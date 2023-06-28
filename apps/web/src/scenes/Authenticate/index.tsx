@@ -1,16 +1,18 @@
-import { Field, Form, Formik } from "formik";
+import { Field, Formik } from "formik";
 import PropTypes, { InferProps } from "prop-types";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { connect, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 
-import FeedbackBlock from "src/components/FeedbackBlock";
 import AuthWrap from "src/components/AuthenticationWrap";
-import { ACCOUNT_PATH, LOGIN_PATH } from "src/constants/routes";
+import FeedbackBlock from "src/components/FeedbackBlock";
+import Form from "src/components/Form";
+import { DASHBOARD_PATH, LOGIN_PATH } from "src/constants/routes";
 import { authSelectors, setCurrentEmail, setUser } from "src/services/auth";
 import { authenticate, getUser } from "src/services/auth/auth.api";
 import { RootState } from "src/services/store";
+import { FormButton } from "src/components/Form/components";
 
 const AuthenticateSchema = Yup.object().shape({
   emailToken: Yup.string().length(8),
@@ -36,7 +38,7 @@ function Authenticate({
         const response = await getUser();
         dispatch(setUser(response.data));
         dispatch(setCurrentEmail(null));
-        navigate(ACCOUNT_PATH);
+        navigate(DASHBOARD_PATH);
       } catch (err) {
         console.log({ err });
         setError(true);
@@ -63,7 +65,7 @@ function Authenticate({
           onSubmit={onSubmit}
         >
           <Form>
-            <div className="form-control w-full mb-4">
+            <div className="form-control w-full">
               <label className="label">
                 <span className="label-text">
                   Enter code sent to your email.
@@ -77,12 +79,7 @@ function Authenticate({
                 placeholder="Code"
               />
             </div>
-            <button
-              className="btn bg-blue-600 text-white border-none w-full"
-              type="submit"
-            >
-              Log In
-            </button>
+            <FormButton>Login</FormButton>
           </Form>
         </Formik>
       </AuthWrap>
