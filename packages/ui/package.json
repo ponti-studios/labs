@@ -19,6 +19,8 @@
   },
   "dependencies": {
     "@emotion/styled": "^11.8.1",
+    "@radix-ui/colors": "^1.0.0",
+    "@radix-ui/react-avatar": "^1.0.3",
     "@types/prop-types": "^15.7.5",
     "formik": "^2.2.9",
     "prop-types": "^15.8.1"

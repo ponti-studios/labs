@@ -17,8 +17,5 @@ export function authenticate({ email, emailToken }: LoginPayload) {
 }
 
 export function logout() {
-  return api.post("/logout", {}).then(() => {
-    window.location.pathname = LANDING_PATH;
-    window.location.reload();
-  });
+  return api.post("/logout", {});
 }

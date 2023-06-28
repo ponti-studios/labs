@@ -1,3 +1,5 @@
+@import "@radix-ui/colors/violet-alpha.css";
+
 .wrap {
     display: flex;
     flex-direction: column;
@@ -6,7 +8,14 @@
 
 }
 
+.appName {
+    color: var(--violet-11);
+    font-size: 24px;
+    font-weight: 600;
+}
+
 .subtitle {
+    color: var(--violet-11);
     font-style: italic;
     font-size: 16px;
 }

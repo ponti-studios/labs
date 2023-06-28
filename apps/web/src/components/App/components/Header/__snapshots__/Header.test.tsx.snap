@@ -5,28 +5,26 @@ exports[`<Header/> > should render component 1`] = `
   className="flex items-center justify-between py-2 px-4"
 >
   <div
-    className="_menuItem_o6kzu_1"
+    className="_menuItem_104x6_1"
   >
     <a
-      className="_appName_1jhvd_13"
+      className="_appName_17bat_13"
       href="/"
       onClick={[Function]}
     >
-      rocco
+      Rocco
     </a>
   </div>
-  <div>
-    <div
-      className="_menuItem_o6kzu_1"
+  <div
+    className="_menuItem_104x6_1"
+  >
+    <a
+      className="btn border-none min-h-0 h-10 text-white ml-4"
+      href="/login"
+      onClick={[Function]}
     >
-      <a
-        className="btn bg-blue-600 border-none min-h-0 h-10 text-white ml-4"
-        href="/login"
-        onClick={[Function]}
-      >
-        Log In
-      </a>
-    </div>
+      Log In
+    </a>
   </div>
 </header>
 `;

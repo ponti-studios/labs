@@ -7,6 +7,7 @@ import { defineConfig, splitVendorChunkPlugin } from "vite";
 export default defineConfig({
   plugins: [react(), splitVendorChunkPlugin()],
   build: {
+    outDir: "build",
     rollupOptions: {
       plugins: [
         analyze({

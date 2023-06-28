@@ -1,20 +1,15 @@
-import PropTypes, { InferProps } from "prop-types";
 import styles from "./NavMenuItem.module.css";
+import React from "react";
 
 function NavMenuItem({
   children,
-  onClick,
-}: InferProps<typeof NavMenuItem.propTypes>) {
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={styles.menuItem} {...(onClick && { onClick })}>
+    <div className={styles.menuItem} {...props}>
       {children}
     </div>
   );
 }
-
-NavMenuItem.propTypes = {
-  children: PropTypes.node,
-  onClick: PropTypes.func,
-};
 
 export default NavMenuItem;

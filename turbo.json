@@ -4,10 +4,13 @@
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["build/**", "dist/**"],
+      "outputs": ["build/**"],
       "inputs": ["prisma/**", "src/**/*.tsx", "src/**/*.ts", "test/**/*.ts"]
     },
     "lint": {
+      "outputs": []
+    },
+    "test:update": {
       "outputs": []
     },
     "test": {

@@ -1,4 +1,4 @@
-export const APP_NAME = "rocco";
+export const APP_NAME = "Rocco";
 
 export default {
   APP_NAME,

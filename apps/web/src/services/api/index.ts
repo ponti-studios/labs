@@ -7,7 +7,7 @@ const api = axios.create({
 
 // Check that api is up
 api
-  .get("/")
+  .get("/status")
   .then(() => console.log("Server up"))
   .catch(() => console.log("Server disconnected"));
 

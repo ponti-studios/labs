@@ -11,7 +11,7 @@ import { User } from "src/services/utils/propTypes";
 const Wrap = styled.div`
   display: flex;
   flex-direction: column;
-  margin: 0 24px;
+  padding: 0 1rem;
 `;
 
 function Account({ user }: { user: User }) {

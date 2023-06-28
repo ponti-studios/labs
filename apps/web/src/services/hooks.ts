@@ -5,6 +5,7 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import api from "./api";
 import { setUser } from "./auth";
 import type { RootState, AppDispatch } from "./store";
+import { User } from "./auth/auth.types";
 
 // Use throughout your app instead of plain `useDispatch` and `useSelector`
 export const useAppDispatch = () => useDispatch<AppDispatch>();
@@ -14,18 +15,6 @@ const feedback = {
   connection: "There was an issue connection to the server",
   server: "There was an issue on the server. Our bad",
 };
-
-interface Transaction {
-  id: string;
-  amount: number;
-  payee: number;
-}
-
-interface Account {
-  id: string;
-  name: string;
-  type: string;
-}
 
 export const useMountedState = () => {
   const isMountedRef = useRef<Boolean>(false);
@@ -42,17 +31,11 @@ export const useMountedState = () => {
   return isMounted;
 };
 
-export const useAccounts = () => {
-  return useQuery<Account[], Error | null>("getAccounts", () =>
-    api.get("accounts").then((d) => d.data)
-  );
-};
-
-export const useProfile = () => {
+export const useAccount = () => {
   const reqRef = useRef<Boolean>(false);
   const [error, setError] = useState<String | null>(null);
   const [loading, setLoading] = useState<Boolean>(false);
-  const [data, setData] = useState<Transaction[] | null>(null);
+  const [account, setAccount] = useState<User | null>(null);
   const dispatch = useDispatch();
 
   const getProfile = useCallback(async () => {
@@ -67,7 +50,7 @@ export const useProfile = () => {
       reqRef.current = true;
       const response = await api.get("/me");
       dispatch(setUser(response.data));
-      setData(response.data);
+      setAccount(response.data);
     } catch (err: any) {
       setError(err.statusCode === 0 ? feedback.connection : feedback.server);
     } finally {
@@ -80,5 +63,5 @@ export const useProfile = () => {
     getProfile();
   }, []);
 
-  return { loading, error, data, getProfile };
+  return { loading, error, account, getProfile };
 };

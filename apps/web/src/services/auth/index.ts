@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import * as authApi from "./auth.api";
 import { User } from "./auth.types";
+import { LANDING_PATH } from "src/constants/routes";
 
 export interface AuthState {
   loginEmail: string | null;
@@ -13,10 +14,11 @@ const initialState: AuthState = {
 };
 
 export const logout = createAsyncThunk("auth/logout", async () => {
-  return authApi.logout();
+  await authApi.logout();
+  setUser(null);
 });
 
-export const authSlice = createSlice({
+const authSlice = createSlice({
   name: "auth",
   initialState,
   // The `reducers` field lets us define reducers and generate associated actions

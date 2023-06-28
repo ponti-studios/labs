@@ -53,6 +53,6 @@ RUN turbo run build --filter=rocco-web
 FROM nginx:alpine as release
 
 # Copy the built app to the Nginx public directory
-COPY --from=installer /app/apps/web/dist /usr/share/nginx/html
+COPY --from=installer /app/apps/web/build /usr/share/nginx/html
 
 # end

@@ -11,7 +11,6 @@ coverage
 # build
 .next
 build
-dist
 tsconfig.tsbuildinfo
 
 # misc

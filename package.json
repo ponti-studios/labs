@@ -20,7 +20,7 @@
     "prepush": "pnpm test",
     "prerelease": "pnpm test",
     "test": "turbo run test",
-    "test:update": "turbo run test --scope web -- -u",
+    "test:update": "turbo run test:update --scope rocco-web",
     "turbo:migrate": "turbo run prisma:generate && turbo run prisma:deploy"
   },
   "devDependencies": {

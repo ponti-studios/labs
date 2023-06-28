@@ -1,12 +1,13 @@
 {
   "name": "rocco-web",
   "version": "0.0.0",
+  "packageManager": "pnpm@7.29.1",
   "private": true,
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "start": "pnpx http-server dist --gzip -a 0.0.0.0 -p $PORT -c 1209600",
+    "start": "pnpx http-server build --gzip -a 0.0.0.0 -p $PORT -c 1209600",
     "test": "vitest --run",
     "test:update": "vitest -u --run"
   },
@@ -16,6 +17,9 @@
     "@fortawesome/fontawesome-svg-core": "^1.3.0",
     "@fortawesome/free-solid-svg-icons": "^6.0.0",
     "@fortawesome/react-fontawesome": "^0.1.17",
+    "@radix-ui/colors": "^1.0.0",
+    "@radix-ui/react-dropdown-menu": "^2.0.5",
+    "@radix-ui/react-icons": "^1.3.0",
     "@reduxjs/toolkit": "^1.7.2",
     "axios": "^0.26.0",
     "classnames": "^2.3.1",

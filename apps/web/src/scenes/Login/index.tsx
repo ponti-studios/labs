@@ -3,7 +3,6 @@ import { useCallback, useMemo, useState } from "react";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import Input from "ui/Input";
 import * as Yup from "yup";
 
 import api from "src/services/api";
@@ -77,7 +76,7 @@ function Login({ setCurrentEmail, user }: LoginProps) {
               className="btn bg-blue-600 text-white border-none w-full"
               type="submit"
             >
-              Sign Up
+              Get code
             </button>
           </Form>
         )}
