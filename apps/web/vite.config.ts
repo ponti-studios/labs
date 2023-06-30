@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import react from "@vitejs/plugin-react";
 import * as path from "path";
 import analyze from "rollup-plugin-analyzer";
