@@ -1,17 +1,19 @@
-import { Field, Form, Formik } from "formik";
+import { Field, Formik } from "formik";
 import { useCallback, useMemo, useState } from "react";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import * as Yup from "yup";
 
+import FeedbackBlock from "src/components/FeedbackBlock";
+import Form from "src/components/Form";
+import AuthWrap from "src/components/AuthenticationWrap";
+import { LANDING_PATH } from "src/constants/routes";
 import api from "src/services/api";
 import { authSelectors, setCurrentEmail } from "src/services/auth";
-import FeedbackBlock from "src/components/FeedbackBlock";
-import AuthWrap from "src/components/AuthenticationWrap";
 import { User } from "src/services/auth/auth.types";
-import { LANDING_PATH } from "src/constants/routes";
 import { RootState } from "src/services/store";
+import { FormButton } from "src/components/Form/components";
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email(),
@@ -61,7 +63,7 @@ function Login({ setCurrentEmail, user }: LoginProps) {
       >
         {({ errors }) => (
           <Form>
-            <div className="form-control w-full mb-4">
+            <div className="form-control w-full">
               <label className="label">
                 <span className="label-text">What is your email?</span>
               </label>
@@ -72,12 +74,7 @@ function Login({ setCurrentEmail, user }: LoginProps) {
                 placeholder="Email"
               />
             </div>
-            <button
-              className="btn bg-blue-600 text-white border-none w-full"
-              type="submit"
-            >
-              Get code
-            </button>
+            <FormButton>Get code</FormButton>
           </Form>
         )}
       </Formik>
