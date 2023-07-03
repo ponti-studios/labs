@@ -7,5 +7,6 @@ export default async (): Promise<Config> => {
     testEnvironment: "node",
     verbose: true,
     testMatch: [path.resolve(__dirname, "./src/**/*.test.ts")],
+    setupFiles: [path.resolve(__dirname, "./src/jest.setup.ts")],
   };
 };

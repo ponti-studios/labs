@@ -7,6 +7,8 @@ import {
   FastifyRequest,
 } from "fastify";
 import fp from "fastify-plugin";
+import { APP_USER_ID, EVENTS, track } from "../../analytics";
+import { TOKEN_FAILURE_REASONS } from "./constants";
 
 interface LoginInput {
   email: string;
@@ -62,6 +64,11 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
       });
 
       if (!fetchedEmailToken) {
+        // If the token doesn't exist, return 400 bad request
+        reply.log.error("Login token does not exist");
+        track(APP_USER_ID, EVENTS.USER_EVENTS.EMAIL_TOKEN_VALIDATED_FAILURE, {
+          reason: TOKEN_FAILURE_REASONS.NOT_FOUND,
+        });
         reply.code(400).send("Invalid token");
       }
 
@@ -69,12 +76,19 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
         request.session.delete();
         // If the token doesn't exist or is not valid, return 401 unauthorized
         reply.log.error("Login token is not valid");
+        track(APP_USER_ID, EVENTS.USER_EVENTS.EMAIL_TOKEN_VALIDATED_FAILURE, {
+          reason: TOKEN_FAILURE_REASONS.INVALID,
+        });
         reply.code(401).send();
       }
 
       if (fetchedEmailToken.expiration < new Date()) {
         request.session.delete();
         // If the token has expired, return 401 unauthorized
+        reply.log.error("Login token has expired");
+        track(APP_USER_ID, EVENTS.USER_EVENTS.EMAIL_TOKEN_VALIDATED_FAILURE, {
+          reason: TOKEN_FAILURE_REASONS.EXPIRED,
+        });
         reply.code(401).send("Token expired");
       }
 
@@ -82,6 +96,9 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
         request.session.delete();
         // If token doesn't match the email passed in the payload, return 401 unauthorized
         reply.log.error("Token email does not match email");
+        track(APP_USER_ID, EVENTS.USER_EVENTS.EMAIL_TOKEN_VALIDATED_FAILURE, {
+          reason: TOKEN_FAILURE_REASONS.EMAIL_MISMATCH,
+        });
         reply.code(401).send();
       }
 
@@ -118,6 +135,7 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
 
       const { id: userId, isAdmin } = createdToken.user;
 
+      track(userId, EVENTS.USER_EVENTS.LOGIN_SUCCESS, { isAdmin });
       // The API and UI are not hosted at the same domain
       // so we must allow the cookie to be used on domains other
       // than the domain of the API.
@@ -179,11 +197,15 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
           },
         });
 
+        track(APP_USER_ID, EVENTS.USER_EVENTS.REGISTER_SUCCESS, {});
+
         // 👇 send the email token
         await sendEmailToken(email, emailToken);
         return reply.send().code(200);
       } catch (error) {
-        request.log.error((error as Error)?.message);
+        const message = (error as Error)?.message;
+        request.log.error(message);
+        track(APP_USER_ID, EVENTS.USER_EVENTS.REGISTER_FAILURE, { message });
         return reply.code(500).send({ message: "Could not create account" });
       }
     }

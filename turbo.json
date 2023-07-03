@@ -35,11 +35,13 @@
   },
   "globalEnv": [
     "APP_URL",
+    "APP_USER_ID",
     "COOKIE_NAME",
     "COOKIE_SALT",
     "COOKIE_SECRET",
     "ENABLE_REQUEST_LOGGING",
     "NODE_ENV",
-    "PORT"
+    "PORT",
+    "SEGMENT_KEY"
   ]
 }

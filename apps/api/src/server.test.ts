@@ -1,12 +1,5 @@
 import { createServer } from "./server";
 
-jest.mock("@prisma/client", () => ({
-  PrismaClient: jest.fn().mockImplementation(() => ({
-    $connect: jest.fn(),
-    $disconnect: jest.fn(),
-  })),
-}));
-
 describe("api endpoints", () => {
   const server = createServer({ logger: false });
 
