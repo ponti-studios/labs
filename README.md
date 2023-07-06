@@ -5,12 +5,11 @@ This monorepo holds the services for Rocco.
 ### Apps
 - `api`: Fastify API server
 - `web`: React web application
-- `ios`: React Native iOS application (not included in turbo)
 
 ## Packages
 
-- `config`: ESLint configurations
-- `ui`: a base React component library
+- `eslint-config-custom`: ESLint configuration
+- `ui`: component library
 - `tsconfig`: TypeScript configurations
 
 ### Utilities
@@ -20,6 +19,12 @@ This monorepo holds the services for Rocco.
 
 ## Setup
 
+1. Set environment variables:
+   - `cp apps/api/.env.example apps/api/.env`
+   - `cp apps/web/.env.example apps/web/.env`
+   - Set `COOKIE_SALT` with helper function
+   - Set `COOKIE_SECRET` with helper function
+   - Set `SEGMENT_KEY` with helper function
 1. Install dependencies: `pnpm install`
 2. Build all apps and packages: `pnpm build`
 3. Start postgres and redis: `docker-compose up -d`
