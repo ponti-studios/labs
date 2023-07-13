@@ -8,9 +8,9 @@ This monorepo holds the services for Rocco.
 
 ## Packages
 
-- `eslint-config-custom`: ESLint configuration
-- `ui`: component library
+- `eslint-config-ponti`: ESLint configuration
 - `tsconfig`: TypeScript configurations
+- `ui`: component library
 
 ### Utilities
 - [TypeScript](https://www.typescriptlang.org/) for static type checking
