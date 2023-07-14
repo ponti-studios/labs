@@ -28,18 +28,27 @@ const emailPlugin: FastifyPluginAsync = async (server) => {
     const msg: MailDataRequired = {
       to: email,
       from: {
-        email: SENDGRID_SENDER_EMAIL || "",
+        email: SENDGRID_SENDER_EMAIL as string,
         name: SENDGRID_SENDER_NAME,
       },
-      subject: "Login token for the modern backend API",
+      subject: "Ponti Studios login token",
       text: `The login token for the API is: ${token}`,
+      html: `The login token for the API is: ${token}`,
     };
 
     // Log the email token in development to not expend SendGrid email quota
     if (isDev) {
       server.log.info(`email token for ${email}: ${token} `);
     } else {
-      await sendgrid.send(msg);
+      try {
+        await sendgrid.send(msg);
+        server.log.info(
+          `sending email token to ${email} from ${SENDGRID_SENDER_EMAIL}`
+        );
+      } catch (err) {
+        server.log.error({ err, email, token }, "Error sending email token");
+        throw new Error("Error sending email");
+      }
     }
   });
 };
