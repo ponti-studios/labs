@@ -1,7 +1,11 @@
 import { createServer } from "./server";
 
 describe("api endpoints", () => {
-  const server = createServer({ logger: false });
+  let server: any;
+
+  beforeAll(async () => {
+    server = await createServer({ logger: false });
+  });
 
   afterAll(async () => {
     await server.close();

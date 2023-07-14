@@ -11,20 +11,29 @@ import usersPlugin from "./plugins/user";
 import rateLimitPlugin from "./plugins/rate-limit";
 import circuitBreaker from "./plugins/circuit-breaker";
 import sessionPlugin from "./plugins/session";
+import cors from "@fastify/cors";
 
 const { APP_URL, PORT } = process.env;
 
-export function createServer(opts: FastifyServerOptions = {}): FastifyInstance {
+export async function createServer(
+  opts: FastifyServerOptions = {}
+): Promise<FastifyInstance> {
   const server = fastify(opts);
+  //
+  if (!APP_URL) {
+    server.log.error("Missing APP_URL env var");
+    process.exit(1);
+  }
 
+  server.log.info(`App URL: ${APP_URL}`);
+  await server.register(cors, {
+    origin: [APP_URL],
+    credentials: true,
+  });
   server.register(shutdownPlugin);
   server.register(sessionPlugin);
   server.register(require("fastify-csrf"), { cookieOpts: {} });
   server.register(require("@fastify/helmet"));
-  server.register(require("@fastify/cors"), {
-    origin: [APP_URL as string],
-    credentials: true,
-  });
   server.register(circuitBreaker);
   server.register(prismaPlugin);
   server.register(rateLimitPlugin);
@@ -37,7 +46,7 @@ export function createServer(opts: FastifyServerOptions = {}): FastifyInstance {
 }
 
 export async function startServer() {
-  const server = createServer({
+  const server = await createServer({
     logger: true,
     disableRequestLogging: process.env.ENABLE_REQUEST_LOGGING !== "true",
   });
