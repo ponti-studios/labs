@@ -2,13 +2,18 @@ import fp from "fastify-plugin";
 import { FastifyPluginAsync } from "fastify";
 import * as Sentry from "@sentry/node";
 
+const { SENTRY_DSN, SENTRY_DEBUG, NODE_ENV } = process.env as Record<
+  string,
+  string
+>;
+
 const shutdownPlugin: FastifyPluginAsync = fp(async (server) => {
   Sentry.init({
-    dsn: process.env.SENTRY_DSN,
-    environment: process.env.NODE_ENV,
-    enabled: !!process.env.SENTRY_DSN,
+    dsn: SENTRY_DSN,
+    environment: NODE_ENV,
+    enabled: !!SENTRY_DSN,
     integrations: [new Sentry.Integrations.Http({ tracing: true })],
-    debug: !!process.env.SENTRY_DEBUG,
+    debug: !!SENTRY_DEBUG,
     tracesSampleRate: 1,
   });
 

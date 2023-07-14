@@ -1,4 +1,4 @@
-import styled, { StyledComponent } from "@emotion/styled";
+import styled from "@emotion/styled";
 import { Form } from "formik";
 
 const Wrap = styled(Form)`
@@ -11,7 +11,10 @@ const Wrap = styled(Form)`
   }
 `;
 
-const StyledForm = ({ children }) => {
+type StyledFormProps = {
+  children: React.ReactNode;
+};
+const StyledForm = ({ children }: StyledFormProps) => {
   return <Wrap>{children}</Wrap>;
 };
 

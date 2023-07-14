@@ -1,5 +1,4 @@
 import { Field, Formik } from "formik";
-import PropTypes, { InferProps } from "prop-types";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { connect, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -18,9 +17,10 @@ const AuthenticateSchema = Yup.object().shape({
   emailToken: Yup.string().length(8),
 });
 
-function Authenticate({
-  loginEmail = "",
-}: InferProps<typeof Authenticate.propTypes>) {
+type AuthenticateProps = {
+  loginEmail?: string;
+};
+function Authenticate({ loginEmail = "" }: AuthenticateProps) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [error, setError] = useState(false);
@@ -31,28 +31,31 @@ function Authenticate({
     []
   );
 
-  const onSubmit = useCallback(async ({ emailToken }) => {
-    if (loginEmail) {
-      try {
-        await authenticate({ email: loginEmail, emailToken });
-        const response = await getUser();
-        dispatch(setUser(response.data));
-        dispatch(setCurrentEmail(null));
-        navigate(DASHBOARD_PATH);
-      } catch (err) {
-        console.log({ err });
-        setError(true);
-        navigate(LOGIN_PATH);
+  const onSubmit = useCallback(
+    async ({ emailToken }) => {
+      if (loginEmail) {
+        try {
+          await authenticate({ email: loginEmail, emailToken });
+          const response = await getUser();
+          dispatch(setUser(response.data));
+          dispatch(setCurrentEmail(null));
+          navigate(DASHBOARD_PATH);
+        } catch (err) {
+          console.log({ err });
+          setError(true);
+          navigate(LOGIN_PATH);
+        }
       }
-    }
-  }, []);
+    },
+    [dispatch, navigate, loginEmail]
+  );
 
   useEffect(() => {
     // If loginEmail is not set, user will need to request a new email token
     if (!loginEmail) {
       navigate("/login");
     }
-  }, []);
+  });
 
   return (
     loginEmail && (
@@ -66,7 +69,7 @@ function Authenticate({
         >
           <Form>
             <div className="form-control w-full">
-              <label className="label">
+              <label className="label" htmlFor="emailToken">
                 <span className="label-text">
                   Enter code sent to your email.
                 </span>
@@ -86,11 +89,6 @@ function Authenticate({
     )
   );
 }
-
-Authenticate.propTypes = {
-  loginEmail: PropTypes.string,
-  user: PropTypes.any,
-};
 
 const mapStateToProps = (state: RootState) => ({
   loginEmail: authSelectors.getLoginEmail(state),

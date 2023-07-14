@@ -26,7 +26,7 @@ function Account({ user }: { user: User }) {
     if (!user) {
       navigate(LANDING_PATH);
     }
-  }, []);
+  }, [navigate, user]);
 
   if (!user) {
     return null;

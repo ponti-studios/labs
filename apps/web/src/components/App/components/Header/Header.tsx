@@ -1,14 +1,12 @@
-import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import NavMenuItem from "ui/NavMenuItem";
 
 import { APP_NAME } from "src/constants";
 import { LANDING_PATH, LOGIN_PATH } from "src/constants/routes";
-import { authSelectors } from "src/services/auth";
 import { User } from "src/services/auth/auth.types";
 
 import styles from "./Header.module.css";
 import AuthNavMenu from "./AuthNavMenu";
+import NavMenuItem from "./NavMenuItem";
 
 function Header({ user }: { user: User }) {
   const isAuthenticated = !!user;
@@ -21,7 +19,7 @@ function Header({ user }: { user: User }) {
         </Link>
       </NavMenuItem>
       {isAuthenticated ? (
-        <AuthNavMenu user={user} />
+        <AuthNavMenu />
       ) : (
         <NavMenuItem>
           <Link to={LOGIN_PATH} className={btnClassName}>
@@ -33,8 +31,4 @@ function Header({ user }: { user: User }) {
   );
 }
 
-const mapStateToProps = (state) => ({
-  user: authSelectors.getUser(state),
-});
-
-export default connect(mapStateToProps)(Header);
+export default Header;

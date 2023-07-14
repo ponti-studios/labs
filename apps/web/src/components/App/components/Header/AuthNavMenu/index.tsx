@@ -6,9 +6,8 @@ import { useNavigate } from "react-router-dom";
 
 import { ACCOUNT_PATH, LANDING_PATH } from "src/constants/routes";
 import { logout } from "src/services/auth";
-import { User } from "src/services/auth/auth.types";
 import Avatar from "ui/Avatar";
-import NavMenuItem from "ui/NavMenuItem";
+import NavMenuItem from "../NavMenuItem";
 
 import "./styles.css";
 import { useAppDispatch } from "src/services/hooks";
@@ -26,7 +25,7 @@ const Wrap = styled(NavMenuItem)`
   }
 `;
 
-const AuthNavMenu = ({ user }: { user: User }) => {
+const AuthNavMenu = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const onAccountClick = useCallback(() => {
@@ -36,7 +35,7 @@ const AuthNavMenu = ({ user }: { user: User }) => {
     dispatch(logout()).then(() => {
       navigate(LANDING_PATH);
     });
-  }, []);
+  }, [dispatch, navigate]);
 
   return (
     <Wrap>

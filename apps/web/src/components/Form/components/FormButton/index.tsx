@@ -1,4 +1,7 @@
-const FormButton = ({ children, ...props }) => {
+type FormButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  children: React.ReactNode;
+};
+const FormButton = ({ children, ...props }: FormButtonProps) => {
   return (
     <button
       className="btn bg-blue-600 text-white border-none"

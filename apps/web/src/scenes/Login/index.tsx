@@ -33,22 +33,25 @@ function Login({ setCurrentEmail, user }: LoginProps) {
     []
   );
 
+  const onSubmit = useCallback(
+    async ({ email }) => {
+      try {
+        // We don't use credentials for login because the user is not logged in
+        await api.post("/login", { email }, { withCredentials: false });
+        setCurrentEmail(email);
+        navigate("/authenticate");
+      } catch (err) {
+        setError(true);
+      }
+    },
+    [navigate, setCurrentEmail]
+  );
+
   useEffect(() => {
     if (user) {
       navigate(LANDING_PATH);
     }
-  }, []);
-
-  const onSubmit = useCallback(async ({ email }) => {
-    try {
-      // We don't use credentials for login because the user is not logged in
-      await api.post("/login", { email }, { withCredentials: false });
-      setCurrentEmail(email);
-      navigate("/authenticate");
-    } catch (err) {
-      setError(true);
-    }
-  }, []);
+  });
 
   return (
     <AuthWrap>
@@ -61,10 +64,10 @@ function Login({ setCurrentEmail, user }: LoginProps) {
         initialValues={initialValues}
         onSubmit={onSubmit}
       >
-        {({ errors }) => (
+        {() => (
           <Form>
             <div className="form-control w-full">
-              <label className="label">
+              <label className="label" htmlFor="email">
                 <span className="label-text">What is your email?</span>
               </label>
               <Field

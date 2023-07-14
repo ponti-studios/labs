@@ -1,5 +1,4 @@
 import { AxiosResponse } from "axios";
-import { LANDING_PATH } from "../../constants/routes";
 import api from "../api";
 import { User } from "./auth.types";
 

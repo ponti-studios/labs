@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useQuery } from "react-query";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 import api from "./api";
@@ -17,7 +16,7 @@ const feedback = {
 };
 
 export const useMountedState = () => {
-  const isMountedRef = useRef<Boolean>(false);
+  const isMountedRef = useRef<boolean>(false);
   const isMounted = useCallback(() => isMountedRef.current, []);
 
   useEffect(() => {
@@ -32,11 +31,11 @@ export const useMountedState = () => {
 };
 
 export const useAccount = () => {
-  const reqRef = useRef<Boolean>(false);
-  const [error, setError] = useState<String | null>(null);
-  const [loading, setLoading] = useState<Boolean>(false);
-  const [account, setAccount] = useState<User | null>(null);
   const dispatch = useDispatch();
+  const reqRef = useRef<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [account, setAccount] = useState<User | null>(null);
 
   const getProfile = useCallback(async () => {
     if (reqRef.current) {
@@ -52,16 +51,17 @@ export const useAccount = () => {
       dispatch(setUser(response.data));
       setAccount(response.data);
     } catch (err: any) {
+      // eslint-disable-line
       setError(err.statusCode === 0 ? feedback.connection : feedback.server);
     } finally {
       reqRef.current = false;
       setLoading(false);
     }
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     getProfile();
-  }, []);
+  }, [getProfile]);
 
   return { loading, error, account, getProfile };
 };

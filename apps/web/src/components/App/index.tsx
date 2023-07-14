@@ -20,16 +20,19 @@ import { useAccount } from "src/services/hooks";
 
 import Header from "./components/Header";
 import styles from "./App.module.scss";
+import { connect } from "react-redux";
+import { authSelectors } from "src/services/auth";
+import { User } from "src/services/auth/auth.types";
 
 const { VITE_GOOGLE_API_KEY } = import.meta.env;
 
 const LIBRARIES = ["places"];
 
-function App() {
+function App({ user }: { user: User }) {
   const { account, loading } = useAccount();
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: VITE_GOOGLE_API_KEY,
-    libraries: LIBRARIES as any,
+    libraries: LIBRARIES as any, // eslint-disable-line
   });
 
   if (loading) {
@@ -42,7 +45,7 @@ function App() {
 
   return (
     <div id="app" className={`h-100 flex flex-col ${styles.wrap}`}>
-      <Header />
+      <Header user={user} />
       <main className="flex mt-8" style={{ height: "85vh" }}>
         <Routes>
           <Route path={AUTHENTICATE_PATH} element={<Authenticate />} />
@@ -64,4 +67,8 @@ function App() {
   );
 }
 
-export default App;
+const mapStateToProps = (state) => ({
+  user: authSelectors.getUser(state),
+});
+
+export default connect(mapStateToProps)(App);
