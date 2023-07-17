@@ -3,10 +3,10 @@ import { useEffect } from "react";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { LANDING_PATH } from "src/constants/routes";
 import { authSelectors } from "src/services/auth";
+import { User } from "src/services/auth/auth.types";
+import { LANDING_PATH } from "src/constants/routes";
 import { RootState } from "src/services/store";
-import { User } from "src/services/utils/propTypes";
 
 const Wrap = styled.div`
   display: flex;
