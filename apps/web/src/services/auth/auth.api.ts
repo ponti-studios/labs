@@ -1,14 +1,8 @@
-import { AxiosResponse } from "axios";
 import api from "../api";
-import { User } from "./auth.types";
 
 export interface LoginPayload {
   email: string;
   emailToken: string;
-}
-
-export function getUser(): Promise<AxiosResponse<User>> {
-  return api.get("/me");
 }
 
 export function authenticate({ email, emailToken }: LoginPayload) {
