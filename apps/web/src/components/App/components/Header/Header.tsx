@@ -7,7 +7,7 @@ import styles from "./Header.module.css";
 import AuthNavMenu from "./AuthNavMenu";
 import NavMenuItem from "./NavMenuItem";
 import { useAppSelector } from "src/services/hooks";
-import { getIsAuthenticated } from "src/services/auth";
+import { getIsAuthenticated } from "src/services/store";
 
 function Header() {
   const isAuthenticated = useAppSelector(getIsAuthenticated);

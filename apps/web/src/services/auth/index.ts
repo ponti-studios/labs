@@ -1,27 +1,43 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../store";
+import {
+  createAsyncThunk,
+  createSlice,
+  PayloadAction,
+  Reducer,
+} from "@reduxjs/toolkit";
+
+import api from "src/services/api";
+
 import * as authApi from "./auth.api";
-import { User } from "./auth.types";
+
+export type User = {
+  id: string;
+  email: string;
+  name: string;
+  isAdmin: string;
+  createdAt: string;
+  updatedAt: string;
+};
 
 export interface AuthState {
-  isLoadingAuth: boolean;
+  isLoadingAuth?: boolean;
   authError: string | null;
   loginEmail: string | null;
   user?: User;
 }
 
 const initialState: AuthState = {
-  isLoadingAuth: true,
   authError: null,
   loginEmail: null,
 };
 
 export const loadAuth = createAsyncThunk("auth/load", async () => {
-  const response = await authApi.getUser();
+  const response = await api.get("/me");
   return response.data as User;
 });
 
-export const logout = createAsyncThunk("auth/logout", authApi.logout);
+export const logout = createAsyncThunk("auth/logout", async () => {
+  return authApi.logout();
+});
 
 const authSlice = createSlice({
   name: "auth",
@@ -64,10 +80,5 @@ const authSlice = createSlice({
   },
 });
 
-export const getIsLoadingAuth = (state: RootState) => state.auth.isLoadingAuth;
-export const getLoginEmail = (state: RootState) => state.auth.loginEmail;
-export const getUser = (state: RootState) => state.auth.user;
-export const getIsAuthenticated = (state: RootState) => !!state.auth.user;
-
 export const { setCurrentEmail, setUser } = authSlice.actions;
-export default authSlice.reducer;
+export default authSlice.reducer as Reducer<AuthState>;

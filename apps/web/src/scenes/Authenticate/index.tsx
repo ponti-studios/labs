@@ -7,8 +7,9 @@ import AuthWrap from "src/components/AuthenticationWrap";
 import FeedbackBlock from "src/components/FeedbackBlock";
 import Form from "src/components/Form";
 import { DASHBOARD_PATH, LOGIN_PATH } from "src/constants/routes";
-import { getLoginEmail, setCurrentEmail, setUser } from "src/services/auth";
-import { authenticate, getUser } from "src/services/auth/auth.api";
+import { loadAuth, setCurrentEmail } from "src/services/auth";
+import { getLoginEmail } from "src/services/store";
+import { authenticate } from "src/services/auth/auth.api";
 import { FormButton } from "src/components/Form/components";
 import { useAppDispatch, useAppSelector } from "src/services/hooks";
 
@@ -33,8 +34,7 @@ function Authenticate() {
       if (loginEmail) {
         try {
           await authenticate({ email: loginEmail, emailToken });
-          const response = await getUser();
-          dispatch(setUser(response.data));
+          dispatch(loadAuth());
           dispatch(setCurrentEmail(null));
           navigate(DASHBOARD_PATH);
         } catch (err) {

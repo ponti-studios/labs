@@ -1,5 +1,5 @@
 import { useLoadScript } from "@react-google-maps/api";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Route, Routes } from "react-router-dom";
 import Loading from "ui/Loading";
 
@@ -17,11 +17,8 @@ import Dashboard from "src/scenes/Dashboard";
 import Home from "src/scenes/Home";
 import Login from "src/scenes/Login";
 import NotFound from "src/scenes/NotFound";
-import {
-  getIsLoadingAuth,
-  loadAuth,
-  getIsAuthenticated,
-} from "src/services/auth";
+import { loadAuth } from "src/services/auth";
+import { getIsAuthenticated, getIsLoadingAuth } from "src/services/store";
 import { useAppDispatch, useAppSelector } from "src/services/hooks";
 
 import Header from "./components/Header";
@@ -32,6 +29,7 @@ const { VITE_GOOGLE_API_KEY } = import.meta.env;
 const LIBRARIES = ["places"];
 
 function App() {
+  const authRef = useRef<boolean>(false);
   const isLoadingAuth = useAppSelector(getIsLoadingAuth);
   const isAuthenticated = useAppSelector(getIsAuthenticated);
   const dispatch = useAppDispatch();
@@ -41,9 +39,11 @@ function App() {
   });
 
   useEffect(() => {
-    console.log("App: loadAuth");
-    dispatch(loadAuth());
-  }, [dispatch]);
+    if (authRef.current === false) {
+      authRef.current = true;
+      dispatch(loadAuth());
+    }
+  }, []); // eslint-disable-line
 
   if (isLoadingAuth) {
     return (
