@@ -20,7 +20,6 @@ import NotFound from "src/scenes/NotFound";
 import {
   getIsLoadingAuth,
   loadAuth,
-  getUser,
   getIsAuthenticated,
 } from "src/services/auth";
 import { useAppDispatch, useAppSelector } from "src/services/hooks";
@@ -44,7 +43,7 @@ function App() {
   useEffect(() => {
     console.log("App: loadAuth");
     dispatch(loadAuth());
-  });
+  }, [dispatch]);
 
   if (isLoadingAuth) {
     return (
@@ -60,8 +59,7 @@ function App() {
       <main className="flex mt-8" style={{ height: "85vh" }}>
         <Routes>
           <Route path={AUTHENTICATE_PATH} element={<Authenticate />} />
-          {!isAuthenticated && <Route path={LOGIN_PATH} element={<Login />} />}
-          {isAuthenticated && (
+          {isAuthenticated ? (
             <>
               <Route
                 path={DASHBOARD_PATH}
@@ -69,8 +67,12 @@ function App() {
               />
               <Route path={ACCOUNT_PATH} element={<Account />} />
             </>
+          ) : (
+            <>
+              <Route path={LOGIN_PATH} element={<Login />} />
+              <Route path={LANDING_PATH} element={<Home />} />
+            </>
           )}
-          <Route path={LANDING_PATH} element={<Home />} />
           <Route path={WILDCARD_PATH} element={<NotFound />} />
         </Routes>
       </main>

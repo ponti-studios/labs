@@ -1,14 +1,19 @@
+:root {
+  --auth-wrap-size-small: 350px;
+  --auth-wrap-size-medium: 450px;
+}
 .wrap {
-  width: 350px;
-  max-width: 350px;
-  height: 100%;
   display: flex;
   margin: 0 auto;
   flex-direction: column;
   justify-content: center;
+  height: var(--auth-wrap-size-small);
+  width: var(--auth-wrap-size-small);
+  max-width: var(--auth-wrap-size-small);
 
   @media and (min-width: 768px) {
-      width: 450px;
-      max-width: 450px;
+    height: var(--auth-wrap-size-medium);
+    width: var(--auth-wrap-size-medium);
+    max-width: var(--auth-wrap-size-medium);
   }
 }

@@ -11,7 +11,7 @@ import { getIsAuthenticated } from "src/services/auth";
 
 function Header() {
   const isAuthenticated = useAppSelector(getIsAuthenticated);
-  const btnClassName = "btn border-none min-h-0 h-10 text-white ml-4";
+
   return (
     <header className="flex items-center justify-between py-2 px-4">
       <NavMenuItem>
@@ -23,7 +23,10 @@ function Header() {
         <AuthNavMenu />
       ) : (
         <NavMenuItem>
-          <Link to={LOGIN_PATH} className={btnClassName}>
+          <Link
+            to={LOGIN_PATH}
+            className="btn bg-blue-600 border-none min-h-0 h-10 text-white ml-4"
+          >
             Log In
           </Link>
         </NavMenuItem>

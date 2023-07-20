@@ -1,6 +1,5 @@
 import { Field, Formik } from "formik";
 import { useCallback, useMemo, useState } from "react";
-import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import * as Yup from "yup";
@@ -10,20 +9,17 @@ import Form from "src/components/Form";
 import AuthWrap from "src/components/AuthenticationWrap";
 import { LANDING_PATH } from "src/constants/routes";
 import api from "src/services/api";
-import { authSelectors, setCurrentEmail } from "src/services/auth";
-import { User } from "src/services/auth/auth.types";
-import { RootState } from "src/services/store";
+import { getUser, setCurrentEmail } from "src/services/auth";
 import { FormButton } from "src/components/Form/components";
+import { useAppDispatch, useAppSelector } from "src/services/hooks";
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email(),
 });
 
-type LoginProps = {
-  user?: User;
-  setCurrentEmail: (value: string) => void; // eslint-disable-line
-};
-function Login({ setCurrentEmail, user }: LoginProps) {
+function Login() {
+  const dispatch = useAppDispatch();
+  const user = useAppSelector(getUser);
   const [error, setError] = useState(false);
   const navigate = useNavigate();
   const initialValues = useMemo(
@@ -38,13 +34,13 @@ function Login({ setCurrentEmail, user }: LoginProps) {
       try {
         // We don't use credentials for login because the user is not logged in
         await api.post("/login", { email }, { withCredentials: false });
-        setCurrentEmail(email);
+        dispatch(setCurrentEmail(email));
         navigate("/authenticate");
       } catch (err) {
         setError(true);
       }
     },
-    [navigate, setCurrentEmail]
+    [dispatch, navigate]
   );
 
   useEffect(() => {
@@ -85,12 +81,4 @@ function Login({ setCurrentEmail, user }: LoginProps) {
   );
 }
 
-const mapStateToProps = (state: RootState) => ({
-  user: authSelectors.getUser(state),
-});
-
-const mapDispatchToProps = {
-  setCurrentEmail,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default Login;
