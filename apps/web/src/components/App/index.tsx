@@ -41,7 +41,6 @@ function App() {
   });
 
   useEffect(() => {
-    console.log("App: loadAuth");
     dispatch(loadAuth());
   }, [dispatch]);
 
