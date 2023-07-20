@@ -17,11 +17,8 @@ import Dashboard from "src/scenes/Dashboard";
 import Home from "src/scenes/Home";
 import Login from "src/scenes/Login";
 import NotFound from "src/scenes/NotFound";
-import {
-  getIsLoadingAuth,
-  loadAuth,
-  getIsAuthenticated,
-} from "src/services/auth";
+import { loadAuth } from "src/services/auth";
+import { getIsAuthenticated, getIsLoadingAuth } from "src/services/store";
 import { useAppDispatch, useAppSelector } from "src/services/hooks";
 
 import Header from "./components/Header";

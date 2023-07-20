@@ -2,9 +2,9 @@ import styled from "@emotion/styled";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { getUser } from "src/services/auth";
 import { LANDING_PATH } from "src/constants/routes";
 import { useAppSelector } from "src/services/hooks";
+import { getUser } from "src/services/store";
 
 const Wrap = styled.div`
   display: flex;

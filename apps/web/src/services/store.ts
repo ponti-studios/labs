@@ -3,9 +3,14 @@ import auth from "./auth";
 
 export const store = configureStore({
   reducer: {
-    auth: auth,
+    auth,
   },
 });
+
+export const getIsLoadingAuth = (state: RootState) => state.auth.isLoadingAuth;
+export const getLoginEmail = (state: RootState) => state.auth.loginEmail;
+export const getUser = (state: RootState) => state.auth.user;
+export const getIsAuthenticated = (state: RootState) => !!state.auth.user;
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;

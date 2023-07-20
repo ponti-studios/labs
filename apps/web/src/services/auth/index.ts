@@ -1,8 +1,11 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSlice,
+  PayloadAction,
+  Reducer,
+} from "@reduxjs/toolkit";
 
 import api from "src/services/api";
-
-import { RootState } from "../store";
 
 import * as authApi from "./auth.api";
 
@@ -77,10 +80,5 @@ const authSlice = createSlice({
   },
 });
 
-export const getIsLoadingAuth = (state: RootState) => state.auth.isLoadingAuth;
-export const getLoginEmail = (state: RootState) => state.auth.loginEmail;
-export const getUser = (state: RootState) => state.auth.user;
-export const getIsAuthenticated = (state: RootState) => !!state.auth.user;
-
 export const { setCurrentEmail, setUser } = authSlice.actions;
-export default authSlice.reducer;
+export default authSlice.reducer as Reducer<AuthState>;

@@ -4,14 +4,15 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import * as Yup from "yup";
 
+import AuthWrap from "src/components/AuthenticationWrap";
 import FeedbackBlock from "src/components/FeedbackBlock";
 import Form from "src/components/Form";
-import AuthWrap from "src/components/AuthenticationWrap";
+import { FormButton } from "src/components/Form/components";
 import { LANDING_PATH } from "src/constants/routes";
 import api from "src/services/api";
-import { getUser, setCurrentEmail } from "src/services/auth";
-import { FormButton } from "src/components/Form/components";
+import { setCurrentEmail } from "src/services/auth";
 import { useAppDispatch, useAppSelector } from "src/services/hooks";
+import { getUser } from "src/services/store";
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email(),
