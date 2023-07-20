@@ -1,4 +1,5 @@
 import { useLoadScript } from "@react-google-maps/api";
+import { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import Loading from "ui/Loading";
 
@@ -16,26 +17,35 @@ import Dashboard from "src/scenes/Dashboard";
 import Home from "src/scenes/Home";
 import Login from "src/scenes/Login";
 import NotFound from "src/scenes/NotFound";
-import { useAccount } from "src/services/hooks";
+import {
+  getIsLoadingAuth,
+  loadAuth,
+  getIsAuthenticated,
+} from "src/services/auth";
+import { useAppDispatch, useAppSelector } from "src/services/hooks";
 
 import Header from "./components/Header";
 import styles from "./App.module.scss";
-import { connect } from "react-redux";
-import { authSelectors } from "src/services/auth";
-import { User } from "src/services/auth/auth.types";
 
 const { VITE_GOOGLE_API_KEY } = import.meta.env;
 
 const LIBRARIES = ["places"];
 
-function App({ user }: { user: User }) {
-  const { account, loading } = useAccount();
+function App() {
+  const isLoadingAuth = useAppSelector(getIsLoadingAuth);
+  const isAuthenticated = useAppSelector(getIsAuthenticated);
+  const dispatch = useAppDispatch();
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: VITE_GOOGLE_API_KEY,
     libraries: LIBRARIES as any, // eslint-disable-line
   });
 
-  if (loading) {
+  useEffect(() => {
+    console.log("App: loadAuth");
+    dispatch(loadAuth());
+  }, [dispatch]);
+
+  if (isLoadingAuth) {
     return (
       <div className="flex items-center justify-center max-w-[300px] mx-auto min-h-screen">
         <Loading />
@@ -45,12 +55,11 @@ function App({ user }: { user: User }) {
 
   return (
     <div id="app" className={`h-100 flex flex-col ${styles.wrap}`}>
-      <Header user={user} />
+      <Header />
       <main className="flex mt-8" style={{ height: "85vh" }}>
         <Routes>
           <Route path={AUTHENTICATE_PATH} element={<Authenticate />} />
-          {!account && <Route path={LOGIN_PATH} element={<Login />} />}
-          {account && (
+          {isAuthenticated ? (
             <>
               <Route
                 path={DASHBOARD_PATH}
@@ -58,8 +67,12 @@ function App({ user }: { user: User }) {
               />
               <Route path={ACCOUNT_PATH} element={<Account />} />
             </>
+          ) : (
+            <>
+              <Route path={LOGIN_PATH} element={<Login />} />
+              <Route path={LANDING_PATH} element={<Home />} />
+            </>
           )}
-          <Route path={LANDING_PATH} element={<Home />} />
           <Route path={WILDCARD_PATH} element={<NotFound />} />
         </Routes>
       </main>
@@ -67,8 +80,4 @@ function App({ user }: { user: User }) {
   );
 }
 
-const mapStateToProps = (state) => ({
-  user: authSelectors.getUser(state),
-});
-
-export default connect(mapStateToProps)(App);
+export default App;

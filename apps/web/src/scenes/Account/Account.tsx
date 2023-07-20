@@ -1,12 +1,10 @@
 import styled from "@emotion/styled";
 import { useEffect } from "react";
-import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
+import { getUser } from "src/services/auth";
 import { LANDING_PATH } from "src/constants/routes";
-import { authSelectors } from "src/services/auth";
-import { RootState } from "src/services/store";
-import { User } from "src/services/utils/propTypes";
+import { useAppSelector } from "src/services/hooks";
 
 const Wrap = styled.div`
   display: flex;
@@ -14,7 +12,8 @@ const Wrap = styled.div`
   padding: 0 1rem;
 `;
 
-function Account({ user }: { user: User }) {
+function Account() {
+  const user = useAppSelector(getUser);
   const navigate = useNavigate();
   const memberSince = new Date(user.createdAt);
   const timeDiff = new Date().getTime() - memberSince.getTime();
@@ -49,8 +48,4 @@ function Account({ user }: { user: User }) {
   );
 }
 
-const mapStateToProps = (state: RootState) => ({
-  user: authSelectors.getUser(state),
-});
-
-export default connect(mapStateToProps)(Account);
+export default Account;

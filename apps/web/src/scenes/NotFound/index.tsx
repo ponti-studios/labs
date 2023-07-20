@@ -8,6 +8,4 @@ function NotFound() {
   );
 }
 
-NotFound.propTypes = {};
-
 export default NotFound;

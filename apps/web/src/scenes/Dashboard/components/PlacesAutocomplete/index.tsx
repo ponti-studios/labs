@@ -51,7 +51,6 @@ const InputWrap = styled.div`
   place-content: center;
   position: relative;
   align-items: center;
-  width: 600px;
   margin: 0 auto;
 
   svg {

@@ -1,6 +1,5 @@
 import { Field, Formik } from "formik";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { connect, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 
@@ -8,21 +7,19 @@ import AuthWrap from "src/components/AuthenticationWrap";
 import FeedbackBlock from "src/components/FeedbackBlock";
 import Form from "src/components/Form";
 import { DASHBOARD_PATH, LOGIN_PATH } from "src/constants/routes";
-import { authSelectors, setCurrentEmail, setUser } from "src/services/auth";
+import { getLoginEmail, setCurrentEmail, setUser } from "src/services/auth";
 import { authenticate, getUser } from "src/services/auth/auth.api";
-import { RootState } from "src/services/store";
 import { FormButton } from "src/components/Form/components";
+import { useAppDispatch, useAppSelector } from "src/services/hooks";
 
 const AuthenticateSchema = Yup.object().shape({
   emailToken: Yup.string().length(8),
 });
 
-type AuthenticateProps = {
-  loginEmail?: string;
-};
-function Authenticate({ loginEmail = "" }: AuthenticateProps) {
+function Authenticate() {
+  const loginEmail = useAppSelector(getLoginEmail);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [error, setError] = useState(false);
   const initialValues = useMemo(
     () => ({
@@ -90,9 +87,4 @@ function Authenticate({ loginEmail = "" }: AuthenticateProps) {
   );
 }
 
-const mapStateToProps = (state: RootState) => ({
-  loginEmail: authSelectors.getLoginEmail(state),
-  user: authSelectors.getUser(state),
-});
-
-export default connect(mapStateToProps)(Authenticate as React.FC);
+export default Authenticate;

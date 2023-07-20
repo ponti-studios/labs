@@ -2,15 +2,16 @@ import { Link } from "react-router-dom";
 
 import { APP_NAME } from "src/constants";
 import { LANDING_PATH, LOGIN_PATH } from "src/constants/routes";
-import { User } from "src/services/auth/auth.types";
 
 import styles from "./Header.module.css";
 import AuthNavMenu from "./AuthNavMenu";
 import NavMenuItem from "./NavMenuItem";
+import { useAppSelector } from "src/services/hooks";
+import { getIsAuthenticated } from "src/services/auth";
 
-function Header({ user }: { user: User }) {
-  const isAuthenticated = !!user;
-  const btnClassName = "btn border-none min-h-0 h-10 text-white ml-4";
+function Header() {
+  const isAuthenticated = useAppSelector(getIsAuthenticated);
+
   return (
     <header className="flex items-center justify-between py-2 px-4">
       <NavMenuItem>
@@ -22,7 +23,10 @@ function Header({ user }: { user: User }) {
         <AuthNavMenu />
       ) : (
         <NavMenuItem>
-          <Link to={LOGIN_PATH} className={btnClassName}>
+          <Link
+            to={LOGIN_PATH}
+            className="btn bg-blue-600 border-none min-h-0 h-10 text-white ml-4"
+          >
             Log In
           </Link>
         </NavMenuItem>
