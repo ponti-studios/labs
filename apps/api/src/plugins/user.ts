@@ -4,11 +4,6 @@ import fp from "fastify-plugin";
 const usersPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
   const { prisma } = server;
 
-  server.get("/allUsers", async (request, reply) => {
-    const users = await prisma.user.findMany();
-    return reply.send(users).code(200);
-  });
-
   server.get(
     "/me",
     {
@@ -36,22 +31,6 @@ const usersPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
       } catch (err) {
         request.log.info("Could not fetch user", { err });
         return reply.code(500).send();
-      }
-    }
-  );
-
-  server.get(
-    "/users",
-    {
-      preValidation: server.verifyIsAdmin,
-    },
-    async (request, reply) => {
-      try {
-        const users = await server.prisma.user.findMany();
-        reply.send(users).code(200);
-      } catch (err) {
-        request.log.info("Could not fetch users", err);
-        reply.code(500).send();
       }
     }
   );

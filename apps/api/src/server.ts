@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import fastify, { FastifyInstance, FastifyServerOptions } from "fastify";
+import adminPlugin from "./plugins/admin";
 import authPlugin from "./plugins/auth";
 import shutdownPlugin from "./plugins/shutdown";
 import prismaPlugin from "./plugins/prisma";
@@ -39,6 +40,7 @@ export async function createServer(
   server.register(rateLimitPlugin);
   server.register(statusPlugin);
   server.register(emailPlugin);
+  server.register(adminPlugin);
   server.register(authPlugin);
   server.register(usersPlugin);
 
