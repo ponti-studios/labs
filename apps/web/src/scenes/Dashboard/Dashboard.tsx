@@ -1,9 +1,9 @@
-import { GoogleMap, Marker } from "@react-google-maps/api";
 import styled from "@emotion/styled";
+import { GoogleMap, Marker } from "@react-google-maps/api";
 import React, { useCallback, useState } from "react";
 
-import styles from "./Dashboard.module.css";
 import PlacesAutocomplete from "./components/PlacesAutocomplete";
+import styles from "./Dashboard.module.css";
 
 const Wrap = styled.div`
   display: flex;
@@ -20,15 +20,36 @@ const Wrap = styled.div`
 
 const PlacesAutocompleteWrap = styled.div``;
 
-function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
-  const [zoom, setZoom] = useState(10);
-  const [selected, setSelected] = useState(null);
-  const [center, setCenter] = useState({ lat: 37.7749, lng: -122.4194 }); // Default center (San Francisco)
+const ZOOM_LEVELS = {
+  DEFAULT: 10,
+  SELECTED: 17,
+  MARKER: 18,
+};
 
-  const onSelectedChanged = useCallback((value) => {
-    setSelected(value);
-    setCenter(value);
-    setZoom(17);
+const DEFAULT_CENTER = { lat: 37.7749, lng: -122.4194 }; // Default center (San Francisco)
+
+function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
+  const [zoom, setZoom] = useState(ZOOM_LEVELS.DEFAULT);
+  const [selected, setSelected] =
+    useState<google.maps.places.PlaceResult | null>(null);
+  const [center, setCenter] = useState(DEFAULT_CENTER);
+
+  const onSelectedChanged = useCallback(
+    (place: google.maps.places.PlaceResult) => {
+      const {
+        geometry: { location },
+      } = place;
+      const latLng = { lat: location.lat(), lng: location.lng() };
+      setSelected(place);
+      setCenter(latLng);
+      setZoom(ZOOM_LEVELS.SELECTED);
+    },
+    []
+  );
+
+  const onMarkerClick = useCallback(() => {
+    // The map should zoom slightly when the marker is clicked
+    setZoom(ZOOM_LEVELS.MARKER);
   }, []);
 
   if (!isMapLoaded) {
@@ -45,7 +66,7 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
         center={center}
         mapContainerClassName={styles.mapContainer}
       >
-        {selected && <Marker position={selected} />}
+        {selected && <Marker position={center} onClick={onMarkerClick} />}
       </GoogleMap>
     </Wrap>
   );
