@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { Combobox } from "@headlessui/react";
 import usePlacesAutocomplete, { getDetails } from "use-places-autocomplete";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
@@ -75,6 +75,8 @@ function PlacesAutocomplete({
   } = usePlacesAutocomplete({
     debounce: 500,
   });
+  const [error, setError] = useState(null);
+
   const onInputChange = useCallback(
     (e) => {
       setValue(e.target.value);
@@ -87,14 +89,15 @@ function PlacesAutocomplete({
       setValue(suggestion.description, false);
       try {
         const details = await getDetails({ placeId: suggestion.place_id });
-        if (!details) throw new Error("No details returned");
-        if (typeof details === "string") throw new Error("Details is a string");
+        if (!details || typeof details === "string") {
+          throw new Error("This location could not be found.");
+        }
+
         if (typeof details !== "string") {
           setSelected(details);
         }
       } catch (err) {
-        console.error(err);
-        // !TODO Display error message to user
+        setError(err);
       }
     },
     [setSelected, setValue]
@@ -102,6 +105,7 @@ function PlacesAutocomplete({
 
   return (
     <Wrapper>
+      {error && <div>{error}</div>}
       <Combobox value={value} onChange={handleSelect}>
         <InputWrap>
           <Combobox.Input

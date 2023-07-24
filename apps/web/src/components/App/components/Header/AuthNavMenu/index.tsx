@@ -39,7 +39,7 @@ const AuthNavMenu = () => {
 
   return (
     <Wrap>
-      <Avatar />
+      <Avatar alt="user" />
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
           <button className="IconButton" aria-label="account menu">

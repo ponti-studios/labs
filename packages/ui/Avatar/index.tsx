@@ -1,17 +1,28 @@
 import * as Avatar from "@radix-ui/react-avatar";
+import { PersonIcon } from "@radix-ui/react-icons";
+
 import "./styles.css";
 
-const AvatarDemo = () => (
+type AvatarProps = {
+  alt: string;
+  fallback?: string;
+  src?: string;
+};
+const CustomAvatar = ({ alt, src, fallback }: AvatarProps) => (
   <Avatar.Root className="AvatarRoot">
-    <Avatar.Image
-      className="AvatarImage"
-      src="https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?&w=128&h=128&dpr=2&q=80"
-      alt="Colm Tuite"
-    />
+    {src ? (
+      <Avatar.Image
+        className="AvatarImage"
+        src={src || "https://avatars.githubusercontent.com/u/1831709?v=4"}
+        alt={alt}
+      />
+    ) : (
+      <PersonIcon />
+    )}
     <Avatar.Fallback className="AvatarFallback" delayMs={600}>
-      CT
+      {fallback}
     </Avatar.Fallback>
   </Avatar.Root>
 );
 
-export default AvatarDemo;
+export default CustomAvatar;
