@@ -8,10 +8,9 @@
   vertical-align: middle;
   overflow: hidden;
   user-select: none;
-  width: 35px;
-  height: 35px;
-  border-radius: 100%;
-  background-color: var(--blackA3);
+  width: 25px;
+  height: 25px;
+  border-radius: 4px;
 }
 
 .AvatarImage {
@@ -28,7 +27,6 @@
   align-items: center;
   justify-content: center;
   background-color: white;
-  color: var(--violet-11);
   font-size: 15px;
   line-height: 1;
   font-weight: 500;

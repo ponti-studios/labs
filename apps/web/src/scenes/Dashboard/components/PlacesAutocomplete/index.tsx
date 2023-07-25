@@ -12,14 +12,13 @@ const Wrapper = styled.div`
 `;
 
 const Options = styled(Combobox.Options)`
+  background-color: white;
   margin-top: 8px;
-  border: 0.5px solid slateblue;
-  border-radius: 8px;
+  border-radius: 4px;
   width: 100%;
   max-height: 200px;
   position: absolute;
   z-index: 1;
-  background-color: white;
 `;
 
 const Option = styled(Combobox.Option)`

@@ -1,9 +1,10 @@
 import styled from "@emotion/styled";
 import { GoogleMap, Marker } from "@react-google-maps/api";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 
 import PlacesAutocomplete from "./components/PlacesAutocomplete";
 import styles from "./Dashboard.module.css";
+import PlaceModal from "./components/PlaceModal";
 
 const Wrap = styled.div`
   display: flex;
@@ -33,6 +34,8 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
   const [selected, setSelected] =
     useState<google.maps.places.PlaceResult | null>(null);
   const [center, setCenter] = useState(DEFAULT_CENTER);
+  const modalRef = useRef<HTMLDialogElement | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const onSelectedChanged = useCallback(
     (place: google.maps.places.PlaceResult) => {
@@ -48,8 +51,16 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
   );
 
   const onMarkerClick = useCallback(() => {
+    modalRef.current?.showModal();
     // The map should zoom slightly when the marker is clicked
     setZoom(ZOOM_LEVELS.MARKER);
+    setIsModalOpen(true);
+  }, [modalRef]);
+
+  const onModalClose = useCallback(() => {
+    setIsModalOpen(false);
+    setZoom(ZOOM_LEVELS.SELECTED);
+    console.log("modal closed");
   }, []);
 
   if (!isMapLoaded) {
@@ -68,6 +79,12 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
       >
         {selected && <Marker position={center} onClick={onMarkerClick} />}
       </GoogleMap>
+      <PlaceModal
+        isOpen={isModalOpen}
+        place={selected}
+        onModalClose={onModalClose}
+        ref={modalRef}
+      />
     </Wrap>
   );
 }

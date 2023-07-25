@@ -2,20 +2,19 @@ import { Link } from "react-router-dom";
 
 import { APP_NAME } from "src/constants";
 import { LANDING_PATH, LOGIN_PATH } from "src/constants/routes";
-
-import styles from "./Header.module.css";
-import AuthNavMenu from "./AuthNavMenu";
-import NavMenuItem from "./NavMenuItem";
 import { useAppSelector } from "src/services/hooks";
 import { getIsAuthenticated } from "src/services/store";
+
+import AuthNavMenu from "./AuthNavMenu";
+import NavMenuItem from "./NavMenuItem";
 
 function Header() {
   const isAuthenticated = useAppSelector(getIsAuthenticated);
 
   return (
-    <header className="flex items-center justify-between py-2 px-4">
+    <header className="flex items-center justify-between py-2">
       <NavMenuItem>
-        <Link to={LANDING_PATH} className={styles.appName}>
+        <Link to={LANDING_PATH} className="text-primary font-semibold">
           {APP_NAME}
         </Link>
       </NavMenuItem>

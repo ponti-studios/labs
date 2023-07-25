@@ -2,13 +2,13 @@
 
 exports[`<Header/> > should render component 1`] = `
 <header
-  className="flex items-center justify-between py-2 px-4"
+  className="flex items-center justify-between py-2"
 >
   <div
     className="_menuItem_104x6_1"
   >
     <a
-      className="_appName_17bat_13"
+      className="text-primary font-semibold"
       href="/"
       onClick={[Function]}
     >
