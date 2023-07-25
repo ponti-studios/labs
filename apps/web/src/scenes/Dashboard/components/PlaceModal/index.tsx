@@ -12,11 +12,11 @@ function PlaceModal(
 ) {
   return (
     <Modal isOpen={isOpen} onModalClose={onModalClose} ref={ref}>
-      <h3 className="font-bold text-lg">Hello!</h3>
       {place && (
-        <p className="py-4">
-          {place.name} {place.formatted_address}
-        </p>
+        <>
+          <h3 className="font-bold text-lg">{place.name}</h3>
+          <p className="py-4">{place.formatted_address}</p>
+        </>
       )}
       <div className="modal-action">
         <button className="btn" onClick={onModalClose}>
