@@ -5,13 +5,13 @@
   "types": "./index.tsx",
   "license": "MIT",
   "scripts": {
-    "lint": "eslint *.ts*"
+    "lint": "eslint ./*.ts*"
   },
   "devDependencies": {
     "@types/prop-types": "^15.7.5",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
-    "eslint": "^7.32.0",
+    "eslint": "^8.45.0",
     "eslint-config-ponti": "0.0.0",
     "react": "^18.2.0",
     "tsconfig": "0.0.0",

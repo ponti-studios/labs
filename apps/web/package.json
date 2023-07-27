@@ -48,7 +48,7 @@
     "@typescript-eslint/parser": "^6.2.0",
     "@vitejs/plugin-react": "^4.0.3",
     "autoprefixer": "^10.4.13",
-    "eslint": "8.25.0",
+    "eslint": "^8.45.0",
     "eslint-config-ponti": "0.0.0",
     "postcss": "^8.4.19",
     "react-test-renderer": "18.2.0",
