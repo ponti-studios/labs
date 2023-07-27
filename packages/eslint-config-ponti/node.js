@@ -13,10 +13,5 @@ module.exports = {
     ecmaVersion: "latest",
     sourceType: "module",
   },
-  plugins: [
-    "@typescript-eslint",
-    "prettier",
-    "unused-imports",
-    "simple-import-sort",
-  ],
+  plugins: ["@typescript-eslint", "unused-imports", "simple-import-sort"],
 };

@@ -15,7 +15,7 @@ const emailPlugin: FastifyPluginAsync = async (server) => {
   if (!SENDGRID_API_KEY) {
     console.error(
       "warn",
-      "The SENDGRID_API_KEY env var must be set, otherwise the API won't be able to send emails. Using debug mode which logs the email tokens instead."
+      "The SENDGRID_API_KEY env var must be set, otherwise the API won't be able to send emails. Using debug mode which logs the email tokens instead.",
     );
     process.exit(1);
   }
@@ -43,7 +43,7 @@ const emailPlugin: FastifyPluginAsync = async (server) => {
       try {
         await sendgrid.send(msg);
         server.log.info(
-          `sending email token to ${email} from ${SENDGRID_SENDER_EMAIL}`
+          `sending email token to ${email} from ${SENDGRID_SENDER_EMAIL}`,
         );
       } catch (err) {
         server.log.error({ err, email, token }, "Error sending email token");

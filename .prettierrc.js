@@ -3,6 +3,6 @@ module.exports = {
   singleQuote: false,
   jsxSingleQuote: false,
   tabWidth: 2,
-  semi: true
+  semi: true,
+  trailingComma: "all",
 };
-  

@@ -17,5 +17,5 @@ export default fp(
       },
     });
     done();
-  }
+  },
 );

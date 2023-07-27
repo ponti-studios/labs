@@ -26,7 +26,7 @@ function Authenticate() {
     () => ({
       emailToken: "",
     }),
-    []
+    [],
   );
 
   const onSubmit = useCallback(
@@ -44,7 +44,7 @@ function Authenticate() {
         }
       }
     },
-    [dispatch, navigate, loginEmail]
+    [dispatch, navigate, loginEmail],
   );
 
   useEffect(() => {
