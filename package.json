@@ -27,7 +27,7 @@
     "eslint-config-ponti": "workspace:*",
     "husky": "^7.0.4",
     "lint-staged": "^12.5.0",
-    "prettier": "^2.8.7",
+    "prettier": "^3.0.0",
     "turbo": "^1.10.12"
   },
   "engines": {

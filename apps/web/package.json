@@ -60,7 +60,6 @@
     "eslint-plugin-react": "7.31.8",
     "eslint-plugin-react-hooks": "^4.6.0",
     "postcss": "^8.4.19",
-    "prettier": "^2.5.1",
     "react-test-renderer": "18.0.0",
     "rollup-plugin-analyzer": "^4.0.0",
     "sass": "^1.49.10",

@@ -7,13 +7,13 @@ importers:
       eslint-config-ponti: workspace:*
       husky: ^7.0.4
       lint-staged: ^12.5.0
-      prettier: ^2.8.7
+      prettier: ^3.0.0
       turbo: ^1.10.12
     devDependencies:
       eslint-config-ponti: link:packages/eslint-config-ponti
       husky: 7.0.4
       lint-staged: 12.5.0
-      prettier: 2.8.7
+      prettier: 3.0.0
       turbo: 1.10.12
 
   apps/api:
@@ -6989,6 +6989,12 @@ packages:
     resolution: {integrity: sha512-yPngTo3aXUUmyuTjeTUT75txrf+aMh9FiD7q9ZE/i6r0bPb22g4FsE6Y338PQX1bmfy08i9QQCB7/rcUAVntfw==}
     engines: {node: '>=10.13.0'}
     hasBin: true
+
+  /prettier/3.0.0:
+    resolution: {integrity: sha512-zBf5eHpwHOGPC47h0zrPyNn+eAEIdEzfywMoYn2XPi0P44Zp0tSq64rq0xAREh4auw2cJZHo9QUob+NqCQky4g==}
+    engines: {node: '>=14'}
+    hasBin: true
+    dev: true
 
   /pretty-format/29.5.0:
     resolution: {integrity: sha512-V2mGkI31qdttvTFX7Mt4efOqHXqJWMu4/r66Xh3Z3BwZaPfPJgp6/gbwoujRpPUtfEF6AUUWx3Jim3GCw5g/Qw==}
