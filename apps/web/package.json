@@ -48,7 +48,7 @@
     "@types/react-test-renderer": "^17.0.1",
     "@typescript-eslint/eslint-plugin": "^6.2.0",
     "@typescript-eslint/parser": "^6.2.0",
-    "@vitejs/plugin-react": "^1.0.7",
+    "@vitejs/plugin-react": "^4.0.3",
     "autoprefixer": "^10.4.13",
     "eslint": "8.25.0",
     "eslint-config-ponti": "workspace:*",
