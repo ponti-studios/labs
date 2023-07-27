@@ -15,7 +15,7 @@
     "eslint-config-ponti": "workspace:*",
     "react": "^18.2.0",
     "tsconfig": "workspace:*",
-    "typescript": "^4.5.3"
+    "typescript": "^5.1.6"
   },
   "dependencies": {
     "@emotion/styled": "^11.8.1",
