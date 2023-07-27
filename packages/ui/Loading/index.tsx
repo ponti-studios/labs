@@ -1,10 +1,24 @@
-export default function Loading() {
+type LoadingSize = "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
+type LoadingProps = {
+  size?: LoadingSize;
+};
+
+const sizes = {
+  sm: "1rem",
+  md: "2rem",
+  lg: "3rem",
+  xl: "4rem",
+  "2xl": "5rem",
+  "3xl": "6rem",
+};
+
+export default function Loading({ size = "md" }: LoadingProps) {
   return (
     <div role="status">
-      <svg
-        className="animate-spin w-12 h-12 text-indigo-400"
-        viewBox="0 0 24 24"
-      ></svg>
+      <span
+        className="loading loading-infinity"
+        style={{ width: sizes[size] }}
+      ></span>
       <span className="sr-only">Loading...</span>
     </div>
   );

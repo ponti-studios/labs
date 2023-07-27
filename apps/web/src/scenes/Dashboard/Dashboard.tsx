@@ -5,6 +5,7 @@ import React, { useCallback, useRef, useState } from "react";
 import PlacesAutocomplete from "./components/PlacesAutocomplete";
 import styles from "./Dashboard.module.css";
 import PlaceModal from "./components/PlaceModal";
+import Loading from "ui/Loading";
 
 const Wrap = styled.div`
   display: flex;
@@ -47,7 +48,7 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
       setCenter(latLng);
       setZoom(ZOOM_LEVELS.SELECTED);
     },
-    []
+    [],
   );
 
   const onMarkerClick = useCallback(() => {
@@ -63,7 +64,11 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
   }, []);
 
   if (!isMapLoaded) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center max-w-[300px] mx-auto min-h-full">
+        <Loading size="xl" />
+      </div>
+    );
   }
 
   return (

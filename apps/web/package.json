@@ -25,7 +25,7 @@
     "@react-google-maps/api": "^2.18.1",
     "@reduxjs/toolkit": "^1.7.2",
     "axios": "^0.26.0",
-    "daisyui": "^2.41.0",
+    "daisyui": "^3.5.0",
     "formik": "^2.2.9",
     "history": "^5.3.0",
     "prop-types": "^15.8.1",
