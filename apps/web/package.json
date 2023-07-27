@@ -36,7 +36,7 @@
     "react-router-dom": "^6.2.1",
     "ui": "workspace:*",
     "use-places-autocomplete": "^4.0.0",
-    "yup": "^0.32.11"
+    "yup": "^1.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
