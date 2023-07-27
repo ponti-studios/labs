@@ -6,22 +6,23 @@ import { useNavigate } from "react-router-dom";
 
 import { ACCOUNT_PATH, LANDING_PATH } from "src/constants/routes";
 import { logout } from "src/services/auth";
+import { useAppDispatch } from "src/services/hooks";
 import Avatar from "ui/Avatar";
+
 import NavMenuItem from "../NavMenuItem";
 
 import "./styles.css";
-import { useAppDispatch } from "src/services/hooks";
 
 const Wrap = styled(NavMenuItem)`
   display: flex;
-  gap: 10px;
-  border: 1px solid slateblue;
-  border-radius: 50px;
-  padding: 4px;
-  margin: -4px -4px 0 0;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  padding: 4px 4px 4px 10px;
 
   &:hover {
-    box-shadow: 0px 2px 5px 0px slateblue;
+    background-color: 0px 2px 5px 0px rgba(0, 0, 0, 0.3);
   }
 `;
 
@@ -39,7 +40,7 @@ const AuthNavMenu = () => {
 
   return (
     <Wrap>
-      <Avatar />
+      <Avatar alt="user" />
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
           <button className="IconButton" aria-label="account menu">
@@ -53,14 +54,13 @@ const AuthNavMenu = () => {
             sideOffset={5}
           >
             <DropdownMenu.Item
-              className="DropdownMenuItem"
+              className="DropdownMenuItem text-primary"
               onClick={onAccountClick}
             >
               Account
             </DropdownMenu.Item>
-            <DropdownMenu.Separator className="DropdownMenuSeparator" />
             <DropdownMenu.Item
-              className="DropdownMenuItem"
+              className="DropdownMenuItem text-primary"
               onClick={onLogoutClick}
             >
               Logout

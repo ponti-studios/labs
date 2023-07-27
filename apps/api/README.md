@@ -9,6 +9,8 @@ This repo uses the following technologies:
 - [**Prisma**](https://www.prisma.io/): Next-generation type-safe ORM
 - [**PostgreSQL**](https://www.postgresql.org/): powerful, open source object-relational database system
 - [**Segment**](https://segment.com/): Customer data platform
+- [**Sendgird**](https://sendgrid.com/): Email delivery service
+- [**Sentry**](https://sentry.io/): Application monitoring
 
 ## Components
 
@@ -16,6 +18,6 @@ This repo uses the following technologies:
 
 ### Steps
 
-1. create `.env` file from `.env.example`
+1. Clone `.env` file from `.env.example`
 2. Define environment variables in `.env`
-3. Run `pnpm prisma:dev` to run schema migrations
+3. Run `pnpm prisma:migrate` to run schema migrations

@@ -1,5 +1,6 @@
-import styles from "./NavMenuItem.module.css";
 import React from "react";
+
+import styles from "./NavMenuItem.module.css";
 
 function NavMenuItem({
   children,

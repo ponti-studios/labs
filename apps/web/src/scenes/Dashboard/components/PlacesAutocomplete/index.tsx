@@ -1,21 +1,24 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { Combobox } from "@headlessui/react";
-import usePlacesAutocomplete, { getGeocode } from "use-places-autocomplete";
+import usePlacesAutocomplete, { getDetails } from "use-places-autocomplete";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 
 import Loading from "ui/Loading";
 import styled from "@emotion/styled";
 
+const Wrapper = styled.div`
+  max-height: 48px; // This is the maximum height of the input field.
+  position: relative;
+`;
+
 const Options = styled(Combobox.Options)`
-  margin-top: 8px;
-  border: 0.5px solid slateblue;
-  border-radius: 8px;
-  width: 100%;
-  position: absolute;
-  top: 3rem;
-  left: 4px;
-  z-index: 1;
   background-color: white;
+  margin-top: 8px;
+  border-radius: 4px;
+  width: 100%;
+  max-height: 200px;
+  position: absolute;
+  z-index: 1;
 `;
 
 const Option = styled(Combobox.Option)`
@@ -61,61 +64,76 @@ const InputWrap = styled.div`
 function PlacesAutocomplete({
   setSelected,
 }: {
-  setSelected: React.Dispatch<google.maps.LatLng>;
+  setSelected: (place: google.maps.places.PlaceResult) => void;
 }) {
   const {
     ready,
     value,
     setValue,
     suggestions: { data, loading },
-    clearSuggestions,
-  } = usePlacesAutocomplete({});
+  } = usePlacesAutocomplete({
+    debounce: 500,
+  });
+  const [error, setError] = useState(null);
 
   const onInputChange = useCallback(
     (e) => {
       setValue(e.target.value);
-      clearSuggestions();
     },
-    [clearSuggestions, setValue]
+    [setValue]
   );
 
   const handleSelect = useCallback(
     async (suggestion) => {
       setValue(suggestion.description, false);
-      clearSuggestions();
-      const geocode = await getGeocode({ address: suggestion.description });
-      setSelected(geocode[0].geometry.location);
+      try {
+        const details = await getDetails({ placeId: suggestion.place_id });
+        if (!details || typeof details === "string") {
+          throw new Error("This location could not be found.");
+        }
+
+        if (typeof details !== "string") {
+          setSelected(details);
+        }
+      } catch (err) {
+        setError(err);
+      }
     },
-    [clearSuggestions, setSelected, setValue]
+    [setSelected, setValue]
   );
 
   return (
-    <Combobox value={value} onChange={handleSelect}>
-      <InputWrap>
-        <Combobox.Input
-          className="input input-bordered w-full"
-          onChange={onInputChange}
-        />
-        <MagnifyingGlassIcon height={24} width={24} />
-        <Options>
-          {!ready || loading ? (
-            <Loading />
-          ) : (
-            data.map(
-              (suggestion: google.maps.places.AutocompletePrediction) => (
-                <Option
-                  key={suggestion.place_id}
-                  value={suggestion}
-                  className="truncate"
-                >
-                  {suggestion.description}
-                </Option>
+    <Wrapper>
+      {error && <div>{error}</div>}
+      <Combobox value={value} onChange={handleSelect}>
+        <InputWrap>
+          <Combobox.Input
+            className="input input-bordered w-full"
+            onChange={onInputChange}
+          />
+          <MagnifyingGlassIcon height={24} width={24} />
+        </InputWrap>
+        {
+          <Options>
+            {!ready || loading ? (
+              <Loading />
+            ) : (
+              data.map(
+                (suggestion: google.maps.places.AutocompletePrediction) => (
+                  <Option
+                    key={suggestion.place_id}
+                    value={suggestion}
+                    className="truncate"
+                  >
+                    {suggestion.description}
+                  </Option>
+                )
               )
-            )
-          )}
-        </Options>
-      </InputWrap>
-    </Combobox>
+            )}
+          </Options>
+        }
+      </Combobox>
+    </Wrapper>
   );
 }
 
