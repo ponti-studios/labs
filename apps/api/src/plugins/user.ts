@@ -28,7 +28,7 @@ const usersPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
           return reply.code(401).send();
         }
 
-        return user;
+        return reply.code(200).send(user);
       } catch (err) {
         request.log.info("Could not fetch user", { err });
         return reply.code(500).send();

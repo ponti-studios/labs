@@ -232,7 +232,6 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
 export const verifyIsAdmin: preValidationHookHandler = async (
   request: FastifyRequest,
   reply: FastifyReply,
-  done: Function,
 ) => {
   const data = request.session.get("data");
 
@@ -244,14 +243,11 @@ export const verifyIsAdmin: preValidationHookHandler = async (
   if (!data.isAdmin) {
     return reply.code(403).send();
   }
-
-  done();
 };
 
 export const verifySession: preValidationHookHandler = async (
   request: FastifyRequest,
   reply: FastifyReply,
-  done: Function,
 ) => {
   const data = request.session.get("data");
 
@@ -259,8 +255,6 @@ export const verifySession: preValidationHookHandler = async (
     reply.log.error("Could not verify session token");
     return reply.code(401).send();
   }
-
-  done();
 };
 
 export default fp(authPlugin);
