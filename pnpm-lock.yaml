@@ -104,7 +104,6 @@ importers:
       '@types/react': 18.0.17
       '@types/react-dom': ^17.0.10
       '@types/react-redux': ^7.1.22
-      '@types/react-test-renderer': ^17.0.1
       '@typescript-eslint/eslint-plugin': ^6.2.0
       '@typescript-eslint/parser': ^6.2.0
       '@vitejs/plugin-react': ^4.0.3
@@ -129,7 +128,7 @@ importers:
       react-query: ^3.34.16
       react-redux: ^8.1.1
       react-router-dom: ^6.2.1
-      react-test-renderer: 18.0.0
+      react-test-renderer: 18.2.0
       rollup-plugin-analyzer: ^4.0.0
       sass: ^1.49.10
       tailwindcss: ^3.2.4
@@ -172,7 +171,6 @@ importers:
       '@types/react': 18.0.17
       '@types/react-dom': 17.0.19
       '@types/react-redux': 7.1.25
-      '@types/react-test-renderer': 17.0.2
       '@typescript-eslint/eslint-plugin': 6.2.0_j7e2xu7aqx6pkgb3ahwnlnq7r4
       '@typescript-eslint/parser': 6.2.0_2vn5k25ibx3impp3enrxc4wp7i
       '@vitejs/plugin-react': 4.0.3_vite@4.4.7
@@ -187,7 +185,7 @@ importers:
       eslint-plugin-react: 7.31.8_eslint@8.25.0
       eslint-plugin-react-hooks: 4.6.0_eslint@8.25.0
       postcss: 8.4.22
-      react-test-renderer: 18.0.0_react@18.2.0
+      react-test-renderer: 18.2.0_react@18.2.0
       rollup-plugin-analyzer: 4.0.0
       sass: 1.62.0
       tailwindcss: 3.3.1_postcss@8.4.22
@@ -3231,12 +3229,6 @@ packages:
       '@types/react': 18.0.17
       hoist-non-react-statics: 3.3.2
       redux: 4.2.1
-    dev: true
-
-  /@types/react-test-renderer/17.0.2:
-    resolution: {integrity: sha512-+F1KONQTBHDBBhbHuT2GNydeMpPuviduXIVJRB7Y4nma4NR5DrTJfMMZ+jbhEHbpwL+Uqhs1WXh4KHiyrtYTPg==}
-    dependencies:
-      '@types/react': 17.0.58
     dev: true
 
   /@types/react/17.0.58:
@@ -7778,15 +7770,15 @@ packages:
       tslib: 2.6.1
     dev: false
 
-  /react-test-renderer/18.0.0_react@18.2.0:
-    resolution: {integrity: sha512-SyZTP/FSkwfiKOZuTZiISzsrC8A80KNlQ8PyyoGoOq+VzMAab6Em1POK/CiX3+XyXG6oiJa1C53zYDbdrJu9fw==}
+  /react-test-renderer/18.2.0_react@18.2.0:
+    resolution: {integrity: sha512-JWD+aQ0lh2gvh4NM3bBM42Kx+XybOxCpgYK7F8ugAlpaTSnWsX+39Z4XkOykGZAHrjwwTZT3x3KxswVWxHPUqA==}
     peerDependencies:
-      react: ^18.0.0
+      react: ^18.2.0
     dependencies:
       react: 18.2.0
       react-is: 18.2.0
       react-shallow-renderer: 16.15.0_react@18.2.0
-      scheduler: 0.21.0
+      scheduler: 0.23.0
     dev: true
 
   /react/18.2.0:
@@ -7992,17 +7984,10 @@ packages:
       source-map-js: 1.0.2
     dev: true
 
-  /scheduler/0.21.0:
-    resolution: {integrity: sha512-1r87x5fz9MXqswA2ERLo0EbOAU74DpIUO090gIasYTqlVoJeMcl+Z1Rg7WHz+qtPujhS/hGIt9kxZOYBV3faRQ==}
-    dependencies:
-      loose-envify: 1.4.0
-    dev: true
-
   /scheduler/0.23.0:
     resolution: {integrity: sha512-CtuThmgHNg7zIZWAXi3AsyIzA3n4xx7aNyjwC2VJldO2LMVDhFK+63xGqq6CsJH4rTAt6/M+N4GhZiDYPx9eUw==}
     dependencies:
       loose-envify: 1.4.0
-    dev: false
 
   /secure-json-parse/2.7.0:
     resolution: {integrity: sha512-6aU+Rwsezw7VR8/nyvKTx8QpWH9FrcYiXXlqC4z5d5XQBDRqtbfsRjnwGyqbi3gddNtWHuEk9OANUotL26qKUw==}

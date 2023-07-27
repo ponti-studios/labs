@@ -1,5 +1,6 @@
-import { RefObject, forwardRef } from "react";
 import { OpenInNewWindowIcon } from "@radix-ui/react-icons";
+import { RefObject, forwardRef } from "react";
+
 import Modal from "src/components/Modal";
 import { Bold } from "ui/Text";
 
