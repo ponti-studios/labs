@@ -68,6 +68,6 @@
     "typescript": "^5.1.6",
     "ui": "workspace:*",
     "vite": "^4.4.7",
-    "vitest": "^0.7.10"
+    "vitest": "^0.33.0"
   }
 }
