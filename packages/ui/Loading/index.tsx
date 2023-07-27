@@ -1,4 +1,4 @@
-export default function LoadingScene() {
+export default function Loading() {
   return (
     <div role="status">
       <svg
