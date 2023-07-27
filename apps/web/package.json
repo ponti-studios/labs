@@ -7,7 +7,7 @@
     "build": "tsc && vite build",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx src",
     "preview": "vite preview",
-    "start": "pnpx http-server build --gzip -a 0.0.0.0 -p $PORT -c 1209600",
+    "start": "npx http-server build --gzip -a 0.0.0.0 -p $PORT -c 1209600",
     "test": "vitest --run",
     "test:update": "vitest -u --run"
   },
