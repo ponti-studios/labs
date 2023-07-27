@@ -37,7 +37,7 @@ jobs:
           node-version: '20.5.0'
           run_install: true
       
-      - name: 🏗️ Generate Prisma client
+      - name: 📦 Install dependencies
         run: npm install
 
       #! The tests require the Prisma client to be generated.
