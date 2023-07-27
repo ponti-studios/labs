@@ -2,7 +2,7 @@
 
 exports[`<Header/> > should render component 1`] = `
 <header
-  className="flex items-center justify-between py-2"
+  className="flex items-center justify-between py-2 max-md:px-2"
 >
   <div
     className="_menuItem_104x6_1"

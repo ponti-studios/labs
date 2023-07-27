@@ -9,29 +9,29 @@ import AuthNavMenu from "./AuthNavMenu";
 import NavMenuItem from "./NavMenuItem";
 
 function Header() {
-  const isAuthenticated = useAppSelector(getIsAuthenticated);
+ const isAuthenticated = useAppSelector(getIsAuthenticated);
 
-  return (
-    <header className="flex items-center justify-between py-2">
-      <NavMenuItem>
-        <Link to={LANDING_PATH} className="text-primary font-semibold">
-          {APP_NAME}
-        </Link>
-      </NavMenuItem>
-      {isAuthenticated ? (
-        <AuthNavMenu />
-      ) : (
-        <NavMenuItem>
-          <Link
-            to={LOGIN_PATH}
-            className="btn bg-blue-600 border-none min-h-0 h-10 text-white ml-4"
-          >
-            Log In
-          </Link>
-        </NavMenuItem>
-      )}
-    </header>
-  );
+ return (
+  <header className="flex items-center justify-between py-2 max-md:px-2">
+   <NavMenuItem>
+    <Link to={LANDING_PATH} className="text-primary font-semibold">
+     {APP_NAME}
+    </Link>
+   </NavMenuItem>
+   {isAuthenticated ? (
+    <AuthNavMenu />
+   ) : (
+    <NavMenuItem>
+     <Link
+      to={LOGIN_PATH}
+      className="btn bg-blue-600 border-none min-h-0 h-10 text-white ml-4"
+     >
+      Log In
+     </Link>
+    </NavMenuItem>
+   )}
+  </header>
+ );
 }
 
 export default Header;
