@@ -21,7 +21,7 @@ module.exports = {
     ecmaVersion: "latest",
     sourceType: "module",
   },
-  plugins: ["@typescript-eslint", "react", "prettier"],
+  plugins: ["@typescript-eslint", "react", "prettier", "simple-import-sort"],
   rules: {
     "import/extensions": 0,
     "react/jsx-filename-extension": 0,
