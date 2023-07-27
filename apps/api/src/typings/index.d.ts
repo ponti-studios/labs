@@ -1,6 +1,4 @@
 /* eslint-disable */
-import { FastifyValidationResult } from "fastify/types/schema";
-
 import { Token } from "@prisma/client";
 import { Session } from "@fastify/secure-session";
 
@@ -15,8 +13,6 @@ declare module "fastify" {
     getUserId: (FastifyRequest) => string;
     prisma: PrismaClient;
     sendEmailToken: Function;
-    verifySession: FastifyValidationResult;
-    verifyIsAdmin: FastifyValidationResult;
   }
 
   interface FastifyRequest

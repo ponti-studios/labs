@@ -1,20 +1,18 @@
-FROM node:16 AS base
+FROM node:20.5.0 AS base
 
 LABEL version="0.0.1"
 LABEL name="rocco-api"
 LABEL description="rocco core api"
 LABEL maintainer="Chase Ponti <cj@ponti.io>"
+LABEL vendor="Ponti & Co, LLC"
 
-ENV PNPM_HOME="/root/.local/share/pnpm"
-ENV PATH="${PATH}:${PNPM_HOME}"
-RUN npm install --global pnpm@7.29.1
 RUN apt-get update
 
 # Required for Prisma
 RUN apt-get install -y openssl
 
 # Add the Turbo CLI
-RUN pnpm add -g turbo
+RUN npm install -g turbo
 
 # ------------------------------------------------------------------------------
 
@@ -35,11 +33,11 @@ WORKDIR /app
 
 # Copy the lockfile, package files, and of the isolated subworkspace
 COPY --from=pruner /app/out/json/ /app/
-COPY --from=pruner /app/out/pnpm-lock.yaml /app/pnpm-lock.yaml
+COPY --from=pruner /app/out/package-lock.json /app/package-lock.json
 COPY --from=pruner /app/out/full/ /app/
 
 # Install dependencies
-RUN pnpm install --frozen-lockfile --prefer-frozen-lockfile --ignore-scripts
+RUN npm install --frozen-lockfile --prefer-frozen-lockfile --ignore-scripts
 
 # Set build-time environment variables
 ARG APP_URL

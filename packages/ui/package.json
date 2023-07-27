@@ -12,9 +12,9 @@
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "eslint": "^7.32.0",
-    "eslint-config-ponti": "workspace:*",
+    "eslint-config-ponti": "0.0.0",
     "react": "^18.2.0",
-    "tsconfig": "workspace:*",
+    "tsconfig": "0.0.0",
     "typescript": "^5.1.6"
   },
   "dependencies": {

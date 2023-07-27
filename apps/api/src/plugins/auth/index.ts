@@ -5,6 +5,7 @@ import {
   FastifyPluginAsync,
   FastifyReply,
   FastifyRequest,
+  preValidationHookHandler,
 } from "fastify";
 import fp from "fastify-plugin";
 import { APP_USER_ID, EVENTS, track } from "../../analytics";
@@ -26,7 +27,7 @@ const AUTHENTICATION_TOKEN_EXPIRATION_HOURS = 12;
 if (!COOKIE_SECRET) {
   console.log(
     "warn",
-    "The COOKIE_SECRET env var is not set. This is unsafe! If running in production, set it."
+    "The COOKIE_SECRET env var is not set. This is unsafe! If running in production, set it.",
   );
   throw Error;
 }
@@ -69,7 +70,7 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
         track(APP_USER_ID, EVENTS.USER_EVENTS.EMAIL_TOKEN_VALIDATED_FAILURE, {
           reason: TOKEN_FAILURE_REASONS.NOT_FOUND,
         });
-        reply.code(400).send("Invalid token");
+        return reply.code(400).send("Invalid token");
       }
 
       if (!fetchedEmailToken.valid) {
@@ -79,7 +80,7 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
         track(APP_USER_ID, EVENTS.USER_EVENTS.EMAIL_TOKEN_VALIDATED_FAILURE, {
           reason: TOKEN_FAILURE_REASONS.INVALID,
         });
-        reply.code(401).send();
+        return reply.code(401).send();
       }
 
       if (fetchedEmailToken.expiration < new Date()) {
@@ -89,7 +90,7 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
         track(APP_USER_ID, EVENTS.USER_EVENTS.EMAIL_TOKEN_VALIDATED_FAILURE, {
           reason: TOKEN_FAILURE_REASONS.EXPIRED,
         });
-        reply.code(401).send("Token expired");
+        return reply.code(401).send("Token expired");
       }
 
       if (fetchedEmailToken.user?.email !== email) {
@@ -99,7 +100,7 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
         track(APP_USER_ID, EVENTS.USER_EVENTS.EMAIL_TOKEN_VALIDATED_FAILURE, {
           reason: TOKEN_FAILURE_REASONS.EMAIL_MISMATCH,
         });
-        reply.code(401).send();
+        return reply.code(401).send();
       }
 
       const tokenExpiration = add(new Date(), {
@@ -141,13 +142,13 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
       // than the domain of the API.
       request.session.options({ sameSite: "none", secure: true });
       request.session.set("data", { isAdmin, roles: [], userId });
-      return reply.send().code(200);
-    }
+      return reply.code(200).send();
+    },
   );
 
   server.post("/logout", {}, async (request, reply) => {
     request.session.delete();
-    reply.send().code(200);
+    return reply.code(200).send();
   });
 
   /**
@@ -201,14 +202,14 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
 
         // 👇 send the email token
         await sendEmailToken(email, emailToken);
-        return reply.send().code(200);
+        return reply.code(200).send();
       } catch (error) {
         const message = (error as Error)?.message;
         request.log.error(message);
         track(APP_USER_ID, EVENTS.USER_EVENTS.REGISTER_FAILURE, { message });
         return reply.code(500).send({ message: "Could not create account" });
       }
-    }
+    },
   );
 
   server.decorate("verifyPermissions", (permissions: string[]) => {
@@ -226,38 +227,40 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
       return done();
     };
   });
+};
 
-  server.decorate(
-    "verifyIsAdmin",
-    (request: FastifyRequest, reply: FastifyReply, done: Function) => {
-      const data = request.session.get("data");
+export const verifyIsAdmin: preValidationHookHandler = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+  done: Function,
+) => {
+  const data = request.session.get("data");
 
-      if (!data) {
-        reply.log.error("Could not verifyIsAdmin - no session");
-        reply.code(401).send();
-      }
+  if (!data) {
+    reply.log.error("Could not verifyIsAdmin - no session");
+    return reply.code(401).send();
+  }
 
-      if (!data.isAdmin) {
-        reply.code(403).send();
-      }
+  if (!data.isAdmin) {
+    return reply.code(403).send();
+  }
 
-      done();
-    }
-  );
+  done();
+};
 
-  server.decorate(
-    "verifySession",
-    (request: FastifyRequest, reply: FastifyReply, done: Function) => {
-      const data = request.session.get("data");
+export const verifySession: preValidationHookHandler = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+  done: Function,
+) => {
+  const data = request.session.get("data");
 
-      if (!data) {
-        reply.log.error("Could not verify session token");
-        reply.code(401).send();
-      }
+  if (!data) {
+    reply.log.error("Could not verify session token");
+    return reply.code(401).send();
+  }
 
-      done();
-    }
-  );
+  done();
 };
 
 export default fp(authPlugin);

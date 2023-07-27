@@ -15,28 +15,28 @@
     "docker:web:run": "docker run -it -p 3000:80 rocco-web",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo run lint",
-    "precommit": "pnpm format && pnpm lint",
+    "precommit": "npm run format && npm run lint",
     "prepare": "husky install",
-    "prepush": "pnpm test",
-    "prerelease": "pnpm test",
+    "prepush": "npm run test",
+    "prerelease": "npm run test",
     "test": "turbo run test",
     "test:update": "turbo run test:update --scope rocco-web",
     "turbo:migrate": "turbo run prisma:generate && turbo run prisma:deploy"
   },
   "devDependencies": {
-    "eslint-config-ponti": "workspace:*",
+    "eslint-config-ponti": "0.0.0",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.3",
     "prettier": "^3.0.0",
     "turbo": "^1.10.12"
   },
   "engines": {
-    "node": ">=14.0.0",
-    "npm": "please-use-pnpm",
-    "yarn": "please-use-pnpm",
-    "pnpm": "7.29.1"
+    "node": "20.5.0",
+    "npm": ">=9.8.0",
+    "yarn": "please-use-npm",
+    "pnpm": "please-use-npm"
   },
-  "packageManager": "pnpm@7.29.1",
+  "packageManager": "npm@9.8.0",
   "lint-staged": {
     "apps/**/*.{js,jsx,ts,tsx,md,json}": [
       "prettier --write"

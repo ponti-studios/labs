@@ -17,7 +17,7 @@ import cors from "@fastify/cors";
 const { APP_URL, PORT } = process.env;
 
 export async function createServer(
-  opts: FastifyServerOptions = {}
+  opts: FastifyServerOptions = {},
 ): Promise<FastifyInstance> {
   const server = fastify(opts);
   //
@@ -33,7 +33,9 @@ export async function createServer(
   });
   server.register(shutdownPlugin);
   server.register(sessionPlugin);
-  server.register(require("fastify-csrf"), { cookieOpts: {} });
+  server.register(require("@fastify/csrf-protection"), {
+    sessionPlugin: "@fastify/secure-session",
+  });
   server.register(require("@fastify/helmet"));
   server.register(circuitBreaker);
   server.register(prismaPlugin);
@@ -59,7 +61,7 @@ export async function startServer() {
   }
 
   try {
-    await server.listen(PORT, "0.0.0.0");
+    await server.listen({ port: +PORT, host: "0.0.0.0" });
   } catch (err) {
     server.log.error(err);
     process.exit(1);
