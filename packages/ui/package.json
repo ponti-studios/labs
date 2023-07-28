@@ -5,17 +5,17 @@
   "types": "./index.tsx",
   "license": "MIT",
   "scripts": {
-    "lint": "eslint *.ts*"
+    "lint": "eslint ./*.ts*"
   },
   "devDependencies": {
     "@types/prop-types": "^15.7.5",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
-    "eslint": "^7.32.0",
-    "eslint-config-ponti": "workspace:*",
+    "eslint": "^8.45.0",
+    "eslint-config-ponti": "0.0.0",
     "react": "^18.2.0",
-    "tsconfig": "workspace:*",
-    "typescript": "^4.5.3"
+    "tsconfig": "0.0.0",
+    "typescript": "^5.1.6"
   },
   "dependencies": {
     "@emotion/styled": "^11.8.1",

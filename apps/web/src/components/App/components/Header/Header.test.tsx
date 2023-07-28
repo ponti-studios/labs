@@ -14,7 +14,7 @@ describe("<Header/>", () => {
         <Provider store={store}>
           <Header />
         </Provider>
-      </Router>
+      </Router>,
     );
     expect(div.toJSON()).toMatchSnapshot();
   });

@@ -18,7 +18,7 @@ const PlaceAddress = ({ place }: Props) => {
               (component) =>
                 component.types.includes("subpremise") ||
                 component.types.includes("street_number") ||
-                component.types.includes("route")
+                component.types.includes("route"),
             )
             .sort((a, b) => {
               // Sort by the order of the address_components array

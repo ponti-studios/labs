@@ -6,10 +6,9 @@ module.exports = {
   },
   extends: [
     "eslint:recommended",
-    "prettier",
     "plugin:react/recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:prettier/recommended",
+    "prettier",
     "plugin:jsx-a11y/recommended",
     "plugin:react-hooks/recommended",
   ],
@@ -21,7 +20,12 @@ module.exports = {
     ecmaVersion: "latest",
     sourceType: "module",
   },
-  plugins: ["@typescript-eslint", "react", "prettier"],
+  plugins: [
+    "@typescript-eslint",
+    "react",
+    "unused-imports",
+    "simple-import-sort",
+  ],
   rules: {
     "import/extensions": 0,
     "react/jsx-filename-extension": 0,

@@ -1,5 +1,6 @@
 import { FastifyInstance, FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
+import { verifySession } from "./auth";
 
 const usersPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
   const { prisma } = server;
@@ -7,7 +8,7 @@ const usersPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
   server.get(
     "/me",
     {
-      preValidation: server.verifySession,
+      preValidation: verifySession,
     },
     async (request, reply) => {
       const session = request.session.get("data");
@@ -24,15 +25,15 @@ const usersPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
          */
         if (!user) {
           request.session.delete();
-          return reply.send().code(401);
+          return reply.code(401).send();
         }
 
-        return reply.send(user).code(200);
+        return reply.code(200).send(user);
       } catch (err) {
         request.log.info("Could not fetch user", { err });
         return reply.code(500).send();
       }
-    }
+    },
   );
 };
 

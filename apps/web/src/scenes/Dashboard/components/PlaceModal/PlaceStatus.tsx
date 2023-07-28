@@ -16,6 +16,10 @@ const PlaceStatus = ({ place, ...props }: PlaceStatusProps) => {
   const temporarilyClosed = place?.business_status === "CLOSED_TEMPORARILY";
   const isOpen = place?.opening_hours?.isOpen();
 
+  if (!place?.business_status) {
+    return null;
+  }
+
   if (opertional && isOpen) {
     return (
       <Wrap {...props}>

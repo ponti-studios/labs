@@ -80,7 +80,7 @@ function PlacesAutocomplete({
     (e) => {
       setValue(e.target.value);
     },
-    [setValue]
+    [setValue],
   );
 
   const handleSelect = useCallback(
@@ -99,7 +99,7 @@ function PlacesAutocomplete({
         setError(err);
       }
     },
-    [setSelected, setValue]
+    [setSelected, setValue],
   );
 
   return (
@@ -127,7 +127,7 @@ function PlacesAutocomplete({
                   >
                     {suggestion.description}
                   </Option>
-                )
+                ),
               )
             )}
           </Options>

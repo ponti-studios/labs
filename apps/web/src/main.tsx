@@ -21,5 +21,5 @@ root.render(
         </QueryClientProvider>
       </Provider>
     </Router>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

@@ -27,7 +27,7 @@ function Login() {
     () => ({
       email: "",
     }),
-    []
+    [],
   );
 
   const onSubmit = useCallback(
@@ -41,7 +41,7 @@ function Login() {
         setError(true);
       }
     },
-    [dispatch, navigate]
+    [dispatch, navigate],
   );
 
   useEffect(() => {

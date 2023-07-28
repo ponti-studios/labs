@@ -29,7 +29,7 @@ type ModalProps = {
 };
 function Modal(
   { children, isOpen, onModalClose }: ModalProps,
-  ref: RefObject<HTMLDialogElement | null>
+  ref: RefObject<HTMLDialogElement | null>,
 ) {
   const handleKeyDown = useCallback(
     (event: KeyboardEvent<HTMLDialogElement>) => {
@@ -37,7 +37,7 @@ function Modal(
         onModalClose();
       }
     },
-    [onModalClose]
+    [onModalClose],
   );
 
   return (

@@ -1,5 +1,6 @@
-import { RefObject, forwardRef } from "react";
 import { OpenInNewWindowIcon } from "@radix-ui/react-icons";
+import { RefObject, forwardRef } from "react";
+
 import Modal from "src/components/Modal";
 import { Bold } from "ui/Text";
 
@@ -14,7 +15,7 @@ type PlaceModalProps = {
 };
 function PlaceModal(
   { place, isOpen, onModalClose }: PlaceModalProps,
-  ref: RefObject<HTMLDialogElement | null>
+  ref: RefObject<HTMLDialogElement | null>,
 ) {
   const type = place && place.types[0] && place.types[0].split("_")[0];
   return (
@@ -52,11 +53,11 @@ function PlaceModal(
               }
             </p>
           )}
-          {
+          {place.international_phone_number && (
             <p className="py-[4px]">
               <Bold>Phone Number:</Bold> {place.international_phone_number}
             </p>
-          }
+          )}
           {place.website && (
             <p className="py-[4px]">
               <Bold>Website: </Bold>

@@ -33,7 +33,7 @@ function App() {
   const isLoadingAuth = useAppSelector(getIsLoadingAuth);
   const isAuthenticated = useAppSelector(getIsAuthenticated);
   const dispatch = useAppDispatch();
-  const { isLoaded } = useLoadScript({
+  const { isLoaded: isMapLoaded } = useLoadScript({
     googleMapsApiKey: VITE_GOOGLE_API_KEY,
     libraries: LIBRARIES as any, // eslint-disable-line
   });
@@ -48,7 +48,7 @@ function App() {
   if (isLoadingAuth) {
     return (
       <div className="flex items-center justify-center max-w-[300px] mx-auto min-h-screen">
-        <Loading />
+        <Loading size="xl" />
       </div>
     );
   }
@@ -63,7 +63,7 @@ function App() {
             <>
               <Route
                 path={DASHBOARD_PATH}
-                element={<Dashboard isMapLoaded={isLoaded} />}
+                element={<Dashboard isMapLoaded={isMapLoaded} />}
               />
               <Route path={ACCOUNT_PATH} element={<Account />} />
             </>

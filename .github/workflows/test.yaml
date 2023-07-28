@@ -25,29 +25,27 @@ jobs:
       
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [20.5.0]
     
     steps:
       - uses: actions/checkout@v3
 
-      - name: 🏗️ Set up PNPM
-        uses: pnpm/action-setup@v2.2.1
-        with:
-          version: 7.29.1
-          run_install: true
 
       - name: 🏗️ Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
-          cache: 'pnpm'
+          node-version: '20.5.0'
+          run_install: true
       
+      - name: 📦 Install dependencies
+        run: npm install
+
       #! The tests require the Prisma client to be generated.
       - name: 🏗️ Generate Prisma client
-        run: pnpx turbo run prisma:generate
+        run: npx turbo run prisma:generate
 
       - name: 🧪 Run test suites
-        run: pnpm test
+        run: npm run test
         env:
           APP_URL: ${{ secrets.APP_URL }}}
           COOKIE_SALT: 9yDzDu8E6JzFbbMK
