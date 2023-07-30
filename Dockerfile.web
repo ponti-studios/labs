@@ -1,4 +1,4 @@
-FROM node:16-alpine as base
+FROM node:20.5.0 as base
 
 LABEL version="0.0.1"
 LABEL name="rocco-web"
@@ -6,8 +6,7 @@ LABEL description="rocco web application"
 LABEL maintainer="Chase Ponti <cj@ponti.io>"
 LABEL vendor="Ponti & Co, LLC"
 
-RUN apk add --no-cache libc6-compat
-RUN apk update && apk add bash
+RUN apt-get update
 
 # Add the Turbo CLI
 RUN npm install -g turbo
@@ -33,7 +32,7 @@ COPY --from=builder /app/out/package-lock.json /app/package-lock.json
 COPY --from=builder /app/out/full/ /app/
 
 # Install dependencies
-RUN npm install --frozen-lockfile --prefer-frozen-lockfile --ignore-scripts
+RUN npm ci
 
 # Set default node environment to production
 ARG NODE_ENV=production

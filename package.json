@@ -11,7 +11,7 @@
     "dev": "turbo run dev --parallel",
     "docker:api:build": "docker build -t rocco-api:latest -f apps/api/Dockerfile .",
     "docker:api:run": "docker run -it -p 4444:4444 --name=rocco-api rocco-api",
-    "docker:web:build": "docker build -t rocco-web:latest -f Dockerfile.web",
+    "docker:web:build": "docker build -t rocco-web:latest -f Dockerfile.web .",
     "docker:web:run": "docker run -it -p 3000:80 rocco-web",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo run lint",
