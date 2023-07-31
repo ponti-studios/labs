@@ -6,7 +6,11 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      animation: {
+        "spin-slow": "spin 6s linear infinite",
+      },
+    },
   },
   plugins: [require("daisyui")],
   daisyui: {
