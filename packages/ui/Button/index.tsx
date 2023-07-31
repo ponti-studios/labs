@@ -1,24 +1,16 @@
-import React, { ReactNode } from "react";
-import styles from "./Button.module.css";
+import { HTMLAttributes, ReactNode } from "react";
 
-type Props = {
+type Props = HTMLAttributes<HTMLButtonElement> & {
   className?: string;
   children: ReactNode;
   onClick: () => void;
 };
 
-export const Button: React.FC<Props> = ({
-  className,
-  children,
-  onClick,
-  ...props
-}) => {
+export const Button = ({ className, children, onClick, ...props }: Props) => {
   return (
     <button
       onClick={onClick}
-      className={`${styles.wrap} bg-blue-600 text-white ${
-        (className && ` ${className}`) ?? ""
-      }`}
+      className={`btn btn-primary ${(className && ` ${className}`) ?? ""}`}
       {...props}
     >
       {children}

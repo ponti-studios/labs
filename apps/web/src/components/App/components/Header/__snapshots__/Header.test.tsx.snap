@@ -2,13 +2,13 @@
 
 exports[`<Header/> > should render component 1`] = `
 <header
-  className="flex items-center justify-between py-2 max-md:px-2"
+  className="flex items-center justify-between py-4 max-md:px-2"
 >
   <div
     className="_menuItem_02ca72"
   >
     <a
-      className="text-primary font-semibold"
+      className="text-primary font-extrabold lowercase text-4xl"
       href="/"
       onClick={[Function]}
     >
@@ -19,7 +19,7 @@ exports[`<Header/> > should render component 1`] = `
     className="_menuItem_02ca72"
   >
     <a
-      className="btn bg-blue-600 border-none min-h-0 h-10 text-white ml-4"
+      className="btn btn-primary"
       href="/login"
       onClick={[Function]}
     >
