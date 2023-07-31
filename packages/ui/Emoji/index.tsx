@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { HTMLAttributes, ReactNode } from "react";
 
 type EmojiSizes = "sm" | "md" | "lg";
 
@@ -8,15 +8,20 @@ const SIZES = {
   lg: "48px",
 };
 
-type EmojiProps = {
+type EmojiProps = HTMLAttributes<HTMLSpanElement> & {
   children: ReactNode;
   kind: string;
   size: EmojiSizes;
 };
 
-function Emoji({ children, kind, size }: EmojiProps) {
+function Emoji({ children, kind, size, ...props }: EmojiProps) {
   return (
-    <span aria-label={kind} role="img" style={{ fontSize: SIZES[size] }}>
+    <span
+      aria-label={kind}
+      role="img"
+      style={{ fontSize: SIZES[size] }}
+      {...props}
+    >
       {children}
     </span>
   );
