@@ -6,6 +6,7 @@ import PlacesAutocomplete from "./components/PlacesAutocomplete";
 import styles from "./Dashboard.module.css";
 import PlaceModal from "./components/PlaceModal";
 import Loading from "ui/Loading";
+import { mediaQueries } from "src/constants/styles";
 
 const Wrap = styled.div`
   display: flex;
@@ -14,7 +15,7 @@ const Wrap = styled.div`
   width: 100%;
   height: 100%;
 
-  @media screen and (max-width: 900px) {
+  ${mediaQueries.belowMedium} {
     max-width: calc(100% - 16px);
     margin: 0 auto;
   }
