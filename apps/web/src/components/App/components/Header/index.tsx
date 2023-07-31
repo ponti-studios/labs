@@ -12,9 +12,12 @@ function Header() {
   const isAuthenticated = useAppSelector(getIsAuthenticated);
 
   return (
-    <header className="flex items-center justify-between py-2 max-md:px-2">
+    <header className="flex items-center justify-between py-4 max-md:px-2">
       <NavMenuItem>
-        <Link to={LANDING_PATH} className="text-primary font-semibold">
+        <Link
+          to={LANDING_PATH}
+          className="text-primary font-extrabold lowercase text-4xl"
+        >
           {APP_NAME}
         </Link>
       </NavMenuItem>
@@ -22,10 +25,7 @@ function Header() {
         <AuthNavMenu />
       ) : (
         <NavMenuItem>
-          <Link
-            to={LOGIN_PATH}
-            className="btn bg-blue-600 border-none min-h-0 h-10 text-white ml-4"
-          >
+          <Link to={LOGIN_PATH} className="btn btn-primary">
             Log In
           </Link>
         </NavMenuItem>
