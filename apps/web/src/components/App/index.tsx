@@ -56,7 +56,7 @@ function App() {
   return (
     <div id="app" className={`h-100 flex flex-col ${styles.wrap}`}>
       <Header />
-      <main className="flex mt-8" style={{ height: "85vh" }}>
+      <main className="flex mt-8">
         <Routes>
           <Route path={AUTHENTICATE_PATH} element={<Authenticate />} />
           {isAuthenticated ? (
