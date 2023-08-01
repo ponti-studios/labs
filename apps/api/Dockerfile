@@ -1,4 +1,4 @@
-FROM node:20.5.0 AS base
+FROM node:18 AS base
 
 LABEL version="0.0.1"
 LABEL name="rocco-api"

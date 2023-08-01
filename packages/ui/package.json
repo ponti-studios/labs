@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "@types/prop-types": "^15.7.5",
-    "@types/react": "^18.0.17",
+    "@types/react": "^18.2.18",
     "@types/react-dom": "^18.0.6",
     "eslint": "^8.45.0",
     "eslint-config-ponti": "0.0.0",
