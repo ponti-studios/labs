@@ -32,11 +32,10 @@
   },
   "engines": {
     "node": "18",
-    "npm": ">=9",
+    "npm": ">=8",
     "yarn": "please-use-npm",
     "pnpm": "please-use-npm"
   },
-  "packageManager": "npm@9.8.0",
   "lint-staged": {
     "apps/**/*.{js,jsx,ts,tsx,md,json}": [
       "prettier --write"
