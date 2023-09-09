@@ -18,6 +18,14 @@
       "outputs": [],
       "inputs": ["prisma/**", "src/**/*.tsx", "src/**/*.ts", "test/**/*.ts"]
     },
+    "test:e2e:ci": {
+      "dependsOn": ["^build"],
+      "outputs": [],
+      "inputs": ["prisma/**", "src/**/*.tsx", "src/**/*.ts", "test/**/*.ts"]
+    },
+    "typecheck": {
+      "outputs": []
+    },
     "prisma:deploy": {
       "cache": false,
       "inputs": ["prisma/**"]
@@ -39,12 +47,15 @@
     "COOKIE_NAME",
     "COOKIE_SALT",
     "COOKIE_SECRET",
+    "CYPRESS_PROJECT_ID",
     "ENABLE_REQUEST_LOGGING",
     "NODE_ENV",
     "PORT",
     "SEGMENT_KEY",
     "SENDGRID_API_KEY",
     "SENDGRID_SENDER_EMAIL",
-    "SENDGRID_SENDER_NAME"
+    "SENDGRID_SENDER_NAME",
+    "VERCEL_URL",
+    "NEXT_PUBLIC_API_URL"
   ]
 }

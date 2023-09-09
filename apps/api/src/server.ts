@@ -1,18 +1,21 @@
 import dotenv from "dotenv";
 dotenv.config();
 
+import cors from "@fastify/cors";
 import fastify, { FastifyInstance, FastifyServerOptions } from "fastify";
-import adminPlugin from "./plugins/admin";
+
 import authPlugin from "./plugins/auth";
 import shutdownPlugin from "./plugins/shutdown";
 import prismaPlugin from "./plugins/prisma";
 import emailPlugin from "./plugins/email";
 import statusPlugin from "./plugins/status";
-import usersPlugin from "./plugins/user";
 import rateLimitPlugin from "./plugins/rate-limit";
 import circuitBreaker from "./plugins/circuit-breaker";
 import sessionPlugin from "./plugins/session";
-import cors from "@fastify/cors";
+import usersPlugin from "./plugins/user";
+import adminPlugin from "./plugins/admin";
+import bookmarksPlugin from "./plugins/bookmarks";
+import ideasPlugin from "./plugins/ideas";
 
 const { APP_URL, PORT } = process.env;
 
@@ -45,6 +48,8 @@ export async function createServer(
   server.register(adminPlugin);
   server.register(authPlugin);
   server.register(usersPlugin);
+  server.register(bookmarksPlugin);
+  server.register(ideasPlugin);
 
   return server;
 }

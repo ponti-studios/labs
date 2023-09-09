@@ -20,10 +20,13 @@
     "prepush": "npm run test",
     "prerelease": "npm run test",
     "test": "turbo run test",
+    "test:e2e:ci": "turbo run test:e2e:ci --scope rocco-web",
     "test:update": "turbo run test:update --scope rocco-web",
     "turbo:migrate": "turbo run prisma:generate && turbo run prisma:deploy"
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.6.6",
+    "@commitlint/config-conventional": "^17.6.6",
     "eslint-config-ponti": "0.0.0",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.3",

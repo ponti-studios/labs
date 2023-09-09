@@ -52,24 +52,24 @@ const Home = () => {
     <Wrap>
       <HeroImage className="h-52 md:h-full" />
       <HeroText className="flex justify-between items-center mt-16 mb-16 gap-14 max-md:flex-col w-44">
-        <p className="flex items-center text-primary font-extrabold text-xl">
+        <div className="flex text-primary font-extrabold text-xl">
           <Emoji kind="map" size="lg" className="animate-spin-slow">
             🌎
           </Emoji>
-          <span className="ml-2">the world if finally yours</span>
-        </p>
-        <p className="flex items-center text-primary font-extrabold text-xl">
+          <p className="ml-2">the world is yours</p>
+        </div>
+        <div className="flex items-center text-primary font-extrabold text-xl">
           <Emoji kind="map" size="lg" className="animate-spin-slow">
             📍
           </Emoji>
-          <span className="ml-2">Discover the places your friends love</span>
-        </p>
-        <p className="flex items-center text-primary font-extrabold text-xl">
+          <p className="ml-2">Discover your friend&apos;s fave places</p>
+        </div>
+        <div className="flex items-center text-primary font-extrabold text-xl">
           <Emoji kind="map" size="lg" className="animate-spin-slow">
             🤩
           </Emoji>
-          <span className="ml-2">Never wonder where to go again</span>
-        </p>
+          <p className="ml-2">Never wonder where to go again</p>
+        </div>
         <div className="mt-2">
           <button className="btn btn-primary font-extrabold lowercase">
             Get Started

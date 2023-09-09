@@ -7,10 +7,13 @@ node_modules
 
 # testing
 coverage
+apps/web/cypress/screenshots/**
+apps/web/cypress/videos/**
 
 # build
 .vercel
 .next
+.eslintcache
 build
 tsconfig.tsbuildinfo
 

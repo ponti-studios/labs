@@ -1,6 +1,9 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
-  provider = "prisma-client-js"
-  binaryTargets = ["native", "darwin-arm64", "linux-musl", "linux-arm64-openssl-1.1.x"]
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "darwin-arm64", "linux-musl", "linux-arm64-openssl-1.1.x", "rhel-openssl-1.0.x"]
 }
 
 datasource db {
@@ -9,15 +12,27 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String?
-  isAdmin   Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime  @default(now())
+  email         String    @unique
+  emailVerified DateTime?
+  id            String    @id @default(uuid())
+  image         String?
+  isAdmin       Boolean   @default(false)
+  name          String?
+  updatedAt     DateTime  @updatedAt
 
+  // Relations
+  accounts        Account[]
+  sessions        Session[]
+  ideas           Idea[]
+  recommendations Recommendation[]
+  flights         Flight[]
+  lists           UserLists[]
+  receivedInvites ListInvite[]     @relation(name: "receivedListInvites")
+  sentInvites     ListInvite[]     @relation(name: "sentListInvites")
+  List            List[]
   // Relation fields
-  tokens Token[]
+  tokens          Token[]
 }
 
 model Token {
@@ -37,4 +52,137 @@ model Token {
 enum TokenType {
   EMAIL // used as a short lived token sent to the user's email
   API
+}
+
+// Necessary for Next auth
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Idea {
+  id          String   @id @default(cuid())
+  description String
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Recommendation {
+  id              String   @id @default(cuid())
+  image           String
+  title           String
+  description     String
+  imageHeight     String?
+  imageWidth      String?
+  locationAddress String?
+  locationLat     String?
+  locationLng     String?
+  siteName        String
+  url             String
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Flight {
+  id                String   @id @default(uuid())
+  flightNumber      String   @db.Text()
+  departureAirport  String   @db.Text()
+  departureDate     DateTime @db.Timestamp()
+  arrivalDate       DateTime @db.Timestamp()
+  arrivalAirport    String   @db.Text()
+  airline           String   @db.Text()
+  reservationNumber String   @db.Text()
+  url               String   @db.Text()
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  // Relations
+  userId            String
+  createdBy         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listId            String?
+  list              List?    @relation(fields: [listId], references: [id])
+}
+
+model Item {
+  id        String   @id @default(uuid())
+  type      String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // Relations
+  itemId    String
+  list      List?    @relation(fields: [listId], references: [id])
+  listId    String?
+}
+
+model UserLists {
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  listId String
+  list   List   @relation(fields: [listId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Compound ID to ensure that relation is unique.
+  @@id([listId, userId])
+}
+
+model List {
+  id          String       @id @default(uuid())
+  name        String       @db.Text
+  description String?      @db.Text
+  userId      String       @db.Text()
+  createdBy   User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  users       UserLists[]
+  items       Item[]
+  invites     ListInvite[]
+  Flight      Flight[]
+}
+
+model ListInvite {
+  accepted         Boolean @default(false)
+  listId           String
+  list             List    @relation(fields: [listId], references: [id], onDelete: Cascade)
+  invitedUserEmail String  @db.Text()
+  invitedUserId    String?
+  invitedUser      User?   @relation(name: "receivedListInvites", fields: [invitedUserId], references: [id], onDelete: Cascade)
+  userId           String
+  user             User    @relation(name: "sentListInvites", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([listId, invitedUserEmail])
 }

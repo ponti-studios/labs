@@ -1,6 +1,6 @@
-@import '@radix-ui/colors/black-alpha.css';
-@import '@radix-ui/colors/mauve.css';
-@import '@radix-ui/colors/violet.css';
+@import "@radix-ui/colors/black-alpha.css";
+@import "@radix-ui/colors/mauve.css";
+@import "@radix-ui/colors/violet.css";
 
 /* reset */
 button {
@@ -10,32 +10,30 @@ button {
 .DropdownMenuContent,
 .DropdownMenuSubContent {
   min-width: 220px;
-  background-color: rgb(255, 255, 255);
   border-radius: 4px;
   /* padding: 5px; */
   margin-top: 4px;
   margin-right: -4px;
-  box-shadow: 0px 10px 38px -10px rgba(22, 23, 24, 0.35), 0px 10px 20px -15px rgba(22, 23, 24, 0.2);
-  
+
   /* Animation */
   animation-duration: 400ms;
   animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform, opacity;
 }
-.DropdownMenuContent[data-side='top'],
-.DropdownMenuSubContent[data-side='top'] {
+.DropdownMenuContent[data-side="top"],
+.DropdownMenuSubContent[data-side="top"] {
   animation-name: slideDownAndFade;
 }
-.DropdownMenuContent[data-side='right'],
-.DropdownMenuSubContent[data-side='right'] {
+.DropdownMenuContent[data-side="right"],
+.DropdownMenuSubContent[data-side="right"] {
   animation-name: slideLeftAndFade;
 }
-.DropdownMenuContent[data-side='bottom'],
-.DropdownMenuSubContent[data-side='bottom'] {
+.DropdownMenuContent[data-side="bottom"],
+.DropdownMenuSubContent[data-side="bottom"] {
   animation-name: slideUpAndFade;
 }
-.DropdownMenuContent[data-side='left'],
-.DropdownMenuSubContent[data-side='left'] {
+.DropdownMenuContent[data-side="left"],
+.DropdownMenuSubContent[data-side="left"] {
   animation-name: slideRightAndFade;
 }
 
@@ -53,7 +51,7 @@ button {
   outline: none;
   cursor: pointer;
 }
-.DropdownMenuSubTrigger[data-state='open'] {
+.DropdownMenuSubTrigger[data-state="open"] {
   background-color: var(--violet-4);
   background-color: black;
   color: var(--violet-11);
@@ -102,13 +100,11 @@ button {
   align-items: center;
   justify-content: center;
   color: var(--violet-11);
-  background-color: white;
   box-shadow: 0 2px 10px var(--blackA7);
 }
 
 .IconButton:hover,
 .IconButton:focus {
-  background-color: rgba(133, 133, 133, 0.1);
   cursor: pointer;
 }
 
