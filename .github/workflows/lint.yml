@@ -1,6 +1,6 @@
 # Inspired by:
 # https://github.com/kentcdodds/kentcdodds.com/blob/main/.github/workflows/deployment.yml
-name: 🔍 Code Quality
+name: 🧹 Lint
 on:
   push:
     branches:
@@ -9,7 +9,6 @@ on:
 
 jobs:
   lint:
-    name: 🧹 Lint & ʦ Typecheck
     runs-on: ubuntu-latest
     steps:
       - name: 🛑 Cancel Previous Runs
