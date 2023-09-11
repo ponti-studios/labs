@@ -17,7 +17,7 @@ const Wrap = styled(NavMenuItem)`
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 4px 4px 4px 10px;
+  padding: 4px;
 
   &:hover {
     background-color: 0px 2px 5px 0px rgba(0, 0, 0, 0.3);
