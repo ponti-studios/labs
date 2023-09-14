@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/theponti/rocco/compare/v1.0.0...v1.0.1) (2023-09-11)
+
+
+### Bug Fixes
+
+* **apps/web:** only show avatar if src ([ab80ec8](https://github.com/theponti/rocco/commit/ab80ec882aec765ae01ce9b5aaba2138580389a8))
+
 ## 1.0.0 (2023-09-10)
 
 
