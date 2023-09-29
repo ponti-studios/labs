@@ -39,6 +39,7 @@ function App() {
   });
 
   useEffect(() => {
+    // Cats
     if (authRef.current === false) {
       authRef.current = true;
       dispatch(loadAuth());

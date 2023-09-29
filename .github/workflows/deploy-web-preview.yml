@@ -1,0 +1,38 @@
+name: 🚀 Web > Deploy > Preview
+
+on:
+  push:
+    branches-ignore:
+      - main
+    paths: ["apps/web/**"]
+
+jobs:
+  Deploy-Preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: 🏗 Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: ⬇️ Install dependencies
+        run: npm install
+
+      - name: 📥 Generate artifacts
+        run: npx turbo run prisma:generate
+
+      - name: 🏗️ Build
+        run: npm run build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+
+      - name: Install Railway
+        run: npm install -g @railway/cli
+
+      - name: Deploy
+        working-directory: apps/web/build
+        run: railway up --service ${{ secrets.RAILWAY_SERVICE_WEB }}
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
