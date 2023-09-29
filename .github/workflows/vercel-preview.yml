@@ -1,0 +1,44 @@
+name: 🚀 Deploy >> Preview
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+on:
+  push:
+    branches-ignore:
+      - main
+    paths: ["apps/web/**"]
+
+jobs:
+  Deploy-Preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: 🏗 Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: ⬇️ Install dependencies
+        run: npm install
+
+      - name: ⬇️ Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: 📥 Generate artifacts
+        run: npx turbo run prisma:generate
+
+      - name: 🏗️ Build
+        run: npm run build
+
+      - name: ⬇️ Pull Vercel Env
+        working-directory: ./apps/web
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: 🏗 Build
+        working-directory: ./apps/web
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: ⬆️ Deploy
+        working-directory: ./apps/web
+        run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
