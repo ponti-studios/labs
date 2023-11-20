@@ -1,12 +1,16 @@
-## Jira Ticket
-
-<!-- https://ponti.atlassian.net/browse/{JIRA-ID-HERE} -->
+## Ticket
+<!-- https://linear.app/ponti/issue/[TICKET NUMBER]-->
 
 ## Description
 
-<!--- Describe why we need this change -->
-<!--- Any linked document. e.g. Notion document, Google docs, ADRs -->
-<!--- Demo video, screenshots -->
+### What
+<!-- What is being changed? -->
+
+### Why
+<!-- Why is this change being made? How does this improve the product? -->
+
+### Resources
+<!--- Any linked documents. e.g. docs, video, screenshots -->
 <!--- Explain how your change affects other areas of the code -->
 <!--- Is there anything that merits special attention during code review? -->
 
@@ -20,7 +24,6 @@
 ## TODOs
 
 ### Before Merging
-
 <!---
 E.g:
 - [x] Set SOME_KEY in beta and production
@@ -28,7 +31,6 @@ E.g:
 -->
 
 ### After Merging
-
 <!---
 E.g:
 - [ ] Remove migration job
