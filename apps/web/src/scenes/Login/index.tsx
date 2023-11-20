@@ -52,31 +52,29 @@ function Login() {
 
   return (
     <AuthWrap>
-      <h2 className="text-2xl font-semibold mb-6">Log in</h2>
       {error && (
         <FeedbackBlock>There was a problem! Try again, homie.</FeedbackBlock>
       )}
+      <h2 className="text-2xl font-semibold mb-6">Log in</h2>
       <Formik
         validationSchema={LoginSchema}
         initialValues={initialValues}
         onSubmit={onSubmit}
       >
-        {() => (
-          <Form>
-            <div className="form-control w-full">
-              <label className="label" htmlFor="email">
-                <span className="label-text">What is your email?</span>
-              </label>
-              <Field
-                className="input input-bordered"
-                name="email"
-                type="email"
-                placeholder="Email"
-              />
-            </div>
-            <FormButton>Get code</FormButton>
-          </Form>
-        )}
+        <Form>
+          <div className="form-control w-full">
+            <label className="label" htmlFor="email">
+              <span className="label-text">What is your email?</span>
+            </label>
+            <Field
+              className="input input-bordered"
+              name="email"
+              type="email"
+              placeholder="Email"
+            />
+          </div>
+          <FormButton>Get code</FormButton>
+        </Form>
       </Formik>
     </AuthWrap>
   );

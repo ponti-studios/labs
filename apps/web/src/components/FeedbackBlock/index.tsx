@@ -3,10 +3,12 @@ import { ReactNode } from "react";
 
 const Wrap = styled.div`
   border-radius: 4px;
-  border: 1px solid grey;
+  background-color: #e83333;
+  color: white;
   padding: 16px;
-  font-size: 1.3rem;
+  font-size: 1rem;
   font-weight: 500;
+  margin-bottom: 16px;
 `;
 
 type FeedbackBlockProps = {
