@@ -39,13 +39,13 @@ const List = () => {
   return (
     <>
       <div className="flex mb-8">
-        <LinkButton href={`/list/${userList.list.id}`}>
+        <LinkButton href={`/list/${userList.id}`}>
           <span className="mr-1">⬅️</span> Back to list
         </LinkButton>
       </div>
       <div className="flex flex-col px-0.5">
         <h1>
-          <span className="text-gray-600">{userList.list.name}</span> Invites
+          <span className="text-gray-600">{userList.name}</span> Invites
         </h1>
       </div>
       <ListInviteForm listId={listId} onCreate={onInviteSuccess} />
