@@ -1,13 +1,13 @@
 import { Link, useNavigate } from "react-router-dom";
 import LoadingScene from "ui/Loading";
 
-import DashboardNav from "src/components/DashboardNav";
+import DashboardWrap from "src/components/DashboardWrap";
+import FeedbackBlock from "src/components/FeedbackBlock";
 import { useGetLists } from "src/services/api";
 import { useAppSelector } from "src/services/hooks";
 import { getUser } from "src/services/store";
 
 import ListForm from "./components/ListForm";
-import FeedbackBlock from "src/components/FeedbackBlock";
 
 const Lists = () => {
   const navigate = useNavigate();
@@ -19,8 +19,7 @@ const Lists = () => {
   }
 
   return (
-    <div className="flex flex-col flex-1 px-4 sm:max-w-2xl mx-auto">
-      <DashboardNav />
+    <DashboardWrap>
       <ListForm onCreate={refetch} />
       <div>
         {listsStatus === "loading" && <LoadingScene />}
@@ -29,7 +28,10 @@ const Lists = () => {
         {data && data.length > 0 && (
           <ul className="space-y-2">
             {data.map((list) => (
-              <li key={list.id} className="card shadow-md p-4 text-lg">
+              <li
+                key={list.id}
+                className="card shadow-md p-4 text-lg bg-secondary text-primary rounded-md"
+              >
                 <Link to={`/list/${list.id}`}>{list.name}</Link>
                 {/* Only display list owner if the list does not belong to current user */}
                 {list.createdBy.email !== user?.email && (
@@ -40,7 +42,7 @@ const Lists = () => {
           </ul>
         )}
       </div>
-    </div>
+    </DashboardWrap>
   );
 };
 

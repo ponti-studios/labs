@@ -1,7 +1,8 @@
 import { SyntheticEvent, useCallback, useState } from "react";
+import { useMutation } from "react-query";
 import AlertError from "ui/AlertError";
 
-import { useCreateList } from "src/services/api";
+import api, { URLS } from "src/services/api";
 
 type ListFormProps = {
   onCreate: () => void;
@@ -11,9 +12,18 @@ export default function ListForm({ onCreate }: ListFormProps) {
   const {
     error,
     isLoading,
-    mutateAsync: createList,
-    isSuccess,
-  } = useCreateList();
+    mutate: createList,
+  } = useMutation({
+    mutationFn: async (name: string) => {
+      const res = await api.post(URLS.lists, {
+        name,
+      });
+      return res.data;
+    },
+    onSuccess: () => {
+      onCreate();
+    },
+  });
   const onNameChange = useCallback(
     (e: SyntheticEvent<HTMLInputElement>) => {
       setName(e.currentTarget.value);
@@ -23,12 +33,9 @@ export default function ListForm({ onCreate }: ListFormProps) {
   const onFormSubmit = useCallback(
     async (e: SyntheticEvent<HTMLFormElement>) => {
       e.preventDefault();
-      await createList(name);
-      if (isSuccess) {
-        onCreate();
-      }
+      createList(name);
     },
-    [createList, isSuccess, onCreate, name],
+    [createList, name],
   );
 
   return (
@@ -51,8 +58,8 @@ export default function ListForm({ onCreate }: ListFormProps) {
         </div>
         {!!name.length && (
           <button
-            className={`btn btn-primary float-right min-w-full mb-4 rounded text-white${
-              isLoading ? " loading" : ""
+            className={`btn btn-primary w-full mb-4 rounded box-border ${
+              isLoading ? "loading" : ""
             }`}
           >
             Submit

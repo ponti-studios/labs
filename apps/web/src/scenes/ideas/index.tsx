@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import LoadingScene from "ui/Loading";
 
-import DashboardNav from "src/components/DashboardNav";
+import DashboardWrap from "src/components/DashboardWrap";
 import { useGetIdeas } from "src/services/api/ideas";
 import { useAppSelector } from "src/services/hooks";
 import { getUser } from "src/services/store";
@@ -9,7 +9,7 @@ import { getUser } from "src/services/store";
 import IdeaForm from "./IdeaForm";
 import IdeaListItem from "./IdeaListItem";
 
-const Dashboard = () => {
+const Ideas = () => {
   const navigate = useNavigate();
   const user = useAppSelector(getUser);
   const { data, refetch, status: ideasStatus } = useGetIdeas();
@@ -19,11 +19,8 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="flex flex-col">
-      <DashboardNav />
-      <div>
-        <IdeaForm onCreate={refetch} />
-      </div>
+    <DashboardWrap>
+      <IdeaForm onCreate={refetch} />
       <div>
         {ideasStatus === "loading" && <LoadingScene />}
         {data?.length === 0 && "your thoughts will appear here"}
@@ -35,8 +32,8 @@ const Dashboard = () => {
           </ul>
         )}
       </div>
-    </div>
+    </DashboardWrap>
   );
 };
 
-export default Dashboard;
+export default Ideas;

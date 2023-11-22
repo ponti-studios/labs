@@ -1,13 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import LoadingScene from "ui/Loading";
 
-import DashboardNav from "src/components/DashboardNav";
 import { useGetBookmarks } from "src/services/api/bookmarks";
 import { useAppSelector } from "src/services/hooks";
 import { getUser } from "src/services/store";
 
 import BookmarkForm from "./components/BookmarkForm";
 import BookmarkListItem from "./components/BookmarkListItem";
+import DashboardWrap from "src/components/DashboardWrap";
 
 const Recommendations = () => {
   const navigate = useNavigate();
@@ -21,8 +21,7 @@ const Recommendations = () => {
   }
 
   return (
-    <>
-      <DashboardNav />
+    <DashboardWrap>
       <BookmarkForm onCreate={refetch} />
       <div>
         {bookmarksStatus === "loading" && <LoadingScene />}
@@ -39,7 +38,7 @@ const Recommendations = () => {
           </ul>
         )}
       </div>
-    </>
+    </DashboardWrap>
   );
 };
 

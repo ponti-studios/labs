@@ -4,12 +4,16 @@ import { useMutation, useQuery } from "react-query";
 import { User } from "../auth";
 import { List, ListInvite, UserList } from "../types";
 
-const baseURL = import.meta.env.VITE_API_URL || "http://127.0.0.1:4444";
+export const baseURL = import.meta.env.VITE_API_URL || "http://127.0.0.1:4444";
 
 const api = axios.create({
   baseURL,
   withCredentials: true,
 });
+
+export const URLS = {
+  lists: `${baseURL}/lists`,
+};
 
 type InboundInvitesResponse = (ListInvite & { list: List; user: User })[];
 export const useGetInboundInvites = () => {
@@ -59,17 +63,6 @@ export const useGetLists = () => {
   return useQuery<UserList[], { message: string }>("lists", async () => {
     const res = await api.get(`${baseURL}/lists`);
     return res.data;
-  });
-};
-
-export const useCreateList = () => {
-  return useMutation({
-    mutationFn: async (name: string) => {
-      const res = await api.post(`${baseURL}/lists`, {
-        name,
-      });
-      return res.data;
-    },
   });
 };
 

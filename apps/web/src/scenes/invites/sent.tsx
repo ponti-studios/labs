@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 
 import LinkButton from "ui/LinkButton";
 
-import DashboardNav from "src/components/DashboardNav";
+import DashboardWrap from "src/components/DashboardWrap";
 import { useGetOutboundInvites } from "src/services/api";
 import { useAppSelector } from "src/services/hooks";
 import { getUser } from "src/services/store";
@@ -17,8 +17,7 @@ const ListInvites = () => {
   }
 
   return (
-    <>
-      <DashboardNav />
+    <DashboardWrap>
       <div className="my-4">
         <LinkButton href="/lists/invites">
           <span className="mr-1">⬅️</span> Back to invites
@@ -48,7 +47,7 @@ const ListInvites = () => {
           </ul>
         )}
       </div>
-    </>
+    </DashboardWrap>
   );
 };
 
