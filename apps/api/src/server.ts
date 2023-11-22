@@ -16,6 +16,7 @@ import usersPlugin from "./plugins/user";
 import adminPlugin from "./plugins/admin";
 import bookmarksPlugin from "./plugins/bookmarks";
 import ideasPlugin from "./plugins/ideas";
+import listsPlugin from "./plugins/lists";
 
 const { APP_URL, PORT } = process.env;
 
@@ -48,6 +49,7 @@ export async function createServer(
   server.register(adminPlugin);
   server.register(authPlugin);
   server.register(usersPlugin);
+  server.register(listsPlugin);
   server.register(bookmarksPlugin);
   server.register(ideasPlugin);
 

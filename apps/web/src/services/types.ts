@@ -12,6 +12,7 @@ export interface Idea extends BaseModel {
 
 export interface List extends BaseModel {
   name: string;
+  description: string;
   userId: string;
 }
 
@@ -30,8 +31,8 @@ export interface Recommendation extends BaseModel {
   url: string;
 }
 
-export type UserList = BaseModel & {
-  listId: string;
-  list: List;
-  user: User;
-};
+export type UserList = BaseModel &
+  List & {
+    listId: string;
+    createdBy: User;
+  };

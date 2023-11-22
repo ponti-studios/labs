@@ -8,6 +8,7 @@ import {
   AUTHENTICATE_PATH,
   DASHBOARD_PATH,
   LANDING_PATH,
+  LISTS_PATH,
   LOGIN_PATH,
   WILDCARD_PATH,
 } from "src/constants/routes";
@@ -16,6 +17,7 @@ import Authenticate from "src/scenes/Authenticate";
 import Dashboard from "src/scenes/Dashboard";
 import Home from "src/scenes/Home";
 import Login from "src/scenes/Login";
+import Lists from "src/scenes/lists";
 import NotFound from "src/scenes/NotFound";
 import { loadAuth } from "src/services/auth";
 import { getIsAuthenticated, getIsLoadingAuth } from "src/services/store";
@@ -39,7 +41,6 @@ function App() {
   });
 
   useEffect(() => {
-    // Cats
     if (authRef.current === false) {
       authRef.current = true;
       dispatch(loadAuth());
@@ -57,7 +58,7 @@ function App() {
   return (
     <div id="app" className={`h-100 flex flex-col ${styles.wrap}`}>
       <Header />
-      <main className="flex flex-1 sm:mt-4 md:mt-8" data-testid="app-main">
+      <main className="flex sm:mt-4 md:mt-8" data-testid="app-main">
         <Routes>
           <Route path={AUTHENTICATE_PATH} element={<Authenticate />} />
           {isAuthenticated ? (
@@ -67,6 +68,7 @@ function App() {
                 element={<Dashboard isMapLoaded={isMapLoaded} />}
               />
               <Route path={ACCOUNT_PATH} element={<Account />} />
+              <Route path={LISTS_PATH} element={<Lists />} />
             </>
           ) : (
             <>

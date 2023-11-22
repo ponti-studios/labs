@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import { ReactNode } from "react";
 
 type LinkButtonProps = {
@@ -7,7 +7,7 @@ type LinkButtonProps = {
 };
 export default function LinkButton({ children, href }: LinkButtonProps) {
   return (
-    <Link href={href}>
+    <Link to={href}>
       <span className="border-primary border-[1px] px-2 py-3 rounded-md hover:cursor-pointer">
         {children}
       </span>
