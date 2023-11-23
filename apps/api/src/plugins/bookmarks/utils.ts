@@ -1,4 +1,5 @@
 import ogs from "open-graph-scraper";
+import { OgObject } from "open-graph-scraper/dist/lib/types";
 
 interface GetOpenGraphDataParams {
   url: string;
@@ -12,7 +13,7 @@ interface GetFaviconUrlFallbackParams {
   url: string;
 }
 
-interface OpenGraphData {
+export type OpenGraphData = OgObject & {
   description?: string;
   faviconUrl?: string;
   imageHeight?: number;
@@ -20,7 +21,7 @@ interface OpenGraphData {
   imageUrl?: string;
   siteName: string;
   title: string;
-}
+};
 
 const twitterRegex =
   /(?:https?:\/\/)?(?:www\.)?\b(twitter\.com)\b((?:\/[a-z][a-z0-9_]*))?/i;
@@ -111,6 +112,7 @@ export async function getOpenGraphData({
   }
 
   return {
+    ...result,
     description: result.ogDescription,
     faviconUrl,
     imageUrl,

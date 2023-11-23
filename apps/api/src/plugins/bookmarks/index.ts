@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyPluginAsync } from "fastify";
 
-import { getOpenGraphData } from "./utils";
+import { OpenGraphData, getOpenGraphData } from "./utils";
 
 type LinkType = {
   image: string;
@@ -71,6 +71,24 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
     },
   );
 
+  const convertOGContentToRecommendation = ({
+    url,
+    ogContent,
+  }: {
+    url: string;
+    ogContent: OpenGraphData;
+  }) => {
+    return {
+      image: ogContent.imageUrl ?? "",
+      title: ogContent.title,
+      description: ogContent.description ?? "",
+      url,
+      siteName: ogContent.siteName,
+      imageWidth: ogContent.imageWidth + "",
+      imageHeight: ogContent.imageHeight + "",
+    };
+  };
+
   server.post(
     "/bookmarks",
     {
@@ -94,20 +112,17 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
 
       try {
         const ogContent = await getOpenGraphData({ url });
-        const recommendation = {
-          image: ogContent.imageUrl,
-          title: ogContent.title,
-          description: ogContent.description,
+        const recommendation = convertOGContentToRecommendation({
           url,
-          siteName: ogContent.siteName,
-          imageWidth: ogContent.imageWidth,
-          imageHeight: ogContent.imageHeight,
-        };
+          ogContent,
+        });
 
         const obj = await prisma.recommendation.create({
           data: {
             ...recommendation,
-            userId,
+            user: {
+              connect: { id: userId },
+            },
           },
         });
         return { recommendation: obj };
@@ -150,15 +165,10 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
 
       try {
         const ogContent = await getOpenGraphData({ url });
-        const recommendation = {
-          image: ogContent.imageUrl,
-          title: ogContent.title,
-          description: ogContent.description,
+        const recommendation = convertOGContentToRecommendation({
           url,
-          siteName: ogContent.siteName,
-          imageWidth: ogContent.imageWidth,
-          imageHeight: ogContent.imageHeight,
-        };
+          ogContent,
+        });
 
         const obj = await prisma.recommendation.update({
           where: { id, userId },

@@ -1,11 +1,14 @@
 import { z } from "zod";
 import { FastifyPluginAsync } from "fastify";
+import { verifySession } from "../auth";
+import fastifyPlugin from "fastify-plugin";
 
 // Example router with queries that can only be hit if the user requesting is signed in
 const listsPlugin: FastifyPluginAsync = async (server) => {
   server.get(
     "/lists",
     {
+      preValidation: verifySession,
       schema: {
         response: {
           200: z.array(
@@ -23,6 +26,9 @@ const listsPlugin: FastifyPluginAsync = async (server) => {
       const { prisma } = server;
       const { userId } = request.session.get("data");
       const lists = await prisma.list.findMany({
+        include: {
+          createdBy: true,
+        },
         where: { userId },
         orderBy: { createdAt: "desc" },
       });
@@ -35,21 +41,27 @@ const listsPlugin: FastifyPluginAsync = async (server) => {
     {
       schema: {
         body: {
-          type: "object",
-          properties: {
-            name: { type: "string" },
+          name: {
+            type: "string",
+            minLength: 3,
+            maxLength: 50,
           },
-          required: ["name"],
         },
         response: {
-          200: z.object({
-            list: z.object({
-              id: z.string(),
-              name: z.string(),
-              createdAt: z.string(),
-              updatedAt: z.string(),
-            }),
-          }),
+          200: {
+            type: "object",
+            properties: {
+              list: {
+                type: "object",
+                properties: {
+                  id: { type: "string" },
+                  name: { type: "string" },
+                  createdAt: { type: "string" },
+                  updatedAt: { type: "string" },
+                },
+              },
+            },
+          },
         },
       },
     },
@@ -79,23 +91,28 @@ const listsPlugin: FastifyPluginAsync = async (server) => {
           required: ["id"],
         },
         response: {
-          200: z.object({
-            list: z.object({
-              id: z.string(),
-              name: z.string(),
-              createdAt: z.string(),
-              updatedAt: z.string(),
-            }),
-          }),
+          200: {
+            type: "object",
+            properties: {
+              list: {
+                type: "object",
+                properties: {
+                  id: { type: "string" },
+                  name: { type: "string" },
+                  createdAt: { type: "string" },
+                  updatedAt: { type: "string" },
+                },
+              },
+            },
+          },
         },
       },
     },
     async (request) => {
       const { prisma } = server;
       const { id } = request.params as { id: string };
-      const { userId } = request.session.get("data");
       const list = await prisma.list.delete({
-        where: { id_userId: { id, userId } },
+        where: { id },
       });
       return { list };
     },
@@ -120,14 +137,20 @@ const listsPlugin: FastifyPluginAsync = async (server) => {
           required: ["name"],
         },
         response: {
-          200: z.object({
-            list: z.object({
-              id: z.string(),
-              name: z.string(),
-              createdAt: z.string(),
-              updatedAt: z.string(),
-            }),
-          }),
+          200: {
+            type: "object",
+            properties: {
+              list: {
+                type: "object",
+                properties: {
+                  id: { type: "string" },
+                  name: { type: "string" },
+                  createdAt: { type: "string" },
+                  updatedAt: { type: "string" },
+                },
+              },
+            },
+          },
         },
       },
     },
@@ -135,9 +158,8 @@ const listsPlugin: FastifyPluginAsync = async (server) => {
       const { prisma } = server;
       const { id } = request.params as { id: string };
       const { name } = request.body as { name: string };
-      const { userId } = request.session.get("data");
       const list = await prisma.list.update({
-        where: { id_userId: { id, userId } },
+        where: { id },
         data: { name },
       });
       return { list };
@@ -145,4 +167,4 @@ const listsPlugin: FastifyPluginAsync = async (server) => {
   );
 };
 
-export default listsPlugin;
+export default fastifyPlugin(listsPlugin);

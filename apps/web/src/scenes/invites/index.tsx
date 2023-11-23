@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import LoadingScene from "ui/Loading";
 
-import DashboardNav from "src/components/DashboardNav";
+import DashboardWrap from "src/components/DashboardWrap";
 import { useGetInboundInvites } from "src/services/api";
 import { useAppSelector } from "src/services/hooks";
 import { getUser } from "src/services/store";
@@ -18,8 +18,7 @@ const ListInvites = () => {
   }
 
   return (
-    <>
-      <DashboardNav />
+    <DashboardWrap>
       <h1>List Invites</h1>
       {status === "loading" && <LoadingScene />}
       {status === "success" && (
@@ -39,7 +38,7 @@ const ListInvites = () => {
           )}
         </div>
       )}
-    </>
+    </DashboardWrap>
   );
 };
 
