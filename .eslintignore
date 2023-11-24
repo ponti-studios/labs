@@ -1,0 +1,20 @@
+# Extensions
+*.css
+*.html
+*.png
+*.scss
+*.snap
+*.webp
+*.yaml
+*.yml
+
+# Directories
+cypress/fixtures/**
+cypress/support/**
+
+# Files
+cypress.config.ts
+package.json
+package-lock.json
+tsconfig.json
+README.md

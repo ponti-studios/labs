@@ -31,8 +31,17 @@ model User {
   receivedInvites ListInvite[]     @relation(name: "receivedListInvites")
   sentInvites     ListInvite[]     @relation(name: "sentListInvites")
   List            List[]
+
   // Relation fields
-  tokens          Token[]
+  tokens Token[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
 }
 
 model Token {
@@ -79,14 +88,6 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
 }
 
 model Idea {
