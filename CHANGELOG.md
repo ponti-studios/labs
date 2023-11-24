@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.0](https://github.com/theponti/rocco/compare/v1.0.1...v1.1.0) (2023-11-24)
+
+
+### Features
+
+* **ci:** add vercel preview and prod deploys for web ([#14](https://github.com/theponti/rocco/issues/14)) ([cc4d074](https://github.com/theponti/rocco/commit/cc4d074418924bce1ecb688378243733534fea90))
+* **ci:** switch web deploy to railway ([1d22e64](https://github.com/theponti/rocco/commit/1d22e644effe153f45f049178ea635182bca2fe6))
+
+
+### Bug Fixes
+
+* various fixings ([#18](https://github.com/theponti/rocco/issues/18)) ([12eecfa](https://github.com/theponti/rocco/commit/12eecfaab901da3aa8aac47e6be319cde4b36404))
+
 ## [1.0.1](https://github.com/theponti/rocco/compare/v1.0.0...v1.0.1) (2023-09-11)
 
 
