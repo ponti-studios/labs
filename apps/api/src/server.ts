@@ -18,7 +18,7 @@ import bookmarksPlugin from "./plugins/bookmarks";
 import ideasPlugin from "./plugins/ideas";
 import listsPlugin from "./plugins/lists";
 
-const { APP_URL, PORT } = process.env;
+const { APP_URL, JWT_SECRET, PORT } = process.env;
 
 export async function createServer(
   opts: FastifyServerOptions = {},
@@ -41,6 +41,9 @@ export async function createServer(
     sessionPlugin: "@fastify/secure-session",
   });
   server.register(require("@fastify/helmet"));
+  server.register(require("@fastify/jwt"), {
+    secret: JWT_SECRET,
+  });
   server.register(circuitBreaker);
   server.register(prismaPlugin);
   server.register(rateLimitPlugin);

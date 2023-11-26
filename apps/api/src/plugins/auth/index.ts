@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import { TokenType } from "@prisma/client";
 import { add } from "date-fns";
 import {
@@ -103,16 +104,35 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
         return reply.code(401).send();
       }
 
-      const tokenExpiration = add(new Date(), {
-        hours: AUTHENTICATION_TOKEN_EXPIRATION_HOURS,
-      });
+      let user = await prisma.user.findUnique({ where: { email } });
+
+      if (!user) {
+        user = await prisma.user.create({
+          data: {
+            email,
+          },
+        });
+      }
+
+      const tokenBase = {
+        isAdmin: user.isAdmin,
+        roles: ["user", !!user.isAdmin && "admin"].filter(Boolean),
+        userId: user.id,
+      };
+      const accessToken = server.jwt.sign(tokenBase);
+
+      // Create a unique refresh token
+      const refreshToken = crypto.randomUUID();
 
       const [createdToken] = await prisma.$transaction([
-        // Persist token in DB so it's stateful
         prisma.token.create({
           data: {
             type: TokenType.API,
-            expiration: tokenExpiration,
+            accessToken,
+            refreshToken,
+            expiration: add(new Date(), {
+              hours: AUTHENTICATION_TOKEN_EXPIRATION_HOURS,
+            }),
             user: {
               connect: {
                 email,
@@ -134,15 +154,26 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
         }),
       ]);
 
-      const { id: userId, isAdmin } = createdToken.user;
+      const { id: userId, isAdmin, name } = createdToken.user;
+      const responseUser = {
+        ...tokenBase,
+        name,
+      };
 
       track(userId, EVENTS.USER_EVENTS.LOGIN_SUCCESS, { isAdmin });
-      // The API and UI are not hosted at the same domain
-      // so we must allow the cookie to be used on domains other
-      // than the domain of the API.
+
+      // The API and UI are not hosted at the same domain.
+      // Setting 'sameSite' to none and 'secure' to true enables the application cookie
+      // to be used on domains other than the API's domain. The API only accepts requests
+      // from the UI domain so we can safely set these values.
       request.session.options({ sameSite: "none", secure: true });
-      request.session.set("data", { isAdmin, roles: [], userId });
-      return reply.code(200).send();
+      request.session.set("data", responseUser);
+      return reply
+        .code(200)
+        .send({ user: responseUser })
+        .headers({
+          Authorization: `Bearer ${accessToken}`,
+        });
     },
   );
 
@@ -252,6 +283,13 @@ export const verifySession: preValidationHookHandler = async (
   const data = request.session.get("data");
 
   if (!data) {
+    try {
+      const token = await request.jwtVerify<{ userId: string }>();
+      request.session.set("data", token);
+    } catch (e: any) {
+      reply.log.error("Could not verify session", e);
+      return reply.code(401).send();
+    }
     reply.log.error("Could not verify session token");
     return reply.code(401).send();
   }
