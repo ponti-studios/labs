@@ -1,12 +1,19 @@
-import type { Config } from "jest";
-import path from "path";
+const path = require("path");
 
-export default async (): Promise<Config> => {
+module.exports = async () => {
   return {
     preset: "ts-jest",
     testEnvironment: "node",
     verbose: true,
     testMatch: [path.resolve(__dirname, "./src/**/*.test.ts")],
     setupFiles: [path.resolve(__dirname, "./src/jest.setup.ts")],
+    transform: {
+      "^.+\\.(ts|tsx)$": [
+        `ts-jest`,
+        {
+          tsconfig: `tsconfig.json`,
+        },
+      ],
+    },
   };
 };

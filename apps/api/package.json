@@ -41,7 +41,6 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
-    "@tsconfig/node20": "^20.1.0",
     "@types/jest": "29.5.2",
     "@types/node": "^20.4.5",
     "eslint-config-ponti": "0.0.0",

@@ -24,10 +24,6 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
-      
-    strategy:
-      matrix:
-        node-version: [18]
     
     steps:
       - name: 🛑 Cancel Previous Runs
@@ -57,6 +53,7 @@ jobs:
           COOKIE_SECRET: f1qnL2ixpbu99pX0LWGoUBBFJZmNhlBMzWGsNF1e3bg=
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/rocco
           SENDGRID_API_KEY: SG.1234567890
+          JWT_SECRET: f1qnL2ixpbu99pX0LWGoUBBFJZmNhlBMzWGsNF1e3bg=
       
       - name: 🧪 End-to-end tests
         # Uses the official Cypress GitHub action https://github.com/cypress-io/github-action

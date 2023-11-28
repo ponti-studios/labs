@@ -24,7 +24,7 @@ export async function createServer(
   opts: FastifyServerOptions = {},
 ): Promise<FastifyInstance> {
   const server = fastify(opts);
-  //
+
   if (!APP_URL) {
     server.log.error("Missing APP_URL env var");
     process.exit(1);

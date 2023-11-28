@@ -5,6 +5,10 @@ on:
     branches-ignore:
       - main
     paths: ["apps/web/**"]
+  workflow_run:
+    workflows: ["🔍 Code Quality"]
+    types:
+      - completed
 
 jobs:
   Deploy-Preview:

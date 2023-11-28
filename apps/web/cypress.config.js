@@ -1,6 +1,6 @@
-import { defineConfig } from "cypress";
+const { defineConfig } = require("cypress"); // eslint-disable-line @typescript-eslint/no-var-requires
 
-export default defineConfig({
+module.exports = defineConfig({
   fileServerFolder: "build",
   fixturesFolder: false,
   e2e: {
