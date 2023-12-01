@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/theponti/rocco/compare/v1.1.0...v1.2.0) (2023-12-01)
+
+
+### Features
+
+* **apps/web:** hide default infowindow on POI click ([62cfa4c](https://github.com/theponti/rocco/commit/62cfa4c47af757c1b66e0fb21ff090848ed2a014))
+
 ## [1.1.0](https://github.com/theponti/rocco/compare/v1.0.1...v1.1.0) (2023-11-24)
 
 
