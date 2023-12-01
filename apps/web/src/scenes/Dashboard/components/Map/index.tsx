@@ -1,4 +1,4 @@
-import { GoogleMap, InfoBox, Marker } from "@react-google-maps/api";
+import { GoogleMap, Marker } from "@react-google-maps/api";
 import { useCallback } from "react";
 
 import styles from "./Map.module.css";
@@ -44,24 +44,6 @@ const Map = ({
       onLoad={onMapLoad}
       mapContainerClassName={styles.mapContainer}
     >
-      {selected ? (
-        <InfoBox
-          position={selected?.geometry.location}
-          options={{ closeBoxURL: ``, enableEventPropagation: true }}
-        >
-          <div
-            style={{
-              backgroundColor: `yellow`,
-              opacity: 0.75,
-              padding: `12px`,
-            }}
-          >
-            <div style={{ fontSize: `16px`, color: `#08233B` }}>
-              Hello, Taipei!
-            </div>
-          </div>
-        </InfoBox>
-      ) : null}
       {selected && <Marker position={center} onClick={onMarkerClick} />}
     </GoogleMap>
   );
