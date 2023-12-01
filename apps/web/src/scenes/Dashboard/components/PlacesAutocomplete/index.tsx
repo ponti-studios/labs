@@ -12,7 +12,6 @@ const Wrapper = styled.div`
 `;
 
 const Options = styled(Combobox.Options)`
-  background-color: white;
   margin-top: 8px;
   border-radius: 4px;
   width: 100%;
@@ -59,6 +58,14 @@ const InputWrap = styled.div`
   svg {
     margin-left: -30px;
   }
+`;
+
+const LoadingWrap = styled.div`
+  display: flex;
+  place-content: center;
+  align-items: center;
+  padding: 24px;
+  border-radius: 4px;
 `;
 
 function PlacesAutocomplete({
@@ -114,16 +121,18 @@ function PlacesAutocomplete({
           <MagnifyingGlassIcon height={24} width={24} />
         </InputWrap>
         {
-          <Options>
+          <Options className="bg-slate-600">
             {!ready || loading ? (
-              <Loading />
+              <LoadingWrap>
+                <Loading />
+              </LoadingWrap>
             ) : (
               data.map(
                 (suggestion: google.maps.places.AutocompletePrediction) => (
                   <Option
                     key={suggestion.place_id}
                     value={suggestion}
-                    className="truncate"
+                    className="truncate text-primary"
                   >
                     {suggestion.description}
                   </Option>

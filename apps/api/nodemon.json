@@ -2,7 +2,7 @@
   "restartable": "rs",
   "ignore": [".git", "node_modules/**/node_modules"],
   "verbose": true,
-  "exec": "ts-node --transpile-only src/index | pino-pretty",
+  "exec": "ts-node --project ./tsconfig.json --transpile-only src/index | pino-pretty",
   "watch": ["src/"],
   "env": {
     "NODE_ENV": "development"
