@@ -1,12 +1,15 @@
 import styled from "@emotion/styled";
-import { GoogleMap, Marker } from "@react-google-maps/api";
 import React, { useCallback, useRef, useState } from "react";
 
-import PlacesAutocomplete from "./components/PlacesAutocomplete";
-import styles from "./Dashboard.module.css";
-import PlaceModal from "./components/PlaceModal";
+import { getDetails } from "use-places-autocomplete";
+
 import Loading from "ui/Loading";
+
 import { mediaQueries } from "src/constants/styles";
+
+import PlacesAutocomplete from "./components/PlacesAutocomplete";
+import PlaceModal from "./components/PlaceModal";
+import Map from "./components/Map";
 
 const Wrap = styled.div`
   display: flex;
@@ -39,6 +42,21 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
   const modalRef = useRef<HTMLDialogElement | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const onMapClick = useCallback(async (args) => {
+    const place = await getDetails({ placeId: args.placeId });
+
+    if (!place || typeof place === "string") {
+      console.log("This location could not be found.");
+      return;
+    }
+
+    // Select the clicked location
+    setSelected(place);
+    setCenter(args.latLng.toJSON());
+    setZoom(ZOOM_LEVELS.MARKER);
+    setIsModalOpen(true);
+  }, []);
+
   const onSelectedChanged = useCallback(
     (place: google.maps.places.PlaceResult) => {
       const {
@@ -60,6 +78,7 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
   }, [modalRef]);
 
   const onModalClose = useCallback(() => {
+    setSelected(null);
     setIsModalOpen(false);
     setZoom(ZOOM_LEVELS.SELECTED);
   }, []);
@@ -77,13 +96,14 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
       <PlacesAutocompleteWrap>
         <PlacesAutocomplete setSelected={onSelectedChanged} />
       </PlacesAutocompleteWrap>
-      <GoogleMap
+      <Map
         zoom={zoom}
         center={center}
-        mapContainerClassName={styles.mapContainer}
-      >
-        {selected && <Marker position={center} onClick={onMarkerClick} />}
-      </GoogleMap>
+        onMapClick={onMapClick}
+        onMarkerClick={onMarkerClick}
+        selected={selected}
+        setSelected={setSelected}
+      />
       <PlaceModal
         isOpen={isModalOpen}
         place={selected}
