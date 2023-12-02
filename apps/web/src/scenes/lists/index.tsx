@@ -9,6 +9,17 @@ import { getUser } from "src/services/store";
 
 import ListForm from "./components/ListForm";
 
+const NoResults = () => {
+  return (
+    <div className="flex flex-col items-center justify-center text-center py-6">
+      <p className="text-2xl font-bold">No lists found.</p>
+      <p className="text-gray-400">
+        Your lists will appear here once you create them.
+      </p>
+    </div>
+  );
+};
+
 const Lists = () => {
   const navigate = useNavigate();
   const user = useAppSelector(getUser);
@@ -19,12 +30,13 @@ const Lists = () => {
   }
 
   return (
-    <DashboardWrap>
+    <DashboardWrap className="flex gap-4">
+      <h1 className="text-3xl font-bold">Lists</h1>
       <ListForm onCreate={refetch} />
       <div>
         {listsStatus === "loading" && <LoadingScene />}
         {error && <FeedbackBlock>{error.message}</FeedbackBlock>}
-        {data?.length === 0 && "Your lists will appear here."}
+        {data?.length === 0 ? <NoResults /> : null}
         {data && data.length > 0 && (
           <ul className="space-y-2">
             {data.map((list) => (
