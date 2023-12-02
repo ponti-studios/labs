@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.0](https://github.com/theponti/rocco/compare/v1.2.0...v1.3.0) (2023-12-02)
+
+
+### Features
+
+* **apps/web:** improve Lists style ([c8c1f6a](https://github.com/theponti/rocco/commit/c8c1f6a5a3821fc49d2489cb6a5d0691e9b0737f))
+* **apps/web:** remove DashboardNav ([89532d3](https://github.com/theponti/rocco/commit/89532d31d2667ac4f1f5912866c83c9d3a6bf13d))
+
 ## [1.2.0](https://github.com/theponti/rocco/compare/v1.1.0...v1.2.0) (2023-12-01)
 
 
