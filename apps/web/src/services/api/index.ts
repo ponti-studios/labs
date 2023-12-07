@@ -1,19 +1,8 @@
-import axios from "axios";
-import { useMutation, useQuery } from "react-query";
+import { QueryKey, UseQueryOptions, useMutation, useQuery } from "react-query";
 
 import { User } from "../auth";
 import { List, ListInvite, UserList } from "../types";
-
-export const baseURL = import.meta.env.VITE_API_URL || "http://127.0.0.1:4444";
-
-const api = axios.create({
-  baseURL,
-  withCredentials: true,
-});
-
-export const URLS = {
-  lists: `${baseURL}/lists`,
-};
+import { api, baseURL } from "./base";
 
 type InboundInvitesResponse = (ListInvite & { list: List; user: User })[];
 export const useGetInboundInvites = () => {
@@ -59,15 +48,34 @@ export const useCreateListInvite = () => {
   });
 };
 
-export const useGetLists = () => {
-  return useQuery<UserList[], { message: string }>("lists", async () => {
-    const res = await api.get(`${baseURL}/lists`);
-    return res.data;
-  });
+export const useGetLists = ({
+  options,
+}: {
+  options?: Omit<
+    UseQueryOptions<UserList[], { message: string }, UserList[], QueryKey>,
+    "queryKey" | "queryFn"
+  >;
+} = {}) => {
+  return useQuery<UserList[], { message: string }>(
+    "lists",
+    async () => {
+      const res = await api.get(`${baseURL}/lists`);
+      return res.data;
+    },
+    options,
+  );
 };
 
+type GetListResponse = UserList & {
+  items: {
+    id: string;
+    name: string;
+    googleMapsId: string;
+    types: string[];
+  }[];
+};
 export const useGetList = (id: string) => {
-  return useQuery<UserList>(["list", id], async () => {
+  return useQuery<GetListResponse>(["list", id], async () => {
     const res = await api.get(`${baseURL}/lists/${id}`);
     return res.data;
   });

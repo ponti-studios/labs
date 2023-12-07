@@ -1,8 +1,9 @@
-export const ACCOUNT_PATH = "/account";
+export const ACCOUNT = "/account";
 export const ADMIN = "/admin";
-export const AUTHENTICATE_PATH = "/authenticate";
-export const DASHBOARD_PATH = "/";
-export const LANDING_PATH = "/";
-export const LISTS_PATH = "/lists";
-export const LOGIN_PATH = "/login";
-export const WILDCARD_PATH = "*";
+export const AUTHENTICATE = "/authenticate";
+export const DASHBOARD = "/";
+export const LANDING = "/";
+export const LIST = "/list/:id";
+export const LISTS = "/lists";
+export const LOGIN = "/login";
+export const WILDCARD = "*";

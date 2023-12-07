@@ -1,12 +1,28 @@
-import { OpenInNewWindowIcon } from "@radix-ui/react-icons";
-import { RefObject, forwardRef } from "react";
+import { RefObject, forwardRef, useState } from "react";
 
 import Modal from "src/components/Modal";
 import { Bold } from "ui/Text";
 
+import AddPlaceToList from "./AddPlaceToList";
 import PlaceStatus from "./PlaceStatus";
 import PlacePhotos from "./PlacePhotos";
 import PlaceAddress from "./PlaceAddress";
+import { useGetLists } from "src/services/api";
+import PlacePriceLevel from "./PlacePriceLevel";
+import PlaceWebsite from "./PlaceWebsite";
+
+const PlaceRating = ({ place }: { place: google.maps.places.PlaceResult }) => {
+  return (
+    <p className="py-[4px]">
+      <Bold>Rating:</Bold>{" "}
+      {[...Array(Math.floor(place.rating))].map((_, i) => (
+        <span key={i} className="text-yellow-500">
+          ★
+        </span>
+      ))}
+    </p>
+  );
+};
 
 type PlaceModalProps = {
   isOpen: boolean;
@@ -18,67 +34,63 @@ function PlaceModal(
   ref: RefObject<HTMLDialogElement | null>,
 ) {
   const type = place && place.types[0] && place.types[0].split("_")[0];
+  const [isListSelectOpen, setIsListSelectOpen] = useState(false);
+  const { isLoading: isListsLoading, data: lists } = useGetLists({
+    options: {
+      enabled: isListSelectOpen,
+    },
+  });
+
+  const onAddToList = () => {
+    setIsListSelectOpen(true);
+  };
+
+  const onAddToListSuccess = () => {
+    setIsListSelectOpen(false);
+    onModalClose();
+  };
+
   return (
     <Modal isOpen={isOpen} onModalClose={onModalClose} ref={ref}>
       {place && (
-        <>
-          <h3 className="font-bold text-4xl my-4">{place.name}</h3>
+        <div className="mt-3">
           <PlacePhotos alt={place.name} photos={place.photos} />
-          <p className="py-[4px] mt-3 text-gray-400 italic">
-            {type.charAt(0).toUpperCase() + type.slice(1)}
-          </p>
+          <div className="mt-4">
+            <p className="font-bold text-xl">{place.name}</p>
+            <p className="text-gray-400 italic">
+              {type.charAt(0).toUpperCase() + type.slice(1)}
+            </p>
+          </div>
           <PlaceAddress place={place} />
-          <PlaceStatus className="py-[4px]" place={place} />
-          {place.rating && place.rating > 0 && (
-            <p className="py-[4px]">
-              <Bold>Rating:</Bold>{" "}
-              {[...Array(Math.floor(place.rating))].map((_, i) => (
-                <span key={i} className="text-yellow-500">
-                  ★
-                </span>
-              ))}
-            </p>
-          )}
-          {place.price_level && (
-            <p className="py-0">
-              <Bold>Price Level: </Bold>
-              {
-                // Render price level as dollar signs
-                place.price_level &&
-                  [...Array(place.price_level)].map((_, i) => (
-                    <span key={i} className="text-green-500 px-[4px]">
-                      🤑
-                    </span>
-                  ))
-              }
-            </p>
-          )}
-          {place.international_phone_number && (
-            <p className="py-[4px]">
-              <Bold>Phone Number:</Bold> {place.international_phone_number}
-            </p>
-          )}
-          {place.website && (
-            <p className="py-[4px]">
-              <Bold>Website: </Bold>
-              <a
-                href={place.website}
-                target="_blank"
-                rel="noreferrer"
-                className="text-primary font-medium"
-              >
-                {place.website.replace(/(^\w+:|^)\/\//, "").split("/")[0]}
-                <OpenInNewWindowIcon className="inline-block ml-1" />
-              </a>
-            </p>
-          )}
-        </>
+          <div className="hidden">
+            <PlaceStatus className="py-[4px]" place={place} />
+            {place.rating && place.rating > 0 && <PlaceRating place={place} />}
+            {place.price_level && (
+              <PlacePriceLevel priceLevel={place.price_level} />
+            )}
+            {place.international_phone_number && (
+              <p className="py-[4px]">
+                <Bold>Phone Number:</Bold> {place.international_phone_number}
+              </p>
+            )}
+            {place.website && <PlaceWebsite website={place.website} />}
+          </div>
+        </div>
       )}
-      <div className="modal-action">
-        <button className="btn" onClick={onModalClose}>
-          Close
-        </button>
-      </div>
+      {!isListSelectOpen && (
+        <div className="modal-action">
+          <button className="btn" onClick={onAddToList}>
+            Add to list
+          </button>
+        </div>
+      )}
+      {isListSelectOpen && !isListsLoading && (
+        <AddPlaceToList
+          lists={lists}
+          place={place}
+          onSuccess={onAddToListSuccess}
+        />
+      )}
     </Modal>
   );
 }

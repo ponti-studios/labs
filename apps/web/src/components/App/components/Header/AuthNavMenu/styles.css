@@ -9,11 +9,7 @@ button {
 
 .DropdownMenuContent,
 .DropdownMenuSubContent {
-  min-width: 220px;
-  border-radius: 4px;
-  /* padding: 5px; */
-  margin-top: 4px;
-  margin-right: -4px;
+  @apply bg-primary-content text-primary mt-1 mr-[-4px] rounded-sm min-w-[200px] shadow-lg;
 
   /* Animation */
   animation-duration: 400ms;
@@ -92,20 +88,16 @@ button {
 }
 
 .IconButton {
-  font-family: inherit;
-  border-radius: 4px;
-  height: 35px;
-  width: 35px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--violet-11);
-  box-shadow: 0 2px 10px var(--blackA7);
-}
-
-.IconButton:hover,
-.IconButton:focus {
-  cursor: pointer;
+  @apply flex 
+    items-center 
+    justify-center
+    text-primary-focus
+    bg-primary-content
+    font-sans 
+    rounded-md 
+    h-9 
+    w-9
+    hover:cursor-pointer;
 }
 
 .RightSlot {

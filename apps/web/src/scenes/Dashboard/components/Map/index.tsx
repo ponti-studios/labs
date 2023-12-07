@@ -21,7 +21,6 @@ const Map = ({
 }: MapProps) => {
   const onMapLoad = useCallback(
     (map) => {
-      // close map info windows
       map?.addListener("click", (event) => {
         // Remove currently selected marker
         setSelected(null);
@@ -29,7 +28,6 @@ const Map = ({
         // Hide info window
         if (event.placeId) {
           if (event?.stop) event.stop();
-          console.log("event.placeId", event.placeId);
         }
       });
     },

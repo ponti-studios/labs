@@ -8,7 +8,7 @@ import AuthWrap from "src/components/AuthenticationWrap";
 import FeedbackBlock from "src/components/FeedbackBlock";
 import Form from "src/components/Form";
 import { FormButton } from "src/components/Form/components";
-import { LANDING_PATH } from "src/constants/routes";
+import { LANDING } from "src/constants/routes";
 import api from "src/services/api";
 import { setCurrentEmail } from "src/services/auth";
 import { useAppDispatch, useAppSelector } from "src/services/hooks";
@@ -46,7 +46,7 @@ function Login() {
 
   useEffect(() => {
     if (user) {
-      navigate(LANDING_PATH);
+      navigate(LANDING);
     }
   });
 

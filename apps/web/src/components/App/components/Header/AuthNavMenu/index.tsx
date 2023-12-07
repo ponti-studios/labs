@@ -4,7 +4,7 @@ import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { ACCOUNT_PATH, LANDING_PATH, LISTS_PATH } from "src/constants/routes";
+import { ACCOUNT, LANDING, LISTS } from "src/constants/routes";
 import { logout } from "src/services/auth";
 import { useAppDispatch } from "src/services/hooks";
 import Avatar from "ui/Avatar";
@@ -17,7 +17,6 @@ const Wrap = styled(NavMenuItem)`
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 4px;
 
   &:hover {
     background-color: 0px 2px 5px 0px rgba(0, 0, 0, 0.3);
@@ -28,32 +27,27 @@ const AuthNavMenu = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const onListsClick = useCallback(() => {
-    navigate(LISTS_PATH);
+    navigate(LISTS);
   }, [navigate]);
   const onAccountClick = useCallback(() => {
-    navigate(ACCOUNT_PATH);
+    navigate(ACCOUNT);
   }, [navigate]);
   const onLogoutClick = useCallback(() => {
     dispatch(logout()).then(() => {
-      navigate(LANDING_PATH);
+      navigate(LANDING);
     });
   }, [dispatch, navigate]);
 
   return (
-    <Wrap className="border-accent-focus border rounded">
+    <Wrap>
       <Avatar alt="user" />
       <DropdownMenu.Root>
-        <DropdownMenu.Trigger asChild>
-          <button
-            className="IconButton bg-transparent"
-            aria-label="account menu"
-          >
-            <HamburgerMenuIcon />
-          </button>
+        <DropdownMenu.Trigger className="IconButton" aria-label="account menu">
+          <HamburgerMenuIcon />
         </DropdownMenu.Trigger>
         <DropdownMenu.Portal>
           <DropdownMenu.Content
-            className="DropdownMenuContent bg-gray-800 text-primary"
+            className="DropdownMenuContent"
             align="end"
             sideOffset={5}
           >

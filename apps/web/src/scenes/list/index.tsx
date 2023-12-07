@@ -29,7 +29,27 @@ const List = () => {
       {!data && <AlertError error="We could not find this list." />}
       {data && (
         <div className="flex flex-col px-0.5">
-          <h1 className="mb-1">{data.name}</h1>
+          <h1 className="mb-8 text-3xl font-semibold">{data.name}</h1>
+          {data.items.map((place) => (
+            <div key={place.id} className="flex flex-col mb-10">
+              <span className="mb-1 text-lg text-primary font-medium">
+                {place.name}
+              </span>
+              <span className="mb-1 text-sm text-gray-500">
+                {place.googleMapsId}
+              </span>
+              <div className="flex gap-2">
+                {place.types.map((type) => (
+                  <span
+                    key={type}
+                    className="text-sm text-gray-200 bg-accent rounded p-1"
+                  >
+                    {type}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
           {/* Only the owner of the list can invite other users */}
           {data.userId === user.id && (
             <Link to={`/list/${data.id}/invites`}>

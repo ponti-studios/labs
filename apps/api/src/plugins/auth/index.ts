@@ -25,7 +25,7 @@ const COOKIE_SECRET = process.env.COOKIE_SECRET;
 const EMAIL_TOKEN_EXPIRATION_MINUTES = 10;
 const AUTHENTICATION_TOKEN_EXPIRATION_HOURS = 12;
 
-if (!COOKIE_SECRET) {
+if (!COOKIE_SECRET && process.env.NODE_ENV !== "test") {
   console.log(
     "warn",
     "The COOKIE_SECRET env var is not set. This is unsafe! If running in production, set it.",

@@ -25,6 +25,7 @@ model User {
   accounts        Account[]
   sessions        Session[]
   ideas           Idea[]
+  places          Place[]
   recommendations Recommendation[]
   flights         Flight[]
   lists           UserLists[]
@@ -143,10 +144,12 @@ model Item {
   type      String   @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
   // Relations
-  itemId    String
-  list      List?    @relation(fields: [listId], references: [id])
-  listId    String?
+  list   List?   @relation(fields: [listId], references: [id])
+  listId String?
+  itemId String
+  Place  Place[]
 }
 
 model UserLists {
@@ -175,6 +178,7 @@ model List {
   items       Item[]
   invites     ListInvite[]
   Flight      Flight[]
+  Place       Place[]
 }
 
 model ListInvite {
@@ -188,4 +192,26 @@ model ListInvite {
   user             User    @relation(name: "sentListInvites", fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([listId, invitedUserEmail])
+}
+
+model Place {
+  id           String   @id @default(uuid())
+  name         String   @db.Text()
+  description  String?  @db.Text()
+  address      String?  @db.Text()
+  lat          String?  @db.Text()
+  lng          String?  @db.Text()
+  types        String[] @db.Text()
+  // Google Maps Place ID
+  googleMapsId String?  @db.Text()
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  userId    String  @db.Text()
+  createdBy User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  itemId    String?
+  item      Item?   @relation(fields: [itemId], references: [id])
+  List      List?   @relation(fields: [listId], references: [id])
+  listId    String?
 }

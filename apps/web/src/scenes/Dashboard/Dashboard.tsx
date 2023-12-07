@@ -78,6 +78,7 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
   }, [modalRef]);
 
   const onModalClose = useCallback(() => {
+    modalRef.current?.close();
     setSelected(null);
     setIsModalOpen(false);
     setZoom(ZOOM_LEVELS.SELECTED);

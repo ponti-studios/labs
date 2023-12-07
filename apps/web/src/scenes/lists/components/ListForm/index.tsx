@@ -3,7 +3,7 @@ import { useMutation } from "react-query";
 
 import AlertError from "ui/AlertError";
 
-import api, { URLS } from "src/services/api";
+import { api, URLS } from "src/services/api/base";
 
 const MIN_LENGTH = 3;
 

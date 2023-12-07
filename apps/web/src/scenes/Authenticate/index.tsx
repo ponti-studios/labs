@@ -12,7 +12,7 @@ import * as Yup from "yup";
 import AuthWrap from "src/components/AuthenticationWrap";
 import FeedbackBlock from "src/components/FeedbackBlock";
 import Form from "src/components/Form";
-import { DASHBOARD_PATH } from "src/constants/routes";
+import { DASHBOARD } from "src/constants/routes";
 import { loadAuth, setCurrentEmail } from "src/services/auth";
 import { getLoginEmail } from "src/services/store";
 import { authenticate } from "src/services/auth/auth.api";
@@ -42,7 +42,7 @@ function Authenticate() {
           await authenticate({ email: loginEmail, emailToken });
           dispatch(loadAuth());
           dispatch(setCurrentEmail(null));
-          navigate(DASHBOARD_PATH);
+          navigate(DASHBOARD);
         } catch (err) {
           console.log({ err });
           if (err.response?.status === 401) {

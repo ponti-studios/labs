@@ -3,15 +3,7 @@ import { useEffect, useRef } from "react";
 import { Route, Routes } from "react-router-dom";
 import Loading from "ui/Loading";
 
-import {
-  ACCOUNT_PATH,
-  AUTHENTICATE_PATH,
-  DASHBOARD_PATH,
-  LANDING_PATH,
-  LISTS_PATH,
-  LOGIN_PATH,
-  WILDCARD_PATH,
-} from "src/constants/routes";
+import * as ROUTES from "src/constants/routes";
 import Account from "src/scenes/Account";
 import Authenticate from "src/scenes/Authenticate";
 import Dashboard from "src/scenes/Dashboard";
@@ -25,6 +17,7 @@ import { useAppDispatch, useAppSelector } from "src/services/hooks";
 
 import Header from "./components/Header";
 import styles from "./App.module.scss";
+import List from "src/scenes/list";
 
 const { VITE_GOOGLE_API_KEY } = import.meta.env;
 
@@ -55,37 +48,29 @@ function App() {
     );
   }
 
-  if (!isMapLoaded) {
-    console.log("map not loaded");
-    return (
-      <div className="flex items-center justify-center max-w-[300px] mx-auto min-h-screen">
-        <Loading size="xl" />
-      </div>
-    );
-  }
-
   return (
     <div id="app" className={`h-100 flex flex-col ${styles.wrap}`}>
       <Header />
       <main className="flex flex-1 sm:mt-4 md:mt-8" data-testid="app-main">
         <Routes>
-          <Route path={AUTHENTICATE_PATH} element={<Authenticate />} />
+          <Route path={ROUTES.AUTHENTICATE} element={<Authenticate />} />
           {isAuthenticated ? (
             <>
               <Route
-                path={DASHBOARD_PATH}
+                path={ROUTES.DASHBOARD}
                 element={<Dashboard isMapLoaded={isMapLoaded} />}
               />
-              <Route path={ACCOUNT_PATH} element={<Account />} />
-              <Route path={LISTS_PATH} element={<Lists />} />
+              <Route path={ROUTES.ACCOUNT} element={<Account />} />
+              <Route path={ROUTES.LISTS} element={<Lists />} />
+              <Route path={ROUTES.LIST} element={<List />} />
             </>
           ) : (
             <>
-              <Route path={LOGIN_PATH} element={<Login />} />
-              <Route path={LANDING_PATH} element={<Home />} />
+              <Route path={ROUTES.LOGIN} element={<Login />} />
+              <Route path={ROUTES.LANDING} element={<Home />} />
             </>
           )}
-          <Route path={WILDCARD_PATH} element={<NotFound />} />
+          <Route path={ROUTES.WILDCARD} element={<NotFound />} />
         </Routes>
       </main>
     </div>

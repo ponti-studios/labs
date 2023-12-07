@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
 import { APP_NAME } from "src/constants";
-import { LANDING_PATH, LOGIN_PATH } from "src/constants/routes";
+import { LANDING, LOGIN } from "src/constants/routes";
 import { useAppSelector } from "src/services/hooks";
 import { getIsAuthenticated } from "src/services/store";
 
@@ -15,7 +15,7 @@ function Header() {
     <header className="flex items-center justify-between py-4 max-md:px-2">
       <NavMenuItem>
         <Link
-          to={LANDING_PATH}
+          to={LANDING}
           className="text-primary font-extrabold lowercase text-4xl"
         >
           {APP_NAME}
@@ -25,7 +25,7 @@ function Header() {
         <AuthNavMenu />
       ) : (
         <NavMenuItem>
-          <Link to={LOGIN_PATH} className="btn btn-primary">
+          <Link to={LOGIN} className="btn btn-primary">
             Log In
           </Link>
         </NavMenuItem>
