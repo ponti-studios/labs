@@ -147,9 +147,12 @@ model Item {
 
   // Relations
   list   List?   @relation(fields: [listId], references: [id])
-  listId String?
+  listId String
   itemId String
   Place  Place[]
+
+  // Compound ID to ensure that relation is unique.
+  @@unique([listId, itemId])
 }
 
 model UserLists {
@@ -177,8 +180,7 @@ model List {
   users       UserLists[]
   items       Item[]
   invites     ListInvite[]
-  Flight      Flight[]
-  Place       Place[]
+  flights     Flight[]
 }
 
 model ListInvite {
@@ -195,23 +197,22 @@ model ListInvite {
 }
 
 model Place {
-  id           String   @id @default(uuid())
-  name         String   @db.Text()
-  description  String?  @db.Text()
-  address      String?  @db.Text()
-  lat          String?  @db.Text()
-  lng          String?  @db.Text()
-  types        String[] @db.Text()
+  id          String   @id @default(uuid())
+  name        String   @db.Text()
+  description String?  @db.Text()
+  address     String?  @db.Text()
+  lat         String?  @db.Text()
+  lng         String?  @db.Text()
+  types       String[] @db.Text()
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
   // Google Maps Place ID
-  googleMapsId String?  @db.Text()
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  googleMapsId String? @db.Text()
 
   // Relations
   userId    String  @db.Text()
   createdBy User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   itemId    String?
-  item      Item?   @relation(fields: [itemId], references: [id])
-  List      List?   @relation(fields: [listId], references: [id])
-  listId    String?
+  lists     Item?   @relation(fields: [itemId], references: [id], onDelete: Cascade)
 }

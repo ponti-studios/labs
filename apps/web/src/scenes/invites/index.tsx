@@ -1,45 +1,38 @@
 import { useNavigate } from "react-router-dom";
-import LoadingScene from "ui/Loading";
+import Typography from "ui/Typography";
 
 import DashboardWrap from "src/components/DashboardWrap";
-import { useGetInboundInvites } from "src/services/api";
+import { useGetInvites } from "src/services/api";
 import { useAppSelector } from "src/services/hooks";
 import { getUser } from "src/services/store";
+import InviteListItem from "./components/InviteListItem";
 
-import ListInviteItem from "./components/ListInviteItem";
-
-const ListInvites = () => {
+const Invites = () => {
   const navigate = useNavigate();
   const user = useAppSelector(getUser);
-  const { data, refetch, status } = useGetInboundInvites();
-
+  const { data: invites, refetch } = useGetInvites();
   if (!user) {
     navigate("/");
   }
 
   return (
     <DashboardWrap>
-      <h1>List Invites</h1>
-      {status === "loading" && <LoadingScene />}
-      {status === "success" && (
-        <div>
-          {data?.length === 0 &&
-            "Invites others have sent you will appear here."}
-          {data && data.length > 0 && (
-            <ul className="space-y-2">
-              {data.map((invite) => (
-                <ListInviteItem
-                  key={invite.listId}
-                  invite={invite}
-                  onAcceptInvite={refetch}
-                />
-              ))}
-            </ul>
-          )}
-        </div>
+      <Typography className="mb-4" variant="h1">
+        Invites
+      </Typography>
+      {invites && (
+        <ul>
+          {invites.map((listInvite) => (
+            <InviteListItem
+              key={listInvite.listId}
+              listInvite={listInvite}
+              onAccept={refetch}
+            />
+          ))}
+        </ul>
       )}
     </DashboardWrap>
   );
 };
 
-export default ListInvites;
+export default Invites;

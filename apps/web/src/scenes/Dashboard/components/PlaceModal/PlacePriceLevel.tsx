@@ -1,9 +1,9 @@
-import { Bold } from "ui/Text";
+import Typography from "ui/Typography";
 
 const PlacePriceLevel = ({ priceLevel }: { priceLevel: number }) => {
   return (
     <p className="py-0">
-      <Bold>Price Level: </Bold>
+      <Typography variant="bold">Price Level: </Typography>
       {
         // Render price level as dollar signs
         priceLevel &&

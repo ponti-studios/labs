@@ -46,9 +46,11 @@ const Lists = () => {
               >
                 <Link to={`/list/${list.id}`}>{list.name}</Link>
                 {/* Only display list owner if the list does not belong to current user */}
-                {list.createdBy.email !== user?.email && (
-                  <p className="text-xs text-gray-400">{user.email}</p>
-                )}
+                {list.createdBy && list.createdBy.email !== user?.email ? (
+                  <p className="text-xs text-gray-400">
+                    {list.createdBy.email}
+                  </p>
+                ) : null}
               </li>
             ))}
           </ul>

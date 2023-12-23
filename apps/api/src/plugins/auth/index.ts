@@ -11,6 +11,7 @@ import {
 import fp from "fastify-plugin";
 import { APP_USER_ID, EVENTS, track } from "../../analytics";
 import { TOKEN_FAILURE_REASONS } from "./constants";
+import { prisma } from "../prisma";
 
 interface LoginInput {
   email: string;
@@ -285,13 +286,34 @@ export const verifySession: preValidationHookHandler = async (
   if (!data) {
     try {
       const token = await request.jwtVerify<{ userId: string }>();
-      request.session.set("data", token);
+      const user = await prisma.user.findUnique({
+        where: { id: token.userId },
+      });
+
+      if (!user) {
+        return reply.code(401).send();
+      }
+
+      request.session.set("data", {
+        ...token,
+        email: user?.email,
+      });
     } catch (e: any) {
       reply.log.error("Could not verify session", e);
       return reply.code(401).send();
     }
     reply.log.error("Could not verify session token");
     return reply.code(401).send();
+  }
+
+  if (!data.email) {
+    const user = await prisma.user.findUnique({
+      where: { id: data.userId },
+    });
+    request.session.set("data", {
+      ...data,
+      email: user?.email,
+    });
   }
 };
 

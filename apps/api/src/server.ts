@@ -17,6 +17,7 @@ import adminPlugin from "./plugins/admin";
 import bookmarksPlugin from "./plugins/bookmarks";
 import ideasPlugin from "./plugins/ideas";
 import listsPlugin from "./plugins/lists";
+import invites from "./plugins/invites";
 
 const { APP_URL, JWT_SECRET, PORT } = process.env;
 
@@ -53,8 +54,14 @@ export async function createServer(
   server.register(authPlugin);
   server.register(usersPlugin);
   server.register(listsPlugin);
+  server.register(invites);
   server.register(bookmarksPlugin);
   server.register(ideasPlugin);
+
+  server.setErrorHandler((error, request, reply) => {
+    console.error(error);
+    reply.status(500).send({ error: "Internal server error" });
+  });
 
   return server;
 }

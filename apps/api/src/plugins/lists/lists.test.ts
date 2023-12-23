@@ -8,6 +8,7 @@ describe("/lists", () => {
   beforeAll(async () => {
     server = await createServer({ logger: false });
     jest.spyOn(server.prisma.list, "findMany").mockResolvedValue([]);
+    jest.spyOn(server.prisma.userLists, "findMany").mockResolvedValue([]);
   });
 
   afterEach(async () => {

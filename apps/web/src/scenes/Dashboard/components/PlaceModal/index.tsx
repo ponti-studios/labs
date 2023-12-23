@@ -1,7 +1,7 @@
 import { RefObject, forwardRef, useState } from "react";
 
 import Modal from "src/components/Modal";
-import { Bold } from "ui/Text";
+import Typography from "ui/Typography";
 
 import AddPlaceToList from "./AddPlaceToList";
 import PlaceStatus from "./PlaceStatus";
@@ -14,7 +14,7 @@ import PlaceWebsite from "./PlaceWebsite";
 const PlaceRating = ({ place }: { place: google.maps.places.PlaceResult }) => {
   return (
     <p className="py-[4px]">
-      <Bold>Rating:</Bold>{" "}
+      <Typography variant="bold">Rating:</Typography>{" "}
       {[...Array(Math.floor(place.rating))].map((_, i) => (
         <span key={i} className="text-yellow-500">
           ★
@@ -70,7 +70,8 @@ function PlaceModal(
             )}
             {place.international_phone_number && (
               <p className="py-[4px]">
-                <Bold>Phone Number:</Bold> {place.international_phone_number}
+                <Typography variant="bold">Phone Number:</Typography>{" "}
+                {place.international_phone_number}
               </p>
             )}
             {place.website && <PlaceWebsite website={place.website} />}

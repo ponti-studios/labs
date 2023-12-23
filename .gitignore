@@ -13,6 +13,7 @@ apps/web/cypress/videos/**
 # build
 .next
 .eslintcache
+.stylelintcache
 build
 tsconfig.tsbuildinfo
 

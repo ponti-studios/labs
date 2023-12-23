@@ -46,7 +46,12 @@ button {
   user-select: none;
   outline: none;
   cursor: pointer;
+
+  &.pt-0 {
+    padding-top: 0;
+  }
 }
+
 .DropdownMenuSubTrigger[data-state="open"] {
   background-color: var(--violet-4);
   background-color: black;

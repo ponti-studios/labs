@@ -1,5 +1,14 @@
 import * as auth from "./plugins/auth";
 
+function mockPrismaModel() {
+  return {
+    findMany: jest.fn(),
+    create: jest.fn(),
+    delete: jest.fn(),
+    update: jest.fn(),
+  };
+}
+
 jest.mock("@prisma/client", () => ({
   PrismaClient: jest.fn().mockImplementation(() => ({
     $connect: jest.fn(),
@@ -10,6 +19,8 @@ jest.mock("@prisma/client", () => ({
       delete: jest.fn(),
       update: jest.fn(),
     },
+    listInvite: mockPrismaModel(),
+    userLists: mockPrismaModel(),
     place: {
       create: jest.fn(),
     },

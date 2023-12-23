@@ -1,16 +1,17 @@
 import { User } from "./auth";
 
 interface BaseModel {
-  id: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
 export interface Idea extends BaseModel {
+  id: string;
   description: string;
 }
 
 export interface List extends BaseModel {
+  id: string;
   name: string;
   description: string;
   userId: string;
@@ -25,14 +26,14 @@ export interface ListInvite extends BaseModel {
 }
 
 export interface Recommendation extends BaseModel {
+  id: string;
   image: string;
   title: string;
   siteName: string;
   url: string;
 }
 
-export type UserList = BaseModel &
-  List & {
-    listId: string;
-    createdBy: User;
-  };
+export type UserList = List & {
+  listId: string;
+  createdBy: User;
+};

@@ -7,6 +7,12 @@ import { BrowserRouter as Router } from "react-router-dom";
 import "./index.css";
 import App from "./components/App";
 import { store } from "./services/store";
+import * as Spotlight from "@spotlightjs/spotlight";
+
+// only load Spotlight in dev
+if (process.env.NODE_ENV === "development") {
+  Spotlight.init();
+}
 
 const queryClient = new QueryClient();
 

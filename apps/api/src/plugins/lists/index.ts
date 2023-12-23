@@ -2,17 +2,20 @@ import { FastifyPluginAsync } from "fastify";
 import fastifyPlugin from "fastify-plugin";
 
 // Routes
-import getListRoute from "./get/list";
+import deleteListRoute from "./delete";
 import getListsRoute from "./get";
+import getListRoute from "./get/list";
+import getListInvitesRoute from "./get/list/invites";
 import postListsPlace from "./post/place";
 import postListRoute from "./post";
+import acceptListInviteRoute from "./post/acceptInvite";
 import putListRoute from "./put";
-import deleteListRoute from "./delete";
 
-// Example router with queries that can only be hit if the user requesting is signed in
 const listsPlugin: FastifyPluginAsync = async (server) => {
+  acceptListInviteRoute(server);
   deleteListRoute(server);
   getListRoute(server);
+  getListInvitesRoute(server);
   getListsRoute(server);
   postListRoute(server);
   postListsPlace(server);

@@ -1,17 +1,17 @@
 import { useCallback } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 import AlertError from "ui/AlertError";
-import LinkButton from "ui/LinkButton";
 import LoadingScene from "ui/Loading";
 
 import { useGetList, useGetListInvites } from "src/services/api";
 import { useAppSelector } from "src/services/hooks";
 import { getUser } from "src/services/store";
 
-import ListInviteForm from "./ListInviteForm";
+import ListInviteForm from "../ListInviteForm";
+import DashboardWrap from "src/components/DashboardWrap";
 
-const List = () => {
+const ListInvites = () => {
   const params = useParams();
   const navigate = useNavigate();
   const user = useAppSelector(getUser);
@@ -37,15 +37,15 @@ const List = () => {
   }
 
   return (
-    <>
-      <div className="flex mb-8">
-        <LinkButton href={`/list/${userList.id}`}>
-          <span className="mr-1">⬅️</span> Back to list
-        </LinkButton>
-      </div>
+    <DashboardWrap>
       <div className="flex flex-col px-0.5">
-        <h1>
-          <span className="text-gray-600">{userList.name}</span> Invites
+        <h1 className="text-2xl">
+          <Link to={`/list/${userList.id}`}>
+            <span className="font-extrabold text-4xl mr-4">
+              {userList.name}
+            </span>
+          </Link>
+          <span className="text-primary-focus">Invites</span>
         </h1>
       </div>
       <ListInviteForm listId={listId} onCreate={onInviteSuccess} />
@@ -67,12 +67,12 @@ const List = () => {
             ))}
           </ul>
         ) : (
-          <p className="text-lg flex justify-center p-4 font-semibold">
+          <p className="text-lg flex justify-center p-4 font-semibold text-primary-focus">
             You haven&apos;t invited anyone to this list yet.
           </p>
         ))}
-    </>
+    </DashboardWrap>
   );
 };
 
-export default List;
+export default ListInvites;

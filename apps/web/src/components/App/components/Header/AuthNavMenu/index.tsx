@@ -4,14 +4,15 @@ import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { ACCOUNT, LANDING, LISTS } from "src/constants/routes";
+import { ACCOUNT, INVITES, LANDING, LISTS } from "src/constants/routes";
 import { logout } from "src/services/auth";
-import { useAppDispatch } from "src/services/hooks";
+import { useAppDispatch, useAppSelector } from "src/services/hooks";
 import Avatar from "ui/Avatar";
 
 import NavMenuItem from "../NavMenuItem";
 
 import "./styles.css";
+import { getUser } from "src/services/store";
 
 const Wrap = styled(NavMenuItem)`
   display: flex;
@@ -26,8 +27,12 @@ const Wrap = styled(NavMenuItem)`
 const AuthNavMenu = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const user = useAppSelector(getUser);
   const onListsClick = useCallback(() => {
     navigate(LISTS);
+  }, [navigate]);
+  const onInvitesClick = useCallback(() => {
+    navigate(INVITES);
   }, [navigate]);
   const onAccountClick = useCallback(() => {
     navigate(ACCOUNT);
@@ -38,6 +43,7 @@ const AuthNavMenu = () => {
     });
   }, [dispatch, navigate]);
 
+  console.log("user", user);
   return (
     <Wrap>
       <Avatar alt="user" />
@@ -51,11 +57,22 @@ const AuthNavMenu = () => {
             align="end"
             sideOffset={5}
           >
+            {user ? (
+              <DropdownMenu.Item className="flex justify-end text-sm pr-2 py-2 text-secondary-content">
+                {user.email}
+              </DropdownMenu.Item>
+            ) : null}
             <DropdownMenu.Item
               className="DropdownMenuItem text-primary"
               onClick={onListsClick}
             >
               Lists
+            </DropdownMenu.Item>
+            <DropdownMenu.Item
+              className="DropdownMenuItem text-primary"
+              onClick={onInvitesClick}
+            >
+              Invites
             </DropdownMenu.Item>
             <DropdownMenu.Separator />
             <DropdownMenu.Item

@@ -71,7 +71,7 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
     },
   );
 
-  const convertOGContentToRecommendation = ({
+  const convertOGContentToBookmark = ({
     url,
     ogContent,
   }: {
@@ -112,7 +112,7 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
 
       try {
         const ogContent = await getOpenGraphData({ url });
-        const recommendation = convertOGContentToRecommendation({
+        const recommendation = convertOGContentToBookmark({
           url,
           ogContent,
         });
@@ -165,7 +165,7 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
 
       try {
         const ogContent = await getOpenGraphData({ url });
-        const recommendation = convertOGContentToRecommendation({
+        const recommendation = convertOGContentToBookmark({
           url,
           ogContent,
         });

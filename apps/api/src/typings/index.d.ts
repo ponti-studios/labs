@@ -1,6 +1,7 @@
 /* eslint-disable */
 import { PrismaClient, Token } from "@prisma/client";
 import { Session } from "@fastify/secure-session";
+import { MailService } from "@sendgrid/mail";
 import * as FastifyJwt from "@fastify/jwt";
 
 interface SessionToken {
@@ -13,6 +14,13 @@ declare module "fastify" {
   interface FastifyInstance extends FastifyServerFactory {
     getUserId: (FastifyRequest) => string;
     prisma: PrismaClient;
+    sendgrid: MailService;
+    sendEmail: (
+      email: string,
+      subject: string,
+      text: string,
+      html: string,
+    ) => Promise<void>;
     sendEmailToken: Function;
     jwt: {
       sign: (payload: SessionToken) => Promise<Token>;

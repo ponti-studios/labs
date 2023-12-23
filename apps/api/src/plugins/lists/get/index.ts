@@ -30,7 +30,27 @@ const getListsRoute = (server: FastifyInstance) => {
         where: { userId },
         orderBy: { createdAt: "desc" },
       });
-      return lists;
+      const userLists = await prisma.userLists.findMany({
+        include: {
+          list: {
+            include: {
+              createdBy: true,
+            },
+          },
+        },
+        where: { userId },
+        orderBy: { createdAt: "desc" },
+      });
+
+      return [
+        ...lists,
+        ...userLists.map(({ list }) => ({
+          ...list,
+          createdBy: {
+            email: list.createdBy.email,
+          },
+        })),
+      ];
     },
   );
 };

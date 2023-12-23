@@ -18,6 +18,8 @@ import { useAppDispatch, useAppSelector } from "src/services/hooks";
 import Header from "./components/Header";
 import styles from "./App.module.scss";
 import List from "src/scenes/list";
+import ListInvites from "src/scenes/list/invites";
+import Invites from "src/scenes/invites";
 
 const { VITE_GOOGLE_API_KEY } = import.meta.env;
 
@@ -61,8 +63,10 @@ function App() {
                 element={<Dashboard isMapLoaded={isMapLoaded} />}
               />
               <Route path={ROUTES.ACCOUNT} element={<Account />} />
+              <Route path={ROUTES.INVITES} element={<Invites />} />
               <Route path={ROUTES.LISTS} element={<Lists />} />
               <Route path={ROUTES.LIST} element={<List />} />
+              <Route path={ROUTES.LIST_INVITE} element={<ListInvites />} />
             </>
           ) : (
             <>

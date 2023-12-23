@@ -1,8 +1,8 @@
 import { HTMLAttributes, ReactNode, SyntheticEvent } from "react";
 
 type Props = HTMLAttributes<HTMLButtonElement> & {
-  className?: string;
   children: ReactNode;
+  className?: string;
   loading?: boolean;
   onClick?: (e: SyntheticEvent<HTMLButtonElement>) => void;
 };
@@ -10,11 +10,10 @@ type Props = HTMLAttributes<HTMLButtonElement> & {
 export const Button = ({ className, children, onClick, ...props }: Props) => {
   return (
     <button
-      onClick={onClick}
+      {...(onClick && { onClick })}
       className={`btn btn-primary ${className ?? ""} ${
         props.loading ?? " loading"
       }`}
-      {...props}
     >
       {children}
     </button>

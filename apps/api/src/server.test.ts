@@ -1,6 +1,6 @@
 import { createServer } from "./server";
 
-describe("api endpoints", () => {
+describe("server", () => {
   let server: any;
 
   beforeAll(async () => {

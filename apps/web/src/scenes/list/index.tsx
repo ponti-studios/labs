@@ -29,7 +29,17 @@ const List = () => {
       {!data && <AlertError error="We could not find this list." />}
       {data && (
         <div className="flex flex-col px-0.5">
-          <h1 className="mb-8 text-3xl font-semibold">{data.name}</h1>
+          <div className="flex justify-between items-center mb-12">
+            <h1 className="text-3xl font-semibold">{data.name}</h1>
+            {/* Only the owner of the list can invite other users */}
+            {data.userId === user.id && (
+              <Link to={`/lists/${data.id}/invites`}>
+                <span className="text-lg hover:cursor-pointer">
+                  <UserPlus />
+                </span>
+              </Link>
+            )}
+          </div>
           {data.items.map((place) => (
             <div key={place.id} className="flex flex-col mb-10">
               <span className="mb-1 text-lg text-primary font-medium">
@@ -50,14 +60,6 @@ const List = () => {
               </div>
             </div>
           ))}
-          {/* Only the owner of the list can invite other users */}
-          {data.userId === user.id && (
-            <Link to={`/list/${data.id}/invites`}>
-              <span className="text-blue-500 text-lg hover:cursor-pointer">
-                <UserPlus stroke="black" className="w-6 h-6" />
-              </span>
-            </Link>
-          )}
         </div>
       )}
     </DashboardWrap>
