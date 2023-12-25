@@ -3,11 +3,7 @@ type FormButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 const FormButton = ({ children, ...props }: FormButtonProps) => {
   return (
-    <button
-      className="btn bg-blue-600 text-white border-none"
-      type="submit"
-      {...props}
-    >
+    <button className="btn btn-primary border-none" type="submit" {...props}>
       {children}
     </button>
   );

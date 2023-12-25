@@ -55,7 +55,7 @@ function Login() {
       {error && (
         <FeedbackBlock>There was a problem! Try again, homie.</FeedbackBlock>
       )}
-      <h2 className="text-2xl font-semibold mb-6">Log in</h2>
+      <h2 className="text-primary-focus text-2xl font-semibold mb-6">Log in</h2>
       <Formik
         validationSchema={LoginSchema}
         initialValues={initialValues}
@@ -63,11 +63,13 @@ function Login() {
       >
         <Form>
           <div className="form-control w-full">
-            <label className="label" htmlFor="email">
-              <span className="label-text">What is your email?</span>
+            <label className="label pl-0" htmlFor="email">
+              <span className="label-text text-primary-focus">
+                What is your email?
+              </span>
             </label>
             <Field
-              className="input input-bordered"
+              className="input input-bordered text-primary w-full"
               name="email"
               type="email"
               placeholder="Email"
