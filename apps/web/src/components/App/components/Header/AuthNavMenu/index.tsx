@@ -43,7 +43,6 @@ const AuthNavMenu = () => {
     });
   }, [dispatch, navigate]);
 
-  console.log("user", user);
   return (
     <Wrap>
       <Avatar alt="user" />
