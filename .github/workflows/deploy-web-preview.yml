@@ -4,7 +4,7 @@ on:
   push:
     branches-ignore:
       - main
-    paths: ["apps/web/**", ".github/workflows/deploy-web-preview.yml"]
+    paths: ["apps/web/**", "apps/packages/**", ".github/workflows/deploy-web-preview.yml"]
   workflow_run:
     workflows: ["🔍 Code Quality"]
     types:

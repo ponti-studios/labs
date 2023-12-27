@@ -4,8 +4,12 @@ on:
   push:
     branches:
       - main
-    paths: ["apps/web/**"]
-    
+    paths: ["apps/web/**", "apps/packages/**", ".github/workflows/deploy-web-prod.yml"]
+  workflow_run:
+    workflows: ["🔍 Code Quality"]
+    types:
+      - completed
+  
 jobs:
   Deploy-Production:
     runs-on: ubuntu-latest
