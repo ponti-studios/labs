@@ -32,5 +32,3 @@ jobs:
         run: railway up --service ${{ secrets.RAILWAY_SERVICE_API }}
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          VITE_API_URL: ${{ secrets.VITE_API_URL }}
-          VITE_GOOGLE_API_KEY: ${{ secrets.VITE_GOOGLE_API_KEY }}
