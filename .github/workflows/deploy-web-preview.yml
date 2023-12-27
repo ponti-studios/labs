@@ -4,7 +4,7 @@ on:
   push:
     branches-ignore:
       - main
-    paths: ["apps/web/**"]
+    paths: ["apps/web/**", ".github/workflows/deploy-web-preview.yml"]
   workflow_run:
     workflows: ["🔍 Code Quality"]
     types:
@@ -14,30 +14,17 @@ jobs:
   Deploy-Preview:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: 🏗 Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: "18"
 
-      - name: ⬇️ Install dependencies
-        run: npm install
-
-      - name: 📥 Generate artifacts
-        run: npx turbo run prisma:generate
-
-      - name: 🏗️ Build
-        run: npm run build
-        env:
-          VITE_API_URL: ${{ secrets.VITE_API_URL }}
-          VITE_GOOGLE_API_KEY: ${{ secrets.VITE_GOOGLE_API_KEY }}
-
       - name: Install Railway
         run: npm install -g @railway/cli
 
       - name: Deploy
-        working-directory: apps/web/build
-        run: railway up --service ${{ secrets.RAILWAY_SERVICE_WEB }}
+        run: railway up --service ${{ secrets.RAILWAY_SERVICE_WEB_BETA }}
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
