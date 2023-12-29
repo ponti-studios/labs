@@ -12,6 +12,7 @@ import fp from "fastify-plugin";
 import { APP_USER_ID, EVENTS, track } from "../../analytics";
 import { TOKEN_FAILURE_REASONS } from "./constants";
 import { prisma } from "../prisma";
+import { createToken } from "./createToken";
 
 interface LoginInput {
   email: string;
@@ -23,7 +24,6 @@ interface AuthenticateInput {
 }
 
 const COOKIE_SECRET = process.env.COOKIE_SECRET;
-const EMAIL_TOKEN_EXPIRATION_MINUTES = 10;
 const AUTHENTICATION_TOKEN_EXPIRATION_HOURS = 12;
 
 if (!COOKIE_SECRET && process.env.NODE_ENV !== "test") {
@@ -32,11 +32,6 @@ if (!COOKIE_SECRET && process.env.NODE_ENV !== "test") {
     "The COOKIE_SECRET env var is not set. This is unsafe! If running in production, set it.",
   );
   throw Error;
-}
-
-// Generate a random 8 digit number as the email token
-function generateEmailToken(): string {
-  return Math.floor(10000000 + Math.random() * 90000000).toString();
 }
 
 const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
@@ -199,41 +194,10 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
       },
     },
     async (request, reply) => {
-      // 👇 get prisma and the sendEmailToken from shared application state
-      const { prisma, sendEmailToken } = server;
-      // 👇 get the email from the request payload
       const { email } = request.body as LoginInput;
-      // 👇 generate an alphanumeric token
-      const emailToken = generateEmailToken();
-      // 👇 create a date object for the email token expiration
-      const tokenExpiration = add(new Date(), {
-        minutes: EMAIL_TOKEN_EXPIRATION_MINUTES,
-      });
 
       try {
-        // 👇 create a short lived token and update user or create if they don't exist
-        await prisma.token.create({
-          data: {
-            emailToken,
-            type: TokenType.EMAIL,
-            expiration: tokenExpiration,
-            user: {
-              connectOrCreate: {
-                create: {
-                  email,
-                },
-                where: {
-                  email,
-                },
-              },
-            },
-          },
-        });
-
-        track(APP_USER_ID, EVENTS.USER_EVENTS.REGISTER_SUCCESS, {});
-
-        // 👇 send the email token
-        await sendEmailToken(email, emailToken);
+        await createToken({ email, server });
         return reply.code(200).send();
       } catch (error) {
         const message = (error as Error)?.message;
