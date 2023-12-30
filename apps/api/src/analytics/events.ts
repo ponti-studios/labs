@@ -9,6 +9,7 @@ const USER_EVENTS = {
   EMAIL_TOKEN_VALIDATED: "email_token_validated",
   EMAIL_TOKEN_VALIDATED_FAILURE: "email_token_validated_failure",
   EMAIL_TOKEN_VALIDATED_SUCCESS: "email_token_validated_success",
+  LIST_CREATED: "list_created",
   PLACE_ADDED: "place_added",
 };
 

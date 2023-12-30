@@ -1,6 +1,7 @@
 import { FastifyInstance } from "fastify";
 
 import { verifySession } from "../../auth";
+import { EVENTS, track } from "../../../analytics";
 
 const postListRoute = (server: FastifyInstance) => {
   server.post(
@@ -43,6 +44,9 @@ const postListRoute = (server: FastifyInstance) => {
           userId,
         },
       });
+
+      track(userId, EVENTS.USER_EVENTS.LIST_CREATED, { name });
+
       return { list };
     },
   );
