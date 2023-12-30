@@ -36,6 +36,9 @@ jest.mock("@prisma/client", () => ({
 
 jest.mock("./analytics", () => ({
   track: jest.fn(),
+  EVENTS: {
+    USER_EVENTS: {},
+  },
 }));
 
 jest.spyOn(auth, "verifySession");

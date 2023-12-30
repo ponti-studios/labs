@@ -1,5 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { verifySession } from "../../auth";
+import { EVENTS, track } from "../../../analytics";
 
 const postListsPlace = (server: FastifyInstance) => {
   // A route to create a new Place and add it to a list
@@ -72,6 +73,7 @@ const postListsPlace = (server: FastifyInstance) => {
     },
     async (request) => {
       const { prisma } = server;
+      const { userId } = request.session.get("data");
       const { listIds, place } = request.body as {
         listIds: string[];
         place: {
@@ -95,7 +97,7 @@ const postListsPlace = (server: FastifyInstance) => {
           lng: `${location.lng}`,
           createdBy: {
             connect: {
-              id: request.session.get("data").userId,
+              id: userId,
             },
           },
         },
@@ -112,6 +114,17 @@ const postListsPlace = (server: FastifyInstance) => {
 
       const lists = await prisma.list.findMany({
         where: { id: { in: listIds } },
+      });
+
+      // 👇 Track place creation
+      track(userId, EVENTS.USER_EVENTS.PLACE_ADDED, {
+        types: place.types,
+      });
+
+      server.log.info("place added to lists", {
+        userId,
+        placeId: createdPlace.id,
+        listIds,
       });
 
       return { place: createdPlace, lists };
