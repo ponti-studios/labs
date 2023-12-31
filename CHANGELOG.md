@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.4.0](https://github.com/theponti/rocco/compare/v1.3.0...v1.4.0) (2023-12-30)
+
+
+### Features
+
+* Analytics track place added ([#30](https://github.com/theponti/rocco/issues/30)) ([3324e4f](https://github.com/theponti/rocco/commit/3324e4f3c66217001211ba8fa808ea24747deb83))
+* remove unnecessary web deploy env vars ([1b60d67](https://github.com/theponti/rocco/commit/1b60d67d94a120ef49395984fb2305a5946bf23f))
+
+
+### Bug Fixes
+
+* improve copy on invites not found page ([#25](https://github.com/theponti/rocco/issues/25)) ([3b1574b](https://github.com/theponti/rocco/commit/3b1574bcf74642e244ba6a7e82f7a172aefbe61c))
+
 ## [1.3.0](https://github.com/theponti/rocco/compare/v1.2.0...v1.3.0) (2023-12-02)
 
 
