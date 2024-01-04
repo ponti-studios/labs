@@ -42,9 +42,11 @@ const Lists = () => {
             {data.map((list) => (
               <li
                 key={list.id}
-                className="card shadow-md p-4 text-lg bg-secondary text-primary rounded-md"
+                className="card shadow-md p-3 text-lg bg-primary rounded-md"
               >
-                <Link to={`/list/${list.id}`}>{list.name}</Link>
+                <Link to={`/list/${list.id}`} className="text-primary-content">
+                  {list.name}
+                </Link>
                 {/* Only display list owner if the list does not belong to current user */}
                 {list.createdBy && list.createdBy.email !== user?.email ? (
                   <p className="text-xs text-gray-400">

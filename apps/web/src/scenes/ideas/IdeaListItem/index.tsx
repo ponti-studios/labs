@@ -1,9 +1,9 @@
+import { TrashIcon } from "@radix-ui/react-icons";
 import React, { useCallback } from "react";
 import { useDeleteIdea } from "src/services/api/ideas";
 import { Idea } from "src/services/types";
 
 import Button from "ui/Button";
-import Trash from "ui/Icons/Trash";
 
 type IdeaListItemProps = {
   idea: Idea;
@@ -33,7 +33,7 @@ function IdeaListItem({ idea, onDelete }: IdeaListItemProps) {
         className="btn btn-ghost col-start-12 flex justify-end text-red-500"
         onClick={deleteIdea}
       >
-        {!mutation.isLoading && <Trash />}
+        {!mutation.isLoading && <TrashIcon />}
       </Button>
     </li>
   );

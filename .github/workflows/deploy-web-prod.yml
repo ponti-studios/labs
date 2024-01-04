@@ -2,13 +2,13 @@ name: 🚀 Web > Deploy > Prod
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
     paths: ["apps/web/**", "apps/packages/**", ".github/workflows/deploy-web-prod.yml"]
   workflow_run:
     workflows: ["🔍 Code Quality"]
     types:
       - completed
+    branches: [main]
   
 jobs:
   Deploy-Production:

@@ -1,10 +1,12 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 import auth from "./auth";
 
+export const rootReducer = {
+  auth,
+};
+
 export const store = configureStore({
-  reducer: {
-    auth,
-  },
+  reducer: rootReducer,
 });
 
 export const getIsLoadingAuth = (state: RootState) => state.auth.isLoadingAuth;

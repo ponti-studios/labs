@@ -30,6 +30,7 @@ const getListRoute = (server: FastifyInstance) => {
                   type: "object",
                   properties: {
                     id: { type: "string" },
+                    itemId: { type: "string" },
                     description: { type: "string" },
                     itemAddedAt: { type: "string" },
                     googleMapsId: { type: "string" },
@@ -58,6 +59,7 @@ const getListRoute = (server: FastifyInstance) => {
       const items = await prisma.$queryRaw`
         SELECT 
           i.id as "id",
+          i."itemId" as "itemId",
           p.description as description,
           i."createdAt" as "itemAddedAt",
           p."googleMapsId" as "googleMapsId",

@@ -82,19 +82,29 @@ export const useGetLists = ({
   );
 };
 
+export type ListPlace = {
+  id: string;
+  itemId: string;
+  name: string;
+  googleMapsId: string;
+  types: string[];
+};
+
 type GetListResponse = UserList & {
-  items: {
-    id: string;
-    name: string;
-    googleMapsId: string;
-    types: string[];
-  }[];
+  id: string;
+  items: ListPlace[];
 };
 export const useGetList = (id: string) => {
-  return useQuery<GetListResponse>(["list", id], async () => {
-    const res = await api.get(`${baseURL}/lists/${id}`);
-    return res.data;
-  });
+  return useQuery<GetListResponse>(
+    ["list", id],
+    async () => {
+      const res = await api.get(`${baseURL}/lists/${id}`);
+      return res.data;
+    },
+    {
+      retry: false,
+    },
+  );
 };
 
 export const useUpdateList = () => {

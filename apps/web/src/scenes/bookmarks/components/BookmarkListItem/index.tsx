@@ -1,11 +1,11 @@
 import React, { useCallback, MouseEvent } from "react";
 import Button from "ui/Button";
-import Trash from "ui/Icons/Trash";
 
 import { useDeleteBookmark } from "src/services/api/bookmarks";
 import { Recommendation } from "src/services/types";
 
 import styles from "./BookmarkListItem.module.css";
+import { TrashIcon } from "@radix-ui/react-icons";
 
 type BookmarkListItemProps = {
   bookmark: Recommendation;
@@ -55,7 +55,7 @@ function BookmarkListItem({ bookmark, onDelete }: BookmarkListItemProps) {
             className="btn btn-ghost"
             onClick={onDeleteClick}
           >
-            {!isLoading && <Trash className="text-red-700" />}
+            {!isLoading && <TrashIcon className="text-red-700" />}
           </Button>
         </div>
       </div>

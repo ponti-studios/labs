@@ -9,17 +9,17 @@ import Authenticate from "src/scenes/Authenticate";
 import Dashboard from "src/scenes/Dashboard";
 import Home from "src/scenes/Home";
 import Login from "src/scenes/Login";
-import Lists from "src/scenes/lists";
 import NotFound from "src/scenes/NotFound";
-import { loadAuth } from "src/services/auth";
-import { getIsAuthenticated, getIsLoadingAuth } from "src/services/store";
-import { useAppDispatch, useAppSelector } from "src/services/hooks";
-
-import Header from "./components/Header";
-import styles from "./App.module.scss";
+import Invites from "src/scenes/invites";
 import List from "src/scenes/list";
 import ListInvites from "src/scenes/list/invites";
-import Invites from "src/scenes/invites";
+import Lists from "src/scenes/lists";
+import { loadAuth } from "src/services/auth";
+import { useAppDispatch, useAppSelector } from "src/services/hooks";
+import { getIsAuthenticated, getIsLoadingAuth } from "src/services/store";
+
+import styles from "./App.module.scss";
+import Header from "./components/Header";
 
 const { VITE_GOOGLE_API_KEY } = import.meta.env;
 
