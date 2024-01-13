@@ -57,7 +57,7 @@ const AuthNavMenu = () => {
             sideOffset={5}
           >
             {user ? (
-              <DropdownMenu.Item className="flex justify-end text-sm pr-2 py-2 text-secondary-content">
+              <DropdownMenu.Item className="flex justify-end text-sm pr-2 py-2 text-secondary-content hover:outline-none">
                 {user.email}
               </DropdownMenu.Item>
             ) : null}

@@ -1,5 +1,4 @@
 import { SyntheticEvent, useCallback, useState } from "react";
-
 import AlertError from "ui/AlertError";
 import Button from "ui/Button";
 
@@ -44,7 +43,7 @@ export default function BookmarksForm({ onCreate }: BookmarksFormProps) {
             onChange={onUrlChange}
           />
         </div>
-        {!!url.length && <Button loading={mutation.isLoading}>Submit</Button>}
+        {!!url.length && <Button isLoading={mutation.isLoading}>Submit</Button>}
       </form>
     </>
   );

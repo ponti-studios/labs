@@ -29,7 +29,7 @@ function IdeaListItem({ idea, onDelete }: IdeaListItemProps) {
         {idea.description}
       </p>
       <Button
-        loading={mutation.isLoading}
+        isLoading={mutation.isLoading}
         className="btn btn-ghost col-start-12 flex justify-end text-red-500"
         onClick={deleteIdea}
       >

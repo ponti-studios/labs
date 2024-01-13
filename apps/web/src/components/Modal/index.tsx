@@ -1,5 +1,11 @@
 import styled from "@emotion/styled";
-import { KeyboardEvent, RefObject, forwardRef, useCallback } from "react";
+import {
+  KeyboardEvent,
+  PropsWithChildren,
+  RefObject,
+  forwardRef,
+  useCallback,
+} from "react";
 
 const StyledDialog = styled.dialog`
   position: fixed;
@@ -22,8 +28,7 @@ const StyledDialog = styled.dialog`
   }
 `;
 
-type ModalProps = {
-  children: React.ReactNode;
+type ModalProps = PropsWithChildren & {
   isOpen: boolean;
   onModalClose: () => void;
 };
@@ -42,7 +47,6 @@ function Modal(
 
   return (
     <StyledDialog
-      id="roccoModal"
       className={`modal ${isOpen ? "modal-open" : ""}`}
       ref={ref}
       onKeyDown={handleKeyDown}

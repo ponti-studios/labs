@@ -52,7 +52,7 @@ export default function IdeaForm({ onCreate }: IdeaFormProps) {
             onChange={onDescriptionChange}
           />
         </div>
-        {!!description.length && <Button loading={isLoading}>Submit</Button>}
+        {!!description.length && <Button isLoading={isLoading}>Submit</Button>}
       </form>
     </>
   );

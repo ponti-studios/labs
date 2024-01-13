@@ -30,7 +30,11 @@ const ListItem = ({
     },
   });
 
-  const onDeleteClick = async () => {
+  const onDeleteClick = async (e: React.MouseEvent) => {
+    if (e.button !== 0) {
+      return;
+    }
+
     await mutateAsync();
   };
 
@@ -41,7 +45,7 @@ const ListItem = ({
   };
 
   return (
-    <div className="card p-2 py-3 rounded-md flex flex-row bg-neutral text-primary mb-10">
+    <div className="card p-2 py-3 rounded-md flex flex-row text-primary mb-10 border-2 glass">
       <div className="flex flex-col flex-1">
         <span className="mb-2 text-lg font-semibold uppercase">
           {place.name}
@@ -50,7 +54,7 @@ const ListItem = ({
           {place.types.map((type) => (
             <span
               key={type}
-              className="bg-black rounded px-2 py-1 text-white text-xs capitalize"
+              className="bg-secondary rounded px-2 py-1 text-secondary-content text-xs capitalize"
             >
               {type.replace(/_/gi, " ")}
             </span>
@@ -59,7 +63,7 @@ const ListItem = ({
       </div>
       <button
         data-testid="delete-place-button"
-        className="flex items-center px-4 hover:cursor-pointer hover:bg-neutral-content hover:bg-opacity-10"
+        className="flex items-center px-4 rounded-md hover:cursor-pointer hover:bg-neutral-content hover:bg-opacity-10 "
         onClick={onDeleteClick}
         onKeyDown={onDeleteKeyDown}
       >
@@ -96,12 +100,12 @@ const List = () => {
             {data.userId === user.id && (
               <Link
                 to={`/lists/${data.id}/invites`}
-                className="flex gap-2 text-primary btn btn-sm btn-neutral"
+                className="flex gap-2 btn btn-primary"
               >
-                Invite others
                 <span className="text-lg hover:cursor-pointer">
                   <UserPlus />
                 </span>
+                Invite others
               </Link>
             )}
           </div>

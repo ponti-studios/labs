@@ -1,13 +1,9 @@
 import { Field, Formik } from "formik";
-import React, {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useMutation } from "react-query";
 import * as Yup from "yup";
+import Button from "ui/Button";
 
 import AuthWrap from "src/components/AuthenticationWrap";
 import FeedbackBlock from "src/components/FeedbackBlock";
@@ -16,7 +12,6 @@ import { DASHBOARD } from "src/constants/routes";
 import { loadAuth, setCurrentEmail } from "src/services/auth";
 import { getLoginEmail } from "src/services/store";
 import { authenticate } from "src/services/auth/auth.api";
-import { FormButton } from "src/components/Form/components";
 import { useAppDispatch, useAppSelector } from "src/services/hooks";
 
 const AuthenticateSchema = Yup.object().shape({
@@ -27,38 +22,32 @@ function Authenticate() {
   const loginEmail = useAppSelector(getLoginEmail);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const [error, setError] = useState<ReactNode | undefined>();
   const initialValues = useMemo(
     () => ({
       emailToken: "",
     }),
     [],
   );
-
-  const onSubmit = useCallback(
-    async ({ emailToken }) => {
-      if (loginEmail) {
-        try {
-          await authenticate({ email: loginEmail, emailToken });
-          dispatch(loadAuth());
-          dispatch(setCurrentEmail(null));
-          navigate(DASHBOARD);
-        } catch (err) {
-          console.log({ err });
-          if (err.response?.status === 401) {
-            setError(
-              <FeedbackBlock>
-                Invalid code.
-                <Link to="login"> Request a new one.</Link>
-              </FeedbackBlock>,
-            );
-          } else {
-            setError(err.response?.data?.message || "There was a problem.");
-          }
-        }
-      }
+  const { mutateAsync, isLoading, isError, error } = useMutation<
+    void,
+    { response: { message: string; status: number } },
+    { emailToken: string }
+  >({
+    mutationFn: async ({ emailToken }) => {
+      await authenticate({ email: loginEmail, emailToken });
     },
-    [dispatch, navigate, loginEmail],
+    onSuccess: () => {
+      dispatch(loadAuth());
+      dispatch(setCurrentEmail(null));
+      navigate(DASHBOARD);
+    },
+  });
+
+  const onSubmit = useMemo(
+    () => (values) => {
+      mutateAsync(values);
+    },
+    [mutateAsync],
   );
 
   useEffect(() => {
@@ -74,8 +63,16 @@ function Authenticate() {
 
   return (
     <AuthWrap>
-      <h2 className="text-2xl font-semibold mb-6">Authenticate</h2>
-      {error && <FeedbackBlock>{error}</FeedbackBlock>}
+      <h2 className="text-2xl text-primary font-semibold mb-6">Authenticate</h2>
+      {isError && error.response?.status === 401 && (
+        <FeedbackBlock>
+          Invalid code.
+          <Link to="login"> Request a new one.</Link>
+        </FeedbackBlock>
+      )}
+      {isError && error.response?.status !== 401 && (
+        <FeedbackBlock>{error.response.message}</FeedbackBlock>
+      )}
       <Formik
         validationSchema={AuthenticateSchema}
         initialValues={initialValues}
@@ -84,7 +81,9 @@ function Authenticate() {
         <Form>
           <div className="form-control w-full">
             <label className="label" htmlFor="emailToken">
-              <span className="label-text">Enter code sent to your email.</span>
+              <span className="label-text text-primary">
+                Enter code sent to your email.
+              </span>
             </label>
             <Field
               type="string"
@@ -94,7 +93,7 @@ function Authenticate() {
               placeholder="Code"
             />
           </div>
-          <FormButton>Login</FormButton>
+          <Button isLoading={isLoading}>Login</Button>
         </Form>
       </Formik>
     </AuthWrap>

@@ -1,6 +1,4 @@
-# Inspired by:
-# https://github.com/kentcdodds/kentcdodds.com/blob/main/.github/workflows/deployment.yml
-name: 🔍 Code Quality
+name: code-quality
 on:
   push:
     branches:

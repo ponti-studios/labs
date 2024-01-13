@@ -2,7 +2,7 @@ name: 🚀 API > Deploy > Prod
 
 on:
   workflow_run:
-    workflows: ["🔍 Code Quality"]
+    workflows: ["code-quality"]
     branches: [main]
     types:
       - completed

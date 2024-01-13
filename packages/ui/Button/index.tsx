@@ -1,21 +1,24 @@
-import { HTMLAttributes, ReactNode, SyntheticEvent } from "react";
+import { ButtonHTMLAttributes, ReactNode } from "react";
 
-type Props = HTMLAttributes<HTMLButtonElement> & {
+type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
   children: ReactNode;
   className?: string;
-  loading?: boolean;
-  onClick?: (e: SyntheticEvent<HTMLButtonElement>) => void;
+  isLoading?: boolean;
 };
 
-export const Button = ({ className, children, onClick, ...props }: Props) => {
+export const Button = ({ className, children, ...props }: Props) => {
   return (
     <button
-      {...(onClick && { onClick })}
-      className={`btn btn-primary ${className ?? ""} ${
-        props.loading ?? " loading"
+      className={`btn btn-primary border-none ${className ?? ""} ${
+        props.isLoading ?? " loading"
       }`}
+      {...props}
     >
-      {children}
+      {props.isLoading ? (
+        <span className="loading-dots text-black" />
+      ) : (
+        children
+      )}
     </button>
   );
 };

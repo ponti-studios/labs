@@ -1,4 +1,4 @@
-name: 🚀 Web > Deploy > Preview
+name: deploy-web-preview
 
 on:
   push:
@@ -6,13 +6,13 @@ on:
       - main
     paths: ["apps/web/**", "apps/packages/**", ".github/workflows/deploy-web-preview.yml"]
   workflow_run:
-    workflows: ["🔍 Code Quality"]
-    types:
-      - completed
+    workflows: ["code-quality"]
+    types: [completed]
 
 jobs:
-  Deploy-Preview:
+  deploy-web-preview:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - uses: actions/checkout@v3
 

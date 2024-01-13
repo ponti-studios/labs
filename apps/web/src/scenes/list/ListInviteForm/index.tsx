@@ -64,7 +64,7 @@ export default function ListInviteForm({
           />
         </div>
         {!!email.length && (
-          <Button className="mt-2 float-right w-2/5" loading={isLoading}>
+          <Button className="mt-2 float-right w-2/5" isLoading={isLoading}>
             Submit
           </Button>
         )}

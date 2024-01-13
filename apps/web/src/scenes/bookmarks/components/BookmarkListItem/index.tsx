@@ -51,7 +51,7 @@ function BookmarkListItem({ bookmark, onDelete }: BookmarkListItemProps) {
         <p className="flex-1" />
         <div className="flex justify-end items-end">
           <Button
-            loading={isLoading}
+            isLoading={isLoading}
             className="btn btn-ghost"
             onClick={onDeleteClick}
           >

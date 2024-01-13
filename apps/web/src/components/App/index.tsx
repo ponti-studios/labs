@@ -4,12 +4,12 @@ import { Route, Routes } from "react-router-dom";
 import Loading from "ui/Loading";
 
 import * as ROUTES from "src/constants/routes";
-import Account from "src/scenes/Account";
-import Authenticate from "src/scenes/Authenticate";
-import Dashboard from "src/scenes/Dashboard";
+import Account from "src/scenes/account";
+import Authenticate from "src/scenes/login/scenes/authenticate";
+import Dashboard from "src/scenes/dashboard";
 import Home from "src/scenes/Home";
-import Login from "src/scenes/Login";
-import NotFound from "src/scenes/NotFound";
+import Login from "src/scenes/login";
+import NotFound from "src/scenes/not-found";
 import Invites from "src/scenes/invites";
 import List from "src/scenes/list";
 import ListInvites from "src/scenes/list/invites";
