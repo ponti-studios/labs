@@ -121,7 +121,7 @@ function PlacesAutocomplete({
           <MagnifyingGlassIcon height={24} width={24} />
         </InputWrap>
         {
-          <Options className="bg-slate-600">
+          <Options className="bg-white">
             {!ready || loading ? (
               <LoadingWrap>
                 <Loading />

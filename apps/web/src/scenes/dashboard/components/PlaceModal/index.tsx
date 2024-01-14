@@ -7,7 +7,6 @@ import AddPlaceToList from "./AddPlaceToList";
 import PlaceStatus from "./PlaceStatus";
 import PlacePhotos from "./PlacePhotos";
 import PlaceAddress from "./PlaceAddress";
-import { useGetLists } from "src/services/api";
 import PlacePriceLevel from "./PlacePriceLevel";
 import PlaceWebsite from "./PlaceWebsite";
 
@@ -35,11 +34,6 @@ function PlaceModal(
 ) {
   const type = place && place.types[0] && place.types[0].split("_")[0];
   const [isListSelectOpen, setIsListSelectOpen] = useState(false);
-  const { isLoading: isListsLoading, data: lists } = useGetLists({
-    options: {
-      enabled: isListSelectOpen,
-    },
-  });
 
   const onAddToList = () => {
     setIsListSelectOpen(true);
@@ -50,9 +44,11 @@ function PlaceModal(
     onModalClose();
   };
 
+  if (!place) return null;
+
   return (
     <Modal isOpen={isOpen} onModalClose={onModalClose} ref={ref}>
-      {place && (
+      {!isListSelectOpen && (
         <div className="mt-3">
           <PlacePhotos alt={place.name} photos={place.photos} />
           <div className="mt-4">
@@ -76,18 +72,16 @@ function PlaceModal(
             )}
             {place.website && <PlaceWebsite website={place.website} />}
           </div>
+          <div className="modal-action">
+            <button className="btn" onClick={onAddToList}>
+              Add to list
+            </button>
+          </div>
         </div>
       )}
-      {!isListSelectOpen && (
-        <div className="modal-action">
-          <button className="btn" onClick={onAddToList}>
-            Add to list
-          </button>
-        </div>
-      )}
-      {isListSelectOpen && !isListsLoading && (
+      {isListSelectOpen && (
         <AddPlaceToList
-          lists={lists}
+          cancel={() => setIsListSelectOpen(false)}
           place={place}
           onSuccess={onAddToListSuccess}
         />

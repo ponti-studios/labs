@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { useState } from "react";
+import { useGetLists } from "src/services/api";
 import { useAddLocationToList } from "src/services/api/locations";
-import { List } from "src/services/types";
 
 const ListItem = styled.li`
   padding: 8px;
@@ -24,14 +24,15 @@ const Checkbox = styled.label`
   justify-content: space-between;
 `;
 const AddPlaceToList = ({
-  lists,
+  cancel,
   onSuccess,
   place,
 }: {
-  lists: List[];
+  cancel: () => void;
   onSuccess: () => void;
   place: google.maps.places.PlaceResult;
 }) => {
+  const { isLoading, data: lists } = useGetLists();
   const [listIds, setListIds] = useState<string[]>([]);
   const { mutate: addToList } = useAddLocationToList({
     onSuccess: () => {
@@ -55,30 +56,46 @@ const AddPlaceToList = ({
 
   // List of lists displaying their name and a round checkbox that when clicked adds the list to the listIds array
   return (
-    <ul className="list-none mt-8">
-      {lists.map((list) => (
-        <ListItem
-          key={list.id}
-          className="border-accent border hover:cursor-pointer"
-        >
-          <Checkbox htmlFor={list.id} className="hover:cursor-pointer">
-            <input
-              type="checkbox"
-              id={list.id}
-              value={list.id}
-              onChange={onListSelectChange}
-            />
-            {list.name}
-          </Checkbox>
-        </ListItem>
-      ))}
-      <button
-        className="btn btn-primary float-right mt-4"
-        onClick={onAddToList}
-      >
-        Add to list
-      </button>
-    </ul>
+    <div>
+      <h2 className="text-xl font-bold">Add to lists</h2>
+      <p>Select the lists you want to add this place to.</p>
+      <hr className="my-6" />
+      {isLoading ? (
+        <div className="flex items-center justify-center h-16">
+          <div className="loading loading-infinity w-14" />
+        </div>
+      ) : (
+        <ul className="list-none">
+          {lists.map((list) => (
+            <ListItem key={list.id} className="border hover:cursor-pointer">
+              <Checkbox htmlFor={list.id} className="hover:cursor-pointer">
+                <input
+                  type="checkbox"
+                  id={list.id}
+                  value={list.id}
+                  onChange={onListSelectChange}
+                />
+                {list.name}
+              </Checkbox>
+            </ListItem>
+          ))}
+          <div className="flex items-center justify-between mt-4">
+            <button
+              className="btn btn-primary float-right mt-4 btn-outline"
+              onClick={cancel}
+            >
+              Back
+            </button>
+            <button
+              className="btn btn-primary float-right mt-4"
+              onClick={onAddToList}
+            >
+              Add to lists
+            </button>
+          </div>
+        </ul>
+      )}
+    </div>
   );
 };
 
