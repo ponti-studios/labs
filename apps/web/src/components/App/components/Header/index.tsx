@@ -25,7 +25,7 @@ function Header() {
         <AuthNavMenu />
       ) : (
         <NavMenuItem>
-          <Link to={LOGIN} className="btn btn-primary">
+          <Link to={LOGIN} className="btn btn-primary text-white">
             Log In
           </Link>
         </NavMenuItem>

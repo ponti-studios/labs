@@ -1,6 +1,6 @@
 describe("landing flow", () => {
   it("should load", () => {
     cy.visit("http://localhost:5001");
-    cy.contains("the world is yours").should("be.visible");
+    cy.contains("Make the world yours").should("be.visible");
   });
 });

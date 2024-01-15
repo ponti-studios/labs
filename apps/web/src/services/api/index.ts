@@ -10,10 +10,9 @@ import { User } from "../auth";
 import { List, ListInvite, UserList } from "../types";
 import { api, baseURL } from "./base";
 
-type InboundInvitesResponse = (ListInvite & { list: List; user: User })[];
-export const useListInvites = ({ listId }: { listId: string }) => {
-  return useQuery<InboundInvitesResponse>("inboundInvites", async () => {
-    const res = await api.get(`${baseURL}/lists/${listId}/invites`);
+export const useGetInvites = () => {
+  return useQuery<ListInvite[]>("invites", async () => {
+    const res = await api.get(`${baseURL}/invites`);
     return res.data;
   });
 };
@@ -42,13 +41,6 @@ type ListInvitesResponse = (ListInvite & { list: List })[];
 export const useGetListInvites = (id: string) => {
   return useQuery<ListInvitesResponse>("listInvites", async () => {
     const res = await api.get(`${baseURL}/lists/${id}/invites`);
-    return res.data;
-  });
-};
-
-export const useGetInvites = () => {
-  return useQuery<ListInvite[]>("invites", async () => {
-    const res = await api.get(`${baseURL}/invites`);
     return res.data;
   });
 };

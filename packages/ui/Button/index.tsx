@@ -9,13 +9,11 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
 export const Button = ({ className, children, ...props }: Props) => {
   return (
     <button
-      className={`btn btn-primary border-none ${className ?? ""} ${
-        props.isLoading ?? " loading"
-      }`}
+      className={`btn btn-primary text-white border-none ${className ?? ""}`}
       {...props}
     >
       {props.isLoading ? (
-        <span className="loading-dots text-black" />
+        <span className="loading-dots loading-md bg-white h-6" />
       ) : (
         children
       )}

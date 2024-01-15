@@ -1,7 +1,7 @@
 import { useMutation } from "react-query";
 import api from ".";
 
-export const useAddLocationToList = (options) => {
+export const useAddPlaceToList = (options) => {
   return useMutation(
     ({
       listIds,

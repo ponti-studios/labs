@@ -1,7 +1,8 @@
 import styled from "@emotion/styled";
 import { useState } from "react";
 import { useGetLists } from "src/services/api";
-import { useAddLocationToList } from "src/services/api/locations";
+import { useAddPlaceToList } from "src/services/api/places";
+import Button from "ui/Button";
 
 const ListItem = styled.li`
   padding: 8px;
@@ -34,7 +35,7 @@ const AddPlaceToList = ({
 }) => {
   const { isLoading, data: lists } = useGetLists();
   const [listIds, setListIds] = useState<string[]>([]);
-  const { mutate: addToList } = useAddLocationToList({
+  const { mutate: addToList, isLoading: isAddingToList } = useAddPlaceToList({
     onSuccess: () => {
       onSuccess?.();
     },
@@ -80,18 +81,16 @@ const AddPlaceToList = ({
             </ListItem>
           ))}
           <div className="flex items-center justify-between mt-4">
-            <button
-              className="btn btn-primary float-right mt-4 btn-outline"
-              onClick={cancel}
-            >
+            <Button className="btn-outline" onClick={cancel}>
               Back
-            </button>
-            <button
-              className="btn btn-primary float-right mt-4"
+            </Button>
+            <Button
+              className="float-right"
+              isLoading={isAddingToList}
               onClick={onAddToList}
             >
               Add to lists
-            </button>
+            </Button>
           </div>
         </ul>
       )}

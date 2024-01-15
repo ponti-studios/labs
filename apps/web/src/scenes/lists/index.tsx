@@ -40,19 +40,19 @@ const Lists = () => {
         {data && data.length > 0 && (
           <ul className="space-y-2">
             {data.map((list) => (
-              <li
-                key={list.id}
-                className="card shadow-md p-3 text-lg bg-primary rounded-md"
-              >
-                <Link to={`/list/${list.id}`} className="text-primary-content">
+              <li key={list.id} className="flex">
+                <Link
+                  className="flex justify-between items-center p-3 text-lg border rounded-md w-full"
+                  to={`/list/${list.id}`}
+                >
                   {list.name}
+                  {/* Only display list owner if the list does not belong to current user */}
+                  {list.createdBy && list.createdBy.email !== user?.email ? (
+                    <p className="text-xs text-gray-400">
+                      {list.createdBy.email}
+                    </p>
+                  ) : null}
                 </Link>
-                {/* Only display list owner if the list does not belong to current user */}
-                {list.createdBy && list.createdBy.email !== user?.email ? (
-                  <p className="text-xs text-gray-400">
-                    {list.createdBy.email}
-                  </p>
-                ) : null}
               </li>
             ))}
           </ul>

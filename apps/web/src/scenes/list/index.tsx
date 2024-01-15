@@ -51,14 +51,31 @@ const ListItem = ({
           {place.name}
         </span>
         <div className="flex gap-2">
-          {place.types.map((type) => (
-            <span
-              key={type}
-              className="bg-secondary rounded px-2 py-1 text-secondary-content text-xs capitalize"
-            >
-              {type.replace(/_/gi, " ")}
-            </span>
-          ))}
+          {place.types
+            .filter((type) => {
+              console.log(place.name, place.types);
+              if (
+                place.types.every((type) =>
+                  ["establishment", "point_of_interest"].includes(type),
+                ) &&
+                type === "point_of_interest"
+              ) {
+                return true;
+              }
+              return (
+                ["establishment", "food", "point_of_interest"].includes(
+                  type,
+                ) === false
+              );
+            })
+            .map((type) => (
+              <span
+                key={type}
+                className="bg-secondary rounded px-2 py-1 text-white text-xs capitalize"
+              >
+                {type.replace(/_/gi, " ")}
+              </span>
+            ))}
         </div>
       </div>
       <button
@@ -95,14 +112,14 @@ const List = () => {
       {data && (
         <div className="flex flex-col px-0.5">
           <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-semibold text-white">{data.name}</h1>
+            <h1 className="text-3xl font-semibold">{data.name}</h1>
             {/* Only list owners can invite others. */}
             {data.userId === user.id && (
               <Link
                 to={`/lists/${data.id}/invites`}
-                className="flex gap-2 btn btn-primary"
+                className="flex gap-2 btn btn-primary text-white"
               >
-                <span className="text-lg hover:cursor-pointer">
+                <span className="hover:cursor-pointer">
                   <UserPlus />
                 </span>
                 Invite others
