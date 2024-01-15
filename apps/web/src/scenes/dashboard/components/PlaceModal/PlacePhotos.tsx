@@ -8,13 +8,13 @@ const PlacePhotos = ({ alt, photos }: Props) => {
   }
 
   return (
-    <div className="flex overflow-x-auto w-full rounded-[4px]">
+    <div className="flex overflow-x-auto w-full rounded border-2 border-secondary">
       {photos.map((photo) => (
         <img
           key={photo.getUrl()}
           src={photo.getUrl()}
           alt={alt}
-          className="w-64 h-64 object-cover object-top"
+          className="w-[300px] h-[300px] object-cover object-top"
         />
       ))}
     </div>

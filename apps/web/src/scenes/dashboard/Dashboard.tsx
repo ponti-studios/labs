@@ -46,7 +46,6 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
     const place = await getDetails({ placeId: args.placeId });
 
     if (!place || typeof place === "string") {
-      console.log("This location could not be found.");
       return;
     }
 

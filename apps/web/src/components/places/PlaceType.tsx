@@ -6,9 +6,9 @@ const PlaceType = ({
 }: HTMLAttributes<HTMLSpanElement>) => {
   return (
     <span
-      className={`inline-block bg-secondary rounded-md px-3 py-1 text-sm font-semibold text-primary-content mr-2 ${className}`}
+      className={`bg-secondary rounded px-3 py-1 text-white text-xs capitalize ${className}`}
     >
-      # {children}
+      {children}
     </span>
   );
 };

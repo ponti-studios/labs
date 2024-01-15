@@ -1,5 +1,6 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
 import { TrashIcon } from "@radix-ui/react-icons";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useMutation } from "react-query";
 
 import AlertError from "ui/AlertError";
 import UserPlus from "ui/Icons/UserPlus";
@@ -9,8 +10,9 @@ import DashboardWrap from "src/components/DashboardWrap";
 import api, { ListPlace, useGetList } from "src/services/api";
 import { useAppSelector } from "src/services/hooks";
 import { getUser } from "src/services/store";
-import { useMutation } from "react-query";
 import { baseURL } from "src/services/api/base";
+
+import PlaceTypes from "../../components/places/PlaceTypes";
 
 const ListItem = ({
   listId,
@@ -50,33 +52,7 @@ const ListItem = ({
         <span className="mb-2 text-lg font-semibold uppercase">
           {place.name}
         </span>
-        <div className="flex gap-2">
-          {place.types
-            .filter((type) => {
-              console.log(place.name, place.types);
-              if (
-                place.types.every((type) =>
-                  ["establishment", "point_of_interest"].includes(type),
-                ) &&
-                type === "point_of_interest"
-              ) {
-                return true;
-              }
-              return (
-                ["establishment", "food", "point_of_interest"].includes(
-                  type,
-                ) === false
-              );
-            })
-            .map((type) => (
-              <span
-                key={type}
-                className="bg-secondary rounded px-2 py-1 text-white text-xs capitalize"
-              >
-                {type.replace(/_/gi, " ")}
-              </span>
-            ))}
-        </div>
+        <PlaceTypes types={place.types} />
       </div>
       <button
         data-testid="delete-place-button"

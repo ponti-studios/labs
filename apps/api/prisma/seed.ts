@@ -7,7 +7,7 @@ async function main() {
   await prisma.token.deleteMany({});
   await prisma.user.deleteMany({});
 
-  const [grace, jeff] = await Promise.all([
+  await Promise.all([
     prisma.user.create({
       data: {
         email: "grace@hey.com",
@@ -21,8 +21,6 @@ async function main() {
       },
     }),
   ]);
-
-  console.log("Users", { grace, jeff });
 }
 
 main()

@@ -23,9 +23,12 @@ function NotFound() {
 
   return (
     <div className={styles.wrap}>
-      <h1 className="text-3xl font-semibold mb-4">You seem to be lost!</h1>
-      <Link to="/" className="font-semibold btn btn-primary max-w-[150px]">
-        Go back home
+      <h1 className="text-3xl font-semibold mb-16">You seem to be lost!</h1>
+      <Link
+        to="/"
+        className="font-semibold btn btn-primary max-w-[150px] text-white"
+      >
+        Go home
       </Link>
     </div>
   );

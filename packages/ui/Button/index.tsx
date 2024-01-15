@@ -6,13 +6,13 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
   isLoading?: boolean;
 };
 
-export const Button = ({ className, children, ...props }: Props) => {
+export const Button = ({ className, children, isLoading, ...props }: Props) => {
   return (
     <button
       className={`btn btn-primary text-white border-none ${className ?? ""}`}
       {...props}
     >
-      {props.isLoading ? (
+      {isLoading ? (
         <span className="loading-dots loading-md bg-white h-6" />
       ) : (
         children

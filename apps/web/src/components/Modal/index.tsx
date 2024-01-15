@@ -58,7 +58,7 @@ function Modal(
         >
           ✕
         </button>
-        {children}
+        <div className="mt-6">{children}</div>
       </form>
     </StyledDialog>
   );

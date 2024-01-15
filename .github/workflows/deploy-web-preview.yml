@@ -6,6 +6,7 @@ on:
       - main
     paths: ["apps/web/**", "apps/packages/**", ".github/workflows/deploy-web-preview.yml"]
   workflow_run:
+    branches-ignore: [main]
     workflows: ["code-quality"]
     types: [completed]
 
