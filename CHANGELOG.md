@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/theponti/rocco/compare/v1.4.0...v1.4.1) (2024-01-15)
+
+
+### Bug Fixes
+
+* do not deploy preview on main ([#37](https://github.com/theponti/rocco/issues/37)) ([1bc38fb](https://github.com/theponti/rocco/commit/1bc38fb088218e8c7cf5c76533d99f85b908366b))
+
 ## [1.4.0](https://github.com/theponti/rocco/compare/v1.3.0...v1.4.0) (2023-12-30)
 
 
