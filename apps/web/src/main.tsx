@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter as Router } from "react-router-dom";
+import { APIProvider } from "@vis.gl/react-google-maps";
 
 import "./index.css";
 import App from "./components/App";
@@ -23,7 +24,9 @@ root.render(
     <Router>
       <Provider store={store}>
         <QueryClientProvider client={queryClient}>
-          <App />
+          <APIProvider apiKey={import.meta.env.VITE_GOOGLE_API_KEY}>
+            <App />
+          </APIProvider>
         </QueryClientProvider>
       </Provider>
     </Router>

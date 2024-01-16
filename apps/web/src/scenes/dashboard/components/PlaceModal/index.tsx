@@ -4,13 +4,14 @@ import Modal from "src/components/Modal";
 import Button from "ui/Button";
 import Typography from "ui/Typography";
 
+import PlaceTypes from "src/components/places/PlaceTypes";
+import PlaceStatus from "src/components/PlaceModal/PlaceStatus";
+import PlaceAddress from "src/components/PlaceModal/PlaceAddress";
+import PlacePriceLevel from "src/components/PlaceModal/PlacePriceLevel";
+import PlaceWebsite from "src/components/PlaceModal/PlaceWebsite";
+
+import PlacePhotos from "src/components/places/PlacePhotos";
 import AddPlaceToList from "./AddPlaceToList";
-import PlaceStatus from "./PlaceStatus";
-import PlacePhotos from "./PlacePhotos";
-import PlaceAddress from "./PlaceAddress";
-import PlacePriceLevel from "./PlacePriceLevel";
-import PlaceWebsite from "./PlaceWebsite";
-import PlaceTypes from "../../../../components/places/PlaceTypes";
 
 const PlaceRating = ({ place }: { place: google.maps.places.PlaceResult }) => {
   return (
