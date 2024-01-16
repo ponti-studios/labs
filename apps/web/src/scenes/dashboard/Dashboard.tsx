@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useState } from "react";
 
 import { getDetails } from "use-places-autocomplete";
 
@@ -8,8 +8,9 @@ import Loading from "ui/Loading";
 import { mediaQueries } from "src/constants/styles";
 
 import PlacesAutocomplete from "./components/PlacesAutocomplete";
-import PlaceModal from "./components/PlaceModal";
 import Map from "./components/Map";
+import { useAppDispatch } from "src/services/hooks";
+import { openPlaceModal } from "src/services/store";
 
 const Wrap = styled.div`
   display: flex;
@@ -39,22 +40,32 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
   const [selected, setSelected] =
     useState<google.maps.places.PlaceResult | null>(null);
   const [center, setCenter] = useState(DEFAULT_CENTER);
-  const modalRef = useRef<HTMLDialogElement | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const dispatch = useAppDispatch();
 
-  const onMapClick = useCallback(async (args) => {
-    const place = await getDetails({ placeId: args.placeId });
+  const onMapClick = useCallback(
+    async (args) => {
+      const place = await getDetails({ placeId: args.placeId });
 
-    if (!place || typeof place === "string") {
-      return;
-    }
+      if (!place || typeof place === "string") {
+        return;
+      }
 
-    // Select the clicked location
-    setSelected(place);
-    setCenter(args.latLng.toJSON());
-    setZoom(ZOOM_LEVELS.MARKER);
-    setIsModalOpen(true);
-  }, []);
+      // Select the clicked location
+      setSelected(place);
+      setCenter(args.latLng.toJSON());
+      setZoom(ZOOM_LEVELS.MARKER);
+      dispatch(
+        openPlaceModal({
+          onClose: () => {
+            setSelected(null);
+            setZoom(ZOOM_LEVELS.SELECTED);
+          },
+          place,
+        }),
+      );
+    },
+    [dispatch],
+  );
 
   const onSelectedChanged = useCallback(
     (place: google.maps.places.PlaceResult) => {
@@ -70,18 +81,18 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
   );
 
   const onMarkerClick = useCallback(() => {
-    modalRef.current?.showModal();
     // The map should zoom slightly when the marker is clicked
     setZoom(ZOOM_LEVELS.MARKER);
-    setIsModalOpen(true);
-  }, [modalRef]);
-
-  const onModalClose = useCallback(() => {
-    modalRef.current?.close();
-    setSelected(null);
-    setIsModalOpen(false);
-    setZoom(ZOOM_LEVELS.SELECTED);
-  }, []);
+    dispatch(
+      openPlaceModal({
+        onClose: () => {
+          setSelected(null);
+          setZoom(ZOOM_LEVELS.SELECTED);
+        },
+        place: selected,
+      }),
+    );
+  }, [dispatch, selected]);
 
   if (!isMapLoaded) {
     return (
@@ -103,12 +114,6 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
         onMarkerClick={onMarkerClick}
         selected={selected}
         setSelected={setSelected}
-      />
-      <PlaceModal
-        isOpen={isModalOpen}
-        place={selected}
-        onModalClose={onModalClose}
-        ref={modalRef}
       />
     </Wrap>
   );

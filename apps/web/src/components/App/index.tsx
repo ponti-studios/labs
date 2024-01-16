@@ -20,6 +20,7 @@ import { getIsAuthenticated, getIsLoadingAuth } from "src/services/store";
 
 import styles from "./App.module.scss";
 import Header from "./components/Header";
+import PlaceModal from "../PlaceModal";
 
 const { VITE_GOOGLE_API_KEY } = import.meta.env;
 
@@ -29,7 +30,9 @@ function App() {
   const authRef = useRef<boolean>(false);
   const isLoadingAuth = useAppSelector(getIsLoadingAuth);
   const isAuthenticated = useAppSelector(getIsAuthenticated);
+  const placeModalState = useAppSelector((state) => state.placeModal);
   const dispatch = useAppDispatch();
+  const modalRef = useRef<HTMLDialogElement | null>(null);
   const { isLoaded: isMapLoaded } = useLoadScript({
     googleMapsApiKey: VITE_GOOGLE_API_KEY,
     libraries: LIBRARIES as any, // eslint-disable-line
@@ -76,6 +79,12 @@ function App() {
           )}
           <Route path={ROUTES.WILDCARD} element={<NotFound />} />
         </Routes>
+        <PlaceModal
+          isOpen={placeModalState.isOpen}
+          place={placeModalState.place}
+          onModalClose={placeModalState.onClose}
+          ref={modalRef}
+        />
       </main>
     </div>
   );
