@@ -37,10 +37,6 @@ button {
   line-height: 1;
   user-select: none;
   outline: none;
-
-  &.pt-0 {
-    padding-top: 0;
-  }
 }
 
 .DropdownMenuSubTrigger[data-state="open"] {
