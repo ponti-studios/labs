@@ -1,6 +1,4 @@
 import { TrashIcon } from "@radix-ui/react-icons";
-import { useMapsLibrary } from "@vis.gl/react-google-maps";
-import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useMutation } from "react-query";
 
@@ -14,21 +12,7 @@ import api, { ListPlace, useGetList } from "src/services/api";
 import { useAppDispatch, useAppSelector } from "src/services/hooks";
 import { getUser, openPlaceModal } from "src/services/store";
 import { baseURL } from "src/services/api/base";
-
-function usePlacesService() {
-  const placesLibrary = useMapsLibrary("places");
-  const [placesService, setPlacesService] = useState(null);
-
-  useEffect(() => {
-    if (!placesLibrary) return;
-
-    setPlacesService(
-      new placesLibrary.PlacesService(document.createElement("div")),
-    );
-  }, [placesLibrary]);
-
-  return placesService;
-}
+import { usePlacesService } from "src/services/google-maps";
 
 const ListItem = ({
   listId,

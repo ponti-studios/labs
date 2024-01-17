@@ -1,4 +1,4 @@
-import { useLoadScript } from "@react-google-maps/api";
+import { useApiIsLoaded } from "@vis.gl/react-google-maps";
 import { useEffect, useRef } from "react";
 import { Route, Routes } from "react-router-dom";
 import Loading from "ui/Loading";
@@ -22,10 +22,6 @@ import styles from "./App.module.scss";
 import Header from "./components/Header";
 import PlaceModal from "../PlaceModal";
 
-const { VITE_GOOGLE_API_KEY } = import.meta.env;
-
-const LIBRARIES = ["places"];
-
 function App() {
   const authRef = useRef<boolean>(false);
   const isLoadingAuth = useAppSelector(getIsLoadingAuth);
@@ -33,10 +29,7 @@ function App() {
   const placeModalState = useAppSelector((state) => state.placeModal);
   const dispatch = useAppDispatch();
   const modalRef = useRef<HTMLDialogElement | null>(null);
-  const { isLoaded: isMapLoaded } = useLoadScript({
-    googleMapsApiKey: VITE_GOOGLE_API_KEY,
-    libraries: LIBRARIES as any, // eslint-disable-line
-  });
+  const isMapLoaded = useApiIsLoaded();
 
   useEffect(() => {
     if (authRef.current === false) {

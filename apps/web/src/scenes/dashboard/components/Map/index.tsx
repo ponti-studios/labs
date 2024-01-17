@@ -1,14 +1,15 @@
-import { GoogleMap, Marker } from "@react-google-maps/api";
+import { Map as GoogleMap, Marker } from "@vis.gl/react-google-maps";
 import { useCallback } from "react";
 
 import styles from "./Map.module.css";
+import { MapMouseEvent } from "@vis.gl/react-google-maps/dist/components/map/use-map-events";
 
 type MapProps = {
   setSelected: (place: google.maps.places.PlaceResult) => void;
   selected: google.maps.places.PlaceResult | null;
   zoom: number;
   center: google.maps.LatLngLiteral;
-  onMapClick: (e: google.maps.MapMouseEvent) => void;
+  onMapClick: (event: MapMouseEvent) => void;
   onMarkerClick: () => void;
 };
 const Map = ({
@@ -19,28 +20,29 @@ const Map = ({
   selected,
   setSelected,
 }: MapProps) => {
-  const onMapLoad = useCallback(
-    (map) => {
-      map?.addListener("click", (event) => {
-        // Remove currently selected marker
-        setSelected(null);
+  const onClick = useCallback(
+    (event: MapMouseEvent) => {
+      const { placeId } = event.detail;
 
-        // Hide info window
-        if (event.placeId) {
-          if (event?.stop) event.stop();
-        }
-      });
+      // Remove currently selected marker
+      setSelected(null);
+
+      // Hide info window
+      if (placeId) {
+        if (event?.stop) event.stop();
+      }
+
+      onMapClick(event);
     },
-    [setSelected],
+    [onMapClick, setSelected],
   );
 
   return (
     <GoogleMap
       zoom={zoom}
       center={center}
-      onClick={onMapClick}
-      onLoad={onMapLoad}
-      mapContainerClassName={styles.mapContainer}
+      onClick={onClick}
+      className={styles.mapContainer}
     >
       {selected && <Marker position={center} onClick={onMarkerClick} />}
     </GoogleMap>

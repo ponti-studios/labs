@@ -1,16 +1,15 @@
 import styled from "@emotion/styled";
+import { MapMouseEvent } from "@vis.gl/react-google-maps/dist/components/map/use-map-events";
 import React, { useCallback, useState } from "react";
-
-import { getDetails } from "use-places-autocomplete";
-
 import Loading from "ui/Loading";
 
 import { mediaQueries } from "src/constants/styles";
-
-import PlacesAutocomplete from "./components/PlacesAutocomplete";
-import Map from "./components/Map";
 import { useAppDispatch } from "src/services/hooks";
 import { openPlaceModal } from "src/services/store";
+import { usePlacesService } from "src/services/google-maps";
+
+import Map from "./components/Map";
+import PlacesAutocomplete from "./components/PlacesAutocomplete";
 
 const Wrap = styled.div`
   display: flex;
@@ -41,10 +40,19 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
     useState<google.maps.places.PlaceResult | null>(null);
   const [center, setCenter] = useState(DEFAULT_CENTER);
   const dispatch = useAppDispatch();
+  const placesService = usePlacesService();
 
   const onMapClick = useCallback(
-    async (args) => {
-      const place = await getDetails({ placeId: args.placeId });
+    async (args: MapMouseEvent) => {
+      const { placeId, latLng } = args.detail;
+      const place = await new Promise((res) => {
+        placesService.getDetails({ placeId }, (place, status) => {
+          if (status !== google.maps.places.PlacesServiceStatus.OK) {
+            res(null);
+          }
+          res(place);
+        });
+      });
 
       if (!place || typeof place === "string") {
         return;
@@ -52,7 +60,7 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
 
       // Select the clicked location
       setSelected(place);
-      setCenter(args.latLng.toJSON());
+      setCenter(latLng);
       setZoom(ZOOM_LEVELS.MARKER);
       dispatch(
         openPlaceModal({
@@ -64,7 +72,7 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
         }),
       );
     },
-    [dispatch],
+    [dispatch, placesService],
   );
 
   const onSelectedChanged = useCallback(

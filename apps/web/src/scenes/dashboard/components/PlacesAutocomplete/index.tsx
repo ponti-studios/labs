@@ -1,10 +1,11 @@
-import React, { useCallback, useState } from "react";
+import styled from "@emotion/styled";
 import { Combobox } from "@headlessui/react";
-import usePlacesAutocomplete, { getDetails } from "use-places-autocomplete";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import React, { useCallback, useState } from "react";
+import { useQuery } from "react-query";
 
 import Loading from "ui/Loading";
-import styled from "@emotion/styled";
+import { usePlacesService } from "src/services/google-maps";
 
 const Wrapper = styled.div`
   max-height: 48px; // This is the maximum height of the input field.
@@ -73,28 +74,70 @@ function PlacesAutocomplete({
 }: {
   setSelected: (place: google.maps.places.PlaceResult) => void;
 }) {
-  const {
-    ready,
-    value,
-    setValue,
-    suggestions: { data, loading },
-  } = usePlacesAutocomplete({
-    debounce: 500,
-  });
+  const placesService = usePlacesService();
+  const [value, setValue] = useState("");
   const [error, setError] = useState(null);
+  const [suggestions, setSuggestions] = useState<
+    google.maps.places.PlaceResult[]
+  >([]);
+  const { isLoading, refetch } = useQuery<google.maps.places.PlaceResult[]>({
+    queryKey: ["placeDetails", value],
+    queryFn: () =>
+      new Promise((resolve) => {
+        placesService.findPlaceFromQuery(
+          {
+            query: value,
+            fields: ["formatted_address", "geometry", "name", "place_id"],
+          },
+          (response) => {
+            if (!response) resolve([]);
+            resolve(response);
+          },
+        );
+      }),
+    onSuccess: (data) => {
+      setSuggestions(data);
+    },
+    enabled: !!value,
+    retry: false,
+    onError: (err) => {
+      setError(err);
+    },
+  });
 
   const onInputChange = useCallback(
     (e) => {
+      if (!placesService) return;
+
+      if (!e.target.value) {
+        setSuggestions([]);
+        return;
+      }
+
       setValue(e.target.value);
+
+      refetch();
     },
-    [setValue],
+    [placesService, refetch, setValue],
   );
 
   const handleSelect = useCallback(
     async (suggestion) => {
-      setValue(suggestion.description, false);
+      setValue(suggestion.description);
       try {
-        const details = await getDetails({ placeId: suggestion.place_id });
+        const details =
+          await new Promise<google.maps.places.PlaceResult | null>(
+            (resolve) => {
+              placesService.getDetails(
+                { placeId: suggestion.place_id },
+                (place) => {
+                  if (!place) resolve(null);
+                  resolve(place);
+                },
+              );
+            },
+          );
+
         if (!details || typeof details === "string") {
           throw new Error("This location could not be found.");
         }
@@ -106,9 +149,10 @@ function PlacesAutocomplete({
         setError(err);
       }
     },
-    [setSelected, setValue],
+    [placesService, setSelected, setValue],
   );
 
+  console.log({ suggestions });
   return (
     <Wrapper>
       {error && <div>{error}</div>}
@@ -122,22 +166,23 @@ function PlacesAutocomplete({
         </InputWrap>
         {
           <Options className="bg-white">
-            {!ready || loading ? (
+            {isLoading ? (
               <LoadingWrap>
                 <Loading />
               </LoadingWrap>
             ) : (
-              data.map(
-                (suggestion: google.maps.places.AutocompletePrediction) => (
-                  <Option
-                    key={suggestion.place_id}
-                    value={suggestion}
-                    className="truncate text-primary"
-                  >
-                    {suggestion.description}
-                  </Option>
-                ),
-              )
+              suggestions.map((suggestion) => (
+                <Option
+                  key={suggestion.place_id}
+                  value={suggestion}
+                  className="truncate text-primary"
+                >
+                  {suggestion.name},{" "}
+                  <span className="text-primary-content">
+                    {suggestion.formatted_address}
+                  </span>
+                </Option>
+              ))
             )}
           </Options>
         }
