@@ -10,8 +10,8 @@ import Form from "src/components/Form";
 import { LANDING } from "src/constants/routes";
 import api from "src/services/api";
 import { setCurrentEmail } from "src/services/auth";
-import { useAppDispatch, useAppSelector } from "src/services/hooks";
-import { getUser } from "src/services/store";
+import { useAppDispatch } from "src/services/hooks";
+import { useAuth } from "src/services/store";
 import Button from "ui/Button";
 
 const LoginSchema = Yup.object().shape({
@@ -20,7 +20,7 @@ const LoginSchema = Yup.object().shape({
 
 function Login() {
   const dispatch = useAppDispatch();
-  const user = useAppSelector(getUser);
+  const { user } = useAuth();
   const navigate = useNavigate();
   const initialValues = useMemo(
     () => ({

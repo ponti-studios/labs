@@ -11,7 +11,6 @@ const StyledDialog = styled.dialog`
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 100;
   width: 100vw;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0);
@@ -47,7 +46,7 @@ function Modal(
 
   return (
     <StyledDialog
-      className={`modal ${isOpen ? "modal-open" : ""}`}
+      className={`modal z-40 ${isOpen ? "modal-open" : ""}`}
       ref={ref}
       onKeyDown={handleKeyDown}
     >

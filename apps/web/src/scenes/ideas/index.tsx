@@ -3,15 +3,14 @@ import LoadingScene from "ui/Loading";
 
 import DashboardWrap from "src/components/DashboardWrap";
 import { useGetIdeas } from "src/services/api/ideas";
-import { useAppSelector } from "src/services/hooks";
-import { getUser } from "src/services/store";
+import { useAuth } from "src/services/store";
 
 import IdeaForm from "./IdeaForm";
 import IdeaListItem from "./IdeaListItem";
 
 const Ideas = () => {
   const navigate = useNavigate();
-  const user = useAppSelector(getUser);
+  const { user } = useAuth();
   const { data, refetch, status: ideasStatus } = useGetIdeas();
 
   if (!user) {

@@ -4,8 +4,7 @@ import LoadingScene from "ui/Loading";
 import DashboardWrap from "src/components/DashboardWrap";
 import FeedbackBlock from "src/components/FeedbackBlock";
 import { useGetLists } from "src/services/api";
-import { useAppSelector } from "src/services/hooks";
-import { getUser } from "src/services/store";
+import { useAuth } from "src/services/store";
 
 import ListForm from "./components/ListForm";
 
@@ -22,7 +21,7 @@ const NoResults = () => {
 
 const Lists = () => {
   const navigate = useNavigate();
-  const user = useAppSelector(getUser);
+  const { user } = useAuth();
   const { data, error, refetch, status: listsStatus } = useGetLists();
 
   if (!user) {

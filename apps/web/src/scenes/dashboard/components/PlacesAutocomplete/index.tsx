@@ -152,7 +152,6 @@ function PlacesAutocomplete({
     [placesService, setSelected, setValue],
   );
 
-  console.log({ suggestions });
   return (
     <Wrapper>
       {error && <div>{error}</div>}

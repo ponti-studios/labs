@@ -3,16 +3,16 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import Avatar from "ui/Avatar";
 
 import { ACCOUNT, INVITES, LANDING, LISTS } from "src/constants/routes";
 import { logout } from "src/services/auth";
-import { useAppDispatch, useAppSelector } from "src/services/hooks";
-import Avatar from "ui/Avatar";
+import { useAppDispatch } from "src/services/hooks";
+import { useAuth } from "src/services/store";
 
 import NavMenuItem from "../NavMenuItem";
 
 import "./styles.css";
-import { getUser } from "src/services/store";
 
 const Wrap = styled(NavMenuItem)`
   display: flex;
@@ -27,7 +27,7 @@ const Wrap = styled(NavMenuItem)`
 const AuthNavMenu = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const user = useAppSelector(getUser);
+  const { user } = useAuth();
   const onListsClick = useCallback(() => {
     navigate(LISTS);
   }, [navigate]);

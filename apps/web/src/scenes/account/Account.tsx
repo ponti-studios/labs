@@ -1,11 +1,10 @@
 import styled from "@emotion/styled";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import AlertError from "ui/AlertError";
 
 import { LANDING } from "src/constants/routes";
-import { useAppSelector } from "src/services/hooks";
-import { getUser } from "src/services/store";
-import AlertError from "ui/AlertError";
+import { useAuth } from "src/services/store";
 
 const Wrap = styled.div`
   display: flex;
@@ -21,7 +20,7 @@ function useDeleteUserMutation() {
 }
 
 function Account() {
-  const user = useAppSelector(getUser);
+  const { user } = useAuth();
   const navigate = useNavigate();
   const memberSince = new Date(user.createdAt);
   const timeDiff = new Date().getTime() - memberSince.getTime();

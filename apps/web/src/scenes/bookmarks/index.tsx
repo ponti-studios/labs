@@ -2,8 +2,7 @@ import { useNavigate } from "react-router-dom";
 import LoadingScene from "ui/Loading";
 
 import { useGetBookmarks } from "src/services/api/bookmarks";
-import { useAppSelector } from "src/services/hooks";
-import { getUser } from "src/services/store";
+import { useAuth } from "src/services/store";
 
 import BookmarkForm from "./components/BookmarkForm";
 import BookmarkListItem from "./components/BookmarkListItem";
@@ -11,7 +10,7 @@ import DashboardWrap from "src/components/DashboardWrap";
 
 const Recommendations = () => {
   const navigate = useNavigate();
-  const user = useAppSelector(getUser);
+  const { user } = useAuth();
   const { data, refetch, status: bookmarksStatus } = useGetBookmarks();
 
   if (!user) {

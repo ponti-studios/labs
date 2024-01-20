@@ -5,6 +5,8 @@ import {
   createSlice,
 } from "@reduxjs/toolkit";
 import auth from "./auth";
+import { useAppDispatch, useAppSelector } from "./hooks";
+import toastSlice from "./toast/toast.slice";
 
 const initialState: {
   isOpen: boolean;
@@ -39,6 +41,7 @@ export const { openPlaceModal, closePlaceModal } = placeModalSlice.actions;
 export const rootReducer = {
   auth,
   placeModal: placeModalSlice.reducer,
+  toast: toastSlice.reducer,
 };
 
 export const store = configureStore({
@@ -47,8 +50,20 @@ export const store = configureStore({
 
 export const getIsLoadingAuth = (state: RootState) => state.auth.isLoadingAuth;
 export const getLoginEmail = (state: RootState) => state.auth.loginEmail;
-export const getUser = (state: RootState) => state.auth.user;
 export const getIsAuthenticated = (state: RootState) => !!state.auth.user;
+
+export const useAuth = () => {
+  const user = useAppSelector((state: RootState) => state.auth.user);
+  const isLoadingAuth = useAppSelector(getIsLoadingAuth);
+  const loginEmail = useAppSelector(getLoginEmail);
+  const dispatch = useAppDispatch();
+  return {
+    user,
+    isLoadingAuth,
+    loginEmail,
+    dispatch,
+  };
+};
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;

@@ -5,8 +5,7 @@ import AlertError from "ui/AlertError";
 import LoadingScene from "ui/Loading";
 
 import { useGetList, useGetListInvites } from "src/services/api";
-import { useAppSelector } from "src/services/hooks";
-import { getUser } from "src/services/store";
+import { useAuth } from "src/services/store";
 
 import ListInviteForm from "../ListInviteForm";
 import DashboardWrap from "src/components/DashboardWrap";
@@ -14,7 +13,7 @@ import DashboardWrap from "src/components/DashboardWrap";
 const ListInvites = () => {
   const params = useParams();
   const navigate = useNavigate();
-  const user = useAppSelector(getUser);
+  const { user } = useAuth();
   const listId = params.id;
   const { data: userList, status: listStatus } = useGetList(listId);
   const {

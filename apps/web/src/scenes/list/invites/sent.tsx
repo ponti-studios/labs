@@ -4,12 +4,11 @@ import LinkButton from "ui/LinkButton";
 
 import DashboardWrap from "src/components/DashboardWrap";
 import { useGetOutboundInvites } from "src/services/api";
-import { useAppSelector } from "src/services/hooks";
-import { getUser } from "src/services/store";
+import { useAuth } from "src/services/store";
 
 const ListInvites = () => {
   const navigate = useNavigate();
-  const user = useAppSelector(getUser);
+  const { user } = useAuth();
   const { data } = useGetOutboundInvites();
 
   if (user) {

@@ -9,8 +9,8 @@ import LoadingScene from "ui/Loading";
 import DashboardWrap from "src/components/DashboardWrap";
 import PlaceTypes from "src/components/places/PlaceTypes";
 import api, { ListPlace, useGetList } from "src/services/api";
-import { useAppDispatch, useAppSelector } from "src/services/hooks";
-import { getUser, openPlaceModal } from "src/services/store";
+import { useAppDispatch } from "src/services/hooks";
+import { useAuth, openPlaceModal } from "src/services/store";
 import { baseURL } from "src/services/api/base";
 import { usePlacesService } from "src/services/google-maps";
 
@@ -84,7 +84,7 @@ const ListItem = ({
 const List = () => {
   const navigate = useNavigate();
   const params = useParams<{ id: string }>();
-  const user = useAppSelector(getUser);
+  const { user } = useAuth();
   const listId = params.id;
   const { data, refetch, status: listStatus } = useGetList(listId);
 
