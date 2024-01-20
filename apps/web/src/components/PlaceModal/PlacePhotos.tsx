@@ -8,14 +8,11 @@ const PlacePhotos = ({ alt, photos }: Props) => {
   }
 
   return (
-    <div className="flex overflow-x-auto w-full rounded-[4px]">
+    <div className="carousel carousel-center p-4 space-x-4 bg-slate-200 rounded-box h-64">
       {photos.map((photo) => (
-        <img
-          key={photo.getUrl()}
-          src={photo.getUrl()}
-          alt={alt}
-          className="w-64 h-64 object-cover object-top"
-        />
+        <div key={photo.getUrl()} className="carousel-item">
+          <img src={photo.getUrl()} alt={alt} className="rounded-box" />
+        </div>
       ))}
     </div>
   );

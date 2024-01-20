@@ -67,13 +67,15 @@ function PlaceModal(
       {!isListSelectOpen && (
         <div className="mt-3">
           <PlacePhotos alt={place.name} photos={place.photos} />
-          <div className="mt-4">
-            <p className="font-bold text-xl">{place.name}</p>
-            <p className="text-gray-400 italic">
-              {type.charAt(0).toUpperCase() + type.slice(1)}
-            </p>
+          <div className="rounded-box bg-slate-100 mt-4 px-4 py-6">
+            <div>
+              <p className="font-bold text-xl">{place.name}</p>
+              <p className="text-gray-400 italic">
+                {type.charAt(0).toUpperCase() + type.slice(1)}
+              </p>
+            </div>
+            <PlaceAddress place={place} />
           </div>
-          <PlaceAddress place={place} />
           <div className="hidden">
             <PlaceStatus className="py-[4px]" place={place} />
             {place.rating && place.rating > 0 && <PlaceRating place={place} />}
