@@ -14,6 +14,7 @@
     "eslint": "^8.45.0",
     "eslint-config-ponti": "0.0.0",
     "react": "^18.2.0",
+    "tailwind-merge": "^2.2.1",
     "tsconfig": "0.0.0",
     "typescript": "^5.1.6"
   },

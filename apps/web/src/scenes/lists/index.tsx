@@ -54,7 +54,9 @@ const Lists = () => {
         </div>
       ) : null}
       {isListFormOpen ? (
-        <ListForm onCancel={onListFormCancel} onCreate={onListCreate} />
+        <div className="mb-4">
+          <ListForm onCancel={onListFormCancel} onCreate={onListCreate} />
+        </div>
       ) : null}
       <div>
         {listsStatus === "loading" && <LoadingScene />}

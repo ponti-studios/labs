@@ -61,7 +61,7 @@ export default function ListForm({ onCreate, onCancel }: ListFormProps) {
         />
         <div className="btn-group-horizontal float-right">
           <Button
-            className="btn-outline px-12 bordered"
+            className="btn-outline px-12 bg-blue-100"
             onClick={onCancelClick}
           >
             Cancel
