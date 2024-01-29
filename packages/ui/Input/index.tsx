@@ -1,36 +1,58 @@
-import { Field } from "formik";
-import styles from "./Input.module.css";
+import { InputHTMLAttributes } from "react";
 
-type Props = {
-  error?: any;
-  label?: string;
+type Props = InputHTMLAttributes<HTMLInputElement> & {
+  altLabel?: string;
+  bottomRightLabel?: string;
+  error?: string;
+  label: string;
   name: string;
-  type: string;
-};
+} & (
+    | { value: string; type: "text" }
+    | { value: string; type: "password" }
+    | { value: string; type: "email" }
+    | { value: string; type: "number" }
+    | { value: string; type: "search" }
+    | { value: string; type: "tel" }
+    | { value: string; type: "url" }
+    | { value: string; type: "date" }
+    | { value: string; type: "datetime-local" }
+    | { value: string; type: "month" }
+    | { value: string; type: "week" }
+    | { value: string; type: "time" }
+    | { value: string; type: "color" }
+  );
 
-function Input({ error, label, name, type, ...props }: Props) {
+function Input({
+  altLabel,
+  bottomRightLabel,
+  error,
+  label,
+  name,
+  ...props
+}: Props) {
   return (
     <>
-      {label && (
-        <label htmlFor={name} className="label hidden">
-          {label}
-        </label>
-      )}
-      <div className="form-control w-full max-w-xs">
-        <label className="label">
-          <span className="label-text">What is your name?</span>
-          <span className="label-text-alt">Alt label</span>
-        </label>
+      <label className="form-control w-full">
+        <div className="label">
+          <span className="label-text">{label}</span>
+          {altLabel ? <span className="label-text-alt">Alt label</span> : null}
+        </div>
         <input
-          type="text"
-          placeholder="Type here"
-          className="input input-bordered w-full max-w-xs"
+          name={name}
+          className="input input-bordered w-full"
+          {...props}
+          type={props.type || "text"}
+          value={props.value}
         />
-      </div>
-      <Field name={name} type={type} {...props} placeholder="Foo bar" />
-      {error && (
-        <span className={styles.errorText}>{error.regex as string}</span>
-      )}
+        <div className="label">
+          {error ? (
+            <span className="label-text-alt text-error">{error}</span>
+          ) : null}
+          {bottomRightLabel ? (
+            <span className="label-text-alt">Bottom Right label</span>
+          ) : null}
+        </div>
+      </label>
     </>
   );
 }

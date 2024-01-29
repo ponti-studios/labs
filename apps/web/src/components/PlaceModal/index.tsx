@@ -75,6 +75,11 @@ function PlaceModal(
               </p>
             </div>
             <PlaceAddress place={place} />
+            {place.website && (
+              <div className="flex justify-end mt-2">
+                <PlaceWebsite website={place.website} />
+              </div>
+            )}
           </div>
           <div className="hidden">
             <PlaceStatus className="py-[4px]" place={place} />
@@ -88,7 +93,6 @@ function PlaceModal(
                 {place.international_phone_number}
               </p>
             )}
-            {place.website && <PlaceWebsite website={place.website} />}
           </div>
           <div className="modal-action">
             <Button onClick={onAddToList}>Add to list</Button>

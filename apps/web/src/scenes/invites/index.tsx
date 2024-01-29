@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import Typography from "ui/Typography";
 
-import DashboardWrap from "src/components/DashboardWrap";
 import { useGetInvites } from "src/services/api";
 import { useAuth } from "src/services/store";
 import InviteListItem from "./components/InviteListItem";
@@ -15,7 +14,7 @@ const Invites = () => {
   }
 
   return (
-    <DashboardWrap>
+    <>
       <Typography className="mb-4" variant="h1">
         Invites
       </Typography>
@@ -30,7 +29,7 @@ const Invites = () => {
           ))}
         </ul>
       )}
-    </DashboardWrap>
+    </>
   );
 };
 

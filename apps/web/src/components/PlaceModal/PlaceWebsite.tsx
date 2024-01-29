@@ -1,10 +1,8 @@
 import { OpenInNewWindowIcon } from "@radix-ui/react-icons";
-import Typography from "ui/Typography";
 
 const PlaceWebsite = ({ website }: { website: string }) => {
   return (
     <p className="py-[4px]">
-      <Typography variant="bold">Website: </Typography>
       <a
         href={website}
         target="_blank"

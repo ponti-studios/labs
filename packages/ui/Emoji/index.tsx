@@ -11,7 +11,7 @@ const SIZES = {
 type EmojiProps = HTMLAttributes<HTMLSpanElement> & {
   children: ReactNode;
   kind: string;
-  size: EmojiSizes;
+  size?: EmojiSizes;
 };
 
 function Emoji({ children, kind, size, ...props }: EmojiProps) {
@@ -19,7 +19,7 @@ function Emoji({ children, kind, size, ...props }: EmojiProps) {
     <span
       aria-label={kind}
       role="img"
-      style={{ fontSize: SIZES[size] }}
+      style={size ? { fontSize: SIZES[size] } : {}}
       {...props}
     >
       {children}

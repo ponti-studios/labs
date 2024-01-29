@@ -17,6 +17,7 @@ const Wrap = styled.div`
   gap: 1rem;
   width: 100%;
   height: 100%;
+  padding-bottom: 32px;
 
   ${mediaQueries.belowMedium} {
     max-width: calc(100% - 16px);

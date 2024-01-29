@@ -11,7 +11,6 @@ import { loadAuth } from "src/services/auth";
 import { useAppDispatch, useAppSelector } from "src/services/hooks";
 import { getIsAuthenticated, getIsLoadingAuth } from "src/services/store";
 
-import styles from "./App.module.scss";
 import Header from "./components/Header";
 import AuthenticatedScenes from "./Authenticated";
 
@@ -37,9 +36,9 @@ function App() {
   }
 
   return (
-    <div id="app" className={`h-100 flex flex-col ${styles.wrap}`}>
+    <div id="app" className="h-full w-full flex flex-col">
       <Header />
-      <main className="flex flex-1 sm:mt-4 md:mt-8" data-testid="app-main">
+      <main className="flex flex-1 mt-8" data-testid="app-main">
         {isAuthenticated ? (
           <AuthenticatedScenes />
         ) : (

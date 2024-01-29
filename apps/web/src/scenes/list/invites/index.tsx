@@ -1,6 +1,5 @@
 import { useCallback } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-
 import AlertError from "ui/AlertError";
 import LoadingScene from "ui/Loading";
 
@@ -8,7 +7,6 @@ import { useGetList, useGetListInvites } from "src/services/api";
 import { useAuth } from "src/services/store";
 
 import ListInviteForm from "../ListInviteForm";
-import DashboardWrap from "src/components/DashboardWrap";
 
 const ListInvites = () => {
   const params = useParams();
@@ -36,7 +34,7 @@ const ListInvites = () => {
   }
 
   return (
-    <DashboardWrap>
+    <>
       <div className="flex flex-col px-0.5">
         <h1 className="text-2xl">
           <Link to={`/list/${userList.id}`}>
@@ -70,7 +68,7 @@ const ListInvites = () => {
             You haven&apos;t invited anyone to this list yet.
           </p>
         ))}
-    </DashboardWrap>
+    </>
   );
 };
 

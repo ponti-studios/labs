@@ -29,12 +29,7 @@ export function CustomPlaceAddress({ place }: Props) {
     return <span className="flex-1">{placeAddress}</span>;
   }
 
-  return (
-    <span
-      className="flex-1"
-      dangerouslySetInnerHTML={{ __html: place.adr_address }}
-    ></span>
-  );
+  return <span dangerouslySetInnerHTML={{ __html: place.adr_address }}></span>;
 }
 
 type Props = {
@@ -42,7 +37,7 @@ type Props = {
 };
 const PlaceAddress = ({ place }: Props) => {
   return (
-    <p className="flex justify-between py-[4px] w-full items-center">
+    <p className="flex justify-end py-[4px] w-full items-center">
       <SewingPinFilledIcon className="inline-block mr-2" />
       <CustomPlaceAddress place={place} />
       <span>

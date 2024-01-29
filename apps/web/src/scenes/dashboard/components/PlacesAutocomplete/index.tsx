@@ -28,7 +28,7 @@ const Option = styled(Combobox.Option)`
   &:hover,
   &[aria-selected="true"],
   &[data-headlessui-state="active"] {
-    background-color: slateblue;
+    background-color: #037afb;
     color: white;
     font-weight: 600;
   }
@@ -161,7 +161,11 @@ function PlacesAutocomplete({
             className="input input-bordered w-full"
             onChange={onInputChange}
           />
-          <MagnifyingGlassIcon height={24} width={24} />
+          <MagnifyingGlassIcon
+            height={24}
+            width={24}
+            className="text-primary"
+          />
         </InputWrap>
         {
           <Options className="bg-white">

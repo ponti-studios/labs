@@ -13,6 +13,7 @@ import { setCurrentEmail } from "src/services/auth";
 import { useAppDispatch } from "src/services/hooks";
 import { useAuth } from "src/services/store";
 import Button from "ui/Button";
+import Emoji from "ui/Emoji";
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email(),
@@ -59,7 +60,12 @@ function Login() {
           There was a problem submitting your email. Try again later.
         </FeedbackBlock>
       )}
-      <h2 className="text-primary-focus text-2xl font-semibold mb-6">Log in</h2>
+      <div className="flex justify-center text-primary font-extrabold mb-4 mt-24">
+        <Emoji kind="map" className="animate-spin-slow text-[125px]">
+          🌎
+        </Emoji>
+      </div>
+      <h2 className="text-2xl font-semibold mb-6">Log in</h2>
       <Formik
         validationSchema={LoginSchema}
         initialValues={initialValues}
@@ -68,12 +74,10 @@ function Login() {
         <Form>
           <div className="form-control w-full">
             <label className="label pl-0" htmlFor="email">
-              <span className="label-text text-primary-focus">
-                What is your email?
-              </span>
+              <span className="label-text">What is your email?</span>
             </label>
             <Field
-              className="input input-bordered text-primary w-full"
+              className="input input-bordered w-full font-semibold"
               name="email"
               type="email"
               placeholder="Email"

@@ -1,12 +1,13 @@
 import { Link, useNavigate } from "react-router-dom";
 import LoadingScene from "ui/Loading";
 
-import DashboardWrap from "src/components/DashboardWrap";
 import FeedbackBlock from "src/components/FeedbackBlock";
 import { useGetLists } from "src/services/api";
 import { useAuth } from "src/services/store";
 
 import ListForm from "./components/ListForm";
+import { useCallback, useState } from "react";
+import Button from "ui/Button";
 
 const NoResults = () => {
   return (
@@ -22,16 +23,39 @@ const NoResults = () => {
 const Lists = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [isListFormOpen, setIsListFormOpen] = useState(false);
   const { data, error, refetch, status: listsStatus } = useGetLists();
+
+  const onAddListClick = useCallback(() => {
+    setIsListFormOpen(true);
+  }, [setIsListFormOpen]);
+
+  const onListCreate = useCallback(() => {
+    setIsListFormOpen(false);
+    refetch();
+  }, [setIsListFormOpen, refetch]);
+
+  const onListFormCancel = useCallback(() => {
+    setIsListFormOpen(false);
+  }, [setIsListFormOpen]);
 
   if (!user) {
     navigate("/");
   }
 
   return (
-    <DashboardWrap className="flex gap-4">
+    <>
       <h1 className="text-3xl font-bold">Lists</h1>
-      <ListForm onCreate={refetch} />
+      {!isListFormOpen ? (
+        <div className="flex justify-end w-full mb-2">
+          <Button onClick={onAddListClick} disabled={isListFormOpen}>
+            Create new list
+          </Button>
+        </div>
+      ) : null}
+      {isListFormOpen ? (
+        <ListForm onCancel={onListFormCancel} onCreate={onListCreate} />
+      ) : null}
       <div>
         {listsStatus === "loading" && <LoadingScene />}
         {error && <FeedbackBlock>{error.message}</FeedbackBlock>}
@@ -57,7 +81,7 @@ const Lists = () => {
           </ul>
         )}
       </div>
-    </DashboardWrap>
+    </>
   );
 };
 

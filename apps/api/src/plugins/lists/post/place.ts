@@ -86,7 +86,7 @@ const postListsPlace = (server: FastifyInstance) => {
       };
       const { name, address, location, place_id } = place;
       const filteredListTypes = place.types.filter((type) => {
-        return !/point_of_interest|establishment/.test(type);
+        return !/point_of_interest|establishment|political/.test(type);
       });
 
       const createdPlace = await prisma.place.create({

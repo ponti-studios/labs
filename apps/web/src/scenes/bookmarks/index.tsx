@@ -6,7 +6,6 @@ import { useAuth } from "src/services/store";
 
 import BookmarkForm from "./components/BookmarkForm";
 import BookmarkListItem from "./components/BookmarkListItem";
-import DashboardWrap from "src/components/DashboardWrap";
 
 const Recommendations = () => {
   const navigate = useNavigate();
@@ -20,7 +19,7 @@ const Recommendations = () => {
   }
 
   return (
-    <DashboardWrap>
+    <>
       <BookmarkForm onCreate={refetch} />
       <div>
         {bookmarksStatus === "loading" && <LoadingScene />}
@@ -37,7 +36,7 @@ const Recommendations = () => {
           </ul>
         )}
       </div>
-    </DashboardWrap>
+    </>
   );
 };
 

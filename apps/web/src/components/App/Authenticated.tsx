@@ -19,8 +19,9 @@ const AuthenticatedScenes = () => {
   const isMapLoaded = useApiIsLoaded();
   const placeModalState = useAppSelector((state) => state.placeModal);
   const modalRef = useRef<HTMLDialogElement | null>(null);
+
   return (
-    <>
+    <div className="flex flex-col flex-1 sm:max-w-3xl mx-auto">
       <Routes>
         <Route
           path={ROUTES.DASHBOARD}
@@ -40,7 +41,7 @@ const AuthenticatedScenes = () => {
         onModalClose={placeModalState.onClose}
         ref={modalRef}
       />
-    </>
+    </div>
   );
 };
 

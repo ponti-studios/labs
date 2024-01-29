@@ -1,18 +1,16 @@
 import { TrashIcon } from "@radix-ui/react-icons";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useMutation } from "react-query";
-
 import AlertError from "ui/AlertError";
 import UserPlus from "ui/Icons/UserPlus";
 import LoadingScene from "ui/Loading";
 
-import DashboardWrap from "src/components/DashboardWrap";
 import PlaceTypes from "src/components/places/PlaceTypes";
 import api, { ListPlace, useGetList } from "src/services/api";
-import { useAppDispatch } from "src/services/hooks";
-import { useAuth, openPlaceModal } from "src/services/store";
 import { baseURL } from "src/services/api/base";
 import { usePlacesService } from "src/services/google-maps";
+import { useAppDispatch } from "src/services/hooks";
+import { useAuth, openPlaceModal } from "src/services/store";
 
 const ListItem = ({
   listId,
@@ -58,25 +56,25 @@ const ListItem = ({
   };
 
   return (
-    <div className="card p-2 py-3 rounded-md flex flex-row text-primary mb-10 border-2 glass">
-      <div className="flex flex-col flex-1">
+    <div className="card glass px-2 py-3 rounded-md flex mb-4">
+      <div className="flex flex-row mb-2">
         <Link
           to="#"
-          className="mb-2 text-lg font-semibold uppercase justify-start underline-offset-4 focus-visible:underline focus-visible:outline-none"
+          className="flex-1 mb-2 text-lg font-semibold justify-start underline-offset-4 focus-visible:underline focus-visible:outline-none"
           onClick={onPlaceNameClick}
         >
           {place.name}
         </Link>
-        <PlaceTypes types={place.types} />
+        <button
+          data-testid="delete-place-button"
+          className="flex items-center px-4 rounded-md hover:cursor-pointer hover:bg-neutral-content hover:bg-opacity-10 focus:bg-neutral-content focus:bg-opacity-10 transition-colors"
+          onClick={onDeleteClick}
+          onKeyDown={onDeleteKeyDown}
+        >
+          <TrashIcon width={24} height={24} className="text-red-500" />
+        </button>
       </div>
-      <button
-        data-testid="delete-place-button"
-        className="flex items-center px-4 rounded-md hover:cursor-pointer hover:bg-neutral-content hover:bg-opacity-10 focus:bg-neutral-content focus:bg-opacity-10 transition-colors"
-        onClick={onDeleteClick}
-        onKeyDown={onDeleteKeyDown}
-      >
-        <TrashIcon width={24} height={24} className="text-red-500" />
-      </button>
+      <PlaceTypes types={place.types} />
     </div>
   );
 };
@@ -98,17 +96,17 @@ const List = () => {
   }
 
   return (
-    <DashboardWrap>
+    <>
       {!data && <AlertError error="We could not find this list." />}
       {data && (
         <div className="flex flex-col px-0.5">
-          <div className="flex justify-between items-center mb-8">
+          <div className="flex justify-between items-center mb-12">
             <h1 className="text-3xl font-semibold">{data.name}</h1>
             {/* Only list owners can invite others. */}
             {data.userId === user.id && (
               <Link
                 to={`/lists/${data.id}/invites`}
-                className="flex gap-2 btn btn-primary text-white"
+                className="flex gap-2 btn btn-secondary bg-black text-white hover:bg-opacity-80 focus:bg-opacity-80"
               >
                 <span className="hover:cursor-pointer">
                   <UserPlus />
@@ -127,7 +125,7 @@ const List = () => {
           ))}
         </div>
       )}
-    </DashboardWrap>
+    </>
   );
 };
 

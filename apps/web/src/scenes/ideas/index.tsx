@@ -1,10 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import LoadingScene from "ui/Loading";
 
-import DashboardWrap from "src/components/DashboardWrap";
 import { useGetIdeas } from "src/services/api/ideas";
 import { useAuth } from "src/services/store";
-
 import IdeaForm from "./IdeaForm";
 import IdeaListItem from "./IdeaListItem";
 
@@ -18,7 +16,7 @@ const Ideas = () => {
   }
 
   return (
-    <DashboardWrap>
+    <>
       <IdeaForm onCreate={refetch} />
       <div>
         {ideasStatus === "loading" && <LoadingScene />}
@@ -31,7 +29,7 @@ const Ideas = () => {
           </ul>
         )}
       </div>
-    </DashboardWrap>
+    </>
   );
 };
 
