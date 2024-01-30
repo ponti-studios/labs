@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.5.0](https://github.com/theponti/rocco/compare/v1.4.1...v1.5.0) (2024-01-30)
+
+
+### Features
+
+* **apps/web:** update login page style ([#43](https://github.com/theponti/rocco/issues/43)) ([db12be4](https://github.com/theponti/rocco/commit/db12be4f2a6104429b3044e481b9c909f25bbb19))
+* use daisy carousel for place photos ([cc51a90](https://github.com/theponti/rocco/commit/cc51a90fdc90ae261ae6d2a924169b8bab234248))
+
 ## [1.4.1](https://github.com/theponti/rocco/compare/v1.4.0...v1.4.1) (2024-01-15)
 
 
