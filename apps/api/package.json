@@ -4,11 +4,11 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "build": "npm run clean && prisma generate && tsc",
+    "build": "npm run clean && npm run prisma:generate && tsc",
     "clean": "rm -rf build",
     "dev": "npm run build && nodemon --config nodemon.json",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx src",
-    "prisma:deploy": "prisma migrate deploy",
+    "prisma:deploy": "npx prisma migrate deploy",
     "prisma:dev": "npx prisma migrate dev",
     "prisma:generate": "npx prisma generate",
     "prisma:push": "npx prisma db push",
