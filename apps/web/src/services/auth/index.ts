@@ -9,6 +9,11 @@ import api from "src/services/api";
 
 import * as authApi from "./auth.api";
 
+export type CurrentLocation = {
+  lat: number;
+  lng: number;
+};
+
 export type User = {
   id: string;
   avatar: string;
@@ -20,6 +25,7 @@ export type User = {
 };
 
 export interface AuthState {
+  currentLocation?: CurrentLocation;
   isLoadingAuth?: boolean;
   authError: string | null;
   loginEmail: string | null;
@@ -28,6 +34,7 @@ export interface AuthState {
 
 const initialState: AuthState = {
   authError: null,
+  currentLocation: null,
   loginEmail: null,
 };
 
@@ -45,6 +52,9 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
+    setCurrentLocation(state, action: PayloadAction<CurrentLocation>) {
+      state.currentLocation = action.payload;
+    },
     setError(state, action: PayloadAction<string | null>) {
       state.authError = action.payload;
     },
@@ -83,5 +93,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { setCurrentEmail, setUser } = authSlice.actions;
+export const { setCurrentEmail, setUser, setCurrentLocation } =
+  authSlice.actions;
 export default authSlice.reducer as Reducer<AuthState>;

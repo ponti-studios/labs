@@ -1,10 +1,10 @@
 import styled from "@emotion/styled";
 import { MapMouseEvent } from "@vis.gl/react-google-maps/dist/components/map/use-map-events";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Loading from "ui/Loading";
 
 import { mediaQueries } from "src/constants/styles";
-import { useAppDispatch } from "src/services/hooks";
+import { useAppDispatch, useAppSelector } from "src/services/hooks";
 import { openPlaceModal } from "src/services/store";
 import { usePlacesService } from "src/services/google-maps";
 
@@ -37,9 +37,10 @@ const DEFAULT_CENTER = { lat: 37.7749, lng: -122.4194 }; // Default center (San 
 
 function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
   const [zoom, setZoom] = useState(ZOOM_LEVELS.DEFAULT);
+  const currentLocation = useAppSelector((state) => state.auth.currentLocation);
   const [selected, setSelected] =
     useState<google.maps.places.PlaceResult | null>(null);
-  const [center, setCenter] = useState(DEFAULT_CENTER);
+  const [center, setCenter] = useState(currentLocation || DEFAULT_CENTER);
   const dispatch = useAppDispatch();
   const placesService = usePlacesService();
 
@@ -103,6 +104,13 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
     );
   }, [dispatch, selected]);
 
+  useEffect(() => {
+    console.log(currentLocation, "currentLocation");
+    if (currentLocation) {
+      setCenter(currentLocation);
+    }
+  }, [currentLocation]);
+
   if (!isMapLoaded) {
     return (
       <div className="flex items-center justify-center max-w-[300px] mx-auto min-h-full">
@@ -114,9 +122,13 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
   return (
     <Wrap>
       <PlacesAutocompleteWrap>
-        <PlacesAutocomplete setSelected={onSelectedChanged} />
+        <PlacesAutocomplete
+          setSelected={onSelectedChanged}
+          center={currentLocation}
+        />
       </PlacesAutocompleteWrap>
       <Map
+        isLoadingCurrentLocation={!currentLocation}
         zoom={zoom}
         center={center}
         onMapClick={onMapClick}

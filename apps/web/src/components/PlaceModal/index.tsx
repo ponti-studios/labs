@@ -1,9 +1,11 @@
 import { RefObject, forwardRef, useState } from "react";
+import Button from "ui/Button";
 import Typography from "ui/Typography";
 
 import Modal from "src/components/Modal";
 import { closePlaceModal } from "src/services/store";
 import { useAppDispatch } from "src/services/hooks";
+import { useToast } from "src/services/toast/toast.slice";
 
 import AddPlaceToList from "./AddPlaceToList";
 import PlaceStatus from "./PlaceStatus";
@@ -11,8 +13,6 @@ import PlacePhotos from "./PlacePhotos";
 import PlaceAddress from "./PlaceAddress";
 import PlacePriceLevel from "./PlacePriceLevel";
 import PlaceWebsite from "./PlaceWebsite";
-import { useToast } from "src/services/toast/toast.slice";
-import Button from "ui/Button";
 
 const PlaceRating = ({ place }: { place: google.maps.places.PlaceResult }) => {
   return (

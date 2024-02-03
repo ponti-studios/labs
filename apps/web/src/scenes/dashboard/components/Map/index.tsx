@@ -1,10 +1,20 @@
-import { Map as GoogleMap, Marker } from "@vis.gl/react-google-maps";
+import { Map as GoogleMap, Marker, MapProps } from "@vis.gl/react-google-maps";
 import { useCallback } from "react";
 
-import styles from "./Map.module.css";
 import { MapMouseEvent } from "@vis.gl/react-google-maps/dist/components/map/use-map-events";
+import styled from "@emotion/styled";
 
-type MapProps = {
+const Loading = styled.div`
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: max-content;
+  position: absolute;
+`;
+
+type RoccoMapProps = MapProps & {
+  isLoadingCurrentLocation: boolean;
   setSelected: (place: google.maps.places.PlaceResult) => void;
   selected: google.maps.places.PlaceResult | null;
   zoom: number;
@@ -15,11 +25,12 @@ type MapProps = {
 const Map = ({
   zoom,
   center,
+  isLoadingCurrentLocation,
   onMapClick,
   onMarkerClick,
   selected,
   setSelected,
-}: MapProps) => {
+}: RoccoMapProps) => {
   const onClick = useCallback(
     (event: MapMouseEvent) => {
       const { placeId } = event.detail;
@@ -38,14 +49,22 @@ const Map = ({
   );
 
   return (
-    <GoogleMap
-      zoom={zoom}
-      center={center}
-      onClick={onClick}
-      className={styles.mapContainer}
-    >
-      {selected && <Marker position={center} onClick={onMarkerClick} />}
-    </GoogleMap>
+    <div className="flex flex-1 relative overflow-hidden rounded-lg shadow-md">
+      {isLoadingCurrentLocation ? (
+        <Loading className="rounded-lg border-blue-500 bg-blue-200 text-blue-600 z-10 p-1 px-4 text-sm mt-2">
+          <span className="animate-ping inline-flex size-1 rounded-full bg-blue-800 opacity-75 mr-3"></span>
+          Loading current location
+        </Loading>
+      ) : null}
+      <GoogleMap
+        zoom={zoom}
+        center={center}
+        onClick={onClick}
+        className="flex size-full"
+      >
+        {selected && <Marker position={center} onClick={onMarkerClick} />}
+      </GoogleMap>
+    </div>
   );
 };
 

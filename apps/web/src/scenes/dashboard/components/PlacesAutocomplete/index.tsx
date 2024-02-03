@@ -70,8 +70,10 @@ const LoadingWrap = styled.div`
 `;
 
 function PlacesAutocomplete({
+  center,
   setSelected,
 }: {
+  center: google.maps.LatLngLiteral;
   setSelected: (place: google.maps.places.PlaceResult) => void;
 }) {
   const placesService = usePlacesService();
@@ -84,16 +86,28 @@ function PlacesAutocomplete({
     queryKey: ["placeDetails", value],
     queryFn: () =>
       new Promise((resolve) => {
-        placesService.findPlaceFromQuery(
+        placesService.textSearch(
           {
             query: value,
-            fields: ["formatted_address", "geometry", "name", "place_id"],
+            location: center,
+            radius: 100,
           },
           (response) => {
             if (!response) resolve([]);
             resolve(response);
           },
         );
+        // placesService.findPlaceFromQuery(
+        //   {
+        //     query: value,
+        //     fields: ["formatted_address", "geometry", "name", "place_id"],
+        //     locationBias: { radius: 100_000, center },
+        //   },
+        //   (response) => {
+        //     if (!response) resolve([]);
+        //     resolve(response);
+        //   },
+        // );
       }),
     onSuccess: (data) => {
       setSuggestions(data);
@@ -114,6 +128,7 @@ function PlacesAutocomplete({
         return;
       }
 
+      console.log("e.target.value", e.target.value);
       setValue(e.target.value);
 
       refetch();
@@ -168,7 +183,7 @@ function PlacesAutocomplete({
           />
         </InputWrap>
         {
-          <Options className="bg-white">
+          <Options className="bg-white overflow-y-scroll">
             {isLoading ? (
               <LoadingWrap>
                 <Loading />
@@ -180,8 +195,8 @@ function PlacesAutocomplete({
                   value={suggestion}
                   className="truncate text-primary"
                 >
-                  {suggestion.name},{" "}
-                  <span className="text-primary-content">
+                  <span className="font-medium">{suggestion.name}</span>,{" "}
+                  <span className="text-slate-400 font-light">
                     {suggestion.formatted_address}
                   </span>
                 </Option>
