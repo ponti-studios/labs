@@ -247,30 +247,53 @@ export const verifySession: preValidationHookHandler = async (
 ) => {
   const data = request.session.get("data");
 
+  /**
+   * If no session exists, attempt to verify the JWT token.
+   */
   if (!data) {
+    let token;
+
     try {
-      const token = await request.jwtVerify<{ userId: string }>();
+      token = await request.jwtVerify<{ userId: string }>();
+    } catch (e: any) {
+      reply.log.error("Could not verify session token", e);
+      return reply.code(401).send();
+    }
+
+    /**
+     * If the token is invalid or doesn't contain a userId,
+     * return 401 unauthorized
+     */
+    if (!token || (token && !token.userId)) {
+      return reply.code(401).send();
+    }
+
+    try {
       const user = await prisma.user.findUnique({
         where: { id: token.userId },
       });
 
+      /**
+       * If the user doesn't exist, return 401 unauthorized
+       */
       if (!user) {
         return reply.code(401).send();
       }
 
       request.session.set("data", {
         ...token,
-        email: user?.email,
+        email: user.email,
       });
     } catch (e: any) {
       reply.log.error("Could not verify session", e);
       return reply.code(401).send();
     }
-    reply.log.error("Could not verify session token");
-    return reply.code(401).send();
   }
 
-  if (!data.email) {
+  /**
+   * If the session exists, but the email is missing,
+   */
+  if (data && data.userId && !data.email) {
     const user = await prisma.user.findUnique({
       where: { id: data.userId },
     });

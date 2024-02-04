@@ -35,6 +35,7 @@ const getListRoute = (server: FastifyInstance) => {
                     itemAddedAt: { type: "string" },
                     googleMapsId: { type: "string" },
                     name: { type: "string" },
+                    imageUrl: { type: "string" },
                     type: { type: "string" },
                     types: { type: "array", items: { type: "string" } },
                   },
@@ -64,6 +65,7 @@ const getListRoute = (server: FastifyInstance) => {
           i."createdAt" as "itemAddedAt",
           p."googleMapsId" as "googleMapsId",
           p.name as name,
+          p."imageUrl" as "imageUrl",
           p.types as types,
           i.type as "type"
         FROM "Item" i

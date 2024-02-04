@@ -1,7 +1,8 @@
+import { FastifyInstance } from "fastify";
 import { createServer } from "./server";
 
 describe("server", () => {
-  let server: any;
+  let server: FastifyInstance;
 
   beforeAll(async () => {
     server = await createServer({ logger: false });

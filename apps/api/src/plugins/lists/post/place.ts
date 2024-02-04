@@ -29,6 +29,7 @@ const postListsPlace = (server: FastifyInstance) => {
                   },
                   required: ["lat", "lng"],
                 },
+                image: { type: "string" },
               },
               required: ["name", "address", "location"],
             },
@@ -60,6 +61,7 @@ const postListsPlace = (server: FastifyInstance) => {
                   address: { type: "string" },
                   googleMapsId: { type: "string" },
                   types: { type: "array", items: { type: "string" } },
+                  imageUrl: { type: "string" },
                   lat: { type: "string" },
                   lng: { type: "string" },
                   createdAt: { type: "string" },
@@ -79,6 +81,7 @@ const postListsPlace = (server: FastifyInstance) => {
         place: {
           name: string;
           address: string;
+          imageUrl: string;
           place_id: string;
           location: { lat: number; lng: number };
           types: string[];
@@ -96,6 +99,7 @@ const postListsPlace = (server: FastifyInstance) => {
           address,
           googleMapsId: place_id,
           types: filteredListTypes,
+          imageUrl: place.imageUrl,
           lat: `${location.lat}`,
           lng: `${location.lng}`,
           createdBy: {

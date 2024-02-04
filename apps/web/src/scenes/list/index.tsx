@@ -11,6 +11,7 @@ import { baseURL } from "src/services/api/base";
 import { usePlacesService } from "src/services/google-maps";
 import { useAppDispatch } from "src/services/hooks";
 import { useAuth, openPlaceModal } from "src/services/store";
+import { useEffect, useState } from "react";
 
 const ListItem = ({
   listId,
@@ -21,6 +22,7 @@ const ListItem = ({
   onDelete: () => void;
   place: ListPlace;
 }) => {
+  const [imageUrl, setImageUrl] = useState(place.imageUrl);
   const dispatch = useAppDispatch();
   const placesService = usePlacesService();
   const { mutateAsync } = useMutation({
@@ -55,16 +57,39 @@ const ListItem = ({
     });
   };
 
+  useEffect(() => {
+    if (!imageUrl) {
+      // Get image from Google Maps API.
+      if (placesService) {
+        placesService.getDetails({ placeId: place.googleMapsId }, (res) => {
+          if (res) {
+            const image = res.photos?.[0].getUrl({
+              maxWidth: 100,
+              maxHeight: 100,
+            });
+            setImageUrl(image);
+          }
+        });
+      }
+    }
+  }, [imageUrl, place.googleMapsId, placesService]);
+
   return (
     <div className="card glass px-2 py-3 rounded-md flex mb-4">
-      <div className="flex flex-row mb-2">
-        <Link
-          to="#"
-          className="flex-1 mb-2 text-lg font-semibold justify-start underline-offset-4 focus-visible:underline focus-visible:outline-none"
-          onClick={onPlaceNameClick}
-        >
-          {place.name}
+      <div className="flex flex-row">
+        <Link to="#" className="w-16 h-16" onClick={onPlaceNameClick}>
+          <img src={imageUrl} alt={place.name} className="w-16 h-16" />
         </Link>
+        <div className="flex flex-col flex-1 h-full justify-between pl-2">
+          <Link
+            to="#"
+            className="flex-1 mb-2 text-xl md:text-2xl font-medium justify-start underline-offset-4 focus-visible:underline focus-visible:outline-none"
+            onClick={onPlaceNameClick}
+          >
+            {place.name}
+          </Link>
+          <PlaceTypes types={place.types} />
+        </div>
         <button
           data-testid="delete-place-button"
           className="flex items-center px-4 rounded-md hover:cursor-pointer hover:bg-neutral-content hover:bg-opacity-10 focus:bg-neutral-content focus:bg-opacity-10 transition-colors"
@@ -74,7 +99,6 @@ const ListItem = ({
           <TrashIcon width={24} height={24} className="text-red-500" />
         </button>
       </div>
-      <PlaceTypes types={place.types} />
     </div>
   );
 };

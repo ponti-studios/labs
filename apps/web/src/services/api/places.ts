@@ -19,6 +19,7 @@ export const useAddPlaceToList = (options) => {
             lat: place.geometry?.location.lat(),
             lng: place.geometry?.location.lng(),
           },
+          imageUrl: place.photos?.[0].getUrl(),
           place_id: place.place_id,
           rating: place.rating,
           price_level: place.price_level,
