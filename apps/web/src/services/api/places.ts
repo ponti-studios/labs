@@ -34,8 +34,15 @@ export const useAddPlaceToList = (options) => {
 };
 
 export const getDefaultImageUrl = (place: google.maps.places.PlaceResult) => {
-  return place.photos?.[0].getUrl({
+  const url = place.photos?.[0].getUrl({
     maxWidth: 400,
     maxHeight: 400,
   });
+
+  if (!url) {
+    console.log("No max-sized photo found for", place.name);
+    return place.photos?.[0].getUrl();
+  }
+
+  return url;
 };
