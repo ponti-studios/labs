@@ -19,7 +19,7 @@ export const useAddPlaceToList = (options) => {
             lat: place.geometry?.location.lat(),
             lng: place.geometry?.location.lng(),
           },
-          imageUrl: place.photos?.[0].getUrl(),
+          imageUrl: getDefaultImageUrl(place),
           place_id: place.place_id,
           rating: place.rating,
           price_level: place.price_level,
@@ -31,4 +31,11 @@ export const useAddPlaceToList = (options) => {
     },
     options,
   );
+};
+
+export const getDefaultImageUrl = (place: google.maps.places.PlaceResult) => {
+  return place.photos?.[0].getUrl({
+    maxWidth: 400,
+    maxHeight: 400,
+  });
 };

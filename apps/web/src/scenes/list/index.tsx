@@ -12,6 +12,7 @@ import { usePlacesService } from "src/services/google-maps";
 import { useAppDispatch } from "src/services/hooks";
 import { useAuth, openPlaceModal } from "src/services/store";
 import { useEffect, useState } from "react";
+import { getDefaultImageUrl } from "src/services/api/places";
 
 const ListItem = ({
   listId,
@@ -61,12 +62,9 @@ const ListItem = ({
     if (!imageUrl) {
       // Get image from Google Maps API.
       if (placesService) {
-        placesService.getDetails({ placeId: place.googleMapsId }, (res) => {
-          if (res) {
-            const image = res.photos?.[0].getUrl({
-              maxWidth: 100,
-              maxHeight: 100,
-            });
+        placesService.getDetails({ placeId: place.googleMapsId }, (place) => {
+          if (place) {
+            const image = getDefaultImageUrl(place);
             setImageUrl(image);
           }
         });
