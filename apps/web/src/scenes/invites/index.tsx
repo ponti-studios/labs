@@ -9,6 +9,7 @@ const Invites = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { data: invites, refetch } = useGetInvites();
+
   if (!user) {
     navigate("/");
   }
@@ -19,7 +20,7 @@ const Invites = () => {
         Invites
       </Typography>
       {invites && (
-        <ul>
+        <ul className="space-y-4">
           {invites.map((listInvite) => (
             <InviteListItem
               key={listInvite.listId}

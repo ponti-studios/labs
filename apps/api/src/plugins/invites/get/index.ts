@@ -59,6 +59,7 @@ const getUserInvitesRoute = (server: FastifyInstance) => {
           list: {
             select: {
               name: true,
+              id: true,
             },
           },
           user: {
@@ -68,6 +69,7 @@ const getUserInvitesRoute = (server: FastifyInstance) => {
             },
           },
         },
+        orderBy: { listId: "asc" },
       });
 
       return reply.status(200).send(invites);

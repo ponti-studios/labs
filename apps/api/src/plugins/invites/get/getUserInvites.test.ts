@@ -34,6 +34,7 @@ describe("GET /invites", () => {
       include: {
         list: {
           select: {
+            id: true,
             name: true,
           },
         },
@@ -44,6 +45,7 @@ describe("GET /invites", () => {
           },
         },
       },
+      orderBy: { listId: "asc" },
     });
     expect(response.statusCode).toEqual(200);
     expect(response.json()).toEqual([]);

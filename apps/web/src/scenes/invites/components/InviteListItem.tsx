@@ -1,7 +1,10 @@
+import { Link2 } from "lucide-react";
 import { useCallback } from "react";
+import { Link } from "react-router-dom";
 
 import { useAcceptInviteMutation } from "src/services/api";
 import { ListInvite } from "src/services/types";
+import Button from "ui/Button";
 
 type InviteListItemProps = {
   listInvite: ListInvite;
@@ -18,20 +21,25 @@ const InviteListItem = ({ listInvite, onAccept }: InviteListItemProps) => {
   }, [listInvite.listId, mutate]);
 
   return (
-    <li className="card shadow-md p-4 text-lg flex flex-row items-center justify-between border border-red-100">
-      <p className="text-lg font-semibod text-gray-400">{list.name}</p>
+    <li className="card p-4 text-lg flex flex-row items-center justify-between border min-h-[82px]">
+      <p className="text-lg font-semibold">{list.name}</p>
       {accepted ? (
-        <span className="text-sm">✅ Accepted</span>
+        <Link
+          to={`/list/${list.id}`}
+          className="flex items-center gap-2 text-md normal-case font-medium btn btn-outline"
+        >
+          View list
+          <Link2 size={24} />
+        </Link>
       ) : (
-        <span className="text-sm">⏳ Pending</span>
+        <Button
+          className="normal-case"
+          disabled={isLoading}
+          onClick={onAcceptClick}
+        >
+          Accept invite
+        </Button>
       )}
-      <button
-        className="btn btn-primary btn-sm"
-        disabled={isLoading}
-        onClick={onAcceptClick}
-      >
-        Accept
-      </button>
     </li>
   );
 };
