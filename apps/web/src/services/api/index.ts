@@ -9,6 +9,7 @@ import {
 import { User } from "../auth";
 import { List, ListInvite, UserList } from "../types";
 import { api, baseURL } from "./base";
+import { AxiosError } from "axios";
 
 export const useGetInvites = () => {
   return useQuery<ListInvite[]>("invites", async () => {
@@ -45,7 +46,13 @@ export const useGetListInvites = (id: string) => {
   });
 };
 
-export const useCreateListInvite = () => {
+export const useCreateListInvite = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess: (data: ListInvite) => void;
+  onError?: (err: AxiosError) => void;
+}) => {
   return useMutation({
     mutationFn: async ({ email, id }: { email: string; id: string }) => {
       const res = await api.post(`${baseURL}/lists/${id}/invites`, {
@@ -53,6 +60,8 @@ export const useCreateListInvite = () => {
       });
       return res.data;
     },
+    onError,
+    onSuccess,
   });
 };
 

@@ -2,7 +2,6 @@ import { TrashIcon } from "@radix-ui/react-icons";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useMutation } from "react-query";
 import AlertError from "ui/AlertError";
-import UserPlus from "ui/Icons/UserPlus";
 import LoadingScene from "ui/Loading";
 
 import PlaceTypes from "src/components/places/PlaceTypes";
@@ -13,6 +12,7 @@ import { useAppDispatch } from "src/services/hooks";
 import { useAuth, openPlaceModal } from "src/services/store";
 import { useEffect, useState } from "react";
 import { getDefaultImageUrl } from "src/services/api/places";
+import { Share } from "lucide-react";
 
 const ListItem = ({
   listId,
@@ -128,12 +128,11 @@ const List = () => {
             {data.userId === user.id && (
               <Link
                 to={`/lists/${data.id}/invites`}
-                className="flex gap-2 btn btn-secondary bg-black text-white hover:bg-opacity-80 focus:bg-opacity-80"
+                className="flex gap-2 text-black hover:bg-opacity-80 focus:bg-opacity-80"
               >
                 <span className="hover:cursor-pointer">
-                  <UserPlus />
+                  <Share />
                 </span>
-                Invite others
               </Link>
             )}
           </div>

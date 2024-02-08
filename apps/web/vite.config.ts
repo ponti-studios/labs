@@ -17,7 +17,7 @@ export default defineConfig({
     },
   },
   preview: {
-    port: 5001,
+    port: 53422,
   },
   resolve: {
     alias: {
@@ -25,6 +25,6 @@ export default defineConfig({
     },
   },
   server: {
-    port: 5001,
+    port: 53422,
   },
 });

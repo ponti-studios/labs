@@ -6,7 +6,7 @@ import LoadingScene from "ui/Loading";
 import { useGetList, useGetListInvites } from "src/services/api";
 import { useAuth } from "src/services/store";
 
-import ListInviteForm from "../ListInviteForm";
+import ListInviteForm from "./components/ListInviteForm";
 
 const ListInvites = () => {
   const params = useParams();
@@ -46,28 +46,27 @@ const ListInvites = () => {
         </h1>
       </div>
       <ListInviteForm listId={listId} onCreate={onInviteSuccess} />
-      {listInvites &&
-        (listInvites.length > 0 ? (
-          <ul className="space-y-2">
-            {listInvites.map(({ accepted, invitedUserEmail }) => (
-              <li
-                key={invitedUserEmail}
-                className="card shadow-md p-4 text-lg flex flex-row justify-between"
-              >
-                <p className="text-sm text-gray-400">{invitedUserEmail}</p>
-                {accepted ? (
-                  <span className="text-sm">✅ Accepted</span>
-                ) : (
-                  <span className="text-sm">⏳ Pending</span>
-                )}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-lg flex justify-center p-4 font-semibold text-primary-focus">
-            You haven&apos;t invited anyone to this list yet.
-          </p>
-        ))}
+      {listInvites.length > 0 ? (
+        <ul className="space-y-4">
+          {listInvites.map(({ accepted, invitedUserEmail }) => (
+            <li
+              key={invitedUserEmail}
+              className="p-4 text-lg flex flex-row justify-between border-2 border-gray-100 rounded-md"
+            >
+              <p className="text-sm text-gray-400">{invitedUserEmail}</p>
+              {accepted ? (
+                <span className="text-sm">✅ Accepted</span>
+              ) : (
+                <span className="text-sm">⏳ Pending</span>
+              )}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-lg flex justify-center p-4 font-semibold">
+          You haven&apos;t invited anyone to this list.
+        </p>
+      )}
     </>
   );
 };

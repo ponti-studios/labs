@@ -3,10 +3,10 @@ type AlertErrorProps = {
 };
 function AlertError({ error }: AlertErrorProps) {
   return (
-    <div className="flex alert alert-error shadow-lg mb-8">
+    <div className="flex alert alert-error mb-4">
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className="stroke-current flex-shrink-0 h-6 w-6"
+        className="stroke-current flex-shrink-0 size-6"
         fill="none"
         viewBox="0 0 24 24"
       >

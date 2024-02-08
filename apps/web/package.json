@@ -10,7 +10,7 @@
     "lint:fix": "eslint --cache --fix --ignore-path ../../.gitignore --ext .js,.jsx,.ts,.tsx src",
     "lint": "eslint --max-warnings=0 --cache --ignore-path ../../.gitignore --ext .js,.jsx,.ts,.tsx src",
     "postinstall": "cypress install",
-    "preview:test": "start-server-and-test preview http://localhost:5001",
+    "preview:test": "start-server-and-test preview http://localhost:53422",
     "preview": "vite preview",
     "start": "npx http-server build --gzip -a 0.0.0.0 -p $PORT -c 1209600",
     "test:ci": "vitest run",

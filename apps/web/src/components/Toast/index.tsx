@@ -16,7 +16,7 @@ const Toast = () => {
   };
 
   return (
-    <div className="toast z-50">
+    <div className="toast toast-center z-50">
       {messages.map((message) => (
         <ToastItem key={message.text} message={message} />
       ))}

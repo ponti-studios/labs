@@ -127,7 +127,7 @@ const getListInvitesRoute = (server: FastifyInstance) => {
 
         switch (err.code) {
           case "P2002":
-            return reply.status(400).send({
+            return reply.status(409).send({
               message: "Invite already exists",
             });
           default:
