@@ -26,6 +26,7 @@
     "@fastify/jwt": "^7.2.0",
     "@fastify/rate-limit": "^8.0.3",
     "@fastify/secure-session": "^6.1.0",
+    "@googlemaps/places": "^1.1.0",
     "@prisma/client": "^5.9.1",
     "@segment/analytics-node": "^1.0.0",
     "@sendgrid/mail": "^7.6.1",

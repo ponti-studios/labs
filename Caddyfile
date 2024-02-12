@@ -1,0 +1,7 @@
+rocco.localhost {
+	reverse_proxy localhost:53422
+}
+
+api.rocco.localhost {
+	reverse_proxy localhost:53421
+}

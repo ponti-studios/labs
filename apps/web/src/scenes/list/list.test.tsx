@@ -1,4 +1,4 @@
-import { act, fireEvent, screen } from "@testing-library/react";
+import { act, fireEvent, screen, waitFor } from "@testing-library/react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   afterEach,
@@ -14,10 +14,11 @@ import { renderWithProviders } from "src/test/utils";
 import List from ".";
 import api from "src/services/api";
 import { baseURL } from "src/services/api/base";
+import { TEST_LIST_ID } from "src/test/test.setup";
 
 describe("List", () => {
   beforeEach(() => {
-    (useParams as Mock).mockReturnValue({ id: "list-id" });
+    (useParams as Mock).mockReturnValue({ id: TEST_LIST_ID });
   });
 
   afterEach(() => {
@@ -35,7 +36,13 @@ describe("List", () => {
   describe("delete list item", () => {
     test("should make DELETE API request on enter click", async () => {
       renderWithProviders(<List />, { isAuth: true });
-      const deleteButton = screen.getByTestId("delete-place-button");
+
+      // Wait for list to load
+      await waitFor(() => {
+        expect(screen.getByTestId("delete-place-button")).toBeInTheDocument();
+      });
+
+      const deleteButton = await screen.getByTestId("delete-place-button");
 
       await act(async () => {
         fireEvent.keyDown(deleteButton, { key: "Enter", code: "Enter" });
@@ -48,6 +55,12 @@ describe("List", () => {
 
     test("should make DELETE API request on button click", async () => {
       renderWithProviders(<List />, { isAuth: true });
+
+      // Wait for list to load
+      await waitFor(() => {
+        expect(screen.getByTestId("delete-place-button")).toBeInTheDocument();
+      });
+
       const deleteButton = screen.getByTestId("delete-place-button");
 
       await act(async () => {

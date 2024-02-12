@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev --parallel",
+    "dev": "caddy start & turbo run dev --parallel",
     "docker:api:build": "docker build -t rocco-api:latest -f apps/api/Dockerfile .",
     "docker:api:run": "docker run -it -p 4444:4444 --name=rocco-api rocco-api",
     "docker:web:build": "docker build -t rocco-web:latest -f Dockerfile.web .",

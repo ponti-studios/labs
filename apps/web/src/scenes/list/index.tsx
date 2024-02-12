@@ -1,6 +1,7 @@
 import { TrashIcon } from "@radix-ui/react-icons";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Share } from "lucide-react";
 import { useMutation } from "react-query";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import AlertError from "ui/AlertError";
 import LoadingScene from "ui/Loading";
 
@@ -10,9 +11,6 @@ import { baseURL } from "src/services/api/base";
 import { usePlacesService } from "src/services/google-maps";
 import { useAppDispatch } from "src/services/hooks";
 import { useAuth, openPlaceModal } from "src/services/store";
-import { useEffect, useState } from "react";
-import { getDefaultImageUrl } from "src/services/api/places";
-import { Share } from "lucide-react";
 
 const ListItem = ({
   listId,
@@ -23,7 +21,6 @@ const ListItem = ({
   onDelete: () => void;
   place: ListPlace;
 }) => {
-  const [imageUrl, setImageUrl] = useState(place.imageUrl);
   const dispatch = useAppDispatch();
   const placesService = usePlacesService();
   const { mutateAsync } = useMutation({
@@ -58,25 +55,11 @@ const ListItem = ({
     });
   };
 
-  useEffect(() => {
-    if (!imageUrl) {
-      // Get image from Google Maps API.
-      if (placesService) {
-        placesService.getDetails({ placeId: place.googleMapsId }, (place) => {
-          if (place) {
-            const image = getDefaultImageUrl(place);
-            setImageUrl(image);
-          }
-        });
-      }
-    }
-  }, [imageUrl, place.googleMapsId, placesService]);
-
   return (
     <div className="card glass px-2 py-3 rounded-md flex mb-4">
       <div className="flex flex-row">
         <Link to="#" className="w-16 h-16" onClick={onPlaceNameClick}>
-          <img src={imageUrl} alt={place.name} className="w-16 h-16" />
+          <img src={place.imageUrl} alt={place.name} className="w-16 h-16" />
         </Link>
         <div className="flex flex-col flex-1 h-full justify-between pl-2">
           <Link

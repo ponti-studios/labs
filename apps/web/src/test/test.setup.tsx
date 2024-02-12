@@ -10,8 +10,14 @@ import { cleanup } from "@testing-library/react";
 import { api, baseURL } from "../services/api/base";
 import { PropsWithChildren } from "react";
 
-const listId = "list-id";
+export const TEST_LIST_ID = "list-id";
 const placeId = "place-id";
+
+vi.mock("src/services/google-maps", () => ({
+  usePlacesService: () => ({
+    getDetails: vi.fn(),
+  }),
+}));
 
 vi.mock("react-router-dom", () => ({
   useParams: vi.fn(),
@@ -22,21 +28,22 @@ vi.mock("react-router-dom", () => ({
 }));
 
 const restHandlers = [
-  http.get(`${baseURL}/lists/${listId}`, () => {
+  http.get(`${baseURL}/lists/${TEST_LIST_ID}`, () => {
     return HttpResponse.json({
-      id: listId,
+      id: TEST_LIST_ID,
       name: "test list",
       items: [
         {
           id: placeId,
           itemId: placeId,
           name: "test place",
+          imageUrl: "test-image-url",
           types: ["test_type"],
         },
       ],
     });
   }),
-  http.delete(`${baseURL}/lists/${listId}/place/${placeId}`, () => {
+  http.delete(`${baseURL}/lists/${TEST_LIST_ID}/place/${placeId}`, () => {
     return HttpResponse.json({ success: true });
   }),
 ];

@@ -1,12 +1,13 @@
+import { FileX2 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import styles from "./NotFound.module.css";
 
 function NotFound() {
   const pathname = useLocation().pathname;
 
   if (pathname.indexOf("invites") !== -1) {
     return (
-      <div className={styles.wrap}>
+      <div className="py-2">
+        <FileX2 size={100} className="text-slate-700" />
         <h2 className="text-2xl font-semibold">
           This invite could not be found.
         </h2>
@@ -22,7 +23,7 @@ function NotFound() {
   }
 
   return (
-    <div className={styles.wrap}>
+    <div className="flex flex-col w-full h-full justify-center items-center">
       <h1 className="text-3xl font-semibold mb-16">You seem to be lost!</h1>
       <Link
         to="/"

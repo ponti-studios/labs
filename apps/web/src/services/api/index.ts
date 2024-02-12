@@ -1,3 +1,5 @@
+import { AxiosError } from "axios";
+
 import {
   QueryKey,
   UseMutationOptions,
@@ -8,8 +10,8 @@ import {
 
 import { User } from "../auth";
 import { List, ListInvite, UserList } from "../types";
+
 import { api, baseURL } from "./base";
-import { AxiosError } from "axios";
 
 export const useGetInvites = () => {
   return useQuery<ListInvite[]>("invites", async () => {
@@ -90,6 +92,7 @@ export type ListPlace = {
   name: string;
   googleMapsId: string;
   types: string[];
+  description: string;
 };
 
 type GetListResponse = UserList & {
@@ -100,7 +103,7 @@ export const useGetList = (id: string) => {
   return useQuery<GetListResponse>(
     ["list", id],
     async () => {
-      const res = await api.get(`${baseURL}/lists/${id}`);
+      const res = await api.get<GetListResponse>(`${baseURL}/lists/${id}`);
       return res.data;
     },
     {

@@ -158,12 +158,8 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
 
       track(userId, EVENTS.USER_EVENTS.LOGIN_SUCCESS, { isAdmin });
 
-      // The API and UI are not hosted at the same domain.
-      // Setting 'sameSite' to none and 'secure' to true enables the application cookie
-      // to be used on domains other than the API's domain. The API only accepts requests
-      // from the UI domain so we can safely set these values.
-      request.session.options({ sameSite: "none", secure: true });
       request.session.set("data", responseUser);
+
       return reply
         .code(200)
         .send({ user: responseUser })
