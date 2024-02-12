@@ -25,8 +25,13 @@ const { PlacesClient } = v1;
 // Instantiates a client
 const placesClient = new PlacesClient({
   credentials: {
+<<<<<<< HEAD
     client_email: credential.client_email,
     private_key: credential.private_key,
+=======
+    client_email: serviceAccount.client_email,
+    private_key: serviceAccount.private_key,
+>>>>>>> 3dffd65 (Add Google Maps API integration)
   },
 });
 
