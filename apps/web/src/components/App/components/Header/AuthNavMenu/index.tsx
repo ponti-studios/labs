@@ -1,28 +1,20 @@
-import styled from "@emotion/styled";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { HamburgerMenuIcon } from "@radix-ui/react-icons";
+import { List, LogOut, Mail, Menu, Search, Settings } from "lucide-react";
 import { useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import Avatar from "ui/Avatar";
+import { Link, useNavigate } from "react-router-dom";
 
-import { ACCOUNT, INVITES, LANDING, LISTS } from "src/constants/routes";
+import {
+  ACCOUNT,
+  DASHBOARD,
+  INVITES,
+  LANDING,
+  LISTS,
+} from "src/constants/routes";
 import { logout } from "src/services/auth";
 import { useAppDispatch } from "src/services/hooks";
 import { useAuth } from "src/services/store";
 
-import NavMenuItem from "../NavMenuItem";
-
 import "./styles.css";
-
-const Wrap = styled(NavMenuItem)`
-  display: flex;
-  align-items: center;
-  gap: 4px;
-
-  &:hover {
-    background-color: 0px 2px 5px 0px rgba(0, 0, 0, 0.3);
-  }
-`;
 
 const AuthNavMenu = () => {
   const navigate = useNavigate();
@@ -44,11 +36,21 @@ const AuthNavMenu = () => {
   }, [dispatch, navigate]);
 
   return (
-    <Wrap>
-      <Avatar alt="user" />
+    <>
+      <div className="hidden md:visible md:flex-1 md:flex justify-center gap-16">
+        <Link to={DASHBOARD} className="text-black">
+          <Search />
+        </Link>
+        <Link to={LISTS} className="text-black">
+          <List />
+        </Link>
+        <Link to={INVITES} className="text-black">
+          <Mail />
+        </Link>
+      </div>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger className="IconButton" aria-label="account menu">
-          <HamburgerMenuIcon />
+          <Menu />
         </DropdownMenu.Trigger>
         <DropdownMenu.Portal>
           <DropdownMenu.Content
@@ -56,40 +58,42 @@ const AuthNavMenu = () => {
             align="end"
             sideOffset={5}
           >
-            {user ? (
-              <DropdownMenu.Item className="flex justify-end text-sm pr-2 py-2 text-secondary-content hover:outline-none">
-                {user.email}
-              </DropdownMenu.Item>
-            ) : null}
+            <DropdownMenu.Item className="flex justify-end text-sm pr-2 py-2 text-secondary-content hover:outline-none">
+              {user.email}
+            </DropdownMenu.Item>
             <DropdownMenu.Item
-              className="DropdownMenuItem text-primary"
+              className="DropdownMenuItem text-black flex gap-4"
               onClick={onListsClick}
             >
+              <List size={20} />
               Lists
             </DropdownMenu.Item>
             <DropdownMenu.Item
-              className="DropdownMenuItem text-primary"
+              className="DropdownMenuItem text-black flex gap-4"
               onClick={onInvitesClick}
             >
+              <Mail size={20} />
               Invites
             </DropdownMenu.Item>
             <DropdownMenu.Separator />
             <DropdownMenu.Item
-              className="DropdownMenuItem text-primary"
+              className="DropdownMenuItem text-black flex gap-4"
               onClick={onAccountClick}
             >
+              <Settings size={20} />
               Account
             </DropdownMenu.Item>
             <DropdownMenu.Item
-              className="DropdownMenuItem text-primary"
+              className="DropdownMenuItem text-black flex gap-4"
               onClick={onLogoutClick}
             >
+              <LogOut size={20} />
               Logout
             </DropdownMenu.Item>
           </DropdownMenu.Content>
         </DropdownMenu.Portal>
       </DropdownMenu.Root>
-    </Wrap>
+    </>
   );
 };
 

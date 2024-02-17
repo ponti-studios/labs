@@ -81,7 +81,7 @@ button {
   @apply flex 
     items-center 
     justify-center
-    text-primary
+    text-black
     font-sans 
     rounded-md 
     h-9 

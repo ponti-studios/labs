@@ -105,7 +105,6 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
   }, [dispatch, selected]);
 
   useEffect(() => {
-    console.log(currentLocation, "currentLocation");
     if (currentLocation) {
       setCenter(currentLocation);
     }
