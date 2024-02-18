@@ -54,7 +54,7 @@ button {
 .DropdownMenuCheckboxItem[data-highlighted],
 .DropdownMenuRadioItem[data-highlighted],
 .DropdownMenuSubTrigger[data-highlighted] {
-  @apply bg-primary-content text-primary;
+  @apply bg-blue-100 text-primary;
 }
 
 .DropdownMenuLabel {

@@ -1,21 +1,21 @@
 import { List as ListIcon, Mail, Search } from "lucide-react";
-import { Link } from "react-router-dom";
 import { DASHBOARD, INVITES, LISTS } from "src/constants/routes";
+import NavLink from "../NavLink";
 
 const Footer = () => {
   return (
     <div className="sm:hidden btm-nav relative z-[55]">
-      <Link to={DASHBOARD} className="text-black">
+      <NavLink to={DASHBOARD}>
         <Search className="inline-block" />
-      </Link>
-      <Link to={LISTS} className="text-black">
+      </NavLink>
+      <NavLink to={LISTS}>
         <span className="inline-block relative">
           <ListIcon className="inline-block" />
         </span>
-      </Link>
-      <Link to={INVITES} className="text-black">
+      </NavLink>
+      <NavLink to={INVITES}>
         <Mail className="inline-block" />
-      </Link>
+      </NavLink>
     </div>
   );
 };

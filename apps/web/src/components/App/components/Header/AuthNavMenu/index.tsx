@@ -1,7 +1,7 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { List, LogOut, Mail, Menu, Search, Settings } from "lucide-react";
 import { useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import {
   ACCOUNT,
@@ -15,6 +15,7 @@ import { useAppDispatch } from "src/services/hooks";
 import { useAuth } from "src/services/store";
 
 import "./styles.css";
+import NavLink from "../../NavLink";
 
 const AuthNavMenu = () => {
   const navigate = useNavigate();
@@ -37,16 +38,16 @@ const AuthNavMenu = () => {
 
   return (
     <>
-      <div className="hidden md:visible md:flex-1 md:flex justify-center gap-16">
-        <Link to={DASHBOARD} className="text-black">
+      <div className="hidden md:visible md:flex-1 md:flex justify-center gap-6">
+        <NavLink to={DASHBOARD} className="px-4 py-2 rounded-xl">
           <Search />
-        </Link>
-        <Link to={LISTS} className="text-black">
+        </NavLink>
+        <NavLink to={LISTS} className="px-4 py-2 rounded-xl">
           <List />
-        </Link>
-        <Link to={INVITES} className="text-black">
+        </NavLink>
+        <NavLink to={INVITES} className="px-4 py-2 rounded-xl">
           <Mail />
-        </Link>
+        </NavLink>
       </div>
       <div className="flex-1 flex justify-end">
         <DropdownMenu.Root>
