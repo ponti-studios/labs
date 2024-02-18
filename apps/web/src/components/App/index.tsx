@@ -11,8 +11,9 @@ import { loadAuth } from "src/services/auth";
 import { useAppDispatch, useAppSelector } from "src/services/hooks";
 import { getIsAuthenticated, getIsLoadingAuth } from "src/services/store";
 
-import Header from "./components/Header";
 import AuthenticatedScenes from "./components/Authenticated";
+import Footer from "./components/Footer";
+import Header from "./components/Header";
 
 function App() {
   const authRef = useRef<boolean>(false);
@@ -36,20 +37,23 @@ function App() {
   }
 
   return (
-    <div id="app" className="h-full w-full flex flex-col">
-      <Header />
-      <main className="flex flex-1 mt-8" data-testid="app-main">
-        {isAuthenticated ? (
-          <AuthenticatedScenes />
-        ) : (
-          <Routes>
-            <Route path={ROUTES.AUTHENTICATE} element={<Authenticate />} />
-            <Route path={ROUTES.LOGIN} element={<Login />} />
-            <Route path={ROUTES.LANDING} element={<Home />} />
-            <Route path={ROUTES.WILDCARD} element={<NotFound />} />
-          </Routes>
-        )}
-      </main>
+    <div className="h-full w-full flex flex-col items-center">
+      <div className="h-full w-full flex flex-col lg:max-w-[800px] sm:px-2 md:px-0">
+        <Header />
+        <main className="flex flex-1 mt-8 w-full" data-testid="app-main">
+          {isAuthenticated ? (
+            <AuthenticatedScenes />
+          ) : (
+            <Routes>
+              <Route path={ROUTES.AUTHENTICATE} element={<Authenticate />} />
+              <Route path={ROUTES.LOGIN} element={<Login />} />
+              <Route path={ROUTES.LANDING} element={<Home />} />
+              <Route path={ROUTES.WILDCARD} element={<NotFound />} />
+            </Routes>
+          )}
+        </main>
+        {isAuthenticated && <Footer />}
+      </div>
     </div>
   );
 }
