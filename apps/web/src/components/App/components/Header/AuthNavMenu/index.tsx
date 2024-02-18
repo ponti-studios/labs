@@ -48,51 +48,56 @@ const AuthNavMenu = () => {
           <Mail />
         </Link>
       </div>
-      <DropdownMenu.Root>
-        <DropdownMenu.Trigger className="IconButton" aria-label="account menu">
-          <Menu />
-        </DropdownMenu.Trigger>
-        <DropdownMenu.Portal>
-          <DropdownMenu.Content
-            className="DropdownMenuContent"
-            align="end"
-            sideOffset={5}
+      <div className="flex-1 flex justify-end">
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger
+            className="IconButton"
+            aria-label="account menu"
           >
-            <DropdownMenu.Item className="flex justify-end text-sm pr-2 py-2 text-secondary-content hover:outline-none">
-              {user.email}
-            </DropdownMenu.Item>
-            <DropdownMenu.Item
-              className="DropdownMenuItem text-black flex gap-4"
-              onClick={onListsClick}
+            <Menu />
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Portal>
+            <DropdownMenu.Content
+              className="DropdownMenuContent"
+              align="end"
+              sideOffset={5}
             >
-              <List size={20} />
-              Lists
-            </DropdownMenu.Item>
-            <DropdownMenu.Item
-              className="DropdownMenuItem text-black flex gap-4"
-              onClick={onInvitesClick}
-            >
-              <Mail size={20} />
-              Invites
-            </DropdownMenu.Item>
-            <DropdownMenu.Separator />
-            <DropdownMenu.Item
-              className="DropdownMenuItem text-black flex gap-4"
-              onClick={onAccountClick}
-            >
-              <Settings size={20} />
-              Account
-            </DropdownMenu.Item>
-            <DropdownMenu.Item
-              className="DropdownMenuItem text-black flex gap-4"
-              onClick={onLogoutClick}
-            >
-              <LogOut size={20} />
-              Logout
-            </DropdownMenu.Item>
-          </DropdownMenu.Content>
-        </DropdownMenu.Portal>
-      </DropdownMenu.Root>
+              <DropdownMenu.Item className="flex justify-end text-sm pr-2 py-2 text-secondary-content hover:outline-none">
+                {user.email}
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                className="DropdownMenuItem text-black flex gap-4"
+                onClick={onListsClick}
+              >
+                <List size={20} />
+                Lists
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                className="DropdownMenuItem text-black flex gap-4"
+                onClick={onInvitesClick}
+              >
+                <Mail size={20} />
+                Invites
+              </DropdownMenu.Item>
+              <DropdownMenu.Separator />
+              <DropdownMenu.Item
+                className="DropdownMenuItem text-black flex gap-4"
+                onClick={onAccountClick}
+              >
+                <Settings size={20} />
+                Account
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                className="DropdownMenuItem text-black flex gap-4"
+                onClick={onLogoutClick}
+              >
+                <LogOut size={20} />
+                Logout
+              </DropdownMenu.Item>
+            </DropdownMenu.Content>
+          </DropdownMenu.Portal>
+        </DropdownMenu.Root>
+      </div>
     </>
   );
 };

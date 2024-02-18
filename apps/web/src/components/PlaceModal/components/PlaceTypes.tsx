@@ -1,10 +1,9 @@
-import Typography from "ui/Typography";
 import PlaceType from "./PlaceType";
 
 const PlaceTypes = ({ types }: { types: string[] }) => {
   return (
     <p className="py-[4px]">
-      <Typography variant="bold">Types</Typography>
+      <span className="font-semibold">Types</span>
       {/* Div that places a 8px gap between text wrap lines */}
       <div style={{ lineHeight: 2 }}>
         {types.map((type) => {

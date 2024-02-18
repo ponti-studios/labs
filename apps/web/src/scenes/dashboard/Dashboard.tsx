@@ -4,9 +4,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import Loading from "ui/Loading";
 
 import { mediaQueries } from "src/constants/styles";
-import { useAppDispatch, useAppSelector } from "src/services/hooks";
-import { openPlaceModal } from "src/services/store";
-import { usePlacesService } from "src/services/google-maps";
+import { useAppSelector } from "src/services/hooks";
+import { usePlaceModal, usePlacesService } from "src/services/places";
+import { Place } from "src/services/types";
 
 import Map from "./components/Map";
 import PlacesAutocomplete from "./components/PlacesAutocomplete";
@@ -29,32 +29,24 @@ const PlacesAutocompleteWrap = styled.div``;
 
 const ZOOM_LEVELS = {
   DEFAULT: 10,
-  SELECTED: 17,
+  SELECTED: 19,
   MARKER: 18,
 };
 
 const DEFAULT_CENTER = { lat: 37.7749, lng: -122.4194 }; // Default center (San Francisco)
 
 function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
+  const { openPlaceModal } = usePlaceModal();
   const [zoom, setZoom] = useState(ZOOM_LEVELS.DEFAULT);
   const currentLocation = useAppSelector((state) => state.auth.currentLocation);
-  const [selected, setSelected] =
-    useState<google.maps.places.PlaceResult | null>(null);
+  const [selected, setSelected] = useState<Place | null>(null);
   const [center, setCenter] = useState(currentLocation || DEFAULT_CENTER);
-  const dispatch = useAppDispatch();
-  const placesService = usePlacesService();
+  const { getPlaceDetails } = usePlacesService();
 
   const onMapClick = useCallback(
     async (args: MapMouseEvent) => {
       const { placeId, latLng } = args.detail;
-      const place = await new Promise((res) => {
-        placesService.getDetails({ placeId }, (place, status) => {
-          if (status !== google.maps.places.PlacesServiceStatus.OK) {
-            res(null);
-          }
-          res(place);
-        });
-      });
+      const place = await getPlaceDetails({ placeId });
 
       if (!place || typeof place === "string") {
         return;
@@ -64,45 +56,37 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
       setSelected(place);
       setCenter(latLng);
       setZoom(ZOOM_LEVELS.MARKER);
-      dispatch(
-        openPlaceModal({
-          onClose: () => {
-            setSelected(null);
-            setZoom(ZOOM_LEVELS.SELECTED);
-          },
-          place,
-        }),
-      );
-    },
-    [dispatch, placesService],
-  );
-
-  const onSelectedChanged = useCallback(
-    (place: google.maps.places.PlaceResult) => {
-      const {
-        geometry: { location },
-      } = place;
-      const latLng = { lat: location.lat(), lng: location.lng() };
-      setSelected(place);
-      setCenter(latLng);
-      setZoom(ZOOM_LEVELS.SELECTED);
-    },
-    [],
-  );
-
-  const onMarkerClick = useCallback(() => {
-    // The map should zoom slightly when the marker is clicked
-    setZoom(ZOOM_LEVELS.MARKER);
-    dispatch(
       openPlaceModal({
         onClose: () => {
           setSelected(null);
           setZoom(ZOOM_LEVELS.SELECTED);
         },
-        place: selected,
-      }),
-    );
-  }, [dispatch, selected]);
+        place,
+      });
+    },
+    [getPlaceDetails, openPlaceModal],
+  );
+
+  const onSelectedChanged = useCallback((place: Place) => {
+    setSelected(place);
+    setCenter({
+      lat: place.latitude,
+      lng: place.longitude,
+    });
+    setZoom(ZOOM_LEVELS.SELECTED);
+  }, []);
+
+  const onMarkerClick = useCallback(() => {
+    // The map should zoom slightly when the marker is clicked
+    setZoom(ZOOM_LEVELS.MARKER);
+    openPlaceModal({
+      onClose: () => {
+        setSelected(null);
+        setZoom(ZOOM_LEVELS.SELECTED);
+      },
+      place: selected,
+    });
+  }, [openPlaceModal, selected]);
 
   useEffect(() => {
     if (currentLocation) {

@@ -37,3 +37,18 @@ export type UserList = List & {
   listId: string;
   createdBy: User;
 };
+
+export type Place = {
+  address: string;
+  imageUrl: string;
+  international_phone_number: string;
+  latitude: number;
+  longitude: number;
+  name: string;
+  photos: string[];
+  place_id: string;
+  price_level: number;
+  rating: number;
+  types: string[];
+  website: string;
+};

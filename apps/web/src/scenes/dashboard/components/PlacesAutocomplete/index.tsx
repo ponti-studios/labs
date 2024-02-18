@@ -1,11 +1,12 @@
 import styled from "@emotion/styled";
 import { Combobox } from "@headlessui/react";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { useQuery } from "react-query";
-
 import Loading from "ui/Loading";
-import { usePlacesService } from "src/services/google-maps";
+
+import { usePlacesService } from "src/services/places";
+import { Place } from "src/services/types";
 
 const Wrapper = styled.div`
   max-height: 48px; // This is the maximum height of the input field.
@@ -69,46 +70,38 @@ const LoadingWrap = styled.div`
   border-radius: 4px;
 `;
 
+// const useDebounce = (fn, delay) => {
+//   const timeoutRef = useRef(null);
+//   return (...args) => {
+//     clearTimeout(timeoutRef.current);
+//     timeoutRef.current = setTimeout(() => {
+//       fn(...args);
+//     }, delay);
+//   };
+// }
+
 function PlacesAutocomplete({
   center,
   setSelected,
 }: {
   center: google.maps.LatLngLiteral;
-  setSelected: (place: google.maps.places.PlaceResult) => void;
+  setSelected: (place: Place) => void;
 }) {
-  const placesService = usePlacesService();
+  const { getPlaceDetails, textSearch } = usePlacesService();
   const [value, setValue] = useState("");
   const [error, setError] = useState(null);
-  const [suggestions, setSuggestions] = useState<
-    google.maps.places.PlaceResult[]
-  >([]);
-  const { isLoading, refetch } = useQuery<google.maps.places.PlaceResult[]>({
-    queryKey: ["placeDetails", value],
-    queryFn: () =>
-      new Promise((resolve) => {
-        placesService.textSearch(
-          {
-            query: value,
-            location: center,
-            radius: 100,
-          },
-          (response) => {
-            if (!response) resolve([]);
-            resolve(response);
-          },
-        );
-        // placesService.findPlaceFromQuery(
-        //   {
-        //     query: value,
-        //     fields: ["formatted_address", "geometry", "name", "place_id"],
-        //     locationBias: { radius: 100_000, center },
-        //   },
-        //   (response) => {
-        //     if (!response) resolve([]);
-        //     resolve(response);
-        //   },
-        // );
-      }),
+  const [suggestions, setSuggestions] = useState<Place[]>([]);
+  const { isLoading, refetch } = useQuery<Place[]>({
+    queryKey: ["placeDetails", center, value],
+    queryFn: () => {
+      if (value.length < 3 || !center) return Promise.resolve([]);
+
+      return textSearch({
+        query: value,
+        location: center,
+        radius: 100,
+      });
+    },
     onSuccess: (data) => {
       setSuggestions(data);
     },
@@ -121,50 +114,46 @@ function PlacesAutocomplete({
 
   const onInputChange = useCallback(
     (e) => {
-      if (!placesService) return;
+      if (!textSearch) return;
 
       if (!e.target.value) {
         setSuggestions([]);
         return;
       }
 
-      console.log("e.target.value", e.target.value);
       setValue(e.target.value);
 
       refetch();
     },
-    [placesService, refetch, setValue],
+    [textSearch, refetch, setValue],
   );
+
+  // This debounce prevents excess API requests.
+  const timeoutId = useRef(null);
+  const DEBOUNCE_TIME_MS = 1000;
 
   const handleSelect = useCallback(
     async (suggestion) => {
-      setValue(suggestion.description);
-      try {
-        const details =
-          await new Promise<google.maps.places.PlaceResult | null>(
-            (resolve) => {
-              placesService.getDetails(
-                { placeId: suggestion.place_id },
-                (place) => {
-                  if (!place) resolve(null);
-                  resolve(place);
-                },
-              );
-            },
-          );
+      clearTimeout(timeoutId.current);
+      timeoutId.current = setTimeout(async () => {
+        try {
+          const place = await getPlaceDetails({
+            placeId: suggestion.place_id,
+          });
 
-        if (!details || typeof details === "string") {
-          throw new Error("This location could not be found.");
-        }
+          if (!place || typeof place === "string") {
+            throw new Error("This location could not be found.");
+          }
 
-        if (typeof details !== "string") {
-          setSelected(details);
+          if (typeof place !== "string") {
+            setSelected(place);
+          }
+        } catch (err) {
+          setError(err);
         }
-      } catch (err) {
-        setError(err);
-      }
+      }, DEBOUNCE_TIME_MS);
     },
-    [placesService, setSelected, setValue],
+    [getPlaceDetails, setSelected],
   );
 
   return (
@@ -174,6 +163,7 @@ function PlacesAutocomplete({
         <InputWrap>
           <Combobox.Input
             className="input input-bordered w-full"
+            value={value}
             onChange={onInputChange}
           />
           <MagnifyingGlassIcon
@@ -182,28 +172,26 @@ function PlacesAutocomplete({
             className="text-primary"
           />
         </InputWrap>
-        {
-          <Options className="bg-white overflow-y-scroll">
-            {isLoading ? (
-              <LoadingWrap>
-                <Loading />
-              </LoadingWrap>
-            ) : (
-              suggestions.map((suggestion) => (
-                <Option
-                  key={suggestion.place_id}
-                  value={suggestion}
-                  className="truncate text-primary"
-                >
-                  <span className="font-medium">{suggestion.name}</span>,{" "}
-                  <span className="text-slate-400 font-light">
-                    {suggestion.formatted_address}
-                  </span>
-                </Option>
-              ))
-            )}
-          </Options>
-        }
+        <Options className="bg-white overflow-y-scroll">
+          {isLoading ? (
+            <LoadingWrap>
+              <Loading />
+            </LoadingWrap>
+          ) : (
+            suggestions.map((suggestion) => (
+              <Option
+                key={suggestion.place_id}
+                value={suggestion}
+                className="truncate text-primary"
+              >
+                <span className="font-medium">{suggestion.name}</span>,{" "}
+                <span className="text-slate-400 font-light">
+                  {suggestion.address}
+                </span>
+              </Option>
+            ))
+          )}
+        </Options>
       </Combobox>
     </Wrapper>
   );

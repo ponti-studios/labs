@@ -1,21 +1,37 @@
 import "@testing-library/jest-dom";
-
-import React from "react";
+import { cleanup } from "@testing-library/react";
+import { createSlice } from "@reduxjs/toolkit";
+import React, { PropsWithChildren } from "react";
 import { useParams } from "react-router-dom";
-import { Mock, afterAll, afterEach, beforeAll, vi } from "vitest";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
-import { cleanup } from "@testing-library/react";
+import { Mock, afterAll, afterEach, beforeAll, vi } from "vitest";
 
 import { api, baseURL } from "../services/api/base";
-import { PropsWithChildren } from "react";
 
 export const TEST_LIST_ID = "list-id";
 const placeId = "place-id";
 
-vi.mock("src/services/google-maps", () => ({
+vi.mock("src/services/places", () => ({
   usePlacesService: () => ({
     getDetails: vi.fn(),
+  }),
+  usePlaceModal: vi.fn(() => ({
+    closePlaceModal: vi.fn(),
+    openPlaceModal: vi.fn(),
+  })),
+  placesSlice: createSlice({
+    name: "places",
+    initialState: {
+      isOpen: false,
+      listId: null,
+      place: null,
+      onClose: null,
+    },
+    reducers: {
+      openPlaceModal: vi.fn(),
+      closePlaceModal: vi.fn(),
+    },
   }),
 }));
 

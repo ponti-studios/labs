@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Link, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Loading from "ui/Loading";
 
 import * as ROUTES from "src/constants/routes";
@@ -12,8 +12,7 @@ import { useAppDispatch, useAppSelector } from "src/services/hooks";
 import { getIsAuthenticated, getIsLoadingAuth } from "src/services/store";
 
 import Header from "./components/Header";
-import AuthenticatedScenes from "./Authenticated";
-import { List, Mail, Search } from "lucide-react";
+import AuthenticatedScenes from "./components/Authenticated";
 
 function App() {
   const authRef = useRef<boolean>(false);
@@ -51,21 +50,6 @@ function App() {
           </Routes>
         )}
       </main>
-      {isAuthenticated && (
-        <div className="sm:hidden btm-nav relative z-[55]">
-          <Link to={ROUTES.DASHBOARD} className="text-black">
-            <Search className="inline-block" />
-          </Link>
-          <Link to={ROUTES.LISTS} className="text-black">
-            <span className="inline-block relative">
-              <List className="inline-block" />
-            </span>
-          </Link>
-          <Link to={ROUTES.INVITES} className="text-black">
-            <Mail className="inline-block" />
-          </Link>
-        </div>
-      )}
     </div>
   );
 }

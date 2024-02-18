@@ -1,5 +1,4 @@
 import { HTMLAttributes } from "react";
-import Typography from "ui/Typography";
 
 type WrapProps = HTMLAttributes<HTMLParagraphElement>;
 const Wrap = ({ children, ...props }: WrapProps) => (
@@ -57,7 +56,7 @@ const PlaceStatus = ({ place, ...props }: PlaceStatusProps) => {
 
   return (
     <Wrap {...props}>
-      <Typography variant="bold">Status:</Typography>{" "}
+      <span className="font-semibold">Status:</span>{" "}
       {
         // If permanently closed, show sad message
         permanentlyClosed && (

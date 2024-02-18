@@ -1,95 +1,33 @@
-import { TrashIcon } from "@radix-ui/react-icons";
 import { Share } from "lucide-react";
-import { useMutation } from "react-query";
+import { useCallback } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import AlertError from "ui/AlertError";
 import LoadingScene from "ui/Loading";
 
-import PlaceTypes from "src/components/places/PlaceTypes";
-import api, { ListPlace, useGetList } from "src/services/api";
-import { baseURL } from "src/services/api/base";
-import { usePlacesService } from "src/services/google-maps";
-import { useAppDispatch } from "src/services/hooks";
-import { useAuth, openPlaceModal } from "src/services/store";
+import { useGetList } from "src/services/api";
+import { useAppSelector } from "src/services/hooks";
+import { useAuth } from "src/services/store";
+import { usePlaceModal } from "src/services/places";
 
-const ListItem = ({
-  listId,
-  onDelete,
-  place,
-}: {
-  listId: string;
-  onDelete: () => void;
-  place: ListPlace;
-}) => {
-  const dispatch = useAppDispatch();
-  const placesService = usePlacesService();
-  const { mutateAsync } = useMutation({
-    mutationKey: ["deleteListItem", listId, place.id],
-    mutationFn: () =>
-      api.delete(`${baseURL}/lists/${listId}/place/${place.itemId}`),
-    onSuccess: () => {
-      onDelete();
-    },
-  });
-
-  const onDeleteClick = async (e: React.MouseEvent) => {
-    if (e.button !== 0) {
-      return;
-    }
-
-    await mutateAsync();
-  };
-
-  const onDeleteKeyDown = async (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      await mutateAsync();
-    }
-  };
-
-  const onPlaceNameClick = (e) => {
-    e.preventDefault();
-    if (!placesService) return;
-    placesService.getDetails({ placeId: place.googleMapsId }, (res) => {
-      if (!res) return;
-      dispatch(openPlaceModal({ place: res }));
-    });
-  };
-
-  return (
-    <div className="card glass px-2 py-3 rounded-md flex mb-4">
-      <div className="flex flex-row">
-        <Link to="#" className="w-16 h-16" onClick={onPlaceNameClick}>
-          <img src={place.imageUrl} alt={place.name} className="w-16 h-16" />
-        </Link>
-        <div className="flex flex-col flex-1 h-full justify-between pl-2">
-          <Link
-            to="#"
-            className="flex-1 mb-2 text-xl md:text-2xl font-medium justify-start underline-offset-4 focus-visible:underline focus-visible:outline-none"
-            onClick={onPlaceNameClick}
-          >
-            {place.name}
-          </Link>
-          <PlaceTypes types={place.types} />
-        </div>
-        <button
-          data-testid="delete-place-button"
-          className="flex items-center px-4 rounded-md hover:cursor-pointer hover:bg-neutral-content hover:bg-opacity-10 focus:bg-neutral-content focus:bg-opacity-10 transition-colors"
-          onClick={onDeleteClick}
-          onKeyDown={onDeleteKeyDown}
-        >
-          <TrashIcon width={24} height={24} className="text-red-500" />
-        </button>
-      </div>
-    </div>
-  );
-};
+import ListItem from "./components/ListItem";
+import PlacesAutocomplete from "../dashboard/components/PlacesAutocomplete";
+import { Place } from "src/services/types";
 
 const List = () => {
+  const { openPlaceModal } = usePlaceModal();
   const navigate = useNavigate();
+  const currentLocation = useAppSelector((state) => state.auth.currentLocation);
   const params = useParams<{ id: string }>();
   const { user } = useAuth();
   const listId = params.id;
   const { data, refetch, status: listStatus } = useGetList(listId);
+
+  const onSelectedChanged = useCallback(
+    (place: Place) => {
+      openPlaceModal({ place, onClose: refetch });
+    },
+    [openPlaceModal, refetch],
+  );
 
   if (!user) {
     navigate("/");
@@ -105,7 +43,7 @@ const List = () => {
       {!data && <AlertError error="We could not find this list." />}
       {data && (
         <div className="flex flex-col px-0.5">
-          <div className="flex justify-between items-center mb-12">
+          <div className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-semibold">{data.name}</h1>
             {/* Only list owners can invite others. */}
             {data.userId === user.id && (
@@ -118,6 +56,15 @@ const List = () => {
                 </span>
               </Link>
             )}
+          </div>
+          <div className="mb-6">
+            <label className="label" htmlFor="search">
+              Add a place
+            </label>
+            <PlacesAutocomplete
+              setSelected={onSelectedChanged}
+              center={currentLocation}
+            />
           </div>
           {data.items.map((place) => (
             <ListItem

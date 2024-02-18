@@ -1,25 +1,20 @@
 import { useMutation } from "react-query";
 import api from ".";
+import { Place } from "../types";
 
 export const useAddPlaceToList = (options) => {
   return useMutation(
-    ({
-      listIds,
-      place,
-    }: {
-      listIds: string[];
-      place: google.maps.places.PlaceResult;
-    }) => {
+    ({ listIds, place }: { listIds: string[]; place: Place }) => {
       return api.post(`/lists/place`, {
         listIds,
         place: {
           name: place.name,
-          address: place.formatted_address,
+          address: place.address,
           location: {
-            lat: place.geometry?.location.lat(),
-            lng: place.geometry?.location.lng(),
+            lat: place.latitude,
+            lng: place.longitude,
           },
-          imageUrl: getDefaultImageUrl(place),
+          imageUrl: place.imageUrl,
           place_id: place.place_id,
           rating: place.rating,
           price_level: place.price_level,

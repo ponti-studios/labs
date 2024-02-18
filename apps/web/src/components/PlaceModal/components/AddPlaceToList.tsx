@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import { useState } from "react";
 import { useGetLists } from "src/services/api";
 import { useAddPlaceToList } from "src/services/api/places";
+import { Place } from "src/services/types";
 import Button from "ui/Button";
 
 const ListItem = styled.li`
@@ -31,7 +32,7 @@ const AddPlaceToList = ({
 }: {
   cancel: () => void;
   onSuccess: () => void;
-  place: google.maps.places.PlaceResult;
+  place: Place;
 }) => {
   const { isLoading, data: lists } = useGetLists();
   const [listIds, setListIds] = useState<string[]>([]);

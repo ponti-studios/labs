@@ -1,42 +1,26 @@
 import { RefObject, forwardRef, useState } from "react";
 import Button from "ui/Button";
-import Typography from "ui/Typography";
 
 import Modal from "src/components/Modal";
-import { closePlaceModal } from "src/services/store";
-import { useAppDispatch } from "src/services/hooks";
+import { usePlaceModal } from "src/services/places";
 import { useToast } from "src/services/toast/toast.slice";
+import { Place } from "src/services/types";
 
-import AddPlaceToList from "./AddPlaceToList";
-import PlaceStatus from "./PlaceStatus";
-import PlacePhotos from "./PlacePhotos";
-import PlaceAddress from "./PlaceAddress";
-import PlacePriceLevel from "./PlacePriceLevel";
-import PlaceWebsite from "./PlaceWebsite";
-
-const PlaceRating = ({ place }: { place: google.maps.places.PlaceResult }) => {
-  return (
-    <p className="py-[4px]">
-      <Typography variant="bold">Rating:</Typography>{" "}
-      {[...Array(Math.floor(place.rating))].map((_, i) => (
-        <span key={i} className="text-yellow-500">
-          ★
-        </span>
-      ))}
-    </p>
-  );
-};
+import AddPlaceToList from "./components/AddPlaceToList";
+import PlacePhotos from "./components/PlacePhotos";
+import PlaceAddress from "./components/PlaceAddress";
+import PlaceWebsite from "./components/PlaceWebsite";
 
 type PlaceModalProps = {
   isOpen: boolean;
   onModalClose: () => void;
-  place: google.maps.places.PlaceResult;
+  place: Place;
 };
 function PlaceModal(
   { place, isOpen, onModalClose }: PlaceModalProps,
   ref: RefObject<HTMLDialogElement | null>,
 ) {
-  const dispatch = useAppDispatch();
+  const { closePlaceModal } = usePlaceModal();
   const { openToast } = useToast();
   const type = place && place.types[0] && place.types[0].split("_")[0];
   const [isListSelectOpen, setIsListSelectOpen] = useState(false);
@@ -46,7 +30,7 @@ function PlaceModal(
   };
 
   const closeModal = () => {
-    dispatch(closePlaceModal());
+    closePlaceModal();
     setIsListSelectOpen(false);
     onModalClose?.();
   };
@@ -74,24 +58,15 @@ function PlaceModal(
                 {type.charAt(0).toUpperCase() + type.slice(1)}
               </p>
             </div>
-            <PlaceAddress place={place} />
+            <PlaceAddress
+              address={place.address}
+              name={place.name}
+              place_id={place.place_id}
+            />
             {place.website && (
               <div className="flex justify-end mt-2">
                 <PlaceWebsite website={place.website} />
               </div>
-            )}
-          </div>
-          <div className="hidden">
-            <PlaceStatus className="py-[4px]" place={place} />
-            {place.rating && place.rating > 0 && <PlaceRating place={place} />}
-            {place.price_level && (
-              <PlacePriceLevel priceLevel={place.price_level} />
-            )}
-            {place.international_phone_number && (
-              <p className="py-[4px]">
-                <Typography variant="bold">Phone Number:</Typography>{" "}
-                {place.international_phone_number}
-              </p>
             )}
           </div>
           <div className="modal-action">
