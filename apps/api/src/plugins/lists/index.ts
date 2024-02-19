@@ -10,6 +10,7 @@ import postListsPlace from "./post/place";
 import postListRoute from "./post";
 import acceptListInviteRoute from "./post/acceptInvite";
 import putListRoute from "./put";
+import addPhotoToPlace from "./crons/addPhotoToPlace";
 
 const listsPlugin: FastifyPluginAsync = async (server) => {
   acceptListInviteRoute(server);
@@ -20,6 +21,11 @@ const listsPlugin: FastifyPluginAsync = async (server) => {
   postListRoute(server);
   postListsPlace(server);
   putListRoute(server);
+
+  // Add cron jobs
+  addPhotoToPlace(server).catch((err) => {
+    server.log.error(err);
+  });
 };
 
 export default fastifyPlugin(listsPlugin);
