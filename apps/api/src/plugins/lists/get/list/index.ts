@@ -2,7 +2,6 @@ import { FastifyInstance } from "fastify";
 
 // src/plugins
 import { verifySession } from "../../../auth";
-import { getPlacePhoto } from "../../../google-places";
 import { prisma } from "../../../prisma";
 
 async function getListPlaces(listId: string): Promise<
@@ -91,20 +90,8 @@ const getListRoute = (server: FastifyInstance) => {
       }
 
       const items = await getListPlaces(id);
-      const withGooglePlacesImages = await Promise.all(
-        items.map(async (item) => {
-          if (item.type === "PLACE") {
-            return {
-              ...item,
-              imageUrl: await getPlacePhoto(item.googleMapsId),
-            };
-          }
 
-          return item;
-        }),
-      );
-
-      return { ...list, items: withGooglePlacesImages, userId: list.userId };
+      return { ...list, items, userId: list.userId };
     },
   );
 };
