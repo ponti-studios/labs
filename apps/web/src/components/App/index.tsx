@@ -40,7 +40,10 @@ function App() {
     <div className="h-full w-full flex flex-col items-center">
       <div className="h-full w-full flex flex-col lg:max-w-[800px] sm:px-2 md:px-0">
         <Header />
-        <main className="flex flex-1 mt-8 w-full" data-testid="app-main">
+        <main
+          className="flex flex-1 mt-8 w-full max-sm:pb-16"
+          data-testid="app-main"
+        >
           {isAuthenticated ? (
             <AuthenticatedScenes />
           ) : (
