@@ -6,12 +6,13 @@ import LoadingScene from "ui/Loading";
 
 import { useGetList } from "src/services/api";
 import { useAppSelector } from "src/services/hooks";
-import { useAuth } from "src/services/store";
 import { usePlaceModal } from "src/services/places";
+import { useAuth } from "src/services/store";
+import { Place } from "src/services/types";
+
+import PlacesAutocomplete from "../dashboard/components/PlacesAutocomplete";
 
 import ListItem from "./components/ListItem";
-import PlacesAutocomplete from "../dashboard/components/PlacesAutocomplete";
-import { Place } from "src/services/types";
 
 const List = () => {
   const { openPlaceModal } = usePlaceModal();

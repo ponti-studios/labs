@@ -2,7 +2,7 @@
 
 import { FastifyInstance } from "fastify";
 import { prisma } from "../../prisma";
-import { getPlacePhoto } from "../../google-places";
+import { getPlacePhoto } from "../../google/places";
 
 async function addPhotoToPlace(server: FastifyInstance) {
   const places = await prisma.place.findMany();
