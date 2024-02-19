@@ -17,7 +17,7 @@ function Header() {
         to={LANDING}
         className="flex flex-1 gap-2 items-center font-extrabold lowercase text-4xl"
       >
-        <Globe className="animate-spin-slow mt-1 h-7 w-7 text-primary" />
+        <Globe className="animate-spin-slow mt-1 size-7 text-primary" />
         {APP_NAME}
       </Link>
       {isAuthenticated ? (
