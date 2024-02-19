@@ -1,13 +1,12 @@
 import styled from "@emotion/styled";
 import { Link } from "react-router-dom";
-import Emoji from "ui/Emoji";
+import { Globe2, Heart, Eye, Pin } from "lucide-react";
 
 import { LOGIN } from "src/constants/routes";
 import { mediaQueries } from "src/constants/styles";
 
-import svg from "./world.svg";
-
 const Wrap = styled.div`
+  position: relative;
   display: flex;
   justify-items: center;
   align-items: center;
@@ -24,66 +23,38 @@ const Wrap = styled.div`
   }
 `;
 
-const HeroImage = styled.div`
-  width: 50%;
-  background-image: url(${svg});
-  background-size: cover;
-  background-position: center;
-
-  ${mediaQueries.belowMedium} {
-    width: 100%;
-  }
-`;
-
-const HeroText = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 50%;
-  height: 100%;
-  padding: 0 2rem;
-
-  ${mediaQueries.belowMedium} {
-    width: 100%;
-  }
-`;
-
 const Home = () => {
   return (
     <Wrap>
-      <HeroImage className="h-52 md:h-full" />
-      <HeroText className="flex mt-16 mb-16 max-md:flex-col w-44">
+      <div className="flex flex-col items-center justify-center w-full">
         <div className="flex text-primary font-extrabold text-4xl mb-8">
-          <Emoji kind="map" size="lg" className="animate-spin-slow">
-            🌎
-          </Emoji>
+          <div>
+            <Globe2 className="animate-spin-slow" size={40} />
+          </div>
           <p className="ml-2">Make the world yours.</p>
         </div>
-        <div className="flex font-extrabold text-md">
-          <Emoji kind="map" size="md">
-            📍
-          </Emoji>
-          <p className="ml-2">Save the places you love and want to visit.</p>
-        </div>
-        <div className="flex font-extrabold text-md">
-          <Emoji kind="map" size="md">
-            👀
-          </Emoji>
-          <p className="ml-2">Discover your friend&apos;s fave places</p>
-        </div>
-        <div className="flex font-extrabold text-md">
-          <Emoji kind="map" size="md">
-            🤩
-          </Emoji>
-          <p className="ml-2">Never wonder where to go again</p>
+        <div className="flex flex-col gap-4 mb-4 font-extrabold text-xl">
+          <div className="flex items-center font-extrabold text-xl">
+            <Pin size={20} />
+            <p className="ml-2">
+              Never forget the places you love and want to visit.
+            </p>
+          </div>
+          <div className="flex items-center font-extrabold text-xl">
+            <Eye size={20} />
+            <p className="ml-2">Discover your friend&apos;s fave places</p>
+          </div>
+          <div className="flex font-extrabold text-md">
+            <Heart size={20} />
+            <p className="ml-2">Never wonder where to go again</p>
+          </div>
         </div>
         <div className="mt-2">
           <Link to={LOGIN} className="btn btn-primary text-white">
             Get Started
           </Link>
         </div>
-      </HeroText>
+      </div>
     </Wrap>
   );
 };
