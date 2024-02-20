@@ -10,7 +10,9 @@ import postListsPlace from "./post/place";
 import postListRoute from "./post";
 import acceptListInviteRoute from "./post/acceptInvite";
 import putListRoute from "./put";
-import addPhotoToPlaces from "./crons/addPhotoToPlaces";
+
+// Cron jobs
+// import addPhotoToPlaces from "./crons/addPhotoToPlaces";
 
 const listsPlugin: FastifyPluginAsync = async (server) => {
   acceptListInviteRoute(server);
@@ -23,9 +25,9 @@ const listsPlugin: FastifyPluginAsync = async (server) => {
   putListRoute(server);
 
   // Cron jobs
-  addPhotoToPlaces(server).catch((err) => {
-    console.error("Error adding photo to place", err);
-  });
+  // addPhotoToPlaces(server).catch((err) => {
+  //   console.error("Error adding photo to place", err);
+  // });
 };
 
 export default fastifyPlugin(listsPlugin);
