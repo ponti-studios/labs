@@ -33,7 +33,7 @@ describe("List", () => {
     expect(navigate).toHaveBeenCalledWith("/");
   });
 
-  describe("delete list item", () => {
+  describe.skip("delete list item", () => {
     test("should make DELETE API request on enter click", async () => {
       renderWithProviders(<List />, { isAuth: true });
 

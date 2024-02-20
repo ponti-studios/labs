@@ -1,45 +1,12 @@
-import { TrashIcon } from "@radix-ui/react-icons";
-import { useMutation } from "react-query";
 import { Link } from "react-router-dom";
 
 import PlaceTypes from "src/components/places/PlaceTypes";
-import api, { ListPlace } from "src/services/api";
-import { baseURL } from "src/services/api/base";
+import { ListPlace } from "src/services/api";
 import { usePlaceModal, usePlacesService } from "src/services/places";
 
-const ListItem = ({
-  listId,
-  onDelete,
-  place,
-}: {
-  listId: string;
-  onDelete: () => void;
-  place: ListPlace;
-}) => {
+const ListItem = ({ place }: { place: ListPlace }) => {
   const { openPlaceModal } = usePlaceModal();
   const placesService = usePlacesService();
-  const { mutateAsync } = useMutation({
-    mutationKey: ["deleteListItem", listId, place.id],
-    mutationFn: () =>
-      api.delete(`${baseURL}/lists/${listId}/place/${place.itemId}`),
-    onSuccess: () => {
-      onDelete();
-    },
-  });
-
-  const onDeleteClick = async (e: React.MouseEvent) => {
-    if (e.button !== 0) {
-      return;
-    }
-
-    await mutateAsync();
-  };
-
-  const onDeleteKeyDown = async (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      await mutateAsync();
-    }
-  };
 
   const onPlaceNameClick = async (e) => {
     e.preventDefault();
@@ -53,29 +20,27 @@ const ListItem = ({
   };
 
   return (
-    <div className="card glass px-2 py-3 rounded-md flex mb-4">
-      <div className="flex flex-row">
-        <Link to="#" className="w-16 h-16" onClick={onPlaceNameClick}>
-          <img src={place.imageUrl} alt={place.name} className="w-16 h-16" />
-        </Link>
-        <div className="flex flex-col flex-1 h-full justify-between pl-2">
-          <Link
-            to="#"
-            className="flex-1 mb-2 text-xl md:text-2xl font-medium justify-start underline-offset-4 focus-visible:underline focus-visible:outline-none"
-            onClick={onPlaceNameClick}
-          >
-            {place.name}
-          </Link>
-          <PlaceTypes types={place.types} />
-        </div>
-        <button
-          data-testid="delete-place-button"
-          className="flex items-center px-4 rounded-md hover:cursor-pointer hover:bg-neutral-content hover:bg-opacity-10 focus:bg-neutral-content focus:bg-opacity-10 transition-colors"
-          onClick={onDeleteClick}
-          onKeyDown={onDeleteKeyDown}
+    <div className="flex card rounded-lg size-full">
+      <Link
+        to="#"
+        className="rounded-lg p-[2px] border border-slate-200 w-full h-[200px]"
+        onClick={onPlaceNameClick}
+      >
+        <img
+          src={place.imageUrl}
+          alt={place.name}
+          className="rounded-lg object-cover w-full h-full"
+        />
+      </Link>
+      <div className="flex flex-col flex-1 mt-1 pl-1 h-full justify-between text-wrap break-words">
+        <Link
+          to="#"
+          className="flex-1 mb-1 font-semibold justify-start underline-offset-4 focus-visible:underline focus-visible:outline-none"
+          onClick={onPlaceNameClick}
         >
-          <TrashIcon width={24} height={24} className="text-red-500" />
-        </button>
+          {place.name}
+        </Link>
+        <PlaceTypes types={place.types} />
       </div>
     </div>
   );

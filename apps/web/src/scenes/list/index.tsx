@@ -67,14 +67,11 @@ const List = () => {
               center={currentLocation}
             />
           </div>
-          {data.items.map((place) => (
-            <ListItem
-              key={place.id}
-              listId={data.id}
-              place={place}
-              onDelete={refetch}
-            />
-          ))}
+          <div className="grid gap-x-6 gap-y-14 grid-cols-2 sm:grid-cols-3">
+            {data.items.map((place) => (
+              <ListItem key={place.id} place={place} />
+            ))}
+          </div>
         </div>
       )}
     </>
