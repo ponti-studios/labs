@@ -1,11 +1,16 @@
-// Fastify cron that uses the Google Places API to add a photo to all places in the database.
+/**
+ * This cron job fetches the first photo of a place from the Google Places API
+ * and updates the place with the photo URL.
+ */
 
 import { FastifyInstance } from "fastify";
 import { prisma } from "../../prisma";
 import { places as placesClient } from "../../google";
 
 const isValidImageUrl = (url: string) => {
-  return url ? url.indexOf("googleusercontent") !== -1 : false;
+  return (
+    !!url && typeof url === "string" && url.indexOf("googleusercontent") !== -1
+  );
 };
 
 async function addPhotoToPlaces(server: FastifyInstance) {
@@ -18,7 +23,8 @@ async function addPhotoToPlaces(server: FastifyInstance) {
 
   for (const place of places) {
     // Skip places that already have a valid image
-    if (place.imageUrl && !isValidImageUrl(place.imageUrl)) {
+    if (place.imageUrl && isValidImageUrl(place.imageUrl)) {
+      console.log("Place already has a valid image", { id: place.id });
       continue;
     }
 
@@ -49,10 +55,25 @@ async function addPhotoToPlaces(server: FastifyInstance) {
       maxHeightPx: 300,
     });
 
-    if (media.data.photoUri && isValidImageUrl(media.data.photoUri)) {
+    const imageUrl = media.request.responseURL;
+
+    if (!imageUrl) {
+      console.error("No photoUri found for place", { id: place.id });
+      continue;
+    }
+
+    if (!isValidImageUrl(imageUrl)) {
+      console.error("Invalid photoUri found for place", {
+        id: place.id,
+        imageUrl,
+      });
+      continue;
+    }
+
+    if (isValidImageUrl(imageUrl)) {
       await prisma.place.update({
         where: { id: place.id },
-        data: { imageUrl: media.data.photoUri },
+        data: { imageUrl },
       });
       count += 1;
     }
