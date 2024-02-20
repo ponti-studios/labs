@@ -3,6 +3,7 @@ import { FastifyInstance } from "fastify";
 // src/plugins
 import { verifySession } from "../../../auth";
 import { prisma } from "../../../prisma";
+import { getPlacePhoto } from "../../../google";
 
 async function getListPlaces(listId: string): Promise<
   {
@@ -91,7 +92,12 @@ const getListRoute = (server: FastifyInstance) => {
 
       const items = await getListPlaces(id);
 
-      return { ...list, items, userId: list.userId };
+      return {
+        ...list,
+        items,
+        userId: list.userId,
+        photo: await getPlacePhoto(items[0].googleMapsId),
+      };
     },
   );
 };

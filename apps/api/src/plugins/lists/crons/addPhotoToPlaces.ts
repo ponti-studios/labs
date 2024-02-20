@@ -2,9 +2,9 @@
 
 import { FastifyInstance } from "fastify";
 import { prisma } from "../../prisma";
-import { getPlacePhoto } from "../../google/places";
+import { places as placesClient } from "../../google";
 
-async function addPhotoToPlace(server: FastifyInstance) {
+async function addPhotoToPlaces(server: FastifyInstance) {
   const places = await prisma.place.findMany();
 
   if (!places.length) {
@@ -20,12 +20,30 @@ async function addPhotoToPlace(server: FastifyInstance) {
       continue;
     }
 
-    const photo = await getPlacePhoto(place.googleMapsId);
+    const { data } = await placesClient.get({
+      name: `places/${place.googleMapsId}`,
+      fields: "photos",
+    });
 
-    if (photo) {
+    if (!data) {
+      continue;
+    }
+
+    const { photos } = data;
+
+    if (!photos) {
+      continue;
+    }
+
+    const media = await placesClient.photos.getMedia({
+      name: `${photos[0].name}/media`,
+      maxHeightPx: 300,
+    });
+
+    if (media.data.photoUri) {
       await prisma.place.update({
         where: { id: place.id },
-        data: { imageUrl: photo },
+        data: { imageUrl: media.data.photoUri },
       });
     }
   }
@@ -39,4 +57,4 @@ async function addPhotoToPlace(server: FastifyInstance) {
   );
 }
 
-export default addPhotoToPlace;
+export default addPhotoToPlaces;
