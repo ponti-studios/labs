@@ -5,13 +5,7 @@
 
 import { FastifyInstance } from "fastify";
 import { prisma } from "../../prisma";
-import { places as placesClient } from "../../google";
-
-const isValidImageUrl = (url: string) => {
-  return (
-    !!url && typeof url === "string" && url.indexOf("googleusercontent") !== -1
-  );
-};
+import { isValidImageUrl, getPlacePhotos } from "../../google/places";
 
 async function addPhotoToPlaces(server: FastifyInstance) {
   let count = 0;
@@ -33,29 +27,18 @@ async function addPhotoToPlaces(server: FastifyInstance) {
       continue;
     }
 
-    const { data } = await placesClient.get({
-      name: `places/${place.googleMapsId}`,
-      fields: "photos",
+    const media = await getPlacePhotos({
+      googleMapsId: place.googleMapsId,
+      placeId: place.id,
+      limit: 1,
     });
 
-    if (!data) {
-      console.error("Error fetching place", { id: place.id });
+    if (!media) {
+      console.error("Error fetching photo for place", { id: place.id });
       continue;
     }
 
-    const { photos } = data;
-
-    if (!photos) {
-      console.error("No photos found for place", { id: place.id });
-      continue;
-    }
-
-    const media = await placesClient.photos.getMedia({
-      name: `${photos[0].name}/media`,
-      maxHeightPx: 300,
-    });
-
-    const imageUrl = media.request.responseURL;
+    const { imageUrl } = media[0];
 
     if (!imageUrl) {
       console.error("No photoUri found for place", { id: place.id });

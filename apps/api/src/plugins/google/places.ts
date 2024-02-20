@@ -1,110 +1,116 @@
-import { PlacesClient } from "@googlemaps/places";
+import { writeFile } from "fs";
+import * as path from "path";
+import { google } from "./auth";
 
-const { GOOGLE_SERVICE_ACCOUNT } = process.env;
+const { places } = google.places("v1");
 
-if (!GOOGLE_SERVICE_ACCOUNT) {
-  throw new Error("GOOGLE_SERVICE_ACCOUNT is required");
-}
-
-const credential = JSON.parse(
-  Buffer.from(GOOGLE_SERVICE_ACCOUNT, "base64").toString(),
-) as {
-  client_email: string;
-  private_key: string;
-};
-
-// Instantiates a client
-const placesClient = new PlacesClient({
-  credentials: {
-    client_email: credential.client_email,
-    private_key: credential.private_key,
-  },
-});
-
-export default placesClient;
-
-async function getPlaceDetails({
+export async function getPlaceDetails({
   placeId,
-  fields = ["photos", "formatted_address"],
 }: {
   placeId: string;
   fields: string[];
 }) {
-  return new Promise<any>((resolve) => {
-    placesClient.getPlace(
-      { name: `places/${placeId}` },
-      {
-        otherArgs: {
-          headers: {
-            "X-Goog-FieldMask": fields.join(","),
-          },
-        },
-        maxResults: 10,
-      },
-      (err, place) => {
-        if (err) {
-          console.error("Error fetching place", place);
-          return resolve({});
-        }
-
-        return resolve(place);
-      },
-    );
+  const response = await places.get({
+    name: `places/${placeId}`,
+    fields: "formatted_address,photos",
   });
+
+  return response.data;
 }
 
-async function getPhotoURI({
-  name,
-  maxHeightPx = 300,
+export const isValidImageUrl = (url: string) => {
+  return (
+    !!url && typeof url === "string" && url.indexOf("googleusercontent") !== -1
+  );
+};
+
+export const getPlacePhotos = async ({
+  googleMapsId,
+  placeId,
+  limit,
 }: {
-  name: string;
-  maxHeightPx?: number;
-}) {
-  return new Promise<string>((resolve, reject) => {
-    placesClient.getPhotoMedia(
-      { name, maxHeightPx },
-      {
-        otherArgs: {
-          headers: {
-            "X-Goog-FieldMask": "photoUri",
-          },
-        },
-      },
-      (err, media) => {
-        if (err) {
-          console.error("Error fetching place photo", err);
-          return reject(err);
-        }
-
-        if (!media) {
-          console.error("No media found for place photo", media);
-          return reject("No media found for place photo");
-        }
-
-        if (!media.photoUri) {
-          console.error("No photoUri found for place photo", media);
-          return reject("No photoUri found for place photo");
-        }
-
-        return resolve(media.photoUri);
-      },
-    );
+  googleMapsId: string;
+  limit?: number;
+  placeId: string;
+}) => {
+  const result = [];
+  const { data } = await places.get({
+    name: `places/${googleMapsId}`,
+    fields: "photos",
   });
-}
 
-export async function getPlacePhoto(placeId: string) {
-  const place = await getPlaceDetails({ placeId, fields: ["photos"] });
-  const placePhotoName = place?.photos?.[0]?.name;
-
-  if (!placePhotoName) {
-    console.error("No photo found for place", place);
-    throw new Error("No photo found for place");
+  if (!data) {
+    console.error("Error fetching place", { placeId });
+    return;
   }
 
-  const photoUri = await getPhotoURI({
-    name: `${placePhotoName}/media`,
-    maxHeightPx: 300,
-  });
+  const { photos } = data;
 
-  return photoUri;
-}
+  if (!photos) {
+    console.error("No photos found for place", { placeId });
+    return;
+  }
+
+  for (const photo of photos) {
+    if (limit && result.length >= limit) {
+      break;
+    }
+
+    const media = await places.photos.getMedia({
+      name: `${photo.name}/media`,
+      maxHeightPx: 300,
+    });
+
+    let imageUrl = media.request.responseURL;
+
+    result.push({
+      blob: media.data,
+      imageUrl: isValidImageUrl(imageUrl) ? imageUrl : null,
+    });
+  }
+
+  return result;
+};
+
+export const downloadPlacePhotBlob = async (blob: Blob, filename: string) => {
+  const buffer = await blob.arrayBuffer();
+  const bufferData = Buffer.from(buffer);
+  const filePath = path.resolve(__dirname, `./public/${filename}.jpg`);
+  console.log("Downloading photo to", filePath);
+
+  await new Promise<void>((res, rej) =>
+    writeFile(filePath, bufferData, (err) => {
+      if (err) {
+        console.error("Error writing file", err);
+        rej(err);
+      }
+      res();
+    }),
+  );
+};
+export const downloadPlacePhotos = async ({
+  googleMapsId,
+  placeId,
+}: {
+  googleMapsId: string;
+  placeId: string;
+}) => {
+  if (googleMapsId) {
+    const photos = await getPlacePhotos({
+      googleMapsId,
+      placeId,
+    });
+
+    if (photos) {
+      console.log("Found photos for place", { placeId });
+      await Promise.all(
+        photos.map(async (photo, index) => {
+          return (
+            photo.blob &&
+            downloadPlacePhotBlob(photo.blob as Blob, `${placeId}-${index}`)
+          );
+        }),
+      );
+    }
+  }
+};
