@@ -4,7 +4,12 @@ import { FastifyInstance } from "fastify";
 import { prisma } from "../../prisma";
 import { places as placesClient } from "../../google";
 
+const isValidImageUrl = (url: string) => {
+  return url ? url.indexOf("googleusercontent") !== -1 : false;
+};
+
 async function addPhotoToPlaces(server: FastifyInstance) {
+  let count = 0;
   const places = await prisma.place.findMany();
 
   if (!places.length) {
@@ -12,10 +17,12 @@ async function addPhotoToPlaces(server: FastifyInstance) {
   }
 
   for (const place of places) {
-    if (place.imageUrl) {
+    // Skip places that already have a valid image
+    if (place.imageUrl && !isValidImageUrl(place.imageUrl)) {
       continue;
     }
 
+    // Skip places that don't have a googleMapsId
     if (!place.googleMapsId) {
       continue;
     }
@@ -26,12 +33,14 @@ async function addPhotoToPlaces(server: FastifyInstance) {
     });
 
     if (!data) {
+      console.error("Error fetching place", { id: place.id });
       continue;
     }
 
     const { photos } = data;
 
     if (!photos) {
+      console.error("No photos found for place", { id: place.id });
       continue;
     }
 
@@ -40,11 +49,12 @@ async function addPhotoToPlaces(server: FastifyInstance) {
       maxHeightPx: 300,
     });
 
-    if (media.data.photoUri) {
+    if (media.data.photoUri && isValidImageUrl(media.data.photoUri)) {
       await prisma.place.update({
         where: { id: place.id },
         data: { imageUrl: media.data.photoUri },
       });
+      count += 1;
     }
   }
 
@@ -53,7 +63,7 @@ async function addPhotoToPlaces(server: FastifyInstance) {
     process.env.SENDGRID_SENDER_EMAIL as string,
     "All places have been updated with photos",
     "All places have been updated with photos",
-    `<p>All places have been updated with photos</p>`,
+    `<p>${count} places have been updated with valid image URLs</p>`,
   );
 }
 
