@@ -23,6 +23,9 @@ jest.mock("@prisma/client", () => ({
     userLists: mockPrismaModel(),
     place: {
       create: jest.fn(),
+      delete: jest.fn(),
+      findMany: jest.fn(),
+      update: jest.fn(),
     },
     user: {
       findUnique: jest.fn(),

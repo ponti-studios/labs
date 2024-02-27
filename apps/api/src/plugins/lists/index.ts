@@ -10,6 +10,7 @@ import postListsPlace from "./post/place";
 import postListRoute from "./post";
 import acceptListInviteRoute from "./post/acceptInvite";
 import putListRoute from "./put";
+import migrateLatLngFloat from "./crons/migrateLatLngFloat";
 
 // Cron jobs
 // import addPhotoToPlaces from "./crons/addPhotoToPlaces";
@@ -25,9 +26,14 @@ const listsPlugin: FastifyPluginAsync = async (server) => {
   putListRoute(server);
 
   // Cron jobs
-  // addPhotoToPlaces(server).catch((err) => {
-  //   console.error("Error adding photo to place", err);
-  // });
+  if (process.env.NODE_ENV !== "test") {
+    // addPhotoToPlaces(server).catch((err) => {
+    //   console.error("Error adding photo to place", err);
+    // });
+    migrateLatLngFloat(server).catch((err) => {
+      console.error("Error migrating lat and lng", err);
+    });
+  }
 };
 
 export default fastifyPlugin(listsPlugin);
