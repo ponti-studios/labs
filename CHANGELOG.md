@@ -1,5 +1,30 @@
 # Changelog
 
+## [1.6.0](https://github.com/theponti/rocco/compare/v1.5.0...v1.6.0) (2024-02-27)
+
+
+### Features
+
+* **app/api:** remove add imageUrl cron ([0a09895](https://github.com/theponti/rocco/commit/0a0989565af7f8a213067e54e188f9ad69267770))
+* **app/web:** highlight nav icon for route ([2809626](https://github.com/theponti/rocco/commit/2809626b5bdd9336502092265b43cf9d4976e5b5))
+* **app/web:** Update styles and add ListDeleteButton component ([4f5fbc1](https://github.com/theponti/rocco/commit/4f5fbc1b075e9924b9ea120c3d12ac8d0b39f3f5))
+* **apps/api:** add cron to update imageUrls ([#52](https://github.com/theponti/rocco/issues/52)) ([14c089b](https://github.com/theponti/rocco/commit/14c089b402896e6f728ee90bfe4df8f0064250cb))
+* **apps/api:** use googleapis package ([9bccf14](https://github.com/theponti/rocco/commit/9bccf14ee68dab194ae7c4372e5dc9844eba1364))
+* **apps/web:** save users current location to state ([#45](https://github.com/theponti/rocco/issues/45)) ([0e7f38b](https://github.com/theponti/rocco/commit/0e7f38bcdc2791761e7b290d1f838b50dd8e89ce))
+* **apps/web:** update home page ([6c9f227](https://github.com/theponti/rocco/commit/6c9f227ca36b6d3168cfba4057c3fa8f77511118))
+* **apps/web:** use lucide glob in header ([78b9ab0](https://github.com/theponti/rocco/commit/78b9ab0b8b45133b329fea485bbe43d64b0708a8))
+* improve invites list ([#48](https://github.com/theponti/rocco/issues/48)) ([693f510](https://github.com/theponti/rocco/commit/693f510aff87e0796c94d62d65363cae6ac0de5a))
+
+
+### Bug Fixes
+
+* **app/api:** update place photo cron to use correct value ([8b13ece](https://github.com/theponti/rocco/commit/8b13ece409ed83589d27c33c60ced637ee25cf10))
+* **app/api:** update place photo cron to use correct value ([4f68086](https://github.com/theponti/rocco/commit/4f68086697f6873980dec50ce515df9ab4840806))
+* **apps/api:** run photos cron for all invalid places ([6a42bed](https://github.com/theponti/rocco/commit/6a42bed2830ce8a47ce06953998b6251cc7ea1da))
+* **apps/api:** use npx for prisma generate ([c4414e0](https://github.com/theponti/rocco/commit/c4414e0d55c5442d673452a213f7e047b41854e4))
+* **apps/web:** fix footer to bottom ([71ff060](https://github.com/theponti/rocco/commit/71ff060f860bbd2bc3095e9340643ea532b663a1))
+* **apps/web:** fix mobile nav to viewport bottom ([d6d5beb](https://github.com/theponti/rocco/commit/d6d5beb40c4f3781d8f48ad307f0223b553012d3))
+
 ## [1.5.0](https://github.com/theponti/rocco/compare/v1.4.1...v1.5.0) (2024-01-30)
 
 
