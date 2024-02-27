@@ -41,12 +41,12 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
   const currentLocation = useAppSelector((state) => state.auth.currentLocation);
   const [selected, setSelected] = useState<Place | null>(null);
   const [center, setCenter] = useState(currentLocation || DEFAULT_CENTER);
-  const { getPlaceDetails } = usePlacesService();
+  const { getPlace } = usePlacesService();
 
   const onMapClick = useCallback(
     async (args: MapMouseEvent) => {
       const { placeId, latLng } = args.detail;
-      const place = await getPlaceDetails({ placeId });
+      const place = await getPlace({ googleMapsId: placeId });
 
       if (!place || typeof place === "string") {
         return;
@@ -64,14 +64,14 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
         place,
       });
     },
-    [getPlaceDetails, openPlaceModal],
+    [getPlace, openPlaceModal],
   );
 
   const onSelectedChanged = useCallback((place: Place) => {
     setSelected(place);
     setCenter({
-      lat: place.latitude,
-      lng: place.longitude,
+      lat: place.lat,
+      lng: place.lng,
     });
     setZoom(ZOOM_LEVELS.SELECTED);
   }, []);
@@ -116,7 +116,6 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
         center={center}
         onMapClick={onMapClick}
         onMarkerClick={onMarkerClick}
-        selected={selected}
         setSelected={setSelected}
       />
     </Wrap>

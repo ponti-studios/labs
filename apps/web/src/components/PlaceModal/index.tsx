@@ -61,11 +61,11 @@ function PlaceModal(
             <PlaceAddress
               address={place.address}
               name={place.name}
-              place_id={place.place_id}
+              place_id={place.googleMapsId}
             />
-            {place.website && (
+            {place.websiteUri && (
               <div className="flex justify-end mt-2">
-                <PlaceWebsite website={place.website} />
+                <PlaceWebsite website={place.websiteUri} />
               </div>
             )}
           </div>

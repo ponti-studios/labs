@@ -18,6 +18,7 @@ import bookmarksPlugin from "./plugins/bookmarks";
 import ideasPlugin from "./plugins/ideas";
 import listsPlugin from "./plugins/lists";
 import invites from "./plugins/invites";
+import PlacesPlugin from "./plugins/places";
 
 const { APP_URL, JWT_SECRET, PORT } = process.env;
 
@@ -54,6 +55,7 @@ export async function createServer(
   server.register(authPlugin);
   server.register(usersPlugin);
   server.register(listsPlugin);
+  server.register(PlacesPlugin);
   server.register(invites);
   server.register(bookmarksPlugin);
   server.register(ideasPlugin);

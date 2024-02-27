@@ -58,7 +58,7 @@ const List = () => {
               </Link>
             )}
           </div>
-          <div className="mb-6">
+          <div className="mb-6 bg-slate-100 rounded-lg p-4 pb-8">
             <label className="label" htmlFor="search">
               Add a place
             </label>

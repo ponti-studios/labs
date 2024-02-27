@@ -1,5 +1,3 @@
-import { Link } from "react-router-dom";
-
 import PlaceTypes from "src/components/places/PlaceTypes";
 import { ListPlace } from "src/services/api";
 import { usePlaceModal, usePlacesService } from "src/services/places";
@@ -13,36 +11,31 @@ const ListItem = ({ place }: { place: ListPlace }) => {
     if (!placesService) return;
 
     openPlaceModal({
-      place: await placesService.getPlaceDetails({
-        placeId: place.googleMapsId,
+      place: await placesService.getPlace({
+        googleMapsId: place.googleMapsId,
       }),
     });
   };
 
   return (
-    <div className="flex card rounded-lg size-full">
-      <Link
-        to="#"
-        className="rounded-lg p-[2px] border border-slate-200 w-full h-[200px]"
-        onClick={onPlaceNameClick}
-      >
+    <button
+      className="flex card rounded-lg size-full"
+      onClick={onPlaceNameClick}
+    >
+      <div className="rounded-lg p-[2px] border border-slate-200 w-full h-[200px]">
         <img
           src={place.imageUrl}
           alt={place.name}
           className="rounded-lg object-cover w-full h-full"
         />
-      </Link>
+      </div>
       <div className="flex flex-col flex-1 mt-1 pl-1 h-full justify-between text-wrap break-words">
-        <Link
-          to="#"
-          className="flex-1 mb-1 font-semibold justify-start underline-offset-4 focus-visible:underline focus-visible:outline-none"
-          onClick={onPlaceNameClick}
-        >
+        <p className="flex-1 mb-1 font-semibold justify-start underline-offset-4 focus-visible:underline focus-visible:outline-none">
           {place.name}
-        </Link>
+        </p>
         <PlaceTypes types={place.types} />
       </div>
-    </div>
+    </button>
   );
 };
 

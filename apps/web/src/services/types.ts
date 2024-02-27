@@ -39,16 +39,17 @@ export type UserList = List & {
 };
 
 export type Place = {
+  id: string;
   address: string;
   imageUrl: string;
-  international_phone_number: string;
-  latitude: number;
-  longitude: number;
+  phoneNumber: string;
+  lat: number;
+  lng: number;
   name: string;
   photos: string[];
-  place_id: string;
+  googleMapsId: string;
   price_level: number;
   rating: number;
   types: string[];
-  website: string;
+  websiteUri: string;
 };

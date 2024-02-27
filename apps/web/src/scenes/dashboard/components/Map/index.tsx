@@ -17,7 +17,6 @@ const Loading = styled.div`
 type RoccoMapProps = MapProps & {
   isLoadingCurrentLocation: boolean;
   setSelected: (place: Place) => void;
-  selected: Place | null;
   zoom: number;
   center: google.maps.LatLngLiteral;
   onMapClick: (event: MapMouseEvent) => void;
@@ -28,7 +27,6 @@ const Map = ({
   center,
   isLoadingCurrentLocation,
   onMapClick,
-  selected,
   setSelected,
 }: RoccoMapProps) => {
   const onClick = useCallback(
@@ -58,14 +56,7 @@ const Map = ({
       ) : null}
       <GoogleMap
         zoom={zoom}
-        center={
-          selected
-            ? {
-                lat: selected.latitude,
-                lng: selected.longitude,
-              }
-            : center
-        }
+        center={center}
         onClick={onClick}
         className="flex size-full"
       />

@@ -21,17 +21,21 @@ const postListsPlace = (server: FastifyInstance) => {
               properties: {
                 name: { type: "string" },
                 address: { type: "string" },
-                location: {
-                  type: "object",
-                  properties: {
-                    lat: { type: "number" },
-                    lng: { type: "number" },
-                  },
-                  required: ["lat", "lng"],
-                },
-                image: { type: "string" },
+                googleMapsId: { type: "string" },
+                lat: { type: "number" },
+                lng: { type: "number" },
+                websiteUri: { type: "string" },
+                imageUrl: { type: "string" },
               },
-              required: ["name", "address", "location"],
+              required: [
+                "name",
+                "address",
+                "googleMapsId",
+                "lat",
+                "lng",
+                "websiteUri",
+                "imageUrl",
+              ],
             },
           },
           required: ["listIds", "place"],
@@ -82,26 +86,27 @@ const postListsPlace = (server: FastifyInstance) => {
           name: string;
           address: string;
           imageUrl: string;
-          place_id: string;
-          location: { lat: number; lng: number };
+          googleMapsId: string;
+          lat: number;
+          lng: number;
           types: string[];
+          websiteUri: string;
         };
       };
-      const { name, address, location, place_id } = place;
       const filteredListTypes = place.types.filter((type) => {
         return !/point_of_interest|establishment|political/.test(type);
       });
 
       const createdPlace = await prisma.place.create({
         data: {
-          name,
+          name: place.name,
           description: "",
-          address,
-          googleMapsId: place_id,
+          address: place.address,
+          googleMapsId: place.googleMapsId,
           types: filteredListTypes,
           imageUrl: place.imageUrl,
-          lat: `${location.lat}`,
-          lng: `${location.lng}`,
+          lat: `${place.lat}`,
+          lng: `${place.lng}`,
           createdBy: {
             connect: {
               id: userId,

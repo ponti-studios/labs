@@ -68,9 +68,12 @@ describe("/lists", () => {
         place: {
           name: "Test Place",
           address: "Test Address",
-          place_id: "TestPlaceID",
-          location: { lat: 40.7128, lng: -74.006 },
+          googleMapsId: "TestPlaceID",
+          lat: 40.7128,
+          lng: -74.006,
           types: ["type1", "type2"],
+          imageUrl: "Test Image URL",
+          websiteUri: "Test Website URI",
         },
       };
 
@@ -124,6 +127,7 @@ describe("/lists", () => {
           types: ["type1", "type2"],
           lat: "40.7128",
           lng: "-74.006",
+          imageUrl: "Test Image URL",
           createdBy: {
             connect: {
               id: "testUserId",

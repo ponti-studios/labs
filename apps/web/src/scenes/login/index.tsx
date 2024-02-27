@@ -13,7 +13,7 @@ import { setCurrentEmail } from "src/services/auth";
 import { useAppDispatch } from "src/services/hooks";
 import { useAuth } from "src/services/store";
 import Button from "ui/Button";
-import Emoji from "ui/Emoji";
+import { Globe } from "lucide-react";
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email(),
@@ -55,15 +55,8 @@ function Login() {
 
   return (
     <AuthWrap>
-      {isError && (
-        <FeedbackBlock>
-          There was a problem submitting your email. Try again later.
-        </FeedbackBlock>
-      )}
       <div className="flex justify-center text-primary font-extrabold mb-4 mt-24">
-        <Emoji kind="map" className="animate-spin-slow text-[125px]">
-          🌎
-        </Emoji>
+        <Globe size={150} className="animate-pulse" />
       </div>
       <h2 className="text-2xl font-semibold mb-6">Log in</h2>
       <Formik
@@ -84,6 +77,14 @@ function Login() {
             />
           </div>
           <Button isLoading={isLoading}>Get code</Button>
+          {isError && (
+            <FeedbackBlock>
+              <p className="mb-1">
+                We ran into an issue finding or creating your account.
+              </p>
+              <p>Please, try again later</p>
+            </FeedbackBlock>
+          )}
         </Form>
       </Formik>
     </AuthWrap>

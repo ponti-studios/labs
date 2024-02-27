@@ -198,15 +198,20 @@ model ListInvite {
 
 model Place {
   id          String   @id @default(uuid())
-  name        String   @db.Text()
-  description String?  @db.Text()
   address     String?  @db.Text()
-  lat         String?  @db.Text()
-  lng         String?  @db.Text()
-  imageUrl    String?  @db.Text()
-  types       String[] @db.Text()
   createdAt   DateTime @default(now())
+  description String?  @db.Text()
+  imageUrl    String?  @db.Text()
+  lat         String?  @db.Text()
+  latitude    Float?
+  lng         String?  @db.Text()
+  longitude   Float?
+  name        String   @db.Text()
+  phoneNumber String?  @db.Text()
+  rating      Float?
+  types       String[] @db.Text()
   updatedAt   DateTime @updatedAt
+  websiteUri  String?  @db.Text()
 
   // Google Maps Place ID
   googleMapsId String? @db.Text()
