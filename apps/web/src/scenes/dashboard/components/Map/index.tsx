@@ -1,9 +1,9 @@
-import { Map as GoogleMap, MapProps } from "@vis.gl/react-google-maps";
+import { Map as GoogleMap } from "@vis.gl/react-google-maps";
 import { useCallback } from "react";
 
 import { MapMouseEvent } from "@vis.gl/react-google-maps/dist/components/map/use-map-events";
 import styled from "@emotion/styled";
-import { Place } from "src/services/types";
+import { Place, PlaceLocation } from "src/services/types";
 
 const Loading = styled.div`
   left: 0;
@@ -14,11 +14,11 @@ const Loading = styled.div`
   position: absolute;
 `;
 
-type RoccoMapProps = MapProps & {
+type RoccoMapProps = {
   isLoadingCurrentLocation: boolean;
   setSelected: (place: Place) => void;
   zoom: number;
-  center: google.maps.LatLngLiteral;
+  center: PlaceLocation;
   onMapClick: (event: MapMouseEvent) => void;
   onMarkerClick: () => void;
 };
@@ -56,7 +56,10 @@ const Map = ({
       ) : null}
       <GoogleMap
         zoom={zoom}
-        center={center}
+        center={{
+          lat: center.latitude,
+          lng: center.longitude,
+        }}
         onClick={onClick}
         className="flex size-full"
       />

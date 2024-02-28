@@ -5,6 +5,33 @@ import { places_v1 } from "googleapis";
 
 export const { places } = google.places("v1");
 
+export type FormattedPlace = {
+  address: string | null;
+  name: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  googleMapsId?: string | null;
+  phoneNumber?: string | null;
+  types: string[];
+  websiteUri?: string | null;
+  photos?: PhotoMedia[];
+};
+
+const formatGooglePlace = (
+  googlePlace: places_v1.Schema$GoogleMapsPlacesV1Place,
+): FormattedPlace => {
+  return {
+    address: googlePlace.adrFormatAddress || null,
+    name: googlePlace.displayName?.text || "Unknown",
+    latitude: googlePlace.location?.latitude,
+    longitude: googlePlace.location?.longitude,
+    googleMapsId: googlePlace.id,
+    phoneNumber: googlePlace.internationalPhoneNumber,
+    types: googlePlace.types || [],
+    websiteUri: googlePlace.websiteUri,
+  };
+};
+
 export async function getPlaceDetails({
   placeId,
   fields = [
@@ -20,22 +47,26 @@ export async function getPlaceDetails({
 }: {
   placeId: string;
   fields?: string[];
-}) {
+}): Promise<FormattedPlace> {
   const response = await places.get({
     name: `places/${placeId}`,
     fields: fields.join(","),
   });
+  let photos: PhotoMedia[] = [];
+  const googlePlace = formatGooglePlace(response.data);
 
   if (fields.includes("photos") && response.data.photos) {
+    photos = await getPhotosMedia({
+      photos: response.data.photos,
+    });
+
     return {
-      ...response.data,
-      photos: await getPhotosMedia({
-        photos: response.data.photos,
-      }),
+      ...googlePlace,
+      photos,
     };
   }
 
-  return response.data;
+  return googlePlace;
 }
 
 export const isValidImageUrl = (url: string) => {
@@ -83,6 +114,11 @@ export async function getPhotosMedia({
   return Promise.all(photos.map((photo) => getPhotoMedia(photo)));
 }
 
+export type PhotoMedia = {
+  blob: places_v1.Schema$GoogleMapsPlacesV1PhotoMedia;
+  imageUrl: string | null;
+};
+
 export async function getPhotoMedia(
   photo: places_v1.Schema$GoogleMapsPlacesV1Photo,
 ) {
@@ -114,6 +150,7 @@ export const downloadPlacePhotBlob = async (blob: Blob, filename: string) => {
     }),
   );
 };
+
 export const downloadPlacePhotos = async ({
   googleMapsId,
   placeId,

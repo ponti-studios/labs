@@ -43,8 +43,8 @@ export type Place = {
   address: string;
   imageUrl: string;
   phoneNumber: string;
-  lat: number;
-  lng: number;
+  latitude: number;
+  longitude: number;
   name: string;
   photos: string[];
   googleMapsId: string;
@@ -52,4 +52,9 @@ export type Place = {
   rating: number;
   types: string[];
   websiteUri: string;
+};
+
+export type PlaceLocation = {
+  latitude: number;
+  longitude: number;
 };

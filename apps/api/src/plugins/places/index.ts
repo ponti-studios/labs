@@ -5,8 +5,8 @@ import {
   FastifyRequest,
 } from "fastify";
 
+import { EVENTS, track } from "../../analytics";
 import { SessionToken } from "../../typings";
-
 import { verifySession } from "../auth";
 import {
   getPlaceDetails,
@@ -14,7 +14,184 @@ import {
   searchPlaces,
 } from "../google/places";
 
+type PlacePostBody = {
+  listIds: string[];
+  place: {
+    name: string;
+    address: string;
+    imageUrl: string;
+    googleMapsId: string;
+    latitude: number;
+    longitude: number;
+    types: string[];
+    websiteUri: string;
+  };
+};
+
+const CreatePlaceProperties = {
+  name: { type: "string" },
+  address: { type: "string" },
+  googleMapsId: { type: "string" },
+  latitude: { type: "number" },
+  longitude: { type: "number" },
+  websiteUri: { type: "string" },
+  imageUrl: { type: "string" },
+  types: { type: "array", items: { type: "string" } },
+};
+
+const CreatePlaceRequired = Object.keys(CreatePlaceProperties);
+
+const CreatePlaceResponseProperties = {
+  ...CreatePlaceProperties,
+  id: { type: "string" },
+  description: { type: "string" },
+  createdAt: { type: "string" },
+  updatedAt: { type: "string" },
+};
+const CreatePlaceResponseRequired = Object.keys(CreatePlaceResponseProperties);
+
 const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
+  server.post(
+    "/lists/place",
+    {
+      preValidation: verifySession,
+      schema: {
+        body: {
+          type: "object",
+          properties: {
+            listIds: {
+              type: "array",
+              items: { type: "string" },
+            },
+            place: {
+              type: "object",
+              properties: CreatePlaceProperties,
+              required: CreatePlaceRequired,
+            },
+          },
+          required: ["listIds", "place"],
+        },
+        response: {
+          200: {
+            type: "object",
+            properties: {
+              lists: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    id: { type: "string" },
+                    name: { type: "string" },
+                    createdAt: { type: "string" },
+                    updatedAt: { type: "string" },
+                  },
+                },
+              },
+              place: {
+                type: "object",
+                properties: CreatePlaceResponseProperties,
+                required: CreatePlaceResponseRequired,
+              },
+            },
+          },
+        },
+      },
+    },
+    async (request) => {
+      const { prisma } = server;
+      const { userId } = request.session.get("data");
+      const { listIds, place } = request.body as PlacePostBody;
+      const filteredListTypes = place.types.filter((type) => {
+        return !/point_of_interest|establishment|political/.test(type);
+      });
+
+      const createdPlace = await prisma.place.create({
+        data: {
+          name: place.name,
+          description: "",
+          address: place.address,
+          googleMapsId: place.googleMapsId,
+          types: filteredListTypes,
+          imageUrl: place.imageUrl,
+          latitude: place.latitude,
+          longitude: place.longitude,
+          websiteUri: place.websiteUri,
+          createdBy: {
+            connect: {
+              id: userId,
+            },
+          },
+        },
+      });
+
+      await prisma.item.createMany({
+        data: [...listIds].map((id) => ({
+          type: "PLACE",
+          itemId: createdPlace.id,
+          listId: id,
+        })),
+        skipDuplicates: true,
+      });
+
+      const lists = await prisma.list.findMany({
+        where: { id: { in: listIds } },
+      });
+
+      // 👇 Track place creation
+      track(userId, EVENTS.USER_EVENTS.PLACE_ADDED, {
+        types: place.types,
+      });
+
+      server.log.info("place added to lists", {
+        userId,
+        placeId: createdPlace.id,
+        listIds,
+      });
+
+      return { place: createdPlace, lists };
+    },
+  );
+
+  server.delete(
+    "/lists/:listId/place/:placeId",
+    {
+      preValidation: verifySession,
+      schema: {
+        params: {
+          type: "object",
+          properties: {
+            listId: { type: "string" },
+            placeId: { type: "string" },
+          },
+          required: ["listId", "placeId"],
+        },
+      },
+    },
+    async (request) => {
+      const { listId, placeId } = request.params as {
+        listId: string;
+        placeId: string;
+      };
+      const { prisma } = server;
+      const { userId } = request.session.get("data");
+
+      await prisma.item.deleteMany({
+        where: {
+          listId,
+          itemId: placeId,
+        },
+      });
+
+      server.log.info("place removed from list", {
+        userId,
+        placeId,
+        listId,
+      });
+
+      return { success: true };
+    },
+  );
+
   server.get(
     "/places/:id",
     {
@@ -32,8 +209,8 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
             type: "object",
             properties: {
               address: { type: "string" },
-              lat: { type: "number" },
-              lng: { type: "number" },
+              latitude: { type: "number" },
+              longitude: { type: "number" },
               name: { type: "string" },
               googleMapsId: { type: "string" },
               imageUrl: { type: "string" },
@@ -82,22 +259,10 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
           return reply.code(404).send();
         }
 
-        let imageUrl: string | null = null;
-        if (googlePlace.photos) {
-          imageUrl = googlePlace.photos[0] as string;
-        }
-
         const newPlace = await server.prisma.place.create({
           data: {
-            address: googlePlace.adrFormatAddress,
-            name: googlePlace.displayName?.text || "Unknown",
-            lat: `${googlePlace.location?.latitude}`,
-            lng: `${googlePlace.location?.longitude}`,
-            googleMapsId: googlePlace.id,
-            imageUrl,
-            phoneNumber: googlePlace.internationalPhoneNumber,
-            types: googlePlace.types || [],
-            websiteUri: googlePlace.websiteUri,
+            ...googlePlace,
+            imageUrl: googlePlace.photos?.[0].imageUrl || "",
             createdBy: {
               connect: {
                 id: session.userId,
@@ -109,11 +274,8 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
         return reply.code(200).send({
           ...newPlace,
           photos: googlePlace.photos || [],
-          lat: parseFloat(newPlace.lat!),
-          lng: parseFloat(newPlace.lng!),
         });
       } catch (err) {
-        console.log(err);
         request.log.error(`Could not fetch place`, err);
         return reply.code(500).send();
       }
@@ -142,8 +304,8 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
               type: "object",
               properties: {
                 address: { type: "string" },
-                lat: { type: "number" },
-                lng: { type: "number" },
+                latitude: { type: "number" },
+                longitude: { type: "number" },
                 name: { type: "string" },
                 googleMapsId: { type: "string" },
               },
@@ -179,8 +341,8 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
         return reply.code(200).send(
           places.map((place) => ({
             address: place.shortFormattedAddress,
-            lat: place.location?.latitude,
-            lng: place.location?.longitude,
+            latitude: place.location?.latitude,
+            longitude: place.location?.longitude,
             name: place.displayName?.text,
             googleMapsId: place.id,
           })),

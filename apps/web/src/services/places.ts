@@ -2,7 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 
 import api from "./api";
 import { useAppDispatch } from "./hooks";
-import { Place } from "./types";
+import { Place, PlaceLocation } from "./types";
+import { useQuery } from "react-query";
+import { AxiosError } from "axios";
 
 const initialState: {
   isOpen: boolean;
@@ -62,27 +64,42 @@ export const usePlaceModal = () => {
   };
 };
 
+type TextSearchQuery = {
+  query: string;
+  latitude: PlaceLocation["latitude"];
+  longitude: PlaceLocation["longitude"];
+  radius: number;
+};
+export const useTextSearch = (params: TextSearchQuery) => {
+  return useQuery<Place[], AxiosError, TextSearchQuery>({
+    queryKey: ["places/search", params],
+    queryFn: async (request) => {
+      const response = await api.get<Place[]>(`/places/search`, {
+        params: request.queryKey[1],
+      });
+
+      return response.data;
+    },
+  });
+};
+
 export function usePlacesService() {
   const getPlace = async ({ googleMapsId }: { googleMapsId: string }) => {
     const response = await api.get<Place>(`/places/${googleMapsId}`);
-    const place = response.data;
-
-    place.lat =
-      typeof place.lat === "number" ? place.lat : parseFloat(place.lat);
-    place.lng =
-      typeof place.lng === "number" ? place.lng : parseFloat(place.lng);
-
-    return place;
+    return response.data;
   };
 
-  const textSearch = async (
-    request: google.maps.places.TextSearchRequest,
-  ): Promise<Place[]> => {
+  const textSearch = async (request: {
+    query: string;
+    latitude: PlaceLocation["latitude"];
+    longitude: PlaceLocation["longitude"];
+    radius: number;
+  }): Promise<Place[]> => {
     const response = await api.get<Place[]>(`/places/search`, {
       params: {
         query: request.query,
-        latitude: request.location.lat,
-        longitude: request.location.lng,
+        latitude: request.latitude,
+        longitude: request.longitude,
         radius: request.radius,
       },
     });

@@ -26,11 +26,7 @@ const AuthenticatedScenes = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position: GeolocationPosition) => {
-          const pos = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          };
-          dispatch(setCurrentLocation(pos));
+          dispatch(setCurrentLocation(position.coords));
         },
       );
     } else {

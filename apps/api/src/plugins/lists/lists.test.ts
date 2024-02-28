@@ -69,38 +69,36 @@ describe("/lists", () => {
           name: "Test Place",
           address: "Test Address",
           googleMapsId: "TestPlaceID",
-          lat: 40.7128,
-          lng: -74.006,
+          latitude: 40.7128,
+          longitude: -74.006,
           types: ["type1", "type2"],
           imageUrl: "Test Image URL",
           websiteUri: "Test Website URI",
         },
       };
-
+      const createdAt = new Date();
+      const updatedAt = new Date();
+      const dates = { createdAt, updatedAt };
+      const stringDates = {
+        createdAt: createdAt.toISOString(),
+        updatedAt: updatedAt.toISOString(),
+      };
       (server.prisma.place.create as jest.Mock).mockResolvedValue({
+        ...payload.place,
+        ...dates,
         id: "testPlaceId",
-        name: "Test Place",
         description: "",
-        address: "Test Address",
-        googleMapsId: "TestPlaceID",
-        types: ["type1", "type2"],
-        lat: "40.7128",
-        lng: "-74.006",
-        createdAt: new Date(),
-        updatedAt: new Date(),
       });
       (server.prisma.list.findMany as jest.Mock).mockResolvedValue([
         {
           id: "listId1",
           name: "List 1",
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          ...dates,
         },
         {
           id: "listId2",
           name: "List 2",
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          ...dates,
         },
       ]);
       (server.prisma.item.createMany as jest.Mock).mockResolvedValue({
@@ -109,8 +107,7 @@ describe("/lists", () => {
         description: "",
         placeId: "testPlaceId",
         listId: "listId1",
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        ...dates,
       });
       const response = await server.inject({
         method: "POST",
@@ -120,14 +117,8 @@ describe("/lists", () => {
 
       expect(server.prisma.place.create).toHaveBeenCalledWith({
         data: {
-          name: "Test Place",
+          ...payload.place,
           description: "",
-          address: "Test Address",
-          googleMapsId: "TestPlaceID",
-          types: ["type1", "type2"],
-          lat: "40.7128",
-          lng: "-74.006",
-          imageUrl: "Test Image URL",
           createdBy: {
             connect: {
               id: "testUserId",
@@ -163,22 +154,20 @@ describe("/lists", () => {
         expect.objectContaining({
           place: expect.objectContaining({
             id: "testPlaceId",
-            name: "Test Place",
             description: "",
-            address: "Test Address",
-            googleMapsId: "TestPlaceID",
-            types: ["type1", "type2"],
-            lat: "40.7128",
-            lng: "-74.006",
+            ...payload.place,
+            ...stringDates,
           }),
           lists: expect.arrayContaining([
             expect.objectContaining({
               id: "listId1",
               name: "List 1",
+              ...stringDates,
             }),
             expect.objectContaining({
               id: "listId2",
               name: "List 2",
+              ...stringDates,
             }),
           ]),
         }),

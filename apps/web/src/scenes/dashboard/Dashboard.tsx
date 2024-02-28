@@ -33,7 +33,7 @@ const ZOOM_LEVELS = {
   MARKER: 18,
 };
 
-const DEFAULT_CENTER = { lat: 37.7749, lng: -122.4194 }; // Default center (San Francisco)
+const DEFAULT_CENTER = { latitude: 37.7749, longitude: -122.4194 }; // Default center (San Francisco)
 
 function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
   const { openPlaceModal } = usePlaceModal();
@@ -54,7 +54,10 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
 
       // Select the clicked location
       setSelected(place);
-      setCenter(latLng);
+      setCenter({
+        latitude: latLng.lat,
+        longitude: latLng.lng,
+      });
       setZoom(ZOOM_LEVELS.MARKER);
       openPlaceModal({
         onClose: () => {
@@ -70,8 +73,8 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
   const onSelectedChanged = useCallback((place: Place) => {
     setSelected(place);
     setCenter({
-      lat: place.lat,
-      lng: place.lng,
+      latitude: place.latitude,
+      longitude: place.longitude,
     });
     setZoom(ZOOM_LEVELS.SELECTED);
   }, []);

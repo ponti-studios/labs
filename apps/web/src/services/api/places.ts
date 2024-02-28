@@ -18,8 +18,8 @@ export const useAddPlaceToList = (
         place: {
           name: place.name,
           address: place.address,
-          lat: place.lat,
-          lng: place.lng,
+          latitude: place.latitude,
+          longitude: place.longitude,
           imageUrl: place.imageUrl,
           googleMapsId: place.googleMapsId,
           rating: place.rating,

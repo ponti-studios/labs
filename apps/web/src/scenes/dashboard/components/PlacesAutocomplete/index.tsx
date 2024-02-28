@@ -6,7 +6,7 @@ import { useQuery } from "react-query";
 import Loading from "ui/Loading";
 
 import { usePlacesService } from "src/services/places";
-import { Place } from "src/services/types";
+import { Place, PlaceLocation } from "src/services/types";
 import { AxiosError } from "axios";
 
 const Wrapper = styled.div`
@@ -75,7 +75,7 @@ function PlacesAutocomplete({
   center,
   setSelected,
 }: {
-  center: google.maps.LatLngLiteral;
+  center: PlaceLocation;
   setSelected: (place: Place) => void;
 }) {
   const { getPlace, textSearch } = usePlacesService();
@@ -88,7 +88,8 @@ function PlacesAutocomplete({
 
       return textSearch({
         query: value,
-        location: center,
+        latitude: center.latitude,
+        longitude: center.longitude,
         radius: 100,
       });
     },
