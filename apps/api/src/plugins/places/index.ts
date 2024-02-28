@@ -14,15 +14,25 @@ import {
   searchPlaces,
 } from "../google/places";
 
+const types = {
+  location: {
+    latitude: { type: "number" },
+    longitude: { type: "number" },
+  },
+};
+
+type Location = {
+  latitude: number;
+  longitude: number;
+};
+
 type PlacePostBody = {
   listIds: string[];
-  place: {
+  place: Location & {
     name: string;
     address: string;
     imageUrl: string;
     googleMapsId: string;
-    latitude: number;
-    longitude: number;
     types: string[];
     websiteUri: string;
   };
@@ -32,8 +42,7 @@ const CreatePlaceProperties = {
   name: { type: "string" },
   address: { type: "string" },
   googleMapsId: { type: "string" },
-  latitude: { type: "number" },
-  longitude: { type: "number" },
+  ...types.location,
   websiteUri: { type: "string" },
   imageUrl: { type: "string" },
   types: { type: "array", items: { type: "string" } },
@@ -209,8 +218,6 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
             type: "object",
             properties: {
               address: { type: "string" },
-              latitude: { type: "number" },
-              longitude: { type: "number" },
               name: { type: "string" },
               googleMapsId: { type: "string" },
               imageUrl: { type: "string" },
@@ -218,7 +225,20 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
               photos: { type: "array", items: { type: "string" } },
               types: { type: "array", items: { type: "string" } },
               websiteUri: { type: "string" },
+              ...types.location,
             },
+            required: [
+              "address",
+              "latitude",
+              "longitude",
+              "name",
+              "googleMapsId",
+              "imageUrl",
+              "phoneNumber",
+              "photos",
+              "types",
+              "websiteUri",
+            ],
           },
           404: {
             type: "null",
@@ -291,9 +311,8 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
           type: "object",
           properties: {
             query: { type: "string" },
-            latitude: { type: "number" },
-            longitude: { type: "number" },
             radius: { type: "number" },
+            ...types.location,
           },
           required: ["query", "latitude", "longitude", "radius"],
         },
@@ -304,11 +323,17 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
               type: "object",
               properties: {
                 address: { type: "string" },
-                latitude: { type: "number" },
-                longitude: { type: "number" },
                 name: { type: "string" },
                 googleMapsId: { type: "string" },
+                ...types.location,
               },
+              required: [
+                "address",
+                "latitude",
+                "longitude",
+                "name",
+                "googleMapsId",
+              ],
             },
           },
           404: {
