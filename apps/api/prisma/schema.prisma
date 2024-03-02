@@ -123,10 +123,10 @@ model Recommendation {
 model Flight {
   id                String   @id @default(uuid())
   flightNumber      String   @db.Text()
-  departureAirport  String   @db.Text()
+  departureAirport  String   @db.Text() // Valid IATA code
   departureDate     DateTime @db.Timestamp()
   arrivalDate       DateTime @db.Timestamp()
-  arrivalAirport    String   @db.Text()
+  arrivalAirport    String   @db.Text() // Valid IATA code
   airline           String   @db.Text()
   reservationNumber String   @db.Text()
   url               String   @db.Text()
@@ -139,17 +139,23 @@ model Flight {
   list              List?    @relation(fields: [listId], references: [id])
 }
 
+enum ListItemType {
+  FLIGHT
+  PLACE
+}
+
 model Item {
-  id        String   @id @default(uuid())
-  type      String   @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String       @id @default(uuid())
+  type      String       @db.Text
+  itemType  ListItemType @default(PLACE)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
 
   // Relations
   list   List?   @relation(fields: [listId], references: [id])
   listId String
   itemId String
-  Place  Place[]
+  place  Place[]
 
   // Compound ID to ensure that relation is unique.
   @@unique([listId, itemId])

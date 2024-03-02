@@ -39,10 +39,10 @@ type PlacePostBody = {
 };
 
 const CreatePlaceProperties = {
+  ...types.location,
   name: { type: "string" },
   address: { type: "string" },
   googleMapsId: { type: "string" },
-  ...types.location,
   websiteUri: { type: "string" },
   imageUrl: { type: "string" },
   types: { type: "array", items: { type: "string" } },

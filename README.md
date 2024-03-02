@@ -30,7 +30,7 @@ This monorepo holds the services for Rocco.
 1. Install dependencies: `npm install`
 1. Build all apps and packages: `npm run build`
 1. Start postgres and redis: `docker-compose up -d`
-1. Migrate the database: `npm run turbo:migrate`
+1. Migrate the database: `npm run prisma:migrate`
 1. Start dev services: `npm run dev`
 
 ## Resources

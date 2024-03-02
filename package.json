@@ -22,7 +22,8 @@
     "test": "turbo run test",
     "test:e2e:ci": "turbo run test:e2e:ci --scope rocco-web",
     "test:update": "turbo run test:update --scope rocco-web",
-    "turbo:migrate": "turbo run prisma:generate && turbo run prisma:deploy"
+    "prisma:dev": "npm run prisma:dev -w rocco-api",
+    "prisma:migrate": "npm run prisma:generate -w rocco-api && npm run prisma:deploy -w rocco-api"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.6.6",
