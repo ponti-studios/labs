@@ -1,7 +1,8 @@
-import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify";
-import { verifySession } from "./index";
-import { createServer } from "../../server";
 import { User } from "@prisma/client";
+import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify";
+import { createServer } from "../../server";
+
+import { verifySession } from "./index";
 
 describe("verifySession", () => {
   let request: FastifyRequest;

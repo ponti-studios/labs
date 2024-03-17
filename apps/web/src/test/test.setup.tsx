@@ -8,9 +8,9 @@ import { setupServer } from "msw/node";
 import { Mock, afterAll, afterEach, beforeAll, vi } from "vitest";
 
 import { api, baseURL } from "../services/api/base";
+import { MOCK_PLACE, PLACE_HANDLERS } from "./mocks/place";
 
 export const TEST_LIST_ID = "list-id";
-const placeId = "place-id";
 
 vi.mock("src/services/places", () => ({
   usePlacesService: () => ({
@@ -48,20 +48,10 @@ const restHandlers = [
     return HttpResponse.json({
       id: TEST_LIST_ID,
       name: "test list",
-      items: [
-        {
-          id: placeId,
-          itemId: placeId,
-          name: "test place",
-          imageUrl: "test-image-url",
-          types: ["test_type"],
-        },
-      ],
+      items: [MOCK_PLACE],
     });
   }),
-  http.delete(`${baseURL}/lists/${TEST_LIST_ID}/place/${placeId}`, () => {
-    return HttpResponse.json({ success: true });
-  }),
+  ...PLACE_HANDLERS,
 ];
 
 const server = setupServer(...restHandlers);

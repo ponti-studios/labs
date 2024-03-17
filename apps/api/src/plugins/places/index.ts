@@ -9,10 +9,13 @@ import { EVENTS, track } from "../../analytics";
 import { SessionToken } from "../../typings";
 import { verifySession } from "../auth";
 import {
+  FormattedPlace,
+  PhotoMedia,
   getPlaceDetails,
   getPlacePhotos,
-  searchPlaces,
 } from "../google/places";
+
+import * as search from "./search";
 
 const types = {
   location: {
@@ -249,6 +252,7 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
     async (request: FastifyRequest, reply: FastifyReply) => {
       const session = request.session.get("data") as SessionToken;
       const { id } = request.params as { id: string };
+      let photos: PhotoMedia[] | undefined;
 
       try {
         const place = await server.prisma.place.findFirst({
@@ -257,11 +261,16 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
 
         // Serve the place from the database if it exists.
         if (place && place.googleMapsId) {
-          const photos = await getPlacePhotos({
-            googleMapsId: place.googleMapsId,
-            placeId: place.id,
-            limit: 5,
-          });
+          try {
+            photos = await getPlacePhotos({
+              googleMapsId: place.googleMapsId,
+              placeId: place.id,
+              limit: 5,
+            });
+          } catch (err) {
+            request.log.error(`Could not fetch photos from Google`);
+            return reply.code(500).send();
+          }
 
           return reply.code(200).send({
             ...place,
@@ -269,14 +278,27 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
           });
         }
 
-        // If this place has not been saved before, fetch it from Google.
-        const googlePlace = await getPlaceDetails({
-          placeId: id,
-        });
+        let googlePlace: FormattedPlace | null = null;
+        try {
+          // If this place has not been saved before, fetch it from Google.
+          googlePlace = await getPlaceDetails({
+            placeId: id,
+          });
 
-        // If the place does not exist in Google, return a 404.
-        if (!googlePlace) {
-          return reply.code(404).send();
+          // If the place does not exist in Google, return a 404.
+          if (!googlePlace) {
+            return reply.code(404).send();
+          }
+        } catch (err) {
+          request.log.error(`Could not fetch place from Google`);
+          const googleError = (err as { response: { status: number } })
+            ?.response;
+
+          if (googleError?.status >= 400 && googleError?.status < 500) {
+            return reply.code(404).send();
+          }
+
+          return reply.code(500).send();
         }
 
         const newPlace = await server.prisma.place.create({
@@ -296,7 +318,7 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
           photos: googlePlace.photos || [],
         });
       } catch (err) {
-        request.log.error(`Could not fetch place`, err);
+        request.log.error(err, "Could not fetch place");
         return reply.code(500).send();
       }
     },
@@ -342,42 +364,7 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
         },
       },
     },
-    async (request: FastifyRequest, reply: FastifyReply) => {
-      const { query, latitude, longitude, radius } = request.query as {
-        query: string;
-        latitude: number;
-        longitude: number;
-        radius: number;
-      };
-
-      try {
-        const places = await searchPlaces({
-          query,
-          center: { latitude, longitude },
-          radius,
-          fields: [
-            "places.id",
-            "places.shortFormattedAddress",
-            "places.displayName",
-            "places.location",
-          ],
-        });
-
-        return reply.code(200).send(
-          places.map((place) => ({
-            address: place.shortFormattedAddress,
-            latitude: place.location?.latitude,
-            longitude: place.location?.longitude,
-            name: place.displayName?.text,
-            googleMapsId: place.id,
-          })),
-        );
-      } catch (err) {
-        console.log(err);
-        request.log.info("Could not fetch places", err);
-        return reply.code(500).send();
-      }
-    },
+    search.GET,
   );
 };
 

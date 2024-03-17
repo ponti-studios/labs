@@ -1,7 +1,8 @@
-import { UseMutationOptions, useMutation } from "react-query";
+import { UseMutationOptions, useMutation, useQuery } from "react-query";
 import api from ".";
 import { Place } from "../types";
 import { AxiosError } from "axios";
+import { useState } from "react";
 
 type AddPlaceToListOptions = {
   listIds: string[];
@@ -32,4 +33,44 @@ export const useAddPlaceToList = (
     },
     options,
   );
+};
+
+export const useGetPlace = (id: string) => {
+  const [formattedError, setFormattedError] = useState<string | null>(null);
+  const query = useQuery<Place, AxiosError>(
+    ["place", id],
+    async () => {
+      setFormattedError(null);
+      return api.get(`/places/${id}`).then((res) => res.data);
+    },
+    {
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+      onSuccess: () => {
+        setFormattedError(null);
+      },
+      onError: (error) => {
+        if (error.response?.status === 404) {
+          setFormattedError("Place not found.");
+          return;
+        }
+
+        if (error.response?.status === 403) {
+          setFormattedError("You do not have permission to view this place.");
+          return;
+        }
+
+        if (error.response?.status === 500) {
+          setFormattedError(
+            "An error occurred while fetching the place. Please try again later.",
+          );
+          return;
+        }
+
+        setFormattedError(error.message);
+      },
+    },
+  );
+
+  return { ...query, formattedError };
 };

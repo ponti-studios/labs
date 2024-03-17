@@ -1,20 +1,23 @@
+import { useNavigate } from "react-router-dom";
 import PlaceTypes from "src/components/places/PlaceTypes";
 import { ListPlace } from "src/services/api";
-import { usePlaceModal, usePlacesService } from "src/services/places";
+import { usePlacesService } from "src/services/places";
 
 const ListItem = ({ place }: { place: ListPlace }) => {
-  const { openPlaceModal } = usePlaceModal();
   const placesService = usePlacesService();
-
+  const navigate = useNavigate();
   const onPlaceNameClick = async (e) => {
     e.preventDefault();
     if (!placesService) return;
 
-    openPlaceModal({
-      place: await placesService.getPlace({
-        googleMapsId: place.googleMapsId,
-      }),
-    });
+    navigator.vibrate?.(10);
+
+    navigate(`/place/${place.googleMapsId}`);
+    // openPlaceModal({
+    //   place: await placesService.getPlace({
+    //     googleMapsId: place.googleMapsId,
+    //   }),
+    // });
   };
 
   return (

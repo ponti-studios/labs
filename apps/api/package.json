@@ -9,6 +9,7 @@
     "dev": "npm run build && nodemon --config nodemon.json",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx src",
     "prisma:deploy": "npx prisma migrate deploy",
+    "db:migrate:dev": "dotenv -e .env.development -- prisma migrate dev",
     "prisma:dev": "npx prisma migrate dev",
     "prisma:generate": "npx prisma generate",
     "prisma:push": "npx prisma db push",

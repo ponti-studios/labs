@@ -9,6 +9,7 @@ import Invites from "src/scenes/invites";
 import List from "src/scenes/list";
 import ListInvites from "src/scenes/list/invites";
 import Lists from "src/scenes/lists";
+import Place from "src/scenes/place";
 import NotFound from "src/scenes/not-found";
 import { setCurrentLocation } from "src/services/auth";
 import { useAppDispatch, useAppSelector } from "src/services/hooks";
@@ -47,6 +48,7 @@ const AuthenticatedScenes = () => {
         <Route path={ROUTES.LISTS} element={<Lists />} />
         <Route path={ROUTES.LIST} element={<List />} />
         <Route path={ROUTES.LIST_INVITE} element={<ListInvites />} />
+        <Route path={ROUTES.PLACE} element={<Place />} />
         <Route path={ROUTES.WILDCARD} element={<NotFound />} />
       </Routes>
       <Toast />

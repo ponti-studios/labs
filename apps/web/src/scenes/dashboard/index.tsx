@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 
 const LazyDashboard = React.lazy(
-  () => import(/* webpackChunkName: "acount" */ "./Dashboard"),
+  () => import(/* webpackChunkName: "dashboard" */ "./Dashboard"),
 );
 
 const Dashboard = (props) => (

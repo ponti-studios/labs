@@ -83,7 +83,7 @@ export const getPlacePhotos = async ({
   googleMapsId: string;
   limit?: number;
   placeId: string;
-}) => {
+}): Promise<PhotoMedia[] | undefined> => {
   const { data } = await places.get({
     name: `places/${googleMapsId}`,
     fields: "photos",
