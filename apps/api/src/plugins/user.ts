@@ -1,10 +1,9 @@
+import { prisma } from "@hominem/db";
 import { FastifyInstance, FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
 import { verifySession } from "./auth";
 
 const usersPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
-  const { prisma } = server;
-
   server.get(
     "/me",
     {

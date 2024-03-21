@@ -1,4 +1,5 @@
 import { FastifyInstance } from "fastify";
+import { prisma } from "@hominem/db";
 
 import { verifySession } from "../../auth";
 
@@ -41,7 +42,6 @@ const putListRoute = (server: FastifyInstance) => {
       },
     },
     async (request) => {
-      const { prisma } = server;
       const { id } = request.params as { id: string };
       const { name } = request.body as { name: string };
       const list = await prisma.list.update({

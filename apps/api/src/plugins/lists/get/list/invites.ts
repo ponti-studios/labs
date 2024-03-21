@@ -1,7 +1,8 @@
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { PrismaClientKnownRequestError } from "@hominem/db";
 import { FastifyInstance } from "fastify";
 
 import { verifySession } from "../../../auth";
+import { prisma } from "@hominem/db";
 
 const getListInvitesRoute = (server: FastifyInstance) => {
   server.get(
@@ -44,7 +45,6 @@ const getListInvitesRoute = (server: FastifyInstance) => {
       },
     },
     async (request, reply) => {
-      const { prisma } = server;
       const { id } = request.params as { id: string };
       const invites = await prisma.listInvite.findMany({
         where: { listId: id },
@@ -99,7 +99,6 @@ const getListInvitesRoute = (server: FastifyInstance) => {
       },
     },
     async (request, reply) => {
-      const { prisma } = server;
       const { id } = request.params as { id: string };
       const { email } = request.body as { email: string };
       const { userId } = request.session.get("data");

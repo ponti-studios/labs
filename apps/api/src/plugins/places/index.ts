@@ -4,6 +4,7 @@ import {
   FastifyReply,
   FastifyRequest,
 } from "fastify";
+import { prisma } from "@hominem/db";
 
 import { EVENTS, track } from "../../analytics";
 import { SessionToken } from "../../typings";
@@ -110,7 +111,6 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
       },
     },
     async (request) => {
-      const { prisma } = server;
       const { userId } = request.session.get("data");
       const { listIds, place } = request.body as PlacePostBody;
       const filteredListTypes = place.types.filter((type) => {
@@ -184,7 +184,6 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
         listId: string;
         placeId: string;
       };
-      const { prisma } = server;
       const { userId } = request.session.get("data");
 
       await prisma.item.deleteMany({
@@ -255,7 +254,7 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
       let photos: PhotoMedia[] | undefined;
 
       try {
-        const place = await server.prisma.place.findFirst({
+        const place = await prisma.place.findFirst({
           where: { googleMapsId: id },
         });
 
@@ -301,7 +300,7 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
           return reply.code(500).send();
         }
 
-        const newPlace = await server.prisma.place.create({
+        const newPlace = await prisma.place.create({
           data: {
             ...googlePlace,
             imageUrl: googlePlace.photos?.[0].imageUrl || "",

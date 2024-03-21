@@ -1,4 +1,4 @@
-import { List, ListInvite, User } from "@prisma/client";
+import { List, ListInvite, User } from "@hominem/db";
 import classNames from "classnames";
 import React, { useCallback } from "react";
 import { trpc } from "src/utils/trpc";
@@ -19,7 +19,7 @@ function ListInviteItem({ invite, onAcceptInvite }: ListInviteItemProps) {
       <p
         className={classNames(
           "text-lg flex flex-col gap-2",
-          !invite.accepted && "text-gray-400"
+          !invite.accepted && "text-gray-400",
         )}
       >
         <span className="text-lg font-semibold">{invite.list.name}</span>

@@ -1,9 +1,9 @@
+import { prisma } from "@hominem/db";
 import { initTRPC, TRPCError } from "@trpc/server";
 import { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { Session } from "next-auth";
 import superjson from "superjson";
 
-import { prisma } from "../db/client";
 import { getServerAuthSession } from "./get-server-auth-session";
 
 interface Context {

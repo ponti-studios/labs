@@ -3,8 +3,8 @@
  * and updates the place with the photo URL.
  */
 
+import { prisma } from "@hominem/db";
 import { FastifyInstance } from "fastify";
-import { prisma } from "../../prisma";
 
 async function migrateLatLngFloat(server: FastifyInstance) {
   let count = 0;

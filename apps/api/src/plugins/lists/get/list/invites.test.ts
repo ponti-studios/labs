@@ -1,4 +1,4 @@
-// import { PrismaClient } from "@prisma/client";
+import { prisma } from "@hominem/db";
 import { FastifyInstance } from "fastify";
 
 import { mockAuthSession } from "../../../../test.utils";
@@ -6,11 +6,10 @@ import { createServer } from "../../../../server";
 
 describe("GET /lists/:id/invites", () => {
   let server: FastifyInstance;
-  // let prisma: PrismaClient;
 
   beforeAll(async () => {
     server = await createServer({ logger: false });
-    jest.spyOn(server.prisma.list, "findMany").mockResolvedValue([]);
+    jest.spyOn(prisma.list, "findMany").mockResolvedValue([]);
   });
 
   afterEach(async () => {
@@ -34,7 +33,7 @@ describe("GET /lists/:id/invites", () => {
       },
     ];
     mockAuthSession();
-    (server.prisma.listInvite.findMany as jest.Mock).mockResolvedValueOnce(
+    (prisma.listInvite.findMany as jest.Mock).mockResolvedValueOnce(
       mockResponse,
     );
     const response = await server.inject({

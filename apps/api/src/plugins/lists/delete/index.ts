@@ -1,5 +1,7 @@
 import { FastifyInstance } from "fastify";
 
+import { prisma } from "@hominem/db";
+
 import { verifySession } from "../../auth";
 
 const deleteListRoute = (server: FastifyInstance) => {
@@ -34,7 +36,6 @@ const deleteListRoute = (server: FastifyInstance) => {
       },
     },
     async (request) => {
-      const { prisma } = server;
       const { id } = request.params as { id: string };
       const list = await prisma.list.delete({
         where: { id },

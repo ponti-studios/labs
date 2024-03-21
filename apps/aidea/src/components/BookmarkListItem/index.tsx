@@ -1,6 +1,6 @@
-import { Recommendation } from "@prisma/client";
 import classNames from "classnames";
 import React, { SyntheticEvent, useCallback } from "react";
+import { Recommendation } from "@hominem/db";
 import Trash from "src/components/Icons/Trash";
 import { trpc } from "src/utils/trpc";
 
@@ -21,7 +21,7 @@ function BookmarkListItem({ bookmark, onDelete }: BookmarkListItemProps) {
       await mutation.mutateAsync({ id });
       onDelete();
     },
-    [id, mutation, onDelete]
+    [id, mutation, onDelete],
   );
 
   return (

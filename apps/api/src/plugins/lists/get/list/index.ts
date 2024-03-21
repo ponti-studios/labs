@@ -1,8 +1,8 @@
 import { FastifyInstance } from "fastify";
 
-// src/plugins
+import { prisma } from "@hominem/db";
+
 import { verifySession } from "../../../auth";
-import { prisma } from "../../../prisma";
 
 async function getListPlaces(listId: string): Promise<
   {
@@ -79,7 +79,6 @@ const getListRoute = (server: FastifyInstance) => {
       },
     },
     async (request, reply) => {
-      const { prisma } = server;
       const { id } = request.params as { id: string };
       const list = await prisma.list.findUnique({
         where: { id },

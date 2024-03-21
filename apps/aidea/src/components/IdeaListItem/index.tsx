@@ -1,4 +1,4 @@
-import { Idea } from "@prisma/client";
+import { Idea } from "@hominem/db";
 import classNames from "classnames";
 import React, { useCallback } from "react";
 import Trash from "src/components/Icons/Trash";
@@ -30,7 +30,7 @@ function IdeaListItem({ idea, onDelete }: IdeaListItemProps) {
       <button
         className={classNames(
           "btn btn-ghost col-start-12 flex justify-end text-red-500",
-          mutation.isLoading && "loading"
+          mutation.isLoading && "loading",
         )}
         onClick={deleteIdea}
       >

@@ -1,3 +1,4 @@
+import { prisma } from "@hominem/db";
 import { FastifyInstance } from "fastify";
 
 import { verifySession } from "../../auth";
@@ -43,7 +44,6 @@ const getUserInvitesRoute = (server: FastifyInstance) => {
       },
     },
     async (request, reply) => {
-      const { prisma } = server;
       const { userId } = request.session.get("data");
       const currentUser = await prisma.user.findUnique({
         where: { id: userId },
@@ -109,7 +109,6 @@ const getUserInvitesRoute = (server: FastifyInstance) => {
       },
     },
     async (request, reply) => {
-      const { prisma } = server;
       const { userId } = request.session.get("data");
       const invites = await prisma.listInvite.findMany({
         where: { userId },

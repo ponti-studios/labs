@@ -1,3 +1,4 @@
+import { prisma } from "@hominem/db";
 import { FastifyInstance, FastifyPluginAsync } from "fastify";
 
 import { OpenGraphData, getOpenGraphData } from "./utils";
@@ -55,7 +56,6 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
       },
     },
     async (request, reply) => {
-      const { prisma } = server;
       const session = request.session.get("data");
 
       if (!session) {
@@ -106,7 +106,6 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
       },
     },
     async (request, reply) => {
-      const { prisma } = server;
       const { url } = request.body as { url: string };
       const { userId } = request.session.get("data");
 
@@ -158,7 +157,6 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
       },
     },
     async (request, reply) => {
-      const { prisma } = server;
       const { id } = request.params as { id: string };
       const { url } = request.body as { url: string };
       const { userId } = request.session.get("data");
@@ -200,7 +198,6 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
       },
     },
     async (request, reply) => {
-      const { prisma } = server;
       const { id } = request.params as { id: string };
       const { userId } = request.session.get("data");
 

@@ -1,4 +1,4 @@
-import { ListInvite } from "@prisma/client";
+import { ListInvite } from "@hominem/db";
 import { SyntheticEvent, useCallback, useState } from "react";
 import { trpc } from "src/utils/trpc";
 
@@ -35,7 +35,7 @@ export default function useListInviteForm({
         setIsLoading(false);
       }
     },
-    [email, mutation, onCreate]
+    [email, mutation, onCreate],
   );
 
   return {

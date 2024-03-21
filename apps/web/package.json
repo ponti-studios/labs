@@ -10,7 +10,7 @@
     "lint:fix": "eslint --cache --fix --ignore-path ../../.gitignore --ext .js,.jsx,.ts,.tsx src",
     "lint:stylelint": "stylelint --config ../../.stylelintrc.json --cache --fix 'src/**/*.{css,scss,less,styl}'",
     "lint:eslint": "eslint --max-warnings=0 --cache --ignore-path ../../.gitignore --ext .js,.jsx,.ts,.tsx src",
-    "lint": "npm run lint:eslint && npm run lint:stylelint && npm run typecheck",
+    "lint": "npm run lint:eslint && npm run lint:stylelint",
     "postinstall": "cypress install",
     "preview:test": "start-server-and-test preview http://localhost:53422",
     "preview": "vite preview",

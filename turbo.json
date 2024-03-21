@@ -10,6 +10,9 @@
     "lint": {
       "outputs": []
     },
+    "typecheck": {
+      "outputs": []
+    },
     "test:update": {
       "outputs": []
     },
@@ -22,9 +25,6 @@
       "dependsOn": ["^build"],
       "outputs": [],
       "inputs": ["prisma/**", "src/**/*.tsx", "src/**/*.ts", "test/**/*.ts"]
-    },
-    "typecheck": {
-      "outputs": []
     },
     "prisma:deploy": {
       "cache": false,

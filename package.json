@@ -7,14 +7,14 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "turbo run build",
+    "build": "npm run prisma:generate && turbo run build",
     "dev": "caddy start & turbo run dev --parallel",
     "docker:api:build": "docker build -t rocco-api:latest -f apps/api/Dockerfile .",
     "docker:api:run": "docker run -it -p 4444:4444 --name=rocco-api rocco-api",
     "docker:web:build": "docker build -t rocco-web:latest -f Dockerfile.web .",
     "docker:web:run": "docker run -it -p 3000:80 rocco-web",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "lint": "turbo run lint",
+    "lint": "turbo run lint && turbo run typecheck",
     "precommit": "npm run format && npm run lint",
     "prepare": "husky install",
     "prepush": "npm run test",
@@ -22,9 +22,9 @@
     "test": "turbo run test",
     "test:e2e:ci": "turbo run test:e2e:ci --scope rocco-web",
     "test:update": "turbo run test:update --scope rocco-web",
-    "prisma:dev": "npm run prisma:dev -w rocco-api",
-    "prisma:generate": "npm run prisma:generate -w rocco-api",
-    "prisma:migrate": "npm run prisma:generate && npm run prisma:deploy -w rocco-api"
+    "prisma:dev": "npm run prisma:dev -w @hominem/db",
+    "prisma:generate": "npm run prisma:generate -w @hominem/db",
+    "prisma:migrate": "npm run prisma:migrate -w @hominem/db"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.6.6",

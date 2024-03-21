@@ -1,7 +1,8 @@
 import { FastifyInstance } from "fastify";
+import { prisma } from "@hominem/db";
 
-import { verifySession } from "../../auth";
 import { EVENTS, track } from "../../../analytics";
+import { verifySession } from "../../auth";
 
 const postListRoute = (server: FastifyInstance) => {
   server.post(
@@ -35,7 +36,6 @@ const postListRoute = (server: FastifyInstance) => {
       },
     },
     async (request) => {
-      const { prisma } = server;
       const { name } = request.body as { name: string };
       const { userId } = request.session.get("data");
       const list = await prisma.list.create({

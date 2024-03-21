@@ -16,8 +16,7 @@ env:
   VITE_API_URL: ""
 
 jobs:
-  test:
-    name: 🧪 Test
+  code-quality:
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -50,17 +49,10 @@ jobs:
         run: npm install
 
       - name: 📥 Generate artifacts
-        run: npm run prisma:generate -w rocco-api
+        run: npm run prisma:generate
 
-      - name: 🔬 Lint
-        run: npx turbo run lint
-
-      - name: 🔎 Type check
-        run: npx turbo run typecheck
-
-      #! The tests require the Prisma client to be generated.
-      - name: 🏗️ Generate Prisma client
-        run: npm run prisma:generate -w rocco-api
+      - name: 🔬 Lint & Type check
+        run: npm run lint
 
       - name: 🧪 Unit tests
         run: npm run test
@@ -73,7 +65,7 @@ jobs:
           build: npm run build
           # Starts web server for E2E tests - replace with your own server invocation
           # https://docs.cypress.io/guides/continuous-integration/introduction#Boot-your-server
-          start: npm run dev
+          start: npx turbo run dev --parallel
           command: npm run test:e2e:ci
           # Address to wait for before running tests
           # wait-on: 'http://localhost:53422' 

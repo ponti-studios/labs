@@ -1,14 +1,16 @@
-import { createServer } from "../../server";
+import { prisma } from "@hominem/db";
 import { FastifyInstance } from "fastify";
+
 import { mockAuthSession } from "../../test.utils";
+import { createServer } from "../../server";
 
 describe("/lists", () => {
   let server: FastifyInstance;
 
   beforeAll(async () => {
     server = await createServer({ logger: false });
-    jest.spyOn(server.prisma.list, "findMany").mockResolvedValue([]);
-    jest.spyOn(server.prisma.userLists, "findMany").mockResolvedValue([]);
+    jest.spyOn(prisma.list, "findMany").mockResolvedValue([]);
+    jest.spyOn(prisma.userLists, "findMany").mockResolvedValue([]);
   });
 
   afterEach(async () => {
@@ -35,7 +37,7 @@ describe("/lists", () => {
   describe("POST /lists", () => {
     test("returns 200", async () => {
       mockAuthSession();
-      (server.prisma.list.create as jest.Mock).mockResolvedValue({
+      (prisma.list.create as jest.Mock).mockResolvedValue({
         id: "testListId",
         name: "My List",
         createdAt: new Date(),
@@ -48,7 +50,7 @@ describe("/lists", () => {
           name: "My List",
         },
       });
-      expect(server.prisma.list.create).toHaveBeenCalledWith({
+      expect(prisma.list.create).toHaveBeenCalledWith({
         data: { name: "My List", userId: "testUserId" },
       });
       expect(response.statusCode).toBe(200);
@@ -83,13 +85,13 @@ describe("/lists", () => {
         createdAt: createdAt.toISOString(),
         updatedAt: updatedAt.toISOString(),
       };
-      (server.prisma.place.create as jest.Mock).mockResolvedValue({
+      (prisma.place.create as jest.Mock).mockResolvedValue({
         ...payload.place,
         ...dates,
         id: "testPlaceId",
         description: "",
       });
-      (server.prisma.list.findMany as jest.Mock).mockResolvedValue([
+      (prisma.list.findMany as jest.Mock).mockResolvedValue([
         {
           id: "listId1",
           name: "List 1",
@@ -101,7 +103,7 @@ describe("/lists", () => {
           ...dates,
         },
       ]);
-      (server.prisma.item.createMany as jest.Mock).mockResolvedValue({
+      (prisma.item.createMany as jest.Mock).mockResolvedValue({
         id: "testItemId",
         name: "Test Item",
         description: "",
@@ -115,7 +117,7 @@ describe("/lists", () => {
         payload,
       });
 
-      expect(server.prisma.place.create).toHaveBeenCalledWith({
+      expect(prisma.place.create).toHaveBeenCalledWith({
         data: {
           ...payload.place,
           description: "",
@@ -126,10 +128,10 @@ describe("/lists", () => {
           },
         },
       });
-      expect(server.prisma.list.findMany).toHaveBeenCalledWith({
+      expect(prisma.list.findMany).toHaveBeenCalledWith({
         where: { id: { in: ["listId1", "listId2"] } },
       });
-      expect(server.prisma.item.createMany).toHaveBeenCalledWith({
+      expect(prisma.item.createMany).toHaveBeenCalledWith({
         data: [
           {
             type: "PLACE",

@@ -1,4 +1,5 @@
 // Test for deleteListRoute
+import { prisma } from "@hominem/db";
 import { FastifyInstance } from "fastify";
 import { createServer } from "../../../server";
 import { mockAuthSession } from "../../../test.utils";
@@ -27,12 +28,12 @@ describe("DELETE /lists/:id", () => {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    (server.prisma.list.delete as jest.Mock).mockResolvedValue(payload);
+    (prisma.list.delete as jest.Mock).mockResolvedValue(payload);
     const response = await server.inject({
       method: "DELETE",
       url: "/lists/testListId",
     });
-    expect(server.prisma.list.delete).toHaveBeenCalledWith({
+    expect(prisma.list.delete).toHaveBeenCalledWith({
       where: { id: "testListId" },
     });
     expect(response.statusCode).toBe(200);

@@ -3,8 +3,8 @@
  * and updates the place with the photo URL.
  */
 
+import { prisma } from "@hominem/db";
 import { FastifyInstance } from "fastify";
-import { prisma } from "../../prisma";
 import { isValidImageUrl, getPlacePhotos } from "../../google/places";
 
 async function addPhotoToPlaces(server: FastifyInstance) {

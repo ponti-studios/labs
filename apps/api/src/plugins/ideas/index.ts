@@ -1,3 +1,4 @@
+import { prisma } from "@hominem/db";
 import { FastifyInstance, FastifyPluginAsync, FastifyRequest } from "fastify";
 
 const ideaSchema = {
@@ -23,7 +24,6 @@ const ideasPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
       },
     },
     async (request) => {
-      const { prisma } = server;
       const { userId } = request.session.get("data");
       const ideas = await prisma.idea.findMany({
         where: { userId },
@@ -50,7 +50,6 @@ const ideasPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
       },
     },
     async (request: FastifyRequest) => {
-      const { prisma } = server;
       const { description } = request.body as { description: string };
       const { userId } = request.session.get("data");
       const idea = await prisma.idea.create({
@@ -80,7 +79,6 @@ const ideasPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
       },
     },
     async (request) => {
-      const { prisma } = server;
       const { id } = request.params as { id: string };
       const idea = await prisma.idea.delete({
         where: { id },

@@ -1,5 +1,5 @@
+import { TokenType, prisma } from "@hominem/db";
 import crypto from "crypto";
-import { TokenType } from "@prisma/client";
 import { add } from "date-fns";
 import {
   FastifyInstance,
@@ -11,7 +11,6 @@ import {
 import fp from "fastify-plugin";
 import { APP_USER_ID, EVENTS, track } from "../../analytics";
 import { TOKEN_FAILURE_REASONS } from "./constants";
-import { prisma } from "../prisma";
 import { createToken } from "./createToken";
 
 interface LoginInput {
@@ -46,8 +45,6 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
       },
     },
     async (request, reply) => {
-      // 👇 get prisma from shared application state
-      const { prisma } = server;
       // 👇 get the email and emailToken from the request payload
       const { email, emailToken } = request.body as AuthenticateInput;
 

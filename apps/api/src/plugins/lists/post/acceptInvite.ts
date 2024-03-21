@@ -1,6 +1,7 @@
 import { FastifyInstance } from "fastify";
 
 import { verifySession } from "../../auth";
+import { prisma } from "@hominem/db";
 
 const acceptListInviteRoute = async (server: FastifyInstance) => {
   server.post(
@@ -30,7 +31,6 @@ const acceptListInviteRoute = async (server: FastifyInstance) => {
       },
     },
     async (request, reply) => {
-      const { prisma } = server;
       const { listId } = request.params as { listId: string };
       const { email, userId } = request.session.get("data");
       const listInviteArgs = {

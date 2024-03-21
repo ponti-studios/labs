@@ -9,8 +9,8 @@ function mockPrismaModel() {
   };
 }
 
-jest.mock("@prisma/client", () => ({
-  PrismaClient: jest.fn().mockImplementation(() => ({
+jest.mock("@hominem/db", () => ({
+  prisma: {
     $connect: jest.fn(),
     $disconnect: jest.fn(),
     list: {
@@ -34,7 +34,7 @@ jest.mock("@prisma/client", () => ({
       create: jest.fn(),
       createMany: jest.fn(),
     },
-  })),
+  },
 }));
 
 jest.mock("./analytics", () => ({

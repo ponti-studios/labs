@@ -1,10 +1,10 @@
+import { prisma } from "@hominem/db";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { assert } from "console";
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
 import { env } from "../../../env/server.mjs";
-import { prisma } from "../../../server/db/client";
 
 assert(env.GOOGLE_CLIENT_ID, "GOOGLE_CLIENT_ID is not set");
 assert(env.GOOGLE_CLIENT_SECRET, "GOOGLE_CLIENT_SECRET is not set");

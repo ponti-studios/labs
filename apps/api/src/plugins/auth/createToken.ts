@@ -1,4 +1,4 @@
-import { TokenType } from "@prisma/client";
+import { TokenType, prisma } from "@hominem/db";
 import { add } from "date-fns";
 import { FastifyInstance } from "fastify";
 import { APP_USER_ID, EVENTS, track } from "../../analytics";
@@ -18,7 +18,7 @@ async function createToken({
   server: FastifyInstance;
 }) {
   // 👇 get prisma and the sendEmailToken from shared application state
-  const { prisma, sendEmailToken } = server;
+  const { sendEmailToken } = server;
   // 👇 generate an alphanumeric token
   const emailToken = generateEmailToken();
   // 👇 create a date object for the email token expiration

@@ -1,6 +1,26 @@
+import { List, User, prisma } from "@hominem/db";
 import { FastifyInstance } from "fastify";
-import { verifySession } from "../../auth";
 import { z } from "zod";
+
+import { verifySession } from "../../auth";
+
+type UserList = {
+  list: List & { createdBy: User };
+};
+
+async function getUserLists(userId: string) {
+  return prisma.userLists.findMany({
+    include: {
+      list: {
+        include: {
+          createdBy: true,
+        },
+      },
+    },
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+  });
+}
 
 const getListsRoute = (server: FastifyInstance) => {
   server.get(
@@ -21,7 +41,6 @@ const getListsRoute = (server: FastifyInstance) => {
       },
     },
     async (request) => {
-      const { prisma } = server;
       const { userId } = request.session.get("data");
       const lists = await prisma.list.findMany({
         include: {
@@ -30,21 +49,11 @@ const getListsRoute = (server: FastifyInstance) => {
         where: { userId },
         orderBy: { createdAt: "desc" },
       });
-      const userLists = await prisma.userLists.findMany({
-        include: {
-          list: {
-            include: {
-              createdBy: true,
-            },
-          },
-        },
-        where: { userId },
-        orderBy: { createdAt: "desc" },
-      });
+      const userLists = await getUserLists(userId);
 
       return [
         ...lists,
-        ...userLists.map(({ list }) => ({
+        ...userLists.map(({ list }: UserList) => ({
           ...list,
           createdBy: {
             email: list.createdBy.email,

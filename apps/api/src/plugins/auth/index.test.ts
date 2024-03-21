@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { User, prisma } from "@hominem/db";
 import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify";
 import { createServer } from "../../server";
 
@@ -63,13 +63,13 @@ describe("verifySession", () => {
       set: jest.fn(),
     } as any;
     request.jwtVerify = jest.fn().mockResolvedValue({ userId: "123" });
-    jest.spyOn(server.prisma.user, "findUnique").mockResolvedValue(null);
+    jest.spyOn(prisma.user, "findUnique").mockResolvedValue(null);
 
     await verifySession.bind(server)(request, reply, jest.fn());
 
     expect(request.session.get).toHaveBeenCalledWith("data");
     expect(request.jwtVerify).toHaveBeenCalled();
-    expect(server.prisma.user.findUnique).toHaveBeenCalledWith({
+    expect(prisma.user.findUnique).toHaveBeenCalledWith({
       where: { id: "123" },
     });
     expect(reply.code).toHaveBeenCalledWith(401);
@@ -82,14 +82,12 @@ describe("verifySession", () => {
       get: jest.fn().mockReturnValue({ userId: "123" }),
       set: jest.fn(),
     } as any;
-    jest
-      .spyOn(server.prisma.user, "findUnique")
-      .mockResolvedValue(user as User);
+    jest.spyOn(prisma.user, "findUnique").mockResolvedValue(user as User);
 
     await verifySession.bind(server)(request, reply, jest.fn());
 
     expect(request.session.get).toHaveBeenCalledWith("data");
-    expect(server.prisma.user.findUnique).toHaveBeenCalledWith({
+    expect(prisma.user.findUnique).toHaveBeenCalledWith({
       where: { id: "123" },
     });
     expect(request.session.set).toHaveBeenCalledWith("data", {
@@ -106,14 +104,12 @@ describe("verifySession", () => {
         .mockReturnValue({ userId: "123", email: "test@example.com" }),
       set: jest.fn(),
     } as any;
-    jest
-      .spyOn(server.prisma.user, "findUnique")
-      .mockResolvedValue(user as User);
+    jest.spyOn(prisma.user, "findUnique").mockResolvedValue(user as User);
 
     await verifySession.bind(server)(request, reply, jest.fn());
 
     expect(request.session.get).toHaveBeenCalledWith("data");
-    expect(server.prisma.user.findUnique).not.toHaveBeenCalled();
+    expect(prisma.user.findUnique).not.toHaveBeenCalled();
     expect(request.session.set).not.toHaveBeenCalled();
   });
 });
