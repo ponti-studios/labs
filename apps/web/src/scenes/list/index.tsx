@@ -12,7 +12,7 @@ import { Place } from "src/services/types";
 
 import PlacesAutocomplete from "../dashboard/components/PlacesAutocomplete";
 
-import ListItem from "./components/ListItem";
+import PlaceItem from "./components/PlaceItem";
 
 const List = () => {
   const { openPlaceModal } = usePlaceModal();
@@ -69,7 +69,7 @@ const List = () => {
           </div>
           <div className="grid gap-x-6 gap-y-14 grid-cols-2 sm:grid-cols-3">
             {data.items.map((place) => (
-              <ListItem key={place.id} place={place} />
+              <PlaceItem key={place.id} place={place} />
             ))}
           </div>
         </div>

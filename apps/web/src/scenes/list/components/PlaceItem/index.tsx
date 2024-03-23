@@ -1,27 +1,25 @@
-import { useNavigate } from "react-router-dom";
+import { MouseEvent } from "react";
+import { generatePath, useNavigate } from "react-router-dom";
 import PlaceTypes from "src/components/places/PlaceTypes";
-import { ListPlace } from "src/services/api";
+import { PLACE } from "src/constants/routes";
 import { usePlacesService } from "src/services/places";
+import { ListPlace } from "src/services/types";
 
 const ListItem = ({ place }: { place: ListPlace }) => {
   const placesService = usePlacesService();
   const navigate = useNavigate();
-  const onPlaceNameClick = async (e) => {
+  const onPlaceNameClick = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!placesService) return;
 
     navigator.vibrate?.(10);
 
-    navigate(`/place/${place.googleMapsId}`);
-    // openPlaceModal({
-    //   place: await placesService.getPlace({
-    //     googleMapsId: place.googleMapsId,
-    //   }),
-    // });
+    navigate(generatePath(PLACE, { id: place.googleMapsId }));
   };
 
   return (
     <button
+      data-testid="place-item"
       className="flex card rounded-lg size-full"
       onClick={onPlaceNameClick}
     >

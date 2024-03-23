@@ -1,6 +1,5 @@
 import { HttpResponse, http } from "msw";
 import { baseURL } from "src/services/api/base";
-import { vi } from "vitest";
 
 export const PLACE_ID = "place-id";
 
@@ -11,10 +10,6 @@ export const MOCK_PLACE = {
   imageUrl: "test-image-url",
   types: ["test_type"],
 };
-
-export const usePlacesService = () => ({
-  getDetails: vi.fn(() => MOCK_PLACE),
-});
 
 export const PLACE_HANDLERS = [
   http.get(`${baseURL}/places/123`, () => {

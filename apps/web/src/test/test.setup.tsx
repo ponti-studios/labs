@@ -35,13 +35,17 @@ vi.mock("src/services/places", () => ({
   }),
 }));
 
-vi.mock("react-router-dom", () => ({
-  useParams: vi.fn(),
-  useNavigate: vi.fn(),
-  Link: (props: PropsWithChildren<object>) => {
-    return <a {...props}>{props.children}</a>;
-  },
-}));
+vi.mock("react-router-dom", async () => {
+  const actual = (await vi.importActual("react-router-dom")) as any; // eslint-disable-line
+  return {
+    ...actual,
+    useParams: vi.fn(),
+    useNavigate: vi.fn(),
+    Link: (props: PropsWithChildren<object>) => {
+      return <a {...props}>{props.children}</a>;
+    },
+  };
+});
 
 const restHandlers = [
   http.get(`${baseURL}/lists/${TEST_LIST_ID}`, () => {

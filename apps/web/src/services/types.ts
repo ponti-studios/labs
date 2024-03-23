@@ -38,6 +38,16 @@ export type UserList = List & {
   createdBy: User;
 };
 
+export type ListPlace = {
+  id: string;
+  imageUrl: string;
+  itemId: string;
+  name: string;
+  googleMapsId: string;
+  types: string[];
+  description: string;
+};
+
 export type Place = {
   id: string;
   address: string;

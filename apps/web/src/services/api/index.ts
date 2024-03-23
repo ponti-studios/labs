@@ -9,7 +9,7 @@ import {
 } from "react-query";
 
 import { User } from "../auth";
-import { List, ListInvite, UserList } from "../types";
+import { List, ListInvite, ListPlace, UserList } from "../types";
 
 import { api, baseURL } from "./base";
 
@@ -83,16 +83,6 @@ export const useGetLists = ({
     },
     options,
   );
-};
-
-export type ListPlace = {
-  id: string;
-  imageUrl: string;
-  itemId: string;
-  name: string;
-  googleMapsId: string;
-  types: string[];
-  description: string;
 };
 
 type GetListResponse = UserList & {
