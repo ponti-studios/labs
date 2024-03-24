@@ -22,15 +22,15 @@ export async function GET(request: FastifyRequest, reply: FastifyReply) {
       ],
     });
 
-    return reply.code(200).send(
-      places.map((place) => ({
-        address: place.shortFormattedAddress,
-        latitude: place.location?.latitude,
-        longitude: place.location?.longitude,
-        name: place.displayName?.text,
-        googleMapsId: place.id,
-      })),
-    );
+    const formattedPlaces = places.map((place) => ({
+      address: place.shortFormattedAddress,
+      latitude: place.location?.latitude,
+      longitude: place.location?.longitude,
+      name: place.displayName?.text,
+      googleMapsId: place.id,
+    }));
+
+    return reply.code(200).send(formattedPlaces);
   } catch (err) {
     console.log(err);
     request.log.info("Could not fetch places", err);

@@ -1,5 +1,5 @@
 describe("Header.cy.ts", () => {
-  it("Header", () => {
+  test("Header", () => {
     // cy.mount(<Header />);
   });
 });

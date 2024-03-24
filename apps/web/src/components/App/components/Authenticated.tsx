@@ -1,5 +1,5 @@
 import { useApiIsLoaded } from "@vis.gl/react-google-maps";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 
 import * as ROUTES from "src/constants/routes";
@@ -12,22 +12,24 @@ import Lists from "src/scenes/lists";
 import Place from "src/scenes/place";
 import NotFound from "src/scenes/not-found";
 import { setCurrentLocation } from "src/services/auth";
-import { useAppDispatch, useAppSelector } from "src/services/hooks";
+import { useAppDispatch } from "src/services/hooks";
 
-import PlaceModal from "../../PlaceModal";
 import Toast from "../../Toast";
 
 const AuthenticatedScenes = () => {
   const isMapLoaded = useApiIsLoaded();
   const dispatch = useAppDispatch();
-  const placeModalState = useAppSelector((state) => state.placeModal);
-  const modalRef = useRef<HTMLDialogElement | null>(null);
 
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position: GeolocationPosition) => {
-          dispatch(setCurrentLocation(position.coords));
+          dispatch(
+            setCurrentLocation({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            }),
+          );
         },
       );
     } else {
@@ -52,12 +54,6 @@ const AuthenticatedScenes = () => {
         <Route path={ROUTES.WILDCARD} element={<NotFound />} />
       </Routes>
       <Toast />
-      <PlaceModal
-        isOpen={placeModalState.isOpen}
-        place={placeModalState.place}
-        onModalClose={placeModalState.onClose}
-        ref={modalRef}
-      />
     </div>
   );
 };

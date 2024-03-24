@@ -2,7 +2,6 @@ import styled from "@emotion/styled";
 import {
   KeyboardEvent,
   PropsWithChildren,
-  RefObject,
   forwardRef,
   useCallback,
 } from "react";
@@ -31,10 +30,7 @@ type ModalProps = PropsWithChildren & {
   isOpen: boolean;
   onModalClose: () => void;
 };
-function Modal(
-  { children, isOpen, onModalClose }: ModalProps,
-  ref: RefObject<HTMLDialogElement | null>,
-) {
+function Modal({ children, isOpen, onModalClose }: ModalProps) {
   const handleKeyDown = useCallback(
     (event: KeyboardEvent<HTMLDialogElement>) => {
       if (event.code === "Escape") {
@@ -47,7 +43,6 @@ function Modal(
   return (
     <StyledDialog
       className={`modal z-40 ${isOpen ? "modal-open" : ""}`}
-      ref={ref}
       onKeyDown={handleKeyDown}
     >
       <form method="dialog" className="modal-box">

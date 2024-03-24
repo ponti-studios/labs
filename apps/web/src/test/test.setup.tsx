@@ -2,20 +2,16 @@ import "@testing-library/jest-dom";
 import { cleanup } from "@testing-library/react";
 import { createSlice } from "@reduxjs/toolkit";
 import React, { PropsWithChildren } from "react";
-import { useParams } from "react-router-dom";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
-import { Mock, afterAll, afterEach, beforeAll, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, vi } from "vitest";
 
-import { api, baseURL } from "../services/api/base";
+import { baseURL } from "../services/api/base";
 import { MOCK_PLACE, PLACE_HANDLERS } from "./mocks/place";
 
 export const TEST_LIST_ID = "list-id";
 
 vi.mock("src/services/places", () => ({
-  usePlacesService: () => ({
-    getDetails: vi.fn(),
-  }),
   usePlaceModal: vi.fn(() => ({
     closePlaceModal: vi.fn(),
     openPlaceModal: vi.fn(),
@@ -35,12 +31,20 @@ vi.mock("src/services/places", () => ({
   }),
 }));
 
+vi.mock("src/services/store", async () => {
+  const actual = (await vi.importActual("src/services/store")) as any; // eslint-disable-line
+  return {
+    ...actual,
+    useAuth: vi.fn(),
+  };
+});
+
 vi.mock("react-router-dom", async () => {
   const actual = (await vi.importActual("react-router-dom")) as any; // eslint-disable-line
   return {
     ...actual,
     useParams: vi.fn(),
-    useNavigate: vi.fn(),
+    useNavigate: vi.fn(() => vi.fn()),
     Link: (props: PropsWithChildren<object>) => {
       return <a {...props}>{props.children}</a>;
     },
@@ -58,26 +62,19 @@ const restHandlers = [
   ...PLACE_HANDLERS,
 ];
 
-const server = setupServer(...restHandlers);
+export const testServer = setupServer(...restHandlers);
 
 // Start server before all tests
 beforeAll(() => {
-  server.listen({ onUnhandledRequest: "error" });
-  vi.spyOn(api, "get");
-  vi.spyOn(api, "delete");
-  vi.spyOn(api, "post");
-  vi.spyOn(api, "put");
+  testServer.listen({ onUnhandledRequest: "error" });
 });
 
 //  Close server after all tests
-afterAll(() => server.close());
+afterAll(() => testServer.close());
 
 // Reset handlers after each test `important for test isolation`
 afterEach(() => {
-  server.resetHandlers();
+  testServer.resetHandlers();
+  vi.resetAllMocks();
   cleanup();
-});
-
-beforeAll(() => {
-  (useParams as Mock).mockReturnValue({ id: "123" });
 });

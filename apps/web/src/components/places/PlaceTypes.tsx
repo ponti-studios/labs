@@ -1,6 +1,6 @@
 import PlaceType from "src/components/places/PlaceType";
 
-const PlaceTypes = ({ types }: { types: string[] }) => {
+const PlaceTypes = ({ limit, types }: { limit?: number; types: string[] }) => {
   const excludedTypes = [
     "establishment",
     "food",
@@ -20,6 +20,7 @@ const PlaceTypes = ({ types }: { types: string[] }) => {
         <PlaceType>Point of Interest</PlaceType>
       ) : (
         types
+          .slice(0, limit)
           .filter(filterExcludedTypes)
           .filter((type, index, arr) => {
             if (type === "store" && arr.length > 1) {

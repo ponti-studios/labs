@@ -24,7 +24,7 @@ describe("PlaceItem", () => {
     (useNavigate as jest.Mock).mockReturnValue(navigate);
   });
 
-  it("should render", async () => {
+  test("should render", async () => {
     renderWithProviders(<PlaceItem place={place} />);
     const placeItem = await screen.findByTestId("place-item");
 

@@ -6,6 +6,7 @@ const PlaceType = ({
 }: HTMLAttributes<HTMLSpanElement>) => {
   return (
     <span
+      data-testid="place-type"
       className={`rounded px-3 py-1 border border-slate-200 text-slate-400 text-xs capitalize italic ${className}`}
     >
       {children}

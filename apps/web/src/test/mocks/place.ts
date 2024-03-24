@@ -6,6 +6,7 @@ export const PLACE_ID = "place-id";
 export const MOCK_PLACE = {
   id: PLACE_ID,
   itemId: PLACE_ID,
+  googleMapsId: "123",
   name: "test place",
   imageUrl: "test-image-url",
   types: ["test_type"],

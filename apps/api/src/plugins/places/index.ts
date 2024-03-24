@@ -348,13 +348,7 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
                 googleMapsId: { type: "string" },
                 ...types.location,
               },
-              required: [
-                "address",
-                "latitude",
-                "longitude",
-                "name",
-                "googleMapsId",
-              ],
+              required: ["latitude", "longitude", "name", "googleMapsId"],
             },
           },
           404: {

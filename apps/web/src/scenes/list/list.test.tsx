@@ -1,36 +1,46 @@
 import { act, fireEvent, screen, waitFor } from "@testing-library/react";
+import { HttpResponse, http } from "msw";
 import { useParams, useNavigate } from "react-router-dom";
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  Mock,
-  test,
-  vi,
-} from "vitest";
+import { beforeEach, describe, expect, Mock, test, vi } from "vitest";
 
-import { renderWithProviders } from "src/test/utils";
-import List from ".";
 import api from "src/services/api";
 import { baseURL } from "src/services/api/base";
-import { TEST_LIST_ID } from "src/test/test.setup";
+import { useAuth } from "src/services/store";
+import { MOCK_PLACE } from "src/test/mocks/place";
+import { TEST_LIST_ID, testServer } from "src/test/test.setup";
+import { renderWithProviders } from "src/test/utils";
+
+import List from ".";
 
 describe("List", () => {
   beforeEach(() => {
     (useParams as Mock).mockReturnValue({ id: TEST_LIST_ID });
   });
 
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
+  describe("when list does not belong to user", () => {
+    beforeEach(() => {
+      testServer.use(
+        http.get(`${baseURL}/lists/${TEST_LIST_ID}`, () => {
+          return HttpResponse.json({
+            id: TEST_LIST_ID,
+            name: "test list",
+            items: [MOCK_PLACE],
+            userId: "other-user-id",
+          });
+        }),
+      );
+      (useAuth as Mock).mockReturnValue({ user: null });
+    });
 
-  test("it should navigate to home page if no user", () => {
-    const navigate = vi.fn();
-    (useNavigate as Mock).mockReturnValue(navigate);
-    renderWithProviders(<List />);
-    expect(useParams).toHaveBeenCalled();
-    expect(navigate).toHaveBeenCalledWith("/");
+    test("should navigate to home page", async () => {
+      const navigate = vi.fn();
+      (useNavigate as Mock).mockReturnValue(navigate);
+      renderWithProviders(<List />, { isAuth: true });
+
+      await waitFor(() => {
+        expect(navigate).toHaveBeenCalledWith("/");
+      });
+    });
   });
 
   describe.skip("delete list item", () => {
@@ -70,6 +80,47 @@ describe("List", () => {
       expect(api.delete).toHaveBeenCalledWith(
         `${baseURL}/lists/list-id/place/place-id`,
       );
+    });
+  });
+
+  describe("own list", () => {
+    beforeEach(() => {
+      const userId = "user-id";
+      testServer.use(
+        http.get(`${baseURL}/lists/${TEST_LIST_ID}`, () => {
+          return HttpResponse.json({
+            id: TEST_LIST_ID,
+            name: "test list",
+            items: [MOCK_PLACE],
+            userId,
+          });
+        }),
+      );
+      (useAuth as Mock).mockReturnValue({ user: { id: userId } });
+    });
+
+    test("should hide add-to-list by default", async () => {
+      renderWithProviders(<List />, { isAuth: true });
+
+      await waitFor(() => {
+        expect(screen.queryByTestId("add-to-list")).not.toBeInTheDocument();
+      });
+    });
+
+    test("should show add-to-list when add-to-list-button is clicked", async () => {
+      renderWithProviders(<List />, { isAuth: true });
+
+      await waitFor(() => {
+        expect(screen.queryByTestId("add-to-list")).not.toBeInTheDocument();
+      });
+
+      await act(async () => {
+        fireEvent.click(screen.getByTestId("add-to-list-button"));
+      });
+
+      await waitFor(() => {
+        expect(screen.queryByTestId("add-to-list")).toBeInTheDocument();
+      });
     });
   });
 });

@@ -2,15 +2,12 @@ import { MouseEvent } from "react";
 import { generatePath, useNavigate } from "react-router-dom";
 import PlaceTypes from "src/components/places/PlaceTypes";
 import { PLACE } from "src/constants/routes";
-import { usePlacesService } from "src/services/places";
 import { ListPlace } from "src/services/types";
 
 const ListItem = ({ place }: { place: ListPlace }) => {
-  const placesService = usePlacesService();
   const navigate = useNavigate();
   const onPlaceNameClick = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    if (!placesService) return;
 
     navigator.vibrate?.(10);
 
@@ -34,7 +31,7 @@ const ListItem = ({ place }: { place: ListPlace }) => {
         <p className="flex-1 mb-1 font-semibold justify-start underline-offset-4 focus-visible:underline focus-visible:outline-none">
           {place.name}
         </p>
-        <PlaceTypes types={place.types} />
+        <PlaceTypes limit={1} types={place.types} />
       </div>
     </button>
   );
