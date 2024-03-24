@@ -93,23 +93,25 @@ export const getPlacePhotos = async ({
     return;
   }
 
-  return Promise.all(
-    photos.slice(0, limit).map((photo) => getPhotoMedia(photo)),
-  );
+  return getPhotosMedia({ limit, photos });
 };
-
-export async function getPhotosMedia({
-  photos,
-}: {
-  photos: places_v1.Schema$GoogleMapsPlacesV1Photo[];
-}) {
-  return Promise.all(photos.map((photo) => getPhotoMedia(photo)));
-}
 
 export type PhotoMedia = {
   blob: places_v1.Schema$GoogleMapsPlacesV1PhotoMedia;
   imageUrl: string | null;
 };
+
+export async function getPhotosMedia({
+  limit,
+  photos,
+}: {
+  limit?: number;
+  photos: places_v1.Schema$GoogleMapsPlacesV1Photo[];
+}): Promise<PhotoMedia[]> {
+  return Promise.all(
+    photos.slice(0, limit).map((photo) => getPhotoMedia(photo)),
+  );
+}
 
 export async function getPhotoMedia(
   photo: places_v1.Schema$GoogleMapsPlacesV1Photo,
@@ -127,7 +129,7 @@ export async function getPhotoMedia(
   };
 }
 
-export const downloadPlacePhotBlob = async (blob: Blob, filename: string) => {
+export const downloadPlacePhotoBlob = async (blob: Blob, filename: string) => {
   const buffer = await blob.arrayBuffer();
   const bufferData = Buffer.from(buffer);
   const filePath = path.resolve(__dirname, `./public/${filename}.jpg`);
@@ -157,12 +159,14 @@ export const downloadPlacePhotos = async ({
 
   if (photos) {
     await Promise.all(
-      photos.map(async (photo, index) => {
-        return (
-          photo.blob &&
-          downloadPlacePhotBlob(photo.blob as Blob, `${placeId}-${index}`)
-        );
-      }),
+      photos
+        .filter((photo) => photo.blob)
+        .map(async (photo, index) => {
+          return downloadPlacePhotoBlob(
+            photo.blob as Blob,
+            `${placeId}-${index}`,
+          );
+        }),
     );
   }
 };
