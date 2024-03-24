@@ -14,7 +14,6 @@ export type FormattedPlace = {
   phoneNumber?: string | null;
   types: string[];
   websiteUri?: string | null;
-  photos?: PhotoMedia[];
 };
 
 const formatGooglePlace = (
@@ -32,6 +31,10 @@ const formatGooglePlace = (
   };
 };
 
+export type PlaceDetails = {
+  place: FormattedPlace;
+  photos?: PhotoMedia[];
+};
 export async function getPlaceDetails({
   placeId,
   fields = [
@@ -47,26 +50,15 @@ export async function getPlaceDetails({
 }: {
   placeId: string;
   fields?: string[];
-}): Promise<FormattedPlace> {
+}): Promise<PlaceDetails> {
   const response = await places.get({
     name: `places/${placeId}`,
     fields: fields.join(","),
   });
-  let photos: PhotoMedia[] = [];
-  const googlePlace = formatGooglePlace(response.data);
 
-  if (fields.includes("photos") && response.data.photos) {
-    photos = await getPhotosMedia({
-      photos: response.data.photos,
-    });
-
-    return {
-      ...googlePlace,
-      photos,
-    };
-  }
-
-  return googlePlace;
+  return {
+    place: formatGooglePlace(response.data),
+  };
 }
 
 export const isValidImageUrl = (url: string) => {
@@ -158,22 +150,20 @@ export const downloadPlacePhotos = async ({
   googleMapsId: string;
   placeId: string;
 }) => {
-  if (googleMapsId) {
-    const photos = await getPlacePhotos({
-      googleMapsId,
-      placeId,
-    });
+  const photos = await getPlacePhotos({
+    googleMapsId,
+    placeId,
+  });
 
-    if (photos) {
-      await Promise.all(
-        photos.map(async (photo, index) => {
-          return (
-            photo.blob &&
-            downloadPlacePhotBlob(photo.blob as Blob, `${placeId}-${index}`)
-          );
-        }),
-      );
-    }
+  if (photos) {
+    await Promise.all(
+      photos.map(async (photo, index) => {
+        return (
+          photo.blob &&
+          downloadPlacePhotBlob(photo.blob as Blob, `${placeId}-${index}`)
+        );
+      }),
+    );
   }
 };
 

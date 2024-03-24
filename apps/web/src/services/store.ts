@@ -2,11 +2,9 @@ import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 import auth from "./auth";
 import { useAppDispatch, useAppSelector } from "./hooks";
 import toastSlice from "./toast/toast.slice";
-import { placesSlice } from "./places";
 
 export const rootReducer = {
   auth,
-  placeModal: placesSlice.reducer,
   toast: toastSlice.reducer,
 };
 

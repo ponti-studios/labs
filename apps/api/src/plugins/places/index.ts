@@ -10,8 +10,8 @@ import { EVENTS, track } from "../../analytics";
 import { SessionToken } from "../../typings";
 import { verifySession } from "../auth";
 import {
-  FormattedPlace,
   PhotoMedia,
+  PlaceDetails,
   getPlaceDetails,
   getPlacePhotos,
 } from "../google/places";
@@ -253,33 +253,20 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
       const { id } = request.params as { id: string };
       let photos: PhotoMedia[] | undefined;
 
+      let place;
       try {
-        const place = await prisma.place.findFirst({
+        place = await prisma.place.findFirst({
           where: { googleMapsId: id },
         });
+      } catch (err) {
+        request.log.error(err, "Could not fetch place");
+        return reply.code(500).send();
+      }
 
-        // Serve the place from the database if it exists.
-        if (place && place.googleMapsId) {
-          try {
-            photos = await getPlacePhotos({
-              googleMapsId: place.googleMapsId,
-              placeId: place.id,
-              limit: 5,
-            });
-          } catch (err) {
-            request.log.error(`Could not fetch photos from Google`);
-            return reply.code(500).send();
-          }
-
-          return reply.code(200).send({
-            ...place,
-            photos: photos?.map((photo) => photo.imageUrl) || [],
-          });
-        }
-
-        let googlePlace: FormattedPlace | null = null;
+      // If this place has not been saved before, fetch it from Google.
+      if (!place) {
+        let googlePlace: PlaceDetails | null = null;
         try {
-          // If this place has not been saved before, fetch it from Google.
           googlePlace = await getPlaceDetails({
             placeId: id,
           });
@@ -300,26 +287,39 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
           return reply.code(500).send();
         }
 
-        const newPlace = await prisma.place.create({
-          data: {
-            ...googlePlace,
-            imageUrl: googlePlace.photos?.[0].imageUrl || "",
-            createdBy: {
-              connect: {
-                id: session.userId,
+        try {
+          place = await prisma.place.create({
+            data: {
+              ...googlePlace.place,
+              imageUrl: googlePlace.photos?.[0].imageUrl || "",
+              createdBy: {
+                connect: {
+                  id: session.userId,
+                },
               },
             },
-          },
-        });
+          });
+        } catch (err) {
+          request.log.error(err, "Could not save place");
+          return reply.code(500).send();
+        }
+      }
 
-        return reply.code(200).send({
-          ...newPlace,
-          photos: googlePlace.photos || [],
+      try {
+        photos = await getPlacePhotos({
+          googleMapsId: place.googleMapsId!,
+          placeId: place.id,
+          limit: 5,
         });
       } catch (err) {
-        request.log.error(err, "Could not fetch place");
+        request.log.error(`Could not fetch photos from Google`);
         return reply.code(500).send();
       }
+
+      return reply.code(200).send({
+        ...place,
+        photos: photos?.map((photo) => photo.imageUrl) || [],
+      });
     },
   );
 

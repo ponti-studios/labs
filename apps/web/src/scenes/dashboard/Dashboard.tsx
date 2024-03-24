@@ -5,11 +5,12 @@ import Loading from "ui/Loading";
 
 import { mediaQueries } from "src/constants/styles";
 import { useAppSelector } from "src/services/hooks";
-import { usePlaceModal, usePlacesService } from "src/services/places";
 import { Place } from "src/services/types";
 
 import Map from "./components/Map";
 import PlacesAutocomplete from "./components/PlacesAutocomplete";
+import { generatePath, useNavigate } from "react-router-dom";
+import { PLACE } from "src/constants/routes";
 
 const Wrap = styled.div`
   display: flex;
@@ -36,38 +37,17 @@ const ZOOM_LEVELS = {
 const DEFAULT_CENTER = { latitude: 37.7749, longitude: -122.4194 }; // Default center (San Francisco)
 
 function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
-  const { openPlaceModal } = usePlaceModal();
   const [zoom, setZoom] = useState(ZOOM_LEVELS.DEFAULT);
   const currentLocation = useAppSelector((state) => state.auth.currentLocation);
   const [selected, setSelected] = useState<Place | null>(null);
   const [center, setCenter] = useState(currentLocation || DEFAULT_CENTER);
-  const { getPlace } = usePlacesService();
+  const navigate = useNavigate();
 
   const onMapClick = useCallback(
     async (args: MapMouseEvent) => {
-      const { placeId, latLng } = args.detail;
-      const place = await getPlace({ googleMapsId: placeId });
-
-      if (!place || typeof place === "string") {
-        return;
-      }
-
-      // Select the clicked location
-      setSelected(place);
-      setCenter({
-        latitude: latLng.lat,
-        longitude: latLng.lng,
-      });
-      setZoom(ZOOM_LEVELS.MARKER);
-      openPlaceModal({
-        onClose: () => {
-          setSelected(null);
-          setZoom(ZOOM_LEVELS.SELECTED);
-        },
-        place,
-      });
+      navigate(generatePath(PLACE, { id: args.detail.placeId }));
     },
-    [getPlace, openPlaceModal],
+    [navigate],
   );
 
   const onSelectedChanged = useCallback((place: Place) => {
@@ -80,16 +60,8 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
   }, []);
 
   const onMarkerClick = useCallback(() => {
-    // The map should zoom slightly when the marker is clicked
-    setZoom(ZOOM_LEVELS.MARKER);
-    openPlaceModal({
-      onClose: () => {
-        setSelected(null);
-        setZoom(ZOOM_LEVELS.SELECTED);
-      },
-      place: selected,
-    });
-  }, [openPlaceModal, selected]);
+    navigate(generatePath(PLACE, { id: selected.googleMapsId }));
+  }, [navigate, selected]);
 
   useEffect(() => {
     if (currentLocation) {
