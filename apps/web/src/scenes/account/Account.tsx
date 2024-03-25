@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import AlertError from "ui/AlertError";
+import FeedbackBlock from "ui/FeedbackBlock";
 
 import { LANDING } from "src/constants/routes";
 import { useAuth } from "src/services/store";
@@ -19,15 +19,23 @@ function useDeleteUserMutation() {
   };
 }
 
+function MemberSince({ createdAt }: { createdAt: string }) {
+  const memberSince = new Date(createdAt);
+  const timeDiff = new Date().getTime() - memberSince.getTime();
+  // Convert milliseconds to years
+  const years = Math.floor(timeDiff / (1000 * 60 * 60 * 24 * 365));
+
+  return (
+    <p>{`Member since ${memberSince.getMonth()}/${
+      memberSince.getFullYear() + years
+    }`}</p>
+  );
+}
+
 function Account() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const memberSince = new Date(user.createdAt);
-  const timeDiff = new Date().getTime() - memberSince.getTime();
   const { mutateAsync: deleteUser, error } = useDeleteUserMutation();
-
-  // Convert milliseconds to years
-  const years = Math.floor(timeDiff / (1000 * 60 * 60 * 24 * 365));
 
   const onDelectAccount = async () => {
     await deleteUser();
@@ -45,10 +53,8 @@ function Account() {
 
   return (
     <Wrap>
-      {user.name && <h2>{user.name}</h2>}
       <div className="col-span-12">
         <h1>Account</h1>
-
         <div className="card shadow-md md:max-w-sm">
           <div className="card-body">
             {user.avatar && (
@@ -60,16 +66,14 @@ function Account() {
             )}
             <p className="text-lg">{user?.name}</p>
             <p className="text-sm text-gray-400">{user?.email}</p>
-            <p>{`Member since ${memberSince.getMonth()}/${
-              memberSince.getFullYear() + years
-            }`}</p>
+            <MemberSince createdAt={user.createdAt} />
           </div>
         </div>
         <div className="flex flex-col mb-12"></div>
 
         <div className="divider" />
 
-        {error && <AlertError error={error.message} />}
+        {error && <FeedbackBlock type="error">{error.message}</FeedbackBlock>}
 
         <button className="btn btn-ghost text-error" onClick={onDelectAccount}>
           Delete account

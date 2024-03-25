@@ -1,9 +1,10 @@
 import { PlusCircle, Share } from "lucide-react";
 import { useCallback, useState } from "react";
 import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
-import AlertError from "ui/AlertError";
+import FeedbackBlock from "ui/FeedbackBlock";
 import LoadingScene from "ui/Loading";
 
+import { PLACE } from "src/constants/routes";
 import { useGetList } from "src/services/api";
 import { useAppSelector } from "src/services/hooks";
 import { useAuth } from "src/services/store";
@@ -12,7 +13,6 @@ import { SearchPlace } from "src/services/types";
 import PlacesAutocomplete from "../dashboard/components/PlacesAutocomplete";
 
 import PlaceItem from "./components/PlaceItem";
-import { PLACE } from "src/constants/routes";
 
 const List = () => {
   const [isAddToListOpen, setIsAddToListOpen] = useState(false);
@@ -21,7 +21,7 @@ const List = () => {
   const params = useParams<{ id: string }>();
   const { user } = useAuth();
   const listId = params.id;
-  const { data, status: listStatus } = useGetList(listId);
+  const { data, error, status: listStatus } = useGetList(listId);
 
   const onSelectedChanged = useCallback(
     (place: SearchPlace) =>
@@ -40,7 +40,9 @@ const List = () => {
 
   return (
     <>
-      {!data && <AlertError error="We could not find this list." />}
+      {error && (
+        <FeedbackBlock type="error">We could not find this list.</FeedbackBlock>
+      )}
       {data && (
         <div className="flex flex-col px-0.5">
           <div className="flex justify-between items-center mb-6">

@@ -90,7 +90,7 @@ type GetListResponse = UserList & {
   items: ListPlace[];
 };
 export const useGetList = (id: string) => {
-  return useQuery<GetListResponse>(
+  return useQuery<GetListResponse, AxiosError>(
     ["list", id],
     async () => {
       const res = await api.get<GetListResponse>(`${baseURL}/lists/${id}`);

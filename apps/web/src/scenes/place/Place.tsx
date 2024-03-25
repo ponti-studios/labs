@@ -1,15 +1,16 @@
+import { useCallback, useState } from "react";
 import { useParams } from "react-router-dom";
-import FeedbackBlock from "src/components/FeedbackBlock";
+import Button from "ui/Button";
+import FeedbackBlock from "ui/FeedbackBlock";
+import { LoadingScene } from "ui/Loading";
+
 import AddPlaceToList from "src/components/places/AddPlaceToList";
 import PlaceAddress from "src/components/places/PlaceAddress";
 import PlacePhotos from "src/components/places/PlacePhotos";
 import PlaceWebsite from "src/components/places/PlaceWebsite";
 import PlaceTypes from "src/components/places/PlaceTypes";
 import { useGetPlace } from "src/services/api/places";
-import { LoadingScene } from "ui/Loading";
-import { useCallback, useState } from "react";
 import { useToast } from "src/services/toast/toast.slice";
-import Button from "ui/Button";
 
 function PlaceScene() {
   const { openToast } = useToast();
@@ -33,7 +34,7 @@ function PlaceScene() {
   }
 
   if (formattedError) {
-    return <FeedbackBlock>{formattedError}</FeedbackBlock>;
+    return <FeedbackBlock type="error">{formattedError}</FeedbackBlock>;
   }
 
   return (

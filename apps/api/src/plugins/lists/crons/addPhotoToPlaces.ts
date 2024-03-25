@@ -29,7 +29,6 @@ async function addPhotoToPlaces(server: FastifyInstance) {
 
     const media = await getPlacePhotos({
       googleMapsId: place.googleMapsId,
-      placeId: place.id,
       limit: 1,
     });
 

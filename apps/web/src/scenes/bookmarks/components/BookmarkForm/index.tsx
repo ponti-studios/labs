@@ -1,5 +1,5 @@
 import { SyntheticEvent, useCallback, useState } from "react";
-import AlertError from "ui/AlertError";
+import FeedbackBlock from "ui/FeedbackBlock";
 import Button from "ui/Button";
 
 import { useCreateBookmark } from "src/services/api/bookmarks";
@@ -8,7 +8,7 @@ type BookmarksFormProps = {
   onCreate: () => void;
 };
 export default function BookmarksForm({ onCreate }: BookmarksFormProps) {
-  const mutation = useCreateBookmark();
+  const { mutateAsync, error, isLoading } = useCreateBookmark();
   const [url, setUrl] = useState("");
 
   const onUrlChange = useCallback((e: SyntheticEvent<HTMLInputElement>) => {
@@ -18,16 +18,16 @@ export default function BookmarksForm({ onCreate }: BookmarksFormProps) {
   const onFormSubmit = useCallback(
     async (e: SyntheticEvent<HTMLFormElement>) => {
       e.preventDefault();
-      await mutation.mutateAsync(url);
+      await mutateAsync(url);
       setUrl("");
       onCreate();
     },
-    [mutation, onCreate, url],
+    [mutateAsync, onCreate, url],
   );
 
   return (
     <>
-      {mutation.error && <AlertError error={mutation.error as string} />}
+      {error && <FeedbackBlock type="error">{error as string}</FeedbackBlock>}
 
       <form onSubmit={onFormSubmit}>
         <div className="form-control w-full mb-2">
@@ -43,7 +43,7 @@ export default function BookmarksForm({ onCreate }: BookmarksFormProps) {
             onChange={onUrlChange}
           />
         </div>
-        {!!url.length && <Button isLoading={mutation.isLoading}>Submit</Button>}
+        {!!url.length && <Button isLoading={isLoading}>Submit</Button>}
       </form>
     </>
   );

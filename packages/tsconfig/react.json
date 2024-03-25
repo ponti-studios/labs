@@ -17,6 +17,6 @@
     "isolatedModules": true,
     "jsx": "preserve"
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "styles/global.css"],
-  "exclude": ["node_modules", ".next", ".turbo"]
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", ".turbo"]
 }

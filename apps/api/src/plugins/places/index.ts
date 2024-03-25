@@ -7,14 +7,8 @@ import {
 import { prisma } from "@hominem/db";
 
 import { EVENTS, track } from "../../analytics";
-import { SessionToken } from "../../typings";
 import { verifySession } from "../auth";
-import {
-  PhotoMedia,
-  PlaceDetails,
-  getPlaceDetails,
-  getPlacePhotos,
-} from "../google/places";
+import { PhotoMedia, getPlaceDetails, getPlacePhotos } from "../google/places";
 
 import * as search from "./search";
 
@@ -249,11 +243,10 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
       },
     },
     async (request: FastifyRequest, reply: FastifyReply) => {
-      const session = request.session.get("data") as SessionToken;
       const { id } = request.params as { id: string };
       let photos: PhotoMedia[] | undefined;
-
       let place;
+
       try {
         place = await prisma.place.findFirst({
           where: { googleMapsId: id },
@@ -265,14 +258,13 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
 
       // If this place has not been saved before, fetch it from Google.
       if (!place) {
-        let googlePlace: PlaceDetails | null = null;
         try {
-          googlePlace = await getPlaceDetails({
+          place = await getPlaceDetails({
             placeId: id,
           });
 
           // If the place does not exist in Google, return a 404.
-          if (!googlePlace) {
+          if (!place) {
             return reply.code(404).send();
           }
         } catch (err) {
@@ -286,29 +278,11 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
 
           return reply.code(500).send();
         }
-
-        try {
-          place = await prisma.place.create({
-            data: {
-              ...googlePlace.place,
-              imageUrl: googlePlace.photos?.[0].imageUrl || "",
-              createdBy: {
-                connect: {
-                  id: session.userId,
-                },
-              },
-            },
-          });
-        } catch (err) {
-          request.log.error(err, "Could not save place");
-          return reply.code(500).send();
-        }
       }
 
       try {
         photos = await getPlacePhotos({
           googleMapsId: place.googleMapsId!,
-          placeId: place.id,
           limit: 5,
         });
       } catch (err) {

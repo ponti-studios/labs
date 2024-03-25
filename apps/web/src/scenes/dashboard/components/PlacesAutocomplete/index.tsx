@@ -4,9 +4,9 @@ import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { AxiosError } from "axios";
 import React, { useCallback, useRef, useState } from "react";
 import { useQuery } from "react-query";
+import FeedbackBlock from "ui/FeedbackBlock";
 import Loading from "ui/Loading";
 
-import FeedbackBlock from "src/components/FeedbackBlock";
 import api from "src/services/api";
 import { Place, PlaceLocation } from "src/services/types";
 
@@ -161,7 +161,7 @@ function PlacesAutocomplete({
           </Options>
         )}
       </Combobox>
-      {error && <FeedbackBlock>{error.message}</FeedbackBlock>}
+      {error && <FeedbackBlock type="error">{error.message}</FeedbackBlock>}
     </Wrapper>
   );
 }

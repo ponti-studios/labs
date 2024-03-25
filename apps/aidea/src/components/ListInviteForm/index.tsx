@@ -1,7 +1,8 @@
 import { ListInvite } from "@hominem/db";
 import classNames from "classnames";
 import { SyntheticEvent, useCallback } from "react";
-import AlertError from "src/components/AlertError";
+import FeedbackBlock from "ui/FeedbackBlock";
+
 import useListInviteForm from "./useListInviteForm";
 
 type ListInviteFormProps = {
@@ -26,7 +27,7 @@ export default function ListInviteForm({
 
   return (
     <div className="mb-8">
-      {error && <AlertError error={error} />}
+      {error && <FeedbackBlock type="error">{error}</FeedbackBlock>}
 
       <form onSubmit={onFormSubmit}>
         <div className="form-control w-full">

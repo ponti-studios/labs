@@ -1,19 +1,19 @@
 import { Field, Formik } from "formik";
+import { Globe } from "lucide-react";
 import { useCallback, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "react-query";
 import * as Yup from "yup";
+import Button from "ui/Button";
+import FeedbackBlock from "ui/FeedbackBlock";
 
 import AuthWrap from "src/components/AuthenticationWrap";
-import FeedbackBlock from "src/components/FeedbackBlock";
 import Form from "src/components/Form";
 import { LANDING } from "src/constants/routes";
 import api from "src/services/api";
 import { setCurrentEmail } from "src/services/auth";
 import { useAppDispatch } from "src/services/hooks";
 import { useAuth } from "src/services/store";
-import Button from "ui/Button";
-import { Globe } from "lucide-react";
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email(),
@@ -78,7 +78,7 @@ function Login() {
           </div>
           <Button isLoading={isLoading}>Get code</Button>
           {isError && (
-            <FeedbackBlock>
+            <FeedbackBlock type="error">
               <p className="mb-1">
                 We ran into an issue finding or creating your account.
               </p>

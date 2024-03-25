@@ -3,11 +3,11 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import AlertError from "src/components/AlertError";
+import FeedbackBlock from "ui/FeedbackBlock";
+
 import DashboardNav from "src/components/DashboardNav";
 import UserPlus from "src/components/Icons/UserPlus";
 import LoadingScene from "src/components/Loading";
-
 import { trpc } from "src/utils/trpc";
 
 const List: NextPage = () => {
@@ -44,7 +44,7 @@ const List: NextPage = () => {
   return (
     <>
       <DashboardNav />
-      {!data && <AlertError error="We could not find this list." />}
+      {!data && <FeedbackBlock type="error">We could not find this list.</FeedbackBlock>}
       {data && (
         <div className="flex flex-col px-0.5">
           <h1 className="mb-1">

@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import { SyntheticEvent, useCallback } from "react";
-import AlertError from "src/components/AlertError";
+import FeedbackBlock from "ui/FeedbackBlock";
+
 import useIdeaForm from "./useIdeasForm";
 
 type IdeaFormProps = {
@@ -22,7 +23,7 @@ export default function IdeaForm({ onCreate }: IdeaFormProps) {
 
   return (
     <>
-      {error && <AlertError error={error} />}
+      {error && <FeedbackBlock type="error">{error}</FeedbackBlock>}
 
       <form onSubmit={onFormSubmit}>
         <div className="form-control w-full mb-2">

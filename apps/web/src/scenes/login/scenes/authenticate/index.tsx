@@ -3,10 +3,10 @@ import React, { useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "react-query";
 import * as Yup from "yup";
+import FeedbackBlock from "ui/FeedbackBlock";
 import Button from "ui/Button";
 
 import AuthWrap from "src/components/AuthenticationWrap";
-import FeedbackBlock from "src/components/FeedbackBlock";
 import Form from "src/components/Form";
 import { DASHBOARD } from "src/constants/routes";
 import { loadAuth, setCurrentEmail } from "src/services/auth";
@@ -65,13 +65,13 @@ function Authenticate() {
     <AuthWrap>
       <h2 className="text-2xl font-semibold mb-6">Authenticate</h2>
       {isError && error.response?.status === 401 && (
-        <FeedbackBlock>
+        <FeedbackBlock type="error">
           Invalid code.
           <Link to="login"> Request a new one.</Link>
         </FeedbackBlock>
       )}
       {isError && error.response?.status !== 401 && (
-        <FeedbackBlock>{error.response.message}</FeedbackBlock>
+        <FeedbackBlock type="error">{error.response.message}</FeedbackBlock>
       )}
       <Formik
         validationSchema={AuthenticateSchema}

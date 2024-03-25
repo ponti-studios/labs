@@ -18,6 +18,7 @@ const withBundleAnalyzer = bundleAnalyer({
 
 export default withBundleAnalyzer(
   defineNextConfig({
+    transpilePackages: ["ui"],
     reactStrictMode: true,
     swcMinify: true,
     // Next.js i18n docs: https://nextjs.org/docs/advanced-features/i18n-routing
@@ -28,5 +29,5 @@ export default withBundleAnalyzer(
     images: {
       domains: ["pbs.twimg.com", "lh3.googleusercontent.com"],
     },
-  })
+  }),
 );

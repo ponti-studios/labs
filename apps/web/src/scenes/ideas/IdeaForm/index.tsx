@@ -1,5 +1,5 @@
 import { SyntheticEvent, useCallback, useState } from "react";
-import AlertError from "ui/AlertError";
+import FeedbackBlock from "ui/FeedbackBlock";
 import Button from "ui/Button";
 
 import { useCreateIdea } from "src/services/api/ideas";
@@ -37,7 +37,7 @@ export default function IdeaForm({ onCreate }: IdeaFormProps) {
 
   return (
     <>
-      {error && <AlertError error={error as string} />}
+      {error && <FeedbackBlock type="error">{error as string}</FeedbackBlock>}
 
       <form onSubmit={onFormSubmit}>
         <div className="form-control w-full mb-2">

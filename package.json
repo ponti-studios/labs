@@ -33,7 +33,7 @@
     "husky": "^8.0.3",
     "lint-staged": "^13.2.3",
     "prettier": "^3.0.0",
-    "turbo": "^1.12.2"
+    "turbo": "^1.13.0"
   },
   "engines": {
     "node": "20",

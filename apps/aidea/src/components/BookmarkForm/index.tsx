@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import { SyntheticEvent, useCallback } from "react";
-import AlertError from "src/components/AlertError";
+import FeedbackBlock from "ui/FeedbackBlock";
+
 import useBookmarksForm from "./useBookmarkForm";
 
 type BookmarksFormProps = {
@@ -21,7 +22,7 @@ export default function BookmarksForm({ onCreate }: BookmarksFormProps) {
 
   return (
     <>
-      {error && <AlertError error={error} />}
+      {error && <FeedbackBlock type="error">{error}</FeedbackBlock>}
 
       <form onSubmit={onFormSubmit}>
         <div className="form-control w-full mb-2">

@@ -1,13 +1,13 @@
+import { useCallback, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Button from "ui/Button";
+import FeedbackBlock from "ui/FeedbackBlock";
 import LoadingScene from "ui/Loading";
 
-import FeedbackBlock from "src/components/FeedbackBlock";
 import { useGetLists } from "src/services/api";
 import { useAuth } from "src/services/store";
 
 import ListForm from "./components/ListForm";
-import { useCallback, useState } from "react";
-import Button from "ui/Button";
 
 const NoResults = () => {
   return (
@@ -60,7 +60,7 @@ const Lists = () => {
       ) : null}
       <div>
         {listsStatus === "loading" && <LoadingScene />}
-        {error && <FeedbackBlock>{error.message}</FeedbackBlock>}
+        {error && <FeedbackBlock type="error">{error.message}</FeedbackBlock>}
         {data?.length === 0 ? <NoResults /> : null}
         {data && data.length > 0 && (
           <ul className="space-y-2">

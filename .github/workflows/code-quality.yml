@@ -55,7 +55,7 @@ jobs:
         run: npm run lint
 
       - name: 🧪 Unit tests
-        run: npm run test
+        run: npx turbo run test --force
 
       - name: 🧪 End-to-end tests
         # Uses the official Cypress GitHub action https://github.com/cypress-io/github-action

@@ -8,5 +8,19 @@ export default defineConfig({
     globals: true,
     environment: "jsdom",
     setupFiles: "./src/test/test.setup.tsx",
+    clearMocks: true,
+    coverage: {
+      provider: "v8",
+      clean: true,
+      enabled: true,
+      exclude: [
+        "src/services/constants",
+        "src/styles",
+        "src/testUtils",
+        "src/**/*.spec.{ts,tsx}",
+      ],
+      reporter: ["lcov"],
+      reportsDirectory: "coverage",
+    },
   },
 });

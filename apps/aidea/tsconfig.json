@@ -20,6 +20,18 @@
     },
     "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "cypress", "vite.config.ts"]
+  "include": [
+    ".eslintrc.*",
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.mts",
+    "**/*.js",
+    "**/*.cjs",
+    "**/*.mjs",
+    "**/*.jsx",
+    "**/*.json",
+    ".next/types/**/*.ts",
+  ],
+  "exclude": ["**/node_modules", "**/.*/*", "cypress", "vite.config.ts"]
 }

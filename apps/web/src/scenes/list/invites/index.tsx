@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import AlertError from "ui/AlertError";
+import FeedbackBlock from "ui/FeedbackBlock";
 import LoadingScene from "ui/Loading";
 
 import { useGetList, useGetListInvites } from "src/services/api";
@@ -30,7 +30,9 @@ const ListInvites = () => {
   }
 
   if (!userList) {
-    return <AlertError error="We could not find this list." />;
+    return (
+      <FeedbackBlock type="error">We could not find this list.</FeedbackBlock>
+    );
   }
 
   return (

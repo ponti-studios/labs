@@ -1,6 +1,6 @@
 import { SyntheticEvent, useCallback, useState } from "react";
 import { useMutation } from "react-query";
-import AlertError from "ui/AlertError";
+import FeedbackBlock from "ui/FeedbackBlock";
 import Input from "ui/Input";
 
 import { api, URLS } from "src/services/api/base";
@@ -49,7 +49,11 @@ export default function ListForm({ onCreate, onCancel }: ListFormProps) {
 
   return (
     <>
-      {error && <AlertError error={(error as AxiosError).message} />}
+      {error && (
+        <FeedbackBlock type="error">
+          {(error as AxiosError).message}
+        </FeedbackBlock>
+      )}
 
       <form onSubmit={onSubmit}>
         <Input

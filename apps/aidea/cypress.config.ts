@@ -8,17 +8,10 @@ export default defineConfig({
     setupNodeEvents(on, config) {
       // implement node event listeners here
     },
+    baseUrl: "http://localhost:4173/",
+    specPattern: "cypress/e2e/**/*.{js,jsx,ts,tsx}",
   },
-  // e2e: {
-  //   // We've imported your old cypress plugins here.
-  //   // You may want to clean this up later by importing these.
-  //   setupNodeEvents(on, config) {
-  //     return pluginConfig(on, config) as Cypress.PluginConfigOptions;
-  //   },
-  //   baseUrl: "http://localhost:4173/",
-  //   specPattern: "cypress/e2e/**/*.{js,jsx,ts,tsx}",
-  // },
-  projectId: "3n5c3n",
+  projectId: process.env.CYPRESS_PROJECT_ID,
   component: {
     devServer: {
       framework: "next",

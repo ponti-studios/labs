@@ -1,10 +1,12 @@
-import renderer from "react-test-renderer";
-import { test, expect } from "vitest";
+import { screen } from "@testing-library/react";
+import { describe, test, expect } from "vitest";
+import { renderWithProviders } from "src/test/utils";
+
 import Home from ".";
 
-test("Home", () => {
+describe("Home", () => {
   test("renders", () => {
-    const instance = renderer.create(<Home />);
-    expect(instance.toJSON()).toMatchSnapshot();
+    renderWithProviders(<Home />);
+    expect(screen.getByText("Make the world yours.")).toBeInTheDocument();
   });
 });

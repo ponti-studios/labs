@@ -50,15 +50,13 @@ export async function getPlaceDetails({
 }: {
   placeId: string;
   fields?: string[];
-}): Promise<PlaceDetails> {
+}): Promise<FormattedPlace> {
   const response = await places.get({
     name: `places/${placeId}`,
     fields: fields.join(","),
   });
 
-  return {
-    place: formatGooglePlace(response.data),
-  };
+  return formatGooglePlace(response.data);
 }
 
 export const isValidImageUrl = (url: string) => {
@@ -69,12 +67,10 @@ export const isValidImageUrl = (url: string) => {
 
 export const getPlacePhotos = async ({
   googleMapsId,
-  placeId,
   limit,
 }: {
   googleMapsId: string;
   limit?: number;
-  placeId: string;
 }): Promise<PhotoMedia[] | undefined> => {
   const { data } = await places.get({
     name: `places/${googleMapsId}`,
@@ -82,14 +78,14 @@ export const getPlacePhotos = async ({
   });
 
   if (!data) {
-    console.error("Error fetching place", { placeId });
+    console.error("Error fetching place", { googleMapsId });
     return;
   }
 
   const { photos } = data;
 
   if (!photos) {
-    console.error("No photos found for place", { placeId });
+    console.error("No photos found for place", { googleMapsId });
     return;
   }
 
@@ -154,7 +150,6 @@ export const downloadPlacePhotos = async ({
 }) => {
   const photos = await getPlacePhotos({
     googleMapsId,
-    placeId,
   });
 
   if (photos) {

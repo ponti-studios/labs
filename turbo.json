@@ -42,6 +42,7 @@
     }
   },
   "globalEnv": [
+    "ANALYZE",
     "APP_URL",
     "APP_USER_ID",
     "COOKIE_NAME",
@@ -58,6 +59,8 @@
     "SENDGRID_SENDER_EMAIL",
     "SENDGRID_SENDER_NAME",
     "NEXT_PUBLIC_API_URL",
-    "VERCEL_URL"
+    "VERCEL_URL",
+    "VITE_API_URL",
+    "VITE_GOOGLE_API_KEY"
   ]
 }

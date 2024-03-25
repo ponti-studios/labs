@@ -2,7 +2,8 @@ import type { NextPage } from "next";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useCallback, useEffect } from "react";
-import AlertError from "src/components/AlertError";
+import FeedbackBlock from "ui/FeedbackBlock";
+
 import LinkButton from "src/components/LinkButton";
 import ListInviteForm from "src/components/ListInviteForm";
 import LoadingScene from "src/components/Loading";
@@ -47,7 +48,9 @@ const List: NextPage = () => {
   }
 
   if (!userList) {
-    return <AlertError error="We could not find this list." />;
+    return (
+      <FeedbackBlock type="error">We could not find this list.</FeedbackBlock>
+    );
   }
 
   return (

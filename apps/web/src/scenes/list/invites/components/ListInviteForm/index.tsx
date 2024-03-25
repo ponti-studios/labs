@@ -1,7 +1,6 @@
 import { validateYupSchema } from "formik";
 import styled from "@emotion/styled";
 import { SyntheticEvent, useCallback, useState } from "react";
-import AlertError from "ui/AlertError";
 import Input from "ui/Input";
 import Button from "ui/Button";
 import * as Yup from "yup";
@@ -9,6 +8,7 @@ import * as Yup from "yup";
 import { useCreateListInvite } from "src/services/api";
 import { ListInvite } from "src/services/types";
 import { useToast } from "src/services/toast/toast.slice";
+import FeedbackBlock from "ui/FeedbackBlock";
 
 const Form = styled.form`
   display: flex;
@@ -77,7 +77,7 @@ export default function ListInviteForm({
 
   return (
     <div className="mb-4">
-      <div className="my-4">{error && <AlertError error={error} />}</div>
+      {error && <FeedbackBlock type="error">{error}</FeedbackBlock>}
       <Form onSubmit={onFormSubmit}>
         <Input
           id="email"

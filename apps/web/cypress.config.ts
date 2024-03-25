@@ -1,6 +1,9 @@
-const { defineConfig } = require("cypress"); // eslint-disable-line @typescript-eslint/no-var-requires
+import dotenv from "dotenv";
+dotenv.config();
 
-module.exports = defineConfig({
+import { defineConfig } from "cypress";
+
+export default defineConfig({
   fileServerFolder: "build",
   fixturesFolder: false,
   e2e: {

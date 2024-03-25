@@ -2,8 +2,8 @@ import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useCallback, useEffect } from "react";
+import FeedbackBlock from "ui/FeedbackBlock";
 
-import AlertError from "src/components/AlertError";
 import LoadingScene from "src/components/Loading";
 import { trpc } from "src/utils/trpc";
 
@@ -54,7 +54,7 @@ const Account = () => {
 
         <div className="divider" />
 
-        {deleteUser.error && <AlertError error={deleteUser.error.message} />}
+        {deleteUser.error && <FeedbackBlock type="error">{deleteUser.error.message}</FeedbackBlock>}
 
         <button className="btn btn-ghost text-error" onClick={onDelectAccount}>
           Delete account

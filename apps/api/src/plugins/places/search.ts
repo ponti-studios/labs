@@ -32,8 +32,7 @@ export async function GET(request: FastifyRequest, reply: FastifyReply) {
 
     return reply.code(200).send(formattedPlaces);
   } catch (err) {
-    console.log(err);
-    request.log.info("Could not fetch places", err);
+    request.log.error("Could not fetch places", err);
     return reply.code(500).send();
   }
 }
