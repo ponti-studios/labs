@@ -7,12 +7,12 @@ on:
 
 env:
   APP_URL: ${{ secrets.APP_URL }}
-  COOKIE_SALT: 9yDzDu8E6JzFbbMK
-  COOKIE_SECRET: f1qnL2ixpbu99pX0LWGoUBBFJZmNhlBMzWGsNF1e3bg=
   DATABASE_URL: postgresql://postgres:postgres@localhost:5432/rocco
+  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+  COOKIE_SALT: ${{ secrets.COOKIE_SALT }}
+  COOKIE_SECRET: ${{ secrets.COOKIE_SECRET }}
   GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
-  JWT_SECRET: f1qnL2ixpbu99pX0LWGoUBBFJZmNhlBMzWGsNF1e3bg=
-  SENDGRID_API_KEY: SG.1234567890
+  SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
   VITE_API_URL: ""
 
 jobs:
