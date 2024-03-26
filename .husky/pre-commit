@@ -1,5 +1,4 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-# Before allowing the commit, ensure the tests pass and the app builds.
-npm run test && npx lint-staged
+npx lint-staged && npm run lint && npm run test

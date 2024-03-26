@@ -1,3 +1,4 @@
+import { Idea } from "@hominem/db";
 import type { NextPage } from "next";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -16,7 +17,7 @@ const Dashboard: NextPage = () => {
     data,
     refetch,
     status: ideasStatus,
-  } = trpc.idea.getIdeas.useQuery(undefined, {
+  } = trpc.idea.getIdeas.useQuery<Idea[]>(undefined, {
     enabled: false,
   });
 

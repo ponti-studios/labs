@@ -1,7 +1,7 @@
 import { prisma } from "@hominem/db";
 import { FastifyInstance } from "fastify";
 
-import { mockAuthSession } from "../../../../test.utils";
+import { mockAuthSession } from "../../../../../test/utils";
 import { createServer } from "../../../../server";
 
 describe("GET /lists/:id/invites", () => {

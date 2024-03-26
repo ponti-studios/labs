@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import DashboardNav from "src/components/DashboardNav";
 import ListInviteItem from "src/components/ListInviteItem";
 import LoadingScene from "src/components/Loading";
+import { ListInviteResponse } from "src/types/next-auth";
 import { trpc } from "src/utils/trpc";
 
 const ListInvites: NextPage = () => {
@@ -15,7 +16,9 @@ const ListInvites: NextPage = () => {
     data,
     refetch,
     status: invitesStatus,
-  } = trpc.lists.invites.useQuery(undefined, { enabled: false });
+  } = trpc.lists.invites.useQuery<ListInviteResponse[]>(undefined, {
+    enabled: false,
+  });
 
   useEffect(() => {
     if (status === "unauthenticated") {

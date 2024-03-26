@@ -7,7 +7,7 @@ import FeedbackBlock from "ui/FeedbackBlock";
 import LinkButton from "src/components/LinkButton";
 import ListInviteForm from "src/components/ListInviteForm";
 import LoadingScene from "src/components/Loading";
-
+import { ListInviteResponse } from "src/types/next-auth";
 import { trpc } from "src/utils/trpc";
 
 const List: NextPage = () => {
@@ -23,7 +23,10 @@ const List: NextPage = () => {
     data: listInvites,
     status: invitesStatus,
     refetch: getInvites,
-  } = trpc.lists.listInvites.useQuery({ listId }, { enabled: false });
+  } = trpc.lists.listInvites.useQuery<ListInviteResponse[]>(
+    { listId },
+    { enabled: false },
+  );
   const onInviteSuccess = useCallback(() => getInvites(), [getInvites]);
 
   useEffect(() => {

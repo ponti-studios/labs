@@ -6,11 +6,12 @@
   "license": "MIT",
   "files": [
     "index.js",
+    "node.js",
     "next.js",
     "react.js"
   ],
   "dependencies": {
-    "eslint": "^8.45.0",
+    "eslint": "8.57.0",
     "eslint-config-next": "^13.4.12",
     "eslint-config-prettier": "^8.5.0",
     "eslint-config-turbo": "latest",

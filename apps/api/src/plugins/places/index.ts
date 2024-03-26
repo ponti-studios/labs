@@ -4,11 +4,16 @@ import {
   FastifyReply,
   FastifyRequest,
 } from "fastify";
-import { prisma } from "@hominem/db";
+import { Place, prisma } from "@hominem/db";
 
 import { EVENTS, track } from "../../analytics";
 import { verifySession } from "../auth";
-import { PhotoMedia, getPlaceDetails, getPlacePhotos } from "../google/places";
+import {
+  FormattedPlace,
+  PhotoMedia,
+  getPlaceDetails,
+  getPlacePhotos,
+} from "../google/places";
 
 import * as search from "./search";
 
@@ -215,6 +220,7 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
             properties: {
               address: { type: "string" },
               name: { type: "string" },
+              id: { type: "string" },
               googleMapsId: { type: "string" },
               imageUrl: { type: "string" },
               phoneNumber: { type: "string" },
@@ -230,10 +236,8 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
               "name",
               "googleMapsId",
               "imageUrl",
-              "phoneNumber",
               "photos",
               "types",
-              "websiteUri",
             ],
           },
           404: {
@@ -245,7 +249,7 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
     async (request: FastifyRequest, reply: FastifyReply) => {
       const { id } = request.params as { id: string };
       let photos: PhotoMedia[] | undefined;
-      let place;
+      let place: Place | FormattedPlace | null;
 
       try {
         place = await prisma.place.findFirst({
@@ -265,18 +269,15 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
 
           // If the place does not exist in Google, return a 404.
           if (!place) {
+            server.log.error(`GET Place - Could not find place from Google`);
             return reply.code(404).send();
           }
         } catch (err) {
-          request.log.error(`Could not fetch place from Google`);
-          const googleError = (err as { response: { status: number } })
-            ?.response;
+          const statusCode =
+            (err as { response: { status: number } })?.response?.status || 500;
 
-          if (googleError?.status >= 400 && googleError?.status < 500) {
-            return reply.code(404).send();
-          }
-
-          return reply.code(500).send();
+          server.log.error(`GET Place Google Error`, err);
+          return reply.code(statusCode).send();
         }
       }
 
@@ -286,12 +287,13 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
           limit: 5,
         });
       } catch (err) {
-        request.log.error(`Could not fetch photos from Google`);
+        server.log.error(`Could not fetch photos from Google`);
         return reply.code(500).send();
       }
 
       return reply.code(200).send({
         ...place,
+        imageUrl: photos?.[0]?.imageUrl || "",
         photos: photos?.map((photo) => photo.imageUrl) || [],
       });
     },

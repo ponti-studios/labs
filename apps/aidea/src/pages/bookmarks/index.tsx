@@ -2,12 +2,13 @@ import type { NextPage } from "next";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+
 import DashboardNav from "src/components/DashboardNav";
 import LoadingScene from "src/components/Loading";
-
 import BookmarkForm from "src/components/BookmarkForm";
 import BookmarkListItem from "src/components/BookmarkListItem";
 import { trpc } from "src/utils/trpc";
+import { Recommendation } from "@hominem/db";
 
 const Recommendations: NextPage = () => {
   const router = useRouter();
@@ -16,7 +17,9 @@ const Recommendations: NextPage = () => {
     data,
     refetch,
     status: bookmarksStatus,
-  } = trpc.bookmarks.get.useQuery(undefined, { enabled: false });
+  } = trpc.bookmarks.get.useQuery<Recommendation[]>(undefined, {
+    enabled: false,
+  });
 
   useEffect(() => {
     if (status === "unauthenticated") {

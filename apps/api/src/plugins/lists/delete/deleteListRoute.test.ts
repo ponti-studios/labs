@@ -2,7 +2,7 @@
 import { prisma } from "@hominem/db";
 import { FastifyInstance } from "fastify";
 import { createServer } from "../../../server";
-import { mockAuthSession } from "../../../test.utils";
+import { mockAuthSession } from "../../../../test/utils";
 
 describe("DELETE /lists/:id", () => {
   let server: FastifyInstance;

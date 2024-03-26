@@ -2,39 +2,39 @@ import { writeFile } from "fs";
 import * as path from "path";
 import { google } from "./auth";
 import { places_v1 } from "googleapis";
+import { Place } from "@hominem/db";
 
 export const { places } = google.places("v1");
 
-export type FormattedPlace = {
-  address: string | null;
-  name: string;
-  latitude?: number | null;
-  longitude?: number | null;
-  googleMapsId?: string | null;
-  phoneNumber?: string | null;
-  types: string[];
-  websiteUri?: string | null;
-};
+export type FormattedPlace = Pick<
+  Place,
+  | "id"
+  | "address"
+  | "name"
+  | "googleMapsId"
+  | "phoneNumber"
+  | "types"
+  | "websiteUri"
+  | "latitude"
+  | "longitude"
+>;
 
 const formatGooglePlace = (
-  googlePlace: places_v1.Schema$GoogleMapsPlacesV1Place,
+  place: places_v1.Schema$GoogleMapsPlacesV1Place,
 ): FormattedPlace => {
   return {
-    address: googlePlace.adrFormatAddress || null,
-    name: googlePlace.displayName?.text || "Unknown",
-    latitude: googlePlace.location?.latitude,
-    longitude: googlePlace.location?.longitude,
-    googleMapsId: googlePlace.id,
-    phoneNumber: googlePlace.internationalPhoneNumber,
-    types: googlePlace.types || [],
-    websiteUri: googlePlace.websiteUri,
+    address: place.adrFormatAddress || null,
+    name: place.displayName?.text || "Unknown",
+    latitude: place.location?.latitude || null,
+    longitude: place.location?.longitude || null,
+    id: place.id!,
+    googleMapsId: place.id!,
+    phoneNumber: place.internationalPhoneNumber || null,
+    types: place.types || [],
+    websiteUri: place.websiteUri || null,
   };
 };
 
-export type PlaceDetails = {
-  place: FormattedPlace;
-  photos?: PhotoMedia[];
-};
 export async function getPlaceDetails({
   placeId,
   fields = [
@@ -112,16 +112,17 @@ export async function getPhotosMedia({
 export async function getPhotoMedia(
   photo: places_v1.Schema$GoogleMapsPlacesV1Photo,
 ) {
-  const media = await places.photos.getMedia({
+  const {
+    data,
+    request: { responseURL },
+  } = await places.photos.getMedia({
     name: `${photo.name}/media`,
     maxHeightPx: 300,
   });
 
-  let imageUrl = media.request.responseURL;
-
   return {
-    blob: media.data,
-    imageUrl: isValidImageUrl(imageUrl) ? imageUrl : null,
+    blob: data,
+    imageUrl: responseURL,
   };
 }
 

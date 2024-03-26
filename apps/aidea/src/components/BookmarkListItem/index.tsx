@@ -1,7 +1,8 @@
+import { Recommendation } from "@hominem/db";
 import classNames from "classnames";
 import { Trash } from "lucide-react";
 import React, { SyntheticEvent, useCallback } from "react";
-import { Recommendation } from "@hominem/db";
+
 import { trpc } from "src/utils/trpc";
 
 import styles from "./BookmarkListItem.module.css";

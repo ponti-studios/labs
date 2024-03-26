@@ -1,4 +1,7 @@
+import { List, ListInvite, User } from "@hominem/db";
 import { DefaultSession } from "next-auth";
+
+type ListInviteResponse = ListInvite & { list: List; user: User };
 
 declare module "next-auth" {
   /**
