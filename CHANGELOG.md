@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.7.0](https://github.com/theponti/rocco/compare/v1.6.0...v1.7.0) (2024-03-26)
+
+
+### Features
+
+* **app/api:** add itemType to item table ([bad39f1](https://github.com/theponti/rocco/commit/bad39f1cbc5e085e4fe5b2f8aed02337bf48c93b))
+* create hominem/db package ([#56](https://github.com/theponti/rocco/issues/56)) ([48f6121](https://github.com/theponti/rocco/commit/48f6121f6b5f3b4d41dd27360a77f3dda5f52264))
+
+
+### Bug Fixes
+
+* **app/rocco:** fix place item click ([54571c1](https://github.com/theponti/rocco/commit/54571c1dc945f2e72759538b23a178c0cc65ae54))
+* **app/rocco:** fix text search ([#57](https://github.com/theponti/rocco/issues/57)) ([ddc9e27](https://github.com/theponti/rocco/commit/ddc9e2732bfa2ab9785147a8193ba196c8eb03f1))
+* fix get google place ([#59](https://github.com/theponti/rocco/issues/59)) ([fc78102](https://github.com/theponti/rocco/commit/fc78102c942456f3d594418824c688da06e0038b))
+
 ## [1.6.0](https://github.com/theponti/rocco/compare/v1.5.0...v1.6.0) (2024-02-27)
 
 
