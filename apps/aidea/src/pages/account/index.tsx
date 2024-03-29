@@ -54,7 +54,9 @@ const Account = () => {
 
         <div className="divider" />
 
-        {deleteUser.error && <FeedbackBlock type="error">{deleteUser.error.message}</FeedbackBlock>}
+        {deleteUser.error && (
+          <FeedbackBlock type="error">{deleteUser.error.message}</FeedbackBlock>
+        )}
 
         <button className="btn btn-ghost text-error" onClick={onDelectAccount}>
           Delete account

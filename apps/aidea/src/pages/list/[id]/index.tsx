@@ -44,7 +44,9 @@ const List: NextPage = () => {
   return (
     <>
       <DashboardNav />
-      {!data && <FeedbackBlock type="error">We could not find this list.</FeedbackBlock>}
+      {!data && (
+        <FeedbackBlock type="error">We could not find this list.</FeedbackBlock>
+      )}
       {data && (
         <div className="flex flex-col px-0.5">
           <h1 className="mb-1">

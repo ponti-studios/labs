@@ -13,7 +13,7 @@ export const ideaRouter = router({
     .input(
       z.object({
         description: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const idea = await ctx.prisma.idea.create({
@@ -28,7 +28,7 @@ export const ideaRouter = router({
     .input(
       z.object({
         id: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const idea = await ctx.prisma.idea.delete({

@@ -16,7 +16,7 @@ export default function ListForm({ onCreate }: ListFormProps) {
       e.preventDefault();
       createList();
     },
-    [createList]
+    [createList],
   );
 
   return (
@@ -40,7 +40,7 @@ export default function ListForm({ onCreate }: ListFormProps) {
           <button
             className={classNames(
               "btn btn-primary float-right min-w-full mb-4 rounded text-white",
-              isLoading && "loading"
+              isLoading && "loading",
             )}
           >
             Submit

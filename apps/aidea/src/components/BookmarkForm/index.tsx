@@ -17,7 +17,7 @@ export default function BookmarksForm({ onCreate }: BookmarksFormProps) {
       e.preventDefault();
       createBookmark();
     },
-    [createBookmark]
+    [createBookmark],
   );
 
   return (
@@ -41,7 +41,7 @@ export default function BookmarksForm({ onCreate }: BookmarksFormProps) {
           <button
             className={classNames(
               "btn btn-primary float-right min-w-full mb-4 rounded text-white",
-              isLoading && "loading"
+              isLoading && "loading",
             )}
           >
             Submit

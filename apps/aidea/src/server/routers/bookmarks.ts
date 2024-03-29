@@ -20,7 +20,7 @@ export const bookmarksRouter = router({
     .input(
       z.object({
         url: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       try {
@@ -55,7 +55,7 @@ export const bookmarksRouter = router({
     .input(
       z.object({
         id: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       return await ctx.prisma.recommendation.delete({

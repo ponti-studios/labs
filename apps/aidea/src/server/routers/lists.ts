@@ -16,7 +16,7 @@ export const listsRouter = router({
     .input(
       z.object({
         listId: z.string(),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       return ctx.prisma.userLists.findUnique({
@@ -33,7 +33,7 @@ export const listsRouter = router({
     .input(
       z.object({
         name: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       try {
@@ -73,7 +73,7 @@ export const listsRouter = router({
     .input(
       z.object({
         listId: z.string(),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       return await ctx.prisma.listInvite.findMany({
@@ -101,7 +101,7 @@ export const listsRouter = router({
       z.object({
         email: z.string(),
         listId: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       return await ctx.prisma.listInvite.create({
@@ -116,7 +116,7 @@ export const listsRouter = router({
     .input(
       z.object({
         listId: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       // Accept invite
@@ -146,7 +146,7 @@ export const listsRouter = router({
     .input(
       z.object({
         id: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       return await ctx.prisma.list.delete({

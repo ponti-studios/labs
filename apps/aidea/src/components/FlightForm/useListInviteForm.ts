@@ -34,7 +34,7 @@ export default function useListInviteForm({
         setIsLoading(false);
       }
     },
-    [email, mutation, onCreate]
+    [email, mutation, onCreate],
   );
 
   return {

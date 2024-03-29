@@ -18,7 +18,7 @@ export default function IdeaForm({ onCreate }: IdeaFormProps) {
       e.preventDefault();
       createIdea();
     },
-    [createIdea]
+    [createIdea],
   );
 
   return (
@@ -41,7 +41,7 @@ export default function IdeaForm({ onCreate }: IdeaFormProps) {
           <button
             className={classNames(
               "btn btn-primary float-right min-w-full mb-4",
-              isLoading && "loading"
+              isLoading && "loading",
             )}
           >
             Submit

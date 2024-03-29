@@ -14,7 +14,7 @@ export default function useIdeaForm({ onCreate }: UseIdeaFormProps) {
       setDescription(e.currentTarget.value);
       setError(undefined);
     },
-    []
+    [],
   );
 
   const createIdea = useCallback(async () => {

@@ -21,7 +21,7 @@ export default function ListInviteForm({
       e.preventDefault();
       createListInvite({ listId });
     },
-    [createListInvite, listId]
+    [createListInvite, listId],
   );
 
   return (
@@ -45,7 +45,7 @@ export default function ListInviteForm({
           <button
             className={classNames(
               "btn btn-primary float-right min-w-full mb-4 rounded text-white",
-              isLoading && "loading"
+              isLoading && "loading",
             )}
           >
             Submit
