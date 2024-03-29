@@ -1,3 +1,3 @@
 module.exports = {
-  extends: ["ponti/node"],
+  extends: ["ponti"],
 };
