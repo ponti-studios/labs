@@ -8,7 +8,6 @@
   ],
   "scripts": {
     "build": "npm run prisma:generate && turbo run build",
-    "commit": "commit",
     "commitlint": "commitlint --edit",
     "dev": "caddy start & turbo run dev --parallel",
     "docker:api:build": "docker build -t rocco-api:latest -f apps/api/Dockerfile .",
@@ -31,7 +30,6 @@
   "devDependencies": {
     "@commitlint/cli": "^19.2.1",
     "@commitlint/config-conventional": "^19.1.0",
-    "@commitlint/prompt-cli": "^19.2.0",
     "eslint-config-ponti": "0.0.0",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.3",
