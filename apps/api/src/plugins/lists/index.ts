@@ -4,7 +4,7 @@ import fastifyPlugin from "fastify-plugin";
 // Routes
 import deleteListRoute from "./delete";
 import getListsRoute from "./lists";
-import getListRoute from "./list";
+import { getListRoute, deleteListItemRoute } from "./list";
 import getListInvitesRoute from "./invites";
 import postListRoute from "./post";
 import acceptListInviteRoute from "./post/acceptInvite";
@@ -17,6 +17,7 @@ import putListRoute from "./put";
 const listsPlugin: FastifyPluginAsync = async (server) => {
   acceptListInviteRoute(server);
   deleteListRoute(server);
+  deleteListItemRoute(server);
   getListRoute(server);
   getListInvitesRoute(server);
   getListsRoute(server);

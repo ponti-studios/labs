@@ -34,7 +34,7 @@ async function getListPlaces(listId: string): Promise<
   `;
 }
 
-const getListRoute = (server: FastifyInstance) => {
+export const getListRoute = (server: FastifyInstance) => {
   server.get(
     "/lists/:id",
     {
@@ -95,4 +95,33 @@ const getListRoute = (server: FastifyInstance) => {
   );
 };
 
-export default getListRoute;
+export const deleteListItemRoute = async (server: FastifyInstance) => {
+  server.delete(
+    "/lists/:listId/items/:itemId",
+    {
+      preValidation: verifySession,
+      schema: {
+        params: {
+          type: "object",
+          properties: {
+            listId: { type: "string" },
+            itemId: { type: "string" },
+          },
+          required: ["listId", "itemId"],
+        },
+      },
+    },
+    async (request, reply) => {
+      const { listId, itemId } = request.params as {
+        itemId: string;
+        listId: string;
+      };
+
+      await prisma.item.delete({
+        where: { listId_itemId: { listId, itemId } },
+      });
+
+      return reply.status(204).send();
+    },
+  );
+};
