@@ -25,7 +25,8 @@
     "test:update": "turbo run test:update --scope rocco-web",
     "prisma:dev": "npm run prisma:dev -w @hominem/db",
     "prisma:generate": "npm run prisma:generate -w @hominem/db",
-    "prisma:migrate": "npm run prisma:migrate -w @hominem/db"
+    "prisma:migrate": "npm run prisma:migrate -w @hominem/db",
+    "coverage:web": "open apps/web/coverage/lcov-report/index.html"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.2.1",

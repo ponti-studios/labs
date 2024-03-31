@@ -61,6 +61,7 @@ function Modal({ children, isOpen, onModalClose, ...props }: ModalProps) {
     >
       <form method="dialog" className="modal-box">
         <button
+          data-testid="modal-close-button"
           className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
           onClick={onModalClose}
         >

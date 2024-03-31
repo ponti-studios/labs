@@ -54,6 +54,7 @@ const ListItem = ({
     setIsDeleteModalOpen(true);
   };
 
+  const closeModal = () => setIsDeleteModalOpen(false);
   const onModalDelete = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -98,7 +99,7 @@ const ListItem = ({
         <Modal
           data-testid="delete-modal"
           isOpen={isDeleteModalOpen}
-          onModalClose={() => setIsDeleteModalOpen(false)}
+          onModalClose={closeModal}
         >
           <div className="flex flex-col gap-4">
             <h2 className="text-2xl font-semibold">Delete place</h2>
@@ -108,7 +109,7 @@ const ListItem = ({
             <div className="mt-4 flex gap-4 justify-end">
               <Button
                 data-testid="delete-place-cancel-button"
-                onClick={() => setIsDeleteModalOpen(false)}
+                onClick={closeModal}
                 className="btn-outline"
               >
                 Cancel

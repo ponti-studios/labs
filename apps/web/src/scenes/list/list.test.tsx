@@ -147,6 +147,25 @@ describe("List", () => {
         });
       });
 
+      test("should not make DELETE API request on non-enter click", async () => {
+        renderWithProviders(<List />, { isAuth: true });
+
+        // Wait for list to load
+        await waitFor(() => {
+          expect(screen.getByTestId("delete-button")).toBeInTheDocument();
+        });
+
+        const deleteButton = await screen.getByTestId("delete-button");
+
+        await act(async () => {
+          fireEvent.keyDown(deleteButton, { key: "Space", code: "Space" });
+        });
+
+        await waitFor(() => {
+          expect(api.delete).not.toHaveBeenCalled();
+        });
+      });
+
       test("should make DELETE API request on button click", async () => {
         renderWithProviders(<List />, { isAuth: true });
 
@@ -208,6 +227,31 @@ describe("List", () => {
           expect(
             screen.getByText("Could not delete place. Please try again."),
           ).toBeInTheDocument();
+        });
+      });
+
+      test("modal should close on close button click", async () => {
+        renderWithProviders(<List />, { isAuth: true });
+
+        // Wait for list to load
+        await waitFor(() => {
+          expect(screen.getByTestId("delete-button")).toBeInTheDocument();
+        });
+
+        const deleteButton = screen.getByTestId("delete-button");
+
+        await act(async () => {
+          fireEvent.click(deleteButton);
+        });
+
+        const closeButton = await screen.findByTestId("modal-close-button");
+
+        await act(async () => {
+          closeButton.click();
+        });
+
+        await waitFor(() => {
+          expect(screen.queryByTestId("delete-modal")).not.toBeInTheDocument();
         });
       });
     });
