@@ -2,7 +2,7 @@ import { List, User, prisma } from "@hominem/db";
 import { FastifyInstance } from "fastify";
 import { z } from "zod";
 
-import { verifySession } from "../../auth";
+import { verifySession } from "../auth";
 
 type UserList = {
   list: List & { createdBy: User };

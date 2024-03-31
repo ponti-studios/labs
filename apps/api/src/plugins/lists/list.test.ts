@@ -1,12 +1,11 @@
 import { prisma } from "@hominem/db";
 import { FastifyInstance } from "fastify";
 
-import { mockAuthSession } from "../../../../test/utils";
-import { createServer } from "../../../server";
+import { createServer } from "@app/server";
+import { mockAuthSession } from "@test/utils";
 
 describe("GET /lists/:id", () => {
   let server: FastifyInstance;
-  // let prisma: PrismaClient;
 
   beforeAll(async () => {
     server = await createServer({ logger: false });
@@ -52,5 +51,24 @@ describe("GET /lists/:id", () => {
     });
     expect(response.statusCode).toBe(200);
     expect(response.json()).toEqual([list, userList.list]);
+  });
+
+  describe("DELETE /lists/:listId/items/:itemId", () => {
+    test("returns 204", async () => {
+      mockAuthSession();
+      const response = await server.inject({
+        method: "DELETE",
+        url: "/lists/123/items/456",
+      });
+      expect(prisma.item.delete).toHaveBeenCalledWith({
+        where: {
+          listId_itemId: {
+            listId: "123",
+            itemId: "456",
+          },
+        },
+      });
+      expect(response.statusCode).toBe(204);
+    });
   });
 });

@@ -5,6 +5,7 @@ function mockPrismaModel() {
     create: jest.fn(),
     createMany: jest.fn(),
     delete: jest.fn(),
+    deleteMany: jest.fn(),
     findFirst: jest.fn(),
     findMany: jest.fn(),
     findUnique: jest.fn(),

@@ -1,8 +1,8 @@
 // Test for deleteListRoute
 import { prisma } from "@hominem/db";
 import { FastifyInstance } from "fastify";
-import { createServer } from "../../../server";
-import { mockAuthSession } from "../../../../test/utils";
+import { createServer } from "@app/server";
+import { mockAuthSession } from "@test/utils";
 
 describe("DELETE /lists/:id", () => {
   let server: FastifyInstance;
