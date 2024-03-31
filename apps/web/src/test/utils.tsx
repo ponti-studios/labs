@@ -4,7 +4,6 @@ import { render, RenderOptions } from "@testing-library/react";
 import { ReactElement, ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Provider } from "react-redux";
-import { Router } from "react-router-dom";
 import { rootReducer } from "src/services/store";
 
 const queryClient = new QueryClient({
