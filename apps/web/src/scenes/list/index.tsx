@@ -31,7 +31,6 @@ const List = () => {
   );
 
   const handleDeleteError = () => {
-    console.log("handleDeleteError");
     setDeleteError("Could not delete place. Please try again.");
   };
 

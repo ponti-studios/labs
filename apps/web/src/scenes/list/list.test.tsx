@@ -14,6 +14,7 @@ import List from ".";
 
 describe("List", () => {
   beforeEach(() => {
+    vi.spyOn(api, "delete").mockImplementation(() => Promise.resolve());
     (useParams as Mock).mockReturnValue({ id: TEST_LIST_ID });
   });
 
@@ -109,7 +110,6 @@ describe("List", () => {
 
     describe("delete list item", () => {
       beforeAll(() => {
-        vi.spyOn(api, "delete");
         testServer.use(
           http.delete(
             `${baseURL}/lists/${TEST_LIST_ID}/items/${PLACE_ID}`,
@@ -125,18 +125,26 @@ describe("List", () => {
 
         // Wait for list to load
         await waitFor(() => {
-          expect(screen.getByTestId("delete-place-button")).toBeInTheDocument();
+          expect(screen.getByTestId("delete-button")).toBeInTheDocument();
         });
 
-        const deleteButton = await screen.getByTestId("delete-place-button");
+        const deleteButton = await screen.getByTestId("delete-button");
 
         await act(async () => {
           fireEvent.keyDown(deleteButton, { key: "Enter", code: "Enter" });
         });
 
-        expect(api.delete).toHaveBeenCalledWith(
-          `/lists/list-id/items/place-id`,
+        const confirmButton = await screen.findByTestId(
+          "delete-place-confirm-button",
         );
+
+        confirmButton.click();
+
+        await waitFor(() => {
+          expect(api.delete).toHaveBeenCalledWith(
+            `/lists/list-id/items/place-id`,
+          );
+        });
       });
 
       test("should make DELETE API request on button click", async () => {
@@ -144,21 +152,29 @@ describe("List", () => {
 
         // Wait for list to load
         await waitFor(() => {
-          expect(screen.getByTestId("delete-place-button")).toBeInTheDocument();
+          expect(screen.getByTestId("delete-button")).toBeInTheDocument();
         });
 
-        const deleteButton = screen.getByTestId("delete-place-button");
+        const deleteButton = screen.getByTestId("delete-button");
 
         await act(async () => {
           fireEvent.click(deleteButton);
         });
 
-        expect(api.delete).toHaveBeenCalledWith(
-          `/lists/list-id/items/place-id`,
+        const confirmButton = await screen.findByTestId(
+          "delete-place-confirm-button",
         );
+
+        confirmButton.click();
+
+        await waitFor(() => {
+          expect(api.delete).toHaveBeenCalledWith(
+            `/lists/list-id/items/place-id`,
+          );
+        });
       });
 
-      test.only("should handle api error", async () => {
+      test("should handle api error", async () => {
         (api.delete as Mock).mockRejectedValue("error");
         testServer.use(
           http.delete(
@@ -171,18 +187,28 @@ describe("List", () => {
 
         // Wait for list to load
         await waitFor(() => {
-          expect(screen.getByTestId("delete-place-button")).toBeInTheDocument();
+          expect(screen.getByTestId("delete-button")).toBeInTheDocument();
         });
 
-        const deleteButton = screen.getByTestId("delete-place-button");
+        const deleteButton = screen.getByTestId("delete-button");
 
         await act(async () => {
           fireEvent.click(deleteButton);
         });
 
-        expect(
-          screen.getByText("Could not delete place. Please try again."),
-        ).toBeInTheDocument();
+        // deleteButton.click();
+        // const deleteModal = await screen.findByTestId("delete-modal");
+        const confirmButton = await screen.findByTestId(
+          "delete-place-confirm-button",
+        );
+
+        confirmButton.click();
+
+        await waitFor(() => {
+          expect(
+            screen.getByText("Could not delete place. Please try again."),
+          ).toBeInTheDocument();
+        });
       });
     });
   });
