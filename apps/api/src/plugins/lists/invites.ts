@@ -1,7 +1,7 @@
 import { PrismaClientKnownRequestError } from "@hominem/db";
 import { FastifyInstance } from "fastify";
 
-import { verifySession } from "../../../auth";
+import { verifySession } from "../auth";
 import { prisma } from "@hominem/db";
 
 const getListInvitesRoute = (server: FastifyInstance) => {

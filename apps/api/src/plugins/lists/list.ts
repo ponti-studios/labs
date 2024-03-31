@@ -2,7 +2,7 @@ import { FastifyInstance } from "fastify";
 
 import { prisma } from "@hominem/db";
 
-import { verifySession } from "../../../auth";
+import { verifySession } from "../auth";
 
 async function getListPlaces(listId: string): Promise<
   {

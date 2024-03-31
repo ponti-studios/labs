@@ -1,12 +1,11 @@
 import { prisma } from "@hominem/db";
 import { FastifyInstance } from "fastify";
 
-import { mockAuthSession } from "../../../../test/utils";
-import { createServer } from "../../../server";
+import { createServer } from "@app/server";
+import { mockAuthSession } from "@test/utils";
 
 describe("GET /lists/:id", () => {
   let server: FastifyInstance;
-  // let prisma: PrismaClient;
 
   beforeAll(async () => {
     server = await createServer({ logger: false });

@@ -3,9 +3,9 @@ import fastifyPlugin from "fastify-plugin";
 
 // Routes
 import deleteListRoute from "./delete";
-import getListsRoute from "./get";
-import getListRoute from "./get/list";
-import getListInvitesRoute from "./get/list/invites";
+import getListsRoute from "./lists";
+import getListRoute from "./list";
+import getListInvitesRoute from "./invites";
 import postListRoute from "./post";
 import acceptListInviteRoute from "./post/acceptInvite";
 import putListRoute from "./put";
