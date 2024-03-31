@@ -73,7 +73,7 @@ const ListItem = ({
           <img
             src={place.imageUrl}
             alt={place.name}
-            className="rounded-lg object-cover w-full h-full"
+            className="rounded-[5px] object-cover w-full h-full"
           />
         </div>
         <div className="flex">
