@@ -34,7 +34,7 @@ function FeedbackBlock({
 
   if (type === "info") {
     return (
-      <div className="rounded-md bg-blue-400 text-info-content p-4 text-md mb-4">
+      <div className="rounded-md bg-gray-100 text-info-content p-4 text-md mb-4">
         {children}
       </div>
     );

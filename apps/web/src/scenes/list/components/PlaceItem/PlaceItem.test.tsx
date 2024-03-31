@@ -25,7 +25,14 @@ describe("PlaceItem", () => {
   });
 
   test("should render", async () => {
-    renderWithProviders(<PlaceItem place={place} />);
+    renderWithProviders(
+      <PlaceItem
+        place={place}
+        onDelete={() => void 0}
+        onError={() => void 0}
+        listId="123"
+      />,
+    );
     const placeItem = await screen.findByTestId("place-item");
 
     expect(screen.findAllByText("Place Name")).toBeTruthy();
