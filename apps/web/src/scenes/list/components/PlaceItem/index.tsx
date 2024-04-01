@@ -37,7 +37,7 @@ const ListItem = ({
   };
 
   const onDeleteClick = async (
-    e: MouseEvent<HTMLSpanElement> | KeyboardEvent<HTMLSpanElement>,
+    e: MouseEvent<HTMLSpanElement> | KeyboardEvent<HTMLSpanElement> | undefined,
   ) => {
     e.stopPropagation();
     e.preventDefault();
@@ -54,7 +54,14 @@ const ListItem = ({
     setIsDeleteModalOpen(true);
   };
 
-  const closeModal = () => setIsDeleteModalOpen(false);
+  const closeModal = (
+    e: MouseEvent<HTMLSpanElement> | KeyboardEvent<HTMLSpanElement>,
+  ) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setIsDeleteModalOpen(false);
+  };
+
   const onModalDelete = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();

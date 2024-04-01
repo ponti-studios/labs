@@ -1,7 +1,6 @@
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { List, LogOut, Mail, Menu, Search, Settings } from "lucide-react";
 import { useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import {
   ACCOUNT,
@@ -14,22 +13,12 @@ import { logout } from "src/services/auth";
 import { useAppDispatch } from "src/services/hooks";
 import { useAuth } from "src/services/store";
 
-import "./styles.css";
 import NavLink from "../../NavLink";
 
 const AuthNavMenu = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { user } = useAuth();
-  const onListsClick = useCallback(() => {
-    navigate(LISTS);
-  }, [navigate]);
-  const onInvitesClick = useCallback(() => {
-    navigate(INVITES);
-  }, [navigate]);
-  const onAccountClick = useCallback(() => {
-    navigate(ACCOUNT);
-  }, [navigate]);
   const onLogoutClick = useCallback(() => {
     dispatch(logout()).then(() => {
       navigate(LANDING);
@@ -37,69 +26,54 @@ const AuthNavMenu = () => {
   }, [dispatch, navigate]);
 
   return (
-    <>
-      <div className="hidden md:visible md:flex-1 md:flex justify-center gap-6">
-        <NavLink to={DASHBOARD} className="px-4 py-2 rounded-xl">
-          <Search />
-        </NavLink>
-        <NavLink to={LISTS} className="px-4 py-2 rounded-xl">
-          <List />
-        </NavLink>
-        <NavLink to={INVITES} className="px-4 py-2 rounded-xl">
-          <Mail />
-        </NavLink>
-      </div>
-      <div className="flex-1 flex justify-end">
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger
-            className="IconButton"
-            aria-label="account menu"
-          >
-            <Menu />
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Portal>
-            <DropdownMenu.Content
-              className="DropdownMenuContent"
-              align="end"
-              sideOffset={5}
-            >
-              <DropdownMenu.Item className="flex justify-end text-sm pr-2 py-2 text-secondary-content hover:outline-none">
-                {user.email}
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                className="DropdownMenuItem text-black flex gap-4"
-                onClick={onListsClick}
-              >
-                <List size={20} />
-                Lists
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                className="DropdownMenuItem text-black flex gap-4"
-                onClick={onInvitesClick}
-              >
-                <Mail size={20} />
-                Invites
-              </DropdownMenu.Item>
-              <DropdownMenu.Separator />
-              <DropdownMenu.Item
-                className="DropdownMenuItem text-black flex gap-4"
-                onClick={onAccountClick}
-              >
-                <Settings size={20} />
-                Account
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                className="DropdownMenuItem text-black flex gap-4"
-                onClick={onLogoutClick}
-              >
-                <LogOut size={20} />
-                Logout
-              </DropdownMenu.Item>
-            </DropdownMenu.Content>
-          </DropdownMenu.Portal>
-        </DropdownMenu.Root>
-      </div>
-    </>
+    <div className="hidden md:visible md:flex-1 md:flex justify-center gap-6">
+      <NavLink to={DASHBOARD} className="px-4 py-2 rounded-xl">
+        <Search />
+      </NavLink>
+      <NavLink to={LISTS} className="px-4 py-2 rounded-xl">
+        <List />
+      </NavLink>
+      <NavLink to={INVITES} className="px-4 py-2 rounded-xl">
+        <Mail />
+      </NavLink>
+
+      <details data-testid="dropdown" className="dropdown dropdown-end">
+        <summary data-testid="dropdown-button" role="button" className="btn">
+          <Menu />
+        </summary>
+        <ul className="p-1 pb-3 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52 mt-1">
+          <li>
+            <span className="flex justify-end text-sm text-secondary hover:outline-none">
+              {user.email}
+            </span>
+          </li>
+          <li>
+            <Link to={LISTS}>
+              <List size={20} />
+              Lists
+            </Link>
+          </li>
+          <li>
+            <Link to={INVITES}>
+              <Mail size={20} />
+              Invites
+            </Link>
+          </li>
+          <li>
+            <Link to={ACCOUNT}>
+              <Settings size={20} />
+              Account
+            </Link>
+          </li>
+          <li>
+            <button className="btn-ghost" onClick={onLogoutClick}>
+              <LogOut size={20} />
+              Logout
+            </button>
+          </li>
+        </ul>
+      </details>
+    </div>
   );
 };
 

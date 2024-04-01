@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { Combobox } from "@headlessui/react";
-import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { AxiosError } from "axios";
+import { Search } from "lucide-react";
 import React, { useCallback, useRef, useState } from "react";
 import { useQuery } from "react-query";
 import FeedbackBlock from "ui/FeedbackBlock";
@@ -132,11 +132,7 @@ function PlacesAutocomplete({
             value={value}
             onChange={onInputChange}
           />
-          <MagnifyingGlassIcon
-            height={24}
-            width={24}
-            className="text-primary"
-          />
+          <Search size={24} className="text-primary" />
         </InputWrap>
         {(isLoading || data) && (
           <Options className="bg-white overflow-y-scroll">

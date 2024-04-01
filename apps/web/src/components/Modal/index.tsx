@@ -30,14 +30,14 @@ const StyledDialog = styled.dialog`
 
 type ModalProps = PropsWithChildren & {
   isOpen: boolean;
-  onModalClose: () => void;
+  onModalClose: (_?: unknown) => void;
 };
 function Modal({ children, isOpen, onModalClose, ...props }: ModalProps) {
   const ref = useRef<SVGSVGElement>(null);
   const handleKeyDown = useCallback(
     (event: KeyboardEvent<HTMLDialogElement>) => {
       if (event.code === "Escape") {
-        onModalClose();
+        onModalClose(event);
       }
     },
     [onModalClose],
