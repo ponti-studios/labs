@@ -8,26 +8,26 @@
   "scripts": {
     "lint": "eslint ./*.ts*"
   },
-  "devDependencies": {
-    "@types/prop-types": "^15.7.5",
-    "@types/react": "^18.2.66",
-    "@types/react-dom": "^18.0.6",
-    "eslint": "8.57.0",
-    "eslint-config-ponti": "0.0.0",
-    "react": "18.2.0",
-    "tailwind-merge": "^2.2.1",
-    "tsconfig": "0.0.0",
-    "typescript": "5.1.6"
-  },
   "dependencies": {
     "@emotion/styled": "^11.8.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "formik": "^2.2.9",
-    "lucide-react": "^0.320.0",
+    "lucide-react": "^0.363.0",
     "prop-types": "^15.8.1",
     "react-stately": "^3.24.0",
-    "tailwindcss": "^3.4.1",
+    "tailwindcss": "^3.4.3",
     "tailwindcss-animate": "^1.0.7"
+  },
+  "devDependencies": {
+    "@types/prop-types": "^15.7.5",
+    "@types/react": "^18.2.66",
+    "@types/react-dom": "^18.2.23",
+    "eslint": "8.57.0",
+    "eslint-config-ponti": "0.0.0",
+    "react": "18.2.0",
+    "tailwind-merge": "^2.2.1",
+    "tsconfig": "0.0.0",
+    "typescript": "5.4.3"
   }
 }

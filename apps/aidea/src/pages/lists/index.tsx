@@ -1,8 +1,10 @@
+import type { Item, List, User } from "@hominem/db";
 import type { NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+
 import DashboardNav from "src/components/DashboardNav";
 import ListForm from "src/components/ListForm";
 import LoadingScene from "src/components/Loading";
@@ -16,7 +18,10 @@ const Lists: NextPage = () => {
     data,
     refetch,
     status: listsStatus,
-  } = trpc.lists.get.useQuery(undefined, { enabled: false });
+  } = trpc.lists.get.useQuery<(Item & { list: List; user: User })[]>(
+    undefined,
+    { enabled: false },
+  );
 
   useEffect(() => {
     if (status === "unauthenticated") {
