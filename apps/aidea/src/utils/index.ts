@@ -1,24 +1,24 @@
-import { GetServerSidePropsContext } from "next";
+import type { GetServerSidePropsContext } from "next";
 import { getServerAuthSession } from "src/server/common/get-server-auth-session";
 
 export async function getProtectedServerSideProps(
-  ctx: GetServerSidePropsContext,
+	ctx: GetServerSidePropsContext,
 ) {
-  const session = await getServerAuthSession(ctx);
+	const session = await getServerAuthSession(ctx);
 
-  if (!session) {
-    return {
-      redirect: {
-        destination: "/",
-        // Use `false` to prevent browser caching
-        permanent: false,
-      },
-    };
-  }
+	if (!session) {
+		return {
+			redirect: {
+				destination: "/",
+				// Use `false` to prevent browser caching
+				permanent: false,
+			},
+		};
+	}
 
-  return {
-    props: {
-      session,
-    },
-  };
+	return {
+		props: {
+			session,
+		},
+	};
 }

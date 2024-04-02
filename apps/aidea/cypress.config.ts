@@ -4,7 +4,6 @@ export default defineConfig({
   fileServerFolder: "build",
   fixturesFolder: false,
   e2e: {
-    // eslint-disable-next-line
     setupNodeEvents(on, config) {
       // implement node event listeners here
     },

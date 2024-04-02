@@ -22,58 +22,62 @@ const Wrap = styled.div`
 `;
 
 const AuthNavMenu = () => {
-  const router = useRouter();
-  const onAccountClick = useCallback(() => {
-    router.push(ACCOUNT_PATH);
-  }, [router]);
-  const onLogoutClick = useCallback(() => {
-    signOut();
-  }, []);
-  const { data: session, status } = useSession();
-  const pictureUrl = session?.user?.image as string;
+	const router = useRouter();
+	const onAccountClick = useCallback(() => {
+		router.push(ACCOUNT_PATH);
+	}, [router]);
+	const onLogoutClick = useCallback(() => {
+		signOut();
+	}, []);
+	const { data: session, status } = useSession();
+	const pictureUrl = session?.user?.image as string;
 
-  switch (status) {
-    case "loading":
-      return null;
-    case "unauthenticated":
-      return <div />;
-    default:
-      break;
-  }
+	switch (status) {
+		case "loading":
+			return null;
+		case "unauthenticated":
+			return <div />;
+		default:
+			break;
+	}
 
-  return (
-    <Wrap data-testid="AuthenticatedMenu">
-      <Avatar src={pictureUrl} alt={session?.user?.name || ""} />
-      <DropdownMenu.Root>
-        <DropdownMenu.Trigger asChild>
-          <button className={styles.IconButton} aria-label="account menu">
-            <HamburgerMenuIcon />
-          </button>
-        </DropdownMenu.Trigger>
-        <DropdownMenu.Portal>
-          <DropdownMenu.Content
-            className={styles.DropdownMenuContent}
-            align="end"
-            sideOffset={5}
-          >
-            <DropdownMenu.Item
-              className={styles.DropdownMenuItem}
-              onClick={onAccountClick}
-            >
-              Account
-            </DropdownMenu.Item>
-            <DropdownMenu.Separator className={styles.DropdownMenuSeparator} />
-            <DropdownMenu.Item
-              className={styles.DropdownMenuItem}
-              onClick={onLogoutClick}
-            >
-              Logout
-            </DropdownMenu.Item>
-          </DropdownMenu.Content>
-        </DropdownMenu.Portal>
-      </DropdownMenu.Root>
-    </Wrap>
-  );
+	return (
+		<Wrap data-testid="AuthenticatedMenu">
+			<Avatar src={pictureUrl} alt={session?.user?.name || ""} />
+			<DropdownMenu.Root>
+				<DropdownMenu.Trigger asChild>
+					<button
+						type="button"
+						className={styles.IconButton}
+						aria-label="account menu"
+					>
+						<HamburgerMenuIcon />
+					</button>
+				</DropdownMenu.Trigger>
+				<DropdownMenu.Portal>
+					<DropdownMenu.Content
+						className={styles.DropdownMenuContent}
+						align="end"
+						sideOffset={5}
+					>
+						<DropdownMenu.Item
+							className={styles.DropdownMenuItem}
+							onClick={onAccountClick}
+						>
+							Account
+						</DropdownMenu.Item>
+						<DropdownMenu.Separator className={styles.DropdownMenuSeparator} />
+						<DropdownMenu.Item
+							className={styles.DropdownMenuItem}
+							onClick={onLogoutClick}
+						>
+							Logout
+						</DropdownMenu.Item>
+					</DropdownMenu.Content>
+				</DropdownMenu.Portal>
+			</DropdownMenu.Root>
+		</Wrap>
+	);
 };
 
 export default AuthNavMenu;

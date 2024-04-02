@@ -1,7 +1,7 @@
+import crypto from "node:crypto";
 import { TokenType, prisma } from "@hominem/db";
-import crypto from "crypto";
 import { add } from "date-fns";
-import {
+import type {
   FastifyInstance,
   FastifyPluginAsync,
   FastifyReply,
@@ -202,7 +202,7 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
   );
 
   server.decorate("verifyPermissions", (permissions: string[]) => {
-    return (request: FastifyRequest, reply: FastifyReply, done: Function) => {
+    return (request: FastifyRequest, reply: FastifyReply, done: () => void) => {
       const data = request.session.get("data");
 
       if (!data) {
@@ -244,7 +244,7 @@ export const verifySession: preValidationHookHandler = async (
    * If no session exists, attempt to verify the JWT token.
    */
   if (!data) {
-    let token;
+    let token: { userId: string } | undefined;
 
     try {
       token = await request.jwtVerify<{ userId: string }>();
@@ -286,7 +286,7 @@ export const verifySession: preValidationHookHandler = async (
   /**
    * If the session exists, but the email is missing,
    */
-  if (data && data.userId && !data.email) {
+  if (data?.userId && !data.email) {
     const user = await prisma.user.findUnique({
       where: { id: data.userId },
     });

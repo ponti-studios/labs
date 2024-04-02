@@ -13,9 +13,6 @@
     "typecheck": {
       "outputs": []
     },
-    "test:update": {
-      "outputs": []
-    },
     "test": {
       "dependsOn": ["^build"],
       "outputs": [],

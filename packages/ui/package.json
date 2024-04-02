@@ -6,7 +6,7 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "lint": "eslint ./*.ts*"
+    "lint": "biome lint ./*.ts*"
   },
   "dependencies": {
     "@emotion/styled": "^11.8.1",
@@ -23,8 +23,6 @@
     "@types/prop-types": "^15.7.5",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.23",
-    "eslint": "8.57.0",
-    "eslint-config-ponti": "0.0.0",
     "react": "18.2.0",
     "tailwind-merge": "^2.2.1",
     "tsconfig": "0.0.0",

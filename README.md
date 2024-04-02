@@ -5,19 +5,18 @@ This monorepo holds the services for Rocco.
 ### Apps
 
 - `api`: Fastify API server
-- `web`: React web application
+- `aidea`: React web application to store ideas and URL bookmarks
+- `web`: React web application to store places
 
 ## Packages
 
-- `eslint-config-ponti`: ESLint configuration
 - `tsconfig`: TypeScript configurations
 - `ui`: component library
 
 ### Utilities
 
 - [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+- [Biome](https://biomejs.dev) for linting and formatting (replacing ESLint and Prettier)
 
 ## Setup
 

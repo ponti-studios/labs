@@ -7,7 +7,7 @@
     "build": "npm run clean && tsc",
     "clean": "rm -rf build",
     "dev": "npm run build && nodemon --config nodemon.json",
-    "lint": "eslint --ext .js,.jsx,.ts,.tsx src",
+    "lint": "biome lint ./src",
     "start": "node build/src/index",
     "test": "NODE_ENV=test jest",
     "typecheck": "tsc --noEmit --incremental false"
@@ -39,7 +39,6 @@
   "devDependencies": {
     "@types/jest": "29.5.2",
     "@types/node": "^20.4.5",
-    "eslint-config-ponti": "0.0.0",
     "jest": "29.5.0",
     "nodemon": "^3.0.1",
     "ts-jest": "^29.1.0",

@@ -1,4 +1,4 @@
-import { FastifyPluginAsync } from "fastify";
+import type { FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
 
 const { COOKIE_NAME, COOKIE_SECRET, COOKIE_SALT } = process.env;

@@ -1,5 +1,6 @@
-import { FastifyInstance } from "fastify";
-import { createServer } from "./server";
+import type { FastifyInstance } from "fastify";
+
+import { createServer } from "@app/server";
 
 describe("server", () => {
   let server: FastifyInstance;
@@ -12,7 +13,7 @@ describe("server", () => {
     await server.close();
   });
 
-  test("status endpoint returns 200", async () => {
+  test.only("status endpoint returns 200", async () => {
     const response = await server.inject({
       method: "GET",
       url: "/status",

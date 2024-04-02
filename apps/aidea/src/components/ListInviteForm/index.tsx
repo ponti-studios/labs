@@ -1,58 +1,59 @@
-import { ListInvite } from "@hominem/db";
+import type { ListInvite } from "@hominem/db";
 import classNames from "classnames";
-import { SyntheticEvent, useCallback } from "react";
+import { type SyntheticEvent, useCallback } from "react";
 import FeedbackBlock from "ui/FeedbackBlock";
 
 import useListInviteForm from "./useListInviteForm";
 
 type ListInviteFormProps = {
-  listId: string;
-  onCreate: (invite: ListInvite) => void;
+	listId: string;
+	onCreate: (invite: ListInvite) => void;
 };
 export default function ListInviteForm({
-  listId,
-  onCreate,
+	listId,
+	onCreate,
 }: ListInviteFormProps) {
-  const { error, isLoading, email, createListInvite, onEmailChange } =
-    useListInviteForm({
-      onCreate,
-    });
-  const onFormSubmit = useCallback(
-    (e: SyntheticEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      createListInvite({ listId });
-    },
-    [createListInvite, listId],
-  );
+	const { error, isLoading, email, createListInvite, onEmailChange } =
+		useListInviteForm({
+			onCreate,
+		});
+	const onFormSubmit = useCallback(
+		(e: SyntheticEvent<HTMLFormElement>) => {
+			e.preventDefault();
+			createListInvite({ listId });
+		},
+		[createListInvite, listId],
+	);
 
-  return (
-    <div className="mb-8">
-      {error && <FeedbackBlock type="error">{error}</FeedbackBlock>}
+	return (
+		<div className="mb-8">
+			{error && <FeedbackBlock type="error">{error}</FeedbackBlock>}
 
-      <form onSubmit={onFormSubmit}>
-        <div className="form-control w-full">
-          <label className="label">
-            <span className="label-text">Invite someone new</span>
-          </label>
-          <input
-            type="text"
-            placeholder="What's their email?"
-            className="input w-full text-lg p-2 border-stone-300 rounded placeholder:text-zinc-400"
-            value={email}
-            onChange={onEmailChange}
-          />
-        </div>
-        {!!email.length && (
-          <button
-            className={classNames(
-              "btn btn-primary float-right min-w-full mb-4 rounded text-white",
-              isLoading && "loading",
-            )}
-          >
-            Submit
-          </button>
-        )}
-      </form>
-    </div>
-  );
+			<form onSubmit={onFormSubmit}>
+				<div className="form-control w-full">
+					<label className="label">
+						<span className="label-text">Invite someone new</span>
+					</label>
+					<input
+						type="text"
+						placeholder="What's their email?"
+						className="input w-full text-lg p-2 border-stone-300 rounded placeholder:text-zinc-400"
+						value={email}
+						onChange={onEmailChange}
+					/>
+				</div>
+				{!!email.length && (
+					<button
+						type="submit"
+						className={classNames(
+							"btn btn-primary float-right min-w-full mb-4 rounded text-white",
+							isLoading && "loading",
+						)}
+					>
+						Submit
+					</button>
+				)}
+			</form>
+		</div>
+	);
 }

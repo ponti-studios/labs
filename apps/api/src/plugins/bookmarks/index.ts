@@ -1,7 +1,7 @@
 import { prisma } from "@hominem/db";
-import { FastifyInstance, FastifyPluginAsync } from "fastify";
+import type { FastifyInstance, FastifyPluginAsync } from "fastify";
 
-import { OpenGraphData, getOpenGraphData } from "./utils";
+import { type OpenGraphData, getOpenGraphData } from "./utils";
 
 type LinkType = {
   image: string;
@@ -84,8 +84,8 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
       description: ogContent.description ?? "",
       url,
       siteName: ogContent.siteName,
-      imageWidth: ogContent.imageWidth + "",
-      imageHeight: ogContent.imageHeight + "",
+      imageWidth: `${ogContent.imageWidth}`,
+      imageHeight: `${ogContent.imageHeight}`,
     };
   };
 

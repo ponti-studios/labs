@@ -1,8 +1,8 @@
-import { PrismaClientKnownRequestError } from "@hominem/db";
-import { FastifyInstance } from "fastify";
+import type { ListInvite, PrismaClientKnownRequestError } from "@hominem/db";
+import type { FastifyInstance } from "fastify";
 
-import { verifySession } from "../auth";
 import { prisma } from "@hominem/db";
+import { verifySession } from "../auth";
 
 const getListInvitesRoute = (server: FastifyInstance) => {
   server.get(
@@ -110,7 +110,7 @@ const getListInvitesRoute = (server: FastifyInstance) => {
         });
       }
 
-      let invite;
+      let invite: ListInvite;
       try {
         invite = await prisma.listInvite.create({
           data: {
@@ -122,7 +122,7 @@ const getListInvitesRoute = (server: FastifyInstance) => {
           },
         });
       } catch (error) {
-        let err = error as PrismaClientKnownRequestError;
+        const err = error as PrismaClientKnownRequestError;
 
         switch (err.code) {
           case "P2002":
@@ -147,7 +147,7 @@ const getListInvitesRoute = (server: FastifyInstance) => {
       await server.sendEmail(
         email,
         "You have been invited to a list",
-        `You have been invited to a list`,
+        "You have been invited to a list",
         `
           <div class="email" style="font-family: sans-serif;">
             <h1>You have been invited to a list</h1>

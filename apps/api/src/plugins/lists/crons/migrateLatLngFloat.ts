@@ -4,7 +4,7 @@
  */
 
 import { prisma } from "@hominem/db";
-import { FastifyInstance } from "fastify";
+import type { FastifyInstance } from "fastify";
 
 async function migrateLatLngFloat(server: FastifyInstance) {
   let count = 0;
@@ -26,8 +26,8 @@ async function migrateLatLngFloat(server: FastifyInstance) {
         data: {
           lat: null,
           lng: null,
-          latitude: parseFloat(place.lat),
-          longitude: parseFloat(place.lng),
+          latitude: Number.parseFloat(place.lat),
+          longitude: Number.parseFloat(place.lng),
         },
       });
       count += 1;

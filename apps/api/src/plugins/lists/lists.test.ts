@@ -1,5 +1,5 @@
 import { prisma } from "@hominem/db";
-import { FastifyInstance } from "fastify";
+import type { FastifyInstance } from "fastify";
 
 import { createServer } from "@app/server";
 import { mockAuthSession } from "@test/utils";

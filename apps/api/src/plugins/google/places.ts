@@ -1,8 +1,8 @@
-import { writeFile } from "fs";
-import * as path from "path";
+import { writeFile } from "node:fs";
+import * as path from "node:path";
+import type { Place } from "@hominem/db";
+import type { places_v1 } from "googleapis";
 import { google } from "./auth";
-import { places_v1 } from "googleapis";
-import { Place } from "@hominem/db";
 
 export const { places } = google.places("v1");
 
@@ -22,13 +22,17 @@ export type FormattedPlace = Pick<
 const formatGooglePlace = (
   place: places_v1.Schema$GoogleMapsPlacesV1Place,
 ): FormattedPlace => {
+  if (!place.id) {
+    throw new Error("Invalid place");
+  }
+
   return {
     address: place.adrFormatAddress || null,
     name: place.displayName?.text || "Unknown",
     latitude: place.location?.latitude || null,
     longitude: place.location?.longitude || null,
-    id: place.id!,
-    googleMapsId: place.id!,
+    id: place.id,
+    googleMapsId: place.id,
     phoneNumber: place.internationalPhoneNumber || null,
     types: place.types || [],
     websiteUri: place.websiteUri || null,
@@ -55,6 +59,10 @@ export async function getPlaceDetails({
     name: `places/${placeId}`,
     fields: fields.join(","),
   });
+
+  if (!response.data || !response.data.id) {
+    throw new Error("Place not found");
+  }
 
   return formatGooglePlace(response.data);
 }

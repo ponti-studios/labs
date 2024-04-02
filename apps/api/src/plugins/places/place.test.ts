@@ -1,10 +1,12 @@
 import { prisma } from "@hominem/db";
-import { FastifyInstance } from "fastify";
+import type { FastifyInstance } from "fastify";
+
 import { createServer } from "@app/server";
 import { googlePlaces } from "@test/jest.setup";
-import { mockAuthSession } from "@test/utils";
 import { MOCKS } from "@test/mocks";
-import * as googlePlacesPlugin from "@app/plugins/google/places";
+import { mockAuthSession } from "@test/utils";
+
+import * as googlePlacesPlugin from "../google/places";
 
 const { PLACE, GOOGLE_PLACE_GET, GOOGLE_PHOTO_MEDIA } = MOCKS;
 

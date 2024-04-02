@@ -1,18 +1,18 @@
 import { prisma } from "@hominem/db";
-import { initTRPC, TRPCError } from "@trpc/server";
-import { CreateNextContextOptions } from "@trpc/server/adapters/next";
-import { Session } from "next-auth";
+import { TRPCError, initTRPC } from "@trpc/server";
+import type { CreateNextContextOptions } from "@trpc/server/adapters/next";
+import type { Session } from "next-auth";
 import superjson from "superjson";
 
 import { getServerAuthSession } from "./get-server-auth-session";
 
 interface Context {
-  prisma: typeof prisma;
-  session: Session | null;
+	prisma: typeof prisma;
+	session: Session | null;
 }
 
 const t = initTRPC.context<Context>().create({
-  transformer: superjson,
+	transformer: superjson,
 });
 export const middleware = t.middleware;
 export const publicProcedure = t.procedure;
@@ -23,11 +23,11 @@ export const router = t.router;
  * - trpc's `createSSGHelpers` where we don't have req/res
  **/
 export const createContextInner = async ({
-  session,
+	session,
 }: {
-  session: Session | null;
+	session: Session | null;
 }) => {
-  return { prisma, session };
+	return { prisma, session };
 };
 
 /**
@@ -35,10 +35,10 @@ export const createContextInner = async ({
  * @link https://trpc.io/docs/context
  **/
 export const createContext = async (opts: CreateNextContextOptions) => {
-  const { req, res } = opts;
-  const session = await getServerAuthSession({ req, res });
+	const { req, res } = opts;
+	const session = await getServerAuthSession({ req, res });
 
-  return await createContextInner({ session });
+	return await createContextInner({ session });
 };
 
 /**
@@ -47,18 +47,18 @@ export const createContext = async (opts: CreateNextContextOptions) => {
  * the request context.
  **/
 const isAuthenticated = middleware(async ({ ctx, next }) => {
-  if (!ctx.session || !ctx.session.user) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
+	if (!ctx.session || !ctx.session.user) {
+		throw new TRPCError({ code: "UNAUTHORIZED" });
+	}
 
-  return next({
-    ctx: {
-      ...ctx,
-      prisma,
-      // infers that `session` is non-nullable to downstream resolvers
-      session: { ...ctx.session, user: ctx.session.user },
-    },
-  });
+	return next({
+		ctx: {
+			...ctx,
+			prisma,
+			// infers that `session` is non-nullable to downstream resolvers
+			session: { ...ctx.session, user: ctx.session.user },
+		},
+	});
 });
 
 export const authenticatedProcedure = publicProcedure.use(isAuthenticated);

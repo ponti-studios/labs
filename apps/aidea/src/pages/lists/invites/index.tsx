@@ -6,60 +6,60 @@ import { useEffect } from "react";
 import DashboardNav from "src/components/DashboardNav";
 import ListInviteItem from "src/components/ListInviteItem";
 import LoadingScene from "src/components/Loading";
-import { ListInviteResponse } from "src/types/next-auth";
+import type { ListInviteResponse } from "src/types/next-auth";
 import { trpc } from "src/utils/trpc";
 
 const ListInvites: NextPage = () => {
-  const router = useRouter();
-  const { status } = useSession();
-  const {
-    data,
-    refetch,
-    status: invitesStatus,
-  } = trpc.lists.invites.useQuery<ListInviteResponse[]>(undefined, {
-    enabled: false,
-  });
+	const router = useRouter();
+	const { status } = useSession();
+	const {
+		data,
+		refetch,
+		status: invitesStatus,
+	} = trpc.lists.invites.useQuery<ListInviteResponse[]>(undefined, {
+		enabled: false,
+	});
 
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/");
-    }
+	useEffect(() => {
+		if (status === "unauthenticated") {
+			router.push("/");
+		}
 
-    if (status === "authenticated") {
-      refetch();
-    }
-  }, [refetch, router, status]);
+		if (status === "authenticated") {
+			refetch();
+		}
+	}, [refetch, router, status]);
 
-  switch (status) {
-    case "loading":
-      return <LoadingScene />;
-    case "unauthenticated":
-      return <div />;
-    default:
-      break;
-  }
+	switch (status) {
+		case "loading":
+			return <LoadingScene />;
+		case "unauthenticated":
+			return <div />;
+		default:
+			break;
+	}
 
-  return (
-    <>
-      <DashboardNav />
-      <h1>List Invites</h1>
-      <div>
-        {invitesStatus === "loading" && <LoadingScene />}
-        {data?.length === 0 && "Invites others have sent you will appear here."}
-        {data && data.length > 0 && (
-          <ul className="space-y-2">
-            {data.map((invite) => (
-              <ListInviteItem
-                key={invite.listId}
-                invite={invite}
-                onAcceptInvite={refetch}
-              />
-            ))}
-          </ul>
-        )}
-      </div>
-    </>
-  );
+	return (
+		<>
+			<DashboardNav />
+			<h1>List Invites</h1>
+			<div>
+				{invitesStatus === "loading" && <LoadingScene />}
+				{data?.length === 0 && "Invites others have sent you will appear here."}
+				{data && data.length > 0 && (
+					<ul className="space-y-2">
+						{data.map((invite) => (
+							<ListInviteItem
+								key={invite.listId}
+								invite={invite}
+								onAcceptInvite={refetch}
+							/>
+						))}
+					</ul>
+				)}
+			</div>
+		</>
+	);
 };
 
 export default ListInvites;

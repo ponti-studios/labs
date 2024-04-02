@@ -1,16 +1,16 @@
-import {
+import { type Place, prisma } from "@hominem/db";
+import type {
   FastifyInstance,
   FastifyPluginAsync,
   FastifyReply,
   FastifyRequest,
 } from "fastify";
-import { Place, prisma } from "@hominem/db";
 
 import { EVENTS, track } from "../../analytics";
 import { verifySession } from "../auth";
 import {
-  FormattedPlace,
-  PhotoMedia,
+  type FormattedPlace,
+  type PhotoMedia,
   getPlaceDetails,
   getPlacePhotos,
 } from "../google/places";
@@ -269,25 +269,30 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
 
           // If the place does not exist in Google, return a 404.
           if (!place) {
-            server.log.error(`GET Place - Could not find place from Google`);
+            server.log.error("GET Place - Could not find place from Google");
             return reply.code(404).send();
           }
         } catch (err) {
           const statusCode =
             (err as { response: { status: number } })?.response?.status || 500;
 
-          server.log.error(`GET Place Google Error`, err);
+          server.log.error("GET Place Google Error", err);
           return reply.code(statusCode).send();
         }
       }
 
+      if (!place.googleMapsId) {
+        server.log.error("GET Place - Place does not have a Google Maps ID");
+        return reply.code(404).send();
+      }
+
       try {
         photos = await getPlacePhotos({
-          googleMapsId: place.googleMapsId!,
+          googleMapsId: place.googleMapsId,
           limit: 5,
         });
       } catch (err) {
-        server.log.error(`Could not fetch photos from Google`);
+        server.log.error("Could not fetch photos from Google");
         return reply.code(500).send();
       }
 

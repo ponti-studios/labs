@@ -1,5 +1,5 @@
-import sendgrid, { MailDataRequired } from "@sendgrid/mail";
-import { FastifyPluginAsync } from "fastify";
+import sendgrid, { type MailDataRequired } from "@sendgrid/mail";
+import type { FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
 
 const {
@@ -43,7 +43,7 @@ const emailPlugin: FastifyPluginAsync = async (server) => {
       // } else {
       try {
         await sendgrid.send(msg);
-        server.log.info(`Email sent`, {
+        server.log.info("Email sent", {
           receiver: email,
           sender: SENDGRID_SENDER_EMAIL,
         });

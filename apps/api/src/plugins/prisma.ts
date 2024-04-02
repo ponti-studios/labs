@@ -1,6 +1,6 @@
-import { FastifyPluginAsync } from "fastify";
-import fp from "fastify-plugin";
 import { prisma } from "@hominem/db";
+import type { FastifyPluginAsync } from "fastify";
+import fp from "fastify-plugin";
 
 const prismaPlugin: FastifyPluginAsync = async (server) => {
   await prisma.$connect();

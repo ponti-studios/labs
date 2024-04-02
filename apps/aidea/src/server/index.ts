@@ -5,10 +5,10 @@ import { listsRouter } from "./routers/lists";
 import { userRouter } from "./routers/user";
 
 export const appRouter = router({
-  auth: userRouter,
-  idea: ideaRouter,
-  lists: listsRouter,
-  bookmarks: bookmarksRouter,
+	auth: userRouter,
+	idea: ideaRouter,
+	lists: listsRouter,
+	bookmarks: bookmarksRouter,
 });
 
 // export type definition of API

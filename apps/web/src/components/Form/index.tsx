@@ -12,10 +12,10 @@ const Wrap = styled(Form)`
 `;
 
 type StyledFormProps = {
-  children: React.ReactNode;
+	children: React.ReactNode;
 };
 const StyledForm = ({ children }: StyledFormProps) => {
-  return <Wrap>{children}</Wrap>;
+	return <Wrap>{children}</Wrap>;
 };
 
 export default StyledForm;

@@ -4,8 +4,8 @@
  */
 
 import { prisma } from "@hominem/db";
-import { FastifyInstance } from "fastify";
-import { isValidImageUrl, getPlacePhotos } from "../../google/places";
+import type { FastifyInstance } from "fastify";
+import { getPlacePhotos, isValidImageUrl } from "../../google/places";
 
 async function addPhotoToPlaces(server: FastifyInstance) {
   let count = 0;

@@ -8,36 +8,36 @@ import BookmarkForm from "./components/BookmarkForm";
 import BookmarkListItem from "./components/BookmarkListItem";
 
 const Recommendations = () => {
-  const navigate = useNavigate();
-  const { user } = useAuth();
-  const { data, refetch, status: bookmarksStatus } = useGetBookmarks();
+	const navigate = useNavigate();
+	const { user } = useAuth();
+	const { data, refetch, status: bookmarksStatus } = useGetBookmarks();
 
-  if (!user) {
-    navigate("/");
-  } else {
-    refetch();
-  }
+	if (!user) {
+		navigate("/");
+	} else {
+		refetch();
+	}
 
-  return (
-    <>
-      <BookmarkForm onCreate={refetch} />
-      <div>
-        {bookmarksStatus === "loading" && <LoadingScene />}
-        {data?.length === 0 && "your bookmarks will appear here"}
-        {data && data.length > 0 && (
-          <ul className="space-y-2">
-            {data.map((bookmark) => (
-              <BookmarkListItem
-                key={bookmark.id}
-                bookmark={bookmark}
-                onDelete={refetch}
-              />
-            ))}
-          </ul>
-        )}
-      </div>
-    </>
-  );
+	return (
+		<>
+			<BookmarkForm onCreate={refetch} />
+			<div>
+				{bookmarksStatus === "loading" && <LoadingScene />}
+				{data?.length === 0 && "your bookmarks will appear here"}
+				{data && data.length > 0 && (
+					<ul className="space-y-2">
+						{data.map((bookmark) => (
+							<BookmarkListItem
+								key={bookmark.id}
+								bookmark={bookmark}
+								onDelete={refetch}
+							/>
+						))}
+					</ul>
+				)}
+			</div>
+		</>
+	);
 };
 
 export default Recommendations;

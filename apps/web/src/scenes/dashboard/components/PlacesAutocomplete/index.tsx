@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { Combobox } from "@headlessui/react";
-import { AxiosError } from "axios";
+import type { AxiosError } from "axios";
 import { Search } from "lucide-react";
 import React, { useCallback, useRef, useState } from "react";
 import { useQuery } from "react-query";
@@ -8,7 +8,7 @@ import FeedbackBlock from "ui/FeedbackBlock";
 import Loading from "ui/Loading";
 
 import api from "src/services/api";
-import { Place, PlaceLocation } from "src/services/types";
+import type { Place, PlaceLocation } from "src/services/types";
 
 const Wrapper = styled.div`
   position: relative;
@@ -72,94 +72,94 @@ const LoadingWrap = styled.div`
 `;
 
 function PlacesAutocomplete({
-  center,
-  setSelected,
+	center,
+	setSelected,
 }: {
-  center: PlaceLocation;
-  setSelected: (place: Place) => void;
+	center: PlaceLocation;
+	setSelected: (place: Place) => void;
 }) {
-  const [value, setValue] = useState<Place["googleMapsId"]>("");
-  const { data, error, isLoading, refetch } = useQuery<Place[], AxiosError>({
-    queryKey: ["placeDetails", center, value],
-    queryFn: async () => {
-      if (value.length < 3 || !center) return Promise.resolve([]);
+	const [value, setValue] = useState<Place["googleMapsId"]>("");
+	const { data, error, isLoading, refetch } = useQuery<Place[], AxiosError>({
+		queryKey: ["placeDetails", center, value],
+		queryFn: async () => {
+			if (value.length < 3 || !center) return Promise.resolve([]);
 
-      const response = await api.get<Place[]>(`/places/search`, {
-        params: {
-          query: value,
-          latitude: center.latitude,
-          longitude: center.longitude,
-          radius: 100,
-        },
-      });
+			const response = await api.get<Place[]>("/places/search", {
+				params: {
+					query: value,
+					latitude: center.latitude,
+					longitude: center.longitude,
+					radius: 100,
+				},
+			});
 
-      return response.data;
-    },
-    enabled: !!value,
-    retry: false,
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-  });
+			return response.data;
+		},
+		enabled: !!value,
+		retry: false,
+		refetchOnWindowFocus: false,
+		refetchOnMount: false,
+	});
 
-  // This debounce prevents excess API requests.
-  const timeoutId = useRef(null);
-  const DEBOUNCE_TIME_MS = 1000;
-  const onInputChange = useCallback(
-    (e) => {
-      setValue(e.target.value);
+	// This debounce prevents excess API requests.
+	const timeoutId = useRef(null);
+	const DEBOUNCE_TIME_MS = 1000;
+	const onInputChange = useCallback(
+		(e) => {
+			setValue(e.target.value);
 
-      clearTimeout(timeoutId.current);
-      timeoutId.current = setTimeout(async () => {
-        refetch();
-      }, DEBOUNCE_TIME_MS);
-    },
-    [refetch, setValue],
-  );
+			clearTimeout(timeoutId.current);
+			timeoutId.current = setTimeout(async () => {
+				refetch();
+			}, DEBOUNCE_TIME_MS);
+		},
+		[refetch],
+	);
 
-  const handleSelect = useCallback(
-    async (googleMapsId: Place["googleMapsId"]) => {
-      setSelected(data.find((p) => p.googleMapsId === googleMapsId));
-    },
-    [data, setSelected],
-  );
+	const handleSelect = useCallback(
+		async (googleMapsId: Place["googleMapsId"]) => {
+			setSelected(data.find((p) => p.googleMapsId === googleMapsId));
+		},
+		[data, setSelected],
+	);
 
-  return (
-    <Wrapper>
-      <Combobox value={value} onChange={handleSelect}>
-        <InputWrap>
-          <Combobox.Input
-            className="input input-bordered w-full"
-            value={value}
-            onChange={onInputChange}
-          />
-          <Search size={24} className="text-primary" />
-        </InputWrap>
-        {(isLoading || data) && (
-          <Options className="bg-white overflow-y-scroll">
-            {isLoading ? (
-              <LoadingWrap>
-                <Loading />
-              </LoadingWrap>
-            ) : (
-              data.map((suggestion) => (
-                <Option
-                  key={suggestion.googleMapsId}
-                  value={suggestion.googleMapsId}
-                  className="truncate text-primary"
-                >
-                  <span className="font-medium">{suggestion.name}</span>,{" "}
-                  <span className="text-slate-400 font-light">
-                    {suggestion.address}
-                  </span>
-                </Option>
-              ))
-            )}
-          </Options>
-        )}
-      </Combobox>
-      {error && <FeedbackBlock type="error">{error.message}</FeedbackBlock>}
-    </Wrapper>
-  );
+	return (
+		<Wrapper>
+			<Combobox value={value} onChange={handleSelect}>
+				<InputWrap>
+					<Combobox.Input
+						className="input input-bordered w-full"
+						value={value}
+						onChange={onInputChange}
+					/>
+					<Search size={24} className="text-primary" />
+				</InputWrap>
+				{(isLoading || data) && (
+					<Options className="bg-white overflow-y-scroll">
+						{isLoading ? (
+							<LoadingWrap>
+								<Loading />
+							</LoadingWrap>
+						) : (
+							data.map((suggestion) => (
+								<Option
+									key={suggestion.googleMapsId}
+									value={suggestion.googleMapsId}
+									className="truncate text-primary"
+								>
+									<span className="font-medium">{suggestion.name}</span>,{" "}
+									<span className="text-slate-400 font-light">
+										{suggestion.address}
+									</span>
+								</Option>
+							))
+						)}
+					</Options>
+				)}
+			</Combobox>
+			{error && <FeedbackBlock type="error">{error.message}</FeedbackBlock>}
+		</Wrapper>
+	);
 }
 
 export default PlacesAutocomplete;

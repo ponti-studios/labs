@@ -1,3 +1,3 @@
 module.exports = {
-  extends: ["ponti/react"],
+	extends: ["ponti/react"],
 };

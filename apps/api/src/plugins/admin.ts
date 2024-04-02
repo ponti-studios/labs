@@ -1,5 +1,5 @@
 import { prisma } from "@hominem/db";
-import { FastifyInstance, FastifyPluginAsync } from "fastify";
+import type { FastifyInstance, FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
 import { verifyIsAdmin } from "./auth";
 

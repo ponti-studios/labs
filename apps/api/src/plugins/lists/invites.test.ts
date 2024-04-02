@@ -1,5 +1,5 @@
 import { prisma } from "@hominem/db";
-import { FastifyInstance } from "fastify";
+import type { FastifyInstance } from "fastify";
 
 import { createServer } from "@app/server";
 import { mockAuthSession } from "@test/utils";
@@ -38,7 +38,7 @@ describe("GET /lists/:id/invites", () => {
     );
     const response = await server.inject({
       method: "GET",
-      url: `/lists/123/invites`,
+      url: "/lists/123/invites",
     });
     expect(response.statusCode).toBe(200);
     expect(response.json()).toEqual(mockResponse);

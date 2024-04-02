@@ -1,11 +1,11 @@
-import { FastifyPluginAsync } from "fastify";
+import type { FastifyPluginAsync } from "fastify";
 import fastifyPlugin from "fastify-plugin";
 
 // Routes
 import deleteListRoute from "./delete";
-import getListsRoute from "./lists";
-import { getListRoute, deleteListItemRoute } from "./list";
 import getListInvitesRoute from "./invites";
+import { deleteListItemRoute, getListRoute } from "./list";
+import getListsRoute from "./lists";
 import postListRoute from "./post";
 import acceptListInviteRoute from "./post/acceptInvite";
 import putListRoute from "./put";

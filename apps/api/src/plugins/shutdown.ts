@@ -1,4 +1,4 @@
-import { FastifyPluginAsync } from "fastify";
+import type { FastifyPluginAsync } from "fastify";
 
 const shutdownPlugin: FastifyPluginAsync = async (server) => {
   process.on("SIGINT", () => server.close());

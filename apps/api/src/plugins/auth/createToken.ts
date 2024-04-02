@@ -1,6 +1,6 @@
 import { TokenType, prisma } from "@hominem/db";
 import { add } from "date-fns";
-import { FastifyInstance } from "fastify";
+import type { FastifyInstance } from "fastify";
 import { APP_USER_ID, EVENTS, track } from "../../analytics";
 
 const EMAIL_TOKEN_EXPIRATION_MINUTES = 10;
@@ -26,7 +26,9 @@ async function createToken({
     minutes: EMAIL_TOKEN_EXPIRATION_MINUTES,
   });
 
-  let tokenCreateParams;
+  let tokenCreateParams:
+    | { connect: { email: string } }
+    | { create: { email: string } };
   const user = await prisma.user.findUnique({
     where: { email },
   });

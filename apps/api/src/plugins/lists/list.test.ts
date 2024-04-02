@@ -1,5 +1,5 @@
 import { prisma } from "@hominem/db";
-import { FastifyInstance } from "fastify";
+import type { FastifyInstance } from "fastify";
 
 import { createServer } from "@app/server";
 import { mockAuthSession } from "@test/utils";
@@ -47,7 +47,7 @@ describe("GET /lists/:id", () => {
     (prisma.userLists.findMany as jest.Mock).mockResolvedValueOnce([userList]);
     const response = await server.inject({
       method: "GET",
-      url: `/lists`,
+      url: "/lists",
     });
     expect(response.statusCode).toBe(200);
     expect(response.json()).toEqual([list, userList.list]);

@@ -1,5 +1,5 @@
 import ogs from "open-graph-scraper";
-import { OgObject } from "open-graph-scraper/dist/lib/types";
+import type { OgObject } from "open-graph-scraper/dist/lib/types";
 
 interface GetOpenGraphDataParams {
   url: string;
@@ -83,7 +83,7 @@ export async function getOpenGraphData({
     throw Error("Could not load data");
   }
 
-  let ogImage = result.ogImage;
+  const ogImage = result.ogImage;
   let imageUrl: string | undefined;
   if (typeof ogImage === "object") {
     imageUrl = Array.isArray(ogImage) ? ogImage[0]?.url : "";

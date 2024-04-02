@@ -1,6 +1,6 @@
-import fp from "fastify-plugin";
-import { FastifyPluginAsync } from "fastify";
 import * as Sentry from "@sentry/node";
+import type { FastifyPluginAsync } from "fastify";
+import fp from "fastify-plugin";
 
 const { SENTRY_DSN, SENTRY_DEBUG, NODE_ENV } = process.env as Record<
   string,

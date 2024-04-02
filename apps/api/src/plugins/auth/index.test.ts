@@ -1,6 +1,6 @@
-import { User, prisma } from "@hominem/db";
-import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify";
 import { createServer } from "@app/server";
+import { type User, prisma } from "@hominem/db";
+import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 
 import { verifySession } from "./index";
 

@@ -1,5 +1,5 @@
-import { FastifyInstance } from "fastify";
 import { prisma } from "@hominem/db";
+import type { FastifyInstance } from "fastify";
 
 import { verifySession } from "../../auth";
 

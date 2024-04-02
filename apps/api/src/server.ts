@@ -2,23 +2,26 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import cors from "@fastify/cors";
-import fastify, { FastifyInstance, FastifyServerOptions } from "fastify";
+import fastify, {
+  type FastifyInstance,
+  type FastifyServerOptions,
+} from "fastify";
 
-import authPlugin from "./plugins/auth";
-import shutdownPlugin from "./plugins/shutdown";
-import prismaPlugin from "./plugins/prisma";
-import emailPlugin from "./plugins/email";
-import statusPlugin from "./plugins/status";
-import rateLimitPlugin from "./plugins/rate-limit";
-import circuitBreaker from "./plugins/circuit-breaker";
-import sessionPlugin from "./plugins/session";
-import usersPlugin from "./plugins/user";
 import adminPlugin from "./plugins/admin";
+import authPlugin from "./plugins/auth";
 import bookmarksPlugin from "./plugins/bookmarks";
+import circuitBreaker from "./plugins/circuit-breaker";
+import emailPlugin from "./plugins/email";
 import ideasPlugin from "./plugins/ideas";
-import listsPlugin from "./plugins/lists";
 import invites from "./plugins/invites";
+import listsPlugin from "./plugins/lists";
 import PlacesPlugin from "./plugins/places";
+import prismaPlugin from "./plugins/prisma";
+import rateLimitPlugin from "./plugins/rate-limit";
+import sessionPlugin from "./plugins/session";
+import shutdownPlugin from "./plugins/shutdown";
+import statusPlugin from "./plugins/status";
+import usersPlugin from "./plugins/user";
 
 const { APP_URL, JWT_SECRET, PORT } = process.env;
 

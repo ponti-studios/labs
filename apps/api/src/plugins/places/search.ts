@@ -1,4 +1,4 @@
-import { FastifyReply, FastifyRequest } from "fastify";
+import type { FastifyReply, FastifyRequest } from "fastify";
 import { searchPlaces } from "../google/places";
 
 export async function GET(request: FastifyRequest, reply: FastifyReply) {

@@ -1,5 +1,9 @@
 import { prisma } from "@hominem/db";
-import { FastifyInstance, FastifyPluginAsync, FastifyRequest } from "fastify";
+import type {
+  FastifyInstance,
+  FastifyPluginAsync,
+  FastifyRequest,
+} from "fastify";
 
 const ideaSchema = {
   type: "object",

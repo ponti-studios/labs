@@ -1,7 +1,6 @@
-/* eslint-disable */
-import { Session } from "@fastify/secure-session";
-import { MailService } from "@sendgrid/mail";
 import * as FastifyJwt from "@fastify/jwt";
+import type { Session } from "@fastify/secure-session";
+import type { MailService } from "@sendgrid/mail";
 
 interface SessionToken {
   userId: string;
@@ -19,7 +18,7 @@ declare module "fastify" {
       text: string,
       html: string,
     ) => Promise<void>;
-    sendEmailToken: Function;
+    sendEmailToken: (email: string, emailToken: string) => void;
     jwt: {
       sign: (payload: SessionToken) => Promise<Token>;
       verify: (token: string) => Promise<SessionToken>;

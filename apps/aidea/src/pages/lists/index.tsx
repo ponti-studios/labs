@@ -1,4 +1,4 @@
-import type { Item, List, User } from "@hominem/db";
+import type { Item, List, User, UserLists } from "@hominem/db";
 import type { NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -12,62 +12,63 @@ import LoadingScene from "src/components/Loading";
 import { trpc } from "src/utils/trpc";
 
 const Lists: NextPage = () => {
-  const router = useRouter();
-  const { data: session, status } = useSession();
-  const {
-    data,
-    refetch,
-    status: listsStatus,
-  } = trpc.lists.get.useQuery<(Item & { list: List; user: User })[]>(
-    undefined,
-    { enabled: false },
-  );
+	const router = useRouter();
+	const { data: session, status } = useSession();
+	const {
+		data,
+		refetch,
+		isLoading,
+		status: listsStatus,
+	} = trpc.lists.get.useQuery<(UserLists & { list: List; user: User })[]>(
+		undefined,
+		{ enabled: false },
+	);
 
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/");
-    }
+	useEffect(() => {
+		if (status === "unauthenticated") {
+			router.push("/");
+		}
 
-    if (status === "authenticated") {
-      refetch();
-    }
-  }, [refetch, router, status]);
+		if (status === "authenticated") {
+			refetch();
+		}
+	}, [refetch, router, status]);
 
-  switch (status) {
-    case "loading":
-      return <LoadingScene />;
-    case "unauthenticated":
-      return <div />;
-    default:
-      break;
-  }
+	switch (status) {
+		case "loading":
+			return <LoadingScene />;
+		case "unauthenticated":
+			return <div />;
+		default:
+			break;
+	}
 
-  return (
-    <>
-      <DashboardNav />
-      <h1>Lists</h1>
-      <ListForm onCreate={refetch} />
-      <div>
-        {listsStatus === "loading" && <LoadingScene />}
-        {data?.length === 0 && "Your lists will appear here."}
-        {data && data.length > 0 && (
-          <ul className="space-y-2">
-            {data.map(({ user, ...list }) => (
-              <li key={list.listId} className="card shadow-md p-4 text-lg">
-                <Link href={`/list/${list.listId}`}>{list.list.name}</Link>
-                {/*
+	return (
+		<>
+			<DashboardNav />
+			<h1>Lists</h1>
+			<ListForm onCreate={refetch} />
+			<div>
+				{isLoading && <LoadingScene />}
+				{data?.length === 0 && "Your lists will appear here."}
+				{data && data.length > 0 && (
+					<ul className="space-y-2">
+						{data.map(({ user, ...list }) => (
+							<li key={list.listId} className="card shadow-md p-4 text-lg">
+								<Link href={`/list/${list.listId}`}>{list.list.name}</Link>
+								{/*
                   Only display list owner if the list does not belong to current user
                 */}
-                {user.email !== session.user?.email && (
-                  <p className="text-xs text-gray-400">{user.email}</p>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </>
-  );
+								{user.email !== session.user?.email && (
+									<p className="text-xs text-gray-400">{user.email}</p>
+								)}
+							</li>
+						))}
+					</ul>
+				)}
+			</div>
+		</>
+	);
 };
 
 export default Lists;
