@@ -1,15 +1,13 @@
 import { google } from "googleapis";
 
-const { GOOGLE_SERVICE_ACCOUNT, NODE_ENV } = process.env;
+const { GOOGLE_SERVICE_ACCOUNT } = process.env;
 
-const serviceAccount = NODE_ENV === "test" ? GOOGLE_SERVICE_ACCOUNT : null;
-
-if (!serviceAccount) {
+if (!GOOGLE_SERVICE_ACCOUNT) {
   throw new Error("GOOGLE_SERVICE_ACCOUNT is required");
 }
 
 const credential = JSON.parse(
-  Buffer.from(serviceAccount, "base64").toString(),
+  Buffer.from(GOOGLE_SERVICE_ACCOUNT, "base64").toString(),
 ) as {
   client_email: string;
   private_key: string;
