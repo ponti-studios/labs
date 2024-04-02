@@ -1,4 +1,4 @@
-import { List, LogOut, Mail, Menu, Search, Settings } from "lucide-react";
+import { List, LogOut, Mail, Search, Settings, UserCircle } from "lucide-react";
 import { useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -26,7 +26,8 @@ const AuthNavMenu = () => {
 	}, [dispatch, navigate]);
 
 	return (
-		<div className="hidden md:visible md:flex-1 md:flex justify-center gap-6">
+		<>
+		<div className="hidden md:visible md:flex gap-6 mr-4">
 			<NavLink to={DASHBOARD} className="px-4 py-2 rounded-xl">
 				<Search />
 			</NavLink>
@@ -36,10 +37,11 @@ const AuthNavMenu = () => {
 			<NavLink to={INVITES} className="px-4 py-2 rounded-xl">
 				<Mail />
 			</NavLink>
-
+			</div>
+			<div>
 			<details data-testid="dropdown" className="dropdown dropdown-end">
-				<summary data-testid="dropdown-button" role="button" className="btn">
-					<Menu />
+				<summary data-testid="dropdown-button" role="button" className="btn bg-transparent border-none">
+					<UserCircle />
 				</summary>
 				<ul className="p-1 pb-3 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52 mt-1">
 					<li>
@@ -74,6 +76,7 @@ const AuthNavMenu = () => {
 				</ul>
 			</details>
 		</div>
+		</>
 	);
 };
 
