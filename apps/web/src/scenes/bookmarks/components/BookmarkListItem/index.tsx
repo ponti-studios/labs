@@ -1,6 +1,6 @@
+import Button from "@hominem/components/Button";
 import { TrashIcon } from "lucide-react";
 import React, { useCallback, type MouseEvent } from "react";
-import Button from "ui/Button";
 
 import { useDeleteBookmark } from "src/services/api/bookmarks";
 import type { Recommendation } from "src/services/types";

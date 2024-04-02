@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
+import Loading from "@hominem/components/Loading";
 import type { MapMouseEvent } from "@vis.gl/react-google-maps/dist/components/map/use-map-events";
 import React, { useCallback, useEffect, useState } from "react";
-import Loading from "ui/Loading";
 
 import { mediaQueries } from "src/constants/styles";
 import { useAppSelector } from "src/services/hooks";

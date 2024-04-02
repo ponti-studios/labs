@@ -1,11 +1,11 @@
+import FeedbackBlock from "@hominem/components/FeedbackBlock";
+import Input from "@hominem/components/Input";
 import type { AxiosError } from "axios";
 import { type SyntheticEvent, useCallback, useState } from "react";
 import { useMutation } from "react-query";
-import FeedbackBlock from "ui/FeedbackBlock";
-import Input from "ui/Input";
 
+import Button from "@hominem/components/Button";
 import { URLS, api } from "src/services/api/base";
-import Button from "ui/Button";
 
 const MIN_LENGTH = 3;
 

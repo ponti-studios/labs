@@ -2,9 +2,9 @@ import { Link2 } from "lucide-react";
 import { useCallback } from "react";
 import { Link } from "react-router-dom";
 
+import Button from "@hominem/components/Button";
 import { useAcceptInviteMutation } from "src/services/api";
 import type { ListInvite } from "src/services/types";
-import Button from "ui/Button";
 
 type InviteListItemProps = {
 	listInvite: ListInvite;

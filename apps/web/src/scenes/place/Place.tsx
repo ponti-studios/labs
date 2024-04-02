@@ -1,8 +1,8 @@
+import Button from "@hominem/components/Button";
+import FeedbackBlock from "@hominem/components/FeedbackBlock";
+import { LoadingScene } from "@hominem/components/Loading";
 import { useCallback, useState } from "react";
 import { useParams } from "react-router-dom";
-import Button from "ui/Button";
-import FeedbackBlock from "ui/FeedbackBlock";
-import { LoadingScene } from "ui/Loading";
 
 import AddPlaceToList from "src/components/places/AddPlaceToList";
 import PlaceAddress from "src/components/places/PlaceAddress";

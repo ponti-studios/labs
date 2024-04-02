@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useCallback, useEffect } from "react";
-import FeedbackBlock from "ui/FeedbackBlock";
+import FeedbackBlock from "@hominem/components/FeedbackBlock";
 
 import LinkButton from "src/components/LinkButton";
 import ListInviteForm from "src/components/ListInviteForm";

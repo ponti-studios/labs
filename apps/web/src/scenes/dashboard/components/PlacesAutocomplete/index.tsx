@@ -1,11 +1,11 @@
 import styled from "@emotion/styled";
 import { Combobox } from "@headlessui/react";
+import FeedbackBlock from "@hominem/components/FeedbackBlock";
+import Loading from "@hominem/components/Loading";
 import type { AxiosError } from "axios";
 import { Search } from "lucide-react";
 import React, { useCallback, useRef, useState } from "react";
 import { useQuery } from "react-query";
-import FeedbackBlock from "ui/FeedbackBlock";
-import Loading from "ui/Loading";
 
 import api from "src/services/api";
 import type { Place, PlaceLocation } from "src/services/types";

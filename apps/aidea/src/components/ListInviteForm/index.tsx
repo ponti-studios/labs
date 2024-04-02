@@ -1,7 +1,7 @@
 import type { ListInvite } from "@hominem/db";
 import classNames from "classnames";
 import { type SyntheticEvent, useCallback } from "react";
-import FeedbackBlock from "ui/FeedbackBlock";
+import FeedbackBlock from "@hominem/components/FeedbackBlock";
 
 import useListInviteForm from "./useListInviteForm";
 

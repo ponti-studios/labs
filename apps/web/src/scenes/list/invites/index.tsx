@@ -1,7 +1,7 @@
+import FeedbackBlock from "@hominem/components/FeedbackBlock";
+import LoadingScene from "@hominem/components/Loading";
 import { useCallback } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import FeedbackBlock from "ui/FeedbackBlock";
-import LoadingScene from "ui/Loading";
 
 import { useGetList, useGetListInvites } from "src/services/api";
 import { useAuth } from "src/services/store";

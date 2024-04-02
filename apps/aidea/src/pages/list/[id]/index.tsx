@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import FeedbackBlock from "ui/FeedbackBlock";
+import FeedbackBlock from "@hominem/components/FeedbackBlock";
 
 import DashboardNav from "src/components/DashboardNav";
 import LoadingScene from "src/components/Loading";

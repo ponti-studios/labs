@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
 
+import Button from "@hominem/components/Button";
 import { useAcceptInviteMutation } from "src/services/api";
 import type { ListInvite } from "src/services/types";
-import Button from "ui/Button";
 
 type ListInviteItemProps = {
 	invite: ListInvite;

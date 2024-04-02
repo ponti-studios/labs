@@ -2,7 +2,7 @@ import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useCallback, useEffect } from "react";
-import FeedbackBlock from "ui/FeedbackBlock";
+import FeedbackBlock from "@hominem/components/FeedbackBlock";
 
 import LoadingScene from "src/components/Loading";
 import { trpc } from "src/utils/trpc";

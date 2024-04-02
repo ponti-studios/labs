@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { type SyntheticEvent, useCallback } from "react";
-import FeedbackBlock from "ui/FeedbackBlock";
+import FeedbackBlock from "@hominem/components/FeedbackBlock";
 
 import useBookmarksForm from "./useBookmarkForm";
 

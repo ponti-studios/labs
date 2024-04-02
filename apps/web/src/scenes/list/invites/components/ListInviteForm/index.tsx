@@ -1,14 +1,14 @@
 import styled from "@emotion/styled";
+import Button from "@hominem/components/Button";
+import Input from "@hominem/components/Input";
 import { validateYupSchema } from "formik";
 import { type SyntheticEvent, useCallback, useState } from "react";
-import Button from "ui/Button";
-import Input from "ui/Input";
 import * as Yup from "yup";
 
+import FeedbackBlock from "@hominem/components/FeedbackBlock";
 import { useCreateListInvite } from "src/services/api";
 import { useToast } from "src/services/toast/toast.slice";
 import type { ListInvite } from "src/services/types";
-import FeedbackBlock from "ui/FeedbackBlock";
 
 const Form = styled.form`
   display: flex;

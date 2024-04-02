@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { useDeleteIdea } from "src/services/api/ideas";
 import type { Idea } from "src/services/types";
 
-import Button from "ui/Button";
+import Button from "@hominem/components/Button";
 
 type IdeaListItemProps = {
 	idea: Idea;

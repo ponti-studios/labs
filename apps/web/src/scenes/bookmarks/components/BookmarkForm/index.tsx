@@ -1,6 +1,6 @@
+import Button from "@hominem/components/Button";
+import FeedbackBlock from "@hominem/components/FeedbackBlock";
 import { type SyntheticEvent, useCallback, useState } from "react";
-import Button from "ui/Button";
-import FeedbackBlock from "ui/FeedbackBlock";
 
 import { useCreateBookmark } from "src/services/api/bookmarks";
 

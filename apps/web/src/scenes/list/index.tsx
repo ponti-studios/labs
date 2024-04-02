@@ -1,8 +1,8 @@
+import FeedbackBlock from "@hominem/components/FeedbackBlock";
+import LoadingScene from "@hominem/components/Loading";
 import { PlusCircle, Share } from "lucide-react";
 import { useCallback, useState } from "react";
 import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
-import FeedbackBlock from "ui/FeedbackBlock";
-import LoadingScene from "ui/Loading";
 
 import { PLACE } from "src/constants/routes";
 import { useGetList } from "src/services/api";

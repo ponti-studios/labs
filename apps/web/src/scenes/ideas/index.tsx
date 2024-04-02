@@ -1,5 +1,5 @@
+import LoadingScene from "@hominem/components/Loading";
 import { useNavigate } from "react-router-dom";
-import LoadingScene from "ui/Loading";
 
 import { useGetIdeas } from "src/services/api/ideas";
 import { useAuth } from "src/services/store";

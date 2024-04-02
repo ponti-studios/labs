@@ -1,6 +1,6 @@
+import Loading from "@hominem/components/Loading";
 import { useEffect, useRef } from "react";
 import { Route, Routes } from "react-router-dom";
-import Loading from "ui/Loading";
 
 import * as ROUTES from "src/constants/routes";
 import Home from "src/scenes/Home";

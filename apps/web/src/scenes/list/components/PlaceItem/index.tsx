@@ -1,3 +1,4 @@
+import Button from "@hominem/components/Button";
 import { X } from "lucide-react";
 import { type KeyboardEvent, type MouseEvent, useState } from "react";
 import { useMutation } from "react-query";
@@ -7,7 +8,6 @@ import PlaceTypes from "src/components/places/PlaceTypes";
 import { PLACE } from "src/constants/routes";
 import api from "src/services/api";
 import type { ListPlace } from "src/services/types";
-import Button from "ui/Button";
 
 const ListItem = ({
 	listId,

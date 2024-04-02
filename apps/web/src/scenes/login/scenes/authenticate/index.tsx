@@ -1,9 +1,9 @@
+import Button from "@hominem/components/Button";
+import FeedbackBlock from "@hominem/components/FeedbackBlock";
 import { Field, Formik } from "formik";
 import React, { useEffect, useMemo } from "react";
 import { useMutation } from "react-query";
 import { Link, useNavigate } from "react-router-dom";
-import Button from "ui/Button";
-import FeedbackBlock from "ui/FeedbackBlock";
 import * as Yup from "yup";
 
 import AuthWrap from "src/components/AuthenticationWrap";
