@@ -1,5 +1,5 @@
 import Loading from "@hominem/components/Loading";
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Route, Routes } from "react-router-dom";
 
 import * as ROUTES from "src/constants/routes";
@@ -14,6 +14,8 @@ import { getIsAuthenticated, getIsLoadingAuth } from "src/services/store";
 import AuthenticatedScenes from "./components/Authenticated";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
+
+const Spotlight = React.lazy(() => import("../../spotlight"));
 
 function App() {
 	const authRef = useRef<boolean>(false);
@@ -39,6 +41,7 @@ function App() {
 	return (
 		<div className="h-full w-full flex flex-col items-center">
 			<div className="h-full w-full flex flex-col lg:max-w-[800px] sm:px-2 md:px-0">
+				{process.env.NODE_ENV === "development" && <Spotlight />}
 				<Header />
 				<main
 					className="flex flex-1 mt-8 w-full max-sm:pb-16"

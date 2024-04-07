@@ -5,15 +5,9 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { Provider } from "react-redux";
 import { BrowserRouter as Router } from "react-router-dom";
 
-import * as Spotlight from "@spotlightjs/spotlight";
 import App from "./components/App";
 import "./index.css";
 import { store } from "./services/store";
-
-// only load Spotlight in dev
-if (process.env.NODE_ENV === "development") {
-	Spotlight.init();
-}
 
 const queryClient = new QueryClient();
 
