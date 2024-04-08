@@ -11,15 +11,23 @@ const Wrapper = ({ children }: PropsWithChildren) => {
 	);
 };
 
+const NotFoundHeader = ({ children }: PropsWithChildren) => {
+	return <h1 className="text-2xl font-semibold">{children}</h1>;
+};
+
+const NotFoundDescription = ({ children }: PropsWithChildren) => {
+	return <p className="text-md">{children}</p>;
+};
+
 function NotFound() {
 	if (useMatch("/invites/:id")) {
 		return (
 			<Wrapper>
 				<SearchX size={100} className="text-slate-700" />
-				<h2 className="text-2xl font-semibold">
-					This invite could not be found.
-				</h2>
-				<p className="text-md">Sign up to start making lists with friends!</p>
+				<NotFoundHeader>This invite could not be found.</NotFoundHeader>
+				<NotFoundDescription>
+					Sign up to start making lists with friends!
+				</NotFoundDescription>
 				<LinkButton href="/signup">Go to list</LinkButton>
 			</Wrapper>
 		);
@@ -29,16 +37,16 @@ function NotFound() {
 		return (
 			<Wrapper>
 				<List size={100} className="text-slate-700" />
-				<h2 className="text-2xl font-semibold">
+				<NotFoundHeader>
 					Sign up to start making lists with friends!
-				</h2>
-				<p className="text-md">
+				</NotFoundHeader>
+				<NotFoundDescription>
 					If someone invited you to a list,{" "}
 					<Link to="/login" className="text-blue-400 font-semibold">
 						log in
 					</Link>{" "}
 					to view your new list.
-				</p>
+				</NotFoundDescription>
 				<LinkButton href="/signup">Go to list</LinkButton>
 			</Wrapper>
 		);
@@ -49,17 +57,15 @@ function NotFound() {
 			<Wrapper>
 				<FileX2 size={100} className="text-slate-700" />
 
-				<h2 className="text-2xl font-semibold">
-					This list could not be found.
-				</h2>
+				<NotFoundHeader>This list could not be found.</NotFoundHeader>
 
-				<p className="text-md">
+				<NotFoundDescription>
 					If you think this is a mistake,{" "}
 					<Link to="/login" className="text-blue-400 font-semibold">
 						log in
 					</Link>{" "}
 					to view your lists.
-				</p>
+				</NotFoundDescription>
 
 				<LinkButton href="/signup">Go to list</LinkButton>
 			</Wrapper>
@@ -69,10 +75,9 @@ function NotFound() {
 	return (
 		<Wrapper>
 			<SearchX size={100} className="text-slate-700" />
-			<h1 className="text-3xl font-semibold mb-16">
+			<NotFoundHeader>
 				We can't find the page you're looking for.
-			</h1>
-			<p>Log in to find your lists.</p>
+			</NotFoundHeader>
 			<LinkButton href="/login" className="font-semibold">
 				Log in
 			</LinkButton>
