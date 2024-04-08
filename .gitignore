@@ -15,6 +15,7 @@ apps/web/cypress/videos/**
 .stylelintcache
 build
 tsconfig.tsbuildinfo
+build-analysis.txt
 
 # misc
 .DS_Store

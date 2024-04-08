@@ -1,3 +1,4 @@
+import { writeFile, writeFileSync } from "node:fs";
 import * as path from "node:path";
 import react from "@vitejs/plugin-react";
 import analyze from "rollup-plugin-analyzer";
@@ -23,6 +24,11 @@ export default defineConfig({
 			plugins: [
 				analyze({
 					summaryOnly: true,
+					writeTo(analysisString) {
+						if (process.env.ANALYZE === "true") {
+							writeFileSync("build-analysis.txt", analysisString);
+						}
+					},
 				}),
 			],
 		},
