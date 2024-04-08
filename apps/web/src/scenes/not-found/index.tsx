@@ -1,6 +1,7 @@
-import { FileX2, SearchX } from "lucide-react";
+import LinkButton from "@hominem/components/LinkButton";
+import { FileX2, List, SearchX } from "lucide-react";
 import type { PropsWithChildren } from "react";
-import { Link, useLocation, useMatch } from "react-router-dom";
+import { Link, useMatch } from "react-router-dom";
 
 const Wrapper = ({ children }: PropsWithChildren) => {
 	return (
@@ -11,15 +12,25 @@ const Wrapper = ({ children }: PropsWithChildren) => {
 };
 
 function NotFound() {
-	const isListRoute = useMatch("/list/:id");
-	const pathname = useLocation().pathname;
-
-	if (pathname.indexOf("invites") !== -1) {
+	if (useMatch("/invites/:id")) {
 		return (
 			<Wrapper>
-				<FileX2 size={100} className="text-slate-700" />
+				<SearchX size={100} className="text-slate-700" />
 				<h2 className="text-2xl font-semibold">
 					This invite could not be found.
+				</h2>
+				<p className="text-md">Sign up to start making lists with friends!</p>
+				<LinkButton href="/signup">Go to list</LinkButton>
+			</Wrapper>
+		);
+	}
+
+	if (useMatch("/invites")) {
+		return (
+			<Wrapper>
+				<List size={100} className="text-slate-700" />
+				<h2 className="text-2xl font-semibold">
+					Sign up to start making lists with friends!
 				</h2>
 				<p className="text-md">
 					If someone invited you to a list,{" "}
@@ -28,11 +39,12 @@ function NotFound() {
 					</Link>{" "}
 					to view your new list.
 				</p>
+				<LinkButton href="/signup">Go to list</LinkButton>
 			</Wrapper>
 		);
 	}
 
-	if (isListRoute) {
+	if (useMatch("/list/:id")) {
 		return (
 			<Wrapper>
 				<FileX2 size={100} className="text-slate-700" />
@@ -48,6 +60,8 @@ function NotFound() {
 					</Link>{" "}
 					to view your lists.
 				</p>
+
+				<LinkButton href="/signup">Go to list</LinkButton>
 			</Wrapper>
 		);
 	}
@@ -55,13 +69,13 @@ function NotFound() {
 	return (
 		<Wrapper>
 			<SearchX size={100} className="text-slate-700" />
-			<h1 className="text-3xl font-semibold mb-16">You seem to be lost!</h1>
-			<Link
-				to="/"
-				className="font-semibold btn btn-primary max-w-[150px] text-white"
-			>
-				Go home
-			</Link>
+			<h1 className="text-3xl font-semibold mb-16">
+				We can't find the page you're looking for.
+			</h1>
+			<p>Log in to find your lists.</p>
+			<LinkButton href="/login" className="font-semibold">
+				Log in
+			</LinkButton>
 		</Wrapper>
 	);
 }
