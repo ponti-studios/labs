@@ -12,7 +12,7 @@ const Wrapper = ({ children }: PropsWithChildren) => {
 };
 
 const NotFoundHeader = ({ children }: PropsWithChildren) => {
-	return <h1 className="text-2xl font-semibold">{children}</h1>;
+	return <h1 className="text-2xl font-semibold text-center">{children}</h1>;
 };
 
 const NotFoundDescription = ({ children }: PropsWithChildren) => {
@@ -76,7 +76,7 @@ function NotFound() {
 		<Wrapper>
 			<SearchX size={100} className="text-slate-700" />
 			<NotFoundHeader>
-				We can't find the page you're looking for.
+				What are you looking for? We can't find it.
 			</NotFoundHeader>
 			<LinkButton href="/login" className="font-semibold">
 				Log in
