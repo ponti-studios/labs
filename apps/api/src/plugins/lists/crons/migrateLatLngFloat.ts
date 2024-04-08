@@ -7,40 +7,40 @@ import { prisma } from "@hominem/db";
 import type { FastifyInstance } from "fastify";
 
 async function migrateLatLngFloat(server: FastifyInstance) {
-  let count = 0;
-  const places = await prisma.place.findMany({
-    where: {
-      lat: { not: null },
-      lng: { not: null },
-    },
-  });
+	let count = 0;
+	const places = await prisma.place.findMany({
+		where: {
+			lat: { not: null },
+			lng: { not: null },
+		},
+	});
 
-  if (!places.length) {
-    return;
-  }
+	if (!places.length) {
+		return;
+	}
 
-  for (const place of places) {
-    if (place.lat && place.lng) {
-      await prisma.place.update({
-        where: { id: place.id },
-        data: {
-          lat: null,
-          lng: null,
-          latitude: Number.parseFloat(place.lat),
-          longitude: Number.parseFloat(place.lng),
-        },
-      });
-      count += 1;
-    }
-  }
+	for (const place of places) {
+		if (place.lat && place.lng) {
+			await prisma.place.update({
+				where: { id: place.id },
+				data: {
+					lat: null,
+					lng: null,
+					latitude: Number.parseFloat(place.lat),
+					longitude: Number.parseFloat(place.lng),
+				},
+			});
+			count += 1;
+		}
+	}
 
-  // Send email to admin
-  server.sendEmail(
-    process.env.SENDGRID_SENDER_EMAIL as string,
-    "All places have been updated with photos",
-    "All places have been updated with photos",
-    `<p>${count} places have been updated with valid image URLs</p>`,
-  );
+	// Send email to admin
+	server.sendEmail(
+		process.env.SENDGRID_SENDER_EMAIL as string,
+		"All places have been updated with photos",
+		"All places have been updated with photos",
+		`<p>${count} places have been updated with valid image URLs</p>`,
+	);
 }
 
 export default migrateLatLngFloat;

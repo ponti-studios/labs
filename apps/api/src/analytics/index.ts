@@ -5,43 +5,43 @@ export const APP_USER_ID = process.env.APP_USER_ID || "app_user_id";
 
 // instantiation
 export const analytics = new Analytics({
-  writeKey: process.env.SEGMENT_KEY || "",
+	writeKey: process.env.SEGMENT_KEY || "",
 });
 
 export function identify(userId: string, traits: any) {
-  analytics.identify({
-    userId,
-    traits,
-  });
+	analytics.identify({
+		userId,
+		traits,
+	});
 }
 
 export function track(userId: string, event: string, properties: any) {
-  analytics.track({
-    userId,
-    event,
-    properties,
-  });
+	analytics.track({
+		userId,
+		event,
+		properties,
+	});
 }
 
 export function page(userId: string, name: string, properties: any) {
-  analytics.page({
-    userId,
-    name,
-    properties,
-  });
+	analytics.page({
+		userId,
+		name,
+		properties,
+	});
 }
 
 export function group(userId: string, groupId: string, traits: any) {
-  analytics.group({
-    userId,
-    groupId,
-    traits,
-  });
+	analytics.group({
+		userId,
+		groupId,
+		traits,
+	});
 }
 
 export function alias(userId: string, previousId: string) {
-  analytics.alias({
-    userId,
-    previousId,
-  });
+	analytics.alias({
+		userId,
+		previousId,
+	});
 }

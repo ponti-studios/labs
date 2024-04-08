@@ -5,7 +5,7 @@ import fastifyPlugin from "fastify-plugin";
 import getUserInvitesRoute from "./get";
 
 const invitesPlugin: FastifyPluginAsync = async (server) => {
-  getUserInvitesRoute(server);
+	getUserInvitesRoute(server);
 };
 
 export default fastifyPlugin(invitesPlugin);

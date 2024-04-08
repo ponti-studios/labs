@@ -3,8 +3,8 @@ dotenv.config();
 
 import cors from "@fastify/cors";
 import fastify, {
-  type FastifyInstance,
-  type FastifyServerOptions,
+	type FastifyInstance,
+	type FastifyServerOptions,
 } from "fastify";
 
 import adminPlugin from "./plugins/admin";
@@ -26,66 +26,66 @@ import usersPlugin from "./plugins/user";
 const { APP_URL, JWT_SECRET, PORT } = process.env;
 
 export async function createServer(
-  opts: FastifyServerOptions = {},
+	opts: FastifyServerOptions = {},
 ): Promise<FastifyInstance> {
-  const server = fastify(opts);
+	const server = fastify(opts);
 
-  if (!APP_URL) {
-    server.log.error("Missing APP_URL env var");
-    process.exit(1);
-  }
+	if (!APP_URL) {
+		server.log.error("Missing APP_URL env var");
+		process.exit(1);
+	}
 
-  server.log.info(`App URL: ${APP_URL}`);
-  await server.register(cors, {
-    origin: [APP_URL],
-    credentials: true,
-  });
-  server.register(shutdownPlugin);
-  server.register(sessionPlugin);
-  server.register(require("@fastify/csrf-protection"), {
-    sessionPlugin: "@fastify/secure-session",
-  });
-  server.register(require("@fastify/helmet"));
-  server.register(require("@fastify/jwt"), {
-    secret: JWT_SECRET,
-  });
-  server.register(circuitBreaker);
-  server.register(prismaPlugin);
-  server.register(rateLimitPlugin);
-  server.register(statusPlugin);
-  server.register(emailPlugin);
-  server.register(adminPlugin);
-  server.register(authPlugin);
-  server.register(usersPlugin);
-  server.register(listsPlugin);
-  server.register(PlacesPlugin);
-  server.register(invites);
-  server.register(bookmarksPlugin);
-  server.register(ideasPlugin);
+	server.log.info(`App URL: ${APP_URL}`);
+	await server.register(cors, {
+		origin: [APP_URL],
+		credentials: true,
+	});
+	server.register(shutdownPlugin);
+	server.register(sessionPlugin);
+	server.register(require("@fastify/csrf-protection"), {
+		sessionPlugin: "@fastify/secure-session",
+	});
+	server.register(require("@fastify/helmet"));
+	server.register(require("@fastify/jwt"), {
+		secret: JWT_SECRET,
+	});
+	server.register(circuitBreaker);
+	server.register(prismaPlugin);
+	server.register(rateLimitPlugin);
+	server.register(statusPlugin);
+	server.register(emailPlugin);
+	server.register(adminPlugin);
+	server.register(authPlugin);
+	server.register(usersPlugin);
+	server.register(listsPlugin);
+	server.register(PlacesPlugin);
+	server.register(invites);
+	server.register(bookmarksPlugin);
+	server.register(ideasPlugin);
 
-  server.setErrorHandler((error, request, reply) => {
-    console.error(error);
-    reply.status(500).send({ error: "Internal server error" });
-  });
+	server.setErrorHandler((error, request, reply) => {
+		console.error(error);
+		reply.status(500).send({ error: "Internal server error" });
+	});
 
-  return server;
+	return server;
 }
 
 export async function startServer() {
-  const server = await createServer({
-    logger: true,
-    disableRequestLogging: process.env.ENABLE_REQUEST_LOGGING !== "true",
-  });
+	const server = await createServer({
+		logger: true,
+		disableRequestLogging: process.env.ENABLE_REQUEST_LOGGING !== "true",
+	});
 
-  if (!PORT) {
-    server.log.error("Missing PORT env var");
-    process.exit(1);
-  }
+	if (!PORT) {
+		server.log.error("Missing PORT env var");
+		process.exit(1);
+	}
 
-  try {
-    await server.listen({ port: +PORT, host: "0.0.0.0" });
-  } catch (err) {
-    server.log.error(err);
-    process.exit(1);
-  }
+	try {
+		await server.listen({ port: +PORT, host: "0.0.0.0" });
+	} catch (err) {
+		server.log.error(err);
+		process.exit(1);
+	}
 }
