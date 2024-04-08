@@ -28,13 +28,15 @@ model User {
   places          Place[]
   recommendations Recommendation[]
   flights         Flight[]
-  lists           UserLists[]
   receivedInvites ListInvite[]     @relation(name: "receivedListInvites")
   sentInvites     ListInvite[]     @relation(name: "sentListInvites")
-  List            List[]
+  tokens          Token[]
+  movieViewings   MovieViewings[]
 
-  // Relation fields
-  tokens Token[]
+  // Lists
+  listItems   Item[]
+  lists       List[]
+  sharedLists UserLists[]
 }
 
 model VerificationToken {
@@ -139,23 +141,25 @@ model Flight {
   list              List?    @relation(fields: [listId], references: [id])
 }
 
-enum ListItemType {
+enum ItemType {
   FLIGHT
   PLACE
 }
 
 model Item {
-  id        String       @id @default(uuid())
-  type      String       @db.Text
-  itemType  ListItemType @default(PLACE)
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  id        String   @id @default(uuid())
+  type      String   @db.Text()
+  itemType  ItemType @default(PLACE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
+  listId String  @db.Text()
   list   List?   @relation(fields: [listId], references: [id])
-  listId String
   itemId String
   place  Place[]
+  User   User?   @relation(fields: [userId], references: [id])
+  userId String?
 
   // Compound ID to ensure that relation is unique.
   @@unique([listId, itemId])
@@ -179,9 +183,9 @@ model List {
   id          String       @id @default(uuid())
   name        String       @db.Text
   description String?      @db.Text
+  createdAt   DateTime     @default(now())
   userId      String       @db.Text()
   createdBy   User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   users       UserLists[]
   items       Item[]
@@ -227,4 +231,27 @@ model Place {
   createdBy User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   itemId    String?
   lists     Item?   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+}
+
+model Movie {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  image       String
+  director    String?
+  userId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  viewings MovieViewings[]
+}
+
+model MovieViewings {
+  id        String   @id @default(uuid())
+  movieId   String
+  movie     Movie    @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
