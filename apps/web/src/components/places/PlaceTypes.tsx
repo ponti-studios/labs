@@ -15,7 +15,7 @@ const PlaceTypes = ({ limit, types }: { limit?: number; types: string[] }) => {
 		types.includes("point_of_interest");
 
 	return (
-		<p className="flex gap-2">
+		<p className="flex justify-start flex-wrap gap-2">
 			{isPointOfInterest ? (
 				<PlaceType>Point of Interest</PlaceType>
 			) : (
