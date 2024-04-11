@@ -1,5 +1,7 @@
 import { prisma } from "@hominem/db";
 import type { FastifyInstance } from "fastify";
+import type { Mock } from "vitest";
+import { vi } from "vitest";
 
 import { createServer } from "@app/server";
 import { mockAuthSession } from "@test/utils";
@@ -12,13 +14,13 @@ describe("GET /invites", () => {
 	});
 
 	afterEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	it("should return users' incoming invites", async () => {
 		mockAuthSession();
-		(prisma.listInvite.findMany as jest.Mock).mockResolvedValueOnce([]);
-		(prisma.user.findUnique as jest.Mock).mockResolvedValueOnce({
+		(prisma.listInvite.findMany as Mock).mockResolvedValueOnce([]);
+		(prisma.user.findUnique as Mock).mockResolvedValueOnce({
 			email: "testUser@email.com",
 		});
 		const response = await server.inject({
@@ -55,7 +57,7 @@ describe("GET /invites", () => {
 
 	it("should return users' outgoing invites", async () => {
 		mockAuthSession();
-		(prisma.listInvite.findMany as jest.Mock).mockResolvedValueOnce([]);
+		(prisma.listInvite.findMany as Mock).mockResolvedValueOnce([]);
 		const response = await server.inject({
 			method: "GET",
 			url: "/invites/outgoing",

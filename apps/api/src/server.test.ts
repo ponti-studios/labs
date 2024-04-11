@@ -13,7 +13,7 @@ describe("server", () => {
 		await server.close();
 	});
 
-	test.only("status endpoint returns 200", async () => {
+	test("status endpoint returns 200", async () => {
 		const response = await server.inject({
 			method: "GET",
 			url: "/status",

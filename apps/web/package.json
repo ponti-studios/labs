@@ -16,7 +16,7 @@
 		"preview:test": "start-server-and-test preview http://localhost:53422",
 		"preview": "vite preview",
 		"start": "npx http-server build --gzip -a 0.0.0.0 -p $PORT -c 1209600",
-		"test": "vitest --run",
+		"test": "NODE_ENV=test vitest --run",
 		"test:coverage": "vitest --run --coverage",
 		"test:coverage:view": "npx vite preview --outDir coverage/lcov-report",
 		"test:e2e": "npm run preview:test 'cypress open'",

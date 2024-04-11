@@ -1,5 +1,7 @@
 import { prisma } from "@hominem/db";
 import type { FastifyInstance } from "fastify";
+import type { Mock } from "vitest";
+import { vi } from "vitest";
 
 import { createServer } from "@app/server";
 import { mockAuthSession } from "@test/utils";
@@ -9,12 +11,12 @@ describe("GET /lists/:id/invites", () => {
 
 	beforeAll(async () => {
 		server = await createServer({ logger: false });
-		jest.spyOn(prisma.list, "findMany").mockResolvedValue([]);
+		vi.spyOn(prisma.list, "findMany").mockResolvedValue([]);
 	});
 
 	afterEach(async () => {
-		jest.resetAllMocks();
-		jest.clearAllMocks();
+		vi.resetAllMocks();
+		vi.clearAllMocks();
 	});
 
 	afterAll(async () => {
@@ -33,9 +35,7 @@ describe("GET /lists/:id/invites", () => {
 			},
 		];
 		mockAuthSession();
-		(prisma.listInvite.findMany as jest.Mock).mockResolvedValueOnce(
-			mockResponse,
-		);
+		(prisma.listInvite.findMany as Mock).mockResolvedValueOnce(mockResponse);
 		const response = await server.inject({
 			method: "GET",
 			url: "/lists/123/invites",
