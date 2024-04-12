@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-  pull_request: {}
+  pull_request:
 
 env:
   APP_URL: ${{ secrets.APP_URL }}
