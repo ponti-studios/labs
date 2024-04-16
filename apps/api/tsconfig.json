@@ -20,10 +20,22 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "@app/*": ["./src/*"],
-      "@test/*": ["./test/*"]
+      "@app/*": [
+        "./src/*"
+      ],
+      "@test/*": [
+        "./test/*"
+      ]
     }
   },
-  "include": ["src/**/*.ts", "test/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "src/**/*.ts",
+    "test/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "ts-node": {
+    "swc": true
+  }
 }

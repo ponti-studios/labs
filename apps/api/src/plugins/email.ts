@@ -1,6 +1,7 @@
-import logger from "@app/logger";
 import sendgrid, { type MailDataRequired } from "@sendgrid/mail";
-import type { FastifyInstance, FastifyPluginAsync } from "fastify";
+import type { FastifyInstance } from "fastify";
+
+import logger from "../logger";
 
 const {
 	SENDGRID_API_KEY,
