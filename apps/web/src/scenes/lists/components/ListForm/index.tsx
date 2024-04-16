@@ -35,7 +35,7 @@ export default function ListForm({ onCreate, onCancel }: ListFormProps) {
 	const onSubmit = useCallback(
 		(e: SyntheticEvent<HTMLFormElement>) => {
 			e.preventDefault();
-			return mutate();
+			mutate();
 		},
 		[mutate],
 	);
@@ -54,6 +54,7 @@ export default function ListForm({ onCreate, onCancel }: ListFormProps) {
 
 			<form onSubmit={onSubmit}>
 				<Input
+					autoFocus
 					name="listName"
 					type="text"
 					label="List name"
