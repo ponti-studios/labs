@@ -1,7 +1,9 @@
 import { TokenType, prisma } from "@hominem/db";
 import { add } from "date-fns";
 import type { FastifyInstance } from "fastify";
-import { APP_USER_ID, EVENTS, track } from "../../analytics";
+
+import { APP_USER_ID, EVENTS, track } from "../../../analytics";
+import { sendEmailToken } from "../../email";
 
 const EMAIL_TOKEN_EXPIRATION_MINUTES = 10;
 
@@ -17,11 +19,9 @@ async function createToken({
 	email: string;
 	server: FastifyInstance;
 }) {
-	// 👇 get prisma and the sendEmailToken from shared application state
-	const { sendEmailToken } = server;
-	// 👇 generate an alphanumeric token
+	// 👇 Generate an alphanumeric token
 	const emailToken = generateEmailToken();
-	// 👇 create a date object for the email token expiration
+	// 👇 Create a date object for the email token expiration
 	const tokenExpiration = add(new Date(), {
 		minutes: EMAIL_TOKEN_EXPIRATION_MINUTES,
 	});
@@ -69,8 +69,13 @@ async function createToken({
 
 	track(APP_USER_ID, EVENTS.USER_EVENTS.REGISTER_SUCCESS, {});
 
-	// 👇 send the email token
-	await sendEmailToken(email, emailToken);
+	try {
+		// 👇 Send the email token
+		await sendEmailToken(email, emailToken);
+	} catch (error) {
+		server.log.error("Error sending email token", error);
+		throw new Error("Error sending email token");
+	}
 }
 
 export { createToken };

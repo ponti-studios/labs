@@ -2,7 +2,7 @@ import { prisma } from "@hominem/db";
 import type { FastifyInstance } from "fastify";
 
 import { EVENTS, track } from "../../../analytics";
-import { verifySession } from "../../auth";
+import { verifySession } from "../../auth/utils";
 
 const postListRoute = (server: FastifyInstance) => {
 	server.post(

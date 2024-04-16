@@ -13,6 +13,10 @@ describe("GET /invites", () => {
 		server = await createServer();
 	});
 
+	afterAll(async () => {
+		await server.close();
+	});
+
 	afterEach(() => {
 		vi.clearAllMocks();
 	});

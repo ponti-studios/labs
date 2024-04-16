@@ -7,7 +7,7 @@ import type {
 } from "fastify";
 
 import { EVENTS, track } from "../../analytics";
-import { verifySession } from "../auth";
+import { verifySession } from "../auth/utils";
 import {
 	type FormattedPlace,
 	type PhotoMedia,

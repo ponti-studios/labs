@@ -3,6 +3,14 @@ import fp from "fastify-plugin";
 
 const { COOKIE_NAME, COOKIE_SECRET, COOKIE_SALT } = process.env;
 
+if (!COOKIE_SECRET) {
+	console.log(
+		"warn",
+		"The COOKIE_SECRET env var is not set. This is unsafe! If running in production, set it.",
+	);
+	throw Error;
+}
+
 const sessionPlugin: FastifyPluginAsync = async (server) => {
 	server.register(require("@fastify/secure-session"), {
 		cookieName: COOKIE_NAME, // the name of the session cookie, defaults to 'session'

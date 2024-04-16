@@ -1,6 +1,6 @@
+import logger from "@app/logger";
 import sendgrid, { type MailDataRequired } from "@sendgrid/mail";
-import type { FastifyPluginAsync } from "fastify";
-import fp from "fastify-plugin";
+import type { FastifyInstance, FastifyPluginAsync } from "fastify";
 
 const {
 	SENDGRID_API_KEY,
@@ -11,7 +11,7 @@ const {
 
 const isDev = NODE_ENV === "development";
 
-const emailPlugin: FastifyPluginAsync = async (server) => {
+export default async function emailPlugin(server: FastifyInstance) {
 	if (!SENDGRID_API_KEY) {
 		console.error(
 			"warn",
@@ -57,35 +57,40 @@ const emailPlugin: FastifyPluginAsync = async (server) => {
 			// }
 		},
 	);
-
-	// Add a server decorator to send emails
-	server.decorate("sendEmailToken", async (email: string, token: string) => {
-		const msg: MailDataRequired = {
-			to: email,
-			from: {
-				email: SENDGRID_SENDER_EMAIL as string,
-				name: SENDGRID_SENDER_NAME,
-			},
-			subject: "Ponti Studios login token",
-			text: `The login token for the API is: ${token}`,
-			html: `The login token for the API is: ${token}`,
-		};
-
-		// Log the email token in development to not expend SendGrid email quota
-		if (isDev) {
-			server.log.info(`email token for ${email}: ${token} `);
-		} else {
-			try {
-				await sendgrid.send(msg);
-				server.log.info(
-					`sending email token to ${email} from ${SENDGRID_SENDER_EMAIL}`,
-				);
-			} catch (err) {
-				server.log.error({ err, email, token }, "Error sending email token");
-				throw new Error("Error sending email");
-			}
-		}
-	});
 };
 
-export default fp(emailPlugin);
+export async function sendEmailToken(email: string, token: string) {
+	const msg: MailDataRequired = {
+		to: email,
+		from: {
+			email: SENDGRID_SENDER_EMAIL as string,
+			name: SENDGRID_SENDER_NAME,
+		},
+		subject: "Your Ponti Studios login token",
+		text: `The login token for the API is: ${token}`,
+		html: `
+			<div style="font-family: sans-serif;">
+				<div style="display: flex; align-items: center; margin-bottom: 16px; padding: 16px 0;">
+					<h1>Ponti Studios</h1>
+				</div>
+				<p>The login token for the API is: ${token}</p>
+			</div>
+		`,
+	};
+
+	// Log the email token in development to not expend SendGrid email quota
+	if (isDev) {
+		logger.info(`Email token for ${email}: ${token} `);
+		return;
+	}
+
+	try {
+		await sendgrid.send(msg);
+		logger.info(
+			`sending email token to ${email} from ${SENDGRID_SENDER_EMAIL}`,
+		);
+	} catch (err) {
+		logger.error({ err, email, token }, "Error sending email token");
+		throw new Error("Error sending email");
+	}
+}

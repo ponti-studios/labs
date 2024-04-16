@@ -3,7 +3,7 @@ import { type User, prisma } from "@hominem/db";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { vi } from "vitest";
 
-import { verifySession } from "./index";
+import { verifySession } from ".";
 
 describe("verifySession", () => {
 	let request: FastifyRequest;

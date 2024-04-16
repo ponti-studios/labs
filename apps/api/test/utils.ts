@@ -2,7 +2,8 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import type { Mock } from "vitest";
 import { vi } from "vitest";
 
-import * as auth from "../src/plugins/auth";
+import * as auth from "@app/plugins/auth/utils";
+
 export function mockAuthSession() {
 	(auth.verifySession as Mock).mockImplementation(async (req) => {
 		req.session.set("data", { userId: "testUserId" });

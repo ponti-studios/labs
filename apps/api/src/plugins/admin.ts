@@ -1,13 +1,17 @@
 import { prisma } from "@hominem/db";
-import type { FastifyInstance, FastifyPluginAsync } from "fastify";
-import fp from "fastify-plugin";
-import { verifyIsAdmin } from "./auth";
+import type { FastifyPluginAsync } from "fastify";
+import { verifyIsAdmin } from "./auth/utils";
 
-const adminPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
+const adminPlugin: FastifyPluginAsync = async (server) => {
 	server.get(
 		"/admin/users",
 		{
 			preValidation: verifyIsAdmin,
+			config: {
+				summary: "Fetch all users",
+				description: "Fetch all users",
+				tags: ["Admin"],
+			}
 		},
 		async (request, reply) => {
 			try {
@@ -21,4 +25,4 @@ const adminPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
 	);
 };
 
-export default fp(adminPlugin);
+export default adminPlugin;

@@ -1,5 +1,5 @@
 import { List, LogOut, Mail, Search, Settings, UserCircle } from "lucide-react";
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import {
@@ -16,6 +16,7 @@ import { useAuth } from "src/services/store";
 import NavLink from "../../NavLink";
 
 const AuthNavMenu = () => {
+	const navMenuRef = useRef(null);
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
 	const { user } = useAuth();
@@ -25,6 +26,17 @@ const AuthNavMenu = () => {
 		});
 	}, [dispatch, navigate]);
 
+	const onLinkClick = useCallback(() => {
+		navMenuRef.current?.click?.();
+	}, []);
+
+	const onLinkKeyDown = useCallback((event) => {
+		if (event.key === "Enter") {
+			event.preventDefault();
+			navMenuRef.current?.click?.();
+		}
+	}, []);
+	
 	return (
 		<>
 			<div className="hidden md:visible md:flex gap-6 mr-4">
@@ -41,13 +53,14 @@ const AuthNavMenu = () => {
 			<div>
 				<details data-testid="dropdown" className="dropdown dropdown-end">
 					<summary
+						ref={navMenuRef}
 						data-testid="dropdown-button"
 						role="button"
 						className="btn bg-transparent border-none"
 					>
 						<UserCircle />
 					</summary>
-					<ul className="p-1 pb-3 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52 mt-1">
+					<ul className="p-1 pb-3 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52 mt-1" onKeyDown={onLinkKeyDown} onClick={onLinkClick}>
 						<li>
 							<span className="flex justify-end text-sm text-secondary hover:outline-none">
 								{user.email}

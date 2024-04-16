@@ -1,7 +1,7 @@
 import { prisma } from "@hominem/db";
 import type { FastifyInstance } from "fastify";
 
-import { verifySession } from "../../auth";
+import { verifySession } from "../../auth/utils";
 
 const putListRoute = (server: FastifyInstance) => {
 	server.put(

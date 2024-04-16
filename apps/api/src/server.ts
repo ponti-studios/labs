@@ -35,33 +35,32 @@ export async function createServer(
 		process.exit(1);
 	}
 
-	server.log.info(`App URL: ${APP_URL}`);
 	await server.register(cors, {
 		origin: [APP_URL],
 		credentials: true,
 	});
-	server.register(shutdownPlugin);
-	server.register(sessionPlugin);
-	server.register(require("@fastify/csrf-protection"), {
+	await server.register(shutdownPlugin);
+	await server.register(sessionPlugin);
+	await server.register(require("@fastify/csrf-protection"), {
 		sessionPlugin: "@fastify/secure-session",
 	});
-	server.register(require("@fastify/helmet"));
-	server.register(require("@fastify/jwt"), {
+	await server.register(require("@fastify/helmet"));
+	await server.register(require("@fastify/jwt"), {
 		secret: JWT_SECRET,
 	});
-	server.register(circuitBreaker);
-	server.register(prismaPlugin);
-	server.register(rateLimitPlugin);
-	server.register(statusPlugin);
-	server.register(emailPlugin);
-	server.register(adminPlugin);
-	server.register(authPlugin);
-	server.register(usersPlugin);
-	server.register(listsPlugin);
-	server.register(PlacesPlugin);
-	server.register(invites);
-	server.register(bookmarksPlugin);
-	server.register(ideasPlugin);
+	await server.register(circuitBreaker);
+	await server.register(prismaPlugin);
+	await server.register(rateLimitPlugin);
+	await server.register(statusPlugin);
+	await server.register(emailPlugin);
+	await server.register(adminPlugin);
+	await server.register(authPlugin);
+	await server.register(usersPlugin);
+	await server.register(listsPlugin);
+	await server.register(PlacesPlugin);
+	await server.register(invites);
+	await server.register(bookmarksPlugin);
+	await server.register(ideasPlugin);
 
 	server.setErrorHandler((error, request, reply) => {
 		console.error(error);

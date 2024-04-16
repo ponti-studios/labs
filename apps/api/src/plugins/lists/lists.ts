@@ -1,8 +1,7 @@
 import { type List, type User, prisma } from "@hominem/db";
 import type { FastifyInstance } from "fastify";
-import { z } from "zod";
 
-import { verifySession } from "../auth";
+import { verifySession } from "../auth/utils";
 
 type UserList = {
 	list: List & { createdBy: User };

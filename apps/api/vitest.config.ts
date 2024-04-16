@@ -9,6 +9,15 @@ export default defineConfig({
 		setupFiles: "./test/test.setup.ts",
 		clearMocks: true,
 		exclude: ["**/node_modules/**", "**/build/**"],
+		env: {
+			SENDGRID_API_KEY: "SG.sendgrid-api-key",
+			COOKIE_SECRET: "T1FBln1N5TI7qrzHv/ZW+sVbxKAQtBjUP6U=",
+			GOOGLE_SERVICE_ACCOUNT: Buffer.from(JSON.stringify({
+				type: "service_account",
+				project_id: "project-id",
+				private_key_id: "private",
+			})).toString("base64"),
+		},
 		coverage: {
 			provider: "v8",
 			clean: true,

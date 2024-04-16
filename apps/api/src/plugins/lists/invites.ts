@@ -1,8 +1,8 @@
 import type { ListInvite, PrismaClientKnownRequestError } from "@hominem/db";
+import { prisma } from "@hominem/db";
 import type { FastifyInstance } from "fastify";
 
-import { prisma } from "@hominem/db";
-import { verifySession } from "../auth";
+import { verifySession } from "../auth/utils";
 
 const getListInvitesRoute = (server: FastifyInstance) => {
 	server.get(

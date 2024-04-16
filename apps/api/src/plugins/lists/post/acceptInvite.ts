@@ -1,7 +1,7 @@
+import { prisma } from "@hominem/db";
 import type { FastifyInstance } from "fastify";
 
-import { prisma } from "@hominem/db";
-import { verifySession } from "../../auth";
+import { verifySession } from "../../auth/utils";
 
 const acceptListInviteRoute = async (server: FastifyInstance) => {
 	server.post(
