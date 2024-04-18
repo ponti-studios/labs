@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
+import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { createServer } from "./server";
-
 
 describe("server", () => {
 	let testServer: FastifyInstance;
@@ -8,7 +8,7 @@ describe("server", () => {
 	beforeAll(async () => {
 		testServer = await createServer({ logger: false });
 	});
-	
+
 	afterAll(async () => {
 		await testServer.close();
 	});

@@ -3,7 +3,15 @@ import { prisma } from "@hominem/db";
 import { mockAuthSession } from "@test/utils";
 import type { FastifyInstance } from "fastify";
 import type { Mock } from "vitest";
-import { vi } from "vitest";
+import {
+	afterAll,
+	afterEach,
+	beforeEach,
+	describe,
+	expect,
+	test,
+	vi,
+} from "vitest";
 
 describe("DELETE /lists/:id", () => {
 	let server: FastifyInstance;
@@ -21,7 +29,7 @@ describe("DELETE /lists/:id", () => {
 		await server.close();
 	});
 
-	it("should delete a list", async () => {
+	test("should delete a list", async () => {
 		mockAuthSession();
 		const payload = {
 			id: "testListId",

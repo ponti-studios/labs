@@ -1,9 +1,10 @@
 import { screen } from "@testing-library/react";
 import React from "react";
+import { beforeEach, describe, expect, test } from "vitest";
+import type { Mock } from "vitest";
+
 import { useAuth } from "src/services/store";
 import { renderWithProviders } from "src/test/utils";
-import { describe, expect, test } from "vitest";
-import type { Mock } from "vitest";
 
 import Account from "./Account";
 

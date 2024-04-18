@@ -1,27 +1,18 @@
 import { act, screen, waitFor } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 import { useNavigate } from "react-router-dom";
-import { type MockedFunction, vi } from "vitest";
-import type { Mock } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
+import type { Mock, MockedFunction } from "vitest";
 
 import { baseURL } from "src/services/api/base";
-import type { ListPlace } from "src/services/types";
 import { testServer } from "src/test/test.setup";
-import { renderWithProviders } from "src/test/utils";
+import { getMockPlace, renderWithProviders } from "src/test/utils";
 
 import PlaceItem from "./index";
 
 describe("PlaceItem", () => {
 	let navigate: MockedFunction<typeof useNavigate>;
-	const place: ListPlace = {
-		imageUrl: "https://example.com/image.jpg",
-		googleMapsId: "123",
-		name: "Place Name",
-		types: ["type1", "type2"],
-		id: "123",
-		itemId: "123",
-		description: "Description",
-	};
+	const place = getMockPlace();
 
 	beforeEach(() => {
 		navigate = vi.fn();

@@ -2,6 +2,7 @@
 	"name": "aidea",
 	"version": "1.4.0",
 	"private": true,
+	"type": "module",
 	"scripts": {
 		"cy": "cypress open",
 		"cy:headless": "cypress run",

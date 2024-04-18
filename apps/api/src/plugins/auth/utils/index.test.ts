@@ -1,7 +1,7 @@
 import { createServer } from "@app/server";
 import { type User, prisma } from "@hominem/db";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 import { verifySession } from ".";
 

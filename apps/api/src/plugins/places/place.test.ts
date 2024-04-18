@@ -1,7 +1,16 @@
 import { prisma } from "@hominem/db";
 import type { FastifyInstance } from "fastify";
 import type { Mock } from "vitest";
-import { vi } from "vitest";
+import {
+	afterAll,
+	afterEach,
+	beforeAll,
+	beforeEach,
+	describe,
+	expect,
+	test,
+	vi,
+} from "vitest";
 
 import { createServer } from "@app/server";
 import { MOCKS } from "@test/mocks";
@@ -37,7 +46,9 @@ describe("/places/:id", () => {
 		test("should return place from Google Places if place does not exist in DB", async () => {
 			vi.spyOn(prisma.place, "findFirst").mockResolvedValue(null);
 			(googlePlaces.get as Mock).mockResolvedValue(GOOGLE_PLACE_GET);
-			(googlePlaces.photos.getMedia as Mock).mockResolvedValue(GOOGLE_PHOTO_MEDIA);
+			(googlePlaces.photos.getMedia as Mock).mockResolvedValue(
+				GOOGLE_PHOTO_MEDIA,
+			);
 			const response = await server.inject({
 				method: "GET",
 				url: "/places/123",

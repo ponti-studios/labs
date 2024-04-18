@@ -1,5 +1,5 @@
 import { act, screen, waitFor } from "@testing-library/react";
-import { beforeEach, describe, test } from "vitest";
+import { beforeEach, describe, expect, test } from "vitest";
 import type { Mock } from "vitest";
 
 import { useAuth } from "src/services/store";

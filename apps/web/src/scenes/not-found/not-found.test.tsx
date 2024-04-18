@@ -1,6 +1,6 @@
 import { screen } from "@testing-library/react";
-import { useLocation, useMatch } from "react-router-dom";
-import type { Mock } from "vitest";
+import { useMatch } from "react-router-dom";
+import { type Mock, describe, expect, test } from "vitest";
 
 import { renderWithProviders } from "src/test/utils";
 
@@ -12,7 +12,7 @@ function mockUseMatch(paths: { [key: string]: boolean }) {
 	});
 }
 describe("not-found", () => {
-	it("should render not found for invites route", () => {
+	test("should render not found for invites route", () => {
 		mockUseMatch({ "/invites": true });
 		renderWithProviders(<NotFound />);
 
@@ -21,7 +21,7 @@ describe("not-found", () => {
 		).toBeInTheDocument();
 	});
 
-	it("should render NotFound for invite route", () => {
+	test("should render NotFound for invite route", () => {
 		mockUseMatch({ "/invites/:id": true });
 		renderWithProviders(<NotFound />);
 
@@ -30,7 +30,7 @@ describe("not-found", () => {
 		).toBeInTheDocument();
 	});
 
-	it("should render not found for list route", () => {
+	test("should render not found for list route", () => {
 		mockUseMatch({ "/list/:id": true });
 		renderWithProviders(<NotFound />);
 

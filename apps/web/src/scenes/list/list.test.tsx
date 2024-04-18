@@ -1,7 +1,15 @@
 import { act, fireEvent, screen, waitFor } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 import { useNavigate, useParams } from "react-router-dom";
-import { type Mock, beforeEach, describe, expect, test, vi } from "vitest";
+import {
+	type Mock,
+	beforeAll,
+	beforeEach,
+	describe,
+	expect,
+	test,
+	vi,
+} from "vitest";
 
 import api from "src/services/api";
 import { baseURL } from "src/services/api/base";

@@ -4,6 +4,7 @@ import type { ReactElement, ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Provider } from "react-redux";
 import { rootReducer } from "src/services/store";
+import type { ListPlace } from "src/services/types";
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -13,20 +14,32 @@ const queryClient = new QueryClient({
 	},
 });
 
-const defaultAuthState = {
-	auth: {
-		user: {
-			id: "1",
-		},
-	},
-};
+export const getMockPlace = (): ListPlace => ({
+	imageUrl: "https://example.com/image.jpg",
+	googleMapsId: "123",
+	name: "Place Name",
+	types: ["type1", "type2"],
+	id: "123",
+	itemId: "123",
+	description: "Description",
+});
+
+export const USER_ID = "user-id";
 
 export function renderWithProviders(
 	ui: ReactElement,
 	{
 		options,
 		isAuth = false,
-		preloadedState = isAuth ? defaultAuthState : {},
+		preloadedState = isAuth
+			? {
+					auth: {
+						user: {
+							id: USER_ID,
+						},
+					},
+				}
+			: {},
 		store = configureStore({ reducer: rootReducer, preloadedState }),
 	}: {
 		options?: RenderOptions;

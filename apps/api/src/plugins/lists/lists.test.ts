@@ -1,7 +1,15 @@
 import { prisma } from "@hominem/db";
 import type { FastifyInstance } from "fastify";
 import type { Mock } from "vitest";
-import { vi } from "vitest";
+import {
+	afterAll,
+	afterEach,
+	beforeAll,
+	describe,
+	expect,
+	test,
+	vi,
+} from "vitest";
 
 import { createServer } from "@app/server";
 import { mockAuthSession } from "@test/utils";
@@ -65,7 +73,7 @@ describe("/lists", () => {
 	});
 
 	describe("POST /lists/place", () => {
-		it("should create a place and associate it with lists", async () => {
+		test("should create a place and associate it with lists", async () => {
 			mockAuthSession();
 			const payload = {
 				listIds: ["listId1", "listId2"],
