@@ -12,8 +12,8 @@ import Form from "src/components/Form";
 import { LANDING } from "src/constants/routes";
 import api from "src/services/api";
 import { setCurrentEmail } from "src/services/auth";
-import { useAppDispatch } from "src/services/hooks";
-import { useAuth } from "src/services/store";
+import { useAuth } from "src/services/hooks";
+import { useAppDispatch } from "src/services/store";
 
 const LoginSchema = Yup.object().shape({
 	email: Yup.string().email(),

@@ -3,7 +3,7 @@ import React from "react";
 import { beforeEach, describe, expect, test } from "vitest";
 import type { Mock } from "vitest";
 
-import { useAuth } from "src/services/store";
+import { useAuth } from "src/services/hooks";
 import { renderWithProviders } from "src/test/utils";
 
 import Account from "./Account";

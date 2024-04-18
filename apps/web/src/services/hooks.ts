@@ -1,15 +1,27 @@
 import { useCallback, useEffect, useRef } from "react";
-import {
-	type TypedUseSelectorHook,
-	useDispatch,
-	useSelector,
-} from "react-redux";
 
-import type { AppDispatch, RootState } from "./store";
+import { type RootState, useAppDispatch, useAppSelector } from "./store";
 
-// Use throughout client application instead of plain `useDispatch` and `useSelector`
-export const useAppDispatch = () => useDispatch<AppDispatch>();
-export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+export const getIsLoadingAuth = (state: RootState) => state.auth.isLoadingAuth;
+export const getLoginEmail = (state: RootState) => state.auth.loginEmail;
+export const getIsAuthenticated = (state: RootState) => !!state.auth.user;
+
+export const useAuth = () => {
+	const user = useAppSelector((state: RootState) => state.auth.user);
+	const isLoadingAuth = useAppSelector(getIsLoadingAuth);
+	const loginEmail = useAppSelector(getLoginEmail);
+	const dispatch = useAppDispatch();
+	const status = useAppSelector((state: RootState) => state.auth.status);
+
+	return {
+		dispatch,
+		isAuthenticated: !!user,
+		isLoadingAuth,
+		loginEmail,
+		status,
+		user,
+	};
+};
 
 export const useMountedState = () => {
 	const isMountedRef = useRef<boolean>(false);

@@ -10,8 +10,8 @@ import { MOCK_PLACE, PLACE_HANDLERS } from "./mocks/place";
 
 export const TEST_LIST_ID = "list-id";
 
-vi.mock("src/services/store", async () => {
-	const actual = await vi.importActual("src/services/store");
+vi.mock("src/services/hooks", async () => {
+	const actual = await vi.importActual("src/services/hooks");
 	return {
 		...actual,
 		useAuth: vi.fn(),

@@ -11,8 +11,8 @@ import Form from "src/components/Form";
 import { DASHBOARD } from "src/constants/routes";
 import { loadAuth, setCurrentEmail } from "src/services/auth";
 import { authenticate } from "src/services/auth/auth.api";
-import { useAppDispatch, useAppSelector } from "src/services/hooks";
-import { getLoginEmail } from "src/services/store";
+import { getLoginEmail } from "src/services/hooks";
+import { useAppDispatch, useAppSelector } from "src/services/store";
 
 const AuthenticateSchema = Yup.object().shape({
 	emailToken: Yup.string().length(8),

@@ -1,11 +1,11 @@
 import styled from "@emotion/styled";
+import Button from "@hominem/components/Button";
 import FeedbackBlock from "@hominem/components/FeedbackBlock";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import Button from "@hominem/components/Button";
 import { LANDING } from "src/constants/routes";
-import { useAuth } from "src/services/store";
+import { useAuth } from "src/services/hooks";
 
 const Wrap = styled.div`
   display: flex;

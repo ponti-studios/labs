@@ -12,7 +12,7 @@ import Lists from "src/scenes/lists";
 import NotFound from "src/scenes/not-found";
 import Place from "src/scenes/place";
 import { setCurrentLocation } from "src/services/auth";
-import { useAppDispatch } from "src/services/hooks";
+import { useAppDispatch } from "src/services/store";
 
 import Toast from "../../Toast";
 

@@ -6,8 +6,8 @@ import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
 
 import { PLACE } from "src/constants/routes";
 import { useGetList } from "src/services/api";
-import { useAppSelector } from "src/services/hooks";
-import { useAuth } from "src/services/store";
+import { useAuth } from "src/services/hooks";
+import { useAppSelector } from "src/services/store";
 import type { SearchPlace } from "src/services/types";
 
 import PlacesAutocomplete from "../dashboard/components/PlacesAutocomplete";

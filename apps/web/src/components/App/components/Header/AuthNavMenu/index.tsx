@@ -10,8 +10,8 @@ import {
 	LISTS,
 } from "src/constants/routes";
 import { logout } from "src/services/auth";
-import { useAppDispatch } from "src/services/hooks";
-import { useAuth } from "src/services/store";
+import { useAuth } from "src/services/hooks";
+import { useAppDispatch } from "src/services/store";
 
 import NavLink from "../../NavLink";
 
@@ -36,7 +36,7 @@ const AuthNavMenu = () => {
 			navMenuRef.current?.click?.();
 		}
 	}, []);
-	
+
 	return (
 		<>
 			<div className="hidden md:visible md:flex gap-6 mr-4">
@@ -60,7 +60,11 @@ const AuthNavMenu = () => {
 					>
 						<UserCircle />
 					</summary>
-					<ul className="p-1 pb-3 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52 mt-1" onKeyDown={onLinkKeyDown} onClick={onLinkClick}>
+					<ul
+						className="p-1 pb-3 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52 mt-1"
+						onKeyDown={onLinkKeyDown}
+						onClick={onLinkClick}
+					>
 						<li>
 							<span className="flex justify-end text-sm text-secondary hover:outline-none">
 								{user.email}

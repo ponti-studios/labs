@@ -13,7 +13,7 @@ import {
 
 import api from "src/services/api";
 import { baseURL } from "src/services/api/base";
-import { useAuth } from "src/services/store";
+import { useAuth } from "src/services/hooks";
 import { MOCK_PLACE, PLACE_ID } from "src/test/mocks/place";
 import { TEST_LIST_ID, testServer } from "src/test/test.setup";
 import { renderWithProviders } from "src/test/utils";

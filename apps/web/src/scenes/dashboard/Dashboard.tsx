@@ -4,7 +4,7 @@ import type { MapMouseEvent } from "@vis.gl/react-google-maps/dist/components/ma
 import React, { useCallback, useEffect, useState } from "react";
 
 import { mediaQueries } from "src/constants/styles";
-import { useAppSelector } from "src/services/hooks";
+import { useAppSelector } from "src/services/store";
 import type { Place } from "src/services/types";
 
 import { generatePath, useNavigate } from "react-router-dom";

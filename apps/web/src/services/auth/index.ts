@@ -29,6 +29,12 @@ export interface AuthState {
 	isLoadingAuth?: boolean;
 	authError: string | null;
 	loginEmail: string | null;
+	status:
+		| "unloaded"
+		| "loading"
+		| "authenticated"
+		| "unauthenticated"
+		| "error";
 	user?: User;
 }
 
@@ -36,6 +42,7 @@ const initialState: AuthState = {
 	authError: null,
 	currentLocation: null,
 	loginEmail: null,
+	status: "unloaded",
 };
 
 export const loadAuth = createAsyncThunk("auth/load", async () => {
@@ -69,26 +76,36 @@ const authSlice = createSlice({
 		builder
 			.addCase(loadAuth.pending, (state) => {
 				state.isLoadingAuth = true;
+				state.status = "loading";
 				state.authError = null;
 			})
 			.addCase(loadAuth.fulfilled, (state, action) => {
 				state.isLoadingAuth = false;
 				state.authError = null;
+				state.status = action.payload.id ? "authenticated" : "unauthenticated";
 				state.user = action.payload;
 			})
 			.addCase(loadAuth.rejected, (state, action) => {
-				state.isLoadingAuth = false;
 				state.authError = action.error.message;
+				state.isLoadingAuth = false;
+				state.status = "unauthenticated";
 				state.user = null;
+			})
+			.addCase(logout.pending, (state) => {
+				state.authError = null;
+				state.isLoadingAuth = true;
+				state.status = "loading";
 			})
 			.addCase(logout.fulfilled, (state) => {
-				state.isLoadingAuth = false;
 				state.authError = null;
+				state.isLoadingAuth = false;
 				state.user = null;
+				state.status = "unauthenticated";
 			})
 			.addCase(logout.rejected, (state, action) => {
-				state.isLoadingAuth = false;
 				state.authError = action.error.message;
+				state.isLoadingAuth = false;
+				state.status = "error";
 			});
 	},
 });

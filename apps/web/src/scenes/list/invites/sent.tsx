@@ -2,7 +2,7 @@ import LinkButton from "@hominem/components/LinkButton";
 import { useNavigate } from "react-router-dom";
 
 import { useGetOutboundInvites } from "src/services/api";
-import { useAuth } from "src/services/store";
+import { useAuth } from "src/services/hooks";
 
 const ListInvites = () => {
 	const navigate = useNavigate();

@@ -3,8 +3,9 @@ import {
 	type ThunkAction,
 	configureStore,
 } from "@reduxjs/toolkit";
+import { type TypedUseSelectorHook, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import auth from "./auth";
-import { useAppDispatch, useAppSelector } from "./hooks";
 import toastSlice from "./toast/toast.slice";
 
 export const rootReducer = {
@@ -16,23 +17,6 @@ export const store = configureStore({
 	reducer: rootReducer,
 });
 
-export const getIsLoadingAuth = (state: RootState) => state.auth.isLoadingAuth;
-export const getLoginEmail = (state: RootState) => state.auth.loginEmail;
-export const getIsAuthenticated = (state: RootState) => !!state.auth.user;
-
-export const useAuth = () => {
-	const user = useAppSelector((state: RootState) => state.auth.user);
-	const isLoadingAuth = useAppSelector(getIsLoadingAuth);
-	const loginEmail = useAppSelector(getLoginEmail);
-	const dispatch = useAppDispatch();
-	return {
-		user,
-		isLoadingAuth,
-		loginEmail,
-		dispatch,
-	};
-};
-
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
 export type AppThunk<ReturnType = void> = ThunkAction<
@@ -41,3 +25,7 @@ export type AppThunk<ReturnType = void> = ThunkAction<
 	unknown,
 	Action<string>
 >;
+
+// Use throughout client application instead of plain `useDispatch` and `useSelector`
+export const useAppDispatch = () => useDispatch<AppDispatch>();
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;

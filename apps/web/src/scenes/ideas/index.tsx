@@ -2,7 +2,7 @@ import LoadingScene from "@hominem/components/Loading";
 import { useNavigate } from "react-router-dom";
 
 import { useGetIdeas } from "src/services/api/ideas";
-import { useAuth } from "src/services/store";
+import { useAuth } from "src/services/hooks";
 import IdeaForm from "./IdeaForm";
 import IdeaListItem from "./IdeaListItem";
 

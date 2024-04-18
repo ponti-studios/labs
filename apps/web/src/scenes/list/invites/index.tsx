@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { useGetList, useGetListInvites } from "src/services/api";
-import { useAuth } from "src/services/store";
+import { useAuth } from "src/services/hooks";
 
 import ListInviteForm from "./components/ListInviteForm";
 
