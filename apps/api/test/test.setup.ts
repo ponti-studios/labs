@@ -3,9 +3,6 @@ dotenv.config();
 
 import { vi } from "vitest";
 import * as auth from "../src/plugins/auth/utils";
-import { FastifyInstance } from "fastify";
-import { createServer } from "@app/server";
-import { after } from "node:test";
 
 function mockPrismaModel() {
 	return {
@@ -20,7 +17,7 @@ function mockPrismaModel() {
 	};
 }
 
-vi.mock('sendgrid', () => ({
+vi.mock("sendgrid", () => ({
 	setApiKey: vi.fn(),
 	send: vi.fn(),
 }));
@@ -51,13 +48,15 @@ vi.mock("googleapis", () => ({
 			GoogleAuth: vi.fn(),
 		},
 		options: vi.fn(),
-		places: vi.fn(() => ({ places: {
-			get: vi.fn(),
-			photos: {
-				getMedia: vi.fn(),
+		places: vi.fn(() => ({
+			places: {
+				get: vi.fn(),
+				photos: {
+					getMedia: vi.fn(),
+				},
+				searchText: vi.fn(),
 			},
-			searchText: vi.fn(),
-		} })),
+		})),
 	},
 }));
 
