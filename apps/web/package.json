@@ -31,7 +31,6 @@
 		"@headlessui/react": "^1.7.15",
 		"@hominem/components": "0.0.0",
 		"@reduxjs/toolkit": "^1.7.2",
-		"@spotlightjs/spotlight": "^1.2.5",
 		"@vis.gl/react-google-maps": "^0.4.3",
 		"axios": "^1.6.2",
 		"class-variance-authority": "^0.7.0",
@@ -51,6 +50,7 @@
 	},
 	"devDependencies": {
 		"@babel/core": "^7.22.9",
+		"@spotlightjs/spotlight": "^1.2.5",
 		"@testing-library/cypress": "10.0.1",
 		"@testing-library/jest-dom": "^6.2.0",
 		"@testing-library/react": "14.0.0",
@@ -79,12 +79,15 @@
 		"tsconfig": "0.0.0",
 		"typescript": "5.4.3",
 		"vite": "^5.2.7",
+		"vite-plugin-pwa": "^0.19.8",
 		"vite-tsconfig-paths": "^4.2.3",
 		"vitest": "^1.4.0"
 	},
 	"nyc": {
 		"report-dir": "coverage/cypress",
-		"reporter": ["lcov"]
+		"reporter": [
+			"lcov"
+		]
 	},
 	"optionalDependencies": {
 		"@rollup/rollup-linux-x64-gnu": "^4.13.0"

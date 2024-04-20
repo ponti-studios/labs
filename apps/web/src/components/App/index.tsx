@@ -15,8 +15,6 @@ import AuthenticatedScenes from "./components/Authenticated";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 
-const Spotlight = React.lazy(() => import("../../spotlight"));
-
 function App() {
 	const { isAuthenticated, status } = useAuth();
 	const dispatch = useAppDispatch();
@@ -38,7 +36,6 @@ function App() {
 	return (
 		<div className="h-full w-full flex flex-col items-center">
 			<div className="h-full w-full flex flex-col lg:max-w-[800px] sm:px-2 md:px-0">
-				{process.env.NODE_ENV === "development" && <Spotlight />}
 				<Header />
 				<main
 					data-testid="app-main"
