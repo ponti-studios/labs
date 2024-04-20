@@ -18,10 +18,14 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Install Railway
-        run: npm install -g @railway/cli
+      - name: Build
+        run: npx turbo run build --filter=rocco-web
 
-      - name: Deploy
-        run: railway up --service ${{ secrets.RAILWAY_SERVICE_WEB }}
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      - name: Publish
+        uses: cloudflare/pages-action@1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: rocco
+          directory: apps/web/build
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
