@@ -18,6 +18,9 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Install dependencies
+        run: npm install --frozen-lockfile --prefer-frozen-lockfile --ignore-scripts
+
       - name: Build
         run: npx turbo run build --filter=rocco-web
 
