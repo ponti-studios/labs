@@ -9,17 +9,15 @@ import {
 	LANDING,
 	LISTS,
 } from "src/constants/routes";
-import { logout } from "src/services/auth";
-import { useAuth } from "src/services/hooks";
+import { type User, logout } from "src/services/auth";
 import { useAppDispatch } from "src/services/store";
 
 import NavLink from "../../NavLink";
 
-const AuthNavMenu = () => {
+const AuthNavMenu = ({ user }: { user: User }) => {
 	const navMenuRef = useRef(null);
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
-	const { user } = useAuth();
 	const onLogoutClick = useCallback(() => {
 		dispatch(logout()).then(() => {
 			navigate(LANDING);

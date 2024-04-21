@@ -15,13 +15,12 @@ import PlacesAutocomplete from "../dashboard/components/PlacesAutocomplete";
 import PlaceItem from "./components/PlaceItem";
 
 const List = () => {
-	const [isAddToListOpen, setIsAddToListOpen] = useState(false);
 	const navigate = useNavigate();
 	const currentLocation = useAppSelector((state) => state.auth.currentLocation);
-	const params = useParams<{ id: string }>();
-	const { user } = useAuth();
-	const listId = params.id;
+	const [isAddToListOpen, setIsAddToListOpen] = useState(false);
 	const [deleteError, setDeleteError] = useState<string | null>(null);
+	const { id: listId } = useParams<{ id: string }>();
+	const { user } = useAuth();
 	const { data, error, status, refetch } = useGetList(listId);
 
 	const onSelectedChanged = useCallback(

@@ -3,13 +3,12 @@ import { Link } from "react-router-dom";
 
 import { APP_NAME } from "src/constants";
 import { LANDING, LOGIN } from "src/constants/routes";
-import { getIsAuthenticated } from "src/services/hooks";
-import { useAppSelector } from "src/services/store";
+import { useAuth } from "src/services/hooks";
 
 import AuthNavMenu from "./AuthNavMenu";
 
 function Header() {
-	const isAuthenticated = useAppSelector(getIsAuthenticated);
+	const { isAuthenticated, user } = useAuth();
 
 	return (
 		<header className="navbar flex flex-row justify-between items-center pt-4">
@@ -21,7 +20,7 @@ function Header() {
 				{APP_NAME}
 			</Link>
 			{isAuthenticated ? (
-				<AuthNavMenu />
+				<AuthNavMenu user={user} />
 			) : (
 				<Link to={LOGIN} className="btn btn-primary text-white">
 					Log In

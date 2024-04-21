@@ -10,8 +10,8 @@ export const useAuth = () => {
 	const user = useAppSelector((state: RootState) => state.auth.user);
 	const isLoadingAuth = useAppSelector(getIsLoadingAuth);
 	const loginEmail = useAppSelector(getLoginEmail);
-	const dispatch = useAppDispatch();
 	const status = useAppSelector((state: RootState) => state.auth.status);
+	const dispatch = useAppDispatch();
 
 	return {
 		dispatch,

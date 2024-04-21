@@ -39,7 +39,10 @@ const AuthenticatedScenes = () => {
 	}, [dispatch]);
 
 	return (
-		<div className="flex flex-col flex-1 px-2 sm:p-0 sm:max-w-3xl mx-auto">
+		<div
+			data-testid="authenticated-scenes"
+			className="flex flex-col flex-1 px-2 sm:p-0 sm:max-w-3xl mx-auto"
+		>
 			<Routes>
 				<Route
 					path={ROUTES.DASHBOARD}

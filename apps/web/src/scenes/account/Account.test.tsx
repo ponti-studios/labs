@@ -1,27 +1,24 @@
 import { screen } from "@testing-library/react";
 import React from "react";
 import { beforeEach, describe, expect, test } from "vitest";
-import type { Mock } from "vitest";
+import { vi } from "vitest";
 
-import { useAuth } from "src/services/hooks";
-import { renderWithProviders } from "src/test/utils";
+import * as hooks from "src/services/hooks";
+import {
+	TEST_USER_NAME,
+	renderWithProviders,
+	useAuthMock,
+} from "src/test/utils";
 
 import Account from "./Account";
 
 describe("Account", () => {
 	beforeEach(() => {
-		(useAuth as Mock).mockReturnValue({
-			user: {
-				name: "Test user",
-				email: "test-user@email.com",
-				avatar: "https://avatar.com",
-				createdAt: "2021-01-01T00:00:00.000Z",
-			},
-		});
+		vi.spyOn(hooks, "useAuth").mockReturnValue(useAuthMock({ isAuth: true }));
 	});
 
 	test("renders when loading = true", () => {
 		renderWithProviders(<Account />);
-		expect(screen.getByText("Test user")).toBeInTheDocument();
+		expect(screen.getByText(TEST_USER_NAME)).toBeInTheDocument();
 	});
 });

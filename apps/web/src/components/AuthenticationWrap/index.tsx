@@ -1,12 +1,17 @@
+import clsx from "clsx";
 import type React from "react";
+
 import styles from "./AuthWrap.module.css";
 
-type Props = {
-	children: React.ReactNode;
-};
-
-function AuthWrap({ children }: Props) {
-	return <div className={styles.wrap}>{children}</div>;
+function AuthWrap({
+	children,
+	...props
+}: React.PropsWithChildren & React.HTMLProps<HTMLDivElement>) {
+	return (
+		<div {...props} className={clsx(styles.wrap, props.className)}>
+			{children}
+		</div>
+	);
 }
 
 export default AuthWrap;

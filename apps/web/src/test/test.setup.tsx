@@ -10,14 +10,6 @@ import { MOCK_PLACE, PLACE_HANDLERS } from "./mocks/place";
 
 export const TEST_LIST_ID = "list-id";
 
-vi.mock("src/services/hooks", async () => {
-	const actual = await vi.importActual("src/services/hooks");
-	return {
-		...actual,
-		useAuth: vi.fn(),
-	};
-});
-
 vi.mock("react-router-dom", async () => {
 	const actual = await vi.importActual("react-router-dom");
 	return {

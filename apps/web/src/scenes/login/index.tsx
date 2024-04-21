@@ -54,7 +54,7 @@ function Login() {
 	});
 
 	return (
-		<AuthWrap>
+		<AuthWrap data-testid="login-page">
 			<div className="flex justify-center text-primary font-extrabold mb-4 mt-24">
 				<Globe size={150} className="animate-pulse" />
 			</div>
