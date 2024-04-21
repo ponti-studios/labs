@@ -1,16 +1,15 @@
-import type { PropsWithChildren, ReactNode } from "react";
+import type { PropsWithChildren } from "react";
 import { Link } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
 
-type LinkButtonProps = PropsWithChildren & {
-	className?: string;
-	href: string;
-};
 export default function LinkButton({
 	children,
 	className,
 	href,
-}: LinkButtonProps) {
+}: PropsWithChildren<{
+	className?: string;
+	href: string;
+}>) {
 	return (
 		<Link to={href}>
 			<span

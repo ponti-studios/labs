@@ -28,10 +28,11 @@ const StyledDialog = styled.dialog`
   }
 `;
 
-type ModalProps = PropsWithChildren & {
+type ModalProps = PropsWithChildren<{
 	isOpen: boolean;
 	onModalClose: (_?: unknown) => void;
-};
+}>;
+
 function Modal({ children, isOpen, onModalClose, ...props }: ModalProps) {
 	const ref = useRef<SVGSVGElement>(null);
 	const handleKeyDown = useCallback(

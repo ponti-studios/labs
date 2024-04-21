@@ -6,7 +6,7 @@ import styles from "./AuthWrap.module.css";
 function AuthWrap({
 	children,
 	...props
-}: React.PropsWithChildren & React.HTMLProps<HTMLDivElement>) {
+}: React.PropsWithChildren<React.HTMLProps<HTMLDivElement>>) {
 	return (
 		<div {...props} className={clsx(styles.wrap, props.className)}>
 			{children}

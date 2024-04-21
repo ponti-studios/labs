@@ -3,8 +3,8 @@ import { type RenderOptions, render } from "@testing-library/react";
 import type { PropsWithChildren, ReactElement } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Provider } from "react-redux";
-import { BrowserRouter, MemoryRouter } from "react-router-dom";
-import { type AuthState, AuthStatus, type User } from "src/services/auth";
+import { MemoryRouter } from "react-router-dom";
+import { AuthStatus, type User } from "src/services/auth";
 import { rootReducer } from "src/services/store";
 import type { ListPlace } from "src/services/types";
 
@@ -73,17 +73,16 @@ export const useAuthMock = ({
 	status: isAuth ? AuthStatus.Authenticated : AuthStatus.Unauthenticated,
 });
 
-type TestProvidersProps = PropsWithChildren & {
-	initialEntries?: string[];
-	isAuth?: boolean;
-	store?: ReturnType<typeof configureStore>;
-};
 export const TestProviders = ({
 	children,
 	initialEntries = ["/"],
 	isAuth = false,
 	store,
-}: TestProvidersProps) => {
+}: PropsWithChildren<{
+	initialEntries?: string[];
+	isAuth?: boolean;
+	store?: ReturnType<typeof configureStore>;
+}>) => {
 	return (
 		<MemoryRouter initialEntries={initialEntries}>
 			<Provider store={store || getMockStore({ isAuth })}>

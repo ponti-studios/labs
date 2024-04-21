@@ -6,10 +6,7 @@ const NavLink = ({
 	to,
 	className,
 	children,
-}: PropsWithChildren & {
-	className?: string;
-	to: string;
-}) => {
+}: PropsWithChildren<{ className?: string; to: string }>) => {
 	return (
 		<Link
 			to={to}
