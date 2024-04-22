@@ -7,11 +7,13 @@ on:
 
 env:
   APP_URL: ${{ secrets.APP_URL }}
-  DATABASE_URL: postgresql://postgres:postgres@localhost:5432/rocco
-  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+  COOKIE_DOMAIN: ${{ secrets.COOKIE_DOMAIN }}
+  COOKIE_NAME: ${{ secrets.COOKIE_NAME }}
   COOKIE_SALT: ${{ secrets.COOKIE_SALT }}
   COOKIE_SECRET: ${{ secrets.COOKIE_SECRET }}
+  DATABASE_URL: postgresql://postgres:postgres@localhost:5432/rocco
   GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
+  JWT_SECRET: ${{ secrets.JWT_SECRET }}
   SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
   VITE_API_URL: ""
 
