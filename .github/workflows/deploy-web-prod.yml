@@ -1,4 +1,4 @@
-name: 🚀 Web > Deploy > Prod
+name: deploy-web-prod
 
 on:
   workflow_run:
@@ -8,8 +8,9 @@ on:
       - completed
   
 jobs:
-  Deploy-Production:
+  deploy:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - uses: actions/checkout@v4
       
