@@ -1,7 +1,7 @@
-rocco.localhost {
+rocco.hominem.localhost {
 	reverse_proxy localhost:53422
 }
 
-api.rocco.localhost {
+api.hominem.localhost {
 	reverse_proxy localhost:53421
 }
