@@ -1,4 +1,5 @@
 import assert from "node:assert";
+import type { CookieSerializeOptions } from "@fastify/cookie";
 import type { FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
 
@@ -14,18 +15,14 @@ const sessionPlugin: FastifyPluginAsync = async (server) => {
 		cookieName: COOKIE_NAME, // Defaults to `session`
 		secret: COOKIE_SECRET,
 		salt: COOKIE_SALT,
-		// options for setCookie, see https://github.com/fastify/fastify-cookie
-		// The API and UI are not hosted at the same domain.
-		// Setting 'sameSite' to none and 'secure' to true enables the application cookie
-		// to be used on domains other than the API's domain. The API only accepts requests
-		// from the UI domain so we can safely set these values.
 		cookie: {
+			// Options https://github.com/fastify/fastify-cookie
 			maxAge: 60 * 60 * 24 * 7,
 			domain: COOKIE_DOMAIN,
 			httpOnly: true,
 			sameSite: "lax",
 			secure: true,
-		},
+		} as CookieSerializeOptions,
 	});
 };
 
