@@ -35,7 +35,7 @@ function App() {
 
 	return (
 		<div className="h-full w-full flex flex-col items-center">
-			<div className="h-full w-full flex flex-col lg:max-w-[800px] sm:px-2 md:px-0">
+			<div className="h-full w-full flex flex-col sm:max-w-3xl px-2">
 				<Header />
 				<main
 					data-testid="app-main"

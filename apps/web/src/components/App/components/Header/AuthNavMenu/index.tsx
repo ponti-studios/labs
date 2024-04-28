@@ -54,7 +54,7 @@ const AuthNavMenu = ({ user }: { user: User }) => {
 						ref={navMenuRef}
 						data-testid="dropdown-button"
 						role="button"
-						className="btn bg-transparent border-none"
+						className="btn bg-transparent border-black"
 					>
 						<UserCircle />
 					</summary>
