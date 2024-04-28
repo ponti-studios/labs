@@ -14,7 +14,7 @@ function Header() {
 		<header className="navbar flex flex-row justify-between items-center pt-4">
 			<Link
 				to={LANDING}
-				className="flex flex-1 gap-2 items-center font-extrabold lowercase text-4xl"
+				className="flex gap-2 items-center font-extrabold lowercase text-4xl py-1 pl-2"
 			>
 				<Globe className="animate-spin-slow mt-1 size-7 text-primary" />
 				{APP_NAME}
