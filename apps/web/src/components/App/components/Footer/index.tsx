@@ -4,7 +4,7 @@ import NavLink from "../NavLink";
 
 const Footer = () => {
 	return (
-		<div className="sm:hidden btm-nav z-[55]">
+		<div className="visible md:hidden btm-nav z-[55]">
 			<NavLink to={DASHBOARD}>
 				<Search className="inline-block" />
 			</NavLink>
