@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import { vi } from "vitest";
+
 import * as auth from "../src/plugins/auth/utils";
 
 function mockPrismaModel() {

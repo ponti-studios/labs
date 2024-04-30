@@ -3,7 +3,12 @@ import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, test } from "vitest";
 
-import { TestProviders, getMockStore, getMockUser } from "src/test/utils";
+import {
+	TestProviders,
+	getMockLists,
+	getMockStore,
+	getMockUser,
+} from "src/test/utils";
 
 import { http, HttpResponse } from "msw";
 import { baseURL } from "src/services/api/base";
@@ -12,6 +17,7 @@ import App from "./index";
 
 describe("App", () => {
 	test("renders authenticated scenes when user is authenticated", async () => {
+		const lists = getMockLists();
 		testServer.use(
 			http.get(`${baseURL}/me`, () => HttpResponse.json(getMockUser())),
 		);
@@ -62,6 +68,4 @@ describe("App", () => {
 			expect(screen.getByTestId("login-page")).toBeInTheDocument();
 		});
 	});
-
-	// Add more tests for other scenarios as needed
 });

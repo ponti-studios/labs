@@ -124,10 +124,11 @@ function PlacesAutocomplete({
 	);
 
 	return (
-		<Wrapper>
+		<Wrapper data-testid="places-autocomplete">
 			<Combobox value={value} onChange={handleSelect}>
 				<InputWrap>
 					<Combobox.Input
+						data-testid="places-autocomplete-input"
 						className="input input-bordered w-full"
 						value={value}
 						onChange={onInputChange}
@@ -143,6 +144,7 @@ function PlacesAutocomplete({
 						) : (
 							data.map((suggestion) => (
 								<Option
+									data-testid="places-autocomplete-option"
 									key={suggestion.googleMapsId}
 									value={suggestion.googleMapsId}
 									className="truncate text-primary"

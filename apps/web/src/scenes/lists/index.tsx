@@ -1,27 +1,15 @@
-import Alert from "@hominem/components/Alert";
 import Button from "@hominem/components/Button";
-import LoadingScene from "@hominem/components/Loading";
 import { PlusCircle } from "lucide-react";
 import { useCallback, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { useGetLists } from "src/services/api";
 import { useAuth } from "src/services/hooks";
 
 import ListForm from "./components/ListForm";
+import Lists from "./components/Lists";
 
-const NoResults = () => {
-	return (
-		<div className="flex flex-col items-center justify-center text-center py-6">
-			<p className="text-2xl font-bold">No lists found.</p>
-			<p className="text-gray-400">
-				Your lists will appear here once you create them.
-			</p>
-		</div>
-	);
-};
-
-const Lists = () => {
+const ListsScene = () => {
 	const navigate = useNavigate();
 	const { user } = useAuth();
 	const [isListFormOpen, setIsListFormOpen] = useState(false);
@@ -64,32 +52,15 @@ const Lists = () => {
 				</div>
 			) : null}
 			<div>
-				{listsStatus === "loading" && <LoadingScene />}
-				{error && <Alert type="error">{error.message}</Alert>}
-				{data?.length === 0 ? <NoResults /> : null}
-				{data && data.length > 0 && (
-					<ul className="space-y-2">
-						{data.map((list) => (
-							<li key={list.id} className="flex">
-								<Link
-									className="flex justify-between items-center p-3 text-lg border rounded-md w-full"
-									to={`/list/${list.id}`}
-								>
-									{list.name}
-									{/* Only display list owner if the list does not belong to current user */}
-									{list.createdBy && list.createdBy.email !== user?.email ? (
-										<p className="text-xs text-gray-400">
-											{list.createdBy.email}
-										</p>
-									) : null}
-								</Link>
-							</li>
-						))}
-					</ul>
-				)}
+				<Lists
+					status={listsStatus}
+					lists={data}
+					error={error}
+					currentUserEmail={user?.email}
+				/>
 			</div>
 		</>
 	);
 };
 
-export default Lists;
+export default ListsScene;

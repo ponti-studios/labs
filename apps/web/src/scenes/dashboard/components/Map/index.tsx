@@ -47,7 +47,12 @@ const RoccoMap = ({
 	);
 
 	return (
-		<div className="flex flex-1 relative overflow-hidden rounded-lg shadow-md">
+		<div
+			data-testid="rocco-map"
+			data-zoom={zoom}
+			data-center={JSON.stringify(center)}
+			className="flex flex-1 relative overflow-hidden rounded-lg shadow-md size-full"
+		>
 			{isLoadingCurrentLocation ? (
 				<Loading className="rounded-lg border-blue-500 bg-blue-200 text-blue-600 z-10 p-1 px-4 text-sm mt-2">
 					<span className="animate-ping inline-flex size-1 rounded-full bg-blue-800 opacity-75 mb-[2px] mr-3" />

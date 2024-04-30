@@ -40,7 +40,26 @@ export const getMockPlace = (): ListPlace => ({
 	description: "Description",
 });
 
-export const getMockStore = ({ isAuth }) =>
+export const getMockLists = () => [
+	{
+		id: "1",
+		name: "List 1",
+		createdAt: "2021-01-01T00:00:00.000Z",
+		updatedAt: "2021-01-01T00:00:00.000Z",
+		createdBy: getMockUser(),
+		places: [getMockPlace()],
+	},
+	{
+		id: "2",
+		name: "List 2",
+		createdAt: "2021-01-01T00:00:00.000Z",
+		updatedAt: "2021-01-01T00:00:00.000Z",
+		createdBy: getMockUser(),
+		places: [getMockPlace()],
+	},
+];
+
+export const getMockStore = ({ isAuth, authOptions = {} }) =>
 	configureStore({
 		reducer: rootReducer,
 		preloadedState: {
@@ -51,6 +70,7 @@ export const getMockStore = ({ isAuth }) =>
 				loginEmail: null,
 				status: AuthStatus.Unloaded,
 				user: isAuth ? getMockUser() : null,
+				...authOptions,
 			},
 		},
 	});

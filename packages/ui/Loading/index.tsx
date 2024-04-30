@@ -14,7 +14,7 @@ const sizes = {
 
 export default function Loading({ size = "md" }: LoadingProps) {
 	return (
-		<div role="status">
+		<div data-testid="loading-spinner" role="status">
 			<span
 				className="loading loading-infinity"
 				style={{ width: sizes[size] }}

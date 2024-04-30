@@ -9,6 +9,9 @@ import type { Place } from "src/services/types";
 
 import { generatePath, useNavigate } from "react-router-dom";
 import { PLACE } from "src/constants/routes";
+import { useGetLists } from "src/services/api";
+import { useAuth } from "src/services/hooks";
+import Lists from "../lists/components/Lists";
 import RoccoMap from "./components/Map";
 import PlacesAutocomplete from "./components/PlacesAutocomplete";
 
@@ -28,7 +31,7 @@ const Wrap = styled.div`
 
 const PlacesAutocompleteWrap = styled.div``;
 
-const ZOOM_LEVELS = {
+export const ZOOM_LEVELS = {
 	DEFAULT: 10,
 	SELECTED: 19,
 	MARKER: 18,
@@ -37,11 +40,13 @@ const ZOOM_LEVELS = {
 const DEFAULT_CENTER = { latitude: 37.7749, longitude: -122.4194 }; // Default center (San Francisco)
 
 function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
+	const { user } = useAuth();
 	const [zoom, setZoom] = useState(ZOOM_LEVELS.DEFAULT);
 	const currentLocation = useAppSelector((state) => state.auth.currentLocation);
 	const [selected, setSelected] = useState<Place | null>(null);
 	const [center, setCenter] = useState(currentLocation || DEFAULT_CENTER);
 	const navigate = useNavigate();
+	const { data, error, status: listsStatus } = useGetLists();
 
 	const onMapClick = useCallback(
 		async (args: MapMouseEvent) => {
@@ -51,6 +56,7 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
 	);
 
 	const onSelectedChanged = useCallback((place: Place) => {
+		console.log("Selected place", place);
 		setSelected(place);
 		setCenter({
 			latitude: place.latitude,
@@ -85,13 +91,21 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
 					center={currentLocation}
 				/>
 			</PlacesAutocompleteWrap>
-			<RoccoMap
-				isLoadingCurrentLocation={!currentLocation}
-				zoom={zoom}
-				center={center}
-				onMapClick={onMapClick}
-				onMarkerClick={onMarkerClick}
-				setSelected={setSelected}
+			<div className="min-h-60 h-60">
+				<RoccoMap
+					isLoadingCurrentLocation={!currentLocation}
+					zoom={zoom}
+					center={center}
+					onMapClick={onMapClick}
+					onMarkerClick={onMarkerClick}
+					setSelected={setSelected}
+				/>
+			</div>
+			<Lists
+				status={listsStatus}
+				lists={data}
+				error={error}
+				currentUserEmail={user?.email}
 			/>
 		</Wrap>
 	);

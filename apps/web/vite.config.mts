@@ -45,5 +45,14 @@ export default defineConfig({
 	},
 	server: {
 		port: 53422,
+		watch: {
+			ignored: [
+				"**/node_modules",
+				"**/.git",
+				"**/.yarn",
+				"**/.pnp.*",
+				"**/*.test.tsx",
+			],
+		},
 	},
 });

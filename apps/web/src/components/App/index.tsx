@@ -1,5 +1,5 @@
 import Loading from "@hominem/components/Loading";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 
 import * as ROUTES from "src/constants/routes";
