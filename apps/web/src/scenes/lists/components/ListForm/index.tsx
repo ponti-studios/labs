@@ -1,4 +1,4 @@
-import FeedbackBlock from "@hominem/components/FeedbackBlock";
+import Alert from "@hominem/components/Alert";
 import Input from "@hominem/components/Input";
 import type { AxiosError } from "axios";
 import { type SyntheticEvent, useCallback, useState } from "react";
@@ -46,11 +46,7 @@ export default function ListForm({ onCreate, onCancel }: ListFormProps) {
 
 	return (
 		<>
-			{error && (
-				<FeedbackBlock type="error">
-					{(error as AxiosError).message}
-				</FeedbackBlock>
-			)}
+			{error && <Alert type="error">{(error as AxiosError).message}</Alert>}
 
 			<form onSubmit={onSubmit}>
 				<Input

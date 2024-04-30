@@ -1,5 +1,5 @@
+import Alert from "@hominem/components/Alert";
 import Button from "@hominem/components/Button";
-import FeedbackBlock from "@hominem/components/FeedbackBlock";
 import { LoadingScene } from "@hominem/components/Loading";
 import { useCallback, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -31,7 +31,7 @@ function PlaceScene() {
 	}
 
 	if (formattedError) {
-		return <FeedbackBlock type="error">{formattedError}</FeedbackBlock>;
+		return <Alert type="error">{formattedError}</Alert>;
 	}
 
 	return (

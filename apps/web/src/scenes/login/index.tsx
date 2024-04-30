@@ -1,5 +1,5 @@
+import Alert from "@hominem/components/Alert";
 import Button from "@hominem/components/Button";
-import FeedbackBlock from "@hominem/components/FeedbackBlock";
 import { Field, Formik } from "formik";
 import { Globe } from "lucide-react";
 import { useCallback, useEffect, useMemo } from "react";
@@ -78,12 +78,12 @@ function Login() {
 					</div>
 					<Button isLoading={isLoading}>Get code</Button>
 					{isError && (
-						<FeedbackBlock type="error">
+						<Alert type="error">
 							<p className="mb-1">
 								We ran into an issue finding or creating your account.
 							</p>
 							<p>Please, try again later</p>
-						</FeedbackBlock>
+						</Alert>
 					)}
 				</Form>
 			</Formik>

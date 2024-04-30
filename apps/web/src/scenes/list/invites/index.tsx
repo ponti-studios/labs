@@ -1,4 +1,4 @@
-import FeedbackBlock from "@hominem/components/FeedbackBlock";
+import Alert from "@hominem/components/Alert";
 import LoadingScene from "@hominem/components/Loading";
 import { useCallback } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -30,9 +30,7 @@ const ListInvites = () => {
 	}
 
 	if (!userList) {
-		return (
-			<FeedbackBlock type="error">We could not find this list.</FeedbackBlock>
-		);
+		return <Alert type="error">We could not find this list.</Alert>;
 	}
 
 	return (

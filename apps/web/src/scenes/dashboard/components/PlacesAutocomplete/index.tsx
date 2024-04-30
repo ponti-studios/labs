@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { Combobox } from "@headlessui/react";
-import FeedbackBlock from "@hominem/components/FeedbackBlock";
+import Alert from "@hominem/components/Alert";
 import Loading from "@hominem/components/Loading";
 import type { AxiosError } from "axios";
 import { Search } from "lucide-react";
@@ -157,7 +157,7 @@ function PlacesAutocomplete({
 					</Options>
 				)}
 			</Combobox>
-			{error && <FeedbackBlock type="error">{error.message}</FeedbackBlock>}
+			{error && <Alert type="error">{error.message}</Alert>}
 		</Wrapper>
 	);
 }

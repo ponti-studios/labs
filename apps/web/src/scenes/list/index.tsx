@@ -1,4 +1,4 @@
-import FeedbackBlock from "@hominem/components/FeedbackBlock";
+import Alert from "@hominem/components/Alert";
 import LoadingScene from "@hominem/components/Loading";
 import { PlusCircle, Share } from "lucide-react";
 import { useCallback, useState } from "react";
@@ -43,13 +43,11 @@ const List = () => {
 	}
 
 	if (error) {
-		return (
-			<FeedbackBlock type="error">We could not find this list.</FeedbackBlock>
-		);
+		return <Alert type="error">We could not find this list.</Alert>;
 	}
 
 	if (deleteError) {
-		return <FeedbackBlock type="error">{deleteError}</FeedbackBlock>;
+		return <Alert type="error">{deleteError}</Alert>;
 	}
 
 	return (
@@ -96,9 +94,9 @@ const List = () => {
 					</div>
 				)}
 				{data.items.length === 0 && (
-					<FeedbackBlock type="info">
+					<Alert type="info">
 						This list is empty. Start adding places with the search bar above.
-					</FeedbackBlock>
+					</Alert>
 				)}
 				<div className="grid gap-x-6 gap-y-14 grid-cols-2 sm:grid-cols-3">
 					{data.items.map((place) => (

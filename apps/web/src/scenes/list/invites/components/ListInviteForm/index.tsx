@@ -5,7 +5,7 @@ import { validateYupSchema } from "formik";
 import { type SyntheticEvent, useCallback, useState } from "react";
 import * as Yup from "yup";
 
-import FeedbackBlock from "@hominem/components/FeedbackBlock";
+import Alert from "@hominem/components/Alert";
 import { useCreateListInvite } from "src/services/api";
 import { useToast } from "src/services/toast/toast.slice";
 import type { ListInvite } from "src/services/types";
@@ -74,7 +74,7 @@ export default function ListInviteForm({
 
 	return (
 		<div className="mb-4">
-			{error && <FeedbackBlock type="error">{error}</FeedbackBlock>}
+			{error && <Alert type="error">{error}</Alert>}
 			<Form onSubmit={onFormSubmit}>
 				<Input
 					id="email"

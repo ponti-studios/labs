@@ -1,7 +1,7 @@
 import { BadgeAlert } from "lucide-react";
 import type { PropsWithChildren } from "react";
 
-function FeedbackBlock({
+function Alert({
 	children,
 	type,
 }: PropsWithChildren<{
@@ -47,4 +47,4 @@ function FeedbackBlock({
 	);
 }
 
-export default FeedbackBlock;
+export default Alert;

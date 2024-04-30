@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
+import Alert from "@hominem/components/Alert";
 import Button from "@hominem/components/Button";
-import FeedbackBlock from "@hominem/components/FeedbackBlock";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -74,7 +74,7 @@ function Account() {
 
 				<div className="divider" />
 
-				{error && <FeedbackBlock type="error">{error.message}</FeedbackBlock>}
+				{error && <Alert type="error">{error.message}</Alert>}
 
 				<Button className="btn-ghost text-error" onClick={onDelectAccount}>
 					Delete account

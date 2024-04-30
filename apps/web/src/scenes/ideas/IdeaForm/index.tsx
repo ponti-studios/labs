@@ -1,5 +1,5 @@
+import Alert from "@hominem/components/Alert";
 import Button from "@hominem/components/Button";
-import FeedbackBlock from "@hominem/components/FeedbackBlock";
 import { type SyntheticEvent, useCallback, useState } from "react";
 
 import { useCreateIdea } from "src/services/api/ideas";
@@ -37,7 +37,7 @@ export default function IdeaForm({ onCreate }: IdeaFormProps) {
 
 	return (
 		<>
-			{error && <FeedbackBlock type="error">{error as string}</FeedbackBlock>}
+			{error && <Alert type="error">{error as string}</Alert>}
 
 			<form onSubmit={onFormSubmit}>
 				<div className="form-control w-full mb-2">
