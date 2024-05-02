@@ -55,15 +55,12 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
 		[navigate],
 	);
 
-	const onSelectedChanged = useCallback((place: Place) => {
-		console.log("Selected place", place);
-		setSelected(place);
-		setCenter({
-			latitude: place.latitude,
-			longitude: place.longitude,
-		});
-		setZoom(ZOOM_LEVELS.SELECTED);
-	}, []);
+	const onSelectedChanged = useCallback(
+		(place: Place) => {
+			navigate(generatePath(PLACE, { id: place.googleMapsId }));
+		},
+		[navigate],
+	);
 
 	const onMarkerClick = useCallback(() => {
 		navigate(generatePath(PLACE, { id: selected.googleMapsId }));

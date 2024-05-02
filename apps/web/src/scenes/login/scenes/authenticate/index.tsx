@@ -8,7 +8,7 @@ import * as Yup from "yup";
 
 import AuthWrap from "src/components/AuthenticationWrap";
 import Form from "src/components/Form";
-import { DASHBOARD } from "src/constants/routes";
+import { DASHBOARD, LOGIN } from "src/constants/routes";
 import { loadAuth, setCurrentEmail } from "src/services/auth";
 import { authenticate } from "src/services/auth/auth.api";
 import { getLoginEmail } from "src/services/hooks";
@@ -64,15 +64,6 @@ function Authenticate() {
 	return (
 		<AuthWrap>
 			<h2 className="text-2xl font-semibold mb-6">Authenticate</h2>
-			{isError && error.response?.status === 401 && (
-				<Alert type="error">
-					Invalid code.
-					<Link to="login"> Request a new one.</Link>
-				</Alert>
-			)}
-			{isError && error.response?.status !== 401 && (
-				<Alert type="error">{error.response.message}</Alert>
-			)}
 			<Formik
 				validationSchema={AuthenticateSchema}
 				initialValues={initialValues}
@@ -90,6 +81,22 @@ function Authenticate() {
 							className="input input-bordered"
 							placeholder="Code"
 						/>
+						{isError && error.response?.status !== 401 && (
+							<Alert className="mt-2" type="error">
+								There was an issue validating your code.
+								<Link to={LOGIN} className="text-blue-500">
+									Try logging in again.
+								</Link>
+							</Alert>
+						)}
+						{isError && error.response?.status === 401 && (
+							<Alert className="mt-2" type="info">
+								<span>Invalid code.</span>
+								<Link to={LOGIN} className="text-blue-500">
+									Request a new one.
+								</Link>
+							</Alert>
+						)}
 					</div>
 					<Button isLoading={isLoading}>Login</Button>
 				</Form>

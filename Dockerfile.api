@@ -1,4 +1,4 @@
-FROM node:18 AS base
+FROM node:20 AS base
 
 LABEL version="0.0.1"
 LABEL name="rocco-api"
@@ -55,11 +55,11 @@ ENV COOKIE_SECRET=${COOKIE_SECRET}
 ENV COOKIE_SALT=${COOKIE_SALT}
 ENV SENDGRID_API_KEY=${SENDGRID_API_KEY}
 
+# Generate the Prisma client
+RUN turbo run prisma:generate --scope="@hominem/db"
+
 # Build the app
 RUN turbo run build --filter=rocco-api
-
-# Generate the Prisma client
-RUN turbo run prisma:generate --scope=rocco-api
 
 # ------------------------------------------------------------------------------
 

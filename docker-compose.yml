@@ -1,4 +1,16 @@
 services:
+  # caddy:
+  #   image: caddy:latest
+  #   container_name: caddy
+  #   restart: always
+  #   volumes:
+  #     - ./Caddyfile:/etc/caddy/Caddyfile
+  #   networks:
+  #     - rocco
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  
   postgres:
     image: postgres:latest
     container_name: postgres
@@ -24,6 +36,38 @@ services:
       - rocco
     ports:
       - 6379:6379
+
+  # api:
+  #   build: 
+  #     context: .
+  #     dockerfile: Dockerfile.api
+  #   container_name: rocco-api
+  #   restart: always
+  #   volumes:
+  #     - .:/app
+  #   networks:
+  #     - rocco
+  #   ports:
+  #     - 8000:8000
+  #   depends_on:
+  #     - postgres
+  #     - redis
+
+  # web:
+  #   build: 
+  #     context: .
+  #     dockerfile: Dockerfile.web
+  #   container_name: rocco-web
+  #   restart: always
+  #   volumes:
+  #     - .:/app
+  #     - ./apps/web/nginx.conf:/etc/nginx/nginx.conf
+  #   networks:
+  #     - rocco
+  #   ports:
+  #     - 8080:80
+  #   depends_on:
+  #     - api
 
 networks:
   rocco:

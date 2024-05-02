@@ -212,9 +212,7 @@ model Place {
   createdAt   DateTime @default(now())
   description String?  @db.Text()
   imageUrl    String?  @db.Text()
-  lat         String?  @db.Text()
   latitude    Float?
-  lng         String?  @db.Text()
   longitude   Float?
   name        String   @db.Text()
   phoneNumber String?  @db.Text()
