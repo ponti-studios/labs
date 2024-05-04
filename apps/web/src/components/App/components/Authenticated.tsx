@@ -16,7 +16,7 @@ import { useAppDispatch } from "src/services/store";
 
 import Toast from "../../Toast";
 
-const AuthenticatedScenes = () => {
+const AuthenticatedRoutes = () => {
 	const isMapLoaded = useApiIsLoaded();
 	const dispatch = useAppDispatch();
 
@@ -61,4 +61,4 @@ const AuthenticatedScenes = () => {
 	);
 };
 
-export default AuthenticatedScenes;
+export default AuthenticatedRoutes;

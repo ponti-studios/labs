@@ -11,7 +11,7 @@ import { loadAuth } from "src/services/auth";
 import { useAuth } from "src/services/hooks";
 import { useAppDispatch } from "src/services/store";
 
-import AuthenticatedScenes from "./components/Authenticated";
+import AuthenticatedRoutes from "./components/Authenticated";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 
@@ -42,7 +42,7 @@ function App() {
 					className="flex flex-1 mt-8 w-full max-sm:pb-16"
 				>
 					{isAuthenticated ? (
-						<AuthenticatedScenes />
+						<AuthenticatedRoutes />
 					) : (
 						<Routes>
 							<Route path={ROUTES.AUTHENTICATE} element={<Authenticate />} />

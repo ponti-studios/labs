@@ -9,7 +9,7 @@ import { useAuth } from "src/services/hooks";
 import ListForm from "./components/ListForm";
 import Lists from "./components/Lists";
 
-const ListsScene = () => {
+const ListsRoute = () => {
 	const navigate = useNavigate();
 	const { user } = useAuth();
 	const [isListFormOpen, setIsListFormOpen] = useState(false);
@@ -63,4 +63,4 @@ const ListsScene = () => {
 	);
 };
 
-export default ListsScene;
+export default ListsRoute;

@@ -12,7 +12,7 @@ import PlaceWebsite from "src/components/places/PlaceWebsite";
 import { useGetPlace } from "src/services/api/places";
 import { useToast } from "src/services/toast/toast.slice";
 
-function PlaceScene() {
+function PlaceRoute() {
 	const { openToast } = useToast();
 	const params = useParams<{ id: string }>();
 	const [isListSelectOpen, setIsListSelectOpen] = useState<boolean>(false);
@@ -71,4 +71,4 @@ function PlaceScene() {
 	);
 }
 
-export default PlaceScene;
+export default PlaceRoute;
