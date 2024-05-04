@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 
 import * as ROUTES from "src/constants/routes";
-import Home from "src/scenes/Home";
+import LandingPage from "src/scenes/index";
 import Login from "src/scenes/login";
 import Authenticate from "src/scenes/login/scenes/authenticate";
 import NotFound from "src/scenes/not-found";
@@ -47,7 +47,7 @@ function App() {
 						<Routes>
 							<Route path={ROUTES.AUTHENTICATE} element={<Authenticate />} />
 							<Route path={ROUTES.LOGIN} element={<Login />} />
-							<Route path={ROUTES.LANDING} element={<Home />} />
+							<Route path={ROUTES.LANDING} element={<LandingPage />} />
 							<Route path={ROUTES.WILDCARD} element={<NotFound />} />
 						</Routes>
 					)}

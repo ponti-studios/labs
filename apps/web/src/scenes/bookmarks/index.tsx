@@ -1,4 +1,4 @@
-import LoadingScene from "@hominem/components/Loading";
+import Loading from "@hominem/components/Loading";
 import { useNavigate } from "react-router-dom";
 
 import { useGetBookmarks } from "src/services/api/bookmarks";
@@ -22,7 +22,7 @@ const Recommendations = () => {
 		<>
 			<BookmarkForm onCreate={refetch} />
 			<div>
-				{bookmarksStatus === "loading" && <LoadingScene />}
+				{bookmarksStatus === "loading" && <Loading />}
 				{data?.length === 0 && "your bookmarks will appear here"}
 				{data && data.length > 0 && (
 					<ul className="space-y-2">

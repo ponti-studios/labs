@@ -1,5 +1,5 @@
 import Alert from "@hominem/components/Alert";
-import LoadingScene from "@hominem/components/Loading";
+import Loading from "@hominem/components/Loading";
 import { PlusCircle, Share } from "lucide-react";
 import { useCallback, useState } from "react";
 import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
@@ -39,7 +39,7 @@ const List = () => {
 	}
 
 	if (status === "loading") {
-		return <LoadingScene />;
+		return <Loading />;
 	}
 
 	if (error) {

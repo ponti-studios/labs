@@ -1,6 +1,6 @@
 import Alert from "@hominem/components/Alert";
 import Button from "@hominem/components/Button";
-import { LoadingScene } from "@hominem/components/Loading";
+import Loading from "@hominem/components/Loading";
 import { useCallback, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -27,7 +27,7 @@ function PlaceScene() {
 	const onAddToList = useCallback(() => setIsListSelectOpen(true), []);
 
 	if (isLoading) {
-		return <LoadingScene />;
+		return <Loading />;
 	}
 
 	if (formattedError) {

@@ -1,5 +1,5 @@
 import Alert from "@hominem/components/Alert";
-import LoadingScene from "@hominem/components/Loading";
+import Loading from "@hominem/components/Loading";
 import { useCallback } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
@@ -26,7 +26,7 @@ const ListInvites = () => {
 	}
 
 	if ([listStatus, invitesStatus].indexOf("loading") >= 0) {
-		return <LoadingScene />;
+		return <Loading />;
 	}
 
 	if (!userList) {

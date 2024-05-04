@@ -2,11 +2,11 @@ import { screen } from "@testing-library/react";
 import { renderWithProviders } from "src/test/utils";
 import { describe, expect, test } from "vitest";
 
-import Home from ".";
+import LandingPage from "../scenes";
 
-describe("Home", () => {
+describe("landing", () => {
 	test("renders", () => {
-		renderWithProviders(<Home />);
+		renderWithProviders(<LandingPage />);
 		expect(screen.getByText("Make the world yours.")).toBeInTheDocument();
 	});
 });

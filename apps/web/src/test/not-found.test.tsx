@@ -4,7 +4,7 @@ import { type Mock, describe, expect, test } from "vitest";
 
 import { renderWithProviders } from "src/test/utils";
 
-import NotFound from ".";
+import NotFound from "../scenes/not-found";
 
 function mockUseMatch(paths: { [key: string]: boolean }) {
 	(useMatch as Mock).mockImplementation((path) => {

@@ -23,7 +23,7 @@ const Wrap = styled.div`
   }
 `;
 
-const Home = () => {
+const LandingPage = () => {
 	return (
 		<Wrap>
 			<div className="flex flex-col items-center justify-center w-full">
@@ -59,4 +59,4 @@ const Home = () => {
 	);
 };
 
-export default Home;
+export default LandingPage;

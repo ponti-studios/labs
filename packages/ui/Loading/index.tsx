@@ -23,11 +23,3 @@ export default function Loading({ size = "md" }: LoadingProps) {
 		</div>
 	);
 }
-
-export function LoadingScene() {
-	return (
-		<div className="flex items-center justify-center max-w-[300px] mx-auto min-h-full">
-			<Loading size="xl" />
-		</div>
-	);
-}

@@ -1,4 +1,4 @@
-import LoadingScene from "@hominem/components/Loading";
+import Loading from "@hominem/components/Loading";
 import { useNavigate } from "react-router-dom";
 
 import { useGetIdeas } from "src/services/api/ideas";
@@ -19,7 +19,7 @@ const Ideas = () => {
 		<>
 			<IdeaForm onCreate={refetch} />
 			<div>
-				{ideasStatus === "loading" && <LoadingScene />}
+				{ideasStatus === "loading" && <Loading />}
 				{data?.length === 0 && "your thoughts will appear here"}
 				{data && data.length > 0 && (
 					<ul className="space-y-2">
