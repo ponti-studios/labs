@@ -35,7 +35,7 @@
 		"axios": "^1.6.2",
 		"class-variance-authority": "^0.7.0",
 		"clsx": "^2.1.0",
-		"daisyui": "^3.5.0",
+		"daisyui": "^4.10.5",
 		"formik": "^2.2.9",
 		"lucide-react": "^0.320.0",
 		"prop-types": "^15.8.1",
