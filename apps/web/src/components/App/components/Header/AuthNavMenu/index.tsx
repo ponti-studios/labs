@@ -12,7 +12,7 @@ import {
 	LISTS,
 } from "src/lib/utils/routes";
 
-import NavLink from "../../NavLink";
+import AppLink from "../../AppLink";
 
 const AuthNavMenu = ({ user }: { user: User }) => {
 	const navMenuRef = useRef(null);
@@ -38,15 +38,15 @@ const AuthNavMenu = ({ user }: { user: User }) => {
 	return (
 		<>
 			<div className="hidden md:visible md:flex gap-6 mr-4">
-				<NavLink to={DASHBOARD} className="px-4 py-2 rounded-xl">
+				<AppLink to={DASHBOARD} className="px-4 py-2 rounded-xl">
 					<Search />
-				</NavLink>
-				<NavLink to={LISTS} className="px-4 py-2 rounded-xl">
+				</AppLink>
+				<AppLink to={LISTS} className="px-4 py-2 rounded-xl">
 					<List />
-				</NavLink>
-				<NavLink to={INVITES} className="px-4 py-2 rounded-xl">
+				</AppLink>
+				<AppLink to={INVITES} className="px-4 py-2 rounded-xl">
 					<Mail />
-				</NavLink>
+				</AppLink>
 			</div>
 			<div>
 				<details data-testid="dropdown" className="dropdown dropdown-end">

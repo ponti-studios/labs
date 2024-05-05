@@ -1,6 +1,6 @@
-import LinkButton from "@hominem/components/LinkButton";
 import { useNavigate } from "react-router-dom";
 
+import AppLink from "src/components/App/components/AppLink";
 import { useGetOutboundInvites } from "src/lib/api";
 import { useAuth } from "src/lib/hooks";
 
@@ -16,9 +16,9 @@ const ListInvites = () => {
 	return (
 		<>
 			<div className="my-4">
-				<LinkButton href="/lists/invites">
+				<AppLink btn to="/lists/invites">
 					<span className="mr-1">⬅️</span> Back to invites
-				</LinkButton>
+				</AppLink>
 			</div>
 			<h1>Sent Invites</h1>
 			<div>

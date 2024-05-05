@@ -1,7 +1,8 @@
-import LinkButton from "@hominem/components/LinkButton";
 import { FileX2, List, SearchX } from "lucide-react";
 import type { PropsWithChildren } from "react";
 import { Link, useMatch } from "react-router-dom";
+
+import AppLink from "src/components/App/components/AppLink";
 
 const Wrapper = ({ children }: PropsWithChildren) => {
 	return (
@@ -28,7 +29,9 @@ function NotFound() {
 				<NotFoundDescription>
 					Sign up to start making lists with friends!
 				</NotFoundDescription>
-				<LinkButton href="/signup">Go to list</LinkButton>
+				<AppLink btn to="/signup">
+					Go to list
+				</AppLink>
 			</Wrapper>
 		);
 	}
@@ -47,7 +50,9 @@ function NotFound() {
 					</Link>{" "}
 					to view your new list.
 				</NotFoundDescription>
-				<LinkButton href="/signup">Go to list</LinkButton>
+				<AppLink btn to="/signup">
+					Go to list
+				</AppLink>
 			</Wrapper>
 		);
 	}
@@ -67,7 +72,9 @@ function NotFound() {
 					to view your lists.
 				</NotFoundDescription>
 
-				<LinkButton href="/signup">Go to list</LinkButton>
+				<AppLink btn to="/signup">
+					Go to list
+				</AppLink>
 			</Wrapper>
 		);
 	}
@@ -78,9 +85,9 @@ function NotFound() {
 			<NotFoundHeader>
 				What are you looking for? We can't find it.
 			</NotFoundHeader>
-			<LinkButton href="/login" className="font-semibold">
+			<AppLink btn to="/login" className="font-semibold">
 				Log in
-			</LinkButton>
+			</AppLink>
 		</Wrapper>
 	);
 }
