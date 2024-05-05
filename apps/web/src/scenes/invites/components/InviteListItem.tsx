@@ -3,8 +3,8 @@ import { useCallback } from "react";
 import { Link } from "react-router-dom";
 
 import Button from "@hominem/components/Button";
-import { useAcceptInviteMutation } from "src/services/api";
-import type { ListInvite } from "src/services/types";
+import { useAcceptInviteMutation } from "src/lib/api";
+import type { ListInvite } from "src/lib/types";
 
 type InviteListItemProps = {
 	listInvite: ListInvite;

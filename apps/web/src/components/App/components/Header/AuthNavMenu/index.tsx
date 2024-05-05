@@ -2,15 +2,15 @@ import { List, LogOut, Mail, Search, Settings, UserCircle } from "lucide-react";
 import { useCallback, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+import { type User, logout } from "src/lib/auth";
+import { useAppDispatch } from "src/lib/store";
 import {
 	ACCOUNT,
 	DASHBOARD,
 	INVITES,
 	LANDING,
 	LISTS,
-} from "src/constants/routes";
-import { type User, logout } from "src/services/auth";
-import { useAppDispatch } from "src/services/store";
+} from "src/lib/utils/routes";
 
 import NavLink from "../../NavLink";
 

@@ -1,11 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-import {
-	type RootState,
-	useAppDispatch,
-	useAppSelector,
-} from "src/services/store";
+import { type RootState, useAppDispatch, useAppSelector } from "src/lib/store";
 
 export type ToastMessage = {
 	text: string;

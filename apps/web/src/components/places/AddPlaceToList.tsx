@@ -1,9 +1,9 @@
 import styled from "@emotion/styled";
 import Button from "@hominem/components/Button";
 import { useState } from "react";
-import { useGetLists } from "src/services/api";
-import { useAddPlaceToList } from "src/services/api/places";
-import type { Place } from "src/services/types";
+import { useGetLists } from "src/lib/api";
+import { useAddPlaceToList } from "src/lib/api/places";
+import type { Place } from "src/lib/types";
 
 const ListItem = styled.li`
   padding: 8px;

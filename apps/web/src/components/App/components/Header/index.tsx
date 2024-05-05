@@ -1,9 +1,9 @@
 import { Globe } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import { APP_NAME } from "src/constants";
-import { LANDING, LOGIN } from "src/constants/routes";
-import { useAuth } from "src/services/hooks";
+import { useAuth } from "src/lib/hooks";
+import { APP_NAME } from "src/lib/utils";
+import { LANDING, LOGIN } from "src/lib/utils/routes";
 
 import AuthNavMenu from "./AuthNavMenu";
 

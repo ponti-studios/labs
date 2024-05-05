@@ -1,7 +1,7 @@
 import { TrashIcon } from "lucide-react";
 import React, { useCallback } from "react";
-import { useDeleteIdea } from "src/services/api/ideas";
-import type { Idea } from "src/services/types";
+import { useDeleteIdea } from "src/lib/api/ideas";
+import type { Idea } from "src/lib/types";
 
 import Button from "@hominem/components/Button";
 

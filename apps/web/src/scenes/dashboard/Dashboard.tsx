@@ -3,14 +3,14 @@ import Loading from "@hominem/components/Loading";
 import type { MapMouseEvent } from "@vis.gl/react-google-maps/dist/components/map/use-map-events";
 import React, { useCallback, useEffect, useState } from "react";
 
-import { mediaQueries } from "src/constants/styles";
-import { useAppSelector } from "src/services/store";
-import type { Place } from "src/services/types";
+import { useAppSelector } from "src/lib/store";
+import type { Place } from "src/lib/types";
+import { mediaQueries } from "src/lib/utils/styles";
 
 import { generatePath, useNavigate } from "react-router-dom";
-import { PLACE } from "src/constants/routes";
-import { useGetLists } from "src/services/api";
-import { useAuth } from "src/services/hooks";
+import { useGetLists } from "src/lib/api";
+import { useAuth } from "src/lib/hooks";
+import { PLACE } from "src/lib/utils/routes";
 import Lists from "../lists/components/Lists";
 import RoccoMap from "./components/Map";
 import PlacesAutocomplete from "./components/PlacesAutocomplete";

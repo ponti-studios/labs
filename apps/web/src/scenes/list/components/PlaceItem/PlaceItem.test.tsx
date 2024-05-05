@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import type { Mock, MockedFunction } from "vitest";
 
-import { baseURL } from "src/services/api/base";
+import { baseURL } from "src/lib/api/base";
 import { testServer } from "src/test/test.setup";
 import { getMockPlace, renderWithProviders } from "src/test/utils";
 

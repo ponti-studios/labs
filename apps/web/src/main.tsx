@@ -7,7 +7,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 
 import App from "./components/App";
 import "./index.css";
-import { store } from "./services/store";
+import { store } from "./lib/store";
 
 const queryClient = new QueryClient();
 

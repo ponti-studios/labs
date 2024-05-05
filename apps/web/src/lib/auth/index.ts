@@ -5,7 +5,7 @@ import {
 	createSlice,
 } from "@reduxjs/toolkit";
 
-import api from "src/services/api";
+import api from "src/lib/api";
 
 import * as authApi from "./auth.api";
 
@@ -49,13 +49,7 @@ const initialState: AuthState = {
 };
 
 export const loadAuth = createAsyncThunk("auth/load", async () => {
-	const response = await api.get("/me");
-
-	if (!response.data || !response.data.id) {
-		throw new Error("User not found");
-	}
-
-	return response.data;
+	return authApi.getUser();
 });
 
 export const logout = createAsyncThunk("auth/logout", async () => {

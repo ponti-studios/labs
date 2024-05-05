@@ -5,7 +5,7 @@ import { type SyntheticEvent, useCallback, useState } from "react";
 import { useMutation } from "react-query";
 
 import Button from "@hominem/components/Button";
-import { URLS, api } from "src/services/api/base";
+import { URLS, api } from "src/lib/api/base";
 
 const MIN_LENGTH = 3;
 

@@ -9,11 +9,11 @@ import * as Yup from "yup";
 
 import AuthWrap from "src/components/AuthenticationWrap";
 import Form from "src/components/Form";
-import { LANDING } from "src/constants/routes";
-import api from "src/services/api";
-import { setCurrentEmail } from "src/services/auth";
-import { useAuth } from "src/services/hooks";
-import { useAppDispatch } from "src/services/store";
+import api from "src/lib/api";
+import { setCurrentEmail } from "src/lib/auth";
+import { useAuth } from "src/lib/hooks";
+import { useAppDispatch } from "src/lib/store";
+import { LANDING } from "src/lib/utils/routes";
 
 const LoginSchema = Yup.object().shape({
 	email: Yup.string().email(),

@@ -3,8 +3,8 @@ import { PlusCircle } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { useGetLists } from "src/services/api";
-import { useAuth } from "src/services/hooks";
+import { useGetLists } from "src/lib/api";
+import { useAuth } from "src/lib/hooks";
 
 import ListForm from "./components/ListForm";
 import Lists from "./components/Lists";

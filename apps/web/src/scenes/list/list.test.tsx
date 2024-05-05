@@ -11,9 +11,9 @@ import {
 	vi,
 } from "vitest";
 
-import api from "src/services/api";
-import { baseURL } from "src/services/api/base";
-import * as hooks from "src/services/hooks";
+import api from "src/lib/api";
+import { baseURL } from "src/lib/api/base";
+import * as hooks from "src/lib/hooks";
 import { MOCK_PLACE, PLACE_ID } from "src/test/mocks/place";
 import { TEST_LIST_ID, testServer } from "src/test/test.setup";
 import { getMockStore, renderWithProviders, useAuthMock } from "src/test/utils";

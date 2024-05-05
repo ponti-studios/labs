@@ -4,7 +4,7 @@ import { http, HttpResponse } from "msw";
 import * as reactRouterDom from "react-router-dom";
 import { type Mock, beforeEach, describe, expect, test, vi } from "vitest";
 
-import { baseURL } from "src/services/api/base";
+import { baseURL } from "src/lib/api/base";
 import { MOCK_PLACE_SEARCH } from "src/test/mocks/place";
 import { testServer } from "src/test/test.setup";
 import {

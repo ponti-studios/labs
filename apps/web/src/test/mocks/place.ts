@@ -1,6 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { createElement } from "react";
-import { baseURL } from "src/services/api/base";
+import { baseURL } from "src/lib/api/base";
 import { vi } from "vitest";
 
 export const PLACE_ID = "place-id";

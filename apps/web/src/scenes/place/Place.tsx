@@ -9,8 +9,8 @@ import PlaceAddress from "src/components/places/PlaceAddress";
 import PlacePhotos from "src/components/places/PlacePhotos";
 import PlaceTypes from "src/components/places/PlaceTypes";
 import PlaceWebsite from "src/components/places/PlaceWebsite";
-import { useGetPlace } from "src/services/api/places";
-import { useToast } from "src/services/toast/toast.slice";
+import { useGetPlace } from "src/lib/api/places";
+import { useToast } from "src/lib/toast/toast.slice";
 
 function PlaceRoute() {
 	const { openToast } = useToast();

@@ -4,9 +4,9 @@ import type { PropsWithChildren, ReactElement } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
-import { AuthStatus, type User } from "src/services/auth";
-import { rootReducer } from "src/services/store";
-import type { ListPlace } from "src/services/types";
+import { AuthStatus, type User } from "src/lib/auth";
+import { rootReducer } from "src/lib/store";
+import type { ListPlace } from "src/lib/types";
 
 const queryClient = new QueryClient({
 	defaultOptions: {

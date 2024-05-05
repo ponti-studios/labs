@@ -2,8 +2,8 @@ import Button from "@hominem/components/Button";
 import { TrashIcon } from "lucide-react";
 import React, { useCallback, type MouseEvent } from "react";
 
-import { useDeleteBookmark } from "src/services/api/bookmarks";
-import type { Recommendation } from "src/services/types";
+import { useDeleteBookmark } from "src/lib/api/bookmarks";
+import type { Recommendation } from "src/lib/types";
 
 import styles from "./BookmarkListItem.module.css";
 

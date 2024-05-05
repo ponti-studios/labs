@@ -2,8 +2,8 @@ import Alert from "@hominem/components/Alert";
 import Loading from "@hominem/components/Loading";
 import { Link } from "react-router-dom";
 
-import type { User } from "src/services/auth";
-import type { List } from "src/services/types";
+import type { User } from "src/lib/auth";
+import type { List } from "src/lib/types";
 
 const NoResults = () => {
 	return (

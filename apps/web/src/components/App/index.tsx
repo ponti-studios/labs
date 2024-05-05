@@ -2,14 +2,14 @@ import Loading from "@hominem/components/Loading";
 import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 
-import * as ROUTES from "src/constants/routes";
+import { loadAuth } from "src/lib/auth";
+import { useAuth } from "src/lib/hooks";
+import { useAppDispatch } from "src/lib/store";
+import * as ROUTES from "src/lib/utils/routes";
 import LandingPage from "src/scenes/index";
 import Login from "src/scenes/login";
 import Authenticate from "src/scenes/login/scenes/authenticate";
 import NotFound from "src/scenes/not-found";
-import { loadAuth } from "src/services/auth";
-import { useAuth } from "src/services/hooks";
-import { useAppDispatch } from "src/services/store";
 
 import AuthenticatedRoutes from "./components/Authenticated";
 import Footer from "./components/Footer";

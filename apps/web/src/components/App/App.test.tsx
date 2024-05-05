@@ -11,7 +11,7 @@ import {
 } from "src/test/utils";
 
 import { http, HttpResponse } from "msw";
-import { baseURL } from "src/services/api/base";
+import { baseURL } from "src/lib/api/base";
 import { testServer } from "src/test/test.setup";
 import App from "./index";
 

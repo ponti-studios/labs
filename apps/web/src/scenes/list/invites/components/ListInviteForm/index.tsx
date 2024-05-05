@@ -6,9 +6,9 @@ import { type SyntheticEvent, useCallback, useState } from "react";
 import * as Yup from "yup";
 
 import Alert from "@hominem/components/Alert";
-import { useCreateListInvite } from "src/services/api";
-import { useToast } from "src/services/toast/toast.slice";
-import type { ListInvite } from "src/services/types";
+import { useCreateListInvite } from "src/lib/api";
+import { useToast } from "src/lib/toast/toast.slice";
+import type { ListInvite } from "src/lib/types";
 
 const Form = styled.form`
   display: flex;

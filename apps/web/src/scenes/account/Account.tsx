@@ -4,8 +4,8 @@ import Button from "@hominem/components/Button";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { LANDING } from "src/constants/routes";
-import { useAuth } from "src/services/hooks";
+import { useAuth } from "src/lib/hooks";
+import { LANDING } from "src/lib/utils/routes";
 
 const Wrap = styled.div`
   display: flex;

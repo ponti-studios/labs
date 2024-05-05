@@ -5,9 +5,9 @@ import { useMutation } from "react-query";
 import { generatePath, useNavigate } from "react-router-dom";
 import Modal from "src/components/Modal";
 import PlaceTypes from "src/components/places/PlaceTypes";
-import { PLACE } from "src/constants/routes";
-import api from "src/services/api";
-import type { ListPlace } from "src/services/types";
+import api from "src/lib/api";
+import type { ListPlace } from "src/lib/types";
+import { PLACE } from "src/lib/utils/routes";
 
 const ListItem = ({
 	listId,

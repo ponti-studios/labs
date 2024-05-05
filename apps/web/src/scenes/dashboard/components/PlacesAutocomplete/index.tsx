@@ -7,8 +7,8 @@ import { Search } from "lucide-react";
 import React, { useCallback, useRef, useState } from "react";
 import { useQuery } from "react-query";
 
-import api from "src/services/api";
-import type { Place, PlaceLocation } from "src/services/types";
+import api from "src/lib/api";
+import type { Place, PlaceLocation } from "src/lib/types";
 
 const Wrapper = styled.div`
   position: relative;

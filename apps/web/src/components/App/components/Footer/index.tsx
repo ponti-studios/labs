@@ -1,5 +1,5 @@
 import { List as ListIcon, Mail, Search } from "lucide-react";
-import { DASHBOARD, INVITES, LISTS } from "src/constants/routes";
+import { DASHBOARD, INVITES, LISTS } from "src/lib/utils/routes";
 import NavLink from "../NavLink";
 
 const Footer = () => {

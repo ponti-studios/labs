@@ -2,7 +2,9 @@ import { useApiIsLoaded } from "@vis.gl/react-google-maps";
 import { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 
-import * as ROUTES from "src/constants/routes";
+import { setCurrentLocation } from "src/lib/auth";
+import { useAppDispatch } from "src/lib/store";
+import * as ROUTES from "src/lib/utils/routes";
 import Account from "src/scenes/account";
 import Dashboard from "src/scenes/dashboard";
 import Invites from "src/scenes/invites";
@@ -11,8 +13,6 @@ import ListInvites from "src/scenes/list/invites";
 import Lists from "src/scenes/lists";
 import NotFound from "src/scenes/not-found";
 import Place from "src/scenes/place";
-import { setCurrentLocation } from "src/services/auth";
-import { useAppDispatch } from "src/services/store";
 
 import Toast from "../../Toast";
 

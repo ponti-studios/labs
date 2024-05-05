@@ -1,4 +1,4 @@
-import type { Place } from "src/services/types";
+import type { Place } from "src/lib/types";
 
 type Props = {
 	alt: string;

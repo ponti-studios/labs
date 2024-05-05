@@ -2,8 +2,8 @@ import styled from "@emotion/styled";
 import { Eye, Globe2, Heart, Pin } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import { LOGIN } from "src/constants/routes";
-import { mediaQueries } from "src/constants/styles";
+import { LOGIN } from "src/lib/utils/routes";
+import { mediaQueries } from "src/lib/utils/styles";
 
 const Wrap = styled.div`
   position: relative;

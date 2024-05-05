@@ -2,7 +2,7 @@ import Alert from "@hominem/components/Alert";
 import Button from "@hominem/components/Button";
 import { type SyntheticEvent, useCallback, useState } from "react";
 
-import { useCreateIdea } from "src/services/api/ideas";
+import { useCreateIdea } from "src/lib/api/ideas";
 
 type IdeaFormProps = {
 	onCreate: () => void;

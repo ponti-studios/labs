@@ -3,7 +3,7 @@ import React from "react";
 import { beforeEach, describe, expect, test } from "vitest";
 import { vi } from "vitest";
 
-import * as hooks from "src/services/hooks";
+import * as hooks from "src/lib/hooks";
 import {
 	TEST_USER_NAME,
 	renderWithProviders,

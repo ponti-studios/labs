@@ -2,7 +2,7 @@ import Alert from "@hominem/components/Alert";
 import Button from "@hominem/components/Button";
 import { type SyntheticEvent, useCallback, useState } from "react";
 
-import { useCreateBookmark } from "src/services/api/bookmarks";
+import { useCreateBookmark } from "src/lib/api/bookmarks";
 
 type BookmarksFormProps = {
 	onCreate: () => void;

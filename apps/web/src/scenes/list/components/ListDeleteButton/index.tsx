@@ -1,8 +1,8 @@
 import { Trash } from "lucide-react";
 import { useMutation } from "react-query";
 
-import api from "src/services/api";
-import { baseURL } from "src/services/api/base";
+import api from "src/lib/api";
+import { baseURL } from "src/lib/api/base";
 
 const ListDeleteButton = ({
 	listId,

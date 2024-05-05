@@ -3,7 +3,7 @@ import { useCallback } from "react";
 
 import styled from "@emotion/styled";
 import type { MapMouseEvent } from "@vis.gl/react-google-maps/dist/components/map/use-map-events";
-import type { Place, PlaceLocation } from "src/services/types";
+import type { Place, PlaceLocation } from "src/lib/types";
 
 const Loading = styled.div`
   left: 0;

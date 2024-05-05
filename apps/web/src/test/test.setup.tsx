@@ -5,7 +5,7 @@ import { setupServer } from "msw/node";
 import React, { type PropsWithChildren } from "react";
 import { afterAll, afterEach, beforeAll, vi } from "vitest";
 
-import { baseURL } from "../services/api/base";
+import { baseURL } from "../lib/api/base";
 import { MOCK_PLACE, PLACE_HANDLERS } from "./mocks/place";
 
 export const TEST_LIST_ID = "list-id";
