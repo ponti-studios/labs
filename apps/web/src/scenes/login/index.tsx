@@ -1,9 +1,9 @@
 import Alert from "@hominem/components/Alert";
 import Button from "@hominem/components/Button";
+import { useMutation } from "@tanstack/react-query";
 import { Field, Formik } from "formik";
 import { Globe } from "lucide-react";
 import { useCallback, useEffect, useMemo } from "react";
-import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 
@@ -30,7 +30,7 @@ function Login() {
 		[],
 	);
 
-	const { mutateAsync, isLoading, isError } = useMutation({
+	const { mutateAsync, status, isError } = useMutation({
 		mutationFn: async ({ email }: { email: string }) => {
 			await api.post("/login", { email }, { withCredentials: false });
 			dispatch(setCurrentEmail(email));
@@ -76,7 +76,7 @@ function Login() {
 							placeholder="Email"
 						/>
 					</div>
-					<Button isLoading={isLoading}>Get code</Button>
+					<Button isLoading={status === "pending"}>Get code</Button>
 					{isError && (
 						<Alert type="error">
 							<p className="mb-1">

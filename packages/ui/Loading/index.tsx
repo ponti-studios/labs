@@ -1,5 +1,6 @@
 type LoadingSize = "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
 type LoadingProps = {
+	color?: string;
 	size?: LoadingSize;
 };
 
@@ -12,12 +13,12 @@ const sizes = {
 	"3xl": "6rem",
 };
 
-export default function Loading({ size = "md" }: LoadingProps) {
+export default function Loading({ color, size = "md" }: LoadingProps) {
 	return (
 		<div data-testid="loading-spinner" role="status">
 			<span
 				className="loading loading-infinity"
-				style={{ width: sizes[size] }}
+				style={{ width: sizes[size], color }}
 			/>
 			<span className="sr-only">Loading...</span>
 		</div>

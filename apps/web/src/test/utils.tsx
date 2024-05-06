@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { type RenderOptions, render } from "@testing-library/react";
 import type { PropsWithChildren, ReactElement } from "react";
-import { QueryClient, QueryClientProvider } from "react-query";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
 import { AuthStatus, type User } from "src/lib/auth";

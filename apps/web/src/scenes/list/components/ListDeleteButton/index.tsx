@@ -1,5 +1,5 @@
+import { useMutation } from "@tanstack/react-query";
 import { Trash } from "lucide-react";
-import { useMutation } from "react-query";
 
 import api from "src/lib/api";
 import { baseURL } from "src/lib/api/base";

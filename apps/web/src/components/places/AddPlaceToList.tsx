@@ -36,12 +36,12 @@ const AddPlaceToList = ({
 }) => {
 	const { isLoading, data: lists } = useGetLists();
 	const [listIds, setListIds] = useState<string[]>([]);
-	const { mutate: addToList, isLoading: isAddingToList } = useAddPlaceToList({
+	const { mutate: addToList, status: addPlaceStatus } = useAddPlaceToList({
 		onSuccess: () => {
 			onSuccess?.();
 		},
 	});
-
+	const isAddingToList = addPlaceStatus === "pending";
 	const onAddToList = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 		e.stopPropagation();

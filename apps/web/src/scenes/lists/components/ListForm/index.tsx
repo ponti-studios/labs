@@ -1,8 +1,8 @@
 import Alert from "@hominem/components/Alert";
 import Input from "@hominem/components/Input";
+import { useMutation } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { type SyntheticEvent, useCallback, useState } from "react";
-import { useMutation } from "react-query";
 
 import Button from "@hominem/components/Button";
 import { URLS, api } from "src/lib/api/base";
@@ -15,7 +15,7 @@ type ListFormProps = {
 };
 export default function ListForm({ onCreate, onCancel }: ListFormProps) {
 	const [name, setName] = useState("");
-	const { error, isLoading, mutate } = useMutation({
+	const { error, mutate, status } = useMutation({
 		mutationFn: async () => api.post(URLS.lists, { name }),
 		onSuccess: () => {
 			setName("");
@@ -67,7 +67,7 @@ export default function ListForm({ onCreate, onCancel }: ListFormProps) {
 					<Button
 						className="px-12"
 						disabled={name.length < MIN_LENGTH}
-						isLoading={isLoading}
+						isLoading={status === "pending"}
 					>
 						Submit
 					</Button>

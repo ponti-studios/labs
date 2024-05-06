@@ -34,17 +34,6 @@ export default defineConfig({
 		minify: "esbuild",
 		outDir: "build",
 		rollupOptions: {
-			output: {
-				manualChunks(id) {
-					const doNotInclude: string[] = ["spotlight"];
-					if (id.includes("node_modules")) {
-						if (doNotInclude.find((moduleName) => id.includes(moduleName))) {
-							return;
-						}
-						return "vendor";
-					}
-				},
-			},
 			plugins: [
 				analyze({
 					summaryOnly: true,

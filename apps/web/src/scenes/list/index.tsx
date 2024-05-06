@@ -11,7 +11,6 @@ import type { SearchPlace } from "src/lib/types";
 import { PLACE } from "src/lib/utils/routes";
 
 import PlacesAutocomplete from "../dashboard/components/PlacesAutocomplete";
-
 import PlaceItem from "./components/PlaceItem";
 
 const List = () => {
@@ -38,7 +37,7 @@ const List = () => {
 		return null;
 	}
 
-	if (status === "loading") {
+	if (status === "pending") {
 		return <Loading />;
 	}
 

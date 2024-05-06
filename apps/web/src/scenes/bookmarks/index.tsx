@@ -22,7 +22,7 @@ const Recommendations = () => {
 		<>
 			<BookmarkForm onCreate={refetch} />
 			<div>
-				{bookmarksStatus === "loading" && <Loading />}
+				{bookmarksStatus === "pending" && <Loading />}
 				{data?.length === 0 && "your bookmarks will appear here"}
 				{data && data.length > 0 && (
 					<ul className="space-y-2">

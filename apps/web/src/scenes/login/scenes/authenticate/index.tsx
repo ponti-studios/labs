@@ -1,8 +1,8 @@
 import Alert from "@hominem/components/Alert";
 import Button from "@hominem/components/Button";
+import { useMutation } from "@tanstack/react-query";
 import { Field, Formik } from "formik";
 import React, { useEffect, useMemo } from "react";
-import { useMutation } from "react-query";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 
@@ -28,7 +28,7 @@ function Authenticate() {
 		}),
 		[],
 	);
-	const { mutateAsync, isLoading, isError, error } = useMutation<
+	const { mutateAsync, status, isError, error } = useMutation<
 		void,
 		{ response: { message: string; status: number } },
 		{ emailToken: string }
@@ -98,7 +98,7 @@ function Authenticate() {
 							</Alert>
 						)}
 					</div>
-					<Button isLoading={isLoading}>Login</Button>
+					<Button isLoading={status === "pending"}>Login</Button>
 				</Form>
 			</Formik>
 		</AuthWrap>

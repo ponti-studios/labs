@@ -25,7 +25,7 @@ const ListInvites = () => {
 		navigate("/");
 	}
 
-	if ([listStatus, invitesStatus].indexOf("loading") >= 0) {
+	if ([listStatus, invitesStatus].indexOf("pending") >= 0) {
 		return <Loading />;
 	}
 

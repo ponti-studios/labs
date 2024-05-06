@@ -1,8 +1,9 @@
 import Button from "@hominem/components/Button";
+import { useMutation } from "@tanstack/react-query";
 import { X } from "lucide-react";
 import { type KeyboardEvent, type MouseEvent, useState } from "react";
-import { useMutation } from "react-query";
 import { generatePath, useNavigate } from "react-router-dom";
+
 import Modal from "src/components/Modal";
 import PlaceTypes from "src/components/places/PlaceTypes";
 import api from "src/lib/api";
@@ -22,11 +23,13 @@ const ListItem = ({
 }) => {
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 	const navigate = useNavigate();
-	const { mutateAsync } = useMutation(async () => {
-		return api
-			.delete(`/lists/${listId}/items/${place.itemId}`)
-			.then(onDelete)
-			.catch(onError);
+	const { mutateAsync } = useMutation({
+		mutationKey: ["deleteListItem", listId, place.itemId],
+		mutationFn: async () =>
+			api
+				.delete(`/lists/${listId}/items/${place.itemId}`)
+				.then(onDelete)
+				.catch(onError),
 	});
 	const onPlaceNameClick = async (e: MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();

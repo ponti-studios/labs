@@ -9,12 +9,7 @@ type IdeaFormProps = {
 };
 export default function IdeaForm({ onCreate }: IdeaFormProps) {
 	const [description, setDescription] = useState("");
-	const {
-		error,
-		isLoading,
-		isSuccess,
-		mutateAsync: createIdea,
-	} = useCreateIdea();
+	const { error, isSuccess, mutateAsync: createIdea, status } = useCreateIdea();
 
 	const onFormSubmit = useCallback(
 		async (e: SyntheticEvent<HTMLFormElement>) => {
@@ -37,7 +32,11 @@ export default function IdeaForm({ onCreate }: IdeaFormProps) {
 
 	return (
 		<>
-			{error && <Alert type="error">{error as string}</Alert>}
+			{error && (
+				<Alert type="error">
+					There was an error creating the idea. Please try again.
+				</Alert>
+			)}
 
 			<form onSubmit={onFormSubmit}>
 				<div className="form-control w-full mb-2">
@@ -52,7 +51,9 @@ export default function IdeaForm({ onCreate }: IdeaFormProps) {
 						onChange={onDescriptionChange}
 					/>
 				</div>
-				{!!description.length && <Button isLoading={isLoading}>Submit</Button>}
+				{!!description.length && (
+					<Button isLoading={status === "pending"}>Submit</Button>
+				)}
 			</form>
 		</>
 	);

@@ -8,7 +8,7 @@ type BookmarksFormProps = {
 	onCreate: () => void;
 };
 export default function BookmarksForm({ onCreate }: BookmarksFormProps) {
-	const { mutateAsync, error, isLoading } = useCreateBookmark();
+	const { mutateAsync, error, status } = useCreateBookmark();
 	const [url, setUrl] = useState("");
 
 	const onUrlChange = useCallback((e: SyntheticEvent<HTMLInputElement>) => {
@@ -27,7 +27,11 @@ export default function BookmarksForm({ onCreate }: BookmarksFormProps) {
 
 	return (
 		<>
-			{error && <Alert type="error">{error as string}</Alert>}
+			{error && (
+				<Alert type="error">
+					There was an error creating the bookmark. Please try again.
+				</Alert>
+			)}
 
 			<form onSubmit={onFormSubmit}>
 				<div className="form-control w-full mb-2">
@@ -43,7 +47,9 @@ export default function BookmarksForm({ onCreate }: BookmarksFormProps) {
 						onChange={onUrlChange}
 					/>
 				</div>
-				{!!url.length && <Button isLoading={isLoading}>Submit</Button>}
+				{!!url.length && (
+					<Button isLoading={status === "pending"}>Submit</Button>
+				)}
 			</form>
 		</>
 	);

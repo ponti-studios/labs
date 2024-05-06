@@ -6,7 +6,7 @@ import {
 	type UseQueryOptions,
 	useMutation,
 	useQuery,
-} from "react-query";
+} from "@tanstack/react-query";
 
 import type { User } from "../auth";
 import type { List, ListInvite, ListPlace, UserList } from "../types";
@@ -14,17 +14,23 @@ import type { List, ListInvite, ListPlace, UserList } from "../types";
 import { api, baseURL } from "./base";
 
 export const useGetInvites = () => {
-	return useQuery<ListInvite[]>("invites", async () => {
-		const res = await api.get(`${baseURL}/invites`);
-		return res.data;
+	return useQuery<ListInvite[]>({
+		queryKey: ["invites"],
+		queryFn: async () => {
+			const res = await api.get(`${baseURL}/invites`);
+			return res.data;
+		},
 	});
 };
 
 type OutboundInvitesResponse = (ListInvite & { list: List; user: User })[];
 export const useGetOutboundInvites = () => {
-	return useQuery<OutboundInvitesResponse>("outboundInvites", async () => {
-		const res = await api.get(`${baseURL}/invites/outbound`);
-		return res.data;
+	return useQuery<OutboundInvitesResponse>({
+		queryKey: ["outboundInvites"],
+		queryFn: async () => {
+			const res = await api.get(`${baseURL}/invites/outbound`);
+			return res.data;
+		},
 	});
 };
 
@@ -42,9 +48,12 @@ export function useAcceptInviteMutation(
 
 type ListInvitesResponse = (ListInvite & { list: List })[];
 export const useGetListInvites = (id: string) => {
-	return useQuery<ListInvitesResponse>("listInvites", async () => {
-		const res = await api.get(`${baseURL}/lists/${id}/invites`);
-		return res.data;
+	return useQuery<ListInvitesResponse>({
+		queryKey: ["listInvites"],
+		queryFn: async () => {
+			const res = await api.get(`${baseURL}/lists/${id}/invites`);
+			return res.data;
+		},
 	});
 };
 
@@ -75,14 +84,14 @@ export const useGetLists = ({
 		"queryKey" | "queryFn"
 	>;
 } = {}) => {
-	return useQuery<UserList[], { message: string }>(
-		"lists",
-		async () => {
+	return useQuery<UserList[], { message: string }>({
+		queryKey: ["lists"],
+		queryFn: async () => {
 			const res = await api.get(`${baseURL}/lists`);
 			return res.data;
 		},
-		options,
-	);
+		...options,
+	});
 };
 
 type GetListResponse = UserList & {
@@ -90,16 +99,14 @@ type GetListResponse = UserList & {
 	items: ListPlace[];
 };
 export const useGetList = (id: string) => {
-	return useQuery<GetListResponse, AxiosError>(
-		["list", id],
-		async () => {
+	return useQuery<GetListResponse, AxiosError>({
+		queryKey: ["list", id],
+		queryFn: async () => {
 			const res = await api.get<GetListResponse>(`${baseURL}/lists/${id}`);
 			return res.data;
 		},
-		{
-			retry: false,
-		},
-	);
+		retry: false,
+	});
 };
 
 export const useUpdateList = () => {

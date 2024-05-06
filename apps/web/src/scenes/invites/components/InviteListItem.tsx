@@ -1,8 +1,8 @@
+import Button from "@hominem/components/Button";
 import { Link2 } from "lucide-react";
 import { useCallback } from "react";
 import { Link } from "react-router-dom";
 
-import Button from "@hominem/components/Button";
 import { useAcceptInviteMutation } from "src/lib/api";
 import type { ListInvite } from "src/lib/types";
 
@@ -12,7 +12,7 @@ type InviteListItemProps = {
 };
 const InviteListItem = ({ listInvite, onAccept }: InviteListItemProps) => {
 	const { accepted, list } = listInvite;
-	const { mutate, isLoading } = useAcceptInviteMutation({
+	const { mutate, status } = useAcceptInviteMutation({
 		onSuccess: onAccept,
 	});
 
@@ -34,7 +34,7 @@ const InviteListItem = ({ listInvite, onAccept }: InviteListItemProps) => {
 			) : (
 				<Button
 					className="normal-case"
-					disabled={isLoading}
+					disabled={status === "pending"}
 					onClick={onAcceptClick}
 				>
 					Accept invite

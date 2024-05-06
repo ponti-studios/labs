@@ -1,11 +1,11 @@
 import styled from "@emotion/styled";
+import Alert from "@hominem/components/Alert";
 import Button from "@hominem/components/Button";
 import Input from "@hominem/components/Input";
 import { validateYupSchema } from "formik";
 import { type SyntheticEvent, useCallback, useState } from "react";
 import * as Yup from "yup";
 
-import Alert from "@hominem/components/Alert";
 import { useCreateListInvite } from "src/lib/api";
 import { useToast } from "src/lib/toast/toast.slice";
 import type { ListInvite } from "src/lib/types";
@@ -32,7 +32,7 @@ export default function ListInviteForm({
 	const [error, setError] = useState<string | null>(null);
 	const [email, setEmail] = useState("");
 	const { openToast } = useToast();
-	const { isLoading, mutateAsync: createListInvite } = useCreateListInvite({
+	const { mutateAsync: createListInvite, status } = useCreateListInvite({
 		onSuccess: (data) => {
 			onCreate(data);
 			openToast({
@@ -88,7 +88,7 @@ export default function ListInviteForm({
 				<Button
 					className="float-right mt-4"
 					disabled={email.length === 0}
-					isLoading={isLoading}
+					isLoading={status === "pending"}
 				>
 					Submit
 				</Button>

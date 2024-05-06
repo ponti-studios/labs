@@ -4,6 +4,7 @@ import { useDeleteIdea } from "src/lib/api/ideas";
 import type { Idea } from "src/lib/types";
 
 import Button from "@hominem/components/Button";
+import Loading from "@hominem/components/Loading";
 
 type IdeaListItemProps = {
 	idea: Idea;
@@ -29,11 +30,11 @@ function IdeaListItem({ idea, onDelete }: IdeaListItemProps) {
 				{idea.description}
 			</p>
 			<Button
-				isLoading={mutation.isLoading}
+				isLoading={mutation.status === "pending"}
 				className="btn btn-ghost col-start-12 flex justify-end text-red-500"
 				onClick={deleteIdea}
 			>
-				{!mutation.isLoading && <TrashIcon size={16} />}
+				<TrashIcon size={16} />
 			</Button>
 		</li>
 	);

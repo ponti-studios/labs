@@ -1,10 +1,15 @@
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Axios, type AxiosError } from "axios";
 import type { Recommendation } from "../types";
+import { api } from "./base";
 
 export const useGetBookmarks = () => {
-	return useQuery<Recommendation[]>("bookmarks", async () => {
-		const res = await fetch("/api/bookmarks");
-		return res.json();
+	return useQuery<Recommendation[]>({
+		queryKey: ["bookmarks"],
+		queryFn: async () => {
+			const res = await fetch("/api/bookmarks");
+			return res.json();
+		},
 	});
 };
 
@@ -20,13 +25,13 @@ export const useDeleteBookmark = () => {
 };
 
 export const useCreateBookmark = () => {
-	return useMutation({
+	return useMutation<any, AxiosError, string>({
 		mutationFn: async (url: string) => {
-			const res = await fetch("/api/bookmarks", {
+			const response = await api.post("/bookmarks", {
 				method: "POST",
 				body: JSON.stringify({ url }),
 			});
-			return res.json();
+			return response.data;
 		},
 	});
 };

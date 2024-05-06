@@ -1,6 +1,7 @@
 import Alert from "@hominem/components/Alert";
 import Button from "@hominem/components/Button";
 import Loading from "@hominem/components/Loading";
+import type { AxiosError } from "axios";
 import { useCallback, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -12,11 +13,31 @@ import PlaceWebsite from "src/components/places/PlaceWebsite";
 import { useGetPlace } from "src/lib/api/places";
 import { useToast } from "src/lib/toast/toast.slice";
 
+function PlaceError({ error }: { error: AxiosError }) {
+	if (!error || !error.response) {
+		return "An error occurred while fetching the place. Please try again later.";
+	}
+
+	if (error.response.status === 404) {
+		return "Place not found.";
+	}
+
+	if (error.response?.status === 403) {
+		return "You do not have permission to view this place.";
+	}
+
+	if (error.response?.status === 500) {
+		return "An error occurred while fetching the place. Please try again later.";
+	}
+
+	return error.message;
+}
+
 function PlaceRoute() {
 	const { openToast } = useToast();
 	const params = useParams<{ id: string }>();
 	const [isListSelectOpen, setIsListSelectOpen] = useState<boolean>(false);
-	const { data: place, formattedError, isLoading } = useGetPlace(params.id);
+	const { data: place, error, isLoading } = useGetPlace(params.id);
 	const onAddToListSuccess = useCallback(() => {
 		openToast({
 			type: "success",
@@ -30,8 +51,12 @@ function PlaceRoute() {
 		return <Loading />;
 	}
 
-	if (formattedError) {
-		return <Alert type="error">{formattedError}</Alert>;
+	if (error) {
+		return (
+			<Alert type="error">
+				<PlaceError error={error} />
+			</Alert>
+		);
 	}
 
 	return (

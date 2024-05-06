@@ -19,7 +19,7 @@ const Ideas = () => {
 		<>
 			<IdeaForm onCreate={refetch} />
 			<div>
-				{ideasStatus === "loading" && <Loading />}
+				{ideasStatus === "pending" && <Loading />}
 				{data?.length === 0 && "your thoughts will appear here"}
 				{data && data.length > 0 && (
 					<ul className="space-y-2">

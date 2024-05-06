@@ -14,7 +14,7 @@ type BookmarkListItemProps = {
 function BookmarkListItem({ bookmark, onDelete }: BookmarkListItemProps) {
 	const { id, image, title, siteName, url } = bookmark;
 	const mutation = useDeleteBookmark();
-	const { isLoading } = mutation;
+	const isLoading = mutation.status === "pending";
 
 	const onDeleteClick = useCallback(
 		async (e: MouseEvent<HTMLButtonElement>) => {
@@ -54,7 +54,7 @@ function BookmarkListItem({ bookmark, onDelete }: BookmarkListItemProps) {
 						className="btn btn-ghost"
 						onClick={onDeleteClick}
 					>
-						{!isLoading && <TrashIcon size={16} className="text-red-700" />}
+						<TrashIcon size={16} className="text-red-700" />
 					</Button>
 				</div>
 			</div>

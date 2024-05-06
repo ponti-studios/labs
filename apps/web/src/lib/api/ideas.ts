@@ -1,14 +1,16 @@
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
-export const useGetIdeas = () => {
-	return useQuery("ideas", async () => {
-		const res = await fetch("/api/ideas");
-		return res.json();
+export const useGetIdeas = () =>
+	useQuery({
+		queryKey: ["ideas"],
+		queryFn: async () => {
+			const res = await fetch("/api/ideas");
+			return res.json();
+		},
 	});
-};
 
-export const useCreateIdea = () => {
-	return useMutation({
+export const useCreateIdea = () =>
+	useMutation({
 		mutationFn: async (idea: string) => {
 			const res = await fetch("/api/idea", {
 				method: "POST",
@@ -17,10 +19,9 @@ export const useCreateIdea = () => {
 			return res.json();
 		},
 	});
-};
 
-export const useDeleteIdea = () => {
-	return useMutation({
+export const useDeleteIdea = () =>
+	useMutation({
 		mutationFn: async (id: string) => {
 			const res = await fetch(`/api/idea/${id}`, {
 				method: "DELETE",
@@ -28,4 +29,3 @@ export const useDeleteIdea = () => {
 			return res.json();
 		},
 	});
-};

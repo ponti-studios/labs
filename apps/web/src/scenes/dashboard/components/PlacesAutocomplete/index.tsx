@@ -2,10 +2,10 @@ import styled from "@emotion/styled";
 import { Combobox } from "@headlessui/react";
 import Alert from "@hominem/components/Alert";
 import Loading from "@hominem/components/Loading";
+import { useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { Search } from "lucide-react";
 import React, { useCallback, useRef, useState } from "react";
-import { useQuery } from "react-query";
 
 import api from "src/lib/api";
 import type { Place, PlaceLocation } from "src/lib/types";
