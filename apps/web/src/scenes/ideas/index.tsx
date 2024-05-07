@@ -2,7 +2,8 @@ import Loading from "@hominem/components/Loading";
 import { useNavigate } from "react-router-dom";
 
 import { useGetIdeas } from "src/lib/api/ideas";
-import { useAuth } from "src/lib/hooks";
+import { useAuth } from "src/lib/auth";
+
 import IdeaForm from "./IdeaForm";
 import IdeaListItem from "./IdeaListItem";
 

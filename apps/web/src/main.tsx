@@ -7,6 +7,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 
 import App from "./components/App";
 import "./index.css";
+import { AuthProvider } from "./lib/auth";
 import { store } from "./lib/store";
 
 const queryClient = new QueryClient();
@@ -19,7 +20,9 @@ root.render(
 			<Provider store={store}>
 				<QueryClientProvider client={queryClient}>
 					<APIProvider apiKey={import.meta.env.VITE_GOOGLE_API_KEY}>
-						<App />
+						<AuthProvider>
+							<App />
+						</AuthProvider>
 					</APIProvider>
 				</QueryClientProvider>
 			</Provider>

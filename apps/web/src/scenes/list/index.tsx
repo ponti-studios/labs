@@ -5,8 +5,7 @@ import { useCallback, useState } from "react";
 import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
 
 import { useGetList } from "src/lib/api";
-import { useAuth } from "src/lib/hooks";
-import { useAppSelector } from "src/lib/store";
+import { useAuth } from "src/lib/auth";
 import type { SearchPlace } from "src/lib/types";
 import { PLACE } from "src/lib/utils/routes";
 
@@ -14,12 +13,11 @@ import PlacesAutocomplete from "../dashboard/components/PlacesAutocomplete";
 import PlaceItem from "./components/PlaceItem";
 
 const List = () => {
+	const { currentLocation, user } = useAuth();
 	const navigate = useNavigate();
-	const currentLocation = useAppSelector((state) => state.auth.currentLocation);
 	const [isAddToListOpen, setIsAddToListOpen] = useState(false);
 	const [deleteError, setDeleteError] = useState<string | null>(null);
 	const { id: listId } = useParams<{ id: string }>();
-	const { user } = useAuth();
 	const { data, error, status, refetch } = useGetList(listId);
 
 	const onSelectedChanged = useCallback(

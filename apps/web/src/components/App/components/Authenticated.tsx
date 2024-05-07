@@ -2,7 +2,7 @@ import { useApiIsLoaded } from "@vis.gl/react-google-maps";
 import { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 
-import { setCurrentLocation } from "src/lib/auth";
+import { useAuth } from "src/lib/auth";
 import { useAppDispatch } from "src/lib/store";
 import * as ROUTES from "src/lib/utils/routes";
 import Account from "src/scenes/account";
@@ -17,26 +17,24 @@ import Place from "src/scenes/place";
 import Toast from "../../Toast";
 
 const AuthenticatedRoutes = () => {
+	const { setCurrentLocation } = useAuth();
 	const isMapLoaded = useApiIsLoaded();
-	const dispatch = useAppDispatch();
 
 	useEffect(() => {
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(
 				(position: GeolocationPosition) => {
-					dispatch(
-						setCurrentLocation({
-							latitude: position.coords.latitude,
-							longitude: position.coords.longitude,
-						}),
-					);
+					setCurrentLocation({
+						latitude: position.coords.latitude,
+						longitude: position.coords.longitude,
+					});
 				},
 			);
 		} else {
 			// !TODO Browser doesn't support Geolocation
 			// handleLocationError(false, infoWindow, map.getCenter()!);
 		}
-	}, [dispatch]);
+	}, [setCurrentLocation]);
 
 	return (
 		<div

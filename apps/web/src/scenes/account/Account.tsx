@@ -4,7 +4,7 @@ import Button from "@hominem/components/Button";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { useAuth } from "src/lib/hooks";
+import { useAuth } from "src/lib/auth";
 import { LANDING } from "src/lib/utils/routes";
 
 const Wrap = styled.div`

@@ -1,6 +1,5 @@
 import Alert from "@hominem/components/Alert";
 import Button from "@hominem/components/Button";
-import { useMutation } from "@tanstack/react-query";
 import { Field, Formik } from "formik";
 import { Globe } from "lucide-react";
 import { useCallback, useEffect, useMemo } from "react";
@@ -9,10 +8,7 @@ import * as Yup from "yup";
 
 import AuthWrap from "src/components/AuthenticationWrap";
 import Form from "src/components/Form";
-import api from "src/lib/api";
-import { setCurrentEmail } from "src/lib/auth";
-import { useAuth } from "src/lib/hooks";
-import { useAppDispatch } from "src/lib/store";
+import { useAuth } from "src/lib/auth";
 import { LANDING } from "src/lib/utils/routes";
 
 const LoginSchema = Yup.object().shape({
@@ -20,8 +16,7 @@ const LoginSchema = Yup.object().shape({
 });
 
 function Login() {
-	const dispatch = useAppDispatch();
-	const { user } = useAuth();
+	const { login, user } = useAuth();
 	const navigate = useNavigate();
 	const initialValues = useMemo(
 		() => ({
@@ -30,21 +25,17 @@ function Login() {
 		[],
 	);
 
-	const { mutateAsync, status, isError } = useMutation({
-		mutationFn: async ({ email }: { email: string }) => {
-			await api.post("/login", { email }, { withCredentials: false });
-			dispatch(setCurrentEmail(email));
-		},
-		onSuccess: () => {
+	useEffect(() => {
+		if (login.status === "success") {
 			navigate("/authenticate");
-		},
-	});
+		}
+	}, [login.status, navigate]);
 
 	const onSubmit = useCallback(
 		(values) => {
-			mutateAsync(values);
+			login.mutateAsync(values);
 		},
-		[mutateAsync],
+		[login.mutateAsync],
 	);
 
 	useEffect(() => {
@@ -77,7 +68,7 @@ function Login() {
 						/>
 					</div>
 					<Button isLoading={status === "pending"}>Get code</Button>
-					{isError && (
+					{login.error && (
 						<Alert type="error">
 							<p className="mb-1">
 								We ran into an issue finding or creating your account.

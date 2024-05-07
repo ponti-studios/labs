@@ -2,14 +2,14 @@ import styled from "@emotion/styled";
 import Loading from "@hominem/components/Loading";
 import type { MapMouseEvent } from "@vis.gl/react-google-maps/dist/components/map/use-map-events";
 import React, { useCallback, useEffect, useState } from "react";
+import { generatePath, useNavigate } from "react-router-dom";
 
+import { useGetLists } from "src/lib/api";
+import { useAuth } from "src/lib/auth";
 import { useAppSelector } from "src/lib/store";
 import type { Place } from "src/lib/types";
 import { mediaQueries } from "src/lib/utils/styles";
 
-import { generatePath, useNavigate } from "react-router-dom";
-import { useGetLists } from "src/lib/api";
-import { useAuth } from "src/lib/hooks";
 import { PLACE } from "src/lib/utils/routes";
 import Lists from "../lists/components/Lists";
 import RoccoMap from "./components/Map";
@@ -37,14 +37,10 @@ export const ZOOM_LEVELS = {
 	MARKER: 18,
 };
 
-const DEFAULT_CENTER = { latitude: 37.7749, longitude: -122.4194 }; // Default center (San Francisco)
-
 function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
-	const { user } = useAuth();
-	const [zoom, setZoom] = useState(ZOOM_LEVELS.DEFAULT);
-	const currentLocation = useAppSelector((state) => state.auth.currentLocation);
+	const { currentLocation, user } = useAuth();
 	const [selected, setSelected] = useState<Place | null>(null);
-	const [center, setCenter] = useState(currentLocation || DEFAULT_CENTER);
+	const [center, setCenter] = useState(currentLocation);
 	const navigate = useNavigate();
 	const { data, error, status: listsStatus } = useGetLists();
 
@@ -91,7 +87,7 @@ function Dashboard({ isMapLoaded }: { isMapLoaded: boolean }) {
 			<div className="min-h-60 h-60">
 				<RoccoMap
 					isLoadingCurrentLocation={!currentLocation}
-					zoom={zoom}
+					zoom={ZOOM_LEVELS.DEFAULT}
 					center={center}
 					onMapClick={onMapClick}
 					onMarkerClick={onMarkerClick}

@@ -4,6 +4,7 @@ import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import React, { type PropsWithChildren } from "react";
 import { afterAll, afterEach, beforeAll, vi } from "vitest";
+import "./utils";
 
 import { baseURL } from "../lib/api/base";
 import { MOCK_PLACE, PLACE_HANDLERS } from "./mocks/place";
@@ -17,7 +18,7 @@ vi.mock("react-router-dom", async () => {
 		useParams: vi.fn(),
 		useMatch: vi.fn(),
 		useLocation: vi.fn(() => ({ pathname: "/" })),
-		useNavigate: vi.fn(() => vi.fn()),
+		useNavigate: vi.fn().mockReturnValue(vi.fn()),
 		Link: (props: PropsWithChildren<object>) => {
 			return <a {...props}>{props.children}</a>;
 		},

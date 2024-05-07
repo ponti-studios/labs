@@ -4,7 +4,7 @@ import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useGetLists } from "src/lib/api";
-import { useAuth } from "src/lib/hooks";
+import { useAuth } from "src/lib/auth";
 
 import ListForm from "./components/ListForm";
 import Lists from "./components/Lists";

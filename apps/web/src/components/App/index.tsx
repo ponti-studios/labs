@@ -1,10 +1,9 @@
 import Loading from "@hominem/components/Loading";
-import React, { useEffect } from "react";
+import React from "react";
 import { Route, Routes } from "react-router-dom";
 
-import { loadAuth } from "src/lib/auth";
-import { useAuth } from "src/lib/hooks";
-import { useAppDispatch } from "src/lib/store";
+import { useAuth } from "src/lib/auth";
+import { AuthStatus } from "src/lib/auth/types";
 import * as ROUTES from "src/lib/utils/routes";
 import LandingPage from "src/scenes/index";
 import Login from "src/scenes/login";
@@ -16,14 +15,8 @@ import Footer from "./components/Footer";
 import Header from "./components/Header";
 
 function App() {
-	const { isAuthenticated, status } = useAuth();
-	const dispatch = useAppDispatch();
-
-	useEffect(() => {
-		if (status === "unloaded") {
-			dispatch(loadAuth());
-		}
-	}, [dispatch, status]);
+	const { status } = useAuth();
+	const isAuthenticated = status === AuthStatus.Authenticated;
 
 	if (status === "loading") {
 		return (

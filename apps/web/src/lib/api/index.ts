@@ -1,5 +1,3 @@
-import type { AxiosError } from "axios";
-
 import {
 	type QueryKey,
 	type UseMutationOptions,
@@ -7,9 +5,15 @@ import {
 	useMutation,
 	useQuery,
 } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
 
-import type { User } from "../auth";
-import type { List, ListInvite, ListPlace, UserList } from "../types";
+import type {
+	List,
+	ListInvite,
+	ListPlace,
+	User,
+	UserList,
+} from "src/lib/types";
 
 import { api, baseURL } from "./base";
 

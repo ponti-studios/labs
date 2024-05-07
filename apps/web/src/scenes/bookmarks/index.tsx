@@ -2,7 +2,7 @@ import Loading from "@hominem/components/Loading";
 import { useNavigate } from "react-router-dom";
 
 import { useGetBookmarks } from "src/lib/api/bookmarks";
-import { useAuth } from "src/lib/hooks";
+import { useAuth } from "src/lib/auth";
 
 import BookmarkForm from "./components/BookmarkForm";
 import BookmarkListItem from "./components/BookmarkListItem";

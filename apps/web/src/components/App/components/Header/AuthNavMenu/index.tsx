@@ -1,9 +1,9 @@
 import { List, LogOut, Mail, Search, Settings, UserCircle } from "lucide-react";
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { type User, logout } from "src/lib/auth";
-import { useAppDispatch } from "src/lib/store";
+import { useAuth } from "src/lib/auth";
+import type { User } from "src/lib/types";
 import {
 	ACCOUNT,
 	DASHBOARD,
@@ -15,14 +15,17 @@ import {
 import AppLink from "../../AppLink";
 
 const AuthNavMenu = ({ user }: { user: User }) => {
+	const { logout } = useAuth();
 	const navMenuRef = useRef(null);
 	const navigate = useNavigate();
-	const dispatch = useAppDispatch();
-	const onLogoutClick = useCallback(() => {
-		dispatch(logout()).then(() => {
-			navigate(LANDING);
-		});
-	}, [dispatch, navigate]);
+	const onLogoutClick = useCallback(
+		async () => logout.mutateAsync(),
+		[logout.mutateAsync],
+	);
+
+	useEffect(() => {
+		logout.status === "success" && navigate(LANDING);
+	}, [logout.status, navigate]);
 
 	const onLinkClick = useCallback(() => {
 		navMenuRef.current?.click?.();

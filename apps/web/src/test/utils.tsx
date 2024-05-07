@@ -4,9 +4,20 @@ import { type RenderOptions, render } from "@testing-library/react";
 import type { PropsWithChildren, ReactElement } from "react";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
-import { AuthStatus, type User } from "src/lib/auth";
+import { type Mock, beforeEach, vi } from "vitest";
+
+import { useAuth } from "src/lib/auth";
+import type { AuthState } from "src/lib/auth/types";
 import { rootReducer } from "src/lib/store";
-import type { ListPlace } from "src/lib/types";
+import type { ListPlace, User } from "src/lib/types";
+
+vi.mock("src/lib/auth", (importOriginal) => {
+	const original = importOriginal as unknown as typeof import("src/lib/auth");
+	return {
+		...original,
+		useAuth: vi.fn(),
+	};
+});
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -62,36 +73,33 @@ export const getMockLists = () => [
 export const getMockStore = ({ isAuth, authOptions = {} }) =>
 	configureStore({
 		reducer: rootReducer,
-		preloadedState: {
-			auth: {
-				currentLocation: null,
-				isLoadingAuth: false,
-				authError: null,
-				loginEmail: null,
-				status: AuthStatus.Unloaded,
-				user: isAuth ? getMockUser() : null,
-				...authOptions,
-			},
-		},
+		preloadedState: {},
 	});
+
+export const loginMock = {
+	mutateAsync: vi.fn().mockResolvedValue(null),
+};
+
+export const logoutMock = {
+	mutateAsync: vi.fn().mockResolvedValue(null),
+};
 
 export const useAuthMock = ({
 	isAuth = false,
-}: { isAuth?: boolean }): {
-	dispatch: ReturnType<typeof getMockStore>["dispatch"];
-	user: User | null;
-	isAuthenticated: boolean;
-	isLoadingAuth: boolean;
-	loginEmail: string | null;
-	status: AuthStatus;
-} => ({
-	dispatch: getMockStore({ isAuth }).dispatch,
+}: { isAuth?: boolean }): AuthState => ({
+	authError: null,
+	currentLocation: { latitude: 37.7749, longitude: -122.4194 },
 	user: isAuth ? getMockUser() : null,
-	isAuthenticated: isAuth,
 	isLoadingAuth: false,
 	loginEmail: null,
-	status: isAuth ? AuthStatus.Authenticated : AuthStatus.Unauthenticated,
+	status: (isAuth ? "authenticated" : "unauthenticated") as any,
+	login: loginMock as any,
+	logout: logoutMock as any,
 });
+
+export function mockUseAuth(isAuth = false) {
+	(useAuth as Mock).mockReturnValue(useAuthMock({ isAuth }));
+}
 
 export const TestProviders = ({
 	children,
@@ -131,3 +139,7 @@ export function renderWithProviders(
 		...options,
 	});
 }
+
+beforeEach(() => {
+	(useAuth as Mock).mockReturnValue(useAuthMock({ isAuth: false }));
+});

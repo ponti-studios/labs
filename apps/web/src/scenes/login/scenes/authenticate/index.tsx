@@ -8,9 +8,7 @@ import * as Yup from "yup";
 
 import AuthWrap from "src/components/AuthenticationWrap";
 import Form from "src/components/Form";
-import { loadAuth, setCurrentEmail } from "src/lib/auth";
-import { authenticate } from "src/lib/auth/auth.api";
-import { getLoginEmail } from "src/lib/hooks";
+import { useAuth } from "src/lib/auth";
 import { useAppDispatch, useAppSelector } from "src/lib/store";
 import { DASHBOARD, LOGIN } from "src/lib/utils/routes";
 
@@ -19,7 +17,7 @@ const AuthenticateSchema = Yup.object().shape({
 });
 
 function Authenticate() {
-	const loginEmail = useAppSelector(getLoginEmail);
+	const { authenticate, loginEmail } = useAuth();
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
 	const initialValues = useMemo(
@@ -28,27 +26,21 @@ function Authenticate() {
 		}),
 		[],
 	);
-	const { mutateAsync, status, isError, error } = useMutation<
-		void,
-		{ response: { message: string; status: number } },
-		{ emailToken: string }
-	>({
-		mutationFn: async ({ emailToken }) => {
-			await authenticate({ email: loginEmail, emailToken });
-		},
-		onSuccess: () => {
-			dispatch(loadAuth());
-			dispatch(setCurrentEmail(null));
-			navigate(DASHBOARD);
-		},
-	});
+	const { mutateAsync, status, isError, error } = authenticate;
 
 	const onSubmit = useMemo(
-		() => (values) => {
-			mutateAsync(values);
-		},
-		[mutateAsync],
+		() =>
+			async ({ loginEmail, emailToken }) => {
+				await authenticate.mutateAsync({ email: loginEmail, emailToken });
+			},
+		[authenticate.mutateAsync],
 	);
+
+	useEffect(() => {
+		if (status === "success") {
+			navigate(DASHBOARD);
+		}
+	}, [status, navigate]);
 
 	useEffect(() => {
 		// If loginEmail is not set, user will need to request a new email token

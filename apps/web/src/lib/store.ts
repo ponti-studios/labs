@@ -5,11 +5,9 @@ import {
 } from "@reduxjs/toolkit";
 import { type TypedUseSelectorHook, useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import auth from "./auth";
 import toastSlice from "./toast/toast.slice";
 
 export const rootReducer = {
-	auth,
 	toast: toastSlice.reducer,
 };
 

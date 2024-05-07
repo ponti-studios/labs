@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 
 import AppLink from "src/components/App/components/AppLink";
 import { useGetOutboundInvites } from "src/lib/api";
-import { useAuth } from "src/lib/hooks";
+import { useAuth } from "src/lib/auth";
 
 const ListInvites = () => {
 	const navigate = useNavigate();

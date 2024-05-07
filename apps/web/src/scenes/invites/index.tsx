@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router-dom";
 
 import { useGetInvites } from "src/lib/api";
-import { useAuth } from "src/lib/hooks";
+import { useAuth } from "src/lib/auth";
+
 import InviteListItem from "./components/InviteListItem";
 
 const Invites = () => {

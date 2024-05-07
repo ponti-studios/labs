@@ -1,9 +1,15 @@
-import type { User } from "./auth";
-
 interface BaseModel {
-	createdAt: Date;
-	updatedAt: Date;
+	createdAt: string;
+	updatedAt: string;
 }
+
+export type User = BaseModel & {
+	id: string;
+	avatar: string;
+	email: string;
+	name: string;
+	isAdmin: string;
+};
 
 export interface Idea extends BaseModel {
 	id: string;

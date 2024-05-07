@@ -13,10 +13,10 @@ import {
 
 import api from "src/lib/api";
 import { baseURL } from "src/lib/api/base";
-import * as hooks from "src/lib/hooks";
+import * as auth from "src/lib/auth";
 import { MOCK_PLACE, PLACE_ID } from "src/test/mocks/place";
 import { TEST_LIST_ID, testServer } from "src/test/test.setup";
-import { getMockStore, renderWithProviders, useAuthMock } from "src/test/utils";
+import { renderWithProviders, useAuthMock } from "src/test/utils";
 
 import List from ".";
 
@@ -38,15 +38,13 @@ describe("List", () => {
 					});
 				}),
 			);
-			vi.spyOn(hooks, "useAuth").mockReturnValue(useAuthMock({ isAuth: true }));
+			vi.spyOn(auth, "useAuth").mockReturnValue(useAuthMock({ isAuth: true }));
 		});
 
 		test("should navigate to home page", async () => {
 			const navigate = vi.fn();
 			(useNavigate as Mock).mockReturnValue(navigate);
-			vi.spyOn(hooks, "useAuth").mockReturnValue(
-				useAuthMock({ isAuth: false }),
-			);
+			vi.spyOn(auth, "useAuth").mockReturnValue(useAuthMock({ isAuth: false }));
 
 			renderWithProviders(<List />, { isAuth: true });
 
@@ -69,7 +67,7 @@ describe("List", () => {
 					});
 				}),
 			);
-			vi.spyOn(hooks, "useAuth").mockReturnValue(useAuthMock({ isAuth: true }));
+			vi.spyOn(auth, "useAuth").mockReturnValue(useAuthMock({ isAuth: true }));
 		});
 
 		test("should hide add-to-list by default", async () => {
