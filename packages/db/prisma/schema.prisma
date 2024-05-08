@@ -26,10 +26,10 @@ model User {
   sessions        Session[]
   ideas           Idea[]
   places          Place[]
-  recommendations Recommendation[]
+  recommendations Bookmark[]
   flights         Flight[]
-  receivedInvites ListInvite[]     @relation(name: "receivedListInvites")
-  sentInvites     ListInvite[]     @relation(name: "sentListInvites")
+  receivedInvites ListInvite[]    @relation(name: "receivedListInvites")
+  sentInvites     ListInvite[]    @relation(name: "sentListInvites")
   tokens          Token[]
   movieViewings   MovieViewings[]
 
@@ -104,7 +104,7 @@ model Idea {
   updatedAt   DateTime @updatedAt
 }
 
-model Recommendation {
+model Bookmark {
   id              String   @id @default(cuid())
   image           String
   title           String

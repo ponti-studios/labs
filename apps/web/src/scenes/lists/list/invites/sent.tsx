@@ -4,7 +4,7 @@ import AppLink from "src/components/AppLink";
 import { useGetOutboundInvites } from "src/lib/api";
 import { useAuth } from "src/lib/auth";
 
-const ListInvites = () => {
+const ListSentInvites = () => {
 	const navigate = useNavigate();
 	const { user } = useAuth();
 	const { data } = useGetOutboundInvites();
@@ -48,4 +48,4 @@ const ListInvites = () => {
 	);
 };
 
-export default ListInvites;
+export default ListSentInvites;

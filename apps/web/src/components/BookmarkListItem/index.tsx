@@ -3,12 +3,12 @@ import { TrashIcon } from "lucide-react";
 import React, { useCallback, type MouseEvent } from "react";
 
 import { useDeleteBookmark } from "src/lib/api/bookmarks";
-import type { Recommendation } from "src/lib/types";
+import type { Bookmark } from "src/lib/types";
 
 import styles from "./BookmarkListItem.module.css";
 
 type BookmarkListItemProps = {
-	bookmark: Recommendation;
+	bookmark: Bookmark;
 	onDelete: () => void;
 };
 function BookmarkListItem({ bookmark, onDelete }: BookmarkListItemProps) {
@@ -28,7 +28,6 @@ function BookmarkListItem({ bookmark, onDelete }: BookmarkListItemProps) {
 	return (
 		<li className={styles["list-item"]}>
 			<figure className="h-[150px] md:h-[100%] md:w-[200px] flex justify-center overflow-hidden rounded-t-md md:rounded-t-none md:rounded-l">
-				{/* To support all possible og images, we aren't using Next Image */}
 				<img alt={title} src={image} className="object-cover min-w-full" />
 			</figure>
 			<div className="flex-1 flex flex-col px-4 pt-4 pb-2 bg-white rounded-b-md md:rounded-b-none md:rounded-r-md">

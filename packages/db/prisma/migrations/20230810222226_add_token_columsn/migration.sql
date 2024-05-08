@@ -49,7 +49,7 @@ CREATE TABLE "Idea" (
 );
 
 -- CreateTable
-CREATE TABLE "Recommendation" (
+CREATE TABLE "Bookmark" (
     "id" TEXT NOT NULL,
     "image" TEXT NOT NULL,
     "title" TEXT NOT NULL,
@@ -65,7 +65,7 @@ CREATE TABLE "Recommendation" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Recommendation_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Bookmark_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -154,7 +154,7 @@ ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId"
 ALTER TABLE "Idea" ADD CONSTRAINT "Idea_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Recommendation" ADD CONSTRAINT "Recommendation_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Bookmark" ADD CONSTRAINT "Bookmark_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Flight" ADD CONSTRAINT "Flight_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

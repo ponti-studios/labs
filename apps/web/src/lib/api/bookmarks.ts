@@ -1,10 +1,10 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Axios, type AxiosError } from "axios";
-import type { Recommendation } from "../types";
+import type { Bookmark } from "../types";
 import { api } from "./base";
 
 export const useGetBookmarks = () => {
-	return useQuery<Recommendation[]>({
+	return useQuery<Bookmark[]>({
 		queryKey: ["bookmarks"],
 		queryFn: async () => {
 			const res = await fetch("/api/bookmarks");

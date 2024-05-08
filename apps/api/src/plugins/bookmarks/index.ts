@@ -128,7 +128,7 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
 			} catch (err) {
 				return reply
 					.code(500)
-					.send({ message: "Recommendation could not be created" });
+					.send({ message: "Bookmark could not be created" });
 			}
 		},
 	);
@@ -176,7 +176,7 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
 			} catch (err) {
 				return reply
 					.code(500)
-					.send({ message: "Recommendation could not be updated" });
+					.send({ message: "Bookmark could not be updated" });
 			}
 		},
 	);

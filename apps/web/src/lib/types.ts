@@ -31,7 +31,7 @@ export interface ListInvite extends BaseModel {
 	user: User;
 }
 
-export interface Recommendation extends BaseModel {
+export interface Bookmark extends BaseModel {
 	id: string;
 	image: string;
 	title: string;

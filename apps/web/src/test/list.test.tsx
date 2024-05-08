@@ -18,7 +18,7 @@ import { MOCK_PLACE, PLACE_ID } from "src/test/mocks/place";
 import { TEST_LIST_ID, testServer } from "src/test/test.setup";
 import { renderWithProviders, useAuthMock } from "src/test/utils";
 
-import List from "../scenes/list";
+import List from "../scenes/lists/list/List";
 
 describe("List", () => {
 	beforeEach(() => {

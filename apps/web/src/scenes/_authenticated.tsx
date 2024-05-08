@@ -8,9 +8,9 @@ import * as ROUTES from "src/lib/utils/routes";
 import Account from "src/scenes/account";
 import Dashboard from "src/scenes/dashboard";
 import Invites from "src/scenes/invites";
-import List from "src/scenes/list";
-import ListInvites from "src/scenes/list/invites";
 import Lists from "src/scenes/lists";
+import List from "src/scenes/lists/list";
+import ListInvites from "src/scenes/lists/list/invites";
 import NotFound from "src/scenes/not-found";
 import Place from "src/scenes/place";
 
