@@ -26,7 +26,7 @@ model User {
   sessions        Session[]
   ideas           Idea[]
   places          Place[]
-  recommendations Bookmark[]
+  bookmarks       Bookmark[]
   flights         Flight[]
   receivedInvites ListInvite[]    @relation(name: "receivedListInvites")
   sentInvites     ListInvite[]    @relation(name: "sentListInvites")

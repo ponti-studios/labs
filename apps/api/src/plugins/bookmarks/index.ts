@@ -62,7 +62,7 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
 				return reply.code(401).send();
 			}
 
-			const bookmarks = await prisma.recommendation.findMany({
+			const bookmarks = await prisma.bookmark.findMany({
 				where: { userId: session.userId },
 				orderBy: { createdAt: "desc" },
 			});
@@ -111,20 +111,20 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
 
 			try {
 				const ogContent = await getOpenGraphData({ url });
-				const recommendation = convertOGContentToBookmark({
+				const bookmark = convertOGContentToBookmark({
 					url,
 					ogContent,
 				});
 
-				const obj = await prisma.recommendation.create({
+				const obj = await prisma.bookmark.create({
 					data: {
-						...recommendation,
+						...bookmark,
 						user: {
 							connect: { id: userId },
 						},
 					},
 				});
-				return { recommendation: obj };
+				return { bookmark: obj };
 			} catch (err) {
 				return reply
 					.code(500)
@@ -163,16 +163,16 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
 
 			try {
 				const ogContent = await getOpenGraphData({ url });
-				const recommendation = convertOGContentToBookmark({
+				const bookmark = convertOGContentToBookmark({
 					url,
 					ogContent,
 				});
 
-				const obj = await prisma.recommendation.update({
+				const obj = await prisma.bookmark.update({
 					where: { id, userId },
-					data: recommendation,
+					data: bookmark,
 				});
-				return { recommendation: obj };
+				return { bookmark: obj };
 			} catch (err) {
 				return reply
 					.code(500)
@@ -201,7 +201,7 @@ const authPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
 			const { id } = request.params as { id: string };
 			const { userId } = request.session.get("data");
 
-			await prisma.recommendation.delete({
+			await prisma.bookmark.delete({
 				where: { id, userId },
 			});
 
