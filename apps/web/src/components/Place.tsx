@@ -11,7 +11,7 @@ import PlacePhotos from "src/components/places/PlacePhotos";
 import PlaceTypes from "src/components/places/PlaceTypes";
 import PlaceWebsite from "src/components/places/PlaceWebsite";
 import { useGetPlace } from "src/lib/api/places";
-import { useToast } from "src/lib/toast/toast.slice";
+import { useToast } from "src/lib/toast/hooks";
 
 function PlaceError({ error }: { error: AxiosError }) {
 	if (!error || !error.response) {

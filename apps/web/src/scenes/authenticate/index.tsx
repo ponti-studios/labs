@@ -1,6 +1,5 @@
 import Alert from "@hominem/components/Alert";
 import Button from "@hominem/components/Button";
-import { useMutation } from "@tanstack/react-query";
 import { Field, Formik } from "formik";
 import React, { useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -9,7 +8,7 @@ import * as Yup from "yup";
 import AuthWrap from "src/components/AuthenticationWrap";
 import Form from "src/components/Form";
 import { useAuth } from "src/lib/auth";
-import { useAppDispatch, useAppSelector } from "src/lib/store";
+import { useAppDispatch } from "src/lib/store";
 import { DASHBOARD, LOGIN } from "src/lib/utils/routes";
 
 const AuthenticateSchema = Yup.object().shape({

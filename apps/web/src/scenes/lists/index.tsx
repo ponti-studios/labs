@@ -3,11 +3,10 @@ import { PlusCircle } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import ListForm from "src/components/ListForm";
+import Lists from "src/components/Lists";
 import { useGetLists } from "src/lib/api";
 import { useAuth } from "src/lib/auth";
-
-import ListForm from "./components/ListForm";
-import Lists from "./components/Lists";
 
 const ListsRoute = () => {
 	const navigate = useNavigate();

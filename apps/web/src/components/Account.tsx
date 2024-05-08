@@ -1,4 +1,3 @@
-import styled from "@emotion/styled";
 import Alert from "@hominem/components/Alert";
 import Button from "@hominem/components/Button";
 import { useEffect } from "react";
@@ -6,12 +5,6 @@ import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "src/lib/auth";
 import { LANDING } from "src/lib/utils/routes";
-
-const Wrap = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 0 1rem;
-`;
 
 function useDeleteUserMutation() {
 	return {
@@ -53,7 +46,7 @@ function Account() {
 	}
 
 	return (
-		<Wrap>
+		<div className="flex flex-col items-center py-8">
 			<div className="col-span-12">
 				<h1>Account</h1>
 				<div className="card shadow-md md:max-w-sm">
@@ -80,7 +73,7 @@ function Account() {
 					Delete account
 				</Button>
 			</div>
-		</Wrap>
+		</div>
 	);
 }
 

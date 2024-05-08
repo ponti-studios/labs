@@ -3,10 +3,9 @@ import Loading from "@hominem/components/Loading";
 import { useCallback } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
+import ListInviteForm from "src/components/ListInviteForm";
 import { useGetList, useGetListInvites } from "src/lib/api";
 import { useAuth } from "src/lib/auth";
-
-import ListInviteForm from "./components/ListInviteForm";
 
 const ListInvites = () => {
 	const params = useParams();

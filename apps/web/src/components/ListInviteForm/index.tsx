@@ -7,7 +7,7 @@ import { type SyntheticEvent, useCallback, useState } from "react";
 import * as Yup from "yup";
 
 import { useCreateListInvite } from "src/lib/api";
-import { useToast } from "src/lib/toast/toast.slice";
+import { useToast } from "src/lib/toast/hooks";
 import type { ListInvite } from "src/lib/types";
 
 const Form = styled.form`

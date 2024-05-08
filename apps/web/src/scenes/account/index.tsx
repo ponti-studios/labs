@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 
 const LazyAccount = React.lazy(
-	() => import(/* webpackChunkName: "account" */ "./Account"),
+	() => import(/* webpackChunkName: "account" */ "../../components/Account"),
 );
 
 const Account = (props) => (

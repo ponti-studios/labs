@@ -1,11 +1,10 @@
 import Loading from "@hominem/components/Loading";
 import { useNavigate } from "react-router-dom";
 
+import IdeaForm from "src/components/IdeaForm";
+import IdeaListItem from "src/components/IdeaListItem";
 import { useGetIdeas } from "src/lib/api/ideas";
 import { useAuth } from "src/lib/auth";
-
-import IdeaForm from "./IdeaForm";
-import IdeaListItem from "./IdeaListItem";
 
 const Ideas = () => {
 	const navigate = useNavigate();

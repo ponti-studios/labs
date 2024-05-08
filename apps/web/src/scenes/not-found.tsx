@@ -2,7 +2,7 @@ import { FileX2, List, SearchX } from "lucide-react";
 import type { PropsWithChildren } from "react";
 import { Link, useMatch } from "react-router-dom";
 
-import AppLink from "src/components/App/components/AppLink";
+import AppLink from "src/components/AppLink";
 
 const Wrapper = ({ children }: PropsWithChildren) => {
 	return (

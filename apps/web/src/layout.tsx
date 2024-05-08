@@ -2,17 +2,16 @@ import Loading from "@hominem/components/Loading";
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 
+import Footer from "src/components/Footer";
+import Header from "src/components/Header";
 import { useAuth } from "src/lib/auth";
 import { AuthStatus } from "src/lib/auth/types";
 import * as ROUTES from "src/lib/utils/routes";
+import AuthenticatedRoutes from "src/scenes/_authenticated";
+import Authenticate from "src/scenes/authenticate";
 import LandingPage from "src/scenes/index";
 import Login from "src/scenes/login";
-import Authenticate from "src/scenes/login/scenes/authenticate";
 import NotFound from "src/scenes/not-found";
-
-import AuthenticatedRoutes from "./components/Authenticated";
-import Footer from "./components/Footer";
-import Header from "./components/Header";
 
 function App() {
 	const { status } = useAuth();

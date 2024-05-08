@@ -5,7 +5,8 @@ import {
 } from "@reduxjs/toolkit";
 import { type TypedUseSelectorHook, useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import toastSlice from "./toast/toast.slice";
+
+import { toastSlice } from "./toast";
 
 export const rootReducer = {
 	toast: toastSlice.reducer,

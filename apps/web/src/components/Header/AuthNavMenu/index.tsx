@@ -2,6 +2,7 @@ import { List, LogOut, Mail, Search, Settings, UserCircle } from "lucide-react";
 import { useCallback, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+import AppLink from "src/components/AppLink";
 import { useAuth } from "src/lib/auth";
 import type { User } from "src/lib/types";
 import {
@@ -11,8 +12,6 @@ import {
 	LANDING,
 	LISTS,
 } from "src/lib/utils/routes";
-
-import AppLink from "../../AppLink";
 
 const AuthNavMenu = ({ user }: { user: User }) => {
 	const { logout } = useAuth();

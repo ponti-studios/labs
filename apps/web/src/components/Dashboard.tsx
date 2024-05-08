@@ -11,9 +11,9 @@ import type { Place } from "src/lib/types";
 import { mediaQueries } from "src/lib/utils/styles";
 
 import { PLACE } from "src/lib/utils/routes";
-import Lists from "../lists/components/Lists";
-import RoccoMap from "./components/Map";
-import PlacesAutocomplete from "./components/PlacesAutocomplete";
+import Lists from "./Lists";
+import RoccoMap from "./Map";
+import PlacesAutocomplete from "./PlacesAutocomplete";
 
 const Wrap = styled.div`
   display: flex;

@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
-import { type Mock, describe, expect, test, vi } from "vitest";
+import { type Mock, describe, expect, test } from "vitest";
 
 import { baseURL } from "src/lib/api/base";
 import { useAuth } from "src/lib/auth";
@@ -11,7 +11,7 @@ import {
 	renderWithProviders,
 	useAuthMock,
 } from "src/test/utils";
-import App from "./index";
+import App from "../layout";
 
 describe("App", () => {
 	test("renders authenticated scenes when user is authenticated", async () => {

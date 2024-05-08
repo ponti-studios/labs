@@ -4,13 +4,12 @@ import { PlusCircle, Share } from "lucide-react";
 import { useCallback, useState } from "react";
 import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
 
+import PlaceItem from "src/components/PlaceItem";
+import PlacesAutocomplete from "src/components/PlacesAutocomplete";
 import { useGetList } from "src/lib/api";
 import { useAuth } from "src/lib/auth";
 import type { SearchPlace } from "src/lib/types";
 import { PLACE } from "src/lib/utils/routes";
-
-import PlacesAutocomplete from "../dashboard/components/PlacesAutocomplete";
-import PlaceItem from "./components/PlaceItem";
 
 const List = () => {
 	const { currentLocation, user } = useAuth();
