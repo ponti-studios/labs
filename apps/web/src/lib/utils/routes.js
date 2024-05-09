@@ -1,7 +1,7 @@
 export const ACCOUNT = "/account";
 export const ADMIN = "/admin";
 export const AUTHENTICATE = "/authenticate";
-export const DASHBOARD = "/";
+export const DASHBOARD = "/dashboard";
 export const LANDING = "/";
 export const INVITES = "/invites";
 export const LIST = "/list/:id";

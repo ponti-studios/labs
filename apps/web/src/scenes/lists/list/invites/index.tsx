@@ -70,4 +70,4 @@ const ListInvites = () => {
 	);
 };
 
-export default ListInvites;
+export const Component = ListInvites;

@@ -31,4 +31,4 @@ const Invites = () => {
 	);
 };
 
-export default Invites;
+export const Component = Invites;

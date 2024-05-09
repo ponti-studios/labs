@@ -1,21 +1,13 @@
-import { render, screen, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { screen, waitFor } from "@testing-library/react";
+import * as googleMaps from "@vis.gl/react-google-maps";
 import { http, HttpResponse } from "msw";
 import * as reactRouterDom from "react-router-dom";
-import { type Mock, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 import { baseURL } from "src/lib/api/base";
-import { MOCK_PLACE_SEARCH } from "src/test/mocks/place";
+import { Component as Dashboard } from "src/scenes/dashboard";
 import { testServer } from "src/test/test.setup";
-import {
-	TestProviders,
-	getMockLists,
-	getMockStore,
-	renderWithProviders,
-} from "src/test/utils";
-import Dashboard from "./Dashboard";
-
-const { useNavigate } = reactRouterDom;
+import { getMockLists, renderWithProviders } from "src/test/utils";
 
 describe("Dashboard", () => {
 	beforeEach(() => {
@@ -25,19 +17,22 @@ describe("Dashboard", () => {
 	});
 
 	test("renders the loading spinner when map is not loaded", () => {
-		renderWithProviders(<Dashboard isMapLoaded={false} />);
+		vi.spyOn(googleMaps, "useApiIsLoaded").mockReturnValue(false);
+		renderWithProviders(<Dashboard />);
 		expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
 	});
 
 	test("renders the places autocomplete and RoccoMap when map is loaded", () => {
-		renderWithProviders(<Dashboard isMapLoaded={true} />);
+		vi.spyOn(googleMaps, "useApiIsLoaded").mockReturnValue(true);
+		renderWithProviders(<Dashboard />);
 		expect(screen.getByTestId("places-autocomplete")).toBeInTheDocument();
 		expect(screen.getByTestId("rocco-map")).toBeInTheDocument();
 	});
 
 	test("renders lists", async () => {
 		const lists = getMockLists();
-		renderWithProviders(<Dashboard isMapLoaded={true} />);
+		vi.spyOn(googleMaps, "useApiIsLoaded").mockReturnValue(true);
+		renderWithProviders(<Dashboard />);
 
 		await waitFor(() => {
 			expect(screen.getByTestId("lists")).toBeInTheDocument();

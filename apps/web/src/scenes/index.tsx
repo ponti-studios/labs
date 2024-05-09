@@ -1,8 +1,9 @@
 import styled from "@emotion/styled";
 import { Eye, Globe2, Heart, Pin } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
-import { LOGIN } from "src/lib/utils/routes";
+import { useAuth } from "src/lib/auth";
+import { DASHBOARD, LOGIN } from "src/lib/utils/routes";
 import { mediaQueries } from "src/lib/utils/styles";
 
 const Wrap = styled.div`
@@ -24,6 +25,12 @@ const Wrap = styled.div`
 `;
 
 const LandingPage = () => {
+	const { user } = useAuth();
+
+	if (user) {
+		return <Navigate to={DASHBOARD} />;
+	}
+
 	return (
 		<Wrap>
 			<div className="flex flex-col items-center justify-center w-full">
