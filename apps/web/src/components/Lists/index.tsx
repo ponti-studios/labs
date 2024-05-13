@@ -3,6 +3,7 @@ import Loading from "@hominem/components/Loading";
 import { Link } from "react-router-dom";
 
 import type { List, User } from "src/lib/types";
+import ListItem from "./list-item";
 
 const NoResults = () => {
 	return (
@@ -45,18 +46,11 @@ export default function Lists({
 	return (
 		<ul data-testid="lists" className="space-y-2">
 			{lists.map((list) => (
-				<li key={list.id} className="flex">
-					<Link
-						className="flex justify-between items-center p-3 text-lg border rounded-md w-full"
-						to={`/list/${list.id}`}
-					>
-						{list.name}
-						{/* Only display list owner if the list does not belong to current user */}
-						{list.createdBy && list.createdBy.email !== currentUserEmail ? (
-							<p className="text-xs text-gray-400">{list.createdBy.email}</p>
-						) : null}
-					</Link>
-				</li>
+				<ListItem
+					key={list.id}
+					list={list}
+					isOwnList={list.createdBy.email === currentUserEmail}
+				/>
 			))}
 		</ul>
 	);

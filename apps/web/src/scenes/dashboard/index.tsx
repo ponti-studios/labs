@@ -1,6 +1,4 @@
 import styled from "@emotion/styled";
-import Loading from "@hominem/components/Loading";
-import { useApiIsLoaded } from "@vis.gl/react-google-maps";
 import type { MapMouseEvent } from "@vis.gl/react-google-maps/dist/components/map/use-map-events";
 import React, { useCallback, useEffect, useState } from "react";
 import { generatePath, useNavigate } from "react-router-dom";
@@ -10,9 +8,10 @@ import RoccoMap from "src/components/Map";
 import PlacesAutocomplete from "src/components/PlacesAutocomplete";
 import { useGetLists } from "src/lib/api";
 import { useAuth } from "src/lib/auth";
+import { PLACE } from "src/lib/routes";
+import { mediaQueries } from "src/lib/styles";
 import type { Place } from "src/lib/types";
-import { PLACE } from "src/lib/utils/routes";
-import { mediaQueries } from "src/lib/utils/styles";
+import { withAuth } from "src/lib/utils";
 
 const Wrap = styled.div`
   display: flex;
@@ -42,7 +41,6 @@ function Dashboard() {
 	const [center, setCenter] = useState(currentLocation);
 	const navigate = useNavigate();
 	const { data, error, status: listsStatus } = useGetLists();
-	const isMapLoaded = useApiIsLoaded();
 
 	useEffect(() => {
 		if (navigator.geolocation) {
@@ -84,16 +82,8 @@ function Dashboard() {
 		}
 	}, [currentLocation]);
 
-	if (!isMapLoaded) {
-		return (
-			<div className="flex items-center justify-center max-w-[300px] mx-auto min-h-full">
-				<Loading size="xl" />
-			</div>
-		);
-	}
-
 	return (
-		<Wrap>
+		<Wrap data-testid="dashboard-scene">
 			<PlacesAutocompleteWrap>
 				<PlacesAutocomplete
 					setSelected={onSelectedChanged}
@@ -120,4 +110,4 @@ function Dashboard() {
 	);
 }
 
-export const Component = Dashboard;
+export const Component = withAuth(Dashboard);

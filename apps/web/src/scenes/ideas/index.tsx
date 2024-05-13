@@ -1,19 +1,12 @@
 import Loading from "@hominem/components/Loading";
-import { useNavigate } from "react-router-dom";
 
 import IdeaForm from "src/components/IdeaForm";
 import IdeaListItem from "src/components/IdeaListItem";
 import { useGetIdeas } from "src/lib/api/ideas";
-import { useAuth } from "src/lib/auth";
+import { withAuth } from "src/lib/utils";
 
 const Ideas = () => {
-	const navigate = useNavigate();
-	const { user } = useAuth();
 	const { data, refetch, status: ideasStatus } = useGetIdeas();
-
-	if (!user) {
-		navigate("/");
-	}
 
 	return (
 		<>
@@ -33,4 +26,4 @@ const Ideas = () => {
 	);
 };
 
-export default Ideas;
+export default withAuth(Ideas);

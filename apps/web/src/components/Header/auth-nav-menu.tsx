@@ -3,15 +3,15 @@ import { useCallback, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import AppLink from "src/components/AppLink";
-import { useAuth } from "src/lib/auth";
-import type { User } from "src/lib/types";
 import {
-	ACCOUNT,
-	DASHBOARD,
-	INVITES,
-	LANDING,
-	LISTS,
-} from "src/lib/utils/routes";
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "src/components/ui/dropdown-menu";
+import { useAuth } from "src/lib/auth";
+import { ACCOUNT, DASHBOARD, INVITES, LANDING, LISTS } from "src/lib/routes";
+import type { User } from "src/lib/types";
 
 const AuthNavMenu = ({ user }: { user: User }) => {
 	const { logout } = useAuth();
@@ -25,17 +25,6 @@ const AuthNavMenu = ({ user }: { user: User }) => {
 	useEffect(() => {
 		logout.status === "success" && navigate(LANDING);
 	}, [logout.status, navigate]);
-
-	const onLinkClick = useCallback(() => {
-		navMenuRef.current?.click?.();
-	}, []);
-
-	const onLinkKeyDown = useCallback((event) => {
-		if (event.key === "Enter") {
-			event.preventDefault();
-			navMenuRef.current?.click?.();
-		}
-	}, []);
 
 	return (
 		<>
@@ -51,55 +40,52 @@ const AuthNavMenu = ({ user }: { user: User }) => {
 				</AppLink>
 			</div>
 			<div>
-				<details data-testid="dropdown" className="dropdown dropdown-end">
-					<summary
+				<DropdownMenu>
+					<DropdownMenuTrigger
 						ref={navMenuRef}
-						data-testid="dropdown-button"
+						data-testid="auth-dropdown-button"
 						role="button"
-						className="btn bg-transparent border-black"
+						className="btn bg-transparent border-black py-2 px-3"
 					>
 						<UserCircle />
-					</summary>
-					<ul
-						className="p-1 pb-3 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52 mt-1"
-						onKeyDown={onLinkKeyDown}
-						onClick={onLinkClick}
+					</DropdownMenuTrigger>
+					<DropdownMenuContent
+						data-testid="dropdown-content"
+						className="min-w-[200px] w-fit"
 					>
-						<li>
-							<span className="flex justify-end text-sm text-secondary hover:outline-none">
-								{user.email}
-							</span>
-						</li>
-						<li>
-							<Link to={LISTS}>
+						<div className="text-right bg-white text-sm text-gray-400 hover:outline-none pt-2 px-2 pb-3 w-full">
+							{user.email}
+						</div>
+						<DropdownMenuItem>
+							<Link to={LISTS} className="flex gap-4 py-2">
 								<List size={20} />
 								Lists
 							</Link>
-						</li>
-						<li>
-							<Link to={INVITES}>
+						</DropdownMenuItem>
+						<DropdownMenuItem>
+							<Link to={INVITES} className="flex gap-4 py-2">
 								<Mail size={20} />
 								Invites
 							</Link>
-						</li>
-						<li>
-							<Link to={ACCOUNT}>
+						</DropdownMenuItem>
+						<DropdownMenuItem>
+							<Link to={ACCOUNT} className="flex gap-4 py-2">
 								<Settings size={20} />
 								Account
 							</Link>
-						</li>
-						<li>
+						</DropdownMenuItem>
+						<DropdownMenuItem>
 							<button
 								type="button"
-								className="btn-ghost"
+								className="btn-ghost flex gap-4 py-2"
 								onClick={onLogoutClick}
 							>
 								<LogOut size={20} />
 								Logout
 							</button>
-						</li>
-					</ul>
-				</details>
+						</DropdownMenuItem>
+					</DropdownMenuContent>
+				</DropdownMenu>
 			</div>
 		</>
 	);

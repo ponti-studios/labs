@@ -1,16 +1,14 @@
 import Alert from "@hominem/components/Alert";
 import Loading from "@hominem/components/Loading";
 import { useCallback } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import ListInviteForm from "src/components/ListInviteForm";
 import { useGetList, useGetListInvites } from "src/lib/api";
-import { useAuth } from "src/lib/auth";
+import { withAuth } from "src/lib/utils";
 
 const ListInvites = () => {
 	const params = useParams();
-	const navigate = useNavigate();
-	const { user } = useAuth();
 	const listId = params.id;
 	const { data: userList, status: listStatus } = useGetList(listId);
 	const {
@@ -19,10 +17,6 @@ const ListInvites = () => {
 		refetch: getInvites,
 	} = useGetListInvites(listId);
 	const onInviteSuccess = useCallback(() => getInvites(), [getInvites]);
-
-	if (!user) {
-		navigate("/");
-	}
 
 	if ([listStatus, invitesStatus].indexOf("pending") >= 0) {
 		return <Loading />;
@@ -70,4 +64,4 @@ const ListInvites = () => {
 	);
 };
 
-export const Component = ListInvites;
+export const Component = withAuth(ListInvites);

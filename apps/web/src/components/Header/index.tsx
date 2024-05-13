@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 
 import { useAuth } from "src/lib/auth";
 import { AuthStatus } from "src/lib/auth/types";
-import { APP_NAME } from "src/lib/utils";
-import { LANDING, LOGIN } from "src/lib/utils/routes";
+import { APP_NAME } from "src/lib/constants";
+import { LANDING, LOGIN } from "src/lib/routes";
 
-import AuthNavMenu from "./AuthNavMenu";
+import AuthNavMenu from "./auth-nav-menu";
 
 function Header() {
 	const { user, status } = useAuth();

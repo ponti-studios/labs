@@ -1,16 +1,16 @@
 import { screen } from "@testing-library/react";
-import { useMatch } from "react-router-dom";
-import { type Mock, describe, expect, test } from "vitest";
+import * as reactRouterDom from "react-router-dom";
+import { describe, expect, test, vi } from "vitest";
 
+import NotFound from "src/scenes/not-found";
 import { renderWithProviders } from "src/test/utils";
 
-import NotFound from "../scenes/not-found";
-
 function mockUseMatch(paths: { [key: string]: boolean }) {
-	(useMatch as Mock).mockImplementation((path) => {
-		return paths[path] ?? false;
+	vi.spyOn(reactRouterDom, "useMatch").mockImplementation((path) => {
+		return (paths[path as any] ?? false) as any;
 	});
 }
+
 describe("not-found", () => {
 	test("should render not found for invites route", () => {
 		mockUseMatch({ "/invites": true });

@@ -6,10 +6,7 @@ import { api } from "./base";
 export const useGetBookmarks = () => {
 	return useQuery<Bookmark[]>({
 		queryKey: ["bookmarks"],
-		queryFn: async () => {
-			const res = await fetch("/api/bookmarks");
-			return res.json();
-		},
+		queryFn: async () => fetch("/api/bookmarks").then((res) => res.json()),
 	});
 };
 

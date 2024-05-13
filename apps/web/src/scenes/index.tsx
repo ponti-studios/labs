@@ -3,8 +3,8 @@ import { Eye, Globe2, Heart, Pin } from "lucide-react";
 import { Link, Navigate } from "react-router-dom";
 
 import { useAuth } from "src/lib/auth";
-import { DASHBOARD, LOGIN } from "src/lib/utils/routes";
-import { mediaQueries } from "src/lib/utils/styles";
+import { DASHBOARD, LOGIN } from "src/lib/routes";
+import { mediaQueries } from "src/lib/styles";
 
 const Wrap = styled.div`
   position: relative;
@@ -36,7 +36,7 @@ const LandingPage = () => {
 			<div className="flex flex-col items-center justify-center w-full">
 				<div className="flex text-primary font-extrabold text-4xl mb-8">
 					<div>
-						<Globe2 className="animate-spin-slow" size={40} />
+						<Globe2 size={40} />
 					</div>
 					<p className="ml-2">Make the world yours.</p>
 				</div>

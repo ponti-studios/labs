@@ -13,7 +13,9 @@ const ListDeleteButton = ({
 }) => {
 	const { mutateAsync } = useMutation({
 		mutationKey: ["deleteList", listId],
-		mutationFn: () => api.delete(`${baseURL}/lists/${listId}`),
+		mutationFn: async () => {
+			await api.delete(`${baseURL}/lists/${listId}`);
+		},
 		onSuccess: () => {
 			onDelete();
 		},

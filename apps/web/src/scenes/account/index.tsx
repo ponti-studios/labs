@@ -1,11 +1,9 @@
 import Alert from "@hominem/components/Alert";
 import Button from "@hominem/components/Button";
-import { User, UserCircle } from "lucide-react";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { UserCircle } from "lucide-react";
 
 import { useAuth } from "src/lib/auth";
-import { LANDING } from "src/lib/utils/routes";
+import { withAuth } from "src/lib/utils";
 
 function useDeleteUserMutation() {
 	return {
@@ -49,17 +47,6 @@ function DeleteAccount({ onSucess }: { onSucess?: () => void }) {
 
 function Account() {
 	const { user } = useAuth();
-	const navigate = useNavigate();
-
-	useEffect(() => {
-		if (!user) {
-			navigate(LANDING);
-		}
-	}, [navigate, user]);
-
-	if (!user) {
-		return null;
-	}
 
 	return (
 		<div className="flex flex-col w-full">
@@ -93,4 +80,4 @@ function Account() {
 	);
 }
 
-export const Component = Account;
+export const Component = withAuth(Account);

@@ -21,6 +21,7 @@ export interface List extends BaseModel {
 	name: string;
 	description: string;
 	userId: string;
+	createdBy?: { email: string };
 }
 
 export interface ListInvite extends BaseModel {

@@ -16,7 +16,9 @@ type ListFormProps = {
 export default function ListForm({ onCreate, onCancel }: ListFormProps) {
 	const [name, setName] = useState("");
 	const { error, mutate, status } = useMutation({
-		mutationFn: async () => api.post(URLS.lists, { name }),
+		mutationFn: async () => {
+			await api.post(URLS.lists, { name });
+		},
 		onSuccess: () => {
 			setName("");
 			onCreate();

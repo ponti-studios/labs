@@ -7,8 +7,8 @@ import { generatePath, useNavigate } from "react-router-dom";
 import Modal from "src/components/Modal";
 import PlaceTypes from "src/components/places/PlaceTypes";
 import api from "src/lib/api";
+import { PLACE } from "src/lib/routes";
 import type { ListPlace } from "src/lib/types";
-import { PLACE } from "src/lib/utils/routes";
 
 const ListItem = ({
 	listId,

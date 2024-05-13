@@ -8,8 +8,7 @@ import * as Yup from "yup";
 import AuthWrap from "src/components/AuthenticationWrap";
 import Form from "src/components/Form";
 import { useAuth } from "src/lib/auth";
-import { useAppDispatch } from "src/lib/store";
-import { DASHBOARD, LOGIN } from "src/lib/utils/routes";
+import { DASHBOARD, LOGIN } from "src/lib/routes";
 
 const AuthenticateSchema = Yup.object().shape({
 	emailToken: Yup.string().length(8),
@@ -18,21 +17,20 @@ const AuthenticateSchema = Yup.object().shape({
 function Authenticate() {
 	const { authenticate, loginEmail } = useAuth();
 	const navigate = useNavigate();
-	const dispatch = useAppDispatch();
 	const initialValues = useMemo(
 		() => ({
 			emailToken: "",
 		}),
 		[],
 	);
-	const { mutateAsync, status, isError, error } = authenticate;
+	const { error, isError, mutateAsync, status } = authenticate;
 
 	const onSubmit = useMemo(
 		() =>
-			async ({ loginEmail, emailToken }) => {
-				await authenticate.mutateAsync({ email: loginEmail, emailToken });
+			async ({ emailToken }: typeof initialValues) => {
+				mutateAsync({ email: loginEmail, emailToken });
 			},
-		[authenticate.mutateAsync],
+		[mutateAsync, loginEmail],
 	);
 
 	useEffect(() => {
@@ -81,11 +79,13 @@ function Authenticate() {
 							</Alert>
 						)}
 						{isError && error.response?.status === 401 && (
-							<Alert className="mt-2" type="info">
-								<span>Invalid code.</span>
-								<Link to={LOGIN} className="text-blue-500">
-									Request a new one.
-								</Link>
+							<Alert className="mt-2" type="error">
+								<div className="flex flex-col gap-2">
+									<p>Invalid code.</p>
+									<Link to={LOGIN} className="text-white underline">
+										Request a new one.
+									</Link>
+								</div>
 							</Alert>
 						)}
 					</div>

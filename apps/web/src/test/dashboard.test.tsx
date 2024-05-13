@@ -1,7 +1,6 @@
 import { screen, waitFor } from "@testing-library/react";
 import * as googleMaps from "@vis.gl/react-google-maps";
 import { http, HttpResponse } from "msw";
-import * as reactRouterDom from "react-router-dom";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 import { baseURL } from "src/lib/api/base";
@@ -16,23 +15,34 @@ describe("Dashboard", () => {
 		);
 	});
 
-	test("renders the loading spinner when map is not loaded", () => {
-		vi.spyOn(googleMaps, "useApiIsLoaded").mockReturnValue(false);
-		renderWithProviders(<Dashboard />);
-		expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
+	test("renders the loading spinner when map is not loaded", async () => {
+		vi.spyOn(googleMaps, "useApiLoadingStatus").mockReturnValue(
+			googleMaps.APILoadingStatus.LOADING,
+		);
+		renderWithProviders(<Dashboard />, { isAuth: true });
+
+		await waitFor(() => {
+			expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
+		});
 	});
 
-	test("renders the places autocomplete and RoccoMap when map is loaded", () => {
-		vi.spyOn(googleMaps, "useApiIsLoaded").mockReturnValue(true);
-		renderWithProviders(<Dashboard />);
-		expect(screen.getByTestId("places-autocomplete")).toBeInTheDocument();
-		expect(screen.getByTestId("rocco-map")).toBeInTheDocument();
+	test("renders the places autocomplete and RoccoMap when map is loaded", async () => {
+		vi.spyOn(googleMaps, "useApiLoadingStatus").mockReturnValue(
+			googleMaps.APILoadingStatus.LOADED,
+		);
+		renderWithProviders(<Dashboard />, { isAuth: true });
+		await waitFor(() => {
+			expect(screen.getByTestId("places-autocomplete")).toBeInTheDocument();
+			expect(screen.getByTestId("rocco-map")).toBeInTheDocument();
+		});
 	});
 
 	test("renders lists", async () => {
 		const lists = getMockLists();
-		vi.spyOn(googleMaps, "useApiIsLoaded").mockReturnValue(true);
-		renderWithProviders(<Dashboard />);
+		vi.spyOn(googleMaps, "useApiLoadingStatus").mockReturnValue(
+			googleMaps.APILoadingStatus.LOADED,
+		);
+		renderWithProviders(<Dashboard />, { isAuth: true });
 
 		await waitFor(() => {
 			expect(screen.getByTestId("lists")).toBeInTheDocument();

@@ -29,8 +29,8 @@ export default function Layout() {
 					)}
 					<Toast />
 				</main>
-				{isAuthenticated && <Footer />}
 			</div>
+			{isAuthenticated && <Footer />}
 		</div>
 	);
 }

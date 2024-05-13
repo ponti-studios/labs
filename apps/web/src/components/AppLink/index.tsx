@@ -7,10 +7,17 @@ const AppLink = ({
 	to,
 	className,
 	children,
-}: PropsWithChildren<{ btn?: boolean; className?: string; to: string }>) => {
+	...props
+}: PropsWithChildren<
+	React.HTMLProps<HTMLAnchorElement> & {
+		btn?: boolean;
+		className?: string;
+		to: string;
+	}
+>) => {
 	if (btn) {
 		return (
-			<Link to={to}>
+			<Link to={to} {...props}>
 				<span
 					className={twMerge(
 						"btn btn-primary text-white px-4 py-3 hover:cursor-pointer",
@@ -31,6 +38,7 @@ const AppLink = ({
 				useMatch(to) ? "bg-blue-100" : null,
 				className,
 			)}
+			{...props}
 		>
 			{children}
 		</Link>

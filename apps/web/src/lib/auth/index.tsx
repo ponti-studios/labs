@@ -1,5 +1,4 @@
 import { useMutation } from "@tanstack/react-query";
-import type { AxiosError } from "axios";
 import { createContext, useContext, useEffect, useReducer } from "react";
 
 import api from "src/lib/api";
@@ -24,14 +23,12 @@ const authReducer = (state: AuthState, action: any): AuthState => {
 		case "auth/login":
 			return {
 				...state,
-				status: AuthStatus.Loading,
 				loginEmail: action.payload.email,
 				authError: null,
 			};
 		case "auth/authenticate":
 			return {
 				...state,
-				status: AuthStatus.Loading,
 				authError: null,
 			};
 		case "auth/authenticated":
@@ -50,8 +47,6 @@ const authReducer = (state: AuthState, action: any): AuthState => {
 		case "auth/load":
 			return {
 				...state,
-				status: AuthStatus.Loading,
-				authError: null,
 			};
 		case "auth/logout":
 			return {
@@ -67,40 +62,43 @@ const authReducer = (state: AuthState, action: any): AuthState => {
 export const AuthProvider = ({ children }) => {
 	const [authState, dispatch] = useReducer(authReducer, initialAuthState);
 
-	useEffect(() => {
-		async function loadAuth() {
-			try {
-				const response = await api.get("/me");
+	async function loadAuth() {
+		try {
+			const response = await api.get("/me");
 
-				if (!response.data || !response.data.id) {
-					throw new Error("User not found");
-				}
-
-				dispatch({ type: "auth/authenticated", payload: response.data });
-			} catch (error) {
-				dispatch({ type: "auth/error", payload: error.message });
+			if (!response.data || !response.data.id) {
+				throw new Error("User not found");
 			}
-		}
 
+			dispatch({ type: "auth/authenticated", payload: response.data });
+		} catch (error) {
+			dispatch({ type: "auth/error", payload: error.message });
+		}
+	}
+
+	/* biome-ignore lint/correctness/useExhaustiveDependencies: only run once */
+	useEffect(() => {
 		loadAuth();
 	}, []);
 
 	const login: AuthState["login"] = useMutation({
-		mutationFn: async ({ email }) => {
-			await api.post("/login", { email }, { withCredentials: false });
-			dispatch({ type: "auth/login", payload: { email } });
-		},
+		mutationFn: async ({ email }) =>
+			api
+				.post("/login", { email }, { withCredentials: false })
+				.then(() => dispatch({ type: "auth/login", payload: { email } })),
 	});
 
 	const authenticate: AuthState["authenticate"] = useMutation({
-		mutationFn: async ({ email, emailToken }) => {
-			try {
-				dispatch({ type: "auth/authenticate" });
-				await api.post("/authenticate", { email, emailToken });
-				dispatch({ type: "auth/load" });
-			} catch (error) {
-				dispatch({ type: "auth/error", payload: error.message });
-			}
+		mutationFn: async ({ emailToken }) =>
+			api.post("/authenticate", {
+				email: authState.loginEmail,
+				emailToken,
+			}),
+		onSuccess: () => {
+			loadAuth();
+		},
+		onError: (error) => {
+			dispatch({ type: "auth/error", payload: error.message });
 		},
 	});
 

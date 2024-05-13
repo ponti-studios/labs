@@ -1,17 +1,9 @@
-import { useNavigate } from "react-router-dom";
-
 import InviteListItem from "src/components/InviteListItem";
 import { useGetInvites } from "src/lib/api";
-import { useAuth } from "src/lib/auth";
+import { withAuth } from "src/lib/utils";
 
 const Invites = () => {
-	const navigate = useNavigate();
-	const { user } = useAuth();
 	const { data: invites, refetch } = useGetInvites();
-
-	if (!user) {
-		navigate("/");
-	}
 
 	return (
 		<>
@@ -31,4 +23,4 @@ const Invites = () => {
 	);
 };
 
-export const Component = Invites;
+export const Component = withAuth(Invites);

@@ -12,6 +12,7 @@ import PlaceTypes from "src/components/places/PlaceTypes";
 import PlaceWebsite from "src/components/places/PlaceWebsite";
 import { useGetPlace } from "src/lib/api/places";
 import { useToast } from "src/lib/toast/hooks";
+import { withAuth } from "src/lib/utils";
 
 function PlaceError({ error }: { error: AxiosError }) {
 	if (!error || !error.response) {
@@ -96,4 +97,4 @@ function PlaceRoute() {
 	);
 }
 
-export const Component = PlaceRoute;
+export const Component = withAuth(PlaceRoute);

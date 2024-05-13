@@ -1,6 +1,6 @@
 import { act, screen, waitFor } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
-import { useNavigate } from "react-router-dom";
+import * as reactRouterDom from "react-router-dom";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import type { Mock, MockedFunction } from "vitest";
 
@@ -11,12 +11,12 @@ import { getMockPlace, renderWithProviders } from "src/test/utils";
 import PlaceItem from "./index";
 
 describe("PlaceItem", () => {
-	let navigate: MockedFunction<typeof useNavigate>;
+	let navigate: MockedFunction<typeof reactRouterDom.useNavigate>;
 	const place = getMockPlace();
 
 	beforeEach(() => {
 		navigate = vi.fn();
-		(useNavigate as Mock).mockReturnValue(navigate);
+		vi.spyOn(reactRouterDom, "useNavigate").mockReturnValue(navigate);
 	});
 
 	test("should render", async () => {

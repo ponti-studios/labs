@@ -1,15 +1,14 @@
 import Button from "@hominem/components/Button";
 import { PlusCircle } from "lucide-react";
 import { useCallback, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import ListForm from "src/components/ListForm";
 import Lists from "src/components/Lists";
 import { useGetLists } from "src/lib/api";
 import { useAuth } from "src/lib/auth";
+import { withAuth } from "src/lib/utils";
 
-export function Component() {
-	const navigate = useNavigate();
+function ListsScene() {
 	const { user } = useAuth();
 	const [isListFormOpen, setIsListFormOpen] = useState(false);
 	const { data, error, refetch, status: listsStatus } = useGetLists();
@@ -26,10 +25,6 @@ export function Component() {
 	const onListFormCancel = useCallback(() => {
 		setIsListFormOpen(false);
 	}, []);
-
-	if (!user) {
-		navigate("/");
-	}
 
 	return (
 		<div className="flex flex-col w-full">
@@ -61,3 +56,5 @@ export function Component() {
 		</div>
 	);
 }
+
+export const Component = withAuth(ListsScene);

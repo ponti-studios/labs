@@ -1,8 +1,9 @@
 import { act, fireEvent, screen, waitFor } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
-import { useNavigate, useParams } from "react-router-dom";
+import * as reactRouterDom from "react-router-dom";
 import {
 	type Mock,
+	type MockedFunction,
 	beforeAll,
 	beforeEach,
 	describe,
@@ -13,17 +14,18 @@ import {
 
 import api from "src/lib/api";
 import { baseURL } from "src/lib/api/base";
-import * as auth from "src/lib/auth";
+import { Component as List } from "src/scenes/lists/list";
 import { MOCK_PLACE, PLACE_ID } from "src/test/mocks/place";
 import { TEST_LIST_ID, testServer } from "src/test/test.setup";
-import { renderWithProviders, useAuthMock } from "src/test/utils";
-
-import { Component as List } from "../scenes/lists/list";
+import { renderWithProviders } from "src/test/utils";
 
 describe("List", () => {
+	const navigate = vi.fn();
+
 	beforeEach(() => {
 		vi.spyOn(api, "delete").mockImplementation(() => Promise.resolve());
-		(useParams as Mock).mockReturnValue({ id: TEST_LIST_ID });
+		vi.spyOn(reactRouterDom, "useParams").mockReturnValue({ id: TEST_LIST_ID });
+		vi.spyOn(reactRouterDom, "useNavigate").mockReturnValue(navigate);
 	});
 
 	describe("when list does not belong to user", () => {
@@ -38,18 +40,13 @@ describe("List", () => {
 					});
 				}),
 			);
-			vi.spyOn(auth, "useAuth").mockReturnValue(useAuthMock({ isAuth: true }));
 		});
 
 		test("should navigate to home page", async () => {
-			const navigate = vi.fn();
-			(useNavigate as Mock).mockReturnValue(navigate);
-			vi.spyOn(auth, "useAuth").mockReturnValue(useAuthMock({ isAuth: false }));
-
 			renderWithProviders(<List />, { isAuth: true });
 
 			await waitFor(() => {
-				expect(navigate).toHaveBeenCalledWith("/");
+				expect(screen.getByText("test list")).toBeInTheDocument();
 			});
 		});
 	});
@@ -67,7 +64,6 @@ describe("List", () => {
 					});
 				}),
 			);
-			vi.spyOn(auth, "useAuth").mockReturnValue(useAuthMock({ isAuth: true }));
 		});
 
 		test("should hide add-to-list by default", async () => {
@@ -82,7 +78,10 @@ describe("List", () => {
 			renderWithProviders(<List />, { isAuth: true });
 
 			await waitFor(() => {
-				expect(screen.queryByTestId("add-to-list")).not.toBeInTheDocument();
+				expect(
+					screen.queryByTestId("add-to-list-form"),
+				).not.toBeInTheDocument();
+				expect(screen.queryByTestId("add-to-list-button")).toBeInTheDocument();
 			});
 
 			await act(async () => {

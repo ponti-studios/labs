@@ -26,13 +26,8 @@ function Alert({
 
 	if (type === "error") {
 		return (
-			<div
-				className={twMerge(
-					"flex alert alert-error rounded-md text-error-content p-4 text-md",
-					className,
-				)}
-			>
-				<BadgeAlert size={16} />
+			<div className={twMerge("alert bg-destructive", className)}>
+				<BadgeAlert size={24} />
 				<div className="flex-1 ml-4">{children}</div>
 			</div>
 		);

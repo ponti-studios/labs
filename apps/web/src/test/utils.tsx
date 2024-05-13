@@ -6,18 +6,14 @@ import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
 import { type Mock, beforeEach, vi } from "vitest";
 
-import { useAuth } from "src/lib/auth";
+import { http, HttpResponse } from "msw";
+import { baseURL } from "src/lib/api/base";
+import { AuthProvider, useAuth } from "src/lib/auth";
 import type { AuthState } from "src/lib/auth/types";
 import { rootReducer } from "src/lib/store";
 import type { ListPlace, User } from "src/lib/types";
-
-vi.mock("src/lib/auth", (importOriginal) => {
-	const original = importOriginal as unknown as typeof import("src/lib/auth");
-	return {
-		...original,
-		useAuth: vi.fn(),
-	};
-});
+import { Router } from "src/router";
+import { testServer } from "./test.setup";
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -70,12 +66,6 @@ export const getMockLists = () => [
 	},
 ];
 
-export const getMockStore = ({ isAuth, authOptions = {} }) =>
-	configureStore({
-		reducer: rootReducer,
-		preloadedState: {},
-	});
-
 export const loginMock = {
 	mutateAsync: vi.fn().mockResolvedValue(null),
 };
@@ -84,38 +74,38 @@ export const logoutMock = {
 	mutateAsync: vi.fn().mockResolvedValue(null),
 };
 
-export const useAuthMock = ({
-	isAuth = false,
-}: { isAuth?: boolean }): AuthState => ({
-	authError: null,
-	currentLocation: { latitude: 37.7749, longitude: -122.4194 },
-	user: isAuth ? getMockUser() : null,
-	isLoadingAuth: false,
-	loginEmail: null,
-	status: (isAuth ? "authenticated" : "unauthenticated") as any,
-	login: loginMock as any,
-	logout: logoutMock as any,
-});
-
-export function mockUseAuth(isAuth = false) {
-	(useAuth as Mock).mockReturnValue(useAuthMock({ isAuth }));
-}
-
+type TestProviderProps = {
+	initialEntries?: string[];
+	isAuth?: boolean;
+	store?: ReturnType<typeof configureStore>;
+};
 export const TestProviders = ({
 	children,
 	initialEntries = ["/"],
 	isAuth = false,
 	store,
-}: PropsWithChildren<{
-	initialEntries?: string[];
-	isAuth?: boolean;
-	store?: ReturnType<typeof configureStore>;
-}>) => {
+}: PropsWithChildren<TestProviderProps>) => {
+	testServer.use(
+		http.get(`${baseURL}/me`, () => {
+			return isAuth
+				? HttpResponse.json(getMockUser())
+				: HttpResponse.text("Unauthorized", { status: 401 });
+		}),
+	);
+
 	return (
 		<MemoryRouter initialEntries={initialEntries}>
-			<Provider store={store || getMockStore({ isAuth })}>
+			<Provider
+				store={
+					store ||
+					configureStore({
+						reducer: rootReducer,
+						preloadedState: {},
+					})
+				}
+			>
 				<QueryClientProvider client={queryClient}>
-					{children}
+					<AuthProvider>{children}</AuthProvider>
 				</QueryClientProvider>
 			</Provider>
 		</MemoryRouter>
@@ -126,20 +116,15 @@ export function renderWithProviders(
 	ui: ReactElement,
 	{
 		options,
-		isAuth = false,
-	}: {
+		...props
+	}: TestProviderProps & {
 		options?: RenderOptions;
-		isAuth?: boolean;
 	} = {},
 ): ReturnType<typeof render> {
 	return render(ui, {
 		wrapper: ({ children }) => (
-			<TestProviders isAuth={isAuth}>{children}</TestProviders>
+			<TestProviders {...props}>{children}</TestProviders>
 		),
 		...options,
 	});
 }
-
-beforeEach(() => {
-	(useAuth as Mock).mockReturnValue(useAuthMock({ isAuth: false }));
-});

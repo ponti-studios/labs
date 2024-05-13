@@ -3,13 +3,15 @@ import Loading from "@hominem/components/Loading";
 import { PlusCircle, Share } from "lucide-react";
 import { useCallback, useState } from "react";
 import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
+import ListMenu from "src/components/Lists/list-menu";
 
 import PlaceItem from "src/components/PlaceItem";
 import PlacesAutocomplete from "src/components/PlacesAutocomplete";
 import { useGetList } from "src/lib/api";
 import { useAuth } from "src/lib/auth";
+import { PLACE } from "src/lib/routes";
 import type { SearchPlace } from "src/lib/types";
-import { PLACE } from "src/lib/utils/routes";
+import { withAuth } from "src/lib/utils";
 
 const List = () => {
 	const { currentLocation, user } = useAuth();
@@ -28,11 +30,6 @@ const List = () => {
 	const handleDeleteError = () => {
 		setDeleteError("Could not delete place. Please try again.");
 	};
-
-	if (!user) {
-		navigate("/");
-		return null;
-	}
 
 	if (status === "pending") {
 		return <Loading />;
@@ -64,6 +61,7 @@ const List = () => {
 									<PlusCircle />
 								</button>
 							)}
+							{/* Only list owners can share with others. */}
 							{data.userId === user.id && (
 								<Link
 									to={`/lists/${data.id}/invites`}
@@ -74,6 +72,7 @@ const List = () => {
 									</span>
 								</Link>
 							)}
+							<ListMenu list={data} isOwnList={data.userId === user.id} />
 						</div>
 					</div>
 					{(data.items.length === 0 || isAddToListOpen) && (
@@ -112,4 +111,4 @@ const List = () => {
 	);
 };
 
-export const Component = List;
+export const Component = withAuth(List);

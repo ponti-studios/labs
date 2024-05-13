@@ -1,7 +1,18 @@
 import { http, HttpResponse } from "msw";
 import { createElement } from "react";
-import { baseURL } from "src/lib/api/base";
 import { vi } from "vitest";
+
+import { baseURL } from "src/lib/api/base";
+
+vi.mock("@vis.gl/react-google-maps", async (importOriginal) => {
+	const actual = await importOriginal();
+	return {
+		...(actual as any),
+		useApiIsLoaded: () => true,
+		useApiLoadingStatus: vi.fn(),
+		Map: () => createElement("div", { "data-testid": "google-map" }),
+	};
+});
 
 export const PLACE_ID = "place-id";
 
@@ -34,8 +45,3 @@ export const PLACE_HANDLERS = [
 		return HttpResponse.json(MOCK_PLACE_SEARCH);
 	}),
 ];
-
-vi.mock("@vis.gl/react-google-maps", () => ({
-	useApiIsLoaded: () => true,
-	Map: () => createElement("div", { "data-testid": "google-map" }),
-}));
