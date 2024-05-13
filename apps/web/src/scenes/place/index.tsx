@@ -61,11 +61,11 @@ function PlaceRoute() {
 	}
 
 	return (
-		<div className="mt-3">
+		<div className="mt-3 w-full">
 			<PlacePhotos alt={place.name} photos={place.photos} />
 			<div className="rounded-box bg-slate-100 mt-4 px-4 py-6">
 				<div className="mb-4">
-					<p className="font-bold text-xl mb-4">{place.name}</p>
+					<p className="font-bold text-xl mb-2">{place.name}</p>
 					<PlaceTypes types={place.types} />
 				</div>
 				{place.address && (
