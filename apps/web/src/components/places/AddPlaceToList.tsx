@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import Button from "@hominem/components/Button";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useGetLists } from "src/lib/api";
 import { useAddPlaceToList } from "src/lib/api/places";
 import type { Place } from "src/lib/types";
@@ -52,9 +52,12 @@ const AddPlaceToList = ({
 		});
 	};
 
-	const onListSelectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setListIds([...listIds, e.target.value]);
-	};
+	const onListSelectChange = useCallback(
+		(e: React.ChangeEvent<HTMLInputElement>) => {
+			setListIds([...listIds, e.target.value]);
+		},
+		[listIds],
+	);
 
 	// List of lists displaying their name and a round checkbox that when clicked adds the list to the listIds array
 	return (

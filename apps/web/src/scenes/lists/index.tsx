@@ -45,14 +45,12 @@ function ListsScene() {
 					<ListForm onCancel={onListFormCancel} onCreate={onListCreate} />
 				</div>
 			) : null}
-			<div>
-				<Lists
-					status={listsStatus}
-					lists={data}
-					error={error}
-					currentUserEmail={user?.email}
-				/>
-			</div>
+			<Lists
+				status={listsStatus}
+				lists={data}
+				error={error}
+				currentUserEmail={user?.email}
+			/>
 		</div>
 	);
 }

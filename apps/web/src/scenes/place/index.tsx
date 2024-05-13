@@ -1,6 +1,6 @@
 import Alert from "@hominem/components/Alert";
 import Button from "@hominem/components/Button";
-import Loading from "@hominem/components/Loading";
+import { LoadingScreen } from "@hominem/components/Loading";
 import type { AxiosError } from "axios";
 import { useCallback, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -49,7 +49,7 @@ function PlaceRoute() {
 	const onAddToList = useCallback(() => setIsListSelectOpen(true), []);
 
 	if (isLoading) {
-		return <Loading />;
+		return <LoadingScreen />;
 	}
 
 	if (error) {

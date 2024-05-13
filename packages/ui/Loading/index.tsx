@@ -24,3 +24,11 @@ export default function Loading({ color, size = "md" }: LoadingProps) {
 		</div>
 	);
 }
+
+export function LoadingScreen() {
+	return (
+		<div className="flex items-center justify-center max-h-[300px] mx-auto">
+			<Loading size="3xl" />
+		</div>
+	);
+}

@@ -1,5 +1,5 @@
 import Alert from "@hominem/components/Alert";
-import Loading from "@hominem/components/Loading";
+import Loading, { LoadingScreen } from "@hominem/components/Loading";
 import { PlusCircle, Share } from "lucide-react";
 import { useCallback, useState } from "react";
 import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
@@ -32,7 +32,7 @@ const List = () => {
 	};
 
 	if (status === "pending") {
-		return <Loading />;
+		return <LoadingScreen />;
 	}
 
 	if (error) {

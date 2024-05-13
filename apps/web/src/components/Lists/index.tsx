@@ -1,6 +1,5 @@
 import Alert from "@hominem/components/Alert";
-import Loading from "@hominem/components/Loading";
-import { Link } from "react-router-dom";
+import { LoadingScreen } from "@hominem/components/Loading";
 
 import type { List, User } from "src/lib/types";
 import ListItem from "./list-item";
@@ -28,7 +27,7 @@ export default function Lists({
 	currentUserEmail: string;
 }) {
 	if (status === "loading") {
-		return <Loading />;
+		return <LoadingScreen />;
 	}
 
 	if (error) {

@@ -1,5 +1,5 @@
 import Alert from "@hominem/components/Alert";
-import Loading from "@hominem/components/Loading";
+import { LoadingScreen } from "@hominem/components/Loading";
 import { useCallback } from "react";
 import { Link, useParams } from "react-router-dom";
 
@@ -19,7 +19,7 @@ const ListInvites = () => {
 	const onInviteSuccess = useCallback(() => getInvites(), [getInvites]);
 
 	if ([listStatus, invitesStatus].indexOf("pending") >= 0) {
-		return <Loading />;
+		return <LoadingScreen />;
 	}
 
 	if (!userList) {
