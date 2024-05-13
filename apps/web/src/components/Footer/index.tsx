@@ -4,7 +4,7 @@ import AppLink from "../AppLink";
 
 const Footer = () => {
 	return (
-		<div
+		<footer
 			role="menu"
 			className="visible md:hidden btm-nav z-[55] flex justify-between p-0 w-full"
 		>
@@ -31,7 +31,7 @@ const Footer = () => {
 			>
 				<Mail className="inline-block" />
 			</AppLink>
-		</div>
+		</footer>
 	);
 };
 

@@ -18,7 +18,7 @@ export default function Layout() {
 				<Header />
 				<main
 					data-testid="app-main"
-					className="flex flex-1 mt-8 w-full max-sm:pb-16"
+					className="flex flex-1 mt-8 w-full max-md:pb-16"
 				>
 					{status === "loading" ? (
 						<div className="flex items-center justify-center max-w-[300px] mx-auto min-h-screen">
