@@ -16,7 +16,10 @@ export default function Layout() {
 		<div className="h-full w-full flex flex-col items-center">
 			<div className="h-full w-full flex flex-col sm:max-w-3xl px-2">
 				<Header />
-				<main data-testid="app-main" className="flex mt-8 w-full max-md:pb-16">
+				<main
+					data-testid="app-main"
+					className="flex mt-8 w-full max-md:pb-16 pb-12"
+				>
 					{status === "loading" ? (
 						<div className="flex items-center justify-center max-w-[300px] mx-auto min-h-screen">
 							<Loading size="xl" />
