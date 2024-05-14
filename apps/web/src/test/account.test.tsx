@@ -10,7 +10,7 @@ describe("Account", () => {
 		renderWithProviders(<Account />, { isAuth: true });
 
 		await waitFor(() => {
-			expect(screen.getByText(TEST_USER_NAME)).toBeInTheDocument();
+			expect(screen.queryByText(TEST_USER_NAME)).toBeInTheDocument();
 		});
 	});
 });

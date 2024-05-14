@@ -6,8 +6,8 @@ import PlaceTypes from "./PlaceTypes";
 describe("PlaceTypes", () => {
 	test("should render types", () => {
 		renderWithProviders(<PlaceTypes types={["clothing", "boutique"]} />);
-		expect(screen.getByText("clothing")).toBeInTheDocument();
-		expect(screen.getByText("boutique")).toBeInTheDocument();
+		expect(screen.queryByText("clothing")).toBeInTheDocument();
+		expect(screen.queryByText("boutique")).toBeInTheDocument();
 	});
 
 	test("should only render types within limit", () => {

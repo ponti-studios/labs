@@ -47,7 +47,7 @@ describe("List", () => {
 			renderWithProviders(<List />, { isAuth: true });
 
 			await waitFor(() => {
-				expect(screen.getByText("test list")).toBeInTheDocument();
+				expect(screen.queryByText("test list")).toBeInTheDocument();
 			});
 		});
 	});
@@ -93,7 +93,7 @@ describe("List", () => {
 			});
 		});
 
-		test("should display Add a place when data is empty", async () => {
+		test("should display add-to-list when data is empty", async () => {
 			testServer.use(
 				http.get(`${baseURL}/lists/${TEST_LIST_ID}`, () => {
 					return HttpResponse.json({
@@ -108,12 +108,7 @@ describe("List", () => {
 			renderWithProviders(<List />, { isAuth: true });
 
 			await waitFor(() => {
-				expect(screen.getByText("Add a place")).toBeInTheDocument();
-				expect(
-					screen.getByText(
-						"This list is empty. Start adding places with the search bar above.",
-					),
-				).toBeInTheDocument();
+				expect(screen.queryByTestId("add-to-list")).toBeInTheDocument();
 			});
 		});
 	});

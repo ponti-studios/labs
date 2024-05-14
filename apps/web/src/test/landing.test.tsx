@@ -8,17 +8,17 @@ import LandingPage from "src/scenes";
 describe("landing", () => {
 	test("renders", () => {
 		renderWithProviders(<LandingPage />);
-		expect(screen.getByText("Make the world yours.")).toBeInTheDocument();
+		expect(screen.queryByText("Make the world yours.")).toBeInTheDocument();
 	});
 	test("should render log in button if user is not logged in", () => {
 		renderWithProviders(<Layout />);
-		expect(screen.getByText("Log In")).toBeInTheDocument();
+		expect(screen.queryByTestId("header-login-button")).toBeInTheDocument();
 	});
 	test("should render auth nav menu if user is logged in", async () => {
 		renderWithProviders(<Layout />, { isAuth: true });
 
 		await waitFor(() => {
-			expect(screen.getByTestId("auth-dropdown-button")).toBeInTheDocument();
+			expect(screen.queryByTestId("auth-dropdown-button")).toBeInTheDocument();
 		});
 	});
 });

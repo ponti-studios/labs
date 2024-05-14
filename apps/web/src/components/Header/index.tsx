@@ -23,7 +23,11 @@ function Header() {
 			{status === AuthStatus.Authenticated ? (
 				<AuthNavMenu user={user} />
 			) : (
-				<Link to={LOGIN} className="btn btn-primary text-white">
+				<Link
+					data-testid="header-login-button"
+					to={LOGIN}
+					className="btn btn-primary text-white"
+				>
 					Log In
 				</Link>
 			)}

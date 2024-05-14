@@ -61,7 +61,7 @@ describe("PlaceItem", () => {
 
 		// Wait for dropdown menu to render
 		await waitFor(() => {
-			expect(screen.getByTestId("place-delete-button")).toBeInTheDocument();
+			expect(screen.queryByTestId("place-delete-button")).toBeInTheDocument();
 		});
 
 		// Open delete modal
@@ -69,7 +69,7 @@ describe("PlaceItem", () => {
 
 		// Wait for delete modal to render
 		await waitFor(() => {
-			expect(screen.getByTestId("place-delete-modal")).toBeInTheDocument();
+			expect(screen.queryByTestId("place-delete-modal")).toBeInTheDocument();
 		});
 
 		await user.click(screen.getByTestId("place-delete-confirm-button"));

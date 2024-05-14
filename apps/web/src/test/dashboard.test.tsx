@@ -22,7 +22,7 @@ describe("Dashboard", () => {
 		renderWithProviders(<Dashboard />, { isAuth: true });
 
 		await waitFor(() => {
-			expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
+			expect(screen.queryByTestId("loading-spinner")).toBeInTheDocument();
 		});
 	});
 
@@ -32,8 +32,8 @@ describe("Dashboard", () => {
 		);
 		renderWithProviders(<Dashboard />, { isAuth: true });
 		await waitFor(() => {
-			expect(screen.getByTestId("places-autocomplete")).toBeInTheDocument();
-			expect(screen.getByTestId("rocco-map")).toBeInTheDocument();
+			expect(screen.queryByTestId("places-autocomplete")).toBeInTheDocument();
+			expect(screen.queryByTestId("rocco-map")).toBeInTheDocument();
 		});
 	});
 
@@ -45,9 +45,9 @@ describe("Dashboard", () => {
 		renderWithProviders(<Dashboard />, { isAuth: true });
 
 		await waitFor(() => {
-			expect(screen.getByTestId("lists")).toBeInTheDocument();
-			expect(screen.getByText(lists[0].name)).toBeInTheDocument();
-			expect(screen.getByText(lists[1].name)).toBeInTheDocument();
+			expect(screen.queryByTestId("lists")).toBeInTheDocument();
+			expect(screen.queryByText(lists[0].name)).toBeInTheDocument();
+			expect(screen.queryByText(lists[1].name)).toBeInTheDocument();
 		});
 	});
 });

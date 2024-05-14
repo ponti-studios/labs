@@ -28,7 +28,7 @@ describe("Place", () => {
 		renderWithProviders(<Place />, { isAuth: true });
 
 		await waitFor(() => {
-			expect(screen.getByText(MOCK_PLACE.name)).toBeInTheDocument();
+			expect(screen.queryByText(MOCK_PLACE.name)).toBeInTheDocument();
 		});
 	});
 });
