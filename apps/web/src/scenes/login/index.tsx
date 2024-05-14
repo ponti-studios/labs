@@ -70,6 +70,7 @@ function Login() {
 					</div>
 					<Button
 						data-testid="login-button"
+						type="submit"
 						isLoading={login.status === "pending"}
 					>
 						Get code

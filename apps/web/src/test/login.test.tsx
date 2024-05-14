@@ -4,6 +4,7 @@ import * as reactRouterDom from "react-router-dom";
 import { beforeEach, describe, expect, test } from "vitest";
 import { vi } from "vitest";
 
+import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";
 import { baseURL } from "src/lib/api/base";
 import Login from "src/scenes/login";
@@ -18,17 +19,18 @@ describe("Login", () => {
 	});
 
 	test("renders when loading = true", async () => {
-		renderWithProviders(<Login />);
-		const input = await screen.findByTestId("email-input");
-		const button = await screen.findByTestId("login-button");
+		const user = userEvent.setup();
 		testServer.use(
 			http.post(`${baseURL}/login`, () => {
 				return HttpResponse.text("OK", { status: 200 });
 			}),
 		);
-		fireEvent.change(input, { target: { value: "test@test.com" } });
-		fireEvent.click(button);
 
+		renderWithProviders(<Login />);
+		fireEvent.change(screen.getByTestId("email-input"), {
+			target: { value: "test@test.com" },
+		});
+		await user.click(screen.getByTestId("login-button"));
 		await waitFor(() => {
 			expect(navigate).toHaveBeenCalledWith("/authenticate");
 		});

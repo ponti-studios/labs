@@ -20,7 +20,8 @@ describe("PlaceItem", () => {
 		vi.spyOn(reactRouterDom, "useNavigate").mockReturnValue(navigate);
 	});
 
-	test("should render", async () => {
+	test("should render place", async () => {
+		const user = userEvent.setup();
 		renderWithProviders(
 			<PlaceItem
 				place={place}
@@ -29,11 +30,11 @@ describe("PlaceItem", () => {
 				listId="123"
 			/>,
 		);
-		const placeItem = await screen.findByTestId("place-item");
 
 		expect(screen.queryByText("Place Name")).toBeInTheDocument();
 
-		placeItem.click();
+		// Navigate to place
+		await user.click(screen.getByTestId("place-item"));
 		expect(navigate).toHaveBeenCalledWith(`/places/${place.googleMapsId}`);
 	});
 
