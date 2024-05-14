@@ -76,6 +76,7 @@ describe("List", () => {
 		});
 
 		test("should show add-to-list when add-to-list-button is clicked", async () => {
+			const user = userEvent.setup();
 			renderWithProviders(<List />, { isAuth: true });
 
 			await waitFor(() => {
@@ -85,9 +86,7 @@ describe("List", () => {
 				expect(screen.queryByTestId("add-to-list-button")).toBeInTheDocument();
 			});
 
-			await act(async () => {
-				fireEvent.click(screen.getByTestId("add-to-list-button"));
-			});
+			await user.click(screen.getByTestId("add-to-list-button"));
 
 			await waitFor(() => {
 				expect(screen.queryByTestId("add-to-list")).toBeInTheDocument();

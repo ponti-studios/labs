@@ -1,4 +1,4 @@
-import { act, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 import * as reactRouterDom from "react-router-dom";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -56,9 +56,7 @@ describe("PlaceItem", () => {
 		);
 
 		// Open dropdown menu
-		await act(async () => {
-			return user.click(screen.getByTestId("place-dropdownmenu-trigger"));
-		});
+		await user.click(screen.getByTestId("place-dropdownmenu-trigger"));
 
 		// Wait for dropdown menu to render
 		await waitFor(() => {
@@ -66,18 +64,14 @@ describe("PlaceItem", () => {
 		});
 
 		// Open delete modal
-		await act(async () => {
-			return user.click(screen.getByTestId("place-delete-button"));
-		});
+		await user.click(screen.getByTestId("place-delete-button"));
 
 		// Wait for delete modal to render
 		await waitFor(() => {
 			expect(screen.getByTestId("place-delete-modal")).toBeInTheDocument();
 		});
 
-		await act(async () => {
-			return user.click(screen.getByTestId("place-delete-confirm-button"));
-		});
+		await user.click(screen.getByTestId("place-delete-confirm-button"));
 
 		await waitFor(async () => {
 			expect(
