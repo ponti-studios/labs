@@ -26,7 +26,6 @@ function mockUseListMenu({
 	vi.spyOn(listMenu, "useListMenu").mockReturnValue({
 		isEditSheetOpen,
 		setIsEditSheetOpen: vi.fn(),
-		openEditSheet: vi.fn(),
 		isDeleteSheetOpen,
 		setIsDeleteSheetOpen: vi.fn(),
 	});

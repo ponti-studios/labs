@@ -1,11 +1,17 @@
-import Button from "@hominem/components/Button";
 import { useMutation } from "@tanstack/react-query";
-import { X } from "lucide-react";
-import { type KeyboardEvent, type MouseEvent, useState } from "react";
+import { MoreVertical } from "lucide-react";
+import { type MouseEvent, useCallback, useState } from "react";
 import { generatePath, useNavigate } from "react-router-dom";
 
-import Modal from "src/components/Modal";
 import PlaceTypes from "src/components/places/PlaceTypes";
+import { Button } from "src/components/ui/button";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "src/components/ui/dropdown-menu";
+import { Sheet, SheetContent } from "src/components/ui/sheet";
 import api from "src/lib/api";
 import { PLACE } from "src/lib/routes";
 import type { ListPlace } from "src/lib/types";
@@ -26,10 +32,11 @@ const ListItem = ({
 	const { mutateAsync } = useMutation({
 		mutationKey: ["deleteListItem", listId, place.itemId],
 		mutationFn: async () =>
-			api
-				.delete(`/lists/${listId}/items/${place.itemId}`)
-				.then(onDelete)
-				.catch(onError),
+			api.delete(`/lists/${listId}/items/${place.itemId}`),
+		onSuccess: () => {
+			onDelete();
+		},
+		onError,
 	});
 	const onPlaceNameClick = async (e: MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
@@ -39,45 +46,28 @@ const ListItem = ({
 		navigate(generatePath(PLACE, { id: place.googleMapsId }));
 	};
 
-	const onDeleteClick = async (
-		e: MouseEvent<HTMLSpanElement> | KeyboardEvent<HTMLSpanElement> | undefined,
-	) => {
-		e.stopPropagation();
-		e.preventDefault();
+	const onDeleteMenuItemClick = useCallback(
+		async (e: MouseEvent<HTMLDivElement>) => {
+			e.stopPropagation();
+			setIsDeleteModalOpen(true);
+		},
+		[],
+	);
 
-		// Only delete on Enter key
-		if (
-			e.type === "keydown" &&
-			(e as React.KeyboardEvent<HTMLSpanElement>).key !== "Enter"
-		) {
-			return;
-		}
-
-		navigator.vibrate?.(10);
-		setIsDeleteModalOpen(true);
-	};
-
-	const closeModal = (
-		e: MouseEvent<HTMLSpanElement> | KeyboardEvent<HTMLSpanElement>,
-	) => {
-		e.stopPropagation();
-		e.preventDefault();
-		setIsDeleteModalOpen(false);
-	};
-
-	const onModalDelete = async (e: MouseEvent<HTMLButtonElement>) => {
-		e.preventDefault();
-		e.stopPropagation();
-		await mutateAsync();
-		setIsDeleteModalOpen(false);
-	};
+	const onDeleteClick = useCallback(
+		async (e: MouseEvent<HTMLButtonElement>) => {
+			await mutateAsync();
+			setIsDeleteModalOpen(false);
+		},
+		[mutateAsync],
+	);
 
 	return (
 		<>
 			<button
 				type="button"
 				data-testid="place-item"
-				className="flex card rounded-lg size-full"
+				className="flex card rounded-lg w-full h-fit"
 				onClick={onPlaceNameClick}
 			>
 				<div className="rounded-lg p-[2px] border border-slate-200 w-full h-[200px]">
@@ -87,31 +77,34 @@ const ListItem = ({
 						className="rounded-[5px] object-cover w-full h-full"
 					/>
 				</div>
-				<div className="flex">
-					<div className="flex flex-col flex-1 mt-1 pl-1 h-full justify-between text-wrap break-words">
-						<p className="flex-1 mb-1 font-semibold justify-start underline-offset-4 focus-visible:underline focus-visible:outline-none">
+				<div className="flex w-full max-w-full pt-2">
+					<div className="flex flex-col flex-1 pl-1 h-full justify-between text-wrap break-words">
+						<p className="mb-1 font-semibold text-start underline-offset-4 focus-visible:underline focus-visible:outline-none">
 							{place.name}
 						</p>
 						<PlaceTypes limit={1} types={place.types} />
 					</div>
-					<span
-						data-testid="delete-button"
-						role="button"
-						tabIndex={0}
-						className="text-slate-700 cursor-pointer mt-2"
-						onKeyDown={onDeleteClick}
-						onClick={onDeleteClick}
-					>
-						<X size={16} />
-					</span>
+					<DropdownMenu>
+						<DropdownMenuTrigger
+							asChild
+							data-testid="place-dropdownmenu-trigger"
+							className="h-fit mt-0.5"
+						>
+							<MoreVertical size={20} />
+						</DropdownMenuTrigger>
+						<DropdownMenuContent>
+							<DropdownMenuItem
+								data-testid="place-delete-button"
+								onClick={onDeleteMenuItemClick}
+							>
+								Delete
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
 				</div>
 			</button>
-			{isDeleteModalOpen && (
-				<Modal
-					data-testid="delete-modal"
-					isOpen={isDeleteModalOpen}
-					onModalClose={closeModal}
-				>
+			<Sheet open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+				<SheetContent data-testid="place-delete-modal">
 					<div className="flex flex-col gap-4">
 						<h2 className="text-2xl font-semibold">Delete place</h2>
 						<p className="text-md">
@@ -119,23 +112,17 @@ const ListItem = ({
 						</p>
 						<div className="mt-4 flex gap-4 justify-end">
 							<Button
-								data-testid="delete-place-cancel-button"
-								onClick={closeModal}
-								className="btn-outline"
-							>
-								Cancel
-							</Button>
-							<Button
-								data-testid="delete-place-confirm-button"
-								onClick={onModalDelete}
-								className="btn-error text-error-content"
+								type="button"
+								data-testid="place-delete-confirm-button"
+								onClick={onDeleteClick}
+								className="bg-black"
 							>
 								Delete
 							</Button>
 						</div>
 					</div>
-				</Modal>
-			)}
+				</SheetContent>
+			</Sheet>
 		</>
 	);
 };

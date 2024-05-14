@@ -2,12 +2,13 @@ import { act, screen, waitFor } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 import * as reactRouterDom from "react-router-dom";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import type { Mock, MockedFunction } from "vitest";
+import type { MockedFunction } from "vitest";
 
 import { baseURL } from "src/lib/api/base";
 import { testServer } from "src/test/test.setup";
 import { getMockPlace, renderWithProviders } from "src/test/utils";
 
+import userEvent from "@testing-library/user-event";
 import PlaceItem from "./index";
 
 describe("PlaceItem", () => {
@@ -30,32 +31,19 @@ describe("PlaceItem", () => {
 		);
 		const placeItem = await screen.findByTestId("place-item");
 
-		expect(screen.findAllByText("Place Name")).toBeTruthy();
+		expect(screen.queryByText("Place Name")).toBeInTheDocument();
 
 		placeItem.click();
 		expect(navigate).toHaveBeenCalledWith(`/places/${place.googleMapsId}`);
 	});
 
-	test("should open delete modal", async () => {
-		renderWithProviders(
-			<PlaceItem
-				place={place}
-				onDelete={() => void 0}
-				onError={() => void 0}
-				listId="123"
-			/>,
-		);
-		const deleteButton = await screen.findByTestId("delete-button");
-
-		deleteButton.click();
-		expect(screen.findByTestId("delete-modal")).toBeTruthy();
-	});
-
 	test("should delete place", async () => {
+		const user = userEvent.setup();
 		testServer.use(
-			http.delete(`${baseURL}/lists/123/items/123`, () => {
-				return new HttpResponse(null, { status: 204 });
-			}),
+			http.delete(
+				`${baseURL}/lists/123/items/123`,
+				() => new HttpResponse(null, { status: 204 }),
+			),
 		);
 		const onDelete = vi.fn();
 		renderWithProviders(
@@ -66,22 +54,35 @@ describe("PlaceItem", () => {
 				listId="123"
 			/>,
 		);
-		const deleteButton = await screen.findByTestId("delete-button");
 
+		// Open dropdown menu
 		await act(async () => {
-			deleteButton.click();
-		});
-		const deleteModal = await screen.findByTestId("delete-modal");
-		const confirmButton = await screen.findByTestId(
-			"delete-place-confirm-button",
-		);
-
-		await act(async () => {
-			confirmButton.click();
+			return user.click(screen.getByTestId("place-dropdownmenu-trigger"));
 		});
 
+		// Wait for dropdown menu to render
 		await waitFor(() => {
-			expect(deleteModal).not.toBeInTheDocument();
+			expect(screen.getByTestId("place-delete-button")).toBeInTheDocument();
+		});
+
+		// Open delete modal
+		await act(async () => {
+			return user.click(screen.getByTestId("place-delete-button"));
+		});
+
+		// Wait for delete modal to render
+		await waitFor(() => {
+			expect(screen.getByTestId("place-delete-modal")).toBeInTheDocument();
+		});
+
+		await act(async () => {
+			return user.click(screen.getByTestId("place-delete-confirm-button"));
+		});
+
+		await waitFor(async () => {
+			expect(
+				screen.queryByTestId("place-delete-modal"),
+			).not.toBeInTheDocument();
 			expect(onDelete).toHaveBeenCalled();
 		});
 	});

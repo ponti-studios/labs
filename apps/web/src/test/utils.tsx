@@ -4,15 +4,13 @@ import { type RenderOptions, render } from "@testing-library/react";
 import type { PropsWithChildren, ReactElement } from "react";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
-import { type Mock, beforeEach, vi } from "vitest";
+import { vi } from "vitest";
 
 import { http, HttpResponse } from "msw";
 import { baseURL } from "src/lib/api/base";
-import { AuthProvider, useAuth } from "src/lib/auth";
-import type { AuthState } from "src/lib/auth/types";
+import { AuthProvider } from "src/lib/auth";
 import { rootReducer } from "src/lib/store";
 import type { ListPlace, User } from "src/lib/types";
-import { Router } from "src/router";
 import { testServer } from "./test.setup";
 
 const queryClient = new QueryClient({

@@ -15,23 +15,16 @@ const ListMenuContext = React.createContext<{
 	setIsEditSheetOpen: (value: boolean) => void;
 	isDeleteSheetOpen: boolean;
 	setIsDeleteSheetOpen: (value: boolean) => void;
-	openEditSheet: () => void;
 }>({
 	isEditSheetOpen: false,
 	setIsEditSheetOpen: () => {},
 	isDeleteSheetOpen: false,
 	setIsDeleteSheetOpen: () => {},
-	openEditSheet: () => {},
 });
 
 const ListMenuProvider = ({ children }: PropsWithChildren) => {
 	const [isEditSheetOpen, setIsEditSheetOpen] = React.useState(false);
 	const [isDeleteSheetOpen, setIsDeleteSheetOpen] = React.useState(false);
-
-	const openEditSheet = () => {
-		console.log("openEditSheet");
-		setIsEditSheetOpen(true);
-	};
 
 	return (
 		<ListMenuContext.Provider
@@ -40,7 +33,6 @@ const ListMenuProvider = ({ children }: PropsWithChildren) => {
 				setIsEditSheetOpen,
 				isDeleteSheetOpen,
 				setIsDeleteSheetOpen,
-				openEditSheet,
 			}}
 		>
 			{children}
@@ -57,7 +49,7 @@ type ListMenuProps = {
 	isOwnList: boolean;
 };
 export function ListMenu({ list, isOwnList }: ListMenuProps) {
-	const { openEditSheet, setIsDeleteSheetOpen } = useListMenu();
+	const { setIsEditSheetOpen } = useListMenu();
 
 	if (!isOwnList) {
 		return null;
@@ -66,25 +58,16 @@ export function ListMenu({ list, isOwnList }: ListMenuProps) {
 	return (
 		<>
 			<DropdownMenu>
-				<DropdownMenuTrigger>
+				<DropdownMenuTrigger data-testid="list-dropdownmenu-trigger">
 					<MoreVertical />
 				</DropdownMenuTrigger>
 				<DropdownMenuContent>
 					<DropdownMenuItem
 						className="p-2"
-						onClick={() => {
-							console.log("Edit");
-							openEditSheet();
-						}}
+						onClick={() => setIsEditSheetOpen(true)}
 					>
 						Edit
 					</DropdownMenuItem>
-					{/* <DropdownMenuItem
-						className="p-2"
-						onClick={() => setIsDeleteSheetOpen(true)}
-					>
-						Delete
-					</DropdownMenuItem> */}
 				</DropdownMenuContent>
 			</DropdownMenu>
 			<ListEditSheet list={list} />

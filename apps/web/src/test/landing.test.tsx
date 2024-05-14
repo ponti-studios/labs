@@ -12,7 +12,7 @@ describe("landing", () => {
 	});
 	test("should render log in button if user is not logged in", () => {
 		renderWithProviders(<Layout />);
-		expect(screen.getByText("Log In")).toBeTruthy();
+		expect(screen.getByText("Log In")).toBeInTheDocument();
 	});
 	test("should render auth nav menu if user is logged in", async () => {
 		renderWithProviders(<Layout />, { isAuth: true });

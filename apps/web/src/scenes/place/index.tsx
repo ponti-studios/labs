@@ -2,7 +2,14 @@ import Alert from "@hominem/components/Alert";
 import Button from "@hominem/components/Button";
 import { LoadingScreen } from "@hominem/components/Loading";
 import type { AxiosError } from "axios";
-import { useCallback, useState } from "react";
+import { ListPlus } from "lucide-react";
+import {
+	type PropsWithChildren,
+	createContext,
+	useCallback,
+	useContext,
+	useState,
+} from "react";
 import { useParams } from "react-router-dom";
 
 import AddPlaceToList from "src/components/places/AddPlaceToList";
@@ -10,9 +17,12 @@ import PlaceAddress from "src/components/places/PlaceAddress";
 import PlacePhotos from "src/components/places/PlacePhotos";
 import PlaceTypes from "src/components/places/PlaceTypes";
 import PlaceWebsite from "src/components/places/PlaceWebsite";
+import { Sheet, SheetContent, SheetTrigger } from "src/components/ui/sheet";
 import { useGetPlace } from "src/lib/api/places";
 import { useToast } from "src/lib/toast/hooks";
+import type { SearchPlace } from "src/lib/types";
 import { withAuth } from "src/lib/utils";
+import { PlaceProvider, usePlaceContext } from "./place-context";
 
 function PlaceError({ error }: { error: AxiosError }) {
 	if (!error || !error.response) {
@@ -36,17 +46,20 @@ function PlaceError({ error }: { error: AxiosError }) {
 
 function PlaceRoute() {
 	const { openToast } = useToast();
+	const { openSaveSheet, isSaveSheetOpen } = usePlaceContext();
 	const params = useParams<{ id: string }>();
-	const [isListSelectOpen, setIsListSelectOpen] = useState<boolean>(false);
 	const { data: place, error, isLoading } = useGetPlace(params.id);
+
 	const onAddToListSuccess = useCallback(() => {
 		openToast({
 			type: "success",
 			text: `${place.name} added to list!`,
 		});
-		setIsListSelectOpen(false);
 	}, [openToast, place]);
-	const onAddToList = useCallback(() => setIsListSelectOpen(true), []);
+
+	const onSaveClick = useCallback(() => {
+		openSaveSheet();
+	}, [openSaveSheet]);
 
 	if (isLoading) {
 		return <LoadingScreen />;
@@ -84,17 +97,22 @@ function PlaceRoute() {
 				)}
 			</div>
 			<div className="modal-action">
-				<Button onClick={onAddToList}>Add to list</Button>
+				<Button onClick={onSaveClick}>
+					<ListPlus size={16} />
+					Save
+				</Button>
 			</div>
-			{isListSelectOpen && (
-				<AddPlaceToList
-					cancel={() => setIsListSelectOpen(false)}
-					place={place}
-					onSuccess={onAddToListSuccess}
-				/>
+			{isSaveSheetOpen && (
+				<AddPlaceToList place={place} onSuccess={onAddToListSuccess} />
 			)}
 		</div>
 	);
 }
 
-export const Component = withAuth(PlaceRoute);
+export const Component = withAuth(() => {
+	return (
+		<PlaceProvider>
+			<PlaceRoute />
+		</PlaceProvider>
+	);
+});

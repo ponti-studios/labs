@@ -1,5 +1,5 @@
 import Alert from "@hominem/components/Alert";
-import Loading, { LoadingScreen } from "@hominem/components/Loading";
+import { LoadingScreen } from "@hominem/components/Loading";
 import { PlusCircle, Share } from "lucide-react";
 import { useCallback, useState } from "react";
 import { Link, generatePath, useNavigate, useParams } from "react-router-dom";
@@ -16,10 +16,10 @@ import { withAuth } from "src/lib/utils";
 const List = () => {
 	const { currentLocation, user } = useAuth();
 	const navigate = useNavigate();
-	const [isAddToListOpen, setIsAddToListOpen] = useState(false);
 	const [deleteError, setDeleteError] = useState<string | null>(null);
 	const { id: listId } = useParams<{ id: string }>();
 	const { data, error, status, refetch } = useGetList(listId);
+	const [isAddToListOpen, setIsAddToListOpen] = useState(false);
 
 	const onSelectedChanged = useCallback(
 		(place: SearchPlace) =>
@@ -51,7 +51,7 @@ const List = () => {
 						<h1 className="text-3xl font-semibold">{data.name}</h1>
 						<div className="flex gap-4">
 							{/* Only list owners can invite others. */}
-							{data.userId === user.id && (
+							{data.userId === user.id && !isAddToListOpen && (
 								<button
 									type="button"
 									data-testid="add-to-list-button"
@@ -75,7 +75,7 @@ const List = () => {
 							<ListMenu list={data} isOwnList={data.userId === user.id} />
 						</div>
 					</div>
-					{(data.items.length === 0 || isAddToListOpen) && (
+					{(data?.items?.length === 0 || isAddToListOpen) && (
 						<div
 							data-testid="add-to-list"
 							className="mb-6 bg-slate-100 rounded-lg p-4 pb-8"
