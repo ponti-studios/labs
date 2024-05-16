@@ -4,11 +4,7 @@ import { LoadingScreen } from "@hominem/components/Loading";
 import type { AxiosError } from "axios";
 import { ListPlus } from "lucide-react";
 import {
-	type PropsWithChildren,
-	createContext,
 	useCallback,
-	useContext,
-	useState,
 } from "react";
 import { useParams } from "react-router-dom";
 
@@ -17,10 +13,8 @@ import PlaceAddress from "src/components/places/PlaceAddress";
 import PlacePhotos from "src/components/places/PlacePhotos";
 import PlaceTypes from "src/components/places/PlaceTypes";
 import PlaceWebsite from "src/components/places/PlaceWebsite";
-import { Sheet, SheetContent, SheetTrigger } from "src/components/ui/sheet";
 import { useGetPlace } from "src/lib/api/places";
 import { useToast } from "src/lib/toast/hooks";
-import type { SearchPlace } from "src/lib/types";
 import { withAuth } from "src/lib/utils";
 import { PlaceProvider, usePlaceContext } from "./place-context";
 
