@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import type { MapMouseEvent } from "@vis.gl/react-google-maps/dist/components/map/use-map-events";
+import type { MapMouseEvent } from "@vis.gl/react-google-maps";
 import React, { useCallback, useEffect, useState } from "react";
 import { generatePath, useNavigate } from "react-router-dom";
 

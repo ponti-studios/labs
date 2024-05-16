@@ -2,9 +2,9 @@ import Alert from "@hominem/components/Alert";
 import Loading from "@hominem/components/Loading";
 import {
 	Map as GoogleMap,
+	type MapMouseEvent,
 	useApiLoadingStatus,
 } from "@vis.gl/react-google-maps";
-import type { MapMouseEvent } from "@vis.gl/react-google-maps/dist/components/map/use-map-events";
 import { useCallback } from "react";
 
 import type { Place, PlaceLocation } from "src/lib/types";
