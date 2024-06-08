@@ -1,4 +1,4 @@
-name: 🚀 Deploy >> Prisma
+name: deploy-db
 
 on:
   push:
@@ -6,6 +6,12 @@ on:
       - packages/db/**
     branches:
       - main
+  workflow_run:
+    workflows: ["code-quality"]
+    branches: [main]
+    types:
+      - completed
+
 jobs:
   deploy-migrations:
     runs-on: ubuntu-latest
