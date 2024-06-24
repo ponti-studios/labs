@@ -1,6 +1,4 @@
-## Ticket
-https://linear.app/ponti/issue/...
-
+**Ticket:** [HUMAN-...](https://linear.app/ponti/issue/HUMAN-...)
 
 ## TODOs
 

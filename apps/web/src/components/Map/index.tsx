@@ -9,6 +9,9 @@ import { useCallback } from "react";
 
 import type { Place, PlaceLocation } from "src/lib/types";
 
+import styles from "./map.module.css";
+import { cn } from "src/lib/utils";
+
 type RoccoMapProps = {
 	isLoadingCurrentLocation: boolean;
 	setSelected: (place: Place) => void;
@@ -74,7 +77,7 @@ const RoccoMap = ({
 					lng: center.longitude,
 				}}
 				onClick={onClick}
-				className="flex size-full"
+				className={cn("flex size-full", styles.map)}
 			/>
 		</div>
 	);

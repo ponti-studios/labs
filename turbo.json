@@ -1,43 +1,6 @@
 {
   "$schema": "https://turborepo.org/schema.json",
   "globalDependencies": [],
-  "pipeline": {
-    "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["build/**"],
-      "inputs": ["prisma/**", "src/**/*.tsx", "src/**/*.ts", "test/**/*.ts"]
-    },
-    "lint": {
-      "outputs": []
-    },
-    "typecheck": {
-      "outputs": []
-    },
-    "test": {
-      "dependsOn": ["^build"],
-      "outputs": [],
-      "inputs": ["prisma/**", "src/**/*.tsx", "src/**/*.ts", "test/**/*.ts"]
-    },
-    "test:e2e:ci": {
-      "dependsOn": ["^build"],
-      "outputs": [],
-      "inputs": ["prisma/**", "src/**/*.tsx", "src/**/*.ts", "test/**/*.ts"]
-    },
-    "prisma:deploy": {
-      "cache": false,
-      "inputs": ["prisma/**"]
-    },
-    "prisma:generate": {
-      "cache": false,
-      "inputs": ["prisma/**"]
-    },
-    "start": {
-      "cache": false
-    },
-    "dev": {
-      "cache": false
-    }
-  },
   "globalEnv": [
     "ANALYZE",
     "APP_URL",
@@ -45,6 +8,7 @@
     "COOKIE_NAME",
     "COOKIE_SALT",
     "COOKIE_SECRET",
+    "COOKIE_DOMAIN",
     "CYPRESS_PROJECT_ID",
     "ENABLE_REQUEST_LOGGING",
     "GOOGLE_SERVICE_ACCOUNT",
@@ -59,5 +23,69 @@
     "VERCEL_URL",
     "VITE_API_URL",
     "VITE_GOOGLE_API_KEY"
-  ]
+  ],
+  "tasks": {
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "build/**"
+      ],
+      "inputs": [
+        "prisma/**",
+        "src/**/*.tsx",
+        "src/**/*.ts",
+        "test/**/*.ts"
+      ]
+    },
+    "lint": {
+      "outputs": []
+    },
+    "typecheck": {
+      "outputs": []
+    },
+    "test": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [],
+      "inputs": [
+        "prisma/**",
+        "src/**/*.tsx",
+        "src/**/*.ts",
+        "test/**/*.ts"
+      ]
+    },
+    "test:e2e:ci": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [],
+      "inputs": [
+        "prisma/**",
+        "src/**/*.tsx",
+        "src/**/*.ts",
+        "test/**/*.ts"
+      ]
+    },
+    "prisma:deploy": {
+      "cache": false,
+      "inputs": [
+        "prisma/**"
+      ]
+    },
+    "prisma:generate": {
+      "cache": false,
+      "inputs": [
+        "prisma/**"
+      ]
+    },
+    "start": {
+      "cache": false
+    },
+    "dev": {
+      "cache": false
+    }
+  }
 }

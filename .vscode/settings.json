@@ -8,6 +8,7 @@
         "quickfix.biome": "explicit",
         "source.organizeImports.biome": "explicit"
     },
+    "editor.defaultFormatter": "biomejs.biome",
     "[typescript]": {
         "editor.defaultFormatter": "biomejs.biome"
     },
@@ -17,10 +18,10 @@
     "[javascript]": {
         "editor.defaultFormatter": "biomejs.biome"
     },
+    "[json]": {
+        "editor.defaultFormatter": "denoland.vscode-deno"
+    },
     "[css]": {
         "editor.defaultFormatter": "biomejs.biome"
     },
-    "[tailwindcss]": {
-        "editor.defaultFormatter": "biomejs.biome"
-    }
 }

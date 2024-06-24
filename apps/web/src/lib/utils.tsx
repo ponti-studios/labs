@@ -1,7 +1,7 @@
 import Loading from "@hominem/components/Loading";
 import { type ClassValue, clsx } from "clsx";
 import { useEffect } from "react";
-import { type Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
 import { useAuth } from "./auth";
 import { AuthStatus } from "./auth/types";

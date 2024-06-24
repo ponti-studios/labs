@@ -1,7 +1,7 @@
 {
   "name": "@hominem/db",
   "version": "0.0.0",
-  "main": "./build/index.js",
+  "main": "index.ts",
   "license": "MIT",
   "scripts": {
     "build": "tsc",
@@ -13,10 +13,10 @@
     "prisma:reset": "npx prisma migrate reset"
   },
   "dependencies": {
-    "@prisma/client": "^5.13.0"
+    "@prisma/client": "^5.15.0"
   },
   "devDependencies": {
-    "prisma": "^5.13.0",
+    "prisma": "^5.15.0",
     "ts-node-dev": "^2.0.0"
   }
 }

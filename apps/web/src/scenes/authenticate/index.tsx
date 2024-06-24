@@ -80,11 +80,13 @@ function Authenticate() {
 						)}
 						{isError && error.response?.status === 401 && (
 							<Alert className="mt-2" type="error">
-								<div className="flex flex-col gap-2">
+								<div className="flex flex-col gap-2 text-white">
 									<p>Invalid code.</p>
-									<Link to={LOGIN} className="text-white underline">
+									<p>
+									<Link to={LOGIN} className="underline">
 										Request a new one.
 									</Link>
+									</p>
 								</div>
 							</Alert>
 						)}

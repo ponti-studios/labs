@@ -1,41 +1,45 @@
 {
-	"name": "rocco",
-	"version": "1.7.0",
-	"private": true,
-	"workspaces": ["apps/*", "packages/*"],
-	"scripts": {
-		"build": "npm run prisma:generate && turbo run build",
-		"commitlint": "commitlint --edit",
-		"dev": "caddy start & turbo run dev --parallel",
-		"docker:api:build": "docker build -t rocco-api:latest -f apps/api/Dockerfile .",
-		"docker:api:run": "docker run -it -p 4444:4444 --name=rocco-api rocco-api",
-		"docker:web:build": "docker build -t rocco-web:latest -f Dockerfile.web .",
-		"docker:web:run": "docker run -it -p 3000:80 rocco-web",
-		"lint": "turbo run lint && turbo run typecheck",
-		"postinstall": "npm run prisma:generate",
-		"precommit": "npm run format && npm run lint",
-		"prepare": "husky install",
-		"prepush": "npm run test",
-		"prerelease": "npm run test",
-		"test": "turbo run test",
-		"test:e2e:ci": "turbo run test:e2e:ci --scope rocco-web",
-		"test:update": "turbo run test:update --scope rocco-web",
-		"prisma:dev": "npm run prisma:dev -w @hominem/db",
-		"prisma:generate": "npm run prisma:generate -w @hominem/db",
-		"prisma:migrate": "npm run prisma:migrate -w @hominem/db",
-		"coverage:web": "open apps/web/coverage/lcov-report/index.html"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "^1.7.0",
-		"@commitlint/cli": "^19.2.1",
-		"@commitlint/config-conventional": "^19.1.0",
-		"husky": "^8.0.3",
-		"turbo": "^1.13.3"
-	},
-	"engines": {
-		"node": "20",
-		"npm": ">=10",
-		"yarn": "please-use-npm",
-		"pnpm": "please-use-npm"
-	}
+  "name": "rocco",
+  "version": "1.7.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run prisma:generate && turbo run build",
+    "commitlint": "commitlint --edit",
+    "dev": "caddy start & turbo run dev --parallel",
+    "docker:api:build": "docker build -t rocco-api:latest -f apps/api/Dockerfile .",
+    "docker:api:run": "docker run -it -p 4444:4444 --name=rocco-api rocco-api",
+    "docker:web:build": "docker build -t rocco-web:latest -f Dockerfile.web .",
+    "docker:web:run": "docker run -it -p 3000:80 rocco-web",
+    "lint": "turbo run lint && turbo run typecheck",
+    "postinstall": "npm run prisma:generate",
+    "precommit": "npm run format && npm run lint",
+    "prepare": "husky install",
+    "prepush": "npm run test",
+    "prerelease": "npm run test",
+    "test": "turbo run test",
+    "test:e2e:ci": "turbo run test:e2e:ci --filter=rocco-web",
+    "test:update": "turbo run test:update --filter=rocco-web",
+    "prisma:dev": "npm run prisma:dev -w @hominem/db",
+    "prisma:generate": "npm run prisma:generate -w @hominem/db",
+    "prisma:migrate": "npm run prisma:migrate -w @hominem/db",
+    "coverage:web": "open apps/web/coverage/lcov-report/index.html"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.7.0",
+    "@commitlint/cli": "^19.2.1",
+    "@commitlint/config-conventional": "^19.1.0",
+    "husky": "^8.0.3",
+    "turbo": "^2.0.4"
+  },
+  "engines": {
+    "node": "20",
+    "npm": ">=10",
+    "yarn": "please-use-npm",
+    "pnpm": "please-use-npm"
+  },
+  "packageManager": "npm@10.2.4"
 }
