@@ -1,4 +1,4 @@
-import type { FastifyInstance, FastifyPluginAsync } from "fastify";
+import type { FastifyPluginAsync } from "fastify";
 
 import { APP_USER_ID, EVENTS, track } from "../../../analytics";
 import { createToken } from "./createToken";
@@ -11,8 +11,8 @@ const loginPlugin: FastifyPluginAsync = async (server) => {
 	/**
 	 * Login/Registration handler
 	 *
-	 * Because there are no passwords, the same endpoint is used for login and registration.
-	 * Generates a short lived verification token and sends an email
+	 * Since this authentication system does not use passwords, a single endpoint handles
+	 * both login and registration.
 	 */
 	server.post(
 		"/login",
@@ -37,6 +37,6 @@ const loginPlugin: FastifyPluginAsync = async (server) => {
 			}
 		},
 	);
-}
+};
 
 export default loginPlugin;
