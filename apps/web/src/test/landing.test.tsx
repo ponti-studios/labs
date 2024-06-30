@@ -8,7 +8,8 @@ import LandingPage from "src/scenes";
 describe("landing", () => {
 	test("renders", () => {
 		renderWithProviders(<LandingPage />);
-		expect(screen.queryByText("Make the world yours.")).toBeInTheDocument();
+		const heading = screen.getByTestId("home-header");
+		expect(heading).toBeInTheDocument();
 	});
 	test("should render log in button if user is not logged in", () => {
 		renderWithProviders(<Layout />);

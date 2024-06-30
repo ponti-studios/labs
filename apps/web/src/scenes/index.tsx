@@ -34,26 +34,34 @@ const LandingPage = () => {
 	return (
 		<Wrap>
 			<div className="flex flex-col items-center justify-center w-full">
-				<div className="flex text-primary font-extrabold text-4xl mb-8">
+				<div className="flex items-center justify-center gap-2 text-slate-600 font-extrabold mb-8 py-[100px] border-2 border-slate-300 rounded-xl w-full">
 					<div>
-						<Globe2 size={40} />
+						<Globe2 className="animate-pulse" size={50} />
 					</div>
-					<p className="ml-2">Make the world yours.</p>
+					<div className="flex items-center justify-center">
+						<p className="text-4xl text-slate-600" data-testid="home-header">
+							The world is <i className="tracking-tight">finally</i> yours.
+						</p>
+					</div>
 				</div>
-				<div className="flex flex-col gap-4 mb-4 font-extrabold text-xl">
-					<div className="flex items-center font-extrabold text-xl">
-						<Pin size={20} />
-						<p className="ml-2">
+				<div className="flex flex-col gap-4 mb-4 font-extrabold text-xl w-full">
+					<div className="flex justify-start items-center gap-4 py-[20px]">
+						<Pin size={50} />
+						<p className="text-xl font-extrabold">
 							Never forget the places you love and want to visit.
 						</p>
 					</div>
-					<div className="flex items-center font-extrabold text-xl">
-						<Eye size={20} />
-						<p className="ml-2">Discover your friend&apos;s fave places</p>
+					<div className="flex justify-start items-center gap-4 py-[20px]">
+						<Eye size={50} />
+						<p className="text-xl font-extrabold">
+							Discover your friend&apos;s fave places
+						</p>
 					</div>
-					<div className="flex font-extrabold text-md">
-						<Heart size={20} />
-						<p className="ml-2">Never wonder where to go again</p>
+					<div className="flex justify-start items-center gap-4 py-[20px]">
+						<Heart size={50} />
+						<p className="text-xl font-extrabold">
+							Never wonder where to go again
+						</p>
 					</div>
 				</div>
 				<div className="mt-2">
