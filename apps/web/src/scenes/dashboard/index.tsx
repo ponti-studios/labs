@@ -39,24 +39,26 @@ function Dashboard() {
 	const { currentLocation, user, setCurrentLocation } = useAuth();
 	const [selected, setSelected] = useState<Place | null>(null);
 	const [center, setCenter] = useState(currentLocation);
+	const [isLoaded, setIsLoaded] = useState(false);
 	const navigate = useNavigate();
 	const { data, error, status: listsStatus } = useGetLists();
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
-		if (navigator.geolocation) {
+		if (navigator.geolocation && !isLoaded) {
 			navigator.geolocation.getCurrentPosition(
 				(position: GeolocationPosition) => {
-					setCurrentLocation({
+					const location = {
 						latitude: position.coords.latitude,
 						longitude: position.coords.longitude,
-					});
+					};
+					setCurrentLocation(location);
+					setCenter(location);
+					setIsLoaded(true);
 				},
 			);
-		} else {
-			// !TODO Browser doesn't support Geolocation
-			// handleLocationError(false, infoWindow, map.getCenter()!);
 		}
-	}, [setCurrentLocation]);
+	}, []);
 
 	const onMapClick = useCallback(
 		async (args: MapMouseEvent) => {
@@ -75,12 +77,6 @@ function Dashboard() {
 	const onMarkerClick = useCallback(() => {
 		navigate(generatePath(PLACE, { id: selected.googleMapsId }));
 	}, [navigate, selected]);
-
-	useEffect(() => {
-		if (currentLocation) {
-			setCenter(currentLocation);
-		}
-	}, [currentLocation]);
 
 	return (
 		<Wrap data-testid="dashboard-scene">
