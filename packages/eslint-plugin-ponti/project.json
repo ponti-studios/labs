@@ -1,0 +1,33 @@
+{
+  "name": "eslint-plugin-ponti",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/eslint-plugin-ponti/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "main": "libs/eslint-plugin-ponti/src/index.ts",
+        "outputPath": ".eslint-plugin-local/build",
+        "outputFileName": "index.cjs",
+        "tsConfig": "libs/eslint-plugin-ponti/tsconfig.lib.json",
+        "minify": true,
+        "bundle": true,
+        "format": ["cjs"]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/eslint-plugin-ponti/jest.config.ts"
+      }
+    }
+  }
+}

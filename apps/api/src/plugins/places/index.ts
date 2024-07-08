@@ -1,4 +1,4 @@
-import { type Place, prisma } from "@hominem/db";
+import { type List, type Place, Prisma, prisma } from "@hominem/db";
 import type {
 	FastifyInstance,
 	FastifyPluginAsync,
@@ -27,18 +27,6 @@ const types = {
 type Location = {
 	latitude: number;
 	longitude: number;
-};
-
-type PlacePostBody = {
-	listIds: string[];
-	place: Location & {
-		name: string;
-		address: string;
-		imageUrl: string;
-		googleMapsId: string;
-		types: string[];
-		websiteUri: string;
-	};
 };
 
 const CreatePlaceProperties = {
@@ -228,6 +216,16 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
 							types: { type: "array", items: { type: "string" } },
 							websiteUri: { type: "string" },
 							...types.location,
+							lists: {
+								type: "array",
+								items: {
+									type: "object",
+									properties: {
+										id: { type: "string" },
+										name: { type: "string" },
+									},
+								},
+							},
 						},
 						required: [
 							"address",
@@ -249,7 +247,8 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
 		async (request: FastifyRequest, reply: FastifyReply) => {
 			const { id } = request.params as { id: string };
 			let photos: PhotoMedia[] | undefined;
-			let place: Place | FormattedPlace | null;
+			let lists: Pick<List, "id" | "name">[] | null = [];
+			let place: Place | FormattedPlace | null = null;
 
 			try {
 				place = await prisma.place.findFirst({
@@ -296,10 +295,40 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
 				return reply.code(500).send();
 			}
 
+			if (place?.id) {
+				try {
+					const items = await prisma.item.findMany({
+						select: {
+							list: {
+								select: {
+									id: true,
+									name: true,
+								},
+							},
+						},
+						where: {
+							itemId: place.id,
+							itemType: "PLACE",
+						},
+					});
+
+					lists = items
+						?.map((item) => {
+							console.log({ item });
+							return item?.list;
+						})
+						.filter(Boolean);
+				} catch (err) {
+					server.log.error(err, "Could not fetch lists");
+					return reply.code(500).send();
+				}
+			}
+
 			return reply.code(200).send({
 				...place,
 				imageUrl: photos?.[0]?.imageUrl || "",
 				photos: photos?.map((photo) => photo.imageUrl) || [],
+				lists: lists ?? [],
 			});
 		},
 	);
@@ -343,3 +372,15 @@ const PlacesPlugin: FastifyPluginAsync = async (server: FastifyInstance) => {
 };
 
 export default PlacesPlugin;
+
+type PlacePostBody = {
+	listIds: string[];
+	place: Location & {
+		name: string;
+		address: string;
+		imageUrl: string;
+		googleMapsId: string;
+		types: string[];
+		websiteUri: string;
+	};
+};

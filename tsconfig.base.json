@@ -1,0 +1,42 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["ES2021", "DOM"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "strict": true,
+    "paths": {
+      "@prolog-client/": ["libs/prolog-client/src/"],
+      "@prolog-client/test-data": ["libs/prolog-client/test-data/src/index.ts"],
+      "@prolog-web/": ["apps/prolog-client/src/"],
+      "@prolog/eslint": ["libs/eslint-plugin-prolog/src/index.ts"],
+      "@prolog/schema": ["libs/prolog-schema/src/index.ts"],
+      "@prolog/schema/cache-config": ["libs/prolog-schema/src/graphcache.ts"],
+      "@prolog/schema/introspection": [
+        "libs/prolog-schema/src/introspection.json"
+      ],
+      "@prolog/studio-ui": ["libs/studio-ui/src/index.ts"],
+      "prolog-ui": ["libs/prolog-ui/src/index.ts"]
+    }
+  },
+  "plugins": [
+    {
+      "name": "@0no-co/graphqlsp",
+      "schema": "./schema.graphql"
+    }
+  ],
+  "exclude": ["node_modules", "tmp"]
+}

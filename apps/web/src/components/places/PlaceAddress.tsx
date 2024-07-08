@@ -11,13 +11,16 @@ const PlaceAddress = ({ address, name, place_id }: Props) => {
 			href={`https://www.google.com/maps/search/?api=1&query=${name}&query_place_id=${place_id}`}
 			target="_blank"
 			rel="noreferrer"
-			className="flex items-center text-primary font-medium"
+			className="flex items-center text-primary font-medium gap-2"
 		>
-			{/* biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation> */}
-			<span dangerouslySetInnerHTML={{ __html: address }} />
-			<span className="inline-block ml-3">
+			<span className="inline-block">
 				<MapPin size={16} />
 			</span>
+			<span
+				className="line-clamp-1"
+				/* biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation> */
+				dangerouslySetInnerHTML={{ __html: address }}
+			/>
 		</a>
 	);
 };

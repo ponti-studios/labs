@@ -10,7 +10,7 @@ const PlacePhotos = ({ alt, photos }: Props) => {
 	}
 
 	return (
-		<div className="carousel p-4 space-x-4 bg-slate-200 rounded-box h-64">
+		<div className="carousel p-4 space-x-4 bg-slate-200 rounded-box h-64 pl-4">
 			{photos.map((photoUrl) => (
 				<div key={photoUrl} className="carousel-item max-w-[75%]">
 					<img src={photoUrl} alt={alt} className="rounded-box object-cover" />

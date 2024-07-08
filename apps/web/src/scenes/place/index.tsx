@@ -1,12 +1,10 @@
 import Alert from "@hominem/components/Alert";
-import Button from "@hominem/components/Button";
 import { LoadingScreen } from "@hominem/components/Loading";
 import type { AxiosError } from "axios";
-import { ListPlus } from "lucide-react";
-import {
-	useCallback,
-} from "react";
-import { useParams } from "react-router-dom";
+import { ListPlus, Loader } from "lucide-react";
+import { useCallback } from "react";
+import { generatePath, useParams } from "react-router-dom";
+import { Button } from "src/components/ui/button";
 
 import AddPlaceToList from "src/components/places/AddPlaceToList";
 import PlaceAddress from "src/components/places/PlaceAddress";
@@ -14,6 +12,7 @@ import PlacePhotos from "src/components/places/PlacePhotos";
 import PlaceTypes from "src/components/places/PlaceTypes";
 import PlaceWebsite from "src/components/places/PlaceWebsite";
 import { useGetPlace } from "src/lib/api/places";
+import { LIST } from "src/lib/routes";
 import { useToast } from "src/lib/toast/hooks";
 import { withAuth } from "src/lib/utils";
 import { PlaceProvider, usePlaceContext } from "./place-context";
@@ -76,7 +75,7 @@ function PlaceRoute() {
 					<PlaceTypes types={place.types} />
 				</div>
 				{place.address && (
-					<div className="flex justify-end mt-2">
+					<div className="flex mt-2">
 						<PlaceAddress
 							address={place.address}
 							name={place.name}
@@ -85,15 +84,39 @@ function PlaceRoute() {
 					</div>
 				)}
 				{place.websiteUri && (
-					<div className="flex justify-end mt-2">
+					<div className="flex mt-2">
 						<PlaceWebsite website={place.websiteUri} />
+					</div>
+				)}
+				{place.lists && place.lists.length > 0 && (
+					<div className="gap-2 mt-4">
+						<p className="font-bold text-sm">Saved your lists:</p>
+						<div className="flex flex-wrap gap-2 mt-2">
+							{place.lists.map((list) => (
+								<a
+									className="rounded-lg px-2 py-1 border border-blue-500 text-blue-500 text-sm hover:bg-blue-500 hover:text-white transition-colors duration-200 ease-in-out"
+									key={list.id}
+									href={generatePath(LIST, { id: list.id })}
+								>
+									{list.name}
+								</a>
+							))}
+						</div>
 					</div>
 				)}
 			</div>
 			<div className="modal-action">
-				<Button onClick={onSaveClick}>
-					<ListPlus size={16} />
-					Save
+				<Button
+					className="flex gap-2"
+					onClick={onSaveClick}
+					disabled={isLoading}
+				>
+					{isLoading ? (
+						<Loader className="animate-spin" size={16} />
+					) : (
+						<ListPlus size={16} />
+					)}
+					Save to list
 				</Button>
 			</div>
 			{isSaveSheetOpen && (

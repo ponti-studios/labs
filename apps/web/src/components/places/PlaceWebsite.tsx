@@ -6,10 +6,10 @@ const PlaceWebsite = ({ website }: { website: string }) => {
 			href={website}
 			target="_blank"
 			rel="noreferrer"
-			className="text-primary font-medium"
+			className="flex items-center gap-2 text-primary font-medium"
 		>
+			<LinkIcon size={14} className="inline-block" />
 			{website.replace(/(^\w+:|^)\/\//, "").split("/")[0]}
-			<LinkIcon size={14} className="inline-block ml-3" />
 		</a>
 	);
 };

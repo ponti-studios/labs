@@ -77,6 +77,7 @@ export type Place = {
 	rating: number;
 	types: string[];
 	websiteUri: string;
+	lists?: List[];
 };
 
 export type PlaceLocation = {
