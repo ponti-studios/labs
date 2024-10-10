@@ -10,13 +10,8 @@
     "build": "npx nx affected -t build",
     "commitlint": "commitlint --edit",
     "dev": "caddy start & npx nx affected -t dev --parallel",
-    "docker:api:build": "docker build -t rocco-api:latest -f apps/api/Dockerfile .",
-    "docker:api:run": "docker run -it -p 4444:4444 --name=rocco-api rocco-api",
-    "docker:web:build": "docker build -t rocco-web:latest -f Dockerfile.web .",
-    "docker:web:run": "docker run -it -p 3000:80 rocco-web",
     "lint": "nx affected -t lint && npx nx affected -t typecheck",
     "precommit": "npm run format && npm run lint",
-    "prepare": "husky",
     "prepush": "npm run test",
     "prerelease": "npm run test",
     "test": "nx affected -t test",
@@ -34,9 +29,7 @@
     "@playwright/test": "^1.48.0",
     "@types/node": "^22.7.5",
     "@vitest/ui": "^2.1.2",
-    "husky": "^9.1.6",
     "nx": "20.0.0",
-    "turbo": "^2.1.3",
     "typescript": "^5.6.3",
     "vite": "^5.4.8",
     "vitest": "^2.1.2"
@@ -47,6 +40,7 @@
   "dependencies": {
     "@testing-library/dom": "^10.4.0",
     "eslint": "^9.12.0",
+    "lefthook": "^1.7.18",
     "workbox-build": "^7.1.1",
     "workbox-window": "^7.1.0"
   }

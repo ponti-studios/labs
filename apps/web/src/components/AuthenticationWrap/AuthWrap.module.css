@@ -2,6 +2,7 @@
   --auth-wrap-size-small: 350px;
   --auth-wrap-size-medium: 450px;
 }
+
 .wrap {
   display: flex;
   margin: 0 auto;
@@ -11,7 +12,7 @@
   width: var(--auth-wrap-size-small);
   max-width: var(--auth-wrap-size-small);
 
-  @media screen and (min-width: 768px) {
+  @media screen and (width >= 768px) {
     height: var(--auth-wrap-size-medium);
     width: var(--auth-wrap-size-medium);
     max-width: var(--auth-wrap-size-medium);

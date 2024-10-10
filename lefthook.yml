@@ -16,35 +16,13 @@ commit-msg:
   commands:
     lint:
       glob: "*"
-      run: npx commitlint --config commitlint.config.mjs --edit $1
+      run: npx commitlint --config commitlint.config.js --edit $1
 pre-commit:
   parallel: true
   commands:
     lint:
-      glob: "*.{js,ts,jsx,tsx}"
-      run: npx eslint {staged_files}
-    stylelint:
-      tags: frontend style
-      glob: "*.{css,scss}"
-      run: npx stylelint {staged_files}
-    typecheck:
-      tags: frontend
-      run: npx tsc --noEmit --incremental false
+      tags: lint
+      run: yarn lint
     test:
-      tags: frontend
-      run: npx vitest run --passWithNoTests app server components lib
-#     rubocop:
-#       tags: backend style
-#       glob: "*.rb"
-#       exclude: '(^|/)(application|routes)\.rb$'
-#       run: bundle exec rubocop --force-exclusion {all_files}
-#     govet:
-#       tags: backend style
-#       files: git ls-files -m
-#       glob: "*.go"
-#       run: go vet {files}
-#   scripts:
-#     "hello.js":
-#       runner: node
-#     "any.go":
-#       runner: go run
+      tags: test
+      run: yarn test

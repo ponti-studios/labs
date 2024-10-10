@@ -33,9 +33,6 @@ yarn-error.log*
 .env*
 !.env.example
 
-# turbo
-.turbo
-
-
+# NX Workspaces
 .nx/cache
 .nx/workspace-data

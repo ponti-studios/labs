@@ -20,10 +20,10 @@ jobs:
           node-version: "20"
 
       - name: Install dependencies
-        run: npm install --frozen-lockfile --prefer-frozen-lockfile --ignore-scripts
+        run: yarn install
 
       - name: Build
-        run: npx turbo run build --filter=rocco-web
+        run: yarn nx build @hominem/web
         env:
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
           VITE_GOOGLE_API_KEY: ${{ secrets.VITE_GOOGLE_API_KEY }}

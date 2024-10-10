@@ -49,27 +49,24 @@ jobs:
           node-version: "20"
 
       - name: 📦 Install dependencies
-        run: npm install
-
-      - name: 📥 Generate artifacts
-        run: npm run prisma:generate
+        run: yarn install
 
       - name: 🔬 Lint & Type check
-        run: npm run lint
+        run: yarn lint
 
       - name: 🧪 Unit tests
-        run: npx turbo run test --force
+        run: yarn test
 
       - name: 🧪 End-to-end tests
         # Uses the official Cypress GitHub action https://github.com/cypress-io/github-action
         uses: cypress-io/github-action@v2
         # uses: cypress-io/github-action@v5
         with:
-          build: npm run build
+          build: yarn build
           # Starts web server for E2E tests - replace with your own server invocation
           # https://docs.cypress.io/guides/continuous-integration/introduction#Boot-your-server
-          start: npx turbo run dev --parallel
-          command: npm run test:e2e:ci
+          start: yarn dev
+          command: yarn test:e2e:ci
 
       # - name: ⬆️ Upload coverage
       #   uses: codecov/codecov-action@v3
