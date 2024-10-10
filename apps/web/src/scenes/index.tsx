@@ -34,33 +34,13 @@ const LandingPage = () => {
 	return (
 		<Wrap>
 			<div className="flex flex-col items-center justify-center w-full">
-				<div className="flex items-center justify-center gap-2 text-slate-600 font-extrabold mb-8 py-[100px] border-2 border-slate-300 rounded-xl w-full">
-					<div>
-						<Globe2 className="animate-pulse" size={50} />
-					</div>
-					<div className="flex items-center justify-center">
-						<p className="text-4xl text-slate-600" data-testid="home-header">
-							The world is <i className="tracking-tight">finally</i> yours.
+				<div className="flex items-center justify-center gap-2 text-black font-extrabold mb-8 py-[100px]w-full">
+					<div className="flex flex-col justify-center">
+						<p className="text-2xl text-slate-600" data-testid="home-header">
+							For all the places you've been and will be.
 						</p>
-					</div>
-				</div>
-				<div className="flex flex-col gap-4 mb-4 font-extrabold text-xl w-full">
-					<div className="flex justify-start items-center gap-4 py-[20px]">
-						<Pin size={50} />
-						<p className="text-xl font-extrabold">
-							Never forget the places you love and want to visit.
-						</p>
-					</div>
-					<div className="flex justify-start items-center gap-4 py-[20px]">
-						<Eye size={50} />
-						<p className="text-xl font-extrabold">
-							Discover your friend&apos;s fave places
-						</p>
-					</div>
-					<div className="flex justify-start items-center gap-4 py-[20px]">
-						<Heart size={50} />
-						<p className="text-xl font-extrabold">
-							Never wonder where to go again
+						<p className="text-xl text-slate-600">
+							All in one place.
 						</p>
 					</div>
 				</div>

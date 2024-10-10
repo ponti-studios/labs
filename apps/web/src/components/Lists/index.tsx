@@ -7,10 +7,10 @@ import ListItem from "./list-item";
 const NoResults = () => {
 	return (
 		<div className="flex flex-col items-center justify-center text-center py-6">
-			<p className="text-2xl font-bold">No lists found.</p>
 			<p className="text-gray-400">
 				Your lists will appear here once you create them.
 			</p>
+			<p className="text-gray-400"> Start saving your favorite places!</p>
 		</div>
 	);
 };

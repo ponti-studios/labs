@@ -1,22 +1,13 @@
-import { act, fireEvent, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";
 import * as reactRouterDom from "react-router-dom";
-import {
-	type Mock,
-	type MockedFunction,
-	beforeAll,
-	beforeEach,
-	describe,
-	expect,
-	test,
-	vi,
-} from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 import api from "src/lib/api";
 import { baseURL } from "src/lib/api/base";
 import { Component as List } from "src/scenes/lists/list";
-import { MOCK_PLACE, PLACE_ID } from "src/test/mocks/place";
+import { MOCK_PLACE } from "src/test/mocks/place";
 import { TEST_LIST_ID, testServer } from "src/test/test.setup";
 import { renderWithProviders } from "src/test/utils";
 
@@ -32,6 +23,12 @@ describe("List", () => {
 	describe("when list does not belong to user", () => {
 		beforeEach(() => {
 			testServer.use(
+				http.get(`${baseURL}/me`, () => {
+					return HttpResponse.json({
+						email: "test@test.com",
+						id: "test-id",
+					});
+				}),
 				http.get(`${baseURL}/lists/${TEST_LIST_ID}`, () => {
 					return HttpResponse.json({
 						id: TEST_LIST_ID,

@@ -34,6 +34,15 @@ export const MOCK_PLACE_SEARCH = [
 	},
 ];
 
+export const AUTH_HANDLERS = [
+	http.get(`${baseURL}/me`, () => {
+		return HttpResponse.json({
+			email: "test@test.com",
+			id: "test-id",
+		});
+	}),
+];
+
 export const PLACE_HANDLERS = [
 	http.get(`${baseURL}/places/123`, () => {
 		return HttpResponse.json(MOCK_PLACE);

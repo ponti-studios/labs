@@ -6,7 +6,7 @@ import { afterAll, afterEach, beforeAll, vi } from "vitest";
 import "./utils";
 
 import { baseURL } from "../lib/api/base";
-import { MOCK_PLACE, PLACE_HANDLERS } from "./mocks/place";
+import { AUTH_HANDLERS, MOCK_PLACE, PLACE_HANDLERS } from "./mocks/place";
 
 export const TEST_LIST_ID = "list-id";
 
@@ -26,6 +26,7 @@ const restHandlers = [
 		});
 	}),
 	...PLACE_HANDLERS,
+	...AUTH_HANDLERS,
 ];
 
 export const testServer = setupServer(...restHandlers);

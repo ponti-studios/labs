@@ -1,5 +1,5 @@
 import { Check, ChevronsUpDown } from "lucide-react";
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { cn } from "src/lib/utils";
 import { Button } from "./ui/button";
 import {
@@ -99,6 +99,7 @@ export default function TypeaheadDropdown() {
 			<PopoverTrigger asChild>
 				<Button
 					variant="outline"
+					// biome-ignore lint/a11y/useSemanticElements: <explanation>
 					role="combobox"
 					aria-expanded={open}
 					className="w-[200px] justify-between"

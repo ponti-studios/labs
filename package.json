@@ -7,39 +7,47 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run prisma:generate && turbo run build",
+    "build": "npx nx affected -t build",
     "commitlint": "commitlint --edit",
-    "dev": "caddy start & turbo run dev --parallel",
+    "dev": "caddy start & npx nx affected -t dev --parallel",
     "docker:api:build": "docker build -t rocco-api:latest -f apps/api/Dockerfile .",
     "docker:api:run": "docker run -it -p 4444:4444 --name=rocco-api rocco-api",
     "docker:web:build": "docker build -t rocco-web:latest -f Dockerfile.web .",
     "docker:web:run": "docker run -it -p 3000:80 rocco-web",
-    "lint": "npx turbo run lint && npx turbo run typecheck",
-    "postinstall": "npm run prisma:generate",
+    "lint": "nx affected -t lint && npx nx affected -t typecheck",
     "precommit": "npm run format && npm run lint",
     "prepare": "husky install",
     "prepush": "npm run test",
     "prerelease": "npm run test",
-    "test": "turbo run test",
-    "test:e2e:ci": "turbo run test:e2e:ci --filter=rocco-web",
-    "test:update": "turbo run test:update --filter=rocco-web",
-    "prisma:dev": "npm run prisma:dev -w @hominem/db",
-    "prisma:generate": "npm run prisma:generate -w @hominem/db",
-    "prisma:migrate": "npm run prisma:migrate -w @hominem/db",
+    "test": "nx affected -t test",
+    "test:e2e:ci": "nx affected -t test:e2e:ci",
+    "test:update": "nx affected -t test:update",
     "coverage:web": "open apps/web/coverage/lcov-report/index.html"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.7.0",
     "@commitlint/cli": "^19.2.1",
     "@commitlint/config-conventional": "^19.1.0",
+    "@nx/playwright": "19.5.4",
+    "@nx/vite": "19.5.4",
+    "@nx/web": "19.5.4",
+    "@playwright/test": "^1.36.0",
+    "@types/node": "^22.0.0",
+    "@vitest/ui": "^1.3.1",
     "husky": "^8.0.3",
-    "turbo": "^2.0.5"
+    "nx": "19.5.4",
+    "turbo": "^2.0.5",
+    "typescript": "^5.5.4",
+    "vite": "^5.0.0",
+    "vitest": "^2.0.4"
   },
   "engines": {
-    "node": "20",
-    "npm": ">=10",
-    "yarn": "please-use-npm",
-    "pnpm": "please-use-npm"
+    "node": "20"
   },
-  "packageManager": "npm@10.2.4"
+  "dependencies": {
+    "@testing-library/dom": "^10.4.0",
+    "eslint": "^9.8.0",
+    "workbox-build": "^7.1.1",
+    "workbox-window": "^7.1.0"
+  }
 }

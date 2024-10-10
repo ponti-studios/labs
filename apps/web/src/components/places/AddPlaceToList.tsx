@@ -1,16 +1,18 @@
 import styled from "@emotion/styled";
-import Button from "@hominem/components/Button";
-import { useCallback, useState } from "react";
+import { Heart } from "lucide-react";
 
 import { Sheet, SheetContent } from "src/components/ui/sheet";
 import { useGetLists } from "src/lib/api";
-import { useAddPlaceToList } from "src/lib/api/places";
+import {
+	useAddPlaceToList,
+	useGetPlaceLists,
+	useRemoveListItem,
+} from "src/lib/api/places";
 import type { Place } from "src/lib/types";
+import { cn } from "src/lib/utils";
 import { usePlaceContext } from "src/scenes/place/place-context";
 
 const ListItem = styled.li`
-  padding: 8px;
-
   &:first-of-type {
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
@@ -22,12 +24,6 @@ const ListItem = styled.li`
   }
 `;
 
-const Checkbox = styled.label`
-  display: flex;
-  flex-direction: row-reverse;
-  align-items: center;
-  justify-content: space-between;
-`;
 const AddPlaceToList = ({
 	onSuccess,
 	place,
@@ -37,69 +33,68 @@ const AddPlaceToList = ({
 }) => {
 	const { isSaveSheetOpen, setIsSaveSheetOpen } = usePlaceContext();
 	const { isLoading, data: lists } = useGetLists();
-	const [listIds, setListIds] = useState<string[]>([]);
-	const { mutate: addToList, status: addPlaceStatus } = useAddPlaceToList({
+	const { data: placeLists, isLoading: isPlaceListLoading } = useGetPlaceLists({
+		placeId: place.id,
+	});
+	const { mutateAsync: removeFromList } = useRemoveListItem({});
+	const { mutate: addToList } = useAddPlaceToList({
 		onSuccess: () => {
 			onSuccess?.();
 		},
 	});
-	const isAddingToList = addPlaceStatus === "pending";
-	const onAddToList = (e: React.MouseEvent<HTMLButtonElement>) => {
-		e.preventDefault();
-		e.stopPropagation();
+	const listIds = placeLists?.map((list) => list.id) ?? [];
 
-		addToList({
-			listIds,
-			place,
-		});
+	const onListSelectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		if (listIds.includes(e.target.id)) {
+			removeFromList({ listId: e.target.id, placeId: place.id });
+			return;
+		}
+
+		addToList({ listIds: [e.target.id], place });
 	};
-
-	const onListSelectChange = useCallback(
-		(e: React.ChangeEvent<HTMLInputElement>) => {
-			setListIds([...listIds, e.target.value]);
-		},
-		[listIds],
-	);
 
 	// List of lists displaying their name and a round checkbox that when clicked adds the list to the listIds array
 	return (
 		<Sheet open={isSaveSheetOpen} onOpenChange={setIsSaveSheetOpen}>
-			<SheetContent>
-				<div>
+			<SheetContent className="pt-10 px-4">
+				<div className="my-6">
 					<h2 className="text-xl font-bold">Add to lists</h2>
-					<p>Select the lists you want to add this place to.</p>
-					<hr className="my-6" />
-					{isLoading ? (
-						<div className="flex items-center justify-center h-16">
-							<div className="loading loading-infinity w-14" />
-						</div>
-					) : (
-						<ul className="list-none">
-							{lists.map((list) => (
-								<ListItem key={list.id} className="border hover:cursor-pointer">
-									<Checkbox htmlFor={list.id} className="hover:cursor-pointer">
-										<input
-											type="checkbox"
-											id={list.id}
-											value={list.id}
-											onChange={onListSelectChange}
-										/>
-										{list.name}
-									</Checkbox>
-								</ListItem>
-							))}
-							<div className="flex items-center justify-between mt-4">
-								<Button
-									className="float-right"
-									isLoading={isAddingToList}
-									onClick={onAddToList}
-								>
-									Add to lists
-								</Button>
-							</div>
-						</ul>
-					)}
+					<p className="text-sm">Select lists to add this place to.</p>
 				</div>
+				{isLoading || isPlaceListLoading ? (
+					<div className="flex items-center justify-center h-16">
+						<div className="loading loading-infinity w-14" />
+					</div>
+				) : (
+					<ul className="list-none">
+						{lists.map((list) => (
+							<ListItem
+								key={list.id}
+								className="relative border hover:cursor-pointer"
+							>
+								<label
+									htmlFor={list.id}
+									className="flex justify-between items-center hover:cursor-pointer p-2"
+								>
+									<input
+										type="checkbox"
+										id={list.id}
+										className="absolute h-full w-full invisible -ml-2"
+										checked={listIds.includes(list.id)}
+										onChange={onListSelectChange}
+									/>
+									{list.name}
+									<Heart
+										size={24}
+										className={cn({
+											"fill-red-500": listIds.includes(list.id),
+										})}
+									/>
+								</label>
+							</ListItem>
+						))}
+					</ul>
+				)}
 			</SheetContent>
 		</Sheet>
 	);

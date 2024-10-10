@@ -1,15 +1,13 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { APIProvider } from "@vis.gl/react-google-maps";
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
-
 import { AuthProvider } from "src/lib/auth";
 import { store } from "src/lib/store";
 import "./index.css";
+import { queryClient } from "./lib/api/base";
 import { Router } from "./router";
-
-const queryClient = new QueryClient();
 
 const container = document.getElementById("root");
 const root = createRoot(container);

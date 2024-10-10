@@ -28,28 +28,28 @@ const AuthNavMenu = ({ user }: { user: User }) => {
 
 	return (
 		<>
-			<div className="hidden md:visible md:flex gap-6 mr-4">
-				<AppLink to={DASHBOARD} className="px-4 py-2 rounded-xl">
-					<Search />
-				</AppLink>
-				<AppLink to={LISTS} className="px-4 py-2 rounded-xl">
-					<List />
-				</AppLink>
-				<AppLink to={INVITES} className="px-4 py-2 rounded-xl">
-					<Mail />
-				</AppLink>
-			</div>
-			<div>
+			<div className="flex-1 justify-end">
+				<div className="hidden md:visible md:flex justify-end gap-6 mr-6">
+					<AppLink to={DASHBOARD} className="px-4 py-2 rounded-xl">
+						<Search />
+					</AppLink>
+					<AppLink to={LISTS} className="px-4 py-2 rounded-xl">
+						<List />
+					</AppLink>
+					<AppLink to={INVITES} className="px-4 py-2 rounded-xl">
+						<Mail />
+					</AppLink>
+				</div>
 				<DropdownMenu>
 					<DropdownMenuTrigger
 						ref={navMenuRef}
 						data-testid="auth-dropdown-button"
-						role="button"
 						className="btn bg-transparent border-black py-2 px-3"
 					>
 						<UserCircle />
 					</DropdownMenuTrigger>
 					<DropdownMenuContent
+						align="end"
 						data-testid="dropdown-content"
 						className="min-w-[200px] w-fit"
 					>

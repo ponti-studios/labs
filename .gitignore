@@ -35,3 +35,7 @@ yarn-error.log*
 
 # turbo
 .turbo
+
+
+.nx/cache
+.nx/workspace-data

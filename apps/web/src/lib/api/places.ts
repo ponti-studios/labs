@@ -12,6 +12,22 @@ type AddPlaceToListOptions = {
 	place: Place;
 };
 
+export const useRemoveListItem = (
+	options: UseMutationOptions<
+		unknown,
+		AxiosError,
+		{ listId: string; placeId: string }
+	>,
+) => {
+	return useMutation<unknown, AxiosError, { listId: string; placeId: string }>({
+		mutationKey: ["deleteListItem"],
+		mutationFn: ({ listId, placeId }) => {
+			return api.delete(`/lists/${listId}/items/${placeId}`);
+		},
+		...options,
+	});
+};
+
 export const useAddPlaceToList = (
 	options: UseMutationOptions<unknown, AxiosError, AddPlaceToListOptions>,
 ) => {
@@ -44,5 +60,14 @@ export const useGetPlace = (id: string) => {
 		queryFn: async () => api.get(`/places/${id}`).then((res) => res.data),
 		refetchOnWindowFocus: false,
 		refetchOnMount: false,
+	});
+};
+
+export const useGetPlaceLists = ({ placeId }: { placeId: string }) => {
+	return useQuery<{ id: string; name: string }[], AxiosError>({
+		queryKey: ["placeLists", placeId],
+		queryFn: async () => {
+			return api.get(`/places/${placeId}/lists`).then((res) => res.data);
+		},
 	});
 };

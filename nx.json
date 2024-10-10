@@ -1,0 +1,158 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "targetDefaults": {
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": true
+    },
+    "clean": {
+      "dependsOn": [
+        "^clean"
+      ],
+      "cache": true
+    },
+    "dev": {
+      "dependsOn": [
+        "^dev"
+      ]
+    },
+    "lint": {
+      "dependsOn": [
+        "^lint"
+      ],
+      "cache": true
+    },
+    "start": {
+      "dependsOn": [
+        "^start"
+      ]
+    },
+    "start:ts": {
+      "dependsOn": [
+        "^start:ts"
+      ]
+    },
+    "test": {
+      "dependsOn": [
+        "^test"
+      ],
+      "cache": true
+    },
+    "test:coverage": {
+      "dependsOn": [
+        "^test:coverage"
+      ],
+      "cache": true
+    },
+    "test:watch": {
+      "dependsOn": [
+        "^test:watch"
+      ],
+      "cache": true
+    },
+    "typecheck": {
+      "dependsOn": [
+        "^typecheck"
+      ],
+      "cache": true
+    },
+    "build:analyze": {
+      "dependsOn": [
+        "^build:analyze"
+      ],
+      "cache": true
+    },
+    "lint:fix": {
+      "dependsOn": [
+        "^lint:fix"
+      ],
+      "cache": true
+    },
+    "lint:stylelint": {
+      "dependsOn": [
+        "^lint:stylelint"
+      ],
+      "cache": true
+    },
+    "preview:test": {
+      "dependsOn": [
+        "^preview:test"
+      ]
+    },
+    "preview": {
+      "dependsOn": [
+        "^preview"
+      ]
+    },
+    "test:coverage:view": {
+      "dependsOn": [
+        "^test:coverage:view"
+      ],
+      "cache": true
+    },
+    "test:e2e": {
+      "dependsOn": [
+        "^test:e2e"
+      ],
+      "cache": true
+    },
+    "test:e2e:ci": {
+      "dependsOn": [
+        "^test:e2e:ci"
+      ],
+      "cache": true
+    },
+    "test:e2e:headless": {
+      "dependsOn": [
+        "^test:e2e:headless"
+      ],
+      "cache": true
+    },
+    "prisma:deploy": {
+      "dependsOn": [
+        "^prisma:deploy"
+      ]
+    },
+    "prisma:dev": {
+      "dependsOn": [
+        "^prisma:dev"
+      ]
+    },
+    "prisma:generate": {
+      "dependsOn": [
+        "^prisma:generate"
+      ]
+    },
+    "prisma:push": {
+      "dependsOn": [
+        "^prisma:push"
+      ]
+    },
+    "prisma:reset": {
+      "dependsOn": [
+        "^prisma:reset"
+      ]
+    }
+  },
+  "defaultBase": "main",
+  "plugins": [
+    {
+      "plugin": "@nx/vite/plugin",
+      "options": {
+        "buildTargetName": "vite:build",
+        "testTargetName": "vite:test",
+        "serveTargetName": "serve",
+        "previewTargetName": "vite:preview",
+        "serveStaticTargetName": "serve-static"
+      }
+    },
+    {
+      "plugin": "@nx/playwright/plugin",
+      "options": {
+        "targetName": "e2e"
+      }
+    }
+  ]
+}

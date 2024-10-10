@@ -1,94 +1,115 @@
 import Alert from "@hominem/components/Alert";
 import Button from "@hominem/components/Button";
-import { Field, Formik } from "formik";
+import { LoadingScreen } from "@hominem/components/Loading";
+import { useMutation } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
+import { useFormik } from "formik";
 import { Globe } from "lucide-react";
-import { useCallback, useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import * as Yup from "yup";
-
 import AuthWrap from "src/components/AuthenticationWrap";
-import Form from "src/components/Form";
+import api from "src/lib/api";
 import { useAuth } from "src/lib/auth";
-import { LANDING } from "src/lib/routes";
+import * as Yup from "yup";
+import Authenticate from "../authenticate";
+
+type LoginPayload = {
+	email: string;
+};
 
 const LoginSchema = Yup.object().shape({
-  email: Yup.string().email(),
+	email: Yup.string().email(),
 });
 
+type LoginForm = {
+	email: string;
+};
+
 function Login() {
-  const { login, user } = useAuth();
-  const navigate = useNavigate();
-  const initialValues = useMemo(
-    () => ({
-      email: "",
-    }),
-    [],
-  );
+	const navigate = useNavigate();
+	const { authState, isPending, setAuthState, user } = useAuth();
+	const expiryDate = new Date(Date.now() + 1000 * 60 * 10);
+	const form = useFormik<LoginForm>({
+		initialValues: {
+			email: authState?.loginEmail || "",
+		},
+		validationSchema: LoginSchema,
+		onSubmit: (values) => {
+			login.mutateAsync(values);
+		},
+	});
+	const login = useMutation<void, AxiosError, LoginPayload, unknown>({
+		mutationFn: async ({ email }) =>
+			api
+				.post("/login", { email }, { withCredentials: false })
+				// Set email to be used during email code validation step
+				.then(() => setAuthState({ loginEmail: email, expiryDate })),
+		onError: (error) => {
+			setAuthState(null);
+		},
+	});
 
-  useEffect(() => {
-    if (login.status === "success") {
-      navigate("/authenticate");
-    }
-  }, [login.status, navigate]);
+	useEffect(() => {
+		if (user) {
+			navigate("/dashboard");
+		}
+	}, [user, navigate]);
 
-  const onSubmit = useCallback(
-    (values) => {
-      login.mutateAsync(values);
-    },
-    [login.mutateAsync],
-  );
+	if (isPending) {
+		return <LoadingScreen />;
+	}
 
-  useEffect(() => {
-    if (user) {
-      navigate(LANDING);
-    }
-  });
+	if (user) {
+		return null;
+	}
 
-  return (
-    <AuthWrap data-testid="login-page">
-      <div className="flex justify-center text-primary font-extrabold mb-4 mt-24">
-        <Globe size={150} className="animate-pulse" />
-      </div>
-      <h2 className="text-2xl font-semibold mb-6">Log in</h2>
-      <Formik
-        validationSchema={LoginSchema}
-        initialValues={initialValues}
-        onSubmit={onSubmit}
-      >
-        <Form>
-          <div className="form-control w-full">
-            <label className="label pl-0" htmlFor="email">
-              <span className="label-text">What is your email?</span>
-            </label>
-            <Field
-              data-testid="email-input"
-              className="input input-bordered w-full font-semibold"
-              name="email"
-              type="email"
-              placeholder="Email"
-            />
-          </div>
-          <Button
-            data-testid="login-button"
-            type="submit"
-            isLoading={login.status === "pending"}
-          >
-            Get code
-          </Button>
-          {login.error && (
-            <Alert type="error">
-              <p className="mb-1">
-                There was an issue logging you in.
-              </p>
-              <p className="text-sm">
-                Our engineers are working on it. Please, try again later.
-              </p>
-            </Alert>
-          )}
-        </Form>
-      </Formik>
-    </AuthWrap>
-  );
+	if (authState?.loginEmail) {
+		return (
+			<Authenticate
+				loginEmail={authState.loginEmail}
+				setAuthState={setAuthState}
+			/>
+		);
+	}
+
+	return (
+		<AuthWrap data-testid="login-page">
+			<div className="flex justify-center text-primary font-extrabold mb-4 mt-24">
+				<Globe size={150} className="animate-pulse" />
+			</div>
+			<h2 className="text-2xl font-semibold mb-6">Log in</h2>
+			<form className="w-full" onSubmit={form.handleSubmit}>
+				<div className="form-control w-full">
+					<label className="label pl-0" htmlFor="email">
+						<span className="label-text">What is your email?</span>
+					</label>
+					<input
+						{...form.getFieldProps("email")}
+						data-testid="email-input"
+						className="input input-bordered w-full font-semibold"
+						type="email"
+						placeholder="Email"
+					/>
+				</div>
+				<Button
+					data-testid="login-button"
+					type="submit"
+					className="w-full mt-4"
+					isLoading={login.status === "pending"}
+				>
+					Get code
+				</Button>
+				{login.error && (
+					<Alert type="error">
+						<p className="mb-1">There was an issue logging you in.</p>
+						<p className="text-sm">
+							Our engineers are working on it. Please, try again later.
+						</p>
+					</Alert>
+				)}
+			</form>
+		</AuthWrap>
+	);
 }
 
 export default Login;

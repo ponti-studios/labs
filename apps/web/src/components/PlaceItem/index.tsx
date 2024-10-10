@@ -1,6 +1,5 @@
-import { useMutation } from "@tanstack/react-query";
 import { MoreVertical } from "lucide-react";
-import { type MouseEvent, useCallback, useState } from "react";
+import { type MouseEvent, useState } from "react";
 import { generatePath, useNavigate } from "react-router-dom";
 
 import PlaceTypes from "src/components/places/PlaceTypes";
@@ -12,7 +11,7 @@ import {
 	DropdownMenuTrigger,
 } from "src/components/ui/dropdown-menu";
 import { Sheet, SheetContent } from "src/components/ui/sheet";
-import api from "src/lib/api";
+import { useRemoveListItem } from "src/lib/api/places";
 import { PLACE } from "src/lib/routes";
 import type { ListPlace } from "src/lib/types";
 
@@ -29,38 +28,25 @@ const ListItem = ({
 }) => {
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 	const navigate = useNavigate();
-	const { mutateAsync } = useMutation({
-		mutationKey: ["deleteListItem", listId, place.itemId],
-		mutationFn: async () =>
-			api.delete(`/lists/${listId}/items/${place.itemId}`),
-		onSuccess: () => {
-			onDelete();
-		},
+	const { mutateAsync } = useRemoveListItem({
+		onSuccess: onDelete,
 		onError,
 	});
 	const onPlaceNameClick = async (e: MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
-
 		navigator.vibrate?.(10);
-
 		navigate(generatePath(PLACE, { id: place.googleMapsId }));
 	};
 
-	const onDeleteMenuItemClick = useCallback(
-		async (e: MouseEvent<HTMLDivElement>) => {
-			e.stopPropagation();
-			setIsDeleteModalOpen(true);
-		},
-		[],
-	);
+	const onDeleteMenuItemClick = async (e: MouseEvent<HTMLDivElement>) => {
+		e.stopPropagation();
+		setIsDeleteModalOpen(true);
+	};
 
-	const onDeleteClick = useCallback(
-		async (e: MouseEvent<HTMLButtonElement>) => {
-			await mutateAsync();
-			setIsDeleteModalOpen(false);
-		},
-		[mutateAsync],
-	);
+	const onDeleteClick = async (e: MouseEvent<HTMLButtonElement>) => {
+		await mutateAsync({ listId, placeId: place.googleMapsId });
+		setIsDeleteModalOpen(false);
+	};
 
 	return (
 		<>

@@ -1,20 +1,40 @@
 import Alert from "@hominem/components/Alert";
 import Button from "@hominem/components/Button";
-import React, { type SyntheticEvent, useCallback, useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
+import React, { type SyntheticEvent, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import * as Yup from "yup";
-
 import AuthWrap from "src/components/AuthenticationWrap";
-import { useAuth } from "src/lib/auth";
+import api from "src/lib/api";
+import type { AuthState } from "src/lib/auth";
 import { DASHBOARD, LOGIN } from "src/lib/routes";
 
-const AuthenticateSchema = Yup.object().shape({
-	emailToken: Yup.string().length(8),
-});
+export type AuthenticatePayload = {
+	email: string;
+	emailToken: string;
+};
 
-function Authenticate() {
-	const { authenticate, loginEmail } = useAuth();
+function Authenticate({
+	loginEmail,
+	setAuthState,
+}: { loginEmail: string; setAuthState: AuthState["setAuthState"] }) {
 	const navigate = useNavigate();
+	const authenticate = useMutation<
+		void,
+		AxiosError,
+		AuthenticatePayload,
+		unknown
+	>({
+		mutationFn: async ({ emailToken }) =>
+			api.post("/authenticate", {
+				email: loginEmail,
+				emailToken,
+			}),
+		onSuccess: () => {
+			navigate(DASHBOARD);
+		},
+	});
+
 	const { error, isError, mutateAsync, status } = authenticate;
 
 	const onSubmit = useCallback(
@@ -26,19 +46,6 @@ function Authenticate() {
 		},
 		[mutateAsync, loginEmail],
 	);
-
-	useEffect(() => {
-		if (status === "success") {
-			navigate(DASHBOARD);
-		}
-	}, [status, navigate]);
-
-	useEffect(() => {
-		// If loginEmail is not set, user will need to request a new email token
-		if (!loginEmail) {
-			navigate("/login");
-		}
-	});
 
 	if (!loginEmail) {
 		return null;
@@ -98,6 +105,15 @@ function Authenticate() {
 					Login
 				</Button>
 			</form>
+			<div className="mt-4 text-center">
+				<button
+					type="button"
+					className="underline"
+					onClick={() => setAuthState(null)}
+				>
+					Get new code
+				</button>
+			</div>
 		</AuthWrap>
 	);
 }

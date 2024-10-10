@@ -1,14 +1,7 @@
 {
-    "editor.tabSize": 2,
-    "files.associations": {
-        "*.css": "tailwindcss"
+    "[jsonc]": {
+        "editor.defaultFormatter": "biomejs.biome"
     },
-    "editor.formatOnSave": true,
-    "editor.codeActionsOnSave": {
-        "quickfix.biome": "explicit",
-        "source.organizeImports.biome": "explicit"
-    },
-    "editor.defaultFormatter": "biomejs.biome",
     "[typescript]": {
         "editor.defaultFormatter": "biomejs.biome"
     },
@@ -24,4 +17,28 @@
     "[css]": {
         "editor.defaultFormatter": "biomejs.biome"
     },
+    "biome.searchInPath": true,
+    "biome.lspBin": "node_modules/.bin/biome",
+    "deno.enablePaths": ["supabase/functions"],
+    "deno.lint": true,
+    "editor.defaultFormatter": "biomejs.biome",
+    "editor.tabSize": 2,
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "quickfix.biome": "explicit",
+        "source.organizeImports.biome": "explicit",
+        "source.sortImports": "always"
+    },
+    "files.associations": {
+        "*.css": "tailwindcss"
+    },
+    "typescript.enablePromptUseWorkspaceTsdk": true,
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "cSpell.words": [
+        "clsx",
+        "Formik",
+        "lucide",
+        "tanstack",
+        "testid"
+    ],
 }

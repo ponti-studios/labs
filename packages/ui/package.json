@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@emotion/styled": "^11.8.1",
+    "@hominem/utils": "*",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "formik": "^2.2.9",

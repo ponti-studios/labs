@@ -1,7 +1,6 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
 import * as ROUTES from "src/lib/routes";
-import Authenticate from "src/scenes/authenticate";
 import LandingPage from "src/scenes/index";
 import Login from "src/scenes/login";
 import NotFound from "src/scenes/not-found";
@@ -15,7 +14,6 @@ const authRouter = createBrowserRouter([
 			{ path: ROUTES.LANDING, element: <LandingPage /> },
 			{ path: ROUTES.LOGIN, element: <Login /> },
 			{ path: ROUTES.WILDCARD, element: <NotFound /> },
-			{ path: ROUTES.AUTHENTICATE, element: <Authenticate /> },
 			{ path: ROUTES.DASHBOARD, lazy: () => import("./scenes/dashboard") },
 			{ path: ROUTES.ACCOUNT, lazy: () => import("./scenes/account") },
 			{ path: ROUTES.INVITES, lazy: () => import("./scenes/invites") },

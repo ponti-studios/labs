@@ -1,10 +1,9 @@
-import Loading from "@hominem/components/Loading";
+import { LoadingScreen } from "@hominem/components/Loading";
 import { type ClassValue, clsx } from "clsx";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
 import { useAuth } from "./auth";
-import { AuthStatus } from "./auth/types";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -12,7 +11,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export function withAuth(Component: React.ComponentType) {
 	return function AuthComponent(props: any) {
-		const { user, status } = useAuth();
+		const { isPending, user } = useAuth();
 		const navigate = useNavigate();
 
 		useEffect(() => {
@@ -21,12 +20,8 @@ export function withAuth(Component: React.ComponentType) {
 			}
 		}, [user, navigate]);
 
-		if (status === AuthStatus.Unloaded) {
-			return (
-				<div className="flex w-full max-h-[300px] justify-center items-center">
-					<Loading size="xl" />
-				</div>
-			);
+		if (isPending) {
+			return <LoadingScreen />;
 		}
 
 		return <Component {...props} />;
