@@ -1,5 +1,67 @@
 # Changelog
 
+## [1.8.0](https://github.com/theponti/rocco/compare/v1.7.0...v1.8.0) (2024-10-10)
+
+
+### Features
+
+* add animate-spin ([0221a63](https://github.com/theponti/rocco/commit/0221a63eca9754637ead7ba45c38e00a5ea8ae0f))
+* **app/collab:** refactor auth plugin dir structure ([#65](https://github.com/theponti/rocco/issues/65)) ([e9f7417](https://github.com/theponti/rocco/commit/e9f741786e9c8e2d59ce911685f760429353ad95))
+* **apps/api:** migrate from jest to vitest ([#64](https://github.com/theponti/rocco/issues/64)) ([43da5e2](https://github.com/theponti/rocco/commit/43da5e2d5ff965e1d61f0dc91c252a9c61b1d82b))
+* **apps/api:** switch env.example secret gen to openssl ([b7dbc08](https://github.com/theponti/rocco/commit/b7dbc082f910a5ba950826da08e5c5ea909fe4ca))
+* **apps/api:** use cookie domain for api ([9930d3b](https://github.com/theponti/rocco/commit/9930d3be0d790225684d49b20a3c6b1e2aa4f8b7))
+* **apps/api:** use ts-node with swc ([ca92a9b](https://github.com/theponti/rocco/commit/ca92a9ba73140d4152b3710860c4e23dc19c6cd5))
+* **apps/collab:** add gzip compression configuration to nginx.conf ([6addd38](https://github.com/theponti/rocco/commit/6addd38e3104e7f8b2aa562c08dc54dbff397443))
+* **apps/web:** add build analyze script ([fbc172e](https://github.com/theponti/rocco/commit/fbc172ef23b3f7e3f3e14881e1fa835009652700))
+* **apps/web:** add NotFound Invite cases ([5adbde8](https://github.com/theponti/rocco/commit/5adbde8ad15d9f834b20b7bb3c8e1e8f74f4f2eb))
+* **apps/web:** collapse LinkButton into NavLink ([784ad1d](https://github.com/theponti/rocco/commit/784ad1dc28f524b544945477209878826e86489a))
+* **apps/web:** create NotFound typography components ([5308f2f](https://github.com/theponti/rocco/commit/5308f2f34223cf749add97394f57190f3443ab8c))
+* **apps/web:** display loading while auth status is loading ([2859592](https://github.com/theponti/rocco/commit/285959207b0e698f6ce45863cc71a09cc5405ff2))
+* **apps/web:** handle invalid user API value ([dd3d8e8](https://github.com/theponti/rocco/commit/dd3d8e8738e7216961543bb8d3f595105b974737))
+* **apps/web:** remove unused imports from place ([682d7ec](https://github.com/theponti/rocco/commit/682d7ec5bdc004108166a9606678e58104231885))
+* **apps/web:** rename FeedbackBlock to Alert ([00fb346](https://github.com/theponti/rocco/commit/00fb346db219c0991d6c3e784e8b06cd8a4f59f9))
+* **apps/web:** rename Scene to Route ([bf2c50e](https://github.com/theponti/rocco/commit/bf2c50e1e8f7f3eca8d8eb6a78358924b987e248))
+* **apps/web:** switch to auth provider ([#71](https://github.com/theponti/rocco/issues/71)) ([8d5af6e](https://github.com/theponti/rocco/commit/8d5af6e99ed8c69aac201029f664173087f26e69))
+* **apps/web:** text align NotFoundHeader ([cad8ca5](https://github.com/theponti/rocco/commit/cad8ca5071bd53549f075a7e9f52214853350bb8))
+* **apps/web:** update daisyui ([6169fe5](https://github.com/theponti/rocco/commit/6169fe5b43b672aaba449cb2298077e017c043a5))
+* **apps/web:** upgrade to react-query v5 ([#70](https://github.com/theponti/rocco/issues/70)) ([c5e02d5](https://github.com/theponti/rocco/commit/c5e02d5f4bd7e59d76a5069752b9e63fdc79a166))
+* **apps/web:** upgrade to react-router data router ([#73](https://github.com/theponti/rocco/issues/73)) ([e1d0884](https://github.com/theponti/rocco/commit/e1d0884d367a8ac231777bf0c87561797b3da5e4))
+* **apps/web:** use LoadingScreen for component loading state ([425def7](https://github.com/theponti/rocco/commit/425def7dc62dcd1bc946dfd379971b97ec062ee3))
+* **apps/web:** use sheet for add place to lists ([4656f94](https://github.com/theponti/rocco/commit/4656f948b8afb620cc97fd37a7f2bea089d85726))
+* **apps:** upgrade react google maps ([b6d0288](https://github.com/theponti/rocco/commit/b6d028870e760f9a79ff25745a45dc278aeff1f6))
+* **ci:** cloudflare deployment ([b31f31d](https://github.com/theponti/rocco/commit/b31f31db106a327d88e4bacdc60fa85d53c39d9d))
+* **ci:** improve workflow triggers ([545b745](https://github.com/theponti/rocco/commit/545b745031913b38a01c21ba59fbf6370fcf66af))
+* **ci:** only deploy if workflow successful ([615eeec](https://github.com/theponti/rocco/commit/615eeec6358770d247e89d7591ff34038cb45b06))
+* **ci:** use cloudflare wrangler for web deploy ([13485b2](https://github.com/theponti/rocco/commit/13485b27908f32d7afa9a165a3a7505f563bfa24))
+* **db:** update schema and migration ([55c532d](https://github.com/theponti/rocco/commit/55c532d6de3e2c8d5b1810535acf3b834ceb623b))
+* **deps:** upgrade turbo ([c1a8003](https://github.com/theponti/rocco/commit/c1a8003979a1a2f006e5609bd2d8e42a7a4b9cb7))
+* **docker:** remove obsolete compose version setting ([77b2dbb](https://github.com/theponti/rocco/commit/77b2dbb3deb6c30233211435cec4ecf300ab6f31))
+* improve login route comment ([265501b](https://github.com/theponti/rocco/commit/265501b5ef424e0727305864bdf109564f9298e0))
+* **packages:** rename ui to @hominem/components ([1096e1b](https://github.com/theponti/rocco/commit/1096e1ba33a73327deba61e05455074362a693ea))
+* update home page ([9e44fdc](https://github.com/theponti/rocco/commit/9e44fdcfdd01e909794e4dba7e7841deb21123fa))
+* users can save place to list ([#78](https://github.com/theponti/rocco/issues/78)) ([4061c0f](https://github.com/theponti/rocco/commit/4061c0f348fac94614088d5e2fa973ba8e5a4fad))
+
+
+### Bug Fixes
+
+* **apps/api:** disallow wrap in PlaceType ([ffc8106](https://github.com/theponti/rocco/commit/ffc810640454816e0cef394723285c56f4ac7c66))
+* **apps/api:** fix ref to bookmark model ([b2664b6](https://github.com/theponti/rocco/commit/b2664b6a4c5ec319a965c727a463ffa8110024a2))
+* **apps/api:** format files ([2f7fd57](https://github.com/theponti/rocco/commit/2f7fd5701cfcaa9ebf0bcb34f45f52d879848404))
+* **apps/api:** remove google auth test ternary ([8390021](https://github.com/theponti/rocco/commit/8390021b406ff05361f864eeca360b53221e2d62))
+* **apps/web:** display Footer on md ([cf0f0b3](https://github.com/theponti/rocco/commit/cf0f0b3812827c765f6a919011ba5c03a7b522dc))
+* **apps/web:** ensure place is full width ([4cf1da8](https://github.com/theponti/rocco/commit/4cf1da86aac2be67417264a0249163f2997033c1))
+* **apps/web:** fix List header ([045cd8d](https://github.com/theponti/rocco/commit/045cd8de68ca27c6be694ad5cf495e209db08650))
+* **apps/web:** standardize app width n padding ([3140f45](https://github.com/theponti/rocco/commit/3140f457ea09ab7f83fc802f4fcd1c492829b688))
+* **apps/web:** use padding bottom on main max-md ([4f5225f](https://github.com/theponti/rocco/commit/4f5225faa471f3210f728b036855c07aef9c27e2))
+* **ci:** add env vars to deploy-web-prod ([9839890](https://github.com/theponti/rocco/commit/98398905f62fc98f29f8d9d6f9abe476fab1d20f))
+* **ci:** add missing env vars to workflow ([820cf3d](https://github.com/theponti/rocco/commit/820cf3d494c7bc117799393cef335a91976cf143))
+* **ci:** install dependencies ([3a327dc](https://github.com/theponti/rocco/commit/3a327dc140e8db1697d158c77c68bf5e5ba2c4f4))
+* fix infinite loop ([115f509](https://github.com/theponti/rocco/commit/115f509508aaf6d79e3bcadbbb76cd7198635707))
+* fix tsconfigs ([#75](https://github.com/theponti/rocco/issues/75)) ([c826435](https://github.com/theponti/rocco/commit/c826435aee004b6fefd158823d8695557b5787dc))
+* **packages/ui:** wrap error in flex 1 ([3450f36](https://github.com/theponti/rocco/commit/3450f36b072d87ca1a66115d0b2230b77dec6136))
+* use build for db main ([2798417](https://github.com/theponti/rocco/commit/2798417eae9fc2fb8f1a137e84dcfdb95b9281bd))
+* use CommonJS module for hominem/db ([bd67513](https://github.com/theponti/rocco/commit/bd67513078521744f610948d10d11ead5e5e774d))
+
 ## [1.7.0](https://github.com/theponti/rocco/compare/v1.6.0...v1.7.0) (2024-03-26)
 
 ### Features
