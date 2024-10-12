@@ -9,7 +9,7 @@
   "scripts": {
     "build": "npx nx affected -t build",
     "commitlint": "commitlint --edit",
-    "dev": "caddy start & npx nx affected -t dev --parallel",
+    "dev": "caddy start & npx nx run-many -t dev",
     "lint": "nx affected -t lint && npx nx affected -t typecheck",
     "precommit": "npm run format && npm run lint",
     "prepush": "npm run test",
