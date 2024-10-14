@@ -6,8 +6,9 @@ import React, { type SyntheticEvent, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthWrap from "src/components/AuthenticationWrap";
 import api from "src/lib/api";
+import { queryClient } from "src/lib/api/base";
 import type { AuthState } from "src/lib/auth";
-import { DASHBOARD, LOGIN } from "src/lib/routes";
+import { LOGIN } from "src/lib/routes";
 
 export type AuthenticatePayload = {
 	email: string;
@@ -31,12 +32,25 @@ function Authenticate({
 				emailToken,
 			}),
 		onSuccess: () => {
-			navigate(DASHBOARD);
+			// Clear authentication state from local storage
+			setAuthState(null);
+			// Force refetch of user data
+			queryClient.invalidateQueries({ queryKey: ["auth/me"] });
 		},
 	});
 
 	const { error, isError, mutateAsync, status } = authenticate;
 
+	const onGetNewCodeClick = useCallback(() => {
+		setAuthState(null);
+	}, [setAuthState]);
+
+	const onLoginClick = useCallback(
+		async (e: SyntheticEvent<HTMLButtonElement>) => {
+			setAuthState(null);
+		},
+		[setAuthState],
+	);
 	const onSubmit = useCallback(
 		async (e: SyntheticEvent<HTMLFormElement>) => {
 			e.preventDefault();
@@ -57,16 +71,13 @@ function Authenticate({
 			{isError && error.response?.status !== 401 && (
 				<Alert className="mt-2" type="error">
 					There was an issue validating your code.
-					<Link
-						to={LOGIN}
-						className="text-blue-500 block"
-						onClick={(e) => {
-							e.preventDefault();
-							navigate(LOGIN);
-						}}
+					<button
+						type="button"
+						className="text-blue-500 block underline"
+						onClick={onLoginClick}
 					>
 						Try logging in again.
-					</Link>
+					</button>
 				</Alert>
 			)}
 			<form className="w-full" onSubmit={onSubmit}>
@@ -106,11 +117,7 @@ function Authenticate({
 				</Button>
 			</form>
 			<div className="mt-4 text-center">
-				<button
-					type="button"
-					className="underline"
-					onClick={() => setAuthState(null)}
-				>
+				<button type="button" className="underline" onClick={onGetNewCodeClick}>
 					Get new code
 				</button>
 			</div>

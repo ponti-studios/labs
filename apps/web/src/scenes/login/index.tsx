@@ -77,7 +77,6 @@ function Login() {
 			<div className="flex justify-center text-primary font-extrabold mb-4 mt-24">
 				<Globe size={150} className="animate-pulse" />
 			</div>
-			<h2 className="text-2xl font-semibold mb-6">Log in</h2>
 			<form className="w-full" onSubmit={form.handleSubmit}>
 				<div className="form-control w-full">
 					<label className="label pl-0" htmlFor="email">
@@ -86,7 +85,7 @@ function Login() {
 					<input
 						{...form.getFieldProps("email")}
 						data-testid="email-input"
-						className="input input-bordered w-full font-semibold"
+						className="input input-bordered w-full"
 						type="email"
 						placeholder="Email"
 					/>
