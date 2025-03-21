@@ -1,37 +1,39 @@
 {
-  "name": "code-tests",
-  "version": "1.0.0",
-  "description": "",
-  "main": ".eslintrc.js",
-  "scripts": {
-    "lint": "eslint --fix",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/charlesponti/code-tests.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/charlesponti/code-tests/issues"
-  },
-  "homepage": "https://github.com/charlesponti/code-tests#readme",
-  "devDependencies": {
-    "@babel/cli": "^7.10.5",
-    "@babel/core": "^7.10.5",
-    "@babel/node": "^7.10.5",
-    "@types/assert": "^1.5.1",
-    "@typescript-eslint/eslint-plugin": "^3.6.1",
-    "@typescript-eslint/parser": "^3.6.1",
-    "assert": "^2.0.0",
-    "eslint": "^7.4.0",
-    "eslint-config-airbnb": "^18.2.0",
-    "eslint-plugin-import": "^2.22.0",
-    "eslint-plugin-jsx-a11y": "^6.3.1",
-    "eslint-plugin-react": "^7.20.3",
-    "eslint-plugin-react-hooks": "^4.0.8",
-    "typescript": "^3.9.6"
-  }
+	"name": "code-tests",
+	"version": "1.0.0",
+	"description": "",
+	"main": ".eslintrc.js",
+	"workspaces": ["apps/*", "packages/*"],
+	"scripts": {
+		"lint": "eslint --fix",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/charlesponti/code-tests.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/charlesponti/code-tests/issues"
+	},
+	"homepage": "https://github.com/charlesponti/code-tests#readme",
+	"devDependencies": {
+		"@babel/cli": "^7.10.5",
+		"@babel/core": "^7.10.5",
+		"@babel/node": "^7.10.5",
+		"@types/assert": "^1.5.1",
+		"@typescript-eslint/eslint-plugin": "^3.6.1",
+		"@typescript-eslint/parser": "^3.6.1",
+		"assert": "^2.0.0",
+		"eslint": "^7.4.0",
+		"eslint-config-airbnb": "^18.2.0",
+		"eslint-plugin-import": "^2.22.0",
+		"eslint-plugin-jsx-a11y": "^6.3.1",
+		"eslint-plugin-react": "^7.20.3",
+		"eslint-plugin-react-hooks": "^4.0.8",
+		"turbo": "^2.4.4",
+		"typescript": "^3.9.6"
+	}
 }
