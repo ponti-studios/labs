@@ -6,15 +6,6 @@ on:
   pull_request:
 
 env:
-  APP_URL: ${{ secrets.APP_URL }}
-  COOKIE_DOMAIN: ${{ secrets.COOKIE_DOMAIN }}
-  COOKIE_NAME: ${{ secrets.COOKIE_NAME }}
-  COOKIE_SALT: ${{ secrets.COOKIE_SALT }}
-  COOKIE_SECRET: ${{ secrets.COOKIE_SECRET }}
-  DATABASE_URL: postgresql://postgres:postgres@localhost:5432/rocco
-  GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
-  JWT_SECRET: ${{ secrets.JWT_SECRET }}
-  SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   VITE_API_URL: http://127.0.0.1:4444
   VITE_GOOGLE_API_KEY: ${{ secrets.VITE_GOOGLE_API_KEY }}
@@ -48,32 +39,20 @@ jobs:
         with:
           node-version: "20"
 
+      - name: 📦 Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - name: 📦 Install dependencies
-        run: yarn install
+        run: pnpm install
 
       - name: 🔬 Lint & Type check
-        run: yarn lint
+        run: pnpm exec turbo run lint typecheck
 
       - name: 🧪 Unit tests
-        run: yarn test
+        run: pnpm exec turbo run test
 
-      - name: 🧪 End-to-end tests
-        # Uses the official Cypress GitHub action https://github.com/cypress-io/github-action
-        uses: cypress-io/github-action@v2
-        # uses: cypress-io/github-action@v5
-        with:
-          build: yarn build
-          # Starts web server for E2E tests - replace with your own server invocation
-          # https://docs.cypress.io/guides/continuous-integration/introduction#Boot-your-server
-          start: yarn dev
-          command: yarn test:e2e:ci
-
-      # - name: ⬆️ Upload coverage
-      #   uses: codecov/codecov-action@v3
-      #   with:
-      #     fail_ci_if_error: true
-      #   env:
-      #     CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   analyze:
     name: Analyze
     # Runner size impacts CodeQL analysis time. To learn more, please see:

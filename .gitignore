@@ -1,4 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+.DS_Store
+
+# React Router
+.react-router
 
 # dependencies
 node_modules
@@ -12,22 +16,21 @@ apps/web/cypress/videos/**
 
 # build
 .next
-.stylelintcache
 build
+dist
 tsconfig.tsbuildinfo
 build-analysis.txt
 
 # misc
 .DS_Store
 *.pem
+.turbo
 
 # Logging
 logs
 
 # debug
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
 # local env files
 .env*
@@ -36,3 +39,4 @@ yarn-error.log*
 # NX Workspaces
 .nx/cache
 .nx/workspace-data
+**/.claude/settings.local.json

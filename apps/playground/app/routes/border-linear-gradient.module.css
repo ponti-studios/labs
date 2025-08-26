@@ -1,0 +1,42 @@
+.gradientBorder {
+	background: var(
+		--glass-background-gradient,
+		linear-gradient(
+			to bottom right,
+			rgba(255, 255, 255, 0.1),
+			rgba(255, 255, 255, 0.05)
+		)
+	);
+	border-radius: var(--gradient-border-radius);
+	position: relative;
+	background-color: transparent;
+	color: white;
+	z-index: 1;
+}
+
+.gradientBorder::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	padding: var(--gradient-border-width, 2px);
+	border-radius: inherit;
+	background: var(
+		--gradient-border-gradient,
+		linear-gradient(
+			130deg,
+			rgba(255, 255, 255, 0.8) 0%,
+			rgba(255, 255, 255, 0.5) 25%,
+			rgba(255, 255, 255, 0.4) 50%,
+			rgba(255, 255, 255, 0.1) 100%
+		)
+	);
+	-webkit-mask:
+		linear-gradient(#fff 0 0) content-box,
+		linear-gradient(#fff 0 0);
+	-webkit-mask-composite: xor;
+	mask-composite: xor;
+	z-index: -1;
+}

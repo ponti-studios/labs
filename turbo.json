@@ -1,91 +1,113 @@
 {
-  "$schema": "https://turborepo.org/schema.json",
-  "globalDependencies": [],
-  "globalEnv": [
-    "ANALYZE",
-    "APP_URL",
-    "APP_USER_ID",
-    "COOKIE_NAME",
-    "COOKIE_SALT",
-    "COOKIE_SECRET",
-    "COOKIE_DOMAIN",
-    "CYPRESS_PROJECT_ID",
-    "ENABLE_REQUEST_LOGGING",
-    "GOOGLE_SERVICE_ACCOUNT",
-    "JWT_SECRET",
-    "NODE_ENV",
-    "PORT",
-    "SEGMENT_KEY",
-    "SENDGRID_API_KEY",
-    "SENDGRID_SENDER_EMAIL",
-    "SENDGRID_SENDER_NAME",
-    "NEXT_PUBLIC_API_URL",
-    "VERCEL_URL",
-    "VITE_API_URL",
-    "VITE_GOOGLE_API_KEY"
-  ],
-  "tasks": {
-    "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        "build/**"
-      ],
-      "inputs": [
-        "prisma/**",
-        "src/**/*.tsx",
-        "src/**/*.ts",
-        "test/**/*.ts"
-      ]
-    },
-    "lint": {
-      "outputs": []
-    },
-    "typecheck": {
-      "outputs": []
-    },
-    "test": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [],
-      "inputs": [
-        "prisma/**",
-        "src/**/*.tsx",
-        "src/**/*.ts",
-        "test/**/*.ts"
-      ]
-    },
-    "test:e2e:ci": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [],
-      "inputs": [
-        "prisma/**",
-        "src/**/*.tsx",
-        "src/**/*.ts",
-        "test/**/*.ts"
-      ]
-    },
-    "prisma:deploy": {
-      "cache": false,
-      "inputs": [
-        "prisma/**"
-      ]
-    },
-    "prisma:generate": {
-      "cache": false,
-      "inputs": [
-        "prisma/**"
-      ]
-    },
-    "start": {
-      "cache": false
-    },
-    "dev": {
-      "cache": false
-    }
-  }
+	"$schema": "https://turborepo.org/schema.json",
+	"globalDependencies": ["**/.env"],
+	"globalEnv": [
+		"ANALYZE",
+		"APP_URL",
+		"APP_USER_ID",
+		"COOKIE_NAME",
+		"COOKIE_SALT",
+		"COOKIE_SECRET",
+		"COOKIE_DOMAIN",
+		"CYPRESS_PROJECT_ID",
+		"ENABLE_REQUEST_LOGGING",
+		"GOOGLE_SERVICE_ACCOUNT",
+		"JWT_SECRET",
+		"NODE_ENV",
+		"PORT",
+		"SEGMENT_KEY",
+		"SENDGRID_API_KEY",
+		"SENDGRID_SENDER_EMAIL",
+		"SENDGRID_SENDER_NAME",
+		"NEXT_PUBLIC_API_URL",
+		"VERCEL_URL",
+		"VITE_API_URL",
+		"VITE_GOOGLE_API_KEY"
+	],
+	"tasks": {
+		"build": {
+			"dependsOn": ["^build"],
+			"outputs": ["build/**", "dist/**"]
+		},
+		"build:analyze": {
+			"dependsOn": ["^build"],
+			"outputs": ["build/**", "dist/**"]
+		},
+		"format": {
+			"outputs": []
+		},
+		"lint": {
+			"outputs": []
+		},
+		"lint:fix": {
+			"outputs": []
+		},
+		"typecheck": {
+			"outputs": []
+		},
+		"test": {
+			"dependsOn": ["^build"],
+			"outputs": ["coverage/**"]
+		},
+		"test:coverage": {
+			"dependsOn": ["^build"],
+			"outputs": ["coverage/**"]
+		},
+		"test:coverage:view": {
+			"dependsOn": ["test:coverage"],
+			"outputs": []
+		},
+		"test:e2e": {
+			"dependsOn": ["^build"],
+			"outputs": []
+		},
+		"test:e2e:ci": {
+			"dependsOn": ["^build"],
+			"outputs": []
+		},
+		"test:e2e:headless": {
+			"dependsOn": ["^build"],
+			"outputs": []
+		},
+		"test:update": {
+			"outputs": []
+		},
+		"test:watch": {
+			"outputs": []
+		},
+		"dev": {
+			"cache": false,
+			"persistent": true
+		},
+		"preview": {
+			"dependsOn": ["build"]
+		},
+		"preview:test": {
+			"dependsOn": ["build"]
+		},
+		"start": {
+			"dependsOn": ["build"],
+			"cache": false
+		},
+		"prisma:deploy": {
+			"cache": false,
+			"inputs": ["prisma/**"]
+		},
+		"prisma:generate": {
+			"cache": false,
+			"inputs": ["prisma/**"]
+		},
+		"prisma:push": {
+			"cache": false,
+			"inputs": ["prisma/**"]
+		},
+		"prisma:reset": {
+			"cache": false,
+			"inputs": ["prisma/**"]
+		},
+		"prisma:dev": {
+			"cache": false,
+			"inputs": ["prisma/**"]
+		}
+	}
 }

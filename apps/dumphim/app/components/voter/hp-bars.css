@@ -1,0 +1,77 @@
+/* Pokemon HP Bar Styles with glowing gradients */
+
+/* Base HP bar container - styled like Pokemon TCG */
+.hp-bar-container {
+	@apply relative mt-1 h-4 w-full rounded-full overflow-hidden;
+	background: rgba(220, 220, 220, 0.7);
+	border: 1px solid rgba(0, 0, 0, 0.15);
+	box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Glowing effect for all HP bars */
+.hp-bar-glow {
+	@apply h-full rounded-full;
+	filter: drop-shadow(0 0 2px currentColor);
+	position: relative;
+}
+
+.hp-bar-glow::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: linear-gradient(
+		90deg,
+		rgba(255, 255, 255, 0.5) 0%,
+		rgba(255, 255, 255, 0.2) 50%,
+		rgba(255, 255, 255, 0.5) 100%
+	);
+	border-radius: inherit;
+	background-size: 200% 100%;
+}
+
+/* High HP (green) with Pokemon-style gradient */
+.hp-bar-high {
+	background: linear-gradient(90deg, #38a169 0%, #4fd1c5 50%, #38a169 100%);
+	color: rgb(72, 187, 120);
+}
+
+/* Medium HP (yellow/orange) with Pokemon-style gradient */
+.hp-bar-medium {
+	background: linear-gradient(90deg, #ed8936 0%, #ecc94b 50%, #ed8936 100%);
+	color: rgb(245, 158, 11);
+}
+
+/* Low HP (red) with Pokemon-style gradient */
+.hp-bar-low {
+	background: linear-gradient(90deg, #e53e3e 0%, #f56565 50%, #e53e3e 100%);
+	color: rgb(239, 68, 68);
+}
+
+/* Animation for the HP bar - subtle pulsing and shimmer effect */
+@keyframes hp-pulse-glow {
+	0% {
+		opacity: 0.9;
+		background-position: 100% 50%;
+	}
+	50% {
+		opacity: 1;
+		background-position: 0% 50%;
+	}
+	100% {
+		opacity: 0.9;
+		background-position: 100% 50%;
+	}
+}
+
+.hp-bar-animated {
+	animation: hp-pulse-glow 3s infinite ease-in-out;
+}
+
+/* Neutral HP bar (for new trackers) */
+.hp-bar-neutral {
+	background: linear-gradient(90deg, #718096 0%, #a0aec0 50%, #718096 100%);
+	color: rgb(107, 114, 128);
+}

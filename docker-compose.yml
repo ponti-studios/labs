@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: ghcr.io/charlesponti/hominem/pontistudios-postgres:latest
+    container_name: rocco-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: rocco
+      POSTGRES_USER: rocco
+      POSTGRES_PASSWORD: rocco_password
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d
+    networks:
+      - rocco-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: rocco-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --requirepass redis_password
+    networks:
+      - rocco-network
+
+  # Optional: Redis Commander for web-based Redis management
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: rocco-redis-commander
+    restart: unless-stopped
+    environment:
+      REDIS_HOSTS: local:redis:6379:0:redis_password
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
+    networks:
+      - rocco-network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  rocco-network:
+    driver: bridge 

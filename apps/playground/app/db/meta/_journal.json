@@ -1,0 +1,41 @@
+{
+	"version": "7",
+	"dialect": "postgresql",
+	"entries": [
+		{
+			"idx": 0,
+			"version": "7",
+			"when": 1750200760590,
+			"tag": "0000_military_night_thrasher",
+			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "7",
+			"when": 1755707107325,
+			"tag": "0001_glorious_sauron",
+			"breakpoints": true
+		},
+		{
+			"idx": 2,
+			"version": "7",
+			"when": 1755793356280,
+			"tag": "0002_red_karen_page",
+			"breakpoints": true
+		},
+		{
+			"idx": 3,
+			"version": "7",
+			"when": 1755889911237,
+			"tag": "0003_unique_jack_murdock",
+			"breakpoints": true
+		},
+		{
+			"idx": 4,
+			"version": "7",
+			"when": 1755999750390,
+			"tag": "0004_mixed_donald_blake",
+			"breakpoints": true
+		}
+	]
+}

@@ -1,0 +1,60 @@
+/* Custom CSS for the infinite scroll animation */
+body {
+	font-family: "Geist", sans-serif; /* Apply Inter font */
+}
+
+.scroll-container {
+	height: 600px; /* Adjust height as needed */
+	overflow: hidden; /* Hide the overflowing content */
+	position: relative; /* Needed for absolute positioning if used */
+	-webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%); /* Optional: Fade effect at bottom */
+	mask-image: linear-gradient(to bottom, black 80%, transparent 100%); /* Optional: Fade effect at bottom */
+}
+
+.scroll-column {
+	display: flex;
+	flex-direction: column;
+	width: 100%; /* Each column takes full width of its container */
+}
+
+/* Define the keyframes for scrolling */
+@keyframes scroll-up {
+	0% {
+		transform: translateY(0);
+	}
+	100% {
+		transform: translateY(-50%);
+	} /* Scroll up by half the total height */
+}
+
+@keyframes scroll-down {
+	0% {
+		transform: translateY(-50%);
+	} /* Start from the halfway point */
+	100% {
+		transform: translateY(0);
+	} /* Scroll down to the original position */
+}
+
+/* Apply animations to the columns */
+.animate-scroll-up .scroll-column {
+	animation: scroll-up 20s linear infinite; /* Adjust duration for speed */
+	will-change: transform; /* Optimize animation performance */
+}
+
+.animate-scroll-down .scroll-column {
+	animation: scroll-down 20s linear infinite; /* Adjust duration for speed */
+	will-change: transform; /* Optimize animation performance */
+}
+
+/* Style for images within columns */
+.scroll-column img {
+	width: 100%;
+	height: auto; /* Maintain aspect ratio */
+	object-fit: cover; /* Cover the area, cropping if needed */
+	margin-bottom: 1rem; /* Space between images */
+	border-radius: 0.5rem; /* Rounded corners for images */
+	box-shadow:
+		0 4px 6px -1px rgb(0 0 0 / 0.1),
+		0 2px 4px -2px rgb(0 0 0 / 0.1); /* Soft shadow */
+}

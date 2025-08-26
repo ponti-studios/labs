@@ -1,0 +1,240 @@
+/* Pokemon card color themes */
+
+/* Base theme variables that all themes share */
+.pokemon-theme {
+	--card-border-width: 8px;
+	--card-border-radius: 1rem;
+	--card-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+	--card-hover-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+	--header-border-width: 3px;
+	--image-border-width: 3px;
+	--stats-border-width: 2px;
+	--stats-border-radius: 0.375rem;
+}
+
+/* Yellow Theme (Pikachu) - Default */
+.pokemon-theme-yellow {
+	--card-bg: linear-gradient(135deg, #f8d568 0%, #f6c248 100%);
+	--card-border-color: #ffcb05;
+	--header-bg: #e63950;
+	--header-border-color: #cc0000;
+	--header-text: #ffffff;
+	--image-bg: linear-gradient(to bottom, #b3e6ff 0%, #7fd4ff 100%);
+	--image-border-color: #add8e6;
+	--content-bg: #ffffff;
+	--stats-bg: #f3f4f6;
+	--stats-border-color: #dedede;
+	--energy-primary: #ffcb05;
+	--energy-secondary: #d4a40a;
+}
+
+/* Blue Theme (Squirtle) */
+.pokemon-theme-blue {
+	--card-bg: linear-gradient(135deg, #90c5e0 0%, #6ab7db 100%);
+	--card-border-color: #3b82f6;
+	--header-bg: #1d4ed8;
+	--header-border-color: #1e40af;
+	--header-text: #ffffff;
+	--image-bg: linear-gradient(to bottom, #dbeafe 0%, #bfdbfe 100%);
+	--image-border-color: #93c5fd;
+	--content-bg: #ffffff;
+	--stats-bg: #eff6ff;
+	--stats-border-color: #bfdbfe;
+	--energy-primary: #3b82f6;
+	--energy-secondary: #1d4ed8;
+}
+
+/* Red Theme (Charmander) */
+.pokemon-theme-red {
+	--card-bg: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+	--card-border-color: #dc2626;
+	--header-bg: #991b1b;
+	--header-border-color: #7f1d1d;
+	--header-text: #ffffff;
+	--image-bg: linear-gradient(to bottom, #fee2e2 0%, #fecaca 100%);
+	--image-border-color: #fca5a5;
+	--content-bg: #ffffff;
+	--stats-bg: #fef2f2;
+	--stats-border-color: #fecaca;
+	--energy-primary: #dc2626;
+	--energy-secondary: #991b1b;
+}
+
+/* Green Theme (Bulbasaur) */
+.pokemon-theme-green {
+	--card-bg: linear-gradient(135deg, #86efac 0%, #4ade80 100%);
+	--card-border-color: #22c55e;
+	--header-bg: #15803d;
+	--header-border-color: #166534;
+	--header-text: #ffffff;
+	--image-bg: linear-gradient(to bottom, #dcfce7 0%, #bbf7d0 100%);
+	--image-border-color: #86efac;
+	--content-bg: #ffffff;
+	--stats-bg: #f0fdf4;
+	--stats-border-color: #bbf7d0;
+	--energy-primary: #22c55e;
+	--energy-secondary: #15803d;
+}
+
+/* Purple Theme (Gengar) */
+.pokemon-theme-purple {
+	--card-bg: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 100%);
+	--card-border-color: #8b5cf6;
+	--header-bg: #6d28d9;
+	--header-border-color: #5b21b6;
+	--header-text: #ffffff;
+	--image-bg: linear-gradient(to bottom, #ede9fe 0%, #ddd6fe 100%);
+	--image-border-color: #c4b5fd;
+	--content-bg: #ffffff;
+	--stats-bg: #f5f3ff;
+	--stats-border-color: #ddd6fe;
+	--energy-primary: #8b5cf6;
+	--energy-secondary: #6d28d9;
+}
+
+/* Energy type icons */
+.energy-icon {
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	background-size: contain;
+	background-position: center;
+	background-repeat: no-repeat;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.energy-fire {
+	background: linear-gradient(135deg, #ffa07a, #ff4500);
+	border: 1px solid #ff4500;
+}
+
+.energy-water {
+	background: linear-gradient(135deg, #87cefa, #1e90ff);
+	border: 1px solid #1e90ff;
+}
+
+.energy-grass {
+	background: linear-gradient(135deg, #90ee90, #228b22);
+	border: 1px solid #228b22;
+}
+
+.energy-electric {
+	background: linear-gradient(135deg, #ffeb3b, #ffc107);
+	border: 1px solid #ffc107;
+}
+
+.energy-normal {
+	background: linear-gradient(135deg, #e0e0e0, #9e9e9e);
+	border: 1px solid #9e9e9e;
+}
+
+.energy-dark {
+	background: linear-gradient(135deg, #a9a9a9, #2e2e2e);
+	border: 1px solid #2e2e2e;
+}
+
+/* CSS for the theme selector */
+.theme-selector {
+	display: flex;
+	gap: 0.5rem;
+	margin-bottom: 1rem;
+	justify-content: center;
+}
+
+.theme-option {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	cursor: pointer;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+	border: 2px solid transparent;
+}
+
+.theme-option:hover {
+	transform: scale(1.1);
+}
+
+.theme-option.active {
+	border-color: white;
+	box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Card theme selector styles */
+.card-theme-selector {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	display: flex;
+	gap: 4px;
+	z-index: 10;
+	background: rgba(255, 255, 255, 0.7);
+	border-radius: 12px;
+	padding: 4px;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.card-theme-button {
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	cursor: pointer;
+	border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.card-theme-button:hover {
+	transform: scale(1.2);
+}
+
+.theme-option-yellow {
+	background: linear-gradient(135deg, #f8d568 0%, #f6c248 100%);
+}
+
+.theme-option-blue {
+	background: linear-gradient(135deg, #90c5e0 0%, #6ab7db 100%);
+}
+
+.theme-option-red {
+	background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+}
+
+.theme-option-green {
+	background: linear-gradient(135deg, #86efac 0%, #4ade80 100%);
+}
+
+.theme-option-purple {
+	background: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 100%);
+}
+
+/* Apply CSS variables to Pokemon Card */
+.pokemon-card {
+	background: var(--card-bg);
+	border: var(--card-border-width) solid var(--card-border-color);
+	border-radius: var(--card-border-radius);
+	box-shadow: var(--card-shadow);
+}
+
+.pokemon-card:hover {
+	box-shadow: var(--card-hover-shadow);
+}
+
+.pokemon-card-header {
+	background-color: var(--header-bg);
+	color: var(--header-text);
+	border-bottom: var(--header-border-width) solid var(--header-border-color);
+}
+
+.pokemon-card-image {
+	background: var(--image-bg);
+	border-bottom: var(--image-border-width) solid var(--image-border-color);
+}
+
+.pokemon-card-content {
+	background-color: var(--content-bg);
+}
+
+.pokemon-card-stats {
+	background-color: var(--stats-bg);
+	border: var(--stats-border-width) solid var(--stats-border-color);
+	border-radius: var(--stats-border-radius);
+}

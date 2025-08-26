@@ -1,0 +1,507 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+	--font-sans:
+		"Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+		"Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+	--font-serif: "Crimson Text", "Georgia", "Times New Roman", serif;
+
+	--muted: rgba(0, 0, 0, 0.2);
+
+	/* Royal Blue */
+	--primary: rgba(0, 0, 128, 0.8);
+	--primary-foreground: rgba(255, 255, 255, 1);
+	--destructive: rgba(255, 0, 0, 0.8);
+
+	--background: oklch(0.985 0.002 247.839);
+	--foreground: oklch(0.13 0.028 261.692);
+
+	/* Custom olive color palette */
+	--color-olive-50: #f7f8f5;
+	--color-olive-100: #eceee6;
+	--color-olive-200: #d9dccf;
+	--color-olive-300: #bfc5ad;
+	--color-olive-400: #a3b18a;
+	--color-olive-500: #8b9862;
+	--color-olive-600: #6d7c4b;
+	--color-olive-700: #56623c;
+	--color-olive-800: #475032;
+	--color-olive-900: #3d442b;
+	--color-sidebar: oklch(0.985 0.002 247.839);
+	--color-sidebar-foreground: oklch(0.13 0.028 261.692);
+	--color-sidebar-primary: oklch(0.21 0.034 264.665);
+	--color-sidebar-primary-foreground: oklch(0.985 0.002 247.839);
+	--color-sidebar-accent: oklch(0.967 0.003 264.542);
+	--color-sidebar-accent-foreground: oklch(0.21 0.034 264.665);
+	--color-sidebar-border: oklch(0.928 0.006 264.531);
+	--color-sidebar-ring: var(--sidebar-ring);
+}
+
+/* Custom scrollbar styles */
+.scrollbar-thin {
+	scrollbar-width: thin;
+}
+
+.scrollbar-thumb-stone-600 {
+	scrollbar-color: rgb(87 83 78) transparent;
+}
+
+.scrollbar-track-transparent {
+	scrollbar-color: rgb(87 83 78) transparent;
+}
+
+/* Webkit scrollbar for better browser support */
+.scrollbar-thin::-webkit-scrollbar {
+	width: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+	background-color: rgba(87, 83, 78, 0.6);
+	border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+	background-color: rgba(87, 83, 78, 0.8);
+}
+
+html,
+body {
+	@apply bg-white dark:bg-gray-950;
+
+	@media (prefers-color-scheme: dark) {
+		color-scheme: dark;
+	}
+}
+
+@theme inline {
+	--radius: 0.5rem;
+	--radius-sm: calc(var(--radius) - 4px);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) + 4px);
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-destructive: var(--destructive);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+	--color-chart-1: var(--chart-1);
+	--color-chart-2: var(--chart-2);
+	--color-chart-3: var(--chart-3);
+	--color-chart-4: var(--chart-4);
+	--color-chart-5: var(--chart-5);
+	--color-sidebar: var(--sidebar);
+	--color-sidebar-foreground: var(--sidebar-foreground);
+	--color-sidebar-primary: var(--sidebar-primary);
+	--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+	--color-sidebar-accent: var(--sidebar-accent);
+	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+	--color-sidebar-border: var(--sidebar-border);
+	--color-sidebar-ring: var(--sidebar-ring);
+}
+
+.dark {
+	--accent-foreground: oklch(0.985 0.002 247.839);
+	--accent: oklch(0.278 0.033 256.848);
+	--background: oklch(0.13 0.028 261.692);
+	--border: oklch(1 0 0 / 10%);
+	--card-foreground: oklch(0.985 0.002 247.839);
+	--card: oklch(0.21 0.034 264.665);
+	--chart-1: oklch(0.488 0.243 264.376);
+	--chart-2: oklch(0.696 0.17 162.48);
+	--chart-3: oklch(0.769 0.188 70.08);
+	--chart-4: oklch(0.627 0.265 303.9);
+	--chart-5: oklch(0.645 0.246 16.439);
+	--destructive: oklch(0.704 0.191 22.216);
+	--foreground: oklch(0.985 0.002 247.839);
+	--input: oklch(1 0 0 / 15%);
+	--muted-foreground: oklch(0.707 0.022 261.325);
+	--muted: oklch(0.278 0.033 256.848);
+	--popover-foreground: oklch(0.985 0.002 247.839);
+	--popover: oklch(0.21 0.034 264.665);
+	--primary-foreground: oklch(0.21 0.034 264.665);
+	--primary: oklch(0.928 0.006 264.531);
+	--ring: oklch(0.551 0.027 264.364);
+	--secondary-foreground: oklch(0.985 0.002 247.839);
+	--secondary: oklch(0.278 0.033 256.848);
+	--sidebar-accent-foreground: oklch(0.21 0.034 264.665);
+	--sidebar-accent: oklch(0.278 0.033 256.848);
+	--sidebar-border: oklch(0.928 0.006 264.531);
+	--sidebar-foreground: oklch(0.13 0.028 261.692);
+	--sidebar-primary-foreground: oklch(0.985 0.002 247.839);
+	--sidebar-primary: oklch(0.21 0.034 264.665);
+	--sidebar-ring: oklch(0.551 0.027 264.364);
+	--sidebar: oklch(0.21 0.034 264.665);
+}
+
+@layer base {
+	* {
+		@apply border-border outline-ring/50;
+	}
+	body {
+		@apply bg-background text-foreground;
+	}
+}
+
+/* Primary dashboard card with backdrop blur */
+@utility dashboard-card {
+	@apply bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg shadow-md;
+}
+
+/* COVID Dashboard Dark Mode Utility Classes */
+@layer components {
+	/* #region  /**=========== Card Components =========== */
+
+	/* Card with hover effect for interactive elements */
+	.dashboard-card-interactive {
+		@apply dashboard-card hover:bg-white/15 transition-all duration-200;
+	}
+
+	/* Metric cards with different color themes */
+	.metric-card-green {
+		@apply bg-green-500/20 border border-green-400/30 rounded-lg;
+	}
+
+	.metric-card-blue {
+		@apply bg-blue-500/20 border border-blue-400/30 rounded-lg;
+	}
+
+	.metric-card-purple {
+		@apply bg-purple-500/20 border border-purple-400/30 rounded-lg;
+	}
+
+	.metric-card-red {
+		@apply bg-red-500/20 border border-red-400/30 rounded-lg;
+	}
+
+	.metric-card-yellow {
+		@apply bg-yellow-500/20 border border-yellow-400/30 rounded-lg;
+	}
+
+	.metric-card-orange {
+		@apply bg-orange-500/20 border border-orange-400/30 rounded-lg;
+	}
+
+	/* #endregion  /**======== Card Components ======== */
+
+	/* #region  /**=========== Typography =========== */
+
+	/* Page titles and headers */
+	.dashboard-title {
+		@apply text-4xl font-bold text-white;
+	}
+
+	.dashboard-subtitle {
+		@apply text-lg text-blue-200;
+	}
+
+	.section-title {
+		@apply text-2xl font-bold text-white;
+	}
+
+	.section-subtitle {
+		@apply text-xl font-bold text-white;
+	}
+
+	/* Data labels and values */
+	.data-label {
+		@apply text-blue-200;
+	}
+
+	.data-value {
+		@apply font-medium text-white;
+	}
+
+	.data-value-large {
+		@apply text-3xl font-bold text-white;
+	}
+
+	/* Metric values with color coding */
+	.metric-positive {
+		@apply text-green-300;
+	}
+
+	.metric-negative {
+		@apply text-red-300;
+	}
+
+	.metric-neutral {
+		@apply text-blue-300;
+	}
+
+	/* Category headers for different card types */
+	.category-header-green {
+		@apply text-lg font-semibold text-green-300;
+	}
+
+	.category-header-blue {
+		@apply text-lg font-semibold text-blue-300;
+	}
+
+	.category-header-purple {
+		@apply text-lg font-semibold text-purple-300;
+	}
+
+	.category-header-red {
+		@apply text-lg font-semibold text-red-300;
+	}
+
+	.category-header-yellow {
+		@apply text-lg font-semibold text-yellow-300;
+	}
+
+	.category-header-orange {
+		@apply text-lg font-semibold text-orange-300;
+	}
+
+	/* #endregion  /**======== Typography ======== */
+
+	/* #region  /**=========== State Components =========== */
+
+	/* Loading states */
+	.loading-container {
+		@apply flex items-center justify-center p-8;
+	}
+
+	.loading-spinner {
+		@apply animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500;
+	}
+
+	.loading-text {
+		@apply ml-3 text-blue-200;
+	}
+
+	/* Error states */
+	.error-card {
+		@apply bg-red-500/20 border border-red-400/30 rounded-lg p-6;
+	}
+
+	.error-title {
+		@apply text-red-300 font-semibold;
+	}
+
+	.error-text {
+		@apply text-red-200 mt-2;
+	}
+
+	/* Warning states */
+	.warning-card {
+		@apply bg-yellow-500/20 border border-yellow-400/30 rounded-lg p-6;
+	}
+
+	.warning-title {
+		@apply text-yellow-300 font-semibold;
+	}
+
+	.warning-text {
+		@apply text-yellow-200 mt-2;
+	}
+
+	/* Success states */
+	.success-card {
+		@apply bg-green-500/20 border border-green-400/30 rounded-lg p-6;
+	}
+
+	.success-title {
+		@apply text-green-300 font-semibold;
+	}
+
+	.success-text {
+		@apply text-green-200 mt-2;
+	}
+
+	/* Info states */
+	.info-card {
+		@apply bg-blue-500/20 border border-blue-400/30 rounded-lg p-6;
+	}
+
+	.info-title {
+		@apply text-blue-300 font-semibold;
+	}
+
+	.info-text {
+		@apply text-blue-200 mt-2;
+	}
+
+	/* #endregion  /**======== State Components ======== */
+
+	/* #region  /**=========== Chart Components =========== */
+
+	/* Chart container styling */
+	.chart-container {
+		@apply dashboard-card p-6;
+	}
+
+	/* Chart tooltip styling (for inline styles) */
+	.chart-tooltip-style {
+		background-color: rgba(0, 0, 0, 0.8) !important;
+		border: 1px solid rgba(255, 255, 255, 0.2) !important;
+		border-radius: 8px !important;
+		color: #ffffff !important;
+	}
+
+	/* Chart axis styling */
+	.chart-axis-light {
+		fill: #93c5fd;
+		font-size: 12px;
+	}
+
+	/* #endregion  /**======== Chart Components ======== */
+
+	/* #region  /**=========== Layout Components =========== */
+
+	/* Page layout */
+	.dashboard-page {
+		@apply p-8 space-y-8;
+	}
+
+	.dashboard-header {
+		@apply text-center mb-8;
+	}
+
+	/* Grid layouts for metrics */
+	.metrics-grid-2 {
+		@apply grid grid-cols-1 md:grid-cols-2 gap-6;
+	}
+
+	.metrics-grid-3 {
+		@apply grid grid-cols-1 md:grid-cols-3 gap-6;
+	}
+
+	.metrics-grid-4 {
+		@apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6;
+	}
+
+	/* Period comparison layout */
+	.period-comparison {
+		@apply grid grid-cols-1 lg:grid-cols-2 gap-8;
+	}
+
+	/* Metric card content */
+	.metric-content {
+		@apply p-6 text-center;
+	}
+
+	.metric-content-left {
+		@apply p-6 space-y-3;
+	}
+
+	/* Data row layout */
+	.data-row {
+		@apply flex justify-between;
+	}
+
+	/* #endregion  /**======== Layout Components ======== */
+
+	/* #region  /**=========== Interactive Components =========== */
+
+	/* Form controls */
+	.dashboard-select {
+		@apply bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+	}
+
+	.dashboard-input {
+		@apply bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+	}
+
+	.dashboard-button {
+		@apply bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+	}
+
+	.dashboard-button-secondary {
+		@apply bg-white/10 hover:bg-white/20 border border-white/20 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+	}
+
+	/* Navigation elements */
+	.nav-item {
+		@apply bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center hover:bg-white/20 transition-all duration-200 border border-white/20;
+	}
+
+	.nav-item-active {
+		@apply bg-white/20 border-white/30;
+	}
+
+	/* #endregion  /**======== Interactive Components ======== */
+}
+
+/* Additional animation utilities */
+@layer utilities {
+	.animate-fade-in {
+		animation: fadeIn 0.3s ease-in-out;
+	}
+
+	.animate-slide-up {
+		animation: slideUp 0.3s ease-out;
+	}
+
+	.animate-scale-in {
+		animation: scaleIn 0.2s ease-out;
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes slideUp {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes scaleIn {
+	from {
+		opacity: 0;
+		transform: scale(0.95);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+label {
+	color: var(--color-gray-800);
+	font-family: var(--font-serif);
+	font-size: 1rem;
+}
+
+input {
+	border: 1px solid var(--color-gray-300);
+	border-radius: 0.5rem;
+	padding: 0.5rem;
+	font-size: 1rem;
+	font-family: var(--font-serif);
+	min-height: 2.5rem;
+	display: flex;
+	align-items: center;
+}
