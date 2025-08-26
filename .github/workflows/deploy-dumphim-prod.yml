@@ -42,8 +42,11 @@ jobs:
         env:
           NODE_ENV: production
 
+      - name: 🔍 Verify turbo is available
+        run: npx turbo --version
+
       - name: Build dumphim app
-        run: pnpm exec turbo run build --filter=dumphim
+        run: npx turbo run build --filter=dumphim
         env:
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
           VITE_GOOGLE_API_KEY: ${{ secrets.VITE_GOOGLE_API_KEY }}
