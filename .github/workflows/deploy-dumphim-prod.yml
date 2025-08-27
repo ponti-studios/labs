@@ -39,8 +39,6 @@ jobs:
 
       - name: 📦 Install dependencies
         run: pnpm install --frozen-lockfile
-        env:
-          NODE_ENV: production
 
       - name: 🔍 Verify turbo is available
         run: npx turbo --version
