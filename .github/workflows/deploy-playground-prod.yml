@@ -1,16 +1,17 @@
-name: deploy-prod
+name: deploy-playground-prod
 
 on:
-  workflow_run:
-    workflows: ["docker-build"]
-    types:
-      - completed
+  push:
     branches: [ main, master ]
+    paths:
+      - 'apps/playground/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/deploy-playground-prod.yml'
 
 jobs:
   deploy:
-    name: Deploy
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    name: Deploy Playground
     runs-on: ubuntu-latest
     container: ghcr.io/railwayapp/cli:latest
     env:
