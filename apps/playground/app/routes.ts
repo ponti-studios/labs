@@ -4,9 +4,9 @@ export default [
 	index("routes/home.tsx"),
 	route("/border-linear-gradient", "routes/border-linear-gradient.tsx"),
 	route("/svg-glass-test", "routes/svg-glass-test.tsx"),
-	route("/vector-search", "routes/VectorSearchPage.tsx"),
 	route("/google-maps", "routes/google-maps.tsx"),
-	route("/to-do", "routes/to-do.tsx"),
+	route("/tasks", "routes/tasks.tsx"),
+	route("/tasks/search", "routes/tasks.search.tsx"),
 	route("/tasks/:projectId", "routes/tasks.$projectId.tsx"),
 	route("/projects", "routes/projects.tsx"),
 
@@ -64,6 +64,7 @@ export default [
 
 	// API routes
 	route("/api/countries/list", "routes/api.countries.list.ts"),
+	route("/api/search", "routes/api.search.ts"),
 	route("/api/todos", "routes/api.todos.ts"),
 	route("/api/projects", "routes/api.projects.ts"),
 ] satisfies RouteConfig;

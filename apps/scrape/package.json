@@ -11,6 +11,10 @@
 	"author": "",
 	"license": "ISC",
 	"description": "Web scraping utilities",
+	"dependencies": {
+		"@browserbasehq/stagehand": "^2.4.3",
+		"zod": "^3.22.4"
+	},
 	"devDependencies": {
 		"typescript": "^5.8.3",
 		"tsx": "^4.19.2"

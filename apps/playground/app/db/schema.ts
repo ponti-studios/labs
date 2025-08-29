@@ -133,3 +133,16 @@ export const projects = pgTable("projects", {
 });
 export type Project = typeof projects.$inferSelect;
 export type ProjectInsert = typeof projects.$inferInsert;
+
+export const embeddings = pgTable("embeddings", {
+	id: serial().primaryKey().notNull(),
+	todoId: integer("todo_id")
+		.references(() => todos.id, { onDelete: "cascade" })
+		.notNull(),
+	content: text().notNull(),
+	embedding: real("embedding").array().notNull(),
+	model: text().notNull().default("gemini-embedding-001"),
+	createdAt: timestamp("created_at", { mode: "string" }).defaultNow(),
+});
+export type Embedding = typeof embeddings.$inferSelect;
+export type EmbeddingInsert = typeof embeddings.$inferInsert;

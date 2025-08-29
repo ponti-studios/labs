@@ -1,7 +1,8 @@
 import { eq } from "drizzle-orm";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
-import { db, projects, todos } from "~/db";
+import { db, embeddings, projects, todos } from "~/db";
 import type { TodoInsert } from "~/db/schema";
+import { generateTaskEmbedding } from "~/lib/embeddings";
 import { commitSession, getSession } from "~/lib/session";
 
 async function getOrCreateUserId(
@@ -47,7 +48,8 @@ async function fetchUserTodos(userId: string) {
 }
 
 async function createTodo(todoData: TodoInsert, userId: string) {
-	return await db
+	// Create the todo first
+	const newTodo = await db
 		.insert(todos)
 		.values({
 			...todoData,
@@ -55,6 +57,47 @@ async function createTodo(todoData: TodoInsert, userId: string) {
 		})
 		.returning()
 		.then((rows) => rows[0]);
+
+	// Generate and save embedding asynchronously (don't block the response)
+	try {
+		// Get project name if projectId is provided
+		let projectName: string | undefined;
+		if (todoData.projectId) {
+			const project = await db
+				.select({ name: projects.name })
+				.from(projects)
+				.where(eq(projects.id, todoData.projectId))
+				.then((rows) => rows[0]);
+			projectName = project?.name;
+		}
+
+		// Generate embedding
+		const embeddingValues = await generateTaskEmbedding(
+			todoData.title,
+			projectName,
+		);
+
+		// Save embedding to database
+		await db.insert(embeddings).values({
+			todoId: newTodo.id,
+			content: projectName
+				? `Task: ${todoData.title} | Project: ${projectName}`
+				: `Task: ${todoData.title}`,
+			embedding: embeddingValues,
+			model: "gemini-embedding-001",
+		});
+
+		console.log(`Embedding saved for todo ${newTodo.id}`);
+	} catch (error) {
+		console.error(
+			"Failed to generate/save embedding for todo:",
+			newTodo.id,
+			error,
+		);
+		// Don't fail the todo creation if embedding fails
+	}
+
+	return newTodo;
 }
 
 async function updateTodo(

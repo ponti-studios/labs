@@ -3,10 +3,13 @@ export interface SocialPost {
 	content: string;
 	platform: string;
 	date: string;
-	engagement?: number;
-	author?: string;
+	completed?: number;
+	project?: string;
 	url?: string;
 	tags?: string[];
+	start?: string;
+	end?: string;
+	projectId?: number;
 }
 
 export interface SearchResult {

@@ -1,7 +1,7 @@
 import * as readline from "node:readline";
 import { Stagehand } from "@browserbasehq/stagehand";
-import { z } from "zod";
-import { env } from "../env.js";
+import { z } from "zod/v3";
+import { env } from "./env.js";
 
 function askQuestion(question: string): Promise<string> {
 	const rl = readline.createInterface({
@@ -25,7 +25,7 @@ async function main() {
 	const stagehand = new Stagehand({
 		env: "LOCAL",
 		logInferenceToFile: true,
-		logger: (message) => console.log(message),
+		logger: (logLine) => console.log(logLine.message),
 		modelName: "gpt-4o",
 		modelClientOptions: {
 			apiKey: env.OPENAI_API_KEY,
@@ -41,7 +41,7 @@ async function main() {
 	await page.act(`Click the ${location} option`);
 
 	const data = await page.extract({
-		instruction: "The title of the first search result",
+		instruction: "Extract the tax information from the page",
 		schema: z.object({
 			Federal: z.string(),
 			FICA: z.string(),

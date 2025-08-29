@@ -1,6 +1,6 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import { covidData, projects, tflCameras, todos } from "./schema";
+import { covidData, embeddings, projects, tflCameras, todos } from "./schema";
 
 // Get database URL from environment variables
 const DATABASE_URL = process.env.DATABASE_URL || process.env.VITE_DATABASE_URL;
@@ -21,7 +21,7 @@ function initializeDb() {
 
 	_client = postgres(DATABASE_URL);
 	_db = drizzle(_client, {
-		schema: { tflCameras, covidData, todos, projects },
+		schema: { tflCameras, covidData, todos, projects, embeddings },
 	});
 	return _db;
 }
@@ -34,7 +34,7 @@ export const db = new Proxy({} as ReturnType<typeof drizzle>, {
 	},
 });
 
-export { covidData, tflCameras, todos, projects };
+export { covidData, tflCameras, todos, projects, embeddings };
 
 // Close database connection
 export function closeDb() {
