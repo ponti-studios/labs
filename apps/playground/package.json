@@ -18,6 +18,7 @@
 	"dependencies": {
 		"@emotion/styled": "^11.14.1",
 		"@google/genai": "^1.15.0",
+		"@googlemaps/js-api-loader": "^2.0.2",
 		"@radix-ui/react-accordion": "^1.2.11",
 		"@radix-ui/react-dialog": "^1.1.14",
 		"@radix-ui/react-popover": "^1.1.14",
@@ -52,6 +53,7 @@
 		"@testing-library/react": "^16.3.0",
 		"@testing-library/user-event": "^14.6.1",
 		"@types/axios": "^0.9.36",
+		"@types/google.maps": "^3.58.1",
 		"@types/next": "^8.0.7",
 		"@types/node": "^20",
 		"@types/react": "^19.1.8",
