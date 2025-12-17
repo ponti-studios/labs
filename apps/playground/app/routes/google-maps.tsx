@@ -18,8 +18,11 @@ const GoogleMapsContent = () => {
 	const [mapZoom, setMapZoom] = useState(12);
 
 	// React Query hooks
-	const geocodeQuery = useGeocodeLocation(searchAddress);
-	const directionsMutation = useGetDirections();
+	const geocodeQuery = useGeocodeLocation(
+		searchAddress,
+		GOOGLE_MAPS_API_KEY || "",
+	);
+	const directionsMutation = useGetDirections(GOOGLE_MAPS_API_KEY || "");
 	const { clearAllQueries } = useGoogleMapsQueries();
 
 	// Update map center and zoom when geocoding results change

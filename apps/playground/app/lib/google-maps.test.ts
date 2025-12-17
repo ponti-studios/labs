@@ -1,83 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import * as googleMaps from "./google-maps";
 
-// Mock window.google for geocodeLocation and getDirections
-globalThis.window = Object.create(window);
+// Mock @googlemaps/js-api-loader
+vi.mock("@googlemaps/js-api-loader", () => ({
+	setOptions: vi.fn(),
+	importLibrary: vi.fn(() => Promise.resolve()),
+}));
 
-class MockDirectionsRenderer {
-	getDirections(): any {
-		return null;
-	}
-	getMap(): any {
-		return null;
-	}
-	getPanel(): any {
-		return null;
-	}
-	getRouteIndex(): any {
-		return null;
-	}
-	setDirections(): void {}
-	setMap(): void {}
-	setOptions(): void {}
-	setPanel(): void {}
-	setRouteIndex(): void {}
-	addListener(): any {
-		return { remove: () => {} };
-	}
-	bindTo(): void {}
-	get(): void {}
-	notify(): void {}
-	set(): void {}
-	unbind(): void {}
-	unbindAll(): void {}
-	setValues(): void {}
-}
-
-class MockLatLngBounds {
-	static MAX_BOUNDS: MockLatLngBounds;
-	contains(): boolean {
-		return false;
-	}
-	equals(): boolean {
-		return false;
-	}
-	extend(): this {
-		return this;
-	}
-	getCenter(): any {
-		return {};
-	}
-	getNorthEast(): any {
-		return {};
-	}
-	getSouthWest(): any {
-		return {};
-	}
-	intersects(): boolean {
-		return false;
-	}
-	isEmpty(): boolean {
-		return false;
-	}
-	toJSON(): any {
-		return {};
-	}
-	toSpan(): any {
-		return {};
-	}
-	toString(): string {
-		return "";
-	}
-	toUrlValue(): string {
-		return "";
-	}
-	union(): this {
-		return this;
-	}
-}
-MockLatLngBounds.MAX_BOUNDS = new MockLatLngBounds();
-window.google = {
+// Mock google.maps global
+globalThis.google = {
 	maps: {
 		Geocoder: vi.fn(() => ({
 			geocode: vi.fn(),
@@ -85,11 +16,9 @@ window.google = {
 		DirectionsService: vi.fn(() => ({
 			route: vi.fn(),
 		})),
-		DirectionsRenderer: MockDirectionsRenderer,
-		LatLngBounds: MockLatLngBounds,
 		TravelMode: { DRIVING: "DRIVING" } as any,
 	} as any,
-};
+} as any;
 
 describe("cleanHtmlFromInstructions", () => {
 	it("removes HTML tags and decodes entities", () => {
@@ -104,8 +33,10 @@ describe("cleanHtmlFromInstructions", () => {
 });
 
 describe("geocodeLocation", () => {
+	const apiKey = "test-api-key";
+
 	beforeEach(() => {
-		(window.google.maps.Geocoder as any).mockImplementation(() => ({
+		(google.maps.Geocoder as any).mockImplementation(() => ({
 			geocode: (opts: any, cb: any) => {
 				if (opts.address === "valid") {
 					cb(
@@ -125,20 +56,22 @@ describe("geocodeLocation", () => {
 	});
 
 	it("returns locations for valid address", async () => {
-		const result = await googleMaps.geocodeLocation("valid");
+		const result = await googleMaps.geocodeLocation("valid", apiKey);
 		expect(result).toEqual([{ lat: 1, lng: 2, address: "Test Address" }]);
 	});
 
 	it("throws for invalid address", async () => {
-		await expect(googleMaps.geocodeLocation("invalid")).rejects.toThrow(
+		await expect(googleMaps.geocodeLocation("invalid", apiKey)).rejects.toThrow(
 			"Geocoding failed: ZERO_RESULTS",
 		);
 	});
 });
 
 describe("getDirections", () => {
+	const apiKey = "test-api-key";
+
 	beforeEach(() => {
-		(window.google.maps.DirectionsService as any).mockImplementation(() => ({
+		(google.maps.DirectionsService as any).mockImplementation(() => ({
 			route: (opts: any, cb: any) => {
 				if (opts.origin === "A" && opts.destination === "B") {
 					cb(
@@ -172,7 +105,7 @@ describe("getDirections", () => {
 	});
 
 	it("returns directions for valid route", async () => {
-		const result = await googleMaps.getDirections("A", "B");
+		const result = await googleMaps.getDirections("A", "B", apiKey);
 		expect(result).toEqual({
 			summary: {
 				from: "A",
@@ -185,7 +118,7 @@ describe("getDirections", () => {
 	});
 
 	it("throws for invalid route", async () => {
-		await expect(googleMaps.getDirections("X", "Y")).rejects.toThrow(
+		await expect(googleMaps.getDirections("X", "Y", apiKey)).rejects.toThrow(
 			"Directions failed: NOT_FOUND",
 		);
 	});

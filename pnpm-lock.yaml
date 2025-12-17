@@ -184,6 +184,9 @@ importers:
       '@google/genai':
         specifier: ^1.15.0
         version: 1.16.0
+      '@googlemaps/js-api-loader':
+        specifier: ^2.0.2
+        version: 2.0.2
       '@radix-ui/react-accordion':
         specifier: ^1.2.11
         version: 1.2.12(@types/react-dom@19.1.7(@types/react@19.1.10))(@types/react@19.1.10)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -281,6 +284,9 @@ importers:
       '@types/axios':
         specifier: ^0.9.36
         version: 0.9.36
+      '@types/google.maps':
+        specifier: ^3.58.1
+        version: 3.58.1
       '@types/next':
         specifier: ^8.0.7
         version: 8.0.7(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -1539,6 +1545,9 @@ packages:
     peerDependenciesMeta:
       '@modelcontextprotocol/sdk':
         optional: true
+
+  '@googlemaps/js-api-loader@2.0.2':
+    resolution: {integrity: sha512-bKVuTqatS8Jven5aFqVB7rCHF1VFEzpzyi0ruzO0GUR+A7m9oMqMgtnmpANj7kMYEvvhty8Fk7TnJ1MKjWHu+Q==}
 
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
@@ -7232,6 +7241,10 @@ snapshots:
       - encoding
       - supports-color
       - utf-8-validate
+
+  '@googlemaps/js-api-loader@2.0.2':
+    dependencies:
+      '@types/google.maps': 3.58.1
 
   '@isaacs/cliui@8.0.2':
     dependencies:

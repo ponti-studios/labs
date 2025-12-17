@@ -1,5 +1,5 @@
+import { importLibrary, setOptions } from "@googlemaps/js-api-loader";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import "../types/google-maps";
 
 export interface Location {
 	lat: number;
@@ -30,13 +30,42 @@ export const cleanHtmlFromInstructions = (htmlString: string): string => {
 	return text;
 };
 
-export const geocodeLocation = async (address: string): Promise<Location[]> => {
-	if (!window.google) {
-		throw new Error("Google Maps API not loaded");
+// Track if options have been set and libraries loaded
+let optionsSet = false;
+let loadingPromise: Promise<void> | null = null;
+
+const ensureGoogleMapsLoaded = async (apiKey: string): Promise<void> => {
+	if (!optionsSet) {
+		setOptions({
+			key: apiKey,
+			v: "weekly",
+			libraries: ["geometry", "places"],
+		});
+		optionsSet = true;
 	}
 
+	if (!loadingPromise) {
+		// Load the maps library which includes Geocoder and DirectionsService
+		loadingPromise = importLibrary("maps").then(() => {
+			// Also ensure geometry and places are loaded
+			return Promise.all([
+				importLibrary("geometry"),
+				importLibrary("places"),
+			]).then(() => undefined);
+		});
+	}
+
+	return loadingPromise;
+};
+
+export const geocodeLocation = async (
+	address: string,
+	apiKey: string,
+): Promise<Location[]> => {
+	await ensureGoogleMapsLoaded(apiKey);
+
 	return new Promise((resolve, reject) => {
-		const geocoder = new window.google.maps.Geocoder();
+		const geocoder = new google.maps.Geocoder();
 		geocoder.geocode({ address }, (results, status) => {
 			if (status === "OK" && results) {
 				const locations: Location[] = results.map((result) => {
@@ -60,18 +89,17 @@ export const geocodeLocation = async (address: string): Promise<Location[]> => {
 export const getDirections = async (
 	origin: string,
 	destination: string,
+	apiKey: string,
 ): Promise<DirectionsResult> => {
-	if (!window.google) {
-		throw new Error("Google Maps API not loaded");
-	}
+	await ensureGoogleMapsLoaded(apiKey);
 
 	return new Promise((resolve, reject) => {
-		const directionsService = new window.google.maps.DirectionsService();
+		const directionsService = new google.maps.DirectionsService();
 		directionsService.route(
 			{
 				origin,
 				destination,
-				travelMode: window.google.maps.TravelMode.DRIVING,
+				travelMode: google.maps.TravelMode.DRIVING,
 			},
 			(result, status) => {
 				if (status === "OK" && result) {
@@ -99,16 +127,16 @@ export const getDirections = async (
 	});
 };
 
-export const useGeocodeLocation = (address: string | null) => {
+export const useGeocodeLocation = (address: string | null, apiKey: string) => {
 	return useQuery({
 		queryKey: ["geocode", address],
 		queryFn: () => {
 			if (!address) {
 				throw new Error("Address is required");
 			}
-			return geocodeLocation(address);
+			return geocodeLocation(address, apiKey);
 		},
-		enabled: !!address && address.trim().length > 0,
+		enabled: !!address && address.trim().length > 0 && !!apiKey,
 		staleTime: 5 * 60 * 1000,
 		gcTime: 10 * 60 * 1000,
 		retry: 2,
@@ -116,7 +144,7 @@ export const useGeocodeLocation = (address: string | null) => {
 	});
 };
 
-export const useGetDirections = () => {
+export const useGetDirections = (apiKey: string) => {
 	return useMutation({
 		mutationFn: ({
 			origin,
@@ -124,7 +152,7 @@ export const useGetDirections = () => {
 		}: {
 			origin: string;
 			destination: string;
-		}) => getDirections(origin, destination),
+		}) => getDirections(origin, destination, apiKey),
 		retry: 2,
 		retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
 	});
@@ -140,27 +168,4 @@ export const useGoogleMapsQueries = () => {
 	};
 
 	return { clearAllQueries };
-};
-
-// Utility function to check if Google Maps API is loaded
-export const isGoogleMapsLoaded = (): boolean => {
-	return typeof window !== "undefined" && !!window.google;
-};
-
-// Utility function to load Google Maps API
-export const loadGoogleMapsAPI = (apiKey: string): Promise<void> => {
-	return new Promise((resolve, reject) => {
-		if (isGoogleMapsLoaded()) {
-			resolve();
-			return;
-		}
-
-		const script = document.createElement("script");
-		script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=geometry,places`;
-		script.async = true;
-		script.defer = true;
-		script.onload = () => resolve();
-		script.onerror = () => reject(new Error("Failed to load Google Maps API"));
-		document.head.appendChild(script);
-	});
 };
