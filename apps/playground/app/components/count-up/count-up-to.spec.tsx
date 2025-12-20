@@ -2,9 +2,6 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, test } from "vitest";
 import CountUpTo from "./count-up-to";
 
-const delay = async (ms: number) =>
-	new Promise((resolve) => setTimeout(resolve, ms));
-
 describe("CountUpTo", () => {
 	test("should render and count up to target value", async () => {
 		render(<CountUpTo value={100} duration={0.5} />);

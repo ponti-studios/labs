@@ -19,13 +19,11 @@ import { useCreateProject } from "~/lib/projects";
 interface ProjectFormModalProps {
 	onSubmit?: (project: ProjectCreateData) => void;
 	isLoading?: boolean;
-	trigger?: React.ReactNode;
 }
 
 export function ProjectFormModal({
 	onSubmit,
 	isLoading: externalLoading = false,
-	trigger,
 }: ProjectFormModalProps) {
 	const [open, setOpen] = useState(false);
 	const [formData, setFormData] = useState({

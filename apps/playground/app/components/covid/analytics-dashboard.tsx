@@ -137,9 +137,6 @@ export function CovidAnalyticsDashboard({
 		);
 	}
 
-	const countryName =
-		countryCode === "OWID_WRL" ? "World" : statsData?.location || "Unknown";
-
 	return (
 		<div className="space-y-8 max-w-7xl mx-auto px-4">
 			{/* Stats Overview */}

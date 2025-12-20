@@ -64,21 +64,10 @@ export function TaskFormModal({
 		if (!formData.projectId || !formData.title) return;
 
 		const projectId = Number.parseInt(formData.projectId);
-		if (isNaN(projectId)) {
+		if (Number.isNaN(projectId)) {
 			alert("Please select a valid project");
 			return;
 		}
-
-		const startDate = new Date(
-			formData.start || new Date().toISOString().split("T")[0],
-		);
-		const endDate = new Date(formData.end || startDate);
-		const duration = Math.max(
-			1,
-			Math.ceil(
-				(endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
-			) + 1,
-		);
 
 		if (isEditing && todo) {
 			// Update existing todo

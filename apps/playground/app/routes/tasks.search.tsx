@@ -26,7 +26,7 @@ export default function VectorSearchPage() {
 		};
 	}, [query]);
 
-	const { data, isPending, error, refetch } = useQuery<SearchResponse, Error>({
+	const { data, isPending, error } = useQuery<SearchResponse, Error>({
 		queryKey: ["vectorSearch", debouncedQuery],
 		queryFn: async () => {
 			if (!debouncedQuery.trim()) return { results: [] };
@@ -49,7 +49,7 @@ export default function VectorSearchPage() {
 	const transformToTodoItem = (result: SearchResult): TodoItem | null => {
 		// Extract todo ID from the post ID
 		const todoId = parseInt(result.post.id || "0", 10);
-		if (isNaN(todoId)) return null;
+		if (Number.isNaN(todoId)) return null;
 
 		return {
 			id: todoId,
