@@ -2,15 +2,10 @@ import { Link } from "react-router";
 import { ProjectFormModal } from "~/components/ProjectFormModal";
 import { ProjectList } from "~/components/ProjectList";
 import { Button } from "~/components/ui/button";
-import { useDeleteProject, useProjects } from "~/lib/projects";
+import { useProjects } from "~/lib/projects";
 
 export default function ProjectsPage() {
 	const { data: projects = [], isLoading, error } = useProjects();
-	const deleteProjectMutation = useDeleteProject();
-
-	const handleDeleteProject = (id: number) => {
-		deleteProjectMutation.mutate(id);
-	};
 
 	if (isLoading) {
 		return (
