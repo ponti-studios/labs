@@ -1,0 +1,582 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* ============================================
+ * VOID Design System v1.1
+ * Philosophy: Japanese Minimalism
+ * 
+ * Kanso (簡素 - Simplicity): Elimination of the non-essential
+ * Ma (間 - Negative Space): The void is a structural element
+ * Shibui (渋い - Understated): No decoration; motion only via shared breezy wave
+ * Wabi-sabi (侘寂 - Imperfection): Technical honesty, asymmetry
+ * ============================================ */
+
+html,
+body {
+  font-family: var(--font-mono);
+  color-scheme: dark;
+  cursor: crosshair;
+}
+
+/* Shibui: No ad-hoc animations or transitions; only shared breezy utilities allowed */
+*,
+*::before,
+*::after {
+  transition: none !important;
+}
+
+@theme {
+  /* VOID Typography: Monospace Only - The Terminal Aesthetic */
+  --font-mono:
+    'Geist Mono', ui-monospace, 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', monospace;
+
+  /* ====== VOID Color Palette: The Monochrome Mandate ====== */
+
+  /* Core Surface */
+  --color-background: #000000;
+  --color-muted: rgba(255, 255, 255, 0.05);
+
+  /* Typography & Icons */
+  --color-foreground: #ffffff;
+  --color-secondary-foreground: rgba(255, 255, 255, 0.7);
+  --color-muted-foreground: rgba(255, 255, 255, 0.4);
+
+  /* Technical Indicators */
+  --color-primary: #ffffff;
+  --color-primary-foreground: #000000;
+  --color-destructive: #ff0000;
+  --color-destructive-foreground: #ffffff;
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-popover: #000000;
+  --color-popover-foreground: #ffffff;
+
+  /* Minimal System States */
+  --color-secondary: rgba(255, 255, 255, 0.1);
+  --color-accent: rgba(255, 255, 255, 0.15);
+  --color-accent-foreground: #ffffff;
+  --color-input: #000000;
+  --color-ring: #ffffff;
+
+  --color-chart-1: rgba(255, 255, 255, 0.9);
+  --color-chart-2: rgba(255, 255, 255, 0.7);
+  --color-chart-3: rgba(255, 255, 255, 0.5);
+  --color-chart-4: rgba(255, 255, 255, 0.3);
+  --color-chart-5: rgba(255, 255, 255, 0.15);
+
+  /* Chart Semantic Colors */
+  --color-chart-positive: rgba(255, 255, 255, 0.7); /* income, growth, success */
+  --color-chart-negative: #ff0000; /* expenses, decline, destructive */
+  --color-chart-neutral: rgba(255, 255, 255, 0.5); /* baseline, reference */
+
+  /* Standardized Opacity Levels for Differentiation */
+  --color-emphasis-highest: rgba(255, 255, 255, 0.9);
+  --color-emphasis-high: rgba(255, 255, 255, 0.7);
+  --color-emphasis-medium: rgba(255, 255, 255, 0.5);
+  --color-emphasis-low: rgba(255, 255, 255, 0.3);
+  --color-emphasis-lower: rgba(255, 255, 255, 0.2);
+  --color-emphasis-subtle: rgba(255, 255, 255, 0.15);
+  --color-emphasis-minimal: rgba(255, 255, 255, 0.1);
+  --color-emphasis-faint: rgba(255, 255, 255, 0.05);
+  /* Technical State Colors */
+  --color-success: rgba(255, 255, 255, 0.7);
+  --color-warning: #ff8800;
+
+  /* Shibui: No rounded corners - sharp precision only */
+  --radius: 0px;
+  --radius-lg: 0px;
+
+  /* Ma: Massive spacing for negative space */
+  --spacing-ma-xl: 16rem;
+  --spacing-ma-lg: 8rem;
+  --spacing-ma-md: 4rem;
+  --spacing-ma-sm: 2rem;
+
+  /* Wabi-sabi: ASCII Texture opacity limit */
+  --ascii-opacity-max: 0.2;
+  --glass-blur: 12px;
+}
+
+@utility min-h-screen {
+  min-height: 100vh; /* fallback */
+  min-height: 100dvh;
+}
+
+@utility min-h-screen-dynamic {
+  min-height: 100dvh;
+}
+
+@utility h-screen {
+  height: 100vh; /* fallback */
+  height: 100dvh;
+}
+
+@utility pb-safe-area-inset-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@utility mb-safe-area-inset-bottom {
+  margin-bottom: env(safe-area-inset-bottom);
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-border, currentColor);
+  }
+
+  /* Deep Void: Instant Logic */
+  * {
+    transition: none !important;
+  }
+
+  button {
+    cursor: crosshair;
+    font-family: inherit;
+    text-transform: uppercase;
+  }
+
+  /* Deep Void: Instant Inversion Interaction (Shibui) */
+  .void-invert {
+    transition: none !important;
+  }
+
+  .void-invert:hover,
+  .void-invert:focus-visible,
+  .void-invert[data-state='open'],
+  .void-invert:active {
+    background-color: var(--color-foreground) !important;
+    color: var(--color-background) !important;
+  }
+
+  /* Deep Void: Instant Inversion Interaction (Shibui) */
+  .void-invert:active,
+  .void-invert:focus {
+    background-color: var(--foreground) !important;
+    color: var(--background) !important;
+    transition: none !important;
+  }
+
+  /* Deep Void: Void Scrollbar (Sanose) */
+  /* stylelint-disable selector-disallowed-list */
+  ::-webkit-scrollbar {
+    width: 2px;
+    height: 2px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-foreground);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+  }
+  /* stylelint-enable selector-disallowed-list */
+
+  /* Ensure Radix portals work correctly */
+  [data-radix-portal] {
+    z-index: 9999;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: -0.05em;
+    font-weight: 400;
+  }
+
+  :root {
+    /* Semantic aliases referencing @theme variables */
+    --background: var(--color-background);
+    --foreground: var(--color-foreground);
+    --primary: var(--color-primary);
+    --primary-foreground: var(--color-primary-foreground);
+    --primary-hover: var(--color-primary-hover);
+    --secondary: var(--color-secondary);
+    --secondary-foreground: var(--color-secondary-foreground);
+    --muted: var(--color-muted);
+    --muted-foreground: var(--color-muted-foreground);
+    --accent: var(--color-accent);
+    --accent-foreground: var(--color-accent-foreground);
+    --destructive: var(--color-destructive);
+    --destructive-foreground: var(--color-destructive-foreground);
+    --popover: var(--color-popover);
+    --popover-foreground: var(--color-popover-foreground);
+    --input: var(--color-input);
+    --ring: var(--color-ring);
+    --chart-1: var(--color-chart-1);
+    --chart-2: var(--color-chart-2);
+    --chart-3: var(--color-chart-3);
+    --chart-4: var(--color-chart-4);
+    --chart-5: var(--color-chart-5);
+
+    /* Design System Variables */
+    --primary-gradient-start: var(--color-primary-gradient-start);
+    --primary-gradient-end: var(--color-primary-gradient-end);
+    --destructive-gradient-start: var(--color-destructive-gradient-start);
+    --destructive-gradient-end: var(--color-destructive-gradient-end);
+    --success: var(--color-success);
+    --warning: var(--color-warning);
+    --input-background: var(--input);
+    --glass-background: var(--color-glass-background);
+    --glass-border: var(--color-glass-border);
+    --glass-blur: var(--glass-blur);
+    --input-background-focus: var(--primary);
+    --input-text-focus: var(--primary-foreground);
+  }
+}
+
+@layer utilities {
+  .container {
+    @apply mx-auto px-2 sm:px-0 max-w-5xl;
+  }
+
+  /* Breezy wave: approved motion primitive */
+  .void-anim-breezy {
+    animation: void-breezy-wave 320ms cubic-bezier(0.32, 0.72, 0.28, 1) forwards;
+  }
+
+  .void-anim-breezy-loop {
+    animation: void-breezy-wave 1.8s cubic-bezier(0.32, 0.72, 0.28, 1) infinite;
+  }
+
+  .void-anim-breezy-progress {
+    animation: void-breezy-stream 1.8s linear infinite;
+  }
+
+  .void-anim-breezy-stagger > * {
+    animation: void-breezy-wave 1.8s cubic-bezier(0.32, 0.72, 0.28, 1) infinite;
+  }
+
+  .h-screen-dynamic {
+    height: 100dvh;
+  }
+
+  .max-h-screen-dynamic {
+    max-height: 100dvh;
+  }
+
+  .spacing-safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .text-primary {
+    color: var(--primary);
+  }
+
+  .text-secondary {
+    color: var(--secondary-foreground);
+  }
+
+  .text-destructive {
+    color: var(--destructive);
+  }
+
+  .text-success {
+    color: var(--success);
+  }
+
+  .text-warning {
+    color: var(--warning);
+  }
+
+  .text-foreground {
+    color: var(--foreground);
+  }
+
+  .bg-primary {
+    background-color: var(--primary);
+  }
+
+  .text-primary-foreground {
+    color: var(--primary-foreground);
+  }
+
+  .bg-secondary {
+    background-color: var(--secondary);
+  }
+
+  .text-secondary-foreground {
+    color: var(--secondary-foreground);
+  }
+
+  .bg-muted {
+    background-color: var(--muted);
+  }
+
+  .text-muted-foreground {
+    color: var(--muted-foreground);
+  }
+
+  .bg-accent {
+    background-color: var(--accent);
+  }
+
+  .text-accent-foreground {
+    color: var(--accent-foreground);
+  }
+
+  .bg-destructive {
+    background-color: var(--destructive);
+  }
+
+  .bg-success {
+    background-color: var(--success);
+  }
+
+  .bg-warning {
+    background-color: var(--warning);
+  }
+
+  .bg-warning-subtle {
+    background-color: color-mix(in srgb, var(--warning) 10%, transparent);
+  }
+
+  .text-warning-subtle {
+    color: var(--warning);
+    background-color: color-mix(in srgb, var(--warning) 10%, transparent);
+  }
+
+  .border-warning {
+    border-color: var(--warning);
+  }
+
+  .border-warning-subtle {
+    border-color: color-mix(in srgb, var(--warning) 50%, transparent);
+  }
+
+  .text-destructive-foreground {
+    color: var(--destructive-foreground);
+  }
+
+  .border-input {
+    border: 1px solid var(--input);
+  }
+
+  .ring-outline {
+    outline: 2px solid var(--ring);
+    outline-offset: 1px;
+  }
+
+  .ring-ring {
+    outline: 3px solid var(--ring);
+    outline-offset: 1px;
+  }
+
+  .bg-chart-1 {
+    background-color: var(--chart-1);
+  }
+
+  .bg-chart-2 {
+    background-color: var(--chart-2);
+  }
+
+  .bg-chart-3 {
+    background-color: var(--chart-3);
+  }
+
+  .bg-chart-4 {
+    background-color: var(--chart-4);
+  }
+
+  .bg-chart-5 {
+    background-color: var(--chart-5);
+  }
+
+  /* Standardized Emphasis Levels for Differentiation */
+  .bg-emphasis-highest {
+    background-color: var(--color-emphasis-highest);
+  }
+
+  .bg-emphasis-high {
+    background-color: var(--color-emphasis-high);
+  }
+
+  .bg-emphasis-medium {
+    background-color: var(--color-emphasis-medium);
+  }
+
+  .bg-emphasis-low {
+    background-color: var(--color-emphasis-low);
+  }
+
+  .bg-emphasis-lower {
+    background-color: var(--color-emphasis-lower);
+  }
+
+  .bg-emphasis-subtle {
+    background-color: var(--color-emphasis-subtle);
+  }
+
+  .bg-emphasis-minimal {
+    background-color: var(--color-emphasis-minimal);
+  }
+
+  /* b====== VOID Typography System ====== */
+
+  /* Display scales - monospace only */
+  .display-1 {
+    font-size: clamp(2.5rem, 5vw, 6rem);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: -0.05em;
+  }
+
+  .display-2 {
+    font-size: clamp(2rem, 3vw, 3.5rem);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: -0.05em;
+  }
+
+  .heading-1 {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    font-size: clamp(2.25rem, 3vw, 3rem);
+    letter-spacing: -0.05em;
+  }
+
+  .heading-2 {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    font-size: clamp(1.5rem, 2vw, 1.875rem);
+    letter-spacing: -0.05em;
+  }
+
+  .heading-3 {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    font-size: clamp(1.125rem, 1.5vw, 1.25rem);
+    letter-spacing: -0.04em;
+  }
+
+  .heading-4 {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    font-size: clamp(1rem, 1.25vw, 1.25rem);
+    letter-spacing: -0.03em;
+  }
+
+  /* Body Styles */
+  .body-1 {
+    font-size: clamp(1rem, 1.25vw, 1.25rem);
+  }
+
+  .body-2 {
+    font-size: clamp(0.875rem, 1vw, 1rem);
+  }
+
+  .body-3 {
+    font-size: clamp(0.75rem, 0.875vw, 0.875rem);
+  }
+
+  .body-4 {
+    font-size: clamp(0.625rem, 0.75vw, 0.75rem);
+  }
+
+  /* Subheading Styles */
+  .subheading-1 {
+    font-size: clamp(1.25rem, 2vw, 1.75rem);
+  }
+
+  .subheading-2 {
+    font-size: clamp(1.125rem, 1.5vw, 1.5rem);
+  }
+
+  .subheading-3 {
+    font-size: clamp(1rem, 1.25vw, 1.25rem);
+  }
+
+  .subheading-4 {
+    font-size: clamp(0.875rem, 1vw, 1.125rem);
+  }
+
+  /* Ma: Negative Space Utilities */
+  .ma-xl {
+    margin: var(--spacing-ma-xl);
+  }
+
+  .ma-lg {
+    margin: var(--spacing-ma-lg);
+  }
+
+  .ma-md {
+    margin: var(--spacing-ma-md);
+  }
+
+  .ma-sm {
+    margin: var(--spacing-ma-sm);
+  }
+
+  .my-ma-xl {
+    margin-top: var(--spacing-ma-xl);
+    margin-bottom: var(--spacing-ma-xl);
+  }
+
+  .my-ma-lg {
+    margin-top: var(--spacing-ma-lg);
+    margin-bottom: var(--spacing-ma-lg);
+  }
+
+  .my-ma-md {
+    margin-top: var(--spacing-ma-md);
+    margin-bottom: var(--spacing-ma-md);
+  }
+
+  .my-ma-sm {
+    margin-top: var(--spacing-ma-sm);
+    margin-bottom: var(--spacing-ma-sm);
+  }
+
+  /* Wabi-sabi: ASCII Texture - Signal in the Void */
+  .ascii-texture {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ascii-texture::before {
+    content: '+ · ~ - / \\ + · ~ - / \\ + · ~ - / \\ + · ~ - / \\ + · ~ - / \\ + · ~ - / \\ + · ~ - / \\ + · ~ - / \\';
+    position: absolute;
+    inset: 0;
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    opacity: 0.1;
+    pointer-events: none;
+    white-space: pre-wrap;
+    word-break: break-all;
+    line-height: 2;
+    z-index: 0;
+  }
+
+  .ascii-texture > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Deep Void: Technical Ornamentation Utility */
+  .void-metadata {
+    @apply absolute top-1 right-1 font-mono text-[10px] uppercase opacity-10 pointer-events-none tracking-widest;
+  }
+
+  /* VOID: Remove all decorative elements */
+  .btn {
+    @apply px-4 py-2 font-light tracking-wide bg-primary text-primary-foreground gap-2 flex items-center;
+    cursor: crosshair;
+  }
+}

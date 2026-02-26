@@ -1,14 +1,14 @@
 import { Move, ZoomIn, ZoomOut } from "lucide-react";
 import type React from "react";
-import { Button } from "~/components/ui/button";
+import { Button } from "@pontistudios/ui";
 import {
 	Dialog,
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
-} from "~/components/ui/dialog";
-import { Label } from "~/components/ui/label";
-import { Slider } from "~/components/ui/slider";
+} from "@pontistudios/ui";
+import { Label } from "@pontistudios/ui";
+import { Slider } from "@pontistudios/ui";
 
 interface ImageAdjustmentDialogProps {
 	open: boolean;

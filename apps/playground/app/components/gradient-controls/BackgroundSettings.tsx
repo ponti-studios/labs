@@ -1,4 +1,4 @@
-import { Input } from "~/components/ui/input";
+import { Input } from "@pontistudios/ui";
 
 interface BackgroundSettingsProps {
 	backgroundImage: string;

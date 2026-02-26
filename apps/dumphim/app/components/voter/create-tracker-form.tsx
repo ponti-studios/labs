@@ -8,14 +8,14 @@ import {
 	DialogDescription,
 	DialogHeader,
 	DialogTitle,
-} from "~/components/ui/dialog";
+} from "@pontistudios/ui";
 import {
 	Drawer,
 	DrawerContent,
 	DrawerDescription,
 	DrawerHeader,
 	DrawerTitle,
-} from "~/components/ui/drawer";
+} from "@pontistudios/ui";
 import { TRACKER_PHOTO_BUCKET } from "~/lib/consts";
 import { supabase } from "~/lib/supabaseClient";
 import { useIsMobile } from "~/lib/use-is-mobile";

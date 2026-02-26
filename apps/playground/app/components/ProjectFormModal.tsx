@@ -1,7 +1,5 @@
-import { PlusIcon } from "lucide-react";
-import { useState } from "react";
-import { Button } from "~/components/ui/button";
 import {
+	Button,
 	Dialog,
 	DialogContent,
 	DialogDescription,
@@ -9,10 +7,12 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "~/components/ui/dialog";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { Textarea } from "~/components/ui/textarea";
+	Input,
+	Label,
+	Textarea,
+} from "@pontistudios/ui";
+import { PlusIcon } from "lucide-react";
+import { useState } from "react";
 import type { ProjectCreateData } from "~/lib/projects";
 import { useCreateProject } from "~/lib/projects";
 

@@ -1,8 +1,8 @@
 import { MessageSquare, Share2, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { Button } from "~/components/ui/button";
-import { Progress } from "~/components/ui/progress";
+import { Button } from "@pontistudios/ui";
+import { Progress } from "@pontistudios/ui";
 import { AddRatingDialog } from "~/components/voter/add-rating-dialog";
 import { ShareDialog } from "~/components/voter/share-dialog";
 import { supabase } from "~/lib/supabaseClient";

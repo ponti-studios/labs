@@ -16,14 +16,10 @@
 		"db:populate-tfl": "tsx scripts/populate-tfl.ts"
 	},
 	"dependencies": {
+		"@pontistudios/ui": "workspace:*",
 		"@emotion/styled": "^11.14.1",
 		"@google/genai": "^1.15.0",
 		"@googlemaps/js-api-loader": "^2.0.2",
-		"@radix-ui/react-accordion": "^1.2.11",
-		"@radix-ui/react-dialog": "^1.1.14",
-		"@radix-ui/react-popover": "^1.1.14",
-		"@radix-ui/react-slider": "^1.3.5",
-		"@radix-ui/react-slot": "^1.2.3",
 		"@react-router/node": "^7.5.3",
 		"@react-router/serve": "^7.5.3",
 		"@tanstack/react-query": "^5.80.7",

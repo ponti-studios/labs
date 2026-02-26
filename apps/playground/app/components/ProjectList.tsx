@@ -1,5 +1,5 @@
+import { Card, CardContent, CardHeader } from "@pontistudios/ui";
 import { Link } from "react-router";
-import { Card, CardContent, CardHeader } from "~/components/ui/card";
 import type { ProjectItem } from "~/lib/projects";
 import { ProjectFormModal } from "./ProjectFormModal";
 

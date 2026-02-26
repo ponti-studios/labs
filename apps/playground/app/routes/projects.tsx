@@ -1,7 +1,7 @@
+import { Button } from "@pontistudios/ui";
 import { Link } from "react-router";
 import { ProjectFormModal } from "~/components/ProjectFormModal";
 import { ProjectList } from "~/components/ProjectList";
-import { Button } from "~/components/ui/button";
 import { useProjects } from "~/lib/projects";
 
 export default function ProjectsPage() {
