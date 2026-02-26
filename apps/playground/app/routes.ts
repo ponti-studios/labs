@@ -15,6 +15,9 @@ export default [
 	route("/tfl", "routes/tfl.tsx"),
 	route("/infinite-header", "routes/infinite-header/infinite-header.tsx"),
 
+	// Tarot Spread Reader
+	route("/tarot", "routes/tarot.tsx"),
+
 	// COVID-19 routes
 	route("/corona", "routes/corona.tsx"),
 	route("/corona/:countryCode", "routes/corona.$countryCode.tsx"),

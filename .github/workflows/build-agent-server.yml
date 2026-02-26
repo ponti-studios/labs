@@ -1,0 +1,25 @@
+name: Build Agent Server
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: stable
+      - name: Build agent binary
+        run: bun build src/services/agent-server/index.ts --outdir dist/agent
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ponti-agent-server-macos
+          path: dist/agent

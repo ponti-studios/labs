@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 
 const HEAD_SIZE = 100;
 const HEAD_RADIUS = HEAD_SIZE / 2;
@@ -40,16 +40,21 @@ const EyePupil = styled.div`
 
 const EyeFollow = () => {
 	const [eyeRotation, setEyeRotation] = useState(0);
-	const head = document.querySelector(".head");
+	const headRef = useRef<HTMLDivElement | null>(null);
+
+	useEffect(() => {
+		headRef.current = document.querySelector(".head");
+	}, []);
+
 	const headPosition = useMemo(() => {
-		const headRect = head?.getBoundingClientRect();
+		const headRect = headRef.current?.getBoundingClientRect();
 		const headX = headRect?.left as number;
 		const headY = headRect?.top as number;
 		return {
 			top: headX + HEAD_RADIUS,
 			left: headY + HEAD_RADIUS,
 		};
-	}, [head]);
+	}, []);
 
 	const onMouseMove = useCallback(
 		(e: MouseEvent) => {
@@ -72,10 +77,10 @@ const EyeFollow = () => {
 		[headPosition],
 	);
 
-	useEffect(
-		() => document.addEventListener("mousemove", onMouseMove),
-		[onMouseMove],
-	);
+	useEffect(() => {
+		document.addEventListener("mousemove", onMouseMove);
+		return () => document.removeEventListener("mousemove", onMouseMove);
+	}, [onMouseMove]);
 
 	return (
 		<Wrap>

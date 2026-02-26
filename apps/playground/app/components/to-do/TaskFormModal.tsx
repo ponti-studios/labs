@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
-import { Button } from "~/components/ui/button";
 import {
+	Button,
 	Dialog,
 	DialogContent,
 	DialogDescription,
@@ -8,10 +7,11 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "~/components/ui/dialog";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { Select } from "~/components/ui/select";
+	Input,
+	Label,
+	Select,
+} from "@pontistudios/ui";
+import { useEffect, useState } from "react";
 import { useProjects } from "~/lib/projects";
 import type { TodoCreateData, TodoItem } from "~/lib/todos";
 

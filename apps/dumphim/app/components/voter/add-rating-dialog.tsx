@@ -1,14 +1,14 @@
 import { ThumbsDown, ThumbsUp } from "lucide-react";
-import { Button } from "~/components/ui/button";
+import { Button } from "@pontistudios/ui";
 import {
 	Dialog,
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
-} from "~/components/ui/dialog";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { Textarea } from "~/components/ui/textarea";
+} from "@pontistudios/ui";
+import { Input } from "@pontistudios/ui";
+import { Label } from "@pontistudios/ui";
+import { Textarea } from "@pontistudios/ui";
 import { cn } from "~/lib/utils";
 
 interface AddRatingDialogProps {

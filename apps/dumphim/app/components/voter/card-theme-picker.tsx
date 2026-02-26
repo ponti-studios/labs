@@ -1,5 +1,5 @@
-import { Label } from "~/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
+import { Label } from "@pontistudios/ui";
+import { RadioGroup, RadioGroupItem } from "@pontistudios/ui";
 import { cn } from "~/lib/utils";
 
 export interface CardTheme {

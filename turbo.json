@@ -33,13 +33,7 @@
 			"dependsOn": ["^build"],
 			"outputs": ["build/**", "dist/**"]
 		},
-		"format": {
-			"outputs": []
-		},
 		"lint": {
-			"outputs": []
-		},
-		"lint:fix": {
 			"outputs": []
 		},
 		"typecheck": {
@@ -78,6 +72,14 @@
 		"dev": {
 			"cache": false,
 			"persistent": true
+		},
+		"storybook": {
+			"cache": false,
+			"persistent": true
+		},
+		"build-storybook": {
+			"dependsOn": ["^build"],
+			"outputs": ["dist-storybook/**"]
 		},
 		"preview": {
 			"dependsOn": ["build"]

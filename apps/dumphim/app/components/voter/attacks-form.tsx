@@ -1,7 +1,7 @@
-import { Card, CardContent } from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { Slider } from "~/components/ui/slider";
+import { Card, CardContent } from "@pontistudios/ui";
+import { Input } from "@pontistudios/ui";
+import { Label } from "@pontistudios/ui";
+import { Slider } from "@pontistudios/ui";
 import type { Tracker } from "~/db/schema";
 
 interface AttacksFormProps {

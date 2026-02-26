@@ -1,3 +1,11 @@
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+	Button,
+	Card,
+} from "@pontistudios/ui";
 import * as React from "react";
 import { useLoaderData } from "react-router";
 import {
@@ -9,14 +17,6 @@ import {
 	OpacityControls,
 	PositionControls,
 } from "~/components/gradient-controls";
-import {
-	Accordion,
-	AccordionContent,
-	AccordionItem,
-	AccordionTrigger,
-} from "~/components/ui/accordion";
-import { Button } from "~/components/ui/button";
-import { Card } from "~/components/ui/card";
 import {
 	decodeSettings,
 	defaultSettings,

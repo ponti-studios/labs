@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "~/components/ui/button";
-import { Label } from "~/components/ui/label";
+import { Button } from "@pontistudios/ui";
+import { Label } from "@pontistudios/ui";
 import { cn } from "~/lib/utils";
 
 export const PERSONALITY_TYPES = [

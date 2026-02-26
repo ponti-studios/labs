@@ -1,8 +1,7 @@
+import { Badge, Button } from "@pontistudios/ui";
 import { motion } from "framer-motion";
 import { Edit, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { Badge } from "~/components/ui/badge";
-import { Button } from "~/components/ui/button";
 import type { TodoCreateData, TodoItem } from "~/lib/todos";
 import { useUpdateTodo } from "~/lib/todos";
 import { TaskFormModal } from "./TaskFormModal";

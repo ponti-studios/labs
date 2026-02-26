@@ -1,11 +1,11 @@
-import { Button } from "~/components/ui/button";
+import { Button } from "@pontistudios/ui";
 import {
 	Dialog,
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
-} from "~/components/ui/dialog";
-import { Input } from "~/components/ui/input";
+} from "@pontistudios/ui";
+import { Input } from "@pontistudios/ui";
 
 interface ShareDialogProps {
 	open: boolean;

@@ -5,12 +5,12 @@ import type React from "react";
 import { Camera, X, ZoomIn } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-import { Button } from "~/components/ui/button";
-import { Card, CardHeader } from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { Slider } from "~/components/ui/slider";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import { Button } from "@pontistudios/ui";
+import { Card, CardHeader } from "@pontistudios/ui";
+import { Input } from "@pontistudios/ui";
+import { Label } from "@pontistudios/ui";
+import { Slider } from "@pontistudios/ui";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@pontistudios/ui";
 import { AddRatingDialog } from "~/components/voter/add-rating-dialog";
 import { AttacksForm } from "~/components/voter/attacks-form";
 import {
