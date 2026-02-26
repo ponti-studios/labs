@@ -1,44 +1,44 @@
+import { PageHeader, PageSection, Callout, CodeBlock, Stack } from "~/components/void-components";
+
 export default function AIPlaygroundHub() {
 	return (
-		<div className="space-y-8 max-w-4xl">
-			<div className="text-center space-y-2">
-				<h1 className="text-4xl font-bold text-stone-800">AI Playground</h1>
-				<p className="text-stone-600">
-					Test LLM prompts and AI-powered tools
-				</p>
-			</div>
+		<div className="min-h-screen bg-black text-white font-mono">
+			<div className="w-full max-w-6xl mx-auto px-4 py-8 md:py-12 space-y-12">
+				<PageHeader
+					title="AI Playground"
+					description="Test LLM prompts and AI-powered tools"
+				/>
 
-			<div className="bg-white rounded-lg border border-stone-200 p-6 space-y-4">
-				<h3 className="font-semibold text-stone-800">Available Prompts</h3>
-				<div className="space-y-3">
-					<div className="p-4 bg-stone-50 rounded border border-stone-200">
-						<h4 className="font-semibold text-stone-800 mb-2">Real Estate Agent Prompt</h4>
-						<p className="text-sm text-stone-700 mb-3">
-							Mimics an experienced real estate agent. Use this prompt to generate information about specific locations.
-						</p>
-						<code className="text-xs bg-white p-2 rounded block font-mono text-stone-600">
-							"You are an experienced real estate agent who knows a lot about the {'{location}'} area..."
-						</code>
-					</div>
+				<PageSection title="Available Prompts">
+					<Stack spacing="lg">
+						<div className="border border-white/10 bg-white/2 p-6 space-y-3">
+							<h4 className="text-lg font-bold uppercase tracking-widest text-white">Real Estate Agent Prompt</h4>
+							<p className="text-sm text-white/80">
+								Mimics an experienced real estate agent. Use this prompt to generate information about specific locations.
+							</p>
+							<CodeBlock>
+								{'You are an experienced real estate agent who knows a lot about the {location} area...'}
+							</CodeBlock>
+						</div>
 
-					<div className="p-4 bg-stone-50 rounded border border-stone-200">
-						<h4 className="font-semibold text-stone-800 mb-2">Writing Assistant Prompt</h4>
-						<p className="text-sm text-stone-700 mb-3">
-							Edits and improves written content. Corrects grammar, enhances style, and removes bias.
-						</p>
-						<code className="text-xs bg-white p-2 rounded block font-mono text-stone-600">
-							"The user will provide a passage for comprehensive editing..."
-						</code>
-					</div>
-				</div>
-			</div>
+						<div className="border border-white/10 bg-white/2 p-6 space-y-3">
+							<h4 className="text-lg font-bold uppercase tracking-widest text-white">Writing Assistant Prompt</h4>
+							<p className="text-sm text-white/80">
+								Edits and improves written content. Corrects grammar, enhances style, and removes bias.
+							</p>
+							<CodeBlock>
+								{'The user will provide a passage for comprehensive editing...'}
+							</CodeBlock>
+						</div>
+					</Stack>
+				</PageSection>
 
-			<div className="bg-rose-50 border border-rose-200 rounded-lg p-6">
-				<h3 className="font-semibold text-rose-900 mb-2">Coming Soon</h3>
-				<p className="text-sm text-rose-800">
-					Full interactive prompt testing interface with API integration. Try your own prompts against OpenAI,
-					Claude, and other LLM providers.
-				</p>
+				<PageSection title="Coming Soon">
+					<Callout type="warning">
+						Full interactive prompt testing interface with API integration. Try your own prompts against OpenAI,
+						Claude, and other LLM providers.
+					</Callout>
+				</PageSection>
 			</div>
 		</div>
 	);

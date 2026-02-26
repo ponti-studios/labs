@@ -1,80 +1,114 @@
 import { useState } from "react";
-import { binarySearch, binarySearchExample } from "~/lib/algorithms/binary-search";
+import { binarySearch } from "~/lib/algorithms/binary-search";
+import {
+	PageHeader,
+	PageSection,
+	FormSection,
+	InputField,
+	ResultBox,
+	InfoBox,
+	CodeBlock,
+} from "~/components/void-components";
 
 export default function BinarySearchDemo() {
-	const [target, setTarget] = useState(42);
-	const [result, setResult] = useState<number | null>(null);
-	const [executed, setExecuted] = useState(false);
+	const [target, setTarget] = useState("42");
+	const [result, setResult] = useState<number | null | undefined>(undefined);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const handleSearch = () => {
-		const arr = Array.from({ length: 101 }, (_, i) => i);
-		const res = binarySearch(target, arr);
-		setResult(res);
-		setExecuted(true);
+		setIsLoading(true);
+		// Simulate async operation
+		setTimeout(() => {
+			const arr = Array.from({ length: 101 }, (_, i) => i);
+			const res = binarySearch(parseInt(target) || 0, arr);
+			setResult(res);
+			setIsLoading(false);
+		}, 100);
+	};
+
+	const handleReset = () => {
+		setResult(undefined);
+		setTarget("42");
 	};
 
 	return (
-		<div className="space-y-8 max-w-2xl">
-			<div className="space-y-2">
-				<h1 className="text-3xl font-bold text-stone-800">Binary Search</h1>
-				<p className="text-stone-600">
-					An efficient algorithm for finding a target value in a sorted array
-				</p>
-			</div>
+		<div className="min-h-screen bg-black text-white font-mono">
+			<div className="w-full max-w-6xl mx-auto px-4 py-8 md:py-12 space-y-12">
+				<PageHeader
+					title="Binary Search"
+					description="An efficient algorithm for finding a target value in a sorted array"
+				/>
 
-			<div className="bg-white rounded-lg border border-stone-200 p-6 space-y-6">
-				<div>
-					<h3 className="font-semibold text-stone-800 mb-2">How it works</h3>
-					<ol className="text-sm text-stone-700 space-y-2 list-decimal list-inside">
+				<PageSection title="How It Works">
+					<ol className="text-sm text-white/80 space-y-2 list-decimal list-inside font-mono">
 						<li>Start with min = 0, max = array length - 1</li>
 						<li>Calculate guess as the midpoint (min + max) / 2</li>
 						<li>Compare array[guess] with target</li>
 						<li>If equal, found! Otherwise adjust min or max</li>
 						<li>Repeat until found or range is empty</li>
 					</ol>
-				</div>
+				</PageSection>
 
-				<div className="bg-blue-50 p-4 rounded border border-blue-200">
-					<p className="text-sm font-mono text-blue-900">
-						<strong>Time Complexity:</strong> O(log n)
-					</p>
-					<p className="text-sm font-mono text-blue-900">
-						<strong>Space Complexity:</strong> O(1)
-					</p>
-				</div>
-			</div>
+				<PageSection title="Complexity Analysis">
+					<InfoBox>
+						<div className="space-y-1 font-mono text-sm">
+							<p>
+								<strong>TIME COMPLEXITY:</strong> O(LOG N)
+							</p>
+							<p>
+								<strong>SPACE COMPLEXITY:</strong> O(1)
+							</p>
+						</div>
+					</InfoBox>
+				</PageSection>
 
-			<div className="bg-white rounded-lg border border-stone-200 p-6 space-y-4">
-				<h3 className="font-semibold text-stone-800">Interactive Demo</h3>
-				<div className="space-y-3">
-					<div>
-						<label className="block text-sm font-medium text-stone-700 mb-2">
-							Search for (0-100)
-						</label>
-						<input
+				<PageSection title="Interactive Demo">
+					<FormSection onSubmit={handleSearch} isLoading={isLoading}>
+						<InputField
+							label="Search for (0-100)"
 							type="number"
-							min="0"
-							max="100"
 							value={target}
-							onChange={(e) => setTarget(parseInt(e.target.value) || 0)}
-							className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+							onChange={setTarget}
+							placeholder="Enter a number"
 						/>
-					</div>
-					<button
-						onClick={handleSearch}
-						className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-					>
-						Search
-					</button>
-				</div>
+					</FormSection>
 
-				{executed && (
-					<div className={`p-4 rounded ${result !== null ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
-						<p className={`text-sm font-medium ${result !== null ? 'text-green-900' : 'text-red-900'}`}>
-							{result !== null ? `✓ Found at index ${result}` : '✗ Value not found'}
-						</p>
-					</div>
-				)}
+					{result !== undefined && (
+						<ResultBox label="RESULT" state={result !== null ? "success" : "error"}>
+							<div className="font-mono text-sm text-white/80">
+								{result !== null
+									? `[✓] FOUND AT INDEX: ${result}`
+									: "[✗] VALUE NOT FOUND IN ARRAY"}
+							</div>
+						</ResultBox>
+					)}
+
+					{result !== undefined && (
+						<button
+							onClick={handleReset}
+							className="text-xs font-mono uppercase tracking-widest border border-white/20 text-white/80 px-4 py-2 hover:bg-white/5 hover:border-white/40 transition-all duration-100 cursor-crosshair"
+						>
+							Reset
+						</button>
+					)}
+				</PageSection>
+
+				<PageSection title="Algorithm Visualization">
+					<CodeBlock>
+{`ARRAY: [0, 1, 2, ..., 100]
+TARGET: ${target || "?"}
+
+STEP 1: min=0, max=100
+        guess=(0+100)/2=50
+        arr[50]=50 > ${target} → search left half
+
+STEP 2: min=0, max=49
+        guess=(0+49)/2=24
+        arr[24]=24 < ${target} → search right half
+
+STEP 3: min=25, max=49
+        ...continue until found`}</CodeBlock>
+				</PageSection>
 			</div>
 		</div>
 	);
