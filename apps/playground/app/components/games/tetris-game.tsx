@@ -1,14 +1,49 @@
 import React, { useReducer, useEffect, useCallback, useRef, memo } from 'react';
+import type { FC, ReactNode } from 'react';
+
+// Type definitions
+interface Piece {
+  shape: number[][];
+  opacity: number;
+}
+
+type GameCell = null | number | { ghost: true; opacity: number };
+
+interface GameState {
+  grid: GameCell[][];
+  current: Piece | null;
+  next: Piece;
+  held: Piece | null;
+  canHold: boolean;
+  x: number;
+  y: number;
+  score: number;
+  lines: number;
+  level: number;
+  gameOver: boolean;
+  paused: boolean;
+  started: boolean;
+}
+
+type GameAction = 
+  | { type: 'START' }
+  | { type: 'SPAWN' }
+  | { type: 'MOVE'; dx: number; dy: number }
+  | { type: 'ROTATE' }
+  | { type: 'DROP' }
+  | { type: 'LOCK' }
+  | { type: 'HOLD' }
+  | { type: 'PAUSE' };
 
 // Constants
 const COLS = 10;
 const ROWS = 20;
 const TICK_MS = 1000;
 const LOCK_DELAY_MS = 500;
-const POINTS = { 1: 100, 2: 300, 3: 500, 4: 800 };
+const POINTS: Record<number, number> = { 1: 100, 2: 300, 3: 500, 4: 800 };
 
 // Tetrominos - using opacity levels for visual distinction
-const PIECES = {
+const PIECES: Record<string, Piece> = {
   I: { shape: [[1,1,1,1]], opacity: 1.0 },
   O: { shape: [[1,1],[1,1]], opacity: 0.9 },
   T: { shape: [[0,1,0],[1,1,1]], opacity: 0.85 },
@@ -19,15 +54,15 @@ const PIECES = {
 };
 
 // Game logic utilities
-const createEmptyGrid = () => Array(ROWS).fill(null).map(() => Array(COLS).fill(null));
+const createEmptyGrid = (): GameCell[][] => Array(ROWS).fill(null).map(() => Array(COLS).fill(null));
 
-const randomPiece = () => {
+const randomPiece = (): Piece => {
   const keys = Object.keys(PIECES);
-  const key = keys[Math.random() * keys.length | 0];
+  const key = keys[Math.random() * keys.length | 0] as keyof typeof PIECES;
   return { ...PIECES[key], shape: PIECES[key].shape };
 };
 
-const canMove = (grid, piece, x, y) => {
+const canMove = (grid: GameCell[][], piece: Piece, x: number, y: number): boolean => {
   for (let row = 0; row < piece.shape.length; row++) {
     for (let col = 0; col < piece.shape[row].length; col++) {
       if (piece.shape[row][col]) {
@@ -42,8 +77,8 @@ const canMove = (grid, piece, x, y) => {
   return true;
 };
 
-const mergePiece = (grid, piece, x, y) => {
-  const newGrid = grid.map(row => [...row]);
+const mergePiece = (grid: GameCell[][], piece: Piece, x: number, y: number): GameCell[][] => {
+  const newGrid = grid.map((row: GameCell[]) => [...row]);
   
   for (let row = 0; row < piece.shape.length; row++) {
     for (let col = 0; col < piece.shape[row].length; col++) {
@@ -59,12 +94,12 @@ const mergePiece = (grid, piece, x, y) => {
   return newGrid;
 };
 
-const clearLines = (grid) => {
-  const newGrid = [];
+const clearLines = (grid: GameCell[][]): { grid: GameCell[][]; lines: number } => {
+  const newGrid: GameCell[][] = [];
   let cleared = 0;
   
   for (let row = ROWS - 1; row >= 0; row--) {
-    if (grid[row].some(cell => !cell)) {
+    if (grid[row].some((cell: GameCell) => !cell)) {
       newGrid.unshift(grid[row]);
     } else {
       cleared++;
@@ -78,14 +113,14 @@ const clearLines = (grid) => {
   return { grid: newGrid, lines: cleared };
 };
 
-const rotatePiece = (piece) => {
-  const shape = piece.shape[0].map((_, i) =>
-    piece.shape.map(row => row[i]).reverse()
+const rotatePiece = (piece: Piece): Piece => {
+  const shape = piece.shape[0].map((_: number, i: number) =>
+    piece.shape.map((row: number[]) => row[i]).reverse()
   );
   return { ...piece, shape };
 };
 
-const getDropY = (grid, piece, x, y) => {
+const getDropY = (grid: GameCell[][], piece: Piece, x: number, y: number): number => {
   let dropY = y;
   while (canMove(grid, piece, x, dropY + 1)) {
     dropY++;
@@ -93,10 +128,10 @@ const getDropY = (grid, piece, x, y) => {
   return dropY;
 };
 
-const getSpawnX = (piece) => Math.floor((COLS - piece.shape[0].length) / 2);
+const getSpawnX = (piece: Piece): number => Math.floor((COLS - piece.shape[0].length) / 2);
 
 // Initial state
-const initialState = {
+const initialState: GameState = {
   grid: createEmptyGrid(),
   current: null,
   next: randomPiece(),
@@ -113,7 +148,7 @@ const initialState = {
 };
 
 // Reducer
-const reducer = (state, action) => {
+const reducer = (state: GameState, action: GameAction): GameState => {
   switch (action.type) {
     case 'START': {
       const piece = state.next;
@@ -181,7 +216,7 @@ const reducer = (state, action) => {
       
       const newLines = state.lines + lines;
       const level = Math.floor(newLines / 10) + 1;
-      const points = (POINTS[lines] || 0) * state.level;
+      const points = ((POINTS as Record<string, number>)[lines] || 0) * state.level;
       
       return {
         ...state,
@@ -201,7 +236,7 @@ const reducer = (state, action) => {
       
       const newLines = state.lines + lines;
       const level = Math.floor(newLines / 10) + 1;
-      const points = (POINTS[lines] || 0) * state.level;
+      const points = ((POINTS as Record<string, number>)[lines] || 0) * state.level;
       
       return {
         ...state,
@@ -239,7 +274,7 @@ const reducer = (state, action) => {
 };
 
 // Memoized cell component
-const Cell = memo(({ opacity, isGhost }) => (
+const Cell = memo<{ opacity: number | null; isGhost: boolean }>(({ opacity, isGhost }) => (
   <div 
     className="w-6 h-6 border transition-all duration-100"
     style={{ 
@@ -250,14 +285,14 @@ const Cell = memo(({ opacity, isGhost }) => (
 ));
 
 // Memoized preview component
-const Preview = memo(({ piece, title }) => (
+const Preview = memo<{ piece: Piece | null; title: string }>(({ piece, title }) => (
   <div className="border p-3 font-mono" style={{ borderColor: 'rgba(255, 255, 255, 0.1)', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
     <div className="text-xs font-bold mb-2 text-center uppercase tracking-widest" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>{title}</div>
     <div className="flex flex-col items-center">
       {piece ? (
-        piece.shape.map((row, i) => (
+        piece.shape.map((row: number[], i: number) => (
           <div key={i} className="flex">
-            {row.map((cell, j) => (
+            {row.map((cell: number, j: number) => (
               <div 
                 key={j}
                 className="w-5 h-5 border transition-all duration-100"
@@ -279,14 +314,14 @@ const Preview = memo(({ piece, title }) => (
 ));
 
 // Main game component
-const TetrisGame = () => {
+const TetrisGame: FC = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const lockTimer = useRef(null);
-  const dropTimer = useRef(null);
+  const lockTimer = useRef<NodeJS.Timeout | null>(null);
+  const dropTimer = useRef<NodeJS.Timeout | null>(null);
 
   // Calculate display grid (merges current piece and ghost)
   const displayGrid = (() => {
-    const grid = state.grid.map(row => [...row]);
+    const grid = state.grid.map((row: GameCell[]) => [...row]);
     
     if (state.current && !state.gameOver && state.started) {
       // Add ghost piece
@@ -335,7 +370,9 @@ const TetrisGame = () => {
     }, tick);
     
     return () => {
-      clearInterval(dropTimer.current);
+      if (dropTimer.current !== null) {
+        clearInterval(dropTimer.current);
+      }
       if (lockTimer.current) {
         clearTimeout(lockTimer.current);
         lockTimer.current = null;
@@ -352,46 +389,47 @@ const TetrisGame = () => {
   }, [state.current, state.started, state.gameOver]);
 
   // Keyboard controls
-  const handleKeyDown = useCallback((e) => {
-    if (!state.started && e.key === 'Enter') {
+  const handleKeyDown = useCallback((e: Event) => {
+    const keyEvent = e as KeyboardEvent;
+    if (!state.started && keyEvent.key === 'Enter') {
       dispatch({ type: 'START' });
       return;
     }
     
-    if (state.gameOver && (e.key === 'r' || e.key === 'R')) {
+    if (state.gameOver && (keyEvent.key === 'r' || keyEvent.key === 'R')) {
       dispatch({ type: 'START' });
       return;
     }
     
-    switch(e.key) {
+    switch(keyEvent.key) {
       case 'ArrowLeft':
-        e.preventDefault();
+        keyEvent.preventDefault();
         dispatch({ type: 'MOVE', dx: -1, dy: 0 });
         break;
       case 'ArrowRight':
-        e.preventDefault();
+        keyEvent.preventDefault();
         dispatch({ type: 'MOVE', dx: 1, dy: 0 });
         break;
       case 'ArrowDown':
-        e.preventDefault();
+        keyEvent.preventDefault();
         dispatch({ type: 'MOVE', dx: 0, dy: 1 });
         break;
       case 'ArrowUp':
-        e.preventDefault();
+        keyEvent.preventDefault();
         dispatch({ type: 'ROTATE' });
         break;
       case ' ':
-        e.preventDefault();
+        keyEvent.preventDefault();
         dispatch({ type: 'DROP' });
         break;
       case 'c':
       case 'C':
-        e.preventDefault();
+        keyEvent.preventDefault();
         dispatch({ type: 'HOLD' });
         break;
       case 'p':
       case 'P':
-        e.preventDefault();
+        keyEvent.preventDefault();
         dispatch({ type: 'PAUSE' });
         break;
     }
@@ -433,14 +471,18 @@ const TetrisGame = () => {
           
           <div className="border-2 bg-black relative" style={{ borderColor: 'rgba(255, 255, 255, 0.2)' }}>
             <div className="grid" style={{ gridTemplateColumns: `repeat(${COLS}, 1.5rem)` }}>
-              {displayGrid.map((row, i) => 
-                row.map((cell, j) => (
-                  <Cell 
-                    key={`${i}-${j}`}
-                    opacity={typeof cell === 'object' ? cell.opacity : cell}
-                    isGhost={typeof cell === 'object' && !!cell.ghost}
-                  />
-                ))
+              {displayGrid.map((row: GameCell[], i: number) => 
+                row.map((cell: GameCell, j: number) => {
+                  const opacity = typeof cell === 'object' && cell !== null ? cell.opacity : (typeof cell === 'number' ? cell : null);
+                  const isGhost = typeof cell === 'object' && cell !== null && !!cell.ghost;
+                  return (
+                    <Cell 
+                      key={`${i}-${j}`}
+                      opacity={opacity}
+                      isGhost={isGhost}
+                    />
+                  );
+                })
               )}
             </div>
             
