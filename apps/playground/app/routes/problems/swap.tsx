@@ -1,125 +1,119 @@
 import { useState } from "react";
 import { swap, functionalSwap } from "~/lib/problems/swap";
+import {
+	PageHeader,
+	PageSection,
+	FormSection,
+	InputField,
+	ResultBox,
+	CodeBlock,
+	GridSection,
+	DiffDisplay,
+} from "~/components/void-components";
 
 export default function SwapRoute() {
 	const [array, setArray] = useState("1,2,3");
-	const [firstIndex, setFirstIndex] = useState(0);
-	const [secondIndex, setSecondIndex] = useState(2);
-	const [result, setResult] = useState<any>(null);
-	const [executed, setExecuted] = useState(false);
+	const [firstIndex, setFirstIndex] = useState("0");
+	const [secondIndex, setSecondIndex] = useState("2");
+	const [result, setResult] = useState<any>(undefined);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const handleSwap = () => {
-		try {
-			const arr = array.split(",").map(n => {
-				const trimmed = n.trim();
-				return isNaN(parseInt(trimmed)) ? trimmed : parseInt(trimmed);
-			});
-			const res = swap([...arr], firstIndex, secondIndex);
-			setResult(res);
-			setExecuted(true);
-		} catch (error) {
-			setResult("Invalid input");
-			setExecuted(true);
-		}
+		setIsLoading(true);
+		setTimeout(() => {
+			try {
+				const arr = array.split(",").map((n) => {
+					const trimmed = n.trim();
+					return isNaN(parseInt(trimmed)) ? trimmed : parseInt(trimmed);
+				});
+				const res = swap([...arr], parseInt(firstIndex) || 0, parseInt(secondIndex) || 0);
+				setResult(res);
+			} catch (error) {
+				setResult(null);
+			}
+			setIsLoading(false);
+		}, 100);
+	};
+
+	const handleReset = () => {
+		setResult(undefined);
+		setArray("1,2,3");
+		setFirstIndex("0");
+		setSecondIndex("2");
 	};
 
 	return (
-		<div className="space-y-8 max-w-2xl">
-			<div className="space-y-2">
-				<h1 className="text-3xl font-bold text-stone-800">Swap Array Elements</h1>
-				<p className="text-stone-600">
-					Learn different approaches to swapping elements in an array
-				</p>
-			</div>
+		<div className="min-h-screen bg-black text-white font-mono">
+			<div className="w-full max-w-6xl mx-auto px-4 py-8 md:py-12 space-y-12">
+				<PageHeader
+					title="Swap Array Elements"
+					description="Learn different approaches to swapping elements in an array"
+				/>
 
-			<div className="bg-white rounded-lg border border-stone-200 p-6 space-y-4">
-				<div>
-					<h3 className="font-semibold text-stone-800 mb-3">Swap Approaches</h3>
-					<div className="space-y-3">
-						<div className="p-3 bg-red-50 rounded border border-red-200">
-							<p className="text-xs font-bold text-red-900 mb-1">❌ Broken Approach</p>
-							<pre className="text-xs font-mono bg-white p-2 rounded mt-2">
+				<PageSection title="Swap Approaches">
+					<GridSection cols={1} gap="lg">
+						<div className="border border-white/20 bg-white/2 p-6 space-y-3">
+							<h4 className="text-sm font-bold uppercase tracking-widest text-white/80">[1] BROKEN APPROACH</h4>
+							<CodeBlock>{`array[i] = array[j];
+array[j] = array[i]; // WRONG! VALUE ALREADY OVERWRITTEN`}</CodeBlock>
+						</div>
+
+						<div className="border border-white/20 bg-white/3 p-6 space-y-3">
+							<h4 className="text-sm font-bold uppercase tracking-widest text-white/90">[2] STANDARD APPROACH</h4>
+							<CodeBlock>{`const temp = array[i];
 array[i] = array[j];
-array[j] = array[i]; // Wrong! Value already overwritten
-							</pre>
+array[j] = temp;`}</CodeBlock>
 						</div>
 
-						<div className="p-3 bg-green-50 rounded border border-green-200">
-							<p className="text-xs font-bold text-green-900 mb-1">✅ Standard Approach</p>
-							<pre className="text-xs font-mono bg-white p-2 rounded mt-2">
-const temp = array[i];
-array[i] = array[j];
-array[j] = temp;
-							</pre>
+						<div className="border border-white/20 bg-white/2 p-6 space-y-3">
+							<h4 className="text-sm font-bold uppercase tracking-widest text-white/80">[3] FUNCTIONAL APPROACH</h4>
+							<CodeBlock>{`array.reduce((acc, val, idx) => { ... })`}</CodeBlock>
+							<p className="text-xs text-white/60">IMMUTABLE - DOESN'T MODIFY ORIGINAL ARRAY</p>
 						</div>
+					</GridSection>
+				</PageSection>
 
-						<div className="p-3 bg-blue-50 rounded border border-blue-200">
-							<p className="text-xs font-bold text-blue-900 mb-1">✨ Functional Approach</p>
-							<pre className="text-xs font-mono bg-white p-2 rounded mt-2">
-array.reduce((acc, val, idx) =&gt; {"..."}
-							</pre>
-							<p className="text-xs text-blue-800 mt-2">Immutable - doesn't modify original array</p>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div className="bg-white rounded-lg border border-stone-200 p-6 space-y-4">
-				<h3 className="font-semibold text-stone-800">Interactive Swapper</h3>
-				<div className="space-y-3">
-					<div>
-						<label className="block text-sm font-medium text-stone-700 mb-2">
-							Array (comma-separated)
-						</label>
-						<input
-							type="text"
+				<PageSection title="Interactive Swapper">
+					<FormSection onSubmit={handleSwap} isLoading={isLoading}>
+						<InputField
+							label="Array (comma-separated)"
 							value={array}
-							onChange={(e) => setArray(e.target.value)}
-							className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 font-mono text-sm"
+							onChange={setArray}
 							placeholder="1,2,3"
 						/>
-					</div>
-
-					<div className="grid grid-cols-2 gap-3">
-						<div>
-							<label className="block text-sm font-medium text-stone-700 mb-2">
-								First Index
-							</label>
-							<input
+						<div className="grid grid-cols-2 gap-4">
+							<InputField
+								label="First Index"
 								type="number"
 								value={firstIndex}
-								onChange={(e) => setFirstIndex(parseInt(e.target.value) || 0)}
-								className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+								onChange={setFirstIndex}
 							/>
-						</div>
-						<div>
-							<label className="block text-sm font-medium text-stone-700 mb-2">
-								Second Index
-							</label>
-							<input
+							<InputField
+								label="Second Index"
 								type="number"
 								value={secondIndex}
-								onChange={(e) => setSecondIndex(parseInt(e.target.value) || 0)}
-								className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+								onChange={setSecondIndex}
 							/>
 						</div>
-					</div>
+					</FormSection>
 
-					<button
-						onClick={handleSwap}
-						className="w-full px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors font-medium"
-					>
-						Swap
-					</button>
-				</div>
+					{result !== undefined && (
+						<ResultBox label="RESULT" state={result ? "success" : "error"}>
+							<div className="font-mono text-sm text-white/80">
+								[{result?.join(", ")}]
+							</div>
+						</ResultBox>
+					)}
 
-				{executed && (
-					<div className="p-4 bg-green-50 border border-green-200 rounded">
-						<p className="text-sm text-green-900">
-							<strong>Result:</strong> [{result?.join(", ")}]
-						</p>
-					</div>
-				)}
+					{result !== undefined && (
+						<button
+							onClick={handleReset}
+							className="text-xs font-mono uppercase tracking-widest border border-white/20 text-white/80 px-4 py-2 hover:bg-white/5 hover:border-white/40 transition-all duration-100 cursor-crosshair"
+						>
+							Reset
+						</button>
+					)}
+				</PageSection>
 			</div>
 		</div>
 	);

@@ -1,123 +1,124 @@
 import { useState } from "react";
 import { sumOfNumbers, sumUp, sumUpFormula } from "~/lib/problems/sum-array";
+import {
+	PageHeader,
+	PageSection,
+	FormSection,
+	InputField,
+	RangeField,
+	ResultBox,
+	CodeBlock,
+	GridSection,
+	DiffDisplay,
+} from "~/components/void-components";
 
 export default function SumArrayRoute() {
 	const [arrayInput, setArrayInput] = useState("1,2,3,4,5");
 	const [n, setN] = useState(10);
-	const [result, setResult] = useState<any>(null);
-	const [executed, setExecuted] = useState(false);
+	const [result, setResult] = useState<any>(undefined);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const handleSum = () => {
-		try {
-			const arr = arrayInput.split(",").map(x => parseInt(x.trim()));
-			const arraySum = sumOfNumbers(arr);
-			const loopSum = sumUp(n);
-			const formulaSum = sumUpFormula(n);
+		setIsLoading(true);
+		setTimeout(() => {
+			try {
+				const arr = arrayInput.split(",").map((x) => parseInt(x.trim()));
+				const arraySum = sumOfNumbers(arr);
+				const loopSum = sumUp(n);
+				const formulaSum = sumUpFormula(n);
 
-			setResult({
-				arraySum,
-				loopSum,
-				formulaSum,
-				array: arr
-			});
-			setExecuted(true);
-		} catch (error) {
-			setResult({ error: "Invalid input" });
-			setExecuted(true);
-		}
+				setResult({
+					arraySum,
+					loopSum,
+					formulaSum,
+					array: arr,
+				});
+			} catch (error) {
+				setResult({ error: "INVALID INPUT" });
+			}
+			setIsLoading(false);
+		}, 100);
+	};
+
+	const handleReset = () => {
+		setResult(undefined);
+		setArrayInput("1,2,3,4,5");
+		setN(10);
 	};
 
 	return (
-		<div className="space-y-8 max-w-2xl">
-			<div className="space-y-2">
-				<h1 className="text-3xl font-bold text-stone-800">Sum Array</h1>
-				<p className="text-stone-600">
-					Different approaches to summing numbers with performance comparison
-				</p>
-			</div>
+		<div className="min-h-screen bg-black text-white font-mono">
+			<div className="w-full max-w-6xl mx-auto px-4 py-8 md:py-12 space-y-12">
+				<PageHeader
+					title="Sum Array"
+					description="Different approaches to summing numbers with performance comparison"
+				/>
 
-			<div className="bg-white rounded-lg border border-stone-200 p-6 space-y-4">
-				<div>
-					<h3 className="font-semibold text-stone-800 mb-3">Approaches</h3>
-					<div className="space-y-3">
-						<div className="p-3 bg-blue-50 rounded border border-blue-200">
-							<p className="text-xs font-bold text-blue-900 mb-1">Loop Approach</p>
-							<p className="text-xs text-blue-800">Time: O(n) - Linear</p>
-							<pre className="text-xs font-mono bg-white p-2 rounded mt-2 overflow-x-auto">
-for (let i of numbers) {"{"}
-  result += i
-{"}"}
-							</pre>
+				<PageSection title="Approaches">
+					<GridSection cols={1} gap="lg">
+						<div className="border border-white/20 bg-white/2 p-6 space-y-3">
+							<h4 className="text-sm font-bold uppercase tracking-widest text-white/80">[1] Loop Approach</h4>
+							<p className="text-xs text-white/70">TIME: O(N) - LINEAR</p>
+							<CodeBlock>{`FOR EACH NUMBER IN ARRAY:
+  RESULT += NUMBER`}</CodeBlock>
 						</div>
 
-						<div className="p-3 bg-yellow-50 rounded border border-yellow-200">
-							<p className="text-xs font-bold text-yellow-900 mb-1">Formula Approach</p>
-							<p className="text-xs text-yellow-800">Time: O(1) - Constant</p>
-							<pre className="text-xs font-mono bg-white p-2 rounded mt-2">
-sum = n * (n + 1) / 2
-							</pre>
-							<p className="text-xs text-yellow-800 mt-1">Much faster for large numbers!</p>
+						<div className="border border-white/20 bg-white/3 p-6 space-y-3">
+							<h4 className="text-sm font-bold uppercase tracking-widest text-white/90">[2] Formula Approach</h4>
+							<p className="text-xs text-white/70">TIME: O(1) - CONSTANT</p>
+							<CodeBlock>SUM = N * (N + 1) / 2</CodeBlock>
+							<p className="text-xs text-white/60 pt-2">MUCH FASTER FOR LARGE NUMBERS!</p>
 						</div>
-					</div>
-				</div>
-			</div>
+					</GridSection>
+				</PageSection>
 
-			<div className="bg-white rounded-lg border border-stone-200 p-6 space-y-4">
-				<h3 className="font-semibold text-stone-800">Calculator</h3>
-				<div className="space-y-3">
-					<div>
-						<label className="block text-sm font-medium text-stone-700 mb-2">
-							Array to Sum (comma-separated)
-						</label>
-						<input
-							type="text"
+				<PageSection title="Calculator">
+					<FormSection onSubmit={handleSum} isLoading={isLoading}>
+						<InputField
+							label="Array to Sum (comma-separated)"
 							value={arrayInput}
-							onChange={(e) => setArrayInput(e.target.value)}
-							className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 font-mono text-sm"
+							onChange={setArrayInput}
 							placeholder="1,2,3,4,5"
 						/>
-					</div>
+						<RangeField label="Sum 1 to N" value={n} onChange={setN} min={1} max={100} />
+					</FormSection>
 
-					<div>
-						<label className="block text-sm font-medium text-stone-700 mb-2">
-							Sum 1 to N
-						</label>
-						<input
-							type="number"
-							value={n}
-							onChange={(e) => setN(parseInt(e.target.value) || 0)}
-							className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-						/>
-					</div>
+					{result && !result.error && (
+						<div className="space-y-4">
+							<ResultBox label="Array Sum" state="success">
+								<div className="font-mono text-sm text-white/80">
+									SUM OF [{result.array.join(", ")}] = {result.arraySum}
+								</div>
+							</ResultBox>
 
-					<button
-						onClick={handleSum}
-						className="w-full px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors font-medium"
-					>
-						Calculate
-					</button>
-				</div>
-
-				{executed && result && !result.error && (
-					<div className="space-y-3">
-						<div className="p-4 bg-blue-50 border border-blue-200 rounded">
-							<p className="text-sm text-blue-900">
-								<strong>Sum of Array [{result.array.join(", ")}]:</strong> {result.arraySum}
-							</p>
-						</div>
-
-						<div className="grid grid-cols-2 gap-3">
-							<div className="p-3 bg-yellow-50 border border-yellow-200 rounded">
-								<p className="text-xs text-yellow-800">Sum 1 to {n}</p>
-								<p className="text-lg font-bold text-yellow-900">{result.loopSum}</p>
-							</div>
-							<div className="p-3 bg-green-50 border border-green-200 rounded">
-								<p className="text-xs text-green-800">Formula Result</p>
-								<p className="text-lg font-bold text-green-900">{result.formulaSum}</p>
+							<div className="grid grid-cols-2 gap-4">
+								<div className="border border-white/20 bg-white/3 p-4 space-y-2">
+									<p className="text-xs text-white/70 font-mono uppercase tracking-widest">LOOP METHOD</p>
+									<p className="text-2xl font-bold text-white">{result.loopSum}</p>
+								</div>
+								<div className="border border-white/20 bg-white/5 p-4 space-y-2">
+									<p className="text-xs text-white/80 font-mono uppercase tracking-widest">FORMULA RESULT</p>
+									<p className="text-2xl font-bold text-white">{result.formulaSum}</p>
+								</div>
 							</div>
 						</div>
-					</div>
-				)}
+					)}
+
+					{result?.error && (
+						<ResultBox label="ERROR" state="error">
+							<div className="font-mono text-sm text-white/80">{result.error}</div>
+						</ResultBox>
+					)}
+
+					{result && (
+						<button
+							onClick={handleReset}
+							className="text-xs font-mono uppercase tracking-widest border border-white/20 text-white/80 px-4 py-2 hover:bg-white/5 hover:border-white/40 transition-all duration-100 cursor-crosshair"
+						>
+							Reset
+						</button>
+					)}
+				</PageSection>
 			</div>
 		</div>
 	);
