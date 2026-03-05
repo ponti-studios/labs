@@ -10,26 +10,26 @@
  * Swap items in array
  */
 function swap(array: any[], firstIndex: number, secondIndex: number) {
-	const temp = array[firstIndex];
-	array[firstIndex] = array[secondIndex];
-	array[secondIndex] = temp;
+  const temp = array[firstIndex];
+  array[firstIndex] = array[secondIndex];
+  array[secondIndex] = temp;
 }
 
 /**
  * Find the index of the minimum element in an array
  */
 function indexOfMinimum(array: any[], startIndex: number): number {
-	let minValue = array[startIndex];
-	let minIndex = startIndex;
+  let minValue = array[startIndex];
+  let minIndex = startIndex;
 
-	for (let i = minIndex + 1; i < array.length; i++) {
-		if (array[i] < minValue) {
-			minIndex = i;
-			minValue = array[i];
-		}
-	}
+  for (let i = minIndex + 1; i < array.length; i++) {
+    if (array[i] < minValue) {
+      minIndex = i;
+      minValue = array[i];
+    }
+  }
 
-	return minIndex;
+  return minIndex;
 }
 
 /**
@@ -37,10 +37,10 @@ function indexOfMinimum(array: any[], startIndex: number): number {
  * Time Complexity: O(n²)
  */
 export function selectionSort(array: any[]): any[] {
-	const result = [...array];
-	for (let i = 0; i < result.length; i++) {
-		const minimum = indexOfMinimum(result, i);
-		swap(result, i, minimum);
-	}
-	return result;
+  const result = [...array];
+  for (let i = 0; i < result.length; i++) {
+    const minimum = indexOfMinimum(result, i);
+    swap(result, i, minimum);
+  }
+  return result;
 }

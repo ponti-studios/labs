@@ -6,6 +6,8 @@
 	"scripts": {
 		"build": "react-router build",
 		"dev": "react-router dev",
+		"lint": "oxlint app --fix",
+		"format": "oxfmt app --write",
 		"start": "react-router-serve ./build/server/index.js",
 		"typecheck": "react-router typegen && tsc",
 		"db:generate": "drizzle-kit generate",

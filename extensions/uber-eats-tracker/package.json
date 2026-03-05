@@ -8,6 +8,8 @@
 		"dev:vite": "vite",
 		"watch:build": "tsc -b --watch && vite build --watch",
 		"build": "tsc -b && vite build",
+		"lint": "oxlint src --fix",
+		"format": "oxfmt src --write",
 		"preview": "vite preview"
 	},
 	"dependencies": {

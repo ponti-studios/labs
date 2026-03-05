@@ -5,8 +5,8 @@
 	"scripts": {
 		"build": "react-router build",
 		"dev": "react-router dev",
-		"lint": "biome check app --write",
-		"format": "biome format app --write",
+		"lint": "oxlint app --fix",
+		"format": "oxfmt app --write",
 		"start": "react-router-serve ./build/server/index.js --port=${PORT:-3000}",
 		"test": "vitest run --environment jsdom --coverage --reporter verbose --passWithNoTests",
 		"typecheck": "react-router typegen && tsc",

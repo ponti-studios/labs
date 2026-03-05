@@ -1,39 +1,39 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 
 export function useMediaQuery(query: string): boolean {
-  const [value, setValue] = React.useState(false)
+  const [value, setValue] = React.useState(false);
 
   React.useEffect(() => {
     function onChange(event: MediaQueryListEvent) {
-      setValue(event.matches)
+      setValue(event.matches);
     }
 
-    const result = matchMedia(query)
+    const result = matchMedia(query);
     // Fallback for browsers that don't support addEventListener on MediaQueryList
     if (result.media !== "not all") {
       try {
-        result.addEventListener("change", onChange)
+        result.addEventListener("change", onChange);
       } catch {
-        result.addListener(onChange)
+        result.addListener(onChange);
       }
     }
 
-    setValue(result.matches)
+    setValue(result.matches);
 
     return () => {
       try {
-        result.removeEventListener("change", onChange)
+        result.removeEventListener("change", onChange);
       } catch {
-        result.removeListener(onChange)
+        result.removeListener(onChange);
       }
-    }
-  }, [query])
+    };
+  }, [query]);
 
-  return value
+  return value;
 }
 
 export function useIsMobile(threshold = 768): boolean {
-  return useMediaQuery(`(max-width: ${threshold - 1}px)`)
+  return useMediaQuery(`(max-width: ${threshold - 1}px)`);
 }

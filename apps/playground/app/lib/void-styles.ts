@@ -62,22 +62,15 @@ export const componentStyles = {
     "transition-all duration-100 cursor-crosshair",
 
   // Result/info box
-  resultBox:
-    "border border-white/10 bg-white/2 p-6 font-mono text-sm " +
-    "space-y-3",
+  resultBox: "border border-white/10 bg-white/2 p-6 font-mono text-sm " + "space-y-3",
 
-  resultBoxSuccess:
-    "border border-white/20 bg-white/5 p-6 font-mono text-sm " +
-    "space-y-3",
+  resultBoxSuccess: "border border-white/20 bg-white/5 p-6 font-mono text-sm " + "space-y-3",
 
   // Information boxes
-  infoBox:
-    "border-l-2 border-white/30 bg-white/2 px-4 py-3 font-mono text-xs " +
-    "space-y-2",
+  infoBox: "border-l-2 border-white/30 bg-white/2 px-4 py-3 font-mono text-xs " + "space-y-2",
 
   // Range input (slider)
-  range:
-    "w-full accent-white cursor-crosshair",
+  range: "w-full accent-white cursor-crosshair",
 
   // Select dropdown
   select:
