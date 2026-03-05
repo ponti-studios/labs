@@ -29,71 +29,66 @@ export const CYBER_SKULLS = `
 `;
 
 export const MATRIX_EFFECT = [
-	"Wake up, Neo...",
-	"The Matrix has you...",
-	"Follow the white rabbit.",
-	"There is no spoon.",
-	"Welcome to the real world.",
+  "Wake up, Neo...",
+  "The Matrix has you...",
+  "Follow the white rabbit.",
+  "There is no spoon.",
+  "Welcome to the real world.",
 ];
 
 export const BOOT_SEQUENCE = [
-	"CHUCK-DOS Version 2.025 (C) 1995-2025 Chuck Industries",
-	"640K RAM Available",
-	"Extended Memory: 32768K",
-	"",
-	"AutoExec.bat executing...",
-	"Loading CONFIG.SYS...",
-	"Chuck's Code Laboratory initialized.",
-	"",
-	"Type 'HELP' for available commands.",
-	"",
+  "CHUCK-DOS Version 2.025 (C) 1995-2025 Chuck Industries",
+  "640K RAM Available",
+  "Extended Memory: 32768K",
+  "",
+  "AutoExec.bat executing...",
+  "Loading CONFIG.SYS...",
+  "Chuck's Code Laboratory initialized.",
+  "",
+  "Type 'HELP' for available commands.",
+  "",
 ];
 
 export const CAT_ASCII = ["     /\\_/\\  ", "    ( o.o ) ", "     > ^ <  "];
 
 export const HACK_SEQUENCE = [
-	"Bypassing firewall... [████████████] 100%",
-	"Cracking encryption... [████████████] 100%",
-	"Accessing mainframe... [████████████] 100%",
-	"Downloading data... [████████████] 100%",
-	"Covering tracks... [████████████] 100%",
-	"HACK SUCCESSFUL - ACCESS GRANTED",
+  "Bypassing firewall... [████████████] 100%",
+  "Cracking encryption... [████████████] 100%",
+  "Accessing mainframe... [████████████] 100%",
+  "Downloading data... [████████████] 100%",
+  "Covering tracks... [████████████] 100%",
+  "HACK SUCCESSFUL - ACCESS GRANTED",
 ];
 
 export const HELP_COMMANDS = [
-	{ command: "HELP", description: "Show this help message" },
-	{ command: "DIR", description: "List available projects" },
-	{ command: "CLS", description: "Clear screen" },
-	{ command: "VER", description: "Show system version" },
-	{ command: "TIME", description: "Show current time" },
-	{ command: "GRADIENT", description: "Launch gradient border lab" },
-	{ command: "GLASS", description: "Launch SVG glass effects" },
-	{ command: "MATRIX", description: "Enter the Matrix" },
-	{ command: "HACK", description: "Initiate cyber sequence" },
-	{ command: "NEON", description: "Toggle neon mode" },
-	{ command: "SKULL", description: "Display cyber skulls" },
-	{ command: "MEOW", description: "Summon bouncing cyber cats" },
-	{ command: "ABOUT", description: "About this system" },
-	{ command: "EXIT", description: "Shut down system" },
+  { command: "HELP", description: "Show this help message" },
+  { command: "DIR", description: "List available projects" },
+  { command: "CLS", description: "Clear screen" },
+  { command: "VER", description: "Show system version" },
+  { command: "TIME", description: "Show current time" },
+  { command: "GRADIENT", description: "Launch gradient border lab" },
+  { command: "GLASS", description: "Launch SVG glass effects" },
+  { command: "MATRIX", description: "Enter the Matrix" },
+  { command: "HACK", description: "Initiate cyber sequence" },
+  { command: "NEON", description: "Toggle neon mode" },
+  { command: "SKULL", description: "Display cyber skulls" },
+  { command: "MEOW", description: "Summon bouncing cyber cats" },
+  { command: "ABOUT", description: "About this system" },
+  { command: "EXIT", description: "Shut down system" },
 ];
 
-export const TECH_STACK = [
-	"• React Router v7",
-	"• TypeScript",
-	"• Vite",
-	"• Tailwind CSS",
-];
+export const TECH_STACK = ["• React Router v7", "• TypeScript", "• Vite", "• Tailwind CSS"];
 
 export const DIRECTORY_LISTING = [
-	"Directory of C:\\CHUCK\\PROJECTS",
-	"",
-	"GRADIENT.EXE    1,024 bytes  Gradient Border Laboratory",
-	"GLASS.EXE       2,048 bytes  SVG Glass Effects Studio",
-	"TERMINAL.EXE    4,096 bytes  This Terminal Interface",
-	"",
-	"        3 File(s)     7,168 bytes",
-	"        0 Dir(s)    999,999 bytes free",
-	"",
+  "Directory of C:\\CHUCK\\PROJECTS",
+  "",
+  "GRADIENT.EXE    1,024 bytes  Gradient Border Laboratory",
+  "GLASS.EXE       2,048 bytes  SVG Glass Effects Studio",
+  "TERMINAL.EXE    4,096 bytes  This Terminal Interface",
+  "",
+  "        3 File(s)     7,168 bytes",
+  "        0 Dir(s)    999,999 bytes free",
+  "",
 ];
 
 export const CAT_ANIMATION_STYLES = `

@@ -17,30 +17,30 @@
  * @returns {Number | null} - Index of target or null if not found
  */
 export function binarySearch(n: number, list: number[]): number | null {
-	let min = 0;
-	let max = list.length - 1;
-	let count = 0;
+  let min = 0;
+  let max = list.length - 1;
+  let count = 0;
 
-	while (max >= min) {
-		count++;
-		const guess = Math.floor((min + max) / 2);
+  while (max >= min) {
+    count++;
+    const guess = Math.floor((min + max) / 2);
 
-		if (list[guess] === n) return guess;
+    if (list[guess] === n) return guess;
 
-		if (list[guess] < n) {
-			min = guess + 1;
-		} else if (list[guess] > n) {
-			max = guess - 1;
-		}
-	}
+    if (list[guess] < n) {
+      min = guess + 1;
+    } else if (list[guess] > n) {
+      max = guess - 1;
+    }
+  }
 
-	return null;
+  return null;
 }
 
 // Example usage
 export const binarySearchExample = () => {
-	const arr = Array.from({ length: 101 }, (_, i) => i);
-	const target = Math.floor(Math.random() * 100);
-	const result = binarySearch(target, arr);
-	return { target, result, found: result !== null };
+  const arr = Array.from({ length: 101 }, (_, i) => i);
+  const target = Math.floor(Math.random() * 100);
+  const result = binarySearch(target, arr);
+  return { target, result, found: result !== null };
 };

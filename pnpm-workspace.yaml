@@ -1,4 +1,4 @@
 packages:
   - 'apps/*'
   - 'extensions/*'
-  - 'packages/*'
+  # 'packages/*'  # unused in this repo, removed to speed up installs

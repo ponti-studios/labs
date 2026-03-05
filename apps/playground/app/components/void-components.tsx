@@ -4,7 +4,16 @@
  */
 
 import React, { ReactNode } from "react";
-import { cn, textStyles, layoutStyles, componentStyles, stateStyles, buttonClass, inputClass, cardClass } from "./void-styles";
+import {
+  cn,
+  textStyles,
+  layoutStyles,
+  componentStyles,
+  stateStyles,
+  buttonClass,
+  inputClass,
+  cardClass,
+} from "./void-styles";
 
 /**
  * PageHeader - Consistent heading + description for all pages
@@ -180,7 +189,7 @@ export const CodeBlock: React.FC<{
     className={cn(
       "bg-white/2 border border-white/10 p-4 overflow-x-auto",
       "text-xs md:text-sm font-mono whitespace-pre-wrap break-words",
-      className
+      className,
     )}
   >
     <code>{children}</code>
@@ -302,7 +311,13 @@ export const Badge: React.FC<{
   };
 
   return (
-    <span className={cn("inline-block px-3 py-1 text-xs font-mono uppercase tracking-widest", styles[variant], className)}>
+    <span
+      className={cn(
+        "inline-block px-3 py-1 text-xs font-mono uppercase tracking-widest",
+        styles[variant],
+        className,
+      )}
+    >
       {children}
     </span>
   );

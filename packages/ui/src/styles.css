@@ -28,7 +28,7 @@ body {
 @theme {
   /* VOID Typography: Monospace Only - The Terminal Aesthetic */
   --font-mono:
-    'Geist Mono', ui-monospace, 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', monospace;
+    "Geist Mono", ui-monospace, "SFMono-Regular", "Menlo", "Monaco", "Consolas", monospace;
 
   /* ====== VOID Color Palette: The Monochrome Mandate ====== */
 
@@ -153,7 +153,7 @@ body {
 
   .void-invert:hover,
   .void-invert:focus-visible,
-  .void-invert[data-state='open'],
+  .void-invert[data-state="open"],
   .void-invert:active {
     background-color: var(--color-foreground) !important;
     color: var(--color-background) !important;
@@ -551,7 +551,7 @@ body {
   }
 
   .ascii-texture::before {
-    content: '+ · ~ - / \\ + · ~ - / \\ + · ~ - / \\ + · ~ - / \\ + · ~ - / \\ + · ~ - / \\ + · ~ - / \\ + · ~ - / \\';
+    content: "+ · ~ - / \\ + · ~ - / \\ + · ~ - / \\ + · ~ - / \\ + · ~ - / \\ + · ~ - / \\ + · ~ - / \\ + · ~ - / \\";
     position: absolute;
     inset: 0;
     font-family: var(--font-mono);

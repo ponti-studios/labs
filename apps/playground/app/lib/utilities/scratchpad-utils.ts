@@ -6,18 +6,16 @@ import type { Runnable } from "langchain/runnables";
 import type { AIMessageChunk } from "langchain/schema";
 
 export function createChainFromModel(
-	model:
-		| ChatOpenAI
-		| Runnable<BaseLanguageModelInput, AIMessageChunk, ChatOpenAICallOptions>,
-	prompt: PromptTemplate,
-	parser: HttpResponseOutputParser,
+  model: ChatOpenAI | Runnable<BaseLanguageModelInput, AIMessageChunk, ChatOpenAICallOptions>,
+  prompt: PromptTemplate,
+  parser: HttpResponseOutputParser,
 ) {
-	return prompt.pipe(model).pipe(parser);
+  return prompt.pipe(model).pipe(parser);
 }
 
 export const DEFAULT_MODEL_OPTIONS = {
-	apiKey: process.env.OPENAI_API_KEY!,
-	model: "gpt-3.5-turbo",
-	// model: "gpt-4o",
-	temperature: 0.8,
+  apiKey: process.env.OPENAI_API_KEY!,
+  model: "gpt-3.5-turbo",
+  // model: "gpt-4o",
+  temperature: 0.8,
 };

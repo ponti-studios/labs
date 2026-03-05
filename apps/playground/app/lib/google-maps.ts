@@ -2,32 +2,32 @@ import { importLibrary, setOptions } from "@googlemaps/js-api-loader";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export interface Location {
-	lat: number;
-	lng: number;
-	address: string;
+  lat: number;
+  lng: number;
+  address: string;
 }
 
 export interface DirectionsResult {
-	summary: {
-		from: string;
-		to: string;
-		distance: string;
-		duration: string;
-	};
-	steps: Array<{
-		instruction: string;
-		distance: string;
-	}>;
+  summary: {
+    from: string;
+    to: string;
+    distance: string;
+    duration: string;
+  };
+  steps: Array<{
+    instruction: string;
+    distance: string;
+  }>;
 }
 
 export const cleanHtmlFromInstructions = (htmlString: string): string => {
-	const tempDiv = document.createElement("div");
-	tempDiv.innerHTML = htmlString;
+  const tempDiv = document.createElement("div");
+  tempDiv.innerHTML = htmlString;
 
-	// Get text content (removes all HTML tags and decodes HTML entities)
-	const text = tempDiv.textContent || tempDiv.innerText || "";
+  // Get text content (removes all HTML tags and decodes HTML entities)
+  const text = tempDiv.textContent || tempDiv.innerText || "";
 
-	return text;
+  return text;
 };
 
 // Track if options have been set and libraries loaded
@@ -35,137 +35,128 @@ let optionsSet = false;
 let loadingPromise: Promise<void> | null = null;
 
 const ensureGoogleMapsLoaded = async (apiKey: string): Promise<void> => {
-	if (!optionsSet) {
-		setOptions({
-			key: apiKey,
-			v: "weekly",
-			libraries: ["geometry", "places"],
-		});
-		optionsSet = true;
-	}
+  if (!optionsSet) {
+    setOptions({
+      key: apiKey,
+      v: "weekly",
+      libraries: ["geometry", "places"],
+    });
+    optionsSet = true;
+  }
 
-	if (!loadingPromise) {
-		// Load the maps library which includes Geocoder and DirectionsService
-		loadingPromise = importLibrary("maps").then(() => {
-			// Also ensure geometry and places are loaded
-			return Promise.all([
-				importLibrary("geometry"),
-				importLibrary("places"),
-			]).then(() => undefined);
-		});
-	}
+  if (!loadingPromise) {
+    // Load the maps library which includes Geocoder and DirectionsService
+    loadingPromise = importLibrary("maps").then(() => {
+      // Also ensure geometry and places are loaded
+      return Promise.all([importLibrary("geometry"), importLibrary("places")]).then(
+        () => undefined,
+      );
+    });
+  }
 
-	return loadingPromise;
+  return loadingPromise;
 };
 
-export const geocodeLocation = async (
-	address: string,
-	apiKey: string,
-): Promise<Location[]> => {
-	await ensureGoogleMapsLoaded(apiKey);
+export const geocodeLocation = async (address: string, apiKey: string): Promise<Location[]> => {
+  await ensureGoogleMapsLoaded(apiKey);
 
-	return new Promise((resolve, reject) => {
-		const geocoder = new google.maps.Geocoder();
-		geocoder.geocode({ address }, (results, status) => {
-			if (status === "OK" && results) {
-				const locations: Location[] = results.map((result) => {
-					if (!result.geometry?.location) {
-						throw new Error("Invalid location data");
-					}
-					return {
-						lat: result.geometry.location.lat(),
-						lng: result.geometry.location.lng(),
-						address: result.formatted_address || "Unknown location",
-					};
-				});
-				resolve(locations);
-			} else {
-				reject(new Error(`Geocoding failed: ${status}`));
-			}
-		});
-	});
+  return new Promise((resolve, reject) => {
+    const geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ address }, (results, status) => {
+      if (status === "OK" && results) {
+        const locations: Location[] = results.map((result) => {
+          if (!result.geometry?.location) {
+            throw new Error("Invalid location data");
+          }
+          return {
+            lat: result.geometry.location.lat(),
+            lng: result.geometry.location.lng(),
+            address: result.formatted_address || "Unknown location",
+          };
+        });
+        resolve(locations);
+      } else {
+        reject(new Error(`Geocoding failed: ${status}`));
+      }
+    });
+  });
 };
 
 export const getDirections = async (
-	origin: string,
-	destination: string,
-	apiKey: string,
+  origin: string,
+  destination: string,
+  apiKey: string,
 ): Promise<DirectionsResult> => {
-	await ensureGoogleMapsLoaded(apiKey);
+  await ensureGoogleMapsLoaded(apiKey);
 
-	return new Promise((resolve, reject) => {
-		const directionsService = new google.maps.DirectionsService();
-		directionsService.route(
-			{
-				origin,
-				destination,
-				travelMode: google.maps.TravelMode.DRIVING,
-			},
-			(result, status) => {
-				if (status === "OK" && result) {
-					const route = result.routes[0];
-					const leg = route.legs[0];
+  return new Promise((resolve, reject) => {
+    const directionsService = new google.maps.DirectionsService();
+    directionsService.route(
+      {
+        origin,
+        destination,
+        travelMode: google.maps.TravelMode.DRIVING,
+      },
+      (result, status) => {
+        if (status === "OK" && result) {
+          const route = result.routes[0];
+          const leg = route.legs[0];
 
-					const directionsResult: DirectionsResult = {
-						summary: {
-							from: leg.start_address,
-							to: leg.end_address,
-							distance: leg.distance?.text || "Unknown",
-							duration: leg.duration?.text || "Unknown",
-						},
-						steps: leg.steps.map((step) => ({
-							instruction: cleanHtmlFromInstructions(step.instructions),
-							distance: step.distance?.text || "",
-						})),
-					};
-					resolve(directionsResult);
-				} else {
-					reject(new Error(`Directions failed: ${status}`));
-				}
-			},
-		);
-	});
+          const directionsResult: DirectionsResult = {
+            summary: {
+              from: leg.start_address,
+              to: leg.end_address,
+              distance: leg.distance?.text || "Unknown",
+              duration: leg.duration?.text || "Unknown",
+            },
+            steps: leg.steps.map((step) => ({
+              instruction: cleanHtmlFromInstructions(step.instructions),
+              distance: step.distance?.text || "",
+            })),
+          };
+          resolve(directionsResult);
+        } else {
+          reject(new Error(`Directions failed: ${status}`));
+        }
+      },
+    );
+  });
 };
 
 export const useGeocodeLocation = (address: string | null, apiKey: string) => {
-	return useQuery({
-		queryKey: ["geocode", address],
-		queryFn: () => {
-			if (!address) {
-				throw new Error("Address is required");
-			}
-			return geocodeLocation(address, apiKey);
-		},
-		enabled: !!address && address.trim().length > 0 && !!apiKey,
-		staleTime: 5 * 60 * 1000,
-		gcTime: 10 * 60 * 1000,
-		retry: 2,
-		retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-	});
+  return useQuery({
+    queryKey: ["geocode", address],
+    queryFn: () => {
+      if (!address) {
+        throw new Error("Address is required");
+      }
+      return geocodeLocation(address, apiKey);
+    },
+    enabled: !!address && address.trim().length > 0 && !!apiKey,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+  });
 };
 
 export const useGetDirections = (apiKey: string) => {
-	return useMutation({
-		mutationFn: ({
-			origin,
-			destination,
-		}: {
-			origin: string;
-			destination: string;
-		}) => getDirections(origin, destination, apiKey),
-		retry: 2,
-		retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-	});
+  return useMutation({
+    mutationFn: ({ origin, destination }: { origin: string; destination: string }) =>
+      getDirections(origin, destination, apiKey),
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+  });
 };
 
 // Custom hook for managing Google Maps queries
 export const useGoogleMapsQueries = () => {
-	const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
-	const clearAllQueries = () => {
-		queryClient.removeQueries({ queryKey: ["geocode"] });
-		queryClient.removeQueries({ queryKey: ["directions"] });
-	};
+  const clearAllQueries = () => {
+    queryClient.removeQueries({ queryKey: ["geocode"] });
+    queryClient.removeQueries({ queryKey: ["directions"] });
+  };
 
-	return { clearAllQueries };
+  return { clearAllQueries };
 };

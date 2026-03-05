@@ -6,41 +6,41 @@ import { covidData, embeddings, projects, tflCameras, todos } from "./schema";
 const DATABASE_URL = process.env.DATABASE_URL || process.env.VITE_DATABASE_URL;
 
 if (!DATABASE_URL) {
-	throw new Error("DATABASE_URL environment variable is required");
+  throw new Error("DATABASE_URL environment variable is required");
 }
 
 let _db: ReturnType<typeof drizzle> | null = null;
 let _client: postgres.Sql | null = null;
 
 function initializeDb() {
-	if (_db) return _db;
+  if (_db) return _db;
 
-	if (!DATABASE_URL) {
-		throw new Error("DATABASE_URL is not defined");
-	}
+  if (!DATABASE_URL) {
+    throw new Error("DATABASE_URL is not defined");
+  }
 
-	_client = postgres(DATABASE_URL);
-	_db = drizzle(_client, {
-		schema: { tflCameras, covidData, todos, projects, embeddings },
-	});
-	return _db;
+  _client = postgres(DATABASE_URL);
+  _db = drizzle(_client, {
+    schema: { tflCameras, covidData, todos, projects, embeddings },
+  });
+  return _db;
 }
 
 // Getter that initializes the database connection lazily
 export const db = new Proxy({} as ReturnType<typeof drizzle>, {
-	get(_target, prop) {
-		const dbInstance = initializeDb();
-		return Reflect.get(dbInstance, prop);
-	},
+  get(_target, prop) {
+    const dbInstance = initializeDb();
+    return Reflect.get(dbInstance, prop);
+  },
 });
 
 export { covidData, tflCameras, todos, projects, embeddings };
 
 // Close database connection
 export function closeDb() {
-	if (_client) {
-		_client.end();
-		_client = null;
-		_db = null;
-	}
+  if (_client) {
+    _client.end();
+    _client = null;
+    _db = null;
+  }
 }

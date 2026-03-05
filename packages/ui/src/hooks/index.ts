@@ -1,1 +1,1 @@
-export { useMediaQuery, useIsMobile } from './use-media-query'
+export { useMediaQuery, useIsMobile } from "./use-media-query";

@@ -15,6 +15,9 @@
 pre-commit:
   parallel: true
   commands:
+    format:
+      tags: format
+      run: pnpm format
     lint:
       tags: lint
       run: pnpm lint
