@@ -10,13 +10,13 @@ import * as schema from "./schema";
 // and might not require explicit dotenv.config() here if already globally available.
 // However, for scripts or direct execution, it's good practice.
 if (process.env.NODE_ENV !== "production") {
-	dotenv.config({ path: "../../.env" }); // Adjust path to your .env file at the dumphim app root
+  dotenv.config({ path: "../../.env" }); // Adjust path to your .env file at the dumphim app root
 }
 
 const connectionString = process.env.DATABASE_URL;
 
 if (!connectionString) {
-	throw new Error("DATABASE_URL environment variable is not set.");
+  throw new Error("DATABASE_URL environment variable is not set.");
 }
 
 // Disable prefetch as it is not supported for "Transaction" pool mode

@@ -1,24 +1,27 @@
 {
-	"name": "scrape",
-	"version": "1.0.0",
-	"private": true,
-	"scripts": {
-		"start": "tsx smart-tax-asset.ts",
-		"build": "tsc",
-		"lint": "oxlint . --fix",
-		"format": "oxfmt . --write",
-		"type-check": "tsc --noEmit"
-	},
-	"keywords": ["scraping", "typescript"],
-	"author": "",
-	"license": "ISC",
-	"description": "Web scraping utilities",
-	"dependencies": {
-		"@browserbasehq/stagehand": "^2.4.3",
-		"zod": "^3.22.4"
-	},
-	"devDependencies": {
-		"typescript": "^5.8.3",
-		"tsx": "^4.19.2"
-	}
+  "name": "scrape",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Web scraping utilities",
+  "keywords": [
+    "scraping",
+    "typescript"
+  ],
+  "license": "ISC",
+  "author": "",
+  "scripts": {
+    "start": "tsx smart-tax-asset.ts",
+    "build": "tsc",
+    "lint": "oxlint . --fix",
+    "format": "oxfmt . --write",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@browserbasehq/stagehand": "^2.4.3",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "typescript": "^5.8.3"
+  }
 }

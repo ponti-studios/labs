@@ -1,4 +1,4 @@
 packages:
   - 'apps/*'
   - 'extensions/*'
-  - 'packages/*'  # re-enable packages for dependency installation
+  - 'packages/*'

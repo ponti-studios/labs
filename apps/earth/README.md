@@ -21,14 +21,21 @@ You can spin up a MySQL server with Docker:
 
 ```bash
 docker compose up -d mysql
-export DATABASE_URL=mysql://earthuser:earthpass@localhost:3306/earth
-# optionally run migrations against the server:
-# pnpm run db:migrate:apply --env mysql
+export DATABASE_URL=mysql://labs:labs_password@localhost:3306/labs
+# run schema migration if necessary (Atlas will use DATABASE_URL when provided):
+pnpm run db:migrate:apply --env mysql
 ```
 
 The compose file lives at `apps/earth/docker-compose.yml` and uses the
 latest MySQL 8.1 image.  When `DATABASE_URL` is set to a mysql:// URL the
-app will automatically switch Kysely/Atlas to the MySQL dialect.
+app will automatically switch Kysely/Atlas to the MySQL dialect; the
+`sync` script will then write collected events into that server instead of
+`db/app.db`.  You can verify with a client such as TablePlus or by looking at
+the `disaster_events` table in the MySQL instance.
+
+> **Tip:** to load the existing sqlite data into MySQL, simply set
+> `DATABASE_URL` and run `pnpm run sync` again; new records will upsert and
+> the same table structure is used.
 
 > **Tip:** the root workspace has multiple packages; installing at the root will
 also populate other demo apps.  You can run commands from within `apps/earth`.
@@ -41,7 +48,7 @@ also populate other demo apps.  You can run commands from within `apps/earth`.
 | Lint & fix code | `pnpm run lint` |
 | DB check | `pnpm run db:check` |
 | Apply schema | `pnpm run db:schema:apply` |
-| Import latest EONET events | `pnpm run sync:nasa` |
+| Import latest EONET events | `pnpm run sync:nasa` |  # may fail with 500 if NASA API is down
 
 > All npm scripts are aliased to `bunx` when using Bun; you may still use
 `npm run`/`pnpm run` if Bun is not installed.
