@@ -8,12 +8,27 @@ This template is your blank canvas. It comes with a minimal setup to help you ge
 ### Prerequisites
 - Node 18+ (or Bun 1.3+ if you prefer).  This repo uses pnpm for package management.
 - A shell that supports environment variables (zsh, bash, etc.)
+- Docker & docker-compose (for running a local MySQL instance)
+
 
 ### Initial setup
 ```bash
 cd apps/earth
 pnpm install        # or `bun install` to generate bun.lock and work with bun
 ```
+
+You can spin up a MySQL server with Docker:
+
+```bash
+docker compose up -d mysql
+export DATABASE_URL=mysql://earthuser:earthpass@localhost:3306/earth
+# optionally run migrations against the server:
+# pnpm run db:migrate:apply --env mysql
+```
+
+The compose file lives at `apps/earth/docker-compose.yml` and uses the
+latest MySQL 8.1 image.  When `DATABASE_URL` is set to a mysql:// URL the
+app will automatically switch Kysely/Atlas to the MySQL dialect.
 
 > **Tip:** the root workspace has multiple packages; installing at the root will
 also populate other demo apps.  You can run commands from within `apps/earth`.
