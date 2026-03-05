@@ -15,7 +15,8 @@
         "db:schema:apply": "bunx atlas schema apply --env local --auto-approve",
         "db:check": "bunx tsx db/check.ts",
         "optimize": "bunx vite optimize",
-        "preview": "bunx vite preview"
+        "preview": "bunx vite preview",
+        "sync:nasa": "bunx tsx scripts/sync-nasa.ts"
     },
     "dependencies": {
         "@github/spark": "^0.43.1",

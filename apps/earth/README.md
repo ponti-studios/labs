@@ -41,6 +41,7 @@ also populate other demo apps.  You can run commands from within `apps/earth`.
 | Lint & fix code | `pnpm run lint` |
 | DB check | `pnpm run db:check` |
 | Apply schema | `pnpm run db:schema:apply` |
+| Import latest EONET events | `pnpm run sync:nasa` |
 
 > All npm scripts are aliased to `bunx` when using Bun; you may still use
 `npm run`/`pnpm run` if Bun is not installed.
