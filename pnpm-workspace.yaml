@@ -1,4 +1,4 @@
 packages:
   - 'apps/*'
   - 'extensions/*'
-  # 'packages/*'  # unused in this repo, removed to speed up installs
+  - 'packages/*'  # re-enable packages for dependency installation

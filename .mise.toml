@@ -1,0 +1,82 @@
+[tools]
+node = "20"
+pnpm = "latest"
+
+[env]
+# General App Config
+NODE_ENV = "development"
+
+# MySQL Configuration (Matching your docker-compose)
+DATABASE_URL = "mysql://labs:labs_password@localhost:3306/labs"
+MYSQL_ROOT_PASSWORD = "labs_password"
+MYSQL_DATABASE = "labs"
+MYSQL_USER = "labs"
+MYSQL_PASSWORD = "labs_password"
+
+# Redis Configuration (Matching your docker-compose)
+REDIS_URL = "redis://:redis_password@localhost:6379"
+REDIS_PASSWORD = "redis_password"
+
+# --- Tasks ---
+
+[tasks.up]
+description = "Start all Docker services (MySQL, Redis, Exporters)"
+run = "docker compose up -d"
+
+[tasks.down]
+description = "Stop all Docker services"
+run = "docker compose down"
+
+[tasks.db-shell]
+description = "Jump into the MySQL CLI inside the container"
+run = "docker exec -it hackefeller-mysql mysql -u labs -plabs_password labs"
+
+[tasks.redis-shell]
+description = "Jump into Redis CLI"
+run = "docker exec -it hackefeller-redis redis-cli -a redis_password"
+
+[tasks.dev]
+description = "Ensure DB is up then start dev server"
+depends = ["up"]
+run = "pm2 start pnpm --name='hominem' -- run dev"
+
+[tasks."run-redis"]
+description = "Start Redis via PM2"
+run = "pm2 start pnpm --name='hominem-redis' -- run redis"
+
+[tasks.test]
+description = "Run tests"
+run = "pnpm run test"
+
+[tasks.lint]
+description = "Run linter"
+run = "pnpm turbo run lint --force --parallel"
+
+[tasks.build]
+description = "Lint and build the application"
+depends = ["lint"]
+run = "pnpm turbo run build --force"
+
+[tasks.clean]
+description = "Clean build artifacts and dependencies"
+# Using a single glob-based command is cleaner in Mise
+run = """
+rm -rf **/node_modules **/dist **/build **/logs **/coverage **/.next **/.turbo **/.react-router pnpm-lock.yaml package-lock.json
+"""
+
+[tasks."docker-down"]
+description = "Stop Docker containers"
+run = "docker compose down"
+
+[tasks.check]
+description = "Run all tests and linting"
+depends = ["test", "lint"]
+
+[tasks.reset]
+description = "Full cleanup and reinstall"
+depends = ["clean"]
+run = "mise run install"
+
+[tasks.all]
+alias = "default"
+depends = ["install", "build"]
