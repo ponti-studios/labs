@@ -19,12 +19,20 @@ enhancements.
 - Update documentation: README, developer notes, and add a roadmap section.
 - Provide a small proof‑of‑concept that exercises the DB layer.
 - Define long‑term ideas (backend API, tests, offline support) for later work.
+- Lay groundwork for a richer “global pulse” project that blends satellite
+  imagery (MODIS/VIIRS via GIBS) and alternate event feeds (USGS quakes, weather
+  alerts, etc.) into the globe demo, and add a flexible sync script.
+
 
 ## Capabilities
 
 ### New Capabilities
 - `repo-maintenance`: Establishes a set of housekeeping tasks that make the
   `apps/earth` repository easy to set up, build, and modify.
+- `data-ingestion`: A pluggable synchronization framework capable of pulling
+  open datasets (EONET, USGS, GFW, etc.) and storing them in a local database.
+- `satellite-imagery`: Support for loading dynamic MODIS/VIIRS layers from NASA
+  GIBS onto the globe, enabling weather/earth‑observation backdrops.
 
 ### Modified Capabilities
 - *none* (no existing spec requirements change)

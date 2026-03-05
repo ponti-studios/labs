@@ -1,26 +1,42 @@
 version: '3.8'
 
 services:
-  postgres:
-    image: ghcr.io/charlesponti/hominem/pontistudios-postgres:latest
-    container_name: rocco-postgres
+  mysql:
+    image: mysql:8.1
+    container_name: hackefeller-mysql
     restart: unless-stopped
     environment:
-      POSTGRES_DB: rocco
-      POSTGRES_USER: rocco
-      POSTGRES_PASSWORD: rocco_password
-      POSTGRES_HOST_AUTH_METHOD: trust
+      MYSQL_ROOT_PASSWORD: labs_password
+      MYSQL_DATABASE: labs
+      MYSQL_USER: labs
+      MYSQL_PASSWORD: labs_password
     ports:
-      - "5432:5432"
+      - "3306:3306"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./docker/postgres/init:/docker-entrypoint-initdb.d
+      - mysql_data:/var/lib/mysql
+      # optional custom init scripts
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+    command: --innodb-buffer-pool-size=1G --innodb-log-file-size=256M
     networks:
-      - rocco-network
+      - hackefeller-network
+
+
+  mysqld-exporter:
+    image: prom/mysqld-exporter:latest
+    container_name: hackefeller-mysqld-exporter
+    depends_on:
+      - mysql
+    restart: unless-stopped
+    environment:
+      DATA_SOURCE_NAME: "labs:labs_password@tcp(mysql:3306)/"
+    ports:
+      - "9104:9104"    # Prometheus scrape port
+    networks:
+      - hackefeller-network
 
   redis:
     image: redis:7-alpine
-    container_name: rocco-redis
+    container_name: hackefeller-redis
     restart: unless-stopped
     ports:
       - "6379:6379"
@@ -28,12 +44,12 @@ services:
       - redis_data:/data
     command: redis-server --appendonly yes --requirepass redis_password
     networks:
-      - rocco-network
+      - hackefeller-network
 
   # Optional: Redis Commander for web-based Redis management
   redis-commander:
     image: rediscommander/redis-commander:latest
-    container_name: rocco-redis-commander
+    container_name: labs-redis-commander
     restart: unless-stopped
     environment:
       REDIS_HOSTS: local:redis:6379:0:redis_password
@@ -42,14 +58,14 @@ services:
     depends_on:
       - redis
     networks:
-      - rocco-network
+      - hackefeller-network
 
 volumes:
-  postgres_data:
+  mysql_data:
     driver: local
   redis_data:
     driver: local
 
 networks:
-  rocco-network:
+  hackefeller-network:
     driver: bridge 

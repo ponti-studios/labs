@@ -36,6 +36,6 @@
 
 ## 7. Finalize change
 
-- [ ] 7.1 Stage and commit all modifications related to this change. (to be done after review)
+- [x] 7.1 Stage and commit all modifications related to this change. (changes committed)
 - [x] 7.2 Ensure the `openspec` artifacts are updated with any adjustments. (tasks and docs reflect work)
 - [x] 7.3 Prepare for follow-up issues (backend API, tests, etc.). (added comments in docs and plan)

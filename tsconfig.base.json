@@ -1,23 +1,23 @@
 {
-	"compileOnSave": false,
-	"compilerOptions": {
-		"rootDir": ".",
-		"sourceMap": true,
-		"declaration": false,
-		"moduleResolution": "node",
-		"emitDecoratorMetadata": true,
-		"experimentalDecorators": true,
-		"importHelpers": true,
-		"allowSyntheticDefaultImports": true,
-		"esModuleInterop": true,
-		"target": "es2015",
-		"module": "esnext",
-		"lib": ["ES2021", "DOM"],
-		"skipLibCheck": true,
-		"skipDefaultLibCheck": true,
-		"resolveJsonModule": true,
-		"baseUrl": ".",
-		"strict": true
-	},
-	"exclude": ["node_modules", "tmp"]
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["ES2021", "DOM"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "strict": true
+  },
+  "exclude": ["node_modules", "tmp"]
 }
