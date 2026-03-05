@@ -1,12 +1,5 @@
 import { relations } from "drizzle-orm";
-import {
-	json,
-	pgTable,
-	real,
-	text,
-	timestamp,
-	uuid,
-} from "drizzle-orm/pg-core";
+import { json, pgTable, real, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 // Auth users table (reference for foreign keys)
 // We don't define it here as it's managed by Supabase Auth,
@@ -23,57 +16,53 @@ import {
 // If direct FK to auth.users is desired and causes issues, it might need advanced Drizzle config or manual SQL for the FK.
 
 export const trackers = pgTable("trackers", {
-	id: uuid("id").primaryKey().defaultRandom(), // Uses gen_random_uuid() by default
-	createdAt: timestamp("created_at", { withTimezone: true })
-		.defaultNow()
-		.notNull(),
-	name: text("name").notNull(),
-	hp: text("hp"),
-	cardType: text("card_type"),
-	description: text("description"),
-	attacks: json("attacks").$type<{ name: string; damage: number }[]>(),
-	strengths: json("strengths").$type<string[]>(),
-	flaws: json("flaws").$type<string[]>(),
-	commitmentLevel: text("commitment_level"),
-	colorTheme: text("color_theme"),
-	photoUrl: text("photo_url"),
-	imageScale: real("image_scale"),
-	imagePosition: json("image_position").$type<{ x: number; y: number }>(),
-	userId: uuid("user_id").notNull(),
+  id: uuid("id").primaryKey().defaultRandom(), // Uses gen_random_uuid() by default
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  name: text("name").notNull(),
+  hp: text("hp"),
+  cardType: text("card_type"),
+  description: text("description"),
+  attacks: json("attacks").$type<{ name: string; damage: number }[]>(),
+  strengths: json("strengths").$type<string[]>(),
+  flaws: json("flaws").$type<string[]>(),
+  commitmentLevel: text("commitment_level"),
+  colorTheme: text("color_theme"),
+  photoUrl: text("photo_url"),
+  imageScale: real("image_scale"),
+  imagePosition: json("image_position").$type<{ x: number; y: number }>(),
+  userId: uuid("user_id").notNull(),
 });
 export type Tracker = typeof trackers.$inferSelect;
 export type TrackerInsert = typeof trackers.$inferInsert;
 
 export const trackersRelations = relations(trackers, ({ many, one }) => ({
-	votes: many(votes),
-	// If you want to create a relation to a user table (e.g., if you replicate user data or have a profiles table):
-	// user: one(users, { fields: [trackers.userId], references: [users.id] })
+  votes: many(votes),
+  // If you want to create a relation to a user table (e.g., if you replicate user data or have a profiles table):
+  // user: one(users, { fields: [trackers.userId], references: [users.id] })
 }));
 
 export const votes = pgTable("votes", {
-	id: uuid("id").primaryKey().defaultRandom(),
-	createdAt: timestamp("created_at", { withTimezone: true })
-		.defaultNow()
-		.notNull(),
-	trackerId: uuid("tracker_id")
-		.notNull()
-		.references(() => trackers.id),
-	userId: uuid("user_id"), // Nullable for anonymous votes, refers to auth.users.id
-	fingerprint: text("fingerprint").notNull(),
-	raterName: text("rater_name").notNull(), // Added rater's name
-	value: text("value", { enum: ["stay", "dump"] }).notNull(), // Updated enum
-	comment: text("comment"), // Added comment
+  id: uuid("id").primaryKey().defaultRandom(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  trackerId: uuid("tracker_id")
+    .notNull()
+    .references(() => trackers.id),
+  userId: uuid("user_id"), // Nullable for anonymous votes, refers to auth.users.id
+  fingerprint: text("fingerprint").notNull(),
+  raterName: text("rater_name").notNull(), // Added rater's name
+  value: text("value", { enum: ["stay", "dump"] }).notNull(), // Updated enum
+  comment: text("comment"), // Added comment
 });
 export type Vote = typeof votes.$inferSelect;
 export type VoteInsert = typeof votes.$inferInsert;
 
 export const votesRelations = relations(votes, ({ one }) => ({
-	// tracker: one(trackers, {
-	// 	fields: [votes.trackerId],
-	// 	references: [trackers.id],
-	// }),
-	// If you want to create a relation to a user table:
-	// user: one(users, { fields: [votes.userId], references: [users.id] })
+  // tracker: one(trackers, {
+  // 	fields: [votes.trackerId],
+  // 	references: [trackers.id],
+  // }),
+  // If you want to create a relation to a user table:
+  // user: one(users, { fields: [votes.userId], references: [users.id] })
 }));
 
 // Note on auth.users:
