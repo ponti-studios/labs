@@ -1,4 +1,4 @@
-import { Slider } from "~/components/ui";
+import { Slider } from "@pontistudios/ui";
 
 interface BorderWidthProps {
   borderWidth: number;

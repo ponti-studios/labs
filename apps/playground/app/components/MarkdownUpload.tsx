@@ -1,7 +1,7 @@
 import { AlertCircle, CheckCircle, Loader2, Upload } from "lucide-react";
 import type React from "react";
 import { useState } from "react";
-import { Button, Card, CardContent } from "~/components/ui";
+import { Button, Card, CardContent } from "@pontistudios/ui";
 
 export default function MarkdownUpload() {
   const [isUploading, setIsUploading] = useState(false);

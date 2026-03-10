@@ -14,7 +14,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "~/components/ui";
+} from "@pontistudios/ui";
 import { cn } from "~/lib/utils";
 
 type Country = {

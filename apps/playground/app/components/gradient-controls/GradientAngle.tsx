@@ -1,4 +1,4 @@
-import { Button, Input } from "~/components/ui";
+import { Button, Input } from "@pontistudios/ui";
 
 interface GradientAngleProps {
   degree: number;

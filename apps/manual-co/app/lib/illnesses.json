@@ -1,0 +1,202 @@
+[
+  {
+    "name": "Migraine",
+    "description": "A neurological condition causing severe headaches and other symptoms"
+  },
+  {
+    "name": "Rheumatoid Arthritis",
+    "description": "An autoimmune disorder affecting joints"
+  },
+  {
+    "name": "Type 2 Diabetes",
+    "description": "A metabolic disorder affecting blood sugar regulation"
+  },
+  {
+    "name": "Asthma",
+    "description": "A chronic respiratory condition affecting airways"
+  },
+  {
+    "name": "Hypothyroidism",
+    "description": "Underactive thyroid gland condition"
+  },
+  {
+    "name": "Hyperthyroidism",
+    "description": "Overactive thyroid gland condition"
+  },
+  {
+    "name": "Celiac Disease",
+    "description": "An immune reaction to eating gluten"
+  },
+  {
+    "name": "Fibromyalgia",
+    "description": "A condition causing widespread musculoskeletal pain"
+  },
+  {
+    "name": "Chronic Fatigue Syndrome",
+    "description": "A complex disorder characterized by extreme fatigue"
+  },
+  {
+    "name": "Multiple Sclerosis",
+    "description": "A disease affecting the central nervous system"
+  },
+  {
+    "name": "Lupus",
+    "description": "An autoimmune disease affecting multiple body systems"
+  },
+  {
+    "name": "Psoriasis",
+    "description": "A skin condition causing rapid cell buildup"
+  },
+  {
+    "name": "Irritable Bowel Syndrome",
+    "description": "A chronic disorder affecting the large intestine"
+  },
+  {
+    "name": "Crohn's Disease",
+    "description": "An inflammatory bowel disease"
+  },
+  {
+    "name": "Ulcerative Colitis",
+    "description": "A chronic inflammatory bowel disease"
+  },
+  {
+    "name": "Endometriosis",
+    "description": "A disorder where tissue grows outside the uterus"
+  },
+  {
+    "name": "PCOS",
+    "description": "Polycystic ovary syndrome affecting hormone levels"
+  },
+  {
+    "name": "Osteoporosis",
+    "description": "A condition weakening bones"
+  },
+  {
+    "name": "Chronic Bronchitis",
+    "description": "Long-term inflammation of bronchial tubes"
+  },
+  {
+    "name": "Sleep Apnea",
+    "description": "A serious sleep disorder"
+  },
+  {
+    "name": "Gastritis",
+    "description": "Inflammation of the stomach lining"
+  },
+  {
+    "name": "Hypertension",
+    "description": "High blood pressure condition"
+  },
+  {
+    "name": "Hypotension",
+    "description": "Low blood pressure condition"
+  },
+  {
+    "name": "Acid Reflux",
+    "description": "A digestive disease causing heartburn"
+  },
+  {
+    "name": "Anemia",
+    "description": "A condition with insufficient healthy red blood cells"
+  },
+  {
+    "name": "Gout",
+    "description": "A form of inflammatory arthritis"
+  },
+  {
+    "name": "Chronic Sinusitis",
+    "description": "Long-term inflammation of sinuses"
+  },
+  {
+    "name": "Vertigo",
+    "description": "A sensation of dizziness and spinning"
+  },
+  {
+    "name": "Tinnitus",
+    "description": "Ringing or buzzing in the ears"
+  },
+  {
+    "name": "Glaucoma",
+    "description": "Eye condition damaging the optic nerve"
+  },
+  {
+    "name": "Cataracts",
+    "description": "Clouding of the eye's natural lens"
+  },
+  {
+    "name": "Eczema",
+    "description": "Inflammation of the skin"
+  },
+  {
+    "name": "Rosacea",
+    "description": "A chronic skin condition causing redness"
+  },
+  {
+    "name": "Raynaud's Disease",
+    "description": "A condition affecting blood flow to extremities"
+  },
+  {
+    "name": "Sjogren's Syndrome",
+    "description": "An immune system disorder"
+  },
+  {
+    "name": "Chronic Kidney Disease",
+    "description": "Gradual loss of kidney function"
+  },
+  {
+    "name": "Osteoarthritis",
+    "description": "Degenerative joint disease"
+  },
+  {
+    "name": "Carpal Tunnel Syndrome",
+    "description": "Nerve compression in the wrist"
+  },
+  {
+    "name": "Restless Leg Syndrome",
+    "description": "A nervous system disorder causing leg discomfort"
+  },
+  {
+    "name": "Barrett's Esophagus",
+    "description": "Changes in esophageal tissue"
+  },
+  {
+    "name": "Diverticulitis",
+    "description": "Inflammation of digestive tract pouches"
+  },
+  {
+    "name": "Gallbladder Disease",
+    "description": "Various conditions affecting the gallbladder"
+  },
+  {
+    "name": "Peripheral Neuropathy",
+    "description": "Damage to peripheral nerves"
+  },
+  {
+    "name": "Hemochromatosis",
+    "description": "Iron overload disorder"
+  },
+  {
+    "name": "Wilson's Disease",
+    "description": "Copper accumulation disorder"
+  },
+  {
+    "name": "Primary Biliary Cirrhosis",
+    "description": "Chronic liver disease"
+  },
+  {
+    "name": "Addison's Disease",
+    "description": "Adrenal gland disorder"
+  },
+  {
+    "name": "Cushing's Syndrome",
+    "description": "High cortisol levels disorder"
+  },
+  {
+    "name": "Sarcoidosis",
+    "description": "Inflammatory disease affecting multiple organs"
+  },
+  {
+    "name": "Myasthenia Gravis",
+    "description": "Neuromuscular junction disorder"
+  }
+]

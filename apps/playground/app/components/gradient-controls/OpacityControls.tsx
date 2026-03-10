@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Slider } from "~/components/ui";
+import { Slider } from "@pontistudios/ui";
 
 interface OpacityControlsProps {
   opacities: number[];

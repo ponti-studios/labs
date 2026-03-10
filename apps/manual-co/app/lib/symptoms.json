@@ -1,0 +1,740 @@
+[
+  {
+    "name": "hot flashes",
+    "description": "Sudden feeling of warmth in the upper body",
+    "severity_score": 3,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing hot flashes",
+        "url": "/articles/managing-hot-flashes"
+      },
+      {
+        "title": "When to see a doctor",
+        "url": "/articles/when-to-see-a-doctor"
+      }
+    ],
+    "intensity_range": [2, 7],
+    "duration_range": [1, 10]
+  },
+  {
+    "name": "night sweats",
+    "description": "Excessive sweating during sleep",
+    "severity_score": 4,
+    "treatment_guidance": "nonimmediate-care",
+    "articles": [
+      {
+        "title": "Sleep hygiene tips",
+        "url": "/articles/sleep-hygiene-tips"
+      },
+      {
+        "title": "Managing night sweats",
+        "url": "/articles/managing-night-sweats"
+      }
+    ],
+    "intensity_range": [3, 8],
+    "duration_range": [3, 12]
+  },
+  {
+    "name": "irregular periods",
+    "description": "Unpredictable menstrual cycle and varying flow of periods",
+    "severity_score": 2,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Understanding irregular periods",
+        "url": "/articles/understanding-irregular-periods"
+      },
+      {
+        "title": "What to do about irregular periods",
+        "url": "/articles/what-to-do-about-irregular-periods"
+      }
+    ],
+    "intensity_range": [1, 5],
+    "duration_range": [3, 6]
+  },
+  {
+    "name": "irritable mood",
+    "description": "Fluctuations in mood and irritability",
+    "severity_score": 2,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing menopause mood swings",
+        "url": "/articles/managing-menopause-mood-swings"
+      },
+      {
+        "title": "Coping with menopausal irritability",
+        "url": "/articles/coping-with-menopausal-irritability"
+      }
+    ],
+    "intensity_range": [1, 5],
+    "duration_range": [3, 6]
+  },
+  {
+    "name": "mood swings",
+    "description": "Sudden changes in mood and emotions",
+    "severity_score": 2,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Coping with menopause mood swings",
+        "url": "/articles/coping-with-menopause-mood-swings"
+      },
+      {
+        "title": "Managing emotional fluctuations",
+        "url": "/articles/managing-emotional-fluctuations"
+      }
+    ],
+    "intensity_range": [1, 5],
+    "duration_range": [3, 6]
+  },
+  {
+    "name": "fatigue",
+    "description": "Persistent feeling of tiredness and exhaustion",
+    "severity_score": 2,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing menopause fatigue",
+        "url": "/articles/managing-menopause-fatigue"
+      },
+      {
+        "title": "Boosting energy levels",
+        "url": "/articles/boosting-energy-levels"
+      }
+    ],
+    "intensity_range": [1, 5],
+    "duration_range": [3, 6]
+  },
+  {
+    "name": "sleep disturbances",
+    "description": "Difficulty falling asleep or staying asleep",
+    "severity_score": 2,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Improving sleep quality",
+        "url": "/articles/improving-sleep-quality"
+      },
+      {
+        "title": "Coping with insomnia",
+        "url": "/articles/coping-with-insomnia"
+      }
+    ],
+    "intensity_range": [1, 5],
+    "duration_range": [3, 6]
+  },
+  {
+    "name": "depression",
+    "description": "Persistent feeling of sadness and loss of interest in activities",
+    "severity_score": 3,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Recognizing signs of depression",
+        "url": "/articles/recognizing-signs-of-depression"
+      },
+      {
+        "title": "Seeking help for depression",
+        "url": "/articles/seeking-help-for-depression"
+      }
+    ],
+    "intensity_range": [2, 6],
+    "duration_range": [4, 8]
+  },
+  {
+    "name": "anxiety",
+    "description": "Feelings of fear and nervousness without a clear cause",
+    "severity_score": 3,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing menopause anxiety",
+        "url": "/articles/managing-menopause-anxiety"
+      },
+      {
+        "title": "Coping with stress",
+        "url": "/articles/coping-with-stress"
+      }
+    ],
+    "intensity_range": [2, 6],
+    "duration_range": [4, 8]
+  },
+  {
+    "name": "weight gain",
+    "description": "Unintended weight increase and difficulty losing it",
+    "severity_score": 3,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing menopause weight gain",
+        "url": "/articles/managing-menopause-weight-gain"
+      },
+      {
+        "title": "Healthy eating tips",
+        "url": "/articles/healthy-eating-tips"
+      }
+    ],
+    "intensity_range": [2, 6],
+    "duration_range": [4, 8]
+  },
+  {
+    "name": "joint pain",
+    "description": "Pain and discomfort in joints without any apparent injury or inflammation",
+    "severity_score": 3,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing menopause joint pain",
+        "url": "/articles/managing-menopause-joint-pain"
+      },
+      {
+        "title": "Relieving joint discomfort",
+        "url": "/articles/relieving-joint-discomfort"
+      }
+    ],
+    "intensity_range": [2, 6],
+    "duration_range": [4, 8]
+  },
+  {
+    "name": "headaches",
+    "description": "Recurrent or frequent headaches without an apparent cause",
+    "severity_score": 3,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing menopause headaches",
+        "url": "/articles/managing-menopause-headaches"
+      },
+      {
+        "title": "Pain relief options",
+        "url": "/articles/pain-relief-options"
+      }
+    ],
+    "intensity_range": [2, 6],
+    "duration_range": [4, 8]
+  },
+  {
+    "name": "urinary frequency",
+    "description": "Increased need to urinate more often than usual",
+    "severity_score": 2,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing urinary frequency",
+        "url": "/articles/managing-urinary-frequency"
+      },
+      {
+        "title": "Healthy bladder habits",
+        "url": "/articles/healthy-bladder-habits"
+      }
+    ],
+    "intensity_range": [1, 5],
+    "duration_range": [3, 6]
+  },
+  {
+    "name": "urinary urgency",
+    "description": "Strong and sudden urge to urinate without much warning",
+    "severity_score": 2,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing urinary urgency",
+        "url": "/articles/managing-urinary-urgency"
+      },
+      {
+        "title": "Relieving frequent urges",
+        "url": "/articles/relieving-frequent-urges"
+      }
+    ],
+    "intensity_range": [1, 5],
+    "duration_range": [3, 6]
+  },
+  {
+    "name": "urinary incontinence",
+    "description": "Involuntary leakage of urine",
+    "severity_score": 2,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing urinary incontinence",
+        "url": "/articles/managing-urinary-incontinence"
+      },
+      {
+        "title": "Improving bladder control",
+        "url": "/articles/improving-bladder-control"
+      }
+    ],
+    "intensity_range": [1, 5],
+    "duration_range": [3, 6]
+  },
+  {
+    "name": "dry skin",
+    "description": "Skin that feels dry and lacks elasticity or suppleness",
+    "severity_score": 2,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing menopause dry skin",
+        "url": "/articles/managing-menopause-dry-skin"
+      },
+      {
+        "title": "Nourishing your skin",
+        "url": "/articles/nourishing-your-skin"
+      }
+    ],
+    "intensity_range": [1, 5],
+    "duration_range": [3, 6]
+  },
+  {
+    "name": "thinning hair",
+    "description": "Hair that becomes finer or falls out more easily than usual",
+    "severity_score": 2,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing menopause hair loss",
+        "url": "/articles/managing-menopause-hair-loss"
+      },
+      {
+        "title": "Nourishing your hair",
+        "url": "/articles/nourishing-your-hair"
+      }
+    ],
+    "intensity_range": [1, 5],
+    "duration_range": [3, 6]
+  },
+  {
+    "name": "hair thinning and loss",
+    "description": "Hair that becomes thinner and more easily lost",
+    "severity_score": 2,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing menopause hair loss",
+        "url": "/articles/managing-menopause-hair-loss"
+      },
+      {
+        "title": "Nourishing your hair",
+        "url": "/articles/nourishing-your-hair"
+      }
+    ],
+    "intensity_range": [1, 5],
+    "duration_range": [3, 6]
+  },
+  {
+    "name": "burning sensation in vagina",
+    "description": "A burning or discomfort feeling inside the vagina without any apparent injury or infection",
+    "severity_score": 2,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing vaginal dryness",
+        "url": "/articles/managing-vaginal-dryness"
+      },
+      {
+        "title": "Relieving discomfort",
+        "url": "/articles/relieving-discomfort"
+      }
+    ],
+    "intensity_range": [1, 5],
+    "duration_range": [3, 6]
+  },
+  {
+    "name": "itchy vagina",
+    "description": "An itchy feeling inside the vagina without any apparent infection or injury",
+    "severity_score": 2,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing vaginal itching",
+        "url": "/articles/managing-vaginal-itching"
+      },
+      {
+        "title": "Relieving discomfort",
+        "url": "/articles/relieving-discomfort"
+      }
+    ],
+    "intensity_range": [1, 5],
+    "duration_range": [3, 6]
+  },
+  {
+    "name": "vaginal dryness",
+    "description": "Decreased lubrication and decreased elasticity of the vagina",
+    "severity_score": 2,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing vaginal dryness",
+        "url": "/articles/managing-vaginal-dryness"
+      },
+      {
+        "title": "Relieving discomfort",
+        "url": "/articles/relieving-discomfort"
+      }
+    ],
+    "intensity_range": [1, 5],
+    "duration_range": [3, 6]
+  },
+  {
+    "name": "low sex drive",
+    "description": "Decreased interest or desire for sexual activity",
+    "severity_score": 2,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing low sex drive",
+        "url": "/articles/managing-low-sex-drive"
+      },
+      {
+        "title": "Boosting libido",
+        "url": "/articles/boosting-libido"
+      }
+    ],
+    "intensity_range": [1, 5],
+    "duration_range": [3, 6]
+  },
+  {
+    "name": "memory lapses and forgetfulness",
+    "description": "Difficulty remembering things or concentrating on tasks",
+    "severity_score": 2,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing memory lapses",
+        "url": "/articles/managing-memory-lapses"
+      },
+      {
+        "title": "Boosting brain health",
+        "url": "/articles/boosting-brain-health"
+      }
+    ],
+    "intensity_range": [1, 5],
+    "duration_range": [3, 6]
+  },
+  {
+    "name": "palpitations",
+    "description": "Irregular or rapid heartbeats without any apparent cause",
+    "severity_score": 2,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing palpitations",
+        "url": "/articles/managing-palpitations"
+      },
+      {
+        "title": "Heart health tips",
+        "url": "/articles/heart-health-tips"
+      }
+    ],
+    "intensity_range": [1, 5],
+    "duration_range": [3, 6]
+  },
+  {
+    "name": "nausea and vomiting",
+    "description": "Feelings of nausea or actual vomiting without any apparent cause",
+    "severity_score": 2,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing nausea",
+        "url": "/articles/managing-nausea"
+      },
+      {
+        "title": "Relieving morning sickness",
+        "url": "/articles/relieving-morning-sickness"
+      }
+    ],
+    "intensity_range": [1, 5],
+    "duration_range": [3, 6]
+  },
+  {
+    "name": "constipation or diarrhea",
+    "description": "Changes in bowel habits to more frequent loose stools or constipation",
+    "severity_score": 2,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing digestive issues",
+        "url": "/articles/managing-digestive-issues"
+      },
+      {
+        "title": "Healthy gut practices",
+        "url": "/articles/healthy-gut-practices"
+      }
+    ],
+    "intensity_range": [1, 5],
+    "duration_range": [3, 6]
+  },
+  {
+    "name": "tingling sensations",
+    "description": "Numbness or tingling in the hands, feet, or other parts of the body without any apparent cause",
+    "severity_score": 2,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing tingly extremities",
+        "url": "/articles/managing-tingly-extremities"
+      },
+      {
+        "title": "Relieving discomfort",
+        "url": "/articles/relieving-discomfort"
+      }
+    ],
+    "intensity_range": [1, 5],
+    "duration_range": [3, 6]
+  },
+  {
+    "name": "fluid retention",
+    "description": "Increased swelling or puffiness in the hands, feet, face, or ankles",
+    "severity_score": 2,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing fluid retention",
+        "url": "/articles/managing-fluid-retention"
+      },
+      {
+        "title": "Healthy lifestyle habits",
+        "url": "/articles/healthy-lifestyle-habits"
+      }
+    ],
+    "intensity_range": [1, 5],
+    "duration_range": [3, 6]
+  },
+  {
+    "name": "loss of interest in activities",
+    "description": "Decreased enjoyment and motivation for usual activities",
+    "severity_score": 2,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing loss of interest",
+        "url": "/articles/managing-loss-of-interest"
+      },
+      {
+        "title": "Finding joy again",
+        "url": "/articles/finding-joy-again"
+      }
+    ],
+    "intensity_range": [1, 5],
+    "duration_range": [3, 6]
+  },
+  {
+    "name": "dizziness or lightheadedness",
+    "description": "Feeling faint or dizzy without any apparent cause",
+    "severity_score": 2,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing dizziness",
+        "url": "/articles/managing-dizziness"
+      },
+      {
+        "title": "Improving balance and stability",
+        "url": "/articles/improving-balance-and-stability"
+      }
+    ],
+    "intensity_range": [1, 5],
+    "duration_range": [3, 6]
+  },
+  {
+    "name": "loss of appetite or overeating",
+    "description": "Loss of interest in food or eating more than usual without any apparent cause",
+    "severity_score": 2,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing loss of appetite",
+        "url": "/articles/managing-loss-of-appetite"
+      },
+      {
+        "title": "Healthy eating habits",
+        "url": "/articles/healthy-eating-habits"
+      }
+    ],
+    "intensity_range": [1, 5],
+    "duration_range": [3, 6]
+  },
+  {
+    "name": "paleness or pallor",
+    "description": "Sallow or pale appearance due to decreased blood flow or oxygenation",
+    "severity_score": 2,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing paleness",
+        "url": "/articles/managing-paleness"
+      },
+      {
+        "title": "Improving circulation",
+        "url": "/articles/improving-circulation"
+      }
+    ],
+    "intensity_range": [1, 5],
+    "duration_range": [3, 6]
+  },
+  {
+    "name": "difficulty concentrating",
+    "description": "Difficulty focusing on tasks or remembering things",
+    "severity_score": 2,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing concentration issues",
+        "url": "/articles/managing-concentration-issues"
+      },
+      {
+        "title": "Boosting brain health",
+        "url": "/articles/boosting-brain-health"
+      }
+    ],
+    "intensity_range": [1, 5],
+    "duration_range": [3, 6]
+  },
+  {
+    "name": "hair thinning and loss",
+    "description": "Hair that becomes thinner and more easily lost",
+    "severity_score": 2,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing menopause hair loss",
+        "url": "/articles/managing-menopause-hair-loss"
+      },
+      {
+        "title": "Nourishing your hair",
+        "url": "/articles/nourishing-your-hair"
+      }
+    ],
+    "intensity_range": [1, 5],
+    "duration_range": [3, 6]
+  },
+  {
+    "name": "paleness or pallor",
+    "description": "Sallow or pale appearance due to decreased blood flow or oxygenation",
+    "severity_score": 2,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing paleness",
+        "url": "/articles/managing-paleness"
+      },
+      {
+        "title": "Improving circulation",
+        "url": "/articles/improving-circulation"
+      }
+    ],
+    "intensity_range": [1, 5],
+    "duration_range": [3, 6]
+  },
+  {
+    "name": "swelling in ankles or feet",
+    "description": "Increased swelling or puffiness in the ankles or feet",
+    "severity_score": 2,
+    "treatment_guidance": "no-care",
+    "articles": [
+      {
+        "title": "Managing ankle and foot swelling",
+        "url": "/articles/managing-ankle-and-foot-swelling"
+      },
+      {
+        "title": "Healthy lifestyle habits",
+        "url": "/articles/healthy-lifestyle-habits"
+      }
+    ],
+    "intensity_range": [1, 5],
+    "duration_range": [3, 6]
+  },
+  {
+    "name": "severe chest pain",
+    "description": "Intense pain or pressure in the chest that may radiate to arms or jaw",
+    "severity_score": 9,
+    "treatment_guidance": "immediate-care",
+    "articles": [
+      {
+        "title": "When to seek emergency care",
+        "url": "/articles/when-to-seek-emergency-care"
+      },
+      {
+        "title": "Understanding chest pain",
+        "url": "/articles/understanding-chest-pain"
+      }
+    ],
+    "intensity_range": [7, 10],
+    "duration_range": [1, 4]
+  },
+  {
+    "name": "heavy vaginal bleeding",
+    "description": "Unusually heavy or prolonged vaginal bleeding requiring pad changes every hour",
+    "severity_score": 8,
+    "treatment_guidance": "immediate-care",
+    "articles": [
+      {
+        "title": "Emergency signs during menopause",
+        "url": "/articles/emergency-signs-during-menopause"
+      },
+      {
+        "title": "When to call your doctor",
+        "url": "/articles/when-to-call-your-doctor"
+      }
+    ],
+    "intensity_range": [6, 10],
+    "duration_range": [1, 3]
+  },
+  {
+    "name": "severe shortness of breath",
+    "description": "Sudden difficulty breathing or inability to catch breath",
+    "severity_score": 9,
+    "treatment_guidance": "immediate-care",
+    "articles": [
+      {
+        "title": "Breathing emergencies",
+        "url": "/articles/breathing-emergencies"
+      },
+      {
+        "title": "Signs of serious conditions",
+        "url": "/articles/signs-of-serious-conditions"
+      }
+    ],
+    "intensity_range": [7, 10],
+    "duration_range": [1, 4]
+  },
+  {
+    "name": "severe headache with vision changes",
+    "description": "Intense headache accompanied by visual disturbances or confusion",
+    "severity_score": 8,
+    "treatment_guidance": "immediate-care",
+    "articles": [
+      {
+        "title": "Neurological warning signs",
+        "url": "/articles/neurological-warning-signs"
+      },
+      {
+        "title": "Emergency headache symptoms",
+        "url": "/articles/emergency-headache-symptoms"
+      }
+    ],
+    "intensity_range": [6, 10],
+    "duration_range": [1, 4]
+  },
+  {
+    "name": "sudden weakness on one side",
+    "description": "Sudden onset of weakness or numbness on one side of body",
+    "severity_score": 9,
+    "treatment_guidance": "immediate-care",
+    "articles": [
+      {
+        "title": "Stroke warning signs",
+        "url": "/articles/stroke-warning-signs"
+      },
+      {
+        "title": "When to call 911",
+        "url": "/articles/when-to-call-911"
+      }
+    ],
+    "intensity_range": [7, 10],
+    "duration_range": [1, 3]
+  }
+]

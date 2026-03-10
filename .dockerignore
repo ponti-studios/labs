@@ -1,0 +1,44 @@
+# Dependencies
+**/node_modules
+
+# Build outputs
+**/build
+**/dist
+**/.turbo
+
+# Test artifacts
+**/coverage
+**/.playwright
+**/playwright-report
+**/test-results
+
+# Dev tools
+**/.react-router
+**/.storybook
+**/storybook-static
+**/dist-storybook
+
+# OS / editor
+.DS_Store
+**/.DS_Store
+.vscode
+.idea
+
+# Secrets / env
+.env
+.env.*
+!.env.example
+
+# Git
+.git
+.github
+.gitignore
+
+# Docs / misc
+**/README.md
+**/*.md
+openspec/
+_scratchpad/
+# Allow only package.json manifests from extensions (needed for npm workspace link resolution)
+extensions/
+!extensions/*/package.json

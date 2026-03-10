@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Input } from "~/components/ui";
+import { Input } from "@pontistudios/ui";
 
 interface ColorControlsProps {
   colors: string[];
