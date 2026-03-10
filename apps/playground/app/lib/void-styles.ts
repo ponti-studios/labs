@@ -3,8 +3,6 @@
  * CSS class generators and helper functions adhering to design constraints
  */
 
-import { voidTokens } from "./void-tokens";
-
 /**
  * Generate base styles for all pages
  */

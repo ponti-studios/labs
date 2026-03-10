@@ -1,11 +1,19 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@pontistudios/ui";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@pontistudios/ui";
-import { Button } from "@pontistudios/ui";
-import { Badge } from "@pontistudios/ui";
-import { Input } from "@pontistudios/ui";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@pontistudios/ui";
-import { Slider } from "@pontistudios/ui";
+import {
+  Badge,
+  Button,
+  Slider,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@pontistudios/ui";
 
 const STANDARD_PREMIUM = 174.7;
 const STANDARD_DEDUCTIBLE = 240;

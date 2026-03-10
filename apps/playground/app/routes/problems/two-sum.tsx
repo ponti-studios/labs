@@ -23,7 +23,7 @@ export default function TwoSumRoute() {
         const numArray = nums.split(",").map((n) => parseInt(n.trim()));
         const res = twoSum(numArray, parseInt(target) || 0);
         setResult(res);
-      } catch (error) {
+      } catch {
         setResult("INVALID INPUT");
       }
       setIsLoading(false);

@@ -1,5 +1,5 @@
 import React, { useReducer, useEffect, useCallback, useRef, memo } from "react";
-import type { FC, ReactNode } from "react";
+import type { FC } from "react";
 
 // Type definitions
 interface Piece {

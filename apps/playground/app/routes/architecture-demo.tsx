@@ -1,7 +1,7 @@
 // Example route showing Islands Architecture
 // This demonstrates Server Components vs Islands working together
 
-import { Suspense } from "react";
+
 import { InteractiveCard } from "~/components/islands/InteractiveCard";
 import { StaticCard } from "~/components/server/StaticCard";
 

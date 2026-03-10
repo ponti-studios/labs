@@ -9,7 +9,6 @@ import {
   ResultBox,
   CodeBlock,
   GridSection,
-  DiffDisplay,
 } from "~/components/void-components";
 
 export default function SumArrayRoute() {
@@ -33,7 +32,7 @@ export default function SumArrayRoute() {
           formulaSum,
           array: arr,
         });
-      } catch (error) {
+      } catch {
         setResult({ error: "INVALID INPUT" });
       }
       setIsLoading(false);
