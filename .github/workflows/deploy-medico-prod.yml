@@ -1,23 +1,25 @@
-name: deploy-medico-prod
+name: Deploy Medico to Production
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main]
     paths:
-      - 'apps/medico/**'
-      - 'package.json'
-      - 'package-lock.json'
-      - '.github/workflows/deploy-medico-prod.yml'
+      - "apps/medico/**"
+      - "packages/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/deploy-medico-prod.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-medico-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   deploy:
-    name: Deploy Medico
+    name: Deploy to Railway
     runs-on: ubuntu-latest
-    container: ghcr.io/railwayapp/cli:latest
-    env:
-      # Add RAILWAY_MEDICO_ID to GitHub repo secrets once the Railway service is created.
-      # Dashboard: https://railway.app → ponti-io project → medico service → Settings → Service ID
-      SERVICE_ID: ${{ secrets.RAILWAY_MEDICO_ID }}
+    timeout-minutes: 10
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
@@ -25,7 +27,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli@latest
+
       - name: Deploy to Railway
-        run: railway up --service ${{ env.SERVICE_ID }} --detach
+        run: railway up --service ${{ secrets.RAILWAY_SERVICE_MEDICO }} --detach
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
