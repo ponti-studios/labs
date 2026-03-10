@@ -8,7 +8,7 @@
 - `apps/playground/app/lib/utils.ts`
 - `apps/playground/app/lib/void-styles.ts`
 - `apps/dumphim/app/lib/utils.ts`
-- `apps/manual-co/src/lib/utils.ts`
+- `apps/medico/src/lib/utils.ts`
 - `apps/earth/src/lib/utils.ts`
 
 **Solution**: Move to `@pontistudios/utils` package
@@ -19,7 +19,7 @@
 - `apps/earth/src/components/ui/` has 40+ shadcn components
 - `apps/playground` uses `@pontistudios/ui` workspace
 - `apps/dumphim` uses `@pontistudios/ui` workspace
-- `apps/manual-co` uses `@pontistudios/ui` workspace
+- `apps/medico` uses `@pontistudios/ui` workspace
 
 **Solution**: Centralize in `@pontistudios/ui` (already started!)
 
@@ -27,7 +27,7 @@
 
 **Issue**: Same dependencies repeated:
 
-| Dependency | playground | dumphim | manual-co | earth |
+| Dependency | playground | dumphim | medico | earth |
 |------------|-----------|---------|-----------|-------|
 | react | 19.1.0 | 19.1.0 | 18.2.0 | 19.0.0 |
 | react-router | 7.5.3 | 7.5.3 | N/A | N/A |
@@ -241,7 +241,7 @@ Create `packages/data/`:
 ```
 apps/playground/app/lib/utils.ts
 apps/dumphim/app/lib/utils.ts
-apps/manual-co/src/lib/utils.ts
+apps/medico/src/lib/utils.ts
 apps/earth/src/lib/utils.ts
 apps/playground/app/db/schema.ts (migrate to package)
 apps/dumphim/app/db/schema.ts (migrate to package)

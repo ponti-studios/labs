@@ -146,7 +146,7 @@ app/
 
 1. Complete streaming implementation on remaining routes
 2. Convert more components to Server Components
-3. Migrate manual-co and earth to shared packages
+3. Migrate medico and earth to shared packages
 4. Implement inline critical CSS
 5. Continue dumphim Supabase → Drizzle migration
 

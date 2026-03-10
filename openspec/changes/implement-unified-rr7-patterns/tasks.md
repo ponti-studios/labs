@@ -311,7 +311,7 @@ Centralize TypeScript configurations.
 3. [x] Create `react.json` extending base for React apps
 4. [x] Update playground to extend shared config
 5. [x] Update dumphim to extend shared config
-6. [ ] Update remaining apps (manual-co, earth)
+6. [ ] Update remaining apps (medico, earth)
 
 **Acceptance**:
 - [x] `packages/tsconfig` created
@@ -470,7 +470,7 @@ export * from "@pontistudios/utils";
 - Single source of truth for utilities
 
 **Remaining Apps**:
-- [ ] manual-co (Next.js - different pattern)
+- [ ] medico (Next.js - different pattern)
 - [ ] earth (Vite SPA - evaluate separately)
 
 ---
@@ -582,7 +582,7 @@ Move dumphim from Supabase to shared PostgreSQL + Drizzle architecture.
 ### Task 3.6.2: Verify Manual-Co Database Status
 **Priority**: Medium | **Estimated**: 1 hour | **Status**: ⏳ PENDING
 
-Check if manual-co still uses Supabase and migrate if needed.
+Check if medico still uses Supabase and migrate if needed.
 
 **Steps**:
 1. [ ] Check package.json for Supabase dependencies
@@ -695,7 +695,7 @@ All tasks complete when:
 
 ## Notes
 
-- Keep manual-co as Next.js reference for now
+- Keep medico as Next.js reference for now
 - Evaluate earth migration separately
 - Test thoroughly before merging each phase
 - Consider feature flags for risky changes

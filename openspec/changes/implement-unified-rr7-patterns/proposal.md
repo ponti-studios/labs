@@ -10,7 +10,7 @@ Our current labs monorepo has divergent architectures across apps:
 
 - **apps/playground**: RR7 with inconsistent patterns (mix of loaders, client fetching, Supabase)
 - **apps/dumphim**: RR7 but relies heavily on client-side Supabase (bypassing server rendering)
-- **apps/manual-co**: Next.js 14 (different framework entirely)
+- **apps/medico**: Next.js 14 (different framework entirely)
 - **apps/earth**: Vite + React SPA (no SSR, no routing)
 
 This fragmentation creates:
@@ -52,7 +52,7 @@ Standardize on a cutting-edge RR7 stack with:
 4. **Tooling**: Shared configurations (Tailwind, TypeScript, ESLint)
 
 ### Out of Scope
-- apps/manual-co (keep as Next.js reference for now)
+- apps/medico (keep as Next.js reference for now)
 - apps/earth (evaluate separately as visualization demo)
 - New features (this is architectural standardization)
 

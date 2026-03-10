@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { toast } from "sonner";
 
-const DB_NAME = "manual-co-symptom-tracker";
+const DB_NAME = "medico-symptom-tracker";
 const STORE_NAME = "monitored-symptoms";
 const DB_VERSION = 1;
 const QUERY_KEY = "monitoredSymptoms";

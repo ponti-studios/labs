@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 # Build context: monorepo root
-# docker build -f apps/manual-co/Dockerfile .
+# docker build -f apps/medico/Dockerfile .
 
 # ─── Stage 1: Install dependencies ───────────────────────────────────────────
 FROM node:25-bookworm-slim AS deps
@@ -16,7 +16,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 COPY apps/dumphim/package.json          apps/dumphim/package.json
 COPY apps/earth/package.json            apps/earth/package.json
-COPY apps/manual-co/package.json        apps/manual-co/package.json
+COPY apps/medico/package.json           apps/medico/package.json
 COPY apps/playground/package.json       apps/playground/package.json
 COPY apps/scrape/package.json           apps/scrape/package.json
 COPY extensions/polly/package.json      extensions/polly/package.json
@@ -31,7 +31,7 @@ COPY packages/utils/package.json       packages/utils/package.json
 # npm ci is deterministic and respects the lockfile exactly.
 # --ignore-scripts skips postinstall hooks (e.g. lefthook) that don't apply in CI.
 RUN npm ci --ignore-scripts --workspace=packages/ui \
- && npm ci --ignore-scripts --workspace=apps/manual-co
+ && npm ci --ignore-scripts --workspace=apps/medico
 
 
 # ─── Stage 2: Build ──────────────────────────────────────────────────────────
@@ -41,10 +41,10 @@ WORKDIR /app
 
 COPY tsconfig.base.json ./
 COPY packages/ui/   packages/ui/
-COPY apps/manual-co/ apps/manual-co/
+COPY apps/medico/   apps/medico/
 
 RUN npm run build --workspace=packages/ui
-RUN npm run build --workspace=apps/manual-co
+RUN npm run build --workspace=apps/medico
 
 
 # ─── Stage 3: Production image ───────────────────────────────────────────────
@@ -60,7 +60,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 COPY apps/dumphim/package.json          apps/dumphim/package.json
 COPY apps/earth/package.json            apps/earth/package.json
-COPY apps/manual-co/package.json        apps/manual-co/package.json
+COPY apps/medico/package.json           apps/medico/package.json
 COPY apps/playground/package.json       apps/playground/package.json
 COPY apps/scrape/package.json           apps/scrape/package.json
 COPY extensions/polly/package.json      extensions/polly/package.json
@@ -73,12 +73,12 @@ COPY packages/ui/package.json          packages/ui/package.json
 COPY packages/utils/package.json       packages/utils/package.json
 
 RUN npm ci --ignore-scripts --omit=dev --workspace=packages/ui \
- && npm ci --ignore-scripts --omit=dev --workspace=apps/manual-co
+ && npm ci --ignore-scripts --omit=dev --workspace=apps/medico
 
-COPY --from=builder /app/packages/ui/dist       packages/ui/dist
-COPY --from=builder /app/apps/manual-co/build   apps/manual-co/build
+COPY --from=builder /app/packages/ui/dist      packages/ui/dist
+COPY --from=builder /app/apps/medico/build      apps/medico/build
 
-WORKDIR /app/apps/manual-co
+WORKDIR /app/apps/medico
 
 EXPOSE 3000
 ENV PORT=3000

@@ -16,7 +16,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 COPY apps/dumphim/package.json          apps/dumphim/package.json
 COPY apps/earth/package.json            apps/earth/package.json
-COPY apps/manual-co/package.json        apps/manual-co/package.json
+COPY apps/medico/package.json           apps/medico/package.json
 COPY apps/playground/package.json       apps/playground/package.json
 COPY apps/scrape/package.json           apps/scrape/package.json
 COPY extensions/polly/package.json      extensions/polly/package.json
@@ -64,7 +64,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 COPY apps/dumphim/package.json          apps/dumphim/package.json
 COPY apps/earth/package.json            apps/earth/package.json
-COPY apps/manual-co/package.json        apps/manual-co/package.json
+COPY apps/medico/package.json           apps/medico/package.json
 COPY apps/playground/package.json       apps/playground/package.json
 COPY apps/scrape/package.json           apps/scrape/package.json
 COPY extensions/polly/package.json      extensions/polly/package.json

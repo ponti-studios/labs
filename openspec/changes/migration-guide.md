@@ -17,7 +17,7 @@ apps/
 │   ├── lib/utils.ts (same cn function)
 │   ├── tsconfig.json (different)
 │   └── tailwind.config.ts (different)
-└── manual-co/
+└── medico/
     ├── lib/utils.ts (same cn function again!)
     └── ...
 ```

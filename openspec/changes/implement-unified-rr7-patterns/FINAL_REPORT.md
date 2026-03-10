@@ -86,7 +86,7 @@ Successfully established unified RR7 patterns foundation across labs monorepo:
 
 ## Next Steps
 
-1. Complete TS config migration for manual-co and earth
+1. Complete TS config migration for medico and earth
 2. Implement streaming routes with defer()
 3. Add Server Components for static content
 4. Migrate dumphim from Supabase to Drizzle

@@ -206,7 +206,7 @@ packages/
 - ✅ Performance optimizations enabled
 
 ### What's Pending
-- ⏳ Remaining app migrations (manual-co, earth)
+- ⏳ Remaining app migrations (medico, earth)
 - ⏳ Additional streaming routes
 - ⏳ Server Components conversion
 - ⏳ Inline critical CSS
@@ -217,7 +217,7 @@ packages/
 ### Immediate Actions
 1. **Test the implementation**: Run playground app, verify streaming
 2. **Review documentation**: Check migration-guide.md for team
-3. **Migrate remaining apps**: Apply patterns to manual-co, earth
+3. **Migrate remaining apps**: Apply patterns to medico, earth
 4. **Add error boundaries**: Wrap Suspense sections
 
 ### Next Phase

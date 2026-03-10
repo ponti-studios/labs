@@ -25,7 +25,7 @@
 |-----|-----------------|--------|--------|
 | playground | PostgreSQL + Drizzle | Same | ✅ Complete |
 | dumphim | Supabase | PostgreSQL + Drizzle | ⏳ Migrating |
-| manual-co | Local storage | Same | ✅ No change needed |
+| medico | Local storage | Same | ✅ No change needed |
 | earth | @pontistudios/db | Same | ✅ Complete |
 | scrape | None | N/A | ✅ No database |
 
@@ -116,7 +116,7 @@
 
 ---
 
-### 3. apps/manual-co
+### 3. apps/medico
 **Framework**: Next.js 14 + React Query  
 **Purpose**: Healthcare symptom checker
 
@@ -247,7 +247,7 @@
 - COVID-19 Dashboard (multi-country)
 - TFL Camera Network (London traffic)
 - D3 Charts (dumphim)
-- Recharts (manual-co)
+- Recharts (medico)
 
 **Interactive Tools**:
 - Terminal interface
@@ -339,14 +339,14 @@
 ### Frameworks
 - React Router 7 (v7.13.1)
 - React 19
-- Next.js 14 (manual-co)
+- Next.js 14 (medico)
 - Vite 6 (playground, earth)
 
 ### Styling
 - Tailwind CSS 4.x
 - Tailwind v4 (CSS-first)
 - Radix UI
-- DaisyUI (manual-co)
+- DaisyUI (medico)
 
 ### State Management
 - React Query (TanStack)
@@ -381,7 +381,7 @@
 ## Features by Category
 
 ### Health & Wellness
-- ✅ Symptom Checker (manual-co)
+- ✅ Symptom Checker (medico)
 - ✅ Medicare Advisor (playground)
 - ✅ Relationship Health (dumphim)
 
@@ -389,12 +389,12 @@
 - ✅ COVID-19 Dashboard (playground)
 - ✅ Traffic Cameras (playground)
 - ✅ Vote Charts (dumphim)
-- ✅ Match Scores (manual-co)
+- ✅ Match Scores (medico)
 
 ### Productivity
 - ✅ Task Management (playground)
 - ✅ Project Tracker (playground)
-- ✅ Appointment Scheduler (manual-co)
+- ✅ Appointment Scheduler (medico)
 
 ### Utilities
 - ✅ Terminal Interface
@@ -446,7 +446,7 @@
 - ⚠️ dumphim (needs Supabase → Drizzle migration)
 
 **Not Yet Integrated**:
-- ⏳ manual-co (Next.js - different pattern)
+- ⏳ medico (Next.js - different pattern)
 - ⏳ earth (Vite SPA - needs evaluation)
 
 ---
@@ -501,7 +501,7 @@
 4. Inline critical CSS
 
 ### Short Term
-1. Migrate manual-co and earth
+1. Migrate medico and earth
 2. Add more streaming routes
 3. Implement Server Actions
 4. Performance benchmarks
