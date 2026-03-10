@@ -156,7 +156,7 @@ packages/
 |-----|---------------|-----------|-----------------|--------|
 | playground | ✅ | ⏳ | ⏳ | Partial |
 | dumphim | ✅ | ⏳ | ⏳ | Partial |
-| manual-co | ⏳ | ⏳ | ⏳ | Not started |
+| medico | ⏳ | ⏳ | ⏳ | Not started |
 | earth | ⏳ | ⏳ | ⏳ | Not started |
 
 ## Documentation Created

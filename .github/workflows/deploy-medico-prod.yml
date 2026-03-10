@@ -1,0 +1,31 @@
+name: deploy-medico-prod
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'apps/medico/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/deploy-medico-prod.yml'
+
+jobs:
+  deploy:
+    name: Deploy Medico
+    runs-on: ubuntu-latest
+    container: ghcr.io/railwayapp/cli:latest
+    env:
+      # Add RAILWAY_MEDICO_ID to GitHub repo secrets once the Railway service is created.
+      # Dashboard: https://railway.app → ponti-io project → medico service → Settings → Service ID
+      SERVICE_ID: ${{ secrets.RAILWAY_MEDICO_ID }}
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.1
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Railway
+        run: railway up --service ${{ env.SERVICE_ID }} --detach
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}

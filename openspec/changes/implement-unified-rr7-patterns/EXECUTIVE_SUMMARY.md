@@ -263,7 +263,7 @@ openspec/changes/implement-unified-rr7-patterns/
 - **Before**: 5 duplicated `cn()` functions across apps
 - **After**: 1 shared package (@pontistudios/utils)
 - **Eliminated**: 2 instances (playground, dumphim)
-- **Remaining**: 2 apps to migrate (manual-co, earth)
+- **Remaining**: 2 apps to migrate (medico, earth)
 
 ### Configuration Simplification
 - **Before**: 23 lines per tsconfig.json
@@ -353,7 +353,7 @@ export function ErrorBoundary() {
 - [x] Apps integrated with shared packages
 
 ### ⏳ Pending (Non-blocking)
-- [ ] Remaining app migrations (manual-co, earth)
+- [ ] Remaining app migrations (medico, earth)
 - [ ] Additional streaming routes (corona)
 - [ ] Server Components conversion (more examples)
 - [ ] Inline critical CSS
@@ -380,7 +380,7 @@ Navigate to `/architecture-demo` in the playground app to see:
 4. Plan remaining app migrations
 
 ### Short Term (Next 2 Weeks)
-1. Migrate manual-co to shared packages
+1. Migrate medico to shared packages
 2. Add more streaming routes
 3. Create Server Component examples
 4. Performance audit

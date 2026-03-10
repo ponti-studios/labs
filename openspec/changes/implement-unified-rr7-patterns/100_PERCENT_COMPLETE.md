@@ -211,7 +211,7 @@ openspec/changes/implement-unified-rr7-patterns/
 - Before: 5 duplicated `cn()` functions
 - After: 1 shared package (@pontistudios/utils)
 - Eliminated: 2 instances (playground, dumphim)
-- Remaining: 2 apps to migrate (manual-co, earth)
+- Remaining: 2 apps to migrate (medico, earth)
 
 ### Configuration
 - Before: 23 lines per tsconfig.json

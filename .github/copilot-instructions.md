@@ -61,7 +61,7 @@ Run commands inside a specific package by `cd`‑ing into it or using `pnpm -r`/
 
 ### Example prompts to try once instructions are active
 
-- "Run the unit tests in the `manual-co` app and report any failures."
+- "Run the unit tests in the `medico` app and report any failures."
 - "Add a new button component to `@pontistudios/ui` with CVA variants and update Storybook."
 - "Format and lint the entire workspace." 
 
