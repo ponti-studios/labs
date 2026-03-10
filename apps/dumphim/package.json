@@ -15,14 +15,15 @@
 		"db:studio": "drizzle-kit studio"
 	},
 	"dependencies": {
+		"@browserbasehq/stagehand": "3.1.0",
 		"@hono/node-server": "^1.19.11",
 		"@phosphor-icons/react": "^2.1.7",
-		"@tanstack/react-query": "^5.83.1",
 		"@pontistudios/db": "*",
 		"@pontistudios/ui": "*",
 		"@pontistudios/utils": "*",
 		"@react-router/node": "^7.13.1",
 		"@react-router/serve": "^7.5.3",
+		"@tanstack/react-query": "^5.83.1",
 		"bcryptjs": "^3.0.2",
 		"class-variance-authority": "^0.7.1",
 		"cmdk": "^1.1.1",
@@ -38,7 +39,9 @@
 		"react-dom": "^19.1.0",
 		"react-router": "^7.5.3",
 		"tailwind-merge": "^3.3.1",
-		"vaul": "^1.1.2"
+		"vaul": "^1.1.2",
+		"vite-plugin-static-copy": "3.2.0",
+		"workbox-build": "7.0.0"
 	},
 	"devDependencies": {
 		"@pontistudios/tsconfig": "*",
@@ -50,7 +53,7 @@
 		"@types/react": "^19.1.2",
 		"@types/react-dom": "^19.1.2",
 		"dotenv": "^16.5.0",
-		"drizzle-kit": "^0.31.1",
+		"drizzle-kit": "^0.18.1",
 		"tailwindcss": "^4.1.4",
 		"tsconfig-paths": "^4.2.0",
 		"tsx": "^4.21.0",
