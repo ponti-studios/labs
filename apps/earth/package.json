@@ -1,5 +1,5 @@
 {
-    "name": "spark-template",
+    "name": "earth-intelligence",
     "private": true,
     "version": "0.0.0",
     "type": "module",
@@ -98,7 +98,7 @@
         "tsx": "^4.20.5",
         "typescript": "~5.7.2",
         "typescript-eslint": "^8.38.0",
-        "vite": "^7.2.6"
+        "vite": "8.0.0-beta.18"
     },
     "workspaces": {
         "packages": [

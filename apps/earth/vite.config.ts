@@ -22,4 +22,8 @@ export default defineConfig({
       '@': resolve(projectRoot, 'src')
     }
   },
+  build: {
+    // Disable CSS minification to workaround Tailwind v4 + LightningCSS issue in Vite 8 beta
+    cssMinify: false,
+  },
 });
