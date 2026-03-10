@@ -2,7 +2,6 @@ import { eq, desc } from "drizzle-orm";
 import { db } from "~/lib/db";
 import { trackers, votes } from "@pontistudios/db/schema";
 
-
 /**
  * Server-side queries for dumphim
  * Replaces Supabase client queries

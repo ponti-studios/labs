@@ -8,10 +8,6 @@ interface TimeObject {
   seconds: number;
 }
 
-
-
-
-
 interface ContentPlaylistTimeRequest {
   action: string;
 }

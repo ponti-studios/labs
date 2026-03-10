@@ -184,7 +184,7 @@ export const CodeBlock: React.FC<{
   children: string;
   language?: string;
   className?: string;
-}> = ({ children, language, className }) => (
+}> = ({ children, className }) => (
   <pre
     className={cn(
       "bg-white/2 border border-white/10 p-4 overflow-x-auto",
