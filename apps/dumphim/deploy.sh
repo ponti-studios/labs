@@ -33,12 +33,12 @@ pre_deploy() {
   
   # Type check
   echo "  → Type checking..."
-  cd $APP_DIR && pnpm run typecheck > /dev/null 2>&1 && echo "  ✓ Type check passed" || { echo "  ❌ Type check failed"; exit 1; }
+  cd $APP_DIR && npm run typecheck > /dev/null 2>&1 && echo "  ✓ Type check passed" || { echo "  ❌ Type check failed"; exit 1; }
   cd ../..
   
   # Build check
   echo "  → Building..."
-  cd $APP_DIR && pnpm run build > /dev/null 2>&1 && echo "  ✓ Build passed" || { echo "  ❌ Build failed"; exit 1; }
+  cd $APP_DIR && npm run build > /dev/null 2>&1 && echo "  ✓ Build passed" || { echo "  ❌ Build failed"; exit 1; }
   cd ../..
   
   echo "✅ All checks passed!"

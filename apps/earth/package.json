@@ -9,7 +9,7 @@
         "build": "bunx tsc -b --noCheck && bunx vite build",
         "lint": "oxlint src --fix",
         "db:typecheck": "bunx tsc -p tsconfig.db.json --noEmit",
-    "db:migrate": "pnpm --filter @pontistudios/db run db:migrate",
+    "db:migrate": "npm run --workspace=@pontistudios/db db:migrate",
         "db:check": "bunx tsx db/check.ts",
         "optimize": "bunx vite optimize",
         "preview": "bunx vite preview",

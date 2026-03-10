@@ -6,7 +6,7 @@ on:
     paths:
       - 'apps/dumphim/**'
       - 'package.json'
-      - 'pnpm-lock.yaml'
+      - 'package-lock.json'
       - '.github/workflows/deploy-dumphim-prod.yml'
 
 jobs:
