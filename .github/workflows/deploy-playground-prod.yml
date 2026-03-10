@@ -24,6 +24,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Deploy to Railway
-        run: railway up --service ${{ env.SERVICE_ID }} --config apps/playground/railway.json --detach
+        run: railway up --service ${{ env.SERVICE_ID }} --detach ../..
+        working-directory: apps/playground
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
