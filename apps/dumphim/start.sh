@@ -17,4 +17,4 @@ fi
 
 # Start the server
 echo "🌐 Starting server..."
-exec pnpm start
+exec npm start
