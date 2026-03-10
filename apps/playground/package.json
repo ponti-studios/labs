@@ -17,6 +17,7 @@
 	},
 	"dependencies": {
 		"@pontistudios/ui": "workspace:*",
+		"@pontistudios/utils": "workspace:*",
 		"@emotion/styled": "^11.14.1",
 		"@google/genai": "^1.15.0",
 		"@googlemaps/js-api-loader": "^2.0.2",

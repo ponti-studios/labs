@@ -59,7 +59,9 @@ This workspace includes a local SQLite database setup using Kysely for
 type-safe queries and Atlas for schema migrations.
 
 - Default DB file is `db/app.db`.
-- Schema lives at `db/schema.sql`; migrations are stored under `db/migrations`.
+- Schema and migrations now live in the shared package `@pontistudios/db` (see its README).
+- Local migration commands still work via Atlas, but they operate on the central
+  files thanks to `atlas.hcl`.
 - Use `DATABASE_FILE=/path/to/file.db` to override the database path in any
   script.
 
@@ -70,6 +72,9 @@ type-safe queries and Atlas for schema migrations.
 > available.
 
 ### Common DB commands
+
+Commands in this package simply forward to `@pontistudios/db`:
+
 - Generate a migration: `pnpm run db:migrate:diff --name init`
 - Apply pending migrations: `pnpm run db:migrate:apply`
 - Check migration status: `pnpm run db:migrate:status`
@@ -88,13 +93,17 @@ The rest of the original README content follows unchanged below.
 ### Installed integration points
 
 - Atlas config: `atlas.hcl`
-- SQL schema source: `db/schema.sql`
-- Migration directory: `db/migrations`
+- SQL schema source and migration directory are defined in the
+  top‑level Atlas config and point at the central `@pontistudios/db`
+  package; see `packages/db/migrations`.
 - Kysely DB client and types: `db/client.ts`, `db/types.ts`
 
 ### Common commands
 
-- Generate a migration from `db/schema.sql`:
+(These are aliases for the shared package's scripts.)
+
+- Generate a migration from the canonical schema (located in
+  `@pontistudios/db`):
 	- `npm run db:migrate:diff --name init`
 - Apply pending migrations:
 	- `npm run db:migrate:apply`

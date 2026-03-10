@@ -1,0 +1,6 @@
+dist/
+*.tsbuildinfo
+
+# Atlas-generated checksum files
+migrations/*.sum
+

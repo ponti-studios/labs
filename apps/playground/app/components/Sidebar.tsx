@@ -45,6 +45,7 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar }: SidebarProps) 
                 <Link
                   to={route.path}
                   onClick={toggleSidebar}
+                  rel="prefetch"
                   className={cn(
                     "flex px-4 py-3 rounded-lg text-sm font-light transition-all duration-300 text-stone-700 hover:bg-white/40 hover:text-stone-900 mx-1",
                     {

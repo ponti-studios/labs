@@ -11,6 +11,6 @@ describe("twoSum", () => {
   });
 
   test("should work with negative numbers", () => {
-    expect(twoSum([-1, 0, 1, 2, -1, -4], 0)).toEqual([0, 4]);
+    expect(twoSum([-1, 0, 1, 2, -1, -4], 0)).toEqual([0, 2]);
   });
 });

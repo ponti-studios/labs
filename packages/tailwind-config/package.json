@@ -1,0 +1,25 @@
+{
+  "name": "@pontistudios/tailwind-config",
+  "version": "1.0.0",
+  "description": "Shared Tailwind CSS configuration",
+  "main": "index.ts",
+  "types": "index.ts",
+  "files": [
+    "index.ts",
+    "theme.css"
+  ],
+  "exports": {
+    ".": {
+      "import": "./index.ts",
+      "require": "./index.ts"
+    },
+    "./theme.css": "./theme.css"
+  },
+  "dependencies": {
+    "tailwindcss": "^4.1.0",
+    "tw-animate-css": "^1.2.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.0"
+  }
+}

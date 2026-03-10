@@ -6,8 +6,8 @@ if (!process.env.DATABASE_URL) {
 }
 
 export default {
-	schema: "./app/db/schema.ts",
-	out: "./drizzle",
+	schema: "../../packages/db/src/schema/index.ts",
+	out: "../../packages/db/migrations",
 	dialect: "postgresql",
 	dbCredentials: {
 		url: process.env.DATABASE_URL,
