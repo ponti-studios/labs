@@ -38,7 +38,7 @@ export async function authenticateRequest(request: Request): Promise<UserJWTPayl
  * Higher-order function for protected route handlers
  * Automatically checks authentication and passes user to handler
  */
-export function withAuth<T>(
+export function withAuth(
   handler: (args: { request: Request; user: UserJWTPayload }) => Promise<Response>,
 ): (args: { request: Request }) => Promise<Response> {
   return async ({ request }) => {

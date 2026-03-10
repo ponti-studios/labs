@@ -11,8 +11,7 @@
 import { createTracker } from "~/lib/server/mutations";
 import type { TrackerInsert } from "@pontistudios/db/schema";
 import { httpErrors, httpSuccess } from "~/lib/api/response";
-import { withAuth } from "~/lib/api/auth";
-import { invalidateTrackerCache } from "~/lib/server/cache";
+
 
 // Validation helper
 function validateTrackerData(body: Record<string, unknown>): {
