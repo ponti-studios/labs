@@ -1,11 +1,11 @@
 {
 	"$schema": "https://railway.app/railway.schema.json",
 	"build": {
-		"builder": "DOCKERFILE",
-		"dockerfilePath": "apps/medico/Dockerfile"
+		"builder": "RAILPACK",
+		"buildCommand": "npm ci && npm run build --workspace=@pontistudios/medico"
 	},
 	"deploy": {
-		"startCommand": "npm start",
+		"startCommand": "cd apps/medico && npm start",
 		"healthcheckPath": "/",
 		"healthcheckTimeout": 300,
 		"restartPolicyType": "ON_FAILURE",
