@@ -17,7 +17,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@browserbasehq/stagehand": "^2.4.3",
+    "@browserbasehq/stagehand": "^3.1.0",
+    "vite-plugin-static-copy": "3.2.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
