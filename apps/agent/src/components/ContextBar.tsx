@@ -1,30 +1,34 @@
-import type { PageContent } from '../lib/types.ts'
+import type { PageContent } from "../lib/types.ts";
 
 const PAGE_ICONS: Record<string, string> = {
-  youtube: '▶',
-  ubereats: '🛵',
-  generic: '📄',
-}
+  youtube: "▶",
+  ubereats: "🛵",
+  generic: "📄",
+};
 
 const PAGE_COLORS: Record<string, string> = {
-  youtube: 'bg-red-50 text-red-700 border-red-200',
-  ubereats: 'bg-green-50 text-green-700 border-green-200',
-  generic: 'bg-blue-50 text-blue-700 border-blue-200',
-}
+  youtube: "bg-red-50 text-red-700 border-red-200",
+  ubereats: "bg-green-50 text-green-700 border-green-200",
+  generic: "bg-blue-50 text-blue-700 border-blue-200",
+};
 
 interface ContextBarProps {
-  currentPage: PageContent | null
-  additionalPages: PageContent[]
-  onRemovePage: (url: string) => void
+  currentPage: PageContent | null;
+  additionalPages: PageContent[];
+  onRemovePage: (url: string) => void;
 }
 
-export default function ContextBar({ currentPage, additionalPages, onRemovePage }: ContextBarProps) {
+export default function ContextBar({
+  currentPage,
+  additionalPages,
+  onRemovePage,
+}: ContextBarProps) {
   const allPages = [
     ...(currentPage ? [{ ...currentPage, isCurrent: true }] : []),
     ...additionalPages.map((p) => ({ ...p, isCurrent: false })),
-  ]
+  ];
 
-  if (allPages.length === 0) return null
+  if (allPages.length === 0) return null;
 
   return (
     <div className="flex flex-wrap gap-1.5 px-3 py-2 border-b border-gray-100 bg-gray-50">
@@ -46,5 +50,5 @@ export default function ContextBar({ currentPage, additionalPages, onRemovePage 
         </div>
       ))}
     </div>
-  )
+  );
 }

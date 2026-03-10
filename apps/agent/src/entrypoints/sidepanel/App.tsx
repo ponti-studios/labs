@@ -1,110 +1,104 @@
-import { useEffect, useRef, useState } from 'react'
-import ChatMessage from '../../components/ChatMessage.tsx'
-import ChatInput from '../../components/ChatInput.tsx'
-import ContextBar from '../../components/ContextBar.tsx'
-import { streamChat } from '../../lib/api.ts'
-import type { ChatMessage as ChatMsg, PageContent, TabInfo } from '../../lib/types.ts'
+import { useEffect, useRef, useState } from "react";
+import ChatMessage from "../../components/ChatMessage.tsx";
+import ChatInput from "../../components/ChatInput.tsx";
+import ContextBar from "../../components/ContextBar.tsx";
+import { streamChat } from "../../lib/api.ts";
+import type { ChatMessage as ChatMsg, PageContent, TabInfo } from "../../lib/types.ts";
 
 export default function App() {
-  const [messages, setMessages] = useState<ChatMsg[]>([])
-  const [input, setInput] = useState('')
-  const [isStreaming, setIsStreaming] = useState(false)
-  const [currentPage, setCurrentPage] = useState<PageContent | null>(null)
-  const [additionalPages, setAdditionalPages] = useState<PageContent[]>([])
-  const [tabs, setTabs] = useState<TabInfo[]>([])
-  const [showTabs, setShowTabs] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const [messages, setMessages] = useState<ChatMsg[]>([]);
+  const [input, setInput] = useState("");
+  const [isStreaming, setIsStreaming] = useState(false);
+  const [currentPage, setCurrentPage] = useState<PageContent | null>(null);
+  const [additionalPages, setAdditionalPages] = useState<PageContent[]>([]);
+  const [tabs, setTabs] = useState<TabInfo[]>([]);
+  const [showTabs, setShowTabs] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    loadCurrentPage()
-    loadTabs()
-  }, [])
+    loadCurrentPage();
+    loadTabs();
+  }, []);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   async function loadCurrentPage() {
     try {
-      const response = await browser.runtime.sendMessage({ type: 'GET_PAGE_CONTENT' })
-      setCurrentPage(response?.payload ?? null)
+      const response = await browser.runtime.sendMessage({ type: "GET_PAGE_CONTENT" });
+      setCurrentPage(response?.payload ?? null);
     } catch {}
   }
 
   async function loadTabs() {
     try {
-      const response = await browser.runtime.sendMessage({ type: 'GET_TABS' })
-      setTabs(response?.payload ?? [])
+      const response = await browser.runtime.sendMessage({ type: "GET_TABS" });
+      setTabs(response?.payload ?? []);
     } catch {}
   }
 
   async function addTabToContext(tabId: number) {
     try {
       const response = await browser.runtime.sendMessage({
-        type: 'GET_TAB_CONTENT',
+        type: "GET_TAB_CONTENT",
         tabId,
-      })
-      if (!response?.payload) return
+      });
+      if (!response?.payload) return;
       setAdditionalPages((prev) => {
-        if (prev.find((p) => p.url === response.payload.url)) return prev
-        return [...prev, response.payload]
-      })
-      setShowTabs(false)
+        if (prev.find((p) => p.url === response.payload.url)) return prev;
+        return [...prev, response.payload];
+      });
+      setShowTabs(false);
     } catch {}
   }
 
   async function sendMessage() {
-    if (!input.trim() || isStreaming) return
-    setError(null)
+    if (!input.trim() || isStreaming) return;
+    setError(null);
 
     const userMsg: ChatMsg = {
       id: Date.now().toString(),
-      role: 'user',
+      role: "user",
       content: input.trim(),
       timestamp: Date.now(),
-    }
-    const assistantId = (Date.now() + 1).toString()
+    };
+    const assistantId = (Date.now() + 1).toString();
     const assistantMsg: ChatMsg = {
       id: assistantId,
-      role: 'assistant',
-      content: '',
+      role: "assistant",
+      content: "",
       timestamp: Date.now(),
-    }
+    };
 
-    setMessages((prev) => [...prev, userMsg, assistantMsg])
-    setInput('')
-    setIsStreaming(true)
+    setMessages((prev) => [...prev, userMsg, assistantMsg]);
+    setInput("");
+    setIsStreaming(true);
 
     const history = [...messages, userMsg].map((m) => ({
       role: m.role,
       content: m.content,
-    }))
+    }));
 
     try {
-      await streamChat(
-        history,
-        { currentPage, additionalPages, tabs },
-        (text) => {
-          setMessages((prev) =>
-            prev.map((m) =>
-              m.id === assistantId ? { ...m, content: m.content + text } : m
-            )
-          )
-        }
-      )
+      await streamChat(history, { currentPage, additionalPages, tabs }, (text) => {
+        setMessages((prev) =>
+          prev.map((m) => (m.id === assistantId ? { ...m, content: m.content + text } : m)),
+        );
+      });
     } catch (e) {
-      const msg = e instanceof Error ? e.message : 'Unknown error'
-      setError(msg)
+      const msg = e instanceof Error ? e.message : "Unknown error";
+      setError(msg);
       setMessages((prev) =>
         prev.map((m) =>
           m.id === assistantId
-            ? { ...m, content: 'Sorry, something went wrong. Is the Polly server running?' }
-            : m
-        )
-      )
+            ? { ...m, content: "Sorry, something went wrong. Is the Polly server running?" }
+            : m,
+        ),
+      );
     } finally {
-      setIsStreaming(false)
+      setIsStreaming(false);
     }
   }
 
@@ -120,7 +114,10 @@ export default function App() {
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => { setShowTabs(!showTabs); loadTabs() }}
+            onClick={() => {
+              setShowTabs(!showTabs);
+              loadTabs();
+            }}
             className="text-xs text-gray-500 hover:text-gray-800 px-2 py-1 rounded hover:bg-gray-100"
             title="Add tab to context"
           >
@@ -140,9 +137,7 @@ export default function App() {
       <ContextBar
         currentPage={currentPage}
         additionalPages={additionalPages}
-        onRemovePage={(url) =>
-          setAdditionalPages((prev) => prev.filter((p) => p.url !== url))
-        }
+        onRemovePage={(url) => setAdditionalPages((prev) => prev.filter((p) => p.url !== url))}
       />
 
       {/* Tab picker */}
@@ -188,7 +183,7 @@ export default function App() {
               <p className="text-sm text-gray-500 mt-1">
                 {currentPage
                   ? `I can see "${currentPage.title}". Ask me anything.`
-                  : 'Ask me anything. I can analyze pages, track spending, and more.'}
+                  : "Ask me anything. I can analyze pages, track spending, and more."}
               </p>
             </div>
           </div>
@@ -199,12 +194,7 @@ export default function App() {
       </div>
 
       {/* Input */}
-      <ChatInput
-        value={input}
-        onChange={setInput}
-        onSend={sendMessage}
-        disabled={isStreaming}
-      />
+      <ChatInput value={input} onChange={setInput} onSend={sendMessage} disabled={isStreaming} />
     </div>
-  )
+  );
 }
