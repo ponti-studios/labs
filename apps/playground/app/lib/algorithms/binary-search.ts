@@ -19,10 +19,8 @@
 export function binarySearch(n: number, list: number[]): number | null {
   let min = 0;
   let max = list.length - 1;
-  let count = 0;
 
   while (max >= min) {
-    count++;
     const guess = Math.floor((min + max) / 2);
 
     if (list[guess] === n) return guess;

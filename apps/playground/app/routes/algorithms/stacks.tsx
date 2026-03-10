@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { isPalindrome, Stack } from "~/lib/algorithms/stacks";
+import { isPalindrome } from "~/lib/algorithms/stacks";
 import {
   PageHeader,
   PageSection,
@@ -7,7 +7,6 @@ import {
   InputField,
   ResultBox,
   InfoBox,
-  CodeBlock,
 } from "~/components/void-components";
 
 export default function StacksDemo() {
@@ -21,7 +20,7 @@ export default function StacksDemo() {
       try {
         const isPalin = isPalindrome(wordInput);
         setResult({ word: wordInput, isPalindrome: isPalin });
-      } catch (error) {
+      } catch (_err) {
         setResult({ error: "INVALID INPUT" });
       }
       setIsLoading(false);

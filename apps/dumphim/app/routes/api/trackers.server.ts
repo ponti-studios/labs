@@ -12,7 +12,6 @@ import { createTracker } from "~/lib/server/mutations";
 import type { TrackerInsert } from "@pontistudios/db/schema";
 import { httpErrors, httpSuccess } from "~/lib/api/response";
 
-
 // Validation helper
 function validateTrackerData(body: Record<string, unknown>): {
   valid: boolean;
