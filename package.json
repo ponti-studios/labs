@@ -5,6 +5,8 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "dev:agent": "turbo run dev --filter=@pontistudios/agent",
+    "dev:agent-server": "turbo run dev --filter=@pontistudios/agent-server",
     "dev:dumphim": "turbo run dev --filter=dumphim",
     "dev:playground": "turbo run dev --filter=playground",
     "dev:rocco": "turbo run dev --filter=@pontistudios/rocco",
@@ -48,7 +50,6 @@
   },
   "workspaces": [
     "apps/*",
-    "extensions/*",
     "packages/*"
   ]
 }
