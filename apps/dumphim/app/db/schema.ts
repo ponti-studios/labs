@@ -35,7 +35,7 @@ export const trackers = pgTable("trackers", {
 export type Tracker = typeof trackers.$inferSelect;
 export type TrackerInsert = typeof trackers.$inferInsert;
 
-export const trackersRelations = relations(trackers, ({ many, one }) => ({
+export const trackersRelations = relations(trackers, ({ many }) => ({
   votes: many(votes),
   // If you want to create a relation to a user table (e.g., if you replicate user data or have a profiles table):
   // user: one(users, { fields: [trackers.userId], references: [users.id] })
@@ -56,7 +56,7 @@ export const votes = pgTable("votes", {
 export type Vote = typeof votes.$inferSelect;
 export type VoteInsert = typeof votes.$inferInsert;
 
-export const votesRelations = relations(votes, ({ one }) => ({
+export const votesRelations = relations(votes, () => ({
   // tracker: one(trackers, {
   // 	fields: [votes.trackerId],
   // 	references: [trackers.id],

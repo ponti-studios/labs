@@ -12,9 +12,8 @@ import { db } from "~/lib/db";
 import { users } from "@pontistudios/db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
-import { httpSuccess, httpErrors, jsonResponse } from "~/lib/api/response";
-import { withAuth, getCurrentUser } from "~/lib/api/auth";
-import { invalidateTrackerCache } from "~/lib/server/cache";
+import { httpSuccess, httpErrors } from "~/lib/api/response";
+import { getCurrentUser } from "~/lib/api/auth";
 
 // Type-safe form data extraction
 function getFormString(formData: FormData, key: string): string | null {

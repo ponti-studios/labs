@@ -58,7 +58,7 @@ export default function TrackerVoteRoute() {
   const fetcher = useFetcher();
   const navigate = useNavigate();
 
-  const handleVoteCasted = (trackerId: string, updatedVotes: typeof votes) => {
+  const handleVoteCasted = (trackerId: string, _updatedVotes: typeof votes) => {
     navigate(`/tracker/${trackerId}`);
   };
 

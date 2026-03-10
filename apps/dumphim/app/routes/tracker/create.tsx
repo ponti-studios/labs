@@ -24,14 +24,14 @@ import {
   PersonalityTypePicker,
 } from "../../components/voter/personality-type-picker";
 
-// Mock data for friend ratings
-type Rating = {
-  id: string;
-  name: string;
-  verdict: "stay" | "dump";
-  comment: string;
-  date: Date;
-};
+// TODO: Implement friend ratings feature
+// type Rating = {
+//   id: string;
+//   name: string;
+//   verdict: "stay" | "dump";
+//   comment: string;
+//   date: Date;
+// };
 
 export function CardCreator() {
   const { user } = useAuth();
@@ -152,11 +152,6 @@ export function CardCreator() {
     // Local file cleanup - no Supabase storage to manage
   };
 
-  const downloadCard = () => {
-    // In a real implementation, this would capture the card as an image and download it
-    alert("In a real implementation, this would download your card as an image!");
-  };
-
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!imageEditorRef.current) return;
 
@@ -218,13 +213,14 @@ export function CardCreator() {
   const submitRating = () => {
     if (!newRating.name || !newRating.verdict) return;
 
-    const newRatingObj: Rating = {
-      id: Date.now().toString(),
-      name: newRating.name,
-      verdict: newRating.verdict,
-      comment: newRating.comment,
-      date: new Date(),
-    };
+    // TODO: Implement rating submission to backend
+    // const newRatingObj: Rating = {
+    //   id: Date.now().toString(),
+    //   name: newRating.name,
+    //   verdict: newRating.verdict,
+    //   comment: newRating.comment,
+    //   date: new Date(),
+    // };
 
     setNewRating({
       name: "",

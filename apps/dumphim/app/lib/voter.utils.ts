@@ -11,7 +11,7 @@ export const generateFingerprint = (): string => {
   const fingerprint = `${screenData}-${timezone}-${languages}-${platform}`;
   try {
     return btoa(fingerprint); // Base64 encode to make it a bit more opaque
-  } catch (e) {
+  } catch {
     // Fallback for environments where btoa might not be available or fails (e.g., some Node.js versions without polyfills)
     return `fallback-fingerprint-${fingerprint.replace(/[^a-zA-Z0-9]/g, "")}`;
   }

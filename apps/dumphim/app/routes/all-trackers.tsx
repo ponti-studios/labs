@@ -16,7 +16,7 @@ import { getTrackersWithStats } from "~/lib/server/queries-optimized";
 import { withCache, CACHE_TTL } from "~/lib/server/cache";
 
 // Server loader - fetches data on the server with caching
-export async function loader({ request }: Route.LoaderArgs) {
+export async function loader(_args: Route.LoaderArgs) {
   // Use cached data if available (1 minute TTL)
   const trackersWithStats = await withCache(
     "trackers:list:all",
