@@ -17,13 +17,13 @@ pre-commit:
   commands:
     format:
       tags: format
-      run: pnpm format
+      run: npm run format
     lint:
       tags: lint
-      run: pnpm lint
+      run: npm run lint
 
 pre-push:
   commands:
     test:
       tags: test
-      run: pnpm test
+      run: npm test

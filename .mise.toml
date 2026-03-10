@@ -1,5 +1,6 @@
 [tools]
-node = "20"
+node = "25"
+npm = "latest"
 pnpm = "latest"
 
 [env]

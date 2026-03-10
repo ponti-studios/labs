@@ -1,6 +1,6 @@
 import { eq, desc } from "drizzle-orm";
-import { db } from "~/lib/db";
-import { projects, tasks, todos } from "~/lib/db/schema";
+import { db } from "~/db";
+import { projects, todos } from "~/db/schema";
 
 // Server-side data fetching patterns
 // These run on the server only - never shipped to client
@@ -20,16 +20,6 @@ export async function getProject(id: string) {
 export async function getProjectWithTasks(id: string) {
   return db.query.projects.findFirst({
     where: eq(projects.id, parseInt(id)),
-    with: {
-      tasks: true,
-    },
-  });
-}
-
-export async function getTasks(projectId: string) {
-  return db.query.tasks.findMany({
-    where: eq(tasks.projectId, parseInt(projectId)),
-    orderBy: desc(tasks.createdAt),
   });
 }
 

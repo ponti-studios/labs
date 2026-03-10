@@ -1,6 +1,6 @@
 import { Loader } from "lucide-react";
 import { type FormEvent, useState } from "react";
-import { Button } from "~/components/ui";
+import { Button } from "@pontistudios/ui";
 
 export function UploadDocumentsForm() {
   const [isPending, setIsPending] = useState(false);

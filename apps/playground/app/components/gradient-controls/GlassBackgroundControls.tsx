@@ -1,4 +1,4 @@
-import { Input, Slider } from "~/components/ui";
+import { Input, Slider } from "@pontistudios/ui";
 
 interface GlassBackgroundControlsProps {
   glassGradient: {
