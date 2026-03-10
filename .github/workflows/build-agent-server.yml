@@ -15,7 +15,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: stable
+          bun-version: latest
       - name: Build agent binary
         run: bun build src/services/agent-server/index.ts --outdir dist/agent
       - name: Upload artifact
