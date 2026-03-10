@@ -1,21 +1,25 @@
-name: deploy-playground-prod
+name: Deploy Playground to Production
 
 on:
   push:
-    branches: [main, master]
+    branches: [main]
     paths:
       - "apps/playground/**"
+      - "packages/**"
       - "package.json"
       - "package-lock.json"
       - ".github/workflows/deploy-playground-prod.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-playground-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   deploy:
-    name: Deploy Playground
+    name: Deploy to Railway
     runs-on: ubuntu-latest
-    container: ghcr.io/railwayapp/cli:latest
-    env:
-      SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_PLAYGROUND }}
+    timeout-minutes: 10
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
@@ -23,7 +27,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli@latest
+
       - name: Deploy to Railway
-        run: railway up --service ${{ env.SERVICE_ID }} --detach
+        run: railway up --service ${{ secrets.RAILWAY_SERVICE_PLAYGROUND }} --detach
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}

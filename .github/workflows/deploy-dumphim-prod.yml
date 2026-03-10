@@ -1,29 +1,36 @@
-name: deploy-dumphim-prod
+name: Deploy Dumphim to Production
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main]
     paths:
-      - 'apps/dumphim/**'
-      - 'package.json'
-      - 'package-lock.json'
-      - '.github/workflows/deploy-dumphim-prod.yml'
+      - "apps/dumphim/**"
+      - "packages/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/deploy-dumphim-prod.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-dumphim-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   deploy:
-    name: Deploy Dumphim
+    name: Deploy to Railway
     runs-on: ubuntu-latest
-    container: ghcr.io/railwayapp/cli:latest
-    env:
-      SERVICE_ID: ${{ secrets.RAILWAY_DUMPHIM_ID }}
+    timeout-minutes: 10
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
-      
+
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli@latest
+
       - name: Deploy to Railway
-        run: railway up --service ${{ env.SERVICE_ID }} --detach
+        run: railway up --service ${{ secrets.RAILWAY_SERVICE_DUMPHIM }} --detach
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
