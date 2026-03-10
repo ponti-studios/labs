@@ -1,57 +1,116 @@
-import type { Session, User } from "@supabase/supabase-js";
-import { createContext, type ReactNode, useContext, useEffect, useState } from "react";
-import { supabase } from "~/lib/supabaseClient";
+import type { ReactNode } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+
+interface User {
+  id: string;
+  email: string;
+}
 
 interface AuthContextType {
   user: User | null;
-  session: Session | null;
   isLoading: boolean;
-  signInWithPassword: typeof supabase.auth.signInWithPassword;
-  signUp: typeof supabase.auth.signUp;
-  signOut: typeof supabase.auth.signOut;
+  signInWithPassword: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signUp: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setIsLoading(true);
-
-    supabase.auth.getUser().then(({ data: { user: currentUser } }) => {
-      setUser(currentUser);
-      setIsLoading(false);
-    });
-
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (_event, newSession) => {
-      setSession(newSession);
-      if (newSession?.user) {
-        // Verify the user data by calling getUser
-        const {
-          data: { user: verifiedUser },
-        } = await supabase.auth.getUser();
-        setUser(verifiedUser);
-      } else {
-        setUser(null);
+    // Check for existing session on mount
+    const checkSession = async () => {
+      try {
+        const response = await fetch("/api/auth/session");
+        if (response.ok) {
+          const data = await response.json();
+          setUser(data.user);
+        }
+      } catch (error) {
+        console.error("Session check error:", error);
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
-    });
-
-    return () => {
-      authListener?.subscription.unsubscribe();
     };
+
+    checkSession();
   }, []);
+
+  const signInWithPassword = async (email: string, password: string) => {
+    try {
+      const formData = new FormData();
+      formData.append("intent", "login");
+      formData.append("email", email);
+      formData.append("password", password);
+
+      const response = await fetch("/api/auth", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        return { error: new Error(data.error || "Login failed") };
+      }
+
+      const data = await response.json();
+      setUser(data.user);
+      return { error: null };
+    } catch (error) {
+      return { error: error as Error };
+    }
+  };
+
+  const signUp = async (email: string, password: string) => {
+    try {
+      const formData = new FormData();
+      formData.append("intent", "signup");
+      formData.append("email", email);
+      formData.append("password", password);
+
+      const response = await fetch("/api/auth", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        return { error: new Error(data.error || "Signup failed") };
+      }
+
+      const data = await response.json();
+      setUser(data.user);
+      return { error: null };
+    } catch (error) {
+      return { error: error as Error };
+    }
+  };
+
+  const signOut = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("intent", "logout");
+
+      await fetch("/api/auth", {
+        method: "POST",
+        body: formData,
+      });
+
+      setUser(null);
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
 
   const value = {
     user,
-    session,
     isLoading,
-    signInWithPassword: supabase.auth.signInWithPassword,
-    signUp: supabase.auth.signUp,
-    signOut: supabase.auth.signOut,
+    signInWithPassword,
+    signUp,
+    signOut,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

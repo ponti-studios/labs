@@ -2,8 +2,7 @@ import { AlertTriangle, Heart, ThumbsDown, ThumbsUp, User } from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { useAuth } from "~/components/AuthProvider";
-import type { Tracker, Vote } from "~/db/schema";
-import { supabase } from "~/lib/supabaseClient";
+import type { Tracker, Vote } from "@pontistudios/db/schema";
 import { generateFingerprint } from "~/lib/voter.utils";
 import VoteChart from "./VoteChart";
 
@@ -12,14 +11,35 @@ interface VoteScreenProps {
   votes: Vote[];
   onBack: () => void;
   onVoteCasted: (trackerId: string, updatedVotes: Vote[]) => void;
+  fetcher: any;
 }
 
-const VoteScreen: React.FC<VoteScreenProps> = ({ tracker, votes, onBack, onVoteCasted }) => {
+const VoteScreen: React.FC<VoteScreenProps> = ({
+  tracker,
+  votes,
+  onBack,
+  onVoteCasted,
+  fetcher,
+}) => {
   const { user } = useAuth();
   const [currentVotes, setCurrentVotes] = useState<Vote[]>(votes);
   const [hasVoted, setHasVoted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Update votes when fetcher data returns
+  useEffect(() => {
+    if (fetcher.data?.success && fetcher.data?.vote) {
+      const finalVotesArray = currentVotes.map((v) =>
+        v.id.startsWith("temp-") ? fetcher.data.vote : v,
+      );
+      if (!finalVotesArray.find((v) => v.id === fetcher.data.vote.id)) {
+        finalVotesArray.push(fetcher.data.vote);
+      }
+      setCurrentVotes(finalVotesArray);
+      onVoteCasted(tracker.id, finalVotesArray);
+    }
+  }, [fetcher.data]);
 
   useEffect(() => {
     const fingerprint = generateFingerprint();
@@ -42,7 +62,7 @@ const VoteScreen: React.FC<VoteScreenProps> = ({ tracker, votes, onBack, onVoteC
     const fingerprint = generateFingerprint();
     const userId = user?.id;
 
-    const newVotePayload: Omit<Vote, "id" | "createdAt"> = {
+    const newVotePayload: Omit<Vote, "id" | "createdAt" | "updatedAt"> = {
       value,
       fingerprint,
       userId: userId ?? null,
@@ -55,39 +75,22 @@ const VoteScreen: React.FC<VoteScreenProps> = ({ tracker, votes, onBack, onVoteC
       ...newVotePayload,
       id: `temp-${Date.now()}`,
       createdAt: new Date(),
+      updatedAt: new Date(),
     };
     const newVotesArray = [...currentVotes, optimisticVote];
     setCurrentVotes(newVotesArray);
     setHasVoted(true);
 
     try {
-      const { data: insertedVote, error: insertError } = await supabase
-        .from("votes")
-        .insert({
-          ...newVotePayload,
-          createdAt: new Date(),
-        })
-        .select()
-        .single();
+      const formData = new FormData();
+      formData.append("value", value);
+      formData.append("fingerprint", fingerprint);
+      if (userId) formData.append("userId", userId);
+      formData.append("raterName", "Anonymous");
 
-      if (insertError) {
-        throw insertError;
-      }
-
-      if (insertedVote) {
-        const finalVotesArray = currentVotes.map((v) =>
-          v.id === optimisticVote.id ? insertedVote : v,
-        );
-        if (!currentVotes.find((v) => v.id === optimisticVote.id)) {
-          finalVotesArray.push(insertedVote);
-        }
-        setCurrentVotes(finalVotesArray);
-        onVoteCasted(tracker.id, finalVotesArray);
-      } else {
-        throw new Error("Vote not saved: No data returned from server.");
-      }
+      fetcher.submit(formData, { method: "post" });
     } catch (e: any) {
-      console.error("Error submitting vote to Supabase:", e);
+      console.error("Error submitting vote:", e);
       setError(`Failed to save vote: ${e.message}. Please try again.`);
       setCurrentVotes(currentVotes);
       setHasVoted(

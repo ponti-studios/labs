@@ -16,26 +16,31 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@pontistudios/ui";
-import { TRACKER_PHOTO_BUCKET } from "~/lib/consts";
-import { supabase } from "~/lib/supabaseClient";
+import { useAuth } from "~/components/AuthProvider";
 import { useIsMobile } from "~/lib/use-is-mobile";
 import "../voter/pokemon-card.css";
 
 function usePhotoUpload() {
+  const { user } = useAuth();
+
   return useMutation({
     mutationFn: async (file: File) => {
-      const fileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, "_")}`;
-      const { data, error } = await supabase.storage
-        .from(TRACKER_PHOTO_BUCKET)
-        .upload(fileName, file, { cacheControl: "3600", upsert: false });
-      if (error) throw error;
-      const { data: publicUrlData } = supabase.storage
-        .from("tracker-photos")
-        .getPublicUrl(data.path);
-      if (!publicUrlData || !publicUrlData.publicUrl) {
-        throw new Error("Could not get public URL for the uploaded photo.");
+      const formData = new FormData();
+      formData.append("file", file);
+      if (user?.id) formData.append("userId", user.id);
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Upload failed");
       }
-      return publicUrlData.publicUrl as string;
+
+      const data = await response.json();
+      return data.url as string;
     },
   });
 }

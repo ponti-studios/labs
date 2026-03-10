@@ -133,17 +133,17 @@ function App() {
 
       <div className="absolute inset-0 z-20 p-6 flex flex-col justify-between pointer-events-none">
         <div className="flex justify-between items-start gap-4">
-          <div className="pointer-events-auto rounded-lg border border-primary/40 bg-card/85 backdrop-blur-xl p-4" style={{ boxShadow: '0 0 15px rgba(239, 68, 68, 0.15)' }}>
+          <div className="pointer-events-auto rounded-lg border border-white/20 bg-black/85 backdrop-blur-xl p-4" style={{ boxShadow: '0 0 15px rgba(255, 255, 255, 0.15)' }}>
             <h1 className="text-xl font-black tracking-[0.15em] uppercase italic" style={{ fontFamily: 'var(--font-grotesk)' }}>
-              Terra-Monitor <span className="text-primary">v3.0</span>
+              Terra-Monitor <span className="text-white">v3.0</span>
             </h1>
             <div className="flex items-center gap-4 mt-1">
-              <p className="text-[9px] text-muted-foreground uppercase tracking-tighter" style={{ fontFamily: 'var(--font-mono)' }}>
+              <p className="text-[9px] text-gray-400 uppercase tracking-tighter" style={{ fontFamily: 'var(--font-mono)' }}>
                 Global Telemetry Stream
               </p>
               <div className="flex gap-1">
-                <div className="w-1 h-3 bg-primary glow-pulse" />
-                <div className="w-1 h-3 bg-primary/40" />
+                <div className="w-1 h-3 bg-white glow-pulse" />
+                <div className="w-1 h-3 bg-white/40" />
               </div>
             </div>
           </div>

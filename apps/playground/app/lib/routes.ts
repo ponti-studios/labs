@@ -74,4 +74,9 @@ export const routes = [
     label: "Projects",
     description: "Project management with task counts",
   },
+  {
+    path: "/architecture-demo",
+    label: "Architecture Demo",
+    description: "Islands Architecture pattern demonstration",
+  },
 ];

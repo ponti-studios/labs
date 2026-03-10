@@ -23,7 +23,6 @@ import {
   PERSONALITY_TYPES,
   PersonalityTypePicker,
 } from "../../components/voter/personality-type-picker";
-import { supabase } from "../../lib/supabaseClient";
 
 // Mock data for friend ratings
 type Rating = {
@@ -143,8 +142,6 @@ export function CardCreator() {
   };
 
   const removeImage = async () => {
-    const currentImageSrc = image; // Capture current image src for potential Supabase deletion
-
     setImage(null);
     setSelectedImageFile(null); // Clear the selected file
     setImageScale(1);
@@ -152,28 +149,7 @@ export function CardCreator() {
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
-
-    // If the removed image was a Supabase URL, delete it from storage
-    if (currentImageSrc?.startsWith("https://") && user) {
-      try {
-        // Extract path from URL: https://<ref>.supabase.co/storage/v1/object/public/bucket-name/path/to/file.png
-        // We need "path/to/file.png"
-        const urlParts = new URL(currentImageSrc);
-        const pathParts = urlParts.pathname.split("/object/public/dumphim-tracker-photos/");
-        if (pathParts.length > 1) {
-          const filePathInBucket = pathParts[1];
-          const { error: deleteError } = await supabase.storage
-            .from("dumphim-tracker-photos")
-            .remove([filePathInBucket]);
-          if (deleteError) {
-            console.error("Error deleting image from Supabase:", deleteError);
-            // Optionally alert the user
-          }
-        }
-      } catch (e) {
-        console.error("Error parsing URL for deletion or deleting from Supabase:", e);
-      }
-    }
+    // Local file cleanup - no Supabase storage to manage
   };
 
   const downloadCard = () => {
@@ -278,55 +254,36 @@ export function CardCreator() {
     }
 
     setIsSaving(true);
-    let finalPhotoUrl = image; // Assume current image state (could be old Supabase URL, base64, or null)
+    let finalPhotoUrl = image;
 
     // If a new image file was selected, upload it now
     if (selectedImageFile) {
-      const fileName = `${user.id}/${Date.now()}_${selectedImageFile.name}`;
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from("dumphim-tracker-photos")
-        .upload(fileName, selectedImageFile);
+      try {
+        const formData = new FormData();
+        formData.append("file", selectedImageFile);
+        formData.append("userId", user.id);
 
-      if (uploadError) {
-        console.error("Error uploading image:", uploadError);
-        alert(`Error uploading image: ${uploadError.message}`);
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || "Upload failed");
+        }
+
+        const data = await response.json();
+        finalPhotoUrl = data.url;
+        setImage(finalPhotoUrl);
+        setSelectedImageFile(null);
+      } catch (error: any) {
+        console.error("Error uploading image:", error);
+        alert(`Error uploading image: ${error.message}`);
         setIsSaving(false);
         return;
       }
-
-      if (uploadData) {
-        const { data: publicUrlData } = supabase.storage
-          .from("dumphim-tracker-photos")
-          .getPublicUrl(fileName);
-
-        if (publicUrlData?.publicUrl) {
-          // If there was a previous image on Supabase and it's different from the new one, delete the old one.
-          if (image?.startsWith("https://") && image !== publicUrlData.publicUrl) {
-            try {
-              const oldUrlParts = new URL(image);
-              const oldPathParts = oldUrlParts.pathname.split(
-                "/object/public/dumphim-tracker-photos/",
-              );
-              if (oldPathParts.length > 1) {
-                const oldFilePathInBucket = oldPathParts[1];
-                await supabase.storage.from("dumphim-tracker-photos").remove([oldFilePathInBucket]);
-              }
-            } catch (e) {
-              console.error("Error deleting old Supabase image:", e);
-            }
-          }
-          finalPhotoUrl = publicUrlData.publicUrl;
-          setImage(finalPhotoUrl); // Update image state to the new Supabase URL
-          setSelectedImageFile(null); // Clear the selected file as it's now uploaded
-        } else {
-          alert("Error getting public URL for uploaded image.");
-          setIsSaving(false);
-          return;
-        }
-      }
     } else if (!image && fileInputRef.current?.value) {
-      // This case handles if an image was selected (fileInputRef has value) but then removed (image is null)
-      // and no new selectedImageFile is present. Ensure photoUrl is null.
       finalPhotoUrl = null;
     }
 
@@ -340,32 +297,39 @@ export function CardCreator() {
     const trackerToSave = {
       name: cardData.name,
       hp: cardData.hp,
-      card_type: cardData.cardType,
+      cardType: cardData.cardType,
       description: cardData.description,
       attacks: attacksForDb,
       strengths: cardData.strengths,
       flaws: cardData.flaws,
-      commitment_level: cardData.commitmentLevel,
-      color_theme: colorTheme,
-      photo_url: finalPhotoUrl, // Use the potentially updated photo URL
-      image_scale: imageScale,
-      image_position: imagePosition,
-      user_id: user.id,
+      commitmentLevel: cardData.commitmentLevel,
+      colorTheme: colorTheme,
+      photoUrl: finalPhotoUrl,
+      imageScale: imageScale,
+      imagePosition: imagePosition,
+      userId: user.id,
     };
 
     try {
-      const { data, error } = await supabase.from("trackers").insert([trackerToSave]).select();
+      const response = await fetch("/api/trackers", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(trackerToSave),
+      });
 
-      if (error) {
-        console.error("Error saving tracker:", error);
-        alert(`Error saving tracker: ${error.message}`);
-      } else {
-        alert("Tracker created successfully!");
-        console.log("Tracker saved:", data);
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to save tracker");
       }
-    } catch (err) {
-      console.error("Unexpected error:", err);
-      alert("An unexpected error occurred while saving the tracker.");
+
+      const data = await response.json();
+      alert("Tracker created successfully!");
+      console.log("Tracker saved:", data);
+    } catch (err: any) {
+      console.error("Error saving tracker:", err);
+      alert(`Error saving tracker: ${err.message}`);
     } finally {
       setIsSaving(false);
     }

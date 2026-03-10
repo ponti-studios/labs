@@ -1,8 +1,8 @@
+import { Input } from "@pontistudios/ui";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { TaskListItem } from "~/components/to-do/TaskListItem";
-import { Input } from "~/components/ui";
 import type { TodoItem } from "~/lib/todos";
 import { useDeleteTodo } from "~/lib/todos";
 import type { SearchResult } from "~/types/vector-search";

@@ -1,6 +1,6 @@
-import { getDb, closeDb, type NewDisasterEvent } from '@pontistudios/earth-db'
-
-let db: any
+import { sql } from 'kysely'
+import { withDb, type NewDisasterEvent } from '@pontistudios/db'
+import { getDbConfig } from '../db/env'
 
 // generic sync script; sources can be added to this list
 const sources: {
@@ -81,73 +81,84 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
 }
 
 async function main() {
-  db = await getDb()
-  for (const src of sources) {
-    console.log(`${new Date().toISOString()} fetching from ${src.name}`)
-    const events = await src.fetchFn()
-    console.log(`${new Date().toISOString()} received ${events.length} items from ${src.name}`)
-    let records: NewDisasterEvent[] = events.map((evt) => ({
-      ...evt,
-      source: src.name,
-      timestamp: evt.occurred_at,
-    } as any))
+  await withDb(getDbConfig(), async (db) => {
+    for (const src of sources) {
+      console.log(`${new Date().toISOString()} fetching from ${src.name}`)
+      const events = await src.fetchFn()
+      console.log(`${new Date().toISOString()} received ${events.length} items from ${src.name}`)
+      let records: NewDisasterEvent[] = events.map(
+        (evt) =>
+          ({
+            ...evt,
+            source: src.name,
+            timestamp: evt.occurred_at,
+          }) as NewDisasterEvent
+      )
 
-    // log duplicate ids in the fetched data
-    const ids = records.map((r) => r.id)
-    const dupIds = ids.filter((id, i) => ids.indexOf(id) !== i)
-    if (dupIds.length) {
-      console.warn(`found ${dupIds.length} duplicate ids in fetched data:`,
-        Array.from(new Set(dupIds)).slice(0, 20))
-    }
+      const ids = records.map((r) => r.id)
+      const dupIds = ids.filter((id, i) => ids.indexOf(id) !== i)
+      if (dupIds.length) {
+        console.warn(
+          `found ${dupIds.length} duplicate ids in fetched data:`,
+          Array.from(new Set(dupIds)).slice(0, 20)
+        )
+      }
 
-    // remove duplicates within a single sync run by id to avoid errors
-    const uniqueMap = new Map<string, NewDisasterEvent>()
-    for (const r of records) {
-      uniqueMap.set(r.id, r)
-    }
-    const deduped = Array.from(uniqueMap.values())
-    if (deduped.length !== records.length) {
-      console.log(`deduped removed ${records.length - deduped.length} items`)
-    }
-    records = deduped
+      const uniqueMap = new Map<string, NewDisasterEvent>()
+      for (const r of records) {
+        uniqueMap.set(r.id, r)
+      }
+      const deduped = Array.from(uniqueMap.values())
+      if (deduped.length !== records.length) {
+        console.log(`deduped removed ${records.length - deduped.length} items`)
+      }
+      records = deduped
 
-    const batchSize = 500
-    const batches = chunkArray(records, batchSize)
-    let totalInserted = 0
-    console.log(`inserting ${records.length} (deduped) records in ${batches.length} batches`)
+      const batchSize = 500
+      const batches = chunkArray(records, batchSize)
+      let totalUpserted = 0
+      console.log(`upserting ${records.length} (deduped) records in ${batches.length} batches`)
 
-    for (const batch of batches) {
-      try {
+      for (const batch of batches) {
         await db
           .insertInto('disaster_events')
           .values(batch)
-          // MySQL syntax uses "on duplicate key update"
-          .onDuplicateKeyUpdate(batch[0])
+          .onDuplicateKeyUpdate({
+            title: sql`values(title)`,
+            description: sql`values(description)`,
+            source_url: sql`values(source_url)`,
+            category_id: sql`values(category_id)`,
+            category_title: sql`values(category_title)`,
+            occurred_at: sql`values(occurred_at)`,
+            geometry_type: sql`values(geometry_type)`,
+            latitude: sql`values(latitude)`,
+            longitude: sql`values(longitude)`,
+            closed_at: sql`values(closed_at)`,
+            source: sql`values(source)`,
+            timestamp: sql`values(timestamp)`,
+          })
           .execute()
-        totalInserted += batch.length
-      } catch (e) {
-        console.error('batch insert failed:', e)
+
+        totalUpserted += batch.length
       }
+      console.log(
+        `${new Date().toISOString()} finished ${src.name}, upserted ${totalUpserted} rows`
+      )
     }
-    console.log(
-      `${new Date().toISOString()} finished ${src.name}, inserted/updated ${totalInserted} rows`
-    )
-  }
-  // use simple select string for count
-  const [{ count }] = await db
-    .selectFrom('disaster_events')
-    .select(db.fn.count<number>('id').as('count'))
-    .execute()
-  console.log(`${new Date().toISOString()} total stored events:`, count)
-  await closeDb()
+
+    const [{ count }] = await db
+      .selectFrom('disaster_events')
+      .select(db.fn.count<number>('id').as('count'))
+      .execute()
+    console.log(`${new Date().toISOString()} total stored events:`, count)
+  })
 }
 
 main()
   .then(() => {
-    console.log('main finished, exiting now')
-    process.exit(0)
+    console.log('main finished')
   })
   .catch((err) => {
     console.error('main error:', err)
-    process.exit(1)
+    process.exitCode = 1
   })

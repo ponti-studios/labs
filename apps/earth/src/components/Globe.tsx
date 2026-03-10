@@ -27,11 +27,11 @@ interface Arc {
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-  wildfires: '#ff3c00',
-  volcanoes: '#ff8c00',
-  severeStorms: '#00d2ff',
+  wildfires: '#ffffff',
+  volcanoes: '#ffffff',
+  severeStorms: '#ffffff',
   iceberg: '#ffffff',
-  seaLakeIce: '#a0d8f1',
+  seaLakeIce: '#ffffff',
   default: '#888888'
 }
 
@@ -206,9 +206,9 @@ export const Globe = React.memo(function Globe({ events, onEventClick, isRotatin
     countryGroupRef.current = countryGroup
     scene.add(countryGroup)
 
-    // draw cream-coloured grid lines every 15 degrees
+    // draw white grid lines every 15 degrees
     // offset grid slightly above the globe surface so it isn't hidden by the globe texture
-    const gridMat = new THREE.LineBasicMaterial({ color: '#FFF5E1', opacity: 0.6, transparent: true, linewidth: 1 })
+    const gridMat = new THREE.LineBasicMaterial({ color: '#FFFFFF', opacity: 0.4, transparent: true, linewidth: 1 })
     const radius = globe.globeRadius() || 1
     const offset = 1.001 // small multiplier to lift lines above surface
 
@@ -259,7 +259,7 @@ export const Globe = React.memo(function Globe({ events, onEventClick, isRotatin
 
     const radius = globeRef.current.globeRadius() || 1
     const offset = 1.002 // slightly outside the sphere to avoid z-fighting
-    const borderMat = new THREE.LineBasicMaterial({ color: '#FFF5E1', opacity: 0.6, transparent: true, linewidth: 1 })
+    const borderMat = new THREE.LineBasicMaterial({ color: '#FFFFFF', opacity: 0.4, transparent: true, linewidth: 1 })
 
     // clear previous borders if any
     countryGroupRef.current.clear()
@@ -285,7 +285,8 @@ export const Globe = React.memo(function Globe({ events, onEventClick, isRotatin
     <div className="w-full h-full">
       <ReactGlobe
         ref={globeEl}
-        backgroundColor="#000"
+        backgroundColor="#000000"
+        globeColor="#000000"
         atmosphereColor="#000000"
         showAtmosphere={false}
         onGlobeReady={handleGlobeReady}

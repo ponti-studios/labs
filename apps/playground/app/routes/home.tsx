@@ -1,4 +1,4 @@
-import { Terminal } from "../components/terminal";
+import { Terminal } from "~/components/islands/terminal";
 
 export function meta(): Array<{
   title?: string;

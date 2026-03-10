@@ -1,0 +1,32 @@
+change:
+  name: implement-unified-rr7-patterns
+  description: Migrate all labs applications to a unified, cutting-edge React Router 7 architecture with streaming SSR, shared packages, and Islands Architecture
+  created: 2026-03-09
+  status: in_progress
+  priority: high
+  
+artifacts:
+  - name: proposal
+    type: proposal
+    file: proposal.md
+    status: complete
+    
+  - name: design
+    type: design
+    file: design.md
+    status: complete
+    depends_on: [proposal]
+    
+  - name: tasks
+    type: tasks
+    file: tasks.md
+    status: in_progress
+    depends_on: [design]
+    
+schema:
+  name: unified-rr7-patterns
+  version: "1.0"
+  
+apply:
+  requires: [tasks]
+  can_start: true
