@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { swap, functionalSwap } from "~/lib/problems/swap";
+import { swap } from "~/lib/problems/swap";
 import {
   PageHeader,
   PageSection,
@@ -8,7 +8,6 @@ import {
   ResultBox,
   CodeBlock,
   GridSection,
-  DiffDisplay,
 } from "~/components/void-components";
 
 export default function SwapRoute() {
@@ -28,7 +27,7 @@ export default function SwapRoute() {
         });
         const res = swap([...arr], parseInt(firstIndex) || 0, parseInt(secondIndex) || 0);
         setResult(res);
-      } catch (error) {
+      } catch {
         setResult(null);
       }
       setIsLoading(false);

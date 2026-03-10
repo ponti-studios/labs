@@ -5,7 +5,7 @@ import { projects, todos } from "~/db/schema";
 // Server-side data fetching patterns
 // These run on the server only - never shipped to client
 
-export async function getProjects(filters?: { status?: string }) {
+export async function getProjects(_filters?: { status?: string }) {
   return db.query.projects.findMany({
     orderBy: desc(projects.createdAt),
   });

@@ -18,7 +18,7 @@ export default function TarotRoute() {
     const positions = TAROT_SPREADS[spreadType].positions.length;
     const newCards = getRandomCards(positions);
     setCards(newCards);
-    setRevealedCards(new Array(positions).fill(false));
+    setRevealedCards(Array.from({ length: positions }, () => false));
   }, [spreadType]);
 
   const handleCardClick = (index: number) => {
@@ -31,7 +31,7 @@ export default function TarotRoute() {
     const positions = TAROT_SPREADS[spreadType].positions.length;
     const newCards = getRandomCards(positions);
     setCards(newCards);
-    setRevealedCards(new Array(positions).fill(false));
+    setRevealedCards(Array.from({ length: positions }, () => false));
   };
 
   const handleViewDetails = (card: TarotCard) => {
@@ -117,7 +117,7 @@ export default function TarotRoute() {
           </Button>
           {allRevealed && (
             <Button
-              onClick={() => setRevealedCards(new Array(cards.length).fill(false))}
+              onClick={() => setRevealedCards(Array.from({ length: cards.length }, () => false))}
               size="lg"
               variant="outline"
             >

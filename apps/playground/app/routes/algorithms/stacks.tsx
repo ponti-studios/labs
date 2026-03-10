@@ -20,7 +20,7 @@ export default function StacksDemo() {
       try {
         const isPalin = isPalindrome(wordInput);
         setResult({ word: wordInput, isPalindrome: isPalin });
-      } catch (_err) {
+      } catch {
         setResult({ error: "INVALID INPUT" });
       }
       setIsLoading(false);

@@ -20,7 +20,7 @@ export const filteredProjects = computed(() => {
     const matchesQuery =
       project.name.toLowerCase().includes(query) ||
       project.description?.toLowerCase().includes(query);
-    const matchesFilters = filters.length === 0 || filters.every((f) => project.tags?.includes(f));
+    const matchesFilters = filters.every((f) => project.tags?.includes(f));
 
     return matchesQuery && matchesFilters;
   });

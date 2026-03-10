@@ -44,7 +44,7 @@ export default function MarkdownUpload() {
         setUploadStatus("error");
         setStatusMessage(result.error || "Upload failed");
       }
-    } catch (_error) {
+    } catch {
       setUploadStatus("error");
       setStatusMessage("Network error occurred");
     } finally {

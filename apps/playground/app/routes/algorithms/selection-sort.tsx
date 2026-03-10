@@ -23,7 +23,7 @@ export default function SelectionSortDemo() {
         const arr = arrayInput.split(",").map((n) => parseInt(n.trim()));
         const sorted = selectionSort([...arr]);
         setResult({ original: arr, sorted });
-      } catch (error) {
+      } catch {
         setResult({ error: "INVALID INPUT" });
       }
       setIsLoading(false);
