@@ -1,0 +1,66 @@
+name: Build Agent Extension
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: build-agent-extension-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build & Package Extension
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "25"
+          cache: "npm"
+
+      - run: npm ci --ignore-scripts
+
+      - name: Build extension
+        run: npm run build --workspace=apps/agent
+
+      - name: Zip for Chrome Web Store
+        run: npm run zip --workspace=apps/agent
+
+      - name: Upload extension artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: polly-chrome-extension-${{ github.sha }}
+          path: apps/agent/.output/*.zip
+          retention-days: 30
+
+  deploy:
+    name: Submit to Chrome Web Store
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "25"
+          cache: "npm"
+
+      - run: npm ci --ignore-scripts
+
+      - name: Build & zip extension
+        run: |
+          npm run build --workspace=apps/agent
+          npm run zip --workspace=apps/agent
+
+      - name: Publish to Chrome Web Store
+        uses: trmcnvn/chrome-addon@v2
+        with:
+          extension: ${{ secrets.CHROME_EXTENSION_ID }}
+          zip: apps/agent/.output/polly-${{ github.ref_name }}-chrome.zip
+          client-id: ${{ secrets.CHROME_CLIENT_ID }}
+          client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
+          refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
