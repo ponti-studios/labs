@@ -122,7 +122,9 @@ export function TaskFormModal({
             <select
               id="project"
               value={formData.projectId}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, projectId: e.target.value })}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                setFormData({ ...formData, projectId: e.target.value })
+              }
               className="col-span-3 flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring"
               required
               disabled={projectsLoading}
