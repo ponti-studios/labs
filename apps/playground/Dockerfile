@@ -19,9 +19,6 @@ COPY apps/earth/package.json            apps/earth/package.json
 COPY apps/medico/package.json           apps/medico/package.json
 COPY apps/playground/package.json       apps/playground/package.json
 COPY apps/scrape/package.json           apps/scrape/package.json
-COPY extensions/polly/package.json      extensions/polly/package.json
-COPY extensions/uber-eats-tracker/package.json extensions/uber-eats-tracker/package.json
-COPY extensions/youtube/package.json    extensions/youtube/package.json
 COPY packages/db/package.json          packages/db/package.json
 COPY packages/tailwind-config/package.json packages/tailwind-config/package.json
 COPY packages/tsconfig/package.json    packages/tsconfig/package.json
@@ -67,9 +64,6 @@ COPY apps/earth/package.json            apps/earth/package.json
 COPY apps/medico/package.json           apps/medico/package.json
 COPY apps/playground/package.json       apps/playground/package.json
 COPY apps/scrape/package.json           apps/scrape/package.json
-COPY extensions/polly/package.json      extensions/polly/package.json
-COPY extensions/uber-eats-tracker/package.json extensions/uber-eats-tracker/package.json
-COPY extensions/youtube/package.json    extensions/youtube/package.json
 COPY packages/db/package.json          packages/db/package.json
 COPY packages/tailwind-config/package.json packages/tailwind-config/package.json
 COPY packages/tsconfig/package.json    packages/tsconfig/package.json
