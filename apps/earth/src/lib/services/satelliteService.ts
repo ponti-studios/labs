@@ -56,7 +56,7 @@ export async function fetchISSPosition(): Promise<Satellite | null> {
 export async function fetchTLEData(noradId: string): Promise<string | null> {
   try {
     const response = await fetch(
-      `https://celestrak.org/NORAD/elements/gp.php?CATNR=${noradId}&FORMAT=TLE`
+      `https://celestrak.org/NORAD/elements/gp.php?CATNR=${noradId}&FORMAT=TLE`,
     );
     if (!response.ok) throw new Error("Failed to fetch TLE data");
 
@@ -113,7 +113,7 @@ export async function fetchAllSatellites(): Promise<Satellite[]> {
  */
 export function calculateOrbitPath(
   satellite: Satellite,
-  samples: number = 90
+  samples: number = 90,
 ): Cesium.Cartesian3[] {
   const positions: Cesium.Cartesian3[] = [];
   const orbitMinutes = 90; // Approximate orbit period in minutes
@@ -126,9 +126,7 @@ export function calculateOrbitPath(
     const lon = satellite.longitude + offsetDegrees;
     const lat = satellite.latitude + Math.sin((i / samples) * Math.PI * 2) * 5;
 
-    positions.push(
-      Cesium.Cartesian3.fromDegrees(lon, lat, satellite.altitude)
-    );
+    positions.push(Cesium.Cartesian3.fromDegrees(lon, lat, satellite.altitude));
   }
 
   return positions;

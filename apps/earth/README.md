@@ -5,6 +5,7 @@ A global monitoring dashboard built with Svelte 5, TypeScript, and CesiumJS.
 ## Features
 
 ### 🛰️ Live Satellite Tracking
+
 - Real-time ISS position via "Where the ISS at" API
 - Track multiple satellites including Tiangong space station and Hubble
 - Visual orbit paths with glowing polylines
@@ -15,27 +16,29 @@ A global monitoring dashboard built with Svelte 5, TypeScript, and CesiumJS.
 ## Architecture
 
 ### Cesium State Management
+
 Cesium state is kept **imperative** and **not mirrored** in Svelte framework state. The `CesiumViewer` custom element wraps Cesium and exposes a minimal imperative API:
 
 ```typescript
 // Available methods on the viewer
-viewer.flyTo(longitude, latitude, height, duration)
-viewer.addPoint(id, longitude, latitude, color, size)
-viewer.removePoint(id)
-viewer.clearEntities()
-viewer.getCameraPosition() // Call when needed, not stored in state
+viewer.flyTo(longitude, latitude, height, duration);
+viewer.addPoint(id, longitude, latitude, color, size);
+viewer.removePoint(id);
+viewer.clearEntities();
+viewer.getCameraPosition(); // Call when needed, not stored in state
 
 // Satellite methods
-viewer.addSatellite(satellite)
-viewer.updateSatellitePosition(id, longitude, latitude, altitude)
-viewer.removeSatellite(id)
-viewer.showSatelliteOrbit(id)
-viewer.hideSatelliteOrbit(id)
-viewer.toggleSatelliteOrbit(id)
-viewer.clearSatellites()
+viewer.addSatellite(satellite);
+viewer.updateSatellitePosition(id, longitude, latitude, altitude);
+viewer.removeSatellite(id);
+viewer.showSatelliteOrbit(id);
+viewer.hideSatelliteOrbit(id);
+viewer.toggleSatelliteOrbit(id);
+viewer.clearSatellites();
 ```
 
 ### Key Files
+
 - `src/lib/cesium/CesiumViewer.ts` - Custom element wrapping Cesium (imperative state)
 - `src/lib/components/CesiumViewer.svelte` - Svelte wrapper component
 - `src/lib/components/Controls.svelte` - Main controls with tabs
@@ -44,7 +47,9 @@ viewer.clearSatellites()
 - `src/App.svelte` - Main app with full-screen viewer + floating controls
 
 ### Svelte State
+
 Only minimal UI state is reactive:
+
 - `viewer` - reference to the Cesium custom element
 - `selectedLocation` - which location button is active
 - `isFlying` - whether camera is currently animating
@@ -65,6 +70,7 @@ npm run check
 ```
 
 ## Stack
+
 - Vite 6 + TypeScript
 - Svelte 5 (runes mode with `$state`, `$props`)
 - CesiumJS for 3D globe visualization
@@ -74,6 +80,7 @@ npm run check
 Cesium assets (Workers, Assets, Widgets, ThirdParty) are copied from `node_modules/cesium/Build/Cesium/` to `public/cesium/` for serving at runtime.
 
 To update assets after installing/upgrading Cesium:
+
 ```bash
 cp -r node_modules/cesium/Build/Cesium/Workers apps/earth/public/cesium/
 cp -r node_modules/cesium/Build/Cesium/ThirdParty apps/earth/public/cesium/
@@ -101,6 +108,7 @@ See `packages/db/README.md` for more details on database operations.
 ## Migration from React
 
 This app was migrated from React to Svelte 5. Key changes:
+
 - Removed React, React-DOM, and all React-related dependencies
 - Replaced JSX components with Svelte `.svelte` files
 - Replaced React state with Svelte 5 runes (`$state`, `$props`)

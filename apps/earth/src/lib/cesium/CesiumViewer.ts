@@ -56,7 +56,7 @@ export class CesiumViewer extends HTMLElement {
 
     try {
       console.log("[CesiumViewer] Initializing viewer...");
-      
+
       // Initialize Cesium viewer with minimal UI
       this.viewer = new Cesium.Viewer(this.container, {
         animation: false,
@@ -73,27 +73,27 @@ export class CesiumViewer extends HTMLElement {
         creditContainer: document.createElement("div"), // Hide credits
         skyBox: new Cesium.SkyBox({
           sources: {
-            positiveX: '/cesium/Assets/Textures/SkyBox/tycho2t3_80_px.jpg',
-            negativeX: '/cesium/Assets/Textures/SkyBox/tycho2t3_80_mx.jpg',
-            positiveY: '/cesium/Assets/Textures/SkyBox/tycho2t3_80_py.jpg',
-            negativeY: '/cesium/Assets/Textures/SkyBox/tycho2t3_80_my.jpg',
-            positiveZ: '/cesium/Assets/Textures/SkyBox/tycho2t3_80_pz.jpg',
-            negativeZ: '/cesium/Assets/Textures/SkyBox/tycho2t3_80_mz.jpg'
-          }
+            positiveX: "/cesium/Assets/Textures/SkyBox/tycho2t3_80_px.jpg",
+            negativeX: "/cesium/Assets/Textures/SkyBox/tycho2t3_80_mx.jpg",
+            positiveY: "/cesium/Assets/Textures/SkyBox/tycho2t3_80_py.jpg",
+            negativeY: "/cesium/Assets/Textures/SkyBox/tycho2t3_80_my.jpg",
+            positiveZ: "/cesium/Assets/Textures/SkyBox/tycho2t3_80_pz.jpg",
+            negativeZ: "/cesium/Assets/Textures/SkyBox/tycho2t3_80_mz.jpg",
+          },
         }),
         skyAtmosphere: new Cesium.SkyAtmosphere(),
         shouldAnimate: false,
-        targetFrameRate: 60
+        targetFrameRate: 60,
       });
 
       // Configure scene - make globe solid and visible
       this.viewer.scene.globe.enableLighting = true;
       this.viewer.scene.globe.depthTestAgainstTerrain = true;
-      
+
       // Ensure globe is not transparent
       this.viewer.scene.globe.baseColor = Cesium.Color.BLACK;
       this.viewer.scene.backgroundColor = Cesium.Color.BLACK;
-      
+
       // Add a visible base layer if one isn't present
       if (!this.viewer.imageryLayers.length) {
         // Add default Cesium ion imagery as fallback
@@ -109,13 +109,15 @@ export class CesiumViewer extends HTMLElement {
 
       this._isReady = true;
       console.log("[CesiumViewer] Viewer ready, dispatching event");
-      
+
       // Dispatch event for Svelte to catch
-      this.dispatchEvent(new CustomEvent("viewer-ready", { 
-        bubbles: true,
-        composed: true,
-        detail: { viewer: this }
-      }));
+      this.dispatchEvent(
+        new CustomEvent("viewer-ready", {
+          bubbles: true,
+          composed: true,
+          detail: { viewer: this },
+        }),
+      );
     } catch (error) {
       console.error("[CesiumViewer] Error initializing viewer:", error);
     }
@@ -137,7 +139,7 @@ export class CesiumViewer extends HTMLElement {
     this.viewer?.destroy();
     this.viewer = null;
     this._isReady = false;
-    
+
     if (this.container) {
       this.removeChild(this.container);
       this.container = null;
@@ -146,12 +148,7 @@ export class CesiumViewer extends HTMLElement {
 
   // Public imperative API for Svelte to call
 
-  flyTo(
-    longitude: number,
-    latitude: number,
-    height: number,
-    duration = 2
-  ): void {
+  flyTo(longitude: number, latitude: number, height: number, duration = 2): void {
     if (!this.viewer) return;
 
     this.viewer.camera.flyTo({
@@ -165,7 +162,7 @@ export class CesiumViewer extends HTMLElement {
     longitude: number,
     latitude: number,
     color: string = "#ff0000",
-    size = 10
+    size = 10,
   ): void {
     if (!this.viewer || this.entityCollection.has(id)) return;
 
@@ -212,7 +209,7 @@ export class CesiumViewer extends HTMLElement {
     this.satellitePositions.set(satellite.id, {
       lon: satellite.longitude,
       lat: satellite.latitude,
-      alt: satellite.altitude
+      alt: satellite.altitude,
     });
 
     // Create a CallbackProperty that returns the current position every frame
@@ -251,16 +248,13 @@ export class CesiumViewer extends HTMLElement {
     });
 
     this.entityCollection.set(`sat-${satellite.id}`, entity);
-    
-    console.log(`[CesiumViewer] Added satellite: ${satellite.name} at ${satellite.latitude.toFixed(2)}, ${satellite.longitude.toFixed(2)}`);
+
+    console.log(
+      `[CesiumViewer] Added satellite: ${satellite.name} at ${satellite.latitude.toFixed(2)}, ${satellite.longitude.toFixed(2)}`,
+    );
   }
 
-  updateSatellitePosition(
-    id: string,
-    longitude: number,
-    latitude: number,
-    altitude: number
-  ): void {
+  updateSatellitePosition(id: string, longitude: number, latitude: number, altitude: number): void {
     // Simply update the stored position - CallbackProperty will pick it up
     this.satellitePositions.set(id, { lon: longitude, lat: latitude, alt: altitude });
   }
@@ -355,9 +349,7 @@ export class CesiumViewer extends HTMLElement {
   getCameraPosition(): { longitude: number; latitude: number; height: number } | null {
     if (!this.viewer) return null;
 
-    const cartographic = Cesium.Cartographic.fromCartesian(
-      this.viewer.camera.position
-    );
+    const cartographic = Cesium.Cartographic.fromCartesian(this.viewer.camera.position);
 
     return {
       longitude: Cesium.Math.toDegrees(cartographic.longitude),
@@ -380,7 +372,7 @@ export class CesiumViewer extends HTMLElement {
       lng: number;
       cases: number;
       color: string;
-    }>
+    }>,
   ): void {
     if (!this.viewer) return;
 
@@ -390,10 +382,10 @@ export class CesiumViewer extends HTMLElement {
     for (const country of countries) {
       // Scale point size based on cases (log scale)
       const baseSize = Math.max(5, Math.min(40, Math.log10(country.cases || 1) * 4));
-      
+
       // Raise points above surface to prevent clipping
       const heightAboveSurface = 50000; // 50km above surface
-      
+
       const entity = this.viewer.entities.add({
         id: `covid-${country.iso3}`,
         position: Cesium.Cartesian3.fromDegrees(country.lng, country.lat, heightAboveSurface),
@@ -459,31 +451,32 @@ export class CesiumViewer extends HTMLElement {
     }
 
     // Create new click handler
-    this.countryClickHandler = new Cesium.ScreenSpaceEventHandler(
-      this.viewer.canvas
-    );
+    this.countryClickHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
 
-    this.countryClickHandler.setInputAction((click: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
-      const pickedObject = this.viewer?.scene.pick(click.position);
+    this.countryClickHandler.setInputAction(
+      (click: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
+        const pickedObject = this.viewer?.scene.pick(click.position);
 
-      if (pickedObject && pickedObject.id) {
-        const entity = pickedObject.id;
-        const iso3 = entity.properties?.iso3?.getValue();
-        const name = entity.properties?.name?.getValue();
+        if (pickedObject && pickedObject.id) {
+          const entity = pickedObject.id;
+          const iso3 = entity.properties?.iso3?.getValue();
+          const name = entity.properties?.name?.getValue();
 
-        if (iso3 && name && this.countryClickCallback) {
-          this.highlightCountry(iso3);
-          this.countryClickCallback(iso3, name);
+          if (iso3 && name && this.countryClickCallback) {
+            this.highlightCountry(iso3);
+            this.countryClickCallback(iso3, name);
+          }
         }
-      }
-    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      },
+      Cesium.ScreenSpaceEventType.LEFT_CLICK,
+    );
 
     // Also set up hover effect
     this.countryClickHandler.setInputAction((move: Cesium.ScreenSpaceEventHandler.MotionEvent) => {
       const pickedObject = this.viewer?.scene.pick(move.endPosition);
       if (this.viewer) {
-        this.viewer.canvas.style.cursor = 
-          (pickedObject && pickedObject.id?.properties?.iso3) ? 'pointer' : 'default';
+        this.viewer.canvas.style.cursor =
+          pickedObject && pickedObject.id?.properties?.iso3 ? "pointer" : "default";
       }
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
   }
