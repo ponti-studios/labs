@@ -101,6 +101,25 @@ export class CesiumViewer extends HTMLElement {
         this.viewer.imageryLayers.addImageryProvider(imageryProvider);
       }
 
+      // Configure camera to allow zooming all the way to street level
+      const screenSpaceController = this.viewer.scene.screenSpaceCameraController;
+      screenSpaceController.minimumZoomDistance = 1; // 1 meter minimum - street level
+      screenSpaceController.maximumZoomDistance = 10000000000; // Allow zooming out very far
+      screenSpaceController.enableCollisionDetection = true;
+      screenSpaceController.minimumPickingTerrainHeight = 0;
+
+      // Allow camera to go underground and very close to surface
+      this.viewer.scene.globe.depthTestAgainstTerrain = false; // Don't clip camera
+
+      // Enable high-quality rendering at all zoom levels
+      this.viewer.scene.globe.maximumScreenSpaceError = 2;
+
+      // Enable lighting for better detail at close range
+      this.viewer.scene.globe.enableLighting = true;
+
+      // Apply default satellite style
+      this.applySatelliteStyle();
+
       // Set initial view
       this.viewer.camera.flyTo({
         destination: Cesium.Cartesian3.fromDegrees(0, 20, 20000000),
@@ -520,6 +539,201 @@ export class CesiumViewer extends HTMLElement {
       this.countryClickHandler = null;
     }
     this.countryClickCallback = null;
+  }
+
+  // === Globe Style API ===
+
+  /**
+   * Available globe styles
+   */
+  static readonly STYLES = {
+    DEFAULT: 'default',
+    DARK: 'dark',
+    NIGHT: 'night',
+    MINIMAL: 'minimal',
+    WIRE: 'wire',
+    NEON: 'neon',
+    SATELLITE: 'satellite'
+  } as const;
+
+  private currentImageryLayer: Cesium.ImageryLayer | null = null;
+
+  /**
+   * Apply a custom visual style to the globe
+   */
+  setGlobeStyle(style: typeof CesiumViewer.STYLES[keyof typeof CesiumViewer.STYLES]): void {
+    if (!this.viewer) return;
+
+    // Remove existing custom imagery
+    if (this.currentImageryLayer) {
+      this.viewer.imageryLayers.remove(this.currentImageryLayer);
+      this.currentImageryLayer = null;
+    }
+
+    switch (style) {
+      case 'dark':
+        this.applyDarkStyle();
+        break;
+      case 'night':
+        this.applyNightStyle();
+        break;
+      case 'minimal':
+        this.applyMinimalStyle();
+        break;
+      case 'wire':
+        this.applyWireframeStyle();
+        break;
+      case 'neon':
+        this.applyNeonStyle();
+        break;
+      case 'satellite':
+        this.applySatelliteStyle();
+        break;
+      case 'default':
+      default:
+        this.applyDefaultStyle();
+        break;
+    }
+
+    console.log(`[CesiumViewer] Applied style: ${style}`);
+  }
+
+  private applyDefaultStyle(): void {
+    if (!this.viewer) return;
+    
+    // Reset to default Cesium World Imagery
+    this.viewer.imageryLayers.removeAll();
+    const provider = new Cesium.IonImageryProvider({ assetId: 2 });
+    this.currentImageryLayer = this.viewer.imageryLayers.addImageryProvider(provider);
+    
+    // Reset lighting
+    this.viewer.scene.globe.enableLighting = true;
+    this.viewer.scene.globe.atmosphereLightIntensity = 10.0;
+  }
+
+  private applyDarkStyle(): void {
+    if (!this.viewer) return;
+    
+    // Use CartoDB Dark Matter tiles
+    this.viewer.imageryLayers.removeAll();
+    const provider = new Cesium.UrlTemplateImageryProvider({
+      url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+      subdomains: ['a', 'b', 'c', 'd'],
+      maximumLevel: 19,
+      credit: '©OpenStreetMap, ©CartoDB'
+    });
+    this.currentImageryLayer = this.viewer.imageryLayers.addImageryProvider(provider);
+    
+    // Darken the atmosphere
+    this.viewer.scene.globe.atmosphereLightIntensity = 3.0;
+    this.viewer.scene.backgroundColor = Cesium.Color.fromCssColorString('#0a0a0a');
+  }
+
+  private applyNightStyle(): void {
+    if (!this.viewer) return;
+    
+    // NASA Night Lights with city lights
+    this.viewer.imageryLayers.removeAll();
+    const provider = new Cesium.UrlTemplateImageryProvider({
+      url: 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_SNPP_DayNightBand_ENCC/default//GoogleMapsCompatible_Level6/{z}/{y}/{x}.png',
+      maximumLevel: 6,
+      credit: 'NASA GIBS'
+    });
+    this.currentImageryLayer = this.viewer.imageryLayers.addImageryProvider(provider);
+    
+    // Very dark atmosphere for night effect
+    this.viewer.scene.globe.atmosphereLightIntensity = 1.0;
+    this.viewer.scene.backgroundColor = Cesium.Color.BLACK;
+  }
+
+  private applyMinimalStyle(): void {
+    if (!this.viewer) return;
+    
+    // Use OpenStreetMap with low saturation
+    this.viewer.imageryLayers.removeAll();
+    const provider = new Cesium.OpenStreetMapImageryProvider({
+      url: 'https://{s}.tile.openstreetmap.org/',
+      maximumLevel: 18,
+      credit: '© OpenStreetMap contributors'
+    });
+    this.currentImageryLayer = this.viewer.imageryLayers.addImageryProvider(provider);
+    
+    // Apply grayscale filter via CSS on the canvas is not possible,
+    // so we'll set a very neutral lighting
+    this.viewer.scene.globe.enableLighting = false;
+  }
+
+  private applyWireframeStyle(): void {
+    if (!this.viewer) return;
+    
+    // Use a minimal base map and enable wireframe
+    this.viewer.imageryLayers.removeAll();
+    
+    // Just country boundaries
+    const provider = new Cesium.UrlTemplateImageryProvider({
+      url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+      subdomains: ['a', 'b', 'c', 'd'],
+      maximumLevel: 19,
+      credit: '©OpenStreetMap, ©CartoDB'
+    });
+    this.currentImageryLayer = this.viewer.imageryLayers.addImageryProvider(provider);
+    
+    // Reduce opacity of base layer
+    this.currentImageryLayer.alpha = 0.3;
+    
+    // Set dark background
+    this.viewer.scene.backgroundColor = Cesium.Color.fromCssColorString('#050505');
+    this.viewer.scene.globe.atmosphereLightIntensity = 2.0;
+  }
+
+  private applyNeonStyle(): void {
+    if (!this.viewer) return;
+    
+    // Dark base with cyan/teal tint
+    this.viewer.imageryLayers.removeAll();
+    const provider = new Cesium.UrlTemplateImageryProvider({
+      url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+      subdomains: ['a', 'b', 'c', 'd'],
+      maximumLevel: 19,
+      credit: '©OpenStreetMap, ©CartoDB'
+    });
+    this.currentImageryLayer = this.viewer.imageryLayers.addImageryProvider(provider);
+    
+    // Teal/Cyan atmosphere
+    this.viewer.scene.globe.atmosphereLightIntensity = 15.0;
+    this.viewer.scene.backgroundColor = Cesium.Color.fromCssColorString('#001122');
+  }
+
+  private applySatelliteStyle(): void {
+    if (!this.viewer) return;
+    
+    // Use Sentinel-2 satellite imagery
+    this.viewer.imageryLayers.removeAll();
+    const provider = new Cesium.UrlTemplateImageryProvider({
+      url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      maximumLevel: 19,
+      credit: 'Esri'
+    });
+    this.currentImageryLayer = this.viewer.imageryLayers.addImageryProvider(provider);
+    
+    // Bright lighting for satellite view
+    this.viewer.scene.globe.enableLighting = true;
+    this.viewer.scene.globe.atmosphereLightIntensity = 20.0;
+  }
+
+  /**
+   * Get available style names
+   */
+  getAvailableStyles(): Array<{ id: string; name: string; icon: string }> {
+    return [
+      { id: 'default', name: 'Default', icon: '🌍' },
+      { id: 'dark', name: 'Dark Mode', icon: '🌑' },
+      { id: 'night', name: 'Night Lights', icon: '🌃' },
+      { id: 'minimal', name: 'Minimal', icon: '◯' },
+      { id: 'wire', name: 'Wireframe', icon: '⌗' },
+      { id: 'neon', name: 'Neon', icon: '✦' },
+      { id: 'satellite', name: 'Satellite', icon: '📷' }
+    ];
   }
 
   get ready(): boolean {
