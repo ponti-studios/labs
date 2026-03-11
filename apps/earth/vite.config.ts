@@ -1,29 +1,43 @@
-import tailwindcss from "@tailwindcss/vite";
-import react from "@vitejs/plugin-react-swc";
-import { defineConfig, PluginOption } from "vite";
+import { defineConfig } from "vite";
+import { svelte } from "@sveltejs/vite-plugin-svelte";
+import { resolve } from "path";
+import { fileURLToPath } from "url";
 
-import sparkPlugin from "@github/spark/spark-vite-plugin";
-import createIconImportProxy from "@github/spark/vitePhosphorIconProxyPlugin";
-import { resolve } from 'path'
-
-const projectRoot = process.env.PROJECT_ROOT || import.meta.dirname
+const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    react(),
-    tailwindcss(),
-    // DO NOT REMOVE
-    createIconImportProxy() as PluginOption,
-    sparkPlugin() as PluginOption,
+    svelte(),
+    {
+      name: "cesium-middleware",
+      configureServer(server) {
+        server.middlewares.use((req, res, next) => {
+          // Ensure Cesium files are served with correct MIME type
+          if (req.url?.startsWith("/cesium/")) {
+            if (req.url.endsWith(".js")) {
+              res.setHeader("Content-Type", "application/javascript");
+            }
+          }
+          next();
+        });
+      },
+    },
   ],
   resolve: {
     alias: {
-      '@': resolve(projectRoot, 'src')
-    }
+      "@": resolve(__dirname, "src"),
+    },
+  },
+  server: {
+    fs: {
+      strict: false,
+    },
   },
   build: {
-    // Disable CSS minification to workaround Tailwind v4 + LightningCSS issue in Vite 8 beta
-    cssMinify: false,
+    sourcemap: true,
+  },
+  define: {
+    CESIUM_BASE_URL: JSON.stringify("/cesium/"),
   },
 });
