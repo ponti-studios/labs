@@ -1,6 +1,6 @@
 /**
  * COVID-19 Data Service
- * 
+ *
  * Fetches COVID-19 data from disease.sh API (no backend required)
  * Cache results in module scope to reduce API calls
  */
@@ -76,28 +76,28 @@ export interface CountryCode {
  */
 export async function fetchAllCountriesSummary(): Promise<CovidCountry[]> {
   const now = Date.now();
-  
-  if (cache.allCountries && (now - cache.allCountriesTime) < CACHE_DURATION) {
+
+  if (cache.allCountries && now - cache.allCountriesTime < CACHE_DURATION) {
     return cache.allCountries;
   }
 
   try {
-    const response = await fetch('https://disease.sh/v3/covid-19/countries');
-    if (!response.ok) throw new Error('Failed to fetch countries');
-    
+    const response = await fetch("https://disease.sh/v3/covid-19/countries");
+    if (!response.ok) throw new Error("Failed to fetch countries");
+
     const data: CovidCountry[] = await response.json();
-    
+
     // Filter out entries without valid coordinates
-    const validCountries = data.filter(c => 
-      c.countryInfo?.lat && c.countryInfo?.long && c.countryInfo?.iso3
+    const validCountries = data.filter(
+      (c) => c.countryInfo?.lat && c.countryInfo?.long && c.countryInfo?.iso3,
     );
-    
+
     cache.allCountries = validCountries;
     cache.allCountriesTime = now;
-    
+
     return validCountries;
   } catch (error) {
-    console.error('Error fetching all countries:', error);
+    console.error("Error fetching all countries:", error);
     return cache.allCountries || [];
   }
 }
@@ -109,28 +109,26 @@ export async function fetchCountryTimeSeries(iso3: string): Promise<CovidTimeSer
   const now = Date.now();
   const cached = cache.timeSeries.get(iso3);
   const cachedTime = cache.timeSeriesTime.get(iso3) || 0;
-  
-  if (cached && (now - cachedTime) < CACHE_DURATION) {
+
+  if (cached && now - cachedTime < CACHE_DURATION) {
     return cached;
   }
 
   try {
-    const response = await fetch(
-      `https://disease.sh/v3/covid-19/historical/${iso3}?lastdays=365`
-    );
+    const response = await fetch(`https://disease.sh/v3/covid-19/historical/${iso3}?lastdays=365`);
     if (!response.ok) throw new Error(`Failed to fetch time series for ${iso3}`);
-    
+
     const data: CovidHistoricalData = await response.json();
-    
+
     // Convert timeline format to array
     const records: CovidTimeSeriesRecord[] = [];
     const cases = data.timeline?.cases || {};
     const deaths = data.timeline?.deaths || {};
     const recovered = data.timeline?.recovered || {};
-    
+
     // Get all unique dates
     const dates = Object.keys(cases);
-    
+
     for (const dateStr of dates) {
       records.push({
         date: parseDate(dateStr),
@@ -139,13 +137,13 @@ export async function fetchCountryTimeSeries(iso3: string): Promise<CovidTimeSer
         recovered: recovered[dateStr] || 0,
       });
     }
-    
+
     // Sort by date
     records.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-    
+
     cache.timeSeries.set(iso3, records);
     cache.timeSeriesTime.set(iso3, now);
-    
+
     return records;
   } catch (error) {
     console.error(`Error fetching time series for ${iso3}:`, error);
@@ -158,12 +156,12 @@ export async function fetchCountryTimeSeries(iso3: string): Promise<CovidTimeSer
  */
 export async function fetchGlobalSummary(): Promise<Partial<CovidCountry>> {
   try {
-    const response = await fetch('https://disease.sh/v3/covid-19/all');
-    if (!response.ok) throw new Error('Failed to fetch global data');
-    
+    const response = await fetch("https://disease.sh/v3/covid-19/all");
+    if (!response.ok) throw new Error("Failed to fetch global data");
+
     return await response.json();
   } catch (error) {
-    console.error('Error fetching global summary:', error);
+    console.error("Error fetching global summary:", error);
     return {};
   }
 }
@@ -172,10 +170,10 @@ export async function fetchGlobalSummary(): Promise<Partial<CovidCountry>> {
  * Find a country by ISO3 code
  */
 export function findCountryByIso3(
-  countries: CovidCountry[], 
-  iso3: string
+  countries: CovidCountry[],
+  iso3: string,
 ): CovidCountry | undefined {
-  return countries.find(c => c.countryInfo.iso3 === iso3);
+  return countries.find((c) => c.countryInfo.iso3 === iso3);
 }
 
 /**
@@ -184,7 +182,7 @@ export function findCountryByIso3(
 export function getTopCountries(
   countries: CovidCountry[],
   metric: keyof CovidCountry,
-  limit = 15
+  limit = 15,
 ): CovidCountry[] {
   return [...countries]
     .sort((a, b) => (b[metric] as number) - (a[metric] as number))
@@ -196,11 +194,11 @@ export function getTopCountries(
  */
 export function calculateDailyNew(records: CovidTimeSeriesRecord[]): CovidTimeSeriesRecord[] {
   const result: CovidTimeSeriesRecord[] = [];
-  
+
   for (let i = 1; i < records.length; i++) {
     const prev = records[i - 1];
     const curr = records[i];
-    
+
     result.push({
       date: curr.date,
       cases: Math.max(0, curr.cases - prev.cases),
@@ -208,7 +206,7 @@ export function calculateDailyNew(records: CovidTimeSeriesRecord[]): CovidTimeSe
       recovered: Math.max(0, curr.recovered - prev.recovered),
     });
   }
-  
+
   return result;
 }
 
@@ -217,39 +215,41 @@ export function calculateDailyNew(records: CovidTimeSeriesRecord[]): CovidTimeSe
  */
 export function calculateMovingAverage(
   records: CovidTimeSeriesRecord[],
-  metric: 'cases' | 'deaths' | 'recovered' = 'cases',
-  days = 7
+  metric: "cases" | "deaths" | "recovered" = "cases",
+  days = 7,
 ): { date: string; value: number }[] {
   const result: { date: string; value: number }[] = [];
-  
+
   for (let i = days - 1; i < records.length; i++) {
     let sum = 0;
     for (let j = i - days + 1; j <= i; j++) {
       sum += records[j][metric];
     }
-    
+
     result.push({
       date: records[i].date,
       value: Math.round(sum / days),
     });
   }
-  
+
   return result;
 }
 
 /**
  * Calculate vaccination estimate (not all countries report, use heuristic)
  */
-export function estimateVaccinationProgress(
-  country: CovidCountry
-): { partiallyVaccinated: number; fullyVaccinated: number; boosters: number } {
+export function estimateVaccinationProgress(country: CovidCountry): {
+  partiallyVaccinated: number;
+  fullyVaccinated: number;
+  boosters: number;
+} {
   // Use tests as a proxy for vaccination coverage
   // This is a rough heuristic since disease.sh doesn't provide vaccination data
   const vaccinationRate = Math.min(
     0.85, // Cap at 85%
-    (country.testsPerOneMillion / 2000000) * 0.7 // Estimate based on testing rate
+    (country.testsPerOneMillion / 2000000) * 0.7, // Estimate based on testing rate
   );
-  
+
   return {
     partiallyVaccinated: vaccinationRate * 0.95 * 100, // 95% of total get first dose
     fullyVaccinated: vaccinationRate * 0.85 * 100, // 85% complete primary series
@@ -259,17 +259,15 @@ export function estimateVaccinationProgress(
 
 // Helper: Parse M/D/YY format from disease.sh to YYYY-MM-DD
 function parseDate(dateStr: string): string {
-  const [month, day, year] = dateStr.split('/').map(Number);
+  const [month, day, year] = dateStr.split("/").map(Number);
   const fullYear = year < 50 ? 2000 + year : 1900 + year;
-  return `${fullYear}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+  return `${fullYear}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
 
 /**
  * Get list of countries with coordinates for the globe
  */
-export function getCountriesWithCoordinates(
-  countries: CovidCountry[]
-): Array<{
+export function getCountriesWithCoordinates(countries: CovidCountry[]): Array<{
   name: string;
   iso3: string;
   iso2: string | null;
@@ -278,7 +276,7 @@ export function getCountriesWithCoordinates(
   cases: number;
   deaths: number;
 }> {
-  return countries.map(c => ({
+  return countries.map((c) => ({
     name: c.country,
     iso3: c.countryInfo.iso3,
     iso2: c.countryInfo.iso2,
@@ -293,12 +291,12 @@ export function getCountriesWithCoordinates(
  * Get color based on cases per million (for heat map)
  */
 export function getCasesColor(casesPerMillion: number): string {
-  if (casesPerMillion > 100000) return '#7f1d1d'; // Dark red
-  if (casesPerMillion > 50000) return '#dc2626'; // Red
-  if (casesPerMillion > 25000) return '#f97316'; // Orange
-  if (casesPerMillion > 10000) return '#eab308'; // Yellow
-  if (casesPerMillion > 5000) return '#3b82f6'; // Blue
-  return '#10b981'; // Green
+  if (casesPerMillion > 100000) return "#7f1d1d"; // Dark red
+  if (casesPerMillion > 50000) return "#dc2626"; // Red
+  if (casesPerMillion > 25000) return "#f97316"; // Orange
+  if (casesPerMillion > 10000) return "#eab308"; // Yellow
+  if (casesPerMillion > 5000) return "#3b82f6"; // Blue
+  return "#10b981"; // Green
 }
 
 /**
