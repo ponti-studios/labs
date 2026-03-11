@@ -1,6 +1,8 @@
 import "dotenv/config";
-import { db, tflCameras } from "@pontistudios/db";
+import { getPostgresDb, tflCameras } from "@pontistudios/db";
 import formattedCameras from "../app/lib/tfl/cameras-formatted.json";
+
+const { db } = getPostgresDb();
 
 interface FormattedCamera {
 	commonName: string;
