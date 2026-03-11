@@ -9,7 +9,6 @@ export {
   createPostgresDb,
   getPostgresDb,
   closePostgresDb,
-  db,
   schema,
   type Database,
   type PostgresDbConfig,

@@ -75,8 +75,5 @@ export async function closePostgresDb(): Promise<void> {
 // Re-export schema for convenience
 export { schema };
 
-// Export a singleton db instance for convenience
-export const { db } = getPostgresDb();
-
 // Export types
 export type Database = PostgresJsDatabase<typeof schema>;
