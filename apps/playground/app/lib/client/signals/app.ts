@@ -1,5 +1,5 @@
 import { signal, computed } from "@preact/signals-react";
-import type { Project } from "~/types";
+import type { Project } from "~/lib/db";
 
 // Global app state
 export const searchQuery = signal("");
@@ -9,7 +9,7 @@ export const isSidebarOpen = signal(true);
 
 // Projects state
 export const projects = signal<Project[]>([]);
-export const selectedProjectId = signal<string | null>(null);
+export const selectedProjectId = signal<number | null>(null);
 
 // Computed values
 export const filteredProjects = computed(() => {
@@ -20,7 +20,7 @@ export const filteredProjects = computed(() => {
     const matchesQuery =
       project.name.toLowerCase().includes(query) ||
       project.description?.toLowerCase().includes(query);
-    const matchesFilters = filters.every((f) => project.tags?.includes(f));
+    const matchesFilters = filters.every((f) => project.name?.includes(f));
 
     return matchesQuery && matchesFilters;
   });

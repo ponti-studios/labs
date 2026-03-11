@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { Todo, TodoInsert } from "../db/schema";
+import type { Todo, TodoInsert } from "~/lib/db";
 
 export type TodoItem = Todo & {
   projectName?: string;

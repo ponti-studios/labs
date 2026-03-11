@@ -4,6 +4,22 @@
 # React Router
 .react-router
 
+# TypeScript emit files in apps (apps use bundlers, not tsc output)
+# These should only exist in packages that specifically build with tsc
+apps/**/*.js
+apps/**/*.d.ts
+apps/**/*.d.ts.map
+# But keep config files
+!apps/**/*.config.js
+!apps/**/postcss.config.js
+!apps/**/tailwind.config.js
+!apps/**/eslint.config.js
+!apps/**/lint-staged.config.js
+# And keep drizzle generated files
+!apps/**/drizzle/*.js
+!apps/**/drizzle/*.d.ts
+!apps/**/drizzle/*.d.ts.map
+
 # dependencies
 node_modules
 .pnp

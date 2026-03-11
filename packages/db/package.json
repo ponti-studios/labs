@@ -11,6 +11,10 @@
     "./schema": {
       "types": "./dist/schema/index.d.ts",
       "import": "./dist/schema/index.js"
+    },
+    "./postgres": {
+      "types": "./dist/postgres-client.d.ts",
+      "import": "./dist/postgres-client.js"
     }
   },
   "scripts": {
@@ -22,10 +26,10 @@
     "clean": "rm -rf dist tsconfig.tsbuildinfo"
   },
   "dependencies": {
-    "drizzle-orm": "^0.43.1",
+    "drizzle-orm": "^0.44.4",
     "kysely": "^0.28.8",
     "mysql2": "^3.6.0",
-    "postgres": "^3.4.5",
+    "postgres": "^3.4.7",
     "zod": "^3.25.76"
   },
   "devDependencies": {

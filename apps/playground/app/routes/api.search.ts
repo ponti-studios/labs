@@ -1,6 +1,6 @@
 import { eq, ilike, or } from "drizzle-orm";
 import type { LoaderFunctionArgs } from "react-router";
-import { db, projects, todos } from "~/db";
+import { db, projects, todos } from "~/lib/db";
 import { searchTodosBySemanticSimilarity } from "~/lib/semantic-search";
 import { getSession } from "~/lib/session";
 

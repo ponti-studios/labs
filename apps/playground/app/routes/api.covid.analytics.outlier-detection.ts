@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import type { LoaderFunctionArgs } from "react-router";
-import { covidData, db } from "~/db";
+import { covidData, db } from "~/lib/db";
 
 interface Outlier {
   date: string;

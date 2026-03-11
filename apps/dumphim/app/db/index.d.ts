@@ -1,7 +1,0 @@
-import postgres from "postgres";
-import * as schema from "./schema";
-export declare const db: import("drizzle-orm/postgres-js").PostgresJsDatabase<typeof schema> & {
-  $client: postgres.Sql<{}>;
-};
-export type DbClient = typeof db;
-//# sourceMappingURL=index.d.ts.map

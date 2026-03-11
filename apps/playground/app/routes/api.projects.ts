@@ -1,7 +1,6 @@
 import { eq, sql } from "drizzle-orm";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
-import { db, projects, todos } from "~/db";
-import type { ProjectInsert } from "~/db/schema";
+import { db, projects, todos, type ProjectInsert } from "~/lib/db";
 import { commitSession, getSession } from "~/lib/session";
 
 async function getOrCreateUserId(request: Request): Promise<{ userId: string; session: any }> {

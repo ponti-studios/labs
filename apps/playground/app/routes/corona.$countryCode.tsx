@@ -5,7 +5,7 @@ import { StatsOverview } from "~/components/covid/charts/stats-overview";
 import { TimeSeriesChart } from "~/components/covid/charts/time-series-chart";
 import { TopCountriesChart } from "~/components/covid/charts/top-countries-chart";
 import { VaccinationProgress } from "~/components/covid/charts/vaccination-progress";
-import type { CovidData } from "~/db/schema";
+import type { CovidData } from "~/lib/db";
 import {
   getAvailableCountries,
   getCovidStats,

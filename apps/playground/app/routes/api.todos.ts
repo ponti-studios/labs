@@ -1,7 +1,6 @@
 import { eq } from "drizzle-orm";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
-import { db, embeddings, projects, todos } from "~/db";
-import type { TodoInsert } from "~/db/schema";
+import { db, embeddings, projects, todos, type TodoInsert } from "~/lib/db";
 import { generateTaskEmbedding } from "~/lib/embeddings";
 import { commitSession, getSession } from "~/lib/session";
 

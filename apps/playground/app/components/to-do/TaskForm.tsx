@@ -1,4 +1,4 @@
-import { Button, Input, Select } from "@pontistudios/ui";
+import { Button, Input } from "@pontistudios/ui";
 import { useState } from "react";
 import { useProjects } from "~/lib/projects";
 import type { TodoItem } from "~/lib/todos";
@@ -69,12 +69,13 @@ export default function TaskForm({ onTodoCreated, defaultProjectId }: TaskFormPr
         >
           Project
         </label>
-        <Select
+        <select
           id="project-select"
           value={selectedProjectId?.toString() || ""}
-          onChange={(e) =>
+          onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
             setSelectedProjectId(e.target.value ? Number(e.target.value) : undefined)
           }
+          className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring"
         >
           <option value="">No project</option>
           {projects.map((project) => (
@@ -82,7 +83,7 @@ export default function TaskForm({ onTodoCreated, defaultProjectId }: TaskFormPr
               {project.name}
             </option>
           ))}
-        </Select>
+        </select>
       </div>
       <Button
         type="submit"

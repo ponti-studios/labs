@@ -1,5 +1,5 @@
 import { eq, sql } from "drizzle-orm";
-import { db, embeddings, projects, todos } from "~/db";
+import { db, embeddings, projects, todos } from "~/lib/db";
 import { generateEmbedding } from "./embeddings";
 
 export async function searchTodosBySemanticSimilarity(
