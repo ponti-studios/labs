@@ -104,7 +104,7 @@ export function buttonClass(variant: "primary" | "destructive" = "primary"): str
 /**
  * Build input class string
  */
-export function inputClass(...additional: string[]): string {
+export function inputClass(...additional: (string | undefined)[]): string {
   return cn(componentStyles.input, ...additional);
 }
 

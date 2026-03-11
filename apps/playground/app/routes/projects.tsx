@@ -1,5 +1,5 @@
 import { Button } from "@pontistudios/ui";
-import { defer, type LoaderFunctionArgs } from "@react-router/node";
+import type { LoaderFunctionArgs } from "react-router";
 import { Await, isRouteErrorResponse, Link, useLoaderData, useRouteError } from "react-router";
 import { Suspense } from "react";
 import { ProjectFormModal } from "~/components/ProjectFormModal";
@@ -9,14 +9,14 @@ import { getProjects } from "~/lib/server/queries";
 // Server loader with streaming support
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
-  const status = url.searchParams.get("status");
+  const status = url.searchParams.get("status") ?? undefined;
 
   // Stream projects data (don't await)
   const projectsPromise = getProjects({ status });
 
-  return defer({
+  return {
     projects: projectsPromise,
-  });
+  };
 }
 
 // Loading skeleton

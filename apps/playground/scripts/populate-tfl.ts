@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { db, tflCameras } from "../app/db/index";
+import { db, tflCameras } from "@pontistudios/db";
 import formattedCameras from "../app/lib/tfl/cameras-formatted.json";
 
 interface FormattedCamera {

@@ -1,7 +1,6 @@
 import { and, eq, gte, lte, sql } from "drizzle-orm";
 import type { LoaderFunctionArgs } from "react-router";
-import { covidData, db } from "~/db";
-import type { CovidData } from "~/db/schema";
+import { covidData, db, type CovidData } from "~/lib/db";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   try {

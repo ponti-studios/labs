@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { covidData, db } from "~/db";
+import { covidData, db } from "~/lib/db";
 
 export async function loader() {
   try {

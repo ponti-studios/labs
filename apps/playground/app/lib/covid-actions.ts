@@ -1,8 +1,7 @@
 // React Router compatible version of covid actions
 
 import { and, eq, isNotNull, sql } from "drizzle-orm";
-import { covidData, db } from "~/db";
-import type { CovidData } from "~/db/schema";
+import { covidData, db, type CovidData } from "~/lib/db";
 
 interface ApiResponse {
   data: CovidData[];

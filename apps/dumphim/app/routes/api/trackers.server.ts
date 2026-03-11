@@ -9,6 +9,7 @@
  */
 
 import { createTracker } from "~/lib/server/mutations";
+import { invalidateTrackerCache } from "~/lib/server/cache";
 import type { TrackerInsert } from "@pontistudios/db/schema";
 import { httpErrors, httpSuccess } from "~/lib/api/response";
 

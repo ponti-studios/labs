@@ -9,6 +9,15 @@ import {
   unique,
 } from "drizzle-orm/pg-core";
 
+/**
+ * Playground Schema - COVID Data & TFL Cameras
+ *
+ * Tables for the playground app including:
+ * - COVID-19 data from Our World in Data
+ * - TFL (Transport for London) camera feeds
+ * - Todo/Project management with embeddings
+ */
+
 export const covidData = pgTable("covid_data", {
   id: serial().primaryKey().notNull(),
   isoCode: text("iso_code"),
@@ -79,6 +88,7 @@ export const covidData = pgTable("covid_data", {
   excessMortality: real("excess_mortality"),
   excessMortalityCumulativePerMillion: real("excess_mortality_cumulative_per_million"),
 });
+
 export type CovidData = typeof covidData.$inferSelect;
 export type CovidDataInsert = typeof covidData.$inferInsert;
 
@@ -99,7 +109,21 @@ export const tflCameras = pgTable(
   },
   (table) => [unique("tfl_cameras_tfl_id_unique").on(table.tflId)],
 );
+
 export type TflCamera = typeof tflCameras.$inferSelect;
+export type TflCameraInsert = typeof tflCameras.$inferInsert;
+
+export const projects = pgTable("projects", {
+  id: serial().primaryKey().notNull(),
+  userId: text("user_id").notNull(),
+  name: text().notNull(),
+  description: text(),
+  createdAt: timestamp("created_at", { mode: "string" }).defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow(),
+});
+
+export type Project = typeof projects.$inferSelect;
+export type ProjectInsert = typeof projects.$inferInsert;
 
 export const todos = pgTable("todos", {
   id: serial().primaryKey().notNull(),
@@ -112,19 +136,9 @@ export const todos = pgTable("todos", {
   createdAt: timestamp("created_at", { mode: "string" }).defaultNow(),
   updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow(),
 });
+
 export type Todo = typeof todos.$inferSelect;
 export type TodoInsert = typeof todos.$inferInsert;
-
-export const projects = pgTable("projects", {
-  id: serial().primaryKey().notNull(),
-  userId: text("user_id").notNull(),
-  name: text().notNull(),
-  description: text(),
-  createdAt: timestamp("created_at", { mode: "string" }).defaultNow(),
-  updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow(),
-});
-export type Project = typeof projects.$inferSelect;
-export type ProjectInsert = typeof projects.$inferInsert;
 
 export const embeddings = pgTable("embeddings", {
   id: serial().primaryKey().notNull(),
@@ -136,5 +150,6 @@ export const embeddings = pgTable("embeddings", {
   model: text().notNull().default("gemini-embedding-001"),
   createdAt: timestamp("created_at", { mode: "string" }).defaultNow(),
 });
+
 export type Embedding = typeof embeddings.$inferSelect;
 export type EmbeddingInsert = typeof embeddings.$inferInsert;

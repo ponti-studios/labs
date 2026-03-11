@@ -13,7 +13,7 @@ import {
   buttonClass,
   inputClass,
   cardClass,
-} from "./void-styles";
+} from "~/lib/void-styles";
 
 /**
  * PageHeader - Consistent heading + description for all pages
@@ -135,7 +135,7 @@ export const RangeField: React.FC<{
  */
 export const Button: React.FC<{
   children: ReactNode;
-  onClick: () => void;
+  onClick?: () => void;
   variant?: "primary" | "destructive";
   disabled?: boolean;
   className?: string;

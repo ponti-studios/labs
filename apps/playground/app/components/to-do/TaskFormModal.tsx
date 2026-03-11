@@ -9,7 +9,6 @@ import {
   DialogTrigger,
   Input,
   Label,
-  Select,
 } from "@pontistudios/ui";
 import { useEffect, useState } from "react";
 import { useProjects } from "~/lib/projects";
@@ -120,11 +119,11 @@ export function TaskFormModal({
             <Label htmlFor="project" className="text-right">
               Project
             </Label>
-            <Select
+            <select
               id="project"
               value={formData.projectId}
-              onChange={(e) => setFormData({ ...formData, projectId: e.target.value })}
-              className="col-span-3"
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, projectId: e.target.value })}
+              className="col-span-3 flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring"
               required
               disabled={projectsLoading}
               aria-describedby="project-error"
@@ -135,7 +134,7 @@ export function TaskFormModal({
                   {project.name}
                 </option>
               ))}
-            </Select>
+            </select>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="title" className="text-right">

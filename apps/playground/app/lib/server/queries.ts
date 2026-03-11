@@ -1,14 +1,32 @@
-import { eq, desc } from "drizzle-orm";
-import { db } from "~/db";
-import { projects, todos } from "~/db/schema";
+import { eq, desc, sql } from "drizzle-orm";
+import { db } from "~/lib/db";
+import { projects, todos } from "~/lib/db";
 
 // Server-side data fetching patterns
 // These run on the server only - never shipped to client
 
 export async function getProjects(_filters?: { status?: string }) {
-  return db.query.projects.findMany({
-    orderBy: desc(projects.createdAt),
-  });
+  return db
+    .select({
+      id: projects.id,
+      userId: projects.userId,
+      name: projects.name,
+      description: projects.description,
+      createdAt: projects.createdAt,
+      updatedAt: projects.updatedAt,
+      taskCount: sql<number>`COALESCE(COUNT(${todos.id}), 0)`.as("taskCount"),
+    })
+    .from(projects)
+    .leftJoin(todos, eq(projects.id, todos.projectId))
+    .groupBy(
+      projects.id,
+      projects.userId,
+      projects.name,
+      projects.description,
+      projects.createdAt,
+      projects.updatedAt,
+    )
+    .orderBy(desc(projects.createdAt));
 }
 
 export async function getProject(id: string) {
