@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import type { CesiumViewer } from "../cesium/CesiumViewer";
   import type { CovidCountry } from "../services/covidService";
   import SatelliteTracker from "./SatelliteTracker.svelte";
@@ -24,6 +25,20 @@
   let isCollapsed = $state(false);
   let activeTab = $state<"covid" | "satellites" | "locations">("covid");
   let searchQuery = $state("");
+  let showStylePicker = $state(false);
+  
+  // Globe styles - available everywhere
+  const globeStyles = $derived(viewer?.getAvailableStyles() ?? []);
+  let currentStyle = $state("satellite"); // Default to satellite
+
+  // Load saved style preference on mount
+  onMount(() => {
+    const savedStyle = localStorage.getItem("earth-globe-style");
+    if (savedStyle && viewer) {
+      currentStyle = savedStyle;
+      viewer.setGlobeStyle(savedStyle);
+    }
+  });
 
   const locations = [
     { name: "New York", lon: -74.006, lat: 40.7128, height: 500000 },
@@ -113,6 +128,19 @@
     if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
     return num.toLocaleString();
   }
+
+  function changeGlobeStyle(styleId: string) {
+    if (!viewer) return;
+    currentStyle = styleId;
+    viewer.setGlobeStyle(styleId);
+    // Save to localStorage
+    localStorage.setItem("earth-globe-style", styleId);
+    showStylePicker = false;
+  }
+
+  function getCurrentStyleIcon(): string {
+    return globeStyles.find(s => s.id === currentStyle)?.icon ?? '🌍';
+  }
 </script>
 
 <div class="controls" class:collapsed={isCollapsed}>
@@ -122,7 +150,36 @@
 
   {#if !isCollapsed}
     <div class="controls-content">
-      <h2>🌍 Earth Monitor</h2>
+      <div class="header-row">
+        <h2>🌍 Earth Monitor</h2>
+        
+        <!-- Style Picker Button - Always Accessible -->
+        <div class="style-picker-container">
+          <button 
+            class="style-toggle-btn" 
+            onclick={() => showStylePicker = !showStylePicker}
+            title="Change globe style"
+          >
+            <span class="current-style-icon">{getCurrentStyleIcon()}</span>
+            <span class="dropdown-arrow">▼</span>
+          </button>
+          
+          {#if showStylePicker}
+            <div class="style-dropdown">
+              {#each globeStyles as style}
+                <button
+                  class="style-option"
+                  class:active={currentStyle === style.id}
+                  onclick={() => changeGlobeStyle(style.id)}
+                >
+                  <span class="style-icon">{style.icon}</span>
+                  <span class="style-label">{style.name}</span>
+                </button>
+              {/each}
+            </div>
+          {/if}
+        </div>
+      </div>
 
       <!-- Tab Navigation -->
       <div class="tabs">
@@ -323,11 +380,91 @@
     max-height: calc(100vh - 2rem);
   }
 
-  h2 {
-    margin: 0 0 0.75rem 0;
-    font-size: 1.1rem;
+  .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     padding-bottom: 0.5rem;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+
+  /* Style Picker Dropdown */
+  .style-picker-container {
+    position: relative;
+  }
+
+  .style-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.4rem 0.6rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .style-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .current-style-icon {
+    font-size: 1.2rem;
+  }
+
+  .dropdown-arrow {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .style-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 0.5rem;
+    background: rgba(20, 20, 25, 0.98);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 0.5rem;
+    min-width: 150px;
+    z-index: 1000;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  }
+
+  .style-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.5rem;
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    text-align: left;
+    font-size: 0.9rem;
+    transition: all 0.15s;
+  }
+
+  .style-option:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .style-option.active {
+    background: rgba(59, 130, 246, 0.3);
+  }
+
+  .style-label {
+    font-size: 0.85rem;
   }
 
   .tabs {
