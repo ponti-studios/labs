@@ -45,11 +45,6 @@ export const routes = [
     description: "Live traffic views",
   },
   {
-    path: "/corona",
-    label: "Corona Analytics",
-    description: "COVID-19 data and insights",
-  },
-  {
     path: "/svg-glass-test",
     label: "SVG Glass Test",
     description: "SVG glass effect test",

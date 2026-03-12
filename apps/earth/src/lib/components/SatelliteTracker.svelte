@@ -1,11 +1,10 @@
 <script lang="ts">
-  import { onMount, onDestroy } from "svelte";
+  import { onDestroy } from "svelte";
   import type { CesiumViewer } from "../cesium/CesiumViewer";
   import type { Satellite } from "../services/satelliteService";
-  import {
-    fetchAllSatellites,
-    formatSatelliteInfo,
-  } from "../services/satelliteService";
+  import { fetchAllSatellites } from "../services/satelliteService";
+  import PanelMetric from "./panel/PanelMetric.svelte";
+  import PanelSection from "./panel/PanelSection.svelte";
 
   interface Props {
     viewer: CesiumViewer | null;
@@ -19,22 +18,23 @@
   let updateInterval: ReturnType<typeof setInterval> | null = null;
   let lastUpdate = $state<Date | null>(null);
 
-  const UPDATE_INTERVAL = 5000; // Update every 5 seconds
+  const UPDATE_INTERVAL = 5000;
 
   async function updateSatellites() {
     if (!viewer) return;
-
     const newSatellites = await fetchAllSatellites();
 
-    // Update or create satellite entities
-    newSatellites.forEach((sat) => {
-      const existing = satellites.find((s) => s.id === sat.id);
+    newSatellites.forEach((satellite) => {
+      const existing = satellites.find((item) => item.id === satellite.id);
       if (existing) {
-        // Update position
-        viewer.updateSatellitePosition(sat.id, sat.longitude, sat.latitude, sat.altitude);
+        viewer.updateSatellitePosition(
+          satellite.id,
+          satellite.longitude,
+          satellite.latitude,
+          satellite.altitude,
+        );
       } else {
-        // Create new satellite
-        viewer.addSatellite(sat);
+        viewer.addSatellite(satellite);
       }
     });
 
@@ -44,13 +44,9 @@
 
   function startTracking() {
     if (isTracking) return;
-
     isTracking = true;
     updateSatellites();
-
-    updateInterval = setInterval(() => {
-      updateSatellites();
-    }, UPDATE_INTERVAL);
+    updateInterval = setInterval(updateSatellites, UPDATE_INTERVAL);
   }
 
   function stopTracking() {
@@ -59,20 +55,15 @@
       clearInterval(updateInterval);
       updateInterval = null;
     }
-
-    // Remove all satellites
-    satellites.forEach((sat) => {
-      viewer?.removeSatellite(sat.id);
-    });
+    satellites.forEach((satellite) => viewer?.removeSatellite(satellite.id));
     satellites = [];
   }
 
   function flyToSatellite(satelliteId: string) {
-    const satellite = satellites.find((s) => s.id === satelliteId);
-    if (satellite && viewer) {
-      selectedSatellite = satelliteId;
-      viewer.flyTo(satellite.longitude, satellite.latitude, satellite.altitude + 1000000, 2);
-    }
+    const satellite = satellites.find((item) => item.id === satelliteId);
+    if (!satellite || !viewer) return;
+    selectedSatellite = satelliteId;
+    viewer.flyTo(satellite.longitude, satellite.latitude, satellite.altitude + 1000000, 2);
   }
 
   function toggleOrbit(satelliteId: string) {
@@ -80,215 +71,145 @@
   }
 
   onDestroy(() => {
-    if (updateInterval) {
-      clearInterval(updateInterval);
-    }
+    stopTracking();
   });
 </script>
 
-<div class="satellite-tracker">
-  <h3>🛰️ Live Satellites</h3>
+<div class="panel-stack">
+  <PanelSection
+    eyebrow="Orbital feed"
+    title="Live satellites"
+    description="Track a small live constellation and jump directly to orbit positions."
+  >
+    <div class="overview-grid">
+      <PanelMetric label="Tracked" value={satellites.length} tone={isTracking ? "live" : "default"} />
+      <PanelMetric label="Update" value={lastUpdate ? lastUpdate.toLocaleTimeString() : "Standby"} />
+    </div>
 
-  <div class="controls-row">
     <button
-      class="track-btn"
-      class:active={isTracking}
+      class="panel-button"
+      class:primary={isTracking}
+      type="button"
       disabled={!viewer}
       onclick={isTracking ? stopTracking : startTracking}
     >
-      {isTracking ? "Stop Tracking" : "Start Tracking"}
+      {isTracking ? "Pause" : "Live"}
     </button>
-  </div>
-
-  {#if lastUpdate}
-    <p class="last-update">
-      Last update: {lastUpdate.toLocaleTimeString()}
-    </p>
-  {/if}
+  </PanelSection>
 
   {#if satellites.length > 0}
-    <div class="satellite-list">
-      {#each satellites as sat}
-        <div
-          class="satellite-item"
-          class:selected={selectedSatellite === sat.id}
-        >
-          <div class="satellite-header">
-            <span class="satellite-type-icon">
-              {sat.type === "iss" ? "🚀" : sat.type === "space-station" ? "🏠" : "📡"}
-            </span>
-            <span class="satellite-name">{sat.name}</span>
-          </div>
-
-          <div class="satellite-details">
-            <div class="detail-row">
-              <span>Lat: {sat.latitude.toFixed(2)}°</span>
-              <span>Lon: {sat.longitude.toFixed(2)}°</span>
+    <PanelSection eyebrow="Constellation" title="Objects">
+      <div class="satellite-list">
+        {#each satellites as satellite}
+          <div class="satellite-card panel-card-subtle" class:selected={selectedSatellite === satellite.id}>
+            <div class="satellite-head">
+              <div>
+                <p class="panel-kicker">{satellite.type}</p>
+                <strong>{satellite.name}</strong>
+              </div>
+              <span class="panel-pill" class:live={isTracking}>live</span>
             </div>
-            <div class="detail-row">
-              <span>Alt: {(sat.altitude / 1000).toFixed(0)} km</span>
-              <span>Vel: {sat.velocity.toFixed(0)} km/h</span>
+
+            <div class="satellite-data">
+              <span>Lat {satellite.latitude.toFixed(2)}°</span>
+              <span>Lon {satellite.longitude.toFixed(2)}°</span>
+              <span>Alt {(satellite.altitude / 1000).toFixed(0)} km</span>
+              <span>Vel {satellite.velocity.toFixed(0)} km/h</span>
+            </div>
+
+            <div class="satellite-actions">
+              <button class="panel-button panel-button-primary" type="button" onclick={() => flyToSatellite(satellite.id)}>
+                Fly to
+              </button>
+              <button class="panel-button panel-button-ghost" type="button" onclick={() => toggleOrbit(satellite.id)}>
+                Orbit
+              </button>
             </div>
           </div>
-
-          <div class="satellite-actions">
-            <button
-              class="action-btn"
-              onclick={() => flyToSatellite(sat.id)}
-            >
-              Fly To
-            </button>
-            <button
-              class="action-btn"
-              onclick={() => toggleOrbit(sat.id)}
-            >
-              Toggle Orbit
-            </button>
-          </div>
-        </div>
-      {/each}
+        {/each}
+      </div>
+    </PanelSection>
+  {:else}
+    <div class="panel-card-subtle empty-state">
+      {#if !viewer}
+        Waiting for globe viewer.
+      {:else if isTracking}
+        Loading orbital positions.
+      {:else}
+        Tracking is idle.
+      {/if}
     </div>
-  {:else if isTracking}
-    <p class="status">Loading satellites...</p>
-  {/if}
-
-  {#if !viewer}
-    <p class="status">Waiting for viewer...</p>
   {/if}
 </div>
 
 <style>
-  .satellite-tracker {
-    padding: 1rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
+  .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
   }
 
-  h3 {
-    margin: 0 0 0.75rem 0;
-    font-size: 1rem;
-    color: rgba(255, 255, 255, 0.9);
-  }
-
-  .controls-row {
-    margin-bottom: 0.75rem;
-  }
-
-  .track-btn {
-    width: 100%;
-    padding: 0.5rem 1rem;
-    background: rgba(59, 130, 246, 0.3);
-    border: 1px solid rgba(59, 130, 246, 0.5);
-    color: white;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: all 0.2s;
-    font-size: 0.875rem;
-    font-weight: 500;
-  }
-
-  .track-btn:hover:not(:disabled) {
-    background: rgba(59, 130, 246, 0.5);
-  }
-
-  .track-btn.active {
-    background: rgba(239, 68, 68, 0.3);
-    border-color: rgba(239, 68, 68, 0.5);
-  }
-
-  .track-btn.active:hover:not(:disabled) {
-    background: rgba(239, 68, 68, 0.5);
-  }
-
-  .track-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  .last-update {
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.5);
-    margin: 0 0 0.75rem 0;
-    text-align: center;
+  .primary {
+    background: var(--accent-primary);
+    color: var(--text-on-dark);
+    border-color: var(--accent-primary);
   }
 
   .satellite-list {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    max-height: 300px;
-    overflow-y: auto;
+    gap: var(--space-3);
   }
 
-  .satellite-item {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 6px;
-    padding: 0.75rem;
-    transition: all 0.2s;
-  }
-
-  .satellite-item:hover {
-    background: rgba(255, 255, 255, 0.1);
-  }
-
-  .satellite-item.selected {
-    border-color: rgba(59, 130, 246, 0.5);
-    background: rgba(59, 130, 246, 0.1);
-  }
-
-  .satellite-header {
+  .satellite-card {
+    padding: var(--space-4);
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
+    flex-direction: column;
+    gap: var(--space-3);
   }
 
-  .satellite-type-icon {
-    font-size: 1rem;
+  .satellite-card.selected {
+    border-color: var(--border-strong);
+    background: var(--bg-primary);
   }
 
-  .satellite-name {
-    font-weight: 500;
-    font-size: 0.875rem;
-  }
-
-  .satellite-details {
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 0.5rem;
-  }
-
-  .detail-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.25rem;
-  }
-
+  .satellite-head,
   .satellite-actions {
     display: flex;
-    gap: 0.5rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
   }
 
-  .action-btn {
+  strong {
+    color: var(--text-primary);
+    font-size: var(--text-md);
+    font-weight: 600;
+  }
+
+  .satellite-data {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+  }
+
+  .satellite-actions > * {
     flex: 1;
-    padding: 0.25rem 0.5rem;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
-    cursor: pointer;
-    border-radius: 3px;
-    font-size: 0.75rem;
   }
 
-  .action-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
+  .empty-state {
+    padding: 16px;
+    color: var(--text-muted);
+    font-size: var(--text-base);
   }
 
-  .status {
-    font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.6);
-    font-style: italic;
-    text-align: center;
-    padding: 1rem 0;
+  @media (max-width: 760px) {
+    .overview-grid,
+    .satellite-data {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

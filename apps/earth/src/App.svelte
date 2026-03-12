@@ -37,9 +37,10 @@
       }
     });
     
-    // If we already have COVID data, add it to the globe
+    // Load COVID data but keep it hidden by default
     if (covidCountries.length > 0) {
       addCovidPointsToGlobe();
+      viewer.hideCovidPoints(); // Hide by default
     }
   }
 
@@ -51,9 +52,10 @@
       covidCountries = countries;
       loadingCovid = false;
       
-      // If viewer is already ready, add the points
+      // If viewer is already ready, add the points but keep hidden
       if (viewer) {
         addCovidPointsToGlobe();
+        viewer.hideCovidPoints(); // Hide by default
       }
     } catch (error) {
       console.error("[App] Error fetching COVID data:", error);
@@ -160,29 +162,30 @@
 
   .loading-overlay {
     position: fixed;
-    bottom: 1rem;
-    left: 1rem;
-    z-index: 100;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(10px);
-    padding: 0.75rem 1rem;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    bottom: 16px;
+    left: 16px;
+    z-index: 110;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(14px);
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   }
 
   .loading-content {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    color: white;
-    font-size: 0.9rem;
+    gap: 10px;
+    color: #0a0a0a;
+    font-size: 13px;
   }
 
   .spinner {
     width: 16px;
     height: 16px;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    border-top-color: #3b82f6;
+    border: 2px solid rgba(0, 0, 0, 0.12);
+    border-top-color: #0a0a0a;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
   }

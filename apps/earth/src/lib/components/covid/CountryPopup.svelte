@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, onDestroy } from 'svelte';
+  import { onMount } from 'svelte';
   import type { CesiumViewer } from '../../cesium/CesiumViewer';
   import type { CovidCountry, CovidTimeSeriesRecord } from '../../services/covidService';
   import {
@@ -33,17 +33,13 @@
     try {
       loading = true;
       error = null;
-
-      // Fetch all data in parallel
       const [countries, timeSeries] = await Promise.all([
         fetchAllCountriesSummary(),
         fetchCountryTimeSeries(iso3),
       ]);
-
       allCountries = countries;
       timeSeriesData = timeSeries;
       countryData = findCountryByIso3(countries, iso3) || null;
-
       if (!countryData) {
         error = `No data available for ${countryName}`;
       }
@@ -57,17 +53,9 @@
 
   function flyToCountry() {
     if (!viewer || !countryData) return;
-    
     const lat = countryData.countryInfo.lat;
     const lng = countryData.countryInfo.long;
-    
     viewer.flyTo(lng, lat, 3000000, 2);
-  }
-
-  function formatNumber(num: number): string {
-    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
-    if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
-    return num.toLocaleString();
   }
 
   const lastUpdated = $derived(() => {
@@ -83,71 +71,30 @@
   });
 </script>
 
-<div 
-  class="popup-overlay" 
-  onclick={onClose}
-  onkeydown={(e) => e.key === 'Escape' && onClose()}
-  role="button"
-  tabindex="0"
-  aria-label="Close popup"
->
-  <div 
-    class="popup-content" 
-    onclick={(e) => e.stopPropagation()}
-    onkeydown={(e) => e.stopPropagation()}
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="popup-title"
-    tabindex="-1"
-  >
+<div class="popup-overlay" onclick={onClose} onkeydown={(e) => e.key === 'Escape' && onClose()} role="button" tabindex="0" aria-label="Close popup">
+  <div class="popup-content" onclick={(e) => e.stopPropagation()} onkeydown={(e) => e.stopPropagation()} role="dialog" aria-modal="true" tabindex="-1">
     <div class="popup-header">
       <div class="header-left">
         {#if countryData?.countryInfo.flag}
-          <img 
-            src={countryData.countryInfo.flag} 
-            alt="{countryName} flag" 
-            class="flag"
-          />
+          <img src={countryData.countryInfo.flag} alt="{countryName} flag" class="flag" />
         {/if}
         <div class="title-group">
-          <h2 id="popup-title">{countryName}</h2>
+          <h2>{countryName}</h2>
           {#if lastUpdated()}
             <span class="updated">Updated {lastUpdated()}</span>
           {/if}
         </div>
       </div>
       <div class="header-actions">
-        <button class="fly-btn" onclick={flyToCountry} title="Fly to country">
-          🎯
-        </button>
-        <button class="close-btn" onclick={onClose}>
-          ✕
-        </button>
+        <button class="fly-btn" onclick={flyToCountry} title="Fly to country">Target</button>
+        <button class="close-btn" onclick={onClose}>Close</button>
       </div>
     </div>
 
     <div class="popup-tabs">
-      <button 
-        class="tab-btn" 
-        class:active={activeTab === 'overview'}
-        onclick={() => activeTab = 'overview'}
-      >
-        📊 Overview
-      </button>
-      <button 
-        class="tab-btn" 
-        class:active={activeTab === 'trends'}
-        onclick={() => activeTab = 'trends'}
-      >
-        📈 Trends
-      </button>
-      <button 
-        class="tab-btn" 
-        class:active={activeTab === 'comparison'}
-        onclick={() => activeTab = 'comparison'}
-      >
-        🌍 Compare
-      </button>
+      <button class="tab-btn" class:active={activeTab === 'overview'} onclick={() => activeTab = 'overview'}>Overview</button>
+      <button class="tab-btn" class:active={activeTab === 'trends'} onclick={() => activeTab = 'trends'}>Trends</button>
+      <button class="tab-btn" class:active={activeTab === 'comparison'} onclick={() => activeTab = 'comparison'}>Compare</button>
     </div>
 
     <div class="popup-body">
@@ -158,78 +105,32 @@
         </div>
       {:else if error}
         <div class="error-state">
-          <span class="error-icon">⚠️</span>
           <p>{error}</p>
-          <button onclick={onClose}>Close</button>
+          <button class="secondary-btn" onclick={onClose}>Close</button>
         </div>
       {:else if countryData}
         {#if activeTab === 'overview'}
           <StatsOverview country={countryData} />
-          
           {#if timeSeriesData.length > 0}
-            <TimeSeriesChart
-              data={timeSeriesData}
-              metric="cases"
-              title="Daily Cases (7-day avg)"
-              color="#3b82f6"
-              showDaily={true}
-              showMovingAverage={true}
-            />
+            <TimeSeriesChart data={timeSeriesData} metric="cases" title="Daily Cases" color="#e7eaee" showDaily={true} showMovingAverage={true} />
           {/if}
         {:else if activeTab === 'trends'}
           {#if timeSeriesData.length > 0}
-            <TimeSeriesChart
-              data={timeSeriesData}
-              metric="cases"
-              title="Daily Cases"
-              color="#3b82f6"
-              showDaily={true}
-              showMovingAverage={true}
-            />
-            <TimeSeriesChart
-              data={timeSeriesData}
-              metric="deaths"
-              title="Daily Deaths"
-              color="#ef4444"
-              showDaily={true}
-              showMovingAverage={true}
-            />
-            <VaccinationProgress
-              data={timeSeriesData}
-              title="Estimated Vaccination Progress"
-            />
+            <TimeSeriesChart data={timeSeriesData} metric="cases" title="Daily Cases" color="#e7eaee" showDaily={true} showMovingAverage={true} />
+            <TimeSeriesChart data={timeSeriesData} metric="deaths" title="Daily Deaths" color="#ff3b30" showDaily={true} showMovingAverage={true} />
+            <VaccinationProgress data={timeSeriesData} title="Vaccination Progress" />
           {:else}
             <div class="no-data">
-              <span class="no-data-icon">📊</span>
               <p>No historical data available</p>
             </div>
           {/if}
         {:else if activeTab === 'comparison'}
           {#if allCountries.length > 0}
-            <TopCountriesChart
-              countries={allCountries}
-              metric="cases"
-              title="Top Countries by Total Cases"
-              color="#3b82f6"
-              limit={15}
-            />
-            <TopCountriesChart
-              countries={allCountries}
-              metric="casesPerOneMillion"
-              title="Top Countries by Cases per Million"
-              color="#f59e0b"
-              limit={15}
-            />
-            <TopCountriesChart
-              countries={allCountries}
-              metric="deathsPerOneMillion"
-              title="Top Countries by Deaths per Million"
-              color="#ef4444"
-              limit={15}
-            />
+            <TopCountriesChart countries={allCountries} metric="cases" title="Top Countries by Total Cases" color="#e7eaee" limit={15} />
+            <TopCountriesChart countries={allCountries} metric="casesPerOneMillion" title="Cases per Million" color="#e7eaee" limit={15} />
+            <TopCountriesChart countries={allCountries} metric="deathsPerOneMillion" title="Deaths per Million" color="#e7eaee" limit={15} />
           {:else}
             <div class="no-data">
-              <span class="no-data-icon">🌍</span>
               <p>Comparison data not available</p>
             </div>
           {/if}
@@ -246,25 +147,25 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(4px);
     z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
+    padding: 24px;
   }
 
   .popup-content {
-    background: rgba(20, 20, 25, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 16px;
+    background-color: rgba(15, 17, 19, 0.98);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
     width: 100%;
-    max-width: 500px;
+    max-width: 480px;
     max-height: 85vh;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
     overflow: hidden;
   }
 
@@ -272,108 +173,114 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.03);
+    padding: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.02);
   }
 
   .header-left {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 14px;
   }
 
   .flag {
-    width: 40px;
-    height: 26px;
+    width: 44px;
+    height: 30px;
     object-fit: cover;
     border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
   }
 
   .title-group {
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
+    gap: 4px;
   }
 
   .popup-header h2 {
     margin: 0;
-    font-size: 1.1rem;
+    font-size: 18px;
     font-weight: 600;
-    color: white;
+    color: #e7eaee;
+    letter-spacing: -0.03em;
+    font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   }
 
   .updated {
-    font-size: 0.7rem;
-    color: rgba(255, 255, 255, 0.5);
+    font-size: 12px;
+    color: #7a828a;
+    font-weight: 500;
   }
 
   .header-actions {
     display: flex;
-    gap: 0.5rem;
+    gap: 8px;
   }
 
   .fly-btn, .close-btn {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #b3bac2;
     cursor: pointer;
     border-radius: 8px;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    transition: all 0.2s;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+    letter-spacing: -0.01em;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .fly-btn:hover {
-    background: rgba(59, 130, 246, 0.3);
-    border-color: rgba(59, 130, 246, 0.5);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: #e7eaee;
   }
 
   .close-btn:hover {
-    background: rgba(239, 68, 68, 0.3);
-    border-color: rgba(239, 68, 68, 0.5);
+    background: rgba(255, 59, 48, 0.15);
+    border-color: rgba(255, 59, 48, 0.3);
+    color: #ff3b30;
   }
 
   .popup-tabs {
     display: flex;
-    gap: 0.5rem;
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    gap: 4px;
+    padding: 12px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     background: rgba(255, 255, 255, 0.02);
   }
 
   .tab-btn {
     flex: 1;
-    padding: 0.5rem 0.75rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.6);
+    padding: 10px 16px;
+    background: transparent;
+    border: none;
+    color: #7a828a;
     cursor: pointer;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    transition: all 0.2s;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+    letter-spacing: -0.01em;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .tab-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.9);
+    color: #b3bac2;
+    background: rgba(255, 255, 255, 0.03);
   }
 
   .tab-btn.active {
-    background: rgba(59, 130, 246, 0.2);
-    border-color: rgba(59, 130, 246, 0.4);
-    color: white;
+    background: rgba(255, 255, 255, 0.08);
+    color: #e7eaee;
   }
 
   .popup-body {
     flex: 1;
     overflow-y: auto;
-    padding: 1rem;
+    padding: 20px;
   }
 
   .popup-body::-webkit-scrollbar {
@@ -381,35 +288,33 @@
   }
 
   .popup-body::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.03);
   }
 
   .popup-body::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 3px;
   }
 
   .popup-body::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.15);
   }
 
-  .loading-state,
-  .error-state,
-  .no-data {
+  .loading-state, .error-state, .no-data {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 3rem 1rem;
+    padding: 48px 24px;
     text-align: center;
-    gap: 1rem;
+    gap: 16px;
   }
 
   .spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid rgba(255, 255, 255, 0.1);
-    border-top-color: #3b82f6;
+    width: 32px;
+    height: 32px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-top-color: #e7eaee;
     border-radius: 50%;
     animation: spin 1s linear infinite;
   }
@@ -418,29 +323,28 @@
     to { transform: rotate(360deg); }
   }
 
-  .loading-state p,
-  .error-state p,
-  .no-data p {
-    color: rgba(255, 255, 255, 0.7);
+  .loading-state p, .error-state p, .no-data p {
+    color: #7a828a;
     margin: 0;
+    font-size: 14px;
   }
 
-  .error-icon,
-  .no-data-icon {
-    font-size: 2.5rem;
-  }
-
-  .error-state button {
-    padding: 0.5rem 1.5rem;
-    background: rgba(239, 68, 68, 0.2);
-    border: 1px solid rgba(239, 68, 68, 0.4);
-    color: white;
-    border-radius: 6px;
+  .secondary-btn {
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #b3bac2;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .error-state button:hover {
-    background: rgba(239, 68, 68, 0.3);
+  .secondary-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: #e7eaee;
   }
 </style>
