@@ -817,7 +817,7 @@ export class CesiumViewer extends HTMLElement {
       country: string;
       date: string;
       color: string;
-    }>
+    }>,
   ): void {
     if (!this.viewer) return;
 
@@ -880,7 +880,7 @@ export class CesiumViewer extends HTMLElement {
       admin1: string;
       eventCount: number;
       fatalities: number;
-    }>
+    }>,
   ): void {
     if (!this.viewer) return;
 
@@ -891,13 +891,14 @@ export class CesiumViewer extends HTMLElement {
       // Only show high-intensity zones
       if (zone.intensity < 20) continue;
 
-      const radius = 50000 + (zone.intensity * 1000); // 50km to 150km radius
+      const radius = 50000 + zone.intensity * 1000; // 50km to 150km radius
       const heightAboveSurface = 10000; // 10km above surface
 
       // Color based on intensity
-      let color = '#ff3b30'; // Red for high
-      if (zone.intensity < 40) color = '#ff9500'; // Orange
-      else if (zone.intensity < 60) color = '#ffcc00'; // Yellow
+      let color = "#ff3b30"; // Red for high
+      if (zone.intensity < 40)
+        color = "#ff9500"; // Orange
+      else if (zone.intensity < 60) color = "#ffcc00"; // Yellow
 
       const entity = this.viewer.entities.add({
         position: Cesium.Cartesian3.fromDegrees(zone.lng, zone.lat, heightAboveSurface),
@@ -922,7 +923,7 @@ export class CesiumViewer extends HTMLElement {
           translucencyByDistance: new Cesium.NearFarScalar(1e6, 1.0, 5e6, 0.0),
         },
         properties: {
-          zoneType: 'conflict',
+          zoneType: "conflict",
           country: zone.country,
           admin1: zone.admin1,
           eventCount: zone.eventCount,
