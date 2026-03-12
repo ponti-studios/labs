@@ -22,16 +22,16 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar }: SidebarProps) 
     <AnimatePresence>
       {isSidebarOpen && (
         <motion.aside
-          className="bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl shadow-lg p-4 fixed left-6 top-10 bottom-6 w-64 overflow-y-auto z-[100]"
-          initial={{ opacity: 0, scale: 0.95, x: -20 }}
-          animate={{ opacity: 1, scale: 1, x: 0 }}
-          exit={{ opacity: 0, scale: 0.95, x: -20 }}
+          className="bg-bg-panel-0 border border-border-default shadow-md p-4 fixed left-4 top-16 bottom-4 w-64 overflow-y-auto z-[100] rounded-lg"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
           transition={{
-            duration: 0.25,
+            duration: 0.26,
             ease: "easeOut",
           }}
         >
-          <nav className="flex flex-col space-y-2">
+          <nav className="flex flex-col space-y-1">
             {routes.map((route, index) => (
               <motion.div
                 key={route.path}
@@ -47,15 +47,15 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar }: SidebarProps) 
                   onClick={toggleSidebar}
                   rel="prefetch"
                   className={cn(
-                    "flex px-4 py-3 rounded-lg text-sm font-light transition-all duration-300 text-stone-700 hover:bg-white/40 hover:text-stone-900 mx-1",
+                    "flex px-3 py-2 rounded-md text-sm transition-all duration-160 text-text-secondary hover:bg-bg-panel-2 hover:text-text-primary",
                     {
-                      "bg-olive-100/80 text-olive-800 font-medium": isActiveRoute(route.path),
+                      "bg-bg-panel-2 text-text-primary border border-border-accent font-medium": isActiveRoute(route.path),
                     },
                   )}
                 >
                   <div className="flex flex-col">
                     <span>{route.label}</span>
-                    <span className="text-xs opacity-70">{route.description}</span>
+                    <span className="text-xs text-text-muted">{route.description}</span>
                   </div>
                 </Link>
               </motion.div>

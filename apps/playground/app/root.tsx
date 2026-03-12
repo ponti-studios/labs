@@ -24,7 +24,7 @@ export const links: Route.LinksFunction = () => [
   },
   {
     rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap",
+    href: "https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap",
   },
 ];
 
@@ -38,7 +38,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
         <PrefetchProvider />
       </head>
-      <body>
+      <body className="bg-bg-app text-text-primary font-body">
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -58,7 +58,7 @@ export default function App() {
     <QueryProvider>
       <Navigation toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
       <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-      <main className="flex-1 pt-20 p-4 transition-all duration-300">
+      <main className="flex-1 pt-20 px-4 py-6 transition-all duration-300">
         <Outlet />
       </main>
     </QueryProvider>

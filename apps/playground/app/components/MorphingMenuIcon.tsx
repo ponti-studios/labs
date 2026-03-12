@@ -7,7 +7,7 @@ interface MorphingMenuIconProps {
 export default function MorphingMenuIcon({ isOpen }: MorphingMenuIconProps) {
   return (
     <motion.svg
-      className="w-5 h-5 text-stone-700"
+      className="w-5 h-5 text-text-primary"
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"

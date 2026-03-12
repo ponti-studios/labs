@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
-import { chatRoute } from "./routes/chat.ts";
+import { chatRoute } from "./routes/chat";
 
 const app = new Hono();
 
