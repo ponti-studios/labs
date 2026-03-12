@@ -8,17 +8,34 @@
 
   interface Props {
     viewer: CesiumViewer | null;
+    selectedSatelliteId: string | null;
+    isTracking: boolean;
+    onSelectSatellite: (satelliteId: string) => void;
+    onTrackingChange: (isTracking: boolean) => void;
   }
 
-  let { viewer }: Props = $props();
+  let {
+    viewer,
+    selectedSatelliteId,
+    isTracking,
+    onSelectSatellite,
+    onTrackingChange,
+  }: Props = $props();
 
   let satellites = $state<Satellite[]>([]);
-  let isTracking = $state(false);
-  let selectedSatellite = $state<string | null>(null);
   let updateInterval: ReturnType<typeof setInterval> | null = null;
   let lastUpdate = $state<Date | null>(null);
 
   const UPDATE_INTERVAL = 5000;
+
+  function cleanupTracking() {
+    if (updateInterval) {
+      clearInterval(updateInterval);
+      updateInterval = null;
+    }
+    satellites.forEach((satellite) => viewer?.removeSatellite(satellite.id));
+    satellites = [];
+  }
 
   async function updateSatellites() {
     if (!viewer) return;
@@ -43,26 +60,21 @@
   }
 
   function startTracking() {
-    if (isTracking) return;
-    isTracking = true;
+    onTrackingChange(true);
+    if (updateInterval) return;
     updateSatellites();
     updateInterval = setInterval(updateSatellites, UPDATE_INTERVAL);
   }
 
   function stopTracking() {
-    isTracking = false;
-    if (updateInterval) {
-      clearInterval(updateInterval);
-      updateInterval = null;
-    }
-    satellites.forEach((satellite) => viewer?.removeSatellite(satellite.id));
-    satellites = [];
+    onTrackingChange(false);
+    cleanupTracking();
   }
 
   function flyToSatellite(satelliteId: string) {
     const satellite = satellites.find((item) => item.id === satelliteId);
     if (!satellite || !viewer) return;
-    selectedSatellite = satelliteId;
+    onSelectSatellite(satelliteId);
     viewer.flyTo(satellite.longitude, satellite.latitude, satellite.altitude + 1000000, 2);
   }
 
@@ -71,7 +83,7 @@
   }
 
   onDestroy(() => {
-    stopTracking();
+    cleanupTracking();
   });
 </script>
 
@@ -101,7 +113,7 @@
     <PanelSection eyebrow="Constellation" title="Objects">
       <div class="satellite-list">
         {#each satellites as satellite}
-          <div class="satellite-card panel-card-subtle" class:selected={selectedSatellite === satellite.id}>
+          <div class="satellite-card panel-card-subtle" class:selected={selectedSatelliteId === satellite.id}>
             <div class="satellite-head">
               <div>
                 <p class="panel-kicker">{satellite.type}</p>

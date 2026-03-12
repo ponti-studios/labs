@@ -5,6 +5,7 @@
   import type { CovidCountry } from "../services/covidService";
   import IntelSidebar from "./IntelSidebar.svelte";
   import SatelliteTracker from "./SatelliteTracker.svelte";
+  import GeospatialSearch from "./GeospatialSearch.svelte";
   import NavIcon from "./panel/NavIcon.svelte";
   import PanelMetric from "./panel/PanelMetric.svelte";
   import PanelSection from "./panel/PanelSection.svelte";
@@ -13,30 +14,58 @@
 
   interface Props {
     viewer: CesiumViewer | null;
+    activeTab: DockTab;
     covidCountries: CovidCountry[];
     selectedCountry: CovidCountry | null;
+    selectedIntelFeedId: string;
+    intelTracking: boolean;
+    selectedSatelliteId: string | null;
+    satelliteTracking: boolean;
+    tflCameraCount: number;
+    canRestore: boolean;
+    restoreLabel: string;
+    onActiveTabChange: (tab: DockTab) => void;
+    onRestoreFocus: () => void;
+    onSelectIntelFeed: (feedId: string) => void;
+    onIntelTrackingChange: (isTracking: boolean) => void;
+    onSelectSatellite: (satelliteId: string) => void;
+    onSatelliteTrackingChange: (isTracking: boolean) => void;
     onSelectCountry: (country: CovidCountry) => void;
     onClearCountry: () => void;
   }
 
   let {
     viewer,
+    activeTab,
     covidCountries,
     selectedCountry,
+    selectedIntelFeedId,
+    intelTracking,
+    selectedSatelliteId,
+    satelliteTracking,
+    tflCameraCount,
+    canRestore,
+    restoreLabel,
+    onActiveTabChange,
+    onRestoreFocus,
+    onSelectIntelFeed,
+    onIntelTrackingChange,
+    onSelectSatellite,
+    onSatelliteTrackingChange,
     onSelectCountry,
     onClearCountry,
   }: Props = $props();
 
-  type DockTab = "covid" | "satellites" | "intel" | "locations";
+  type DockTab = "covid" | "satellites" | "intel" | "tfl" | "geospatial";
   type GlobeStyle = Parameters<CesiumViewer["setGlobeStyle"]>[0];
 
   let selectedLocation = $state("");
   let isFlying = $state(false);
   let isCollapsed = $state(false);
-  let activeTab = $state<DockTab>("intel");
   let searchQuery = $state("");
   let showStylePicker = $state(false);
   let showCovidData = $state(false);
+  let showTflTraffic = $state(true);
   let currentStyle = $state<GlobeStyle>("satellite");
   let isMobile = $state(false);
   let isAnimating = $state(false);
@@ -45,6 +74,7 @@
   let modeTabsEl = $state<HTMLElement | null>(null);
   let dockFrameEl = $state<HTMLElement | null>(null);
   let accordionSummaryEl = $state<HTMLElement | null>(null);
+  let previousTab = $state<DockTab>("intel");
 
   const globeStyles = $derived(
     (viewer?.getAvailableStyles() ?? []) as Array<{
@@ -65,12 +95,13 @@
     id: DockTab;
     label: string;
     short: string;
-    icon: "intel" | "covid" | "satellites" | "locations";
+    icon: "intel" | "covid" | "satellites" | "tfl" | "geospatial";
   }> = [
     { id: "intel", label: "Intel", short: "INT", icon: "intel" },
     { id: "covid", label: "COVID", short: "C19", icon: "covid" },
     { id: "satellites", label: "Satellites", short: "SAT", icon: "satellites" },
-    { id: "locations", label: "Locations", short: "NAV", icon: "locations" },
+    { id: "geospatial", label: "Geo", short: "GEO", icon: "geospatial" },
+    { id: "tfl", label: "TfL Cameras", short: "TFL", icon: "tfl" },
   ];
 
   let filteredCountries = $derived(
@@ -87,7 +118,7 @@
   const mobileAccordionTitle = $derived(
     activeTab === "covid" && selectedCountry
       ? selectedCountry.country
-      : activeTab === "locations" && selectedLocation
+      : activeTab === "tfl" && selectedLocation
         ? selectedLocation
         : activeTabMeta.label,
   );
@@ -138,6 +169,29 @@
     };
   });
 
+  $effect(() => {
+    if (!viewer) return;
+    if (activeTab === "tfl" && showTflTraffic) {
+      viewer.showTflCameras();
+      return;
+    }
+    viewer.hideTflCameras();
+  });
+
+  $effect(() => {
+    if (!viewer) {
+      previousTab = activeTab;
+      return;
+    }
+
+    if (activeTab === "tfl" && previousTab !== "tfl") {
+      selectedLocation = "London";
+      viewer.flyTo(-0.1276, 51.5074, 12000, 1.8);
+    }
+
+    previousTab = activeTab;
+  });
+
   function getAccordionDetail(): string {
     if (activeTab === "covid") {
       if (selectedCountry) {
@@ -146,8 +200,9 @@
       return showCovidData ? "COVID layer visible" : "Country lookup and pins";
     }
 
-    if (activeTab === "locations") {
-      return selectedLocation ? `Preset locked · ${selectedLocation}` : `${locations.length} route presets`;
+    if (activeTab === "tfl") {
+      if (selectedLocation) return `Preset locked · ${selectedLocation}`;
+      return `${tflCameraCount.toLocaleString()} London cameras`;
     }
 
     if (activeTab === "satellites") {
@@ -160,7 +215,8 @@
   function getDrawerEyebrow(): string {
     if (activeTab === "covid") return "Disease surface";
     if (activeTab === "satellites") return "Orbital feed";
-    if (activeTab === "locations") return "Navigation";
+    if (activeTab === "geospatial") return "Navigation";
+    if (activeTab === "tfl") return "London network";
     return "Intel registry";
   }
 
@@ -175,8 +231,12 @@
       return "Track orbital objects, inspect live positions, and jump directly into view.";
     }
 
-    if (activeTab === "locations") {
-      return "Use a small set of route presets and camera diagnostics.";
+    if (activeTab === "geospatial") {
+      return "Search locations, calculate directions, and visualize routes on the globe.";
+    }
+
+    if (activeTab === "tfl") {
+      return "Reveal the London camera network, jump into the city, and inspect individual feeds.";
     }
 
     return "Monitor source status, live overlays, and response-ready feed detail.";
@@ -260,6 +320,13 @@
     }
   }
 
+  function focusLondonTraffic() {
+    if (!viewer) return;
+    selectedLocation = "London";
+    showTflTraffic = true;
+    viewer.flyTo(-0.1276, 51.5074, 12000, 1.8);
+  }
+
   function formatNumber(num: number): string {
     if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
     if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
@@ -281,6 +348,16 @@
       viewer.showCovidPoints();
     } else {
       viewer.hideCovidPoints();
+    }
+  }
+
+  function toggleTflTraffic() {
+    showTflTraffic = !showTflTraffic;
+    if (!viewer) return;
+    if (showTflTraffic) {
+      viewer.showTflCameras();
+    } else {
+      viewer.hideTflCameras();
     }
   }
 </script>
@@ -321,6 +398,12 @@
         </div>
       {/if}
     </div>
+
+    {#if canRestore}
+      <button class="theme-trigger" type="button" onclick={onRestoreFocus}>
+        <span>{restoreLabel}</span>
+      </button>
+    {/if}
   </div>
 </nav>
 
@@ -331,7 +414,7 @@
         class="mode-tab"
         class:active={tab.id === activeTab}
         type="button"
-        onclick={() => (activeTab = tab.id)}
+        onclick={() => onActiveTabChange(tab.id)}
       >
         <NavIcon name={tab.icon} />
         <span class="panel-label">{tab.short}</span>
@@ -378,7 +461,7 @@
               class="mobile-tab"
               class:active={tab.id === activeTab}
               type="button"
-              onclick={() => (activeTab = tab.id)}
+              onclick={() => onActiveTabChange(tab.id)}
             >
               <NavIcon name={tab.icon} />
               <span>{tab.label}</span>
@@ -389,7 +472,13 @@
 
       <div class="drawer-scroll panel-scroll">
         {#if activeTab === "intel"}
-          <IntelSidebar {viewer} />
+          <IntelSidebar
+            {viewer}
+            selectedFeedId={selectedIntelFeedId}
+            isAcledTracking={intelTracking}
+            onSelectFeed={onSelectIntelFeed}
+            onTrackingChange={onIntelTrackingChange}
+          />
         {:else if activeTab === "covid"}
           <div class="panel-stack">
             <PanelSection eyebrow="Dataset" title="COVID signal">
@@ -471,7 +560,15 @@
             {/if}
           </div>
         {:else if activeTab === "satellites"}
-          <SatelliteTracker {viewer} />
+          <SatelliteTracker
+            {viewer}
+            selectedSatelliteId={selectedSatelliteId}
+            isTracking={satelliteTracking}
+            onSelectSatellite={onSelectSatellite}
+            onTrackingChange={onSatelliteTrackingChange}
+          />
+        {:else if activeTab === "geospatial"}
+          <GeospatialSearch {viewer} />
         {:else}
           <div class="panel-stack">
             <PanelSection eyebrow="Route presets" title="Fly to positions">
@@ -488,6 +585,30 @@
                     <strong>{location.name}</strong>
                   </button>
                 {/each}
+              </div>
+            </PanelSection>
+
+            <PanelSection
+              eyebrow="London traffic"
+              title="TfL camera layer"
+              description="Camera points stay anchored around London and open feed cards directly from the globe."
+            >
+              <div class="metric-grid">
+                <PanelMetric label="Cameras" value={tflCameraCount.toLocaleString()} />
+                <PanelMetric
+                  label="Layer"
+                  value={showTflTraffic ? "Visible" : "Hidden"}
+                  tone={showTflTraffic ? "live" : "default"}
+                />
+              </div>
+
+              <div class="panel-action-row">
+                <button class="panel-button panel-button-primary" type="button" disabled={!viewer} onclick={focusLondonTraffic}>
+                  Jump to London traffic
+                </button>
+                <button class="panel-button" type="button" disabled={!viewer} onclick={toggleTflTraffic}>
+                  {showTflTraffic ? "Hide cameras" : "Show cameras"}
+                </button>
               </div>
             </PanelSection>
 
@@ -611,6 +732,12 @@
     height: 8px;
     border-radius: 999px;
     background: var(--accent-primary);
+  }
+
+  .panel-action-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
   }
 
   .mode-tabs {

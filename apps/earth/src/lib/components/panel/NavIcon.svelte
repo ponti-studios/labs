@@ -4,7 +4,8 @@
       | "intel"
       | "covid"
       | "satellites"
-      | "locations"
+      | "tfl"
+      | "geospatial"
       | "theme"
       | "chevron-up"
       | "chevron-down";
@@ -25,9 +26,12 @@
     <path d="M6 10l2 2-2 2-2-2 2-2Zm12 0l2 2-2 2-2-2 2-2Z" />
     <path d="M12 16l2 2-2 2-2-2 2-2Z" />
     <path d="M8 8l8 8M16 8l-8 8" />
-  {:else if name === "locations"}
-    <path d="M12 20s5-5.1 5-9a5 5 0 1 0-10 0c0 3.9 5 9 5 9Z" />
-    <circle cx="12" cy="11" r="1.8" />
+  {:else if name === "tfl"}
+    <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3Z" />
+    <circle cx="12" cy="13" r="3" />
+  {:else if name === "geospatial"}
+    <path d="M3 6.5 9 4l6 2.5 6-2v13L15 20l-6-2.5-6 2Z" />
+    <path d="M9 4v13.5M15 6.5V20" />
   {:else if name === "theme"}
     <circle cx="12" cy="12" r="7" />
     <path d="M12 5v14M5 12h14" />

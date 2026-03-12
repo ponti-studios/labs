@@ -12,25 +12,33 @@
 
   interface Props {
     viewer: CesiumViewer | null;
+    selectedFeedId: string;
+    isAcledTracking: boolean;
+    onSelectFeed: (feedId: string) => void;
+    onTrackingChange: (isTracking: boolean) => void;
   }
 
-  let { viewer }: Props = $props();
+  let {
+    viewer,
+    selectedFeedId,
+    isAcledTracking,
+    onSelectFeed,
+    onTrackingChange,
+  }: Props = $props();
 
-  let selectedFeedId = $state("acled");
-  let activeOverlayIds = $state<string[]>([]);
-  let lastRefreshLabel = $state("No live overlay");
+  let activeOverlayIds = $derived(isAcledTracking ? ["acled"] : []);
+  let lastRefreshLabel = $derived(isAcledTracking ? "ACLED live on globe" : "No live overlay");
   const overview = $derived(getIntelOverview(activeOverlayIds));
 
   function selectFeed(feedId: string) {
-    selectedFeedId = feedId;
+    onSelectFeed(feedId);
     if (feedId === "acled") {
-      updateAcledTracking(true);
+      onTrackingChange(true);
     }
   }
 
   function updateAcledTracking(isTracking: boolean) {
-    activeOverlayIds = isTracking ? ["acled"] : [];
-    lastRefreshLabel = isTracking ? "ACLED live on globe" : "No live overlay";
+    onTrackingChange(isTracking);
   }
 
   function openSource(feed: IntelFeedDefinition) {
@@ -87,7 +95,7 @@
                 </div>
                 <ConflictTracker
                   {viewer}
-                  isTracking={activeOverlayIds.includes("acled")}
+                  isTracking={isAcledTracking}
                   onTrackingChange={updateAcledTracking}
                 />
               </div>

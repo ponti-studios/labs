@@ -1,6 +1,21 @@
 import * as Cesium from "cesium";
 import type { Satellite } from "../services/satelliteService";
 import { getSatelliteColor, calculateSmoothOrbitPath } from "../services/satelliteService";
+import { PostProcessingManager } from "./effects/PostProcessingManager";
+import { ParticleSystemManager } from "./effects/ParticleSystemManager";
+import { ShaderMaterialManager } from "./effects/ShaderMaterialManager";
+import { CameraTourManager } from "./navigation/CameraTourManager";
+import { SceneModeManager } from "./navigation/SceneModeManager";
+import type { PostProcessConfig } from "./effects/PostProcessingManager";
+import type { ParticleSystemConfig } from "./effects/ParticleSystemManager";
+import type { CameraTourConfig, TourStop } from "./navigation/CameraTourManager";
+
+const TFL_CAMERA_ICON = `data:image/svg+xml;utf8,${encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
+    <circle cx="12" cy="13" r="3"/>
+  </svg>`,
+)}`;
 
 /**
  * CesiumViewer - Custom element wrapper for Cesium
@@ -11,17 +26,31 @@ export class CesiumViewer extends HTMLElement {
   private viewer: Cesium.Viewer | null = null;
   private container: HTMLDivElement | null = null;
 
-  // Imperative state - not mirrored to Svelte
+  // Data collections
   private entityCollection: Map<string, Cesium.Entity> = new Map();
   private orbitCollection: Map<string, Cesium.Entity> = new Map();
   private satellitePositions: Map<string, { lon: number; lat: number; alt: number }> = new Map();
   private covidPoints: Map<string, Cesium.Entity> = new Map();
+  private tflCameraPoints: Map<string, Cesium.Entity> = new Map();
   private conflictEntities: Map<string, Cesium.Entity> = new Map();
   private conflictZoneEntities: Map<string, Cesium.Entity> = new Map();
+  
+  // Click handlers
   private _isReady = false;
   private countryClickHandler: Cesium.ScreenSpaceEventHandler | null = null;
   private countryClickCallback: ((iso3: string, name: string) => void) | null = null;
+  private tflCameraClickCallback:
+    | ((cameraId: string, name: string) => void)
+    | null = null;
   private highlightedCountry: string | null = null;
+  private highlightedTflCamera: string | null = null;
+
+  // Effect managers - lazy initialized
+  private postProcessingManager: PostProcessingManager | null = null;
+  private particleSystemManager: ParticleSystemManager | null = null;
+  private shaderMaterialManager: ShaderMaterialManager | null = null;
+  private cameraTourManager: CameraTourManager | null = null;
+  private sceneModeManager: SceneModeManager | null = null;
 
   constructor() {
     super();
@@ -30,7 +59,7 @@ export class CesiumViewer extends HTMLElement {
   connectedCallback() {
     console.log("[CesiumViewer] connectedCallback");
     this.render();
-    this.initViewer();
+    void this.initViewer();
   }
 
   disconnectedCallback() {
@@ -49,7 +78,7 @@ export class CesiumViewer extends HTMLElement {
     this.appendChild(this.container);
   }
 
-  private initViewer() {
+  private async initViewer() {
     if (!this.container) {
       console.error("[CesiumViewer] No container found");
       return;
@@ -58,8 +87,15 @@ export class CesiumViewer extends HTMLElement {
     try {
       console.log("[CesiumViewer] Initializing viewer...");
 
-      // Initialize Cesium viewer with minimal UI
+      // Initialize terrain provider with world terrain
+      const terrainProvider = await Cesium.createWorldTerrainAsync({
+        requestVertexNormals: true,
+        requestWaterMask: true,
+      });
+
+      // Initialize Cesium viewer with minimal UI and terrain
       this.viewer = new Cesium.Viewer(this.container, {
+        terrainProvider,
         animation: false,
         baseLayerPicker: false,
         fullscreenButton: false,
@@ -159,6 +195,11 @@ export class CesiumViewer extends HTMLElement {
     this.orbitCollection.clear();
 
     this.satellitePositions.clear();
+    this.clearCovidPoints();
+    this.clearTflCameras();
+    this.clearConflictEvents();
+    this.clearConflictZones();
+    this.removeCountryClickHandler();
 
     this.viewer?.destroy();
     this.viewer = null;
@@ -237,13 +278,16 @@ export class CesiumViewer extends HTMLElement {
     });
 
     // Create a CallbackProperty that returns the current position every frame
-    const positionProperty = new Cesium.CallbackPositionProperty((_time, result) => {
-      const pos = this.satellitePositions.get(satellite.id);
-      if (pos) {
-        return Cesium.Cartesian3.fromDegrees(pos.lon, pos.lat, pos.alt, undefined, result);
-      }
-      return Cesium.Cartesian3.fromDegrees(0, 0, 0, undefined, result);
-    }, false);
+    const positionProperty = new Cesium.CallbackPositionProperty(
+      (_time: Cesium.JulianDate | undefined, result: Cesium.Cartesian3 | undefined) => {
+        const pos = this.satellitePositions.get(satellite.id);
+        if (pos) {
+          return Cesium.Cartesian3.fromDegrees(pos.lon, pos.lat, pos.alt, undefined, result);
+        }
+        return Cesium.Cartesian3.fromDegrees(0, 0, 0, undefined, result);
+      },
+      false
+    );
 
     // Create satellite entity with label - make it very visible
     const entity = this.viewer.entities.add({
@@ -479,48 +523,103 @@ export class CesiumViewer extends HTMLElement {
     });
   }
 
-  /**
-   * Register a callback for when a country is clicked
-   */
-  onCountryClick(callback: (iso3: string, name: string) => void): void {
+  addTflCameras(
+    cameras: Array<{
+      id: string;
+      commonName: string;
+      available: string;
+      imageUrl: string;
+      videoUrl: string;
+      view: string;
+      lat: number;
+      lng: number;
+    }>,
+  ): void {
     if (!this.viewer) return;
 
-    this.countryClickCallback = callback;
+    this.clearTflCameras();
 
-    // Remove existing handler
-    if (this.countryClickHandler) {
-      this.countryClickHandler.destroy();
+    for (const camera of cameras) {
+      const entity = this.viewer.entities.add({
+        id: `tfl-${camera.id}`,
+        position: Cesium.Cartesian3.fromDegrees(camera.lng, camera.lat, 40),
+        billboard: {
+          image: TFL_CAMERA_ICON,
+          color: Cesium.Color.fromCssColorString(
+            camera.available === "true" ? "#14b8a6" : "#64748b",
+          ),
+          width: 20,
+          height: 20,
+          scale: 1,
+          verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+          scaleByDistance: new Cesium.NearFarScalar(1.5e2, 1.1, 1.5e7, 0.45),
+          disableDepthTestDistance: Number.POSITIVE_INFINITY,
+        },
+        properties: {
+          tflCameraId: camera.id,
+          name: camera.commonName,
+          available: camera.available,
+          imageUrl: camera.imageUrl,
+          videoUrl: camera.videoUrl,
+          view: camera.view,
+          lat: camera.lat,
+          lng: camera.lng,
+        },
+      });
+
+      this.tflCameraPoints.set(camera.id, entity);
+    }
+  }
+
+  clearTflCameras(): void {
+    if (!this.viewer) return;
+
+    this.tflCameraPoints.forEach((entity) => {
+      this.viewer?.entities.remove(entity);
+    });
+    this.tflCameraPoints.clear();
+    this.highlightedTflCamera = null;
+  }
+
+  showTflCameras(): void {
+    this.tflCameraPoints.forEach((entity) => {
+      (entity.show as any) = true;
+    });
+  }
+
+  hideTflCameras(): void {
+    this.tflCameraPoints.forEach((entity) => {
+      (entity.show as any) = false;
+    });
+  }
+
+  highlightTflCamera(id: string): void {
+    if (this.highlightedTflCamera) {
+      const previous = this.tflCameraPoints.get(this.highlightedTflCamera);
+      if (previous?.billboard) {
+        (previous.billboard.scale as any) = 1;
+        (previous.billboard.color as any) = Cesium.Color.fromCssColorString(
+          previous.properties?.available?.getValue() === "true" ? "#14b8a6" : "#64748b",
+        );
+      }
     }
 
-    // Create new click handler
-    this.countryClickHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
+    const entity = this.tflCameraPoints.get(id);
+    if (entity?.billboard) {
+      (entity.billboard.scale as any) = 1.25;
+      (entity.billboard.color as any) = Cesium.Color.fromCssColorString("#2dd4bf");
+      this.highlightedTflCamera = id;
+    }
+  }
 
-    this.countryClickHandler.setInputAction(
-      (click: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
-        const pickedObject = this.viewer?.scene.pick(click.position);
+  onTflCameraClick(callback: (cameraId: string, name: string) => void): void {
+    this.tflCameraClickCallback = callback;
+    this.setupInteractionHandler();
+  }
 
-        if (pickedObject && pickedObject.id) {
-          const entity = pickedObject.id;
-          const iso3 = entity.properties?.iso3?.getValue();
-          const name = entity.properties?.name?.getValue();
-
-          if (iso3 && name && this.countryClickCallback) {
-            this.highlightCountry(iso3);
-            this.countryClickCallback(iso3, name);
-          }
-        }
-      },
-      Cesium.ScreenSpaceEventType.LEFT_CLICK,
-    );
-
-    // Also set up hover effect
-    this.countryClickHandler.setInputAction((move: Cesium.ScreenSpaceEventHandler.MotionEvent) => {
-      const pickedObject = this.viewer?.scene.pick(move.endPosition);
-      if (this.viewer) {
-        this.viewer.canvas.style.cursor =
-          pickedObject && pickedObject.id?.properties?.iso3 ? "pointer" : "default";
-      }
-    }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+  onCountryClick(callback: (iso3: string, name: string) => void): void {
+    this.countryClickCallback = callback;
+    this.setupInteractionHandler();
   }
 
   /**
@@ -562,6 +661,55 @@ export class CesiumViewer extends HTMLElement {
       this.countryClickHandler = null;
     }
     this.countryClickCallback = null;
+    this.tflCameraClickCallback = null;
+  }
+
+  private setupInteractionHandler(): void {
+    if (!this.viewer) return;
+
+    if (this.countryClickHandler) {
+      this.countryClickHandler.destroy();
+    }
+
+    this.countryClickHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
+
+    this.countryClickHandler.setInputAction(
+      (click: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
+        const pickedObject = this.viewer?.scene.pick(click.position);
+        const entity = pickedObject?.id;
+        if (!entity) return;
+
+        const cameraId = entity.properties?.tflCameraId?.getValue();
+        const cameraName = entity.properties?.name?.getValue();
+        if (cameraId && cameraName && this.tflCameraClickCallback) {
+          this.highlightTflCamera(cameraId);
+          this.tflCameraClickCallback(cameraId, cameraName);
+          return;
+        }
+
+        const iso3 = entity.properties?.iso3?.getValue();
+        const name = entity.properties?.name?.getValue();
+        if (iso3 && name && this.countryClickCallback) {
+          this.highlightCountry(iso3);
+          this.countryClickCallback(iso3, name);
+        }
+      },
+      Cesium.ScreenSpaceEventType.LEFT_CLICK,
+    );
+
+    this.countryClickHandler.setInputAction(
+      (move: Cesium.ScreenSpaceEventHandler.MotionEvent) => {
+        const pickedObject = this.viewer?.scene.pick(move.endPosition);
+        const properties = pickedObject?.id?.properties;
+        if (this.viewer) {
+          this.viewer.canvas.style.cursor =
+            properties?.iso3?.getValue() || properties?.tflCameraId?.getValue()
+              ? "pointer"
+              : "default";
+        }
+      },
+      Cesium.ScreenSpaceEventType.MOUSE_MOVE,
+    );
   }
 
   // === Globe Style API ===
@@ -973,6 +1121,376 @@ export class CesiumViewer extends HTMLElement {
     this.conflictZoneEntities.forEach((entity) => {
       (entity.show as any) = visible;
     });
+  }
+
+  // === Geospatial Features API ===
+
+  private geospatialMarkers: Map<string, Cesium.Entity> = new Map();
+  private routePolylines: Map<string, Cesium.Entity> = new Map();
+
+  /**
+   * Add markers from geocoding results
+   */
+  addGeocodeMarkers(
+    locations: Array<{
+      id: string;
+      lat: number;
+      lng: number;
+      address: string;
+      type?: "origin" | "destination" | "result";
+    }>,
+  ): void {
+    if (!this.viewer) return;
+
+    for (const location of locations) {
+      const colorMap: Record<string, string> = {
+        origin: "#5d7f61", // status-live green
+        destination: "#985252", // status-critical red
+        result: "#6f8091", // status-info blue
+      };
+
+      const color = colorMap[location.type || "result"];
+
+      const entity = this.viewer.entities.add({
+        id: `geocode-${location.id}`,
+        position: Cesium.Cartesian3.fromDegrees(location.lng, location.lat),
+        point: {
+          pixelSize: 12,
+          color: Cesium.Color.fromCssColorString(color),
+          outlineColor: Cesium.Color.WHITE,
+          outlineWidth: 2,
+        },
+        label: {
+          text: location.address.split(",")[0], // First part of address
+          font: "13px sans-serif",
+          fillColor: Cesium.Color.WHITE,
+          outlineColor: Cesium.Color.fromCssColorString(color),
+          outlineWidth: 2,
+          style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+          verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+          pixelOffset: new Cesium.Cartesian2(0, -12),
+        },
+      });
+
+      this.geospatialMarkers.set(location.id, entity);
+    }
+
+    console.log(`[CesiumViewer] Added ${locations.length} geocode markers`);
+  }
+
+  /**
+   * Draw a route line between two points
+   */
+  addRoute(
+    routeId: string,
+    waypoints: Array<{ lat: number; lng: number }>,
+    color: string = "#6f8091",
+  ): void {
+    if (!this.viewer || waypoints.length < 2) return;
+
+    // Remove existing route if it exists
+    this.removeRoute(routeId);
+
+    const positions = waypoints.map((wp) =>
+      Cesium.Cartesian3.fromDegrees(wp.lng, wp.lat)
+    );
+
+    const entity = this.viewer.entities.add({
+      id: `route-${routeId}`,
+      polyline: {
+        positions,
+        width: 3,
+        material: new Cesium.PolylineGlowMaterialProperty({
+          glowPower: 0.2,
+          color: Cesium.Color.fromCssColorString(color),
+        }),
+        arcType: Cesium.ArcType.GEODESIC,
+      },
+    });
+
+    this.routePolylines.set(routeId, entity);
+    console.log(`[CesiumViewer] Added route: ${routeId}`);
+  }
+
+  /**
+   * Remove a route by ID
+   */
+  removeRoute(routeId: string): void {
+    const entity = this.routePolylines.get(routeId);
+    if (entity && this.viewer) {
+      this.viewer.entities.remove(entity);
+      this.routePolylines.delete(routeId);
+    }
+  }
+
+  /**
+   * Clear all geospatial markers and routes
+   */
+  clearGeospatial(): void {
+    if (!this.viewer) return;
+
+    this.geospatialMarkers.forEach((entity) => {
+      this.viewer?.entities.remove(entity);
+    });
+    this.geospatialMarkers.clear();
+
+    this.routePolylines.forEach((entity) => {
+      this.viewer?.entities.remove(entity);
+    });
+    this.routePolylines.clear();
+  }
+
+  /**
+   * Fly to a geocoded location and zoom
+   */
+  flyToGeocodeResult(lat: number, lng: number, zoomLevel: number = 500000): void {
+    this.flyTo(lng, lat, zoomLevel, 2);
+  }
+
+  // ============================================
+  // EFFECT MANAGERS - Post Processing
+  // ============================================
+
+  /**
+   * Apply post-processing effects configuration
+   */
+  applyPostProcessing(config: PostProcessConfig): void {
+    if (!this.viewer) return;
+    if (!this.postProcessingManager) {
+      this.postProcessingManager = new PostProcessingManager(this.viewer);
+    }
+    this.postProcessingManager.applyConfig(config);
+  }
+
+  /**
+   * Apply a post-processing preset (cinematic, neon, scientific, performance)
+   */
+  applyPostProcessingPreset(preset: "CINEMATIC" | "NEON" | "SCIENTIFIC" | "PERFORMANCE"): void {
+    if (!this.viewer) return;
+    if (!this.postProcessingManager) {
+      this.postProcessingManager = new PostProcessingManager(this.viewer);
+    }
+    this.postProcessingManager.applyConfig(PostProcessingManager.PRESETS[preset]);
+  }
+
+  /**
+   * Clear all post-processing effects
+   */
+  clearPostProcessing(): void {
+    this.postProcessingManager?.clearAll();
+  }
+
+  // ============================================
+  // EFFECT MANAGERS - Particle Systems
+  // ============================================
+
+  /**
+   * Create a particle system effect
+   */
+  createParticleSystem(id: string, config: ParticleSystemConfig): void {
+    if (!this.viewer) return;
+    if (!this.particleSystemManager) {
+      this.particleSystemManager = new ParticleSystemManager(this.viewer);
+    }
+    this.particleSystemManager.create(id, config);
+  }
+
+  /**
+   * Create a conflict event visualization with fire and smoke
+   */
+  createConflictParticles(
+    id: string,
+    longitude: number,
+    latitude: number,
+    altitude: number,
+    intensity: "low" | "medium" | "high" | "extreme"
+  ): void {
+    if (!this.viewer) return;
+    if (!this.particleSystemManager) {
+      this.particleSystemManager = new ParticleSystemManager(this.viewer);
+    }
+    this.particleSystemManager.createConflictEvent(id, longitude, latitude, altitude, intensity);
+  }
+
+  /**
+   * Create an explosion effect
+   */
+  createExplosion(id: string, longitude: number, latitude: number, altitude: number, color?: string): void {
+    if (!this.viewer) return;
+    if (!this.particleSystemManager) {
+      this.particleSystemManager = new ParticleSystemManager(this.viewer);
+    }
+    this.particleSystemManager.createExplosion(id, longitude, latitude, altitude, color);
+  }
+
+  /**
+   * Remove a particle system
+   */
+  removeParticleSystem(id: string): void {
+    this.particleSystemManager?.remove(id);
+  }
+
+  /**
+   * Remove all particle systems
+   */
+  clearParticleSystems(): void {
+    this.particleSystemManager?.removeAll();
+  }
+
+  // ============================================
+  // EFFECT MANAGERS - Shader Materials
+  // ============================================
+
+  /**
+   * Create a pulsing ring effect at a location
+   */
+  createPulseRing(
+    id: string,
+    longitude: number,
+    latitude: number,
+    options?: { radius?: number; color?: string; speed?: number; thickness?: number }
+  ): void {
+    if (!this.viewer) return;
+    if (!this.shaderMaterialManager) {
+      this.shaderMaterialManager = new ShaderMaterialManager(this.viewer);
+    }
+    this.shaderMaterialManager.createPulseRing(id, longitude, latitude, options);
+  }
+
+  /**
+   * Create a radar scan effect at a location
+   */
+  createRadarScan(
+    id: string,
+    longitude: number,
+    latitude: number,
+    options?: { radius?: number; color?: string; speed?: number }
+  ): void {
+    if (!this.viewer) return;
+    if (!this.shaderMaterialManager) {
+      this.shaderMaterialManager = new ShaderMaterialManager(this.viewer);
+    }
+    this.shaderMaterialManager.createRadarScan(id, longitude, latitude, options);
+  }
+
+  /**
+   * Create animated flow lines between points
+   */
+  createFlowLines(
+    id: string,
+    lines: Array<{
+      start: { longitude: number; latitude: number };
+      end: { longitude: number; latitude: number };
+    }>,
+    options?: { color?: string; speed?: number; width?: number }
+  ): void {
+    if (!this.viewer) return;
+    if (!this.shaderMaterialManager) {
+      this.shaderMaterialManager = new ShaderMaterialManager(this.viewer);
+    }
+    this.shaderMaterialManager.createFlowLines(id, lines, options);
+  }
+
+  /**
+   * Remove a shader effect
+   */
+  removeShaderEffect(id: string): void {
+    this.shaderMaterialManager?.remove(id);
+  }
+
+  /**
+   * Clear all shader effects
+   */
+  clearShaderEffects(): void {
+    this.shaderMaterialManager?.removeAll();
+  }
+
+  // ============================================
+  // NAVIGATION - Camera Tours
+  // ============================================
+
+  /**
+   * Start a camera tour
+   */
+  async startCameraTour(config: CameraTourConfig): Promise<void> {
+    if (!this.viewer) return;
+    if (!this.cameraTourManager) {
+      this.cameraTourManager = new CameraTourManager(this.viewer);
+    }
+    await this.cameraTourManager.startTour(config);
+  }
+
+  /**
+   * Start a preset camera tour
+   */
+  async startPresetTour(
+    preset: "global-overview" | "conflict-tour" | "satellite-orbit" | "data-comparison" | "regional-focus",
+    customStops?: TourStop[]
+  ): Promise<void> {
+    if (!this.viewer) return;
+    if (!this.cameraTourManager) {
+      this.cameraTourManager = new CameraTourManager(this.viewer);
+    }
+    const config = CameraTourManager.createPresetTour(preset, customStops);
+    await this.cameraTourManager.startTour(config);
+  }
+
+  /**
+   * Cancel the current camera tour
+   */
+  cancelCameraTour(): void {
+    this.cameraTourManager?.cancel();
+  }
+
+  /**
+   * Check if a tour is currently playing
+   */
+  isTourPlaying(): boolean {
+    return this.cameraTourManager?.isTourPlaying() ?? false;
+  }
+
+  // ============================================
+  // NAVIGATION - Scene Mode
+  // ============================================
+
+  /**
+   * Switch scene mode (3D, 2D, Columbus)
+   */
+  switchSceneMode(mode: "3D" | "2D" | "Columbus", duration?: number): void {
+    if (!this.viewer) return;
+    if (!this.sceneModeManager) {
+      this.sceneModeManager = new SceneModeManager(this.viewer);
+    }
+    this.sceneModeManager.switchToMode(mode, duration);
+  }
+
+  /**
+   * Toggle between 3D and 2D modes
+   */
+  toggle3D2D(duration?: number): void {
+    if (!this.viewer) return;
+    if (!this.sceneModeManager) {
+      this.sceneModeManager = new SceneModeManager(this.viewer);
+    }
+    this.sceneModeManager.toggle3D2D(duration);
+  }
+
+  /**
+   * Cycle through all scene modes
+   */
+  cycleSceneMode(duration?: number): "3D" | "2D" | "Columbus" {
+    if (!this.viewer) return "3D";
+    if (!this.sceneModeManager) {
+      this.sceneModeManager = new SceneModeManager(this.viewer);
+    }
+    return this.sceneModeManager.cycleMode(duration);
+  }
+
+  /**
+   * Get current scene mode
+   */
+  getSceneMode(): "3D" | "2D" | "Columbus" {
+    return this.sceneModeManager?.getCurrentMode() ?? "3D";
   }
 
   get ready(): boolean {

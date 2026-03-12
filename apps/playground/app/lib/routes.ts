@@ -50,11 +50,6 @@ export const routes = [
     description: "SVG glass effect test",
   },
   {
-    path: "/google-maps",
-    label: "Google Maps",
-    description: "Interactive Google Maps",
-  },
-  {
     path: "/tarot",
     label: "Tarot Reader",
     description: "Interactive tarot spread reader",
