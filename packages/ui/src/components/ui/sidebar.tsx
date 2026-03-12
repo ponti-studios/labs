@@ -85,7 +85,7 @@ const SidebarProvider = React.forwardRef<
         }
 
         // This sets the cookie to keep the sidebar state.
-        // eslint-disable-next-line unicorn/no-document-cookie
+        // biome-ignore lint/safe/noDocumentCookie: storing sidebar state in cookie intentionally
         document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
       },
       [setOpenProp, open],

@@ -627,7 +627,7 @@ Create shared configs for consistency.
 1. Create `packages/config/` with:
    - TypeScript config
    - Tailwind config
-   - ESLint config
+   - linting config (oxlint/biome)
    - Prettier config
 2. Update all apps to use shared configs
 3. Document usage

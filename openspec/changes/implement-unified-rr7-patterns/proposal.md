@@ -49,7 +49,7 @@ Standardize on a cutting-edge RR7 stack with:
 1. **apps/playground**: Refactor to unified patterns (reference implementation)
 2. **apps/dumphim**: Migrate from Supabase client to Drizzle server queries
 3. **Documentation**: Update patterns doc with migration guides
-4. **Tooling**: Shared configurations (Tailwind, TypeScript, ESLint)
+4. **Tooling**: Shared configurations (Tailwind, TypeScript, linting)
 
 ### Out of Scope
 - apps/medico (keep as Next.js reference for now)
