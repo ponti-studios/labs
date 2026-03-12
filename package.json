@@ -24,6 +24,7 @@
     "@types/node": "^22.7.5",
     "oxfmt": "^0.35.0",
     "oxlint": "^0.9.7",
+    "rolldown": "^1.0.0-rc.9",
     "turbo": "^2.7.0",
     "typescript": "^5.6.3"
   },

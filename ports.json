@@ -1,0 +1,24 @@
+{
+  "labs": {
+    "ponti-io": { "name": "Home (ponti-io)", "port": 3000, "url": "http://localhost:3000" },
+    "playground": { "name": "Playground", "port": 3001, "url": "http://localhost:3001" },
+    "agent": { "name": "Agent (browser extension)", "port": 3002, "url": "http://localhost:3002" },
+    "medico": { "name": "Medico", "port": 3003, "url": "http://localhost:3003" },
+    "agent-server": { "name": "Agent Server", "port": 3004, "url": "http://localhost:3004" },
+    "dumphim": { "name": "Dumphim", "port": 3005, "url": "http://localhost:3005" },
+    "earth": { "name": "Earth", "port": 3006, "url": "http://localhost:3006" },
+    "ui": { "name": "UI (package)", "port": 3007, "url": "(build tool)" }
+  },
+  "other": {
+    "hominem-api": { "name": "Hominem (API)", "port": 4040, "url": "http://localhost:4040" },
+    "hominem-finance": { "name": "Hominem (Finance)", "port": 4444, "url": "http://localhost:4444" },
+    "hominem-notes": { "name": "Hominem (Notes)", "port": 4445, "url": "http://localhost:4445" },
+    "hominem-rocco": { "name": "Hominem (Rocco)", "port": 4446, "url": "http://localhost:4446" },
+    "hominem-workers": { "name": "Hominem (Workers)", "port": 4447, "url": "http://localhost:4447" },
+    "hominem-desktop": { "name": "Hominem (Desktop)", "port": 5173, "url": "http://localhost:5173" },
+    "craftd": { "name": "Craftd", "port": 4451, "url": "http://localhost:4451" },
+    "kuma": { "name": "Kuma", "port": 8080, "url": "http://localhost:8080" },
+    "fortymac": { "name": "FortyMac", "port": 8081, "url": "http://localhost:8081" },
+    "jinn": { "name": "Jinn", "port": 4096, "url": "http://localhost:4096" }
+  }
+}

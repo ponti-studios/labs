@@ -27,7 +27,7 @@
   --border-subtle: rgba(22, 21, 20, 0.08);
   --border-default: rgba(22, 21, 20, 0.14);
   --border-strong: rgba(22, 21, 20, 0.22);
-  --border-accent: rgba(22, 21, 20, 0.30);
+  --border-accent: rgba(22, 21, 20, 0.3);
 
   /* Typography */
   --font-body: "Geist", sans-serif;
@@ -65,7 +65,9 @@ body {
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 120ms ease-out, border-color 120ms ease-out;
+  transition:
+    background-color 120ms ease-out,
+    border-color 120ms ease-out;
 }
 
 .btn-primary:hover {
@@ -81,7 +83,9 @@ body {
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 120ms ease-out, border-color 120ms ease-out;
+  transition:
+    background-color 120ms ease-out,
+    border-color 120ms ease-out;
 }
 
 .btn-secondary:hover {
@@ -116,7 +120,9 @@ textarea {
   padding: 8px 12px;
   font-family: var(--font-body);
   font-size: 13px;
-  transition: border-color 120ms ease-out, background-color 120ms ease-out;
+  transition:
+    border-color 120ms ease-out,
+    background-color 120ms ease-out;
 }
 
 .input:focus,

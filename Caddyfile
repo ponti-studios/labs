@@ -1,0 +1,35 @@
+# Ponti Studios Local Development Proxy
+
+# Labs Apps
+ponti.test {
+    reverse_proxy localhost:3000
+}
+
+playground.test {
+    reverse_proxy localhost:3001
+}
+
+agent.test {
+    reverse_proxy localhost:3002
+}
+
+medico.test {
+    reverse_proxy localhost:3003
+}
+
+agent-server.test {
+    reverse_proxy localhost:3004
+}
+
+dumphim.test {
+    reverse_proxy localhost:3005
+}
+
+earth.test {
+    reverse_proxy localhost:3006
+}
+
+# API services (no frontend)
+api.test {
+    reverse_proxy localhost:3004
+}

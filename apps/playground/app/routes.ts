@@ -4,7 +4,7 @@ export default [
   index("routes/home.tsx"),
   route("/border-linear-gradient", "routes/border-linear-gradient.tsx"),
   route("/svg-glass-test", "routes/svg-glass-test.tsx"),
-  route("/google-maps", "routes/google-maps.tsx"),
+
   route("/tasks", "routes/tasks.tsx"),
   route("/tasks/search", "routes/tasks.search.tsx"),
   route("/tasks/:projectId", "routes/tasks.$projectId.tsx"),
