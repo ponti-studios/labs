@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router";
+import { Link } from "react-router";
 import { activeTab } from "../lib/signals/earth";
 
 const tabs = [
@@ -9,8 +9,6 @@ const tabs = [
 ] as const;
 
 export default function Controls() {
-  const location = useLocation();
-
   return (
     <div className="border-b border-border-default">
       <div className="flex">

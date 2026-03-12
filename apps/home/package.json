@@ -12,7 +12,7 @@
 		"db:populate-tfl": "tsx db/populate-tfl.ts",
 		"db:studio": "drizzle-kit studio",
 		"dev": "next dev --turbo",
-		"format": "npx biome lint src --apply --no-errors-on-unmatched && npx biome format --write src",
+		"format": "npx biome lint app components --apply --no-errors-on-unmatched && npx biome format --write app components",
 		"lint": "run-p run-lint run-stylelint",
 		"prepare": "lefthook install",
 		"preview": "npm run build && npm start",

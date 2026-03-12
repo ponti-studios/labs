@@ -127,8 +127,3 @@ button:focus-visible {
   border-radius: 3px;
 }
 
-/* Light mode - default */
-:root {
-  color: #161514;
-  background-color: #ebe6dc;
-}

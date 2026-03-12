@@ -20,7 +20,7 @@ function extractPageContent(): PageContent {
     return extractYouTubeContent(url, title);
   }
   if (url.includes("ubereats.com")) {
-    return extractUberEatsContent(url, title);
+    return extractUberEatsContent(url);
   }
   return extractGenericContent(url, title);
 }
@@ -90,7 +90,7 @@ function extractYouTubeContent(url: string, title: string): PageContent {
   };
 }
 
-function extractUberEatsContent(url: string, title: string): PageContent {
+function extractUberEatsContent(url: string): PageContent {
   interface Order {
     restaurant: string;
     amount: number;
