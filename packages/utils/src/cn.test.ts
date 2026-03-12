@@ -7,7 +7,14 @@ describe("cn", () => {
   });
 
   it("should handle conditional classes", () => {
-    expect(cn("base", true && "conditional", false && "ignored")).toBe("base conditional");
+    // use ternary expressions to avoid constant-binary-expression lint warnings
+    expect(
+      cn(
+        "base",
+        1 ? "conditional" : undefined,
+        0 ? "ignored" : undefined,
+      ),
+    ).toBe("base conditional");
   });
 
   it("should handle arrays", () => {
