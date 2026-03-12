@@ -16,7 +16,7 @@
     data, 
     metric, 
     title, 
-    color = '#3b82f6',
+    color = '#e7eaee',
     showDaily = false,
     showMovingAverage = true 
   }: Props = $props();
@@ -74,8 +74,8 @@
           ...(showDaily ? [{
             label: 'Daily',
             data: dailyData.slice(6),
-            borderColor: color + '40',
-            backgroundColor: color + '20',
+            borderColor: color + '30',
+            backgroundColor: color + '15',
             borderWidth: 1,
             fill: true,
             tension: 0.4,
@@ -83,10 +83,10 @@
             order: 2,
           }] : []),
           ...(showMovingAverage ? [{
-            label: '7-day Average',
+            label: '7-day Avg',
             data: maData,
             borderColor: color,
-            backgroundColor: color + '40',
+            backgroundColor: color + '20',
             borderWidth: 2,
             fill: true,
             tension: 0.4,
@@ -99,52 +99,33 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        interaction: {
-          intersect: false,
-          mode: 'index',
-        },
+        interaction: { intersect: false, mode: 'index' },
         plugins: {
           legend: {
             display: showDaily && showMovingAverage,
-            labels: {
-              color: 'rgba(255, 255, 255, 0.7)',
-              font: { size: 10 },
-              boxWidth: 12,
-            },
+            labels: { color: '#7a828a', font: { size: 11, family: 'Geist' }, boxWidth: 10 },
           },
           tooltip: {
-            backgroundColor: 'rgba(0, 0, 0, 0.9)',
-            titleColor: 'white',
-            bodyColor: 'white',
-            borderColor: 'rgba(255, 255, 255, 0.1)',
+            backgroundColor: 'rgba(15, 17, 19, 0.95)',
+            titleColor: '#e7eaee',
+            bodyColor: '#b3bac2',
+            borderColor: 'rgba(255, 255, 255, 0.08)',
             borderWidth: 1,
+            padding: 12,
+            cornerRadius: 8,
             callbacks: {
-              label: (context) => {
-                return `${context.dataset.label}: ${formatValue(context.raw as number)}`;
-              },
+              label: (context) => `${context.dataset.label}: ${formatValue(context.raw as number)}`,
             },
           },
         },
         scales: {
           x: {
-            grid: {
-              color: 'rgba(255, 255, 255, 0.05)',
-            },
-            ticks: {
-              color: 'rgba(255, 255, 255, 0.5)',
-              font: { size: 9 },
-              maxTicksLimit: 8,
-            },
+            grid: { color: 'rgba(255, 255, 255, 0.04)' },
+            ticks: { color: '#7a828a', font: { size: 10, family: 'Geist' }, maxTicksLimit: 6 },
           },
           y: {
-            grid: {
-              color: 'rgba(255, 255, 255, 0.05)',
-            },
-            ticks: {
-              color: 'rgba(255, 255, 255, 0.5)',
-              font: { size: 9 },
-              callback: (value) => formatValue(value as number),
-            },
+            grid: { color: 'rgba(255, 255, 255, 0.04)' },
+            ticks: { color: '#7a828a', font: { size: 10, family: 'Geist' }, callback: (value) => formatValue(value as number) },
           },
         },
       },
@@ -152,10 +133,7 @@
   });
 
   onDestroy(() => {
-    if (chart) {
-      chart.destroy();
-      chart = null;
-    }
+    if (chart) { chart.destroy(); chart = null; }
   });
 </script>
 
@@ -168,22 +146,24 @@
 
 <style>
   .chart-container {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    padding: 0.75rem;
-    margin-bottom: 0.75rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 16px;
   }
 
   .chart-title {
-    margin: 0 0 0.5rem 0;
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.8);
+    margin: 0 0 12px 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #b3bac2;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
   }
 
   .canvas-wrapper {
-    height: 150px;
+    height: 180px;
     position: relative;
   }
 

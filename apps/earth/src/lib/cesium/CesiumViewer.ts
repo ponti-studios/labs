@@ -1,6 +1,6 @@
 import * as Cesium from "cesium";
 import type { Satellite } from "../services/satelliteService";
-import { getSatelliteColor, calculateOrbitPath } from "../services/satelliteService";
+import { getSatelliteColor, calculateSmoothOrbitPath } from "../services/satelliteService";
 
 /**
  * CesiumViewer - Custom element wrapper for Cesium
@@ -15,8 +15,9 @@ export class CesiumViewer extends HTMLElement {
   private entityCollection: Map<string, Cesium.Entity> = new Map();
   private orbitCollection: Map<string, Cesium.Entity> = new Map();
   private satellitePositions: Map<string, { lon: number; lat: number; alt: number }> = new Map();
-  private countryEntities: Map<string, Cesium.Entity> = new Map();
   private covidPoints: Map<string, Cesium.Entity> = new Map();
+  private conflictEntities: Map<string, Cesium.Entity> = new Map();
+  private conflictZoneEntities: Map<string, Cesium.Entity> = new Map();
   private _isReady = false;
   private countryClickHandler: Cesium.ScreenSpaceEventHandler | null = null;
   private countryClickCallback: ((iso3: string, name: string) => void) | null = null;
@@ -96,8 +97,12 @@ export class CesiumViewer extends HTMLElement {
 
       // Add a visible base layer if one isn't present
       if (!this.viewer.imageryLayers.length) {
-        // Add default Cesium ion imagery as fallback
-        const imageryProvider = new Cesium.IonImageryProvider({ assetId: 2 });
+        const imageryProvider = new Cesium.UrlTemplateImageryProvider({
+          url: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+          subdomains: ["a", "b", "c", "d"],
+          maximumLevel: 19,
+          credit: "©OpenStreetMap, ©CartoDB",
+        });
         this.viewer.imageryLayers.addImageryProvider(imageryProvider);
       }
 
@@ -232,12 +237,12 @@ export class CesiumViewer extends HTMLElement {
     });
 
     // Create a CallbackProperty that returns the current position every frame
-    const positionProperty = new Cesium.CallbackProperty((time) => {
+    const positionProperty = new Cesium.CallbackPositionProperty((_time, result) => {
       const pos = this.satellitePositions.get(satellite.id);
       if (pos) {
-        return Cesium.Cartesian3.fromDegrees(pos.lon, pos.lat, pos.alt);
+        return Cesium.Cartesian3.fromDegrees(pos.lon, pos.lat, pos.alt, undefined, result);
       }
-      return Cesium.Cartesian3.fromDegrees(0, 0, 0);
+      return Cesium.Cartesian3.fromDegrees(0, 0, 0, undefined, result);
     }, false);
 
     // Create satellite entity with label - make it very visible
@@ -312,7 +317,7 @@ export class CesiumViewer extends HTMLElement {
       timestamp: new Date(),
     };
 
-    const orbitPositions = calculateOrbitPath(satellite);
+    const orbitPositions = calculateSmoothOrbitPath(satellite);
     const color = getSatelliteColor(satellite.type);
 
     const orbitEntity = this.viewer.entities.add({
@@ -457,6 +462,24 @@ export class CesiumViewer extends HTMLElement {
   }
 
   /**
+   * Show COVID data points (make them visible)
+   */
+  showCovidPoints(): void {
+    this.covidPoints.forEach((entity) => {
+      (entity as any).show = true;
+    });
+  }
+
+  /**
+   * Hide COVID data points (make them invisible)
+   */
+  hideCovidPoints(): void {
+    this.covidPoints.forEach((entity) => {
+      (entity as any).show = false;
+    });
+  }
+
+  /**
    * Register a callback for when a country is clicked
    */
   onCountryClick(callback: (iso3: string, name: string) => void): void {
@@ -547,21 +570,37 @@ export class CesiumViewer extends HTMLElement {
    * Available globe styles
    */
   static readonly STYLES = {
-    DEFAULT: 'default',
-    DARK: 'dark',
-    NIGHT: 'night',
-    MINIMAL: 'minimal',
-    WIRE: 'wire',
-    NEON: 'neon',
-    SATELLITE: 'satellite'
+    DEFAULT: "default",
+    DARK: "dark",
+    MINIMAL: "minimal",
+    WIRE: "wire",
+    PAPER: "wireframe-paper",
+    NEON: "neon",
+    SATELLITE: "satellite",
   } as const;
 
   private currentImageryLayer: Cesium.ImageryLayer | null = null;
 
+  private resetSceneStyle(): void {
+    if (!this.viewer) return;
+
+    this.viewer.scene.globe.baseColor = Cesium.Color.BLACK;
+    this.viewer.scene.globe.enableLighting = true;
+    this.viewer.scene.globe.showGroundAtmosphere = true;
+    this.viewer.scene.globe.atmosphereLightIntensity = 10.0;
+    this.viewer.scene.backgroundColor = Cesium.Color.BLACK;
+    if (this.viewer.scene.moon) {
+      this.viewer.scene.moon.show = true;
+    }
+    if (this.viewer.scene.skyAtmosphere) {
+      this.viewer.scene.skyAtmosphere.show = true;
+    }
+  }
+
   /**
    * Apply a custom visual style to the globe
    */
-  setGlobeStyle(style: typeof CesiumViewer.STYLES[keyof typeof CesiumViewer.STYLES]): void {
+  setGlobeStyle(style: (typeof CesiumViewer.STYLES)[keyof typeof CesiumViewer.STYLES]): void {
     if (!this.viewer) return;
 
     // Remove existing custom imagery
@@ -571,25 +610,25 @@ export class CesiumViewer extends HTMLElement {
     }
 
     switch (style) {
-      case 'dark':
+      case "dark":
         this.applyDarkStyle();
         break;
-      case 'night':
-        this.applyNightStyle();
-        break;
-      case 'minimal':
+      case "minimal":
         this.applyMinimalStyle();
         break;
-      case 'wire':
+      case "wire":
         this.applyWireframeStyle();
         break;
-      case 'neon':
+      case "wireframe-paper":
+        this.applyPaperWireframeStyle();
+        break;
+      case "neon":
         this.applyNeonStyle();
         break;
-      case 'satellite':
+      case "satellite":
         this.applySatelliteStyle();
         break;
-      case 'default':
+      case "default":
       default:
         this.applyDefaultStyle();
         break;
@@ -600,12 +639,18 @@ export class CesiumViewer extends HTMLElement {
 
   private applyDefaultStyle(): void {
     if (!this.viewer) return;
-    
+    this.resetSceneStyle();
+
     // Reset to default Cesium World Imagery
     this.viewer.imageryLayers.removeAll();
-    const provider = new Cesium.IonImageryProvider({ assetId: 2 });
+    const provider = new Cesium.UrlTemplateImageryProvider({
+      url: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+      subdomains: ["a", "b", "c", "d"],
+      maximumLevel: 19,
+      credit: "©OpenStreetMap, ©CartoDB",
+    });
     this.currentImageryLayer = this.viewer.imageryLayers.addImageryProvider(provider);
-    
+
     // Reset lighting
     this.viewer.scene.globe.enableLighting = true;
     this.viewer.scene.globe.atmosphereLightIntensity = 10.0;
@@ -613,51 +658,36 @@ export class CesiumViewer extends HTMLElement {
 
   private applyDarkStyle(): void {
     if (!this.viewer) return;
-    
+    this.resetSceneStyle();
+
     // Use CartoDB Dark Matter tiles
     this.viewer.imageryLayers.removeAll();
     const provider = new Cesium.UrlTemplateImageryProvider({
-      url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-      subdomains: ['a', 'b', 'c', 'd'],
+      url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
+      subdomains: ["a", "b", "c", "d"],
       maximumLevel: 19,
-      credit: '©OpenStreetMap, ©CartoDB'
+      credit: "©OpenStreetMap, ©CartoDB",
     });
     this.currentImageryLayer = this.viewer.imageryLayers.addImageryProvider(provider);
-    
+
     // Darken the atmosphere
     this.viewer.scene.globe.atmosphereLightIntensity = 3.0;
-    this.viewer.scene.backgroundColor = Cesium.Color.fromCssColorString('#0a0a0a');
-  }
-
-  private applyNightStyle(): void {
-    if (!this.viewer) return;
-    
-    // NASA Night Lights with city lights
-    this.viewer.imageryLayers.removeAll();
-    const provider = new Cesium.UrlTemplateImageryProvider({
-      url: 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_SNPP_DayNightBand_ENCC/default//GoogleMapsCompatible_Level6/{z}/{y}/{x}.png',
-      maximumLevel: 6,
-      credit: 'NASA GIBS'
-    });
-    this.currentImageryLayer = this.viewer.imageryLayers.addImageryProvider(provider);
-    
-    // Very dark atmosphere for night effect
-    this.viewer.scene.globe.atmosphereLightIntensity = 1.0;
-    this.viewer.scene.backgroundColor = Cesium.Color.BLACK;
+    this.viewer.scene.backgroundColor = Cesium.Color.fromCssColorString("#0a0a0a");
   }
 
   private applyMinimalStyle(): void {
     if (!this.viewer) return;
-    
+    this.resetSceneStyle();
+
     // Use OpenStreetMap with low saturation
     this.viewer.imageryLayers.removeAll();
     const provider = new Cesium.OpenStreetMapImageryProvider({
-      url: 'https://{s}.tile.openstreetmap.org/',
+      url: "https://{s}.tile.openstreetmap.org/",
       maximumLevel: 18,
-      credit: '© OpenStreetMap contributors'
+      credit: "© OpenStreetMap contributors",
     });
     this.currentImageryLayer = this.viewer.imageryLayers.addImageryProvider(provider);
-    
+
     // Apply grayscale filter via CSS on the canvas is not possible,
     // so we'll set a very neutral lighting
     this.viewer.scene.globe.enableLighting = false;
@@ -665,57 +695,92 @@ export class CesiumViewer extends HTMLElement {
 
   private applyWireframeStyle(): void {
     if (!this.viewer) return;
-    
+    this.resetSceneStyle();
+
     // Use a minimal base map and enable wireframe
     this.viewer.imageryLayers.removeAll();
-    
+
     // Just country boundaries
     const provider = new Cesium.UrlTemplateImageryProvider({
-      url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
-      subdomains: ['a', 'b', 'c', 'd'],
+      url: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+      subdomains: ["a", "b", "c", "d"],
       maximumLevel: 19,
-      credit: '©OpenStreetMap, ©CartoDB'
+      credit: "©OpenStreetMap, ©CartoDB",
     });
     this.currentImageryLayer = this.viewer.imageryLayers.addImageryProvider(provider);
-    
+
     // Reduce opacity of base layer
     this.currentImageryLayer.alpha = 0.3;
-    
+
     // Set dark background
-    this.viewer.scene.backgroundColor = Cesium.Color.fromCssColorString('#050505');
+    this.viewer.scene.backgroundColor = Cesium.Color.fromCssColorString("#050505");
     this.viewer.scene.globe.atmosphereLightIntensity = 2.0;
+  }
+
+  private applyPaperWireframeStyle(): void {
+    if (!this.viewer) return;
+    this.resetSceneStyle();
+
+    this.viewer.imageryLayers.removeAll();
+    const provider = new Cesium.UrlTemplateImageryProvider({
+      url: "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png",
+      subdomains: ["a", "b", "c", "d"],
+      maximumLevel: 19,
+      credit: "©OpenStreetMap, ©CartoDB",
+    });
+    this.currentImageryLayer = this.viewer.imageryLayers.addImageryProvider(provider);
+    this.currentImageryLayer.alpha = 0.88;
+    this.currentImageryLayer.brightness = 1.08;
+    this.currentImageryLayer.contrast = 1.12;
+    this.currentImageryLayer.saturation = 0.18;
+    this.currentImageryLayer.gamma = 0.92;
+
+    const cream = Cesium.Color.fromCssColorString("#f4edde");
+    this.viewer.scene.backgroundColor = cream;
+    this.viewer.scene.globe.baseColor = cream;
+    this.viewer.scene.globe.enableLighting = false;
+    this.viewer.scene.globe.atmosphereLightIntensity = 0.35;
+    this.viewer.scene.globe.showGroundAtmosphere = false;
+    if (this.viewer.scene.moon) {
+      this.viewer.scene.moon.show = false;
+    }
+    if (this.viewer.scene.skyAtmosphere) {
+      this.viewer.scene.skyAtmosphere.show = false;
+    }
   }
 
   private applyNeonStyle(): void {
     if (!this.viewer) return;
-    
+    this.resetSceneStyle();
+
     // Dark base with cyan/teal tint
     this.viewer.imageryLayers.removeAll();
     const provider = new Cesium.UrlTemplateImageryProvider({
-      url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-      subdomains: ['a', 'b', 'c', 'd'],
+      url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
+      subdomains: ["a", "b", "c", "d"],
       maximumLevel: 19,
-      credit: '©OpenStreetMap, ©CartoDB'
+      credit: "©OpenStreetMap, ©CartoDB",
     });
     this.currentImageryLayer = this.viewer.imageryLayers.addImageryProvider(provider);
-    
+
     // Teal/Cyan atmosphere
     this.viewer.scene.globe.atmosphereLightIntensity = 15.0;
-    this.viewer.scene.backgroundColor = Cesium.Color.fromCssColorString('#001122');
+    this.viewer.scene.backgroundColor = Cesium.Color.fromCssColorString("#001122");
   }
 
   private applySatelliteStyle(): void {
     if (!this.viewer) return;
-    
+    this.resetSceneStyle();
+
     // Use Sentinel-2 satellite imagery
     this.viewer.imageryLayers.removeAll();
     const provider = new Cesium.UrlTemplateImageryProvider({
-      url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
       maximumLevel: 19,
-      credit: 'Esri'
+      credit: "Esri",
     });
     this.currentImageryLayer = this.viewer.imageryLayers.addImageryProvider(provider);
-    
+
     // Bright lighting for satellite view
     this.viewer.scene.globe.enableLighting = true;
     this.viewer.scene.globe.atmosphereLightIntensity = 20.0;
@@ -726,14 +791,187 @@ export class CesiumViewer extends HTMLElement {
    */
   getAvailableStyles(): Array<{ id: string; name: string; icon: string }> {
     return [
-      { id: 'default', name: 'Default', icon: '🌍' },
-      { id: 'dark', name: 'Dark Mode', icon: '🌑' },
-      { id: 'night', name: 'Night Lights', icon: '🌃' },
-      { id: 'minimal', name: 'Minimal', icon: '◯' },
-      { id: 'wire', name: 'Wireframe', icon: '⌗' },
-      { id: 'neon', name: 'Neon', icon: '✦' },
-      { id: 'satellite', name: 'Satellite', icon: '📷' }
+      { id: "default", name: "Atlas", icon: "" },
+      { id: "dark", name: "Dark", icon: "" },
+      { id: "minimal", name: "Minimal", icon: "" },
+      { id: "wire", name: "Wireframe", icon: "" },
+      { id: "wireframe-paper", name: "Wireframe Paper", icon: "" },
+      { id: "neon", name: "Neon", icon: "" },
+      { id: "satellite", name: "Satellite", icon: "" },
     ];
+  }
+
+  // === ACLED Conflict Data API ===
+
+  /**
+   * Add conflict events to the globe
+   */
+  addConflictEvents(
+    events: Array<{
+      id: string;
+      lat: number;
+      lng: number;
+      eventType: string;
+      fatalities: number;
+      location: string;
+      country: string;
+      date: string;
+      color: string;
+    }>
+  ): void {
+    if (!this.viewer) return;
+
+    // Clear existing conflict events
+    this.clearConflictEvents();
+
+    for (const event of events) {
+      // Scale point size by fatalities (log scale)
+      const baseSize = Math.max(14, Math.min(42, Math.log10((event.fatalities || 1) + 1) * 10));
+      const heightAboveSurface = 60000;
+
+      const entity = this.viewer.entities.add({
+        id: `conflict-${event.id}`,
+        position: Cesium.Cartesian3.fromDegrees(event.lng, event.lat, heightAboveSurface),
+        point: {
+          pixelSize: baseSize,
+          color: Cesium.Color.fromCssColorString(event.color),
+          outlineColor: Cesium.Color.fromCssColorString("#f5f1e8"),
+          outlineWidth: 3,
+          scaleByDistance: new Cesium.NearFarScalar(1.5e2, 3.2, 1.5e7, 0.8),
+          disableDepthTestDistance: Number.POSITIVE_INFINITY,
+        },
+        label: {
+          text: event.fatalities > 0 ? `${event.fatalities} dead` : event.eventType,
+          font: "13px Geist, sans-serif",
+          fillColor: Cesium.Color.WHITE,
+          outlineColor: Cesium.Color.BLACK,
+          outlineWidth: 2,
+          style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+          verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+          pixelOffset: new Cesium.Cartesian2(0, -baseSize - 8),
+          translucencyByDistance: new Cesium.NearFarScalar(8e5, 1.0, 4e6, 0.0),
+          disableDepthTestDistance: Number.POSITIVE_INFINITY,
+        },
+        properties: {
+          eventId: event.id,
+          eventType: event.eventType,
+          location: event.location,
+          country: event.country,
+          date: event.date,
+          fatalities: event.fatalities,
+        },
+      });
+
+      this.conflictEntities.set(event.id, entity);
+    }
+
+    console.log(`[CesiumViewer] Added ${events.length} conflict events`);
+  }
+
+  /**
+   * Add conflict zones as heatmap circles
+   */
+  addConflictZones(
+    zones: Array<{
+      lat: number;
+      lng: number;
+      intensity: number;
+      country: string;
+      admin1: string;
+      eventCount: number;
+      fatalities: number;
+    }>
+  ): void {
+    if (!this.viewer) return;
+
+    // Clear existing zones
+    this.clearConflictZones();
+
+    for (const zone of zones) {
+      // Only show high-intensity zones
+      if (zone.intensity < 20) continue;
+
+      const radius = 50000 + (zone.intensity * 1000); // 50km to 150km radius
+      const heightAboveSurface = 10000; // 10km above surface
+
+      // Color based on intensity
+      let color = '#ff3b30'; // Red for high
+      if (zone.intensity < 40) color = '#ff9500'; // Orange
+      else if (zone.intensity < 60) color = '#ffcc00'; // Yellow
+
+      const entity = this.viewer.entities.add({
+        position: Cesium.Cartesian3.fromDegrees(zone.lng, zone.lat, heightAboveSurface),
+        ellipse: {
+          semiMinorAxis: radius,
+          semiMajorAxis: radius,
+          material: Cesium.Color.fromCssColorString(color).withAlpha(0.25),
+          outline: true,
+          outlineColor: Cesium.Color.fromCssColorString(color).withAlpha(0.6),
+          outlineWidth: 2,
+          heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
+        },
+        label: {
+          text: `${zone.country} - ${zone.admin1}`,
+          font: "12px Geist, sans-serif",
+          fillColor: Cesium.Color.WHITE,
+          outlineColor: Cesium.Color.BLACK,
+          outlineWidth: 2,
+          style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+          verticalOrigin: Cesium.VerticalOrigin.TOP,
+          pixelOffset: new Cesium.Cartesian2(0, 15),
+          translucencyByDistance: new Cesium.NearFarScalar(1e6, 1.0, 5e6, 0.0),
+        },
+        properties: {
+          zoneType: 'conflict',
+          country: zone.country,
+          admin1: zone.admin1,
+          eventCount: zone.eventCount,
+          fatalities: zone.fatalities,
+          intensity: zone.intensity,
+        },
+      });
+
+      const zoneId = `${zone.country}-${zone.admin1}`;
+      this.conflictZoneEntities.set(zoneId, entity);
+    }
+
+    console.log(`[CesiumViewer] Added ${this.conflictZoneEntities.size} conflict zones`);
+  }
+
+  /**
+   * Clear all conflict events
+   */
+  clearConflictEvents(): void {
+    if (!this.viewer) return;
+
+    this.conflictEntities.forEach((entity) => {
+      this.viewer?.entities.remove(entity);
+    });
+    this.conflictEntities.clear();
+  }
+
+  /**
+   * Clear all conflict zones
+   */
+  clearConflictZones(): void {
+    if (!this.viewer) return;
+
+    this.conflictZoneEntities.forEach((entity) => {
+      this.viewer?.entities.remove(entity);
+    });
+    this.conflictZoneEntities.clear();
+  }
+
+  /**
+   * Show/hide conflict data
+   */
+  setConflictVisibility(visible: boolean): void {
+    this.conflictEntities.forEach((entity) => {
+      (entity.show as any) = visible;
+    });
+    this.conflictZoneEntities.forEach((entity) => {
+      (entity.show as any) = visible;
+    });
   }
 
   get ready(): boolean {

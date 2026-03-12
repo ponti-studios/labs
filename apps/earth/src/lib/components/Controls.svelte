@@ -1,8 +1,15 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { Flip, gsap } from "gsap/all";
+  import { onMount, tick } from "svelte";
   import type { CesiumViewer } from "../cesium/CesiumViewer";
   import type { CovidCountry } from "../services/covidService";
+  import IntelSidebar from "./IntelSidebar.svelte";
   import SatelliteTracker from "./SatelliteTracker.svelte";
+  import NavIcon from "./panel/NavIcon.svelte";
+  import PanelMetric from "./panel/PanelMetric.svelte";
+  import PanelSection from "./panel/PanelSection.svelte";
+
+  gsap.registerPlugin(Flip);
 
   interface Props {
     viewer: CesiumViewer | null;
@@ -12,33 +19,39 @@
     onClearCountry: () => void;
   }
 
-  let { 
-    viewer, 
-    covidCountries, 
-    selectedCountry, 
+  let {
+    viewer,
+    covidCountries,
+    selectedCountry,
     onSelectCountry,
-    onClearCountry 
+    onClearCountry,
   }: Props = $props();
+
+  type DockTab = "covid" | "satellites" | "intel" | "locations";
+  type GlobeStyle = Parameters<CesiumViewer["setGlobeStyle"]>[0];
 
   let selectedLocation = $state("");
   let isFlying = $state(false);
   let isCollapsed = $state(false);
-  let activeTab = $state<"covid" | "satellites" | "locations">("covid");
+  let activeTab = $state<DockTab>("intel");
   let searchQuery = $state("");
   let showStylePicker = $state(false);
-  
-  // Globe styles - available everywhere
-  const globeStyles = $derived(viewer?.getAvailableStyles() ?? []);
-  let currentStyle = $state("satellite"); // Default to satellite
+  let showCovidData = $state(false);
+  let currentStyle = $state<GlobeStyle>("satellite");
+  let isMobile = $state(false);
+  let isAnimating = $state(false);
 
-  // Load saved style preference on mount
-  onMount(() => {
-    const savedStyle = localStorage.getItem("earth-globe-style");
-    if (savedStyle && viewer) {
-      currentStyle = savedStyle;
-      viewer.setGlobeStyle(savedStyle);
-    }
-  });
+  let topNavEl = $state<HTMLElement | null>(null);
+  let modeTabsEl = $state<HTMLElement | null>(null);
+  let dockFrameEl = $state<HTMLElement | null>(null);
+  let accordionSummaryEl = $state<HTMLElement | null>(null);
+
+  const globeStyles = $derived(
+    (viewer?.getAvailableStyles() ?? []) as Array<{
+      id: GlobeStyle;
+      name: string;
+    }>,
+  );
 
   const locations = [
     { name: "New York", lon: -74.006, lat: 40.7128, height: 500000 },
@@ -48,27 +61,178 @@
     { name: "Cape Town", lon: 18.4241, lat: -33.9249, height: 500000 },
   ];
 
-  // Filter countries based on search
+  const tabs: Array<{
+    id: DockTab;
+    label: string;
+    short: string;
+    icon: "intel" | "covid" | "satellites" | "locations";
+  }> = [
+    { id: "intel", label: "Intel", short: "INT", icon: "intel" },
+    { id: "covid", label: "COVID", short: "C19", icon: "covid" },
+    { id: "satellites", label: "Satellites", short: "SAT", icon: "satellites" },
+    { id: "locations", label: "Locations", short: "NAV", icon: "locations" },
+  ];
+
   let filteredCountries = $derived(
     covidCountries
-      .filter(c => 
-        c.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.countryInfo.iso3?.toLowerCase().includes(searchQuery.toLowerCase())
+      .filter(
+        (country) =>
+          country.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          country.countryInfo.iso3?.toLowerCase().includes(searchQuery.toLowerCase()),
       )
-      .slice(0, 10)
+      .slice(0, 10),
   );
+
+  const activeTabMeta = $derived(tabs.find((tab) => tab.id === activeTab) ?? tabs[0]);
+  const mobileAccordionTitle = $derived(
+    activeTab === "covid" && selectedCountry
+      ? selectedCountry.country
+      : activeTab === "locations" && selectedLocation
+        ? selectedLocation
+        : activeTabMeta.label,
+  );
+  const mobileAccordionDetail = $derived(getAccordionDetail());
+  const drawerEyebrow = $derived(getDrawerEyebrow());
+  const drawerDescription = $derived(getDrawerDescription());
+
+  onMount(() => {
+    const mobileQuery = window.matchMedia("(max-width: 760px)");
+
+    const syncViewport = (matches: boolean) => {
+      isMobile = matches;
+      isCollapsed = matches;
+      showStylePicker = false;
+    };
+
+    syncViewport(mobileQuery.matches);
+
+    const handleViewportChange = (event: MediaQueryListEvent) => {
+      syncViewport(event.matches);
+    };
+
+    mobileQuery.addEventListener("change", handleViewportChange);
+
+    const savedStyle = localStorage.getItem("earth-globe-style");
+    if (savedStyle && viewer) {
+      currentStyle = savedStyle as GlobeStyle;
+      viewer.setGlobeStyle(currentStyle);
+    }
+
+    void tick().then(() => {
+      const introNodes = [topNavEl, modeTabsEl, dockFrameEl].filter(Boolean);
+      if (!introNodes.length) return;
+
+      gsap.set(introNodes, {
+        opacity: 0,
+        y: 18,
+      });
+
+      gsap.timeline({ defaults: { ease: "power3.out" } })
+        .to(topNavEl, { opacity: 1, y: 0, duration: 0.62 })
+        .to(modeTabsEl, { opacity: 1, y: 0, duration: 0.58 }, "-=0.34")
+        .to(dockFrameEl, { opacity: 1, y: 0, duration: 0.64 }, "-=0.4");
+    });
+
+    return () => {
+      mobileQuery.removeEventListener("change", handleViewportChange);
+    };
+  });
+
+  function getAccordionDetail(): string {
+    if (activeTab === "covid") {
+      if (selectedCountry) {
+        return `${selectedCountry.countryInfo.iso3} · ${formatNumber(selectedCountry.cases)} cases`;
+      }
+      return showCovidData ? "COVID layer visible" : "Country lookup and pins";
+    }
+
+    if (activeTab === "locations") {
+      return selectedLocation ? `Preset locked · ${selectedLocation}` : `${locations.length} route presets`;
+    }
+
+    if (activeTab === "satellites") {
+      return "Live orbital objects and orbit controls";
+    }
+
+    return "Seven-source response library";
+  }
+
+  function getDrawerEyebrow(): string {
+    if (activeTab === "covid") return "Disease surface";
+    if (activeTab === "satellites") return "Orbital feed";
+    if (activeTab === "locations") return "Navigation";
+    return "Intel registry";
+  }
+
+  function getDrawerDescription(): string {
+    if (activeTab === "covid") {
+      return selectedCountry
+        ? "Selected country profile pinned to the globe."
+        : "Search countries, inspect case totals, and toggle the globe layer.";
+    }
+
+    if (activeTab === "satellites") {
+      return "Track orbital objects, inspect live positions, and jump directly into view.";
+    }
+
+    if (activeTab === "locations") {
+      return "Use a small set of route presets and camera diagnostics.";
+    }
+
+    return "Monitor source status, live overlays, and response-ready feed detail.";
+  }
+
+  async function animateMobileDock(nextCollapsed: boolean) {
+    if (!isMobile || !dockFrameEl || isAnimating) {
+      isCollapsed = nextCollapsed;
+      return;
+    }
+
+    isAnimating = true;
+    const targets = [dockFrameEl, accordionSummaryEl].filter(Boolean) as Element[];
+    const state = Flip.getState(targets, { props: "borderRadius,boxShadow,opacity" });
+
+    isCollapsed = nextCollapsed;
+    await tick();
+
+    Flip.from(state, {
+      duration: nextCollapsed ? 0.32 : 0.42,
+      ease: "power3.inOut",
+      nested: true,
+      absolute: false,
+      simple: true,
+      prune: true,
+      onComplete: () => {
+        isAnimating = false;
+      },
+    });
+
+    if (dockFrameEl) {
+      gsap.fromTo(
+        dockFrameEl,
+        { y: nextCollapsed ? 0 : 18, opacity: nextCollapsed ? 1 : 0.92 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: nextCollapsed ? 0.26 : 0.34,
+          ease: "power2.out",
+          clearProps: "transform,opacity",
+        },
+      );
+    }
+  }
+
+  function toggleDock() {
+    void animateMobileDock(!isCollapsed);
+  }
 
   function flyToLocation(name: string) {
     if (!viewer) return;
-
-    const location = locations.find((l) => l.name === name);
+    const location = locations.find((item) => item.name === name);
     if (!location) return;
-
     isFlying = true;
     selectedLocation = name;
-
     viewer.flyTo(location.lon, location.lat, location.height, 2);
-
     setTimeout(() => {
       isFlying = false;
     }, 2000);
@@ -76,49 +240,22 @@
 
   function flyToCountry(country: CovidCountry) {
     if (!viewer) return;
-    
-    viewer.flyToCountry(
-      country.countryInfo.lat,
-      country.countryInfo.long,
-      country.countryInfo.iso3
-    );
-    
+    viewer.flyToCountry(country.countryInfo.lat, country.countryInfo.long, country.countryInfo.iso3);
     onSelectCountry(country);
     searchQuery = "";
   }
 
   function handleClearCountry() {
     onClearCountry();
-    // Fly back to world view
-    if (viewer) {
-      viewer.flyTo(0, 20, 20000000, 2);
-    }
-  }
-
-  function addRandomPoint() {
-    if (!viewer) return;
-
-    const id = `point-${Date.now()}`;
-    const lon = (Math.random() - 0.5) * 360;
-    const lat = (Math.random() - 0.5) * 180;
-    const colors = ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff"];
-    const color = colors[Math.floor(Math.random() * colors.length)];
-
-    viewer.addPoint(id, lon, lat, color, 15);
-  }
-
-  function clearAllPoints() {
-    if (!viewer) return;
-    viewer.clearEntities();
+    viewer?.flyTo(0, 20, 20000000, 2);
   }
 
   function getCurrentPosition() {
     if (!viewer) return;
     const pos = viewer.getCameraPosition();
     if (pos) {
-      console.log("Camera position:", pos);
       alert(
-        `Camera Position:\nLon: ${pos.longitude.toFixed(4)}\nLat: ${pos.latitude.toFixed(4)}\nHeight: ${pos.height.toFixed(0)}m`
+        `Camera Position:\nLon: ${pos.longitude.toFixed(4)}\nLat: ${pos.latitude.toFixed(4)}\nHeight: ${pos.height.toFixed(0)}m`,
       );
     }
   }
@@ -129,603 +266,714 @@
     return num.toLocaleString();
   }
 
-  function changeGlobeStyle(styleId: string) {
+  function changeGlobeStyle(styleId: GlobeStyle) {
     if (!viewer) return;
     currentStyle = styleId;
     viewer.setGlobeStyle(styleId);
-    // Save to localStorage
     localStorage.setItem("earth-globe-style", styleId);
     showStylePicker = false;
   }
 
-  function getCurrentStyleIcon(): string {
-    return globeStyles.find(s => s.id === currentStyle)?.icon ?? '🌍';
+  function toggleCovidData() {
+    showCovidData = !showCovidData;
+    if (!viewer) return;
+    if (showCovidData) {
+      viewer.showCovidPoints();
+    } else {
+      viewer.hideCovidPoints();
+    }
   }
 </script>
 
-<div class="controls" class:collapsed={isCollapsed}>
-  <button class="toggle-btn" onclick={() => isCollapsed = !isCollapsed}>
-    {isCollapsed ? '☰' : '✕'}
-  </button>
+<nav bind:this={topNavEl} class="top-nav">
+  <div class="top-nav-brand">
+    <span class="top-nav-wordmark">ponti.earth</span>
+    <span class="top-nav-meta">field atlas</span>
+  </div>
 
-  {#if !isCollapsed}
-    <div class="controls-content">
-      <div class="header-row">
-        <h2>🌍 Earth Monitor</h2>
-        
-        <!-- Style Picker Button - Always Accessible -->
-        <div class="style-picker-container">
-          <button 
-            class="style-toggle-btn" 
-            onclick={() => showStylePicker = !showStylePicker}
-            title="Change globe style"
-          >
-            <span class="current-style-icon">{getCurrentStyleIcon()}</span>
-            <span class="dropdown-arrow">▼</span>
-          </button>
-          
-          {#if showStylePicker}
-            <div class="style-dropdown">
-              {#each globeStyles as style}
-                <button
-                  class="style-option"
-                  class:active={currentStyle === style.id}
-                  onclick={() => changeGlobeStyle(style.id)}
-                >
-                  <span class="style-icon">{style.icon}</span>
-                  <span class="style-label">{style.name}</span>
-                </button>
-              {/each}
-            </div>
-          {/if}
-        </div>
-      </div>
+  <div class="top-nav-actions">
+    <div class="style-picker-container">
+      <button
+        class="theme-trigger"
+        type="button"
+        aria-label="Change globe theme"
+        onclick={() => (showStylePicker = !showStylePicker)}
+      >
+        <NavIcon name="theme" />
+        <span>{globeStyles.find((style) => style.id === currentStyle)?.name ?? "Theme"}</span>
+      </button>
 
-      <!-- Tab Navigation -->
-      <div class="tabs">
-        <button
-          class="tab-btn"
-          class:active={activeTab === "covid"}
-          onclick={() => activeTab = "covid"}
-        >
-          🦠 COVID
-        </button>
-        <button
-          class="tab-btn"
-          class:active={activeTab === "satellites"}
-          onclick={() => activeTab = "satellites"}
-        >
-          🛰️ Satellites
-        </button>
-        <button
-          class="tab-btn"
-          class:active={activeTab === "locations"}
-          onclick={() => activeTab = "locations"}
-        >
-          📍 Locations
-        </button>
-      </div>
-
-      {#if activeTab === "covid"}
-        <section>
-          <h3>COVID-19 Tracker</h3>
-          
-          {#if selectedCountry}
-            <div class="selected-country">
-              <div class="country-header">
-                <img 
-                  src={selectedCountry.countryInfo.flag} 
-                  alt="{selectedCountry.country} flag"
-                  class="country-flag"
-                />
-                <span class="country-name">{selectedCountry.country}</span>
-              </div>
-              <div class="country-stats">
-                <div class="stat-row">
-                  <span class="stat-label">Cases:</span>
-                  <span class="stat-value cases">{formatNumber(selectedCountry.cases)}</span>
-                </div>
-                <div class="stat-row">
-                  <span class="stat-label">Deaths:</span>
-                  <span class="stat-value deaths">{formatNumber(selectedCountry.deaths)}</span>
-                </div>
-                <div class="stat-row">
-                  <span class="stat-label">Recovered:</span>
-                  <span class="stat-value recovered">{formatNumber(selectedCountry.recovered)}</span>
-                </div>
-              </div>
-              <button class="clear-btn" onclick={handleClearCountry}>
-                🌍 Back to World View
-              </button>
-            </div>
-          {:else}
-            <div class="search-section">
-              <p class="hint">Search for a country or click on the globe</p>
-              <input
-                type="text"
-                placeholder="Search countries..."
-                bind:value={searchQuery}
-                class="search-input"
-              />
-              
-              {#if searchQuery && filteredCountries.length > 0}
-                <div class="search-results">
-                  {#each filteredCountries as country}
-                    <button
-                      class="country-result"
-                      onclick={() => flyToCountry(country)}
-                    >
-                      <img 
-                        src={country.countryInfo.flag} 
-                        alt="{country.country} flag"
-                        class="result-flag"
-                      />
-                      <span class="result-name">{country.country}</span>
-                      <span class="result-cases">{formatNumber(country.cases)}</span>
-                    </button>
-                  {/each}
-                </div>
-              {:else if searchQuery}
-                <p class="no-results">No countries found</p>
+      {#if showStylePicker}
+        <div class="style-dropdown panel-card">
+          {#each globeStyles as style}
+            <button
+              class="style-option"
+              class:active={style.id === currentStyle}
+              type="button"
+              onclick={() => changeGlobeStyle(style.id)}
+            >
+              <span>{style.name}</span>
+              {#if style.id === currentStyle}
+                <span class="style-check"></span>
               {/if}
-            </div>
-            
-            <div class="stats-summary">
-              <p class="summary-text">
-                📊 Showing {covidCountries.length} countries with COVID data
-              </p>
-              <p class="hint">
-                Click on any country dot to view detailed statistics
-              </p>
-            </div>
-          {/if}
-        </section>
-      {:else if activeTab === "satellites"}
-        <SatelliteTracker {viewer} />
-      {:else}
-        <section>
-          <h3>Fly To Location</h3>
-          <div class="button-group">
-            {#each locations as location}
-              <button
-                class="location-btn"
-                class:active={selectedLocation === location.name}
-                disabled={isFlying || !viewer}
-                onclick={() => flyToLocation(location.name)}
-              >
-                {location.name}
-              </button>
-            {/each}
-          </div>
-        </section>
-
-        <section>
-          <h3>Entities</h3>
-          <div class="button-group">
-            <button disabled={!viewer} onclick={addRandomPoint}>
-              Add Random Point
             </button>
-            <button disabled={!viewer} onclick={clearAllPoints}>
-              Clear All Points
-            </button>
-          </div>
-        </section>
-
-        <section>
-          <h3>Debug</h3>
-          <button disabled={!viewer} onclick={getCurrentPosition}>
-            Get Camera Position
-          </button>
-        </section>
-      {/if}
-
-      {#if !viewer}
-        <p class="status">Loading viewer...</p>
+          {/each}
+        </div>
       {/if}
     </div>
-  {/if}
-</div>
+  </div>
+</nav>
+
+{#if !isMobile}
+  <div bind:this={modeTabsEl} class="mode-tabs panel-card panel-scroll">
+    {#each tabs as tab}
+      <button
+        class="mode-tab"
+        class:active={tab.id === activeTab}
+        type="button"
+        onclick={() => (activeTab = tab.id)}
+      >
+        <NavIcon name={tab.icon} />
+        <span class="panel-label">{tab.short}</span>
+        <strong>{tab.label}</strong>
+      </button>
+    {/each}
+  </div>
+{/if}
+
+<section class="dock-shell" class:mobile={isMobile}>
+  <div bind:this={dockFrameEl} class="dock-frame panel-card" class:mobile={isMobile} class:collapsed={isCollapsed && !isMobile}>
+    {#if isMobile}
+      <button bind:this={accordionSummaryEl} class="mobile-accordion-head" type="button" onclick={toggleDock}>
+        <div class="mobile-accordion-copy">
+          <p class="panel-kicker">{activeTabMeta.short}</p>
+          <strong>{mobileAccordionTitle}</strong>
+          <span>{mobileAccordionDetail}</span>
+        </div>
+        <span class="mobile-accordion-toggle">
+          <NavIcon name={isCollapsed ? "chevron-up" : "chevron-down"} />
+        </span>
+      </button>
+    {/if}
+
+    {#if !isMobile}
+      <header class="drawer-header">
+        <div class="drawer-header-copy">
+          <p class="panel-kicker">{drawerEyebrow}</p>
+          <h2>{activeTabMeta.label}</h2>
+          <p class="panel-copy">{drawerDescription}</p>
+        </div>
+
+        <button class="panel-button panel-icon-button" type="button" onclick={() => (isCollapsed = !isCollapsed)}>
+          <NavIcon name={isCollapsed ? "chevron-up" : "chevron-down"} />
+        </button>
+      </header>
+    {/if}
+
+    <div class="drawer-body" class:hidden={isMobile && isCollapsed} class:desktop-hidden={isCollapsed && !isMobile}>
+      {#if isMobile}
+        <div class="mobile-tabs panel-scroll">
+          {#each tabs as tab}
+            <button
+              class="mobile-tab"
+              class:active={tab.id === activeTab}
+              type="button"
+              onclick={() => (activeTab = tab.id)}
+            >
+              <NavIcon name={tab.icon} />
+              <span>{tab.label}</span>
+            </button>
+          {/each}
+        </div>
+      {/if}
+
+      <div class="drawer-scroll panel-scroll">
+        {#if activeTab === "intel"}
+          <IntelSidebar {viewer} />
+        {:else if activeTab === "covid"}
+          <div class="panel-stack">
+            <PanelSection eyebrow="Dataset" title="COVID signal">
+              <button
+                class="panel-button"
+                class:panel-button-primary={showCovidData}
+                type="button"
+                onclick={toggleCovidData}
+              >
+                {showCovidData ? "Hide globe layer" : "Show globe layer"}
+              </button>
+            </PanelSection>
+
+            {#if selectedCountry}
+              <PanelSection eyebrow="Selected country" title={selectedCountry.country}>
+                <div class="country-card panel-card">
+                  <div class="country-head">
+                    <img src={selectedCountry.countryInfo.flag} alt="{selectedCountry.country} flag" class="country-flag" />
+                    <div>
+                      <p class="panel-kicker">{selectedCountry.countryInfo.iso3}</p>
+                      <p class="panel-copy">Country profile locked to the current globe selection.</p>
+                    </div>
+                  </div>
+
+                  <div class="metric-grid">
+                    <PanelMetric label="Cases" value={formatNumber(selectedCountry.cases)} />
+                    <PanelMetric label="Deaths" value={formatNumber(selectedCountry.deaths)} tone="critical" />
+                    <PanelMetric label="Recovered" value={formatNumber(selectedCountry.recovered)} tone="live" />
+                  </div>
+
+                  <button class="panel-button panel-button-primary" type="button" onclick={handleClearCountry}>
+                    Back to world view
+                  </button>
+                </div>
+              </PanelSection>
+            {:else}
+              <PanelSection
+                eyebrow="Search"
+                title="Country lookup"
+                description="Search a country or select a point directly on the globe."
+              >
+                <input
+                  class="panel-input"
+                  type="text"
+                  bind:value={searchQuery}
+                  placeholder="Search countries or ISO3"
+                />
+
+                {#if searchQuery && filteredCountries.length > 0}
+                  <div class="country-results panel-card-subtle">
+                    {#each filteredCountries as country}
+                      <button class="country-result" type="button" onclick={() => flyToCountry(country)}>
+                        <div class="country-result-main">
+                          <img src={country.countryInfo.flag} alt="{country.country} flag" class="result-flag" />
+                          <div>
+                            <span class="result-name">{country.country}</span>
+                            <span class="panel-kicker">{country.countryInfo.iso3}</span>
+                          </div>
+                        </div>
+                        <span class="result-value">{formatNumber(country.cases)}</span>
+                      </button>
+                    {/each}
+                  </div>
+                {:else if searchQuery}
+                  <div class="empty-state panel-card-subtle">No countries found.</div>
+                {/if}
+              </PanelSection>
+
+              <PanelSection eyebrow="Coverage" title="Dataset status">
+                <div class="metric-grid">
+                  <PanelMetric label="Countries" value={covidCountries.length} />
+                  <PanelMetric
+                    label="Layer"
+                    value={showCovidData ? "Visible" : "Hidden"}
+                    tone={showCovidData ? "live" : "default"}
+                  />
+                </div>
+              </PanelSection>
+            {/if}
+          </div>
+        {:else if activeTab === "satellites"}
+          <SatelliteTracker {viewer} />
+        {:else}
+          <div class="panel-stack">
+            <PanelSection eyebrow="Route presets" title="Fly to positions">
+              <div class="location-grid">
+                {#each locations as location}
+                  <button
+                    class="location-card panel-card-subtle"
+                    class:active={selectedLocation === location.name}
+                    disabled={isFlying || !viewer}
+                    type="button"
+                    onclick={() => flyToLocation(location.name)}
+                  >
+                    <span class="panel-label">Preset</span>
+                    <strong>{location.name}</strong>
+                  </button>
+                {/each}
+              </div>
+            </PanelSection>
+
+            <PanelSection eyebrow="Diagnostics" title="Camera tools">
+              <button class="panel-button panel-button-ghost" type="button" disabled={!viewer} onclick={getCurrentPosition}>
+                Get camera position
+              </button>
+            </PanelSection>
+          </div>
+        {/if}
+      </div>
+    </div>
+  </div>
+</section>
 
 <style>
-  .controls {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    z-index: 100;
-    background: rgba(0, 0, 0, 0.85);
-    color: white;
-    border-radius: 8px;
-    backdrop-filter: blur(10px);
-    max-height: calc(100vh - 2rem);
-    overflow: hidden;
-    transition: all 0.3s ease;
-  }
-
-  .controls.collapsed {
-    width: auto;
-    min-width: unset;
-  }
-
-  .controls:not(.collapsed) {
-    width: 300px;
-  }
-
-  .toggle-btn {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
-    cursor: pointer;
-    border-radius: 4px;
-    font-size: 1rem;
+  .top-nav {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    z-index: 130;
+    min-height: 62px;
+    padding: 0 var(--space-4);
     display: flex;
     align-items: center;
-    justify-content: center;
-    z-index: 10;
-  }
-
-  .toggle-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-  }
-
-  .controls-content {
-    padding: 1rem;
-    padding-top: 2.5rem;
-    overflow-y: auto;
-    max-height: calc(100vh - 2rem);
-  }
-
-  .header-row {
-    display: flex;
     justify-content: space-between;
+    gap: var(--space-4);
+    background: rgba(246, 240, 228, 0.94);
+    border: 1px solid var(--border-default);
+    box-shadow: var(--shadow-md);
+    pointer-events: auto;
+  }
+
+  .top-nav-brand,
+  .top-nav-actions {
+    display: flex;
     align-items: center;
-    margin-bottom: 0.75rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    padding-bottom: 0.5rem;
+    gap: var(--space-3);
   }
 
-  h2 {
-    margin: 0;
-    font-size: 1.1rem;
+  .top-nav-brand {
+    min-width: 0;
   }
 
-  /* Style Picker Dropdown */
+  .top-nav-wordmark {
+    color: var(--text-primary);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+  }
+
+  .top-nav-meta {
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
   .style-picker-container {
     position: relative;
   }
 
-  .style-toggle-btn {
-    display: flex;
+  .theme-trigger {
+    display: inline-flex;
     align-items: center;
-    gap: 0.25rem;
-    padding: 0.4rem 0.6rem;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 6px;
+    gap: var(--space-2);
+    min-height: 38px;
+    padding: 0 12px;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    background: var(--bg-panel-0);
+    color: var(--text-secondary);
+    font: inherit;
     cursor: pointer;
-    transition: all 0.2s;
   }
 
-  .style-toggle-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.3);
-  }
-
-  .current-style-icon {
-    font-size: 1.2rem;
-  }
-
-  .dropdown-arrow {
-    font-size: 0.7rem;
-    color: rgba(255, 255, 255, 0.6);
+  .theme-trigger:hover {
+    background: var(--bg-panel-2);
+    border-color: var(--border-strong);
   }
 
   .style-dropdown {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 8px);
     right: 0;
-    margin-top: 0.5rem;
-    background: rgba(20, 20, 25, 0.98);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 8px;
-    padding: 0.5rem;
-    min-width: 150px;
-    z-index: 1000;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    min-width: 220px;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 10;
   }
 
   .style-option {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    justify-content: space-between;
+    gap: var(--space-2);
     width: 100%;
-    padding: 0.5rem;
-    background: transparent;
+    min-height: 38px;
+    padding: 0 10px;
     border: none;
-    border-radius: 4px;
-    color: white;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--text-secondary);
     cursor: pointer;
     text-align: left;
-    font-size: 0.9rem;
-    transition: all 0.15s;
+    font: inherit;
   }
 
-  .style-option:hover {
-    background: rgba(255, 255, 255, 0.1);
-  }
-
+  .style-option:hover,
   .style-option.active {
-    background: rgba(59, 130, 246, 0.3);
+    background: var(--bg-panel-2);
+    color: var(--text-primary);
   }
 
-  .style-label {
-    font-size: 0.85rem;
+  .style-check {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--accent-primary);
   }
 
-  .tabs {
+  .mode-tabs {
+    position: fixed;
+    top: 94px;
+    left: 16px;
+    right: 16px;
+    z-index: 120;
+    min-height: 62px;
+    padding: 8px;
     display: flex;
-    gap: 0.5rem;
-    margin-bottom: 0.75rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    padding-bottom: 0.5rem;
+    gap: var(--space-2);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    pointer-events: auto;
   }
 
-  .tab-btn {
-    flex: 1;
-    padding: 0.5rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.7);
-    cursor: pointer;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    transition: all 0.2s;
+  .mode-tabs::-webkit-scrollbar {
+    display: none;
   }
 
-  .tab-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-  }
-
-  .tab-btn.active {
-    background: rgba(59, 130, 246, 0.3);
-    border-color: rgba(59, 130, 246, 0.5);
-    color: white;
-  }
-
-  h3 {
-    margin: 0 0 0.75rem 0;
-    font-size: 0.875rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: rgba(255, 255, 255, 0.7);
-  }
-
-  section {
-    margin-bottom: 1.5rem;
-  }
-
-  .button-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  button {
-    padding: 0.5rem 1rem;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: all 0.2s;
-    font-size: 0.875rem;
-  }
-
-  button:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.4);
-  }
-
-  button:active:not(:disabled) {
-    background: rgba(255, 255, 255, 0.3);
-  }
-
-  button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  button.location-btn.active {
-    background: rgba(59, 130, 246, 0.5);
-    border-color: rgba(59, 130, 246, 0.7);
-  }
-
-  .status {
-    font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.6);
-    font-style: italic;
-    text-align: center;
-    margin-top: 1rem;
-  }
-
-  /* COVID Styles */
-  .selected-country {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    padding: 1rem;
-  }
-
-  .country-header {
+  .mode-tab {
+    flex: 0 0 auto;
+    min-width: 116px;
+    min-height: 44px;
+    padding: 0 14px;
+    border-radius: var(--radius-lg);
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-secondary);
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    gap: var(--space-2);
+    cursor: pointer;
+    scroll-snap-align: start;
+    font: inherit;
   }
 
-  .country-flag {
+  .mode-tab:hover {
+    background: var(--bg-panel-1);
+    border-color: var(--border-default);
+  }
+
+  .mode-tab.active {
+    background: var(--bg-panel-2);
+    border-color: var(--border-accent);
+    color: var(--text-primary);
+  }
+
+  .mode-tab strong {
+    font-size: var(--text-md);
+    font-weight: 600;
+  }
+
+  .dock-shell {
+    position: fixed;
+    top: 168px;
+    right: 16px;
+    bottom: 16px;
+    z-index: 120;
+    display: flex;
+    justify-content: flex-end;
+    pointer-events: none;
+  }
+
+  .dock-frame {
+    width: min(420px, calc(100vw - 32px));
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    pointer-events: auto;
+  }
+
+  .dock-frame.collapsed {
+    width: 74px;
+  }
+
+  .drawer-header {
+    flex: 0 0 auto;
+    min-height: 116px;
+    padding: 18px;
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .drawer-header-copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .drawer-header-copy h2 {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: var(--text-xl);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+  }
+
+  .drawer-body {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    flex-direction: column;
+  }
+
+  .drawer-body.hidden,
+  .drawer-body.desktop-hidden {
+    display: none;
+  }
+
+  .drawer-scroll {
+    flex: 1;
+    min-height: 0;
+    padding: 18px;
+    overflow-y: auto;
+  }
+
+  .mobile-tabs {
+    display: none;
+  }
+
+  .country-card,
+  .country-results,
+  .location-card {
+    padding: var(--space-4);
+  }
+
+  .country-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .country-head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .country-flag,
+  .result-flag {
     width: 36px;
     height: 24px;
+    border-radius: var(--radius-sm);
     object-fit: cover;
-    border-radius: 3px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-subtle);
   }
 
-  .country-name {
-    font-size: 1.1rem;
-    font-weight: 600;
+  .metric-grid,
+  .location-grid {
+    display: grid;
+    gap: var(--space-3);
   }
 
-  .country-stats {
+  .metric-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .location-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .country-results {
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
-    margin-bottom: 1rem;
-  }
-
-  .stat-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.9rem;
-  }
-
-  .stat-label {
-    color: rgba(255, 255, 255, 0.6);
-  }
-
-  .stat-value {
-    font-weight: 600;
-  }
-
-  .stat-value.cases {
-    color: #3b82f6;
-  }
-
-  .stat-value.deaths {
-    color: #ef4444;
-  }
-
-  .stat-value.recovered {
-    color: #10b981;
-  }
-
-  .clear-btn {
-    width: 100%;
-    background: rgba(59, 130, 246, 0.2);
-    border-color: rgba(59, 130, 246, 0.4);
-  }
-
-  .clear-btn:hover {
-    background: rgba(59, 130, 246, 0.3);
-  }
-
-  .search-section {
-    margin-bottom: 1rem;
-  }
-
-  .hint {
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.5);
-    margin: 0 0 0.75rem 0;
-    font-style: italic;
-  }
-
-  .search-input {
-    width: 100%;
-    padding: 0.6rem;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 6px;
-    color: white;
-    font-size: 0.9rem;
-    box-sizing: border-box;
-  }
-
-  .search-input::placeholder {
-    color: rgba(255, 255, 255, 0.4);
-  }
-
-  .search-input:focus {
-    outline: none;
-    border-color: rgba(59, 130, 246, 0.5);
-  }
-
-  .search-results {
-    margin-top: 0.5rem;
-    max-height: 200px;
-    overflow-y: auto;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 6px;
-    background: rgba(0, 0, 0, 0.3);
+    gap: 1px;
   }
 
   .country-result {
+    min-height: 56px;
+    padding: 0 12px;
+    border: none;
+    background: transparent;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem;
-    background: transparent;
-    border: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    color: white;
+    justify-content: space-between;
+    gap: var(--space-3);
+    color: var(--text-secondary);
     cursor: pointer;
     text-align: left;
-    width: 100%;
-    font-size: 0.85rem;
-  }
-
-  .country-result:last-child {
-    border-bottom: none;
+    font: inherit;
   }
 
   .country-result:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(22, 21, 20, 0.04);
   }
 
-  .result-flag {
-    width: 24px;
-    height: 16px;
-    object-fit: cover;
-    border-radius: 2px;
-    flex-shrink: 0;
+  .country-result-main {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
   }
 
-  .result-name {
-    flex: 1;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  .result-name,
+  .location-card strong {
+    color: var(--text-primary);
+    font-size: var(--text-md);
+    font-weight: 600;
   }
 
-  .result-cases {
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 0.75rem;
+  .result-value {
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
   }
 
-  .no-results {
-    padding: 1rem;
-    text-align: center;
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 0.85rem;
+  .empty-state {
+    padding: var(--space-4);
+    color: var(--text-muted);
   }
 
-  .stats-summary {
-    padding-top: 0.75rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  .location-card {
+    min-height: 92px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-2);
+    cursor: pointer;
+    text-align: left;
+    font: inherit;
   }
 
-  .summary-text {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.7);
-    margin: 0 0 0.5rem 0;
+  .location-card.active {
+    background: var(--bg-panel-2);
+    border-color: var(--border-strong);
+  }
+
+  @media (max-width: 980px) {
+    .dock-frame {
+      width: min(380px, calc(100vw - 32px));
+    }
+
+    .location-grid,
+    .metric-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .top-nav {
+      min-height: 56px;
+      padding-inline: 12px;
+    }
+
+    .top-nav-meta {
+      display: none;
+    }
+
+    .theme-trigger span:last-child {
+      display: none;
+    }
+
+    .dock-shell {
+      top: auto;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+    }
+
+    .dock-frame {
+      width: 100%;
+      height: auto;
+      max-height: min(78vh, 640px);
+      border-radius: var(--radius-xl);
+    }
+
+    .mobile-accordion-head {
+      width: 100%;
+      min-height: 76px;
+      padding: 14px 16px;
+      border: none;
+      background: transparent;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+      text-align: left;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .mobile-accordion-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+    }
+
+    .mobile-accordion-copy strong {
+      font-size: var(--text-lg);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .mobile-accordion-copy span {
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+      line-height: 1.4;
+    }
+
+    .mobile-accordion-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      border: 1px solid var(--border-default);
+      background: var(--bg-panel-1);
+      color: var(--text-secondary);
+      flex: 0 0 auto;
+    }
+
+    .drawer-body {
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .mobile-tabs {
+      display: flex;
+      gap: var(--space-2);
+      padding: 12px 16px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      border-bottom: 1px solid var(--border-subtle);
+      scrollbar-width: none;
+    }
+
+    .mobile-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .mobile-tab {
+      flex: 0 0 auto;
+      min-height: 38px;
+      padding: 0 12px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-default);
+      background: var(--bg-panel-1);
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      cursor: pointer;
+      scroll-snap-align: start;
+      font: inherit;
+    }
+
+    .mobile-tab.active {
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+      color: var(--text-on-dark);
+    }
+
+    .drawer-scroll {
+      padding: 16px;
+      max-height: min(58vh, 520px);
+    }
   }
 </style>

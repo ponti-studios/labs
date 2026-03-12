@@ -13,8 +13,6 @@
   let canvasRef: HTMLCanvasElement;
   let chart: Chart | null = null;
 
-  // Simulated vaccination data based on total cases/recovered trends
-  // In a real app, this would come from a vaccination API
   function generateVaccinationEstimate(records: CovidTimeSeriesRecord[]): {
     dates: string[];
     partially: number[];
@@ -24,34 +22,27 @@
     const startDate = new Date(records[0].date);
     const endDate = new Date(records[records.length - 1].date);
     const daysDiff = Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-    
-    // Start vaccinations ~6 months after first cases
     const vaccinationStart = Math.min(180, Math.floor(daysDiff * 0.2));
     const dates: string[] = [];
     const partially: number[] = [];
     const fully: number[] = [];
     const boosters: number[] = [];
-    
-    const maxRate = 75; // Max vaccination rate %
+    const maxRate = 75;
     
     for (let i = vaccinationStart; i < records.length; i++) {
       const progress = (i - vaccinationStart) / (records.length - vaccinationStart);
-      const curve = 1 - Math.exp(-progress * 4); // Exponential approach to max
-      
+      const curve = 1 - Math.exp(-progress * 4);
       dates.push(records[i].date);
-      partially.push(Math.min(maxRate * 1.1, curve * maxRate * 1.1)); // 10% more get first dose
-      fully.push(Math.min(maxRate, curve * maxRate * 0.9)); // 90% complete primary
+      partially.push(Math.min(maxRate * 1.1, curve * maxRate * 1.1));
+      fully.push(Math.min(maxRate, curve * maxRate * 0.9));
       boosters.push(progress > 0.5 ? Math.min(maxRate * 0.6, (progress - 0.5) * 2 * maxRate * 0.6) : 0);
     }
-    
     return { dates, partially, fully, boosters };
   }
 
   onMount(() => {
     if (!canvasRef || data.length === 0) return;
-
     const { dates, partially, fully, boosters } = generateVaccinationEstimate(data);
-
     const labels = dates.map(d => {
       const date = new Date(d);
       return `${date.getMonth() + 1}/${date.getDate()}`;
@@ -68,8 +59,8 @@
           {
             label: 'Boosters',
             data: boosters,
-            borderColor: '#f59e0b',
-            backgroundColor: 'rgba(245, 158, 11, 0.3)',
+            borderColor: '#b3bac2',
+            backgroundColor: 'rgba(179, 186, 194, 0.2)',
             fill: true,
             tension: 0.4,
             pointRadius: 0,
@@ -78,8 +69,8 @@
           {
             label: 'Fully Vaccinated',
             data: fully,
-            borderColor: '#10b981',
-            backgroundColor: 'rgba(16, 185, 129, 0.3)',
+            borderColor: '#e7eaee',
+            backgroundColor: 'rgba(231, 234, 238, 0.25)',
             fill: true,
             tension: 0.4,
             pointRadius: 0,
@@ -88,8 +79,8 @@
           {
             label: 'Partially Vaccinated',
             data: partially,
-            borderColor: '#3b82f6',
-            backgroundColor: 'rgba(59, 130, 246, 0.3)',
+            borderColor: '#7a828a',
+            backgroundColor: 'rgba(122, 130, 138, 0.2)',
             fill: true,
             tension: 0.4,
             pointRadius: 0,
@@ -100,55 +91,35 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        interaction: {
-          intersect: false,
-          mode: 'index',
-        },
+        interaction: { intersect: false, mode: 'index' },
         plugins: {
           legend: {
             display: true,
             position: 'bottom',
-            labels: {
-              color: 'rgba(255, 255, 255, 0.7)',
-              font: { size: 9 },
-              boxWidth: 10,
-              padding: 10,
-            },
+            labels: { color: '#7a828a', font: { size: 10, family: 'Geist' }, boxWidth: 8, padding: 15 },
           },
           tooltip: {
-            backgroundColor: 'rgba(0, 0, 0, 0.9)',
-            titleColor: 'white',
-            bodyColor: 'white',
-            borderColor: 'rgba(255, 255, 255, 0.1)',
+            backgroundColor: 'rgba(15, 17, 19, 0.95)',
+            titleColor: '#e7eaee',
+            bodyColor: '#b3bac2',
+            borderColor: 'rgba(255, 255, 255, 0.08)',
             borderWidth: 1,
+            padding: 12,
+            cornerRadius: 8,
             callbacks: {
-              label: (context) => {
-                return `${context.dataset.label}: ${(context.raw as number).toFixed(1)}%`;
-              },
+              label: (context) => [`${context.dataset.label}: ${(context.raw as number).toFixed(1)}%`],
             },
           },
         },
         scales: {
           x: {
-            grid: {
-              color: 'rgba(255, 255, 255, 0.05)',
-            },
-            ticks: {
-              color: 'rgba(255, 255, 255, 0.5)',
-              font: { size: 9 },
-              maxTicksLimit: 8,
-            },
+            grid: { color: 'rgba(255, 255, 255, 0.04)' },
+            ticks: { color: '#7a828a', font: { size: 10, family: 'Geist' }, maxTicksLimit: 6 },
           },
           y: {
             max: 100,
-            grid: {
-              color: 'rgba(255, 255, 255, 0.05)',
-            },
-            ticks: {
-              color: 'rgba(255, 255, 255, 0.5)',
-              font: { size: 9 },
-              callback: (value) => `${value}%`,
-            },
+            grid: { color: 'rgba(255, 255, 255, 0.04)' },
+            ticks: { color: '#7a828a', font: { size: 10, family: 'Geist' }, callback: (value) => `${value}%` },
           },
         },
       },
@@ -156,15 +127,15 @@
   });
 
   onDestroy(() => {
-    if (chart) {
-      chart.destroy();
-      chart = null;
-    }
+    if (chart) { chart.destroy(); chart = null; }
   });
 </script>
 
 <div class="chart-container">
-  <h4 class="chart-title">{title} <span class="estimate-label">(estimated)</span></h4>
+  <div class="chart-header">
+    <h4 class="chart-title">{title}</h4>
+    <span class="estimate-label">estimated</span>
+  </div>
   <div class="canvas-wrapper">
     <canvas bind:this={canvasRef}></canvas>
   </div>
@@ -172,32 +143,42 @@
 
 <style>
   .chart-container {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    padding: 0.75rem;
-    margin-bottom: 0.75rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .chart-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
   }
 
   .chart-title {
-    margin: 0 0 0.5rem 0;
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.8);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #b3bac2;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
   }
 
   .estimate-label {
-    font-size: 0.7rem;
-    font-weight: 400;
-    color: rgba(255, 255, 255, 0.4);
-    font-style: italic;
+    font-size: 10px;
+    color: #7a828a;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 2px 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
   }
 
   .canvas-wrapper {
-    height: 160px;
+    height: 180px;
     position: relative;
   }
 

@@ -11,13 +11,7 @@
     limit?: number;
   }
 
-  let { 
-    countries, 
-    metric, 
-    title, 
-    color = '#3b82f6',
-    limit = 15 
-  }: Props = $props();
+  let { countries, metric, title, color = '#e7eaee', limit = 15 }: Props = $props();
 
   let canvasRef: HTMLCanvasElement;
   let chart: Chart | null = null;
@@ -41,7 +35,6 @@
   onMount(() => {
     if (!canvasRef || countries.length === 0) return;
 
-    // Sort and get top countries
     const sorted = [...countries]
       .sort((a, b) => getMetricValue(b) - getMetricValue(a))
       .slice(0, limit);
@@ -59,12 +52,12 @@
         datasets: [{
           label: title,
           data: values,
-          backgroundColor: color + 'cc',
+          backgroundColor: color + '80',
           borderColor: color,
           borderWidth: 1,
           borderRadius: 3,
           barThickness: 'flex',
-          maxBarThickness: 20,
+          maxBarThickness: 16,
         }],
       },
       options: {
@@ -72,41 +65,28 @@
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: {
-            display: false,
-          },
+          legend: { display: false },
           tooltip: {
-            backgroundColor: 'rgba(0, 0, 0, 0.9)',
-            titleColor: 'white',
-            bodyColor: 'white',
-            borderColor: 'rgba(255, 255, 255, 0.1)',
+            backgroundColor: 'rgba(15, 17, 19, 0.95)',
+            titleColor: '#e7eaee',
+            bodyColor: '#b3bac2',
+            borderColor: 'rgba(255, 255, 255, 0.08)',
             borderWidth: 1,
+            padding: 12,
+            cornerRadius: 8,
             callbacks: {
-              label: (context) => {
-                return `${formatValue(context.raw as number)} ${metric.includes('Per') ? 'per million' : ''}`;
-              },
+              label: (context) => `${formatValue(context.raw as number)} ${metric.includes('Per') ? 'per million' : ''}`,
             },
           },
         },
         scales: {
           x: {
-            grid: {
-              color: 'rgba(255, 255, 255, 0.05)',
-            },
-            ticks: {
-              color: 'rgba(255, 255, 255, 0.5)',
-              font: { size: 9 },
-              callback: (value) => formatValue(value as number),
-            },
+            grid: { color: 'rgba(255, 255, 255, 0.04)' },
+            ticks: { color: '#7a828a', font: { size: 10, family: 'Geist' }, callback: (value) => formatValue(value as number) },
           },
           y: {
-            grid: {
-              display: false,
-            },
-            ticks: {
-              color: 'rgba(255, 255, 255, 0.7)',
-              font: { size: 10 },
-            },
+            grid: { display: false },
+            ticks: { color: '#b3bac2', font: { size: 11, family: 'Geist' } },
           },
         },
       },
@@ -114,10 +94,7 @@
   });
 
   onDestroy(() => {
-    if (chart) {
-      chart.destroy();
-      chart = null;
-    }
+    if (chart) { chart.destroy(); chart = null; }
   });
 </script>
 
@@ -130,22 +107,24 @@
 
 <style>
   .chart-container {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    padding: 0.75rem;
-    margin-bottom: 0.75rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 16px;
   }
 
   .chart-title {
-    margin: 0 0 0.5rem 0;
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.8);
+    margin: 0 0 12px 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #b3bac2;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
   }
 
   .canvas-wrapper {
-    height: 280px;
+    height: 300px;
     position: relative;
   }
 
