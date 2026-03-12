@@ -2,7 +2,7 @@
 
 - [x] 1.1 Clone the repository and install Node dependencies (`npm install` or `pnpm install`).
 - [x] 1.2 Read `README.md`, browse `src/` and `db/` to understand current structure.
-- [x] 1.3 Run `npm run lint`, `npm run build`, and `npm run dev` to observe any errors. (lint was originally ESLint and failed; switched to `oxlint` per company policy; build succeeded with CSS warnings)
+- [x] 1.3 Run `npm run lint`, `npm run build`, and `npm run dev` to observe any errors. (lint uses oxlint per company policy; build succeeded with CSS warnings)
 
 ## 2. Database initialization and cleanup
 

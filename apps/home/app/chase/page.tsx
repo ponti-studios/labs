@@ -43,14 +43,20 @@ export default function Home() {
 					<div className="flex justify-between px-5 py-2 text-sm font-medium">
 						<div>{currentTime}</div>
 						<div className="flex items-center space-x-2">
-							<span><Wifi size={12} /></span>
-							<span><Battery size={12} /></span>
+							<span>
+								<Wifi size={12} />
+							</span>
+							<span>
+								<Battery size={12} />
+							</span>
 						</div>
 					</div>
 
 					<div className="content-area h-full overflow-y-auto px-6 pt-20 pb-16">
 						<div className="flex items-center mb-6">
-							<div className="profile-dot mr-3"><Hand size={20} /></div>
+							<div className="profile-dot mr-3">
+								<Hand size={20} />
+							</div>
 							<span className="text-primary font-normal">chase ponti</span>
 						</div>
 						<span className="inline-flex items-center">

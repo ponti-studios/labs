@@ -114,8 +114,8 @@ packages/config/
 ├── tailwind/
 │   ├── base.ts
 │   └── shadcn.ts
-├── eslint/
-│   └── index.js
+├── lint/
+│   └── index.js  # shared oxlint/biome rules
 └── package.json (shared peer deps)
 ```
 
@@ -254,7 +254,7 @@ apps/dumphim/tsconfig.json (extend instead)
 ```
 packages/
 ├── utils/              # cn(), invariant(), formatting
-├── config/             # tsconfig, tailwind, eslint
+├── config/             # tsconfig, tailwind, linting
 ├── db/                 # Drizzle schemas + connection
 ├── ui/                 # Shared UI components (existing)
 └── data/               # React Query patterns

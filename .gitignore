@@ -13,7 +13,7 @@ apps/**/*.d.ts.map
 !apps/**/*.config.js
 !apps/**/postcss.config.js
 !apps/**/tailwind.config.js
-!apps/**/eslint.config.js
+
 !apps/**/lint-staged.config.js
 # And keep drizzle generated files
 !apps/**/drizzle/*.js

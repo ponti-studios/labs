@@ -53,7 +53,7 @@ export interface Satellite {
 }
 
 // Cesium Viewer - persists across route changes
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: persisted Cesium viewer is typed any
 export const cesiumViewer = signal<any>(null);
 
 // Active Tab
