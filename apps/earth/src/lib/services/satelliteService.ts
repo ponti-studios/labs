@@ -54,11 +54,11 @@ export function calculateSmoothOrbitPath(
   samples: number = 120, // 120 points = 2 minutes between points for 4-hour orbit
 ): Cesium.Cartesian3[] {
   const positions: Cesium.Cartesian3[] = [];
-  
+
   // Use satellite's orbital period or default to 90 minutes (typical LEO)
   const periodMinutes = satellite.orbitalPeriod || 90;
   const periodSeconds = periodMinutes * 60;
-  
+
   // Calculate orbital elements from current position
   const inclinationRad = Cesium.Math.toRadians(satellite.inclination || 51.6);
   // Generate positions for one complete orbit
@@ -66,32 +66,32 @@ export function calculateSmoothOrbitPath(
     // Time offset from now (0 to period)
     const timeOffsetSeconds = (i / samples) * periodSeconds;
     const fraction = i / samples;
-    
+
     // Calculate mean anomaly (position in orbit)
     const meanAnomaly = fraction * 2 * Math.PI;
-    
+
     // Approximate orbital motion using spherical trigonometry
     // This creates a smoother, more realistic orbit than simple linear interpolation
-    
+
     // Calculate change in longitude based on orbital period
     // Earth rotates ~15 degrees per hour, satellite orbits ~360 degrees per period
     const earthRotationOffset = (timeOffsetSeconds / 3600) * 15; // degrees
     const orbitalProgress = fraction * 360; // degrees
-    
+
     // New longitude accounting for both satellite motion and Earth rotation
     let newLongitude = satellite.longitude + orbitalProgress - earthRotationOffset;
     newLongitude = ((newLongitude + 180) % 360) - 180; // Normalize to -180 to 180
-    
+
     // Calculate latitude variation based on inclination
     // Satellite oscillates between +inclination and -inclination
     const latitudeVariation = Math.sin(meanAnomaly) * Cesium.Math.toDegrees(inclinationRad);
     let newLatitude = latitudeVariation;
-    
+
     // Add some altitude variation (elliptical orbit approximation)
     // Most satellites have nearly circular orbits, small variation
     const altitudeVariation = Math.cos(meanAnomaly * 2) * 5000; // ±5km variation
     const newAltitude = satellite.altitude + altitudeVariation;
-    
+
     positions.push(Cesium.Cartesian3.fromDegrees(newLongitude, newLatitude, newAltitude));
   }
 
@@ -104,28 +104,28 @@ export function calculateSmoothOrbitPath(
  */
 export function calculatePositionAtTime(
   satellite: Satellite,
-  timeOffsetSeconds: number
+  timeOffsetSeconds: number,
 ): { longitude: number; latitude: number; altitude: number } {
   const periodMinutes = satellite.orbitalPeriod || 90;
   const periodSeconds = periodMinutes * 60;
   const inclinationRad = Cesium.Math.toRadians(satellite.inclination || 51.6);
-  
+
   // Normalize time to orbit period
   const normalizedTime = (timeOffsetSeconds % periodSeconds) / periodSeconds;
   const meanAnomaly = normalizedTime * 2 * Math.PI;
-  
+
   // Earth rotation offset
   const earthRotationOffset = (timeOffsetSeconds / 3600) * 15;
   const orbitalProgress = normalizedTime * 360;
-  
+
   // Calculate new position
   let longitude = satellite.longitude + orbitalProgress - earthRotationOffset;
   longitude = ((longitude + 180) % 360) - 180;
-  
+
   const latitude = Math.sin(meanAnomaly) * Cesium.Math.toDegrees(inclinationRad);
   const altitudeVariation = Math.cos(meanAnomaly * 2) * 5000;
   const altitude = satellite.altitude + altitudeVariation;
-  
+
   return { longitude, latitude, altitude };
 }
 
@@ -141,7 +141,7 @@ export async function fetchAllSatellites(): Promise<Satellite[]> {
 
   // Add other satellites with calculated positions based on orbital mechanics
   const now = new Date();
-  
+
   // Tiangong - offset from ISS by ~30 minutes in orbit
   const tiangongOffset = 30 * 60; // 30 minutes in seconds
   const tiangongPos = calculatePositionAtTime(
@@ -157,9 +157,9 @@ export async function fetchAllSatellites(): Promise<Satellite[]> {
       orbitalPeriod: 91.5,
       inclination: 41.5,
     },
-    tiangongOffset
+    tiangongOffset,
   );
-  
+
   satellites.push({
     id: "tiangong",
     name: "Tiangong Space Station",
@@ -188,9 +188,9 @@ export async function fetchAllSatellites(): Promise<Satellite[]> {
       orbitalPeriod: 96.5,
       inclination: 28.5,
     },
-    hubbleOffset
+    hubbleOffset,
   );
-  
+
   satellites.push({
     id: "hubble",
     name: "Hubble Space Telescope",
