@@ -1,0 +1,112 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #f6f0e4;
+  --foreground: #161514;
+  --card: #f6f0e4;
+  --card-foreground: #161514;
+  --popover: #fbf7ef;
+  --popover-foreground: #161514;
+  --primary: #1f1d1b;
+  --primary-foreground: #f6f0e4;
+  --secondary: #efe7d8;
+  --secondary-foreground: #161514;
+  --muted: #efe7d8;
+  --muted-foreground: #43403c;
+  --accent: #efe7d8;
+  --accent-foreground: #161514;
+  --destructive: #985252;
+  --destructive-foreground: #f6f0e4;
+  --border: rgba(22,21,20,0.14);
+  --input: rgba(22,21,20,0.14);
+  --ring: #1f1d1b;
+  --radius: 8px;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Geist", ui-sans-serif, system-ui, sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Geist Mono", ui-monospace, monospace;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+}
+
+html,
+body {
+  min-height: 100dvh;
+}
+
+@layer utilities {
+  .panel {
+    background: #f6f0e4;
+    border: 1px solid rgba(22,21,20,0.14);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(22,21,20,0.08);
+  }
+
+  .section {
+    background: #efe7d8;
+    border: 1px solid rgba(22,21,20,0.08);
+    border-radius: 8px;
+  }
+
+  .animated-underline {
+    background-image:
+      linear-gradient(rgba(22,21,20,0.08), rgba(22,21,20,0.08)),
+      linear-gradient(to right, #43403c, #1f1d1b);
+    background-size:
+      100% 2px,
+      0 2px;
+    background-position:
+      100% 100%,
+      0 100%;
+    background-repeat: no-repeat;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .animated-underline {
+      transition: 0.3s ease;
+      transition-property: background-size, color, background-color, border-color;
+    }
+  }
+
+  .animated-underline:hover,
+  .animated-underline:focus-visible {
+    background-size:
+      0 2px,
+      100% 2px;
+  }
+
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}

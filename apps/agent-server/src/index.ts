@@ -18,7 +18,7 @@ app.use(
 app.route("/chat", chatRoute);
 app.get("/health", (c) => c.json({ status: "ok", model: "claude-sonnet-4-6" }));
 
-const port = Number(process.env.PORT ?? 4000);
+const port = Number(process.env.PORT ?? 3004);
 console.log(`Polly agent server running on http://localhost:${port}`);
 
 export default { port, fetch: app.fetch };

@@ -1,0 +1,134 @@
+/* 
+ * Chase App Styles
+ * Base styling and iPhone frame simulation
+ */
+
+/* Base styles */
+:root {
+  font-family: Geist, ui-sans-serif, system-ui, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: light;
+  color: #161514;
+  background-color: #ebe6dc;
+  font-synthesis: none;
+  text-rendering: optimizelegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Typography */
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+a {
+  font-weight: 500;
+  color: #1f1d1b;
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: #43403c;
+}
+
+/* Components */
+.card {
+  padding: 2em;
+}
+
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+.profile-dot {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #1f1d1b;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #f6f0e4;
+}
+
+/* Logo styles */
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #43403caa);
+}
+
+.logo.vanilla:hover {
+  filter: drop-shadow(0 0 2em #43403caa);
+}
+
+/* iPhone frame simulation */
+.iphone-frame {
+  background-color: #161514;
+  border-radius: 40px;
+  box-shadow: 0 0 0 6px #1f1d1b, 0 15px 25px rgb(22 21 20 / 20%);
+  position: relative;
+  padding: 12px;
+  max-width: 375px;
+}
+
+.iphone-notch {
+  position: absolute;
+  width: 150px;
+  height: 30px;
+  background-color: #161514;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  border-bottom-left-radius: 18px;
+  border-bottom-right-radius: 18px;
+  z-index: 100;
+}
+
+.iphone-screen {
+  background-color: #f6f0e4;
+  border-radius: 32px;
+  overflow: hidden;
+  height: 700px;
+  position: relative;
+}
+
+.iphone-home-indicator {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 5px;
+  background-color: #43403c;
+  border-radius: 3px;
+  z-index: 50;
+}
+
+/* Scrollbar customization */
+.content-area::-webkit-scrollbar {
+  width: 3px;
+}
+
+.content-area::-webkit-scrollbar-track {
+  background: rgb(22 21 20 / 5%);
+}
+
+.content-area::-webkit-scrollbar-thumb {
+  background: rgb(22 21 20 / 20%);
+  border-radius: 3px;
+}
+
+/* Light mode - default */
+:root {
+  color: #161514;
+  background-color: #ebe6dc;
+}

@@ -49,7 +49,8 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar }: SidebarProps) 
                   className={cn(
                     "flex px-3 py-2 rounded-md text-sm transition-all duration-160 text-text-secondary hover:bg-bg-panel-2 hover:text-text-primary",
                     {
-                      "bg-bg-panel-2 text-text-primary border border-border-accent font-medium": isActiveRoute(route.path),
+                      "bg-bg-panel-2 text-text-primary border border-border-accent font-medium":
+                        isActiveRoute(route.path),
                     },
                   )}
                 >

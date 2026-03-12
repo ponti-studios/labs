@@ -1,0 +1,41 @@
+{
+	"Hero": {
+		"title": "Ponti\nStudios.",
+		"description": "We are a studio that builds, integrates, and designs AI for small, medium, and large businesses."
+	},
+	"Navigation": {
+		"contact": "GET IN TOUCH",
+		"home": "PONTI STUDIOS"
+	},
+	"Services": {
+		"title": "Capabilities",
+		"items": {
+			"strategy": {
+				"title": "AI Strategy & Design",
+				"description": "Mapping the future of your business with intelligent systems."
+			},
+			"llm": {
+				"title": "LLM Integration",
+				"description": "Customizing and deploying large language models for production."
+			},
+			"agentic": {
+				"title": "Agentic Workflows",
+				"description": "Automating complex processes with autonomous AI agents."
+			},
+			"data": {
+				"title": "Data Architecture",
+				"description": "The foundation for high-performance AI applications."
+			}
+		}
+	},
+	"About": {
+		"title": "About",
+		"p1": "Ponti Studios is a technical studio that builds, integrates, and designs AI for small, medium, and large businesses. We transform operational complexity into intelligent autonomy.",
+		"p2": "We exist to bring clarity to the chaos of product development. In a world obsessed with 'more,' we advocate for 'better.' Better performance, better aesthetics, and better intent.",
+		"p3": "We don't just write code; we craft digital artifacts that stand the test of time.",
+		"cta": "Initialize Partnership"
+	},
+	"Footer": {
+		"rights": "© {year} Ponti Studios. All rights reserved."
+	}
+}
