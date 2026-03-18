@@ -11,13 +11,13 @@ import type { Route } from "./+types/profile";
 import { COLOR_THEMES } from "~/components/voter/card-theme-picker";
 import { PersonCardDisplay } from "~/components/voter/person-card-display";
 import { PERSONALITY_TYPES } from "~/components/voter/personality-type-picker";
-import { getCurrentUser } from "~/lib/api/auth";
+import { getCurrentUser } from "~/lib/auth-server";
 import { getTrackersByUser } from "~/lib/server/queries";
 
 export async function loader({ request }: Route.LoaderArgs) {
   // Get authenticated user (or null if not logged in)
   const user = await getCurrentUser(request);
-  const userId = user?.userId ?? "demo-user-id"; // Fallback for demo
+  const userId = user?.id ?? "demo-user-id"; // Fallback for demo
 
   const trackers = await getTrackersByUser(userId);
   return { trackers };

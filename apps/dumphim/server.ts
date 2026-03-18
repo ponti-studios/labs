@@ -2,14 +2,14 @@
  * Hono Server with React Router Integration
  * 
  * Handles API routes via Hono and proxies all other requests to React Router
+ * Uses Better-Auth via Hominem auth server at localhost:4040
  */
 
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
-import { createReadableStreamFromReadable } from "@react-router/node";
-import type { ServerBuild, AppLoadContext } from "react-router";
+import type { ServerBuild } from "react-router";
 import { httpSuccess } from "./app/lib/api/response";
-import { getCurrentUser } from "./app/lib/api/auth";
+import { getCurrentUser } from "./app/lib/auth-server";
 import { createTracker } from "./app/lib/server/mutations";
 import type { TrackerInsert } from "@pontistudios/db/schema";
 import { invalidateTrackerCache } from "./app/lib/server/cache";
