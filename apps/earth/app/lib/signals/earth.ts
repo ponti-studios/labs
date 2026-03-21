@@ -65,7 +65,6 @@ export const selectedCameraId = signal<string | null>(null);
 export const selectedSatelliteId = signal<string | null>(null);
 
 // Tracking States
-export const satelliteTracking = signal(false);
 export const covidPointsAdded = signal(false);
 
 // Data States
@@ -74,7 +73,6 @@ export const tflCameras = signal<TflCamera[]>([]);
 export const satellites = signal<Satellite[]>([]);
 
 // Loading States
-export const loadingCovid = signal(true);
 export const loadingTfl = signal(true);
 export const loadingSatellites = signal(true);
 

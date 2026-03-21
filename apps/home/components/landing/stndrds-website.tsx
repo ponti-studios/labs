@@ -13,23 +13,31 @@ const services = [
 	},
 ];
 
-const principles = ["Clarity over hype", "Systems over features", "Taste over noise", "Execution over decks"];
+const principles = [
+	"Clarity over hype",
+	"Systems over features",
+	"Taste over noise",
+	"Execution over decks",
+];
 
 const work = [
 	{
 		name: "Agent Harnesses",
 		type: "Systems",
-		blurb: "Architectures for tools, commands, skills, permissions, and model orchestration.",
+		blurb:
+			"Architectures for tools, commands, skills, permissions, and model orchestration.",
 	},
 	{
 		name: "AI-Native Products",
 		type: "Product",
-		blurb: "End-to-end product design and implementation for software built around reasoning models.",
+		blurb:
+			"End-to-end product design and implementation for software built around reasoning models.",
 	},
 	{
 		name: "Studio Systems",
 		type: "Brand",
-		blurb: "Identity, interface language, and product ecosystems built from one coherent standard.",
+		blurb:
+			"Identity, interface language, and product ecosystems built from one coherent standard.",
 	},
 ];
 
@@ -49,11 +57,16 @@ export default function PontiStudiosWebsite() {
 								<div className="col-span-2 bg-black" />
 								<div className="bg-black" />
 							</div>
-							<div className="text-lg font-black tracking-tight md:text-xl">Ponti Studios</div>
+							<div className="text-lg font-black tracking-tight md:text-xl">
+								Ponti Studios
+							</div>
 						</div>
 
 						<nav className="hidden items-center gap-8 text-sm font-medium md:flex">
-							<a href="#services" className="transition-opacity hover:opacity-60">
+							<a
+								href="#services"
+								className="transition-opacity hover:opacity-60"
+							>
 								Services
 							</a>
 							<a href="#work" className="transition-opacity hover:opacity-60">
@@ -92,8 +105,9 @@ export default function PontiStudiosWebsite() {
 								We build AI products with taste, structure, and teeth.
 							</h1>
 							<p className="mt-6 max-w-2xl text-base leading-7 text-black/70 md:text-lg">
-								Ponti Studios is an AI product studio for founders, teams, and companies building serious software.
-								Strategy, systems, design, and engineering—under one standard.
+								Ponti Studios is an AI product studio for founders, teams, and
+								companies building serious software. Strategy, systems, design,
+								and engineering—under one standard.
 							</p>
 							<div className="mt-8 flex flex-wrap gap-4">
 								<a
@@ -112,17 +126,29 @@ export default function PontiStudiosWebsite() {
 						</div>
 
 						<div className="rounded-[2rem] border border-black/10 bg-black p-7 text-white shadow-2xl shadow-black/10">
-							<div className="text-xs font-semibold uppercase tracking-[0.24em] text-white/60">What we make</div>
+							<div className="text-xs font-semibold uppercase tracking-[0.24em] text-white/60">
+								What we make
+							</div>
 							<div className="mt-6 space-y-5">
-								{["Agentic products", "Developer tools", "AI workflows", "Internal systems"].map((item) => (
-									<div key={item} className="flex items-center justify-between border-b border-white/10 pb-4 text-sm">
+								{[
+									"Agentic products",
+									"Developer tools",
+									"AI workflows",
+									"Internal systems",
+								].map((item) => (
+									<div
+										key={item}
+										className="flex items-center justify-between border-b border-white/10 pb-4 text-sm"
+									>
 										<span>{item}</span>
 										<span className="text-white/45">→</span>
 									</div>
 								))}
 							</div>
 							<div className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-5">
-								<div className="text-xs uppercase tracking-[0.2em] text-white/50">Operating mode</div>
+								<div className="text-xs uppercase tracking-[0.2em] text-white/50">
+									Operating mode
+								</div>
 								<div className="mt-2 text-2xl font-bold leading-tight">
 									Small team. High standard. End-to-end execution.
 								</div>
@@ -136,13 +162,16 @@ export default function PontiStudiosWebsite() {
 				<div className="mx-auto max-w-7xl px-6 py-20 md:px-10">
 					<div className="mb-12 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
 						<div>
-							<div className="text-xs font-semibold uppercase tracking-[0.22em] text-black/45">Services</div>
+							<div className="text-xs font-semibold uppercase tracking-[0.22em] text-black/45">
+								Services
+							</div>
 							<h2 className="mt-3 text-3xl font-black tracking-[-0.04em] md:text-5xl">
 								Built for teams shipping real AI.
 							</h2>
 						</div>
 						<p className="max-w-xl text-sm leading-6 text-black/65 md:text-base">
-							We work across product strategy, design systems, architecture, implementation, and launch.
+							We work across product strategy, design systems, architecture,
+							implementation, and launch.
 						</p>
 					</div>
 
@@ -155,7 +184,9 @@ export default function PontiStudiosWebsite() {
 								<div className="text-sm font-semibold uppercase tracking-[0.18em] text-black/45">
 									{service.title}
 								</div>
-								<p className="mt-5 text-lg leading-8 text-black/80">{service.copy}</p>
+								<p className="mt-5 text-lg leading-8 text-black/80">
+									{service.copy}
+								</p>
 							</div>
 						))}
 					</div>
@@ -174,8 +205,9 @@ export default function PontiStudiosWebsite() {
 							</h2>
 						</div>
 						<p className="max-w-2xl text-base leading-7 text-black/68">
-							The best AI products do not just work—they feel coherent. We design the logic, the interface, the
-							workflows, and the language as one operating system.
+							The best AI products do not just work—they feel coherent. We
+							design the logic, the interface, the workflows, and the language
+							as one operating system.
 						</p>
 					</div>
 
@@ -189,10 +221,16 @@ export default function PontiStudiosWebsite() {
 									<div className="text-xs font-semibold uppercase tracking-[0.22em] text-black/40">
 										{item.type}
 									</div>
-									<div className="text-black/25 transition-transform group-hover:translate-x-1">→</div>
+									<div className="text-black/25 transition-transform group-hover:translate-x-1">
+										→
+									</div>
 								</div>
-								<div className="mt-12 text-2xl font-black tracking-[-0.03em]">{item.name}</div>
-								<p className="mt-4 text-sm leading-7 text-black/65">{item.blurb}</p>
+								<div className="mt-12 text-2xl font-black tracking-[-0.03em]">
+									{item.name}
+								</div>
+								<p className="mt-4 text-sm leading-7 text-black/65">
+									{item.blurb}
+								</p>
 							</div>
 						))}
 					</div>
@@ -202,7 +240,9 @@ export default function PontiStudiosWebsite() {
 			<section className="border-y border-black/10 bg-black text-white">
 				<div className="mx-auto grid max-w-7xl gap-8 px-6 py-16 md:px-10 lg:grid-cols-2 lg:items-center">
 					<div>
-						<div className="text-xs font-semibold uppercase tracking-[0.22em] text-white/45">Principles</div>
+						<div className="text-xs font-semibold uppercase tracking-[0.22em] text-white/45">
+							Principles
+						</div>
 						<h2 className="mt-3 text-3xl font-black tracking-[-0.04em] md:text-5xl">
 							A studio shaped by standards.
 						</h2>
@@ -224,19 +264,23 @@ export default function PontiStudiosWebsite() {
 				<div className="mx-auto max-w-7xl px-6 py-20 md:px-10">
 					<div className="grid gap-10 lg:grid-cols-[1fr_0.8fr]">
 						<div>
-							<div className="text-xs font-semibold uppercase tracking-[0.22em] text-black/45">About</div>
+							<div className="text-xs font-semibold uppercase tracking-[0.22em] text-black/45">
+								About
+							</div>
 							<h2 className="mt-3 text-3xl font-black tracking-[-0.04em] md:text-5xl">
 								We help ambitious teams turn AI potential into product reality.
 							</h2>
 						</div>
 						<div className="space-y-5 text-base leading-8 text-black/70">
 							<p>
-								Ponti Studios partners with companies that need more than prototypes. We help define the product,
-								shape the system, and ship the experience.
+								Ponti Studios partners with companies that need more than
+								prototypes. We help define the product, shape the system, and
+								ship the experience.
 							</p>
 							<p>
-								That can mean designing an agent harness, building an AI-native app, refining a developer
-								workflow, or creating the identity and interface language around the product itself.
+								That can mean designing an agent harness, building an AI-native
+								app, refining a developer workflow, or creating the identity and
+								interface language around the product itself.
 							</p>
 						</div>
 					</div>
@@ -248,12 +292,15 @@ export default function PontiStudiosWebsite() {
 					<div className="rounded-[2rem] border border-black bg-white p-8 md:p-12">
 						<div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
 							<div>
-								<div className="text-xs font-semibold uppercase tracking-[0.22em] text-black/45">Contact</div>
+								<div className="text-xs font-semibold uppercase tracking-[0.22em] text-black/45">
+									Contact
+								</div>
 								<h2 className="mt-3 max-w-3xl text-3xl font-black tracking-[-0.04em] md:text-5xl">
 									Need a sharp AI product studio?
 								</h2>
 								<p className="mt-5 max-w-2xl text-base leading-7 text-black/68">
-									Bring the concept, the mess, the ambition, or the rebuild. We'll bring the structure.
+									Bring the concept, the mess, the ambition, or the rebuild.
+									We'll bring the structure.
 								</p>
 							</div>
 							<div className="flex flex-col gap-4 sm:flex-row lg:justify-end">

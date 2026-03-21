@@ -1,6 +1,6 @@
 /**
  * Better-Auth Server-side utilities
- * 
+ *
  * These utilities help validate sessions on the server
  * by querying the Hominem auth server at localhost:4040
  */
@@ -81,13 +81,10 @@ export function withAuth<T extends { request: Request }>(
     const user = await authenticateRequest(args.request);
 
     if (!user) {
-      return new Response(
-        JSON.stringify({ error: "Unauthorized" }),
-        { 
-          status: 401,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     return handler({ ...args, user });
