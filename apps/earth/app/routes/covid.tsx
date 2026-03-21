@@ -1,31 +1,12 @@
-import { useEffect } from "react";
 import { Link } from "react-router";
-import { activeTab, covidCountries, loadingCovid } from "../lib/signals/earth";
-import type { CovidCountry } from "../lib/signals/earth";
+import { activeTab } from "../lib/signals/earth";
+import { useCovidCountries } from "../lib/hooks/useCovidData";
 
 export default function Covid() {
   activeTab.value = "covid";
+  const { data: countries, isLoading } = useCovidCountries();
 
-  useEffect(() => {
-    if (covidCountries.value.length > 0) return;
-
-    async function fetchCovidData() {
-      loadingCovid.value = true;
-      try {
-        const res = await fetch("https://disease.sh/v3/covid-19/countries");
-        const data: CovidCountry[] = await res.json();
-        covidCountries.value = data;
-      } catch (err) {
-        console.error("Failed to fetch COVID data:", err);
-      } finally {
-        loadingCovid.value = false;
-      }
-    }
-
-    fetchCovidData();
-  }, []);
-
-  if (loadingCovid.value) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
         <div className="text-text-muted">Loading COVID data...</div>
@@ -33,7 +14,7 @@ export default function Covid() {
     );
   }
 
-  const topCountries = [...covidCountries.value].sort((a, b) => b.cases - a.cases).slice(0, 10);
+  const topCountries = [...(countries ?? [])].sort((a, b) => b.cases - a.cases).slice(0, 10);
 
   return (
     <div className="space-y-4">
@@ -44,7 +25,7 @@ export default function Covid() {
       <div className="grid grid-cols-2 gap-2">
         <div className="bg-bg-panel-1 p-3 rounded">
           <div className="text-xs text-text-muted uppercase">Countries</div>
-          <div className="text-lg font-bold">{covidCountries.value.length}</div>
+          <div className="text-lg font-bold">{countries?.length ?? 0}</div>
         </div>
       </div>
       <div className="space-y-2 mt-4">

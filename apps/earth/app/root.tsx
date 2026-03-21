@@ -7,9 +7,11 @@ import {
   ScrollRestoration,
 } from "react-router";
 import { useEffect } from "react";
+import { QueryClientProvider } from "@tanstack/react-query";
 import CesiumViewer from "./components/CesiumViewer";
 import Controls from "./components/Controls";
 import { initializeFromUrl } from "./lib/signals/earth";
+import { queryClient } from "./lib/query-client";
 import "./app.css";
 
 export const links = () => [
@@ -50,20 +52,19 @@ export default function App() {
   }, []);
 
   return (
-    <div className="h-screen w-screen flex overflow-hidden relative">
-      {/* Persistent Cesium Viewer */}
-      <CesiumViewer />
-
-      {/* Overlay Panel - route content changes, Cesium stays */}
-      <div className="absolute top-0 left-0 w-[400px] h-full z-10 pointer-events-none">
-        <div className="h-full pointer-events-auto overflow-y-auto bg-bg-panel-0/95 backdrop-blur-sm border-r border-border-default">
-          <Controls />
-          <div className="p-4">
-            <Outlet />
+    <QueryClientProvider client={queryClient}>
+      <div className="h-screen w-screen flex overflow-hidden relative">
+        <CesiumViewer />
+        <div className="absolute top-0 left-0 w-[400px] h-full z-10 pointer-events-none">
+          <div className="h-full pointer-events-auto overflow-y-auto bg-bg-panel-0/95 backdrop-blur-sm border-r border-border-default">
+            <Controls />
+            <div className="p-4">
+              <Outlet />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </QueryClientProvider>
   );
 }
 
