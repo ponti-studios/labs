@@ -88,23 +88,6 @@ cp -r node_modules/cesium/Build/Cesium/Assets apps/earth/public/cesium/
 cp -r node_modules/cesium/Build/Cesium/Widgets apps/earth/public/cesium/
 ```
 
-## Database (Optional)
-
-This app can connect to a MySQL database for storing disaster events data:
-
-```bash
-# Start MySQL with Docker
-docker compose up -d mysql
-export DATABASE_URL=mysql://labs:labs_password@localhost:3306/labs
-
-# Run migrations via the shared db package
-npm run --workspace=@pontistudios/db db:migrate
-```
-
-See `packages/db/README.md` for more details on database operations.
-
----
-
 ## Migration from React
 
 This app was migrated from React to Svelte 5. Key changes:
