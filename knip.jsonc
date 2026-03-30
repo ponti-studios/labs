@@ -1,22 +1,13 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema-jsonc.json",
-  "workspaces": {
-    "packages/*": {
-      "entry": ["src/**/*.ts", "src/**/*.tsx"],
-      "ignore": ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx"]
-    },
-    "apps/*": {
-      "entry": ["app/**/*.ts", "app/**/*.tsx", "src/**/*.ts", "src/**/*.tsx"],
-      "ignore": ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx"]
-    }
-  },
   "ignoreFiles": [
-    "**/dist/**",
+    "**/cesium/**",
+    "**/ThirdParty/**",
     "**/node_modules/**",
-    "**/.next/**",
+    "**/dist/**",
     "**/build/**",
-    "**/coverage/**",
-    "**/*.d.ts"
+    "**/.next/**",
+    "**/coverage/**"
   ],
   "ignoreDependencies": [
     "react"
