@@ -13,6 +13,9 @@
     "dev:rocco": "turbo run dev --filter=@pontistudios/rocco",
     "lint": "turbo run lint",
     "format": "turbo run format",
+    "knip": "knip",
+    "duplicates": "jscpd --threshold 10 --config .jscpd.jsonc",
+    "dedupe": "npm dedupe --prefix=. 2>&1 || echo 'Run npm install after fixing conflicts'",
     "precommit": "npm run format && npm run lint",
     "prepush": "npm test",
     "prerelease": "npm test",
@@ -22,6 +25,8 @@
   },
   "devDependencies": {
     "@types/node": "^22.7.5",
+    "jscpd": "^4.0.8",
+    "knip": "^5.47.0",
     "oxfmt": "^0.35.0",
     "oxlint": "^0.9.7",
     "rolldown": "^1.0.0-rc.9",

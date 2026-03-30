@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json.schemastore.org/jscpd.json",
+  "threshold": 10,
+  "reporters": ["console", "json"],
+  "output": "./.jscpd",
+  "ignore": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.next/**",
+    "**/coverage/**",
+    "**/*.d.ts",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/cesium/**",
+    "**/ThirdParty/**",
+    "**/*.css",
+    "**/db/**"
+  ],
+  "pattern": "**/*.{ts,tsx,js,jsx}",
+  "minLines": 5,
+  "minTokens": 70
+}
