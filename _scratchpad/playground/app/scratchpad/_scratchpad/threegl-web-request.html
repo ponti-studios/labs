@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Request Flow Visualization</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: sans-serif;
+            background-color: #111;
+            color: #fff;
+        }
+        canvas { display: block; }
+        #info {
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            text-align: center;
+            z-index: 100;
+            display:block;
+            color: #fff;
+            pointer-events: none; /* Prevent info text from blocking controls */
+        }
+        #startButton {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: background-color 0.3s;
+            z-index: 101; /* Ensure button is above modal if overlapping */
+        }
+        #startButton:hover {
+            background-color: #45a049;
+        }
+        /* Style for labels */
+        .label {
+            color: #FFF;
+            font-family: sans-serif;
+            padding: 2px 5px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 3px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        /* Styles for the control modal */
+        #controlsModal {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background-color: rgba(40, 40, 60, 0.85); /* Semi-transparent dark background */
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            z-index: 100;
+            color: #eee;
+            font-size: 14px;
+            min-width: 200px; /* Ensure minimum width */
+        }
+        #controlsModal h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 5px;
+        }
+        #controlsModal label {
+            display: block;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        #controlsModal input[type="radio"],
+        #controlsModal input[type="checkbox"] {
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        #controlsModal .info-section {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 12px;
+            color: #bbb;
+        }
+         #controlsModal .info-section h4 {
+             margin-top: 0;
+             margin-bottom: 5px;
+             font-size: 13px;
+             color: #ddd;
+         }
+        #controlsModal .info-section p {
+            margin: 3px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">Web Request Flow Visualization</div>
+
+    <div id="controlsModal">
+        <h3>Controls & Info</h3>
+
+        <div>
+            <label>Animation Speed:</label>
+            <label>
+                <input type="radio" name="speed" value="0.2" > Slow
+            </label>
+            <label>
+                <input type="radio" name="speed" value="0.5" checked> Normal
+            </label>
+            <label>
+                <input type="radio" name="speed" value="1.0"> Fast
+            </label>
+        </div>
+
+        <div style="margin-top: 10px;">
+            <label>
+                <input type="checkbox" id="cacheHitToggle" checked> Simulate Cache Hit
+            </label>
+        </div>
+
+        <div class="info-section">
+            <h4>Typical Relative Latency:</h4>
+            <p>Client &lt;-&gt; Server: Medium (WAN)</p>
+            <p>Server &lt;-&gt; Cache: Very Fast (LAN/Local)</p>
+            <p>Server &lt;-&gt; Database: Fast (LAN)</p>
+            <p>(Animation speed adjusted for visualization)</p>
+        </div>
+    </div>
+
+    <button id="startButton">Start Request</button>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+
+        // --- Global Variables ---
+        let scene, camera, renderer, controls;
+        let labelRenderer;
+        let client, loadBalancer, servers = [], cache, database;
+        let requestSphere;
+        let clock = new THREE.Clock();
+
+        // Animation state
+        let animationActive = false;
+        let requestPath = [];
+        let currentSegment = 0;
+        let segmentProgress = 0;
+        let animationSpeed = 0.5; // Default speed (Normal)
+        let simulateCacheHit = true; // Default to cache hit
+
+        // DOM element references
+        let speedRadios, cacheHitToggle, startButton;
+
+        // --- Initialization ---
+        function init() {
+            // Basic scene setup (Scene, Camera, Renderer)
+            setupScene();
+            // Setup CSS 2D renderer for labels
+            setupLabelRenderer();
+            // Add lighting
+            setupLighting();
+            // Setup camera controls
+            setupControls();
+            // Create the 3D objects representing infrastructure
+            createComponents();
+            // Create the sphere object that represents the request
+            createRequestSphere();
+            // Get references to UI controls and add listeners
+            setupUIControls();
+            // Handle window resize events
+            window.addEventListener('resize', onWindowResize, false);
+            // Start the main animation loop
+            animate();
+        }
+
+        // --- Setup Functions ---
+        function setupScene() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x1a1a2a);
+            scene.fog = new THREE.Fog(0x1a1a2a, 50, 150);
+
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 20, 45); // Slightly adjusted position
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            document.body.appendChild(renderer.domElement);
+        }
+
+        function setupLabelRenderer() {
+            labelRenderer = new CSS2DRenderer();
+            labelRenderer.setSize(window.innerWidth, window.innerHeight);
+            labelRenderer.domElement.style.position = 'absolute';
+            labelRenderer.domElement.style.top = '0px';
+            labelRenderer.domElement.style.pointerEvents = 'none';
+            document.body.appendChild(labelRenderer.domElement);
+        }
+
+        function setupLighting() {
+            const ambientLight = new THREE.AmbientLight(0xcccccc, 0.8);
+            scene.add(ambientLight);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
+            directionalLight.position.set(5, 10, 7.5);
+            directionalLight.castShadow = true;
+            scene.add(directionalLight);
+        }
+
+        function setupControls() {
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.screenSpacePanning = false;
+            controls.minDistance = 10;
+            controls.maxDistance = 100;
+            controls.maxPolarAngle = Math.PI / 2 - 0.05;
+        }
+
+        function setupUIControls() {
+            // Get references to DOM elements
+            speedRadios = document.querySelectorAll('input[name="speed"]');
+            cacheHitToggle = document.getElementById('cacheHitToggle');
+            startButton = document.getElementById('startButton');
+
+            // Add event listeners for speed controls
+            speedRadios.forEach(radio => {
+                radio.addEventListener('change', (event) => {
+                    animationSpeed = parseFloat(event.target.value);
+                    console.log("Animation speed set to:", animationSpeed);
+                });
+                // Set initial speed based on checked radio
+                if (radio.checked) {
+                    animationSpeed = parseFloat(radio.value);
+                }
+            });
+
+            // Add event listener for cache hit toggle
+            cacheHitToggle.addEventListener('change', (event) => {
+                simulateCacheHit = event.target.checked;
+                console.log("Simulate Cache Hit:", simulateCacheHit);
+                // Optional: If animation is running, you could potentially reset
+                // or dynamically change the path, but for simplicity,
+                // the path is determined when 'Start Request' is clicked.
+            });
+             // Set initial cache hit state
+            simulateCacheHit = cacheHitToggle.checked;
+
+
+            // Add event listener for start/reset button
+            startButton.addEventListener('click', () => {
+                if (animationActive) {
+                    resetAnimation();
+                } else {
+                    startAnimation();
+                }
+            });
+        }
+
+
+        // --- Create Scene Components ---
+        function createComponents() {
+            const spacing = 10;
+
+            // Helper to create boxes with labels
+            const createBox = (name, color, position) => {
+                const geometry = new THREE.BoxGeometry(4, 4, 4);
+                const material = new THREE.MeshStandardMaterial({ color: color, metalness: 0.3, roughness: 0.6 });
+                const mesh = new THREE.Mesh(geometry, material);
+                mesh.position.copy(position);
+                scene.add(mesh);
+                addLabel(mesh, name);
+                return mesh;
+            };
+
+            // Helper to create cylinders with labels
+            const createCylinder = (name, color, position) => {
+                const geometry = new THREE.CylinderGeometry(2, 2, 5, 32);
+                const material = new THREE.MeshStandardMaterial({ color: color, metalness: 0.3, roughness: 0.6 });
+                const mesh = new THREE.Mesh(geometry, material);
+                mesh.position.copy(position);
+                // Note: Rotation might affect label positioning if not accounted for
+                // mesh.rotation.x = Math.PI / 2; // Keep it upright for simpler label logic
+                scene.add(mesh);
+                // Adjust label position for upright cylinder
+                const label = addLabel(mesh, name);
+                label.position.set(0, geometry.parameters.height / 2 + 1.5, 0);
+                return mesh;
+            };
+
+            // --- Component Positions ---
+            const clientPos = new THREE.Vector3(-spacing * 2.5, 0, 0);
+            const lbPos = new THREE.Vector3(-spacing * 1.2, 0, 0);
+            const server1Pos = new THREE.Vector3(spacing * 0.5, spacing * 0.5, 0);
+            const server2Pos = new THREE.Vector3(spacing * 0.5, -spacing * 0.5, 0);
+            const cachePos = new THREE.Vector3(spacing * 1.8, spacing * 0.5, 0);
+            const dbPos = new THREE.Vector3(spacing * 1.8, -spacing * 0.5, 0);
+
+            // --- Create Components ---
+            // Client (Sphere)
+            const clientGeo = new THREE.SphereGeometry(2.5, 32, 16);
+            const clientMat = new THREE.MeshStandardMaterial({ color: 0x0077cc, metalness: 0.4, roughness: 0.5 });
+            client = new THREE.Mesh(clientGeo, clientMat);
+            client.position.copy(clientPos);
+            scene.add(client);
+            const clientLabel = addLabel(client, 'Client');
+            clientLabel.position.set(0, clientGeo.parameters.radius + 1.5, 0); // Position above sphere
+
+            // Load Balancer (Box)
+            loadBalancer = createBox('Load Balancer', 0xffa500, lbPos); // Orange
+
+            // Web Servers (Boxes) - Only using Server 1 in the current path logic
+            servers.push(createBox(`Web Server 1`, 0x00cc66, server1Pos)); // Green
+            servers.push(createBox(`Web Server 2`, 0x00dd77, server2Pos)); // Slightly different green
+
+            // Cache (Smaller Box)
+            cache = createBox('Cache', 0xcc00cc, cachePos); // Purple
+            cache.scale.set(0.8, 0.8, 0.8);
+
+            // Database (Cylinder)
+            database = createCylinder('Database', 0xcc4444, dbPos); // Reddish
+        }
+
+        // --- Create Labels ---
+        function addLabel(object, text) {
+            const div = document.createElement('div');
+            div.className = 'label';
+            div.textContent = text;
+            const label = new CSS2DObject(div);
+            // Default position slightly above the object center
+            // Can be overridden after calling addLabel if needed
+            label.position.set(0, 2.5, 0); // Default y-offset
+            object.add(label);
+            return label; // Return label for potential adjustments
+        }
+
+        // --- Create Request Sphere ---
+        function createRequestSphere() {
+            const geometry = new THREE.SphereGeometry(0.5, 16, 8);
+            const material = new THREE.MeshBasicMaterial({ color: 0xffff00, toneMapped: false }); // Bright yellow, ignore scene lighting/tone mapping
+            requestSphere = new THREE.Mesh(geometry, material);
+            requestSphere.visible = false;
+            scene.add(requestSphere);
+        }
+
+        // --- Define Animation Path ---
+        function defineDynamicPath() {
+            // Define points based on the current state of simulateCacheHit
+            const pathPoints = [
+                client.position.clone(),       // 0: Start at Client
+                loadBalancer.position.clone(), // 1: To Load Balancer
+                servers[0].position.clone(),   // 2: To Server 1 (Always goes to server 1 in this example)
+            ];
+
+            if (simulateCacheHit) {
+                // Cache Hit Path
+                pathPoints.push(cache.position.clone());      // 3: To Cache
+                pathPoints.push(servers[0].position.clone()); // 4: Back to Server 1
+            } else {
+                // Cache Miss Path (Go to Database)
+                pathPoints.push(database.position.clone());   // 3: To Database
+                pathPoints.push(servers[0].position.clone()); // 4: Back to Server 1
+            }
+
+            // Common return path
+            pathPoints.push(loadBalancer.position.clone()); // 5: Back to Load Balancer
+            pathPoints.push(client.position.clone());       // 6: Back to Client
+
+            requestPath = pathPoints; // Update the global request path
+            console.log("Defined path:", simulateCacheHit ? "Cache Hit" : "Cache Miss");
+        }
+
+        // --- Animation Control ---
+        function startAnimation() {
+            console.log("Starting animation...");
+            // Define the path based on current settings *before* starting
+            defineDynamicPath();
+
+            if (requestPath.length < 2) {
+                console.error("Cannot start animation, path not defined correctly.");
+                return;
+            }
+
+            requestSphere.position.copy(requestPath[0]);
+            requestSphere.visible = true;
+            animationActive = true;
+            currentSegment = 0;
+            segmentProgress = 0;
+            startButton.textContent = 'Reset Request';
+        }
+
+        function resetAnimation() {
+            console.log("Resetting animation...");
+            animationActive = false;
+            requestSphere.visible = false;
+            currentSegment = 0;
+            segmentProgress = 0;
+            startButton.textContent = 'Start Request';
+        }
+
+        // --- Animation Loop ---
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const delta = clock.getDelta();
+            controls.update(); // Update camera controls
+
+            // Animate the request sphere if active
+            if (animationActive && requestPath.length > 1 && currentSegment < requestPath.length - 1) {
+                const startPoint = requestPath[currentSegment];
+                const endPoint = requestPath[currentSegment + 1];
+                const segmentLength = startPoint.distanceTo(endPoint);
+
+                if (segmentLength > 0) {
+                    // Adjust speed multiplier (e.g., * 10) to make speeds feel right
+                    segmentProgress += (animationSpeed * delta * 10) / segmentLength;
+
+                    if (segmentProgress >= 1.0) {
+                        // Move to the next segment
+                        segmentProgress = 1.0; // Clamp to 1 to avoid overshooting calculation
+                        requestSphere.position.copy(endPoint); // Snap to end point
+
+                        currentSegment++; // Advance to next segment index
+                        segmentProgress = 0; // Reset progress for the new segment
+
+                        // Check if animation finished
+                        if (currentSegment >= requestPath.length - 1) {
+                            resetAnimation();
+                        }
+                        // else: Continue to the next segment in the next frame
+                    } else {
+                        // Interpolate position along the current segment
+                        requestSphere.position.lerpVectors(startPoint, endPoint, segmentProgress);
+                    }
+                } else {
+                    // Segment has zero length (shouldn't normally happen with distinct objects)
+                    // Skip to the next segment immediately
+                     currentSegment++;
+                     segmentProgress = 0;
+                     if (currentSegment >= requestPath.length - 1) {
+                        resetAnimation();
+                    } else {
+                         // Snap to the start of the next segment if path continues
+                         requestSphere.position.copy(requestPath[currentSegment]);
+                    }
+                }
+            }
+
+            // Render the scenes
+            renderer.render(scene, camera);
+            labelRenderer.render(scene, camera); // Render labels on top
+        }
+
+        // --- Handle Window Resize ---
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            labelRenderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // --- Start Everything ---
+        window.onload = init; // Use onload to ensure DOM is ready for UI controls
+
+    </script>
+</body>
+</html>
