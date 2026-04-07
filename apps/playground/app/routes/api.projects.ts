@@ -1,9 +1,9 @@
-import { eq, sql } from "drizzle-orm";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
-import { db, projects, todos, type ProjectInsert } from "~/lib/db";
+import { db } from "~/lib/db";
+import type { NewPlaygroundProject, PlaygroundProject } from "@pontistudios/db";
 import { commitSession, getSession } from "~/lib/session";
 
-async function getOrCreateUserId(request: Request): Promise<{ userId: string; session: any }> {
+async function getOrCreateUserId(request: Request): Promise<{ userId: string; session: unknown }> {
   const session = await getSession(request.headers.get("Cookie"));
   let userId = session.get("userId");
 
@@ -15,73 +15,119 @@ async function getOrCreateUserId(request: Request): Promise<{ userId: string; se
   return { userId, session };
 }
 
-async function createResponseWithSession(data: any, session: any) {
+async function createResponseWithSession(data: unknown, session: unknown) {
   return Response.json(data, {
     headers: {
-      "Set-Cookie": await commitSession(session),
+      "Set-Cookie": await commitSession(session as any),
     },
   });
 }
 
-// Data handling functions
-async function fetchUserProjects(userId: string) {
-  return await db
-    .select({
-      id: projects.id,
-      userId: projects.userId,
-      name: projects.name,
-      description: projects.description,
-      createdAt: projects.createdAt,
-      updatedAt: projects.updatedAt,
-      taskCount: sql<number>`COALESCE(COUNT(${todos.id}), 0)`.as("taskCount"),
-    })
-    .from(projects)
-    .leftJoin(todos, eq(projects.id, todos.projectId))
-    .where(eq(projects.userId, userId))
-    .groupBy(
-      projects.id,
-      projects.userId,
-      projects.name,
-      projects.description,
-      projects.createdAt,
-      projects.updatedAt,
-    )
-    .orderBy(projects.createdAt);
+interface ProjectWithTaskCount {
+  id: number;
+  userId: string;
+  name: string;
+  description: string | null;
+  createdAt: string | null;
+  updatedAt: string | null;
+  taskCount: number;
 }
 
-async function createProject(projectData: ProjectInsert, userId: string) {
-  return await db
-    .insert(projects)
+async function fetchUserProjects(userId: string): Promise<ProjectWithTaskCount[]> {
+  const projects = await db
+    .selectFrom("playground_projects")
+    .where("userId", "=", userId)
+    .orderBy("createdAt", "desc")
+    .select(["id", "userId", "name", "description", "createdAt", "updatedAt"])
+    .execute();
+
+  const projectsWithCounts = await Promise.all(
+    projects.map(async (project) => {
+      const countResult = await db
+        .selectFrom("playground_todos")
+        .where("projectId", "=", project.id)
+        .select((eb) => eb.fn.count<number>("id").as("taskCount"))
+        .executeTakeFirstOrThrow();
+
+      return {
+        ...project,
+        taskCount: Number(countResult.taskCount) || 0,
+      };
+    }),
+  );
+
+  return projectsWithCounts;
+}
+
+async function createProject(
+  projectData: Omit<NewPlaygroundProject, "id" | "createdAt" | "updatedAt">,
+  userId: string,
+): Promise<PlaygroundProject> {
+  const result = await db
+    .insertInto("playground_projects")
     .values({
-      ...projectData,
       userId,
+      name: projectData.name,
+      description: projectData.description ?? null,
     })
-    .returning()
-    .then((rows) => rows[0]);
+    .executeTakeFirst();
+
+  const insertId = Number(result.insertId);
+  const now = new Date().toISOString().slice(0, 19).replace("T", " ");
+
+  return {
+    id: insertId,
+    userId,
+    name: projectData.name,
+    description: projectData.description ?? null,
+    createdAt: now,
+    updatedAt: now,
+  };
 }
 
-async function updateProject(projectData: ProjectInsert & { id: number }, userId: string) {
-  return await db
-    .update(projects)
+async function updateProject(
+  projectData: { id: number; name?: string; description?: string | null },
+  userId: string,
+): Promise<PlaygroundProject | null> {
+  const now = new Date().toISOString().slice(0, 19).replace("T", " ");
+
+  await db
+    .updateTable("playground_projects")
     .set({
-      ...projectData,
-      userId,
-      updatedAt: new Date().toISOString(),
+      name: projectData.name,
+      description: projectData.description,
+      updatedAt: now,
     })
-    .where(eq(projects.id, projectData.id))
-    .returning()
-    .then((rows) => rows[0]);
+    .where("id", "=", projectData.id)
+    .executeTakeFirst();
+
+  const updated = await db
+    .selectFrom("playground_projects")
+    .where("id", "=", projectData.id)
+    .selectAll()
+    .executeTakeFirst();
+
+  if (!updated) return null;
+
+  return {
+    id: updated.id,
+    userId: updated.userId,
+    name: updated.name,
+    description: updated.description,
+    createdAt: updated.createdAt ?? now,
+    updatedAt: updated.updatedAt ?? now,
+  };
 }
 
-async function deleteProject(projectId: number) {
-  return await db
-    .delete(projects)
-    .where(eq(projects.id, projectId))
-    .returning()
-    .then((rows) => rows[0]);
+async function deleteProject(projectId: number): Promise<boolean> {
+  const result = await db
+    .deleteFrom("playground_projects")
+    .where("id", "=", projectId)
+    .executeTakeFirst();
+
+  return result.numDeletedRows > 0;
 }
 
-// Loader function for GET requests
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
     const { userId, session } = await getOrCreateUserId(request);
@@ -93,20 +139,26 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 }
 
-// Action function for POST, PUT, DELETE requests
 export async function action({ request }: ActionFunctionArgs) {
   try {
     const { userId, session } = await getOrCreateUserId(request);
 
     switch (request.method) {
       case "POST": {
-        const body = (await request.json()) as ProjectInsert;
+        const body = (await request.json()) as Omit<
+          NewPlaygroundProject,
+          "id" | "createdAt" | "updatedAt"
+        >;
         const newProject = await createProject(body, userId);
         return createResponseWithSession(newProject, session);
       }
 
       case "PUT": {
-        const body = (await request.json()) as ProjectInsert & { id: number };
+        const body = (await request.json()) as {
+          id: number;
+          name?: string;
+          description?: string | null;
+        };
         const updatedProject = await updateProject(body, userId);
 
         if (!updatedProject) {
@@ -124,9 +176,9 @@ export async function action({ request }: ActionFunctionArgs) {
           return Response.json({ error: "Project ID is required" }, { status: 400 });
         }
 
-        const deletedProject = await deleteProject(parseInt(id));
+        const deleted = await deleteProject(Number.parseInt(id, 10));
 
-        if (!deletedProject) {
+        if (!deleted) {
           return Response.json({ error: "Project not found" }, { status: 404 });
         }
 

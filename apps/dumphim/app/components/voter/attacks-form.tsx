@@ -2,10 +2,10 @@ import { Card, CardContent } from "@pontistudios/ui";
 import { Input } from "@pontistudios/ui";
 import { Label } from "@pontistudios/ui";
 import { Slider } from "@pontistudios/ui";
-import type { Tracker } from "~/db/schema";
+import type { DumphimTrackerParsed } from "@pontistudios/db";
 
 interface AttacksFormProps {
-  attacks: Tracker["attacks"];
+  attacks: DumphimTrackerParsed["attacks"];
   onAttackChange: (index: number, field: "name" | "damage", value: string) => void;
 }
 
@@ -13,7 +13,7 @@ export function AttacksForm({ attacks, onAttackChange }: AttacksFormProps) {
   if (!attacks || attacks.length === 0) return null;
   return (
     <div data-testid="attacks" className="space-y-4">
-      {attacks.map((attack, index) => (
+      {attacks.map((attack: DumphimTrackerParsed["attacks"][number], index: number) => (
         <Card key={attack.name} className="border-gray-300">
           <CardContent className="pt-6 space-y-4">
             <div className="space-y-2">

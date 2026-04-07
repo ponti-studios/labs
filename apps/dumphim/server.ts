@@ -11,7 +11,7 @@ import type { ServerBuild } from "react-router";
 import { httpSuccess } from "./app/lib/api/response";
 import { getCurrentUser } from "./app/lib/auth-server";
 import { createTracker } from "./app/lib/server/mutations";
-import type { TrackerInsert } from "@pontistudios/db/schema";
+import type { NewDumphimTracker } from "@pontistudios/db";
 import { invalidateTrackerCache } from "./app/lib/server/cache";
 
 const app = new Hono();
@@ -44,7 +44,7 @@ api.post("/trackers", async (c) => {
       return c.json({ error: "User ID is required" }, 400);
     }
     
-    const trackerData: TrackerInsert = {
+    const trackerData: NewDumphimTracker = {
       name: body.name,
       hp: typeof body.hp === "string" ? body.hp : null,
       cardType: typeof body.cardType === "string" ? body.cardType : null,
@@ -57,7 +57,7 @@ api.post("/trackers", async (c) => {
       photoUrl: typeof body.photoUrl === "string" ? body.photoUrl : null,
       imageScale: typeof body.imageScale === "number" ? body.imageScale : null,
       imagePosition: typeof body.imagePosition === "object" && body.imagePosition !== null
-        ? body.imagePosition as { x: number; y: number }
+        ? JSON.stringify(body.imagePosition as { x: number; y: number })
         : null,
       userId: body.userId,
     };

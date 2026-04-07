@@ -1,5 +1,5 @@
 import { signal, computed } from "@preact/signals-react";
-import type { Project } from "~/lib/db";
+import type { PlaygroundProject } from "@pontistudios/db";
 
 // Global app state
 export const searchQuery = signal("");
@@ -8,7 +8,7 @@ export const viewMode = signal<"grid" | "list">("grid");
 export const isSidebarOpen = signal(true);
 
 // Projects state
-export const projects = signal<Project[]>([]);
+export const projects = signal<PlaygroundProject[]>([]);
 export const selectedProjectId = signal<number | null>(null);
 
 // Computed values

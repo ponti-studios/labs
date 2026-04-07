@@ -19,7 +19,7 @@ import { ShareDialog } from "~/components/voter/share-dialog";
 import { cn } from "~/lib/utils";
 import { getTrackerWithStats, getVotesByTracker } from "~/lib/server/queries-optimized";
 import { withCache, CACHE_TTL } from "~/lib/server/cache";
-import type { Vote } from "@pontistudios/db/schema";
+import type { DumphimVote } from "@pontistudios/db";
 
 interface LoaderData {
   tracker: {
@@ -36,7 +36,7 @@ interface LoaderData {
       stayPercentage: number;
     };
   } | null;
-  votes: Vote[];
+  votes: DumphimVote[];
 }
 
 export async function loader({ params }: Route.LoaderArgs) {
@@ -81,7 +81,7 @@ export function CardRatingsPage() {
   const { voteStats } = tracker;
 
   // Local state for optimistic UI updates
-  const [localVotes, setLocalVotes] = useState<Vote[]>(votes);
+  const [localDumphimVotes, setLocalDumphimVotes] = useState<DumphimVote[]>(votes);
   const [newRating, setNewRating] = useState({
     name: "",
     verdict: "" as "stay" | "dump" | "",
@@ -91,17 +91,19 @@ export function CardRatingsPage() {
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
 
   // Calculate stats from local votes (for optimistic updates)
-  const localStayCount = localVotes.filter((v) => v.value === "stay").length;
-  const localDumpCount = localVotes.filter((v) => v.value === "dump").length;
-  const localTotal = localVotes.length;
+  const localStayCount = localDumphimVotes.filter((v) => v.value === "stay").length;
+  const localDumpCount = localDumphimVotes.filter((v) => v.value === "dump").length;
+  const localTotal = localDumphimVotes.length;
   const localStayPercentage = localTotal > 0 ? Math.round((localStayCount / localTotal) * 100) : 0;
 
   // Use server stats as base, but update with local changes
-  const displayStayCount = localVotes.length > votes.length ? localStayCount : voteStats.stay;
-  const displayDumpCount = localVotes.length > votes.length ? localDumpCount : voteStats.dump;
-  const displayTotal = localVotes.length > votes.length ? localTotal : voteStats.total;
+  const displayStayCount =
+    localDumphimVotes.length > votes.length ? localStayCount : voteStats.stay;
+  const displayDumpCount =
+    localDumphimVotes.length > votes.length ? localDumpCount : voteStats.dump;
+  const displayTotal = localDumphimVotes.length > votes.length ? localTotal : voteStats.total;
   const displayStayPercentage =
-    localVotes.length > votes.length ? localStayPercentage : voteStats.stayPercentage;
+    localDumphimVotes.length > votes.length ? localStayPercentage : voteStats.stayPercentage;
 
   const handleNewRatingChange = (field: string, value: string) => {
     setNewRating((prev) => ({ ...prev, [field]: value }));
@@ -111,7 +113,7 @@ export function CardRatingsPage() {
     if (newRating.name && newRating.verdict) {
       // TODO: Submit to API and get back the created vote
       // For now, optimistically add to local state
-      const optimisticVote: Vote = {
+      const optimisticDumphimVote: DumphimVote = {
         id: `temp-${Date.now()}`,
         trackerId: tracker.id,
         userId: null,
@@ -119,11 +121,11 @@ export function CardRatingsPage() {
         raterName: newRating.name,
         value: newRating.verdict,
         comment: newRating.comment || null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       };
 
-      setLocalVotes([optimisticVote, ...localVotes]);
+      setLocalDumphimVotes([optimisticDumphimVote, ...localDumphimVotes]);
       setNewRating({ name: "", verdict: "", comment: "" });
       setRatingDialogOpen(false);
 
@@ -241,7 +243,7 @@ export function CardRatingsPage() {
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-gray-900">Recent Ratings</h3>
 
-          {localVotes.map((vote) => (
+          {localDumphimVotes.map((vote) => (
             <div
               key={vote.id}
               className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md transition-shadow"
@@ -283,7 +285,7 @@ export function CardRatingsPage() {
         </div>
 
         {/* Empty State */}
-        {localVotes.length === 0 && (
+        {localDumphimVotes.length === 0 && (
           <div className="text-center py-12">
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <MessageSquare className="w-8 h-8 text-gray-400" />

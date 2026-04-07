@@ -7,54 +7,44 @@ Kysely client factory, environment helpers, and the canonical schema/migrations.
 
 * `createDb`, `withDb` helpers with typed config (`DbConfig`).
 * Zod‑based `DbEnv` parser for environment variables.
-* Atlas migrations stored in `migrations/` and bundled into the build.
+* MySQL migrations via **Flyway** stored in `src/migrations/` and bundled into the build.
 * Basic Vitest smoke tests verifying the client API.
 
 ## Running migrations
 
-The package ships an `atlas.hcl` config file that points at the local
-`migrations/` folder and uses `DATABASE_URL` for the connection string. You can
-run Atlas commands from within the package or from any workspace that depends on
-`@pontistudios/db`.
+The package uses **Flyway** for MySQL schema migrations. SQL files live in
+`src/migrations/` and are bundled into the build output.
 
 ### Available commands
 
 ```bash
-# from root or any workspace that includes this package
-pnpm --filter @pontistudios/db run db:migrate:diff --name <name>
-pnpm --filter @pontistudios/db run db:migrate:apply
-pnpm --filter @pontistudios/db run db:migrate:status
+# from root
+npm --workspace packages/db run db:migrate          # apply pending migrations
+npm --workspace packages/db run db:migrate:info    # show migration status
+npm --workspace packages/db run db:migrate:validate # validate applied migrations
+npm --workspace packages/db run db:migrate:repair   # repair Flyway history table
 ```
 
-The scripts are simple wrappers around the Atlas CLI; they are defined in the
-package's `package.json`:
+Migration files use Flyway's versioned naming convention:
 
-```json
-"scripts": {
-  "build": "tsc && cp -R migrations dist/migrations",
-  "typecheck": "tsc --noEmit",
-  "test": "vitest",
-  "db:migrate:diff": "bunx atlas migrate diff ${npm_config_name} --env mysql",
-  "db:migrate:apply": "bunx atlas migrate apply --env mysql",
-  "db:migrate:status": "bunx atlas migrate status --env mysql",
-  "clean": "rm -rf dist tsconfig.tsbuildinfo"
-},
+```text
+V1__disaster_events_initial.sql
+V2__add_source_timestamp.sql
+V3__relationship_intelligence_initial.sql
 ```
 
-> Note: the `mysql` environment in `atlas.hcl` is used for these commands; the
-> `local` environment includes an explicit `src` definition for diff generation.
+To add a new migration, create the next `V<N>__<name>.sql` file in
+`src/migrations/` and run `db:migrate` to apply it.
 
 ### Consuming from apps
 
-Apps such as `apps/earth` already reference these migrations via their own
-`atlas.hcl` file (see its relative `src` and `migration.dir` settings). Running
-migration commands inside the app simply manipulates the shared files. You do
-*not* need to copy the SQL anywhere — the build process copies the `migrations`
-folder into `dist` so that published versions include the schema.
+Apps can rely on the shared migration scripts exposed by `@pontistudios/db`.
+You do *not* need to copy the SQL anywhere — the build process copies the
+`migrations` folder into `dist` so that published versions include the schema.
 
 ## Testing
 
-Run `pnpm --filter @pontistudios/db run test` to execute the package's
+Run `npm --workspace packages/db run test` to execute the package's
 Vitest suite. The tests verify environment parsing and that `createDb`/
 `withDb` return a valid Kysely instance.
 
@@ -73,10 +63,8 @@ await withDb(env, async (db) => {
 
 ## Building
 
-Standard TypeScript build:
-
 ```bash
-pnpm --filter @pontistudios/db run build
+npm --workspace packages/db run build
 ```
 
 The output goes to `dist/`, and `dist/migrations` contains the SQL migration

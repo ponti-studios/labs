@@ -12,7 +12,7 @@ CREATE TABLE disaster_events (
   closed_at TEXT,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE INDEX disaster_events_category_id_idx ON disaster_events (category_id);
 CREATE INDEX disaster_events_occurred_at_idx ON disaster_events (occurred_at(50));
