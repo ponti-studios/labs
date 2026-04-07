@@ -1,0 +1,41 @@
+{
+  "name": "accrualcalculator",
+  "version": "1.0.0",
+  "description": "CloudMargin's test for JS developers",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "npm run test:unit",
+    "test:unit": "jasmine './test/**/*.spec.js'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CloudMargin/code-test.git"
+  },
+  "author": "CloudMargin",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3"
+  },
+  "devDependencies": {
+    "eslint": "^4.3.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-node": "^4.2.3",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "jasmine": "^2.7.0",
+    "supertest": "^3.0.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "eslint:recommended",
+      "standard"
+    ],
+    "env": {
+      "node": true,
+      "jasmine": true
+    }
+  }
+}

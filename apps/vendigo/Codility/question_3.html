@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Vendigo: Question 3</title>
+</head>
+<body>
+  <img src="question_3.png" style="width: 100%"/>
+  <script>
+    function strongPassword(password) {
+      // Write the code that goes here
+      if (password.length < 12) {
+        return false
+      }
+      
+      // Does not have capital letters
+      if (/^[^A-Z]+$/.test(password)) {
+        return false
+      }
+      
+      // Does not have number
+      if (/^[^0-9]+$/.test(password)) {
+        return false
+      }
+      
+      // Does not have a lower case letter
+      if (/^[^a-z]+$/.test(password)) {
+        return false
+      }
+      
+      // Does not have 123
+      if (/^[^123]+$/.test(password)) {
+        return false
+      }
+      
+      return true
+    }
+
+    ['Strong1Password', 'Strong123Password', 'strong1password'].forEach(function(password) {
+      console.log(
+        password + ': ',
+        strongPassword(password) ? 'is strong' : 'is not strong'
+      ); // Strong password
+    })
+  </script>
+</body>
+</html>

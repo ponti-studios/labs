@@ -1,0 +1,26 @@
+[{
+    "DATE": "2017-01-01",
+    "RATE": 0.5,
+    "BALANCE": 10000,
+    "ACCRUAL": 5000
+}, {
+    "DATE": "2017-01-02",
+    "RATE": 0.5,
+    "BALANCE": 12000,
+    "ACCRUAL": 6000
+}, {
+    "DATE": "2017-01-03",
+    "RATE": 0.5,
+    "BALANCE": 0,
+    "ACCRUAL": 0
+}, {
+    "DATE": "2017-01-04",
+    "RATE": 0.25,
+    "BALANCE": 10000,
+    "ACCRUAL": 2500
+}, {
+    "DATE": "2017-01-05",
+    "RATE": 0.5,
+    "BALANCE": 10000,
+    "ACCRUAL": 5000
+}]

@@ -1,0 +1,1 @@
+py -m coverage run --omit=**/envs/** -m pytest && coverage report

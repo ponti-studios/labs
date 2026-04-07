@@ -1,0 +1,40 @@
+{
+  "name": "boiler-static",
+  "version": "0.0.1",
+  "description": "A boilerplate for a static site",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/theponti/boiler-static.git"
+  },
+  "keywords": [
+    "static",
+    "node",
+    "html",
+    "css"
+  ],
+  "author": "CJ Ponti <cjponti@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/theponti/boiler-static/issues"
+  },
+  "homepage": "https://github.com/theponti/boiler-static",
+  "dependencies": {
+    "gulp": "~3.6.0",
+    "gulp-concat": "^2.2.0",
+    "gulp-jshint": "~1.5.5",
+    "gulp-less": "~1.2.3",
+    "gulp-util": "~2.2.14",
+    "gulp-watch": "^0.6.5",
+    "jshint-stylish": "~0.1.5",
+    "mocha": "^1.19.0",
+    "node-static": "~0.7.3"
+  },
+  "devDependencies": {
+    "should": "^3.3.2",
+    "sinon": "^1.10.0"
+  }
+}

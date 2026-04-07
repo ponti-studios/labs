@@ -1,0 +1,889 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Displays data 1`] = `
+<HTMLTable
+  interactive={true}
+  striped={true}
+>
+  <thead>
+    <tr>
+      <td>
+        <div
+          style={
+            Object {
+              "borderBottom": "1px solid black",
+              "fontSize": "1.5rem",
+              "fontWeight": "bold",
+              "marginBottom": "0.5rem",
+            }
+          }
+        >
+          Current Filters
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <HeaderCell
+        filter=""
+        key="name"
+        name="Name"
+        onFilter={[Function]}
+        type="string"
+      />
+      <HeaderCell
+        filter=""
+        key="phone"
+        name="Phone Number"
+        onFilter={[Function]}
+        type="string"
+      />
+      <HeaderCell
+        filter=""
+        key="city"
+        name="City"
+        onFilter={[Function]}
+        type="category"
+      />
+      <HeaderCell
+        filter=""
+        key="age"
+        name="Age"
+        onFilter={[Function]}
+        type="number"
+      />
+    </tr>
+  </thead>
+  <tbody>
+    <tr
+      key="776-878-8338"
+    >
+      <td
+        key="name"
+      >
+        Gwen Garrick
+      </td>
+      <td
+        key="phone"
+      >
+        776-878-8338
+      </td>
+      <td
+        key="city"
+      >
+        Maquanzhen
+      </td>
+      <td
+        key="age"
+      >
+        35
+      </td>
+    </tr>
+    <tr
+      key="922-694-8628"
+    >
+      <td
+        key="name"
+      >
+        Carmella Brunker
+      </td>
+      <td
+        key="phone"
+      >
+        922-694-8628
+      </td>
+      <td
+        key="city"
+      >
+        General Lavalle
+      </td>
+      <td
+        key="age"
+      >
+        40
+      </td>
+    </tr>
+    <tr
+      key="327-542-4874"
+    >
+      <td
+        key="name"
+      >
+        Abbot Delahunt
+      </td>
+      <td
+        key="phone"
+      >
+        327-542-4874
+      </td>
+      <td
+        key="city"
+      >
+        Xinba
+      </td>
+      <td
+        key="age"
+      >
+        2
+      </td>
+    </tr>
+    <tr
+      key="422-562-2609"
+    >
+      <td
+        key="name"
+      >
+        Lucine Stratz
+      </td>
+      <td
+        key="phone"
+      >
+        422-562-2609
+      </td>
+      <td
+        key="city"
+      >
+        Mlaka pri Kranju
+      </td>
+      <td
+        key="age"
+      >
+        7
+      </td>
+    </tr>
+    <tr
+      key="580-701-9078"
+    >
+      <td
+        key="name"
+      >
+        Ethe Tomankiewicz
+      </td>
+      <td
+        key="phone"
+      >
+        580-701-9078
+      </td>
+      <td
+        key="city"
+      >
+        Kamenický Šenov
+      </td>
+      <td
+        key="age"
+      >
+        98
+      </td>
+    </tr>
+  </tbody>
+</HTMLTable>
+`;
+
+exports[`Remove phone filter 1`] = `
+<HTMLTable
+  interactive={true}
+  striped={true}
+>
+  <thead>
+    <tr>
+      <td>
+        <div
+          style={
+            Object {
+              "borderBottom": "1px solid black",
+              "fontSize": "1.5rem",
+              "fontWeight": "bold",
+              "marginBottom": "0.5rem",
+            }
+          }
+        >
+          Current Filters
+        </div>
+        <div
+          key="phone"
+          style={
+            Object {
+              "fontSize": "1rem",
+              "marginBottom": "0.5rem",
+            }
+          }
+        >
+          <span>
+            <b>
+              PHONE
+            </b>
+             : 
+            562
+          </span>
+          <button
+            onClick={[Function]}
+            style={
+              Object {
+                "color": "red",
+                "fontSize": "1rem",
+              }
+            }
+          >
+             Remove 
+          </button>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <HeaderCell
+        key="name"
+        name="Name"
+        onFilter={[Function]}
+        type="string"
+      />
+      <HeaderCell
+        filter="562"
+        key="phone"
+        name="Phone Number"
+        onFilter={[Function]}
+        type="string"
+      />
+      <HeaderCell
+        key="city"
+        name="City"
+        onFilter={[Function]}
+        type="category"
+      />
+      <HeaderCell
+        key="age"
+        name="Age"
+        onFilter={[Function]}
+        type="number"
+      />
+    </tr>
+  </thead>
+  <tbody>
+    <tr
+      key="422-562-2609"
+    >
+      <td
+        key="name"
+      >
+        Lucine Stratz
+      </td>
+      <td
+        key="phone"
+      >
+        422-562-2609
+      </td>
+      <td
+        key="city"
+      >
+        Mlaka pri Kranju
+      </td>
+      <td
+        key="age"
+      >
+        7
+      </td>
+    </tr>
+  </tbody>
+</HTMLTable>
+`;
+
+exports[`Remove phone filter 2`] = `
+<HTMLTable
+  interactive={true}
+  striped={true}
+>
+  <thead>
+    <tr>
+      <td>
+        <div
+          style={
+            Object {
+              "borderBottom": "1px solid black",
+              "fontSize": "1.5rem",
+              "fontWeight": "bold",
+              "marginBottom": "0.5rem",
+            }
+          }
+        >
+          Current Filters
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <HeaderCell
+        key="name"
+        name="Name"
+        onFilter={[Function]}
+        type="string"
+      />
+      <HeaderCell
+        filter=""
+        key="phone"
+        name="Phone Number"
+        onFilter={[Function]}
+        type="string"
+      />
+      <HeaderCell
+        key="city"
+        name="City"
+        onFilter={[Function]}
+        type="category"
+      />
+      <HeaderCell
+        key="age"
+        name="Age"
+        onFilter={[Function]}
+        type="number"
+      />
+    </tr>
+  </thead>
+  <tbody>
+    <tr
+      key="776-878-8338"
+    >
+      <td
+        key="name"
+      >
+        Gwen Garrick
+      </td>
+      <td
+        key="phone"
+      >
+        776-878-8338
+      </td>
+      <td
+        key="city"
+      >
+        Maquanzhen
+      </td>
+      <td
+        key="age"
+      >
+        35
+      </td>
+    </tr>
+    <tr
+      key="922-694-8628"
+    >
+      <td
+        key="name"
+      >
+        Carmella Brunker
+      </td>
+      <td
+        key="phone"
+      >
+        922-694-8628
+      </td>
+      <td
+        key="city"
+      >
+        General Lavalle
+      </td>
+      <td
+        key="age"
+      >
+        40
+      </td>
+    </tr>
+    <tr
+      key="327-542-4874"
+    >
+      <td
+        key="name"
+      >
+        Abbot Delahunt
+      </td>
+      <td
+        key="phone"
+      >
+        327-542-4874
+      </td>
+      <td
+        key="city"
+      >
+        Xinba
+      </td>
+      <td
+        key="age"
+      >
+        2
+      </td>
+    </tr>
+    <tr
+      key="422-562-2609"
+    >
+      <td
+        key="name"
+      >
+        Lucine Stratz
+      </td>
+      <td
+        key="phone"
+      >
+        422-562-2609
+      </td>
+      <td
+        key="city"
+      >
+        Mlaka pri Kranju
+      </td>
+      <td
+        key="age"
+      >
+        7
+      </td>
+    </tr>
+    <tr
+      key="580-701-9078"
+    >
+      <td
+        key="name"
+      >
+        Ethe Tomankiewicz
+      </td>
+      <td
+        key="phone"
+      >
+        580-701-9078
+      </td>
+      <td
+        key="city"
+      >
+        Kamenický Šenov
+      </td>
+      <td
+        key="age"
+      >
+        98
+      </td>
+    </tr>
+  </tbody>
+</HTMLTable>
+`;
+
+exports[`Sort data by age 1`] = `
+<HTMLTable
+  interactive={true}
+  striped={true}
+>
+  <thead>
+    <tr>
+      <td>
+        <div
+          style={
+            Object {
+              "borderBottom": "1px solid black",
+              "fontSize": "1.5rem",
+              "fontWeight": "bold",
+              "marginBottom": "0.5rem",
+            }
+          }
+        >
+          Current Filters
+        </div>
+        <div
+          key="age"
+          style={
+            Object {
+              "fontSize": "1rem",
+              "marginBottom": "0.5rem",
+            }
+          }
+        >
+          <span>
+            <b>
+              AGE
+            </b>
+             : 
+            35
+          </span>
+          <button
+            onClick={[Function]}
+            style={
+              Object {
+                "color": "red",
+                "fontSize": "1rem",
+              }
+            }
+          >
+             Remove 
+          </button>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <HeaderCell
+        key="name"
+        name="Name"
+        onFilter={[Function]}
+        type="string"
+      />
+      <HeaderCell
+        key="phone"
+        name="Phone Number"
+        onFilter={[Function]}
+        type="string"
+      />
+      <HeaderCell
+        key="city"
+        name="City"
+        onFilter={[Function]}
+        type="category"
+      />
+      <HeaderCell
+        filter="35"
+        key="age"
+        name="Age"
+        onFilter={[Function]}
+        type="number"
+      />
+    </tr>
+  </thead>
+  <tbody>
+    <tr
+      key="776-878-8338"
+    >
+      <td
+        key="name"
+      >
+        Gwen Garrick
+      </td>
+      <td
+        key="phone"
+      >
+        776-878-8338
+      </td>
+      <td
+        key="city"
+      >
+        Maquanzhen
+      </td>
+      <td
+        key="age"
+      >
+        35
+      </td>
+    </tr>
+  </tbody>
+</HTMLTable>
+`;
+
+exports[`Sort data by city 1`] = `
+<HTMLTable
+  interactive={true}
+  striped={true}
+>
+  <thead>
+    <tr>
+      <td>
+        <div
+          style={
+            Object {
+              "borderBottom": "1px solid black",
+              "fontSize": "1.5rem",
+              "fontWeight": "bold",
+              "marginBottom": "0.5rem",
+            }
+          }
+        >
+          Current Filters
+        </div>
+        <div
+          key="city"
+          style={
+            Object {
+              "fontSize": "1rem",
+              "marginBottom": "0.5rem",
+            }
+          }
+        >
+          <span>
+            <b>
+              CITY
+            </b>
+             : 
+            xin
+          </span>
+          <button
+            onClick={[Function]}
+            style={
+              Object {
+                "color": "red",
+                "fontSize": "1rem",
+              }
+            }
+          >
+             Remove 
+          </button>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <HeaderCell
+        key="name"
+        name="Name"
+        onFilter={[Function]}
+        type="string"
+      />
+      <HeaderCell
+        key="phone"
+        name="Phone Number"
+        onFilter={[Function]}
+        type="string"
+      />
+      <HeaderCell
+        filter="xin"
+        key="city"
+        name="City"
+        onFilter={[Function]}
+        type="category"
+      />
+      <HeaderCell
+        key="age"
+        name="Age"
+        onFilter={[Function]}
+        type="number"
+      />
+    </tr>
+  </thead>
+  <tbody>
+    <tr
+      key="327-542-4874"
+    >
+      <td
+        key="name"
+      >
+        Abbot Delahunt
+      </td>
+      <td
+        key="phone"
+      >
+        327-542-4874
+      </td>
+      <td
+        key="city"
+      >
+        Xinba
+      </td>
+      <td
+        key="age"
+      >
+        2
+      </td>
+    </tr>
+  </tbody>
+</HTMLTable>
+`;
+
+exports[`Sort data by name 1`] = `
+<HTMLTable
+  interactive={true}
+  striped={true}
+>
+  <thead>
+    <tr>
+      <td>
+        <div
+          style={
+            Object {
+              "borderBottom": "1px solid black",
+              "fontSize": "1.5rem",
+              "fontWeight": "bold",
+              "marginBottom": "0.5rem",
+            }
+          }
+        >
+          Current Filters
+        </div>
+        <div
+          key="name"
+          style={
+            Object {
+              "fontSize": "1rem",
+              "marginBottom": "0.5rem",
+            }
+          }
+        >
+          <span>
+            <b>
+              NAME
+            </b>
+             : 
+            mell
+          </span>
+          <button
+            onClick={[Function]}
+            style={
+              Object {
+                "color": "red",
+                "fontSize": "1rem",
+              }
+            }
+          >
+             Remove 
+          </button>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <HeaderCell
+        filter="mell"
+        key="name"
+        name="Name"
+        onFilter={[Function]}
+        type="string"
+      />
+      <HeaderCell
+        key="phone"
+        name="Phone Number"
+        onFilter={[Function]}
+        type="string"
+      />
+      <HeaderCell
+        key="city"
+        name="City"
+        onFilter={[Function]}
+        type="category"
+      />
+      <HeaderCell
+        key="age"
+        name="Age"
+        onFilter={[Function]}
+        type="number"
+      />
+    </tr>
+  </thead>
+  <tbody>
+    <tr
+      key="922-694-8628"
+    >
+      <td
+        key="name"
+      >
+        Carmella Brunker
+      </td>
+      <td
+        key="phone"
+      >
+        922-694-8628
+      </td>
+      <td
+        key="city"
+      >
+        General Lavalle
+      </td>
+      <td
+        key="age"
+      >
+        40
+      </td>
+    </tr>
+  </tbody>
+</HTMLTable>
+`;
+
+exports[`Sort data by phone 1`] = `
+<HTMLTable
+  interactive={true}
+  striped={true}
+>
+  <thead>
+    <tr>
+      <td>
+        <div
+          style={
+            Object {
+              "borderBottom": "1px solid black",
+              "fontSize": "1.5rem",
+              "fontWeight": "bold",
+              "marginBottom": "0.5rem",
+            }
+          }
+        >
+          Current Filters
+        </div>
+        <div
+          key="phone"
+          style={
+            Object {
+              "fontSize": "1rem",
+              "marginBottom": "0.5rem",
+            }
+          }
+        >
+          <span>
+            <b>
+              PHONE
+            </b>
+             : 
+            562
+          </span>
+          <button
+            onClick={[Function]}
+            style={
+              Object {
+                "color": "red",
+                "fontSize": "1rem",
+              }
+            }
+          >
+             Remove 
+          </button>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <HeaderCell
+        key="name"
+        name="Name"
+        onFilter={[Function]}
+        type="string"
+      />
+      <HeaderCell
+        filter="562"
+        key="phone"
+        name="Phone Number"
+        onFilter={[Function]}
+        type="string"
+      />
+      <HeaderCell
+        key="city"
+        name="City"
+        onFilter={[Function]}
+        type="category"
+      />
+      <HeaderCell
+        key="age"
+        name="Age"
+        onFilter={[Function]}
+        type="number"
+      />
+    </tr>
+  </thead>
+  <tbody>
+    <tr
+      key="422-562-2609"
+    >
+      <td
+        key="name"
+      >
+        Lucine Stratz
+      </td>
+      <td
+        key="phone"
+      >
+        422-562-2609
+      </td>
+      <td
+        key="city"
+      >
+        Mlaka pri Kranju
+      </td>
+      <td
+        key="age"
+      >
+        7
+      </td>
+    </tr>
+  </tbody>
+</HTMLTable>
+`;
