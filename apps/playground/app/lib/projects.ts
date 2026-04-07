@@ -1,5 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { Project, ProjectInsert } from "~/lib/db";
+import type {
+  PlaygroundProject as Project,
+  NewPlaygroundProject as ProjectInsert,
+} from "@pontistudios/db";
 
 // Type for client-side project data (without server-managed fields)
 export type ProjectItem = Project & { taskCount: number };

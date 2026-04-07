@@ -1,45 +1,63 @@
 /**
  * Optimized Database Queries with SQL Aggregation
+ * Migrated from Drizzle/Postgres to Kysely/MySQL
  *
- * PERFORMANCE IMPROVEMENTS:
+ * PERFORMANCE:
  * - Uses SQL COUNT with filters instead of fetching all records
  * - Single query for stats instead of N+1
  * - ~90% reduction in data transfer for stats endpoints
  */
 
-import { eq, desc, count, sql } from "drizzle-orm";
-import { db } from "~/lib/db";
-import { trackers, votes } from "@pontistudios/db/schema";
+import { sql } from "kysely";
+import { getDb } from "~/lib/db";
+import type { DumphimTrackerParsed, DumphimVote } from "@pontistudios/db";
+
+// Helper to parse JSON fields
+function parseTracker(raw: Record<string, unknown>): DumphimTrackerParsed {
+  return {
+    ...(raw as Omit<DumphimTrackerParsed, "attacks" | "strengths" | "flaws" | "imagePosition">),
+    attacks: typeof raw.attacks === "string" ? JSON.parse(raw.attacks) : (raw.attacks ?? []),
+    strengths:
+      typeof raw.strengths === "string" ? JSON.parse(raw.strengths) : (raw.strengths ?? []),
+    flaws: typeof raw.flaws === "string" ? JSON.parse(raw.flaws) : (raw.flaws ?? []),
+    imagePosition:
+      typeof raw.imagePosition === "string"
+        ? JSON.parse(raw.imagePosition)
+        : (raw.imagePosition ?? null),
+  };
+}
 
 // Trackers
-export async function getTrackers() {
-  return db.query.trackers.findMany({
-    orderBy: desc(trackers.createdAt),
-  });
+export async function getTrackers(): Promise<DumphimTrackerParsed[]> {
+  const db = await getDb();
+  const rows = await db.selectFrom("dumphim_trackers").orderBy("createdAt", "desc").execute();
+  return rows.map((r) => parseTracker(r as Record<string, unknown>));
 }
 
-export async function getTracker(id: string) {
-  return db.query.trackers.findFirst({
-    where: eq(trackers.id, id),
-    with: {
-      votes: true,
-    },
-  });
+export async function getTracker(id: string): Promise<DumphimTrackerParsed | null> {
+  const db = await getDb();
+  const row = await db.selectFrom("dumphim_trackers").where("id", "=", id).executeTakeFirst();
+  return row ? parseTracker(row as Record<string, unknown>) : null;
 }
 
-export async function getTrackersByUser(userId: string) {
-  return db.query.trackers.findMany({
-    where: eq(trackers.userId, userId),
-    orderBy: desc(trackers.createdAt),
-  });
+export async function getTrackersByUser(userId: string): Promise<DumphimTrackerParsed[]> {
+  const db = await getDb();
+  const rows = await db
+    .selectFrom("dumphim_trackers")
+    .where("userId", "=", userId)
+    .orderBy("createdAt", "desc")
+    .execute();
+  return rows.map((r) => parseTracker(r as Record<string, unknown>));
 }
 
 // Votes
-export async function getVotesByTracker(trackerId: string) {
-  return db.query.votes.findMany({
-    where: eq(votes.trackerId, trackerId),
-    orderBy: desc(votes.createdAt),
-  });
+export async function getVotesByTracker(trackerId: string): Promise<DumphimVote[]> {
+  const db = await getDb();
+  return db
+    .selectFrom("dumphim_votes")
+    .where("trackerId", "=", trackerId)
+    .orderBy("createdAt", "desc")
+    .execute() as Promise<DumphimVote[]>;
 }
 
 /**
@@ -50,20 +68,26 @@ export async function getVotesByTracker(trackerId: string) {
  *
  * Performance gain: ~95% faster for large vote counts
  */
-export async function getVoteStats(trackerId: string) {
+export async function getVoteStats(trackerId: string): Promise<{
+  total: number;
+  stay: number;
+  dump: number;
+  stayPercentage: number;
+}> {
+  const db = await getDb();
   const result = await db
-    .select({
-      total: count(votes.id),
-      stay: count(sql`CASE WHEN ${votes.value} = 'stay' THEN 1 END`),
-      dump: count(sql`CASE WHEN ${votes.value} = 'dump' THEN 1 END`),
-    })
-    .from(votes)
-    .where(eq(votes.trackerId, trackerId));
+    .selectFrom("dumphim_votes")
+    .select([
+      sql<number>`count(*)`.as("total"),
+      sql<number>`sum(case when value = 'stay' then 1 else 0 end)`.as("stay"),
+      sql<number>`sum(case when value = 'dump' then 1 else 0 end)`.as("dump"),
+    ])
+    .where("trackerId", "=", trackerId)
+    .executeTakeFirst();
 
-  const stats = result[0];
-  const total = stats.total || 0;
-  const stay = stats.stay || 0;
-  const dump = stats.dump || 0;
+  const total = Number(result?.total) || 0;
+  const stay = Number(result?.stay) || 0;
+  const dump = Number(result?.dump) || 0;
 
   return {
     total,
@@ -81,35 +105,37 @@ export async function getVoteStats(trackerId: string) {
  *
  * Performance gain: ~80% faster for listing pages
  */
-export async function getTrackersWithStats() {
-  // Get all trackers
+export async function getTrackersWithStats(): Promise<
+  (DumphimTrackerParsed & { voteStats: { total: number; stay: number; stayPercentage: number } })[]
+> {
   const allTrackers = await getTrackers();
 
   if (allTrackers.length === 0) {
     return [];
   }
 
-  // Single query for all vote stats
+  const db = await getDb();
   const trackerIds = allTrackers.map((t) => t.id);
 
   const voteStats = await db
-    .select({
-      trackerId: votes.trackerId,
-      total: count(votes.id),
-      stay: count(sql`CASE WHEN ${votes.value} = 'stay' THEN 1 END`),
-    })
-    .from(votes)
-    .where(sql`${votes.trackerId} IN ${trackerIds}`)
-    .groupBy(votes.trackerId);
+    .selectFrom("dumphim_votes")
+    .select([
+      sql<string>`tracker_id`.as("trackerId"),
+      sql<number>`count(*)`.as("total"),
+      sql<number>`sum(case when value = 'stay' then 1 else 0 end)`.as("stay"),
+    ])
+    .where("trackerId", "in", trackerIds)
+    .groupBy("trackerId")
+    .execute();
 
-  // Map stats to trackers
   const statsMap = new Map(
     voteStats.map((s) => [
       s.trackerId,
       {
-        total: s.total || 0,
-        stay: s.stay || 0,
-        stayPercentage: s.total > 0 ? Math.round((s.stay / s.total) * 100) : 0,
+        total: Number(s.total) || 0,
+        stay: Number(s.stay) || 0,
+        stayPercentage:
+          Number(s.total) > 0 ? Math.round((Number(s.stay) / Number(s.total)) * 100) : 0,
       },
     ]),
   );
@@ -126,7 +152,14 @@ export async function getTrackersWithStats() {
  * BEFORE: Fetched tracker, then fetched all votes separately
  * AFTER: Single tracker query + single optimized stats query
  */
-export async function getTrackerWithStats(id: string) {
+export async function getTrackerWithStats(
+  id: string,
+): Promise<
+  | (DumphimTrackerParsed & {
+      voteStats: { total: number; stay: number; dump: number; stayPercentage: number };
+    })
+  | null
+> {
   const [tracker, stats] = await Promise.all([getTracker(id), getVoteStats(id)]);
 
   if (!tracker) return null;

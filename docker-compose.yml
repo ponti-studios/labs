@@ -1,9 +1,12 @@
 version: '3.8'
 
 services:
-  mysql:
-    image: mysql:8.1
-    container_name: hackefeller-mysql
+  hominem-mysql:
+    build:
+      context: ./docker/mysql
+      dockerfile: Dockerfile
+    image: pontistudios/mysql:latest
+    container_name: hominem-mysql
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: labs_password
@@ -14,21 +17,25 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      # optional custom init scripts
-      - ./docker/mysql/init:/docker-entrypoint-initdb.d
-    command: --innodb-buffer-pool-size=1G --innodb-log-file-size=256M
     networks:
       - hackefeller-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-plabs_password"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
 
 
   mysqld-exporter:
     image: prom/mysqld-exporter:latest
     container_name: hackefeller-mysqld-exporter
     depends_on:
-      - mysql
+      hominem-mysql:
+        condition: service_healthy
     restart: unless-stopped
     environment:
-      DATA_SOURCE_NAME: "labs:labs_password@tcp(mysql:3306)/"
+      DATA_SOURCE_NAME: "labs:labs_password@tcp(hominem-mysql:3306)/"
     ports:
       - "9104:9104"    # Prometheus scrape port
     networks:

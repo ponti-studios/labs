@@ -48,7 +48,7 @@ export function TaskListItem({ todo, onDelete, isDeletePending }: TaskListItemPr
             <div className="flex items-start gap-3">
               <input
                 type="checkbox"
-                checked={todo.completed}
+                checked={todo.completed ?? false}
                 onChange={toggleComplete}
                 className="size-4 mt-1"
                 disabled={updateTodoMutation.isPending}

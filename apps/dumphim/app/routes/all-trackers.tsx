@@ -39,14 +39,23 @@ export default function AllTrackersPage() {
       <h1 className="text-3xl font-bold text-center mb-10">All Trackers</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {trackers.map((tracker) => {
+          // Parse JSON fields from MySQL (stored as JSON strings)
+          const parseJson = <T,>(val: string | null, fallback: T): T => {
+            if (!val) return fallback;
+            try {
+              return JSON.parse(val) as T;
+            } catch {
+              return fallback;
+            }
+          };
           const cardData = {
             name: tracker.name,
             hp: tracker.hp ?? undefined,
             cardType: tracker.cardType ?? undefined,
             description: tracker.description ?? undefined,
-            attacks: tracker.attacks ?? [],
-            flaws: Array.isArray(tracker.flaws) ? tracker.flaws : [],
-            strengths: Array.isArray(tracker.strengths) ? tracker.strengths : [],
+            attacks: parseJson(tracker.attacks, []),
+            flaws: parseJson(tracker.flaws, []),
+            strengths: parseJson(tracker.strengths, []),
             commitmentLevel: tracker.commitmentLevel ?? undefined,
           };
           const selectedTheme =
@@ -62,8 +71,8 @@ export default function AllTrackersPage() {
                 selectedTheme={selectedTheme}
                 selectedType={selectedType}
                 image={tracker.photoUrl}
-                imageScale={tracker.imageScale || 1}
-                imagePosition={tracker.imagePosition || { x: 0, y: 0 }}
+                imageScale={tracker.imageScale ?? 1}
+                imagePosition={parseJson(tracker.imagePosition, { x: 0, y: 0 })}
               />
             </div>
           );
