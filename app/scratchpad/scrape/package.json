@@ -1,0 +1,18 @@
+{
+	"name": "scrape",
+	"version": "1.0.0",
+	"private": true,
+	"scripts": {
+		"dev": "tsx smart-tax-asset.ts",
+		"build": "tsc",
+		"type-check": "tsc --noEmit"
+	},
+	"keywords": ["scraping", "typescript"],
+	"author": "",
+	"license": "ISC",
+	"description": "Web scraping utilities",
+	"devDependencies": {
+		"typescript": "^5.8.3",
+		"tsx": "^4.19.2"
+	}
+}
