@@ -152,9 +152,7 @@ export async function getTrackersWithStats(): Promise<
  * BEFORE: Fetched tracker, then fetched all votes separately
  * AFTER: Single tracker query + single optimized stats query
  */
-export async function getTrackerWithStats(
-  id: string,
-): Promise<
+export async function getTrackerWithStats(id: string): Promise<
   | (DumphimTrackerParsed & {
       voteStats: { total: number; stay: number; dump: number; stayPercentage: number };
     })
