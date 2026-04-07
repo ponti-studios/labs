@@ -1,0 +1,28 @@
+{
+  "name": "boiler-static",
+  "version": "0.0.1",
+  "homepage": "https://github.com/theponti/boiler-static",
+  "authors": [
+    "CJ Ponti <cjponti@gmail.com>"
+  ],
+  "description": "A boilerplate for a static site",
+  "main": "gulpfile.js",
+  "keywords": [
+    "static",
+    "node",
+    "html",
+    "css",
+    "javascript"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+
+  }
+}

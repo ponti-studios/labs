@@ -1,0 +1,50 @@
+.book {
+  border-radius: 0.4rem;
+  border: 1px solid darkgrey;
+  max-height: 365px;
+  margin: 0 auto;
+  max-width: 80%;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.book .cover {
+  text-align: center
+}
+
+.book img {
+  max-height: 200px;
+}
+
+.book .price {
+  vertical-align: middle;
+  line-height: 38px;
+  font-size: 25px;
+  font-weight: 500;
+}
+
+.book-title {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 100%;
+  overflow: hidden;
+}
+
+.book .uid { 
+  padding: 8px 0;
+  color: darkgrey;
+}
+
+.bold {
+  font-weight: 500;
+}
+
+.book .btn {
+  background: black;
+  color: white;
+  border: none;
+}
+
+.red-text {
+  color: red;
+}

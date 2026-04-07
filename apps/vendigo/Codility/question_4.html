@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Vendigo: Question 4</title>
+</head>
+<body>
+  <img src="question_4.png" style="width: 100%"/>
+  <script>
+    function calcAvgHeight(data) {
+      var persons = Object.keys(data)
+      
+      // Return null if no persons
+      if (persons.length === 0) {
+        return null
+      }
+      
+      var height = 0
+      
+      persons.forEach(function(person) {
+        height += data[person].height
+      })
+      
+      return height / persons.length
+      // Calculate average height from received data. If no data, return null.
+    }
+
+    var avgHeight = calcAvgHeight({
+      Matt: { height: 174, weight: 69 },
+      Jason: { height: 190, weight: 103 }
+    });
+
+    console.log(avgHeight);
+  </script>
+</body>
+</html>
