@@ -1,46 +1,148 @@
-import { eq } from "drizzle-orm";
-import { db, projects, todos, type TodoInsert, type ProjectInsert } from "~/lib/db";
+import { db } from "~/lib/db";
+import type {
+  NewPlaygroundProject,
+  NewPlaygroundTodo,
+  PlaygroundProject,
+  PlaygroundTodo,
+} from "@pontistudios/db";
 
 // Server Actions for mutations
 // These run on the server and can be called from Client Components
 
-export async function createProject(data: ProjectInsert) {
-  const [project] = await db.insert(projects).values(data).returning();
+export async function createProject(data: NewPlaygroundProject): Promise<PlaygroundProject> {
+  const result = await db
+    .insertInto("playground_projects")
+    .values({
+      userId: data.userId,
+      name: data.name,
+      description: data.description ?? null,
+    })
+    .executeTakeFirst();
 
-  return project;
+  const insertId = Number(result.insertId);
+  const now = new Date().toISOString().slice(0, 19).replace("T", " ");
+
+  return {
+    id: insertId,
+    userId: data.userId,
+    name: data.name,
+    description: data.description ?? null,
+    createdAt: now,
+    updatedAt: now,
+  };
 }
 
-export async function updateProject(id: string, data: Partial<ProjectInsert>) {
-  const [project] = await db
-    .update(projects)
-    .set({ ...data, updatedAt: new Date().toISOString() })
-    .where(eq(projects.id, parseInt(id)))
-    .returning();
+export async function updateProject(
+  id: string,
+  data: Partial<NewPlaygroundProject>,
+): Promise<PlaygroundProject | null> {
+  const now = new Date().toISOString().slice(0, 19).replace("T", " ");
 
-  return project;
+  await db
+    .updateTable("playground_projects")
+    .set({
+      name: data.name,
+      description: data.description,
+      updatedAt: now,
+    })
+    .where("id", "=", Number.parseInt(id, 10))
+    .executeTakeFirst();
+
+  const updated = await db
+    .selectFrom("playground_projects")
+    .where("id", "=", Number.parseInt(id, 10))
+    .selectAll()
+    .executeTakeFirst();
+
+  if (!updated) return null;
+
+  return {
+    id: updated.id,
+    userId: updated.userId,
+    name: updated.name,
+    description: updated.description,
+    createdAt: updated.createdAt ?? now,
+    updatedAt: updated.updatedAt ?? now,
+  };
 }
 
-export async function deleteProject(id: string) {
-  await db.delete(projects).where(eq(projects.id, parseInt(id)));
+export async function deleteProject(id: string): Promise<void> {
+  await db
+    .deleteFrom("playground_projects")
+    .where("id", "=", Number.parseInt(id, 10))
+    .executeTakeFirst();
 }
 
 // Todo mutations
-export async function createTodo(data: TodoInsert) {
-  const [todo] = await db.insert(todos).values(data).returning();
+export async function createTodo(data: NewPlaygroundTodo): Promise<PlaygroundTodo> {
+  const result = await db
+    .insertInto("playground_todos")
+    .values({
+      userId: data.userId,
+      projectId: data.projectId ?? null,
+      title: data.title,
+      start: data.start,
+      end: data.end,
+      completed: data.completed ?? false,
+    })
+    .executeTakeFirst();
 
-  return todo;
+  const insertId = Number(result.insertId);
+  const now = new Date().toISOString().slice(0, 19).replace("T", " ");
+
+  return {
+    id: insertId,
+    userId: data.userId,
+    projectId: data.projectId ?? null,
+    title: data.title,
+    start: data.start,
+    end: data.end,
+    completed: data.completed ?? false,
+    createdAt: now,
+    updatedAt: now,
+  };
 }
 
-export async function updateTodo(id: number, data: Partial<TodoInsert>) {
-  const [todo] = await db
-    .update(todos)
-    .set({ ...data, updatedAt: new Date().toISOString() })
-    .where(eq(todos.id, id))
-    .returning();
+export async function updateTodo(
+  id: number,
+  data: Partial<NewPlaygroundTodo>,
+): Promise<PlaygroundTodo | null> {
+  const now = new Date().toISOString().slice(0, 19).replace("T", " ");
 
-  return todo;
+  await db
+    .updateTable("playground_todos")
+    .set({
+      projectId: data.projectId ?? null,
+      title: data.title,
+      start: data.start,
+      end: data.end,
+      completed: data.completed,
+      updatedAt: now,
+    })
+    .where("id", "=", id)
+    .executeTakeFirst();
+
+  const updated = await db
+    .selectFrom("playground_todos")
+    .where("id", "=", id)
+    .selectAll()
+    .executeTakeFirst();
+
+  if (!updated) return null;
+
+  return {
+    id: updated.id,
+    userId: updated.userId,
+    projectId: updated.projectId,
+    title: updated.title,
+    start: updated.start,
+    end: updated.end,
+    completed: updated.completed,
+    createdAt: updated.createdAt ?? now,
+    updatedAt: updated.updatedAt ?? now,
+  };
 }
 
-export async function deleteTodo(id: number) {
-  await db.delete(todos).where(eq(todos.id, id));
+export async function deleteTodo(id: number): Promise<void> {
+  await db.deleteFrom("playground_todos").where("id", "=", id).executeTakeFirst();
 }

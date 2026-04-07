@@ -1,6 +1,5 @@
-import { eq, ilike, or } from "drizzle-orm";
 import type { LoaderFunctionArgs } from "react-router";
-import { db, projects, todos } from "~/lib/db";
+import { db } from "~/lib/db";
 import { searchTodosBySemanticSimilarity } from "~/lib/semantic-search";
 import { getSession } from "~/lib/session";
 
@@ -10,7 +9,7 @@ type TextSearchResult = {
   title: string;
   start: string;
   end: string;
-  completed: boolean;
+  completed: boolean | null;
   createdAt: string | null;
   projectName: string | null;
   projectId: number | null;
@@ -58,21 +57,41 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
     // Use traditional text search
     if (finalSearchType === "text" || !searchResults) {
-      searchResults = await db
-        .select({
-          id: todos.id,
-          title: todos.title,
-          start: todos.start,
-          end: todos.end,
-          completed: todos.completed,
-          createdAt: todos.createdAt,
-          projectName: projects.name,
-          projectId: projects.id,
-        })
-        .from(todos)
-        .leftJoin(projects, eq(todos.projectId, projects.id))
-        .where(or(ilike(todos.title, `%${query}%`), ilike(projects.name, `%${query}%`)))
-        .orderBy(todos.createdAt);
+      const rows = await db
+        .selectFrom("playground_todos")
+        .leftJoin("playground_projects", "playground_todos.projectId", "playground_projects.id")
+        .where((eb) =>
+          eb.or([
+            eb("playground_todos.title", "like", `%${query}%`),
+            eb("playground_projects.name", "like", `%${query}%`),
+          ]),
+        )
+        .where("playground_todos.userId", "=", userId)
+        .orderBy("playground_todos.createdAt", "desc")
+        .select([
+          "playground_todos.id",
+          "playground_todos.title",
+          "playground_todos.start",
+          "playground_todos.end",
+          "playground_todos.completed",
+          "playground_todos.createdAt",
+          "playground_todos.projectId",
+          "playground_projects.name as projectName",
+        ])
+        .execute();
+
+      searchResults = rows.map(
+        (r): TextSearchResult => ({
+          id: r.id as number,
+          title: r.title,
+          start: r.start,
+          end: r.end,
+          completed: r.completed as boolean | null,
+          createdAt: r.createdAt as string | null,
+          projectName: r.projectName ?? null,
+          projectId: r.projectId as number | null,
+        }),
+      );
     }
 
     // Transform results to match the expected format

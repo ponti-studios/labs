@@ -7,29 +7,21 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
-    },
-    "./schema": {
-      "types": "./dist/schema/index.d.ts",
-      "import": "./dist/schema/index.js"
-    },
-    "./postgres": {
-      "types": "./dist/postgres-client.d.ts",
-      "import": "./dist/postgres-client.js"
     }
   },
   "scripts": {
-    "build": "tsc && cp -R migrations dist/migrations",
+    "build": "tsc && cp -R src/migrations dist/migrations",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "db:migrate": "drizzle-kit migrate",
-    "db:generate": "drizzle-kit generate",
+    "db:migrate": "flyway migrate",
+    "db:migrate:info": "flyway info",
+    "db:migrate:validate": "flyway validate",
+    "db:migrate:repair": "flyway repair",
     "clean": "rm -rf dist tsconfig.tsbuildinfo"
   },
   "dependencies": {
-    "drizzle-orm": "^0.44.4",
     "kysely": "^0.28.8",
     "mysql2": "^3.6.0",
-    "postgres": "^3.4.7",
     "zod": "^4.3.6"
   },
   "devDependencies": {

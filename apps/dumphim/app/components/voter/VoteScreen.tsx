@@ -2,15 +2,15 @@ import { AlertTriangle, Heart, ThumbsDown, ThumbsUp, User } from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { useAuth } from "~/components/AuthProvider";
-import type { Tracker, Vote } from "@pontistudios/db/schema";
+import type { DumphimTrackerParsed, DumphimVote } from "@pontistudios/db";
 import { generateFingerprint } from "~/lib/voter.utils";
 import VoteChart from "./VoteChart";
 
 interface VoteScreenProps {
-  tracker: Tracker;
-  votes: Vote[];
+  tracker: DumphimTrackerParsed;
+  votes: DumphimVote[];
   onBack: () => void;
-  onVoteCasted: (trackerId: string, updatedVotes: Vote[]) => void;
+  onVoteCasted: (trackerId: string, updatedVotes: DumphimVote[]) => void;
   fetcher: any;
 }
 
