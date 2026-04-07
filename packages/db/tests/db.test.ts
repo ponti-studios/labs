@@ -30,7 +30,7 @@ describe('db package basics', () => {
   it('has at least one migration file', () => {
     const fs = require('fs');
     const path = require('path');
-    const files = fs.readdirSync(path.join(__dirname, '../migrations'));
+    const files = fs.readdirSync(path.join(__dirname, '../src/migrations'));
     expect(files.length).toBeGreaterThan(0);
   });
 });
