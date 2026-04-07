@@ -1,8 +1,8 @@
 import "dotenv/config";
-import { getPostgresDb, tflCameras } from "@pontistudios/db";
+import { getDb } from "@pontistudios/db";
 import formattedCameras from "../app/lib/tfl/cameras-formatted.json";
 
-const { db } = getPostgresDb();
+const db = await getDb();
 
 interface FormattedCamera {
 	commonName: string;
@@ -21,38 +21,36 @@ async function populateTflCameras() {
 	try {
 		// Clear existing data
 		console.log("Clearing existing TFL camera data...");
-		await db.delete(tflCameras);
+		await db.deleteFrom("playground_tfl_cameras").execute();
 
 		// Insert new data
 		console.log(`Inserting ${formattedCameras.length} TFL cameras...`);
 
-		const insertData = formattedCameras.map((camera: FormattedCamera) => ({
-			tflId: camera.id,
-			commonName: camera.commonName,
-			available: camera.available === "true",
-			imageUrl: camera.imageUrl,
-			videoUrl: camera.videoUrl,
-			view: camera.view,
-			lat: camera.lat,
-			lng: camera.lng,
-		}));
-
 		// Insert in batches for better performance
 		const batchSize = 100;
-		for (let i = 0; i < insertData.length; i += batchSize) {
-			const batch = insertData.slice(i, i + batchSize);
-			await db.insert(tflCameras).values(batch);
+		for (let i = 0; i < formattedCameras.length; i += batchSize) {
+			const batch = formattedCameras.slice(i, i + batchSize);
+			const values = batch.map((camera: FormattedCamera) => ({
+				tfl_id: camera.id,
+				common_name: camera.commonName,
+				available: camera.available === "true" ? 1 : 0,
+				image_url: camera.imageUrl || null,
+				video_url: camera.videoUrl || null,
+				view: camera.view || null,
+				lat: camera.lat,
+				lng: camera.lng,
+			}));
+
+			await db.insertInto("playground_tfl_cameras").values(values).execute();
 			console.log(
-				`Inserted batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(
-					insertData.length / batchSize,
-				)}`,
+				`Inserted batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(formattedCameras.length / batchSize)}`,
 			);
 		}
 
 		console.log("TFL cameras population completed successfully!");
 
 		// Verify the data
-		const count = await db.select().from(tflCameras);
+		const count = await db.selectFrom("playground_tfl_cameras").select("id").execute();
 		console.log(`Total cameras in database: ${count.length}`);
 	} catch (error) {
 		console.error("Error populating TFL cameras:", error);

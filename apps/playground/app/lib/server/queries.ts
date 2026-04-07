@@ -1,64 +1,78 @@
-import { eq, desc, sql } from "drizzle-orm";
 import { db } from "~/lib/db";
-import { projects, todos } from "~/lib/db";
 
 // Server-side data fetching patterns
 // These run on the server only - never shipped to client
 
-export async function getProjects(_filters?: { status?: string }) {
-  return db
-    .select({
-      id: projects.id,
-      userId: projects.userId,
-      name: projects.name,
-      description: projects.description,
-      createdAt: projects.createdAt,
-      updatedAt: projects.updatedAt,
-      taskCount: sql<number>`COALESCE(COUNT(${todos.id}), 0)`.as("taskCount"),
-    })
-    .from(projects)
-    .leftJoin(todos, eq(projects.id, todos.projectId))
-    .groupBy(
-      projects.id,
-      projects.userId,
-      projects.name,
-      projects.description,
-      projects.createdAt,
-      projects.updatedAt,
-    )
-    .orderBy(desc(projects.createdAt));
+interface ProjectWithTaskCount {
+  id: number;
+  userId: string;
+  name: string;
+  description: string | null;
+  createdAt: string | null;
+  updatedAt: string | null;
+  taskCount: number;
+}
+
+export async function getProjects(_filters?: { status?: string }): Promise<ProjectWithTaskCount[]> {
+  const projects = await db
+    .selectFrom("playground_projects")
+    .orderBy("createdAt", "desc")
+    .select(["id", "userId", "name", "description", "createdAt", "updatedAt"])
+    .execute();
+
+  const projectsWithCounts = await Promise.all(
+    projects.map(async (project) => {
+      const countResult = await db
+        .selectFrom("playground_todos")
+        .where("projectId", "=", project.id)
+        .select((eb) => eb.fn.count<number>("id").as("taskCount"))
+        .executeTakeFirstOrThrow();
+
+      return {
+        ...project,
+        taskCount: Number(countResult.taskCount) || 0,
+      };
+    }),
+  );
+
+  return projectsWithCounts;
 }
 
 export async function getProject(id: string) {
-  return db.query.projects.findFirst({
-    where: eq(projects.id, parseInt(id)),
-  });
+  return db
+    .selectFrom("playground_projects")
+    .where("id", "=", Number.parseInt(id, 10))
+    .selectAll()
+    .executeTakeFirst();
 }
 
 export async function getProjectWithTasks(id: string) {
-  return db.query.projects.findFirst({
-    where: eq(projects.id, parseInt(id)),
-  });
+  return db
+    .selectFrom("playground_projects")
+    .where("id", "=", Number.parseInt(id, 10))
+    .selectAll()
+    .executeTakeFirst();
 }
 
 export async function getTodos() {
-  return db.query.todos.findMany({
-    orderBy: desc(todos.createdAt),
-  });
+  return await db.selectFrom("playground_todos").orderBy("createdAt", "desc").selectAll().execute();
 }
 
 export async function getTodosWithProjects() {
-  const todosData = await db.query.todos.findMany({
-    orderBy: desc(todos.createdAt),
-  });
+  const todosData = await db
+    .selectFrom("playground_todos")
+    .orderBy("createdAt", "desc")
+    .selectAll()
+    .execute();
 
-  // Fetch project names for each todo
   const todosWithProjects = await Promise.all(
     todosData.map(async (todo) => {
       if (todo.projectId) {
-        const project = await db.query.projects.findFirst({
-          where: eq(projects.id, todo.projectId),
-        });
+        const project = await db
+          .selectFrom("playground_projects")
+          .where("id", "=", todo.projectId)
+          .select("name")
+          .executeTakeFirst();
         return {
           ...todo,
           projectName: project?.name,

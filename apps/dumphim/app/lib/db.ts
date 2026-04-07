@@ -1,5 +1,17 @@
-import { getPostgresDb } from "@pontistudios/db";
+import { getDb } from "@pontistudios/db";
+import type {
+  DumphimTracker,
+  DumphimVote,
+  NewDumphimTracker,
+  NewDumphimVote,
+} from "@pontistudios/db";
 
-// Re-export the database connection and schema from the shared package
-export const { db } = getPostgresDb();
-export { schema } from "@pontistudios/db";
+// Re-export types for use throughout the app
+export type {
+  DumphimTracker,
+  DumphimVote,
+  NewDumphimTracker,
+  NewDumphimVote,
+} from "@pontistudios/db";
+
+export { getDb };

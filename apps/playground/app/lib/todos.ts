@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { Todo, TodoInsert } from "~/lib/db";
+import type { PlaygroundTodo as Todo, NewPlaygroundTodo as TodoInsert } from "@pontistudios/db";
 
 export type TodoItem = Todo & {
   projectName?: string;

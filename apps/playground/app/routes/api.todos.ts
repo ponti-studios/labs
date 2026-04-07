@@ -1,10 +1,10 @@
-import { eq } from "drizzle-orm";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
-import { db, embeddings, projects, todos, type TodoInsert } from "~/lib/db";
+import { db } from "~/lib/db";
+import type { NewPlaygroundTodo, PlaygroundTodo } from "@pontistudios/db";
 import { generateTaskEmbedding } from "~/lib/embeddings";
 import { commitSession, getSession } from "~/lib/session";
 
-async function getOrCreateUserId(request: Request): Promise<{ userId: string; session: any }> {
+async function getOrCreateUserId(request: Request): Promise<{ userId: string; session: unknown }> {
   const session = await getSession(request.headers.get("Cookie"));
   let userId = session.get("userId");
 
@@ -16,99 +16,156 @@ async function getOrCreateUserId(request: Request): Promise<{ userId: string; se
   return { userId, session };
 }
 
-async function createResponseWithSession(data: any, session: any) {
+async function createResponseWithSession(data: unknown, session: unknown) {
   return Response.json(data, {
     headers: {
-      "Set-Cookie": await commitSession(session),
+      "Set-Cookie": await commitSession(session as any),
     },
   });
 }
 
-async function fetchUserTodos(userId: string) {
-  return await db
-    .select({
-      id: todos.id,
-      userId: todos.userId,
-      projectId: todos.projectId,
-      title: todos.title,
-      start: todos.start,
-      end: todos.end,
-      completed: todos.completed,
-      createdAt: todos.createdAt,
-      updatedAt: todos.updatedAt,
-      projectName: projects.name,
-    })
-    .from(todos)
-    .leftJoin(projects, eq(todos.projectId, projects.id))
-    .where(eq(todos.userId, userId))
-    .orderBy(todos.createdAt);
+interface TodoWithProjectName {
+  id: number;
+  userId: string;
+  projectId: number | null;
+  title: string;
+  start: string;
+  end: string;
+  completed: boolean | null;
+  createdAt: string | null;
+  updatedAt: string | null;
+  projectName: string | null;
 }
 
-async function createTodo(todoData: TodoInsert, userId: string) {
-  // Create the todo first
-  const newTodo = await db
-    .insert(todos)
+async function fetchUserTodos(userId: string): Promise<TodoWithProjectName[]> {
+  const todos = await db
+    .selectFrom("playground_todos")
+    .leftJoin("playground_projects", "playground_todos.projectId", "playground_projects.id")
+    .where("playground_todos.userId", "=", userId)
+    .orderBy("playground_todos.createdAt")
+    .select([
+      "playground_todos.id",
+      "playground_todos.userId",
+      "playground_todos.projectId",
+      "playground_todos.title",
+      "playground_todos.start",
+      "playground_todos.end",
+      "playground_todos.completed",
+      "playground_todos.createdAt",
+      "playground_todos.updatedAt",
+      "playground_projects.name as projectName",
+    ])
+    .execute();
+
+  return todos.map((t) => ({
+    ...t,
+    projectName: t.projectName ?? null,
+  }));
+}
+
+async function createTodo(
+  todoData: Omit<NewPlaygroundTodo, "id" | "createdAt" | "updatedAt">,
+  userId: string,
+): Promise<PlaygroundTodo> {
+  const insertResult = await db
+    .insertInto("playground_todos")
     .values({
-      ...todoData,
       userId,
+      projectId: todoData.projectId ?? null,
+      title: todoData.title,
+      start: todoData.start,
+      end: todoData.end,
+      completed: todoData.completed ?? false,
     })
-    .returning()
-    .then((rows) => rows[0]);
+    .executeTakeFirst();
+
+  const newTodoId = Number(insertResult.insertId);
+  const now = new Date().toISOString().slice(0, 19).replace("T", " ");
 
   // Generate and save embedding asynchronously (don't block the response)
-  try {
-    // Get project name if projectId is provided
-    let projectName: string | undefined;
-    if (todoData.projectId) {
-      const project = await db
-        .select({ name: projects.name })
-        .from(projects)
-        .where(eq(projects.id, todoData.projectId))
-        .then((rows) => rows[0]);
-      projectName = project?.name;
-    }
+  const projectName = todoData.projectId
+    ? await db
+        .selectFrom("playground_projects")
+        .where("id", "=", todoData.projectId)
+        .select("name")
+        .executeTakeFirst()
+        .then((r) => r?.name ?? undefined)
+    : undefined;
 
-    // Generate embedding
-    const embeddingValues = await generateTaskEmbedding(todoData.title, projectName);
+  const embeddingValues = await generateTaskEmbedding(todoData.title, projectName);
 
-    // Save embedding to database
-    await db.insert(embeddings).values({
-      todoId: newTodo.id,
+  await db
+    .insertInto("playground_embeddings")
+    .values({
+      todoId: newTodoId,
       content: projectName
         ? `Task: ${todoData.title} | Project: ${projectName}`
         : `Task: ${todoData.title}`,
-      embedding: embeddingValues,
+      embedding: JSON.stringify(embeddingValues),
       model: "gemini-embedding-001",
-    });
-
-    console.log(`Embedding saved for todo ${newTodo.id}`);
-  } catch (error) {
-    console.error("Failed to generate/save embedding for todo:", newTodo.id, error);
-    // Don't fail the todo creation if embedding fails
-  }
-
-  return newTodo;
-}
-
-async function updateTodo(todoData: TodoInsert & { id: number }, userId: string) {
-  return await db
-    .update(todos)
-    .set({
-      ...todoData,
-      userId,
-      updatedAt: new Date().toISOString(),
     })
-    .where(eq(todos.id, todoData.id))
-    .returning()
-    .then((rows) => rows[0]);
+    .execute();
+
+  return {
+    id: newTodoId,
+    userId,
+    projectId: todoData.projectId ?? null,
+    title: todoData.title,
+    start: todoData.start,
+    end: todoData.end,
+    completed: todoData.completed ?? false,
+    createdAt: now,
+    updatedAt: now,
+  };
 }
 
-async function deleteTodo(todoId: number) {
-  return await db
-    .delete(todos)
-    .where(eq(todos.id, todoId))
-    .returning()
-    .then((rows) => rows[0]);
+async function updateTodo(
+  todoData: Omit<NewPlaygroundTodo, "id" | "createdAt" | "updatedAt"> & { id: number },
+  _userId: string,
+): Promise<PlaygroundTodo | null> {
+  const now = new Date().toISOString().slice(0, 19).replace("T", " ");
+
+  await db
+    .updateTable("playground_todos")
+    .set({
+      projectId: todoData.projectId ?? null,
+      title: todoData.title,
+      start: todoData.start,
+      end: todoData.end,
+      completed: todoData.completed ?? false,
+      updatedAt: now,
+    })
+    .where("id", "=", todoData.id)
+    .executeTakeFirst();
+
+  const updated = await db
+    .selectFrom("playground_todos")
+    .where("id", "=", todoData.id)
+    .selectAll()
+    .executeTakeFirst();
+
+  if (!updated) return null;
+
+  return {
+    id: updated.id,
+    userId: updated.userId,
+    projectId: updated.projectId,
+    title: updated.title,
+    start: updated.start,
+    end: updated.end,
+    completed: updated.completed,
+    createdAt: updated.createdAt ?? now,
+    updatedAt: updated.updatedAt ?? now,
+  };
+}
+
+async function deleteTodo(todoId: number): Promise<boolean> {
+  const result = await db
+    .deleteFrom("playground_todos")
+    .where("id", "=", todoId)
+    .executeTakeFirst();
+
+  return result.numDeletedRows > 0;
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -128,13 +185,19 @@ export async function action({ request }: ActionFunctionArgs) {
 
     switch (request.method) {
       case "POST": {
-        const body = (await request.json()) as TodoInsert;
+        const body = (await request.json()) as Omit<
+          NewPlaygroundTodo,
+          "id" | "createdAt" | "updatedAt"
+        >;
         const newTodo = await createTodo(body, userId);
         return createResponseWithSession(newTodo, session);
       }
 
       case "PUT": {
-        const body = (await request.json()) as TodoInsert & { id: number };
+        const body = (await request.json()) as Omit<
+          NewPlaygroundTodo,
+          "id" | "createdAt" | "updatedAt"
+        > & { id: number };
         const updatedTodo = await updateTodo(body, userId);
 
         if (!updatedTodo) {
@@ -152,9 +215,9 @@ export async function action({ request }: ActionFunctionArgs) {
           return Response.json({ error: "Todo ID is required" }, { status: 400 });
         }
 
-        const deletedTodo = await deleteTodo(parseInt(id));
+        const deleted = await deleteTodo(Number.parseInt(id, 10));
 
-        if (!deletedTodo) {
+        if (!deleted) {
           return Response.json({ error: "Todo not found" }, { status: 404 });
         }
 

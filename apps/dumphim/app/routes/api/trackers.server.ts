@@ -10,14 +10,14 @@
 
 import { createTracker } from "~/lib/server/mutations";
 import { invalidateTrackerCache } from "~/lib/server/cache";
-import type { TrackerInsert } from "@pontistudios/db/schema";
+import type { NewDumphimTracker } from "@pontistudios/db";
 import { httpErrors, httpSuccess } from "~/lib/api/response";
 
 // Validation helper
 function validateTrackerData(body: Record<string, unknown>): {
   valid: boolean;
   error?: Response;
-  data?: TrackerInsert;
+  data?: NewDumphimTracker;
 } {
   if (!body.name || typeof body.name !== "string") {
     return { valid: false, error: httpErrors.badRequest("Name is required") };
@@ -27,21 +27,21 @@ function validateTrackerData(body: Record<string, unknown>): {
     return { valid: false, error: httpErrors.badRequest("User ID is required") };
   }
 
-  const trackerData: TrackerInsert = {
+  const trackerData: NewDumphimTracker = {
     name: body.name,
     hp: typeof body.hp === "string" ? body.hp : null,
     cardType: typeof body.cardType === "string" ? body.cardType : null,
     description: typeof body.description === "string" ? body.description : null,
-    attacks: Array.isArray(body.attacks) ? body.attacks : null,
-    strengths: Array.isArray(body.strengths) ? body.strengths : null,
-    flaws: Array.isArray(body.flaws) ? body.flaws : null,
+    attacks: Array.isArray(body.attacks) ? JSON.stringify(body.attacks) : null,
+    strengths: Array.isArray(body.strengths) ? JSON.stringify(body.strengths) : null,
+    flaws: Array.isArray(body.flaws) ? JSON.stringify(body.flaws) : null,
     commitmentLevel: typeof body.commitmentLevel === "string" ? body.commitmentLevel : null,
     colorTheme: typeof body.colorTheme === "string" ? body.colorTheme : null,
     photoUrl: typeof body.photoUrl === "string" ? body.photoUrl : null,
     imageScale: typeof body.imageScale === "number" ? body.imageScale : null,
     imagePosition:
       typeof body.imagePosition === "object" && body.imagePosition !== null
-        ? (body.imagePosition as { x: number; y: number })
+        ? JSON.stringify(body.imagePosition as { x: number; y: number })
         : null,
     userId: body.userId,
   };
