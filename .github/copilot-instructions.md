@@ -7,7 +7,6 @@ This repository is a _playground/monorepo_ containing several experimental apps 
 - **Package manager**: [pnpm](https://pnpm.io/) with a workspace defined in `pnpm-workspace.yaml`.
 - **Task runner**: [turbo](https://turborepo.org/) – root `package.json` scripts map to `turbo run <task>`.
 - **Makefile** provides shortcuts (e.g. `make install`, `make build`, `make test`).
-- **Hooks**: `lefthook.yml` runs format, lint, tests on commit/push.
 
 ### Common root commands
 
@@ -26,7 +25,7 @@ Run commands inside a specific package by `cd`‑ing into it or using `pnpm -r`/
 
 ## Project structure
 
-- `apps/` – each subdirectory is its own frontend/backend demo. Frameworks include Next.js, React Router, Cloudflare Pages, extensions, etc. 
+- `apps/` – each subdirectory is its own frontend/backend demo. Frameworks include Next.js, React Router, Cloudflare Pages, extensions, etc.
   - Look for an `app/`, `src/`, or `pages/` directory to locate the main code.
   - Scripts in individual package.json files often provide `dev`, `build`, `lint`, `test`, etc.
 - `packages/` – shared libraries. The most important is `@pontistudios/ui`, a UI component library built with Radix+Tailwind+CVA and Storybook.
@@ -63,7 +62,6 @@ Run commands inside a specific package by `cd`‑ing into it or using `pnpm -r`/
 
 - "Run the unit tests in the `medico` app and report any failures."
 - "Add a new button component to `@pontistudios/ui` with CVA variants and update Storybook."
-- "Format and lint the entire workspace." 
-
+- "Format and lint the entire workspace."
 
 This should give the AI agent enough context to be immediately productive in the `labs` repository.

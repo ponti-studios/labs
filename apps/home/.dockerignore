@@ -124,11 +124,6 @@ playwright-report/
 *.sqlite
 *.sqlite3
 
-# Development files
-lefthook.yml
-.lefthook.yml
-.husky/
-
 # Documentation
 README.md
 *.md
@@ -164,4 +159,4 @@ commitlint.config.js
 
 # Test configs
 vitest.config.mts
-playwright.config.ts 
+playwright.config.ts
