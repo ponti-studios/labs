@@ -1,17 +1,17 @@
-import { useQuery } from '@tanstack/react-query';
-import { Loader2, Search } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { Input } from '../components/ui/input';
-import type { SearchResult, SocialPost } from '../types/vector-search';
-import PostItem from './PostItem';
+import { useQuery } from "@tanstack/react-query";
+import { Loader2, Search } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Input } from "./ui/input";
+import type { SearchResult, SocialPost } from "../types/vector-search";
+import PostItem from "./PostItem";
 
 interface SearchResponse {
   results: SearchResult[];
 }
 
 export default function VectorSearch() {
-  const [query, setQuery] = useState('');
-  const [debouncedQuery, setDebouncedQuery] = useState('');
+  const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -24,12 +24,14 @@ export default function VectorSearch() {
   }, [query]);
 
   const { data, isPending, error, refetch } = useQuery<SearchResponse, Error>({
-    queryKey: ['vectorSearch', debouncedQuery],
+    queryKey: ["vectorSearch", debouncedQuery],
     queryFn: async () => {
       if (!debouncedQuery.trim()) return { results: [] };
-      const response = await fetch(`/api/search?query=${encodeURIComponent(debouncedQuery)}`);
+      const response = await fetch(
+        `/api/search?query=${encodeURIComponent(debouncedQuery)}`,
+      );
       if (!response.ok) {
-        throw new Error('Failed to fetch search results');
+        throw new Error("Failed to fetch search results");
       }
       return response.json();
     },
@@ -40,22 +42,25 @@ export default function VectorSearch() {
   const isSearching = isPending && !!debouncedQuery.trim();
   const errorMessage = error?.message || null;
 
-  const handleUpdatePost = async (postId: string, updates: Partial<SocialPost>) => {
+  const handleUpdatePost = async (
+    postId: string,
+    updates: Partial<SocialPost>,
+  ) => {
     try {
       const response = await fetch(`/api/posts/${postId}`, {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(updates),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update post');
+        throw new Error("Failed to update post");
       }
       refetch(); // Refresh the search query to show updated results
     } catch (err) {
-      console.error('Error updating post:', err);
+      console.error("Error updating post:", err);
       throw err;
     }
   };
@@ -63,15 +68,15 @@ export default function VectorSearch() {
   const handleDeletePost = async (postId: string) => {
     try {
       const response = await fetch(`/api/posts/${postId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete post');
+        throw new Error("Failed to delete post");
       }
       refetch(); // Refresh the search query to show updated results
     } catch (err) {
-      console.error('Error deleting post:', err);
+      console.error("Error deleting post:", err);
       throw err;
     }
   };
@@ -104,7 +109,9 @@ export default function VectorSearch() {
 
       {/* Error */}
       {errorMessage && (
-        <div className="rounded bg-red-50 p-3 text-sm text-red-600">{errorMessage}</div>
+        <div className="rounded bg-red-50 p-3 text-sm text-red-600">
+          {errorMessage}
+        </div>
       )}
 
       {/* Results */}
@@ -123,11 +130,14 @@ export default function VectorSearch() {
       )}
 
       {/* No Results */}
-      {debouncedQuery && results.length === 0 && !isSearching && !errorMessage && (
-        <div className="py-8 text-center text-gray-500">
-          <div className="text-sm">No results found</div>
-        </div>
-      )}
+      {debouncedQuery &&
+        results.length === 0 &&
+        !isSearching &&
+        !errorMessage && (
+          <div className="py-8 text-center text-gray-500">
+            <div className="text-sm">No results found</div>
+          </div>
+        )}
     </div>
   );
 }
