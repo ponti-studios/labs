@@ -27,6 +27,12 @@ export default [
   route("/to-do", "routes/to-do.tsx"),
   route("/vector-search", "routes/VectorSearchPage.tsx"),
 
+  // Experiments (migrated from experiments-data and experiments-web)
+  route("/experiments", "routes/experiments.tsx"),
+  route("/experiments/data-agency", "experiments/data/data-agency.tsx"),
+  route("/experiments/llm-receipt", "experiments/data/llm-receipt.tsx"),
+  route("/experiments/threegl-image-gallery", "experiments/web/threegl-image-gallery.tsx"),
+
   // COVID-19 routes
   route("/corona", "routes/corona.tsx"),
   route("/corona/:countryCode", "routes/corona.$countryCode.tsx"),
