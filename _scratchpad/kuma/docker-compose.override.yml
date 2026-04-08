@@ -1,0 +1,46 @@
+# Docker Compose Override for local development with Air hot-reload
+# This file extends docker-compose.yml for development purposes
+# Production deployment uses only docker-compose.yml
+
+services:
+  kuma:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev  # Use dev stage with Air
+    ports:
+      - "8080:8080"
+    environment:
+      - DATABASE_URL=postgresql://mcp_server:devpassword@postgres:5432/hominem
+      - JWT_SECRET=dev_jwt_secret_change_me_in_production
+      - PORT=8080
+      - LOG_LEVEL=debug
+      - ENVIRONMENT=development
+    volumes:
+      # Mount source code for hot-reload (air handles the build)
+      - .:/app
+      # Persist Go module cache between restarts
+      - go_mod_cache:/go/pkg/mod
+    depends_on:
+      postgres:
+        condition: service_healthy
+    # Air handles the build and restart automatically
+    command: air
+
+  postgres:
+    environment:
+      - POSTGRES_USER=mcp_server
+      - POSTGRES_PASSWORD=devpassword
+      - POSTGRES_DB=hominem
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d/migrations
+    ports:
+      - "5433:5432"
+
+# Named volumes for persistence
+volumes:
+  go_mod_cache:
+    driver: local
+  postgres_data:
+    driver: local

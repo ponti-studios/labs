@@ -1,0 +1,20 @@
+{
+  "case": "p95_success",
+  "description": "All endpoints stay under threshold with HTTP 200 responses",
+  "input": {
+    "samples": 30,
+    "threshold_ms": 300,
+    "status_set": [200]
+  },
+  "expected": {
+    "exit_code": 0,
+    "summary": {
+      "failed": 0
+    },
+    "result_assertions": [
+      "each endpoint has samples=30",
+      "each endpoint p95_ms <= threshold_ms",
+      "each endpoint passed=true"
+    ]
+  }
+}

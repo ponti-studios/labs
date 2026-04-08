@@ -1,0 +1,20 @@
+{
+  "case": "p95_failure",
+  "description": "At least one endpoint exceeds threshold or returns non-200 responses",
+  "input": {
+    "samples": 30,
+    "threshold_ms": 300,
+    "status_set": [200, 500]
+  },
+  "expected": {
+    "exit_code": 1,
+    "summary": {
+      "failed": 1
+    },
+    "result_assertions": [
+      "at least one endpoint passed=false",
+      "error includes unexpected_status or threshold_exceeded",
+      "report still includes all endpoints"
+    ]
+  }
+}
