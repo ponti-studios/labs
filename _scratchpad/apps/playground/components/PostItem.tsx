@@ -1,11 +1,11 @@
-import { EditIcon, Loader2, Save, Trash2, X } from 'lucide-react';
-import type React from 'react';
-import { useState } from 'react';
-import { Button } from '../components/ui/button';
-import { Card, CardContent, CardHeader } from '../components/ui/card';
-import { Input } from '../components/ui/input';
-import { Textarea } from '../components/ui/textarea';
-import type { SearchResult, SocialPost } from '../types/vector-search';
+import { EditIcon, Loader2, Save, Trash2, X } from "lucide-react";
+import type React from "react";
+import { useState } from "react";
+import { Button } from "./ui/button";
+import { Card, CardContent, CardHeader } from "./ui/card";
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
+import type { SearchResult, SocialPost } from "../types/vector-search";
 
 interface PostItemProps {
   result: SearchResult;
@@ -13,18 +13,24 @@ interface PostItemProps {
   onDelete: (postId: string) => Promise<void>;
 }
 
-export default function PostItem({ result, onUpdate, onDelete }: PostItemProps) {
+export default function PostItem({
+  result,
+  onUpdate,
+  onDelete,
+}: PostItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [editedContent, setEditedContent] = useState(result.post.content);
-  const [editedAuthor, setEditedAuthor] = useState(result.post.author || '');
-  const [editedPlatform, setEditedPlatform] = useState(result.post.platform || '');
+  const [editedAuthor, setEditedAuthor] = useState(result.post.author || "");
+  const [editedPlatform, setEditedPlatform] = useState(
+    result.post.platform || "",
+  );
 
   const handleSave = async () => {
     if (!editedContent.trim()) return;
     if (!result.post.id) {
-      console.error('Post ID is missing');
+      console.error("Post ID is missing");
       return;
     }
 
@@ -33,21 +39,21 @@ export default function PostItem({ result, onUpdate, onDelete }: PostItemProps) 
       await onUpdate(result.post.id as string, {
         content: editedContent.trim(),
         author: editedAuthor.trim() || undefined,
-        platform: editedPlatform.trim() || 'markdown',
+        platform: editedPlatform.trim() || "markdown",
       });
       setIsEditing(false);
     } catch (error) {
-      console.error('Failed to update post:', error);
+      console.error("Failed to update post:", error);
     } finally {
       setIsUpdating(false);
     }
   };
 
   const handleDelete = async () => {
-    console.log('handleDelete called');
-    if (!confirm('Are you sure you want to delete this post?')) return;
+    console.log("handleDelete called");
+    if (!confirm("Are you sure you want to delete this post?")) return;
     if (!result.post.id) {
-      console.error('Post ID is missing');
+      console.error("Post ID is missing");
       return;
     }
 
@@ -55,7 +61,7 @@ export default function PostItem({ result, onUpdate, onDelete }: PostItemProps) 
     try {
       await onDelete(result.post.id);
     } catch (error) {
-      console.error('Failed to delete post:', error);
+      console.error("Failed to delete post:", error);
     } finally {
       setIsDeleting(false);
     }
@@ -64,16 +70,16 @@ export default function PostItem({ result, onUpdate, onDelete }: PostItemProps) 
   const handleCancel = () => {
     setIsEditing(false);
     setEditedContent(result.post.content);
-    setEditedAuthor(result.post.author || '');
-    setEditedPlatform(result.post.platform || '');
+    setEditedAuthor(result.post.author || "");
+    setEditedPlatform(result.post.platform || "");
   };
 
   const startEditing = () => {
-    console.log('startEditing called');
+    console.log("startEditing called");
     setIsEditing(true);
     setEditedContent(result.post.content);
-    setEditedAuthor(result.post.author || '');
-    setEditedPlatform(result.post.platform || '');
+    setEditedAuthor(result.post.author || "");
+    setEditedPlatform(result.post.platform || "");
   };
 
   return (
@@ -123,7 +129,10 @@ export default function PostItem({ result, onUpdate, onDelete }: PostItemProps) 
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label htmlFor="platform" className="block text-xs font-medium text-gray-700">
+                <label
+                  htmlFor="platform"
+                  className="block text-xs font-medium text-gray-700"
+                >
                   Platform
                 </label>
                 <Input
@@ -138,7 +147,10 @@ export default function PostItem({ result, onUpdate, onDelete }: PostItemProps) 
                 />
               </div>
               <div>
-                <label htmlFor="author" className="block text-xs font-medium text-gray-700">
+                <label
+                  htmlFor="author"
+                  className="block text-xs font-medium text-gray-700"
+                >
                   Author
                 </label>
                 <Input
@@ -154,7 +166,10 @@ export default function PostItem({ result, onUpdate, onDelete }: PostItemProps) 
               </div>
             </div>
             <div>
-              <label htmlFor="content" className="block text-xs font-medium text-gray-700">
+              <label
+                htmlFor="content"
+                className="block text-xs font-medium text-gray-700"
+              >
                 Content
               </label>
               <Textarea
@@ -169,7 +184,11 @@ export default function PostItem({ result, onUpdate, onDelete }: PostItemProps) 
               />
             </div>
             <div className="flex gap-2">
-              <Button onClick={handleSave} disabled={isUpdating || !editedContent.trim()} size="sm">
+              <Button
+                onClick={handleSave}
+                disabled={isUpdating || !editedContent.trim()}
+                size="sm"
+              >
                 {isUpdating ? (
                   <Loader2 className="mr-1 h-3 w-3 animate-spin" />
                 ) : (
@@ -177,7 +196,12 @@ export default function PostItem({ result, onUpdate, onDelete }: PostItemProps) 
                 )}
                 Save
               </Button>
-              <Button variant="outline" onClick={handleCancel} disabled={isUpdating} size="sm">
+              <Button
+                variant="outline"
+                onClick={handleCancel}
+                disabled={isUpdating}
+                size="sm"
+              >
                 <X className="mr-1 h-3 w-3" />
                 Cancel
               </Button>
@@ -187,7 +211,9 @@ export default function PostItem({ result, onUpdate, onDelete }: PostItemProps) 
           <>
             <p className="text-sm">{result.post.content}</p>
             {result.post.engagement && (
-              <div className="mt-2 text-xs text-gray-500">Engagement: {result.post.engagement}</div>
+              <div className="mt-2 text-xs text-gray-500">
+                Engagement: {result.post.engagement}
+              </div>
             )}
           </>
         )}
