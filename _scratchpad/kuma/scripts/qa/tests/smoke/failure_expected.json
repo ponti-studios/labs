@@ -1,0 +1,28 @@
+{
+  "case": "failure",
+  "description": "Auth-required checks fail when token is missing or invalid",
+  "input": {
+    "base_url": "http://localhost:8080",
+    "token": "",
+    "endpoints": [
+      "/health",
+      "/metrics",
+      "/api/v1/accounts",
+      "/api/v1/transactions",
+      "/api/v1/tasks",
+      "/api/v1/events"
+    ]
+  },
+  "expected": {
+    "exit_code": 1,
+    "summary": {
+      "total": 6,
+      "failed": 4
+    },
+    "result_assertions": [
+      "auth-required checks passed=false",
+      "auth-required checks error contains token_missing",
+      "non-auth checks still execute"
+    ]
+  }
+}

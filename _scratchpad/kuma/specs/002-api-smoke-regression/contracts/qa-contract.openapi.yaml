@@ -1,0 +1,203 @@
+openapi: 3.0.3
+info:
+  title: QA Automation Contract
+  version: 1.0.0
+  description: |
+    Design-time API contract for smoke and p95 QA execution/reporting.
+    This contract documents request/response semantics used by local and CI workflows.
+servers:
+  - url: http://localhost:8080
+paths:
+  /qa/smoke-runs:
+    post:
+      summary: Execute smoke checks
+      operationId: runSmokeChecks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SmokeRunRequest'
+      responses:
+        '200':
+          description: Smoke run completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SmokeRunReport'
+        '400':
+          description: Invalid request configuration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /qa/p95-runs:
+    post:
+      summary: Execute p95 checks
+      operationId: runP95Checks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/P95RunRequest'
+      responses:
+        '200':
+          description: P95 run completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/P95RunReport'
+        '400':
+          description: Invalid request configuration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    SmokeRunRequest:
+      type: object
+      required: [base_url]
+      properties:
+        base_url:
+          type: string
+          format: uri
+        token:
+          type: string
+          description: JWT bearer token value (without Bearer prefix)
+        output_path:
+          type: string
+          default: .tmp/smoke_report.json
+    P95RunRequest:
+      type: object
+      required: [base_url]
+      properties:
+        base_url:
+          type: string
+          format: uri
+        token:
+          type: string
+        samples:
+          type: integer
+          minimum: 1
+          default: 30
+        threshold_ms:
+          type: number
+          minimum: 1
+          default: 300
+        output_path:
+          type: string
+          default: .tmp/p95_report.json
+    SmokeRunReport:
+      type: object
+      required: [schema_version, run_id, base_url, started_at, ended_at, summary, results]
+      properties:
+        schema_version:
+          type: string
+          example: '1.0'
+        run_id:
+          type: string
+        base_url:
+          type: string
+        started_at:
+          type: string
+          format: date-time
+        ended_at:
+          type: string
+          format: date-time
+        summary:
+          $ref: '#/components/schemas/RunSummary'
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SmokeResult'
+    P95RunReport:
+      type: object
+      required: [schema_version, run_id, base_url, threshold_ms, started_at, ended_at, summary, results, exit_code]
+      properties:
+        schema_version:
+          type: string
+          example: '1.0'
+        run_id:
+          type: string
+        base_url:
+          type: string
+        threshold_ms:
+          type: number
+        started_at:
+          type: string
+          format: date-time
+        ended_at:
+          type: string
+          format: date-time
+        summary:
+          $ref: '#/components/schemas/RunSummary'
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/P95EndpointResult'
+        exit_code:
+          type: integer
+    RunSummary:
+      type: object
+      required: [total, passed, failed, exit_code]
+      properties:
+        total:
+          type: integer
+        passed:
+          type: integer
+        failed:
+          type: integer
+        exit_code:
+          type: integer
+    SmokeResult:
+      type: object
+      required: [name, path, status_code, latency_ms, passed]
+      properties:
+        name:
+          type: string
+        path:
+          type: string
+        status_code:
+          type: integer
+        latency_ms:
+          type: number
+        passed:
+          type: boolean
+        error_kind:
+          type: string
+          enum: [config_error, auth_error, network_error, status_error, unknown]
+        error:
+          type: string
+    P95EndpointResult:
+      type: object
+      required: [path, samples, avg_ms, p95_ms, passed]
+      properties:
+        path:
+          type: string
+        status_set:
+          type: array
+          items:
+            type: integer
+        samples:
+          type: integer
+        avg_ms:
+          type: number
+        p95_ms:
+          type: number
+        passed:
+          type: boolean
+        error_kind:
+          type: string
+          enum: [latency_error, auth_error, network_error, status_error, unknown]
+        error:
+          type: string
+    ErrorResponse:
+      type: object
+      required: [error, message]
+      properties:
+        error:
+          type: string
+        message:
+          type: string
