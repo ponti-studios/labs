@@ -8,9 +8,7 @@
 |---------------|------|-----|
 | Home (ponti-io) | 3000 | http://localhost:3000 |
 | Playground | 3001 | http://localhost:3001 |
-| Agent (browser extension) | 3002 | http://localhost:3002 |
 | Medico | 3003 | http://localhost:3003 |
-| Agent Server | 3004 | http://localhost:3004 |
 | Dumphim | 3005 | http://localhost:3005 |
 | Earth | 3006 | http://localhost:3006 |
 | UI (package) | 3007 | (build tool) |
@@ -50,8 +48,6 @@ npm run dev:playground
 - **playground** - React Router app for experiments
 - **medico** - Medical-related React Router app
 - **earth** - Earth intelligence dashboard (Svelte + Cesium)
-- **agent** - Browser extension (WXT)
-- **agent-server** - Agent backend server (Bun/Hono)
 - **dumphim** - Dumphim app (React Router)
 - **ui** - Shared UI component package
 
