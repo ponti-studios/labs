@@ -1,7 +1,0 @@
-__pycache__
-.pytest_cache
-.vscode
-.coverage
-bin
-htmlcov
-tests
