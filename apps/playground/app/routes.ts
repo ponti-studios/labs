@@ -26,6 +26,7 @@ export default [
   // Scratchpad experiments
   route("/to-do", "routes/to-do.tsx"),
   route("/vector-search", "routes/VectorSearchPage.tsx"),
+  route("/github-card", "routes/github-card.tsx"),
 
   // Experiments (migrated from experiments-data and experiments-web)
   route("/experiments", "routes/experiments.tsx"),
