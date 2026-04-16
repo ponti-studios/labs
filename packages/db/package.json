@@ -13,19 +13,21 @@
     "build": "tsc && cp -R src/migrations dist/migrations",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "db:migrate": "flyway migrate",
-    "db:migrate:info": "flyway info",
-    "db:migrate:validate": "flyway validate",
-    "db:migrate:repair": "flyway repair",
+    "db:migrate": "drizzle-kit migrate",
+    "db:generate": "drizzle-kit generate",
+    "db:check": "drizzle-kit check",
     "clean": "rm -rf dist tsconfig.tsbuildinfo"
   },
   "dependencies": {
-    "kysely": "^0.28.8",
-    "mysql2": "^3.6.0",
+    "drizzle-orm": "^0.45.2",
+    "pg": "^8.20.0",
+    "postgres": "^3.4.9",
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/node": "^24.11.0",
+    "@types/pg": "^8.20.0",
+    "drizzle-kit": "^0.31.10",
     "tsx": "^4.21.0",
     "typescript": "~5.7.2",
     "vitest": "^4.0.18"

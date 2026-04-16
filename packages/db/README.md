@@ -1,64 +1,56 @@
 # @pontistudios/db
 
-Shared database utilities for all Ponti Studios apps. This package exports a
-Kysely client factory, environment helpers, and the canonical schema/migrations.
+Shared database schema and utilities for all Ponti Studios labs apps. Exports a Kysely client factory and the canonical Drizzle ORM schema.
 
-## Features
+## Schema
 
-* `createDb`, `withDb` helpers with typed config (`DbConfig`).
-* Zod‑based `DbEnv` parser for environment variables.
-* MySQL migrations via **Flyway** stored in `src/migrations/` and bundled into the build.
-* Basic Vitest smoke tests verifying the client API.
+19 tables across 5 domains:
 
-## Running migrations
+| Domain | Tables |
+|---|---|
+| disaster | `disaster_events` |
+| relationships | `relationship_people`, `relationship_stage_history`, `relationship_events`, `relationship_notes`, `relationship_checkins`, `relationship_flags`, `relationship_friend_invites`, `relationship_friend_votes`, `relationship_metrics_daily` |
+| playground | `covid_data`, `tfl_cameras`, `projects`, `todos`, `embeddings` |
+| dumphim | `trackers`, `votes` |
+| kuma | `users`, `messages` |
 
-The package uses **Flyway** for MySQL schema migrations. SQL files live in
-`src/migrations/` and are bundled into the build output.
+## Migration tool
+
+**Drizzle Kit** manages schema migrations. SQL files live in `migrations/` and are generated from the schema — do not edit them manually.
 
 ### Available commands
 
 ```bash
-# from root
-npm --workspace packages/db run db:migrate          # apply pending migrations
-npm --workspace packages/db run db:migrate:info    # show migration status
-npm --workspace packages/db run db:migrate:validate # validate applied migrations
-npm --workspace packages/db run db:migrate:repair   # repair Flyway history table
+pnpm --workspace packages/db db:generate   # generate migration from schema changes
+pnpm --workspace packages/db db:migrate   # apply pending migrations
+pnpm --workspace packages/db db:check      # verify schema matches DB state
 ```
 
-Migration files use Flyway's versioned naming convention:
+### Making schema changes
 
-```text
-V1__disaster_events_initial.sql
-V2__add_source_timestamp.sql
-V3__relationship_intelligence_initial.sql
-```
+1. Edit schema files in `src/schema/`
+2. Run `pnpm --workspace packages/db db:generate` — Drizzle creates a new migration file in `migrations/`
+3. Run `pnpm --workspace packages/db db:migrate` to apply
 
-To add a new migration, create the next `V<N>__<name>.sql` file in
-`src/migrations/` and run `db:migrate` to apply it.
+### Migration CI
 
-### Consuming from apps
+The `db-migrate` job runs in CI before lint/test/build. It:
+1. Clones foundation (provides postgres via docker compose)
+2. Creates the `labs` database
+3. Runs `db:migrate`
 
-Apps can rely on the shared migration scripts exposed by `@pontistudios/db`.
-You do *not* need to copy the SQL anywhere — the build process copies the
-`migrations` folder into `dist` so that published versions include the schema.
-
-## Testing
-
-Run `npm --workspace packages/db run test` to execute the package's
-Vitest suite. The tests verify environment parsing and that `createDb`/
-`withDb` return a valid Kysely instance.
-
-## Usage in code
+## Consuming from apps
 
 Import from anywhere in the workspace:
 
 ```ts
-import { createDb, withDb, DbEnv } from '@pontistudios/db';
+import { createDb, getDb } from '@pontistudios/db';
+```
 
-const env = DbEnv.parse(process.env);
-await withDb(env, async (db) => {
-  const rows = await db.selectFrom('disaster_events').selectAll().execute();
-});
+Or import specific table definitions:
+
+```ts
+import { trackers, votes } from '@pontistudios/db';
 ```
 
 ## Building
@@ -67,5 +59,10 @@ await withDb(env, async (db) => {
 npm --workspace packages/db run build
 ```
 
-The output goes to `dist/`, and `dist/migrations` contains the SQL migration
-files. The workspace's root `.gitignore` already ignores `dist`.
+Build output goes to `dist/`. The workspace root `.gitignore` ignores `dist`.
+
+## Testing
+
+```bash
+npm --workspace packages/db run test
+```
