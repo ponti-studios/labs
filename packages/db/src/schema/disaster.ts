@@ -1,6 +1,8 @@
-import { pgTable, text, timestamp, numeric } from 'drizzle-orm/pg-core';
+import { pgSchema, text, timestamp, numeric } from 'drizzle-orm/pg-core';
 
-export const disasterEvents = pgTable('disaster_events', {
+const labs = pgSchema('labs');
+
+export const disasterEvents = labs.table('disaster_events', {
   id: text('id').primaryKey(),
   title: text('title').notNull(),
   description: text('description'),
@@ -20,4 +22,3 @@ export const disasterEvents = pgTable('disaster_events', {
 
 export type DisasterEvent = typeof disasterEvents.$inferSelect;
 export type NewDisasterEvent = typeof disasterEvents.$inferInsert;
-

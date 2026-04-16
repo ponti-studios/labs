@@ -1,12 +1,12 @@
 {
-  "id": "ef6f3c73-3a4a-4a19-b3a9-73bf2832a379",
+  "id": "1fccda0a-e760-4458-a315-885c2188cb74",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.disaster_events": {
+    "labs.disaster_events": {
       "name": "disaster_events",
-      "schema": "",
+      "schema": "labs",
       "columns": {
         "id": {
           "name": "id",
@@ -109,9 +109,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.trackers": {
+    "labs.trackers": {
       "name": "trackers",
-      "schema": "",
+      "schema": "labs",
       "columns": {
         "id": {
           "name": "id",
@@ -220,9 +220,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.votes": {
+    "labs.votes": {
       "name": "votes",
-      "schema": "",
+      "schema": "labs",
       "columns": {
         "id": {
           "name": "id",
@@ -289,9 +289,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.relationship_checkins": {
+    "labs.relationship_checkins": {
       "name": "relationship_checkins",
-      "schema": "",
+      "schema": "labs",
       "columns": {
         "id": {
           "name": "id",
@@ -369,9 +369,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.relationship_events": {
+    "labs.relationship_events": {
       "name": "relationship_events",
-      "schema": "",
+      "schema": "labs",
       "columns": {
         "id": {
           "name": "id",
@@ -450,9 +450,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.relationship_flags": {
+    "labs.relationship_flags": {
       "name": "relationship_flags",
-      "schema": "",
+      "schema": "labs",
       "columns": {
         "id": {
           "name": "id",
@@ -525,9 +525,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.relationship_friend_invites": {
+    "labs.relationship_friend_invites": {
       "name": "relationship_friend_invites",
-      "schema": "",
+      "schema": "labs",
       "columns": {
         "id": {
           "name": "id",
@@ -616,9 +616,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.relationship_friend_votes": {
+    "labs.relationship_friend_votes": {
       "name": "relationship_friend_votes",
-      "schema": "",
+      "schema": "labs",
       "columns": {
         "id": {
           "name": "id",
@@ -691,9 +691,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.relationship_metrics_daily": {
+    "labs.relationship_metrics_daily": {
       "name": "relationship_metrics_daily",
-      "schema": "",
+      "schema": "labs",
       "columns": {
         "id": {
           "name": "id",
@@ -769,9 +769,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.relationship_notes": {
+    "labs.relationship_notes": {
       "name": "relationship_notes",
-      "schema": "",
+      "schema": "labs",
       "columns": {
         "id": {
           "name": "id",
@@ -826,9 +826,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.relationship_people": {
+    "labs.relationship_people": {
       "name": "relationship_people",
-      "schema": "",
+      "schema": "labs",
       "columns": {
         "id": {
           "name": "id",
@@ -907,9 +907,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.relationship_stage_history": {
+    "labs.relationship_stage_history": {
       "name": "relationship_stage_history",
-      "schema": "",
+      "schema": "labs",
       "columns": {
         "id": {
           "name": "id",
@@ -963,9 +963,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.covid_data": {
+    "labs.covid_data": {
       "name": "covid_data",
-      "schema": "",
+      "schema": "labs",
       "columns": {
         "id": {
           "name": "id",
@@ -1384,9 +1384,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.embeddings": {
+    "labs.embeddings": {
       "name": "embeddings",
-      "schema": "",
+      "schema": "labs",
       "columns": {
         "id": {
           "name": "id",
@@ -1433,9 +1433,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.projects": {
+    "labs.projects": {
       "name": "projects",
-      "schema": "",
+      "schema": "labs",
       "columns": {
         "id": {
           "name": "id",
@@ -1482,9 +1482,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.tfl_cameras": {
+    "labs.tfl_cameras": {
       "name": "tfl_cameras",
-      "schema": "",
+      "schema": "labs",
       "columns": {
         "id": {
           "name": "id",
@@ -1561,9 +1561,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.todos": {
+    "labs.todos": {
       "name": "todos",
-      "schema": "",
+      "schema": "labs",
       "columns": {
         "id": {
           "name": "id",
@@ -1628,9 +1628,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.messages": {
+    "labs.messages": {
       "name": "messages",
-      "schema": "",
+      "schema": "labs",
       "columns": {
         "id": {
           "name": "id",
@@ -1670,6 +1670,7 @@
           "name": "messages_user_id_users_id_fk",
           "tableFrom": "messages",
           "tableTo": "users",
+          "schemaTo": "labs",
           "columnsFrom": [
             "user_id"
           ],
@@ -1686,9 +1687,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.users": {
+    "labs.users": {
       "name": "users",
-      "schema": "",
+      "schema": "labs",
       "columns": {
         "id": {
           "name": "id",

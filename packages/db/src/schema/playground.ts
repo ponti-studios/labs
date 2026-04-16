@@ -1,13 +1,8 @@
-import {
-  pgTable,
-  text,
-  timestamp,
-  integer,
-  serial,
-  real,
-} from 'drizzle-orm/pg-core';
+import { pgSchema, text, timestamp, integer, serial, real } from 'drizzle-orm/pg-core';
 
-export const covidData = pgTable('covid_data', {
+const labs = pgSchema('labs');
+
+export const covidData = labs.table('covid_data', {
   id: serial('id').primaryKey(),
   isoCode: text('iso_code'),
   continent: text('continent'),
@@ -78,7 +73,7 @@ export const covidData = pgTable('covid_data', {
   excessMortalityCumulativePerMillion: text('excess_mortality_cumulative_per_million'),
 });
 
-export const tflCameras = pgTable('tfl_cameras', {
+export const tflCameras = labs.table('tfl_cameras', {
   id: serial('id').primaryKey(),
   tflId: text('tfl_id').notNull(),
   commonName: text('common_name').notNull(),
@@ -92,7 +87,7 @@ export const tflCameras = pgTable('tfl_cameras', {
   updatedAt: timestamp('updated_at'),
 });
 
-export const projects = pgTable('projects', {
+export const projects = labs.table('projects', {
   id: serial('id').primaryKey(),
   userId: text('user_id').notNull(),
   name: text('name').notNull(),
@@ -101,7 +96,7 @@ export const projects = pgTable('projects', {
   updatedAt: timestamp('updated_at'),
 });
 
-export const todos = pgTable('todos', {
+export const todos = labs.table('todos', {
   id: serial('id').primaryKey(),
   userId: text('user_id').notNull(),
   projectId: integer('project_id'),
@@ -113,7 +108,7 @@ export const todos = pgTable('todos', {
   updatedAt: timestamp('updated_at'),
 });
 
-export const embeddings = pgTable('embeddings', {
+export const embeddings = labs.table('embeddings', {
   id: serial('id').primaryKey(),
   todoId: integer('todo_id').notNull(),
   content: text('content').notNull(),
