@@ -12,18 +12,42 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint-and-test:
+  db-migrate:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: "25"
-          cache: "npm"
-      - run: npm ci --ignore-scripts
-      - run: npm run lint
-      - run: npm test
+          cache: "pnpm"
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - name: Clone foundation
+        run: git clone https://github.com/ponti-studios/foundation.git ../foundation
+      - name: Start foundation postgres
+        run: docker compose -f ../foundation/compose/base.yml -f ../foundation/compose/test.yml up -d
+      - name: Create labs database
+        run: docker exec foundation-db psql -U postgres -c "CREATE DATABASE labs" || true
+      - name: Run migrations
+        run: pnpm --workspace packages/db db:migrate
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:4433/labs
+
+  lint-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: db-migrate
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "25"
+          cache: "pnpm"
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run lint
+      - run: pnpm run test
 
   build:
     runs-on: ubuntu-latest
@@ -34,6 +58,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "25"
-          cache: "npm"
-      - run: npm ci --ignore-scripts
-      - run: npm run build
+          cache: "pnpm"
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build

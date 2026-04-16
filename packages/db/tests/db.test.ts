@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 
 import { createDb, withDb, DbEnv } from '../src';
 
-const fakeUrl = 'mysql://user:pass@localhost:3306/testdb';
+const fakeUrl = 'postgres://user:pass@localhost:5432/testdb';
 
 describe('db package basics', () => {
   it('parses environment correctly', () => {
