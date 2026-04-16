@@ -1,12 +1,8 @@
-import {
-  pgTable,
-  text,
-  timestamp,
-  serial,
-  integer,
-} from 'drizzle-orm/pg-core';
+import { pgSchema, text, timestamp, serial, integer } from 'drizzle-orm/pg-core';
 
-export const users = pgTable('users', {
+const labs = pgSchema('labs');
+
+export const users = labs.table('users', {
   id: serial('id').primaryKey(),
   phoneNumber: text('phone_number').notNull().unique(),
   name: text('name'),
@@ -16,7 +12,7 @@ export const users = pgTable('users', {
   lastSignSent: timestamp('last_sign_sent'),
 });
 
-export const messages = pgTable('messages', {
+export const messages = labs.table('messages', {
   id: serial('id').primaryKey(),
   userId: integer('user_id').notNull().references(() => users.id),
   role: text('role').notNull(),

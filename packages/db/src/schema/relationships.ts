@@ -1,11 +1,8 @@
-import {
-  pgTable,
-  text,
-  timestamp,
-  integer,
-} from 'drizzle-orm/pg-core';
+import { pgSchema, pgTable, text, timestamp, integer } from 'drizzle-orm/pg-core';
 
-export const relationshipPeople = pgTable('relationship_people', {
+const labs = pgSchema('labs');
+
+export const relationshipPeople = labs.table('relationship_people', {
   id: text('id').primaryKey(),
   ownerUserId: text('owner_user_id').notNull(),
   displayName: text('display_name').notNull(),
@@ -19,7 +16,7 @@ export const relationshipPeople = pgTable('relationship_people', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
-export const relationshipStageHistory = pgTable('relationship_stage_history', {
+export const relationshipStageHistory = labs.table('relationship_stage_history', {
   id: text('id').primaryKey(),
   personId: text('person_id').notNull(),
   fromStage: text('from_stage'),
@@ -29,7 +26,7 @@ export const relationshipStageHistory = pgTable('relationship_stage_history', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
-export const relationshipEvents = pgTable('relationship_events', {
+export const relationshipEvents = labs.table('relationship_events', {
   id: text('id').primaryKey(),
   personId: text('person_id').notNull(),
   ownerUserId: text('owner_user_id').notNull(),
@@ -43,7 +40,7 @@ export const relationshipEvents = pgTable('relationship_events', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
-export const relationshipNotes = pgTable('relationship_notes', {
+export const relationshipNotes = labs.table('relationship_notes', {
   id: text('id').primaryKey(),
   personId: text('person_id').notNull(),
   ownerUserId: text('owner_user_id').notNull(),
@@ -53,7 +50,7 @@ export const relationshipNotes = pgTable('relationship_notes', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
-export const relationshipCheckins = pgTable('relationship_checkins', {
+export const relationshipCheckins = labs.table('relationship_checkins', {
   id: text('id').primaryKey(),
   personId: text('person_id').notNull(),
   ownerUserId: text('owner_user_id').notNull(),
@@ -67,7 +64,7 @@ export const relationshipCheckins = pgTable('relationship_checkins', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
-export const relationshipFlags = pgTable('relationship_flags', {
+export const relationshipFlags = labs.table('relationship_flags', {
   id: text('id').primaryKey(),
   personId: text('person_id').notNull(),
   ownerUserId: text('owner_user_id').notNull(),
@@ -80,7 +77,7 @@ export const relationshipFlags = pgTable('relationship_flags', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
-export const relationshipFriendInvites = pgTable('relationship_friend_invites', {
+export const relationshipFriendInvites = labs.table('relationship_friend_invites', {
   id: text('id').primaryKey(),
   personId: text('person_id').notNull(),
   ownerUserId: text('owner_user_id').notNull(),
@@ -95,7 +92,7 @@ export const relationshipFriendInvites = pgTable('relationship_friend_invites', 
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
-export const relationshipFriendVotes = pgTable('relationship_friend_votes', {
+export const relationshipFriendVotes = labs.table('relationship_friend_votes', {
   id: text('id').primaryKey(),
   inviteId: text('invite_id').notNull(),
   personId: text('person_id').notNull(),
@@ -108,7 +105,7 @@ export const relationshipFriendVotes = pgTable('relationship_friend_votes', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
-export const relationshipMetricsDaily = pgTable('relationship_metrics_daily', {
+export const relationshipMetricsDaily = labs.table('relationship_metrics_daily', {
   id: text('id').primaryKey(),
   personId: text('person_id').notNull(),
   metricDate: text('metric_date').notNull(),

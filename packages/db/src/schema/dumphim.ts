@@ -1,11 +1,8 @@
-import {
-  pgTable,
-  text,
-  timestamp,
-  integer,
-} from 'drizzle-orm/pg-core';
+import { pgSchema, text, timestamp, integer } from 'drizzle-orm/pg-core';
 
-export const trackers = pgTable('trackers', {
+const labs = pgSchema('labs');
+
+export const trackers = labs.table('trackers', {
   id: text('id').primaryKey(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
@@ -24,7 +21,7 @@ export const trackers = pgTable('trackers', {
   userId: text('user_id').notNull(),
 });
 
-export const votes = pgTable('votes', {
+export const votes = labs.table('votes', {
   id: text('id').primaryKey(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
