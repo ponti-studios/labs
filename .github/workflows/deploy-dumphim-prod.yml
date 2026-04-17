@@ -1,14 +1,6 @@
 name: Deploy Dumphim to Production
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "apps/dumphim/**"
-      - "packages/**"
-      - "package.json"
-      - "pnpm-lock.yaml"
-      - ".github/workflows/deploy-dumphim-prod.yml"
   workflow_dispatch:
 
 concurrency:

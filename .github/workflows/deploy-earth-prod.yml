@@ -1,23 +1,14 @@
-name: Deploy Earth Intelligence to Production
+name: deploy-earth-prod
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "apps/earth/**"
-      - "packages/**"
-      - "package.json"
-      - "pnpm-lock.yaml"
-      - ".github/workflows/deploy-earth-intelligence-prod.yml"
   workflow_dispatch:
 
 concurrency:
-  group: deploy-earth-intelligence-${{ github.ref }}
+  group: deploy-earth-prod-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   deploy:
-    name: Deploy to Railway
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
