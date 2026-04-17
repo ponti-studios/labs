@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import type { CovidDataRecord } from '~/types/covid';
+import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import type { CovidDataRecord } from "~/types/covid";
 
 interface TopCountriesChartProps {
   data: CovidDataRecord[];
@@ -16,7 +16,7 @@ export function TopCountriesChart({
   data,
   metric,
   title,
-  color = '#ef4444',
+  color = "#ef4444",
   limit = 10,
   height = 400,
 }: TopCountriesChartProps) {
@@ -96,9 +96,9 @@ export function TopCountriesChart({
           <Tooltip
             formatter={(value: number) => [formatValue(value), title]}
             contentStyle={{
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
-              border: '1px solid #e5e7eb',
-              borderRadius: '8px',
+              backgroundColor: "rgba(255, 255, 255, 0.95)",
+              border: "1px solid #e5e7eb",
+              borderRadius: "8px",
             }}
           />
           <Bar dataKey="value" fill={color} />

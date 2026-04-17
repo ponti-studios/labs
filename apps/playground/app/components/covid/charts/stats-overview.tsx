@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import CountUpTo from '~/components/count-up/count-up-to';
-import type { CovidDataRecord } from '~/types/covid';
+import CountUpTo from "~/components/count-up/count-up-to";
+import type { CovidDataRecord } from "~/types/covid";
 
 interface StatsOverviewProps {
   data: CovidDataRecord[];
@@ -36,11 +36,11 @@ function StatCard({ title, value, icon, color, change }: StatCardProps) {
         <div>
           <p className="text-sm font-medium text-gray-600">{title}</p>
           <p className="text-2xl font-bold text-gray-900">
-            {value !== null && value !== undefined ? <CountUpTo value={value} /> : 'N/A'}
+            {value !== null && value !== undefined ? <CountUpTo value={value} /> : "N/A"}
           </p>
           {change !== undefined && change !== null && (
-            <p className={`text-sm mt-1 ${change >= 0 ? 'text-red-600' : 'text-green-600'}`}>
-              {change >= 0 ? '+' : ''}
+            <p className={`text-sm mt-1 ${change >= 0 ? "text-red-600" : "text-green-600"}`}>
+              {change >= 0 ? "+" : ""}
               {formatValue(change)}
             </p>
           )}
@@ -67,31 +67,31 @@ export function StatsOverview({ data, countryCode }: StatsOverviewProps) {
 
   const stats = [
     {
-      title: 'Total Cases',
+      title: "Total Cases",
       value: latestData.totalCases,
-      icon: '🦠',
-      color: '#3b82f6',
+      icon: "🦠",
+      color: "#3b82f6",
       change: latestData.newCasesSmoothed, // Use smoothed data for more stable daily changes
     },
     {
-      title: 'Total Deaths',
+      title: "Total Deaths",
       value: latestData.totalDeaths,
-      icon: '💀',
-      color: '#ef4444',
+      icon: "💀",
+      color: "#ef4444",
       change: latestData.newDeathsSmoothed, // Use smoothed data
     },
     {
-      title: 'Vaccinated',
+      title: "Vaccinated",
       value: latestData.peopleFullyVaccinated,
-      icon: '💉',
-      color: '#10b981',
+      icon: "💉",
+      color: "#10b981",
       change: latestData.newVaccinationsSmoothed, // Use smoothed data
     },
     {
-      title: 'Cases per Million',
+      title: "Cases per Million",
       value: latestData.totalCasesPerMillion,
-      icon: '📊',
-      color: '#f59e0b',
+      icon: "📊",
+      color: "#f59e0b",
     },
   ];
 

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import type { CovidDataRecord } from '~/types/covid';
+import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import type { CovidDataRecord } from "~/types/covid";
 
 interface VaccinationProgressProps {
   data: CovidDataRecord[];
@@ -11,7 +11,7 @@ interface VaccinationProgressProps {
 
 export function VaccinationProgress({
   data,
-  title = 'Vaccination Progress',
+  title = "Vaccination Progress",
   height = 300,
 }: VaccinationProgressProps) {
   // Transform and combine vaccination data
@@ -28,9 +28,9 @@ export function VaccinationProgress({
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      year: 'numeric',
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      year: "numeric",
     });
   };
 
@@ -62,22 +62,22 @@ export function VaccinationProgress({
           <YAxis
             tick={{ fontSize: 12 }}
             width={40}
-            label={{ value: '%', angle: -90, position: 'insideLeft' }}
+            label={{ value: "%", angle: -90, position: "insideLeft" }}
           />
           <Tooltip
             labelFormatter={(label) => formatDate(label as string)}
             formatter={(value: number, name: string) => [
-              value ? `${value.toFixed(1)}%` : 'N/A',
-              name === 'partiallyVaccinated'
-                ? 'Partially Vaccinated'
-                : name === 'fullyVaccinated'
-                  ? 'Fully Vaccinated'
-                  : 'Boosters',
+              value ? `${value.toFixed(1)}%` : "N/A",
+              name === "partiallyVaccinated"
+                ? "Partially Vaccinated"
+                : name === "fullyVaccinated"
+                  ? "Fully Vaccinated"
+                  : "Boosters",
             ]}
             contentStyle={{
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
-              border: '1px solid #e5e7eb',
-              borderRadius: '8px',
+              backgroundColor: "rgba(255, 255, 255, 0.95)",
+              border: "1px solid #e5e7eb",
+              borderRadius: "8px",
             }}
           />
           <Area

@@ -7,18 +7,21 @@ import yargs from "yargs";
 const argv = yargs
   .option("make", { type: "string", demandOption: true, describe: "Car make (e.g. Porsche)" })
   .option("model", { type: "string", demandOption: true, describe: "Car model (e.g. Taycan)" })
-  .help()
-  .argv as any;
+  .help().argv as any;
 
 async function getMakeId(make: string): Promise<string | null> {
-  const res = await fetch("https://www.cargurus.com/api/vehicle-discovery-service/v1/makes?searchType=USED&locale=en_US");
+  const res = await fetch(
+    "https://www.cargurus.com/api/vehicle-discovery-service/v1/makes?searchType=USED&locale=en_US",
+  );
   const data = await res.json();
   const found = data.makes?.find((m: any) => m.name.toLowerCase() === make.toLowerCase());
   return found ? found.id : null;
 }
 
 async function getModelId(makeId: string, model: string): Promise<string | null> {
-  const res = await fetch(`https://www.cargurus.com/api/vehicle-discovery-service/v1/makes/${makeId}/models?searchType=USED&locale=en_US`);
+  const res = await fetch(
+    `https://www.cargurus.com/api/vehicle-discovery-service/v1/makes/${makeId}/models?searchType=USED&locale=en_US`,
+  );
   const data = await res.json();
   const found = data.models?.find((m: any) => m.name.toLowerCase() === model.toLowerCase());
   return found ? found.id : null;

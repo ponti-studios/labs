@@ -1,6 +1,6 @@
-import { and, eq, gte } from 'drizzle-orm';
-import type { LoaderFunctionArgs } from 'react-router';
-import { covidData, db } from '~/db';
+import { and, eq, gte } from "drizzle-orm";
+import type { LoaderFunctionArgs } from "react-router";
+import { covidData, db } from "~/db";
 
 interface VaccinationEffectiveness {
   overall: number;
@@ -21,13 +21,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
   try {
     const url = new URL(request.url);
     const searchParams = url.searchParams;
-    const country = searchParams.get('country') || 'OWID_WRL';
+    const country = searchParams.get("country") || "OWID_WRL";
 
     // Get vaccination timeline data for the last 12 months
     // Since date is stored as text, we'll calculate the cutoff date as a string
     const twelveMonthsAgo = new Date();
     twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
-    const cutoffDate = twelveMonthsAgo.toISOString().split('T')[0]; // YYYY-MM-DD format
+    const cutoffDate = twelveMonthsAgo.toISOString().split("T")[0]; // YYYY-MM-DD format
 
     const timelineData = await db
       .select({
@@ -46,7 +46,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     if (timelineData.length === 0) {
       return Response.json({
         country,
-        error: 'No vaccination data found for country',
+        error: "No vaccination data found for country",
         effectiveness: {
           overall: 0,
           againstHospitalization: 0,
@@ -115,8 +115,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
                 100,
                 ((preVaxHospitalizationRate - postVaxHospitalizationRate) /
                   preVaxHospitalizationRate) *
-                  100
-              )
+                  100,
+              ),
             )
           : 0;
 
@@ -124,7 +124,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
         preVaxDeathRate > 0
           ? Math.max(
               0,
-              Math.min(100, ((preVaxDeathRate - postVaxDeathRate) / preVaxDeathRate) * 100)
+              Math.min(100, ((preVaxDeathRate - postVaxDeathRate) / preVaxDeathRate) * 100),
             )
           : 0;
 
@@ -143,7 +143,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
     // Format timeline data
     const timeline: VaccinationTimeline[] = timelineData.map((row) => ({
-      date: row.date || '',
+      date: row.date || "",
       fullyVaccinatedPerHundred: row.fullyVaccinatedPerHundred || 0,
       newCasesSmoothed: row.newCasesSmoothed || 0,
       newDeathsSmoothed: row.newDeathsSmoothed || 0,
@@ -152,14 +152,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
     // Calculate vaccination milestones
     const milestones = [
-      { threshold: 10, label: '10% Fully Vaccinated' },
-      { threshold: 25, label: '25% Fully Vaccinated' },
-      { threshold: 50, label: '50% Fully Vaccinated' },
-      { threshold: 70, label: '70% Fully Vaccinated' },
-      { threshold: 80, label: '80% Fully Vaccinated' },
+      { threshold: 10, label: "10% Fully Vaccinated" },
+      { threshold: 25, label: "25% Fully Vaccinated" },
+      { threshold: 50, label: "50% Fully Vaccinated" },
+      { threshold: 70, label: "70% Fully Vaccinated" },
+      { threshold: 80, label: "80% Fully Vaccinated" },
     ].map((milestone) => {
       const reachedDate = timelineData.find(
-        (d) => (d.fullyVaccinatedPerHundred || 0) >= milestone.threshold
+        (d) => (d.fullyVaccinatedPerHundred || 0) >= milestone.threshold,
       );
       return {
         ...milestone,
@@ -184,7 +184,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       totalDataPoints: timelineData.length,
     });
   } catch (error) {
-    console.error('Error in vaccination effectiveness analysis:', error);
-    return Response.json({ error: 'Failed to analyze vaccination effectiveness' }, { status: 500 });
+    console.error("Error in vaccination effectiveness analysis:", error);
+    return Response.json({ error: "Failed to analyze vaccination effectiveness" }, { status: 500 });
   }
 }

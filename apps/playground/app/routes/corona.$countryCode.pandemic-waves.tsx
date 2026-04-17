@@ -1,9 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
-import type { LoaderFunctionArgs, MetaFunction } from 'react-router';
-import { useLoaderData } from 'react-router';
-import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { CoronaLayout } from '~/components/CoronaLayout';
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import type { LoaderFunctionArgs, MetaFunction } from "react-router";
+import { useLoaderData } from "react-router";
+import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { CoronaLayout } from "~/components/CoronaLayout";
 
 interface WaveData {
   wave: number;
@@ -24,17 +24,17 @@ interface WaveAnalysisResponse {
 }
 
 export const meta: MetaFunction<typeof loader> = ({ params }) => {
-  const countryCode = params.countryCode || 'OWID_WRL';
+  const countryCode = params.countryCode || "OWID_WRL";
 
-  let countryName = 'World';
-  if (countryCode !== 'OWID_WRL') {
+  let countryName = "World";
+  if (countryCode !== "OWID_WRL") {
     countryName = countryCode;
   }
 
   return [
     { title: `Pandemic Waves - ${countryName} | Ponti Studios` },
     {
-      name: 'description',
+      name: "description",
       content: `Pandemic wave analysis for ${countryName}. View wave patterns, peak dates, and duration.`,
     },
   ];
@@ -44,7 +44,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   const { countryCode } = params;
 
   if (!countryCode) {
-    throw new Response('Country code is required', { status: 400 });
+    throw new Response("Country code is required", { status: 400 });
   }
 
   return { countryCode };
@@ -52,14 +52,14 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
 export default function PandemicWavesPage() {
   const { countryCode } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
-  const [metric, setMetric] = useState<string>('newCasesSmoothed');
+  const [metric, setMetric] = useState<string>("newCasesSmoothed");
 
   const { data, isLoading, isError } = useQuery<WaveAnalysisResponse>({
-    queryKey: ['pandemic-waves', countryCode, metric],
+    queryKey: ["pandemic-waves", countryCode, metric],
     queryFn: () => {
       const params = new URLSearchParams();
-      params.append('country', countryCode);
-      params.append('metric', metric);
+      params.append("country", countryCode);
+      params.append("metric", metric);
 
       return fetch(`/api/covid/analytics/pandemic-waves?${params}`).then((res) => res.json());
     },
@@ -123,17 +123,17 @@ export default function PandemicWavesPage() {
                   <BarChart data={data.waves}>
                     <XAxis
                       dataKey="wave"
-                      tick={{ fill: '#57534e' }}
-                      axisLine={{ stroke: '#a8a29e' }}
+                      tick={{ fill: "#57534e" }}
+                      axisLine={{ stroke: "#a8a29e" }}
                       tickFormatter={(value) => `Wave ${value}`}
                     />
-                    <YAxis tick={{ fill: '#57534e' }} axisLine={{ stroke: '#a8a29e' }} />
+                    <YAxis tick={{ fill: "#57534e" }} axisLine={{ stroke: "#a8a29e" }} />
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                        border: '1px solid #d6d3d1',
-                        borderRadius: '12px',
-                        color: '#1c1917',
+                        backgroundColor: "rgba(255, 255, 255, 0.95)",
+                        border: "1px solid #d6d3d1",
+                        borderRadius: "12px",
+                        color: "#1c1917",
                       }}
                       labelFormatter={(value) => `Wave ${value}`}
                     />
@@ -192,7 +192,7 @@ export default function PandemicWavesPage() {
                     <div className="pt-2 border-t border-stone-200/50">
                       <p className="text-sm text-stone-600 font-light">Duration</p>
                       <p className="text-stone-700">
-                        {new Date(wave.startDate).toLocaleDateString()} →{' '}
+                        {new Date(wave.startDate).toLocaleDateString()} →{" "}
                         {new Date(wave.endDate).toLocaleDateString()}
                       </p>
                     </div>

@@ -1,8 +1,8 @@
 // React Router compatible version of covid actions
 
-import { and, eq, isNotNull, sql } from 'drizzle-orm';
-import { covidData, db } from '~/db';
-import type { CovidDataSelect } from '~/db/schema';
+import { and, eq, isNotNull, sql } from "drizzle-orm";
+import { covidData, db } from "~/db";
+import type { CovidDataSelect } from "~/db/schema";
 
 interface ApiResponse {
   data: CovidDataSelect[];
@@ -26,10 +26,10 @@ export async function getCovidStats(countryCode: string): Promise<ApiResponse> {
   try {
     const conditions = [];
 
-    if (countryCode && countryCode !== 'OWID_WRL') {
+    if (countryCode && countryCode !== "OWID_WRL") {
       conditions.push(eq(covidData.isoCode, countryCode));
     } else {
-      conditions.push(eq(covidData.isoCode, 'OWID_WRL'));
+      conditions.push(eq(covidData.isoCode, "OWID_WRL"));
     }
 
     // Get latest data for stats
@@ -57,8 +57,8 @@ export async function getCovidStats(countryCode: string): Promise<ApiResponse> {
       },
     };
   } catch (error) {
-    console.error('Error fetching COVID stats:', error);
-    throw new Error('Failed to fetch COVID statistics');
+    console.error("Error fetching COVID stats:", error);
+    throw new Error("Failed to fetch COVID statistics");
   }
 }
 
@@ -67,10 +67,10 @@ export async function getCovidTimeSeries(countryCode: string, limit = 1000): Pro
   try {
     const conditions = [];
 
-    if (countryCode && countryCode !== 'OWID_WRL') {
+    if (countryCode && countryCode !== "OWID_WRL") {
       conditions.push(eq(covidData.isoCode, countryCode));
     } else {
-      conditions.push(eq(covidData.isoCode, 'OWID_WRL'));
+      conditions.push(eq(covidData.isoCode, "OWID_WRL"));
     }
 
     // Fetch recent data only to reduce size
@@ -98,8 +98,8 @@ export async function getCovidTimeSeries(countryCode: string, limit = 1000): Pro
       },
     };
   } catch (error) {
-    console.error('Error fetching COVID time series:', error);
-    throw new Error('Failed to fetch COVID time series data');
+    console.error("Error fetching COVID time series:", error);
+    throw new Error("Failed to fetch COVID time series data");
   }
 }
 
@@ -113,7 +113,7 @@ export async function getAvailableCountries(): Promise<string[]> {
 
     return countries.map((c) => c.isoCode).filter(Boolean) as string[];
   } catch (error) {
-    console.error('Error fetching available countries:', error);
+    console.error("Error fetching available countries:", error);
     return [];
   }
 }
@@ -124,7 +124,7 @@ export async function getGlobalCovidData(): Promise<ApiResponse> {
     const records = await db
       .select()
       .from(covidData)
-      .where(eq(covidData.isoCode, 'OWID_WRL'))
+      .where(eq(covidData.isoCode, "OWID_WRL"))
       .orderBy(sql`${covidData.date} DESC`)
       .limit(365); // Last year of data
 
@@ -139,25 +139,25 @@ export async function getGlobalCovidData(): Promise<ApiResponse> {
         hasPrev: false,
       },
       filters: {
-        country: 'OWID_WRL',
+        country: "OWID_WRL",
         startDate: null,
         endDate: null,
       },
     };
   } catch (error) {
-    console.error('Error fetching global COVID data:', error);
-    throw new Error('Failed to fetch global COVID data');
+    console.error("Error fetching global COVID data:", error);
+    throw new Error("Failed to fetch global COVID data");
   }
 }
 
 // Get country comparison data
 export async function getCountryComparisonData(
   countryCodes: string[],
-  limit = 365
+  limit = 365,
 ): Promise<ApiResponse> {
   try {
     if (countryCodes.length === 0) {
-      throw new Error('At least one country code is required');
+      throw new Error("At least one country code is required");
     }
 
     const conditions = countryCodes.map((code) => eq(covidData.isoCode, code));
@@ -165,7 +165,7 @@ export async function getCountryComparisonData(
     const records = await db
       .select()
       .from(covidData)
-      .where(sql`${covidData.isoCode} IN (${sql.join(countryCodes, sql.raw(','))})`)
+      .where(sql`${covidData.isoCode} IN (${sql.join(countryCodes, sql.raw(","))})`)
       .orderBy(sql`${covidData.date} DESC`)
       .limit(limit * countryCodes.length);
 
@@ -180,13 +180,13 @@ export async function getCountryComparisonData(
         hasPrev: false,
       },
       filters: {
-        country: countryCodes.join(','),
+        country: countryCodes.join(","),
         startDate: null,
         endDate: null,
       },
     };
   } catch (error) {
-    console.error('Error fetching country comparison data:', error);
-    throw new Error('Failed to fetch country comparison data');
+    console.error("Error fetching country comparison data:", error);
+    throw new Error("Failed to fetch country comparison data");
   }
 }

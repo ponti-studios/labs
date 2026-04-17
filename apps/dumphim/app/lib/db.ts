@@ -1,5 +1,5 @@
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import {
   trackers,
   votes,
@@ -10,11 +10,11 @@ import {
   type NewDumphimTracker,
   type NewDumphimVote,
   type DumphimTrackerParsed,
-} from '@pontistudios/db';
+} from "@pontistudios/db";
 
 const dbUrl = process.env.DATABASE_URL ?? process.env.VITE_DATABASE_URL;
 if (!dbUrl) {
-  throw new Error('DATABASE_URL environment variable is required');
+  throw new Error("DATABASE_URL environment variable is required");
 }
 
 let _db: ReturnType<typeof drizzle> | null = null;

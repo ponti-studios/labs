@@ -1,6 +1,6 @@
-import axios from 'axios';
+import axios from "axios";
 
-export const BASE_URL = 'https://covid.ponti.io/api';
+export const BASE_URL = "https://covid.ponti.io/api";
 
 export interface RegionData {
   confirmed: number;
@@ -69,10 +69,10 @@ const MAX_REGION_DATA_RECORDS = 10;
 
 export const fetchCountryRegionalData = async (
   countryCode: string,
-  by = 'confirmed'
+  by = "confirmed",
 ): Promise<RegionData[] | undefined> => {
   const { data }: { data: RegionDataResponse[] } = await axios.get(
-    `${BASE_URL}/countries/${countryCode}/${by}`
+    `${BASE_URL}/countries/${countryCode}/${by}`,
   );
 
   return data

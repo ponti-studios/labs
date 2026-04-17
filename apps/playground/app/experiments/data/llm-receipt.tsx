@@ -69,8 +69,7 @@ const calculateSessionMetrics = (messages) => {
     const pricing = PRICING[msg.model] || { input: 0, output: 0, cacheRead: 0 };
 
     // Calculate costs (divide by 1000 since pricing is per 1k tokens)
-    const freshInputCost =
-      ((msg.inputTokens - msg.cachedTokens) / 1000) * pricing.input;
+    const freshInputCost = ((msg.inputTokens - msg.cachedTokens) / 1000) * pricing.input;
     const cachedInputCost = (msg.cachedTokens / 1000) * pricing.cacheRead;
     const outputCost = (msg.outputTokens / 1000) * pricing.output;
 
@@ -89,8 +88,7 @@ const calculateSessionMetrics = (messages) => {
 
   // 2. Calculate Blended Rate (Total Cost / Total Tokens per 1k)
   const totalTokens = totalInputTokens + totalOutputTokens;
-  const blendedRatePer1k =
-    totalTokens > 0 ? totalCost / (totalTokens / 1000) : 0;
+  const blendedRatePer1k = totalTokens > 0 ? totalCost / (totalTokens / 1000) : 0;
 
   // 3. Calculate "What-If" Scenarios (Counterfactuals)
   const generateScenario = (modelName, label) => {
@@ -144,8 +142,7 @@ const ThermalReceipt = ({ data }) => {
       <div
         className="absolute top-0 left-0 right-0 h-3 transform -translate-y-full flex"
         style={{
-          backgroundImage:
-            "radial-gradient(circle at 5px 0, transparent 4px, #fcfbf9 5px)",
+          backgroundImage: "radial-gradient(circle at 5px 0, transparent 4px, #fcfbf9 5px)",
           backgroundSize: "10px 10px",
           backgroundPosition: "bottom",
         }}
@@ -153,16 +150,10 @@ const ThermalReceipt = ({ data }) => {
 
       {/* Header */}
       <div className="text-center mb-6 border-b-2 border-dashed border-slate-300 pb-6">
-        <h1 className="text-2xl font-black uppercase tracking-widest mb-2">
-          LLM Router
-        </h1>
-        <p className="text-xs text-slate-500 font-bold uppercase">
-          Session Telemetry
-        </p>
+        <h1 className="text-2xl font-black uppercase tracking-widest mb-2">LLM Router</h1>
+        <p className="text-xs text-slate-500 font-bold uppercase">Session Telemetry</p>
         <p className="text-xs text-slate-500 mt-2">ID: {data.receiptId}</p>
-        <p className="text-xs text-slate-500">
-          {new Date(data.timestamp).toLocaleString()}
-        </p>
+        <p className="text-xs text-slate-500">{new Date(data.timestamp).toLocaleString()}</p>
       </div>
 
       {/* Line Items */}
@@ -223,9 +214,7 @@ const ThermalReceipt = ({ data }) => {
 
         <div className="flex justify-between items-end border-t border-slate-900 pt-2 mb-1">
           <span className="text-lg font-black uppercase">Total Billed</span>
-          <span className="text-xl font-black">
-            ${data.summary.totalCost.toFixed(4)}
-          </span>
+          <span className="text-xl font-black">${data.summary.totalCost.toFixed(4)}</span>
         </div>
       </div>
 
@@ -247,14 +236,9 @@ const ThermalReceipt = ({ data }) => {
                   <span>${scenario.projectedCost.toFixed(4)}</span>
                 </div>
                 <div className="flex justify-between mt-1">
-                  <span className="text-[10px] text-slate-500">
-                    If routed to {scenario.model}
-                  </span>
-                  <span
-                    className={`font-bold ${isSavings ? "text-green-600" : "text-rose-600"}`}
-                  >
-                    {isSavings ? "Save" : "Add"} $
-                    {Math.abs(scenario.diff).toFixed(4)}
+                  <span className="text-[10px] text-slate-500">If routed to {scenario.model}</span>
+                  <span className={`font-bold ${isSavings ? "text-green-600" : "text-rose-600"}`}>
+                    {isSavings ? "Save" : "Add"} ${Math.abs(scenario.diff).toFixed(4)}
                   </span>
                 </div>
               </div>
@@ -275,17 +259,14 @@ const ThermalReceipt = ({ data }) => {
             ></div>
           ))}
         </div>
-        <p className="text-[10px] text-slate-400 uppercase tracking-widest">
-          End of Session
-        </p>
+        <p className="text-[10px] text-slate-400 uppercase tracking-widest">End of Session</p>
       </div>
 
       {/* Bottom Jagged Edge */}
       <div
         className="absolute bottom-0 left-0 right-0 h-3 transform translate-y-full flex"
         style={{
-          backgroundImage:
-            "radial-gradient(circle at 5px 10px, transparent 4px, #fcfbf9 5px)",
+          backgroundImage: "radial-gradient(circle at 5px 10px, transparent 4px, #fcfbf9 5px)",
           backgroundSize: "10px 10px",
           backgroundPosition: "top",
         }}
@@ -299,22 +280,15 @@ export default function App() {
   const [viewMode, setViewMode] = useState("receipt");
 
   // Memoize the calculation so it only runs once per data set
-  const sessionData = useMemo(
-    () => calculateSessionMetrics(RAW_SESSION_LOGS),
-    [],
-  );
+  const sessionData = useMemo(() => calculateSessionMetrics(RAW_SESSION_LOGS), []);
 
   return (
     <div className="min-h-screen bg-slate-200 p-4 md:p-8 flex flex-col items-center font-sans">
       {/* Header / Controls */}
       <div className="max-w-4xl w-full flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">
-            LLM Cost Router UI
-          </h1>
-          <p className="text-sm text-slate-600">
-            Simulating utility functions & receipt rendering
-          </p>
+          <h1 className="text-2xl font-bold text-slate-800">LLM Cost Router UI</h1>
+          <p className="text-sm text-slate-600">Simulating utility functions & receipt rendering</p>
         </div>
 
         <div className="flex bg-slate-300 p-1 rounded-lg">

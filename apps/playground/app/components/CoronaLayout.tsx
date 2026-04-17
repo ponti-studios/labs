@@ -1,5 +1,5 @@
-import { Link, useLocation, useNavigate } from 'react-router';
-import { CountryPicker } from './country-picker/country-picker';
+import { Link, useLocation, useNavigate } from "react-router";
+import { CountryPicker } from "./country-picker/country-picker";
 
 interface CoronaLayoutProps {
   children: React.ReactNode;
@@ -13,11 +13,11 @@ export function CoronaLayout({ children, countryCode }: CoronaLayoutProps) {
   // Handle country change
   const handleCountryChange = (newCountryCode: string) => {
     // Get the current route path without the country code
-    const pathParts = location.pathname.split('/');
+    const pathParts = location.pathname.split("/");
     // Replace the country code (should be at index 2: /corona/[countryCode]/...)
-    if (pathParts.length >= 3 && pathParts[1] === 'corona') {
+    if (pathParts.length >= 3 && pathParts[1] === "corona") {
       pathParts[2] = newCountryCode;
-      const newPath = pathParts.join('/');
+      const newPath = pathParts.join("/");
       navigate(newPath);
     } else {
       // Fallback to main dashboard
@@ -28,28 +28,28 @@ export function CoronaLayout({ children, countryCode }: CoronaLayoutProps) {
   const navigationItems = [
     {
       href: `/corona/${countryCode}`,
-      icon: '📊',
-      title: 'Dashboard',
+      icon: "📊",
+      title: "Dashboard",
     },
     {
       href: `/corona/${countryCode}/pandemic-waves`,
-      icon: '🌊',
-      title: 'Pandemic Waves',
+      icon: "🌊",
+      title: "Pandemic Waves",
     },
     {
       href: `/corona/${countryCode}/vaccination-effectiveness`,
-      icon: '💉',
-      title: 'Vaccination Impact',
+      icon: "💉",
+      title: "Vaccination Impact",
     },
     {
       href: `/corona/${countryCode}/seasonal-patterns`,
-      icon: '📅',
-      title: 'Seasonal Analysis',
+      icon: "📅",
+      title: "Seasonal Analysis",
     },
     {
       href: `/corona/${countryCode}/outlier-detection`,
-      icon: '⚡',
-      title: 'Outlier Detection',
+      icon: "⚡",
+      title: "Outlier Detection",
     },
   ];
 

@@ -1,6 +1,6 @@
-import { and, desc, eq, isNotNull } from 'drizzle-orm';
-import type { LoaderFunctionArgs } from 'react-router';
-import { covidData, db } from '~/db';
+import { and, desc, eq, isNotNull } from "drizzle-orm";
+import type { LoaderFunctionArgs } from "react-router";
+import { covidData, db } from "~/db";
 
 interface DashboardSummary {
   totalCases: number;
@@ -32,7 +32,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   try {
     const url = new URL(request.url);
     const searchParams = url.searchParams;
-    const country = searchParams.get('country') || 'OWID_WRL';
+    const country = searchParams.get("country") || "OWID_WRL";
 
     // Get latest summary data
     const latestData = await db
@@ -45,10 +45,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
     if (latestData.length === 0) {
       return Response.json(
         {
-          error: 'No data found for country',
+          error: "No data found for country",
           country,
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -95,7 +95,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       .limit(30);
 
     const trends: TrendData[] = trendData.reverse().map((row) => ({
-      date: row.date || '',
+      date: row.date || "",
       newCases: row.newCases || 0,
       newDeaths: row.newDeaths || 0,
       newVaccinations: row.newVaccinations || 0,
@@ -122,22 +122,22 @@ export async function loader({ request }: LoaderFunctionArgs) {
       trends,
       trendAnalysis: {
         cases: {
-          direction: caseTrend > 5 ? 'increasing' : caseTrend < -5 ? 'decreasing' : 'stable',
+          direction: caseTrend > 5 ? "increasing" : caseTrend < -5 ? "decreasing" : "stable",
           percentage: Math.round(caseTrend * 100) / 100,
         },
         deaths: {
-          direction: deathTrend > 5 ? 'increasing' : deathTrend < -5 ? 'decreasing' : 'stable',
+          direction: deathTrend > 5 ? "increasing" : deathTrend < -5 ? "decreasing" : "stable",
           percentage: Math.round(deathTrend * 100) / 100,
         },
         vaccinations: {
           direction:
-            vaccinationTrend > 5 ? 'increasing' : vaccinationTrend < -5 ? 'decreasing' : 'stable',
+            vaccinationTrend > 5 ? "increasing" : vaccinationTrend < -5 ? "decreasing" : "stable",
           percentage: Math.round(vaccinationTrend * 100) / 100,
         },
       },
     });
   } catch (error) {
-    console.error('Error in dashboard analytics:', error);
-    return Response.json({ error: 'Failed to load dashboard analytics' }, { status: 500 });
+    console.error("Error in dashboard analytics:", error);
+    return Response.json({ error: "Failed to load dashboard analytics" }, { status: 500 });
   }
 }

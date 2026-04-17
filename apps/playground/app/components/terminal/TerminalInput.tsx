@@ -1,5 +1,5 @@
-import type React from 'react';
-import { forwardRef, memo } from 'react';
+import type React from "react";
+import { forwardRef, memo } from "react";
 
 interface TerminalInputProps {
   currentCommand: string;
@@ -27,8 +27,8 @@ export const TerminalInput = memo(
           />
         </div>
       </div>
-    )
-  )
+    ),
+  ),
 );
 
-TerminalInput.displayName = 'TerminalInput';
+TerminalInput.displayName = "TerminalInput";

@@ -1,5 +1,5 @@
-import MarkdownUpload from '../components/MarkdownUpload';
-import VectorSearch from '../components/VectorSearch';
+import MarkdownUpload from "../components/MarkdownUpload";
+import VectorSearch from "../components/VectorSearch";
 
 export default function VectorSearchPage() {
   return (

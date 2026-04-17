@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import type { CovidDataRecord } from '~/types/covid';
+import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import type { CovidDataRecord } from "~/types/covid";
 
 interface TimeSeriesChartProps {
   data: CovidDataRecord[];
@@ -15,7 +15,7 @@ export function TimeSeriesChart({
   data,
   metric,
   title,
-  color = '#3b82f6',
+  color = "#3b82f6",
   height = 300,
 }: TimeSeriesChartProps) {
   // Transform data for the chart
@@ -70,9 +70,9 @@ export function TimeSeriesChart({
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      year: 'numeric',
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      year: "numeric",
     });
   };
 
@@ -92,9 +92,9 @@ export function TimeSeriesChart({
             labelFormatter={(label) => formatDate(label as string)}
             formatter={(value: number) => [formatValue(value), title]}
             contentStyle={{
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
-              border: '1px solid #e5e7eb',
-              borderRadius: '8px',
+              backgroundColor: "rgba(255, 255, 255, 0.95)",
+              border: "1px solid #e5e7eb",
+              borderRadius: "8px",
             }}
           />
           <Line

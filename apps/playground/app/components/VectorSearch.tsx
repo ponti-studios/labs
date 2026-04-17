@@ -27,9 +27,7 @@ export default function VectorSearch() {
     queryKey: ["vectorSearch", debouncedQuery],
     queryFn: async () => {
       if (!debouncedQuery.trim()) return { results: [] };
-      const response = await fetch(
-        `/api/search?query=${encodeURIComponent(debouncedQuery)}`,
-      );
+      const response = await fetch(`/api/search?query=${encodeURIComponent(debouncedQuery)}`);
       if (!response.ok) {
         throw new Error("Failed to fetch search results");
       }
@@ -42,10 +40,7 @@ export default function VectorSearch() {
   const isSearching = isPending && !!debouncedQuery.trim();
   const errorMessage = error?.message || null;
 
-  const handleUpdatePost = async (
-    postId: string,
-    updates: Partial<SocialPost>,
-  ) => {
+  const handleUpdatePost = async (postId: string, updates: Partial<SocialPost>) => {
     try {
       const response = await fetch(`/api/posts/${postId}`, {
         method: "PATCH",
@@ -109,9 +104,7 @@ export default function VectorSearch() {
 
       {/* Error */}
       {errorMessage && (
-        <div className="rounded bg-red-50 p-3 text-sm text-red-600">
-          {errorMessage}
-        </div>
+        <div className="rounded bg-red-50 p-3 text-sm text-red-600">{errorMessage}</div>
       )}
 
       {/* Results */}
@@ -130,14 +123,11 @@ export default function VectorSearch() {
       )}
 
       {/* No Results */}
-      {debouncedQuery &&
-        results.length === 0 &&
-        !isSearching &&
-        !errorMessage && (
-          <div className="py-8 text-center text-gray-500">
-            <div className="text-sm">No results found</div>
-          </div>
-        )}
+      {debouncedQuery && results.length === 0 && !isSearching && !errorMessage && (
+        <div className="py-8 text-center text-gray-500">
+          <div className="text-sm">No results found</div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,7 +1,7 @@
-import { and, eq, gte, lte, sql } from 'drizzle-orm';
-import type { LoaderFunctionArgs } from 'react-router';
-import { covidData, db } from '~/db';
-import type { CovidDataSelect } from '~/db/schema';
+import { and, eq, gte, lte, sql } from "drizzle-orm";
+import type { LoaderFunctionArgs } from "react-router";
+import { covidData, db } from "~/db";
+import type { CovidDataSelect } from "~/db/schema";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
@@ -9,29 +9,29 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const searchParams = url.searchParams;
 
     // Parse query parameters
-    const country = searchParams.get('country');
-    const startDate = searchParams.get('startDate');
-    const endDate = searchParams.get('endDate');
-    const page = Number.parseInt(searchParams.get('page') || '1');
-    const limit = Math.min(Number.parseInt(searchParams.get('limit') || '1000'), 5000); // Max 5000 items per page for data analysis
+    const country = searchParams.get("country");
+    const startDate = searchParams.get("startDate");
+    const endDate = searchParams.get("endDate");
+    const page = Number.parseInt(searchParams.get("page") || "1");
+    const limit = Math.min(Number.parseInt(searchParams.get("limit") || "1000"), 5000); // Max 5000 items per page for data analysis
 
     // Validate pagination parameters
     if (page < 1) {
-      return Response.json({ error: 'Page must be greater than 0' }, { status: 400 });
+      return Response.json({ error: "Page must be greater than 0" }, { status: 400 });
     }
 
     if (limit < 1) {
-      return Response.json({ error: 'Limit must be greater than 0' }, { status: 400 });
+      return Response.json({ error: "Limit must be greater than 0" }, { status: 400 });
     }
 
     // Build where conditions
     const conditions = [];
 
     // Filter by country if provided
-    if (country && country !== 'global') {
-      if (country === 'OWID_WRL') {
+    if (country && country !== "global") {
+      if (country === "OWID_WRL") {
         // Global data in OWID format
-        conditions.push(eq(covidData.isoCode, 'OWID_WRL'));
+        conditions.push(eq(covidData.isoCode, "OWID_WRL"));
       } else {
         // Filter by ISO code or location name
         conditions.push(eq(covidData.isoCode, country));
@@ -96,7 +96,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       },
     });
   } catch (error) {
-    console.error('Failed to load COVID data:', error);
-    return Response.json({ error: 'Failed to load COVID data' }, { status: 500 });
+    console.error("Failed to load COVID data:", error);
+    return Response.json({ error: "Failed to load COVID data" }, { status: 500 });
   }
 }

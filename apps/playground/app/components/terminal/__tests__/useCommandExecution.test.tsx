@@ -1,13 +1,13 @@
-import { act, renderHook } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
-import { beforeEach, describe, expect, test, vi } from 'vitest';
-import type { TerminalLine } from '../types';
-import { useCommandExecution } from '../useCommandExecution';
+import { act, renderHook } from "@testing-library/react";
+import { BrowserRouter } from "react-router-dom";
+import { beforeEach, describe, expect, test, vi } from "vitest";
+import type { TerminalLine } from "../types";
+import { useCommandExecution } from "../useCommandExecution";
 
 // Mock react-router's useNavigate hook
 const mockNavigate = vi.fn();
-vi.mock('react-router', async () => {
-  const actual = await vi.importActual('react-router');
+vi.mock("react-router", async () => {
+  const actual = await vi.importActual("react-router");
   return {
     ...actual,
     useNavigate: () => mockNavigate,
@@ -25,18 +25,18 @@ interface MockElement {
 }
 
 const mockElement: MockElement = {
-  className: '',
-  innerHTML: '',
-  style: { cssText: '' },
+  className: "",
+  innerHTML: "",
+  style: { cssText: "" },
   parentNode: {
     removeChild: vi.fn(),
   },
 };
 
-Object.defineProperty(global, 'document', {
+Object.defineProperty(global, "document", {
   value: {
     querySelector: vi.fn(() => ({
-      className: 'terminal',
+      className: "terminal",
     })),
     createElement: vi.fn(() => mockElement),
     head: {
@@ -54,7 +54,7 @@ function RouterWrapper({ children }: { children: React.ReactNode }) {
   return <BrowserRouter>{children}</BrowserRouter>;
 }
 
-describe('useCommandExecution Hook', () => {
+describe("useCommandExecution Hook", () => {
   let setLines: ReturnType<typeof vi.fn>;
   let setCommandHistory: ReturnType<typeof vi.fn>;
   let commandHistory: string[];
@@ -68,26 +68,26 @@ describe('useCommandExecution Hook', () => {
     vi.useFakeTimers();
   });
 
-  test('should return executeCommand function', () => {
+  test("should return executeCommand function", () => {
     const { result } = renderHook(() => useCommandExecution());
-    expect(typeof result.current.executeCommand).toBe('function');
+    expect(typeof result.current.executeCommand).toBe("function");
   });
 
-  test('executeCommand should add command to history', () => {
+  test("executeCommand should add command to history", () => {
     const { result } = renderHook(() => useCommandExecution());
 
     act(() => {
-      result.current.executeCommand('help', commandHistory, setLines, setCommandHistory);
+      result.current.executeCommand("help", commandHistory, setLines, setCommandHistory);
     });
 
     expect(setCommandHistory).toHaveBeenCalledWith(expect.any(Function));
   });
 
-  test('executeCommand should handle help command', () => {
+  test("executeCommand should handle help command", () => {
     const { result } = renderHook(() => useCommandExecution());
 
     act(() => {
-      result.current.executeCommand('help', commandHistory, setLines, setCommandHistory);
+      result.current.executeCommand("help", commandHistory, setLines, setCommandHistory);
     });
 
     expect(setLines).toHaveBeenCalledWith(expect.any(Function));
@@ -98,20 +98,20 @@ describe('useCommandExecution Hook', () => {
 
     // Should contain command line and help content
     expect(newLines[0]).toEqual({
-      type: 'command',
-      content: 'C:\\CHUCK> help',
+      type: "command",
+      content: "C:\\CHUCK> help",
     });
 
-    expect(newLines.some((line: TerminalLine) => line.content.includes('AVAILABLE COMMANDS'))).toBe(
-      true
+    expect(newLines.some((line: TerminalLine) => line.content.includes("AVAILABLE COMMANDS"))).toBe(
+      true,
     );
   });
 
-  test('executeCommand should handle cls command', () => {
+  test("executeCommand should handle cls command", () => {
     const { result } = renderHook(() => useCommandExecution());
 
     act(() => {
-      result.current.executeCommand('cls', commandHistory, setLines, setCommandHistory);
+      result.current.executeCommand("cls", commandHistory, setLines, setCommandHistory);
     });
 
     // Should call setLines twice - once to add command, once to clear
@@ -122,11 +122,11 @@ describe('useCommandExecution Hook', () => {
     expect(secondCall[0]).toEqual([]);
   });
 
-  test('executeCommand should handle gradient command and navigate', () => {
+  test("executeCommand should handle gradient command and navigate", () => {
     const { result } = renderHook(() => useCommandExecution());
 
     act(() => {
-      result.current.executeCommand('gradient', commandHistory, setLines, setCommandHistory);
+      result.current.executeCommand("gradient", commandHistory, setLines, setCommandHistory);
     });
 
     const setLinesCall = setLines.mock.calls[0][0];
@@ -134,8 +134,8 @@ describe('useCommandExecution Hook', () => {
 
     expect(
       newLines.some((line: TerminalLine) =>
-        line.content.includes('Launching Gradient Border Laboratory')
-      )
+        line.content.includes("Launching Gradient Border Laboratory"),
+      ),
     ).toBe(true);
 
     // Fast-forward timers to trigger navigation
@@ -143,52 +143,52 @@ describe('useCommandExecution Hook', () => {
       vi.advanceTimersByTime(1500);
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith('/border-linear-gradient');
+    expect(mockNavigate).toHaveBeenCalledWith("/border-linear-gradient");
   });
 
-  test('executeCommand should handle meow command', () => {
+  test("executeCommand should handle meow command", () => {
     const { result } = renderHook(() => useCommandExecution());
 
     act(() => {
-      result.current.executeCommand('meow', commandHistory, setLines, setCommandHistory);
+      result.current.executeCommand("meow", commandHistory, setLines, setCommandHistory);
     });
 
     const setLinesCall = setLines.mock.calls[0][0];
     const newLines = setLinesCall([]);
 
     expect(
-      newLines.some((line: TerminalLine) => line.content.includes('Summoning cyber cats'))
+      newLines.some((line: TerminalLine) => line.content.includes("Summoning cyber cats")),
     ).toBe(true);
 
     expect(
-      newLines.some((line: TerminalLine) => line.content.includes('MEOW! Cats are bouncing'))
+      newLines.some((line: TerminalLine) => line.content.includes("MEOW! Cats are bouncing")),
     ).toBe(true);
 
     // Should contain cat ASCII art
-    expect(newLines.some((line: TerminalLine) => line.content.includes('/\\_/\\'))).toBe(true);
+    expect(newLines.some((line: TerminalLine) => line.content.includes("/\\_/\\"))).toBe(true);
   });
 
-  test('executeCommand should handle unknown command', () => {
+  test("executeCommand should handle unknown command", () => {
     const { result } = renderHook(() => useCommandExecution());
 
     act(() => {
-      result.current.executeCommand('unknown', commandHistory, setLines, setCommandHistory);
+      result.current.executeCommand("unknown", commandHistory, setLines, setCommandHistory);
     });
 
     const setLinesCall = setLines.mock.calls[0][0];
     const newLines = setLinesCall([]);
 
     expect(
-      newLines.some((line: TerminalLine) => line.content.includes('Bad command or file name'))
+      newLines.some((line: TerminalLine) => line.content.includes("Bad command or file name")),
     ).toBe(true);
   });
 
-  test('should not add duplicate commands to history', () => {
+  test("should not add duplicate commands to history", () => {
     const { result } = renderHook(() => useCommandExecution());
-    const existingHistory = ['help'];
+    const existingHistory = ["help"];
 
     act(() => {
-      result.current.executeCommand('help', existingHistory, setLines, setCommandHistory);
+      result.current.executeCommand("help", existingHistory, setLines, setCommandHistory);
     });
 
     // Should not call setCommandHistory since "help" is already in history

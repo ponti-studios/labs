@@ -1,8 +1,8 @@
 export enum PropertyKey {
-  available = 'available',
-  imageUrl = 'imageUrl',
-  videoUrl = 'videoUrl',
-  view = 'view',
+  available = "available",
+  imageUrl = "imageUrl",
+  videoUrl = "videoUrl",
+  view = "view",
 }
 
 export type AdditionalProperty = {
@@ -19,7 +19,7 @@ export type BaseCamera = {
   id: string;
   url: string;
   commonName: string;
-  placeType: 'JamCam';
+  placeType: "JamCam";
   additionalProperties: AdditionalProperty[];
   children: unknown[];
   childrenUrls: unknown[];

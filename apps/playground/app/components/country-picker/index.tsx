@@ -1,3 +1,3 @@
-import CountryPicker from './country-picker';
+import CountryPicker from "./country-picker";
 
 export { CountryPicker };

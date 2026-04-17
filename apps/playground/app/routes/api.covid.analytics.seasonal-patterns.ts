@@ -1,6 +1,6 @@
-import { eq } from 'drizzle-orm';
-import type { LoaderFunctionArgs } from 'react-router';
-import { covidData, db } from '~/db';
+import { eq } from "drizzle-orm";
+import type { LoaderFunctionArgs } from "react-router";
+import { covidData, db } from "~/db";
 
 interface SeasonalPattern {
   month: number;
@@ -22,7 +22,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   try {
     const url = new URL(request.url);
     const searchParams = url.searchParams;
-    const country = searchParams.get('country') || 'OWID_WRL';
+    const country = searchParams.get("country") || "OWID_WRL";
 
     // Get all available data for the country
     const data = await db
@@ -40,7 +40,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     if (data.length === 0) {
       return Response.json({
         country,
-        error: 'No data found for seasonal analysis',
+        error: "No data found for seasonal analysis",
       });
     }
 
@@ -63,18 +63,18 @@ export async function loader({ request }: LoaderFunctionArgs) {
     }
 
     const monthNames = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
     ];
 
     // Calculate patterns for each month
@@ -145,8 +145,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
       if (winterAvg > overallAvg * 1.3) {
         insights.push({
-          pattern: 'Winter Surge',
-          description: 'Higher case rates during winter months (Dec-Feb)',
+          pattern: "Winter Surge",
+          description: "Higher case rates during winter months (Dec-Feb)",
           strength: Math.round((winterAvg / overallAvg - 1) * 100),
         });
       }
@@ -158,8 +158,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
       if (summerAvg < overallAvg * 0.7 && overallAvg > 0) {
         insights.push({
-          pattern: 'Summer Low',
-          description: 'Lower case rates during summer months (Jun-Aug)',
+          pattern: "Summer Low",
+          description: "Lower case rates during summer months (Jun-Aug)",
           strength: Math.round((1 - summerAvg / overallAvg) * 100),
         });
       }
@@ -187,7 +187,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       },
     });
   } catch (error) {
-    console.error('Error in seasonal patterns analysis:', error);
-    return Response.json({ error: 'Failed to analyze seasonal patterns' }, { status: 500 });
+    console.error("Error in seasonal patterns analysis:", error);
+    return Response.json({ error: "Failed to analyze seasonal patterns" }, { status: 500 });
   }
 }

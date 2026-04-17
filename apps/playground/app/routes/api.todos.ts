@@ -160,10 +160,7 @@ async function updateTodo(
 }
 
 async function deleteTodo(todoId: number): Promise<boolean> {
-  const result = await db
-    .deleteFrom("todos")
-    .where("id", "=", todoId)
-    .executeTakeFirst();
+  const result = await db.deleteFrom("todos").where("id", "=", todoId).executeTakeFirst();
 
   return result.numDeletedRows > 0;
 }

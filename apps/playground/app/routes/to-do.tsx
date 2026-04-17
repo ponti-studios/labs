@@ -1,5 +1,5 @@
-import type React from 'react';
-import { useEffect, useState } from 'react';
+import type React from "react";
+import { useEffect, useState } from "react";
 
 interface TodoItem {
   id: number;
@@ -10,8 +10,8 @@ interface TodoItem {
 
 export default function Todo() {
   const [todos, setTodos] = useState<TodoItem[]>([]);
-  const [task, setTask] = useState('');
-  const [dueDate, setDueDate] = useState('');
+  const [task, setTask] = useState("");
+  const [dueDate, setDueDate] = useState("");
 
   useEffect(() => {
     // Load tasks from Local Storage
@@ -22,7 +22,7 @@ export default function Todo() {
 
   useEffect(() => {
     // Save tasks to Local Storage whenever todos change
-    localStorage.setItem('tasks', JSON.stringify(todos));
+    localStorage.setItem("tasks", JSON.stringify(todos));
   }, [todos]);
 
   const addTodo = (e: React.FormEvent) => {
@@ -31,18 +31,18 @@ export default function Todo() {
       const newTodo: TodoItem = {
         id: todos.length > 0 ? Math.max(...todos.map((t) => t.id)) + 1 : 1,
         task,
-        date: dueDate || new Date().toISOString().split('T')[0],
+        date: dueDate || new Date().toISOString().split("T")[0],
         completed: false,
       };
       setTodos([...todos, newTodo]);
-      setTask('');
-      setDueDate('');
+      setTask("");
+      setDueDate("");
     }
   };
 
   const toggleComplete = (id: number) => {
     setTodos(
-      todos.map((todo) => (todo.id === id ? { ...todo, completed: !todo.completed } : todo))
+      todos.map((todo) => (todo.id === id ? { ...todo, completed: !todo.completed } : todo)),
     );
   };
 
@@ -64,7 +64,7 @@ export default function Todo() {
         <ul id="toDoList">
           {todos.map((todo) => (
             <li key={todo.id}>
-              <label htmlFor={`todo-${todo.id}`} className={todo.completed ? 'finished' : ''}>
+              <label htmlFor={`todo-${todo.id}`} className={todo.completed ? "finished" : ""}>
                 <input
                   type="checkbox"
                   id={`todo-${todo.id}`}

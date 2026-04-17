@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useQuery } from '@tanstack/react-query';
-import type { CovidDataRecord } from '~/types/covid';
-import { StatsOverview } from './charts/stats-overview';
-import { TimeSeriesChart } from './charts/time-series-chart';
-import { TopCountriesChart } from './charts/top-countries-chart';
-import { VaccinationProgress } from './charts/vaccination-progress';
+import { useQuery } from "@tanstack/react-query";
+import type { CovidDataRecord } from "~/types/covid";
+import { StatsOverview } from "./charts/stats-overview";
+import { TimeSeriesChart } from "./charts/time-series-chart";
+import { TopCountriesChart } from "./charts/top-countries-chart";
+import { VaccinationProgress } from "./charts/vaccination-progress";
 
 interface CovidAnalyticsDashboardProps {
   countryCode: string;
@@ -36,12 +36,12 @@ export function CovidAnalyticsDashboard({ countryCode }: CovidAnalyticsDashboard
     isError: isErrorStats,
     error: errorStats,
   } = useQuery<ApiResponse>({
-    queryKey: ['covid-stats', countryCode],
+    queryKey: ["covid-stats", countryCode],
     queryFn: () => {
       const params = new URLSearchParams();
-      params.append('type', 'stats');
+      params.append("type", "stats");
       // Always pass the country code - API will handle OWID_WRL for world data
-      params.append('country', countryCode);
+      params.append("country", countryCode);
 
       return fetch(`/api/covid/analytics/dashboard?${params}`).then((res) => res.json());
     },
@@ -54,13 +54,13 @@ export function CovidAnalyticsDashboard({ countryCode }: CovidAnalyticsDashboard
     isLoading: isLoadingTimeSeries,
     isError: isErrorTimeSeries,
   } = useQuery<ApiResponse>({
-    queryKey: ['covid-timeseries', countryCode],
+    queryKey: ["covid-timeseries", countryCode],
     queryFn: () => {
       const params = new URLSearchParams();
-      params.append('type', 'timeseries');
+      params.append("type", "timeseries");
       // Always pass the country code - API will handle OWID_WRL for world data
-      params.append('country', countryCode);
-      params.append('limit', '2000'); // Get more data for time series
+      params.append("country", countryCode);
+      params.append("limit", "2000"); // Get more data for time series
 
       return fetch(`/api/covid/analytics/dashboard?${params}`).then((res) => res.json());
     },
@@ -73,22 +73,22 @@ export function CovidAnalyticsDashboard({ countryCode }: CovidAnalyticsDashboard
     isLoading: isLoadingGlobalComparison,
     isError: isErrorGlobalComparison,
   } = useQuery<ApiResponse>({
-    queryKey: ['covid-global-latest'],
+    queryKey: ["covid-global-latest"],
     queryFn: () => {
       const params = new URLSearchParams();
-      params.append('type', 'latest');
-      params.append('limit', '200'); // Get top countries
+      params.append("type", "latest");
+      params.append("limit", "200"); // Get top countries
 
       return fetch(`/api/covid/analytics/dashboard?${params}`).then((res) => res.json());
     },
     staleTime: 1000 * 60 * 60, // Cache for 1 hour
-    enabled: countryCode !== 'OWID_WRL', // Only fetch if we're looking at a specific country
+    enabled: countryCode !== "OWID_WRL", // Only fetch if we're looking at a specific country
   });
 
   const isLoading =
     isLoadingStats ||
     isLoadingTimeSeries ||
-    (countryCode !== 'OWID_WRL' && isLoadingGlobalComparison);
+    (countryCode !== "OWID_WRL" && isLoadingGlobalComparison);
   const isError = isErrorStats || isErrorTimeSeries || isErrorGlobalComparison;
 
   if (isLoading) {
@@ -105,7 +105,7 @@ export function CovidAnalyticsDashboard({ countryCode }: CovidAnalyticsDashboard
       <div className="bg-red-50 border border-red-200 rounded-lg p-6">
         <h3 className="text-red-800 font-semibold">Error Loading Data</h3>
         <p className="text-red-600 mt-2">
-          {errorStats instanceof Error ? errorStats.message : 'Failed to load COVID data'}
+          {errorStats instanceof Error ? errorStats.message : "Failed to load COVID data"}
         </p>
       </div>
     );
@@ -127,7 +127,7 @@ export function CovidAnalyticsDashboard({ countryCode }: CovidAnalyticsDashboard
     );
   }
 
-  const countryName = countryCode === 'OWID_WRL' ? 'World' : statsData?.location || 'Unknown';
+  const countryName = countryCode === "OWID_WRL" ? "World" : statsData?.location || "Unknown";
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto px-4">
@@ -165,7 +165,7 @@ export function CovidAnalyticsDashboard({ countryCode }: CovidAnalyticsDashboard
       </div>
 
       {/* Global Comparisons - Only show for specific countries */}
-      {countryCode !== 'OWID_WRL' && (
+      {countryCode !== "OWID_WRL" && (
         <div className="space-y-6">
           <h2 className="text-2xl font-bold text-gray-800 border-b pb-2">Global Comparisons</h2>
 

@@ -1,42 +1,42 @@
-import type { LoaderFunctionArgs, MetaFunction } from 'react-router';
-import { useLoaderData } from 'react-router';
-import { CoronaLayout } from '~/components/CoronaLayout';
-import { StatsOverview } from '~/components/covid/charts/stats-overview';
-import { TimeSeriesChart } from '~/components/covid/charts/time-series-chart';
-import { TopCountriesChart } from '~/components/covid/charts/top-countries-chart';
-import { VaccinationProgress } from '~/components/covid/charts/vaccination-progress';
-import type { CovidDataSelect } from '~/db/schema';
+import type { LoaderFunctionArgs, MetaFunction } from "react-router";
+import { useLoaderData } from "react-router";
+import { CoronaLayout } from "~/components/CoronaLayout";
+import { StatsOverview } from "~/components/covid/charts/stats-overview";
+import { TimeSeriesChart } from "~/components/covid/charts/time-series-chart";
+import { TopCountriesChart } from "~/components/covid/charts/top-countries-chart";
+import { VaccinationProgress } from "~/components/covid/charts/vaccination-progress";
+import type { CovidDataSelect } from "~/db/schema";
 import {
   getAvailableCountries,
   getCovidStats,
   getCovidTimeSeries,
   getGlobalCovidData,
-} from '~/lib/covid-actions';
+} from "~/lib/covid-actions";
 
 export const meta: MetaFunction<typeof loader> = ({ params }) => {
-  const countryCode = params.countryCode || 'OWID_WRL';
+  const countryCode = params.countryCode || "OWID_WRL";
 
-  let countryName = 'World';
-  if (countryCode !== 'OWID_WRL') {
+  let countryName = "World";
+  if (countryCode !== "OWID_WRL") {
     countryName = countryCode;
   }
 
   return [
     { title: `COVID-19 Dashboard - ${countryName} | Ponti Studios` },
     {
-      name: 'description',
+      name: "description",
       content: `Comprehensive COVID-19 analytics and statistics for ${countryName}. View cases, deaths, vaccinations, and trends over time.`,
     },
     {
-      name: 'keywords',
+      name: "keywords",
       content: `covid-19,coronavirus,dashboard,statistics,${countryName},analytics`,
     },
-    { property: 'og:title', content: `COVID-19 Dashboard - ${countryName}` },
+    { property: "og:title", content: `COVID-19 Dashboard - ${countryName}` },
     {
-      property: 'og:description',
+      property: "og:description",
       content: `Comprehensive COVID-19 analytics for ${countryName}`,
     },
-    { property: 'og:type', content: 'website' },
+    { property: "og:type", content: "website" },
   ];
 };
 
@@ -44,17 +44,17 @@ export async function loader({ params }: LoaderFunctionArgs) {
   const { countryCode } = params;
 
   if (!countryCode) {
-    throw new Response('Country code is required', { status: 400 });
+    throw new Response("Country code is required", { status: 400 });
   }
 
   // Validate country code exists
   try {
     const availableCountries = await getAvailableCountries();
-    if (!availableCountries.includes(countryCode) && countryCode !== 'OWID_WRL') {
-      throw new Response('Country not found', { status: 404 });
+    if (!availableCountries.includes(countryCode) && countryCode !== "OWID_WRL") {
+      throw new Response("Country not found", { status: 404 });
     }
   } catch (error) {
-    console.error('Error validating country code:', error);
+    console.error("Error validating country code:", error);
     // If validation fails, still continue but the dashboard will handle the error
   }
 
@@ -63,7 +63,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
     const [statsResponse, timeSeriesResponse, globalComparisonResponse] = await Promise.all([
       getCovidStats(countryCode),
       getCovidTimeSeries(countryCode, 500), // Reduced limit to manage size
-      countryCode !== 'OWID_WRL' ? getGlobalCovidData() : Promise.resolve({ data: [] }),
+      countryCode !== "OWID_WRL" ? getGlobalCovidData() : Promise.resolve({ data: [] }),
     ]);
 
     const statsData = statsResponse.data?.[0] || null;
@@ -77,8 +77,8 @@ export async function loader({ params }: LoaderFunctionArgs) {
       globalComparisonData,
     };
   } catch (error) {
-    console.error('Error fetching COVID data:', error);
-    throw new Response('Failed to fetch COVID data', { status: 500 });
+    console.error("Error fetching COVID data:", error);
+    throw new Response("Failed to fetch COVID data", { status: 500 });
   }
 }
 
@@ -148,7 +148,7 @@ export default function CoronaDashboardPage() {
         </div>
 
         {/* Global Comparisons - Only show for specific countries */}
-        {countryCode !== 'OWID_WRL' && globalComparisonData.length > 0 && (
+        {countryCode !== "OWID_WRL" && globalComparisonData.length > 0 && (
           <div className="space-y-6">
             <h2 className="font-serif text-2xl font-light text-stone-800 border-b border-stone-200 pb-4">
               Global Comparisons
@@ -232,7 +232,7 @@ export default function CoronaDashboardPage() {
 
             {/* Conditionally show based on data availability */}
             {timeSeriesData.some(
-              (record: CovidDataSelect) => record.newVaccinationsSmoothed !== null
+              (record: CovidDataSelect) => record.newVaccinationsSmoothed !== null,
             ) ? (
               <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50 hover:bg-white/50 transition-all duration-300">
                 <h3 className="font-serif text-lg font-medium text-stone-800 mb-4">
@@ -273,7 +273,7 @@ export default function CoronaDashboardPage() {
                 />
               </div>
             ) : timeSeriesData.some(
-                (record: CovidDataSelect) => record.icuPatientsPerMillion !== null
+                (record: CovidDataSelect) => record.icuPatientsPerMillion !== null,
               ) ? (
               <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50 hover:bg-white/50 transition-all duration-300">
                 <h3 className="font-serif text-lg font-medium text-stone-800 mb-4">

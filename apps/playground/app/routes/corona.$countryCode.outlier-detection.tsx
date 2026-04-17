@@ -1,23 +1,23 @@
-import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
-import type { LoaderFunctionArgs, MetaFunction } from 'react-router';
-import { useLoaderData } from 'react-router';
-import { CoronaLayout } from '~/components/CoronaLayout';
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import type { LoaderFunctionArgs, MetaFunction } from "react-router";
+import { useLoaderData } from "react-router";
+import { CoronaLayout } from "~/components/CoronaLayout";
 
 interface Outlier {
   date: string;
   value: number;
   metric: string;
   zScore: number;
-  type: 'spike' | 'drop' | 'anomaly';
-  severity: 'low' | 'medium' | 'high';
+  type: "spike" | "drop" | "anomaly";
+  severity: "low" | "medium" | "high";
   description: string;
 }
 
 interface DataQualityIssue {
   date: string;
   issue: string;
-  severity: 'warning' | 'error';
+  severity: "warning" | "error";
   description: string;
 }
 
@@ -42,17 +42,17 @@ interface OutlierResponse {
 }
 
 export const meta: MetaFunction<typeof loader> = ({ params }) => {
-  const countryCode = params.countryCode || 'OWID_WRL';
+  const countryCode = params.countryCode || "OWID_WRL";
 
-  let countryName = 'World';
-  if (countryCode !== 'OWID_WRL') {
+  let countryName = "World";
+  if (countryCode !== "OWID_WRL") {
     countryName = countryCode;
   }
 
   return [
     { title: `Outlier Detection - ${countryName} | Ponti Studios` },
     {
-      name: 'description',
+      name: "description",
       content: `Outlier detection analysis for ${countryName}.`,
     },
   ];
@@ -62,7 +62,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   const { countryCode } = params;
 
   if (!countryCode) {
-    throw new Response('Country code is required', { status: 400 });
+    throw new Response("Country code is required", { status: 400 });
   }
 
   return { countryCode };
@@ -70,23 +70,23 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
 export default function OutlierDetectionPage() {
   const { countryCode } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
-  const [selectedMetric, setSelectedMetric] = useState('newCasesSmoothed');
+  const [selectedMetric, setSelectedMetric] = useState("newCasesSmoothed");
 
   const metrics = [
-    { value: 'newCasesSmoothed', label: 'New Cases (7-day avg)' },
-    { value: 'newDeathsSmoothed', label: 'New Deaths (7-day avg)' },
-    { value: 'newVaccinations', label: 'New Vaccinations' },
-    { value: 'positiveRate', label: 'Test Positivity Rate' },
-    { value: 'totalCases', label: 'Total Cases' },
-    { value: 'totalDeaths', label: 'Total Deaths' },
+    { value: "newCasesSmoothed", label: "New Cases (7-day avg)" },
+    { value: "newDeathsSmoothed", label: "New Deaths (7-day avg)" },
+    { value: "newVaccinations", label: "New Vaccinations" },
+    { value: "positiveRate", label: "Test Positivity Rate" },
+    { value: "totalCases", label: "Total Cases" },
+    { value: "totalDeaths", label: "Total Deaths" },
   ];
 
   const { data, isLoading, isError } = useQuery<OutlierResponse>({
-    queryKey: ['outlier-detection', countryCode, selectedMetric],
+    queryKey: ["outlier-detection", countryCode, selectedMetric],
     queryFn: () => {
       const params = new URLSearchParams();
-      params.append('country', countryCode);
-      params.append('metric', selectedMetric);
+      params.append("country", countryCode);
+      params.append("metric", selectedMetric);
 
       return fetch(`/api/covid/analytics/outlier-detection?${params}`).then((res) => res.json());
     },
@@ -95,21 +95,21 @@ export default function OutlierDetectionPage() {
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'high':
-        return 'text-red-700 border-red-300 bg-red-50';
-      case 'medium':
-        return 'text-orange-700 border-orange-300 bg-orange-50';
-      case 'low':
-        return 'text-yellow-700 border-yellow-300 bg-yellow-50';
+      case "high":
+        return "text-red-700 border-red-300 bg-red-50";
+      case "medium":
+        return "text-orange-700 border-orange-300 bg-orange-50";
+      case "low":
+        return "text-yellow-700 border-yellow-300 bg-yellow-50";
       default:
-        return 'text-stone-700 border-stone-300 bg-stone-50';
+        return "text-stone-700 border-stone-300 bg-stone-50";
     }
   };
 
   const getQualityScoreColor = (score: number) => {
-    if (score >= 0.8) return 'text-emerald-600';
-    if (score >= 0.6) return 'text-amber-600';
-    return 'text-red-600';
+    if (score >= 0.8) return "text-emerald-600";
+    if (score >= 0.6) return "text-amber-600";
+    return "text-red-600";
   };
 
   return (
@@ -238,7 +238,7 @@ export default function OutlierDetectionPage() {
                       <div className="flex justify-between items-start">
                         <div>
                           <h3 className="font-serif text-lg font-medium mb-2">
-                            {new Date(outlier.date).toLocaleDateString()} -{' '}
+                            {new Date(outlier.date).toLocaleDateString()} -{" "}
                             {outlier.type.charAt(0).toUpperCase() + outlier.type.slice(1)}
                           </h3>
                           <p className="font-light">{outlier.description}</p>
@@ -265,9 +265,9 @@ export default function OutlierDetectionPage() {
                     <div
                       key={`${issue.date}-${issue.issue}`}
                       className={`border-2 rounded-2xl p-6 ${
-                        issue.severity === 'error'
-                          ? 'border-red-300 bg-red-50 text-red-800'
-                          : 'border-yellow-300 bg-yellow-50 text-yellow-800'
+                        issue.severity === "error"
+                          ? "border-red-300 bg-red-50 text-red-800"
+                          : "border-yellow-300 bg-yellow-50 text-yellow-800"
                       }`}
                     >
                       <div className="flex justify-between items-start">
@@ -279,9 +279,9 @@ export default function OutlierDetectionPage() {
                         </div>
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-medium ${
-                            issue.severity === 'error'
-                              ? 'bg-red-100 text-red-800'
-                              : 'bg-yellow-100 text-yellow-800'
+                            issue.severity === "error"
+                              ? "bg-red-100 text-red-800"
+                              : "bg-yellow-100 text-yellow-800"
                           }`}
                         >
                           {issue.severity}
