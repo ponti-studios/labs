@@ -1,11 +1,13 @@
+"use client";
+
+import { useState, type FormEvent } from "react";
+
 import { Loader } from "lucide-react";
-import { type FormEvent, useState } from "react";
-import { Button } from "@pontistudios/ui";
+import { Button } from "../ui/button";
 
 export function UploadDocumentsForm() {
   const [isPending, setIsPending] = useState(false);
   const [document, setDocument] = useState("");
-
   const ingest = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsPending(true);
@@ -18,6 +20,7 @@ export function UploadDocumentsForm() {
       });
       setDocument("Uploaded!");
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error(error);
       setDocument("Failed to upload");
     } finally {
@@ -31,13 +34,13 @@ export function UploadDocumentsForm() {
         className="grow mr-8 p-4 rounded"
         value={document}
         onChange={(e) => setDocument(e.target.value)}
-      />
+      ></textarea>
       <Button
         type="submit"
         className="shrink-0 px-8 py-4 bg-black hover:bg-black text-white rounded-xl"
       >
         {isPending ? (
-          <div className="flex justify-center">
+          <div role="status" className="flex justify-center">
             <Loader className="animate-spin-slow" />
             <span className="sr-only">Loading...</span>
           </div>
