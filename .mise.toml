@@ -1,48 +1,18 @@
 [tools]
-node = "25"
+node = "24.11.0"
 npm = "latest"
 
 [env]
-# General App Config
 NODE_ENV = "development"
 
-# MySQL Configuration (Matching your docker-compose)
-DATABASE_URL = "mysql://labs:labs_password@localhost:3306/labs"
-MYSQL_ROOT_PASSWORD = "labs_password"
-MYSQL_DATABASE = "labs"
-MYSQL_USER = "labs"
-MYSQL_PASSWORD = "labs_password"
-
-# Redis Configuration (Matching your docker-compose)
-REDIS_URL = "redis://:redis_password@localhost:6379"
-REDIS_PASSWORD = "redis_password"
-
-# --- Tasks ---
-
-[tasks.up]
-description = "Start all Docker services (MySQL, Redis, Exporters)"
-run = "docker compose up -d"
-
-[tasks.down]
-description = "Stop all Docker services"
-run = "docker compose down"
-
-[tasks.db-shell]
-description = "Jump into the MySQL CLI inside the container"
-run = "docker exec -it hackefeller-mysql mysql -u labs -plabs_password labs"
-
-[tasks.redis-shell]
-description = "Jump into Redis CLI"
-run = "docker exec -it hackefeller-redis redis-cli -a redis_password"
+# Foundation postgres (run `just docker-up` in ../foundation first)
+DATABASE_URL = "postgresql://postgres:postgres@localhost:5434/labs"
+TEST_DATABASE_URL = "postgresql://postgres:postgres@localhost:4433/labs-test"
+REDIS_URL = "redis://localhost:6379"
 
 [tasks.dev]
-description = "Ensure DB is up then start dev server"
-depends = ["up"]
-run = "pm2 start npm --name='hominem' -- run dev"
-
-[tasks."run-redis"]
-description = "Start Redis via PM2"
-run = "pm2 start npm --name='hominem-redis' -- run redis"
+description = "Start all apps in development mode"
+run = "npm run dev"
 
 [tasks.test]
 description = "Run tests"
@@ -59,14 +29,9 @@ run = "npm run turbo -- run build --force"
 
 [tasks.clean]
 description = "Clean build artifacts and dependencies"
-# Using a single glob-based command is cleaner in Mise
 run = """
 rm -rf **/node_modules **/dist **/build **/logs **/coverage **/.next **/.turbo **/.react-router pnpm-lock.yaml package-lock.json
 """
-
-[tasks."docker-down"]
-description = "Stop Docker containers"
-run = "docker compose down"
 
 [tasks.check]
 description = "Run all tests and linting"

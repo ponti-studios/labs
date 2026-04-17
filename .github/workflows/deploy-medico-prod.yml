@@ -7,7 +7,7 @@ on:
       - "apps/medico/**"
       - "packages/**"
       - "package.json"
-      - "package-lock.json"
+      - "pnpm-lock.yaml"
       - ".github/workflows/deploy-medico-prod.yml"
   workflow_dispatch:
 

@@ -1,20 +1,21 @@
-import { BrowserRouter, Routes, Route, Link } from 'react-router'
-import Home from './pages/Home'
-import Cards from './pages/Cards'
-import Kensho from './pages/Kensho'
-import Quilt from './pages/Quilt'
-import CloudMargin from './pages/CloudMargin'
-import RedBadger from './pages/RedBadger'
-import GoldmanSachs from './pages/GoldmanSachs'
-import GrowthStreet from './pages/GrowthStreet'
-import Vendigo from './pages/Vendigo'
-import PetersonAcademy from './pages/PetersonAcademy'
-import InterviewCake from './pages/InterviewCake'
-import Algorithms from './pages/Algorithms'
-import ClickTherapeutics from './pages/ClickTherapeutics'
-import ChartHop from './pages/ChartHop'
-import DailyMail from './pages/DailyMail'
-import './App.css'
+import { BrowserRouter, Link, Route, Routes } from "react-router";
+import "./App.css";
+import Algorithms from "./pages/Algorithms";
+import Cards from "./pages/Cards";
+import ChartHop from "./pages/ChartHop";
+import ClickTherapeutics from "./pages/ClickTherapeutics";
+import CloudMargin from "./pages/CloudMargin";
+import DailyMail from "./pages/DailyMail";
+import GoldmanSachs from "./pages/GoldmanSachs";
+import GrowthStreet from "./pages/GrowthStreet";
+import Home from "./pages/Home";
+import InterviewCake from "./pages/InterviewCake";
+import Kensho from "./pages/Kensho";
+import PetersonAcademy from "./pages/PetersonAcademy";
+import Qubit from "./pages/Qubit";
+import Quilt from "./pages/Quilt";
+import RedBadger from "./pages/RedBadger";
+import Vendigo from "./pages/Vendigo";
 
 export default function App() {
   return (
@@ -38,6 +39,7 @@ export default function App() {
             <Link to="/click-therapeutics">Click Therapeutics</Link>
             <Link to="/chart-hop">ChartHop</Link>
             <Link to="/daily-mail">Daily Mail</Link>
+            <Link to="/qubit">Qubit</Link>
           </nav>
         </header>
         <main>
@@ -57,9 +59,10 @@ export default function App() {
             <Route path="/click-therapeutics" element={<ClickTherapeutics />} />
             <Route path="/chart-hop" element={<ChartHop />} />
             <Route path="/daily-mail" element={<DailyMail />} />
+            <Route path="/qubit" element={<Qubit />} />
           </Routes>
         </main>
       </div>
     </BrowserRouter>
-  )
+  );
 }

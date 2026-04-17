@@ -2,7 +2,7 @@ import { AlertTriangle, Heart, ThumbsDown, ThumbsUp, User } from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { useAuth } from "~/components/AuthProvider";
-import type { DumphimTrackerParsed, DumphimVote } from "@pontistudios/db";
+import type { DumphimTrackerParsed, DumphimVote } from "~/lib/db";
 import { generateFingerprint } from "~/lib/voter.utils";
 import VoteChart from "./VoteChart";
 
@@ -22,7 +22,7 @@ const VoteScreen: React.FC<VoteScreenProps> = ({
   fetcher,
 }) => {
   const { user } = useAuth();
-  const [currentVotes, setCurrentVotes] = useState<Vote[]>(votes);
+  const [currentVotes, setCurrentVotes] = useState<DumphimVote[]>(votes);
   const [hasVoted, setHasVoted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -62,7 +62,7 @@ const VoteScreen: React.FC<VoteScreenProps> = ({
     const fingerprint = generateFingerprint();
     const userId = user?.id;
 
-    const newVotePayload: Omit<Vote, "id" | "createdAt" | "updatedAt"> = {
+    const newVotePayload: Omit<DumphimVote, 'id' | 'createdAt' | 'updatedAt'> = {
       value,
       fingerprint,
       userId: userId ?? null,
@@ -71,7 +71,7 @@ const VoteScreen: React.FC<VoteScreenProps> = ({
       comment: null,
     };
 
-    const optimisticVote: Vote = {
+    const optimisticVote: DumphimVote = {
       ...newVotePayload,
       id: `temp-${Date.now()}`,
       createdAt: new Date(),

@@ -35,7 +35,7 @@ interface ProjectWithTaskCount {
 
 async function fetchUserProjects(userId: string): Promise<ProjectWithTaskCount[]> {
   const projects = await db
-    .selectFrom("playground_projects")
+    .selectFrom("projects")
     .where("userId", "=", userId)
     .orderBy("createdAt", "desc")
     .select(["id", "userId", "name", "description", "createdAt", "updatedAt"])
@@ -44,7 +44,7 @@ async function fetchUserProjects(userId: string): Promise<ProjectWithTaskCount[]
   const projectsWithCounts = await Promise.all(
     projects.map(async (project) => {
       const countResult = await db
-        .selectFrom("playground_todos")
+        .selectFrom("todos")
         .where("projectId", "=", project.id)
         .select((eb) => eb.fn.count<number>("id").as("taskCount"))
         .executeTakeFirstOrThrow();
@@ -64,7 +64,7 @@ async function createProject(
   userId: string,
 ): Promise<PlaygroundProject> {
   const result = await db
-    .insertInto("playground_projects")
+    .insertInto("projects")
     .values({
       userId,
       name: projectData.name,
@@ -92,7 +92,7 @@ async function updateProject(
   const now = new Date().toISOString().slice(0, 19).replace("T", " ");
 
   await db
-    .updateTable("playground_projects")
+    .updateTable("projects")
     .set({
       name: projectData.name,
       description: projectData.description,
@@ -102,7 +102,7 @@ async function updateProject(
     .executeTakeFirst();
 
   const updated = await db
-    .selectFrom("playground_projects")
+    .selectFrom("projects")
     .where("id", "=", projectData.id)
     .selectAll()
     .executeTakeFirst();
@@ -121,7 +121,7 @@ async function updateProject(
 
 async function deleteProject(projectId: number): Promise<boolean> {
   const result = await db
-    .deleteFrom("playground_projects")
+    .deleteFrom("projects")
     .where("id", "=", projectId)
     .executeTakeFirst();
 

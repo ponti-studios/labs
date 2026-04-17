@@ -58,25 +58,25 @@ export async function loader({ request }: LoaderFunctionArgs) {
     // Use traditional text search
     if (finalSearchType === "text" || !searchResults) {
       const rows = await db
-        .selectFrom("playground_todos")
-        .leftJoin("playground_projects", "playground_todos.projectId", "playground_projects.id")
+        .selectFrom("todos")
+        .leftJoin("projects", "todos.projectId", "projects.id")
         .where((eb) =>
           eb.or([
-            eb("playground_todos.title", "like", `%${query}%`),
-            eb("playground_projects.name", "like", `%${query}%`),
+            eb("todos.title", "like", `%${query}%`),
+            eb("projects.name", "like", `%${query}%`),
           ]),
         )
-        .where("playground_todos.userId", "=", userId)
-        .orderBy("playground_todos.createdAt", "desc")
+        .where("todos.userId", "=", userId)
+        .orderBy("todos.createdAt", "desc")
         .select([
-          "playground_todos.id",
-          "playground_todos.title",
-          "playground_todos.start",
-          "playground_todos.end",
-          "playground_todos.completed",
-          "playground_todos.createdAt",
-          "playground_todos.projectId",
-          "playground_projects.name as projectName",
+          "todos.id",
+          "todos.title",
+          "todos.start",
+          "todos.end",
+          "todos.completed",
+          "todos.createdAt",
+          "todos.projectId",
+          "projects.name as projectName",
         ])
         .execute();
 

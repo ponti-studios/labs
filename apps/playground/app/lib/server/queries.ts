@@ -15,7 +15,7 @@ interface ProjectWithTaskCount {
 
 export async function getProjects(_filters?: { status?: string }): Promise<ProjectWithTaskCount[]> {
   const projects = await db
-    .selectFrom("playground_projects")
+    .selectFrom("projects")
     .orderBy("createdAt", "desc")
     .select(["id", "userId", "name", "description", "createdAt", "updatedAt"])
     .execute();
@@ -23,7 +23,7 @@ export async function getProjects(_filters?: { status?: string }): Promise<Proje
   const projectsWithCounts = await Promise.all(
     projects.map(async (project) => {
       const countResult = await db
-        .selectFrom("playground_todos")
+        .selectFrom("todos")
         .where("projectId", "=", project.id)
         .select((eb) => eb.fn.count<number>("id").as("taskCount"))
         .executeTakeFirstOrThrow();
@@ -40,7 +40,7 @@ export async function getProjects(_filters?: { status?: string }): Promise<Proje
 
 export async function getProject(id: string) {
   return db
-    .selectFrom("playground_projects")
+    .selectFrom("projects")
     .where("id", "=", Number.parseInt(id, 10))
     .selectAll()
     .executeTakeFirst();
@@ -48,19 +48,19 @@ export async function getProject(id: string) {
 
 export async function getProjectWithTasks(id: string) {
   return db
-    .selectFrom("playground_projects")
+    .selectFrom("projects")
     .where("id", "=", Number.parseInt(id, 10))
     .selectAll()
     .executeTakeFirst();
 }
 
 export async function getTodos() {
-  return await db.selectFrom("playground_todos").orderBy("createdAt", "desc").selectAll().execute();
+  return await db.selectFrom("todos").orderBy("createdAt", "desc").selectAll().execute();
 }
 
 export async function getTodosWithProjects() {
   const todosData = await db
-    .selectFrom("playground_todos")
+    .selectFrom("todos")
     .orderBy("createdAt", "desc")
     .selectAll()
     .execute();
@@ -69,7 +69,7 @@ export async function getTodosWithProjects() {
     todosData.map(async (todo) => {
       if (todo.projectId) {
         const project = await db
-          .selectFrom("playground_projects")
+          .selectFrom("projects")
           .where("id", "=", todo.projectId)
           .select("name")
           .executeTakeFirst();

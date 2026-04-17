@@ -21,7 +21,7 @@ async function populateTflCameras() {
 	try {
 		// Clear existing data
 		console.log("Clearing existing TFL camera data...");
-		await db.deleteFrom("playground_tfl_cameras").execute();
+		await db.deleteFrom("tfl_cameras").execute();
 
 		// Insert new data
 		console.log(`Inserting ${formattedCameras.length} TFL cameras...`);
@@ -41,7 +41,7 @@ async function populateTflCameras() {
 				lng: camera.lng,
 			}));
 
-			await db.insertInto("playground_tfl_cameras").values(values).execute();
+			await db.insertInto("tfl_cameras").values(values).execute();
 			console.log(
 				`Inserted batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(formattedCameras.length / batchSize)}`,
 			);
@@ -50,7 +50,7 @@ async function populateTflCameras() {
 		console.log("TFL cameras population completed successfully!");
 
 		// Verify the data
-		const count = await db.selectFrom("playground_tfl_cameras").select("id").execute();
+		const count = await db.selectFrom("tfl_cameras").select("id").execute();
 		console.log(`Total cameras in database: ${count.length}`);
 	} catch (error) {
 		console.error("Error populating TFL cameras:", error);

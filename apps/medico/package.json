@@ -18,8 +18,8 @@
 		"typecheck": "react-router typegen && tsc"
 	},
 	"dependencies": {
-		"@pontistudios/ui": "*",
-		"@pontistudios/utils": "*",
+		"@pontistudios/ui": "workspace:*",
+		"@pontistudios/utils": "workspace:*",
 		"@react-router/serve": "^7.13.0",
 		"@tanstack/react-query": "^5.0.0",
 		"@tanstack/react-query-devtools": "^5.0.0",
