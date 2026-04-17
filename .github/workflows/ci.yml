@@ -13,7 +13,6 @@ concurrency:
 
 jobs:
   db-migrate:
-    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -37,7 +36,6 @@ jobs:
           DATABASE_URL: postgresql://postgres:postgres@localhost:4433/hominem
 
   lint-and-test:
-    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: db-migrate
@@ -56,7 +54,6 @@ jobs:
       - run: pnpm run test
 
   build:
-    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: lint-and-test
