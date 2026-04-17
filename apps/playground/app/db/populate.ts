@@ -1,15 +1,15 @@
-import fs, { createReadStream } from 'node:fs';
-import path from 'node:path';
-import { Transform } from 'node:stream';
-import { pipeline } from 'node:stream/promises';
-import { parse } from 'csv-parse';
-import { sql } from 'drizzle-orm';
-import { db } from './index';
-import { type CovidDataInsert, covidData } from './schema';
+import fs, { createReadStream } from "node:fs";
+import path from "node:path";
+import { Transform } from "node:stream";
+import { pipeline } from "node:stream/promises";
+import { parse } from "csv-parse";
+import { sql } from "drizzle-orm";
+import { db } from "./index";
+import { type CovidDataInsert, covidData } from "./schema";
 
 // Helper function to safely parse numbers
 function safeParseNumber(value: string | null | undefined): number | null {
-  if (!value || value === '' || value === 'null' || value === 'undefined') {
+  if (!value || value === "" || value === "null" || value === "undefined") {
     return null;
   }
   const num = Number.parseFloat(value);
@@ -18,7 +18,7 @@ function safeParseNumber(value: string | null | undefined): number | null {
 
 // Helper function to safely parse dates
 function safeParseDate(value: string | null | undefined): string | null {
-  if (!value || value === '' || value === 'null' || value === 'undefined') {
+  if (!value || value === "" || value === "null" || value === "undefined") {
     return null;
   }
   // Validate date format YYYY-MM-DD
@@ -97,19 +97,19 @@ interface CsvChunk {
 }
 
 async function populateDatabase() {
-  console.log('Starting database population from CSV...');
+  console.log("Starting database population from CSV...");
 
   try {
-    const csvPath = path.join(process.cwd(), '_data', 'owid-covid-data.csv');
+    const csvPath = path.join(process.cwd(), "_data", "owid-covid-data.csv");
 
     // Check if CSV file exists
     if (!fs.existsSync(csvPath)) {
       throw new Error(`CSV file not found at ${csvPath}`);
     }
 
-    console.log('Clearing existing data...');
+    console.log("Clearing existing data...");
     await db.delete(covidData);
-    console.log('Cleared existing data');
+    console.log("Cleared existing data");
 
     let processedRows = 0;
     let insertedRows = 0;
@@ -153,7 +153,7 @@ async function populateDatabase() {
             weeklyIcuAdmissionsPerMillion: safeParseNumber(chunk.weekly_icu_admissions_per_million),
             weeklyHospAdmissions: safeParseNumber(chunk.weekly_hosp_admissions),
             weeklyHospAdmissionsPerMillion: safeParseNumber(
-              chunk.weekly_hosp_admissions_per_million
+              chunk.weekly_hosp_admissions_per_million,
             ),
             totalTests: safeParseNumber(chunk.total_tests),
             newTests: safeParseNumber(chunk.new_tests),
@@ -173,15 +173,15 @@ async function populateDatabase() {
             totalVaccinationsPerHundred: safeParseNumber(chunk.total_vaccinations_per_hundred),
             peopleVaccinatedPerHundred: safeParseNumber(chunk.people_vaccinated_per_hundred),
             peopleFullyVaccinatedPerHundred: safeParseNumber(
-              chunk.people_fully_vaccinated_per_hundred
+              chunk.people_fully_vaccinated_per_hundred,
             ),
             totalBoostersPerHundred: safeParseNumber(chunk.total_boosters_per_hundred),
             newVaccinationsSmoothedPerMillion: safeParseNumber(
-              chunk.new_vaccinations_smoothed_per_million
+              chunk.new_vaccinations_smoothed_per_million,
             ),
             newPeopleVaccinatedSmoothed: safeParseNumber(chunk.new_people_vaccinated_smoothed),
             newPeopleVaccinatedSmoothedPerHundred: safeParseNumber(
-              chunk.new_people_vaccinated_smoothed_per_hundred
+              chunk.new_people_vaccinated_smoothed_per_hundred,
             ),
             stringencyIndex: safeParseNumber(chunk.stringency_index),
             populationDensity: safeParseNumber(chunk.population_density),
@@ -200,12 +200,12 @@ async function populateDatabase() {
             humanDevelopmentIndex: safeParseNumber(chunk.human_development_index),
             population: safeParseNumber(chunk.population),
             excessMortalityCumulativeAbsolute: safeParseNumber(
-              chunk.excess_mortality_cumulative_absolute
+              chunk.excess_mortality_cumulative_absolute,
             ),
             excessMortalityCumulative: safeParseNumber(chunk.excess_mortality_cumulative),
             excessMortality: safeParseNumber(chunk.excess_mortality),
             excessMortalityCumulativePerMillion: safeParseNumber(
-              chunk.excess_mortality_cumulative_per_million
+              chunk.excess_mortality_cumulative_per_million,
             ),
           };
 
@@ -217,10 +217,10 @@ async function populateDatabase() {
               await db.insert(covidData).values(batch);
               insertedRows += batch.length;
               console.log(
-                `Inserted batch of ${batch.length} records. Total processed: ${processedRows}, Total inserted: ${insertedRows}`
+                `Inserted batch of ${batch.length} records. Total processed: ${processedRows}, Total inserted: ${insertedRows}`,
               );
             } catch (insertError) {
-              console.error('Error inserting batch:', insertError);
+              console.error("Error inserting batch:", insertError);
               // Try inserting records one by one if batch fails
               for (const record of batch) {
                 try {
@@ -229,7 +229,7 @@ async function populateDatabase() {
                 } catch (singleError) {
                   errorCount++;
                   if (errorCount <= 10) {
-                    console.warn('Failed to insert single record:', singleError);
+                    console.warn("Failed to insert single record:", singleError);
                   }
                 }
               }
@@ -239,7 +239,7 @@ async function populateDatabase() {
         } catch (error) {
           errorCount++;
           if (errorCount <= 10) {
-            console.warn('Invalid data item:', error);
+            console.warn("Invalid data item:", error);
           }
         }
 
@@ -251,7 +251,7 @@ async function populateDatabase() {
     const parseStream = parse({
       columns: true,
       skip_empty_lines: true,
-      delimiter: ',',
+      delimiter: ",",
       quote: '"',
       escape: '"',
     });
@@ -266,7 +266,7 @@ async function populateDatabase() {
         insertedRows += batch.length;
         console.log(`Inserted final batch of ${batch.length} records`);
       } catch (insertError) {
-        console.error('Error inserting final batch:', insertError);
+        console.error("Error inserting final batch:", insertError);
         // Try inserting records one by one if batch fails
         for (const record of batch) {
           try {
@@ -275,14 +275,14 @@ async function populateDatabase() {
           } catch (singleError) {
             errorCount++;
             if (errorCount <= 10) {
-              console.warn('Failed to insert single record:', singleError);
+              console.warn("Failed to insert single record:", singleError);
             }
           }
         }
       }
     }
 
-    console.log('Database population complete!');
+    console.log("Database population complete!");
     console.log(`Total processed rows: ${processedRows}`);
     console.log(`Total inserted rows: ${insertedRows}`);
     console.log(`Error count: ${errorCount}`);
@@ -302,7 +302,7 @@ async function populateDatabase() {
     console.log(`Total records in database: ${totalRecordsResult}`);
     console.log(`Number of countries: ${countries.length}`);
   } catch (error) {
-    console.error('Error populating database:', error);
+    console.error("Error populating database:", error);
     process.exit(1);
   }
 }
@@ -311,11 +311,11 @@ async function populateDatabase() {
 if (require.main === module) {
   populateDatabase()
     .then(() => {
-      console.log('Done!');
+      console.log("Done!");
       process.exit(0);
     })
     .catch((error) => {
-      console.error('Failed to populate database:', error);
+      console.error("Failed to populate database:", error);
       process.exit(1);
     });
 }

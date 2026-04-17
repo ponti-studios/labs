@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo } from "react";
 // import { ASCII_LOGO } from "./constants";
 
 export const TerminalHeader = memo(() => (
@@ -20,4 +20,4 @@ export const TerminalHeader = memo(() => (
   </div>
 ));
 
-TerminalHeader.displayName = 'TerminalHeader';
+TerminalHeader.displayName = "TerminalHeader";

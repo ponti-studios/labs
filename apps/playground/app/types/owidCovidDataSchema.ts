@@ -1,9 +1,9 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 // Preprocess for optional nullable numbers: '' -> null, '123' -> 123
 // Passes original value if it cannot be converted to a number, for Zod to handle the error.
 const preprocessNumber = (val: unknown) => {
-  if (val === '') return null;
+  if (val === "") return null;
   if (val === null || val === undefined) return val; // Keep null/undefined as is
   const num = Number(val);
   return Number.isNaN(num) ? val : num; // If NaN, pass original value for Zod to report error
@@ -34,12 +34,12 @@ export const OwidCovidDataSchema = z.object({
   weekly_icu_admissions: z.preprocess(preprocessNumber, z.number().nullable().optional()),
   weekly_icu_admissions_per_million: z.preprocess(
     preprocessNumber,
-    z.number().nullable().optional()
+    z.number().nullable().optional(),
   ),
   weekly_hosp_admissions: z.preprocess(preprocessNumber, z.number().nullable().optional()),
   weekly_hosp_admissions_per_million: z.preprocess(
     preprocessNumber,
-    z.number().nullable().optional()
+    z.number().nullable().optional(),
   ),
   total_tests: z.preprocess(preprocessNumber, z.number().nullable().optional()),
   new_tests: z.preprocess(preprocessNumber, z.number().nullable().optional()),
@@ -60,17 +60,17 @@ export const OwidCovidDataSchema = z.object({
   people_vaccinated_per_hundred: z.preprocess(preprocessNumber, z.number().nullable().optional()),
   people_fully_vaccinated_per_hundred: z.preprocess(
     preprocessNumber,
-    z.number().nullable().optional()
+    z.number().nullable().optional(),
   ),
   total_boosters_per_hundred: z.preprocess(preprocessNumber, z.number().nullable().optional()),
   new_vaccinations_smoothed_per_million: z.preprocess(
     preprocessNumber,
-    z.number().nullable().optional()
+    z.number().nullable().optional(),
   ),
   new_people_vaccinated_smoothed: z.preprocess(preprocessNumber, z.number().nullable().optional()),
   new_people_vaccinated_smoothed_per_hundred: z.preprocess(
     preprocessNumber,
-    z.number().nullable().optional()
+    z.number().nullable().optional(),
   ),
   stringency_index: z.preprocess(preprocessNumber, z.number().nullable().optional()),
   population_density: z.preprocess(preprocessNumber, z.number().nullable().optional()),
@@ -90,13 +90,13 @@ export const OwidCovidDataSchema = z.object({
   population: z.preprocess(preprocessNumber, z.number().nullable().optional()),
   excess_mortality_cumulative_absolute: z.preprocess(
     preprocessNumber,
-    z.number().nullable().optional()
+    z.number().nullable().optional(),
   ),
   excess_mortality_cumulative: z.preprocess(preprocessNumber, z.number().nullable().optional()),
   excess_mortality: z.preprocess(preprocessNumber, z.number().nullable().optional()),
   excess_mortality_cumulative_per_million: z.preprocess(
     preprocessNumber,
-    z.number().nullable().optional()
+    z.number().nullable().optional(),
   ),
 });
 

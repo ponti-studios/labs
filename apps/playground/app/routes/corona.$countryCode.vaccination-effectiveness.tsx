@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
-import type { LoaderFunctionArgs, MetaFunction } from 'react-router';
-import { useLoaderData } from 'react-router';
+import { useQuery } from "@tanstack/react-query";
+import type { LoaderFunctionArgs, MetaFunction } from "react-router";
+import { useLoaderData } from "react-router";
 import {
   CartesianGrid,
   Line,
@@ -9,8 +9,8 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from 'recharts';
-import { CoronaLayout } from '~/components/CoronaLayout';
+} from "recharts";
+import { CoronaLayout } from "~/components/CoronaLayout";
 
 interface VaccinationEffectiveness {
   overall: number;
@@ -42,17 +42,17 @@ interface VaccinationResponse {
 }
 
 export const meta: MetaFunction<typeof loader> = ({ params }) => {
-  const countryCode = params.countryCode || 'OWID_WRL';
+  const countryCode = params.countryCode || "OWID_WRL";
 
-  let countryName = 'World';
-  if (countryCode !== 'OWID_WRL') {
+  let countryName = "World";
+  if (countryCode !== "OWID_WRL") {
     countryName = countryCode;
   }
 
   return [
     { title: `Vaccination Effectiveness - ${countryName} | Ponti Studios` },
     {
-      name: 'description',
+      name: "description",
       content: `Vaccination effectiveness analysis for ${countryName}.`,
     },
   ];
@@ -62,7 +62,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   const { countryCode } = params;
 
   if (!countryCode) {
-    throw new Response('Country code is required', { status: 400 });
+    throw new Response("Country code is required", { status: 400 });
   }
 
   return { countryCode };
@@ -72,13 +72,13 @@ export default function VaccinationEffectivenessPage() {
   const { countryCode } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
 
   const { data, isLoading, isError } = useQuery<VaccinationResponse>({
-    queryKey: ['vaccination-effectiveness', countryCode],
+    queryKey: ["vaccination-effectiveness", countryCode],
     queryFn: () => {
       const params = new URLSearchParams();
-      params.append('country', countryCode);
+      params.append("country", countryCode);
 
       return fetch(`/api/covid/analytics/vaccination-effectiveness?${params}`).then((res) =>
-        res.json()
+        res.json(),
       );
     },
     staleTime: 1000 * 60 * 60, // Cache for 1 hour
@@ -127,7 +127,7 @@ export default function VaccinationEffectivenessPage() {
                   Overall Effectiveness
                 </h3>
                 <p className="text-3xl font-light text-olive-600">
-                  {data.effectiveness.overall?.toFixed(1) || '0.0'}%
+                  {data.effectiveness.overall?.toFixed(1) || "0.0"}%
                 </p>
               </div>
               <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50 hover:bg-white/50 transition-all duration-300">
@@ -135,7 +135,7 @@ export default function VaccinationEffectivenessPage() {
                   Against Hospitalization
                 </h3>
                 <p className="text-3xl font-light text-green-600">
-                  {data.effectiveness.againstHospitalization?.toFixed(1) || '0.0'}%
+                  {data.effectiveness.againstHospitalization?.toFixed(1) || "0.0"}%
                 </p>
               </div>
               <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50 hover:bg-white/50 transition-all duration-300">
@@ -143,7 +143,7 @@ export default function VaccinationEffectivenessPage() {
                   Against Death
                 </h3>
                 <p className="text-3xl font-light text-purple-600">
-                  {data.effectiveness.againstDeath?.toFixed(1) || '0.0'}%
+                  {data.effectiveness.againstDeath?.toFixed(1) || "0.0"}%
                 </p>
               </div>
               <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50 hover:bg-white/50 transition-all duration-300">
@@ -151,7 +151,7 @@ export default function VaccinationEffectivenessPage() {
                   Breakthrough Rate
                 </h3>
                 <p className="text-3xl font-light text-amber-600">
-                  {data.effectiveness.breakthroughRate?.toFixed(1) || '0.0'}%
+                  {data.effectiveness.breakthroughRate?.toFixed(1) || "0.0"}%
                 </p>
               </div>
             </div>
@@ -165,19 +165,19 @@ export default function VaccinationEffectivenessPage() {
                 <div className="text-center">
                   <p className="text-stone-600 font-light mb-2">Fully Vaccinated</p>
                   <p className="text-2xl font-light text-stone-800">
-                    {data.vaccinationStats?.fullyVaccinatedPerHundred?.toFixed(1) || '0.0'}%
+                    {data.vaccinationStats?.fullyVaccinatedPerHundred?.toFixed(1) || "0.0"}%
                   </p>
                 </div>
                 <div className="text-center">
                   <p className="text-stone-600 font-light mb-2">Total Vaccinations</p>
                   <p className="text-2xl font-light text-stone-800">
-                    {data.vaccinationStats?.totalVaccinations?.toLocaleString() || '0'}
+                    {data.vaccinationStats?.totalVaccinations?.toLocaleString() || "0"}
                   </p>
                 </div>
                 <div className="text-center">
                   <p className="text-stone-600 font-light mb-2">Daily Vaccinations</p>
                   <p className="text-2xl font-light text-stone-800">
-                    {data.vaccinationStats?.dailyVaccinations?.toLocaleString() || '0'}
+                    {data.vaccinationStats?.dailyVaccinations?.toLocaleString() || "0"}
                   </p>
                 </div>
               </div>
@@ -195,17 +195,17 @@ export default function VaccinationEffectivenessPage() {
                       <CartesianGrid strokeDasharray="3 3" stroke="#d6d3d1" />
                       <XAxis
                         dataKey="date"
-                        tick={{ fill: '#57534e' }}
-                        axisLine={{ stroke: '#a8a29e' }}
+                        tick={{ fill: "#57534e" }}
+                        axisLine={{ stroke: "#a8a29e" }}
                         tickFormatter={(value) => new Date(value).toLocaleDateString()}
                       />
-                      <YAxis tick={{ fill: '#57534e' }} axisLine={{ stroke: '#a8a29e' }} />
+                      <YAxis tick={{ fill: "#57534e" }} axisLine={{ stroke: "#a8a29e" }} />
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                          border: '1px solid #d6d3d1',
-                          borderRadius: '12px',
-                          color: '#1c1917',
+                          backgroundColor: "rgba(255, 255, 255, 0.95)",
+                          border: "1px solid #d6d3d1",
+                          borderRadius: "12px",
+                          color: "#1c1917",
                         }}
                         labelFormatter={(value) => new Date(value).toLocaleDateString()}
                       />
@@ -244,7 +244,7 @@ export default function VaccinationEffectivenessPage() {
                     <p className="text-stone-600 font-light">
                       {milestone.dateReached
                         ? new Date(milestone.dateReached).toLocaleDateString()
-                        : 'Not reached'}
+                        : "Not reached"}
                     </p>
                   </div>
                 )) || (

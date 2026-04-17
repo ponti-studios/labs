@@ -27,7 +27,8 @@ export function calculateHP(tracker: DumphimTracker): {
   const totalDumphimVotes = stayDumphimVotes + dumpDumphimVotes;
 
   // DumphimVote ratio impact (up to 60% of max HP)
-  const voteRatioImpact = totalDumphimVotes > 0 ? (stayDumphimVotes / totalDumphimVotes) * (MAX_HP * 0.6) : 0;
+  const voteRatioImpact =
+    totalDumphimVotes > 0 ? (stayDumphimVotes / totalDumphimVotes) * (MAX_HP * 0.6) : 0;
 
   // Calculate total HP
   let hp = Math.floor(baseHP + voteRatioImpact);

@@ -59,11 +59,7 @@ export async function getTodos() {
 }
 
 export async function getTodosWithProjects() {
-  const todosData = await db
-    .selectFrom("todos")
-    .orderBy("createdAt", "desc")
-    .selectAll()
-    .execute();
+  const todosData = await db.selectFrom("todos").orderBy("createdAt", "desc").selectAll().execute();
 
   const todosWithProjects = await Promise.all(
     todosData.map(async (todo) => {

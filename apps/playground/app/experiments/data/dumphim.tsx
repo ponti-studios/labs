@@ -12,110 +12,110 @@ import {
   PageContainer,
   SparkApp,
   Textarea,
-} from '@github/spark/components'
-import { useKV } from '@github/spark/hooks'
-import { Heart, Plus, ThumbsDown, ThumbsUp, User, Warning } from '@phosphor-icons/react'
-import * as d3 from 'd3'
-import * as React from 'react'
-import { createRoot } from 'react-dom/client'
+} from "@github/spark/components";
+import { useKV } from "@github/spark/hooks";
+import { Heart, Plus, ThumbsDown, ThumbsUp, User, Warning } from "@phosphor-icons/react";
+import * as d3 from "d3";
+import * as React from "react";
+import { createRoot } from "react-dom/client";
 
 // Simple browser fingerprinting function
 const generateFingerprint = () => {
-  const screen = `${window.screen.width},${window.screen.height},${window.screen.colorDepth}`
-  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-  const languages = navigator.languages?.join(',') || navigator.language
-  const platform = navigator.platform
-  const fingerprint = `${screen}-${timezone}-${languages}-${platform}`
-  return btoa(fingerprint)
-}
+  const screen = `${window.screen.width},${window.screen.height},${window.screen.colorDepth}`;
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const languages = navigator.languages?.join(",") || navigator.language;
+  const platform = navigator.platform;
+  const fingerprint = `${screen}-${timezone}-${languages}-${platform}`;
+  return btoa(fingerprint);
+};
 
 function VoteChart({ votes }) {
-  const chartRef = React.useRef()
+  const chartRef = React.useRef();
 
   React.useEffect(() => {
-    if (!votes.length) return
+    if (!votes.length) return;
 
-    d3.select(chartRef.current).selectAll('*').remove()
+    d3.select(chartRef.current).selectAll("*").remove();
 
-    const width = 300
-    const height = 200
-    const radius = Math.min(width, height) / 2
+    const width = 300;
+    const height = 200;
+    const radius = Math.min(width, height) / 2;
 
     const svg = d3
       .select(chartRef.current)
-      .append('svg')
-      .attr('width', width)
-      .attr('height', height)
-      .append('g')
-      .attr('transform', `translate(${width / 2},${height / 2})`)
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .append("g")
+      .attr("transform", `translate(${width / 2},${height / 2})`);
 
     const data = [
-      { label: 'Stay', value: votes.filter((v) => v.value === 'stay').length },
-      { label: 'Go', value: votes.filter((v) => v.value === 'go').length },
-    ]
+      { label: "Stay", value: votes.filter((v) => v.value === "stay").length },
+      { label: "Go", value: votes.filter((v) => v.value === "go").length },
+    ];
 
     const color = d3
       .scaleOrdinal()
       .domain(data.map((d) => d.label))
-      .range(['var(--color-accent-secondary-9)', 'var(--color-accent-9)'])
+      .range(["var(--color-accent-secondary-9)", "var(--color-accent-9)"]);
 
     const pie = d3
       .pie()
       .value((d) => d.value)
-      .sort(null)
+      .sort(null);
 
     const arc = d3
       .arc()
       .innerRadius(radius * 0.6)
-      .outerRadius(radius)
+      .outerRadius(radius);
 
     const paths = svg
-      .selectAll('path')
+      .selectAll("path")
       .data(pie(data))
       .enter()
-      .append('path')
-      .attr('d', arc)
-      .attr('fill', (d) => color(d.data.label))
-      .attr('stroke', 'white')
-      .style('stroke-width', '2px')
+      .append("path")
+      .attr("d", arc)
+      .attr("fill", (d) => color(d.data.label))
+      .attr("stroke", "white")
+      .style("stroke-width", "2px");
 
-    const percentage = Math.round((data[0].value / votes.length) * 100) || 0
+    const percentage = Math.round((data[0].value / votes.length) * 100) || 0;
     svg
-      .append('text')
-      .attr('text-anchor', 'middle')
-      .attr('dy', '0em')
-      .style('font-size', '2em')
-      .style('font-weight', 'bold')
-      .text(`${percentage}%`)
+      .append("text")
+      .attr("text-anchor", "middle")
+      .attr("dy", "0em")
+      .style("font-size", "2em")
+      .style("font-weight", "bold")
+      .text(`${percentage}%`);
 
     svg
-      .append('text')
-      .attr('text-anchor', 'middle')
-      .attr('dy', '1.5em')
-      .style('font-size', '0.9em')
-      .style('fill', 'var(--color-fg-secondary)')
-      .text('Stay Together')
-  }, [votes])
+      .append("text")
+      .attr("text-anchor", "middle")
+      .attr("dy", "1.5em")
+      .style("font-size", "0.9em")
+      .style("fill", "var(--color-fg-secondary)")
+      .text("Stay Together");
+  }, [votes]);
 
-  return <div ref={chartRef} className="flex justify-center" />
+  return <div ref={chartRef} className="flex justify-center" />;
 }
 
 function CreateTracker({ onClose }) {
-  const [photo, setPhoto] = React.useState('')
-  const [name, setName] = React.useState('')
-  const [description, setDescription] = React.useState('')
-  const [trackers, setTrackers] = useKV('trackers', [])
+  const [photo, setPhoto] = React.useState("");
+  const [name, setName] = React.useState("");
+  const [description, setDescription] = React.useState("");
+  const [trackers, setTrackers] = useKV("trackers", []);
 
   const handlePhotoChange = (e) => {
-    const file = e.target.files[0]
+    const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader()
+      const reader = new FileReader();
       reader.onloadend = () => {
-        setPhoto(reader.result)
-      }
-      reader.readAsDataURL(file)
+        setPhoto(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
-  }
+  };
 
   const handleSubmit = () => {
     const newTracker = {
@@ -124,10 +124,10 @@ function CreateTracker({ onClose }) {
       name,
       description,
       votes: [],
-    }
-    setTrackers([...trackers, newTracker])
-    onClose()
-  }
+    };
+    setTrackers([...trackers, newTracker]);
+    onClose();
+  };
 
   return (
     <div className="space-y-4">
@@ -166,7 +166,7 @@ function CreateTracker({ onClose }) {
         </Button>
       </DialogClose>
     </div>
-  )
+  );
 }
 
 function TrackerCard({ tracker, onSelect }) {
@@ -190,34 +190,34 @@ function TrackerCard({ tracker, onSelect }) {
         </div>
       </div>
     </Card>
-  )
+  );
 }
 
 function VoteScreen({ tracker, onBack }) {
-  const [votes, setVotes] = React.useState(tracker.votes)
-  const [hasVoted, setHasVoted] = React.useState(false)
-  const [trackers, setTrackers] = useKV('trackers', [])
+  const [votes, setVotes] = React.useState(tracker.votes);
+  const [hasVoted, setHasVoted] = React.useState(false);
+  const [trackers, setTrackers] = useKV("trackers", []);
 
   React.useEffect(() => {
-    const fingerprint = generateFingerprint()
-    const userHasVoted = votes.some((vote) => vote.fingerprint === fingerprint)
-    setHasVoted(userHasVoted)
-  }, [votes])
+    const fingerprint = generateFingerprint();
+    const userHasVoted = votes.some((vote) => vote.fingerprint === fingerprint);
+    setHasVoted(userHasVoted);
+  }, [votes]);
 
   const handleVote = (value) => {
-    if (hasVoted) return
+    if (hasVoted) return;
 
-    const fingerprint = generateFingerprint()
-    const newVotes = [...votes, { value, timestamp: Date.now(), fingerprint }]
+    const fingerprint = generateFingerprint();
+    const newVotes = [...votes, { value, timestamp: Date.now(), fingerprint }];
 
     // Update both local state and tracker in storage
-    setVotes(newVotes)
+    setVotes(newVotes);
     const updatedTrackers = trackers.map((t) =>
-      t.id === tracker.id ? { ...t, votes: newVotes } : t
-    )
-    setTrackers(updatedTrackers)
-    setHasVoted(true)
-  }
+      t.id === tracker.id ? { ...t, votes: newVotes } : t,
+    );
+    setTrackers(updatedTrackers);
+    setHasVoted(true);
+  };
 
   return (
     <div className="space-y-6">
@@ -260,7 +260,7 @@ function VoteScreen({ tracker, onBack }) {
         <Button
           variant="primary"
           icon={<ThumbsUp />}
-          onClick={() => handleVote('stay')}
+          onClick={() => handleVote("stay")}
           disabled={hasVoted}
           className="bg-accent-secondary-9 hover:bg-accent-secondary-10"
         >
@@ -269,7 +269,7 @@ function VoteScreen({ tracker, onBack }) {
         <Button
           variant="primary"
           icon={<ThumbsDown />}
-          onClick={() => handleVote('go')}
+          onClick={() => handleVote("go")}
           disabled={hasVoted}
           className="bg-accent-9 hover:bg-accent-10"
         >
@@ -283,13 +283,13 @@ function VoteScreen({ tracker, onBack }) {
         </p>
       )}
     </div>
-  )
+  );
 }
 
 function App() {
-  const [trackers] = useKV('trackers', [])
-  const [selectedTracker, setSelectedTracker] = React.useState(null)
-  const [isDialogOpen, setIsDialogOpen] = React.useState(false)
+  const [trackers] = useKV("trackers", []);
+  const [selectedTracker, setSelectedTracker] = React.useState(null);
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
 
   if (selectedTracker) {
     return (
@@ -298,7 +298,7 @@ function App() {
           <VoteScreen tracker={selectedTracker} onBack={() => setSelectedTracker(null)} />
         </PageContainer>
       </SparkApp>
-    )
+    );
   }
 
   return (
@@ -338,8 +338,8 @@ function App() {
         </div>
       </PageContainer>
     </SparkApp>
-  )
+  );
 }
 
-const root = createRoot(document.getElementById('root'))
-root.render(<App />)
+const root = createRoot(document.getElementById("root"));
+root.render(<App />);

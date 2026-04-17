@@ -4,14 +4,14 @@
  */
 
 export interface MarketingProjectionInput {
-	desiredAttendees: number; // Number of attendees you want to achieve
-	conversionRate: number; // Percentage of visitors who purchase a ticket (e.g., 0.02 for 2%)
-	costPerClick: number; // Average cost per click (CPC) in USD
+  desiredAttendees: number; // Number of attendees you want to achieve
+  conversionRate: number; // Percentage of visitors who purchase a ticket (e.g., 0.02 for 2%)
+  costPerClick: number; // Average cost per click (CPC) in USD
 }
 
 export interface MarketingProjectionOutput {
-	requiredClicks: number; // Number of ad clicks needed
-	projectedAdSpend: number; // Total projected ad spend in USD
+  requiredClicks: number; // Number of ad clicks needed
+  projectedAdSpend: number; // Total projected ad spend in USD
 }
 
 /**
@@ -29,28 +29,26 @@ export interface MarketingProjectionOutput {
  * console.log(result); // { requiredClicks: 25000, projectedAdSpend: 25000 }
  */
 export function calculateMarketingSpend(
-	input: MarketingProjectionInput,
+  input: MarketingProjectionInput,
 ): MarketingProjectionOutput {
-	const { desiredAttendees, conversionRate, costPerClick } = input;
+  const { desiredAttendees, conversionRate, costPerClick } = input;
 
-	if (conversionRate <= 0 || conversionRate > 1) {
-		throw new Error(
-			"Conversion rate must be between 0 and 1 (e.g., 0.02 for 2%)",
-		);
-	}
+  if (conversionRate <= 0 || conversionRate > 1) {
+    throw new Error("Conversion rate must be between 0 and 1 (e.g., 0.02 for 2%)");
+  }
 
-	if (costPerClick <= 0) {
-		throw new Error("Cost per click must be greater than 0");
-	}
+  if (costPerClick <= 0) {
+    throw new Error("Cost per click must be greater than 0");
+  }
 
-	// Calculate the number of clicks needed to achieve the desired number of attendees
-	const requiredClicks = Math.ceil(desiredAttendees / conversionRate);
+  // Calculate the number of clicks needed to achieve the desired number of attendees
+  const requiredClicks = Math.ceil(desiredAttendees / conversionRate);
 
-	// Calculate the total projected ad spend
-	const projectedAdSpend = requiredClicks * costPerClick;
+  // Calculate the total projected ad spend
+  const projectedAdSpend = requiredClicks * costPerClick;
 
-	return {
-		requiredClicks,
-		projectedAdSpend,
-	};
+  return {
+    requiredClicks,
+    projectedAdSpend,
+  };
 }

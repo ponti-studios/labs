@@ -691,9 +691,6 @@ importers:
       drizzle-orm:
         specifier: ^0.45.2
         version: 0.45.2(@opentelemetry/api@1.9.0)(@types/pg@8.20.0)(kysely@0.28.15)(mysql2@3.21.1(@types/node@24.12.2))(pg@8.20.0)(postgres@3.4.9)
-      kysely:
-        specifier: ^0.28.15
-        version: 0.28.15
       pg:
         specifier: ^8.20.0
         version: 8.20.0
@@ -722,12 +719,6 @@ importers:
       vitest:
         specifier: ^4.0.18
         version: 4.1.4(@opentelemetry/api@1.9.0)(@types/node@24.12.2)(jsdom@26.1.0(bufferutil@4.1.0))(msw@2.13.2(@types/node@24.12.2)(typescript@5.7.3))(vite@7.3.2(@types/node@24.12.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
-
-  packages/tailwind-config:
-    devDependencies:
-      typescript:
-        specifier: ^5.8.0
-        version: 5.9.3
 
   packages/tsconfig: {}
 

@@ -67,10 +67,7 @@ export async function updateProject(
 }
 
 export async function deleteProject(id: string): Promise<void> {
-  await db
-    .deleteFrom(projects)
-    .where("id", "=", Number.parseInt(id, 10))
-    .executeTakeFirst();
+  await db.deleteFrom(projects).where("id", "=", Number.parseInt(id, 10)).executeTakeFirst();
 }
 
 // Todo mutations
@@ -122,11 +119,7 @@ export async function updateTodo(
     .where("id", "=", id)
     .executeTakeFirst();
 
-  const updated = await db
-    .selectFrom("todos")
-    .where("id", "=", id)
-    .selectAll()
-    .executeTakeFirst();
+  const updated = await db.selectFrom("todos").where("id", "=", id).selectAll().executeTakeFirst();
 
   if (!updated) return null;
 

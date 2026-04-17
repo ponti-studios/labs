@@ -8,19 +8,22 @@
  * - ~90% reduction in data transfer for stats endpoints
  */
 
-import { sql, desc, eq, inArray } from 'drizzle-orm';
-import { db, trackers, votes } from '~/lib/db';
-import type { DumphimTrackerParsed, DumphimVote, DumphimTracker } from '~/lib/db';
+import { sql, desc, eq, inArray } from "drizzle-orm";
+import { db, trackers, votes } from "~/lib/db";
+import type { DumphimTrackerParsed, DumphimVote, DumphimTracker } from "~/lib/db";
 
 function parseTracker(raw: DumphimTracker): DumphimTrackerParsed {
   return {
-    ...(raw as unknown as Omit<DumphimTrackerParsed, 'attacks' | 'strengths' | 'flaws' | 'imagePosition'>),
-    attacks: typeof raw.attacks === 'string' ? JSON.parse(raw.attacks) : (raw.attacks ?? []),
+    ...(raw as unknown as Omit<
+      DumphimTrackerParsed,
+      "attacks" | "strengths" | "flaws" | "imagePosition"
+    >),
+    attacks: typeof raw.attacks === "string" ? JSON.parse(raw.attacks) : (raw.attacks ?? []),
     strengths:
-      typeof raw.strengths === 'string' ? JSON.parse(raw.strengths) : (raw.strengths ?? []),
-    flaws: typeof raw.flaws === 'string' ? JSON.parse(raw.flaws) : (raw.flaws ?? []),
+      typeof raw.strengths === "string" ? JSON.parse(raw.strengths) : (raw.strengths ?? []),
+    flaws: typeof raw.flaws === "string" ? JSON.parse(raw.flaws) : (raw.flaws ?? []),
     imagePosition:
-      typeof raw.imagePosition === 'string'
+      typeof raw.imagePosition === "string"
         ? JSON.parse(raw.imagePosition)
         : (raw.imagePosition ?? null),
   };
@@ -28,20 +31,12 @@ function parseTracker(raw: DumphimTracker): DumphimTrackerParsed {
 
 // Trackers
 export async function getTrackers(): Promise<DumphimTrackerParsed[]> {
-  const rows = await db
-    .select()
-    .from(trackers)
-    .orderBy(desc(trackers.createdAt))
-    .execute();
+  const rows = await db.select().from(trackers).orderBy(desc(trackers.createdAt)).execute();
   return rows.map((r) => parseTracker(r));
 }
 
 export async function getTracker(id: string): Promise<DumphimTrackerParsed | null> {
-  const row = await db
-    .select()
-    .from(trackers)
-    .where(eq(trackers.id, id))
-    .execute();
+  const row = await db.select().from(trackers).where(eq(trackers.id, id)).execute();
   return row[0] ? parseTracker(row[0]) : null;
 }
 
@@ -81,9 +76,9 @@ export async function getVoteStats(trackerId: string): Promise<{
 }> {
   const result = await db
     .select({
-      total: sql<number>`count(*)`.as('total'),
-      stay: sql<number>`sum(case when value = 'stay' then 1 else 0 end)`.as('stay'),
-      dump: sql<number>`sum(case when value = 'dump' then 1 else 0 end)`.as('dump'),
+      total: sql<number>`count(*)`.as("total"),
+      stay: sql<number>`sum(case when value = 'stay' then 1 else 0 end)`.as("stay"),
+      dump: sql<number>`sum(case when value = 'dump' then 1 else 0 end)`.as("dump"),
     })
     .from(votes)
     .where(eq(votes.trackerId, trackerId))
@@ -124,8 +119,8 @@ export async function getTrackersWithStats(): Promise<
   const voteStats = await db
     .select({
       trackerId: votes.trackerId,
-      total: sql<number>`count(*)`.as('total'),
-      stay: sql<number>`sum(case when value = 'stay' then 1 else 0 end)`.as('stay'),
+      total: sql<number>`count(*)`.as("total"),
+      stay: sql<number>`sum(case when value = 'stay' then 1 else 0 end)`.as("stay"),
     })
     .from(votes)
     .where(inArray(votes.trackerId, trackerIds))

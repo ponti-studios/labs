@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
-import type { LoaderFunctionArgs, MetaFunction } from 'react-router';
-import { useLoaderData } from 'react-router';
+import { useQuery } from "@tanstack/react-query";
+import type { LoaderFunctionArgs, MetaFunction } from "react-router";
+import { useLoaderData } from "react-router";
 import {
   Bar,
   BarChart,
@@ -14,8 +14,8 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from 'recharts';
-import { CoronaLayout } from '~/components/CoronaLayout';
+} from "recharts";
+import { CoronaLayout } from "~/components/CoronaLayout";
 
 interface SeasonalPattern {
   month: number;
@@ -49,17 +49,17 @@ interface SeasonalResponse {
 }
 
 export const meta: MetaFunction<typeof loader> = ({ params }) => {
-  const countryCode = params.countryCode || 'OWID_WRL';
+  const countryCode = params.countryCode || "OWID_WRL";
 
-  let countryName = 'World';
-  if (countryCode !== 'OWID_WRL') {
+  let countryName = "World";
+  if (countryCode !== "OWID_WRL") {
     countryName = countryCode;
   }
 
   return [
     { title: `Seasonal Patterns - ${countryName} | Ponti Studios` },
     {
-      name: 'description',
+      name: "description",
       content: `Seasonal pattern analysis for ${countryName}.`,
     },
   ];
@@ -69,7 +69,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   const { countryCode } = params;
 
   if (!countryCode) {
-    throw new Response('Country code is required', { status: 400 });
+    throw new Response("Country code is required", { status: 400 });
   }
 
   return { countryCode };
@@ -79,10 +79,10 @@ export default function SeasonalPatternsPage() {
   const { countryCode } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
 
   const { data, isLoading, isError } = useQuery<SeasonalResponse>({
-    queryKey: ['seasonal-patterns', countryCode],
+    queryKey: ["seasonal-patterns", countryCode],
     queryFn: () => {
       const params = new URLSearchParams();
-      params.append('country', countryCode);
+      params.append("country", countryCode);
 
       return fetch(`/api/covid/analytics/seasonal-patterns?${params}`).then((res) => res.json());
     },
@@ -150,14 +150,14 @@ export default function SeasonalPatternsPage() {
               <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/50 p-8 hover:bg-white/70 transition-all duration-300">
                 <h3 className="font-serif text-xl text-stone-800 mb-3">Peak Month</h3>
                 <p className="text-4xl font-light text-orange-600 mb-2">
-                  {data.analysis.patterns[data.analysis.peakMonth - 1]?.monthName || 'N/A'}
+                  {data.analysis.patterns[data.analysis.peakMonth - 1]?.monthName || "N/A"}
                 </p>
                 <p className="text-stone-600 text-sm font-light">Highest average cases</p>
               </div>
               <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/50 p-8 hover:bg-white/70 transition-all duration-300">
                 <h3 className="font-serif text-xl text-stone-800 mb-3">Trough Month</h3>
                 <p className="text-4xl font-light text-emerald-600 mb-2">
-                  {data.analysis.patterns[data.analysis.troughMonth - 1]?.monthName || 'N/A'}
+                  {data.analysis.patterns[data.analysis.troughMonth - 1]?.monthName || "N/A"}
                 </p>
                 <p className="text-stone-600 text-sm font-light">Lowest average cases</p>
               </div>
@@ -172,23 +172,23 @@ export default function SeasonalPatternsPage() {
                     <CartesianGrid strokeDasharray="3 3" stroke="#d6d3d1" />
                     <XAxis
                       dataKey="monthName"
-                      tick={{ fill: '#57534e', fontSize: 12 }}
-                      axisLine={{ stroke: '#a8a29e' }}
+                      tick={{ fill: "#57534e", fontSize: 12 }}
+                      axisLine={{ stroke: "#a8a29e" }}
                       angle={-45}
                       textAnchor="end"
                       height={80}
                     />
                     <YAxis
-                      tick={{ fill: '#57534e', fontSize: 12 }}
-                      axisLine={{ stroke: '#a8a29e' }}
+                      tick={{ fill: "#57534e", fontSize: 12 }}
+                      axisLine={{ stroke: "#a8a29e" }}
                     />
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                        border: '1px solid #d6d3d1',
-                        borderRadius: '12px',
-                        color: '#57534e',
-                        backdropFilter: 'blur(8px)',
+                        backgroundColor: "rgba(255, 255, 255, 0.95)",
+                        border: "1px solid #d6d3d1",
+                        borderRadius: "12px",
+                        color: "#57534e",
+                        backdropFilter: "blur(8px)",
                       }}
                     />
                     <Bar
@@ -209,10 +209,10 @@ export default function SeasonalPatternsPage() {
                 <ResponsiveContainer width="100%" height="100%">
                   <RadarChart data={data.analysis.patterns}>
                     <PolarGrid stroke="#d6d3d1" />
-                    <PolarAngleAxis dataKey="monthName" tick={{ fill: '#57534e', fontSize: 12 }} />
+                    <PolarAngleAxis dataKey="monthName" tick={{ fill: "#57534e", fontSize: 12 }} />
                     <PolarRadiusAxis
-                      tick={{ fill: '#57534e', fontSize: 10 }}
-                      domain={[0, 'dataMax']}
+                      tick={{ fill: "#57534e", fontSize: 10 }}
+                      domain={[0, "dataMax"]}
                     />
                     <Radar
                       name="Average Cases"
@@ -232,11 +232,11 @@ export default function SeasonalPatternsPage() {
                     />
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                        border: '1px solid #d6d3d1',
-                        borderRadius: '12px',
-                        color: '#57534e',
-                        backdropFilter: 'blur(8px)',
+                        backgroundColor: "rgba(255, 255, 255, 0.95)",
+                        border: "1px solid #d6d3d1",
+                        borderRadius: "12px",
+                        color: "#57534e",
+                        backdropFilter: "blur(8px)",
                       }}
                     />
                   </RadarChart>

@@ -1,6 +1,6 @@
-import { and, eq, gte, sql } from 'drizzle-orm';
-import type { LoaderFunctionArgs } from 'react-router';
-import { covidData, db } from '~/db';
+import { and, eq, gte, sql } from "drizzle-orm";
+import type { LoaderFunctionArgs } from "react-router";
+import { covidData, db } from "~/db";
 
 interface WaveData {
   wave: number;
@@ -17,8 +17,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   try {
     const url = new URL(request.url);
     const searchParams = url.searchParams;
-    const country = searchParams.get('country') || 'OWID_WRL';
-    const metric = searchParams.get('metric') || 'newCasesSmoothed';
+    const country = searchParams.get("country") || "OWID_WRL";
+    const metric = searchParams.get("metric") || "newCasesSmoothed";
 
     // Get time series data for the country
     const data = await db
@@ -31,13 +31,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
       .where(
         and(
           eq(covidData.isoCode, country),
-          gte(covidData.date, '2020-03-01') // Start from March 2020
-        )
+          gte(covidData.date, "2020-03-01"), // Start from March 2020
+        ),
       )
       .orderBy(covidData.date);
 
     if (data.length === 0) {
-      return Response.json({ waves: [], error: 'No data found' });
+      return Response.json({ waves: [], error: "No data found" });
     }
 
     // Filter out null values and prepare data
@@ -52,12 +52,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
     if (validData.length < 7) {
       return Response.json({
         waves: [],
-        error: 'Insufficient data for wave analysis',
+        error: "Insufficient data for wave analysis",
       });
     }
 
     // Apply 7-day smoothing if not already smoothed
-    const smoothedData = metric.includes('Smoothed') ? validData : applySmoothing(validData);
+    const smoothedData = metric.includes("Smoothed") ? validData : applySmoothing(validData);
 
     // Detect waves using peak detection algorithm
     const waves = detectWaves(smoothedData, metric);
@@ -69,8 +69,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
       totalDataPoints: validData.length,
     });
   } catch (error) {
-    console.error('Error in pandemic waves analysis:', error);
-    return Response.json({ error: 'Failed to analyze pandemic waves' }, { status: 500 });
+    console.error("Error in pandemic waves analysis:", error);
+    return Response.json({ error: "Failed to analyze pandemic waves" }, { status: 500 });
   }
 }
 
@@ -100,7 +100,7 @@ function applySmoothing(data: Array<{ date: string; value: number; totalCases: n
 
 function detectWaves(
   data: Array<{ date: string; value: number; totalCases: number }>,
-  metric: string
+  metric: string,
 ): WaveData[] {
   if (data.length < 21) return []; // Need at least 3 weeks of data
 
@@ -168,7 +168,7 @@ function calculateDynamicThreshold(data: Array<{ value: number }>): number {
 function findWaveStart(
   data: Array<{ value: number }>,
   startIndex: number,
-  threshold: number
+  threshold: number,
 ): number {
   for (let i = startIndex; i < data.length - 7; i++) {
     // Look for significant increase over a week

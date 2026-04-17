@@ -86,7 +86,7 @@ export default function ThreeglImageGallery() {
           if (loadingRef.current) {
             loadingRef.current.textContent = "Error loading images.";
           }
-        }
+        },
       );
     });
 

@@ -62,7 +62,7 @@ const VoteScreen: React.FC<VoteScreenProps> = ({
     const fingerprint = generateFingerprint();
     const userId = user?.id;
 
-    const newVotePayload: Omit<DumphimVote, 'id' | 'createdAt' | 'updatedAt'> = {
+    const newVotePayload: Omit<DumphimVote, "id" | "createdAt" | "updatedAt"> = {
       value,
       fingerprint,
       userId: userId ?? null,

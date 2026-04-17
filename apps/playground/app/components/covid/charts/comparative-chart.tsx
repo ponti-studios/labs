@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import type { CovidDataRecord } from '~/types/covid';
+import { Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import type { CovidDataRecord } from "~/types/covid";
 
 interface CombinedDataItem {
   date: string;
@@ -44,7 +44,7 @@ export function ComparativeChart({ data, metrics, title, height = 400 }: Compara
   }
 
   const chartData = Array.from(combinedData.values()).sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
   );
 
   const formatValue = (value: number) => {
@@ -59,9 +59,9 @@ export function ComparativeChart({ data, metrics, title, height = 400 }: Compara
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      year: 'numeric',
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      year: "numeric",
     });
   };
 
@@ -81,9 +81,9 @@ export function ComparativeChart({ data, metrics, title, height = 400 }: Compara
             labelFormatter={(label) => formatDate(label as string)}
             formatter={(value: number, name: string) => [formatValue(value), name]}
             contentStyle={{
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
-              border: '1px solid #e5e7eb',
-              borderRadius: '8px',
+              backgroundColor: "rgba(255, 255, 255, 0.95)",
+              border: "1px solid #e5e7eb",
+              borderRadius: "8px",
             }}
           />
           <Legend />

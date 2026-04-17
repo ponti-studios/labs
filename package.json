@@ -21,19 +21,6 @@
     "test:e2e:ci": "turbo run test:e2e:ci",
     "test:update": "turbo run test:update"
   },
-  "devDependencies": {
-    "@types/node": "^22.7.5",
-    "jscpd": "^4.0.8",
-    "knip": "^5.47.0",
-    "oxfmt": "^0.35.0",
-    "oxlint": "^0.9.7",
-    "rolldown": "^1.0.0-rc.9",
-    "turbo": "^2.7.0",
-    "typescript": "^5.6.3"
-  },
-  "engines": {
-    "node": ">=25"
-  },
   "dependencies": {
     "@browserbasehq/stagehand": "3.1.0",
     "@radix-ui/react-dialog": "^1.1.14",
@@ -49,9 +36,22 @@
     "workbox-build": "^7.0.0",
     "workbox-window": "^7.1.0"
   },
-  "packageManager": "pnpm@10.30.3",
+  "devDependencies": {
+    "@types/node": "^22.7.5",
+    "jscpd": "^4.0.8",
+    "knip": "^5.47.0",
+    "oxfmt": "^0.35.0",
+    "oxlint": "^0.9.7",
+    "rolldown": "^1.0.0-rc.9",
+    "turbo": "^2.7.0",
+    "typescript": "^5.6.3"
+  },
   "overrides": {
     "esbuild": "^0.27.3",
     "zod": "^4.2.0"
-  }
+  },
+  "engines": {
+    "node": "24.11.0"
+  },
+  "packageManager": "pnpm@10.30.3"
 }

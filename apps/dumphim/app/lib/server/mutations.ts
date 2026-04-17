@@ -8,10 +8,10 @@
  * - Consistent updatedAt timestamps
  */
 
-import { eq } from 'drizzle-orm';
-import { db, trackers, votes } from '~/lib/db';
-import type { NewDumphimTracker, NewDumphimVote, DumphimTracker, DumphimVote } from '~/lib/db';
-import { queryCache, invalidateTrackerCache } from './cache';
+import { eq } from "drizzle-orm";
+import { db, trackers, votes } from "~/lib/db";
+import type { NewDumphimTracker, NewDumphimVote, DumphimTracker, DumphimVote } from "~/lib/db";
+import { queryCache, invalidateTrackerCache } from "./cache";
 
 // Tracker mutations
 export async function createTracker(data: NewDumphimTracker): Promise<DumphimTracker> {
@@ -28,7 +28,7 @@ export async function createTracker(data: NewDumphimTracker): Promise<DumphimTra
     .execute();
 
   const inserted = row[0];
-  if (!inserted) throw new Error('Failed to insert tracker');
+  if (!inserted) throw new Error("Failed to insert tracker");
 
   queryCache.invalidatePattern(/^trackers:/);
   return inserted;
@@ -84,14 +84,10 @@ export async function deleteTracker(id: string): Promise<void> {
 
 // Vote mutations
 export async function createVote(data: NewDumphimVote): Promise<DumphimVote> {
-  const row = await db
-    .insert(votes)
-    .values(data)
-    .returning()
-    .execute();
+  const row = await db.insert(votes).values(data).returning().execute();
 
   const inserted = row[0];
-  if (!inserted) throw new Error('Failed to insert vote');
+  if (!inserted) throw new Error("Failed to insert vote");
 
   queryCache.invalidate(`tracker:${data.trackerId}:stats`);
   queryCache.invalidate(`tracker:${data.trackerId}`);

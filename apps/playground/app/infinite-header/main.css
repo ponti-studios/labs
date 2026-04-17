@@ -7,8 +7,16 @@ body {
   height: 600px; /* Adjust height as needed */
   overflow: hidden; /* Hide the overflowing content */
   position: relative; /* Needed for absolute positioning if used */
-  -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%); /* Optional: Fade effect at bottom */
-  mask-image: linear-gradient(to bottom, black 80%, transparent 100%); /* Optional: Fade effect at bottom */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    black 80%,
+    transparent 100%
+  ); /* Optional: Fade effect at bottom */
+  mask-image: linear-gradient(
+    to bottom,
+    black 80%,
+    transparent 100%
+  ); /* Optional: Fade effect at bottom */
 }
 
 .scroll-column {
@@ -54,5 +62,7 @@ body {
   object-fit: cover; /* Cover the area, cropping if needed */
   margin-bottom: 1rem; /* Space between images */
   border-radius: 0.5rem; /* Rounded corners for images */
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* Soft shadow */
+  box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.1),
+    0 2px 4px -2px rgb(0 0 0 / 0.1); /* Soft shadow */
 }

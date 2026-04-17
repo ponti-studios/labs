@@ -1,21 +1,21 @@
-import { eq } from 'drizzle-orm';
-import type { LoaderFunctionArgs } from 'react-router';
-import { covidData, db } from '~/db';
+import { eq } from "drizzle-orm";
+import type { LoaderFunctionArgs } from "react-router";
+import { covidData, db } from "~/db";
 
 interface Outlier {
   date: string;
   value: number;
   metric: string;
   zScore: number;
-  type: 'spike' | 'drop' | 'anomaly';
-  severity: 'low' | 'medium' | 'high';
+  type: "spike" | "drop" | "anomaly";
+  severity: "low" | "medium" | "high";
   description: string;
 }
 
 interface DataQualityIssue {
   date: string;
   issue: string;
-  severity: 'warning' | 'error';
+  severity: "warning" | "error";
   description: string;
 }
 
@@ -23,8 +23,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   try {
     const url = new URL(request.url);
     const searchParams = url.searchParams;
-    const country = searchParams.get('country') || 'OWID_WRL';
-    const metric = searchParams.get('metric') || 'newCasesSmoothed';
+    const country = searchParams.get("country") || "OWID_WRL";
+    const metric = searchParams.get("metric") || "newCasesSmoothed";
 
     // Get time series data
     const data = await db
@@ -46,7 +46,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     if (data.length === 0) {
       return Response.json({
         country,
-        error: 'No data found for outlier detection',
+        error: "No data found for outlier detection",
       });
     }
 
@@ -55,7 +55,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       .map((row) => {
         const value = row[metric as keyof typeof row] as number;
         return {
-          date: row.date || '',
+          date: row.date || "",
           value: value || 0,
         };
       })
@@ -65,7 +65,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       return Response.json({
         country,
         metric,
-        error: 'Insufficient data for outlier detection',
+        error: "Insufficient data for outlier detection",
       });
     }
 
@@ -90,8 +90,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
       // Outlier detection (Z-score > 2.5 = outlier, > 3.5 = extreme outlier)
       if (zScore > 2.5) {
-        const severity = zScore > 3.5 ? 'high' : zScore > 3 ? 'medium' : 'low';
-        const type = current.value > mean ? 'spike' : 'drop';
+        const severity = zScore > 3.5 ? "high" : zScore > 3 ? "medium" : "low";
+        const type = current.value > mean ? "spike" : "drop";
 
         outliers.push({
           date: current.date,
@@ -101,7 +101,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
           type,
           severity,
           description: `${
-            type === 'spike' ? 'Unusual spike' : 'Unusual drop'
+            type === "spike" ? "Unusual spike" : "Unusual drop"
           } in ${metric} (${zScore.toFixed(1)} standard deviations from mean)`,
         });
       }
@@ -118,21 +118,21 @@ export async function loader({ request }: LoaderFunctionArgs) {
         if (percentChange > 500) {
           dataQualityIssues.push({
             date: current.date,
-            issue: 'Sudden Jump',
-            severity: 'warning',
+            issue: "Sudden Jump",
+            severity: "warning",
             description: `${percentChange.toFixed(0)}% day-over-day change in ${metric}`,
           });
         }
 
         // Flag impossible decreases in cumulative metrics
         if (
-          (metric === 'totalCases' || metric === 'totalDeaths') &&
+          (metric === "totalCases" || metric === "totalDeaths") &&
           current.value < previous.value
         ) {
           dataQualityIssues.push({
             date: current.date,
-            issue: 'Negative Growth',
-            severity: 'error',
+            issue: "Negative Growth",
+            severity: "error",
             description: `${metric} decreased from ${previous.value} to ${current.value}`,
           });
         }
@@ -142,8 +142,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
       if (i > 30 && i < values.length - 30 && current.value === 0) {
         dataQualityIssues.push({
           date: current.date,
-          issue: 'Missing Data',
-          severity: 'warning',
+          issue: "Missing Data",
+          severity: "warning",
           description: `Zero value for ${metric} in active reporting period`,
         });
       }
@@ -166,7 +166,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
       // Calculate variance across days of week
       const dayAverages = Object.values(dayOfWeekValues).map((vals) =>
-        vals.length > 0 ? vals.reduce((sum, val) => sum + val, 0) / vals.length : 0
+        vals.length > 0 ? vals.reduce((sum, val) => sum + val, 0) / vals.length : 0,
       );
 
       const overallAvg = dayAverages.reduce((sum, val) => sum + val, 0) / 7;
@@ -175,8 +175,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
       if (overallAvg > 0 && (maxDayAvg - minDayAvg) / overallAvg > 0.5) {
         artifacts.push({
-          type: 'Weekly Reporting Pattern',
-          description: 'Significant variation in reporting by day of week detected',
+          type: "Weekly Reporting Pattern",
+          description: "Significant variation in reporting by day of week detected",
           strength: Math.round(((maxDayAvg - minDayAvg) / overallAvg) * 100),
         });
       }
@@ -196,11 +196,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
       // Penalize for data quality issues
       score -= Math.min(
         20,
-        dataQualityIssues.filter((issue) => issue.severity === 'error').length * 5
+        dataQualityIssues.filter((issue) => issue.severity === "error").length * 5,
       );
       score -= Math.min(
         15,
-        dataQualityIssues.filter((issue) => issue.severity === 'warning').length * 2
+        dataQualityIssues.filter((issue) => issue.severity === "warning").length * 2,
       );
 
       // Penalize for reporting artifacts
@@ -227,7 +227,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       },
     });
   } catch (error) {
-    console.error('Error in outlier detection:', error);
-    return Response.json({ error: 'Failed to perform outlier detection' }, { status: 500 });
+    console.error("Error in outlier detection:", error);
+    return Response.json({ error: "Failed to perform outlier detection" }, { status: 500 });
   }
 }

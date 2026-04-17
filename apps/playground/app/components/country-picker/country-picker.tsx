@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useQuery } from '@tanstack/react-query';
-import { Check, ChevronsUpDown, Globe, Search } from 'lucide-react';
-import { type ReactNode, useCallback, useState } from 'react';
-import { Button } from '~/components/ui/button';
+import { useQuery } from "@tanstack/react-query";
+import { Check, ChevronsUpDown, Globe, Search } from "lucide-react";
+import { type ReactNode, useCallback, useState } from "react";
+import { Button } from "~/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -11,9 +11,9 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '~/components/ui/command';
-import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
-import { cn } from '~/lib/utils';
+} from "~/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
+import { cn } from "~/lib/utils";
 
 type Country = {
   name: string;
@@ -28,7 +28,7 @@ type CountryPickerProps = {
 
 export function CountryPicker({ onChange, countryCode, className }: CountryPickerProps): ReactNode {
   const [open, setOpen] = useState(false);
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValue, setSearchValue] = useState("");
 
   const {
     data: response,
@@ -36,8 +36,8 @@ export function CountryPicker({ onChange, countryCode, className }: CountryPicke
     isError,
     error,
   } = useQuery<{ data: Country[]; total: number }>({
-    queryKey: ['countries-list'],
-    queryFn: () => fetch('/api/countries/list').then((res) => res.json()),
+    queryKey: ["countries-list"],
+    queryFn: () => fetch("/api/countries/list").then((res) => res.json()),
     staleTime: 1000 * 60 * 60, // Cache for 1 hour since countries don't change often
   });
 
@@ -49,13 +49,13 @@ export function CountryPicker({ onChange, countryCode, className }: CountryPicke
     (currentValue: string) => {
       onChange(currentValue);
       setOpen(false);
-      setSearchValue('');
+      setSearchValue("");
     },
-    [onChange]
+    [onChange],
   );
 
   const getCountryFlag = (countryCode: string) => {
-    if (countryCode === 'OWID_WRL') {
+    if (countryCode === "OWID_WRL") {
       return <Globe className="w-4 h-4" />;
     }
     // For real country codes, we could use flag emojis or flag icons
@@ -65,7 +65,7 @@ export function CountryPicker({ onChange, countryCode, className }: CountryPicke
 
   if (isLoading) {
     return (
-      <Button variant="outline" className={cn('w-full justify-between h-10', className)} disabled>
+      <Button variant="outline" className={cn("w-full justify-between h-10", className)} disabled>
         <span className="flex items-center">
           <div className="w-4 h-4 mr-2 animate-spin border-2 border-gray-300 border-t-gray-600 rounded-full" />
           <span className="text-gray-600">Loading countries...</span>
@@ -80,15 +80,15 @@ export function CountryPicker({ onChange, countryCode, className }: CountryPicke
       <Button
         variant="outline"
         className={cn(
-          'w-full justify-between h-10 border-red-200 bg-red-50 hover:bg-red-50',
-          className
+          "w-full justify-between h-10 border-red-200 bg-red-50 hover:bg-red-50",
+          className,
         )}
         disabled
       >
         <span className="flex items-center text-red-600">
           <div className="w-4 h-4 mr-2 text-red-500">⚠</div>
           <span className="truncate">
-            Error: {error instanceof Error ? error.message : 'Failed to load'}
+            Error: {error instanceof Error ? error.message : "Failed to load"}
           </span>
         </span>
         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-30 text-red-400" />
@@ -102,7 +102,7 @@ export function CountryPicker({ onChange, countryCode, className }: CountryPicke
         <Button
           variant="outline"
           aria-expanded={open}
-          className={cn('w-full justify-between', className)}
+          className={cn("w-full justify-between", className)}
         >
           <span className="flex items-center text-black">
             {selectedCountry ? (
@@ -142,13 +142,13 @@ export function CountryPicker({ onChange, countryCode, className }: CountryPicke
                     <span className="ml-2">{country.name}</span>
                   </span>
                   <span className="flex items-center">
-                    {country.code !== 'OWID_WRL' && (
+                    {country.code !== "OWID_WRL" && (
                       <span className="ml-auto text-xs text-gray-500">{country.code}</span>
                     )}
                     <Check
                       className={cn(
-                        'ml-auto h-4 w-4',
-                        countryCode === country.code ? 'opacity-100' : 'opacity-0'
+                        "ml-auto h-4 w-4",
+                        countryCode === country.code ? "opacity-100" : "opacity-0",
                       )}
                     />
                   </span>

@@ -120,10 +120,7 @@ async function updateProject(
 }
 
 async function deleteProject(projectId: number): Promise<boolean> {
-  const result = await db
-    .deleteFrom("projects")
-    .where("id", "=", projectId)
-    .executeTakeFirst();
+  const result = await db.deleteFrom("projects").where("id", "=", projectId).executeTakeFirst();
 
   return result.numDeletedRows > 0;
 }

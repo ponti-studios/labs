@@ -1,19 +1,19 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 import {
   APIProvider,
   Marker,
   Map as ReactGoogleMaps,
   useMap,
   useMapsLibrary,
-} from '@vis.gl/react-google-maps';
-import { X as XIcon } from 'lucide-react';
-import { useState } from 'react';
-import { GOOGLE_MAPS_API_KEY } from '~/lib/constants';
-import type { Camera, Cameras } from '~/lib/tfl/types';
+} from "@vis.gl/react-google-maps";
+import { X as XIcon } from "lucide-react";
+import { useState } from "react";
+import { GOOGLE_MAPS_API_KEY } from "~/lib/constants";
+import type { Camera, Cameras } from "~/lib/tfl/types";
 
 const TFLMapContent = () => {
   const map = useMap();
-  const google = useMapsLibrary('core');
+  const google = useMapsLibrary("core");
   const [selectedCamera, setSelectedCamera] = useState<Camera | null>(null);
   const [mapError, setMapError] = useState<string | null>(null);
 
@@ -22,11 +22,11 @@ const TFLMapContent = () => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['tfl-cameras'],
+    queryKey: ["tfl-cameras"],
     queryFn: async (): Promise<Cameras> => {
-      const response = await fetch('/api/tfl');
+      const response = await fetch("/api/tfl");
       if (!response.ok) {
-        throw new Error('Failed to fetch camera data');
+        throw new Error("Failed to fetch camera data");
       }
       const data = await response.json();
       return data.cameras;
@@ -41,7 +41,7 @@ const TFLMapContent = () => {
             Unable to Load Cameras
           </h2>
           <p className="text-stone-600 font-light">
-            {error instanceof Error ? error.message : 'Failed to load camera data'}
+            {error instanceof Error ? error.message : "Failed to load camera data"}
           </p>
         </div>
       </div>
@@ -112,9 +112,9 @@ const TFLMapContent = () => {
             </h3>
             <div className="flex items-center justify-between">
               <p className="text-sm text-stone-600 font-light">
-                {selectedCamera.view || 'Traffic Camera'}
+                {selectedCamera.view || "Traffic Camera"}
               </p>
-              {selectedCamera.available === 'true' && (
+              {selectedCamera.available === "true" && (
                 <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-olive-100 text-olive-800 border border-olive-200">
                   Live
                 </span>
@@ -122,7 +122,7 @@ const TFLMapContent = () => {
             </div>
           </div>
         </div>
-      )}{' '}
+      )}{" "}
       <ReactGoogleMaps
         className="h-full rounded-2xl"
         zoom={selectedCamera ? 16 : 12}
@@ -138,43 +138,43 @@ const TFLMapContent = () => {
         fullscreenControl={false}
         styles={[
           {
-            featureType: 'all',
-            elementType: 'geometry',
-            stylers: [{ color: '#f5f5f4' }],
+            featureType: "all",
+            elementType: "geometry",
+            stylers: [{ color: "#f5f5f4" }],
           },
           {
-            featureType: 'all',
-            elementType: 'labels.text.fill',
-            stylers: [{ color: '#78716c' }],
+            featureType: "all",
+            elementType: "labels.text.fill",
+            stylers: [{ color: "#78716c" }],
           },
           {
-            featureType: 'all',
-            elementType: 'labels.text.stroke',
-            stylers: [{ color: '#ffffff' }, { weight: 2 }],
+            featureType: "all",
+            elementType: "labels.text.stroke",
+            stylers: [{ color: "#ffffff" }, { weight: 2 }],
           },
           {
-            featureType: 'road',
-            elementType: 'geometry',
-            stylers: [{ color: '#ffffff' }],
+            featureType: "road",
+            elementType: "geometry",
+            stylers: [{ color: "#ffffff" }],
           },
           {
-            featureType: 'road.highway',
-            elementType: 'geometry',
-            stylers: [{ color: '#92a3a3' }],
+            featureType: "road.highway",
+            elementType: "geometry",
+            stylers: [{ color: "#92a3a3" }],
           },
           {
-            featureType: 'water',
-            elementType: 'geometry',
-            stylers: [{ color: '#a3b18a' }],
+            featureType: "water",
+            elementType: "geometry",
+            stylers: [{ color: "#a3b18a" }],
           },
           {
-            featureType: 'poi.park',
-            elementType: 'geometry',
-            stylers: [{ color: '#dad7cd' }],
+            featureType: "poi.park",
+            elementType: "geometry",
+            stylers: [{ color: "#dad7cd" }],
           },
         ]}
       >
-        {' '}
+        {" "}
         {cameras?.map((camera) => (
           <Marker
             key={camera.id}
@@ -187,7 +187,7 @@ const TFLMapContent = () => {
                 (selectedCamera?.id === camera.id
                   ? new google.Size(40, 40)
                   : new google.Size(32, 32)),
-              url: selectedCamera?.id === camera.id ? '/camera-selected.png' : '/camera.png',
+              url: selectedCamera?.id === camera.id ? "/camera-selected.png" : "/camera.png",
             }}
             onClick={() => setSelectedCamera(camera)}
           />
@@ -217,7 +217,7 @@ export default function TFLMap() {
   return (
     <APIProvider
       apiKey={GOOGLE_MAPS_API_KEY}
-      onLoad={() => console.log('Maps API loaded successfully')}
+      onLoad={() => console.log("Maps API loaded successfully")}
     >
       <div className="w-full h-full">
         <TFLMapContent />

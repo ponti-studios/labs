@@ -1,15 +1,15 @@
-import type React from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { TerminalHeader } from './TerminalHeader';
-import { TerminalInput } from './TerminalInput';
-import { TerminalLine as TerminalLineComponent } from './TerminalLine';
-import { BOOT_SEQUENCE } from './constants';
-import type { TerminalLine } from './types';
-import { useCommandExecution } from './useCommandExecution';
+import type React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { TerminalHeader } from "./TerminalHeader";
+import { TerminalInput } from "./TerminalInput";
+import { TerminalLine as TerminalLineComponent } from "./TerminalLine";
+import { BOOT_SEQUENCE } from "./constants";
+import type { TerminalLine } from "./types";
+import { useCommandExecution } from "./useCommandExecution";
 
 export function Terminal() {
   const [lines, setLines] = useState<TerminalLine[]>([]);
-  const [currentCommand, setCurrentCommand] = useState('');
+  const [currentCommand, setCurrentCommand] = useState("");
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [isBooting, setIsBooting] = useState(true);
@@ -26,14 +26,14 @@ export function Terminal() {
           setLines((prev) => [
             ...prev,
             {
-              type: 'system',
+              type: "system",
               content: BOOT_SEQUENCE[bootIndex],
               id: `boot-${bootIndex}`,
             },
           ]);
           setBootIndex(bootIndex + 1);
         },
-        bootIndex === 0 ? 1000 : 200
+        bootIndex === 0 ? 1000 : 200,
       ); // Slower start, then faster
 
       return () => clearTimeout(timer);
@@ -69,16 +69,16 @@ export function Terminal() {
     (cmd: string) => {
       executeCommand(cmd, commandHistory, setLines, setCommandHistory);
     },
-    [executeCommand, commandHistory]
+    [executeCommand, commandHistory],
   );
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
-      if (e.key === 'Enter') {
+      if (e.key === "Enter") {
         handleCommandExecution(currentCommand);
-        setCurrentCommand('');
+        setCurrentCommand("");
         setHistoryIndex(-1);
-      } else if (e.key === 'ArrowUp') {
+      } else if (e.key === "ArrowUp") {
         e.preventDefault();
         if (commandHistory.length > 0) {
           const newIndex =
@@ -86,13 +86,13 @@ export function Terminal() {
           setHistoryIndex(newIndex);
           setCurrentCommand(commandHistory[newIndex]);
         }
-      } else if (e.key === 'ArrowDown') {
+      } else if (e.key === "ArrowDown") {
         e.preventDefault();
         if (historyIndex !== -1) {
           const newIndex = historyIndex + 1;
           if (newIndex >= commandHistory.length) {
             setHistoryIndex(-1);
-            setCurrentCommand('');
+            setCurrentCommand("");
           } else {
             setHistoryIndex(newIndex);
             setCurrentCommand(commandHistory[newIndex]);
@@ -100,7 +100,7 @@ export function Terminal() {
         }
       }
     },
-    [handleCommandExecution, currentCommand, commandHistory, historyIndex]
+    [handleCommandExecution, currentCommand, commandHistory, historyIndex],
   );
 
   const handleTerminalClick = useCallback(() => {
