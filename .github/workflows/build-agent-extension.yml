@@ -18,15 +18,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "25"
-          cache: "npm"
+          cache: "pnpm"
 
-      - run: npm ci --ignore-scripts
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
 
       - name: Build extension
-        run: npm run build --workspace=apps/agent
+        run: pnpm run build --filter=apps/agent
 
       - name: Zip for Chrome Web Store
-        run: npm run zip --workspace=apps/agent
+        run: pnpm run zip --filter=apps/agent
 
       - name: Upload extension artifact
         uses: actions/upload-artifact@v4
@@ -47,14 +48,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "25"
-          cache: "npm"
+          cache: "pnpm"
 
-      - run: npm ci --ignore-scripts
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
 
       - name: Build & zip extension
         run: |
-          npm run build --workspace=apps/agent
-          npm run zip --workspace=apps/agent
+          pnpm run build --filter=apps/agent
+          pnpm run zip --filter=apps/agent
 
       - name: Publish to Chrome Web Store
         uses: trmcnvn/chrome-addon@v2

@@ -1,21 +1,21 @@
 /**
  * Server-side queries for dumphim
- * Migrated from Drizzle/Postgres to Kysely/MySQL
+ * Uses Drizzle ORM with Postgres
  */
 
-import { getDb } from "~/lib/db";
-import type { DumphimTrackerParsed, DumphimVote } from "@pontistudios/db";
+import { desc, eq } from 'drizzle-orm';
+import { db, trackers, votes } from '~/lib/db';
+import type { DumphimTrackerParsed, DumphimVote, DumphimTracker } from '~/lib/db';
 
-// Helper to parse JSON fields
-function parseTracker(raw: Record<string, unknown>): DumphimTrackerParsed {
+function parseTracker(raw: DumphimTracker): DumphimTrackerParsed {
   return {
-    ...(raw as Omit<DumphimTrackerParsed, "attacks" | "strengths" | "flaws" | "imagePosition">),
-    attacks: typeof raw.attacks === "string" ? JSON.parse(raw.attacks) : (raw.attacks ?? []),
+    ...(raw as unknown as Omit<DumphimTrackerParsed, 'attacks' | 'strengths' | 'flaws' | 'imagePosition'>),
+    attacks: typeof raw.attacks === 'string' ? JSON.parse(raw.attacks) : (raw.attacks ?? []),
     strengths:
-      typeof raw.strengths === "string" ? JSON.parse(raw.strengths) : (raw.strengths ?? []),
-    flaws: typeof raw.flaws === "string" ? JSON.parse(raw.flaws) : (raw.flaws ?? []),
+      typeof raw.strengths === 'string' ? JSON.parse(raw.strengths) : (raw.strengths ?? []),
+    flaws: typeof raw.flaws === 'string' ? JSON.parse(raw.flaws) : (raw.flaws ?? []),
     imagePosition:
-      typeof raw.imagePosition === "string"
+      typeof raw.imagePosition === 'string'
         ? JSON.parse(raw.imagePosition)
         : (raw.imagePosition ?? null),
   };
@@ -23,46 +23,50 @@ function parseTracker(raw: Record<string, unknown>): DumphimTrackerParsed {
 
 // Trackers
 export async function getTrackers(): Promise<DumphimTrackerParsed[]> {
-  const db = await getDb();
-  const rows = await db.selectFrom("dumphim_trackers").orderBy("createdAt", "desc").execute();
-  return rows.map((r) => parseTracker(r as Record<string, unknown>));
+  const rows = await db
+    .select()
+    .from(trackers)
+    .orderBy(desc(trackers.createdAt))
+    .execute();
+  return rows.map((r) => parseTracker(r));
 }
 
 export async function getTracker(
   id: string,
 ): Promise<(DumphimTrackerParsed & { votes: DumphimVote[] }) | null> {
-  const db = await getDb();
-  const trackerRow = await db
-    .selectFrom("dumphim_trackers")
-    .where("id", "=", id)
-    .executeTakeFirst();
+  const row = await db
+    .select()
+    .from(trackers)
+    .where(eq(trackers.id, id))
+    .execute();
 
+  const trackerRow = row[0];
   if (!trackerRow) return null;
 
-  const tracker = parseTracker(trackerRow as Record<string, unknown>);
-  const votes = await getVotesByTracker(id);
+  const tracker = parseTracker(trackerRow);
+  const trackerVotes = await getVotesByTracker(id);
 
-  return { ...tracker, votes };
+  return { ...tracker, votes: trackerVotes };
 }
 
 export async function getTrackersByUser(userId: string): Promise<DumphimTrackerParsed[]> {
-  const db = await getDb();
   const rows = await db
-    .selectFrom("dumphim_trackers")
-    .where("userId", "=", userId)
-    .orderBy("createdAt", "desc")
+    .select()
+    .from(trackers)
+    .where(eq(trackers.userId, userId))
+    .orderBy(desc(trackers.createdAt))
     .execute();
-  return rows.map((r) => parseTracker(r as Record<string, unknown>));
+  return rows.map((r) => parseTracker(r));
 }
 
 // Votes
 export async function getVotesByTracker(trackerId: string): Promise<DumphimVote[]> {
-  const db = await getDb();
   return db
-    .selectFrom("dumphim_votes")
-    .where("trackerId", "=", trackerId)
-    .orderBy("createdAt", "desc")
-    .execute() as Promise<DumphimVote[]>;
+    .select()
+    .from(votes)
+    .where(eq(votes.trackerId, trackerId))
+    .orderBy(desc(votes.createdAt))
+    .execute();
 }
 
 export async function getVoteStats(trackerId: string): Promise<{
@@ -73,8 +77,8 @@ export async function getVoteStats(trackerId: string): Promise<{
 }> {
   const allVotes = await getVotesByTracker(trackerId);
 
-  const stayVotes = allVotes.filter((v) => v.value === "stay").length;
-  const dumpVotes = allVotes.filter((v) => v.value === "dump").length;
+  const stayVotes = allVotes.filter((v) => v.value === 'stay').length;
+  const dumpVotes = allVotes.filter((v) => v.value === 'dump').length;
 
   return {
     total: allVotes.length,

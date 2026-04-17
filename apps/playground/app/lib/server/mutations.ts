@@ -1,4 +1,4 @@
-import { db } from "~/lib/db";
+import { db, projects, todos } from "~/lib/db";
 import type {
   NewPlaygroundProject,
   NewPlaygroundTodo,
@@ -11,7 +11,7 @@ import type {
 
 export async function createProject(data: NewPlaygroundProject): Promise<PlaygroundProject> {
   const result = await db
-    .insertInto("playground_projects")
+    .insertInto(projects)
     .values({
       userId: data.userId,
       name: data.name,
@@ -39,7 +39,7 @@ export async function updateProject(
   const now = new Date().toISOString().slice(0, 19).replace("T", " ");
 
   await db
-    .updateTable("playground_projects")
+    .updateTable(projects)
     .set({
       name: data.name,
       description: data.description,
@@ -49,7 +49,7 @@ export async function updateProject(
     .executeTakeFirst();
 
   const updated = await db
-    .selectFrom("playground_projects")
+    .selectFrom("projects")
     .where("id", "=", Number.parseInt(id, 10))
     .selectAll()
     .executeTakeFirst();
@@ -68,7 +68,7 @@ export async function updateProject(
 
 export async function deleteProject(id: string): Promise<void> {
   await db
-    .deleteFrom("playground_projects")
+    .deleteFrom(projects)
     .where("id", "=", Number.parseInt(id, 10))
     .executeTakeFirst();
 }
@@ -76,7 +76,7 @@ export async function deleteProject(id: string): Promise<void> {
 // Todo mutations
 export async function createTodo(data: NewPlaygroundTodo): Promise<PlaygroundTodo> {
   const result = await db
-    .insertInto("playground_todos")
+    .insertInto(todos)
     .values({
       userId: data.userId,
       projectId: data.projectId ?? null,
@@ -110,7 +110,7 @@ export async function updateTodo(
   const now = new Date().toISOString().slice(0, 19).replace("T", " ");
 
   await db
-    .updateTable("playground_todos")
+    .updateTable(todos)
     .set({
       projectId: data.projectId ?? null,
       title: data.title,
@@ -123,7 +123,7 @@ export async function updateTodo(
     .executeTakeFirst();
 
   const updated = await db
-    .selectFrom("playground_todos")
+    .selectFrom("todos")
     .where("id", "=", id)
     .selectAll()
     .executeTakeFirst();
@@ -144,5 +144,5 @@ export async function updateTodo(
 }
 
 export async function deleteTodo(id: number): Promise<void> {
-  await db.deleteFrom("playground_todos").where("id", "=", id).executeTakeFirst();
+  await db.deleteFrom(todos).where("id", "=", id).executeTakeFirst();
 }

@@ -1,12 +1,12 @@
 import * as d3 from "d3";
 import type React from "react";
 import { useEffect, useRef } from "react";
-import type { Vote } from "~/db/schema";
+import type { DumphimVote } from "~/lib/db";
 
 // Use the canonical Vote type from the updated schema
 
 interface VoteChartProps {
-  votes: Vote[];
+  votes: DumphimVote[];
 }
 
 const VoteChart: React.FC<VoteChartProps> = ({ votes }) => {

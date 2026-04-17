@@ -3,12 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "description": "Shared UI component library for ponti-studios labs",
+  "files": [
+    "dist",
+    "src/styles.css"
+  ],
   "type": "module",
   "exports": {
     ".": {
       "types": "./dist/packages/ui/src/index.d.ts",
       "import": "./dist/index.js"
-    }
+    },
+    "./styles.css": "./src/styles.css"
   },
   "scripts": {
     "build": "vite build && tsc --emitDeclarationOnly",
@@ -63,10 +68,6 @@
     "tailwind-merge": "^3.0.2",
     "vaul": "^1.1.2"
   },
-  "peerDependencies": {
-    "react": "^18.2.0 || ^19.0.0",
-    "react-dom": "^18.2.0 || ^19.0.0"
-  },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.2",
     "@storybook/addon-docs": "^8.5.0",
@@ -94,5 +95,9 @@
     "typescript": "^5.6.3",
     "vite": "^7.0.0",
     "vite-plugin-dts": "^4.5.4"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0 || ^19.0.0",
+    "react-dom": "^18.2.0 || ^19.0.0"
   }
 }

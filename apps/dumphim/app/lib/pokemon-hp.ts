@@ -1,4 +1,4 @@
-import type { Tracker, Vote } from "~/db/schema";
+import type { DumphimTracker, DumphimVote } from "~/lib/db";
 
 // Define maximum HP value
 export const MAX_HP = 150;
@@ -7,13 +7,13 @@ export const MAX_HP = 150;
  * Calculate the HP for a relationship tracker based on various factors
  * Higher HP means a healthier relationship
  */
-export function calculateHP(tracker: Tracker): {
+export function calculateHP(tracker: DumphimTracker): {
   hp: number;
   maxHp: number;
   percentage: number;
 } {
-  // Accepts tracker.votes as Vote[] | undefined
-  const votes: Vote[] = (tracker as any).votes || [];
+  // Accepts tracker.votes as DumphimVote[] | undefined
+  const votes: DumphimVote[] = (tracker as any).votes || [];
   if (!votes || votes.length === 0) {
     return { hp: MAX_HP / 2, maxHp: MAX_HP, percentage: 50 };
   }
@@ -22,12 +22,12 @@ export function calculateHP(tracker: Tracker): {
   const baseHP = MAX_HP * 0.4; // Start with 40% of max HP as base
 
   // Calculate vote impact: more "stay" votes increase HP, more "dump" votes decrease it
-  const stayVotes = votes.filter((vote) => vote.value === "stay").length;
-  const dumpVotes = votes.filter((vote) => vote.value === "dump").length;
-  const totalVotes = stayVotes + dumpVotes;
+  const stayDumphimVotes = votes.filter((vote) => vote.value === "stay").length;
+  const dumpDumphimVotes = votes.filter((vote) => vote.value === "dump").length;
+  const totalDumphimVotes = stayDumphimVotes + dumpDumphimVotes;
 
-  // Vote ratio impact (up to 60% of max HP)
-  const voteRatioImpact = totalVotes > 0 ? (stayVotes / totalVotes) * (MAX_HP * 0.6) : 0;
+  // DumphimVote ratio impact (up to 60% of max HP)
+  const voteRatioImpact = totalDumphimVotes > 0 ? (stayDumphimVotes / totalDumphimVotes) * (MAX_HP * 0.6) : 0;
 
   // Calculate total HP
   let hp = Math.floor(baseHP + voteRatioImpact);
@@ -44,21 +44,21 @@ export function calculateHP(tracker: Tracker): {
 /**
  * Determine the energy type based on the relationship status
  */
-export function determineEnergyTypes(tracker: Tracker): string[] {
+export function determineEnergyTypes(tracker: DumphimTracker): string[] {
   const energyTypes: string[] = [];
-  const votes: Vote[] = (tracker as any).votes || [];
+  const votes: DumphimVote[] = (tracker as any).votes || [];
 
   if (!votes || votes.length === 0) {
     // New or no votes yet
     return ["electric", "normal"]; // Default energies for new trackers
   }
 
-  const stayVotes = votes.filter((vote) => vote.value === "stay").length;
-  const dumpVotes = votes.filter((vote) => vote.value === "dump").length;
-  const totalVotes = stayVotes + dumpVotes;
+  const stayDumphimVotes = votes.filter((vote) => vote.value === "stay").length;
+  const dumpDumphimVotes = votes.filter((vote) => vote.value === "dump").length;
+  const totalDumphimVotes = stayDumphimVotes + dumpDumphimVotes;
 
   // Stay ratio determines the primary energy type
-  const stayRatio = totalVotes > 0 ? stayVotes / totalVotes : 0;
+  const stayRatio = totalDumphimVotes > 0 ? stayDumphimVotes / totalDumphimVotes : 0;
 
   if (stayRatio >= 0.8) {
     // Great relationship - Grass type (growth, nurturing)
@@ -75,7 +75,7 @@ export function determineEnergyTypes(tracker: Tracker): string[] {
   }
 
   // Add a secondary energy type based on vote count
-  if (totalVotes >= 10) {
+  if (totalDumphimVotes >= 10) {
     // Many votes indicates strong opinions - add a second energy
     if (stayRatio >= 0.5) {
       energyTypes.push("electric"); // Some excitement
@@ -90,8 +90,8 @@ export function determineEnergyTypes(tracker: Tracker): string[] {
 /**
  * Generate a Pokemon-style description for the relationship
  */
-export function generateRelationshipDescription(tracker: Tracker): string {
-  const votes: Vote[] = (tracker as any).votes || [];
+export function generateRelationshipDescription(tracker: DumphimTracker): string {
+  const votes: DumphimVote[] = (tracker as any).votes || [];
   if (!votes || votes.length === 0) {
     return "A mysterious new relationship. Gather votes to learn more!";
   }

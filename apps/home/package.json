@@ -25,8 +25,8 @@
 		"validate": "run-p lint test test:e2e:ci"
 	},
 	"dependencies": {
-		"@pontistudios/db": "*",
-		"@pontistudios/utils": "*",
+		"@pontistudios/db": "workspace:*",
+		"@pontistudios/utils": "workspace:*",
 		"@radix-ui/react-dialog": "^1.1.14",
 		"@radix-ui/react-popover": "^1.1.14",
 		"@radix-ui/react-slot": "^1.1.2",

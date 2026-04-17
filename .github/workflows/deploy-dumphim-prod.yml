@@ -7,7 +7,7 @@ on:
       - "apps/dumphim/**"
       - "packages/**"
       - "package.json"
-      - "package-lock.json"
+      - "pnpm-lock.yaml"
       - ".github/workflows/deploy-dumphim-prod.yml"
   workflow_dispatch:
 

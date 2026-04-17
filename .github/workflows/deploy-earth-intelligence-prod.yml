@@ -7,7 +7,7 @@ on:
       - "apps/earth/**"
       - "packages/**"
       - "package.json"
-      - "package-lock.json"
+      - "pnpm-lock.yaml"
       - ".github/workflows/deploy-earth-intelligence-prod.yml"
   workflow_dispatch:
 

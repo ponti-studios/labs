@@ -1,6 +1,6 @@
 /**
  * Server-side mutations for dumphim
- * Migrated from Drizzle/Postgres to Kysely/MySQL
+ * Uses Drizzle ORM with Postgres (migrated from Kysely/MySQL)
  *
  * OPTIMIZATIONS:
  * - Automatic cache invalidation after mutations
@@ -8,16 +8,15 @@
  * - Consistent updatedAt timestamps
  */
 
-import { getDb } from "~/lib/db";
-import type { NewDumphimTracker, NewDumphimVote, DumphimTracker, DumphimVote } from "~/lib/db";
-import { queryCache, invalidateTrackerCache } from "./cache";
+import { eq } from 'drizzle-orm';
+import { db, trackers, votes } from '~/lib/db';
+import type { NewDumphimTracker, NewDumphimVote, DumphimTracker, DumphimVote } from '~/lib/db';
+import { queryCache, invalidateTrackerCache } from './cache';
 
 // Tracker mutations
 export async function createTracker(data: NewDumphimTracker): Promise<DumphimTracker> {
-  const db = await getDb();
-
   const row = await db
-    .insertInto("dumphim_trackers")
+    .insert(trackers)
     .values({
       ...data,
       attacks: data.attacks != null ? JSON.stringify(data.attacks) : null,
@@ -25,21 +24,20 @@ export async function createTracker(data: NewDumphimTracker): Promise<DumphimTra
       flaws: data.flaws != null ? JSON.stringify(data.flaws) : null,
       imagePosition: data.imagePosition != null ? JSON.stringify(data.imagePosition) : null,
     })
-    .returningAll()
-    .executeTakeFirstOrThrow();
+    .returning()
+    .execute();
 
-  // Invalidate tracker list cache
+  const inserted = row[0];
+  if (!inserted) throw new Error('Failed to insert tracker');
+
   queryCache.invalidatePattern(/^trackers:/);
-
-  return row as DumphimTracker;
+  return inserted;
 }
 
 export async function updateTracker(
   id: string,
   data: Partial<NewDumphimTracker>,
 ): Promise<DumphimTracker | null> {
-  const db = await getDb();
-
   const updateValues: Record<string, unknown> = {};
   if (data.name !== undefined) updateValues.name = data.name;
   if (data.hp !== undefined) updateValues.hp = data.hp;
@@ -63,61 +61,53 @@ export async function updateTracker(
       data.imagePosition != null ? JSON.stringify(data.imagePosition) : null;
   }
   if (data.userId !== undefined) updateValues.userId = data.userId;
-  // Always update updatedAt
-  updateValues.updatedAt = new Date().toISOString();
+  updateValues.updatedAt = new Date();
 
   const row = await db
-    .updateTable("dumphim_trackers")
+    .update(trackers)
     .set(updateValues)
-    .where("id", "=", id)
-    .returningAll()
-    .executeTakeFirst();
+    .where(eq(trackers.id, id))
+    .returning()
+    .execute();
 
-  // Invalidate specific tracker cache
-  invalidateTrackerCache(id);
-
-  return row as DumphimTracker | null;
+  const updated = row[0] ?? null;
+  if (updated) invalidateTrackerCache(id);
+  return updated;
 }
 
 export async function deleteTracker(id: string): Promise<void> {
-  const db = await getDb();
-  await db.deleteFrom("dumphim_trackers").where("id", "=", id).executeTakeFirst();
+  await db.delete(trackers).where(eq(trackers.id, id)).execute();
 
-  // Invalidate all related caches
   invalidateTrackerCache(id);
   queryCache.invalidatePattern(/^trackers:/);
 }
 
 // Vote mutations
 export async function createVote(data: NewDumphimVote): Promise<DumphimVote> {
-  const db = await getDb();
-
   const row = await db
-    .insertInto("dumphim_votes")
+    .insert(votes)
     .values(data)
-    .returningAll()
-    .executeTakeFirstOrThrow();
+    .returning()
+    .execute();
 
-  // Invalidate vote stats and tracker caches
+  const inserted = row[0];
+  if (!inserted) throw new Error('Failed to insert vote');
+
   queryCache.invalidate(`tracker:${data.trackerId}:stats`);
   queryCache.invalidate(`tracker:${data.trackerId}`);
 
-  return row as DumphimVote;
+  return inserted;
 }
 
 export async function deleteVote(id: string, trackerId: string): Promise<void> {
-  const db = await getDb();
-  await db.deleteFrom("dumphim_votes").where("id", "=", id).executeTakeFirst();
+  await db.delete(votes).where(eq(votes.id, id)).execute();
 
-  // Invalidate vote stats and tracker caches
   queryCache.invalidate(`tracker:${trackerId}:stats`);
   queryCache.invalidate(`tracker:${trackerId}`);
 }
 
 export async function deleteVotesByTracker(trackerId: string): Promise<void> {
-  const db = await getDb();
-  await db.deleteFrom("dumphim_votes").where("trackerId", "=", trackerId).executeTakeFirst();
+  await db.delete(votes).where(eq(votes.trackerId, trackerId)).execute();
 
-  // Invalidate vote stats
   queryCache.invalidate(`tracker:${trackerId}:stats`);
 }

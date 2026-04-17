@@ -39,21 +39,21 @@ interface TodoWithProjectName {
 
 async function fetchUserTodos(userId: string): Promise<TodoWithProjectName[]> {
   const todos = await db
-    .selectFrom("playground_todos")
-    .leftJoin("playground_projects", "playground_todos.projectId", "playground_projects.id")
-    .where("playground_todos.userId", "=", userId)
-    .orderBy("playground_todos.createdAt")
+    .selectFrom("todos")
+    .leftJoin("projects", "todos.projectId", "projects.id")
+    .where("todos.userId", "=", userId)
+    .orderBy("todos.createdAt")
     .select([
-      "playground_todos.id",
-      "playground_todos.userId",
-      "playground_todos.projectId",
-      "playground_todos.title",
-      "playground_todos.start",
-      "playground_todos.end",
-      "playground_todos.completed",
-      "playground_todos.createdAt",
-      "playground_todos.updatedAt",
-      "playground_projects.name as projectName",
+      "todos.id",
+      "todos.userId",
+      "todos.projectId",
+      "todos.title",
+      "todos.start",
+      "todos.end",
+      "todos.completed",
+      "todos.createdAt",
+      "todos.updatedAt",
+      "projects.name as projectName",
     ])
     .execute();
 
@@ -68,7 +68,7 @@ async function createTodo(
   userId: string,
 ): Promise<PlaygroundTodo> {
   const insertResult = await db
-    .insertInto("playground_todos")
+    .insertInto("todos")
     .values({
       userId,
       projectId: todoData.projectId ?? null,
@@ -85,7 +85,7 @@ async function createTodo(
   // Generate and save embedding asynchronously (don't block the response)
   const projectName = todoData.projectId
     ? await db
-        .selectFrom("playground_projects")
+        .selectFrom("projects")
         .where("id", "=", todoData.projectId)
         .select("name")
         .executeTakeFirst()
@@ -95,7 +95,7 @@ async function createTodo(
   const embeddingValues = await generateTaskEmbedding(todoData.title, projectName);
 
   await db
-    .insertInto("playground_embeddings")
+    .insertInto("embeddings")
     .values({
       todoId: newTodoId,
       content: projectName
@@ -126,7 +126,7 @@ async function updateTodo(
   const now = new Date().toISOString().slice(0, 19).replace("T", " ");
 
   await db
-    .updateTable("playground_todos")
+    .updateTable("todos")
     .set({
       projectId: todoData.projectId ?? null,
       title: todoData.title,
@@ -139,7 +139,7 @@ async function updateTodo(
     .executeTakeFirst();
 
   const updated = await db
-    .selectFrom("playground_todos")
+    .selectFrom("todos")
     .where("id", "=", todoData.id)
     .selectAll()
     .executeTakeFirst();
@@ -161,7 +161,7 @@ async function updateTodo(
 
 async function deleteTodo(todoId: number): Promise<boolean> {
   const result = await db
-    .deleteFrom("playground_todos")
+    .deleteFrom("todos")
     .where("id", "=", todoId)
     .executeTakeFirst();
 

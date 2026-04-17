@@ -13,10 +13,10 @@
     "format": "turbo run format",
     "knip": "knip",
     "duplicates": "jscpd --threshold 10 --config .jscpd.jsonc",
-    "dedupe": "npm dedupe --prefix=. 2>&1 || echo 'Run npm install after fixing conflicts'",
-    "precommit": "npm run format && npm run lint",
-    "prepush": "npm test",
-    "prerelease": "npm test",
+    "dedupe": "pnpm dedupe 2>&1 || echo 'Run pnpm install after fixing conflicts'",
+    "precommit": "pnpm run format && pnpm run lint",
+    "prepush": "pnpm test",
+    "prerelease": "pnpm test",
     "test": "turbo run test",
     "test:e2e:ci": "turbo run test:e2e:ci",
     "test:update": "turbo run test:update"
@@ -41,19 +41,17 @@
     "@radix-ui/react-slider": "^1.3.5",
     "@testing-library/dom": "^10.4.0",
     "cmdk": "^1.1.1",
+    "drizzle-orm": "^0.45.2",
     "lucide-react": "^0.539.0",
     "mysql2": "^3.6.0",
+    "postgres": "^3.4.9",
     "vite-plugin-static-copy": "3.2.0",
     "workbox-build": "^7.0.0",
     "workbox-window": "^7.1.0"
   },
-  "packageManager": "npm@10.9.2",
+  "packageManager": "pnpm@10.30.3",
   "overrides": {
     "esbuild": "^0.27.3",
     "zod": "^4.2.0"
-  },
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ]
+  }
 }
