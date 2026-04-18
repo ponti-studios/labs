@@ -13,9 +13,9 @@ const config: Config = {
 	theme: {
 		extend: {
 			fontFamily: {
-				sans: ["Geist", "ui-sans-serif", "system-ui", "sans-serif"],
-				serif: ["Geist", "ui-sans-serif", "system-ui", "sans-serif"],
-				mono: ["Geist Mono", "ui-monospace", "monospace"],
+				sans: ["var(--font-geist)", "ui-sans-serif", "system-ui", "sans-serif"],
+				serif: ["var(--font-serif)", "ui-serif", "Georgia", "serif"],
+				mono: ["var(--font-geist-mono)", "ui-monospace", "monospace"],
 			},
 			width: {
 				"part-full": "calc(100% - 1.5rem)",
@@ -46,7 +46,7 @@ const config: Config = {
 				"bg-elevated": "#fbf7ef",
 				"text-primary": "#161514",
 				"text-secondary": "#43403c",
-				"text-muted": "#76706a",
+				"text-muted": "#5a5652",
 				"text-ghost": "#aaa39a",
 				"accent-active": "#1f1d1b",
 				"border-subtle": "rgba(22,21,20,0.08)",

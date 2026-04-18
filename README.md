@@ -4,14 +4,14 @@
 
 ### Labs (~/Developer/labs)
 
-| App / Service   | Port | URL                   |
-| --------------- | ---- | --------------------- |
-| Home (ponti-io) | 3000 | http://localhost:3000 |
-| Playground      | 3001 | http://localhost:3001 |
-| Medico          | 3003 | http://localhost:3003 |
-| Dumphim         | 3005 | http://localhost:3005 |
-| Earth           | 3006 | http://localhost:3006 |
-| UI (package)    | 3007 | (build tool)          |
+| App / Service | Port | URL                   |
+| ------------- | ---- | --------------------- |
+| Home          | 3000 | http://localhost:3000 |
+| Playground    | 3001 | http://localhost:3001 |
+| Medico        | 3003 | http://localhost:3003 |
+| Dumphim       | 3005 | http://localhost:3005 |
+| Earth         | 3006 | http://localhost:3006 |
+| UI (package)  | 3007 | (build tool)          |
 
 ### Other Developer Apps (~/Developer)
 
@@ -41,6 +41,7 @@ cd ../foundation && just docker-up
 ```
 
 Foundation runs:
+
 - PostgreSQL on `localhost:5434`
 - PostgreSQL test on `localhost:4433`
 - Redis on `localhost:6379`
@@ -64,9 +65,9 @@ npm run dev
 
 **Note:** Apps connect to `localhost:5434` (foundation postgres) by default. Do not run `docker compose` from labs — infra lives in foundation.
 
-## Apps (Labs)
+## Apps
 
-- **ponti-io** - Main studio homepage (Next.js)
+- **home** - Main studio homepage (Next.js)
 - **playground** - React Router app for experiments
 - **medico** - Medical-related React Router app
 - **earth** - Earth intelligence dashboard (Svelte + Cesium)

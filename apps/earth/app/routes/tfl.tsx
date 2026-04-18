@@ -1,105 +1,80 @@
-import { useEffect } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router";
-import { activeTab, tflCameras, loadingTfl } from "../lib/signals/earth";
-import type { TflCamera } from "../lib/signals/earth";
+import { useTflCameras } from "../lib/hooks/useOrbitData";
 
 export default function Tfl() {
-  activeTab.value = "tfl";
+  const { data: cameras, isLoading } = useTflCameras();
 
-  useEffect(() => {
-    if (tflCameras.value.length > 0) return;
+  const online = useMemo(
+    () => (cameras ?? []).filter((c) => c.available === "true").length,
+    [cameras],
+  );
 
-    async function fetchTflData() {
-      loadingTfl.value = true;
-      try {
-        const mockCameras: TflCamera[] = [
-          {
-            id: "cam001",
-            available: "true",
-            commonName: "Tower Bridge",
-            videoUrl: "",
-            view: "north",
-            imageUrl: "",
-            lat: 51.5055,
-            lng: -0.0754,
-          },
-          {
-            id: "cam002",
-            available: "true",
-            commonName: "Oxford Circus",
-            videoUrl: "",
-            view: "south",
-            imageUrl: "",
-            lat: 51.5152,
-            lng: -0.1419,
-          },
-          {
-            id: "cam003",
-            available: "false",
-            commonName: "Piccadilly Circus",
-            videoUrl: "",
-            view: "east",
-            imageUrl: "",
-            lat: 51.51,
-            lng: -0.1348,
-          },
-          {
-            id: "cam004",
-            available: "true",
-            commonName: "Westminster",
-            videoUrl: "",
-            view: "west",
-            imageUrl: "",
-            lat: 51.501,
-            lng: -0.1246,
-          },
-          {
-            id: "cam005",
-            available: "true",
-            commonName: "London Bridge",
-            videoUrl: "",
-            view: "north",
-            imageUrl: "",
-            lat: 51.5079,
-            lng: -0.0877,
-          },
-        ];
-        tflCameras.value = mockCameras;
-      } catch (err) {
-        console.error("Failed to fetch TfL data:", err);
-      } finally {
-        loadingTfl.value = false;
-      }
-    }
-
-    fetchTflData();
-  }, []);
-
-  if (loadingTfl.value) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="text-text-muted">Loading TfL cameras...</div>
+        <div className="text-[var(--text-muted)] font-mono text-xs tracking-widest uppercase">
+          Loading cameras...
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-bold">TfL Traffic Cameras</h2>
-      <p className="text-text-secondary text-sm">Live traffic cameras across London.</p>
-      <div className="space-y-2">
-        {tflCameras.value.slice(0, 10).map((camera) => (
-          <Link
-            key={camera.id}
-            to={`/tfl/${camera.id}`}
-            className="block bg-bg-panel-1 p-3 rounded hover:bg-bg-panel-2 transition-colors"
-          >
-            <div className="font-medium text-text-primary">{camera.commonName}</div>
-            <div className="text-xs text-text-muted">
-              {camera.available === "true" ? "● Available" : "○ Unavailable"}
-            </div>
-          </Link>
-        ))}
+    <div className="space-y-5">
+      <div>
+        <h2 className="text-sm font-mono font-semibold tracking-widest uppercase text-[var(--accent-bright)] mb-1">
+          TfL Traffic Network
+        </h2>
+        <p className="text-[var(--text-muted)] text-xs leading-relaxed">
+          London traffic camera feeds.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2">
+        <div className="cesium-card p-3">
+          <div className="cesium-card-label">Cameras</div>
+          <div className="cesium-card-value">{cameras?.length ?? 0}</div>
+        </div>
+        <div className="cesium-card p-3">
+          <div className="cesium-card-label">Online</div>
+          <div className="cesium-card-value cesium-card-value--accent">{online}</div>
+        </div>
+      </div>
+
+      <div>
+        <div className="font-mono text-[9px] tracking-[0.15em] uppercase text-[var(--text-muted)] mb-2 pb-1 border-b border-[var(--border-default)]">
+          Camera Feeds
+        </div>
+        <ul className="space-y-1">
+          {cameras?.map((camera) => (
+            <li key={camera.id}>
+              <Link
+                to={`/tfl/${camera.id}`}
+                className="cesium-card flex items-center gap-3 p-3 hover:border-[var(--border-active)] transition-colors"
+              >
+                <span
+                  className={`cesium-status-dot cesium-status-dot--${camera.available === "true" ? "online" : "offline"}`}
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-[var(--text-primary)] text-sm truncate">
+                    {camera.commonName}
+                  </div>
+                  <div className="font-mono text-[10px] text-[var(--text-muted)]">
+                    {camera.lat.toFixed(4)}, {camera.lng.toFixed(4)}
+                  </div>
+                </div>
+                <div className="font-mono text-[9px] tracking-wider uppercase text-[var(--text-muted)] flex-shrink-0">
+                  {camera.available === "true" ? (
+                    <span className="text-[var(--status-online)]">LIVE</span>
+                  ) : (
+                    <span className="text-[var(--text-muted)]">OFF</span>
+                  )}
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
