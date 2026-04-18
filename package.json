@@ -9,6 +9,8 @@
     "dev:dumphim": "turbo run dev --filter=dumphim",
     "dev:playground": "turbo run dev --filter=playground",
     "dev:rocco": "turbo run dev --filter=@pontistudios/rocco",
+    "earth:tiles:imagery": "pnpm --filter @pontistudios/earth tiles:imagery",
+    "earth:tiles:terrain": "pnpm --filter @pontistudios/earth tiles:terrain",
     "lint": "turbo run lint",
     "format": "turbo run format",
     "knip": "knip",

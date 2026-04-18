@@ -2,9 +2,9 @@
 FROM node:23.11-bookworm-slim AS base
 
 # Add labels for better metadata
-LABEL maintainer="ponti-io"
+LABEL maintainer="@pontistudios/home"
 LABEL version="1.0"
-LABEL description="ponti-studios homepage"
+LABEL description="@pontistudios/home"
 
 # Next.js app lives here
 WORKDIR /app
@@ -55,11 +55,9 @@ RUN apt-get update -qq && \
 
 # Accept build arguments for Next.js public environment variables
 ARG PORT=3000
-ARG NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
 ARG NEXT_PUBLIC_SHOW_LOGGER=false
 
 # Set build-time environment variables (only public ones)
-ENV NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=$NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
 ENV NEXT_PUBLIC_SHOW_LOGGER=$NEXT_PUBLIC_SHOW_LOGGER
 ENV PORT=$PORT
 

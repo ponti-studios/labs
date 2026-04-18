@@ -1,87 +1,93 @@
-import { useEffect } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router";
-import { activeTab, satellites, loadingSatellites } from "../lib/signals/earth";
-import type { Satellite } from "../lib/signals/earth";
+import { useSatellites } from "../lib/hooks/useOrbitData";
+
+const TYPE_LABELS = {
+  iss: "ISS",
+  "space-station": "CSS",
+  satellite: "SAT",
+} as const;
 
 export default function Satellites() {
-  activeTab.value = "satellites";
+  const { data: satellites, isLoading } = useSatellites();
 
-  useEffect(() => {
-    if (satellites.value.length > 0) return;
+  const orderedSatellites = useMemo(
+    () => [...(satellites ?? [])].sort((a, b) => a.name.localeCompare(b.name)),
+    [satellites],
+  );
 
-    async function fetchSatelliteData() {
-      loadingSatellites.value = true;
-      try {
-        const mockSatellites: Satellite[] = [
-          {
-            id: "iss",
-            name: "International Space Station",
-            type: "iss",
-            latitude: 51.5074,
-            longitude: -0.1276,
-            altitude: 420,
-            velocity: 27600,
-            timestamp: new Date(),
-          },
-          {
-            id: "tiangong",
-            name: "Tiangong Space Station",
-            type: "space-station",
-            latitude: 40.7128,
-            longitude: -74.006,
-            altitude: 390,
-            velocity: 27500,
-            timestamp: new Date(),
-          },
-          {
-            id: "hubble",
-            name: "Hubble Space Telescope",
-            type: "satellite",
-            latitude: 34.0522,
-            longitude: -118.2437,
-            altitude: 540,
-            velocity: 27400,
-            timestamp: new Date(),
-          },
-        ];
-        satellites.value = mockSatellites;
-      } catch (err) {
-        console.error("Failed to fetch satellite data:", err);
-      } finally {
-        loadingSatellites.value = false;
-      }
-    }
-
-    fetchSatelliteData();
-  }, []);
-
-  if (loadingSatellites.value) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="text-text-muted">Loading satellites...</div>
+        <div className="text-[var(--text-muted)] font-mono text-xs tracking-widest uppercase">
+          Tracking...
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-bold">Satellite Tracker</h2>
-      <p className="text-text-secondary text-sm">
-        Real-time tracking of the International Space Station and other satellites.
-      </p>
-      <div className="space-y-2">
-        {satellites.value.map((sat) => (
-          <Link
-            key={sat.id}
-            to={`/satellites/${sat.id}`}
-            className="block bg-bg-panel-1 p-3 rounded hover:bg-bg-panel-2 transition-colors"
-          >
-            <div className="font-medium text-text-primary">{sat.name}</div>
-            <div className="text-xs text-text-muted">
-              Alt: {(sat.altitude / 1000).toFixed(1)} km | Vel: {sat.velocity.toLocaleString()} km/h
-            </div>
-          </Link>
-        ))}
+    <div className="space-y-5">
+      <div>
+        <h2 className="text-sm font-mono font-semibold tracking-widest uppercase text-[var(--accent-bright)] mb-1">
+          Satellite Tracker
+        </h2>
+        <p className="text-[var(--text-muted)] text-xs leading-relaxed">
+          ISS, space stations &amp; orbital assets.
+        </p>
+      </div>
+
+      <div>
+        <div className="font-mono text-[9px] tracking-[0.15em] uppercase text-[var(--text-muted)] mb-2 pb-1 border-b border-[var(--border-default)]">
+          Orbital Assets — {orderedSatellites.length}
+        </div>
+        <ul className="space-y-2">
+          {orderedSatellites.map((sat) => (
+            <li key={sat.id}>
+              <Link
+                to={`/satellites/${sat.id}`}
+                className="cesium-card block p-3 hover:border-[var(--border-active)] transition-colors"
+              >
+                <div className="flex items-start justify-between mb-2">
+                  <div>
+                    <div className="font-medium text-[var(--text-primary)] text-sm mb-1">
+                      {sat.name}
+                    </div>
+                    <div className="cesium-satellite-badge cesium-satellite-badge--iss">
+                      {TYPE_LABELS[sat.type]}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 mt-0.5">
+                    <span className="cesium-status-dot cesium-status-dot--online" />
+                    <span className="font-mono text-[9px] text-[var(--status-online)] tracking-wider">
+                      TRACKING
+                    </span>
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-2 mt-2 pt-2 border-t border-[var(--border-default)]">
+                  <div>
+                    <div className="cesium-card-label">ALT</div>
+                    <div className="font-mono text-xs text-[var(--text-secondary)]">
+                      {sat.altitude.toLocaleString()} km
+                    </div>
+                  </div>
+                  <div>
+                    <div className="cesium-card-label">VEL</div>
+                    <div className="font-mono text-xs text-[var(--text-secondary)]">
+                      {sat.velocity.toLocaleString()}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="cesium-card-label">LAT</div>
+                    <div className="font-mono text-xs text-[var(--text-secondary)]">
+                      {sat.latitude.toFixed(2)}°
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
