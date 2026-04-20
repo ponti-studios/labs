@@ -5,14 +5,14 @@
 
 import React, { ReactNode } from "react";
 import {
-  cn,
-  textStyles,
-  layoutStyles,
-  componentStyles,
-  stateStyles,
   buttonClass,
-  inputClass,
   cardClass,
+  cn,
+  componentStyles,
+  inputClass,
+  layoutStyles,
+  stateStyles,
+  textStyles,
 } from "~/lib/void-styles";
 
 /**
@@ -186,9 +186,10 @@ export const CodeBlock: React.FC<{
   className?: string;
 }> = ({ children, className }) => (
   <pre
+    style={{ overflowWrap: "anywhere" }}
     className={cn(
       "bg-white/2 border border-white/10 p-4 overflow-x-auto",
-      "text-xs md:text-sm font-mono whitespace-pre-wrap break-words",
+      "text-xs md:text-sm font-mono whitespace-pre-wrap",
       className,
     )}
   >
@@ -208,13 +209,19 @@ export const DiffDisplay: React.FC<{
   <div className={cn(layoutStyles.grid, "gap-4 md:gap-6")}>
     <div className="space-y-2">
       <p className={textStyles.label}>{beforeLabel}</p>
-      <div className="bg-white/2 border border-white/10 p-4 text-xs md:text-sm font-mono whitespace-pre-wrap break-words">
+      <div
+        style={{ overflowWrap: "anywhere" }}
+        className="bg-white/2 border border-white/10 p-4 text-xs md:text-sm font-mono whitespace-pre-wrap"
+      >
         {before}
       </div>
     </div>
     <div className="space-y-2">
       <p className={textStyles.label}>{afterLabel}</p>
-      <div className="bg-white/5 border border-white/20 p-4 text-xs md:text-sm font-mono whitespace-pre-wrap break-words">
+      <div
+        style={{ overflowWrap: "anywhere" }}
+        className="bg-white/5 border border-white/20 p-4 text-xs md:text-sm font-mono whitespace-pre-wrap"
+      >
         {after}
       </div>
     </div>

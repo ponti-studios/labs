@@ -5,12 +5,18 @@ import type React from "react";
 import { Camera, X, ZoomIn } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-import { Button } from "@pontistudios/ui";
-import { Card, CardHeader } from "@pontistudios/ui";
-import { Input } from "@pontistudios/ui";
-import { Label } from "@pontistudios/ui";
-import { Slider } from "@pontistudios/ui";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@pontistudios/ui";
+import {
+  Button,
+  Card,
+  CardHeader,
+  Input,
+  Label,
+  Slider,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@pontistudios/ui";
 import { AddRatingDialog } from "~/components/voter/add-rating-dialog";
 import { AttacksForm } from "~/components/voter/attacks-form";
 import { COLOR_THEMES, CardThemePicker } from "~/components/voter/card-theme-picker";
@@ -425,7 +431,7 @@ export function CardCreator() {
                   <Label className="text-gray-700">Partner Photo</Label>
                   <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50">
                     {image ? (
-                      <div className="relative w-full max-w-[200px] aspect-[4/5]">
+                      <div className="relative w-full max-w-50 aspect-4/5">
                         <div className="absolute inset-0 overflow-hidden rounded-lg">
                           <div
                             style={{
