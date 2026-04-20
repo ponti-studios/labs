@@ -7,9 +7,7 @@ export default function NotFound() {
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
           404
         </p>
-        <h1 className="mt-4 text-4xl font-normal uppercase tracking-[-0.04em] md:text-5xl">
-          Page not found
-        </h1>
+        <h1 className="mt-4 text-4xl font-normal uppercase tracking-[-0.04em]">Page not found</h1>
         <p className="mt-4 text-base leading-7 text-muted-foreground">
           The route you requested does not exist.
         </p>

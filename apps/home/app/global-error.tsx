@@ -15,7 +15,7 @@ export default function GlobalError({
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
               Application error
             </p>
-            <h1 className="mt-4 text-4xl font-normal uppercase tracking-[-0.04em] md:text-5xl">
+            <h1 className="mt-4 text-4xl font-normal uppercase tracking-[-0.04em]">
               Something went wrong
             </h1>
             <p className="mt-4 text-base leading-7 text-muted-foreground">{error.message}</p>
