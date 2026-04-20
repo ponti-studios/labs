@@ -55,7 +55,7 @@ const brands = [
   },
 ];
 
-export default function Brands() {
+export function Brands() {
   return (
     <motion.section
       className="mx-auto"
@@ -64,7 +64,7 @@ export default function Brands() {
       transition={{ duration: 0.8, delay: 0.3 }}
     >
       <div className="max-w-5xl text-center">
-        <p className="text-text-muted text-xs md:text-base mb-8 font-light tracking-wide">
+        <p className="text-text-muted text-xs mb-8 font-light tracking-wide">
           Trusted by distinguished organizations
         </p>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8 md:gap-16 items-center justify-center opacity-60 hover:opacity-80 transition-opacity duration-300">

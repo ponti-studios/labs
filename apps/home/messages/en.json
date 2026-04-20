@@ -9,34 +9,36 @@
   "Studio": {
     "hero": {
       "label": "AI product studio",
-      "title": "AI with taste, structure, and teeth.",
-      "description": "Strategy, systems, design, engineering—under one uncompromising standard.",
+      "title": "computational intelligence",
+      "description": " for creators and SMBs.",
       "cta": "Start a project",
       "ctaSecondary": "View our work",
-      "whatWeMake": ["Agentic products", "Developer tools", "AI workflows", "Internal systems"],
-      "operatingMode": "Small team. High standard. End-to-end execution."
+      "whatWeMakeLabel": "What we make",
+      "whatWeMake": ["Agentic systems", "Developer tools", "AI workflows", "Core infrastructure"]
     },
     "services": {
+      "label": "Services",
       "title": "Built for teams shipping real AI.",
-      "subtitle": "We work across product strategy, design systems, architecture, implementation, and launch.",
+      "subtitle": "Product strategy. Design systems. Architecture. Implementation. Launch.",
       "items": [
         {
           "title": "AI Product Strategy",
-          "copy": "From concept to roadmap: product framing, opportunity sizing, user workflows, and technical direction for AI-native software."
+          "copy": "Product framing, opportunity sizing, user workflows, technical direction. From concept to conviction."
         },
         {
           "title": "Agent Systems",
-          "copy": "Harness architecture, tools, skills, command systems, eval loops, and production patterns for reliable agentic products."
+          "copy": "Tools, skills, orchestration, command logic, eval loops. Agentic architecture that ships."
         },
         {
           "title": "Design + Engineering",
-          "copy": "High-taste interfaces and full-stack execution across web, mobile, APIs, infra, and developer tooling."
+          "copy": "Full-stack: web, mobile, APIs, infrastructure, developer tools. High-taste, production-ready."
         }
       ]
     },
     "work": {
+      "label": "Selected focus",
       "title": "Systems first. Brand second. Never separate.",
-      "subtitle": "The best AI products do not just work—they feel coherent. We design the logic, the interface, the workflows, and the language as one operating system.",
+      "subtitle": "The best AI products work *and* feel coherent. Logic, interface, workflows, language—one operating system.",
       "items": [
         {
           "name": "Agent Harnesses",
@@ -56,21 +58,40 @@
       ]
     },
     "principles": {
-      "title": "A studio shaped by standards.",
+      "label": "Principles",
+      "title": "Shaped by standards.",
       "items": [
-        "Clarity over hype",
-        "Systems over features",
-        "Taste over noise",
-        "Execution over decks"
+        {
+          "title": "Clarity over hype",
+          "description": "Say the hard thing plainly. Reduce noise, surface the decision, and make the next step obvious."
+        },
+        {
+          "title": "Systems over features",
+          "description": "Design the working whole, not isolated wins. The product should stay coherent as it grows."
+        },
+        {
+          "title": "Taste over noise",
+          "description": "Favor restraint, proportion, and sharp language over clutter. The interface should feel composed."
+        },
+        {
+          "title": "Execution over decks",
+          "description": "Ship the thing. Reduce ceremony, close the loop, and learn from real use."
+        },
+        {
+          "title": "Operating mode",
+          "description": "Small team. High standard. End-to-end. No sprawl, no theater."
+        }
       ]
     },
     "about": {
-      "title": "We help ambitious teams turn AI potential into product reality.",
-      "description": "Ponti Studios partners with companies that need more than prototypes. We help define the product, shape the system, and ship the experience."
+      "label": "About",
+      "title": "Ambitious teams need more than prototypes.",
+      "description": "Strategy, systems, craft, and execution. From concept to shipping product. For founders and teams who refuse to compromise."
     },
     "contact": {
-      "title": "Need a sharp AI product studio?",
-      "subtitle": "Bring the concept, the mess, the ambition, or the rebuild. We'll bring the structure.",
+      "label": "Contact",
+      "title": "Ready to build something real?",
+      "subtitle": "Concept, mess, ambition, rebuild—bring it. We bring structure, standards, and execution.",
       "email": "hello@ponti.io",
       "bookCall": "Book a call"
     }
