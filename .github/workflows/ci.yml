@@ -27,7 +27,7 @@ jobs:
       - run: corepack enable
       - run: pnpm install --frozen-lockfile
       - name: Clone foundation
-        run: git clone https://github.com/ponti-studios/foundation.git ../foundation
+        run: git clone git@github.com:ponti-studios/foundation.git ../foundation
       - name: Start foundation postgres
         run: docker compose -f ../foundation/compose/base.yml -f ../foundation/compose/test.yml up -d
       - name: Run migrations
