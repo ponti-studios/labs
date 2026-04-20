@@ -151,7 +151,6 @@ next-sitemap.config.js
 
 # Linting configs
 .stylelintrc.json
-biome.json
 .prettierrc*
 
 # Commit tools

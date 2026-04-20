@@ -7,13 +7,13 @@
     "build:sitemap": "next-sitemap --config next-sitemap.config.js",
     "commit": "cz",
     "dev": "next dev --turbo",
-    "format": "npx biome lint app components --apply --no-errors-on-unmatched && npx biome format --write app components",
+    "format": "pnpm exec oxfmt --write app components",
     "lint": "run-p run-lint run-stylelint",
     "preview": "npm run build && npm start",
     "preview:test": "start-server-and-test preview http://localhost:4173",
     "preview:next": "npx next dev -p 4173",
     "refresh-deps": "rm package-lock.json && rm -rf node_modules && npm install",
-    "run-lint": "npx biome lint app && npx biome lint components",
+    "run-lint": "pnpm exec oxlint app components --fix",
     "run-stylelint": "stylelint --cache --fix --ignore-path .gitignore app/**/*.css",
     "start": "next start",
     "test": "vitest --run",
@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@pontistudios/db": "workspace:*",
+    "@pontistudios/ui": "workspace:*",
     "@pontistudios/utils": "workspace:*",
     "@radix-ui/react-dialog": "^1.1.14",
     "@radix-ui/react-popover": "^1.1.14",
@@ -49,10 +50,10 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.6.4",
     "@commitlint/cli": "^18.4.4",
     "@commitlint/config-conventional": "^18.4.4",
     "@playwright/test": "^1.40.1",
+    "@tailwindcss/postcss": "^4.1.10",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@types/css-mediaquery": "^0.1.4",
@@ -77,6 +78,8 @@
     "next-router-mock": "^0.9.11",
     "next-sitemap": "^4.2.3",
     "npm-run-all": "^4.1.5",
+    "oxfmt": "^0.35.0",
+    "oxlint": "^0.9.7",
     "postcss": "^8.4.32",
     "psl": "^1.9.0",
     "rollup-plugin-analyzer": "^4.0.0",
@@ -86,7 +89,7 @@
     "stylelint-config-recommended": "^14.0.0",
     "stylelint-config-standard": "^36.0.0",
     "tailwind-merge": "^2.6.0",
-    "tailwindcss": "^3.3.6",
+    "tailwindcss": "^4.1.10",
     "tsx": "^4.20.3",
     "typescript": "^5.2.2",
     "url-parse": "^1.5.3",
@@ -96,9 +99,12 @@
     "whatwg-fetch": "^3.6.20"
   },
   "lint-staged": {
-    "**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
-      "biome lint --apply --no-errors-on-unmatched",
-      "biome format --write --no-errors-on-unmatched"
+    "**/*.{js,jsx,ts,tsx}": [
+      "pnpm exec oxlint --fix",
+      "pnpm exec oxfmt --write"
+    ],
+    "**/*.{json,css,scss,md}": [
+      "pnpm exec oxfmt --write"
     ]
   }
 }

@@ -1,40 +1,78 @@
 {
-  "Hero": {
-    "description": "computational intelligence for the masses."
-  },
   "Navigation": {
     "contact": "GET IN TOUCH",
     "home": "PONTI STUDIOS"
   },
-  "Services": {
-    "title": "Capabilities",
-    "items": {
-      "strategy": {
-        "title": "AI Strategy & Design",
-        "description": "Mapping the future of your business with intelligent systems."
-      },
-      "llm": {
-        "title": "LLM Integration",
-        "description": "Customizing and deploying large language models for production."
-      },
-      "agentic": {
-        "title": "Agentic Workflows",
-        "description": "Automating complex processes with autonomous AI agents."
-      },
-      "data": {
-        "title": "Data Architecture",
-        "description": "The foundation for high-performance AI applications."
-      }
-    }
-  },
-  "About": {
-    "title": "About",
-    "p1": "We build, integrate, and design AI for small, medium, and large businesses, transforming operational complexity into intelligent autonomy.",
-    "p2": "Full-stack product management requires clarity, while most are drowning in chaos.",
-    "p3": "In a world obsessed with 'more,' we advocate for 'better.' Better performance, better aesthetics, and better intent.",
-    "cta": "Initialize Partnership"
-  },
   "Footer": {
     "rights": "© {year} Ponti Studios. All rights reserved."
+  },
+  "Studio": {
+    "hero": {
+      "label": "AI product studio",
+      "title": "AI with taste, structure, and teeth.",
+      "description": "Strategy, systems, design, engineering—under one uncompromising standard.",
+      "cta": "Start a project",
+      "ctaSecondary": "View our work",
+      "whatWeMake": ["Agentic products", "Developer tools", "AI workflows", "Internal systems"],
+      "operatingMode": "Small team. High standard. End-to-end execution."
+    },
+    "services": {
+      "title": "Built for teams shipping real AI.",
+      "subtitle": "We work across product strategy, design systems, architecture, implementation, and launch.",
+      "items": [
+        {
+          "title": "AI Product Strategy",
+          "copy": "From concept to roadmap: product framing, opportunity sizing, user workflows, and technical direction for AI-native software."
+        },
+        {
+          "title": "Agent Systems",
+          "copy": "Harness architecture, tools, skills, command systems, eval loops, and production patterns for reliable agentic products."
+        },
+        {
+          "title": "Design + Engineering",
+          "copy": "High-taste interfaces and full-stack execution across web, mobile, APIs, infra, and developer tooling."
+        }
+      ]
+    },
+    "work": {
+      "title": "Systems first. Brand second. Never separate.",
+      "subtitle": "The best AI products do not just work—they feel coherent. We design the logic, the interface, the workflows, and the language as one operating system.",
+      "items": [
+        {
+          "name": "Agent Harnesses",
+          "type": "Systems",
+          "blurb": "Architectures for tools, commands, skills, permissions, and model orchestration."
+        },
+        {
+          "name": "AI-Native Products",
+          "type": "Product",
+          "blurb": "End-to-end product design and implementation for software built around reasoning models."
+        },
+        {
+          "name": "Studio Systems",
+          "type": "Brand",
+          "blurb": "Identity, interface language, and product ecosystems built from one coherent standard."
+        }
+      ]
+    },
+    "principles": {
+      "title": "A studio shaped by standards.",
+      "items": [
+        "Clarity over hype",
+        "Systems over features",
+        "Taste over noise",
+        "Execution over decks"
+      ]
+    },
+    "about": {
+      "title": "We help ambitious teams turn AI potential into product reality.",
+      "description": "Ponti Studios partners with companies that need more than prototypes. We help define the product, shape the system, and ship the experience."
+    },
+    "contact": {
+      "title": "Need a sharp AI product studio?",
+      "subtitle": "Bring the concept, the mess, the ambition, or the rebuild. We'll bring the structure.",
+      "email": "hello@ponti.io",
+      "bookCall": "Book a call"
+    }
   }
 }

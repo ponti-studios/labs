@@ -13,8 +13,7 @@ describe("similarity utils", () => {
       expect(isWithinRange(5, [10, 0])).toBe(true);
     });
     test("should handle undefined score", () => {
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-      expect(isWithinRange(undefined as any, [0, 10])).toBe(false);
+      expect(isWithinRange(undefined as unknown as number, [0, 10])).toBe(false);
     });
   });
   describe("getRangeMidpoint", () => {
@@ -33,8 +32,7 @@ describe("similarity utils", () => {
       expect(getScoreFromRange([0, 10], undefined)).toBe(0);
     });
     test("returns 0 if query is null", () => {
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-      expect(getScoreFromRange([0, 10], null as any)).toBe(0);
+      expect(getScoreFromRange([0, 10], null)).toBe(0);
     });
     test("returns 0 if query is 0", () => {
       expect(getScoreFromRange([0, 10], 0)).toBe(0);

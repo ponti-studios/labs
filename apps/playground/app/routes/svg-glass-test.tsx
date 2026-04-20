@@ -237,7 +237,7 @@ export default function SVGGlassTest() {
           </div>
         ) : (
           /* Default colorful pattern background */
-          <div className="w-full h-full bg-gradient-to-br from-cyan-400 via-purple-500 to-pink-600">
+          <div className="w-full h-full bg-linear-to-br from-cyan-400 via-purple-500 to-pink-600">
             {/* Pattern overlay */}
             <div className="absolute inset-0 opacity-50">
               <PatternedBackground />
@@ -286,7 +286,7 @@ export default function SVGGlassTest() {
           top: `${position.y}px`,
           cursor: isDragging ? "grabbing" : "grab",
         }}
-        className="absolute size-[200px] z-[90]"
+        className="absolute size-50 z-90"
         onMouseUp={handleMouseUp}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
@@ -311,24 +311,25 @@ export default function SVGGlassTest() {
   );
 }
 
+const patternedSwatches = Array.from({ length: 64 }, (_, index) => ({
+  key: `static-pattern-${index}`,
+  className: cn({
+    "bg-red-500": index % 8 === 0,
+    "bg-orange-500": index % 8 === 1,
+    "bg-yellow-500": index % 8 === 2,
+    "bg-green-500": index % 8 === 3,
+    "bg-blue-500": index % 8 === 4,
+    "bg-indigo-500": index % 8 === 5,
+    "bg-purple-500": index % 8 === 6,
+    "bg-pink-500": index % 8 === 7,
+  }),
+}));
+
 const PatternedBackground = () => {
   return (
     <div className="grid grid-cols-8 h-full">
-      {Array.from({ length: 64 }).map((_, i) => (
-        <div
-          // biome-ignore lint/suspicious/noArrayIndexKey: This is a static array for visual pattern, index is stable.
-          key={`static-pattern-${i}`}
-          className={cn({
-            "bg-red-500": i % 8 === 0,
-            "bg-orange-500": i % 8 === 1,
-            "bg-yellow-500": i % 8 === 2,
-            "bg-green-500": i % 8 === 3,
-            "bg-blue-500": i % 8 === 4,
-            "bg-indigo-500": i % 8 === 5,
-            "bg-purple-500": i % 8 === 6,
-            "bg-pink-500": i % 8 === 7,
-          })}
-        />
+      {patternedSwatches.map((swatch) => (
+        <div key={swatch.key} className={swatch.className} />
       ))}
     </div>
   );

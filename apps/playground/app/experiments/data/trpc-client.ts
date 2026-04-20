@@ -6,8 +6,7 @@ function createAPIClient<T>({ path = "/api" }: { path: string }): T {
       get(_, key) {
         return new Proxy(() => {}, {
           get(_, method) {
-            // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-            return async (...args: any[]) => {
+            return async (...args: unknown[]) => {
               const url = `${basePath}/${String(key)}/${String(method)}`;
               // const response = await fetch(url);
               return { url, args };
