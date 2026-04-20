@@ -1,21 +1,19 @@
-import { useMutation } from "@tanstack/react-query";
-import { Plus, ThumbsDown, ThumbsUp, Trash2, User } from "lucide-react";
-import type React from "react";
-import { useRef, useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@pontistudios/ui";
-import {
   Drawer,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
   DrawerTitle,
 } from "@pontistudios/ui";
+import { useMutation } from "@tanstack/react-query";
+import { Plus, ThumbsDown, ThumbsUp, Trash2, User } from "lucide-react";
+import type React from "react";
+import { useRef, useState } from "react";
 import { useAuth } from "~/components/AuthProvider";
 import { useIsMobile } from "~/lib/use-is-mobile";
 import "../voter/pokemon-card.css";
@@ -238,7 +236,8 @@ export function CreateTrackerForm({
                 value={pro}
                 onChange={(e) => handleProChange(index, e.target.value)}
                 required={index === 0}
-                className="pokemon-card-input flex-grow"
+                style={{ flexGrow: 1 }}
+                className="pokemon-card-input"
               />
               {pros.length > 1 && (
                 <button
@@ -275,7 +274,8 @@ export function CreateTrackerForm({
                 value={con}
                 onChange={(e) => handleConChange(index, e.target.value)}
                 required={index === 0}
-                className="pokemon-card-input flex-grow"
+                style={{ flexGrow: 1 }}
+                className="pokemon-card-input"
               />
               {cons.length > 1 && (
                 <button

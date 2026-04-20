@@ -21,7 +21,7 @@ export default function Home() {
       <div className="max-w-7xl mx-auto space-y-4">
         {/* Terminal Container */}
         <div className="relative bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/50 overflow-hidden">
-          <div className="h-[60vh] max-h-[600px] min-h-[400px]">
+          <div className="h-[60vh] max-h-150 min-h-100">
             <Terminal />
           </div>
         </div>

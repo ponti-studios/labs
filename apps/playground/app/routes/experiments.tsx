@@ -2,16 +2,6 @@ import { Link } from "react-router";
 
 const experiments = [
   {
-    name: "data-agency",
-    path: "/experiments/data-agency",
-    description: "Glassmorphic landing page demo with animated backgrounds and UI components",
-  },
-  {
-    name: "llm-receipt",
-    path: "/experiments/llm-receipt",
-    description: "LLM pricing calculator and receipt viewer for various AI models",
-  },
-  {
     name: "threegl-image-gallery",
     path: "/experiments/threegl-image-gallery",
     description: "Three.js based 3D image gallery experiment",
