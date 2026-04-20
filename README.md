@@ -8,7 +8,7 @@
 | ------------- | ---- | --------------------- |
 | Home          | 3000 | http://localhost:3000 |
 | Playground    | 3001 | http://localhost:3001 |
-| Medico        | 3003 | http://localhost:3003 |
+| Health        | 3003 | http://localhost:3003 |
 | Dumphim       | 3005 | http://localhost:3005 |
 | Earth         | 3006 | http://localhost:3006 |
 | UI (package)  | 3007 | (build tool)          |
@@ -69,7 +69,7 @@ npm run dev
 
 - **home** - Main studio homepage (Next.js)
 - **playground** - React Router app for experiments
-- **medico** - Medical-related React Router app
+- **health** - Medical-related React Router app
 - **earth** - Earth intelligence dashboard (Svelte + Cesium)
 - **dumphim** - Dumphim app (React Router)
 - **ui** - Shared UI component package
