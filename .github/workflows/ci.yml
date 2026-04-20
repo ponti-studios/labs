@@ -15,6 +15,8 @@ jobs:
   db-migrate:
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -27,7 +29,10 @@ jobs:
       - run: corepack enable
       - run: pnpm install --frozen-lockfile
       - name: Clone foundation
-        run: git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/ponti-studios/foundation.git ../foundation
+        run: |
+          gh auth status || true
+          git clone https://github.com/ponti-studios/foundation.git ../foundation || \
+          git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/ponti-studios/foundation.git ../foundation
       - name: Start foundation postgres
         run: docker compose -f ../foundation/compose/base.yml -f ../foundation/compose/test.yml up -d
       - name: Run migrations
