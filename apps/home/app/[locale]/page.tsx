@@ -6,7 +6,6 @@ import {
   ContactSection,
   HeroSection,
   PrinciplesSection,
-  ServicesSection,
   WorkSection,
 } from "../../components/landing";
 
@@ -55,7 +54,6 @@ export default async function Home() {
       </nav>
 
       <HeroSection
-        label={t("hero.label")}
         title={t("hero.title")}
         description={t("hero.description")}
         cta={t("hero.cta")}
@@ -68,20 +66,17 @@ export default async function Home() {
         </div>
       </div>
 
-      <ServicesSection
-        label={t("services.label")}
-        title={t("services.title")}
-        subtitle={t("services.subtitle")}
-        items={services}
+      <WorkSection
+        servicesLabel={t("services.label")}
+        servicesTitle={t("services.title")}
+        servicesSubtitle={t("services.subtitle")}
+        servicesItems={services}
         whatWeMakeLabel={t("hero.whatWeMakeLabel")}
         whatWeMake={whatWeMake}
-      />
-
-      <WorkSection
-        label={t("work.label")}
-        title={t("work.title")}
-        subtitle={t("work.subtitle")}
-        items={work}
+        workLabel={t("work.label")}
+        workTitle={t("work.title")}
+        workSubtitle={t("work.subtitle")}
+        workItems={work}
       />
 
       <PrinciplesSection
