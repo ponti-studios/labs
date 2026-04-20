@@ -9,11 +9,21 @@
   "Studio": {
     "hero": {
       "title": "computational intelligence",
-      "description": " for creators and SMBs.",
+      "taglines": [
+        "AI that actually lands.",
+        "for founders who ship.",
+        "for teams who refuse to compromise."
+      ],
+      "description": "Guided builds, measurable outcomes, zero hype.",
       "cta": "Start a project",
       "ctaSecondary": "View our work",
       "whatWeMakeLabel": "What we make",
       "whatWeMake": ["Agentic systems", "Developer tools", "AI workflows", "Core infrastructure"]
+    },
+    "stats": {
+      "clients": { "value": "18+", "label": "clients shipped" },
+      "arr": { "value": "$15M+", "label": "ARR generated" },
+      "reduction": { "value": "90%", "label": "avg. ops reduction" }
     },
     "services": {
       "label": "Services",
@@ -35,24 +45,51 @@
       ]
     },
     "work": {
-      "label": "Selected focus",
-      "title": "Systems first. Brand second. Never separate.",
-      "subtitle": "The best AI products work *and* feel coherent. Logic, interface, workflows, language—one operating system.",
-      "items": [
+      "label": "Selected work",
+      "title": "Proof in production.",
+      "subtitle": "Real outcomes for real teams. Not prototypes — shipped systems with measurable results.",
+      "clients": [
         {
-          "name": "Agent Harnesses",
-          "type": "Systems",
-          "blurb": "Architectures for tools, commands, skills, permissions, and model orchestration."
-        },
-        {
-          "name": "AI-Native Products",
+          "name": "StreamYard",
           "type": "Product",
-          "blurb": "End-to-end product design and implementation for software built around reasoning models."
+          "metric": "$15M+",
+          "metricLabel": "ARR unlocked",
+          "blurb": "Creator collaboration marketplace. 300% YoY collaboration growth."
         },
         {
-          "name": "Studio Systems",
-          "type": "Brand",
-          "blurb": "Identity, interface language, and product ecosystems built from one coherent standard."
+          "name": "Prolog",
+          "type": "AI / Automation",
+          "metric": "90%",
+          "metricLabel": "manual entry cut",
+          "blurb": "AI-powered writer submission triage at scale. Vector similarity search."
+        },
+        {
+          "name": "Glow Digital",
+          "type": "Automation",
+          "metric": "hrs/wk",
+          "metricLabel": "saved per advertiser",
+          "blurb": "Social advertising automation. 90% reduction in third-party platform costs."
+        },
+        {
+          "name": "Humana",
+          "type": "Healthcare",
+          "metric": "1M+",
+          "metricLabel": "users served",
+          "blurb": "Senior healthcare platform. Increased engagement through personalized matching."
+        },
+        {
+          "name": "Kensho",
+          "type": "Data Engineering",
+          "metric": "10×",
+          "metricLabel": "ETL throughput",
+          "blurb": "Cloud migration and data engineering transformation for financial analytics."
+        },
+        {
+          "name": "Mimecast",
+          "type": "Enterprise",
+          "metric": "Global",
+          "metricLabel": "deployment scale",
+          "blurb": "Enterprise email security infrastructure. Global deployments with full internationalization."
         }
       ]
     },
@@ -82,15 +119,39 @@
         }
       ]
     },
+    "ventures": {
+      "label": "Ventures",
+      "title": "We build what we believe in.",
+      "subtitle": "Client work funds internal product development. We eat our own cooking.",
+      "items": [
+        {
+          "name": "Sherpa",
+          "description": "AI-powered task management and personal operating system.",
+          "status": "In development"
+        },
+        {
+          "name": "Kernel",
+          "description": "AI harness engine — tools, skills, commands, and model orchestration.",
+          "status": "In development"
+        },
+        {
+          "name": "Void",
+          "description": "Semantic intelligence engine for document analysis and embeddings.",
+          "status": "In development"
+        }
+      ]
+    },
     "about": {
       "label": "About",
       "title": "Ambitious teams need more than prototypes.",
-      "description": "Strategy, systems, craft, and execution. From concept to shipping product. For founders and teams who refuse to compromise."
+      "description": "Strategy, systems, craft, and execution. From concept to shipping product. For founders and teams who refuse to compromise.",
+      "antiposition": "If you're looking for cheap and fast, we're not for you."
     },
     "contact": {
       "label": "Contact",
       "title": "Ready to build something real?",
-      "subtitle": "Concept, mess, ambition, rebuild—bring it. We bring structure, standards, and execution.",
+      "subtitle": "Concept, mess, ambition, rebuild — bring it. We bring structure, standards, and execution.",
+      "promise": "We reply within 24 hours with a 30-minute discovery call.",
       "email": "hello@ponti.io",
       "bookCall": "Book a call"
     }

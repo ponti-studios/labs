@@ -6,11 +6,12 @@ interface ContactSectionProps {
   label: string;
   title: string;
   subtitle: string;
+  promise?: string;
   email: string;
   bookCall: string;
 }
 
-export function ContactSection({ label, title, subtitle, email, bookCall }: ContactSectionProps) {
+export function ContactSection({ label, title, subtitle, promise, email, bookCall }: ContactSectionProps) {
   return (
     <section id="contact" className="border-t border-border bg-muted">
       <div className="container py-20 md:py-28">
@@ -24,6 +25,11 @@ export function ContactSection({ label, title, subtitle, email, bookCall }: Cont
                 {title}
               </h2>
               <p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground">{subtitle}</p>
+              {promise && (
+                <p className="mt-3 text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                  {promise}
+                </p>
+              )}
             </div>
             <div className="flex flex-col gap-4 sm:flex-row lg:justify-end">
               <Link
