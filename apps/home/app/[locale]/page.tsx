@@ -5,16 +5,33 @@ import {
   Brands,
   ContactSection,
   HeroSection,
-  PrinciplesSection,
+  ManifestoSection,
+  StatsStrip,
+  VenturesSection,
   WorkSection,
 } from "../../components/landing";
 
 export default async function Home() {
   const t = await getTranslations("Studio");
   const services = t.raw("services.items") as Array<{ title: string; copy: string }>;
-  const work = t.raw("work.items") as Array<{ name: string; type: string; blurb: string }>;
+  const clients = t.raw("work.clients") as Array<{
+    name: string;
+    type: string;
+    metric: string;
+    metricLabel: string;
+    blurb: string;
+  }>;
   const principles = t.raw("principles.items") as Array<{ title: string; description: string }>;
-  const whatWeMake = t.raw("hero.whatWeMake") as string[];
+  const ventures = t.raw("ventures.items") as Array<{
+    name: string;
+    description: string;
+    status: string;
+  }>;
+  const stats = t.raw("stats") as {
+    clients: { value: string; label: string };
+    arr: { value: string; label: string };
+    reduction: { value: string; label: string };
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -60,6 +77,8 @@ export default async function Home() {
         ctaSecondary={t("hero.ctaSecondary")}
       />
 
+      <StatsStrip clients={stats.clients} arr={stats.arr} reduction={stats.reduction} />
+
       <div className="bg-white border-b border-border py-12">
         <div className="container">
           <Brands />
@@ -71,30 +90,37 @@ export default async function Home() {
         servicesTitle={t("services.title")}
         servicesSubtitle={t("services.subtitle")}
         servicesItems={services}
-        whatWeMakeLabel={t("hero.whatWeMakeLabel")}
-        whatWeMake={whatWeMake}
         workLabel={t("work.label")}
         workTitle={t("work.title")}
         workSubtitle={t("work.subtitle")}
-        workItems={work}
+        clients={clients}
       />
 
-      <PrinciplesSection
+      <ManifestoSection
         label={t("principles.label")}
         title={t("principles.title")}
         items={principles}
+      />
+
+      <VenturesSection
+        label={t("ventures.label")}
+        title={t("ventures.title")}
+        subtitle={t("ventures.subtitle")}
+        items={ventures}
       />
 
       <AboutSection
         label={t("about.label")}
         title={t("about.title")}
         description={t("about.description")}
+        antiposition={t("about.antiposition")}
       />
 
       <ContactSection
         label={t("contact.label")}
         title={t("contact.title")}
         subtitle={t("contact.subtitle")}
+        promise={t("contact.promise")}
         email={t("contact.email")}
         bookCall={t("contact.bookCall")}
       />
