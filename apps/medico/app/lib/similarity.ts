@@ -9,7 +9,7 @@ export function isWithinRange(score: number, range: number[]) {
 // Get the value at the middle of the range.
 export const getRangeMidpoint = (range: number[]) => (Math.min(...range) + Math.max(...range)) / 2;
 
-export function getScoreFromRange(range: number[], query?: number, baseScore = 25) {
+export function getScoreFromRange(range: number[], query?: number | null, baseScore = 25) {
   const maxIntensity = Math.max(...range);
   const minIntensity = Math.min(...range);
 

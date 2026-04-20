@@ -3,29 +3,29 @@
 import { useEffect, useState } from "react";
 
 interface OptimisticDataWrapperProps {
-	children: React.ReactNode;
-	fallback?: React.ReactNode;
-	delay?: number;
+  children: React.ReactNode;
+  fallback?: React.ReactNode;
+  delay?: number;
 }
 
 export function OptimisticDataWrapper({
-	children,
-	fallback,
-	delay = 100,
+  children,
+  fallback,
+  delay = 100,
 }: OptimisticDataWrapperProps) {
-	const [showFallback, setShowFallback] = useState(true);
+  const [showFallback, setShowFallback] = useState(true);
 
-	useEffect(() => {
-		const timer = setTimeout(() => {
-			setShowFallback(false);
-		}, delay);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowFallback(false);
+    }, delay);
 
-		return () => clearTimeout(timer);
-	}, [delay]);
+    return () => clearTimeout(timer);
+  }, [delay]);
 
-	if (showFallback && fallback) {
-		return <>{fallback}</>;
-	}
+  if (showFallback && fallback) {
+    return <>{fallback}</>;
+  }
 
-	return <>{children}</>;
+  return <>{children}</>;
 }
