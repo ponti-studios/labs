@@ -96,25 +96,17 @@
 			"dependsOn": ["build"],
 			"cache": false
 		},
-		"prisma:deploy": {
+		"db:generate": {
 			"cache": false,
-			"inputs": ["prisma/**"]
+			"inputs": ["packages/db/**"]
 		},
-		"prisma:generate": {
+		"db:migrate": {
 			"cache": false,
-			"inputs": ["prisma/**"]
+			"inputs": ["packages/db/**"]
 		},
-		"prisma:push": {
+		"db:push": {
 			"cache": false,
-			"inputs": ["prisma/**"]
-		},
-		"prisma:reset": {
-			"cache": false,
-			"inputs": ["prisma/**"]
-		},
-		"prisma:dev": {
-			"cache": false,
-			"inputs": ["prisma/**"]
+			"inputs": ["packages/db/**"]
 		}
 	}
 }

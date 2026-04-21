@@ -106,5 +106,6 @@
     "**/*.{json,css,scss,md}": [
       "pnpm exec oxfmt --write"
     ]
-  }
+  },
+  "packageManager": "pnpm@10.30.3"
 }
