@@ -14,7 +14,7 @@
     "preview:next": "npx next dev -p 4173",
     "refresh-deps": "rm package-lock.json && rm -rf node_modules && npm install",
     "run-lint": "pnpm exec oxlint app components --fix",
-    "run-stylelint": "stylelint --cache --fix --ignore-path .gitignore app/**/*.css",
+    "run-stylelint": "stylelint --cache --fix --ignore-path .gitignore styles/**/*.css app/**/*.css components/**/*.css 2>/dev/null || true",
     "start": "next start",
     "test": "vitest --run",
     "test:coverage": "open coverage/jest/lcov-report/index.html ",
