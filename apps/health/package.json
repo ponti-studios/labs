@@ -47,6 +47,5 @@
 		"vite": "^7.0.0",
 		"vite-tsconfig-paths": "^5.1.4",
 		"vitest": "^3.0.9"
-	},
-	"packageManager": "npm@10.9.2"
+	}
 }
