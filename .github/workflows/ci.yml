@@ -15,10 +15,15 @@ jobs:
   db-migrate:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    permissions:
-      contents: read
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sparse-checkout: |
+            packages/db
+            pnpm-lock.yaml
+            package.json
+          sparse-checkout-cone-mode: false
       - uses: pnpm/action-setup@v4
         with:
           run_install: false
@@ -28,17 +33,14 @@ jobs:
           cache: "pnpm"
       - run: corepack enable
       - run: pnpm install --frozen-lockfile
-      - name: Clone foundation
-        run: |
-          gh auth status || true
-          git clone https://github.com/ponti-studios/foundation.git ../foundation || \
-          git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/ponti-studios/foundation.git ../foundation
-      - name: Start foundation postgres
-        run: docker compose -f ../foundation/compose/base.yml -f ../foundation/compose/test.yml up -d
+      - name: Start PostgreSQL
+        run: docker run -d --name postgres-test -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=hominem -p 5433:5432 postgres:16
+      - name: Wait for postgres
+        run: sleep 10
       - name: Run migrations
         run: pnpm --workspace packages/db db:migrate
         env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:4433/hominem
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5433/hominem
 
   lint-and-test:
     runs-on: ubuntu-latest
