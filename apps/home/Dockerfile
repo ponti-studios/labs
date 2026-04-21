@@ -1,5 +1,5 @@
 # Base stage with common tools
-FROM node:23.11-bookworm-slim AS base
+FROM node:24-bookworm-slim AS base
 
 # Add labels for better metadata
 LABEL maintainer="@pontistudios/home"
@@ -20,6 +20,8 @@ RUN groupadd --gid 1001 --system nodejs && \
 # Throw-away build stage to reduce size of final image
 FROM base AS deps
 
+RUN corepack enable && pnpm install -g pnpm@10.30.3
+
 # Install packages needed to build node modules
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
@@ -30,28 +32,27 @@ RUN apt-get update -qq && \
         ca-certificates && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
-# Install node modules (copy package files first for better caching)
-COPY package.json package-lock.json* ./
-RUN npm ci --include=dev --legacy-peer-deps --ignore-scripts && \
-    npm cache clean --force
+# Copy workspace files
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/home/package.json apps/home/package.json
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 # Build stage
 FROM base AS builder
 
+WORKDIR /app
+
 # Copy node_modules from deps stage
 COPY --from=deps /app/node_modules ./node_modules
 
+# Copy workspace files
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/home/package.json apps/home/package.json
+
 # Copy application code
 COPY . .
-
-# Install build dependencies
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y \
-        build-essential \
-        node-gyp \
-        pkg-config \
-        python-is-python3 && \
-    rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 # Accept build arguments for Next.js public environment variables
 ARG PORT=3000
@@ -61,14 +62,16 @@ ARG NEXT_PUBLIC_SHOW_LOGGER=false
 ENV NEXT_PUBLIC_SHOW_LOGGER=$NEXT_PUBLIC_SHOW_LOGGER
 ENV PORT=$PORT
 
-# Set a placeholder DATABASE_URL for build time (won't be used during build with our lazy loading)
+# Set a placeholder DATABASE_URL for build time
 ENV DATABASE_URL="postgresql://placeholder:placeholder@placeholder:5432/placeholder"
 
 # Build application
-RUN npm run build
+RUN pnpm run build
 
 # Production stage
 FROM base AS runner
+
+RUN corepack enable && pnpm install -g pnpm@10.30.3
 
 # Install runtime dependencies including PostgreSQL client
 RUN apt-get update -qq && \

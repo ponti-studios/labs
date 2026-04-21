@@ -3,73 +3,52 @@
 # docker build -f apps/earth/Dockerfile .
 
 # ─── Stage 1: Install dependencies ───────────────────────────────────────────
-FROM node:25-bookworm-slim AS deps
+FROM node:24-bookworm-slim AS deps
 
-# npm 11.x has a bug with workspace-deduplication entries in lockfile v3.
-# Pin to 10.x until the upstream fix lands.
-RUN npm install -g npm@10.9.2 --quiet
+RUN corepack enable && pnpm install -g pnpm@10.30.3
 
 WORKDIR /app
 
-# Copy ALL workspace package.json files so npm can resolve the full workspace
-# link graph from the lockfile without missing-directory errors.
-COPY package.json package-lock.json ./
-COPY apps/dumphim/package.json          apps/dumphim/package.json
-COPY apps/earth/package.json            apps/earth/package.json
-COPY apps/health/package.json           apps/health/package.json
-COPY apps/playground/package.json       apps/playground/package.json
-COPY apps/scrape/package.json           apps/scrape/package.json
-COPY packages/db/package.json          packages/db/package.json
-COPY packages/tailwind-config/package.json packages/tailwind-config/package.json
-COPY packages/tsconfig/package.json    packages/tsconfig/package.json
-COPY packages/ui/package.json          packages/ui/package.json
-COPY packages/utils/package.json       packages/utils/package.json
+# Copy pnpm workspace files
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/earth/package.json apps/earth/package.json
+COPY packages/db/package.json packages/db/package.json
+COPY packages/tsconfig/package.json packages/tsconfig/package.json
 
-RUN npm ci --ignore-scripts --workspace=packages/db \
- && npm ci --ignore-scripts --workspace=apps/earth
-
+# Install dependencies
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 # ─── Stage 2: Build ──────────────────────────────────────────────────────────
 FROM deps AS builder
 
 WORKDIR /app
 
-COPY tsconfig.base.json ./
-COPY packages/db/       packages/db/
-COPY apps/earth/        apps/earth/
+COPY packages/db/ packages/db/
+COPY apps/earth/ apps/earth/
 
-RUN npm run build --workspace=packages/db
-RUN npm run build --workspace=apps/earth
-
+RUN pnpm run build --filter @pontistudios/db
+RUN pnpm run build --filter @pontistudios/earth
 
 # ─── Stage 3: Production image ───────────────────────────────────────────────
-FROM node:25-bookworm-slim AS runner
+FROM node:24-bookworm-slim AS runner
 
-# Pin npm to same version as build stages.
-RUN npm install -g npm@10.9.2 --quiet
+RUN corepack enable && pnpm install -g pnpm@10.30.3
 
 ENV NODE_ENV=production
 WORKDIR /app
 
-# Copy ALL workspace manifests so npm can resolve the link graph.
-COPY package.json package-lock.json ./
-COPY apps/dumphim/package.json          apps/dumphim/package.json
-COPY apps/earth/package.json            apps/earth/package.json
-COPY apps/health/package.json           apps/health/package.json
-COPY apps/playground/package.json       apps/playground/package.json
-COPY apps/scrape/package.json           apps/scrape/package.json
-COPY packages/db/package.json          packages/db/package.json
-COPY packages/tailwind-config/package.json packages/tailwind-config/package.json
-COPY packages/tsconfig/package.json    packages/tsconfig/package.json
-COPY packages/ui/package.json          packages/ui/package.json
-COPY packages/utils/package.json       packages/utils/package.json
+# Copy workspace files for pnpm resolution
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/earth/package.json apps/earth/package.json
+COPY packages/db/package.json packages/db/package.json
+COPY packages/tsconfig/package.json packages/tsconfig/package.json
 
-RUN npm ci --ignore-scripts --omit=dev --workspace=packages/db \
- && npm ci --ignore-scripts --omit=dev --workspace=apps/earth
+# Install production dependencies only
+RUN pnpm install --frozen-lockfile --prod --ignore-scripts
 
-# Copy built artifacts from builder stage.
-COPY --from=builder /app/packages/db/dist      packages/db/dist
-COPY --from=builder /app/apps/earth/dist        apps/earth/dist
+# Copy built artifacts
+COPY --from=builder /app/packages/db/dist packages/db/dist
+COPY --from=builder /app/apps/earth/dist apps/earth/dist
 
 # Create non-root user for security
 RUN groupadd -r app && useradd -r -g app app

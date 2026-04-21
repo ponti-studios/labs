@@ -10,5 +10,6 @@
   ],
   "scripts": {
     "test": "echo 'No tests'"
-  }
+  },
+  "packageManager": "pnpm@10.30.3"
 }
