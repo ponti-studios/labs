@@ -29,7 +29,13 @@ jobs:
       - name: Start PostgreSQL
         run: docker run -d --name postgres-test -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=hominem -p 5433:5432 postgres:16
       - name: Wait for postgres
-        run: sleep 10
+        run: |
+          for i in {1..30}; do
+            docker exec postgres-test pg_isready -U postgres && break
+            sleep 1
+          done
+      - name: Verify postgres connection
+        run: docker exec postgres-test psql -U postgres -d hominem -c 'SELECT 1'
       - name: Run migrations
         run: pnpm --filter @pontistudios/db db:migrate
         env:
