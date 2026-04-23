@@ -39,12 +39,12 @@ export type {
 } from './schema/playground';
 
 export type {
-  DumphimTracker,
-  NewDumphimTracker,
-  DumphimVote,
-  NewDumphimVote,
-  DumphimTrackerParsed,
-} from './schema/dumphim';
+  SocialTracker,
+  NewSocialTracker,
+  SocialVote,
+  NewSocialVote,
+  SocialTrackerParsed,
+} from './schema/social';
 
 export {
   disasterEvents,

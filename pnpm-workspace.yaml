@@ -1,4 +1,42 @@
 packages:
   - "apps/*"
   - "packages/*"
+catalog:
+  "@playwright/test": ^1.59.1
+  "@react-router/dev": ^7.14.2
+  "@react-router/node": ^7.14.2
+  "@react-router/serve": ^7.14.2
+  "@tailwindcss/postcss": ^4.2.4
+  "@tailwindcss/vite": ^4.2.4
+  "@tanstack/react-query": ^5.99.2
+  "@tanstack/react-query-devtools": ^5.99.2
+  "@testing-library/dom": ^10.4.1
+  "@testing-library/jest-dom": ^6.9.1
+  "@testing-library/react": ^16.3.2
+  "@types/node": ^25.6.0
+  "@types/react": ^19.2.14
+  "@types/react-dom": ^19.2.3
+  "@vitejs/plugin-react": ^6.0.1
+  "@vitest/coverage-v8": ^4.1.5
+  autoprefixer: ^10.5.0
+  drizzle-orm: ^0.45.2
+  jsdom: ^29.0.2
+  lucide-react: ^1.8.0
+  postcss: ^8.5.10
+  postgres: ^3.4.9
+  react: ^19.2.5
+  react-dom: ^19.2.5
+  react-router: ^7.14.2
+  tailwind-merge: ^3.5.0
+  tailwindcss: ^4.2.4
+  tsx: ^4.21.0
+  typescript: ^5.9.3
+  vite: ^8.0.10
+  vite-tsconfig-paths: ^6.1.1
+  vitest: ^4.1.5
+  zod: ^4.3.6
+catalogs:
+  ui:
+    "@vitejs/plugin-react": ^5.2.0
+    vite: ^6.4.2
 strictPeerDependencies: false

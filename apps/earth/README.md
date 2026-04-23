@@ -60,13 +60,13 @@ Only minimal UI state is reactive:
 
 ```bash
 # Run dev server
-npm run dev:earth
+pnpm dev
 
 # Build for production
-npm run build
+pnpm build
 
 # Type check
-npm run check
+pnpm typecheck
 ```
 
 ## Stack

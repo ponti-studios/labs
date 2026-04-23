@@ -12,20 +12,20 @@ REDIS_URL = "redis://localhost:6379"
 
 [tasks.dev]
 description = "Start all apps in development mode"
-run = "npm run dev"
+run = "pnpm dev"
 
 [tasks.test]
 description = "Run tests"
-run = "npm run test"
+run = "pnpm test"
 
 [tasks.lint]
 description = "Run linter"
-run = "npm run turbo -- run lint --force --parallel"
+run = "pnpm turbo run lint --force --parallel"
 
 [tasks.build]
 description = "Lint and build the application"
 depends = ["lint"]
-run = "npm run turbo -- run build --force"
+run = "pnpm turbo run build --force"
 
 [tasks.clean]
 description = "Clean build artifacts and dependencies"
