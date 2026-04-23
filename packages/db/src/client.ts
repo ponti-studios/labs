@@ -4,7 +4,7 @@ import { Pool } from 'pg';
 import { disasterEvents } from './schema/disaster';
 import { relationshipPeople, relationshipStageHistory, relationshipEvents, relationshipNotes, relationshipCheckins, relationshipFlags, relationshipFriendInvites, relationshipFriendVotes, relationshipMetricsDaily } from './schema/relationships';
 import { covidData, tflCameras, projects, todos, embeddings } from './schema/playground';
-import { trackers, votes } from './schema/dumphim';
+import { trackers, votes } from './schema/social';
 import { users, messages } from './schema/kuma';
 
 export interface Database {

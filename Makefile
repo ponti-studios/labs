@@ -22,6 +22,10 @@ dev:
 	@echo "Starting development server..."
 	pm2 start pnpm --name="hominem" -- run dev
 
+dev-home:
+	@echo "Starting development server for hominem..."
+	pm2 start pnpm --name="@pontistudios/home" -- run dev:home
+
 run-redis:
 	@echo "Starting Redis..."
 	pm2 start pnpm --name="hominem-redis" -- run redis

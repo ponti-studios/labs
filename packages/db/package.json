@@ -19,19 +19,19 @@
     "clean": "rm -rf dist tsconfig.tsbuildinfo"
   },
   "dependencies": {
-    "drizzle-orm": "^0.45.2",
-    "kysely": "^0.28.2",
+    "drizzle-orm": "catalog:",
+    "kysely": "^0.28.16",
     "pg": "^8.20.0",
-    "postgres": "^3.4.9",
-    "zod": "^4.3.6"
+    "postgres": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
-    "@types/node": "^24.11.0",
+    "@types/node": "catalog:",
     "@types/pg": "^8.20.0",
     "drizzle-kit": "^0.31.10",
-    "tsx": "^4.21.0",
-    "typescript": "~5.7.2",
-    "vitest": "^4.0.18"
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "packageManager": "pnpm@10.30.3"
 }

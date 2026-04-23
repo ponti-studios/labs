@@ -9,7 +9,7 @@
 | Home          | 3000 | http://localhost:3000 |
 | Playground    | 3001 | http://localhost:3001 |
 | Health        | 3003 | http://localhost:3003 |
-| Dumphim       | 3005 | http://localhost:3005 |
+| Social       | 3005 | http://localhost:3005 |
 | Earth         | 3006 | http://localhost:3006 |
 | UI (package)  | 3007 | (build tool)          |
 
@@ -57,10 +57,10 @@ cd labs
 cp env.example .env
 
 # Install dependencies
-npm install
+pnpm install
 
 # Run all dev servers
-npm run dev
+pnpm dev
 ```
 
 **Note:** Apps connect to `localhost:5434` (foundation postgres) by default. Do not run `docker compose` from labs — infra lives in foundation.
@@ -71,7 +71,7 @@ npm run dev
 - **playground** - React Router app for experiments
 - **health** - Medical-related React Router app
 - **earth** - Earth intelligence dashboard (Svelte + Cesium)
-- **dumphim** - Dumphim app (React Router)
+- **social** - Social app (React Router)
 - **ui** - Shared UI component package
 
 ## Packages
