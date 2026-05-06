@@ -1,0 +1,14 @@
+{
+  "extends": "@pontistudios/tsconfig/react.json",
+  "include": ["**/*", "**/.server/**/*", "**/.client/**/*", ".react-router/types/**/*"],
+  "exclude": ["app/routes/svelte/**/*"],
+  "compilerOptions": {
+    "types": ["node", "vite/client", "google.maps"],
+    "rootDirs": [".", "./.react-router/types"],
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./app/*"]
+    },
+    "noEmit": true
+  }
+}
