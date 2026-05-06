@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer base {
+  body {
+    @apply bg-[#080a10] text-white antialiased selection:bg-blue-500/30;
+    overflow-x: hidden;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/8 backdrop-blur-[32px] border border-white/15 shadow-[0_30px_60px_rgba(0,0,0,0.4)];
+  }
+  
+  .glass-light {
+    @apply bg-white/5 backdrop-blur-[10px] border border-white/10;
+  }
+
+  .atmosphere {
+    background: 
+      radial-gradient(circle at 20% 30%, #1e2a4a 0, transparent 40%),
+      radial-gradient(circle at 80% 70%, #3d1b3d 0, transparent 40%),
+      linear-gradient(135deg, #080a10 0%, #1a1d2e 100%);
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
