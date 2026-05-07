@@ -1,7 +1,7 @@
 // React Router compatible version of covid actions
 
-import { and, eq, isNotNull, sql } from "drizzle-orm";
-import { covidData, db } from "~/db";
+import { and, eq, isNotNull, sql } from "@pontistudios/db";
+import { covidData, db } from "@pontistudios/db";
 import type { CovidDataSelect } from "~/db/schema";
 
 interface ApiResponse {

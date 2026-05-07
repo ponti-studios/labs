@@ -6,5 +6,6 @@ export default [
   route("/tracker/create", "routes/tracker/create.tsx"),
   route("/tracker/:id", "routes/tracker/[id]/page.tsx"),
   route("/tracker/:id/vote", "routes/tracker/[id]/vote.tsx"),
+  route("/time-together", "routes/time-together.tsx"),
   // API routes are handled by Hono server
 ] satisfies RouteConfig;

@@ -1,6 +1,6 @@
-import { and, eq, gte, sql } from "drizzle-orm";
+import { and, eq, gte, sql } from "@pontistudios/db";
 import type { LoaderFunctionArgs } from "react-router";
-import { covidData, db } from "~/db";
+import { covidData, db } from "@pontistudios/db";
 
 interface WaveData {
   wave: number;

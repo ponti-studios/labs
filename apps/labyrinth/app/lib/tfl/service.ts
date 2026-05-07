@@ -1,5 +1,5 @@
-import { eq } from "drizzle-orm";
-import { db, tflCameras } from "~/db/index";
+import { eq } from "@pontistudios/db";
+import { db, tflCameras } from "@pontistudios/db";
 import type { Cameras } from "./types";
 
 export async function getCameras(): Promise<Cameras> {

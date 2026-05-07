@@ -3,9 +3,9 @@
  * Uses Drizzle ORM with Postgres
  */
 
-import { desc, eq } from "drizzle-orm";
-import { db, trackers, votes } from "~/lib/db";
-import type { SocialTrackerParsed, SocialVote, SocialTracker } from "~/lib/db";
+import { desc, eq } from "@pontistudios/db";
+import { db, trackers, votes } from "@pontistudios/db";
+import type { SocialTrackerParsed, SocialVote, SocialTracker } from "@pontistudios/db";
 
 function parseTracker(raw: SocialTracker): SocialTrackerParsed {
   return {

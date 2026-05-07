@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 import type React from "react";
 import { useEffect, useRef } from "react";
-import type { SocialVote } from "~/lib/db";
+import type { SocialVote } from "@pontistudios/db";
 
 // Use the canonical Vote type from the updated schema
 

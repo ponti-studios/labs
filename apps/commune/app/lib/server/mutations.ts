@@ -8,9 +8,9 @@
  * - Consistent updatedAt timestamps
  */
 
-import { eq } from "drizzle-orm";
-import { db, trackers, votes } from "~/lib/db";
-import type { NewSocialTracker, NewSocialVote, SocialTracker, SocialVote } from "~/lib/db";
+import { eq } from "@pontistudios/db";
+import { db, trackers, votes } from "@pontistudios/db";
+import type { NewSocialTracker, NewSocialVote, SocialTracker, SocialVote } from "@pontistudios/db";
 import { queryCache, invalidateTrackerCache } from "./cache";
 
 // Tracker mutations

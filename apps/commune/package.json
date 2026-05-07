@@ -21,12 +21,10 @@
     "@tanstack/react-query": "catalog:",
     "better-auth": "^1.6.7",
     "d3": "^7.9.0",
-    "drizzle-orm": "catalog:",
     "framer-motion": "^12.38.0",
     "hono": "^4.12.14",
     "isbot": "^5.1.39",
     "lucide-react": "catalog:",
-    "postgres": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-router": "catalog:"

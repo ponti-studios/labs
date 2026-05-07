@@ -2,7 +2,7 @@ import { AlertTriangle, Heart, ThumbsDown, ThumbsUp, User } from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { useAuth } from "~/components/AuthProvider";
-import type { SocialTrackerParsed, SocialVote } from "~/lib/db";
+import type { SocialTrackerParsed, SocialVote } from "@pontistudios/db";
 import { generateFingerprint } from "~/lib/voter.utils";
 import VoteChart from "./VoteChart";
 
