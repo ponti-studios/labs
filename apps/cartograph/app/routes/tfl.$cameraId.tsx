@@ -105,7 +105,9 @@ export default function TflCamera() {
         <div className="grid grid-cols-2 gap-2">
           <div className="cesium-card p-3">
             <div className="cesium-card-label">View Direction</div>
-            <div className="cesium-card-value">{camera.view.toUpperCase()}</div>
+            <div className="cesium-card-value">
+              {camera.view && camera.view.length > 0 ? camera.view.toUpperCase() : "—"}
+            </div>
           </div>
           <div className="cesium-card p-3">
             <div className="cesium-card-label">Status</div>

@@ -1,6 +1,6 @@
-import { and, eq, gte } from "drizzle-orm";
+import { and, eq, gte } from "@pontistudios/db";
 import type { LoaderFunctionArgs } from "react-router";
-import { covidData, db } from "~/db";
+import { covidData, db } from "@pontistudios/db";
 
 interface VaccinationEffectiveness {
   overall: number;

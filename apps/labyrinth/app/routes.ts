@@ -23,6 +23,10 @@ export default [
   route("/api/todos", "routes/api.todos.ts"),
   route("/api/projects", "routes/api.projects.ts"),
 
+  // Experiments
+  route("/experiments", "routes/experiments.tsx"),
+  route("/experiments/threegl-image-gallery", "routes/experiments.threegl-image-gallery.tsx"),
+
   // Coding Challenges
   route("/challenges/algorithms", "routes/Algorithms.jsx"),
   route("/challenges/cards", "routes/Cards.jsx"),
@@ -37,6 +41,6 @@ export default [
   route("/challenges/peterson-academy", "routes/PetersonAcademy.jsx"),
   route("/challenges/qubit", "routes/Qubit.jsx"),
   route("/challenges/quilt", "routes/Quilt.jsx"),
-  route("/challenges/red-badger", "routes/RedBadger.jsx"),
+  route("/challenges/red-badger", "routes/RedBadger.tsx"),
   route("/challenges/vendigo", "routes/Vendigo.jsx"),
 ] satisfies RouteConfig;

@@ -1,6 +1,6 @@
-import { and, eq, gte, lte, sql } from "drizzle-orm";
+import { and, eq, gte, lte, sql } from "@pontistudios/db";
 import type { LoaderFunctionArgs } from "react-router";
-import { covidData, db } from "~/db";
+import { covidData, db } from "@pontistudios/db";
 import type { CovidDataSelect } from "~/db/schema";
 
 export async function loader({ request }: LoaderFunctionArgs) {

@@ -8,9 +8,9 @@
  * - ~90% reduction in data transfer for stats endpoints
  */
 
-import { sql, desc, eq, inArray } from "drizzle-orm";
-import { db, trackers, votes } from "~/lib/db";
-import type { SocialTrackerParsed, SocialVote, SocialTracker } from "~/lib/db";
+import { sql, desc, eq, inArray } from "@pontistudios/db";
+import { db, trackers, votes } from "@pontistudios/db";
+import type { SocialTrackerParsed, SocialVote, SocialTracker } from "@pontistudios/db";
 
 function parseTracker(raw: SocialTracker): SocialTrackerParsed {
   return {

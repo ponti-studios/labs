@@ -1,5 +1,7 @@
-import { isRouteErrorResponse, Links, Meta, Scripts, ScrollRestoration } from "react-router";
-import CesiumViewer from "./components/CesiumViewer";
+import { isRouteErrorResponse, Links, Meta, Scripts, ScrollRestoration, Outlet, useLocation } from "react-router";
+import { useMemo } from "react";
+import LeafletViewer from "./components/LeafletViewer";
+import Controls from "./components/Controls";
 import "./app.css";
 
 export const links = () => [
@@ -36,9 +38,28 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const location = useLocation();
+
+  const currentTab = useMemo(() => {
+    const pathSegments = location.pathname.split("/").filter(Boolean);
+    if (pathSegments.length > 0) {
+      const firstSegment = pathSegments[0];
+      if (["covid", "satellites", "tfl", "geospatial"].includes(firstSegment)) {
+        return firstSegment;
+      }
+    }
+    return "covid"; // Default tab
+  }, [location.pathname]);
+
   return (
     <div className="earth-shell">
-      <CesiumViewer />
+      <LeafletViewer />
+      <div className="earth-dock">
+        <Controls currentTab={currentTab} />
+        <div className="earth-dock-content">
+          <Outlet />
+        </div>
+      </div>
     </div>
   );
 }

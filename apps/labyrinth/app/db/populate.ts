@@ -3,7 +3,7 @@ import path from "node:path";
 import { Transform } from "node:stream";
 import { pipeline } from "node:stream/promises";
 import { parse } from "csv-parse";
-import { sql } from "drizzle-orm";
+import { sql } from "@pontistudios/db";
 import { db } from "./index";
 import { type CovidDataInsert, covidData } from "./schema";
 

@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { cn } from "~/lib/utils";
-import { trackers } from "~/lib/db";
+import { trackers } from "@pontistudios/db";
 import type { CardTheme } from "./card-theme-picker";
 
 type CardData = typeof trackers.$inferInsert;

@@ -1,6 +1,6 @@
-import { sql } from "drizzle-orm";
+import { sql } from "@pontistudios/db";
 import type { LoaderFunctionArgs } from "react-router";
-import { covidData, db } from "~/db";
+import { covidData, db } from "@pontistudios/db";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
