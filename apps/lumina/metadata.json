@@ -1,6 +1,0 @@
-{
-  "name": "Nexus Intelligence",
-  "description": "A unified multi-modal AI layer featuring high-fidelity Chat and real-time Voice Live modes. Capture intent through text, vision, and voice in a single fluid experience.",
-  "requestFramePermissions": ["camera", "microphone"],
-  "majorCapabilities": ["AI", "Multi-modal", "Real-time"]
-}
