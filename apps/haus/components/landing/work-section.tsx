@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { BrandLogos } from "./brands";
 import { AccordionRow, SectionHeader } from "./shared";
 
 // ─── Data shapes ─────────────────────────────────────────────────────────────
@@ -56,14 +55,6 @@ export function WorkSection({
         {/* ── Section header ── */}
         <div className="mb-16">
           <SectionHeader label={label} title={title} subtitle={subtitle} />
-        </div>
-
-        {/* ── Brand logos ── */}
-        <div className="border-y border-border py-12 md:py-16">
-          <p className="mb-10 text-center text-[0.65rem] uppercase tracking-[0.28em] text-muted-foreground/50">
-            Trusted by distinguished organizations
-          </p>
-          <BrandLogos />
         </div>
 
         {/* ── Case studies ── */}

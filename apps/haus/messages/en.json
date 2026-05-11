@@ -74,46 +74,74 @@
       "subtitle": "Real outcomes for real teams. Not prototypes — shipped systems with measurable results.",
       "clients": [
         {
+          "name": "Lumina Industries",
+          "type": "Search / Retention",
+          "metric": "Unified",
+          "metricLabel": "scoring engine",
+          "blurb": "Built a semantic + lexical search engine with unified ranking across keywords, semantic relatedness, recency, and engagement. Also hardened critical flows, reduced payloads, and shipped a student performance dashboard with cohort benchmarking and Resume Learning paths."
+        },
+        {
+          "name": "Revrock",
+          "type": "Music Platform",
+          "metric": "Tour",
+          "metricLabel": "cost reduction",
+          "blurb": "Built an end-to-end platform for independent musicians with intelligent route planning, financial dashboards, automated venue discovery, and Spotify-powered audience insights."
+        },
+        {
           "name": "StreamYard",
           "type": "Product",
           "metric": "$15M+",
-          "metricLabel": "ARR unlocked",
-          "blurb": "Creator collaboration marketplace. 300% YoY collaboration growth."
+          "metricLabel": "new ARR",
+          "blurb": "Drove end-to-end development of consumer Teams and enterprise Business plans with role-based access control and collaboration features that unlocked $15M+ in new ARR and 13% consumer user growth. Built a two-sided creator marketplace serving 20K+ monthly active users with vector recommendations and generative AI conversation starters, driving a 40% lift in engagement and 300% YoY creator collaboration growth."
         },
         {
           "name": "Prolog",
           "type": "AI / Automation",
           "metric": "90%",
-          "metricLabel": "manual entry cut",
-          "blurb": "AI-powered writer submission triage at scale. Vector similarity search."
+          "metricLabel": "manual work removed",
+          "blurb": "Led engineering of a web application for producer submission triage, including an LLM-powered email parser for automated data extraction and vector-based similarity search for rapid candidate evaluation."
         },
         {
-          "name": "Glow Digital",
-          "type": "Automation",
-          "metric": "hrs/wk",
-          "metricLabel": "saved per advertiser",
-          "blurb": "Social advertising automation. 90% reduction in third-party platform costs."
+          "name": "Whistle",
+          "type": "Video / Privacy",
+          "metric": "COVID",
+          "metricLabel": "operations continuity",
+          "blurb": "Managed product, design, and engineering for a privacy-focused video conferencing platform tailored for movement-based education, helping a prestigious NYC ballet school keep operating during COVID-19."
         },
         {
           "name": "Humana",
           "type": "Healthcare",
           "metric": "1M+",
-          "metricLabel": "users served",
-          "blurb": "Senior healthcare platform. Increased engagement through personalized matching."
+          "metricLabel": "senior users",
+          "blurb": "Led mobile, voice, and chat engineering for holistic senior healthcare solutions and conducted user research to keep roadmap decisions tightly value-driven."
         },
         {
           "name": "Kensho",
           "type": "Data Engineering",
           "metric": "10×",
           "metricLabel": "ETL throughput",
-          "blurb": "Cloud migration and data engineering transformation for financial analytics."
+          "blurb": "Led architecture transformation from a proprietary ETL platform to a modern data stack using AWS S3, Spark, and Airflow, reducing processing time and maintenance overhead while leading a 15-engineer team across two locations."
         },
         {
           "name": "Mimecast",
           "type": "Enterprise",
           "metric": "Global",
           "metricLabel": "deployment scale",
-          "blurb": "Enterprise email security infrastructure. Global deployments with full internationalization."
+          "blurb": "Led web application development for an enterprise email and security management product, including a scalable white-label styling system and an internationalization / translation library."
+        },
+        {
+          "name": "Thomson Reuters",
+          "type": "Media",
+          "metric": "Global",
+          "metricLabel": "app deployment",
+          "blurb": "Designed and engineered a global application deployment, management, and monitoring platform, with fine-grained RBAC, personalized dashboards for decision-making, and monthly technical debt and code review sessions to raise team quality."
+        },
+        {
+          "name": "Glow Digital",
+          "type": "Automation",
+          "metric": "90%",
+          "metricLabel": "API reduction",
+          "blurb": "Contributed to a web application for creating and auto-optimizing social ad campaigns, cutting third-party API usage by 90% and automating repetitive data entry to save users several hours per week."
         }
       ]
     },
