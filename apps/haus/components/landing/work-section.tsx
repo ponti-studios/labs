@@ -1,12 +1,10 @@
 "use client";
 
-import { motion, useInView, useReducedMotion } from "framer-motion";
-import { useRef } from "react";
+import { useState } from "react";
+import { BrandLogos } from "./brands";
+import { AccordionRow, SectionHeader } from "./shared";
 
-interface ServiceItem {
-  title: string;
-  copy: string;
-}
+// ─── Data shapes ─────────────────────────────────────────────────────────────
 
 interface ClientItem {
   name: string;
@@ -16,169 +14,141 @@ interface ClientItem {
   blurb: string;
 }
 
-interface WorkSectionProps {
-  servicesLabel: string;
-  servicesTitle: string;
-  servicesSubtitle: string;
-  servicesItems: ServiceItem[];
-  workLabel: string;
-  workTitle: string;
-  workSubtitle: string;
+interface VentureItem {
+  name: string;
+  description: string;
+  status: string;
+}
+
+export interface WorkSectionProps {
+  label: string;
+  title: string;
+  subtitle: string;
   clients: ClientItem[];
+  venturesLabel: string;
+  venturesTitle: string;
+  venturesSubtitle: string;
+  ventures: VentureItem[];
 }
 
-// Animated headline that reveals character-by-character on scroll entry
-function RevealHeadline({ text, className }: { text: string; className?: string }) {
-  const ref = useRef<HTMLHeadingElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-15%" });
-  const prefersReduced = useReducedMotion();
-
-  const words = text.split(" ");
-
-  return (
-    <h2 ref={ref} className={className} aria-label={text}>
-      {words.map((word, wi) => (
-        <span key={wi} className="inline-block mr-[0.25em]">
-          {word.split("").map((char, ci) => (
-            <motion.span
-              key={ci}
-              className="inline-block overflow-hidden"
-              style={{ display: "inline-block" }}
-            >
-              <motion.span
-                style={{ display: "inline-block" }}
-                initial={{ y: prefersReduced ? 0 : "100%" }}
-                animate={isInView || prefersReduced ? { y: 0 } : {}}
-                transition={{
-                  duration: 0.45,
-                  ease: [0.16, 1, 0.3, 1],
-                  delay: prefersReduced ? 0 : (wi * word.length + ci) * 0.022,
-                }}
-              >
-                {char}
-              </motion.span>
-            </motion.span>
-          ))}
-        </span>
-      ))}
-    </h2>
-  );
-}
-
-// Horizontal drag scroller
-function ClientScroller({ clients }: { clients: ClientItem[] }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  return (
-    <div className="overflow-hidden -mx-4 px-4 md:-mx-8 md:px-8">
-      <motion.div
-        ref={containerRef}
-        drag="x"
-        dragConstraints={{ right: 0, left: -(clients.length - 1.5) * 320 }}
-        dragElastic={0.08}
-        dragTransition={{ bounceStiffness: 300, bounceDamping: 30 }}
-        className="flex gap-5 cursor-grab active:cursor-grabbing select-none"
-        style={{ width: `${clients.length * 320 + (clients.length - 1) * 20}px` }}
-      >
-        {clients.map((client, i) => (
-          <motion.div
-            key={client.name}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-5%" }}
-            transition={{ duration: 0.5, delay: i * 0.06 }}
-            className="shrink-0 w-75 border border-border bg-background p-7 flex flex-col justify-between"
-            style={{ minHeight: "260px" }}
-          >
-            <div>
-              <div className="flex items-center justify-between mb-8">
-                <span className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-                  {client.type}
-                </span>
-              </div>
-              <div className="mb-2">
-                <span className="text-4xl font-normal tracking-tight tabular-nums">
-                  {client.metric}
-                </span>
-                <span className="block text-xs uppercase tracking-[0.18em] text-muted-foreground mt-1">
-                  {client.metricLabel}
-                </span>
-              </div>
-            </div>
-            <div>
-              <div className="text-lg font-normal uppercase tracking-[-0.03em] mb-3">
-                {client.name}
-              </div>
-              <p className="text-sm leading-6 text-muted-foreground">{client.blurb}</p>
-            </div>
-          </motion.div>
-        ))}
-      </motion.div>
-      <p className="mt-4 text-xs uppercase tracking-[0.18em] text-muted-foreground opacity-50">
-        ← drag to explore →
-      </p>
-    </div>
-  );
-}
+// ─── Main export ──────────────────────────────────────────────────────────────
 
 export function WorkSection({
-  servicesLabel,
-  servicesTitle,
-  servicesSubtitle,
-  servicesItems,
-  workLabel,
-  workTitle,
-  workSubtitle,
+  label,
+  title,
+  subtitle,
   clients,
+  venturesLabel,
+  venturesTitle,
+  venturesSubtitle,
+  ventures,
 }: WorkSectionProps) {
+  const [openClient, setOpenClient] = useState<number | null>(null);
+  const [openVenture, setOpenVenture] = useState<number | null>(null);
+
+  const toggleClient = (i: number) => setOpenClient(openClient === i ? null : i);
+  const toggleVenture = (i: number) => setOpenVenture(openVenture === i ? null : i);
+
   return (
-    <section id="services" className="border-y border-border bg-muted">
+    <section id="work" className="border-t border-border bg-background">
       <div className="container py-20 md:py-28">
-        {/* Services */}
-        <div className="mb-12 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div>
-            <span className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-              {servicesLabel}
-            </span>
-            <RevealHeadline
-              text={servicesTitle}
-              className="mt-3 text-3xl font-normal uppercase tracking-[-0.04em]"
+
+        {/* ── Section header ── */}
+        <div className="mb-16">
+          <SectionHeader label={label} title={title} subtitle={subtitle} />
+        </div>
+
+        {/* ── Brand logos ── */}
+        <div className="border-y border-border py-12 md:py-16">
+          <p className="mb-10 text-center text-[0.65rem] uppercase tracking-[0.28em] text-muted-foreground/50">
+            Trusted by distinguished organizations
+          </p>
+          <BrandLogos />
+        </div>
+
+        {/* ── Case studies ── */}
+        <div className="mt-16">
+          <div className="mb-8">
+            <SectionHeader
+              as="h3"
+              label="Case Studies"
+              title="Client work"
+              headingClassName="mt-2 text-2xl"
             />
           </div>
-          <p className="max-w-xl text-sm leading-6 text-muted-foreground">{servicesSubtitle}</p>
-        </div>
-
-        <div className="grid gap-5 md:grid-cols-3">
-          {servicesItems.map((service) => (
-            <div
-              key={service.title}
-              className="rounded-none border border-border bg-background p-7"
-            >
-              <div className="mb-5 text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                {service.title}
-              </div>
-              <p className="text-lg leading-8 text-foreground">{service.copy}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Work / Case Studies */}
-        <div id="work" className="mt-20 border-t border-border pt-20">
-          <div className="mb-12 grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
-            <div>
-              <span className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-                {workLabel}
-              </span>
-              <RevealHeadline
-                text={workTitle}
-                className="mt-3 text-3xl font-normal uppercase tracking-[-0.04em]"
-              />
-            </div>
-            <p className="max-w-2xl text-base leading-7 text-muted-foreground">{workSubtitle}</p>
+          <div>
+            {clients.map((client, i) => (
+              <AccordionRow
+                key={client.name}
+                index={i}
+                isOpen={openClient === i}
+                onToggle={() => toggleClient(i)}
+                title={client.name}
+                badge={
+                  <span className="hidden text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground/50 sm:block">
+                    {client.type}
+                  </span>
+                }
+                aside={
+                  <span className="hidden text-right md:block">
+                    <span className="block text-lg font-normal tracking-tight tabular-nums">
+                      {client.metric}
+                    </span>
+                    <span className="block text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground/50">
+                      {client.metricLabel}
+                    </span>
+                  </span>
+                }
+              >
+                {/* Metric visible on mobile inside expanded content */}
+                <p className="mb-1 text-sm font-medium tabular-nums md:hidden">
+                  {client.metric}{" "}
+                  <span className="text-xs font-normal uppercase tracking-[0.16em] text-muted-foreground">
+                    {client.metricLabel}
+                  </span>
+                </p>
+                <p className="text-sm leading-7 text-muted-foreground max-w-2xl">{client.blurb}</p>
+              </AccordionRow>
+            ))}
           </div>
-
-          <ClientScroller clients={clients} />
         </div>
+
+        {/* ── Ventures ── */}
+        <div className="mt-16 border-t border-border pt-16">
+          <div className="mb-8">
+            <SectionHeader
+              as="h3"
+              label={venturesLabel}
+              title={venturesTitle}
+              subtitle={venturesSubtitle}
+              headingClassName="mt-2 text-2xl"
+            />
+          </div>
+          <div>
+            {ventures.map((venture, i) => (
+              <AccordionRow
+                key={venture.name}
+                index={i}
+                isOpen={openVenture === i}
+                onToggle={() => toggleVenture(i)}
+                title={venture.name}
+                aside={
+                  <span className="hidden items-center gap-1.5 sm:inline-flex">
+                    <span className="h-1.5 w-1.5 rounded-full bg-foreground/30" />
+                    <span className="text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground/50">
+                      {venture.status}
+                    </span>
+                  </span>
+                }
+              >
+                <p className="text-sm leading-7 text-muted-foreground max-w-2xl">
+                  {venture.description}
+                </p>
+              </AccordionRow>
+            ))}
+          </div>
+        </div>
+
       </div>
     </section>
   );

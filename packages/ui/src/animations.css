@@ -1,0 +1,31 @@
+@layer utilities {
+  .ui-fade-in-up {
+    animation-name: ui-fade-in-up;
+    animation-duration: var(--ui-animate-duration, 500ms);
+    animation-delay: var(--ui-animate-delay, 0ms);
+    animation-timing-function: var(--ui-animate-ease, cubic-bezier(0.22, 1, 0.36, 1));
+    animation-fill-mode: both;
+    will-change: transform, opacity;
+  }
+}
+
+@keyframes ui-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 0.5rem, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-fade-in-up {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+  }
+}

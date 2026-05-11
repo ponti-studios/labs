@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion, useReducedMotion, useScroll } from "framer-motion";
 import { useRef, useState } from "react";
+import { SectionLabel, SectionHeading } from "./shared";
 
 interface PrincipleItem {
   title: string;
@@ -14,8 +15,6 @@ interface ManifestoSectionProps {
   items: PrincipleItem[];
 }
 
-// Each principle occupies a scroll segment. The active one expands to large
-// typography; inactive ones recede to dim labels.
 function KineticPrinciples({ items }: { items: PrincipleItem[] }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -26,31 +25,25 @@ function KineticPrinciples({ items }: { items: PrincipleItem[] }) {
     offset: ["start start", "end end"],
   });
 
-  // Map scroll progress to an active index
   scrollYProgress.on("change", (v) => {
     const idx = Math.min(Math.floor(v * items.length), items.length - 1);
     setActiveIndex(idx);
   });
 
   if (prefersReduced) {
-    // Static fallback
     return (
-      <div className="grid gap-8 lg:grid-cols-2">
-        <div className="space-y-6">
-          {items.map((item) => (
-            <div key={item.title}>
-              <h3 className="text-2xl font-normal uppercase tracking-[-0.03em]">{item.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.description}</p>
-            </div>
-          ))}
-        </div>
+      <div className="space-y-6 lg:max-w-2xl">
+        {items.map((item) => (
+          <div key={item.title}>
+            <h3 className="text-2xl font-normal uppercase tracking-[-0.03em]">{item.title}</h3>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.description}</p>
+          </div>
+        ))}
       </div>
     );
   }
 
   return (
-    // Sticky scroll container — height = items.length * 100vh so each principle
-    // gets one viewport of scroll distance
     <div
       ref={containerRef}
       style={{ height: `${items.length * 100}vh` }}
@@ -58,19 +51,17 @@ function KineticPrinciples({ items }: { items: PrincipleItem[] }) {
     >
       <div className="sticky top-0 h-screen flex items-center">
         <div className="w-full grid lg:grid-cols-[1fr_auto] gap-16 items-center">
-          {/* Left: principle titles stack */}
+
+          {/* Left: principle titles */}
           <div className="space-y-0">
             {items.map((item, i) => {
               const isActive = i === activeIndex;
               return (
                 <motion.div
                   key={item.title}
-                  animate={{
-                    opacity: isActive ? 1 : 0.13,
-                    scale: isActive ? 1 : 0.97,
-                  }}
+                  animate={{ opacity: isActive ? 1 : 0.13, scale: isActive ? 1 : 0.97 }}
                   transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                  className="py-3 border-b border-border last:border-0"
+                  className="py-3 border-b border-border last:border-0 cursor-default"
                   onClick={() => setActiveIndex(i)}
                 >
                   <motion.h3
@@ -85,7 +76,7 @@ function KineticPrinciples({ items }: { items: PrincipleItem[] }) {
             })}
           </div>
 
-          {/* Right: description panel */}
+          {/* Right: description */}
           <div className="lg:w-72 xl:w-96">
             <AnimatePresence mode="wait">
               <motion.div
@@ -96,7 +87,8 @@ function KineticPrinciples({ items }: { items: PrincipleItem[] }) {
                 transition={{ duration: 0.3, ease: "easeOut" }}
               >
                 <div className="mb-3 text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                  {String(activeIndex + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}
+                  {String(activeIndex + 1).padStart(2, "0")} /{" "}
+                  {String(items.length).padStart(2, "0")}
                 </div>
                 <p className="text-base leading-7 text-muted-foreground">
                   {items[activeIndex].description}
@@ -104,6 +96,7 @@ function KineticPrinciples({ items }: { items: PrincipleItem[] }) {
               </motion.div>
             </AnimatePresence>
           </div>
+
         </div>
       </div>
     </div>
@@ -115,10 +108,8 @@ export function ManifestoSection({ label, title, items }: ManifestoSectionProps)
     <section className="bg-background border-t border-border">
       <div className="container py-20 md:py-28">
         <div className="mb-16">
-          <span className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-            {label}
-          </span>
-          <h2 className="mt-3 text-3xl font-normal uppercase tracking-[-0.04em]">{title}</h2>
+          <SectionLabel>{label}</SectionLabel>
+          <SectionHeading className="mt-3 text-3xl">{title}</SectionHeading>
         </div>
         <KineticPrinciples items={items} />
       </div>
