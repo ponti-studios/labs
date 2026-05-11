@@ -583,8 +583,8 @@ export default function ServicesPage() {
             <Link href="/#work" className="transition-opacity hover:opacity-60">
               Work
             </Link>
-            <Link href="/#about" className="transition-opacity hover:opacity-60">
-              About
+            <Link href="/#principles" className="transition-opacity hover:opacity-60">
+              Principles
             </Link>
             <Link
               href="/#contact"

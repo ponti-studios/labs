@@ -1,7 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import {
-  AboutSection,
   ContactSection,
   HeroSection,
   ManifestoSection,
@@ -54,7 +53,7 @@ export default async function Home() {
 
           {/* Nav links */}
           <div className="hidden items-center gap-7 md:flex">
-            {(["Services", "Work", "About"] as const).map((item) => (
+            {(["Services", "Work", "Principles"] as const).map((item) => (
               <Link
                 key={item}
                 href={`#${item.toLowerCase()}`}
@@ -78,6 +77,10 @@ export default async function Home() {
         description={t("hero.description")}
         cta={t("hero.cta")}
         ctaSecondary={t("hero.ctaSecondary")}
+        aboutLabel={t("about.label")}
+        aboutTitle={t("about.title")}
+        aboutDescription={t("about.description")}
+        aboutAntiposition={t("about.antiposition")}
       />
 
       <StatsStrip clients={stats.clients} arr={stats.arr} reduction={stats.reduction} />
@@ -104,13 +107,6 @@ export default async function Home() {
         label={t("principles.label")}
         title={t("principles.title")}
         items={principles}
-      />
-
-      <AboutSection
-        label={t("about.label")}
-        title={t("about.title")}
-        description={t("about.description")}
-        antiposition={t("about.antiposition")}
       />
 
       <ContactSection

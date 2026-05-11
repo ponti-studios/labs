@@ -11,9 +11,22 @@ interface HeroSectionProps {
   description: string;
   cta: string;
   ctaSecondary: string;
+  aboutLabel: string;
+  aboutTitle: string;
+  aboutDescription: string;
+  aboutAntiposition?: string;
 }
 
-export function HeroSection({ title, description, cta, ctaSecondary }: HeroSectionProps) {
+export function HeroSection({
+  title,
+  description,
+  cta,
+  ctaSecondary,
+  aboutLabel,
+  aboutTitle,
+  aboutDescription,
+  aboutAntiposition,
+}: HeroSectionProps) {
   return (
     <section className="relative flex min-h-screen flex-col items-start justify-center overflow-hidden pt-16">
       <ParticleBackground />
@@ -62,6 +75,34 @@ export function HeroSection({ title, description, cta, ctaSecondary }: HeroSecti
                 {ctaSecondary}
               </Link>
             </MagneticButton>
+          </div>
+
+          <div
+            className="ui-fade-in-up mt-6 grid gap-8 border-t border-border/60 pt-8 md:mt-10 md:grid-cols-[1fr_1fr]"
+            style={
+              {
+                "--ui-animate-delay": "680ms",
+                "--ui-animate-duration": "600ms",
+              } as CSSProperties
+            }
+          >
+            <div>
+              <span className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                {aboutLabel}
+              </span>
+              <h2 className="mt-3 text-2xl font-normal uppercase tracking-[-0.04em] md:text-3xl">
+                {aboutTitle}
+              </h2>
+            </div>
+
+            <div className="space-y-4">
+              <p className="text-base leading-8 text-muted-foreground">{aboutDescription}</p>
+              {aboutAntiposition && (
+                <p className="border-l-2 border-foreground pl-4 text-sm leading-7 font-medium text-foreground">
+                  {aboutAntiposition}
+                </p>
+              )}
+            </div>
           </div>
         </div>
       </div>
