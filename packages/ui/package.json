@@ -5,7 +5,8 @@
   "description": "Shared UI component library for ponti-studios labs",
   "files": [
     "dist",
-    "src/styles.css"
+    "src/styles.css",
+    "src/animations.css"
   ],
   "type": "module",
   "exports": {
@@ -13,7 +14,8 @@
       "types": "./src/index.ts",
       "import": "./src/index.ts"
     },
-    "./styles.css": "./src/styles.css"
+    "./styles.css": "./src/styles.css",
+    "./animations.css": "./src/animations.css"
   },
   "scripts": {
     "build": "vite build && tsc --emitDeclarationOnly",

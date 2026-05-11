@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "@pontistudios/ui/styles.css";
+@import "@pontistudios/ui/animations.css";
 
 @theme inline {
   --font-sans: var(--font-mono);

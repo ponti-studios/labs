@@ -1,5 +1,7 @@
 "use client";
 
+import { SectionLabel, SectionHeading } from "./shared";
+
 interface PrinciplesSectionProps {
   label: string;
   title: string;
@@ -11,12 +13,8 @@ export function PrinciplesSection({ label, title, items }: PrinciplesSectionProp
     <section className="border-y border-border bg-foreground text-background">
       <div className="container py-16 md:py-20">
         <div className="max-w-2xl">
-          <span className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-            {label}
-          </span>
-          <h2 className="mt-3 text-3xl font-normal uppercase tracking-[-0.04em] text-background">
-            {title}
-          </h2>
+          <SectionLabel>{label}</SectionLabel>
+          <SectionHeading className="mt-3 text-3xl text-background">{title}</SectionHeading>
         </div>
         <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {items.map((item) => (

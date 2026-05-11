@@ -2,12 +2,11 @@ import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import {
   AboutSection,
-  Brands,
   ContactSection,
   HeroSection,
   ManifestoSection,
+  ServicesSection,
   StatsStrip,
-  VenturesSection,
   WorkSection,
 } from "../../components/landing";
 
@@ -35,10 +34,11 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm">
-        <div className="container flex items-center justify-between py-4">
-          <div className="flex items-center gap-3">
-            <div className="grid h-10 w-10 grid-cols-3 grid-rows-3 gap-0.5">
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/60 bg-background/70 backdrop-blur-md">
+        <div className="container flex items-center justify-between py-3.5">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <div className="grid h-7 w-7 grid-cols-3 grid-rows-3 gap-[2px] transition-opacity group-hover:opacity-70">
               <div className="bg-foreground" />
               <div className="col-span-2 bg-foreground" />
               <div className="bg-transparent" />
@@ -47,22 +47,25 @@ export default async function Home() {
               <div className="col-span-2 bg-foreground" />
               <div className="bg-foreground" />
             </div>
-            <span className="text-lg font-bold tracking-tight uppercase">Ponti Studios</span>
-          </div>
+            <span className="text-sm font-semibold tracking-[0.12em] uppercase">
+              Ponti Studios
+            </span>
+          </Link>
 
-          <div className="hidden items-center gap-8 text-sm font-medium md:flex">
-            <Link href="#services" className="transition-opacity hover:opacity-60">
-              Services
-            </Link>
-            <Link href="#work" className="transition-opacity hover:opacity-60">
-              Work
-            </Link>
-            <Link href="#about" className="transition-opacity hover:opacity-60">
-              About
-            </Link>
+          {/* Nav links */}
+          <div className="hidden items-center gap-7 md:flex">
+            {(["Services", "Work", "About"] as const).map((item) => (
+              <Link
+                key={item}
+                href={`#${item.toLowerCase()}`}
+                className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {item}
+              </Link>
+            ))}
             <Link
               href="#contact"
-              className="rounded-none border border-foreground px-4 py-2 uppercase tracking-wider hover:bg-foreground hover:text-background transition-colors"
+              className="border border-foreground/80 px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] transition-colors hover:bg-foreground hover:text-background"
             >
               Contact
             </Link>
@@ -79,34 +82,28 @@ export default async function Home() {
 
       <StatsStrip clients={stats.clients} arr={stats.arr} reduction={stats.reduction} />
 
-      <div className="bg-white border-b border-border py-12">
-        <div className="container">
-          <Brands />
-        </div>
-      </div>
+      <ServicesSection
+        label={t("services.label")}
+        title={t("services.title")}
+        subtitle={t("services.subtitle")}
+        items={services}
+      />
 
       <WorkSection
-        servicesLabel={t("services.label")}
-        servicesTitle={t("services.title")}
-        servicesSubtitle={t("services.subtitle")}
-        servicesItems={services}
-        workLabel={t("work.label")}
-        workTitle={t("work.title")}
-        workSubtitle={t("work.subtitle")}
+        label={t("work.label")}
+        title={t("work.title")}
+        subtitle={t("work.subtitle")}
         clients={clients}
+        venturesLabel={t("ventures.label")}
+        venturesTitle={t("ventures.title")}
+        venturesSubtitle={t("ventures.subtitle")}
+        ventures={ventures}
       />
 
       <ManifestoSection
         label={t("principles.label")}
         title={t("principles.title")}
         items={principles}
-      />
-
-      <VenturesSection
-        label={t("ventures.label")}
-        title={t("ventures.title")}
-        subtitle={t("ventures.subtitle")}
-        items={ventures}
       />
 
       <AboutSection
@@ -125,10 +122,13 @@ export default async function Home() {
         bookCall={t("contact.bookCall")}
       />
 
-      <footer className="border-t border-border bg-background py-12">
-        <div className="container">
-          <p className="text-sm uppercase tracking-widest text-muted-foreground">
-            © {new Date().getFullYear()} Ponti Studios. All rights reserved.
+      <footer className="border-t border-border/60 bg-background py-10">
+        <div className="container flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+          <p className="text-[0.65rem] uppercase tracking-[0.24em] text-muted-foreground/60">
+            © {new Date().getFullYear()} Ponti Studios
+          </p>
+          <p className="text-[0.65rem] uppercase tracking-[0.24em] text-muted-foreground/40">
+            Computational intelligence, delivered.
           </p>
         </div>
       </footer>
