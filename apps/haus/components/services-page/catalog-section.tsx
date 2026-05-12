@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/i18n/client";
 import { SERVICES } from "./data";
 import { ServiceSection } from "./service-section";
 

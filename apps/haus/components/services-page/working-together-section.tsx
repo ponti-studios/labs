@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/i18n/client";
 import { useState } from "react";
 import { AccordionRow } from "../landing/ui/accordion-row";
 import { FIT_GOOD_FOR, FIT_NOT_RIGHT, TOGETHER_GAINS, TOGETHER_NEEDS } from "./data";

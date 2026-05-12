@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
-import Link from "next/link";
+import type { Route } from "./+types/privacy";
+import { Link } from "react-router";
 
 const DATA_ROWS = [
   {
@@ -24,20 +24,23 @@ const DATA_ROWS = [
   },
 ];
 
-export const metadata: Metadata = {
-  title: "Privacy Policy | Hakumi",
-  description: "Privacy policy for Hakumi, a notes-first personal workspace by Ponti Studios.",
-};
+export const meta: Route.MetaFunction = () => [
+  { title: "Privacy Policy | Hakumi" },
+  {
+    name: "description",
+    content: "Privacy policy for Hakumi, a notes-first personal workspace by Ponti Studios.",
+  },
+];
 
 export default function PrivacyPage() {
   return (
     <main className="min-h-screen bg-background text-foreground">
       <header className="border-b border-border">
         <div className="container flex items-center justify-between py-6">
-          <Link href="/" className="text-sm font-bold uppercase tracking-tight">
+          <Link to="/" className="text-sm font-bold uppercase tracking-tight">
             Ponti Studios
           </Link>
-          <Link href="/support" className="text-sm uppercase tracking-widest text-muted-foreground">
+          <Link to="/support" className="text-sm uppercase tracking-widest text-muted-foreground">
             Support
           </Link>
         </div>

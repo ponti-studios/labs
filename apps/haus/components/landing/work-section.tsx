@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/i18n/client";
 import { useState } from "react";
 import { AccordionRow } from "./ui/accordion-row";
 
@@ -17,7 +17,7 @@ export function ProjectsSection() {
   const label = t("projects.label");
   const title = t("projects.title");
   const subtitle = t("projects.subtitle");
-  const projects = t.raw("projects.items") as ProjectItem[];
+  const projects = t.raw<ProjectItem[]>("projects.items");
   const [openProject, setOpenProject] = useState<number | null>(null);
 
   return (

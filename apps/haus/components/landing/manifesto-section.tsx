@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/i18n/client";
 import { useState } from "react";
 import { AccordionRow } from "./ui/accordion-row";
 import { APPROACH } from "../services-page/data";
@@ -45,7 +45,7 @@ export function ManifestoSection() {
   const t = useTranslations("Studio");
   const label = t("principles.label");
   const title = t("principles.title");
-  const items = t.raw("principles.items") as PrincipleItem[];
+  const items = t.raw<PrincipleItem[]>("principles.items");
 
   return (
     <section id="principles" className="border-t border-border bg-background">

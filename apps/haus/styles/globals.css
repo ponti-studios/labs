@@ -1,10 +1,13 @@
+/* stylelint-disable import-notation */
 @import "tailwindcss";
 @import "@pontistudios/ui/styles.css";
 @import "@pontistudios/ui/animations.css";
+/* stylelint-enable import-notation */
+
+@source "../../../packages/ui/src";
 
 @theme inline {
   --font-sans: var(--font-mono);
-  --font-mono: var(--font-mono);
 }
 
 @layer base {

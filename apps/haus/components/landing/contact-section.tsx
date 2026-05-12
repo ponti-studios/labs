@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/i18n/client";
 
 export function ContactSection() {
   const t = useTranslations("Studio");
@@ -28,18 +27,18 @@ export function ContactSection() {
               )}
             </div>
             <div className="flex flex-col gap-4 sm:flex-row lg:justify-end">
-              <Link
+              <a
                 href={`mailto:${email}`}
                 className="bg-foreground px-6 py-3 text-center text-sm font-semibold uppercase tracking-wider text-background transition-opacity hover:opacity-90"
               >
                 {email}
-              </Link>
-              <Link
+              </a>
+              <a
                 href="https://cal.com/ponti-studios"
                 className="border border-foreground px-6 py-3 text-center text-sm font-semibold uppercase tracking-wider transition-colors hover:bg-foreground hover:text-background"
               >
                 {bookCall}
-              </Link>
+              </a>
             </div>
           </div>
         </div>

@@ -24,14 +24,14 @@ catalog:
   lucide-react: ^1.8.0
   postcss: ^8.5.10
   postgres: ^3.4.9
-  react: ^19.2.5
-  react-dom: ^19.2.5
+  react: ^19.2.6
+  react-dom: ^19.2.6
   react-router: ^7.14.2
   tailwind-merge: ^3.5.0
   tailwindcss: ^4.2.4
   tsx: ^4.21.0
   typescript: ^5.9.3
-  vite: ^8.0.10
+  vite: ^8.0.12
   vite-tsconfig-paths: ^6.1.1
   vitest: ^4.1.5
   zod: ^4.3.6

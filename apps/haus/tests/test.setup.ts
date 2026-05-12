@@ -9,9 +9,6 @@ import {
 	DESKTOP_RESOLUTION_WIDTH,
 } from "./test.utils";
 
-// Allow router mocks.
-vi.mock("next/navigation", () => require("next-router-mock"));
-
 beforeAll(() => {
 	server.use();
 	// Change to warn temporarily for debugging

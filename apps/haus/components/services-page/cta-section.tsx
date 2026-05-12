@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/i18n/client";
 import { CTA_STEPS } from "./data";
 
 export function CtaSection() {
@@ -30,18 +29,18 @@ export function CtaSection() {
               </div>
             </div>
             <div className="flex flex-col gap-4 sm:flex-row lg:justify-end">
-              <Link
+              <a
                 href={`mailto:${t("cta.email")}`}
                 className="rounded-none bg-foreground px-6 py-3 text-center text-sm font-semibold uppercase tracking-wider text-background hover:opacity-90"
               >
                 {t("cta.email")}
-              </Link>
-              <Link
+              </a>
+              <a
                 href="https://cal.com/ponti-studios"
                 className="rounded-none border border-foreground px-6 py-3 text-center text-sm font-semibold uppercase tracking-wider transition-colors hover:bg-foreground hover:text-background"
               >
                 {t("cta.bookCall")}
-              </Link>
+              </a>
             </div>
           </div>
         </div>

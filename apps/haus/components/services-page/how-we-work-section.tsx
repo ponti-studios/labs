@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/i18n/client";
 import { ENGAGEMENT_MODELS, PROCESS_STEPS } from "./data";
 
 export function HowWeWorkSection() {

@@ -1,10 +1,6 @@
-import { NextResponse } from "next/server";
-
-export async function GET() {
+export async function loader() {
   try {
-    // You can add more sophisticated health checks here
-    // For example, check database connectivity, external services, etc.
-    return NextResponse.json(
+    return Response.json(
       {
         status: "healthy",
         timestamp: new Date().toISOString(),
@@ -13,7 +9,7 @@ export async function GET() {
       { status: 200 },
     );
   } catch (error) {
-    return NextResponse.json(
+    return Response.json(
       {
         status: "unhealthy",
         error: error instanceof Error ? error.message : "Unknown error",
