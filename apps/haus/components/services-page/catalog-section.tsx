@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { SERVICES } from "./data";
-import { ServiceSection } from "./shared";
+import { ServiceSection } from "./service-section";
 
 export function CatalogSection() {
   const t = useTranslations("ServicesPage");

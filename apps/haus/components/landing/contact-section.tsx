@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { SectionLabel, SectionHeading } from "./shared";
 
 export function ContactSection() {
   const t = useTranslations("Studio");
@@ -19,8 +18,8 @@ export function ContactSection() {
         <div className="border border-border bg-background p-8 md:p-12">
           <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
             <div>
-              <SectionLabel>{label}</SectionLabel>
-              <SectionHeading className="mt-3 max-w-3xl text-3xl">{title}</SectionHeading>
+              <span className="eyebrow">{label}</span>
+              <h2 className="max-w-3xl section-heading">{title}</h2>
               <p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground">{subtitle}</p>
               {promise && (
                 <p className="mt-3 text-xs uppercase tracking-[0.18em] text-muted-foreground">

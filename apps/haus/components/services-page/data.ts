@@ -2,29 +2,28 @@ import type { Service } from "./types";
 
 export const SERVICES: Service[] = [
   {
-    id: "product-development",
-    title: "Product Development",
+    id: "engineering",
+    title: "Engineering",
     subtitle: "From zero to launch and beyond",
     description:
-      "We build digital products that people actually want to use. Not minimum viable products that barely work - polished, thoughtful experiences that feel premium from day one.",
+      "We build software people actually want to use. Polished, thoughtful, and production-ready from day one.",
     features: [
       {
         category: "Full-Stack Development",
         items: [
-          "Modern web applications - React, Next.js, TypeScript, Node.js",
-          "Mobile apps - Native iOS/Android or React Native",
-          "Progressive web apps - The best of web and native",
-          "API development - RESTful and GraphQL services",
-          "Database design - PostgreSQL, MongoDB, Redis, and more",
-          "Cloud infrastructure - AWS, Vercel, Railway, Fly.io",
+          "Modern progressive web applications",
+          "Mobile apps",
+          "API development",
+          "Database design",
+          "Cloud infrastructure",
         ],
       },
     ],
     differentiators: [
-      "Clean, maintainable code that your future team will thank you for",
-      "Automated testing so bugs don't reach production",
+      "Scalable codebases",
+      "Rigorously and thoroughly tested",
       "Performance optimization built in, not bolted on",
-      "Security best practices from day one",
+      "Security best practices",
       "Documentation that actually helps",
     ],
     engagement: {
@@ -41,11 +40,11 @@ export const SERVICES: Service[] = [
     ],
   },
   {
-    id: "product-design",
-    title: "Product Design",
+    id: "design",
+    title: "Design",
     subtitle: "Interface and experience design that delights",
     description:
-      "We believe all digital products should be beautiful. Not decoration - thoughtful design that makes complex things feel simple and mundane tasks feel delightful.",
+      "Good design isn't decoration. It makes complex things feel simple and mundane tasks feel effortless.",
     features: [
       {
         category: "UX/UI Design",
@@ -95,7 +94,7 @@ export const SERVICES: Service[] = [
     title: "Product Management",
     subtitle: "Strategic direction meets tactical execution",
     description:
-      "Great products don't just happen - they're the result of ruthless prioritization, clear strategy, and relentless focus on what matters.",
+      "Great products are built on ruthless prioritization. We keep teams focused on what moves the needle.",
     features: [
       {
         category: "Product Strategy",
@@ -143,11 +142,11 @@ export const SERVICES: Service[] = [
     ],
   },
   {
-    id: "strategic-planning",
-    title: "Strategic Planning",
+    id: "planning",
+    title: "Planning",
     subtitle: "Future-proof your business with intentional strategy",
     description:
-      "Most companies react to the market. Great ones shape it. We help you think strategically about where your business is headed and build the capabilities to get there.",
+      "Great companies shape markets. We know where industries are headed so you can outpace the competition.",
     features: [
       {
         category: "Product Planning & Innovation",
@@ -185,39 +184,34 @@ export const SERVICES: Service[] = [
   },
   {
     id: "brand-marketing",
-    title: "Brand & Marketing Strategy",
+    title: "Brand & Marketing",
     subtitle: "Help brands deliver their stories online",
     description:
-      "Your brand isn't your logo. It's what people think and feel when they encounter your company. We help you figure out who you are, what you stand for, and how to communicate that consistently everywhere.",
+      "Your brand is what people feel when they encounter you. We help you define it, articulate it, and deliver it consistently.",
     features: [
       {
-        category: "Brand Strategy",
+        category: "Brand",
         items: [
           "Brand positioning - What makes you uniquely valuable?",
           "Voice & tone development - How should you sound?",
           "Visual identity - Colors, typography, imagery that reflects who you are",
           "Messaging framework - What you say to different audiences",
           "Brand guidelines - Consistency across all touchpoints",
+          "Copy & content - Words that actually persuade",
+          "Site photography - Custom photography that elevates your brand",
         ],
       },
       {
-        category: "Digital Marketing",
+        category: "Marketing",
         items: [
           "Content strategy - What to create and why",
           "SEO optimization - Getting found by the right people",
           "Email marketing - Nurturing leads and customers",
           "Social media strategy - Where to show up and what to say",
           "Analytics & tracking - Understanding what's working",
-        ],
-      },
-      {
-        category: "Website Development & Optimization",
-        items: [
           "Marketing websites - Sites that tell your story and convert visitors",
           "Landing pages - Focused pages for campaigns and acquisition",
           "Conversion optimization - Improving what you already have",
-          "Copy & content - Words that actually persuade",
-          "Site photography - Custom photography that elevates your brand",
         ],
       },
     ],
@@ -239,7 +233,7 @@ export const SERVICES: Service[] = [
     title: "Technical Consulting & Advisory",
     subtitle: "Expert guidance when you need it most",
     description:
-      "Sometimes you don't need a full team - you need expert advice to make the right decisions. We've built dozens of products and made every mistake there is to make. Learn from our scars, not your own.",
+      "Sometimes you need a second opinion more than a full team. We've made every mistake in the book — learn from our scars, not your own.",
     features: [
       {
         category: "Technical Architecture Review",
@@ -297,7 +291,7 @@ export const SERVICES: Service[] = [
     title: "Modernization & Transformation",
     subtitle: "Replace outdated tooling with new web services",
     description:
-      "That system you built 5 years ago? It's holding you back. Let's modernize it without disrupting your business.",
+      "Old systems don't just slow you down — they hold your whole business back. We replace them without disrupting what's working.",
     features: [
       {
         category: "Legacy System Modernization",
@@ -347,7 +341,7 @@ export const SERVICES: Service[] = [
     title: "Growth & Optimization",
     subtitle: "Increase traffic, engagement, and conversion",
     description:
-      "You've built something great. Now let's get it in front of more people and convert them into customers.",
+      "Building something great is only half the job. We get it in front of the right people and turn them into customers.",
     features: [
       {
         category: "Top-of-Funnel Growth",
@@ -397,7 +391,7 @@ export const SERVICES: Service[] = [
     title: "Photography & Visual Content",
     subtitle: "Elevate your brand with professional imagery",
     description:
-      "Stock photos are boring. Your brand deserves better. We create custom photography and visual content that makes your brand unforgettable.",
+      "Stock photos look like stock photos. We create custom imagery that makes your brand instantly recognizable.",
     features: [
       {
         category: "Product Photography",

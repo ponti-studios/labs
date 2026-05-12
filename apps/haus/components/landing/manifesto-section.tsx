@@ -2,7 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { AccordionRow, SectionHeader } from "./shared";
+import { AccordionRow } from "./ui/accordion-row";
+import { APPROACH } from "../services-page/data";
 
 interface PrincipleItem {
   title: string;
@@ -19,7 +20,18 @@ function KineticPrinciples({ items }: { items: PrincipleItem[] }) {
           key={item.title}
           index={i}
           isOpen={openIndex === i}
-          onToggle={() => setOpenIndex(openIndex === i ? null : i)}
+          onToggleAction={() => setOpenIndex(openIndex === i ? null : i)}
+          title={item.title}
+        >
+          <p className="max-w-2xl text-sm leading-7 text-muted-foreground">{item.description}</p>
+        </AccordionRow>
+      ))}
+      {APPROACH.map((item, index) => (
+        <AccordionRow
+          key={item.title}
+          index={index}
+          isOpen={openIndex === index}
+          onToggleAction={() => setOpenIndex(openIndex === index ? null : index)}
           title={item.title}
         >
           <p className="max-w-2xl text-sm leading-7 text-muted-foreground">{item.description}</p>
@@ -39,7 +51,8 @@ export function ManifestoSection() {
     <section id="principles" className="border-t border-border bg-background">
       <div className="container py-20 md:py-28">
         <div className="mb-16">
-          <SectionHeader label={label} title={title} />
+          <span className="eyebrow">{label}</span>
+          <h2 className="section-heading">{title}</h2>
         </div>
         <KineticPrinciples items={items} />
       </div>

@@ -4,7 +4,7 @@ import { SERVICES } from "./data";
 
 export function JumpLinks() {
   return (
-    <div className="sticky top-18.25 z-40 border-b border-border bg-background">
+    <div className="sticky top-18.25 z-40 hidden border-b border-border bg-background md:block">
       <div className="container overflow-x-auto">
         <div className="flex whitespace-nowrap text-xs uppercase tracking-[0.18em]">
           {SERVICES.map((service) => (
