@@ -4,21 +4,89 @@
     "home": "PONTI STUDIOS"
   },
   "Footer": {
-    "rights": "© {year} Ponti Studios. All rights reserved."
+    "rights": "© {year} Ponti Studios. All rights reserved.",
+    "tagline": "Computational intelligence, delivered."
+  },
+  "ServicesPage": {
+    "nav": {
+      "services": "Services",
+      "projects": "Projects",
+      "principles": "Principles"
+    },
+    "hero": {
+      "eyebrow": "Services",
+      "title": "Services that ship excellence",
+      "description": "We're a luxury technology practice for entrepreneurs and early-stage startups who refuse to compromise on quality. We don't just build features - we craft experiences that make people's lives better, products that scale gracefully, and brands that resonate deeply.",
+      "antiposition": "If you're looking for cheap and fast, we're not for you. If you're looking for exceptional work from people who care as much as you do, let's talk."
+    },
+    "approach": {
+      "eyebrow": "Our Approach",
+      "title": "How we think about work"
+    },
+    "serviceLabels": {
+      "different": "What Makes Us Different",
+      "process": "Our Process",
+      "engagement": "Typical Engagement",
+      "duration": "Duration",
+      "team": "Team",
+      "delivery": "Delivery",
+      "investment": "Investment",
+      "perfectFor": "Perfect For"
+    },
+    "work": {
+      "eyebrow": "How We Work",
+      "title": "Engagement models",
+      "processTitle": "Our process"
+    },
+    "together": {
+      "eyebrow": "Working Together",
+      "title": "What to expect",
+      "needTitle": "What We Need From You",
+      "getTitle": "What You Get From Us"
+    },
+    "pricing": {
+      "eyebrow": "Pricing",
+      "title": "Pricing philosophy",
+      "description": "We're not cheap. We're expensive for a reason - we deliver work that lasts, teams that care, and products that win.",
+      "moreTitle": "Why We Cost More",
+      "worthTitle": "Why We're Worth It",
+      "rangesTitle": "Investment Ranges",
+      "note": "Every project is different. These ranges give you a sense, but we'll provide detailed proposals based on your specific needs."
+    },
+    "fit": {
+      "eyebrow": "Fit",
+      "title": "Who we work with",
+      "goodForTitle": "We're Great For",
+      "notRightTitle": "We're Probably Not Right For"
+    },
+    "cta": {
+      "eyebrow": "Let's Build",
+      "title": "Let's build something exceptional",
+      "description": "Ready to create something you'll be proud of? Let's talk.",
+      "steps": [
+        "Schedule a call - No pressure conversation about your needs (30 mins)",
+        "Discovery session - If we're aligned, we'll dig deeper (1-2 weeks)",
+        "Proposal - Detailed scope, timeline, and investment",
+        "Partnership - If you love it, we start building together"
+      ],
+      "email": "hello@ponti.io",
+      "bookCall": "Book a call"
+    }
   },
   "Studio": {
     "hero": {
-      "title": "computational intelligence",
-      "taglines": [
-        "AI that actually lands.",
-        "for founders who ship.",
-        "for teams who refuse to compromise."
-      ],
-      "description": "Guided builds, measurable outcomes, zero hype.",
+      "eyebrow": "Ponti Studios",
+      "title": "AI products that ship.",
+      "description": "Ponti Studios designs and engineers products, workflows, and internal systems for teams that need measurable outcomes, not demos.",
       "cta": "Start a project",
-      "ctaSecondary": "View our work",
-      "whatWeMakeLabel": "What we make",
-      "whatWeMake": ["Agentic systems", "Developer tools", "AI workflows", "Core infrastructure"]
+      "ctaSecondary": "See selected work",
+      "featuredLabel": "Featured outcome",
+      "latestLabel": "Latest",
+      "cardLabels": {
+        "project": "Project",
+        "result": "Result",
+        "focus": "Focus"
+      }
     },
     "stats": {
       "clients": { "value": "18+", "label": "clients shipped" },
@@ -68,80 +136,101 @@
         }
       ]
     },
-    "work": {
+    "projects": {
       "label": "Selected work",
       "title": "Proof in production.",
       "subtitle": "Real outcomes for real teams. Not prototypes — shipped systems with measurable results.",
-      "clients": [
+      "items": [
         {
           "name": "Lumina Industries",
-          "type": "Search / Retention",
+          "kind": "Search / Retention",
           "metric": "Unified",
           "metricLabel": "scoring engine",
           "blurb": "Built a semantic + lexical search engine with unified ranking across keywords, semantic relatedness, recency, and engagement. Also hardened critical flows, reduced payloads, and shipped a student performance dashboard with cohort benchmarking and Resume Learning paths."
         },
         {
           "name": "Revrock",
-          "type": "Music Platform",
+          "kind": "Music Platform",
           "metric": "Tour",
           "metricLabel": "cost reduction",
           "blurb": "Built an end-to-end platform for independent musicians with intelligent route planning, financial dashboards, automated venue discovery, and Spotify-powered audience insights."
         },
         {
           "name": "StreamYard",
-          "type": "Product",
+          "kind": "Product",
           "metric": "$15M+",
           "metricLabel": "new ARR",
           "blurb": "Drove end-to-end development of consumer Teams and enterprise Business plans with role-based access control and collaboration features that unlocked $15M+ in new ARR and 13% consumer user growth. Built a two-sided creator marketplace serving 20K+ monthly active users with vector recommendations and generative AI conversation starters, driving a 40% lift in engagement and 300% YoY creator collaboration growth."
         },
         {
           "name": "Prolog",
-          "type": "AI / Automation",
+          "kind": "AI / Automation",
           "metric": "90%",
           "metricLabel": "manual work removed",
           "blurb": "Led engineering of a web application for producer submission triage, including an LLM-powered email parser for automated data extraction and vector-based similarity search for rapid candidate evaluation."
         },
         {
           "name": "Whistle",
-          "type": "Video / Privacy",
+          "kind": "Video / Privacy",
           "metric": "COVID",
-          "metricLabel": "operations continuity",
+          "metricLabel": "continuity",
           "blurb": "Managed product, design, and engineering for a privacy-focused video conferencing platform tailored for movement-based education, helping a prestigious NYC ballet school keep operating during COVID-19."
         },
         {
           "name": "Humana",
-          "type": "Healthcare",
+          "kind": "Healthcare",
           "metric": "1M+",
           "metricLabel": "senior users",
           "blurb": "Led mobile, voice, and chat engineering for holistic senior healthcare solutions and conducted user research to keep roadmap decisions tightly value-driven."
         },
         {
           "name": "Kensho",
-          "type": "Data Engineering",
+          "kind": "Data Engineering",
           "metric": "10×",
           "metricLabel": "ETL throughput",
           "blurb": "Led architecture transformation from a proprietary ETL platform to a modern data stack using AWS S3, Spark, and Airflow, reducing processing time and maintenance overhead while leading a 15-engineer team across two locations."
         },
         {
           "name": "Mimecast",
-          "type": "Enterprise",
+          "kind": "Enterprise",
           "metric": "Global",
           "metricLabel": "deployment scale",
           "blurb": "Led web application development for an enterprise email and security management product, including a scalable white-label styling system and an internationalization / translation library."
         },
         {
           "name": "Thomson Reuters",
-          "type": "Media",
+          "kind": "Media",
           "metric": "Global",
           "metricLabel": "app deployment",
           "blurb": "Designed and engineered a global application deployment, management, and monitoring platform, with fine-grained RBAC, personalized dashboards for decision-making, and monthly technical debt and code review sessions to raise team quality."
         },
         {
           "name": "Glow Digital",
-          "type": "Automation",
+          "kind": "Automation",
           "metric": "90%",
           "metricLabel": "API reduction",
           "blurb": "Contributed to a web application for creating and auto-optimizing social ad campaigns, cutting third-party API usage by 90% and automating repetitive data entry to save users several hours per week."
+        },
+        {
+          "name": "Sherpa",
+          "kind": "Venture",
+          "metric": "In development",
+          "metricLabel": "internal product",
+          "blurb": "AI-powered task management and personal operating system."
+        },
+        {
+          "name": "Kernel",
+          "kind": "Venture",
+          "metric": "In development",
+          "metricLabel": "internal product",
+          "blurb": "AI harness engine for tools, skills, commands, and model orchestration."
+        },
+        {
+          "name": "Void",
+          "kind": "Venture",
+          "metric": "In development",
+          "metricLabel": "internal product",
+          "blurb": "Semantic intelligence engine for document analysis and embeddings."
         }
       ]
     },
@@ -168,28 +257,6 @@
         {
           "title": "Operating mode",
           "description": "Small team. High standard. End-to-end. No sprawl, no theater."
-        }
-      ]
-    },
-    "ventures": {
-      "label": "Ventures",
-      "title": "We build what we believe in.",
-      "subtitle": "Client work funds internal product development. We eat our own cooking.",
-      "items": [
-        {
-          "name": "Sherpa",
-          "description": "AI-powered task management and personal operating system.",
-          "status": "In development"
-        },
-        {
-          "name": "Kernel",
-          "description": "AI harness engine — tools, skills, commands, and model orchestration.",
-          "status": "In development"
-        },
-        {
-          "name": "Void",
-          "description": "Semantic intelligence engine for document analysis and embeddings.",
-          "status": "In development"
         }
       ]
     },

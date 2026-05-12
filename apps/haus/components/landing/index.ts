@@ -2,7 +2,9 @@ export { SectionLabel, SectionHeading, SectionHeader, RowToggle, AccordionRow } 
 export { ContactSection } from "./contact-section";
 export { HeroSection } from "./hero-section";
 export { ManifestoSection } from "./manifesto-section";
+export { SiteFooter } from "./site-footer";
+export { SiteNavigation } from "./site-navigation";
 export { ParticleBackground } from "./particle-background";
-export { ServicesSection } from "./services-section";
+export { OfferingsSection } from "./services-section";
 export { StatsStrip } from "./stats-strip";
-export { WorkSection } from "./work-section";
+export { ProjectsSection } from "./work-section";
