@@ -2,7 +2,7 @@
 
 import { useTranslations } from "@/i18n/client";
 
-export function SiteFooter() {
+export function PageFooter() {
   const t = useTranslations("Footer");
   const year = new Date().getFullYear();
 

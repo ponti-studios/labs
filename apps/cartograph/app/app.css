@@ -246,7 +246,7 @@ body {
   height: 24px;
   display: flex;
   align-items: center;
-  justify-center;
+  justify-content: center;
   color: inherit;
 }
 

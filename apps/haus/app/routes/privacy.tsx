@@ -34,7 +34,7 @@ export const meta: Route.MetaFunction = () => [
 
 export default function PrivacyPage() {
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main className="min-h-screen text-foreground">
       <header className="border-b border-border">
         <div className="container flex items-center justify-between py-6">
           <Link to="/" className="text-sm font-bold uppercase tracking-tight">

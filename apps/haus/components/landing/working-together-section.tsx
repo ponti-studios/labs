@@ -2,7 +2,7 @@
 
 import { useTranslations } from "@/i18n/client";
 import { useState } from "react";
-import { AccordionRow } from "../landing/ui/accordion-row";
+import { AccordionRow } from "./ui/accordion-row";
 import { FIT_GOOD_FOR, FIT_NOT_RIGHT, TOGETHER_GAINS, TOGETHER_NEEDS } from "./data";
 
 interface TogetherItem {
@@ -66,7 +66,7 @@ export function WorkingTogetherSection() {
   const [openGainIndex, setOpenGainIndex] = useState<number | null>(null);
 
   return (
-    <section className="border-b border-border bg-background">
+    <section className="border-b border-border">
       <div className="container py-20 md:py-28">
         <span className="eyebrow">{t("together.eyebrow")}</span>
         <h2 className="section-heading">{t("together.title")}</h2>

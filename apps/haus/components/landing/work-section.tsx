@@ -21,7 +21,7 @@ export function ProjectsSection() {
   const [openProject, setOpenProject] = useState<number | null>(null);
 
   return (
-    <section id="projects" className="border-t border-border bg-background">
+    <section id="projects" className="border-t border-border">
       <div className="container py-20 md:py-28">
         <div className="mb-16 grid gap-8 lg:grid-cols-[1fr_1fr]">
           <div>
