@@ -1,7 +1,7 @@
 "use client";
 
-import { useTranslations } from "next-intl";
-import Link from "next/link";
+import { useTranslations } from "@/i18n/client";
+import { Link } from "react-router";
 import { Button } from "@pontistudios/ui";
 import { StatsStrip } from "./stats-strip";
 
@@ -26,11 +26,11 @@ export function HeroSection() {
             <p className="text-base leading-8 text-[#b6b6af] md:text-lg">{description}</p>
 
             <div className="flex flex-wrap gap-3">
-              <Button variant="secondary">
-                <Link href="#contact">{cta}</Link>
+              <Button asChild variant="secondary">
+                <Link to="/#contact">{cta}</Link>
               </Button>
-              <Button variant="destructive">
-                <Link href="#projects">{ctaSecondary}</Link>
+              <Button asChild variant="destructive">
+                <Link to="/#projects">{ctaSecondary}</Link>
               </Button>
             </div>
           </div>

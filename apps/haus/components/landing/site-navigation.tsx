@@ -1,9 +1,9 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import Link from "next/link";
+import { Link } from "react-router";
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/i18n/client";
 import { SERVICES } from "../services-page/data";
 
 const NAV_HEIGHT = 73;
@@ -18,22 +18,22 @@ export function SiteNavigation() {
     <>
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm">
         <div className="container flex items-center justify-between py-4">
-          <Link href="/" className="group flex items-center gap-3" onClick={close}>
+          <Link to="/" className="group flex items-center gap-3" onClick={close}>
             <span className="text-lg font-bold uppercase tracking-tight">{t("home")}</span>
           </Link>
 
           <div className="hidden items-center gap-8 text-sm font-medium md:flex">
-            <Link href="/#services" className="transition-opacity hover:opacity-60">
+            <Link to="/#services" className="transition-opacity hover:opacity-60">
               {t("services")}
             </Link>
-            <Link href="/#projects" className="transition-opacity hover:opacity-60">
+            <Link to="/#projects" className="transition-opacity hover:opacity-60">
               {t("projects")}
             </Link>
-            <Link href="/#principles" className="transition-opacity hover:opacity-60">
+            <Link to="/#principles" className="transition-opacity hover:opacity-60">
               {t("principles")}
             </Link>
             <Link
-              href="/#contact"
+              to="/#contact"
               className="rounded-none border border-foreground px-4 py-2 uppercase tracking-wider transition-colors hover:bg-foreground hover:text-background"
             >
               {t("contact")}
@@ -77,7 +77,7 @@ export function SiteNavigation() {
                 ].map(({ href, label }) => (
                   <Link
                     key={href}
-                    href={href}
+                    to={href}
                     onClick={close}
                     className="text-sm font-medium uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground"
                   >

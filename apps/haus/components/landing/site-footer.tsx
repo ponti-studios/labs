@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/i18n/client";
 
 export function SiteFooter() {
   const t = useTranslations("Footer");

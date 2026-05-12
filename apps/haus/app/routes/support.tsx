@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
-import Link from "next/link";
+import type { Route } from "./+types/support";
+import { Link } from "react-router";
 
 const SUPPORT_ITEMS = [
   {
@@ -16,29 +16,30 @@ const SUPPORT_ITEMS = [
   },
 ];
 
-export const metadata: Metadata = {
-  title: "Support | Hakumi",
-  description: "Support and contact information for Hakumi by Ponti Studios.",
-};
+export const meta: Route.MetaFunction = () => [
+  { title: "Support | Hakumi" },
+  {
+    name: "description",
+    content: "Support and contact information for Hakumi by Ponti Studios.",
+  },
+];
 
 export default function SupportPage() {
   return (
     <main className="min-h-screen bg-background text-foreground">
       <header className="border-b border-border">
         <div className="container flex items-center justify-between py-6">
-          <Link href="/" className="text-sm font-bold uppercase tracking-tight">
+          <Link to="/" className="text-sm font-bold uppercase tracking-tight">
             Ponti Studios
           </Link>
-          <Link href="/privacy" className="text-sm uppercase tracking-widest text-muted-foreground">
+          <Link to="/privacy" className="text-sm uppercase tracking-widest text-muted-foreground">
             Privacy
           </Link>
         </div>
       </header>
 
       <section className="container max-w-4xl py-16 md:py-24">
-        <p className="mb-4 text-sm uppercase tracking-widest text-muted-foreground">
-          Hakumi Support
-        </p>
+        <p className="mb-4 text-sm uppercase tracking-widest text-muted-foreground">Hakumi Support</p>
         <h1 className="max-w-3xl text-4xl font-bold tracking-tight md:text-6xl">
           We can help with Hakumi.
         </h1>
