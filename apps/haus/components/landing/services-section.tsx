@@ -4,10 +4,139 @@ import { useTranslations } from "next-intl";
 import { motion, useInView, useReducedMotion } from "framer-motion";
 import { useRef, useState } from "react";
 import { AccordionRow } from "./ui/accordion-row";
+import { SERVICES } from "../services-page/data";
+import type { Service } from "../services-page/types";
 
-interface ServiceItem {
-  title: string;
-  copy: string;
+function ItemCount({ count }: { count: number }) {
+  return (
+    <span className="rounded-full border border-border px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
+      {count}
+    </span>
+  );
+}
+
+function ServiceContent({ service }: { service: Service }) {
+  const rows = [
+    ...service.features.map((f) => f.category),
+    ...(service.differentiators ? ["What Makes Us Different"] : []),
+    ...(service.process ? ["Our Process"] : []),
+  ];
+  const [openRow, setOpenRow] = useState<string | null>(rows[0] ?? null);
+  const toggle = (key: string) => setOpenRow((prev) => (prev === key ? null : key));
+
+  return (
+    <div className="pt-2">
+      <p className="mb-8 max-w-2xl text-sm leading-7 text-muted-foreground">
+        {service.description}
+      </p>
+
+      <div className="border-t border-border">
+        {service.features.map((feature, i) => (
+          <AccordionRow
+            key={feature.category}
+            index={i}
+            isOpen={openRow === feature.category}
+            onToggleAction={() => toggle(feature.category)}
+            title={feature.category}
+            badge={<ItemCount count={feature.items.length} />}
+          >
+            <ul className="space-y-2">
+              {feature.items.map((item) => (
+                <li key={item} className="dash-list-item">
+                  <span className="dash">—</span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </AccordionRow>
+        ))}
+
+        {service.differentiators && (
+          <AccordionRow
+            index={service.features.length}
+            isOpen={openRow === "What Makes Us Different"}
+            onToggleAction={() => toggle("What Makes Us Different")}
+            title="What Makes Us Different"
+            badge={<ItemCount count={service.differentiators.length} />}
+          >
+            <ul className="space-y-2">
+              {service.differentiators.map((item) => (
+                <li key={item} className="dash-list-item">
+                  <span className="dash">—</span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </AccordionRow>
+        )}
+
+        {service.process && (
+          <AccordionRow
+            index={service.features.length + (service.differentiators ? 1 : 0)}
+            isOpen={openRow === "Our Process"}
+            onToggleAction={() => toggle("Our Process")}
+            title="Our Process"
+            badge={<ItemCount count={service.process.length} />}
+          >
+            <ol className="space-y-2">
+              {service.process.map((step, idx) => (
+                <li key={step} className="dash-list-item">
+                  <span className="shrink-0 tabular-nums text-muted-foreground">{idx + 1}.</span>
+                  <span>{step}</span>
+                </li>
+              ))}
+            </ol>
+          </AccordionRow>
+        )}
+      </div>
+
+      <div className="mt-5 grid gap-5 md:grid-cols-2">
+        <div className="card">
+          <p className="mb-5 eyebrow">Typical Engagement</p>
+          <dl className="space-y-3">
+            <div className="flex gap-4">
+              <dt className="w-24 shrink-0 pt-0.5 text-xs uppercase tracking-[0.14em] text-muted-foreground">
+                Duration
+              </dt>
+              <dd className="text-sm text-foreground">{service.engagement.duration}</dd>
+            </div>
+            <div className="flex gap-4">
+              <dt className="w-24 shrink-0 pt-0.5 text-xs uppercase tracking-[0.14em] text-muted-foreground">
+                Team
+              </dt>
+              <dd className="text-sm text-foreground">{service.engagement.team}</dd>
+            </div>
+            <div className="flex gap-4">
+              <dt className="w-24 shrink-0 pt-0.5 text-xs uppercase tracking-[0.14em] text-muted-foreground">
+                Delivery
+              </dt>
+              <dd className="text-sm text-foreground">{service.engagement.delivery}</dd>
+            </div>
+            <div className="mt-3 flex gap-4 border-t border-border pt-3">
+              <dt className="w-24 shrink-0 pt-0.5 text-xs uppercase tracking-[0.14em] text-muted-foreground">
+                Investment
+              </dt>
+              <dd className="text-sm font-semibold text-foreground">
+                {service.engagement.investment}
+              </dd>
+            </div>
+          </dl>
+        </div>
+
+        <div className="card">
+          <p className="mb-5 eyebrow">Perfect For</p>
+          <ul className="space-y-2">
+            {service.perfectFor.map((item) => (
+              <li key={item} className="dash-list-item">
+                <span className="dash">—</span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function RevealHeadline({ text, className }: { text: string; className?: string }) {
@@ -19,7 +148,7 @@ function RevealHeadline({ text, className }: { text: string; className?: string 
   return (
     <h2 ref={ref} className={className} aria-label={text}>
       {words.map((word, wi) => (
-        <span key={`${word}-${wi}`} className="inline-block mr-[0.25em]">
+        <span key={`${word}-${wi}`} className="mr-[0.25em] inline-block">
           {word.split("").map((char, ci) => (
             <motion.span key={`${char}-${ci}`} className="inline-block overflow-hidden">
               <motion.span
@@ -47,7 +176,6 @@ export function OfferingsSection() {
   const label = t("services.label");
   const title = t("services.title");
   const subtitle = t("services.subtitle");
-  const items = t.raw("services.items") as ServiceItem[];
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const toggle = (i: number) => setOpenIndex(openIndex === i ? null : i);
 
@@ -65,15 +193,20 @@ export function OfferingsSection() {
         </div>
 
         <div>
-          {items.map((item, i) => (
+          {SERVICES.map((service, i) => (
             <AccordionRow
-              key={item.title}
+              key={service.id}
               index={i}
               isOpen={openIndex === i}
               onToggleAction={() => toggle(i)}
-              title={item.title}
+              title={service.title}
+              aside={
+                <span className="hidden text-xs text-muted-foreground md:block">
+                  {service.engagement.investment}
+                </span>
+              }
             >
-              <p className="text-sm leading-7 text-muted-foreground max-w-2xl">{item.copy}</p>
+              <ServiceContent service={service} />
             </AccordionRow>
           ))}
         </div>
