@@ -1,17 +1,12 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { AccordionRow, SectionHeader } from "./shared";
 
 interface PrincipleItem {
   title: string;
   description: string;
-}
-
-interface ManifestoSectionProps {
-  label: string;
-  title: string;
-  items: PrincipleItem[];
 }
 
 function KineticPrinciples({ items }: { items: PrincipleItem[] }) {
@@ -27,14 +22,19 @@ function KineticPrinciples({ items }: { items: PrincipleItem[] }) {
           onToggle={() => setOpenIndex(openIndex === i ? null : i)}
           title={item.title}
         >
-          <p className="text-sm leading-7 text-muted-foreground max-w-2xl">{item.description}</p>
+          <p className="max-w-2xl text-sm leading-7 text-muted-foreground">{item.description}</p>
         </AccordionRow>
       ))}
     </div>
   );
 }
 
-export function ManifestoSection({ label, title, items }: ManifestoSectionProps) {
+export function ManifestoSection() {
+  const t = useTranslations("Studio");
+  const label = t("principles.label");
+  const title = t("principles.title");
+  const items = t.raw("principles.items") as PrincipleItem[];
+
   return (
     <section id="principles" className="border-t border-border bg-background">
       <div className="container py-20 md:py-28">

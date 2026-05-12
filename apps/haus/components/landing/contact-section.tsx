@@ -1,25 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { SectionLabel, SectionHeading } from "./shared";
 
-interface ContactSectionProps {
-  label: string;
-  title: string;
-  subtitle: string;
-  promise?: string;
-  email: string;
-  bookCall: string;
-}
+export function ContactSection() {
+  const t = useTranslations("Studio");
+  const label = t("contact.label");
+  const title = t("contact.title");
+  const subtitle = t("contact.subtitle");
+  const promise = t("contact.promise");
+  const email = t("contact.email");
+  const bookCall = t("contact.bookCall");
 
-export function ContactSection({
-  label,
-  title,
-  subtitle,
-  promise,
-  email,
-  bookCall,
-}: ContactSectionProps) {
   return (
     <section id="contact" className="border-t border-border bg-muted">
       <div className="container py-20 md:py-28">

@@ -9,7 +9,7 @@
  *   SectionHeading   — h2 / h3 with the site's display type treatment
  *   SectionHeader    — label + heading, optionally 2-col when subtitle provided
  *   RowToggle        — animated + → × for accordion rows
- *   AccordionRow     — numbered expand / collapse row (Services, Work, Ventures)
+ *   AccordionRow     — numbered expand / collapse row (Services, Projects, Principles)
  */
 
 import { AnimatePresence, motion, useInView } from "framer-motion";
@@ -56,7 +56,7 @@ export function SectionHeading({
 /**
  * Section header: label + heading stacked.
  * When `subtitle` is provided the layout becomes two columns (heading left,
- * subtitle right) — matching the Services / Work / About header pattern.
+ * subtitle right) — matching the Services / Projects header pattern.
  */
 export function SectionHeader({
   label,

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { motion, useInView, useReducedMotion } from "framer-motion";
 import { useRef, useState } from "react";
 import { AccordionRow, SectionLabel } from "./shared";
@@ -7,13 +8,6 @@ import { AccordionRow, SectionLabel } from "./shared";
 interface ServiceItem {
   title: string;
   copy: string;
-}
-
-interface ServicesSectionProps {
-  label: string;
-  title: string;
-  subtitle: string;
-  items: ServiceItem[];
 }
 
 function RevealHeadline({ text, className }: { text: string; className?: string }) {
@@ -48,7 +42,12 @@ function RevealHeadline({ text, className }: { text: string; className?: string 
   );
 }
 
-export function ServicesSection({ label, title, subtitle, items }: ServicesSectionProps) {
+export function OfferingsSection() {
+  const t = useTranslations("Studio");
+  const label = t("services.label");
+  const title = t("services.title");
+  const subtitle = t("services.subtitle");
+  const items = t.raw("services.items") as ServiceItem[];
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const toggle = (i: number) => setOpenIndex(openIndex === i ? null : i);
 
