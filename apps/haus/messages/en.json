@@ -78,18 +78,10 @@
   },
   "Studio": {
     "hero": {
-      "eyebrow": "Ponti Studios",
       "title": "AI products that ship.",
       "description": "Ponti Studios designs and engineers products, workflows, and internal systems for teams that need measurable outcomes, not demos.",
       "cta": "Start a project",
-      "ctaSecondary": "See selected work",
-      "featuredLabel": "Featured outcome",
-      "latestLabel": "Latest",
-      "cardLabels": {
-        "project": "Project",
-        "result": "Result",
-        "focus": "Focus"
-      }
+      "ctaSecondary": "See selected work"
     },
     "stats": {
       "clients": { "value": "18+", "label": "clients shipped" },
@@ -99,45 +91,7 @@
     "services": {
       "label": "Services",
       "title": "Services that ship excellence.",
-      "subtitle": "We're a luxury technology practice for entrepreneurs and early-stage startups who refuse to compromise on quality.",
-      "items": [
-        {
-          "title": "Product Development",
-          "copy": "From zero to launch and beyond. We build digital products that people actually want to use — polished, thoughtful experiences that feel premium from day one."
-        },
-        {
-          "title": "Product Design",
-          "copy": "Interface and experience design that delights. We believe all digital products should be beautiful — thoughtful design that makes complex things feel simple."
-        },
-        {
-          "title": "Product Management",
-          "copy": "Strategic direction meets tactical execution. Great products don't just happen — they're the result of ruthless prioritization, clear strategy, and relentless focus."
-        },
-        {
-          "title": "Strategic Planning",
-          "copy": "Future-proof your business with intentional strategy. Most companies react to the market. Great ones shape it."
-        },
-        {
-          "title": "Brand & Marketing",
-          "copy": "Help brands deliver their stories online. Your brand isn't your logo — it's what people think and feel when they encounter your company."
-        },
-        {
-          "title": "Technical Consulting",
-          "copy": "Expert guidance when you need it most. We've built dozens of products and made every mistake there is to make. Learn from our scars."
-        },
-        {
-          "title": "Modernization",
-          "copy": "Replace outdated tooling with modern web services. That system you built 5 years ago? It's holding you back. Let's modernize it."
-        },
-        {
-          "title": "Growth & Optimization",
-          "copy": "Increase traffic, engagement, and conversion. You've built something great. Now let's get it in front of more people."
-        },
-        {
-          "title": "Photography & Visual",
-          "copy": "Elevate your brand with professional imagery. Stock photos are boring. Your brand deserves better."
-        }
-      ]
+      "subtitle": "We're a luxury technology practice for entrepreneurs and early-stage startups who refuse to compromise on quality."
     },
     "projects": {
       "label": "Selected work",

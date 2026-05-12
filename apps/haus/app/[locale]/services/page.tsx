@@ -1,9 +1,7 @@
 import { SiteNavigation } from "../../../components/landing";
 import {
-  CatalogSection,
   CtaSection,
   HowWeWorkSection,
-  JumpLinks,
   PageFooter,
   PageHero,
   PricingSection,
@@ -15,8 +13,6 @@ export default function ServicesPage() {
     <div className="min-h-screen bg-background text-foreground">
       <SiteNavigation />
       <PageHero />
-      <JumpLinks />
-      <CatalogSection />
       <HowWeWorkSection />
       <WorkingTogetherSection />
       <PricingSection />

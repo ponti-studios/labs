@@ -4,7 +4,6 @@ import {
   ManifestoSection,
   OfferingsSection,
   ProjectsSection,
-  StatsStrip,
   SiteFooter,
   SiteNavigation,
 } from "../../components/landing";
@@ -15,8 +14,6 @@ export default async function Home() {
       <SiteNavigation />
 
       <HeroSection />
-
-      <StatsStrip />
 
       <OfferingsSection />
 
