@@ -43,7 +43,7 @@ const PALETTES: Record<"light" | "dark", Palette> = {
 };
 
 function useResolvedTheme() {
-  const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("dark");
+  const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-color-scheme: dark)");
@@ -98,7 +98,13 @@ export function ParticleBackground({
 
       const targetCount =
         particleCount ??
-        Math.max(80, Math.min(DEFAULT_PARTICLE_COUNT, Math.round((rect.width * rect.height) / PARTICLE_DENSITY)));
+        Math.max(
+          80,
+          Math.min(
+            DEFAULT_PARTICLE_COUNT,
+            Math.round((rect.width * rect.height) / PARTICLE_DENSITY),
+          ),
+        );
 
       particles.current = Array.from({ length: targetCount }, () => ({
         x: Math.random() * rect.width,
@@ -197,7 +203,10 @@ export function ParticleBackground({
   if (!enabled || prefersReduced) return null;
 
   return (
-    <div className={cn("absolute inset-0 overflow-hidden pointer-events-none", className)} aria-hidden="true">
+    <div
+      className={cn("absolute inset-0 overflow-hidden pointer-events-none", className)}
+      aria-hidden="true"
+    >
       <div
         className="absolute inset-0"
         style={{

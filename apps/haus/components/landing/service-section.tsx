@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AccordionRow } from "../landing/ui/accordion-row";
+import { AccordionRow } from "./ui/accordion-row";
 import type { Service } from "./types";
 
 function ItemCount({ count }: { count: number }) {
@@ -43,7 +43,7 @@ export function ServiceSection({
   return (
     <section
       id={service.id}
-      className={`border-b border-border ${index % 2 === 0 ? "bg-background" : "bg-muted"}`}
+      className={`scroll-mt-24 border-b border-border ${index % 2 === 0 ? "bg-background" : "bg-muted"}`}
     >
       <div className="container py-20 md:py-28">
         <div className="flex gap-8">

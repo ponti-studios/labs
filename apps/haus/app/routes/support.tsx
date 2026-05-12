@@ -26,7 +26,7 @@ export const meta: Route.MetaFunction = () => [
 
 export default function SupportPage() {
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main className="min-h-screen text-foreground">
       <header className="border-b border-border">
         <div className="container flex items-center justify-between py-6">
           <Link to="/" className="text-sm font-bold uppercase tracking-tight">
@@ -39,7 +39,9 @@ export default function SupportPage() {
       </header>
 
       <section className="container max-w-4xl py-16 md:py-24">
-        <p className="mb-4 text-sm uppercase tracking-widest text-muted-foreground">Hakumi Support</p>
+        <p className="mb-4 text-sm uppercase tracking-widest text-muted-foreground">
+          Hakumi Support
+        </p>
         <h1 className="max-w-3xl text-4xl font-bold tracking-tight md:text-6xl">
           We can help with Hakumi.
         </h1>

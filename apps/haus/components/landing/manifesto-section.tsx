@@ -3,7 +3,7 @@
 import { useTranslations } from "@/i18n/client";
 import { useState } from "react";
 import { AccordionRow } from "./ui/accordion-row";
-import { APPROACH } from "../services-page/data";
+import { APPROACH } from "./data";
 
 interface PrincipleItem {
   title: string;
@@ -48,7 +48,7 @@ export function ManifestoSection() {
   const items = t.raw<PrincipleItem[]>("principles.items");
 
   return (
-    <section id="principles" className="border-t border-border bg-background">
+    <section id="principles" className="border-t border-border">
       <div className="container py-20 md:py-28">
         <div className="mb-16">
           <span className="eyebrow">{label}</span>

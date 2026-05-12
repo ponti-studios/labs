@@ -4,8 +4,8 @@ import { useTranslations } from "@/i18n/client";
 import { motion, useInView, useReducedMotion } from "framer-motion";
 import { useRef, useState } from "react";
 import { AccordionRow } from "./ui/accordion-row";
-import { SERVICES } from "../services-page/data";
-import type { Service } from "../services-page/types";
+import { SERVICES } from "./data";
+import type { Service } from "./types";
 
 function ItemCount({ count }: { count: number }) {
   return (

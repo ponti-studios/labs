@@ -14,7 +14,7 @@ export function ContactSection() {
   return (
     <section id="contact" className="border-t border-border bg-muted">
       <div className="container py-20 md:py-28">
-        <div className="border border-border bg-background p-8 md:p-12">
+        <div className="border border-border p-8 md:p-12">
           <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
             <div>
               <span className="eyebrow">{label}</span>

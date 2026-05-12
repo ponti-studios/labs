@@ -10,7 +10,7 @@ export default function GlobalError({
   return (
     <html lang="en">
       <body>
-        <main className="flex min-h-screen items-center justify-center bg-background px-6 text-foreground">
+        <main className="flex min-h-screen items-center justify-center px-6 text-foreground">
           <div className="max-w-md text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
               Application error

@@ -22,15 +22,15 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         nav: "flex items-center gap-1",
         button_previous: cn(
           buttonVariants({ variant: "outline" }),
-          "absolute left-1 h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
+          "absolute left-1 h-8 w-8 p-0 opacity-70 hover:opacity-100",
         ),
         button_next: cn(
           buttonVariants({ variant: "outline" }),
-          "absolute right-1 h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
+          "absolute right-1 h-8 w-8 p-0 opacity-70 hover:opacity-100",
         ),
         month_grid: "w-full border-collapse space-y-1",
         weekdays: "flex",
-        weekday: "text-muted-foreground rounded-md w-8 font-normal text-[0.8rem]",
+        weekday: "text-secondary-foreground rounded-md w-8 font-normal text-[0.8rem]",
         week: "flex w-full mt-2",
         day: cn(
           "relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected].day-range-end)]:rounded-r-md",
@@ -48,7 +48,7 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
           "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
         today: "bg-accent text-accent-foreground",
         outside:
-          "day-outside text-muted-foreground aria-selected:bg-accent/50 aria-selected:text-muted-foreground",
+          "day-outside text-secondary-foreground aria-selected:bg-accent/50 aria-selected:text-secondary-foreground",
         disabled: "text-muted-foreground opacity-50",
         range_middle: "aria-selected:bg-accent aria-selected:text-accent-foreground",
         hidden: "invisible",

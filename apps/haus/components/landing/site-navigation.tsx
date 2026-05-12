@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "react-router";
 import { useState } from "react";
 import { useTranslations } from "@/i18n/client";
-import { SERVICES } from "../services-page/data";
+import { SERVICES } from "./data";
 
 const NAV_HEIGHT = 73;
 
@@ -16,7 +16,7 @@ export function SiteNavigation() {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm">
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/80 backdrop-blur-sm">
         <div className="container flex items-center justify-between py-4">
           <Link to="/" className="group flex items-center gap-3" onClick={close}>
             <span className="text-lg font-bold uppercase tracking-tight">{t("home")}</span>
@@ -65,7 +65,7 @@ export function SiteNavigation() {
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
             style={{ top: NAV_HEIGHT }}
-            className="fixed inset-x-0 bottom-0 z-40 overflow-y-auto border-b border-border bg-background md:hidden"
+            className="fixed inset-x-0 bottom-0 z-40 overflow-y-auto border-b border-border md:hidden"
           >
             <div className="container py-8">
               <div className="flex flex-col gap-3">
@@ -93,7 +93,7 @@ export function SiteNavigation() {
                 {SERVICES.map((service) => (
                   <a
                     key={service.id}
-                    href={`/services#${service.id}`}
+                    href={`/#${service.id}`}
                     onClick={close}
                     className="text-sm uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground"
                   >

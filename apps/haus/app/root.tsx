@@ -15,16 +15,6 @@ import { I18nProvider } from "../i18n/client";
 import "../styles/globals.css";
 
 export const links: Route.LinksFunction = () => [
-  { rel: "preconnect", href: "https://fonts.googleapis.com" },
-  {
-    rel: "preconnect",
-    href: "https://fonts.gstatic.com",
-    crossOrigin: "anonymous",
-  },
-  {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&display=swap",
-  },
   { rel: "icon", href: "/favicon/favicon-32x32.png", sizes: "32x32", type: "image/png" },
   { rel: "icon", href: "/favicon/favicon-16x16.png", sizes: "16x16", type: "image/png" },
   { rel: "apple-touch-icon", href: "/favicon/apple-icon-180x180.png", sizes: "180x180" },
@@ -35,7 +25,8 @@ export const meta: Route.MetaFunction = () => [
   { title: "Ponti Studios" },
   {
     name: "description",
-    content: "A studio that builds, integrates, and designs AI for small, medium, and large businesses.",
+    content:
+      "A studio that builds, integrates, and designs AI for small, medium, and large businesses.",
   },
 ];
 
@@ -81,7 +72,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-background px-6 text-foreground">
+    <main className="flex min-h-screen items-center justify-center px-6 text-foreground">
       <div className="max-w-md text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
           {status}
