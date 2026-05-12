@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { motion, useInView, useReducedMotion } from "framer-motion";
 import { useRef, useState } from "react";
-import { AccordionRow, SectionLabel } from "./shared";
+import { AccordionRow } from "./ui/accordion-row";
 
 interface ServiceItem {
   title: string;
@@ -54,36 +54,29 @@ export function OfferingsSection() {
   return (
     <section id="services" className="border-y border-border bg-muted/30">
       <div className="container py-20 md:py-28">
-
-        {/* Header — RevealHeadline handles the animated heading; SectionLabel provides the eyebrow */}
         <div className="mb-16 grid gap-8 lg:grid-cols-[1fr_1fr]">
           <div>
-            <SectionLabel>{label}</SectionLabel>
-            <RevealHeadline
-              text={title}
-              className="mt-3 text-3xl font-normal uppercase tracking-[-0.04em]"
-            />
+            <span className="eyebrow">{label}</span>
+            <RevealHeadline text={title} className="section-heading" />
           </div>
           <div className="flex items-end">
             <p className="text-sm leading-7 text-muted-foreground">{subtitle}</p>
           </div>
         </div>
 
-        {/* Numbered accordion list */}
         <div>
           {items.map((item, i) => (
             <AccordionRow
               key={item.title}
               index={i}
               isOpen={openIndex === i}
-              onToggle={() => toggle(i)}
+              onToggleAction={() => toggle(i)}
               title={item.title}
             >
               <p className="text-sm leading-7 text-muted-foreground max-w-2xl">{item.copy}</p>
             </AccordionRow>
           ))}
         </div>
-
       </div>
     </section>
   );

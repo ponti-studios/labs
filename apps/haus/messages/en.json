@@ -1,7 +1,10 @@
 {
   "Navigation": {
     "contact": "GET IN TOUCH",
-    "home": "PONTI STUDIOS"
+    "home": "PONTI STUDIOS",
+    "services": "Services",
+    "projects": "Projects",
+    "principles": "Principles"
   },
   "Footer": {
     "rights": "© {year} Ponti Studios. All rights reserved.",

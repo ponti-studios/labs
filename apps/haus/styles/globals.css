@@ -12,3 +12,23 @@
     @apply bg-background text-foreground;
   }
 }
+
+@utility eyebrow {
+  @apply text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground;
+}
+
+@utility section-heading {
+  @apply mt-3 text-3xl md:text-4xl font-normal uppercase tracking-[-0.04em];
+}
+
+@utility card {
+  @apply border border-border bg-background p-7;
+}
+
+@utility dash-list-item {
+  @apply flex gap-2 text-sm leading-6 text-foreground;
+}
+
+@utility dash {
+  @apply shrink-0 mt-0.5 text-muted-foreground;
+}

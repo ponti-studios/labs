@@ -1,4 +1,5 @@
-export { SectionLabel, SectionHeading, SectionHeader, RowToggle, AccordionRow } from "./shared";
+export { RowToggle } from "./ui/row-toggle";
+export { AccordionRow } from "./ui/accordion-row";
 export { ContactSection } from "./contact-section";
 export { HeroSection } from "./hero-section";
 export { ManifestoSection } from "./manifesto-section";
