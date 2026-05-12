@@ -3,7 +3,6 @@
 import { useTranslations } from "@/i18n/client";
 import { Link } from "react-router";
 import { Button } from "@pontistudios/ui";
-import { StatsStrip } from "./stats-strip";
 
 export function HeroSection() {
   const t = useTranslations("Studio");
@@ -34,8 +33,6 @@ export function HeroSection() {
               </Button>
             </div>
           </div>
-
-          <StatsStrip />
         </div>
       </div>
     </section>

@@ -7,5 +7,4 @@ export { SiteFooter } from "./site-footer";
 export { SiteNavigation } from "./site-navigation";
 export { ParticleBackground } from "./particle-background";
 export { OfferingsSection } from "./services-section";
-export { StatsStrip } from "./stats-strip";
 export { ProjectsSection } from "./work-section";
