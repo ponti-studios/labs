@@ -1,6 +1,8 @@
+"use client";
+
 import { type ReactNode, useEffect, useState } from "react";
 
-interface CountUpToProps {
+export interface CountUpToProps {
   value: number;
   duration?: number;
   separator?: string;
@@ -21,25 +23,24 @@ function useCountUp(endValue: number, duration = 1.5, startValue = 0) {
 
     const startTime = Date.now();
     const difference = endValue - startValue;
+    let animationId = 0;
 
     const animate = () => {
       const elapsed = Date.now() - startTime;
       const progress = Math.min(elapsed / (duration * 1000), 1);
-
-      // Easing function for smooth animation (ease-out)
       const easeOut = 1 - (1 - progress) ** 3;
       const currentCount = startValue + difference * easeOut;
 
       setCurrentValue(currentCount);
 
       if (progress < 1) {
-        requestAnimationFrame(animate);
+        animationId = requestAnimationFrame(animate);
       } else {
         setCurrentValue(endValue);
       }
     };
 
-    const animationId = requestAnimationFrame(animate);
+    animationId = requestAnimationFrame(animate);
 
     return () => {
       cancelAnimationFrame(animationId);
@@ -57,7 +58,7 @@ function formatNumber(value: number, decimals = 0, separator = ","): string {
   return parts.length > 1 ? `${integerPart}.${parts[1]}` : integerPart;
 }
 
-function CountUpTo({
+export function CountUpTo({
   value,
   duration = 1.5,
   separator = ",",
@@ -77,5 +78,3 @@ function CountUpTo({
     </span>
   );
 }
-
-export default CountUpTo;

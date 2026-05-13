@@ -1,6 +1,6 @@
 "use client";
 
-import CountUpTo from "~/components/count-up/count-up-to";
+import { CountUpTo } from "@pontistudios/ui";
 import type { CovidDataRecord } from "~/types/covid";
 
 interface StatsOverviewProps {
@@ -53,7 +53,7 @@ function StatCard({ title, value, icon, color, change }: StatCardProps) {
   );
 }
 
-export function StatsOverview({ data, countryCode }: StatsOverviewProps) {
+export function StatsOverview({ data, countryCode: _countryCode }: StatsOverviewProps) {
   // Get the latest data entry - now data should contain only the latest record
   const latestData = data && data.length > 0 ? data[0] : null;
 

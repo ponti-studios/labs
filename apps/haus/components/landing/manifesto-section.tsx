@@ -1,8 +1,8 @@
 "use client";
 
 import { useTranslations } from "@/i18n/client";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@pontistudios/ui";
 import { useState } from "react";
-import { AccordionRow } from "./ui/accordion-row";
 import { APPROACH } from "./data";
 
 interface PrincipleItem {
@@ -11,33 +11,36 @@ interface PrincipleItem {
 }
 
 function KineticPrinciples({ items }: { items: PrincipleItem[] }) {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [openItem, setOpenItem] = useState<string | null>(null);
+  const rows = [
+    ...items.map((item, index) => ({
+      key: `principle-${index}`,
+      title: item.title,
+      description: item.description,
+    })),
+    ...APPROACH.map((item, index) => ({
+      key: `approach-${index}`,
+      title: item.title,
+      description: item.description,
+    })),
+  ];
 
   return (
-    <div>
-      {items.map((item, i) => (
-        <AccordionRow
-          key={item.title}
-          index={i}
-          isOpen={openIndex === i}
-          onToggleAction={() => setOpenIndex(openIndex === i ? null : i)}
-          title={item.title}
-        >
-          <p className="max-w-2xl text-sm leading-7 text-muted-foreground">{item.description}</p>
-        </AccordionRow>
+    <Accordion
+      type="single"
+      collapsible
+      value={openItem ?? undefined}
+      onValueChange={(value) => setOpenItem(value || null)}
+    >
+      {rows.map((item, index) => (
+        <AccordionItem key={item.key} value={item.key}>
+          <AccordionTrigger index={index}>{item.title}</AccordionTrigger>
+          <AccordionContent>
+            <p className="max-w-2xl text-sm leading-7 text-muted-foreground">{item.description}</p>
+          </AccordionContent>
+        </AccordionItem>
       ))}
-      {APPROACH.map((item, index) => (
-        <AccordionRow
-          key={item.title}
-          index={index}
-          isOpen={openIndex === index}
-          onToggleAction={() => setOpenIndex(openIndex === index ? null : index)}
-          title={item.title}
-        >
-          <p className="max-w-2xl text-sm leading-7 text-muted-foreground">{item.description}</p>
-        </AccordionRow>
-      ))}
-    </div>
+    </Accordion>
   );
 }
 

@@ -1,9 +1,9 @@
 "use client";
 
 import { useTranslations } from "@/i18n/client";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@pontistudios/ui";
 import { motion, useInView, useReducedMotion } from "framer-motion";
 import { useRef, useState } from "react";
-import { AccordionRow } from "./ui/accordion-row";
 import { SERVICES } from "./data";
 import type { Service } from "./types";
 
@@ -16,13 +16,68 @@ function ItemCount({ count }: { count: number }) {
 }
 
 function ServiceContent({ service }: { service: Service }) {
+  const t = useTranslations("ServicesPage");
   const rows = [
-    ...service.features.map((f) => f.category),
-    ...(service.differentiators ? ["What Makes Us Different"] : []),
-    ...(service.process ? ["Our Process"] : []),
+    ...service.features.map((feature, featureIndex) => ({
+      key: feature.category,
+      title: feature.category,
+      index: featureIndex,
+      badge: <ItemCount count={feature.items.length} />,
+      content: (
+        <ul className="space-y-2">
+          {feature.items.map((item) => (
+            <li key={item} className="dash-list-item">
+              <span className="dash">—</span>
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      ),
+    })),
+    ...(service.differentiators
+      ? [
+          {
+            key: t("serviceLabels.different"),
+            title: t("serviceLabels.different"),
+            index: service.features.length,
+            badge: <ItemCount count={service.differentiators.length} />,
+            content: (
+              <ul className="space-y-2">
+                {service.differentiators.map((item) => (
+                  <li key={item} className="dash-list-item">
+                    <span className="dash">—</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            ),
+          },
+        ]
+      : []),
+    ...(service.process
+      ? [
+          {
+            key: t("serviceLabels.process"),
+            title: t("serviceLabels.process"),
+            index: service.features.length + (service.differentiators ? 1 : 0),
+            badge: <ItemCount count={service.process.length} />,
+            content: (
+              <ol className="space-y-2">
+                {service.process.map((step, stepIndex) => (
+                  <li key={step} className="dash-list-item">
+                    <span className="shrink-0 tabular-nums text-muted-foreground">
+                      {stepIndex + 1}.
+                    </span>
+                    <span>{step}</span>
+                  </li>
+                ))}
+              </ol>
+            ),
+          },
+        ]
+      : []),
   ];
-  const [openRow, setOpenRow] = useState<string | null>(rows[0] ?? null);
-  const toggle = (key: string) => setOpenRow((prev) => (prev === key ? null : key));
+  const [openRow, setOpenRow] = useState<string | null>(rows[0]?.key ?? null);
 
   return (
     <div className="pt-2">
@@ -31,90 +86,48 @@ function ServiceContent({ service }: { service: Service }) {
       </p>
 
       <div className="border-t border-border">
-        {service.features.map((feature, i) => (
-          <AccordionRow
-            key={feature.category}
-            index={i}
-            isOpen={openRow === feature.category}
-            onToggleAction={() => toggle(feature.category)}
-            title={feature.category}
-            badge={<ItemCount count={feature.items.length} />}
-          >
-            <ul className="space-y-2">
-              {feature.items.map((item) => (
-                <li key={item} className="dash-list-item">
-                  <span className="dash">—</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </AccordionRow>
-        ))}
-
-        {service.differentiators && (
-          <AccordionRow
-            index={service.features.length}
-            isOpen={openRow === "What Makes Us Different"}
-            onToggleAction={() => toggle("What Makes Us Different")}
-            title="What Makes Us Different"
-            badge={<ItemCount count={service.differentiators.length} />}
-          >
-            <ul className="space-y-2">
-              {service.differentiators.map((item) => (
-                <li key={item} className="dash-list-item">
-                  <span className="dash">—</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </AccordionRow>
-        )}
-
-        {service.process && (
-          <AccordionRow
-            index={service.features.length + (service.differentiators ? 1 : 0)}
-            isOpen={openRow === "Our Process"}
-            onToggleAction={() => toggle("Our Process")}
-            title="Our Process"
-            badge={<ItemCount count={service.process.length} />}
-          >
-            <ol className="space-y-2">
-              {service.process.map((step, idx) => (
-                <li key={step} className="dash-list-item">
-                  <span className="shrink-0 tabular-nums text-muted-foreground">{idx + 1}.</span>
-                  <span>{step}</span>
-                </li>
-              ))}
-            </ol>
-          </AccordionRow>
-        )}
+        <Accordion
+          type="single"
+          collapsible
+          value={openRow ?? undefined}
+          onValueChange={(value) => setOpenRow(value || null)}
+        >
+          {rows.map((row) => (
+            <AccordionItem key={row.key} value={row.key}>
+              <AccordionTrigger index={row.index} badge={row.badge}>
+                {row.title}
+              </AccordionTrigger>
+              <AccordionContent>{row.content}</AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
       </div>
 
       <div className="mt-5 grid gap-5 md:grid-cols-2">
         <div className="card">
-          <p className="mb-5 eyebrow">Typical Engagement</p>
+          <p className="mb-5 eyebrow">{t("serviceLabels.engagement")}</p>
           <dl className="space-y-3">
             <div className="flex gap-4">
               <dt className="w-24 shrink-0 pt-0.5 text-xs uppercase tracking-[0.14em] text-muted-foreground">
-                Duration
+                {t("serviceLabels.duration")}
               </dt>
               <dd className="text-sm text-foreground">{service.engagement.duration}</dd>
             </div>
             <div className="flex gap-4">
               <dt className="w-24 shrink-0 pt-0.5 text-xs uppercase tracking-[0.14em] text-muted-foreground">
-                Team
+                {t("serviceLabels.team")}
               </dt>
               <dd className="text-sm text-foreground">{service.engagement.team}</dd>
             </div>
             <div className="flex gap-4">
               <dt className="w-24 shrink-0 pt-0.5 text-xs uppercase tracking-[0.14em] text-muted-foreground">
-                Delivery
+                {t("serviceLabels.delivery")}
               </dt>
               <dd className="text-sm text-foreground">{service.engagement.delivery}</dd>
             </div>
             <div className="mt-3 flex gap-4 border-t border-border pt-3">
               <dt className="w-24 shrink-0 pt-0.5 text-xs uppercase tracking-[0.14em] text-muted-foreground">
-                Investment
+                {t("serviceLabels.investment")}
               </dt>
               <dd className="text-sm font-semibold text-foreground">
                 {service.engagement.investment}
@@ -124,7 +137,7 @@ function ServiceContent({ service }: { service: Service }) {
         </div>
 
         <div className="card">
-          <p className="mb-5 eyebrow">Perfect For</p>
+          <p className="mb-5 eyebrow">{t("serviceLabels.perfectFor")}</p>
           <ul className="space-y-2">
             {service.perfectFor.map((item) => (
               <li key={item} className="dash-list-item">
@@ -176,8 +189,7 @@ export function OfferingsSection() {
   const label = t("services.label");
   const title = t("services.title");
   const subtitle = t("services.subtitle");
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const toggle = (i: number) => setOpenIndex(openIndex === i ? null : i);
+  const [openService, setOpenService] = useState<string | null>(null);
 
   return (
     <section id="services" className="border-y border-border bg-muted/30">
@@ -192,24 +204,35 @@ export function OfferingsSection() {
           </div>
         </div>
 
-        <div>
-          {SERVICES.map((service, i) => (
-            <AccordionRow
+        <Accordion
+          type="single"
+          collapsible
+          value={openService ?? undefined}
+          onValueChange={(value) => setOpenService(value || null)}
+        >
+          {SERVICES.map((service, index) => (
+            <AccordionItem
               key={service.id}
-              index={i}
-              isOpen={openIndex === i}
-              onToggleAction={() => toggle(i)}
-              title={service.title}
-              aside={
-                <span className="hidden text-xs text-muted-foreground md:block">
-                  {service.engagement.investment}
-                </span>
-              }
+              value={service.id}
+              id={service.id}
+              className="scroll-mt-24"
             >
-              <ServiceContent service={service} />
-            </AccordionRow>
+              <AccordionTrigger
+                index={index}
+                aside={
+                  <span className="hidden text-xs text-muted-foreground md:block">
+                    {service.engagement.investment}
+                  </span>
+                }
+              >
+                {service.title}
+              </AccordionTrigger>
+              <AccordionContent>
+                <ServiceContent service={service} />
+              </AccordionContent>
+            </AccordionItem>
           ))}
-        </div>
+        </Accordion>
       </div>
     </section>
   );
