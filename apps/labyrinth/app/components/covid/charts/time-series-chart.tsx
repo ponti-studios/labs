@@ -11,6 +11,15 @@ interface TimeSeriesChartProps {
   height?: number;
 }
 
+function toNumber(value: unknown): number | null {
+  if (typeof value === "number") return Number.isFinite(value) ? value : null;
+  if (typeof value === "string" && value.trim() !== "") {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+  return null;
+}
+
 export function TimeSeriesChart({
   data,
   metric,
@@ -20,10 +29,14 @@ export function TimeSeriesChart({
 }: TimeSeriesChartProps) {
   // Transform data for the chart
   const chartData = data
-    .filter((item) => item.date && item[metric] !== null && item[metric] !== undefined)
+    .map((item) => ({
+      date: item.date,
+      value: toNumber(item[metric]),
+    }))
+    .filter((item) => item.date && item.value !== null)
     .map((item) => ({
       date: item.date as string,
-      value: item[metric] as number,
+      value: item.value as number,
     }))
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
@@ -90,7 +103,7 @@ export function TimeSeriesChart({
           <YAxis tickFormatter={formatValue} tick={{ fontSize: 12 }} width={60} />
           <Tooltip
             labelFormatter={(label) => formatDate(label as string)}
-            formatter={(value: number) => [formatValue(value), title]}
+            formatter={(value) => [formatValue(toNumber(value) ?? 0), title]}
             contentStyle={{
               backgroundColor: "rgba(255, 255, 255, 0.95)",
               border: "1px solid #e5e7eb",

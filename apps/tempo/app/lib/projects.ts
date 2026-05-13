@@ -1,12 +1,19 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type {
-  PlaygroundProject as Project,
-  NewPlaygroundProject as ProjectInsert,
-} from "@pontistudios/db";
 
-// Type for client-side project data (without server-managed fields)
-export type ProjectItem = Project & { taskCount: number };
-export type ProjectCreateData = Omit<ProjectInsert, "userId" | "id" | "createdAt" | "updatedAt">;
+export interface ProjectItem {
+  id: number;
+  userId: string;
+  name: string;
+  description: string | null;
+  createdAt: string | null;
+  updatedAt: string | null;
+  taskCount: number;
+}
+
+export interface ProjectCreateData {
+  name: string;
+  description: string | null;
+}
 
 // Custom hooks for project operations
 export const useProjects = () => {

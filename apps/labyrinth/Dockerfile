@@ -13,7 +13,6 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/playground/package.json apps/playground/package.json
 COPY packages/ui/package.json packages/ui/package.json
-COPY packages/utils/package.json packages/utils/package.json
 COPY packages/tsconfig/package.json packages/tsconfig/package.json
 
 # Install dependencies
@@ -26,11 +25,9 @@ WORKDIR /app
 
 COPY packages/tsconfig/ packages/tsconfig/
 COPY packages/ui/ packages/ui/
-COPY packages/utils/ packages/utils/
 COPY apps/playground/ apps/playground/
 
 RUN pnpm run build --filter @pontistudios/ui
-RUN pnpm run build --filter @pontistudios/utils
 RUN pnpm run build --filter @pontistudios/playground
 
 # ─── Stage 3: Production image ───────────────────────────────────────────────
@@ -45,7 +42,6 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/playground/package.json apps/playground/package.json
 COPY packages/ui/package.json packages/ui/package.json
-COPY packages/utils/package.json packages/utils/package.json
 COPY packages/tsconfig/package.json packages/tsconfig/package.json
 
 # Install production dependencies only
@@ -53,7 +49,6 @@ RUN pnpm install --frozen-lockfile --prod --ignore-scripts
 
 # Copy built artifacts
 COPY --from=builder /app/packages/ui/dist packages/ui/dist
-COPY --from=builder /app/packages/utils/dist packages/utils/dist
 COPY --from=builder /app/apps/playground/build apps/playground/build
 
 WORKDIR /app/apps/playground

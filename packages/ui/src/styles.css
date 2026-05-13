@@ -1,8 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans:
-    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   --color-background: #ffffff;
@@ -81,4 +80,24 @@
   --input-background: var(--input);
   --input-background-focus: var(--primary);
   --input-text-focus: var(--primary-foreground);
+}
+
+@utility ui-eyebrow {
+  @apply text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground;
+}
+
+@utility ui-section-heading {
+  @apply mt-3 text-3xl font-medium text-foreground md:text-4xl;
+}
+
+@utility ui-plain-card {
+  @apply border border-border p-7;
+}
+
+@utility ui-dash-list-item {
+  @apply flex gap-2 text-sm leading-6 text-foreground;
+}
+
+@utility ui-dash-marker {
+  @apply mt-0.5 shrink-0 text-muted-foreground;
 }

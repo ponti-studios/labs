@@ -12,6 +12,15 @@ interface TopCountriesChartProps {
   height?: number;
 }
 
+function toNumber(value: unknown): number | null {
+  if (typeof value === "number") return Number.isFinite(value) ? value : null;
+  if (typeof value === "string" && value.trim() !== "") {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+  return null;
+}
+
 export function TopCountriesChart({
   data,
   metric,
@@ -25,7 +34,7 @@ export function TopCountriesChart({
 
   // Build map of latest data per country
   for (const record of data) {
-    if (record.location && record[metric] !== null && record[metric] !== undefined) {
+    if (record.location && toNumber(record[metric]) !== null) {
       const existing = countryLatestData.get(record.location);
       if (!existing || (record.date && existing.date && record.date > existing.date)) {
         countryLatestData.set(record.location, record);
@@ -35,12 +44,12 @@ export function TopCountriesChart({
 
   // Convert to array and get top countries
   const chartData = Array.from(countryLatestData.values())
-    .filter((record) => record[metric] !== null && record[metric] !== undefined)
-    .sort((a, b) => (b[metric] as number) - (a[metric] as number))
+    .filter((record) => toNumber(record[metric]) !== null)
+    .sort((a, b) => (toNumber(b[metric]) ?? 0) - (toNumber(a[metric]) ?? 0))
     .slice(0, limit)
     .map((record) => ({
       country: record.location,
-      value: record[metric] as number,
+      value: toNumber(record[metric]) ?? 0,
     }));
 
   // Check if we have enough data points
@@ -94,7 +103,7 @@ export function TopCountriesChart({
           <XAxis type="number" tickFormatter={formatValue} tick={{ fontSize: 12 }} />
           <YAxis type="category" dataKey="country" tick={{ fontSize: 12 }} width={100} />
           <Tooltip
-            formatter={(value: number) => [formatValue(value), title]}
+            formatter={(value) => [formatValue(toNumber(value) ?? 0), title]}
             contentStyle={{
               backgroundColor: "rgba(255, 255, 255, 0.95)",
               border: "1px solid #e5e7eb",

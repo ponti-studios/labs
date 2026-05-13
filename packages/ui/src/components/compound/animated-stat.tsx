@@ -3,7 +3,7 @@
 import * as React from "react";
 import { motion, useInView } from "framer-motion";
 
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 
 export interface AnimatedStatProps {
   value: string;
@@ -52,7 +52,9 @@ export function AnimatedStat({
       const progress = Math.min(elapsed / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 4);
       const current = eased * target;
-      const formatted = Number.isInteger(target) ? Math.round(current).toString() : current.toFixed(1);
+      const formatted = Number.isInteger(target)
+        ? Math.round(current).toString()
+        : current.toFixed(1);
 
       setDisplayed(`${prefix}${formatted}${suffix}`);
 

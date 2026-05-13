@@ -77,5 +77,4 @@ pnpm dev
 ## Packages
 
 - **@pontistudios/ui** - Shared React UI components
-- **@pontistudios/utils** - Shared utilities
 - **@pontistudios/db** - Database utilities

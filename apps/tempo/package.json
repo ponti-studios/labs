@@ -16,7 +16,7 @@
     "@google/genai": "^1.29.0",
     "@pontistudios/db": "workspace:*",
     "@pontistudios/ui": "workspace:*",
-    "@pontistudios/utils": "workspace:*",
+    "@react-router/node": "catalog:",
     "@react-router/serve": "catalog:",
     "@tanstack/react-query": "catalog:",
     "@tailwindcss/vite": "catalog:",
@@ -33,12 +33,12 @@
     "recharts": "^3.8.1",
     "tailwind-merge": "catalog:",
     "vitest": "catalog:",
-    "zod": "catalog:"
+    "zod": "catalog:",
+    "isbot": "^5"
   },
   "devDependencies": {
     "@pontistudios/tsconfig": "workspace:*",
     "@react-router/dev": "catalog:",
-    "@react-router/node": "catalog:",
     "@tailwindcss/vite": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/react": "catalog:",

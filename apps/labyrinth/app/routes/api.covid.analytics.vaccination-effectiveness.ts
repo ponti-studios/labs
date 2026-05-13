@@ -2,12 +2,12 @@ import { and, eq, gte } from "@pontistudios/db";
 import type { LoaderFunctionArgs } from "react-router";
 import { covidData, db } from "@pontistudios/db";
 
-interface VaccinationEffectiveness {
+type VaccinationEffectiveness = {
   overall: number;
   againstHospitalization: number;
   againstDeath: number;
   breakthroughRate: number;
-}
+};
 
 interface VaccinationTimeline {
   date: string;
@@ -15,6 +15,17 @@ interface VaccinationTimeline {
   newCasesSmoothed: number;
   newDeathsSmoothed: number;
   hospitalPatientsPerMillion: number;
+}
+
+function toNumber(value: unknown): number {
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : 0;
+  }
+  if (typeof value === "string" && value.trim() !== "") {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+  return 0;
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -65,10 +76,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
     }
 
     // Calculate vaccination effectiveness metrics
-    const calculateEffectiveness = (data: typeof timelineData) => {
+    const calculateEffectiveness = (data: typeof timelineData): VaccinationEffectiveness => {
       // Split data into pre and post-vaccination periods
-      const preVaccination = data.filter((d) => (d.fullyVaccinatedPerHundred || 0) < 10);
-      const postVaccination = data.filter((d) => (d.fullyVaccinatedPerHundred || 0) >= 50);
+      const preVaccination = data.filter((d) => toNumber(d.fullyVaccinatedPerHundred) < 10);
+      const postVaccination = data.filter((d) => toNumber(d.fullyVaccinatedPerHundred) >= 50);
 
       if (preVaccination.length === 0 || postVaccination.length === 0) {
         return {
@@ -81,24 +92,24 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
       // Calculate average rates for each period
       const preVaxCaseRate =
-        preVaccination.reduce((sum, d) => sum + (d.newCasesSmoothed || 0), 0) /
+        preVaccination.reduce((sum, d) => sum + toNumber(d.newCasesSmoothed), 0) /
         preVaccination.length;
       const postVaxCaseRate =
-        postVaccination.reduce((sum, d) => sum + (d.newCasesSmoothed || 0), 0) /
+        postVaccination.reduce((sum, d) => sum + toNumber(d.newCasesSmoothed), 0) /
         postVaccination.length;
 
       const preVaxDeathRate =
-        preVaccination.reduce((sum, d) => sum + (d.newDeathsSmoothed || 0), 0) /
+        preVaccination.reduce((sum, d) => sum + toNumber(d.newDeathsSmoothed), 0) /
         preVaccination.length;
       const postVaxDeathRate =
-        postVaccination.reduce((sum, d) => sum + (d.newDeathsSmoothed || 0), 0) /
+        postVaccination.reduce((sum, d) => sum + toNumber(d.newDeathsSmoothed), 0) /
         postVaccination.length;
 
       const preVaxHospitalizationRate =
-        preVaccination.reduce((sum, d) => sum + (d.hospitalPatientsPerMillion || 0), 0) /
+        preVaccination.reduce((sum, d) => sum + toNumber(d.hospitalPatientsPerMillion), 0) /
         preVaccination.length;
       const postVaxHospitalizationRate =
-        postVaccination.reduce((sum, d) => sum + (d.hospitalPatientsPerMillion || 0), 0) /
+        postVaccination.reduce((sum, d) => sum + toNumber(d.hospitalPatientsPerMillion), 0) /
         postVaccination.length;
 
       // Calculate effectiveness percentages
@@ -144,10 +155,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
     // Format timeline data
     const timeline: VaccinationTimeline[] = timelineData.map((row) => ({
       date: row.date || "",
-      fullyVaccinatedPerHundred: row.fullyVaccinatedPerHundred || 0,
-      newCasesSmoothed: row.newCasesSmoothed || 0,
-      newDeathsSmoothed: row.newDeathsSmoothed || 0,
-      hospitalPatientsPerMillion: row.hospitalPatientsPerMillion || 0,
+      fullyVaccinatedPerHundred: toNumber(row.fullyVaccinatedPerHundred),
+      newCasesSmoothed: toNumber(row.newCasesSmoothed),
+      newDeathsSmoothed: toNumber(row.newDeathsSmoothed),
+      hospitalPatientsPerMillion: toNumber(row.hospitalPatientsPerMillion),
     }));
 
     // Calculate vaccination milestones
@@ -159,7 +170,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       { threshold: 80, label: "80% Fully Vaccinated" },
     ].map((milestone) => {
       const reachedDate = timelineData.find(
-        (d) => (d.fullyVaccinatedPerHundred || 0) >= milestone.threshold,
+        (d) => toNumber(d.fullyVaccinatedPerHundred) >= milestone.threshold,
       );
       return {
         ...milestone,
@@ -170,9 +181,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
     // Get latest vaccination stats
     const latest = timelineData[timelineData.length - 1];
     const vaccinationStats = {
-      fullyVaccinatedPerHundred: latest?.fullyVaccinatedPerHundred || 0,
-      totalVaccinations: latest?.totalVaccinations || 0,
-      dailyVaccinations: latest?.newVaccinations || 0,
+      fullyVaccinatedPerHundred: toNumber(latest?.fullyVaccinatedPerHundred),
+      totalVaccinations: toNumber(latest?.totalVaccinations),
+      dailyVaccinations: toNumber(latest?.newVaccinations),
     };
 
     return Response.json({

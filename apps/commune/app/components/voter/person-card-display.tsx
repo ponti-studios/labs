@@ -3,10 +3,20 @@
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { cn } from "~/lib/utils";
-import { trackers } from "@pontistudios/db";
+import type { SocialTrackerParsed } from "@pontistudios/db";
 import type { CardTheme } from "./card-theme-picker";
 
-type CardData = typeof trackers.$inferInsert;
+type CardDisplayData = Pick<
+  SocialTrackerParsed,
+  | "name"
+  | "hp"
+  | "cardType"
+  | "description"
+  | "attacks"
+  | "strengths"
+  | "flaws"
+  | "commitmentLevel"
+>;
 
 interface PersonalityType {
   value: string;
@@ -15,7 +25,7 @@ interface PersonalityType {
 }
 
 interface PersonCardDisplayProps {
-  cardData: Omit<CardData, "userId">;
+  cardData: CardDisplayData;
   selectedTheme: CardTheme;
   selectedType: PersonalityType;
   image: string | null;
@@ -115,32 +125,28 @@ export function PersonCardDisplay({
 
         {/* Attacks */}
         <div className="space-y-2 text-sm leading-snug mb-2">
-          {(cardData.attacks ?? []).map(
-            (attack: { name: string; damage: number }, index: number) => (
+          {cardData.attacks.map((attack, index: number) => (
               <div
                 key={attack.name}
                 className={`flex justify-between items-center ${
-                  index < (cardData.attacks?.length ?? 0) - 1
-                    ? "border-b border-gray-400/50 pb-1"
-                    : ""
+                  index < cardData.attacks.length - 1 ? "border-b border-gray-400/50 pb-1" : ""
                 }`}
               >
                 <span>{attack.name}</span>
                 <span className="font-bold">{attack.damage}</span>
               </div>
-            ),
-          )}
+            ))}
         </div>
 
         {/* Flaws & Strengths */}
         <div className="flex flex-col gap-2 text-sm leading-relaxed mb-2.5">
           <div className="flex items-center">
             <span className="font-semibold mr-1">Flaws:</span>
-            <span>{(cardData.flaws ?? []).join(", ")}</span>
+            <span>{cardData.flaws.join(", ")}</span>
           </div>
           <div className="flex items-center">
             <span className="font-semibold mr-1">Strengths:</span>
-            <span>{(cardData.strengths ?? []).join(", ")}</span>
+            <span>{cardData.strengths.join(", ")}</span>
           </div>
         </div>
 

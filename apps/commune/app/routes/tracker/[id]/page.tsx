@@ -121,8 +121,8 @@ export function CardRatingsPage() {
         raterName: newRating.name,
         value: newRating.verdict,
         comment: newRating.comment || null,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
       };
 
       setLocalSocialVotes([optimisticSocialVote, ...localSocialVotes]);

@@ -9,6 +9,15 @@ interface VaccinationProgressProps {
   height?: number;
 }
 
+function toNumber(value: unknown): number | null {
+  if (typeof value === "number") return Number.isFinite(value) ? value : null;
+  if (typeof value === "string" && value.trim() !== "") {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+  return null;
+}
+
 export function VaccinationProgress({
   data,
   title = "Vaccination Progress",
@@ -21,9 +30,9 @@ export function VaccinationProgress({
 
   const combinedData = sortedData.map((item) => ({
     date: item.date as string,
-    partiallyVaccinated: item.peopleVaccinatedPerHundred,
-    fullyVaccinated: item.peopleFullyVaccinatedPerHundred,
-    boosters: item.totalBoostersPerHundred,
+    partiallyVaccinated: toNumber(item.peopleVaccinatedPerHundred),
+    fullyVaccinated: toNumber(item.peopleFullyVaccinatedPerHundred),
+    boosters: toNumber(item.totalBoostersPerHundred),
   }));
 
   const formatDate = (dateString: string) => {
@@ -66,8 +75,8 @@ export function VaccinationProgress({
           />
           <Tooltip
             labelFormatter={(label) => formatDate(label as string)}
-            formatter={(value: number, name: string) => [
-              value ? `${value.toFixed(1)}%` : "N/A",
+            formatter={(value, name) => [
+              toNumber(value) !== null ? `${(toNumber(value) ?? 0).toFixed(1)}%` : "N/A",
               name === "partiallyVaccinated"
                 ? "Partially Vaccinated"
                 : name === "fullyVaccinated"

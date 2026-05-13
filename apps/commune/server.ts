@@ -11,7 +11,7 @@ import type { ServerBuild } from "react-router";
 import { httpSuccess } from "./app/lib/api/response";
 import { getCurrentUser } from "./app/lib/auth-server";
 import { createTracker } from "./app/lib/server/mutations";
-import type { NewSocialTracker } from "@pontistudios/db";
+import type { TrackerCreateInput } from "./app/lib/server/mutations";
 import { invalidateTrackerCache } from "./app/lib/server/cache";
 
 const app = new Hono();
@@ -44,14 +44,14 @@ api.post("/trackers", async (c) => {
       return c.json({ error: "User ID is required" }, 400);
     }
     
-    const trackerData: NewSocialTracker = {
+    const trackerData: TrackerCreateInput = {
       name: body.name,
       hp: typeof body.hp === "string" ? body.hp : null,
       cardType: typeof body.cardType === "string" ? body.cardType : null,
       description: typeof body.description === "string" ? body.description : null,
-      attacks: Array.isArray(body.attacks) ? body.attacks : null,
-      strengths: Array.isArray(body.strengths) ? body.strengths : null,
-      flaws: Array.isArray(body.flaws) ? body.flaws : null,
+      attacks: Array.isArray(body.attacks) ? JSON.stringify(body.attacks) : null,
+      strengths: Array.isArray(body.strengths) ? JSON.stringify(body.strengths) : null,
+      flaws: Array.isArray(body.flaws) ? JSON.stringify(body.flaws) : null,
       commitmentLevel: typeof body.commitmentLevel === "string" ? body.commitmentLevel : null,
       colorTheme: typeof body.colorTheme === "string" ? body.colorTheme : null,
       photoUrl: typeof body.photoUrl === "string" ? body.photoUrl : null,

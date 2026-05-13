@@ -28,6 +28,17 @@ interface TrendData {
   testPositivityRate: number;
 }
 
+function toNumber(value: unknown): number {
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : 0;
+  }
+  if (typeof value === "string" && value.trim() !== "") {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+  return 0;
+}
+
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
     const url = new URL(request.url);
@@ -72,12 +83,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
     // Get current metrics (daily values)
     const metrics: DashboardMetrics = {
-      newCasesDaily: latest.newCases || 0,
-      newDeathsDaily: latest.newDeaths || 0,
-      newVaccinationsDaily: latest.newVaccinations || 0,
-      testPositivityRate: latest.positiveRate || 0,
-      reproductionRate: latest.reproductionRate || 0,
-      hospitalOccupancy: latest.icuPatientsPerMillion || 0,
+      newCasesDaily: toNumber(latest.newCases),
+      newDeathsDaily: toNumber(latest.newDeaths),
+      newVaccinationsDaily: toNumber(latest.newVaccinations),
+      testPositivityRate: toNumber(latest.positiveRate),
+      reproductionRate: toNumber(latest.reproductionRate),
+      hospitalOccupancy: toNumber(latest.icuPatientsPerMillion),
     };
 
     // Get 30-day trend data
@@ -96,10 +107,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
     const trends: TrendData[] = trendData.reverse().map((row) => ({
       date: row.date || "",
-      newCases: row.newCases || 0,
-      newDeaths: row.newDeaths || 0,
-      newVaccinations: row.newVaccinations || 0,
-      testPositivityRate: row.testPositivityRate || 0,
+      newCases: toNumber(row.newCases),
+      newDeaths: toNumber(row.newDeaths),
+      newVaccinations: toNumber(row.newVaccinations),
+      testPositivityRate: toNumber(row.testPositivityRate),
     }));
 
     // Calculate trend analysis

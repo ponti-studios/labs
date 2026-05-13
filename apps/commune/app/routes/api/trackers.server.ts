@@ -10,14 +10,14 @@
 
 import { createTracker } from "~/lib/server/mutations";
 import { invalidateTrackerCache } from "~/lib/server/cache";
-import type { NewSocialTracker } from "@pontistudios/db";
+import type { TrackerCreateInput } from "~/lib/server/mutations";
 import { httpErrors, httpSuccess } from "~/lib/api/response";
 
 // Validation helper
 function validateTrackerData(body: Record<string, unknown>): {
   valid: boolean;
   error?: Response;
-  data?: NewSocialTracker;
+  data?: TrackerCreateInput;
 } {
   if (!body.name || typeof body.name !== "string") {
     return { valid: false, error: httpErrors.badRequest("Name is required") };
@@ -27,7 +27,7 @@ function validateTrackerData(body: Record<string, unknown>): {
     return { valid: false, error: httpErrors.badRequest("User ID is required") };
   }
 
-  const trackerData: NewSocialTracker = {
+  const trackerData: TrackerCreateInput = {
     name: body.name,
     hp: typeof body.hp === "string" ? body.hp : null,
     cardType: typeof body.cardType === "string" ? body.cardType : null,
