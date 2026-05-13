@@ -1,10 +1,25 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { PlaygroundTodo as Todo, NewPlaygroundTodo as TodoInsert } from "@pontistudios/db";
 
-export type TodoItem = Todo & {
-  projectName?: string;
-};
-export type TodoCreateData = Omit<TodoInsert, "userId" | "id" | "createdAt" | "updatedAt">;
+export interface TodoItem {
+  id: number;
+  userId: string;
+  projectId: number | null;
+  title: string;
+  start: string;
+  end: string;
+  completed: boolean;
+  createdAt: string | null;
+  updatedAt: string | null;
+  projectName?: string | null;
+}
+
+export interface TodoCreateData {
+  projectId: number | null;
+  title: string;
+  start: string;
+  end: string;
+  completed: boolean;
+}
 
 export const useTodos = () => {
   return useQuery({

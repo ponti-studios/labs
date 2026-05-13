@@ -14,7 +14,6 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/social/package.json apps/social/package.json
 COPY packages/db/package.json packages/db/package.json
 COPY packages/ui/package.json packages/ui/package.json
-COPY packages/utils/package.json packages/utils/package.json
 COPY packages/tsconfig/package.json packages/tsconfig/package.json
 
 # Install dependencies
@@ -29,12 +28,10 @@ COPY tsconfig.base.json ./
 COPY packages/tsconfig/ packages/tsconfig/
 COPY packages/db/ packages/db/
 COPY packages/ui/ packages/ui/
-COPY packages/utils/ packages/utils/
 COPY apps/social/ apps/social/
 
 RUN pnpm run build --filter @pontistudios/db
 RUN pnpm run build --filter @pontistudios/ui
-RUN pnpm run build --filter @pontistudios/utils
 RUN pnpm run build --filter @pontistudios/social
 
 # ─── Stage 3: Production image ───────────────────────────────────────────────
@@ -50,7 +47,6 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/social/package.json apps/social/package.json
 COPY packages/db/package.json packages/db/package.json
 COPY packages/ui/package.json packages/ui/package.json
-COPY packages/utils/package.json packages/utils/package.json
 COPY packages/tsconfig/package.json packages/tsconfig/package.json
 
 # Install production dependencies only
@@ -59,7 +55,6 @@ RUN pnpm install --frozen-lockfile --prod --ignore-scripts
 # Copy built artifacts
 COPY --from=builder /app/packages/db/dist packages/db/dist
 COPY --from=builder /app/packages/ui/dist packages/ui/dist
-COPY --from=builder /app/packages/utils/dist packages/utils/dist
 COPY --from=builder /app/apps/social/build apps/social/build
 COPY --from=builder /app/apps/social/server.ts apps/social/server.ts
 

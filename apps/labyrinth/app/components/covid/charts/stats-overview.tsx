@@ -10,10 +10,19 @@ interface StatsOverviewProps {
 
 interface StatCardProps {
   title: string;
-  value: number | null | undefined;
+  value: number | string | null | undefined;
   icon: string;
   color: string;
-  change?: number | null | undefined;
+  change?: number | string | null | undefined;
+}
+
+function toNumber(value: unknown): number | null {
+  if (typeof value === "number") return Number.isFinite(value) ? value : null;
+  if (typeof value === "string" && value.trim() !== "") {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+  return null;
 }
 
 function StatCard({ title, value, icon, color, change }: StatCardProps) {
@@ -36,12 +45,14 @@ function StatCard({ title, value, icon, color, change }: StatCardProps) {
         <div>
           <p className="text-sm font-medium text-gray-600">{title}</p>
           <p className="text-2xl font-bold text-gray-900">
-            {value !== null && value !== undefined ? <CountUpTo value={value} /> : "N/A"}
+            {toNumber(value) !== null ? <CountUpTo value={toNumber(value) ?? 0} /> : "N/A"}
           </p>
-          {change !== undefined && change !== null && (
-            <p className={`text-sm mt-1 ${change >= 0 ? "text-red-600" : "text-green-600"}`}>
-              {change >= 0 ? "+" : ""}
-              {formatValue(change)}
+          {toNumber(change) !== null && (
+            <p
+              className={`text-sm mt-1 ${(toNumber(change) ?? 0) >= 0 ? "text-red-600" : "text-green-600"}`}
+            >
+              {(toNumber(change) ?? 0) >= 0 ? "+" : ""}
+              {formatValue(toNumber(change) ?? 0)}
             </p>
           )}
         </div>

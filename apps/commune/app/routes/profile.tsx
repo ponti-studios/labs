@@ -39,13 +39,13 @@ export function ProfilePage() {
             {trackers.map((tracker) => {
               const cardData = {
                 name: tracker.name,
-                hp: tracker.hp ?? undefined,
-                cardType: tracker.cardType ?? undefined,
-                description: tracker.description ?? undefined,
+                hp: tracker.hp,
+                cardType: tracker.cardType,
+                description: tracker.description,
                 attacks: tracker.attacks ?? [],
                 flaws: Array.isArray(tracker.flaws) ? tracker.flaws : [],
                 strengths: Array.isArray(tracker.strengths) ? tracker.strengths : [],
-                commitmentLevel: tracker.commitmentLevel ?? undefined,
+                commitmentLevel: tracker.commitmentLevel,
               };
 
               const selectedTheme =

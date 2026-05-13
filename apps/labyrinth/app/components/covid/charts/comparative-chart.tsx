@@ -19,16 +19,29 @@ interface ComparativeChartProps {
   height?: number;
 }
 
+function toNumber(value: unknown): number | null {
+  if (typeof value === "number") return Number.isFinite(value) ? value : null;
+  if (typeof value === "string" && value.trim() !== "") {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+  return null;
+}
+
 export function ComparativeChart({ data, metrics, title, height = 400 }: ComparativeChartProps) {
   // Combine data for all metrics
   const combinedData = new Map<string, CombinedDataItem>();
 
   for (const { key, name } of metrics) {
     const metricData = data
-      .filter((item) => item.date && item[key] !== null && item[key] !== undefined)
+      .map((item) => ({
+        date: item.date,
+        value: toNumber(item[key]),
+      }))
+      .filter((item) => item.date && item.value !== null)
       .map((item) => ({
         date: item.date as string,
-        value: item[key] as number,
+        value: item.value as number,
       }))
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
@@ -79,7 +92,7 @@ export function ComparativeChart({ data, metrics, title, height = 400 }: Compara
           <YAxis tickFormatter={formatValue} tick={{ fontSize: 12 }} width={60} />
           <Tooltip
             labelFormatter={(label) => formatDate(label as string)}
-            formatter={(value: number, name: string) => [formatValue(value), name]}
+            formatter={(value, name) => [formatValue(toNumber(value) ?? 0), String(name)]}
             contentStyle={{
               backgroundColor: "rgba(255, 255, 255, 0.95)",
               border: "1px solid #e5e7eb",

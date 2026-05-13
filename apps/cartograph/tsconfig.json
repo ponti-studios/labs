@@ -2,7 +2,7 @@
   "extends": "@pontistudios/tsconfig/react.json",
   "include": ["**/*", "**/.server/**/*", "**/.client/**/*", ".react-router/types/**/*"],
   "compilerOptions": {
-    "types": ["node", "vite/client", "cesium"],
+    "types": ["node", "vite/client"],
     "rootDirs": [".", "./.react-router/types"],
     "baseUrl": ".",
     "paths": {

@@ -15,7 +15,6 @@
     "@hono/node-server": "^2.0.0",
     "@pontistudios/db": "workspace:*",
     "@pontistudios/ui": "workspace:*",
-    "@pontistudios/utils": "workspace:*",
     "@react-router/node": "catalog:",
     "@react-router/serve": "catalog:",
     "@tanstack/react-query": "catalog:",

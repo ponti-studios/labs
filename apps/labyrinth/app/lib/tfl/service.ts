@@ -14,8 +14,8 @@ export async function getCameras(): Promise<Cameras> {
       imageUrl: camera.imageUrl || "",
       videoUrl: camera.videoUrl || "",
       view: camera.view || "",
-      lat: camera.lat,
-      lng: camera.lng,
+      lat: Number.parseFloat(camera.lat),
+      lng: Number.parseFloat(camera.lng),
     }));
   } catch (error) {
     console.error("Error fetching TFL cameras:", error);
@@ -37,8 +37,8 @@ export async function getCameraById(id: string): Promise<Cameras[0] | undefined>
       imageUrl: dbCamera.imageUrl || "",
       videoUrl: dbCamera.videoUrl || "",
       view: dbCamera.view || "",
-      lat: dbCamera.lat,
-      lng: dbCamera.lng,
+      lat: Number.parseFloat(dbCamera.lat),
+      lng: Number.parseFloat(dbCamera.lng),
     };
   } catch (error) {
     console.error("Error fetching camera by ID:", error);

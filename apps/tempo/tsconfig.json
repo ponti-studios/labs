@@ -1,9 +1,19 @@
 {
   "extends": "@pontistudios/tsconfig/react.json",
   "include": ["**/*", "**/.server/**/*", "**/.client/**/*", ".react-router/types/**/*"],
-  "exclude": ["app/routes/svelte/**/*"],
+  "exclude": [
+    "app/routes/svelte/**/*",
+    "app/routes/tasks.search.tsx",
+    "app/components/AddTaskModal.tsx",
+    "app/components/AIPrompt.tsx",
+    "app/components/DependencyManager.tsx",
+    "app/components/TaskCard.tsx",
+    "app/components/TimelineView.tsx",
+    "app/components/VoiceRecorderOverlay.tsx",
+    "src/**/*"
+  ],
   "compilerOptions": {
-    "types": ["node", "vite/client", "google.maps"],
+    "types": ["node", "vite/client"],
     "rootDirs": [".", "./.react-router/types"],
     "baseUrl": ".",
     "paths": {

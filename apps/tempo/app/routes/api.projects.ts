@@ -1,29 +1,16 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
-import { db } from "~/lib/db";
-import type { NewPlaygroundProject, PlaygroundProject } from "@pontistudios/db";
-import { commitSession, getSession } from "~/lib/session";
+import {
+  and,
+  count,
+  db,
+  desc,
+  eq,
+  projects,
+  todos,
+} from "@pontistudios/db";
 
-async function getOrCreateUserId(request: Request): Promise<{ userId: string; session: unknown }> {
-  const session = await getSession(request.headers.get("Cookie"));
-  let userId = session.get("userId");
+const DEMO_USER_ID = "demo-user";
 
-  if (!userId) {
-    userId = `session_${Date.now()}_${crypto.randomUUID()}`;
-    session.set("userId", userId);
-  }
-
-  return { userId, session };
-}
-
-async function createResponseWithSession(data: unknown, session: unknown) {
-  return Response.json(data, {
-    headers: {
-      "Set-Cookie": await commitSession(session as any),
-    },
-  });
-}
-
-interface ProjectWithTaskCount {
+interface ProjectItem {
   id: number;
   userId: string;
   name: string;
@@ -33,136 +20,109 @@ interface ProjectWithTaskCount {
   taskCount: number;
 }
 
-async function fetchUserProjects(userId: string): Promise<ProjectWithTaskCount[]> {
-  const projects = await db
-    .selectFrom("projects")
-    .where("userId", "=", userId)
-    .orderBy("createdAt", "desc")
-    .select(["id", "userId", "name", "description", "createdAt", "updatedAt"])
-    .execute();
+interface ProjectCreateData {
+  name: string;
+  description: string | null;
+}
 
-  const projectsWithCounts = await Promise.all(
-    projects.map(async (project) => {
-      const countResult = await db
-        .selectFrom("todos")
-        .where("projectId", "=", project.id)
-        .select((eb) => eb.fn.count<number>("id").as("taskCount"))
-        .executeTakeFirstOrThrow();
+function toIsoString(value: Date | null): string | null {
+  return value ? value.toISOString() : null;
+}
+
+async function fetchProjects(userId: string): Promise<ProjectItem[]> {
+  const projectRows = await db
+    .select()
+    .from(projects)
+    .where(eq(projects.userId, userId))
+    .orderBy(desc(projects.createdAt));
+
+  return Promise.all(
+    projectRows.map(async (project) => {
+      const [countRow] = await db
+        .select({ value: count() })
+        .from(todos)
+        .where(eq(todos.projectId, project.id));
 
       return {
-        ...project,
-        taskCount: Number(countResult.taskCount) || 0,
+        id: project.id,
+        userId: project.userId,
+        name: project.name,
+        description: project.description,
+        createdAt: toIsoString(project.createdAt),
+        updatedAt: toIsoString(project.updatedAt),
+        taskCount: Number(countRow?.value ?? 0),
       };
     }),
   );
-
-  return projectsWithCounts;
 }
 
-async function createProject(
-  projectData: Omit<NewPlaygroundProject, "id" | "createdAt" | "updatedAt">,
-  userId: string,
-): Promise<PlaygroundProject> {
-  const result = await db
-    .insertInto("projects")
-    .values({
-      userId,
-      name: projectData.name,
-      description: projectData.description ?? null,
-    })
-    .executeTakeFirst();
-
-  const insertId = Number(result.insertId);
-  const now = new Date().toISOString().slice(0, 19).replace("T", " ");
-
-  return {
-    id: insertId,
-    userId,
-    name: projectData.name,
-    description: projectData.description ?? null,
-    createdAt: now,
-    updatedAt: now,
-  };
-}
-
-async function updateProject(
-  projectData: { id: number; name?: string; description?: string | null },
-  userId: string,
-): Promise<PlaygroundProject | null> {
-  const now = new Date().toISOString().slice(0, 19).replace("T", " ");
-
-  await db
-    .updateTable("projects")
-    .set({
-      name: projectData.name,
-      description: projectData.description,
-      updatedAt: now,
-    })
-    .where("id", "=", projectData.id)
-    .executeTakeFirst();
-
-  const updated = await db
-    .selectFrom("projects")
-    .where("id", "=", projectData.id)
-    .selectAll()
-    .executeTakeFirst();
-
-  if (!updated) return null;
-
-  return {
-    id: updated.id,
-    userId: updated.userId,
-    name: updated.name,
-    description: updated.description,
-    createdAt: updated.createdAt ?? now,
-    updatedAt: updated.updatedAt ?? now,
-  };
-}
-
-async function deleteProject(projectId: number): Promise<boolean> {
-  const result = await db.deleteFrom("projects").where("id", "=", projectId).executeTakeFirst();
-
-  return result.numDeletedRows > 0;
-}
-
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader() {
   try {
-    const { userId, session } = await getOrCreateUserId(request);
-    const userProjects = await fetchUserProjects(userId);
-    return createResponseWithSession(userProjects, session);
+    const userProjects = await fetchProjects(DEMO_USER_ID);
+    return Response.json(userProjects);
   } catch (error) {
     console.error("Error fetching projects:", error);
     return Response.json({ error: "Failed to fetch projects" }, { status: 500 });
   }
 }
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ request }: { request: Request }) {
   try {
-    const { userId, session } = await getOrCreateUserId(request);
-
     switch (request.method) {
       case "POST": {
-        const body = (await request.json()) as Omit<
-          NewPlaygroundProject,
-          "id" | "createdAt" | "updatedAt"
-        >;
-        const newProject = await createProject(body, userId);
-        return createResponseWithSession(newProject, session);
+        const body = (await request.json()) as ProjectCreateData;
+        const [project] = await db
+          .insert(projects)
+          .values({
+            userId: DEMO_USER_ID,
+            name: body.name,
+            description: body.description ?? null,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          })
+          .returning();
+
+        return Response.json({
+          id: project.id,
+          userId: project.userId,
+          name: project.name,
+          description: project.description,
+          createdAt: toIsoString(project.createdAt),
+          updatedAt: toIsoString(project.updatedAt),
+          taskCount: 0,
+        } satisfies ProjectItem);
       }
 
       case "PUT": {
-        const body = (await request.json()) as {
-          id: number;
-          name?: string;
-          description?: string | null;
-        };
-        const updatedProject = await updateProject(body, userId);
+        const body = (await request.json()) as ProjectItem;
+        const [project] = await db
+          .update(projects)
+          .set({
+            name: body.name,
+            description: body.description ?? null,
+            updatedAt: new Date(),
+          })
+          .where(and(eq(projects.id, body.id), eq(projects.userId, DEMO_USER_ID)))
+          .returning();
 
-        if (!updatedProject) {
+        if (!project) {
           return Response.json({ error: "Project not found" }, { status: 404 });
         }
 
-        return createResponseWithSession(updatedProject, session);
+        const [countRow] = await db
+          .select({ value: count() })
+          .from(todos)
+          .where(eq(todos.projectId, project.id));
+
+        return Response.json({
+          id: project.id,
+          userId: project.userId,
+          name: project.name,
+          description: project.description,
+          createdAt: toIsoString(project.createdAt),
+          updatedAt: toIsoString(project.updatedAt),
+          taskCount: Number(countRow?.value ?? 0),
+        } satisfies ProjectItem);
       }
 
       case "DELETE": {
@@ -173,20 +133,23 @@ export async function action({ request }: ActionFunctionArgs) {
           return Response.json({ error: "Project ID is required" }, { status: 400 });
         }
 
-        const deleted = await deleteProject(Number.parseInt(id, 10));
+        const [deleted] = await db
+          .delete(projects)
+          .where(and(eq(projects.id, Number(id)), eq(projects.userId, DEMO_USER_ID)))
+          .returning({ id: projects.id });
 
         if (!deleted) {
           return Response.json({ error: "Project not found" }, { status: 404 });
         }
 
-        return createResponseWithSession({ success: true }, session);
+        return Response.json({ success: true });
       }
 
       default:
         return Response.json({ error: "Method not allowed" }, { status: 405 });
     }
   } catch (error) {
-    console.error("Error in action:", error);
+    console.error("Error in project action:", error);
     return Response.json({ error: "Internal server error" }, { status: 500 });
   }
 }

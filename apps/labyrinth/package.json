@@ -17,7 +17,6 @@
     "@emotion/styled": "^11.14.1",
     "@pontistudios/db": "workspace:*",
     "@pontistudios/ui": "workspace:*",
-    "@pontistudios/utils": "workspace:*",
     "@preact/signals-react": "^3.10.0",
     "@react-router/node": "catalog:",
     "@react-router/serve": "catalog:",
@@ -31,6 +30,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-router": "catalog:",
+    "recharts": "^3.8.1",
     "three": "^0.184.0",
     "vitest": "catalog:",
     "zod": "catalog:"

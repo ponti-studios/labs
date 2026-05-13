@@ -1,7 +1,7 @@
 import { ArrowLeft } from "lucide-react";
 import { Link, useParams } from "react-router";
-import TaskForm from "~/components/to-do/TaskForm";
-import { TaskList } from "~/components/to-do/TaskList";
+import TaskForm from "~/components/tasks/to-do/TaskForm";
+import { TaskList } from "~/components/tasks/to-do/TaskList";
 import { useProjects } from "~/lib/projects";
 import { useDeleteTodo, useTodos } from "~/lib/todos";
 
@@ -52,7 +52,7 @@ export default function TasksByProject() {
       <div className="space-y-4">
         <div className="flex items-center gap-4">
           <Link
-            to="/to-do"
+            to="/tasks"
             className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft className="size-4" />

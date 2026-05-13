@@ -11,9 +11,9 @@ const LONDON_CENTER: [number, number] = [51.5074, -0.1278];
 export default function LeafletViewer() {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
-  const markersRef = useRef<Map<string, L.Marker>>(new Map());
+  const markersRef = useRef<Map<string, L.CircleMarker>>(new Map());
   const [ready, setReady] = useState(false);
-  const { data: cameras, isLoading } = useTflCameras();
+  const { data: cameras } = useTflCameras();
   const navigate = useNavigate();
 
   // Initialize map
@@ -32,7 +32,7 @@ export default function LeafletViewer() {
 
       // Add OpenStreetMap tile layer
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: '© OpenStreetMap contributors',
+        attribution: "© OpenStreetMap contributors",
         maxZoom: 19,
         minZoom: 3,
       }).addTo(map);
@@ -65,7 +65,7 @@ export default function LeafletViewer() {
 
     // Add new markers
     cameras.forEach((camera) => {
-      const isOnline = camera.available === "true" || camera.available === true;
+      const isOnline = camera.available === "true";
       const markerColor = isOnline ? "#10b981" : "#6b7280";
 
       // Create a simple circle marker for each camera
@@ -95,7 +95,7 @@ export default function LeafletViewer() {
         {
           className: "leaflet-popup-tfl",
           minWidth: 200,
-        }
+        },
       );
 
       // Add click handler to navigate to detail page

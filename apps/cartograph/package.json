@@ -14,6 +14,7 @@
     "tiles:terrain": "node ../../tools/earth/generate-terrain.mjs"
   },
   "dependencies": {
+    "@pontistudios/db": "workspace:*",
     "@react-router/node": "catalog:",
     "@react-router/serve": "catalog:",
     "@tanstack/react-query": "catalog:",

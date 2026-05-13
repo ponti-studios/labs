@@ -13,16 +13,18 @@ import { db, trackers, votes } from "@pontistudios/db";
 import type { NewSocialTracker, NewSocialVote, SocialTracker, SocialVote } from "@pontistudios/db";
 import { queryCache, invalidateTrackerCache } from "./cache";
 
+export type TrackerCreateInput = Omit<NewSocialTracker, "id" | "createdAt" | "updatedAt">;
+export type VoteCreateInput = Omit<NewSocialVote, "id" | "createdAt" | "updatedAt">;
+
 // Tracker mutations
-export async function createTracker(data: NewSocialTracker): Promise<SocialTracker> {
+export async function createTracker(data: TrackerCreateInput): Promise<SocialTracker> {
   const row = await db
     .insert(trackers)
     .values({
+      id: crypto.randomUUID(),
       ...data,
-      attacks: data.attacks != null ? JSON.stringify(data.attacks) : null,
-      strengths: data.strengths != null ? JSON.stringify(data.strengths) : null,
-      flaws: data.flaws != null ? JSON.stringify(data.flaws) : null,
-      imagePosition: data.imagePosition != null ? JSON.stringify(data.imagePosition) : null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     })
     .returning()
     .execute();
@@ -83,8 +85,17 @@ export async function deleteTracker(id: string): Promise<void> {
 }
 
 // Vote mutations
-export async function createVote(data: NewSocialVote): Promise<SocialVote> {
-  const row = await db.insert(votes).values(data).returning().execute();
+export async function createVote(data: VoteCreateInput): Promise<SocialVote> {
+  const row = await db
+    .insert(votes)
+    .values({
+      id: crypto.randomUUID(),
+      ...data,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })
+    .returning()
+    .execute();
 
   const inserted = row[0];
   if (!inserted) throw new Error("Failed to insert vote");

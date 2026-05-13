@@ -19,7 +19,6 @@ export default [
   route("/tarot", "routes/tarot.tsx"),
 
   // API routes
-  route("/api/search", "routes/api.search.ts"),
   route("/api/todos", "routes/api.todos.ts"),
   route("/api/projects", "routes/api.projects.ts"),
 

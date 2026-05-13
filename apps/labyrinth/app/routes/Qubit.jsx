@@ -149,7 +149,7 @@ export default function Qubit() {
           <div id="some_id" class="some_class some_other_class"></div>
           <img id="some_other_id" class="some_class some_other_class" />
           <input type="text" />
-          <script>${ANSWER_JS}<\/script>
+          <script>${ANSWER_JS}</script>
         </body>
       </html>
     `);

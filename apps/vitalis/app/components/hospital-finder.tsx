@@ -41,7 +41,7 @@ export default function HospitalFinder({ isOpen, onClose }: HospitalFinderProps)
   // Use Sheet for larger screens
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent className="w-[600px] sm:w-[540px] overflow-y-auto">
+      <SheetContent className="w-150 sm:w-135 overflow-y-auto">
         <SheetHeader>
           <SheetTitle>Nearby Hospitals</SheetTitle>
           <SheetDescription>
@@ -57,7 +57,7 @@ export default function HospitalFinder({ isOpen, onClose }: HospitalFinderProps)
 function Hospitals() {
   const [hospitals] = useState<Hospital[]>(HOSPITALS);
 
-  // In a real app, you would fetch nearby hospitals based on geolocation
+  // TODO: import geolocation to fetch nearby hospitals
   // useEffect(() => {
   //   if (isOpen) {
   //     // Get user location and fetch nearby hospitals

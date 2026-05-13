@@ -1,8 +1,0 @@
-export { ContactSection } from "./contact-section";
-export { HeroSection } from "./hero-section";
-export { ManifestoSection } from "./manifesto-section";
-export { SiteFooter } from "./site-footer";
-export { SiteNavigation } from "./site-navigation";
-export { ParticleBackground } from "./particle-background";
-export { OfferingsSection } from "./services-section";
-export { ProjectsSection } from "./work-section";
