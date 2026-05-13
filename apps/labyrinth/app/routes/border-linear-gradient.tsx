@@ -125,7 +125,7 @@ export default function Component() {
 
   const gradientString = React.useMemo(() => {
     return `linear-gradient(
-    ${degree}deg, 
+    ${degree}deg,
     ${hexToRgba(colors[0], opacities[0])} ${positions[0]}%,
     ${hexToRgba(colors[1], opacities[1])} ${positions[1]}%,
     ${hexToRgba(colors[2], opacities[2])} ${positions[2]}%,
@@ -155,8 +155,8 @@ export default function Component() {
 
     return `.gradientBorder {
   background: linear-gradient(
-    ${glassGradient.direction}, 
-    ${glassStartRgba}, 
+    ${glassGradient.direction},
+    ${glassStartRgba},
     ${glassEndRgba}
   );
   border-radius: 12px;
@@ -177,7 +177,7 @@ export default function Component() {
   border-radius: inherit;
   background: ${gradientString};
   -webkit-mask:
-    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: xor;
@@ -315,8 +315,8 @@ export default function Component() {
       <Card className="space-y-4 p-0">
         <Accordion type="single" collapsible defaultValue="background">
           <AccordionItem value="background">
-            <AccordionTrigger className="px-2">Background Settings</AccordionTrigger>
-            <AccordionContent className="px-2">
+            <AccordionTrigger index={0}>Background Settings</AccordionTrigger>
+            <AccordionContent>
               <BackgroundSettings
                 backgroundImage={backgroundImage}
                 backgroundColor={backgroundColor}
@@ -327,8 +327,8 @@ export default function Component() {
           </AccordionItem>
 
           <AccordionItem value="angle">
-            <AccordionTrigger className="px-2">Gradient Angle</AccordionTrigger>
-            <AccordionContent className="px-2">
+            <AccordionTrigger index={1}>Gradient Angle</AccordionTrigger>
+            <AccordionContent>
               <GradientAngle
                 degree={degree}
                 presetAngles={presetAngles}
@@ -338,8 +338,8 @@ export default function Component() {
           </AccordionItem>
 
           <AccordionItem value="border-width">
-            <AccordionTrigger className="px-2">Border Width</AccordionTrigger>
-            <AccordionContent className="px-2">
+            <AccordionTrigger index={2}>Border Width</AccordionTrigger>
+            <AccordionContent>
               <BorderWidth
                 borderWidth={borderWidth}
                 onBorderWidthChange={handleBorderWidthChange}
@@ -348,30 +348,30 @@ export default function Component() {
           </AccordionItem>
 
           <AccordionItem value="colors">
-            <AccordionTrigger className="px-2">Color Controls</AccordionTrigger>
-            <AccordionContent className="px-2">
+            <AccordionTrigger index={3}>Color Controls</AccordionTrigger>
+            <AccordionContent>
               <ColorControls colors={colors} onColorChange={handleColorChange} />
             </AccordionContent>
           </AccordionItem>
 
           <AccordionItem value="opacity">
-            <AccordionTrigger className="px-2">Opacity Controls</AccordionTrigger>
-            <AccordionContent className="px-2">
+            <AccordionTrigger index={4}>Opacity Controls</AccordionTrigger>
+            <AccordionContent>
               <OpacityControls opacities={opacities} onOpacityChange={handleOpacityChange} />
             </AccordionContent>
           </AccordionItem>
 
           <AccordionItem value="position">
-            <AccordionTrigger className="px-2">Position Controls</AccordionTrigger>
-            <AccordionContent className="px-2">
+            <AccordionTrigger index={5}>Position Controls</AccordionTrigger>
+            <AccordionContent>
               <PositionControls positions={positions} onPositionChange={handlePositionChange} />
             </AccordionContent>
           </AccordionItem>
 
           {/* Glass Background Controls */}
           <AccordionItem value="glass-background">
-            <AccordionTrigger className="px-2">Glass Background</AccordionTrigger>
-            <AccordionContent className="px-2">
+            <AccordionTrigger index={6}>Glass Background</AccordionTrigger>
+            <AccordionContent>
               <GlassBackgroundControls
                 glassGradient={glassGradient}
                 onGlassGradientChange={handleGlassGradientChange}

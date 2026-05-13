@@ -1,8 +1,8 @@
 "use client";
 
 import { useTranslations } from "@/i18n/client";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@pontistudios/ui";
 import { useState } from "react";
-import { AccordionRow } from "./ui/accordion-row";
 
 interface ProjectItem {
   name: string;
@@ -18,7 +18,7 @@ export function ProjectsSection() {
   const title = t("projects.title");
   const subtitle = t("projects.subtitle");
   const projects = t.raw<ProjectItem[]>("projects.items");
-  const [openProject, setOpenProject] = useState<number | null>(null);
+  const [openProject, setOpenProject] = useState<string | null>(null);
 
   return (
     <section id="projects" className="border-t border-border">
@@ -46,40 +46,52 @@ export function ProjectsSection() {
             </span>
             <span />
           </div>
-          <div>
-            {projects.map((project, i) => (
-              <AccordionRow
-                key={project.name}
-                index={i}
-                isOpen={openProject === i}
-                onToggleAction={() => setOpenProject(openProject === i ? null : i)}
-                title={project.name}
-                badge={
-                  <span className="hidden text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground/50 sm:block">
-                    {project.kind}
-                  </span>
-                }
-                aside={
-                  <span className="hidden text-right md:block">
-                    <span className="block text-lg font-normal tracking-tight tabular-nums">
-                      {project.metric}
-                    </span>
-                    <span className="block text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground/50">
-                      {project.metricLabel}
-                    </span>
-                  </span>
-                }
-              >
-                <p className="mb-1 text-sm font-medium tabular-nums md:hidden">
-                  {project.metric}{" "}
-                  <span className="text-xs font-normal uppercase tracking-[0.16em] text-muted-foreground">
-                    {project.metricLabel}
-                  </span>
-                </p>
-                <p className="max-w-2xl text-sm leading-7 text-muted-foreground">{project.blurb}</p>
-              </AccordionRow>
-            ))}
-          </div>
+          <Accordion
+            type="single"
+            collapsible
+            value={openProject ?? undefined}
+            onValueChange={(value) => setOpenProject(value || null)}
+          >
+            {projects.map((project, index) => {
+              const value = `project-${index}`;
+
+              return (
+                <AccordionItem key={project.name} value={value}>
+                  <AccordionTrigger
+                    index={index}
+                    badge={
+                      <span className="hidden text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground/50 sm:block">
+                        {project.kind}
+                      </span>
+                    }
+                    aside={
+                      <span className="hidden text-right md:block">
+                        <span className="block text-lg font-normal tracking-tight tabular-nums">
+                          {project.metric}
+                        </span>
+                        <span className="block text-[0.6rem] uppercase tracking-[0.2em] text-muted-foreground/50">
+                          {project.metricLabel}
+                        </span>
+                      </span>
+                    }
+                  >
+                    {project.name}
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <p className="mb-1 text-sm font-medium tabular-nums md:hidden">
+                      {project.metric}{" "}
+                      <span className="text-xs font-normal uppercase tracking-[0.16em] text-muted-foreground">
+                        {project.metricLabel}
+                      </span>
+                    </p>
+                    <p className="max-w-2xl text-sm leading-7 text-muted-foreground">
+                      {project.blurb}
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+              );
+            })}
+          </Accordion>
         </div>
       </div>
     </section>

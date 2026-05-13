@@ -2,17 +2,19 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { Check, ChevronsUpDown, Globe, Search } from "lucide-react";
-import { type ReactNode, useCallback, useState } from "react";
-import { Button } from "~/components/ui/button";
 import {
+  Button,
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
-} from "~/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@pontistudios/ui";
+import { type ReactNode, useCallback, useState } from "react";
 import { cn } from "~/lib/utils";
 
 type Country = {

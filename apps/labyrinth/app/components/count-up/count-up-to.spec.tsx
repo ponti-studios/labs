@@ -1,6 +1,6 @@
+import { CountUpTo } from "@pontistudios/ui";
 import { render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, test } from "vitest";
-import CountUpTo from "./count-up-to";
 
 describe("CountUpTo", () => {
   test("should render and count up to target value", async () => {

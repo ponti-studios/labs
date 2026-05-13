@@ -1,8 +1,8 @@
 "use client";
 
 import { useTranslations } from "@/i18n/client";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@pontistudios/ui";
 import { useState } from "react";
-import { AccordionRow } from "./ui/accordion-row";
 import { FIT_GOOD_FOR, FIT_NOT_RIGHT, TOGETHER_GAINS, TOGETHER_NEEDS } from "./data";
 
 interface TogetherItem {
@@ -13,13 +13,13 @@ interface TogetherItem {
 function TogetherCard({
   title,
   items,
-  openIndex,
-  onToggle,
+  openItem,
+  onOpenChange,
 }: {
   title: string;
   items: TogetherItem[];
-  openIndex: number | null;
-  onToggle: (index: number) => void;
+  openItem: string | null;
+  onOpenChange: (value: string | null) => void;
 }) {
   return (
     <div className="card overflow-hidden p-0">
@@ -28,17 +28,25 @@ function TogetherCard({
       </div>
 
       <div className="px-7 pb-2">
-        {items.map((item, index) => (
-          <AccordionRow
-            key={item.title}
-            index={index}
-            isOpen={openIndex === index}
-            onToggleAction={() => onToggle(index)}
-            title={item.title}
-          >
-            <p className="text-sm leading-6 text-muted-foreground">{item.description}</p>
-          </AccordionRow>
-        ))}
+        <Accordion
+          type="single"
+          collapsible
+          value={openItem ?? undefined}
+          onValueChange={(value) => onOpenChange(value || null)}
+        >
+          {items.map((item, index) => {
+            const value = `item-${index}`;
+
+            return (
+              <AccordionItem key={item.title} value={value}>
+                <AccordionTrigger index={index}>{item.title}</AccordionTrigger>
+                <AccordionContent>
+                  <p className="text-sm leading-6 text-muted-foreground">{item.description}</p>
+                </AccordionContent>
+              </AccordionItem>
+            );
+          })}
+        </Accordion>
       </div>
     </div>
   );
@@ -62,8 +70,8 @@ function FitCard({ title, items }: { title: string; items: string[] }) {
 
 export function WorkingTogetherSection() {
   const t = useTranslations("ServicesPage");
-  const [openNeedIndex, setOpenNeedIndex] = useState<number | null>(null);
-  const [openGainIndex, setOpenGainIndex] = useState<number | null>(null);
+  const [openNeedItem, setOpenNeedItem] = useState<string | null>(null);
+  const [openGainItem, setOpenGainItem] = useState<string | null>(null);
 
   return (
     <section className="border-b border-border">
@@ -75,15 +83,15 @@ export function WorkingTogetherSection() {
           <TogetherCard
             title={t("together.needTitle")}
             items={TOGETHER_NEEDS}
-            openIndex={openNeedIndex}
-            onToggle={(index) => setOpenNeedIndex(openNeedIndex === index ? null : index)}
+            openItem={openNeedItem}
+            onOpenChange={setOpenNeedItem}
           />
 
           <TogetherCard
             title={t("together.getTitle")}
             items={TOGETHER_GAINS}
-            openIndex={openGainIndex}
-            onToggle={(index) => setOpenGainIndex(openGainIndex === index ? null : index)}
+            openItem={openGainItem}
+            onOpenChange={setOpenGainItem}
           />
         </div>
 
