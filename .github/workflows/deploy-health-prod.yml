@@ -1,28 +1,30 @@
-name: Deploy Health to Production
+name: deploy-vitalis-prod
 
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 concurrency:
-  group: deploy-health-${{ github.ref }}
+  group: deploy-vitalis-prod-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   deploy:
-    name: Deploy to Railway
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
+    # Pin Railway CLI. Dependabot keeps this updated (.github/dependabot.yml).
+    container: ghcr.io/railwayapp/cli:v4.58.0
+    env:
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
-      - name: Checkout code
+    steps:
+      - name: checkout-code
         uses: actions/checkout@v4
 
-      - name: Install Railway CLI
-        run: npm install -g @railway/cli@latest
+      - name: validate-env
+        run: test -n "$RAILWAY_TOKEN"
 
-      - name: Deploy to Railway
-        run: railway up --service ${{ secrets.RAILWAY_SERVICE_HEALTH }} --detach
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      - name: deploy-to-railway
+        run: railway up --service ${{ secrets.RAILWAY_SERVICE_HEALTH }} --detach --ci

@@ -7,6 +7,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -15,6 +18,10 @@ jobs:
   db-migrate:
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+      TURBO_TELEMETRY_DISABLED: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -22,9 +29,8 @@ jobs:
           run_install: false
       - uses: actions/setup-node@v4
         with:
-          node-version: "24"
-          cache: "pnpm"
-      - run: corepack enable
+          node-version: '24.14.1'
+          cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
       - name: Start PostgreSQL
         run: docker run -d --name postgres-test -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=hominem -p 5433:5432 postgres:16
@@ -47,6 +53,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: db-migrate
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+      TURBO_TELEMETRY_DISABLED: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -54,9 +64,8 @@ jobs:
           run_install: false
       - uses: actions/setup-node@v4
         with:
-          node-version: "24"
-          cache: "pnpm"
-      - run: corepack enable
+          node-version: '24.14.1'
+          cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
       - run: pnpm run lint
       - run: pnpm run test
@@ -65,6 +74,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: lint-and-test
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+      TURBO_TELEMETRY_DISABLED: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -72,9 +85,8 @@ jobs:
           run_install: false
       - uses: actions/setup-node@v4
         with:
-          node-version: "24"
-          cache: "pnpm"
-      - run: corepack enable
+          node-version: '24.14.1'
+          cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
       - run: pnpm run build
 
@@ -90,7 +102,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: ["javascript"]
+        language: ['javascript']
 
     steps:
       - name: Checkout repository
@@ -107,4 +119,4 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
-          category: "/language:${{matrix.language}}"
+          category: '/language:${{matrix.language}}'
