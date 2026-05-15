@@ -3,7 +3,7 @@
 # docker build -f apps/labyrinth/Dockerfile .
 
 # ─── Stage 1: Install dependencies ───────────────────────────────────────────
-FROM node:24-bookworm-slim AS deps
+FROM node:26-bookworm-slim AS deps
 
 RUN npm install -g pnpm@10.30.3
 
@@ -29,7 +29,7 @@ RUN pnpm run build --filter @pontistudios/ui
 RUN pnpm run build --filter @pontistudios/labyrinth
 
 # ─── Stage 3: Production image ───────────────────────────────────────────────
-FROM node:24-bookworm-slim AS runner
+FROM node:26-bookworm-slim AS runner
 
 RUN npm install -g pnpm@10.30.3
 
