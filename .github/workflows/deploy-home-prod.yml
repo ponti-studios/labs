@@ -22,12 +22,14 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    # Pin Railway CLI. Dependabot keeps this updated (.github/dependabot.yml).
-    container: ghcr.io/railwayapp/cli:v4.58.0
+
     env:
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
     steps:
+      - name: install-railway-cli
+        run: npm install -g @railway/cli@4.58.0
+
       - name: checkout-code
         uses: actions/checkout@v4
 
