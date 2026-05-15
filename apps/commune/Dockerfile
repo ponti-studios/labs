@@ -1,22 +1,20 @@
 # syntax=docker/dockerfile:1
 # Build context: monorepo root
-# docker build -f apps/social/Dockerfile .
+# docker build -f apps/commune/Dockerfile .
 
 # ─── Stage 1: Install dependencies ───────────────────────────────────────────
 FROM node:24-bookworm-slim AS deps
 
-RUN corepack enable && pnpm install -g pnpm@10.30.3
+RUN npm install -g pnpm@10.30.3
 
 WORKDIR /app
 
-# Copy pnpm workspace files
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY apps/social/package.json apps/social/package.json
+COPY apps/commune/package.json apps/commune/package.json
 COPY packages/db/package.json packages/db/package.json
 COPY packages/ui/package.json packages/ui/package.json
 COPY packages/tsconfig/package.json packages/tsconfig/package.json
 
-# Install dependencies
 RUN pnpm install --frozen-lockfile --ignore-scripts
 
 # ─── Stage 2: Build ──────────────────────────────────────────────────────────
@@ -28,39 +26,43 @@ COPY tsconfig.base.json ./
 COPY packages/tsconfig/ packages/tsconfig/
 COPY packages/db/ packages/db/
 COPY packages/ui/ packages/ui/
-COPY apps/social/ apps/social/
+COPY apps/commune/ apps/commune/
 
 RUN pnpm run build --filter @pontistudios/db
 RUN pnpm run build --filter @pontistudios/ui
-RUN pnpm run build --filter @pontistudios/social
+RUN pnpm run build --filter @pontistudios/commune
 
 # ─── Stage 3: Production image ───────────────────────────────────────────────
 FROM node:24-bookworm-slim AS runner
 
-RUN corepack enable && pnpm install -g pnpm@10.30.3
+RUN npm install -g pnpm@10.30.3
 
 ENV NODE_ENV=production
 WORKDIR /app
 
-# Copy workspace files for pnpm resolution
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY apps/social/package.json apps/social/package.json
+COPY apps/commune/package.json apps/commune/package.json
 COPY packages/db/package.json packages/db/package.json
 COPY packages/ui/package.json packages/ui/package.json
 COPY packages/tsconfig/package.json packages/tsconfig/package.json
 
-# Install production dependencies only
 RUN pnpm install --frozen-lockfile --prod --ignore-scripts
 
-# Copy built artifacts
 COPY --from=builder /app/packages/db/dist packages/db/dist
 COPY --from=builder /app/packages/ui/dist packages/ui/dist
-COPY --from=builder /app/apps/social/build apps/social/build
-COPY --from=builder /app/apps/social/server.ts apps/social/server.ts
+COPY --from=builder /app/apps/commune/build apps/commune/build
+COPY --from=builder /app/apps/commune/server.ts apps/commune/server.ts
 
-WORKDIR /app/apps/social
+RUN groupadd -r app && useradd -r -g app app
+
+WORKDIR /app/apps/commune
 
 EXPOSE 3000
 ENV PORT=3000
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000', (r) => {if (r.statusCode >= 500) throw new Error(r.statusCode)})"
+
+USER app
 
 CMD ["pnpm", "start"]
