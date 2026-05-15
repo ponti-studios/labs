@@ -42,7 +42,7 @@
     "@testing-library/dom": "catalog:",
     "@testing-library/react": "catalog:",
     "@testing-library/user-event": "^14.6.1",
-    "@types/google.maps": "^3.64.0",
+    "@types/google.maps": "^3.64.1",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
