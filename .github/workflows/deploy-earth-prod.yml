@@ -23,7 +23,7 @@ jobs:
         run: npm install -g @railway/cli@4.58.0
 
       - name: checkout-code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: validate-env
         run: test -n "$RAILWAY_TOKEN"
