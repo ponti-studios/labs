@@ -21,7 +21,7 @@
     "better-auth": "^1.6.7",
     "d3": "^7.9.0",
     "framer-motion": "^12.38.0",
-    "hono": "^4.12.14",
+    "hono": "^4.12.16",
     "isbot": "^5.1.39",
     "lucide-react": "catalog:",
     "react": "catalog:",
