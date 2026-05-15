@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "drizzle-orm": "catalog:",
-    "kysely": "^0.28.16",
+    "kysely": "^0.28.17",
     "pg": "^8.20.0",
     "postgres": "catalog:",
     "zod": "catalog:"
