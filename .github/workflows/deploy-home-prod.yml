@@ -9,6 +9,7 @@ on:
       - 'package.json'
       - 'pnpm-lock.yaml'
       - '.github/workflows/deploy-home-prod.yml'
+      - '.github/workflows/reusable-railway-deploy.yml'
   workflow_dispatch:
 
 permissions:
@@ -20,21 +21,11 @@ concurrency:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    env:
-      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-
-    steps:
-      - name: install-railway-cli
-        run: npm install -g @railway/cli@4.58.0
-
-      - name: checkout-code
-        uses: actions/checkout@v4
-
-      - name: validate-env
-        run: test -n "$RAILWAY_TOKEN"
-
-      - name: deploy-to-railway
-        run: railway up --service ${{ secrets.RAILWAY_SERVICE_HOME }} --detach --ci
+    uses: ./.github/workflows/reusable-railway-deploy.yml
+    with:
+      node-version: '24'
+      railway-cli-version: '4.58.0'
+      timeout-minutes: 10
+    secrets:
+      railway_token: ${{ secrets.RAILWAY_TOKEN }}
+      railway_service: ${{ secrets.RAILWAY_SERVICE_HOME }}
