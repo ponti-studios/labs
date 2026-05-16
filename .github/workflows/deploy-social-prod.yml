@@ -14,6 +14,7 @@ jobs:
   deploy:
     uses: ./.github/workflows/reusable-railway-deploy.yml
     with:
+      config_path: apps/commune/railway.json
       node-version: '24'
       railway-cli-version: '4.58.0'
       timeout-minutes: 10
