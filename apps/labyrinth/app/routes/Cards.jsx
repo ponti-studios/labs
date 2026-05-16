@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { createDeck } from './cards-lib'
+import { createDeck } from './cards-lib.ts'
 
 export default function Cards() {
   const [deck, setDeck] = useState(() => createDeck())
