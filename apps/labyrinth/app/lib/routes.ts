@@ -1,8 +1,8 @@
 export const routes = [
   {
     path: "/",
-    label: "Terminal",
-    description: "Interactive terminal playground",
+    label: "Overview",
+    description: "Direct access to the available tools and demos",
   },
   {
     path: "/tools",

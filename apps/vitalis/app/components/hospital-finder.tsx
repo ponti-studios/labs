@@ -8,80 +8,39 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@pontistudios/ui";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@pontistudios/ui";
-import { useIsMobile } from "../hooks/use-media-query";
 import { HOSPITALS } from "../lib/hospitals";
 import type { Hospital } from "../types/hospital";
-import { useState } from "react";
 
 interface HospitalFinderProps {
   isOpen: boolean;
   onClose: () => void;
 }
 export default function HospitalFinder({ isOpen, onClose }: HospitalFinderProps) {
-  const isMobile = useIsMobile();
-
-  // Use Dialog for mobile devices
-  if (isMobile) {
-    return (
-      <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-h-[calc(80vh)] max-w-[calc(100vw-20px)] overflow-y-auto rounded-lg">
-          <DialogHeader>
-            <DialogTitle>Nearby Hospitals</DialogTitle>
-            <DialogDescription>
-              Here are the closest medical facilities that can provide immediate care.
-            </DialogDescription>
-          </DialogHeader>
-          <Hospitals />
-        </DialogContent>
-      </Dialog>
-    );
-  }
-
-  // Use Sheet for larger screens
   return (
-    <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent className="w-150 sm:w-135 overflow-y-auto">
-        <SheetHeader>
-          <SheetTitle>Nearby Hospitals</SheetTitle>
-          <SheetDescription>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-h-[80vh] max-w-2xl overflow-y-auto rounded-lg">
+        <DialogHeader>
+          <DialogTitle>Nearby Hospitals</DialogTitle>
+          <DialogDescription>
             Here are the closest medical facilities that can provide immediate care.
-          </SheetDescription>
-        </SheetHeader>
+          </DialogDescription>
+        </DialogHeader>
         <Hospitals />
-      </SheetContent>
-    </Sheet>
+      </DialogContent>
+    </Dialog>
   );
 }
 
 function Hospitals() {
-  const [hospitals] = useState<Hospital[]>(HOSPITALS);
-
-  // TODO: import geolocation to fetch nearby hospitals
-  // useEffect(() => {
-  //   if (isOpen) {
-  //     // Get user location and fetch nearby hospitals
-  //     navigator.geolocation.getCurrentPosition(
-  //       (position) => {
-  //         const { latitude, longitude } = position.coords;
-  //         // fetchNearbyHospitals(latitude, longitude).then(setHospitals);
-  //       },
-  //       (error) => {
-  //         console.error("Error getting location:", error);
-  //       }
-  //     );
-  //   }
-  // }, [isOpen]);
-
   return (
     <div className="space-y-4 mt-6">
-      <div className="h-64 bg-slate-200 rounded-md mb-4 flex items-center justify-center">
-        <p className="text-slate-500">Interactive map would display here</p>
+      <div className="rounded-lg border border-border bg-muted/30 p-4 text-sm text-muted-foreground">
+        If you need urgent in-person care, call ahead or open directions before leaving.
       </div>
 
       <h3 className="font-medium text-lg">Nearest Hospitals</h3>
       <div className="space-y-4">
-        {hospitals.map((hospital) => (
+        {HOSPITALS.map((hospital) => (
           <HospitalListItem key={hospital.id} hospital={hospital} />
         ))}
       </div>
@@ -101,10 +60,20 @@ function HospitalListItem({ hospital }: { hospital: Hospital }) {
       <p className="text-sm text-muted-foreground">{hospital.address}</p>
       <p className="text-sm font-medium mt-2">{hospital.phone}</p>
       <div className="mt-3 flex gap-2">
-        <Button size="sm" variant="outline">
-          Get Directions
+        <Button size="sm" variant="outline" asChild>
+          <a
+            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+              `${hospital.name} ${hospital.address}`,
+            )}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Get Directions
+          </a>
         </Button>
-        <Button size="sm">Call</Button>
+        <Button size="sm" asChild>
+          <a href={`tel:${hospital.phone.replace(/[^\d+]/g, "")}`}>Call</a>
+        </Button>
       </div>
     </div>
   );
