@@ -17,31 +17,22 @@ import {
   TabsList,
   TabsTrigger,
 } from "@pontistudios/ui";
-import { AddRatingDialog } from "~/components/voter/add-rating-dialog";
 import { AttacksForm } from "~/components/voter/attacks-form";
 import { COLOR_THEMES, CardThemePicker } from "~/components/voter/card-theme-picker";
 import { FlawsPicker } from "~/components/voter/flaws-picker";
 import { ImageAdjustmentDialog } from "~/components/voter/image-adjustment-dialog";
 import { PersonCardDisplay } from "~/components/voter/person-card-display";
-import { ShareDialog } from "~/components/voter/share-dialog";
 import { useAuth } from "../../components/AuthProvider";
 import {
   PERSONALITY_TYPES,
   PersonalityTypePicker,
 } from "../../components/voter/personality-type-picker";
 
-// TODO: Implement friend ratings feature
-// type Rating = {
-//   id: string;
-//   name: string;
-//   verdict: "stay" | "dump";
-//   comment: string;
-//   date: Date;
-// };
-
 export function CardCreator() {
   const { user } = useAuth();
   const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null); // New state for the selected file
   const [cardData, setCardData] = useState({
     name: "Alex",
@@ -64,16 +55,7 @@ export function CardCreator() {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [imageAdjustmentDialogOpen, setImageAdjustmentDialogOpen] = useState(false);
-  const [ratingDialogOpen, setRatingDialogOpen] = useState(false);
-  const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("details");
-
-  // New rating form state
-  const [newRating, setNewRating] = useState({
-    name: "",
-    verdict: "" as "stay" | "dump" | "",
-    comment: "",
-  });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const formCardRef = useRef<HTMLDivElement>(null);
@@ -209,33 +191,6 @@ export function CardCreator() {
     }
   };
 
-  const handleNewRatingChange = (field: string, value: string) => {
-    setNewRating((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  const submitRating = () => {
-    if (!newRating.name || !newRating.verdict) return;
-
-    // TODO: Implement rating submission to backend
-    // const newRatingObj: Rating = {
-    //   id: Date.now().toString(),
-    //   name: newRating.name,
-    //   verdict: newRating.verdict,
-    //   comment: newRating.comment,
-    //   date: new Date(),
-    // };
-
-    setNewRating({
-      name: "",
-      verdict: "",
-      comment: "",
-    });
-    setRatingDialogOpen(false);
-  };
-
   const handleFlawChange = (flaw: string, checked: boolean) => {
     setCardData((prev) => {
       const newFlaws = checked ? [...prev.flaws, flaw] : prev.flaws.filter((f) => f !== flaw);
@@ -243,15 +198,12 @@ export function CardCreator() {
     });
   };
 
-  const copyShareLink = () => {
-    // In a real implementation, this would generate and copy a unique link
-    navigator.clipboard.writeText("https://partner-cards.example.com/share/alex-123456");
-    alert("Share link copied to clipboard!");
-  };
-
   const handleSaveTracker = async () => {
+    setSaveError(null);
+    setSaveSuccess(null);
+
     if (!user) {
-      alert("You must be logged in to create a tracker.");
+      setSaveError("You must be logged in to create a tracker.");
       return;
     }
 
@@ -281,7 +233,7 @@ export function CardCreator() {
         setSelectedImageFile(null);
       } catch (error: any) {
         console.error("Error uploading image:", error);
-        alert(`Error uploading image: ${error.message}`);
+        setSaveError(`Error uploading image: ${error.message}`);
         setIsSaving(false);
         return;
       }
@@ -327,11 +279,11 @@ export function CardCreator() {
       }
 
       const data = await response.json();
-      alert("Tracker created successfully!");
+      setSaveSuccess(`Tracker created for ${data.name ?? cardData.name}.`);
       console.log("Tracker saved:", data);
     } catch (err: any) {
       console.error("Error saving tracker:", err);
-      alert(`Error saving tracker: ${err.message}`);
+      setSaveError(`Error saving tracker: ${err.message}`);
     } finally {
       setIsSaving(false);
     }
@@ -576,13 +528,25 @@ export function CardCreator() {
           </CardHeader>
         </Card>
         <div className="mt-6 flex justify-end">
-          <Button
-            onClick={handleSaveTracker}
-            disabled={isSaving}
-            className="bg-green-500 hover:bg-green-600 text-white"
-          >
-            {isSaving ? "Creating..." : "Create Tracker"}
-          </Button>
+          <div className="flex w-full flex-col items-end gap-3">
+            {saveError ? (
+              <p className="w-full rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                {saveError}
+              </p>
+            ) : null}
+            {saveSuccess ? (
+              <p className="w-full rounded-md border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-700">
+                {saveSuccess}
+              </p>
+            ) : null}
+            <Button
+              onClick={handleSaveTracker}
+              disabled={isSaving}
+              className="bg-green-500 hover:bg-green-600 text-white"
+            >
+              {isSaving ? "Creating..." : "Create Tracker"}
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -618,20 +582,6 @@ export function CardCreator() {
         handleMouseUp={handleMouseUp}
       />
 
-      <AddRatingDialog
-        open={ratingDialogOpen}
-        onOpenChange={setRatingDialogOpen}
-        newRating={newRating}
-        handleNewRatingChange={handleNewRatingChange}
-        submitRating={submitRating}
-      />
-
-      <ShareDialog
-        open={shareDialogOpen}
-        onOpenChange={setShareDialogOpen}
-        copyShareLink={copyShareLink}
-        cardName={cardData.name}
-      />
     </div>
   );
 }

@@ -4,24 +4,11 @@ import SymptomCard from "../components/symptom-card";
 import MonitoredSymptomsList from "../components/monitored-symptoms-list";
 import { Button, Input, Label } from "@pontistudios/ui";
 import { cn } from "@pontistudios/ui";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 
 export default function Home() {
   const { symptom, setSymptom, handleSubmit, isDisabled, isPending, data, error } =
     useSymptomForm();
-  const [showResults, setShowResults] = useState(false);
-
-  useEffect(() => {
-    setShowResults(false);
-
-    if (data) {
-      const timer = setTimeout(() => {
-        setShowResults(true);
-      }, 100);
-
-      return () => clearTimeout(timer);
-    }
-  }, [data]);
 
   const handleSymptomSelect = useCallback(
     (selectedSymptom: string) => {
@@ -56,7 +43,7 @@ export default function Home() {
               {isPending ? "Checking..." : "Check"}
             </Button>
           </div>
-          {!showResults || (showResults && symptom.length === 0) ? (
+          {!data || symptom.length === 0 ? (
             <div className="flex flex-col items-center">
               <ul className="list-disc gap-1 grid grid-cols-3">
                 <SampleSymptomButton
@@ -86,22 +73,17 @@ export default function Home() {
 
         <div className="flex flex-col items-center mt-8 max-w-full">
           {data && (
-            <div
-              className={cn("transition-opacity duration-500 ease-in-out", {
-                "opacity-100": showResults,
-                "opacity-0": !showResults,
-              })}
-            >
+            <div className={cn("transition-opacity duration-200 ease-in-out", "opacity-100")}>
               <SymptomCard symptom={data} />
             </div>
           )}
 
           {data?.alternatives?.length && data.alternatives.length > 0 ? (
             <div
-              className={cn("mt-8 w-full max-w-4xl transition-opacity duration-500 ease-in-out", {
-                "opacity-100": showResults,
-                "opacity-0": !showResults,
-              })}
+              className={cn(
+                "mt-8 w-full max-w-4xl transition-opacity duration-200 ease-in-out",
+                "opacity-100",
+              )}
             >
               <h2 className="text-md font-semibold mb-4 text-gray-400">Alternative Matches</h2>
               <div className="carousel flex gap-4 overflow-x-auto rounded-box">
