@@ -1,5 +1,4 @@
-import { act, render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { BOOT_SEQUENCE, NAVIGATION_DELAY } from "../constants";
@@ -24,12 +23,17 @@ function renderTerminal() {
 
 async function bootTerminal() {
   for (let i = 0; i <= BOOT_SEQUENCE.length; i += 1) {
-    await act(async () => {
+    act(() => {
       vi.runOnlyPendingTimers();
     });
   }
 
   return screen.getByRole("textbox");
+}
+
+function submitCommand(input: HTMLInputElement, command: string) {
+  fireEvent.change(input, { target: { value: command } });
+  fireEvent.keyDown(input, { key: "Enter", code: "Enter", charCode: 13 });
 }
 
 describe("Terminal", () => {
@@ -48,22 +52,20 @@ describe("Terminal", () => {
   });
 
   test("runs a help command through the real terminal input", async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     renderTerminal();
 
-    const input = await bootTerminal();
-    await user.type(input, "help{enter}");
+    const input = (await bootTerminal()) as HTMLInputElement;
+    submitCommand(input, "help");
 
     expect(screen.getByText("C:\\CHUCK> help")).toBeInTheDocument();
     expect(screen.getByText("║ AVAILABLE COMMANDS ║")).toBeInTheDocument();
   });
 
   test("navigates after the gradient command", async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     renderTerminal();
 
-    const input = await bootTerminal();
-    await user.type(input, "gradient{enter}");
+    const input = (await bootTerminal()) as HTMLInputElement;
+    submitCommand(input, "gradient");
 
     expect(screen.getByText("Launching Gradient Border Laboratory...")).toBeInTheDocument();
 
@@ -75,23 +77,21 @@ describe("Terminal", () => {
   });
 
   test("renders the error output for an unknown command", async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     renderTerminal();
 
-    const input = await bootTerminal();
-    await user.type(input, "bogus{enter}");
+    const input = (await bootTerminal()) as HTMLInputElement;
+    submitCommand(input, "bogus");
 
     expect(screen.getByText("Bad command or file name: bogus")).toBeInTheDocument();
     expect(screen.getByText("Access denied. Unauthorized command.")).toBeInTheDocument();
   });
 
   test("recalls command history with arrow up", async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     renderTerminal();
 
     const input = (await bootTerminal()) as HTMLInputElement;
-    await user.type(input, "help{enter}");
-    await user.type(input, "{arrowup}");
+    submitCommand(input, "help");
+    fireEvent.keyDown(input, { key: "ArrowUp", code: "ArrowUp" });
 
     expect(input.value).toBe("help");
   });
