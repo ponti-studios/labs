@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import TasksByProject from "../tasks.$projectId";
 
 // Mock the hooks
-vi.mock("~/lib/todos", () => ({
+vi.mock("../../lib/todos", () => ({
   useTodos: vi.fn(),
   useDeleteTodo: vi.fn(() => ({
     mutate: vi.fn(),
@@ -12,15 +12,15 @@ vi.mock("~/lib/todos", () => ({
   })),
 }));
 
-vi.mock("~/lib/projects", () => ({
+vi.mock("../../lib/projects", () => ({
   useProjects: vi.fn(),
 }));
 
-vi.mock("~/components/to-do/TaskForm", () => ({
+vi.mock("../../components/to-do/TaskForm", () => ({
   default: () => <div data-testid="task-form">Task Form</div>,
 }));
 
-vi.mock("~/components/to-do/TaskList", () => ({
+vi.mock("../../components/to-do/TaskList", () => ({
   TaskList: ({ todos }: { todos: any[] }) => (
     <div data-testid="task-list">
       {todos.map((todo) => (
@@ -95,8 +95,8 @@ describe("TasksByProject", () => {
   });
 
   it("should render tasks filtered by project", async () => {
-    const { useTodos } = await import("~/lib/todos");
-    const { useProjects } = await import("~/lib/projects");
+    const { useTodos } = await import("../../lib/todos");
+    const { useProjects } = await import("../../lib/projects");
 
     vi.mocked(useTodos).mockReturnValue({
       data: mockTodos,
@@ -143,8 +143,8 @@ describe("TasksByProject", () => {
   });
 
   it("should show loading state", async () => {
-    const { useTodos } = await import("~/lib/todos");
-    const { useProjects } = await import("~/lib/projects");
+    const { useTodos } = await import("../../lib/todos");
+    const { useProjects } = await import("../../lib/projects");
 
     vi.mocked(useTodos).mockReturnValue({
       data: [],
@@ -176,8 +176,8 @@ describe("TasksByProject", () => {
   });
 
   it("should show error state", async () => {
-    const { useTodos } = await import("~/lib/todos");
-    const { useProjects } = await import("~/lib/projects");
+    const { useTodos } = await import("../../lib/todos");
+    const { useProjects } = await import("../../lib/projects");
 
     vi.mocked(useTodos).mockReturnValue({
       data: [],
@@ -209,8 +209,8 @@ describe("TasksByProject", () => {
   });
 
   it("should show project not found when project doesn't exist", async () => {
-    const { useTodos } = await import("~/lib/todos");
-    const { useProjects } = await import("~/lib/projects");
+    const { useTodos } = await import("../../lib/todos");
+    const { useProjects } = await import("../../lib/projects");
 
     vi.mocked(useTodos).mockReturnValue({
       data: mockTodos,

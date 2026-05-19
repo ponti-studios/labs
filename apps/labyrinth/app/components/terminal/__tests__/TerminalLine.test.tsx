@@ -3,17 +3,6 @@ import { describe, expect, test, vi } from "vitest";
 import { TerminalLine } from "../TerminalLine";
 import type { TerminalLine as TerminalLineType } from "../types";
 
-// Mock the CSS module
-vi.mock("../../routes/home.module.css", () => ({
-  default: {
-    terminalLine: "terminalLine",
-    command: "command",
-    output: "output",
-    error: "error",
-    systemInfo: "systemInfo",
-  },
-}));
-
 describe("TerminalLine Component", () => {
   test("renders command line correctly", () => {
     const line: TerminalLineType = {
@@ -68,7 +57,7 @@ describe("TerminalLine Component", () => {
     const { container } = render(<TerminalLine line={line} index={0} />);
     const element = container.firstChild as HTMLElement;
 
-    expect(element).toHaveClass("terminalLine", "command");
+    expect(element).toHaveClass("font-mono", "text-sm", "leading-relaxed", "text-olive-200", "font-medium");
   });
 
   test("applies correct CSS class for error type", () => {
@@ -80,7 +69,7 @@ describe("TerminalLine Component", () => {
     const { container } = render(<TerminalLine line={line} index={0} />);
     const element = container.firstChild as HTMLElement;
 
-    expect(element).toHaveClass("terminalLine", "error");
+    expect(element).toHaveClass("font-mono", "text-sm", "leading-relaxed", "text-red-300");
   });
 
   test("applies correct CSS class for system type", () => {
@@ -92,7 +81,7 @@ describe("TerminalLine Component", () => {
     const { container } = render(<TerminalLine line={line} index={0} />);
     const element = container.firstChild as HTMLElement;
 
-    expect(element).toHaveClass("terminalLine", "systemInfo");
+    expect(element).toHaveClass("font-mono", "text-sm", "leading-relaxed", "text-amber-300/90", "font-light");
   });
 
   test("applies correct CSS class for output type", () => {
@@ -104,7 +93,7 @@ describe("TerminalLine Component", () => {
     const { container } = render(<TerminalLine line={line} index={0} />);
     const element = container.firstChild as HTMLElement;
 
-    expect(element).toHaveClass("terminalLine", "output");
+    expect(element).toHaveClass("font-mono", "text-sm", "leading-relaxed", "text-stone-300");
   });
 
   test("handles empty content", () => {
@@ -125,9 +114,11 @@ describe("TerminalLine Component", () => {
       content: "  spaced   content  ",
     };
 
-    render(<TerminalLine line={line} index={0} />);
+    const { container } = render(<TerminalLine line={line} index={0} />);
+    const pre = container.querySelector("pre");
 
-    expect(screen.getByText("  spaced   content  ")).toBeInTheDocument();
+    expect(pre).toBeInTheDocument();
+    expect(pre?.textContent).toBe("  spaced   content  ");
   });
 
   test("handles multiline content", () => {
