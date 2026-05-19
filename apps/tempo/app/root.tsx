@@ -2,18 +2,17 @@ import {
   isRouteErrorResponse,
   Links,
   Meta,
+  NavLink,
   Outlet,
   Scripts,
   ScrollRestoration,
 } from "react-router";
 
 import type { Route } from "./+types/root";
-import Navigation from "./components/Navigation";
 import { PrefetchProvider } from "./components/prefetch-provider";
 import QueryProvider from "./components/QueryProvider";
-import Sidebar from "./components/Sidebar";
+import { routes } from "./lib/routes";
 import "./app.css";
-import { useState } from "react";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -48,17 +47,40 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  const [isSidebarOpen, setSidebarOpen] = useState(false);
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!isSidebarOpen);
-  };
-
   return (
     <QueryProvider>
-      <Navigation toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
-      <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-      <main className="flex-1 pt-20 px-4 py-6 transition-all duration-300">
+      <div className="border-b border-border-default bg-bg-panel-0/95 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between gap-4">
+            <NavLink to="/" className="text-lg font-semibold text-text-primary">
+              Tempo
+            </NavLink>
+            <p className="hidden text-sm text-text-secondary md:block">
+              Projects and tasks without sidebar ceremony.
+            </p>
+          </div>
+          <nav aria-label="Primary" className="flex flex-wrap gap-2">
+            {routes.map((route) => (
+              <NavLink
+                key={route.path}
+                to={route.path}
+                prefetch="intent"
+                className={({ isActive }) =>
+                  [
+                    "rounded-full border px-3 py-2 text-sm transition-colors duration-150",
+                    isActive
+                      ? "border-border-accent bg-bg-panel-2 text-text-primary"
+                      : "border-border-default text-text-secondary hover:bg-bg-panel-1 hover:text-text-primary",
+                  ].join(" ")
+                }
+              >
+                {route.label}
+              </NavLink>
+            ))}
+          </nav>
+        </div>
+      </div>
+      <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
         <Outlet />
       </main>
     </QueryProvider>

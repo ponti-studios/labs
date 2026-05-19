@@ -25,11 +25,20 @@ export function AppointmentScheduler({
 }) {
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [mounted, setMounted] = useState(false);
+  const [selectedSlot, setSelectedSlot] = useState<(typeof doctorData.availabilities)[number] | null>(
+    null,
+  );
 
   // Handle hydration mismatch
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setSelectedSlot(null);
+    }
+  }, [isOpen]);
 
   const content = (
     <div className="space-y-4 py-4">
@@ -47,7 +56,7 @@ export function AppointmentScheduler({
         <div className="space-y-2">
           {doctorData.availabilities.map((slot) => (
             <div
-              key={crypto.getRandomValues(new Uint32Array(1))[0]}
+              key={`${slot.date}-${slot.time}`}
               className="flex items-center justify-between p-3 border rounded-md hover:bg-accent transition-colors cursor-pointer"
             >
               <div>
@@ -56,14 +65,27 @@ export function AppointmentScheduler({
               </div>
               <Button
                 size="sm"
-                onClick={() => alert(`Selected appointment on ${slot.date} at ${slot.time}`)}
+                variant={
+                  selectedSlot?.date === slot.date && selectedSlot?.time === slot.time
+                    ? "default"
+                    : "outline"
+                }
+                onClick={() => setSelectedSlot(slot)}
               >
-                Select
+                {selectedSlot?.date === slot.date && selectedSlot?.time === slot.time
+                  ? "Selected"
+                  : "Select"}
               </Button>
             </div>
           ))}
         </div>
       </div>
+
+      {selectedSlot ? (
+        <p className="text-sm text-muted-foreground">
+          Selected: {selectedSlot.date} at {selectedSlot.time}
+        </p>
+      ) : null}
 
       <div className="pt-4 flex justify-end">
         <Button onClick={onClose} variant="outline" className="mr-2">
@@ -71,9 +93,9 @@ export function AppointmentScheduler({
         </Button>
         <Button
           onClick={() => {
-            alert("Appointment scheduled!");
             onClose();
           }}
+          disabled={!selectedSlot}
         >
           Confirm Appointment
         </Button>
