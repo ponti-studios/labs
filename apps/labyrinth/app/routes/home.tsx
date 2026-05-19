@@ -1,4 +1,5 @@
-import { Terminal } from "~/components/islands/terminal";
+import { Link } from "react-router";
+import { routes } from "~/lib/routes";
 
 export function meta(): Array<{
   title?: string;
@@ -6,25 +7,67 @@ export function meta(): Array<{
   content?: string;
 }> {
   return [
-    { title: "Terminal — Interactive Playground" },
+    { title: "Labyrinth — Playground Index" },
     {
       name: "description",
-      content:
-        "Experience our elegant terminal interface designed for modern exploration and interaction.",
+      content: "Browse the available tools, demos, and experiments directly.",
     },
   ];
 }
 
 export default function Home() {
+  const featuredRoutes = routes.filter((route) => route.path !== "/");
+
   return (
-    <div className="pt-32 pb-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-4">
-        {/* Terminal Container */}
-        <div className="relative bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/50 overflow-hidden">
-          <div className="h-[60vh] max-h-150 min-h-100">
-            <Terminal />
+    <div className="pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto space-y-8">
+        <section className="rounded-3xl border border-border-default bg-bg-panel-0 p-6 shadow-sm sm:p-8">
+          <div className="max-w-3xl space-y-3">
+            <p className="text-sm font-medium uppercase tracking-[0.24em] text-text-muted">
+              Labyrinth
+            </p>
+            <h1 className="text-4xl font-semibold tracking-tight text-text-primary sm:text-5xl">
+              Open the tool you want and start there.
+            </h1>
+            <p className="text-base leading-7 text-text-secondary sm:text-lg">
+              The terminal landing page was removed. This app now starts with direct links to the
+              actual features.
+            </p>
           </div>
-        </div>
+        </section>
+
+        <section className="space-y-4">
+          <div className="flex items-baseline justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-semibold text-text-primary">Available routes</h2>
+              <p className="text-sm text-text-secondary">
+                Pick a destination without command syntax or hidden controls.
+              </p>
+            </div>
+            <span className="text-sm text-text-muted">{featuredRoutes.length} routes</span>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {featuredRoutes.map((route) => (
+              <Link
+                key={route.path}
+                to={route.path}
+                rel="prefetch"
+                className="group rounded-2xl border border-border-default bg-bg-panel-0 p-5 transition-colors duration-150 hover:bg-bg-panel-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-accent"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="space-y-2">
+                    <h3 className="text-lg font-medium text-text-primary">{route.label}</h3>
+                    <p className="text-sm leading-6 text-text-secondary">{route.description}</p>
+                  </div>
+                  <span className="text-text-muted transition-colors duration-150 group-hover:text-text-primary">
+                    →
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
       </div>
     </div>
   );

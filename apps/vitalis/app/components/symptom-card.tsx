@@ -61,7 +61,7 @@ function SymptomCard({ className, symptom, isAlternative = false }: SymptomCardP
               <h4 className="font-semibold mb-2">Further Reading:</h4>
               <ul className="list-inside text-sm space-y-3">
                 {symptom.articles.map((article) => (
-                  <li key={crypto.getRandomValues(new Uint32Array(1))[0]}>
+                  <li key={article.url}>
                     <a
                       href={article.url}
                       className="text-blue-600 underline underline-offset-3"
