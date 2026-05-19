@@ -1,0 +1,64 @@
+name: reusable-railway-deploy
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: Node.js version used to install Railway CLI
+        required: false
+        type: string
+        default: '24'
+      config_path:
+        description: Optional path to a service-specific Railway config file
+        required: false
+        type: string
+        default: ''
+      railway-cli-version:
+        description: Railway CLI version to install
+        required: false
+        type: string
+        default: '4.58.0'
+      timeout-minutes:
+        description: Job timeout in minutes
+        required: false
+        type: number
+        default: 10
+    secrets:
+      railway_token:
+        description: Railway API token
+        required: true
+      railway_service:
+        description: Railway service identifier
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ inputs.timeout-minutes }}
+    env:
+      RAILWAY_TOKEN: ${{ secrets.railway_token }}
+
+    steps:
+      - name: checkout-code
+        uses: actions/checkout@v4
+
+      - name: setup-node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: install-railway-cli
+        run: npm install -g @railway/cli@${{ inputs.railway-cli-version }}
+
+      - name: validate-env
+        run: test -n "$RAILWAY_TOKEN"
+
+      - name: stage-railway-config
+        if: inputs.config_path != ''
+        run: cp "${{ inputs.config_path }}" railway.json
+
+      - name: deploy-to-railway
+        run: railway up --service ${{ secrets.railway_service }} --detach --ci

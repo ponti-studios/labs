@@ -30,13 +30,15 @@ describe("Terminal Constants", () => {
     test("ASCII_LOGO should be a non-empty string", () => {
       expect(typeof ASCII_LOGO).toBe("string");
       expect(ASCII_LOGO.trim()).toBeTruthy();
-      expect(ASCII_LOGO).toContain("CHUCK");
+      expect(ASCII_LOGO).toContain("██████");
+      expect(ASCII_LOGO.split("\n").filter(Boolean).length).toBeGreaterThan(5);
     });
 
     test("CYBER_SKULLS should be a non-empty string", () => {
       expect(typeof CYBER_SKULLS).toBe("string");
       expect(CYBER_SKULLS.trim()).toBeTruthy();
-      expect(CYBER_SKULLS).toContain("CYBER");
+      expect(CYBER_SKULLS).toContain("██████");
+      expect(CYBER_SKULLS.split("\n").filter(Boolean).length).toBeGreaterThan(5);
     });
 
     test("CAT_ASCII should contain cat parts", () => {

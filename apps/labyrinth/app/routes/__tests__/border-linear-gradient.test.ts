@@ -4,7 +4,7 @@ import {
   defaultSettings,
   encodeSettings,
   type GradientSettings,
-} from "~/lib/gradient";
+} from "../../lib/gradient";
 
 // Mock console methods to avoid noise in tests
 beforeEach(() => {
