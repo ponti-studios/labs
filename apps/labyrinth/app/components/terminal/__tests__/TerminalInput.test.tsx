@@ -3,18 +3,6 @@ import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { TerminalInput } from "../TerminalInput";
 
-// Mock the CSS module
-vi.mock("../../routes/home.module.css", () => ({
-  default: {
-    terminalLine: "terminalLine",
-    prompt: "prompt",
-    inputWrapper: "inputWrapper",
-    typedText: "typedText",
-    cursor: "cursor",
-    commandInput: "commandInput",
-  },
-}));
-
 describe("TerminalInput Component", () => {
   const mockOnCommandChange = vi.fn();
   const mockOnKeyDown = vi.fn();
@@ -31,7 +19,7 @@ describe("TerminalInput Component", () => {
   test("renders prompt and input correctly", () => {
     render(<TerminalInput {...defaultProps} />);
 
-    expect(screen.getByText("C:\\CHUCK>")).toBeInTheDocument();
+    expect(screen.getByText("$")).toBeInTheDocument();
     expect(screen.getByRole("textbox")).toBeInTheDocument();
   });
 
@@ -44,7 +32,7 @@ describe("TerminalInput Component", () => {
   test("shows cursor", () => {
     render(<TerminalInput {...defaultProps} currentCommand="test" />);
 
-    const cursor = screen.getByText("_");
+    const cursor = screen.getByText("▊");
     expect(cursor).toBeInTheDocument();
   });
 
@@ -97,10 +85,17 @@ describe("TerminalInput Component", () => {
   test("input is visually hidden but functional", () => {
     render(<TerminalInput {...defaultProps} />);
 
-    const input = screen.getByRole("textbox") as HTMLInputElement;
-    expect(input.style.position).toBe("absolute");
-    expect(input.style.left).toBe("-9999px");
-    expect(input.style.opacity).toBe("0");
+    const input = screen.getByRole("textbox");
+    expect(input).toHaveClass(
+      "absolute",
+      "inset-0",
+      "w-full",
+      "bg-transparent",
+      "text-transparent",
+      "border-none",
+      "outline-none",
+      "caret-transparent",
+    );
   });
 
   test("handles special characters", async () => {
