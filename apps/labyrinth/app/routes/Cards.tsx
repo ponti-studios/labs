@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { createDeck } from './cards-lib'
+import { Deck } from './cards-lib'
 
 export default function Cards() {
-  const [deck, setDeck] = useState(() => createDeck())
+  const [deck, setDeck] = useState(() => new Deck().cards)
   const [hands, setHands] = useState([])
   const [winner, setWinner] = useState(null)
 
@@ -28,7 +28,7 @@ export default function Cards() {
   }
 
   const collectHands = () => {
-    setDeck(createDeck())
+    setDeck(new Deck().cards)
     setHands([])
     setWinner(null)
   }
