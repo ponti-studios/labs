@@ -1,6 +1,6 @@
 # RHOBH Wordle — feature & architecture reference
 
-Route: `/games/rhobh-wordle`
+Route: `/games/wordle/rhobh`
 
 ---
 
@@ -35,18 +35,19 @@ Route: `/games/rhobh-wordle`
 - Clicking any cell in the active row redirects focus to the correct active cell via `onFocus → redirectToActiveCell`.
 - Backspace on the physical keyboard removes the last letter and focus moves back one cell automatically.
 
-### Clues
-- **Main clue**: hidden by default; revealed by "Show clue" button. Once revealed it stays visible for the session.
-- **Bonus clue**: hidden and the button is not shown until 3 guesses have been submitted. Reveals the character's role and first letter of the answer.
-- Both clues reset to hidden when the puzzle rotates or Reset is pressed.
+### Post-game reveal
+- On game over (win or loss) a fun-fact panel appears below the board.
+- Shows the answer prominently with a label ("Today's answer" on win, "The answer was" on loss).
+- Shows `puzzle.detail` — a one-sentence fun fact about the person.
+- No clues are shown during play; the reveal is the payoff.
 
 ### Instructions
-- Collapsed by default. "How to play" in the header toggles a three-line rules panel.
+- Collapsed by default. "How to play" in the header toggles a two-line rules panel.
 
 ### Persistence
 - Game state is written to `localStorage` under `labyrinth:rhobh-wordle:<puzzleKey>` after every state change, guarded by a `hydratedPuzzleKey` check to prevent writing stale state before hydration completes.
 - On mount (and on puzzle rotation), the route reads the key for the current day. If the saved `puzzleKey` doesn't match, the state is discarded — stale progress from yesterday never bleeds into today.
-- Persisted shape: `{ puzzleKey, guesses, message, status: "playing" | "solved" | "failed" }`.
+- Persisted shape: `{ puzzleKey, guesses, status: "playing" | "solved" | "failed" }`.
 - Reset wipes the localStorage entry for the current key and clears all React state.
 
 ### Game over
@@ -66,7 +67,6 @@ Route: `/games/rhobh-wordle`
 | `LetterState` | Union: `"absent" \| "correct" \| "present"` |
 | `MAX_GUESSES` | Constant: `6` |
 | `RHOBH_PUZZLES` | Array of 9 puzzle objects |
-| `RHOBH_PUZZLE_SET_LABEL` | Display string for the theme |
 | `normalizeGuess(value)` | Strips non-letters, uppercases |
 | `getPuzzleKeyForDate(date)` | Returns `"rhobh-<utcDayIndex>"` |
 | `getPuzzleForKey(key)` | Decodes the day index, returns puzzle via modulo |
@@ -84,11 +84,8 @@ Route: `/games/rhobh-wordle`
 | `puzzle` | `RhobhPuzzle` | Derived from `puzzleKey` via `useMemo` |
 | `guesses` | `string[]` | Submitted, normalized guesses |
 | `currentGuess` | `string` | In-progress guess being typed |
-| `message` | `string` | Status line shown below the clues |
 | `hydratedPuzzleKey` | `string \| null` | Guards against writing to localStorage before hydration |
 | `showInstructions` | `boolean` | Toggles the rules panel |
-| `showClue` | `boolean` | Toggles the main clue |
-| `showBonusClue` | `boolean` | Toggles the bonus clue (only after 3 guesses) |
 
 **Refs**
 
@@ -106,7 +103,7 @@ Route: `/games/rhobh-wordle`
 | `resetBoard()` | Clears localStorage + all state for the current puzzle key |
 | `handleCellKeyDown(e)` | Per-input handler: letter → `addLetter`, Backspace → `removeLetter`, Enter → `submitGuess` |
 | `handleCellChange(e)` | Mobile fallback: extracts first letter from `onChange` and calls `addLetter` |
-| `redirectToActiveCell()` | Used by `onFocus` to prevent clicking on a filled cell |
+| `redirectToActiveCell()` | Used by `onFocus` to keep focus on the next empty cell |
 
 ---
 
@@ -117,7 +114,6 @@ Route: `/games/rhobh-wordle`
   - Expects a button named `"Reset board"` (now `"Reset"`)
   - Has a test asserting that out-of-set guesses are rejected — that validation was removed; any correct-length string is now accepted
   - References `"1 / 6"` / `"0 / 6"` counter text which no longer exists in the UI
-
-- **Instructions panel** still says "Only names from this Beverly Hills puzzle set are valid guesses" — this is no longer true and should be updated or removed.
+  - References `puzzle.clue` visibility — clues were removed entirely
 
 - **Puzzle pool is small.** 9 puzzles loop every 9 days. Adding more puzzles to `RHOBH_PUZZLES` in `rhobh-wordle.ts` is the only change needed to extend it.

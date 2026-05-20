@@ -35,7 +35,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
         <PrefetchProvider />
       </head>
-      <body className="bg-bg-app text-text-primary font-body">
+      <body className="bg-background text-foreground font-sans">
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -47,10 +47,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <QueryProvider>
-      <div className="border-b border-border-default bg-bg-panel-0/95 backdrop-blur">
+      <div className="border-b border-border bg-background/95 backdrop-blur">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between gap-4">
-            <a href="/" className="text-lg font-semibold text-text-primary">
+            <a href="/" className="text-lg font-semibold text-foreground">
               Labyrinth
             </a>
           </div>

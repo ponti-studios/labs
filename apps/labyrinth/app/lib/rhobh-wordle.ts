@@ -8,19 +8,20 @@ export interface RhobhPuzzle {
 }
 
 export const MAX_GUESSES = 6;
-export const RHOBH_PUZZLE_SET_LABEL = "Beverly Hills cast and friend names";
 
 export const RHOBH_PUZZLES: RhobhPuzzle[] = [
   {
     answer: "KYLE",
     clue: "OG diamond holder navigating a high-profile separation storyline.",
-    detail: "Kyle Richards remains the show's center of gravity and one of the most recognizable names in Beverly Hills.",
+    detail:
+      "Kyle Richards remains the show's center of gravity and one of the most recognizable names in Beverly Hills.",
     role: "Original cast anchor",
   },
   {
     answer: "ERIKA",
     clue: "The Pretty Mess performer never misses a sharp confessional.",
-    detail: "Erika Jayne keeps the glam, the one-liners, and the pop-star energy turned all the way up.",
+    detail:
+      "Erika Jayne keeps the glam, the one-liners, and the pop-star energy turned all the way up.",
     role: "Pop diva energy",
   },
   {
@@ -38,7 +39,8 @@ export const RHOBH_PUZZLES: RhobhPuzzle[] = [
   {
     answer: "BOZOMA",
     clue: "A powerhouse newcomer whose first-season confidence lands fast.",
-    detail: "Bozoma Saint John brings executive polish, direct reads, and instant presence to the ensemble.",
+    detail:
+      "Bozoma Saint John brings executive polish, direct reads, and instant presence to the ensemble.",
     role: "Breakout newcomer",
   },
   {
@@ -50,19 +52,22 @@ export const RHOBH_PUZZLES: RhobhPuzzle[] = [
   {
     answer: "AMANDA",
     clue: "A new full-time cast member with a business-minded personal brand.",
-    detail: "Amanda Frances joins the group with wealth-manifesting confidence and fresh alliances.",
+    detail:
+      "Amanda Frances joins the group with wealth-manifesting confidence and fresh alliances.",
     role: "Entrepreneurial addition",
   },
   {
     answer: "KATHY",
     clue: "Technically a friend of, but always capable of stealing the scene.",
-    detail: "Kathy Hilton floats in with deadpan humor, family tension, and instant meme potential.",
+    detail:
+      "Kathy Hilton floats in with deadpan humor, family tension, and instant meme potential.",
     role: "Scene-stealing friend",
   },
   {
     answer: "TILLY",
     clue: "An offbeat friend of the group with a playful, unmistakable vibe.",
-    detail: "Jennifer Tilly brings camp, charm, and a distinctly different rhythm to the cast orbit.",
+    detail:
+      "Jennifer Tilly brings camp, charm, and a distinctly different rhythm to the cast orbit.",
     role: "Camp icon cameo",
   },
 ];
