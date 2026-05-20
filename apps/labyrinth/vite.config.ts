@@ -6,6 +6,7 @@ import { defineConfig } from "vite";
 export default defineConfig({
 	plugins: [tailwindcss(), reactRouter()],
 	resolve: {
+		tsconfigPaths: true,
 		alias: {
 			"~": path.resolve(__dirname, "./app"),
 		},
