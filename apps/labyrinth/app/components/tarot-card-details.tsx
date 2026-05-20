@@ -1,5 +1,5 @@
 import { Badge, Dialog, DialogContent, DialogHeader, DialogTitle } from "@pontistudios/ui";
-import type { TarotCard } from "~/lib/tarot-cards";
+import type { TarotCard } from "~/lib/tarot-types";
 
 interface TarotCardDetailsProps {
   card: TarotCard | null;

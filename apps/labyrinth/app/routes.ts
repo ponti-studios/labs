@@ -15,9 +15,9 @@ export default [
   route("/tfl", "routes/tfl.tsx"),
   route("/infinite-header", "routes/infinite-header/infinite-header.tsx"),
 
-  // Tarot Spread Reader
+  // Other
   route("/tarot", "routes/tarot.tsx"),
-  route("/games/rhobh-wordle", "routes/games/rhobh-wordle.tsx"),
+  route("/games/wordle/rhobh", "routes/games/rhobh-wordle.tsx"),
 
   // API routes
   route("/api/todos", "routes/api.todos.ts"),

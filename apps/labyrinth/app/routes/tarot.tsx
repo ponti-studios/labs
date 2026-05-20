@@ -1,44 +1,40 @@
 import { Button, Card } from "@pontistudios/ui";
+import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { TarotCardDetails } from "~/components/tarot-card-details";
 import { TarotSpread } from "~/components/tarot-spread";
-import { getRandomCards, TAROT_SPREADS, type TarotCard } from "~/lib/tarot-cards";
+import { TAROT_SPREADS, type TarotSpreadType } from "~/lib/tarot-spreads";
+import type { TarotCard } from "~/lib/tarot-types";
 
-type SpreadType = keyof typeof TAROT_SPREADS;
+type TarotReadingResponse = {
+  cards: TarotCard[];
+  spreadType: TarotSpreadType;
+};
 
 export default function TarotRoute() {
-  const [spreadType, setSpreadType] = useState<SpreadType>("three_card");
-  const [cards, setCards] = useState<TarotCard[]>([]);
-  const [revealedCards, setRevealedCards] = useState<boolean[]>([]);
-  const [selectedCard, setSelectedCard] = useState<TarotCard | null>(null);
+  const [spreadType, setSpreadType] = useState<TarotSpreadType>("three_card");
+  const [readingSeed, setReadingSeed] = useState(0);
 
-  // Initialize with cards
-  useEffect(() => {
-    const positions = TAROT_SPREADS[spreadType].positions.length;
-    const newCards = getRandomCards(positions);
-    setCards(newCards);
-    setRevealedCards(Array.from({ length: positions }, () => false));
-  }, [spreadType]);
+  const tarotQuery = useQuery<TarotReadingResponse, Error>({
+    queryKey: ["tarot", spreadType, readingSeed],
+    queryFn: async () => {
+      const response = await fetch(`/api/tarot?spreadType=${spreadType}`);
 
-  const handleCardClick = (index: number) => {
-    const newRevealed = [...revealedCards];
-    newRevealed[index] = !newRevealed[index];
-    setRevealedCards(newRevealed);
-  };
+      if (!response.ok) {
+        throw new Error(`Failed to load tarot cards (${response.status})`);
+      }
+
+      return (await response.json()) as TarotReadingResponse;
+    },
+    staleTime: 0,
+  });
 
   const handleNewReading = () => {
-    const positions = TAROT_SPREADS[spreadType].positions.length;
-    const newCards = getRandomCards(positions);
-    setCards(newCards);
-    setRevealedCards(Array.from({ length: positions }, () => false));
+    setReadingSeed((current) => current + 1);
   };
 
-  const handleViewDetails = (card: TarotCard) => {
-    setSelectedCard(card);
-  };
-
-  const allRevealed = revealedCards.every((revealed) => revealed);
+  const cards = tarotQuery.data?.cards ?? [];
 
   return (
     <div className="min-h-screen bg-linear-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
@@ -67,7 +63,7 @@ export default function TarotRoute() {
           <Card className="p-6 mb-8">
             <h2 className="text-lg font-semibold mb-4">Choose a Spread</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {(Object.keys(TAROT_SPREADS) as SpreadType[]).map((key) => (
+              {(Object.keys(TAROT_SPREADS) as TarotSpreadType[]).map((key) => (
                 <Button
                   key={key}
                   onClick={() => setSpreadType(key)}
@@ -89,41 +85,23 @@ export default function TarotRoute() {
           transition={{ duration: 0.5 }}
         >
           <Card className="p-8 mb-8">
-            {cards.length > 0 && (
-              <TarotSpread
+            {tarotQuery.isPending ? (
+              <div className="py-16 text-center text-gray-600 dark:text-gray-400">
+                Drawing your cards...
+              </div>
+            ) : tarotQuery.isError ? (
+              <div className="py-16 text-center text-red-600 dark:text-red-400">
+                {tarotQuery.error.message}
+              </div>
+            ) : cards.length > 0 ? (
+              <TarotReadingPanel
+                key={`${spreadType}-${readingSeed}`}
                 cards={cards}
                 spreadType={spreadType}
-                revealedCards={revealedCards}
-                onCardClick={(index) => {
-                  handleCardClick(index);
-                  if (cards[index]) {
-                    handleViewDetails(cards[index]);
-                  }
-                }}
+                onNewReading={handleNewReading}
               />
-            )}
+            ) : null}
           </Card>
-        </motion.div>
-
-        {/* Action Buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="flex gap-4 justify-center mb-8"
-        >
-          <Button onClick={handleNewReading} size="lg">
-            ✨ New Reading
-          </Button>
-          {allRevealed && (
-            <Button
-              onClick={() => setRevealedCards(Array.from({ length: cards.length }, () => false))}
-              size="lg"
-              variant="outline"
-            >
-              🔄 Reset Cards
-            </Button>
-          )}
         </motion.div>
 
         {/* Tips Section */}
@@ -147,9 +125,66 @@ export default function TarotRoute() {
           </Card>
         </motion.div>
       </div>
-
-      {/* Card Details Modal */}
-      <TarotCardDetails card={selectedCard} onClose={() => setSelectedCard(null)} />
     </div>
+  );
+}
+
+function TarotReadingPanel({
+  cards,
+  spreadType,
+  onNewReading,
+}: {
+  cards: TarotCard[];
+  spreadType: TarotSpreadType;
+  onNewReading: () => void;
+}) {
+  const [revealedCards, setRevealedCards] = useState<boolean[]>(() =>
+    Array.from({ length: cards.length }, () => false),
+  );
+  const [selectedCard, setSelectedCard] = useState<TarotCard | null>(null);
+
+  const handleCardClick = (index: number) => {
+    const newRevealed = [...revealedCards];
+    newRevealed[index] = !newRevealed[index];
+    setRevealedCards(newRevealed);
+
+    if (cards[index]) {
+      setSelectedCard(cards[index]);
+    }
+  };
+
+  const allRevealed = revealedCards.every((revealed) => revealed);
+
+  return (
+    <>
+      <TarotSpread
+        cards={cards}
+        spreadType={spreadType}
+        revealedCards={revealedCards}
+        onCardClick={handleCardClick}
+      />
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="flex gap-4 justify-center mb-8"
+      >
+        <Button onClick={onNewReading} size="lg">
+          ✨ New Reading
+        </Button>
+        {allRevealed && (
+          <Button
+            onClick={() => setRevealedCards(Array.from({ length: cards.length }, () => false))}
+            size="lg"
+            variant="outline"
+          >
+            🔄 Reset Cards
+          </Button>
+        )}
+      </motion.div>
+
+      <TarotCardDetails card={selectedCard} onClose={() => setSelectedCard(null)} />
+    </>
   );
 }

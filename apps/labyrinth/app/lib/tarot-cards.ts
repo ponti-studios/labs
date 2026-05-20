@@ -1,22 +1,4 @@
-export interface TarotCard {
-  name: string;
-  number: string;
-  arcana: string;
-  suit: string;
-  img: string;
-  fortune_telling: string[];
-  keywords: string[];
-  meanings: {
-    light: string[];
-    shadow: string[];
-  };
-  Archetype: string;
-  "Hebrew Alphabet": string;
-  Numerology: string;
-  Elemental: string;
-  "Mythical/Spiritual": string;
-  "Questions to Ask": string[];
-}
+import type { TarotCard } from "./tarot-types";
 
 // Import the tarot data
 const tarotData = require("../data/tarot-cards.json");
@@ -44,33 +26,4 @@ export const getRandomCards = (count: number): TarotCard[] => {
   }
 
   return cards;
-};
-
-export const TAROT_SPREADS = {
-  three_card: {
-    name: "Three Card Spread",
-    positions: ["Past", "Present", "Future"],
-    description: "A classic spread to understand the past, present, and future of a situation.",
-  },
-  celtic_cross: {
-    name: "Celtic Cross",
-    positions: [
-      "Present Situation",
-      "Challenge",
-      "Distant Past",
-      "Recent Past",
-      "Possible Outcome",
-      "Near Future",
-      "Your Attitude",
-      "Outside Influences",
-      "Hopes & Fears",
-      "Final Outcome",
-    ],
-    description: "A comprehensive spread exploring all aspects of a situation.",
-  },
-  one_card: {
-    name: "One Card Draw",
-    positions: ["Daily Guidance"],
-    description: "A simple daily card for guidance and reflection.",
-  },
 };
