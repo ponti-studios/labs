@@ -15,7 +15,7 @@ export const routes = [
     description: "Classic Tetris with React",
   },
   {
-    path: "/games/rhobh-wordle",
+    path: "/games/wordle/rhobh",
     label: "RHOBH Wordle",
     description: "Daily Beverly Hills cast-member guessing game",
   },

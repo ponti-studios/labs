@@ -67,8 +67,6 @@ export const RHOBH_PUZZLES: RhobhPuzzle[] = [
   },
 ];
 
-export const VALID_GUESSES = new Set(RHOBH_PUZZLES.map((puzzle) => puzzle.answer));
-
 export function normalizeGuess(value: string): string {
   return value.replaceAll(/[^a-z]/gi, "").toUpperCase();
 }
