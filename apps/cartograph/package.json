@@ -9,9 +9,7 @@
     "start": "react-router-serve ./build/server/index.js",
     "lint": "oxlint app --fix",
     "format": "oxfmt --write .",
-    "typecheck": "react-router typegen && tsc",
-    "tiles:imagery": "node ../../tools/earth/generate-imagery.mjs",
-    "tiles:terrain": "node ../../tools/earth/generate-terrain.mjs"
+    "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
     "@pontistudios/db": "workspace:*",

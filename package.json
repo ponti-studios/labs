@@ -11,8 +11,6 @@
     "dev:tempo": "turbo run dev --filter=@pontistudios/tempo",
     "dev:ui": "turbo run storybook --filter=@pontistudios/ui",
     "dev:vitalis": "turbo run dev --filter=@pontistudios/vitalis",
-    "cartograph:tiles:imagery": "pnpm --filter @pontistudios/cartograph tiles:imagery",
-    "cartograph:tiles:terrain": "pnpm --filter @pontistudios/cartograph tiles:terrain",
     "lint": "turbo run lint",
     "format": "turbo run format",
     "knip": "knip",
