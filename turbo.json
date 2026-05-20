@@ -82,10 +82,6 @@
 			"cache": false,
 			"persistent": true
 		},
-		"build-storybook": {
-			"dependsOn": ["^build"],
-			"outputs": ["dist-storybook/**"]
-		},
 		"preview": {
 			"dependsOn": ["build"]
 		},
