@@ -21,7 +21,6 @@
     "build": "vite build && tsc --emitDeclarationOnly",
     "dev": "vite",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build --output-dir dist-storybook",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint src --fix",
     "format": "oxfmt src --write"
