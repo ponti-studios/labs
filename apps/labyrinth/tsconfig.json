@@ -9,6 +9,7 @@
     "app/lib/semantic-search.ts",
     "app/lib/server/**/*",
     "app/db/**/*",
+    "coverage/**/*",
     "app/components/terminal/__tests__/**/*",
     "app/routes/__tests__/**/*",
     "scripts/**/*"

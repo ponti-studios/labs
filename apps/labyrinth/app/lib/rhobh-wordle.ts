@@ -8,6 +8,7 @@ export interface RhobhPuzzle {
 }
 
 export const MAX_GUESSES = 6;
+export const RHOBH_PUZZLE_SET_LABEL = "Beverly Hills cast and friend names";
 
 export const RHOBH_PUZZLES: RhobhPuzzle[] = [
   {
@@ -72,12 +73,26 @@ export function normalizeGuess(value: string): string {
   return value.replaceAll(/[^a-z]/gi, "").toUpperCase();
 }
 
-export function getPuzzleForDate(date: Date): RhobhPuzzle {
+export function getPuzzleKeyForDate(date: Date): string {
   const utcDay = Math.floor(
     Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()) / 86_400_000,
   );
 
+  return `rhobh-${utcDay}`;
+}
+
+export function getPuzzleForKey(puzzleKey: string): RhobhPuzzle {
+  const utcDay = Number.parseInt(puzzleKey.replace("rhobh-", ""), 10);
+
+  if (Number.isNaN(utcDay)) {
+    return RHOBH_PUZZLES[0];
+  }
+
   return RHOBH_PUZZLES[utcDay % RHOBH_PUZZLES.length];
+}
+
+export function getPuzzleForDate(date: Date): RhobhPuzzle {
+  return getPuzzleForKey(getPuzzleKeyForDate(date));
 }
 
 export function evaluateGuess(answer: string, guess: string): LetterState[] {

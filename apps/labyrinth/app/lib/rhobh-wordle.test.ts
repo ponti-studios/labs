@@ -5,6 +5,7 @@ import {
   RHOBH_PUZZLES,
   evaluateGuess,
   getKeyboardState,
+  getPuzzleKeyForDate,
   getPuzzleForDate,
   normalizeGuess,
 } from "./rhobh-wordle";
@@ -20,6 +21,14 @@ describe("rhobh-wordle helpers", () => {
 
     expect(morning).toBe(evening);
     expect(RHOBH_PUZZLES).toContain(morning);
+  });
+
+  it("returns a stable puzzle key for the same utc day", () => {
+    const morning = getPuzzleKeyForDate(new Date("2026-05-20T01:00:00.000Z"));
+    const evening = getPuzzleKeyForDate(new Date("2026-05-20T23:59:59.000Z"));
+
+    expect(morning).toBe(evening);
+    expect(morning).toMatch(/^rhobh-\d+$/);
   });
 
   it("evaluates guesses with wordle-style duplicate handling", () => {

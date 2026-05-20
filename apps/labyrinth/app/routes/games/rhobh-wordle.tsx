@@ -3,15 +3,18 @@ import { Link } from "react-router";
 
 import {
   MAX_GUESSES,
+  RHOBH_PUZZLE_SET_LABEL,
   VALID_GUESSES,
   type LetterState,
   evaluateGuess,
   getKeyboardState,
-  getPuzzleForDate,
+  getPuzzleForKey,
+  getPuzzleKeyForDate,
   normalizeGuess,
 } from "~/lib/rhobh-wordle";
 
 const KEYBOARD_ROWS = ["QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"];
+const STORAGE_PREFIX = "labyrinth:rhobh-wordle:";
 
 const STATE_CLASSES: Record<LetterState, string> = {
   absent: "border-border-default bg-bg-panel-2 text-text-secondary",
@@ -19,13 +22,19 @@ const STATE_CLASSES: Record<LetterState, string> = {
   correct: "border-emerald-300 bg-emerald-100 text-emerald-950",
 };
 
+interface PersistedGameState {
+  puzzleKey: string;
+  guesses: string[];
+  message: string;
+  status: "playing" | "solved" | "failed";
+}
+
 export function meta() {
   return [
     { title: "RHOBH Wordle — Labyrinth" },
     {
       name: "description",
-      content:
-        "Guess the latest Real Housewives of Beverly Hills cast member in a Wordle-style daily challenge.",
+      content: "Guess a Beverly Hills name from a rotating Wordle-style daily challenge.",
     },
   ];
 }
@@ -36,14 +45,55 @@ function getTileClasses(state?: LetterState) {
     : "border-border-default bg-bg-elevated text-text-primary";
 }
 
+function getStorageKey(puzzleKey: string) {
+  return `${STORAGE_PREFIX}${puzzleKey}`;
+}
+
+function getInitialMessage(answerLength: number) {
+  return `Daily challenge: guess the Beverly Hills name in ${answerLength} letters.`;
+}
+
+function readPersistedGameState(puzzleKey: string): PersistedGameState | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  try {
+    const saved = window.localStorage.getItem(getStorageKey(puzzleKey));
+
+    if (!saved) {
+      return null;
+    }
+
+    const parsed = JSON.parse(saved) as Partial<PersistedGameState>;
+    if (
+      parsed.puzzleKey !== puzzleKey ||
+      !Array.isArray(parsed.guesses) ||
+      typeof parsed.message !== "string" ||
+      (parsed.status !== "playing" && parsed.status !== "solved" && parsed.status !== "failed")
+    ) {
+      return null;
+    }
+
+    return {
+      puzzleKey,
+      guesses: parsed.guesses.map((guess) => normalizeGuess(String(guess))).filter(Boolean),
+      message: parsed.message,
+      status: parsed.status,
+    };
+  } catch {
+    return null;
+  }
+}
+
 export default function RhobhWordleRoute() {
-  const puzzle = useMemo(() => getPuzzleForDate(new Date()), []);
+  const [puzzleKey, setPuzzleKey] = useState(() => getPuzzleKeyForDate(new Date()));
+  const puzzle = useMemo(() => getPuzzleForKey(puzzleKey), [puzzleKey]);
   const answerLength = puzzle.answer.length;
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentGuess, setCurrentGuess] = useState("");
-  const [message, setMessage] = useState(
-    `Daily challenge: guess the Beverly Hills name in ${answerLength} letters.`,
-  );
+  const [message, setMessage] = useState(() => getInitialMessage(answerLength));
+  const [hydratedPuzzleKey, setHydratedPuzzleKey] = useState<string | null>(null);
   const boardColumns = useMemo(
     () => ({ gridTemplateColumns: `repeat(${answerLength}, minmax(0, 1fr))` }),
     [answerLength],
@@ -61,11 +111,53 @@ export default function RhobhWordleRoute() {
       ? `Bonus hint: ${puzzle.role}. Starts with ${puzzle.answer[0]}.`
       : "Bonus hint unlocks after three guesses.";
 
+  useEffect(() => {
+    function syncPuzzleKey() {
+      const nextPuzzleKey = getPuzzleKeyForDate(new Date());
+      setPuzzleKey((currentPuzzleKey) =>
+        currentPuzzleKey === nextPuzzleKey ? currentPuzzleKey : nextPuzzleKey,
+      );
+    }
+
+    const intervalId = window.setInterval(syncPuzzleKey, 60_000);
+    document.addEventListener("visibilitychange", syncPuzzleKey);
+
+    return () => {
+      window.clearInterval(intervalId);
+      document.removeEventListener("visibilitychange", syncPuzzleKey);
+    };
+  }, []);
+
+  useEffect(() => {
+    const savedState = readPersistedGameState(puzzleKey);
+
+    setCurrentGuess("");
+    setGuesses(savedState?.guesses ?? []);
+    setMessage(savedState?.message ?? getInitialMessage(answerLength));
+    setHydratedPuzzleKey(puzzleKey);
+  }, [answerLength, puzzleKey]);
+
+  useEffect(() => {
+    if (hydratedPuzzleKey !== puzzleKey) {
+      return;
+    }
+
+    const persistedState: PersistedGameState = {
+      puzzleKey,
+      guesses,
+      message,
+      status: isSolved ? "solved" : guesses.length >= MAX_GUESSES ? "failed" : "playing",
+    };
+
+    window.localStorage.setItem(getStorageKey(puzzleKey), JSON.stringify(persistedState));
+  }, [guesses, hydratedPuzzleKey, isSolved, message, puzzleKey]);
+
   const resetBoard = useCallback(() => {
+    window.localStorage.removeItem(getStorageKey(puzzleKey));
     setGuesses([]);
     setCurrentGuess("");
-    setMessage(`Daily challenge: guess the Beverly Hills name in ${answerLength} letters.`);
-  }, [answerLength]);
+    setMessage(getInitialMessage(answerLength));
+  }, [answerLength, puzzleKey]);
 
   const addLetter = useCallback(
     (value: string) => {
@@ -105,7 +197,7 @@ export default function RhobhWordleRoute() {
     }
 
     if (!VALID_GUESSES.has(guess)) {
-      setMessage("Try one of the latest-season cast names or standout friends.");
+      setMessage("Try a name from this Beverly Hills puzzle set.");
       return;
     }
 
@@ -167,7 +259,7 @@ export default function RhobhWordleRoute() {
                 RHOBH Wordle
               </h1>
               <p className="text-base leading-7 text-text-secondary sm:text-lg">
-                Guess a name from the latest season of Real Housewives of Beverly Hills. Green
+                Guess a Beverly Hills cast or friend name from this curated puzzle set. Green
                 means the right letter in the right place, gold means the letter belongs somewhere
                 else.
               </p>
@@ -270,7 +362,7 @@ export default function RhobhWordleRoute() {
               </div>
               <div className="flex items-center justify-between gap-4">
                 <dt className="text-sm text-text-secondary">Theme</dt>
-                <dd className="font-mono text-sm text-text-primary">Season 15</dd>
+                <dd className="font-mono text-sm text-text-primary">{RHOBH_PUZZLE_SET_LABEL}</dd>
               </div>
             </dl>
           </section>
@@ -280,13 +372,13 @@ export default function RhobhWordleRoute() {
               If you need a nudge
             </p>
             <ul className="mt-4 space-y-3 text-sm leading-6 text-text-secondary">
-              <li>Use only season 15 names and standout Beverly Hills friends.</li>
+              <li>Use only names from this Beverly Hills puzzle set.</li>
               <li>The keyboard colors keep the strongest hit for every letter.</li>
               <li>After three tries, the bonus clue adds the role and first letter.</li>
             </ul>
           </section>
 
-          {(isGameOver || isSolved) && (
+          {isGameOver && (
             <section className="rounded-3xl border border-border-default bg-bg-panel-0 p-6 shadow-sm">
               <p className="text-sm font-medium uppercase tracking-[0.24em] text-text-muted">
                 Reveal
