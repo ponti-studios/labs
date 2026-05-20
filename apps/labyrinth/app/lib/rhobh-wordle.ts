@@ -83,7 +83,7 @@ export function getPuzzleForDate(date: Date): RhobhPuzzle {
 export function evaluateGuess(answer: string, guess: string): LetterState[] {
   const normalizedAnswer = normalizeGuess(answer);
   const normalizedGuess = normalizeGuess(guess);
-  const states: LetterState[] = Array.from({ length: normalizedAnswer.length }).fill("absent");
+  const states: LetterState[] = Array.from({ length: normalizedAnswer.length }, () => "absent");
   const remaining = normalizedAnswer.split("");
 
   for (const [index, letter] of normalizedGuess.split("").entries()) {

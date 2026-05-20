@@ -44,6 +44,10 @@ export default function RhobhWordleRoute() {
   const [message, setMessage] = useState(
     `Daily challenge: guess the Beverly Hills name in ${answerLength} letters.`,
   );
+  const boardColumns = useMemo(
+    () => ({ gridTemplateColumns: `repeat(${answerLength}, minmax(0, 1fr))` }),
+    [answerLength],
+  );
 
   const keyboardState = useMemo(
     () => getKeyboardState(puzzle.answer, guesses),
@@ -200,7 +204,7 @@ export default function RhobhWordleRoute() {
               const letters = (isCurrentRow ? currentGuess : guess).padEnd(answerLength, " ");
 
               return (
-                <div key={`row-${rowIndex}`} className="grid gap-2" style={{ gridTemplateColumns: `repeat(${answerLength}, minmax(0, 1fr))` }}>
+                <div key={`row-${rowIndex}`} className="grid gap-2" style={boardColumns}>
                   {letters.split("").map((letter, cellIndex) => (
                     <div
                       key={`cell-${rowIndex}-${cellIndex}`}
