@@ -17,6 +17,7 @@ export default [
 
   // Tarot Spread Reader
   route("/tarot", "routes/tarot.tsx"),
+  route("/games/rhobh-wordle", "routes/games/rhobh-wordle.tsx"),
 
   // API routes
   route("/api/todos", "routes/api.todos.ts"),
