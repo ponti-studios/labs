@@ -5,10 +5,6 @@ export default [
   route("/border-linear-gradient", "routes/border-linear-gradient.tsx"),
   route("/svg-glass-test", "routes/svg-glass-test.tsx"),
 
-  route("/tasks", "routes/tasks.tsx"),
-  route("/tasks/search", "routes/tasks.search.tsx"),
-  route("/tasks/:projectId", "routes/tasks.$projectId.tsx"),
-
   // TFL cameras
   route("/api/tfl", "routes/api.tfl.ts"),
   route("/tfl", "routes/tfl.tsx"),
@@ -18,10 +14,6 @@ export default [
   route("/tarot", "routes/tarot.tsx"),
   route("/api/tarot", "routes/api.tarot.ts"),
   route("/games/wordle/rhobh", "routes/games/rhobh-wordle.tsx"),
-
-  // API routes
-  route("/api/todos", "routes/api.todos.ts"),
-  route("/api/projects", "routes/api.projects.ts"),
 
   // Experiments
   route("/experiments", "routes/experiments.tsx"),

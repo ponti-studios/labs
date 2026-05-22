@@ -60,16 +60,6 @@ export const routes = [
     description: "Interactive tarot spread reader",
   },
   {
-    path: "/to-do",
-    label: "To-Do App",
-    description: "Simple To-Do List Application",
-  },
-  {
-    path: "/projects",
-    label: "Projects",
-    description: "Project management with task counts",
-  },
-  {
     path: "/architecture-demo",
     label: "Architecture Demo",
     description: "Islands Architecture pattern demonstration",
