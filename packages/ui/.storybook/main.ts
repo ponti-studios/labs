@@ -19,7 +19,11 @@ const config: StorybookConfig = {
 
   viteFinal: async (config) => {
     const { mergeConfig } = await import("vite");
-    return mergeConfig(config, { build: { target: "esnext" } });
+    const tailwindcss = (await import("@tailwindcss/vite")).default;
+    return mergeConfig(config, {
+      plugins: [tailwindcss()],
+      build: { target: "esnext" },
+    });
   },
 };
 export default config;
