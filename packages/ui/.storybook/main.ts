@@ -17,14 +17,10 @@ const config: StorybookConfig = {
     options: {},
   },
 
-  viteFinal: async (config) => ({
-    ...config,
-    build: { ...config.build, target: "esnext" },
-    optimizeDeps: {
-      ...config.optimizeDeps,
-      esbuildOptions: { ...config.optimizeDeps?.esbuildOptions, target: "esnext" },
-    },
-  }),
+  viteFinal: async (config) => {
+    const { mergeConfig } = await import("vite");
+    return mergeConfig(config, { build: { target: "esnext" } });
+  },
 };
 export default config;
 
