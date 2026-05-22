@@ -23,8 +23,7 @@
     "test:e2e:ci": "turbo run test:e2e:ci",
     "test:update": "turbo run test:update",
     "typecheck": "turbo run typecheck",
-    "ui:storybook": "pnpm --filter @pontistudios/ui storybook",
-    "ui:build-storybook": "pnpm --filter @pontistudios/ui build-storybook"
+    "ui:storybook": "pnpm --filter @pontistudios/ui storybook"
   },
   "devDependencies": {
     "@types/node": "catalog:",
@@ -37,6 +36,10 @@
     "turbo": "^2.9.6",
     "typescript": "catalog:"
   },
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "packageManager": "pnpm@10.30.3",
   "pnpm": {
     "overrides": {
       "esbuild": "^0.27.3",
@@ -54,9 +57,5 @@
       "next": ">=16.2.5",
       "kysely": ">=0.28.17"
     }
-  },
-  "engines": {
-    "node": ">=24.0.0"
-  },
-  "packageManager": "pnpm@10.30.3"
+  }
 }

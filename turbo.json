@@ -1,112 +1,108 @@
 {
-	"$schema": "https://turborepo.org/schema.json",
-	"globalDependencies": ["**/.env"],
-	"globalEnv": [
-		"ANALYZE",
-		"APP_URL",
-		"APP_USER_ID",
-		"COOKIE_NAME",
-		"COOKIE_SALT",
-		"COOKIE_SECRET",
-		"COOKIE_DOMAIN",
-		"DATABASE_URL",
-		"CYPRESS_PROJECT_ID",
-		"ENABLE_REQUEST_LOGGING",
-		"GOOGLE_SERVICE_ACCOUNT",
-		"JWT_SECRET",
-		"NODE_ENV",
-		"PORT",
-		"SEGMENT_KEY",
-		"SENDGRID_API_KEY",
-		"SENDGRID_SENDER_EMAIL",
-		"SENDGRID_SENDER_NAME",
-		"NEXT_PUBLIC_API_URL",
-		"VERCEL_URL",
-		"VITE_API_URL",
-		"VITE_GOOGLE_API_KEY",
-		"ANTHROPIC_API_KEY"
-	],
-	"tasks": {
-		"build": {
-			"dependsOn": ["^build"],
-			"outputs": ["build/**", "dist/**"]
-		},
-		"build:analyze": {
-			"dependsOn": ["^build"],
-			"outputs": ["build/**", "dist/**"]
-		},
-		"lint": {
-			"outputs": []
-		},
-		"format": {
-			"outputs": []
-		},
-		"typecheck": {
-			"outputs": []
-		},
-		"test": {
-			"dependsOn": ["^build"],
-			"outputs": ["coverage/**"]
-		},
-		"test:coverage": {
-			"dependsOn": ["^build"],
-			"outputs": ["coverage/**"]
-		},
-		"test:coverage:view": {
-			"dependsOn": ["test:coverage"],
-			"outputs": []
-		},
-		"test:e2e": {
-			"dependsOn": ["^build"],
-			"outputs": []
-		},
-		"test:e2e:ci": {
-			"dependsOn": ["^build"],
-			"outputs": []
-		},
-		"test:e2e:headless": {
-			"dependsOn": ["^build"],
-			"outputs": []
-		},
-		"test:update": {
-			"outputs": []
-		},
-		"test:watch": {
-			"outputs": []
-		},
-		"dev": {
-			"cache": false,
-			"persistent": true
-		},
-		"storybook": {
-			"cache": false,
-			"persistent": true
-		},
-		"build-storybook": {
-			"dependsOn": ["^build"],
-			"outputs": ["dist-storybook/**"]
-		},
-		"preview": {
-			"dependsOn": ["build"]
-		},
-		"preview:test": {
-			"dependsOn": ["build"]
-		},
-		"start": {
-			"dependsOn": ["build"],
-			"cache": false
-		},
-		"db:generate": {
-			"cache": false,
-			"inputs": ["packages/db/**"]
-		},
-		"db:migrate": {
-			"cache": false,
-			"inputs": ["packages/db/**"]
-		},
-		"db:push": {
-			"cache": false,
-			"inputs": ["packages/db/**"]
-		}
-	}
+  "$schema": "https://turborepo.org/schema.json",
+  "globalDependencies": ["**/.env"],
+  "globalEnv": [
+    "ANALYZE",
+    "APP_URL",
+    "APP_USER_ID",
+    "COOKIE_NAME",
+    "COOKIE_SALT",
+    "COOKIE_SECRET",
+    "COOKIE_DOMAIN",
+    "DATABASE_URL",
+    "CYPRESS_PROJECT_ID",
+    "ENABLE_REQUEST_LOGGING",
+    "GOOGLE_SERVICE_ACCOUNT",
+    "JWT_SECRET",
+    "NODE_ENV",
+    "PORT",
+    "SEGMENT_KEY",
+    "SENDGRID_API_KEY",
+    "SENDGRID_SENDER_EMAIL",
+    "SENDGRID_SENDER_NAME",
+    "NEXT_PUBLIC_API_URL",
+    "VERCEL_URL",
+    "VITE_API_URL",
+    "VITE_GOOGLE_API_KEY",
+    "ANTHROPIC_API_KEY"
+  ],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["build/**", "dist/**"]
+    },
+    "build:analyze": {
+      "dependsOn": ["^build"],
+      "outputs": ["build/**", "dist/**"]
+    },
+    "lint": {
+      "outputs": []
+    },
+    "format": {
+      "outputs": []
+    },
+    "typecheck": {
+      "outputs": []
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/**"]
+    },
+    "test:coverage": {
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/**"]
+    },
+    "test:coverage:view": {
+      "dependsOn": ["test:coverage"],
+      "outputs": []
+    },
+    "test:e2e": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "test:e2e:ci": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "test:e2e:headless": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "test:update": {
+      "outputs": []
+    },
+    "test:watch": {
+      "outputs": []
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "storybook": {
+      "cache": false,
+      "persistent": true
+    },
+    "preview": {
+      "dependsOn": ["build"]
+    },
+    "preview:test": {
+      "dependsOn": ["build"]
+    },
+    "start": {
+      "dependsOn": ["build"],
+      "cache": false
+    },
+    "db:generate": {
+      "cache": false,
+      "inputs": ["packages/db/**"]
+    },
+    "db:migrate": {
+      "cache": false,
+      "inputs": ["packages/db/**"]
+    },
+    "db:push": {
+      "cache": false,
+      "inputs": ["packages/db/**"]
+    }
+  }
 }
