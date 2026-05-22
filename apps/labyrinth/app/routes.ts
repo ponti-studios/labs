@@ -8,7 +8,6 @@ export default [
   route("/tasks", "routes/tasks.tsx"),
   route("/tasks/search", "routes/tasks.search.tsx"),
   route("/tasks/:projectId", "routes/tasks.$projectId.tsx"),
-  route("/projects", "routes/projects.tsx"),
 
   // TFL cameras
   route("/api/tfl", "routes/api.tfl.ts"),
