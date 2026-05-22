@@ -17,6 +17,7 @@ export default [
 
   // Other
   route("/tarot", "routes/tarot.tsx"),
+  route("/api/tarot", "routes/api.tarot.ts"),
   route("/games/wordle/rhobh", "routes/games/rhobh-wordle.tsx"),
 
   // API routes
@@ -25,6 +26,7 @@ export default [
 
   // Experiments
   route("/experiments", "routes/experiments.tsx"),
+  route("/experiments/threegl-web-request", "routes/experiments.threegl-web-request.tsx"),
   route("/experiments/threegl-image-gallery", "routes/experiments.threegl-image-gallery.tsx"),
 
   // Coding Challenges

@@ -2,6 +2,11 @@ import { Link } from "react-router";
 
 const experiments = [
   {
+    name: "threegl-web-request",
+    path: "/experiments/threegl-web-request",
+    description: "Three.js visualization of web request flow across load balancer, cache, and database",
+  },
+  {
     name: "threegl-image-gallery",
     path: "/experiments/threegl-image-gallery",
     description: "Three.js based 3D image gallery experiment",
