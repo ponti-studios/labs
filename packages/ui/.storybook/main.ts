@@ -15,7 +15,16 @@ const config: StorybookConfig = {
   framework: {
     name: getAbsolutePath("@storybook/react-vite"),
     options: {},
-  }
+  },
+
+  viteFinal: async (config) => ({
+    ...config,
+    build: { ...config.build, target: "esnext" },
+    optimizeDeps: {
+      ...config.optimizeDeps,
+      esbuildOptions: { ...config.optimizeDeps?.esbuildOptions, target: "esnext" },
+    },
+  }),
 };
 export default config;
 
