@@ -15,6 +15,11 @@ export const routes = [
     description: "Classic Tetris with React",
   },
   {
+    path: "/games/wordle/rhobh",
+    label: "RHOBH Wordle",
+    description: "Daily Beverly Hills cast-member guessing game",
+  },
+  {
     path: "/algorithms",
     label: "Algorithms Explorer",
     description: "Learn sorting and searching",

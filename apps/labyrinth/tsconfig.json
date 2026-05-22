@@ -9,8 +9,7 @@
     "app/lib/semantic-search.ts",
     "app/lib/server/**/*",
     "app/db/**/*",
-    "app/components/terminal/__tests__/**/*",
-    "app/routes/__tests__/**/*",
+    "coverage/**/*",
     "scripts/**/*"
   ],
   "compilerOptions": {
@@ -19,7 +18,8 @@
     "rootDirs": [".", "./.react-router/types"],
     "baseUrl": ".",
     "paths": {
-      "~/*": ["./app/*"]
+      "~/*": ["./app/*"],
+      "@pontistudios/db": ["../../packages/db/src/index.ts"]
     },
     "noEmit": true
   }
