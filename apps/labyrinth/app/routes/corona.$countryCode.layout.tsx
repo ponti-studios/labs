@@ -1,28 +1,21 @@
-import { Link, useLocation, useNavigate } from "react-router";
-import { CountryPicker } from "../country-picker/country-picker";
+import { Link, Outlet, useLocation, useNavigate, useParams } from "react-router";
+import { CountryPicker } from "~/components/country-picker/country-picker";
 
-interface CoronaLayoutProps {
-  children: React.ReactNode;
-  countryCode: string;
-}
-
-export function CoronaLayout({ children, countryCode }: CoronaLayoutProps) {
+export default function CoronaCountryLayout() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { countryCode = "OWID_WRL" } = useParams();
 
-  // Handle country change
   const handleCountryChange = (newCountryCode: string) => {
-    // Get the current route path without the country code
     const pathParts = location.pathname.split("/");
-    // Replace the country code (should be at index 2: /corona/[countryCode]/...)
+
     if (pathParts.length >= 3 && pathParts[1] === "corona") {
       pathParts[2] = newCountryCode;
-      const newPath = pathParts.join("/");
-      navigate(newPath);
-    } else {
-      // Fallback to main dashboard
-      navigate(`/corona/${newCountryCode}`);
+      navigate(pathParts.join("/"));
+      return;
     }
+
+    navigate(`/corona/${newCountryCode}`);
   };
 
   const navigationItems = [
@@ -55,7 +48,6 @@ export function CoronaLayout({ children, countryCode }: CoronaLayoutProps) {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-stone-50 via-amber-50/20 to-stone-100">
-      {/* Header Section */}
       <div className="pt-32 pb-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-4xl mx-auto mb-12">
@@ -70,7 +62,6 @@ export function CoronaLayout({ children, countryCode }: CoronaLayoutProps) {
               analytical tools for informed decision-making.
             </p>
 
-            {/* Country Picker */}
             <div className="max-w-md mx-auto">
               <CountryPicker
                 countryCode={countryCode}
@@ -80,7 +71,6 @@ export function CoronaLayout({ children, countryCode }: CoronaLayoutProps) {
             </div>
           </div>
 
-          {/* Navigation */}
           <div className="mb-8">
             <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50">
               <div className="flex flex-wrap gap-3 justify-center">
@@ -100,9 +90,10 @@ export function CoronaLayout({ children, countryCode }: CoronaLayoutProps) {
             </div>
           </div>
 
-          {/* Content Container */}
           <div className="relative bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/50 overflow-hidden">
-            <div className="p-8">{children}</div>
+            <div className="p-8">
+              <Outlet />
+            </div>
           </div>
         </div>
       </div>

@@ -14,6 +14,14 @@ export default [
   // Other
   route("/tarot", "routes/tarot.tsx"),
   route("/api/tarot", "routes/api.tarot.ts"),
+  route("/corona", "routes/corona.tsx"),
+  route("/corona/:countryCode", "routes/corona.$countryCode.layout.tsx", [
+    index("routes/corona.$countryCode.tsx"),
+    route("pandemic-waves", "routes/corona.$countryCode.pandemic-waves.tsx"),
+    route("vaccination-effectiveness", "routes/corona.$countryCode.vaccination-effectiveness.tsx"),
+    route("seasonal-patterns", "routes/corona.$countryCode.seasonal-patterns.tsx"),
+    route("outlier-detection", "routes/corona.$countryCode.outlier-detection.tsx"),
+  ]),
   route("/games/wordle/rhobh", "routes/games/rhobh-wordle.tsx"),
 
   // Experiments
