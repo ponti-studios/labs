@@ -18,7 +18,7 @@
     "@react-router/node": "catalog:",
     "@react-router/serve": "catalog:",
     "@tanstack/react-query": "catalog:",
-    "isbot": "^5.1.39",
+    "isbot": "^5.1.40",
     "leaflet": "^1.9.4",
     "react": "catalog:",
     "react-dom": "catalog:",
