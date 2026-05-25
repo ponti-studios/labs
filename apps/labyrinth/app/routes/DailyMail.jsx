@@ -103,21 +103,36 @@ export default function DailyMail() {
       <h2>Daily Mail - Challenges</h2>
       <p>Coding challenges from Daily Mail interview.</p>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", marginTop: "1rem" }}>
+      <div
+        style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", marginTop: "1rem" }}
+      >
         <div>
           <h3>Character Map</h3>
-          <p style={{ fontSize: "0.9rem", color: "#666" }}>Count occurrences of each letter in a string.</p>
+          <p style={{ fontSize: "0.9rem", color: "#666" }}>
+            Count occurrences of each letter in a string.
+          </p>
           <input
             type="text"
             value={charInput}
-            onChange={e => setCharInput(e.target.value)}
+            onChange={(e) => setCharInput(e.target.value)}
             placeholder="Enter text"
             style={{ width: "100%", padding: "0.5rem", marginBottom: "0.5rem" }}
           />
-          <button className="btn btn-primary" onClick={runCharMap}>Run</button>
+          <button className="btn btn-primary" onClick={runCharMap}>
+            Run
+          </button>
           {charResult && (
-            <div style={{ marginTop: "0.5rem", padding: "0.75rem", background: "#f0f0f0", borderRadius: "4px" }}>
-              <pre style={{ margin: 0, fontSize: "0.85rem" }}>{JSON.stringify(charResult, null, 2)}</pre>
+            <div
+              style={{
+                marginTop: "0.5rem",
+                padding: "0.75rem",
+                background: "#f0f0f0",
+                borderRadius: "4px",
+              }}
+            >
+              <pre style={{ margin: 0, fontSize: "0.85rem" }}>
+                {JSON.stringify(charResult, null, 2)}
+              </pre>
             </div>
           )}
         </div>
@@ -125,12 +140,24 @@ export default function DailyMail() {
         <div>
           <h3>Closure Function</h3>
           <p style={{ fontSize: "0.9rem", color: "#666" }}>
-            <code>f()()()()("a")</code> returns <code>"fooooa"</code> - each empty call adds &quot;o&quot;, final call appends the argument.
+            <code>f()()()()("a")</code> returns <code>"fooooa"</code> - each empty call adds
+            &quot;o&quot;, final call appends the argument.
           </p>
-          <button className="btn btn-primary" onClick={runF}>Run f()()()()("a")</button>
+          <button className="btn btn-primary" onClick={runF}>
+            Run f()()()()("a")
+          </button>
           {fResult !== null && (
-            <div style={{ marginTop: "0.5rem", padding: "0.75rem", background: "#f0f0f0", borderRadius: "4px" }}>
-              <p style={{ margin: 0 }}><strong>Result:</strong> <code>{fResult}</code></p>
+            <div
+              style={{
+                marginTop: "0.5rem",
+                padding: "0.75rem",
+                background: "#f0f0f0",
+                borderRadius: "4px",
+              }}
+            >
+              <p style={{ margin: 0 }}>
+                <strong>Result:</strong> <code>{fResult}</code>
+              </p>
             </div>
           )}
         </div>
@@ -140,9 +167,18 @@ export default function DailyMail() {
           <p style={{ fontSize: "0.9rem", color: "#666" }}>
             Check if segments form a connected graph (no orphan segments).
           </p>
-          <button className="btn btn-primary" onClick={runGraph}>Test</button>
+          <button className="btn btn-primary" onClick={runGraph}>
+            Test
+          </button>
           {graphResult !== null && (
-            <div style={{ marginTop: "0.5rem", padding: "0.75rem", background: "#f0f0f0", borderRadius: "4px" }}>
+            <div
+              style={{
+                marginTop: "0.5rem",
+                padding: "0.75rem",
+                background: "#f0f0f0",
+                borderRadius: "4px",
+              }}
+            >
               <p style={{ margin: "0.25rem 0" }}>
                 <strong>Connected graph:</strong> {graphResult.connected ? "true" : "false"}
               </p>

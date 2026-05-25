@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Task } from '../types';
-import { motion, Reorder } from 'motion/react';
+import { motion, Reorder } from 'framer-motion';
 import { startOfDay } from 'date-fns';
 import { cn } from '../lib/utils';
 import { Link2, GripVertical, Zap } from 'lucide-react';

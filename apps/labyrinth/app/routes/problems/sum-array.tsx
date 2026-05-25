@@ -56,18 +56,14 @@ export default function SumArrayRoute() {
         <PageSection title="Approaches">
           <GridSection cols={1} gap="lg">
             <div className="border border-white/20 bg-white/2 p-6 space-y-3">
-              <h4 className="text-sm font-bold uppercase tracking-widest text-white/80">
-                [1] Loop Approach
-              </h4>
+              <h4>[1] Loop Approach</h4>
               <p className="text-xs text-white/70">TIME: O(N) - LINEAR</p>
               <CodeBlock>{`FOR EACH NUMBER IN ARRAY:
   RESULT += NUMBER`}</CodeBlock>
             </div>
 
             <div className="border border-white/20 bg-white/3 p-6 space-y-3">
-              <h4 className="text-sm font-bold uppercase tracking-widest text-white/90">
-                [2] Formula Approach
-              </h4>
+              <h4>[2] Formula Approach</h4>
               <p className="text-xs text-white/70">TIME: O(1) - CONSTANT</p>
               <CodeBlock>SUM = N * (N + 1) / 2</CodeBlock>
               <p className="text-xs text-white/60 pt-2">MUCH FASTER FOR LARGE NUMBERS!</p>

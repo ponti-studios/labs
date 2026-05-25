@@ -17,7 +17,7 @@ function findWinningCandidate(votes, timestamp, numOfCandidates) {
 
   const winner = Object.entries(voteCount).reduce(
     (acc, [name, count]) => (count > acc.votes ? { candidate: name, votes: count } : acc),
-    { candidate: "", votes: 0 }
+    { candidate: "", votes: 0 },
   );
 
   return winner;
@@ -55,13 +55,21 @@ export default function ClickTherapeutics() {
       <h2>Click Therapeutics - Voting</h2>
       <p>Find winning candidates based on votes before a timestamp.</p>
 
-      <div style={{ display: "flex", gap: "1rem", alignItems: "center", marginBottom: "1rem", flexWrap: "wrap" }}>
+      <div
+        style={{
+          display: "flex",
+          gap: "1rem",
+          alignItems: "center",
+          marginBottom: "1rem",
+          flexWrap: "wrap",
+        }}
+      >
         <label>
           Timestamp:
           <input
             type="number"
             value={timestamp}
-            onChange={e => setTimestamp(Number(e.target.value))}
+            onChange={(e) => setTimestamp(Number(e.target.value))}
             style={{ marginLeft: "0.5rem", padding: "0.25rem", width: "60px" }}
           />
         </label>
@@ -70,11 +78,13 @@ export default function ClickTherapeutics() {
           <input
             type="number"
             value={numCandidates}
-            onChange={e => setNumCandidates(Number(e.target.value))}
+            onChange={(e) => setNumCandidates(Number(e.target.value))}
             style={{ marginLeft: "0.5rem", padding: "0.25rem", width: "60px" }}
           />
         </label>
-        <button className="btn btn-primary" onClick={run}>Run</button>
+        <button className="btn btn-primary" onClick={run}>
+          Run
+        </button>
       </div>
 
       <div style={{ marginBottom: "1rem" }}>
@@ -88,9 +98,14 @@ export default function ClickTherapeutics() {
           </thead>
           <tbody>
             {votes.map((v, i) => (
-              <tr key={i} style={{ background: v.timestamp < timestamp ? "#d4edda" : "transparent" }}>
+              <tr
+                key={i}
+                style={{ background: v.timestamp < timestamp ? "#d4edda" : "transparent" }}
+              >
                 <td style={{ border: "1px solid #ccc", padding: "0.25rem 0.5rem" }}>{v.name}</td>
-                <td style={{ border: "1px solid #ccc", padding: "0.25rem 0.5rem" }}>{v.timestamp}</td>
+                <td style={{ border: "1px solid #ccc", padding: "0.25rem 0.5rem" }}>
+                  {v.timestamp}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -111,7 +126,9 @@ export default function ClickTherapeutics() {
           ) : (
             <>
               <h4>Winner:</h4>
-              <p>{result.candidate} with {result.votes} votes</p>
+              <p>
+                {result.candidate} with {result.votes} votes
+              </p>
             </>
           )}
         </div>

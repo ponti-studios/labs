@@ -104,40 +104,25 @@ const DirectorApp: React.FC = () => {
   const handleGenerate = async () => {
     setLoading(true);
     setError(null);
-    const apiKey = ""; // Injected by environment
 
     try {
-      // We send the JSON configuration as a stringified prompt, which the model interprets well for structured generation
-      const promptText = `Generate a photorealistic image based on these strict specifications: ${JSON.stringify(config, null, 2)}`;
-
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            instances: [
-              {
-                prompt: promptText,
-              },
-            ],
-            parameters: {
-              sampleCount: 1,
-            },
-          }),
+      const response = await fetch("/api/director/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({ config }),
+      });
 
       if (!response.ok) {
-        throw new Error(`Generation failed: ${response.statusText}`);
+        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(payload?.error || `Generation failed: ${response.statusText}`);
       }
 
-      const data = await response.json();
+      const data = (await response.json()) as { imageData?: string };
 
-      if (data.predictions && data.predictions[0] && data.predictions[0].bytesBase64Encoded) {
-        setGeneratedImage(`data:image/png;base64,${data.predictions[0].bytesBase64Encoded}`);
+      if (data.imageData) {
+        setGeneratedImage(data.imageData);
       } else {
         throw new Error("No image data received from the API.");
       }
@@ -247,7 +232,7 @@ const DirectorApp: React.FC = () => {
             <Camera className="text-white" size={24} />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white">Director's Console</h1>
+            <h1>Director's Console</h1>
             <p className="text-sm text-slate-400">Parametric Image Generation</p>
           </div>
         </div>
@@ -388,7 +373,7 @@ const DirectorApp: React.FC = () => {
                 <div className="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 border border-slate-700">
                   <Sparkles className="text-slate-600" size={32} />
                 </div>
-                <h3 className="text-lg font-medium text-slate-300">Ready to Imagine</h3>
+                <h3>Ready to Imagine</h3>
                 <p className="text-slate-500 max-w-sm mx-auto mt-2">
                   Configure your parameters on the left and hit generate to create a high-fidelity
                   image.
@@ -449,7 +434,7 @@ const DirectorApp: React.FC = () => {
                 ${
                   loading
                     ? "bg-slate-700 cursor-not-allowed opacity-50"
-                    : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 hover:shadow-blue-500/25"
+                    : "bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 hover:shadow-blue-500/25"
                 }
               `}
             >

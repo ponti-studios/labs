@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Mic, Square, Loader2, X, AlertCircle, Keyboard } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { processVoiceTask, VoiceTaskResult } from '../services/aiService';
 import { cn } from '../lib/utils';
 

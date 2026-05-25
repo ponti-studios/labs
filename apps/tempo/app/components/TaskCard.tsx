@@ -11,7 +11,7 @@ import {
   MoreVertical,
   Link as LinkIcon
 } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 
 interface TaskCardProps {
   task: Task;

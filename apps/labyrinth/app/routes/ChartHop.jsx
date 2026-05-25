@@ -19,7 +19,7 @@ function checkAllLetters(arr, word) {
   const firstWord = arr[0];
   if (firstWord.length !== word.length) return false;
 
-  return word.split("").every(letter => firstWord.includes(letter));
+  return word.split("").every((letter) => firstWord.includes(letter));
 }
 
 function getAnagramArrayIndex(results, word) {
@@ -49,12 +49,18 @@ export default function ChartHop() {
   const [result, setResult] = useState(null);
 
   const runEfficient = () => {
-    const words = input.split(",").map(w => w.trim()).filter(w => w.length > 0);
+    const words = input
+      .split(",")
+      .map((w) => w.trim())
+      .filter((w) => w.length > 0);
     setResult(groupAnagrams(words));
   };
 
   const runManual = () => {
-    const words = input.split(",").map(w => w.trim()).filter(w => w.length > 0);
+    const words = input
+      .split(",")
+      .map((w) => w.trim())
+      .filter((w) => w.length > 0);
     setResult(anagramer(words));
   };
 
@@ -65,15 +71,24 @@ export default function ChartHop() {
 
       <textarea
         value={input}
-        onChange={e => setInput(e.target.value)}
+        onChange={(e) => setInput(e.target.value)}
         placeholder="Enter words separated by commas"
         rows={3}
-        style={{ width: "100%", padding: "0.5rem", marginBottom: "0.5rem", fontFamily: "monospace" }}
+        style={{
+          width: "100%",
+          padding: "0.5rem",
+          marginBottom: "0.5rem",
+          fontFamily: "monospace",
+        }}
       />
 
       <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
-        <button className="btn btn-primary" onClick={runEfficient}>Group (Sort Method)</button>
-        <button className="btn" onClick={runManual}>Group (Manual)</button>
+        <button className="btn btn-primary" onClick={runEfficient}>
+          Group (Sort Method)
+        </button>
+        <button className="btn" onClick={runManual}>
+          Group (Manual)
+        </button>
       </div>
 
       {result && (
@@ -91,7 +106,14 @@ export default function ChartHop() {
                 }}
               >
                 <strong>Group {i + 1}:</strong>
-                <div style={{ display: "flex", gap: "0.25rem", flexWrap: "wrap", marginTop: "0.25rem" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "0.25rem",
+                    flexWrap: "wrap",
+                    marginTop: "0.25rem",
+                  }}
+                >
                   {group.map((word, j) => (
                     <span
                       key={j}
@@ -114,9 +136,23 @@ export default function ChartHop() {
 
       <details style={{ marginTop: "1rem" }}>
         <summary style={{ cursor: "pointer", color: "#666" }}>About the Algorithms</summary>
-        <div style={{ marginTop: "0.5rem", padding: "0.75rem", background: "#fafafa", borderRadius: "4px", fontSize: "0.9rem" }}>
-          <p><strong>Sort Method:</strong> Sort each word&apos;s characters to create a key. Words with the same sorted key are anagrams.</p>
-          <p><strong>Manual Method:</strong> For each word, check if it shares all letters with existing groups.</p>
+        <div
+          style={{
+            marginTop: "0.5rem",
+            padding: "0.75rem",
+            background: "#fafafa",
+            borderRadius: "4px",
+            fontSize: "0.9rem",
+          }}
+        >
+          <p>
+            <strong>Sort Method:</strong> Sort each word&apos;s characters to create a key. Words
+            with the same sorted key are anagrams.
+          </p>
+          <p>
+            <strong>Manual Method:</strong> For each word, check if it shares all letters with
+            existing groups.
+          </p>
         </div>
       </details>
     </div>

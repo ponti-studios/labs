@@ -28,12 +28,7 @@ export default function InterviewCake() {
       )}
       <div style={{ display: "flex", gap: "1rem" }}>
         {prizes.map((_, i) => (
-          <button
-            key={i}
-            type="button"
-            className="btn btn-primary"
-            onClick={() => handleClick(i)}
-          >
+          <button key={i} type="button" className="btn btn-primary" onClick={() => handleClick(i)}>
             Button {i + 1}!
           </button>
         ))}

@@ -3,7 +3,7 @@ import { useState } from "react";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { CoronaLayout } from "~/components/CoronaLayout";
+import { CoronaLayout } from "~/components/covid/CoronaLayout";
 
 interface WaveData {
   wave: number;
@@ -70,9 +70,7 @@ export default function PandemicWavesPage() {
     <CoronaLayout countryCode={countryCode}>
       <div className="space-y-8">
         <div className="text-center">
-          <h1 className="font-serif text-3xl md:text-4xl font-light text-stone-900 mb-4">
-            Pandemic Waves Analysis
-          </h1>
+          <h1 className="mb-4">Pandemic Waves Analysis</h1>
           <p className="text-lg text-stone-600 font-light">
             Detailed analysis of pandemic wave patterns and intensity
           </p>
@@ -115,9 +113,7 @@ export default function PandemicWavesPage() {
           <div className="space-y-8">
             {/* Wave Chart */}
             <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50">
-              <h2 className="font-serif text-xl font-medium mb-6 text-stone-800">
-                Wave Intensity Comparison
-              </h2>
+              <h2 className="mb-6">Wave Intensity Comparison</h2>
               <div className="h-80">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={data.waves}>
@@ -156,9 +152,7 @@ export default function PandemicWavesPage() {
                   className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50 hover:bg-white/50 transition-all duration-300"
                 >
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="font-serif text-lg font-medium text-stone-800">
-                      Wave {wave.wave}
-                    </h3>
+                    <h3>Wave {wave.wave}</h3>
                     <span className="bg-olive-100 text-olive-700 px-3 py-1 rounded-full text-sm font-medium">
                       {wave.duration} days
                     </span>
@@ -203,9 +197,7 @@ export default function PandemicWavesPage() {
 
             {/* Summary Statistics */}
             <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50">
-              <h2 className="font-serif text-xl font-medium mb-6 text-stone-800">
-                Wave Analysis Summary
-              </h2>
+              <h2 className="mb-6">Wave Analysis Summary</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="text-center">
                   <p className="text-stone-600 font-light mb-2">Total Waves Detected</p>

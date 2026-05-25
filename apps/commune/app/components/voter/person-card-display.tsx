@@ -1,21 +1,14 @@
 "use client";
 
+import type { SocialTrackerParsed } from "@pontistudios/db";
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { cn } from "~/lib/utils";
-import type { SocialTrackerParsed } from "@pontistudios/db";
 import type { CardTheme } from "./card-theme-picker";
 
 type CardDisplayData = Pick<
   SocialTrackerParsed,
-  | "name"
-  | "hp"
-  | "cardType"
-  | "description"
-  | "attacks"
-  | "strengths"
-  | "flaws"
-  | "commitmentLevel"
+  "name" | "hp" | "cardType" | "description" | "attacks" | "strengths" | "flaws" | "commitmentLevel"
 >;
 
 interface PersonalityType {
@@ -45,7 +38,7 @@ export function PersonCardDisplay({
     <motion.div
       data-testid="person-card"
       className={cn(
-        "w-[350px] min-h-[500px] rounded-xl overflow-hidden border-8",
+        "w-87.5 min-h-125 rounded-xl overflow-hidden border-8",
         selectedTheme.border,
         "shadow-xl relative",
       )}
@@ -59,7 +52,7 @@ export function PersonCardDisplay({
       transition={{ duration: 0.5 }}
     >
       {/* Card background */}
-      <div className={cn("absolute inset-0 bg-gradient-to-b", selectedTheme.bg)} />
+      <div className={cn("absolute inset-0 bg-linear-to-b", selectedTheme.bg)} />
 
       {/* Sparkle effects */}
       <motion.div
@@ -126,16 +119,16 @@ export function PersonCardDisplay({
         {/* Attacks */}
         <div className="space-y-2 text-sm leading-snug mb-2">
           {cardData.attacks.map((attack, index: number) => (
-              <div
-                key={attack.name}
-                className={`flex justify-between items-center ${
-                  index < cardData.attacks.length - 1 ? "border-b border-gray-400/50 pb-1" : ""
-                }`}
-              >
-                <span>{attack.name}</span>
-                <span className="font-bold">{attack.damage}</span>
-              </div>
-            ))}
+            <div
+              key={attack.name}
+              className={`flex justify-between items-center ${
+                index < cardData.attacks.length - 1 ? "border-b border-gray-400/50 pb-1" : ""
+              }`}
+            >
+              <span>{attack.name}</span>
+              <span className="font-bold">{attack.damage}</span>
+            </div>
+          ))}
         </div>
 
         {/* Flaws & Strengths */}

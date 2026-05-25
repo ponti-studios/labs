@@ -13,7 +13,7 @@ interface StaticCardProps {
 export function StaticCard({ title, description, metadata }: StaticCardProps) {
   return (
     <article className="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
-      <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
+      <h3 className="mb-2">{title}</h3>
       <p className="text-gray-600 mb-4">{description}</p>
       {metadata && (
         <footer className="text-sm text-gray-500 border-t pt-4 mt-4">

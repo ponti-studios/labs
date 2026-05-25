@@ -26,9 +26,7 @@ export default function Home() {
             <p className="text-sm font-medium uppercase tracking-[0.24em] text-muted-foreground">
               Labyrinth
             </p>
-            <h1 className="text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-              Open the tool you want and start there.
-            </h1>
+            <h1>Open the tool you want and start there.</h1>
             <p className="text-base leading-7 text-muted-foreground sm:text-lg">
               The terminal landing page was removed. This app now starts with direct links to the
               actual features.
@@ -39,7 +37,7 @@ export default function Home() {
         <section className="space-y-4">
           <div className="flex items-baseline justify-between gap-4">
             <div>
-              <h2 className="text-2xl font-semibold text-foreground">Available routes</h2>
+              <h2>Available routes</h2>
               <p className="text-sm text-muted-foreground">
                 Pick a destination without command syntax or hidden controls.
               </p>
@@ -57,7 +55,7 @@ export default function Home() {
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="space-y-2">
-                    <h3 className="text-lg font-medium text-foreground">{route.label}</h3>
+                    <h3>{route.label}</h3>
                     <p className="text-sm leading-6 text-muted-foreground">{route.description}</p>
                   </div>
                   <span className="text-muted-foreground transition-colors duration-150 group-hover:text-foreground">

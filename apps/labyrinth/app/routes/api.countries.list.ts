@@ -2,7 +2,7 @@ import { sql } from "@pontistudios/db";
 import type { LoaderFunctionArgs } from "react-router";
 import { covidData, db } from "@pontistudios/db";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader(_args: LoaderFunctionArgs) {
   try {
     // Get all unique countries from the database
     const countries = await db

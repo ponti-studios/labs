@@ -38,7 +38,8 @@ function insertionSort(arr) {
 
 function binarySearch(arr, target) {
   const steps = [];
-  let min = 0, max = arr.length - 1;
+  let min = 0,
+    max = arr.length - 1;
   while (max >= min) {
     const guess = Math.floor((min + max) / 2);
     steps.push({ guess, range: [min, max], array: [...arr] });
@@ -81,15 +82,26 @@ function fibonacci(n) {
 class Stack {
   items = {};
   count = 0;
-  push(item) { this.items[this.count++] = item; }
-  pop() { if (this.count === 0) return undefined; const item = this.items[--this.count]; delete this.items[this.count]; return item; }
-  peek() { return this.items[0]; }
-  length() { return this.count; }
+  push(item) {
+    this.items[this.count++] = item;
+  }
+  pop() {
+    if (this.count === 0) return undefined;
+    const item = this.items[--this.count];
+    delete this.items[this.count];
+    return item;
+  }
+  peek() {
+    return this.items[0];
+  }
+  length() {
+    return this.count;
+  }
 }
 
 function isPalindrome(word) {
   const letters = new Stack();
-  word.split("").forEach(l => letters.push(l));
+  word.split("").forEach((l) => letters.push(l));
   let test = "";
   for (let i = 0; i < word.length; i++) test += letters.pop();
   return test === word;
@@ -108,7 +120,10 @@ export default function Algorithms() {
   const [palindromeResult, setPalindromeResult] = useState(null);
 
   const runSelectionSort = () => {
-    const arr = input.split(",").map(n => parseInt(n.trim())).filter(n => !isNaN(n));
+    const arr = input
+      .split(",")
+      .map((n) => parseInt(n.trim()))
+      .filter((n) => !isNaN(n));
     const steps = selectionSort(arr);
     setSortSteps(steps);
     setCurrentStep(-1);
@@ -116,7 +131,10 @@ export default function Algorithms() {
   };
 
   const runInsertionSort = () => {
-    const arr = input.split(",").map(n => parseInt(n.trim())).filter(n => !isNaN(n));
+    const arr = input
+      .split(",")
+      .map((n) => parseInt(n.trim()))
+      .filter((n) => !isNaN(n));
     const steps = insertionSort(arr);
     setSortSteps(steps);
     setCurrentStep(-1);
@@ -124,7 +142,11 @@ export default function Algorithms() {
   };
 
   const runBinarySearch = () => {
-    const arr = input.split(",").map(n => parseInt(n.trim())).filter(n => !isNaN(n)).sort((a, b) => a - b);
+    const arr = input
+      .split(",")
+      .map((n) => parseInt(n.trim()))
+      .filter((n) => !isNaN(n))
+      .sort((a, b) => a - b);
     const t = parseInt(target);
     const result = binarySearch(arr, t);
     setSearchResult({ ...result, sortedArray: arr });
@@ -133,7 +155,10 @@ export default function Algorithms() {
   };
 
   const runLinearSearch = () => {
-    const arr = input.split(",").map(n => parseInt(n.trim())).filter(n => !isNaN(n));
+    const arr = input
+      .split(",")
+      .map((n) => parseInt(n.trim()))
+      .filter((n) => !isNaN(n));
     const t = parseInt(target);
     const result = linearSearch(arr, t);
     setSearchResult(result);
@@ -142,7 +167,10 @@ export default function Algorithms() {
   };
 
   const runTwoSum = () => {
-    const arr = input.split(",").map(n => parseInt(n.trim())).filter(n => !isNaN(n));
+    const arr = input
+      .split(",")
+      .map((n) => parseInt(n.trim()))
+      .filter((n) => !isNaN(n));
     const t = parseInt(target);
     setTwoSumResult(twoSum(arr, t));
   };
@@ -161,43 +189,80 @@ export default function Algorithms() {
     setPalindromeResult(isPalindrome(word));
   };
 
-  const currentArray = currentStep === -1
-    ? input.split(",").map(n => parseInt(n.trim())).filter(n => !isNaN(n))
-    : sortSteps[currentStep];
+  const currentArray =
+    currentStep === -1
+      ? input
+          .split(",")
+          .map((n) => parseInt(n.trim()))
+          .filter((n) => !isNaN(n))
+      : sortSteps[currentStep];
 
   return (
     <div>
       <h2>Algorithms</h2>
       <p>Interactive demos of classic algorithms and data structures.</p>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", marginTop: "1rem" }}>
+      <div
+        style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", marginTop: "1rem" }}
+      >
         <div>
           <h3>Sorting</h3>
           <input
             type="text"
             value={input}
-            onChange={e => setInput(e.target.value)}
+            onChange={(e) => setInput(e.target.value)}
             placeholder="Array (comma separated)"
             style={{ width: "100%", padding: "0.5rem", marginBottom: "0.5rem" }}
           />
           <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-            <button className="btn" onClick={runSelectionSort}>Selection Sort</button>
-            <button className="btn" onClick={runInsertionSort}>Insertion Sort</button>
+            <button className="btn" onClick={runSelectionSort}>
+              Selection Sort
+            </button>
+            <button className="btn" onClick={runInsertionSort}>
+              Insertion Sort
+            </button>
           </div>
           {sortSteps.length > 0 && (
             <div style={{ marginTop: "1rem" }}>
-              <p>Steps: {currentStep + 1} / {sortSteps.length}</p>
-              <div style={{ display: "flex", gap: "0.25rem", alignItems: "center", flexWrap: "wrap" }}>
+              <p>
+                Steps: {currentStep + 1} / {sortSteps.length}
+              </p>
+              <div
+                style={{ display: "flex", gap: "0.25rem", alignItems: "center", flexWrap: "wrap" }}
+              >
                 {currentArray.map((n, i) => (
-                  <div key={i} style={{
-                    width: "40px", height: "40px", display: "flex", alignItems: "center", justifyContent: "center",
-                    border: "1px solid #333", background: "#f0f0f0", fontWeight: "bold"
-                  }}>{n}</div>
+                  <div
+                    key={i}
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      border: "1px solid #333",
+                      background: "#f0f0f0",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {n}
+                  </div>
                 ))}
               </div>
               <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.5rem" }}>
-                <button className="btn" onClick={() => setCurrentStep(Math.max(-1, currentStep - 1))} disabled={currentStep === -1}>Prev</button>
-                <button className="btn" onClick={() => setCurrentStep(Math.min(sortSteps.length - 1, currentStep + 1))} disabled={currentStep === sortSteps.length - 1}>Next</button>
+                <button
+                  className="btn"
+                  onClick={() => setCurrentStep(Math.max(-1, currentStep - 1))}
+                  disabled={currentStep === -1}
+                >
+                  Prev
+                </button>
+                <button
+                  className="btn"
+                  onClick={() => setCurrentStep(Math.min(sortSteps.length - 1, currentStep + 1))}
+                  disabled={currentStep === sortSteps.length - 1}
+                >
+                  Next
+                </button>
               </div>
             </div>
           )}
@@ -208,33 +273,51 @@ export default function Algorithms() {
           <input
             type="text"
             value={input}
-            onChange={e => setInput(e.target.value)}
+            onChange={(e) => setInput(e.target.value)}
             placeholder="Array (comma separated)"
             style={{ width: "100%", padding: "0.5rem", marginBottom: "0.5rem" }}
           />
           <input
             type="text"
             value={target}
-            onChange={e => setTarget(e.target.value)}
+            onChange={(e) => setTarget(e.target.value)}
             placeholder="Target"
             style={{ width: "100%", padding: "0.5rem", marginBottom: "0.5rem" }}
           />
           <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-            <button className="btn" onClick={runBinarySearch}>Binary Search</button>
-            <button className="btn" onClick={runLinearSearch}>Linear Search</button>
+            <button className="btn" onClick={runBinarySearch}>
+              Binary Search
+            </button>
+            <button className="btn" onClick={runLinearSearch}>
+              Linear Search
+            </button>
           </div>
           {searchResult && (
-            <div style={{ marginTop: "1rem", padding: "1rem", background: "#f0f0f0", borderRadius: "4px" }}>
-              <p><strong>Result:</strong> {searchResult.found ? `Found at index ${searchResult.index}` : "Not found"}</p>
+            <div
+              style={{
+                marginTop: "1rem",
+                padding: "1rem",
+                background: "#f0f0f0",
+                borderRadius: "4px",
+              }}
+            >
+              <p>
+                <strong>Result:</strong>{" "}
+                {searchResult.found ? `Found at index ${searchResult.index}` : "Not found"}
+              </p>
               {searchResult.sortedArray && (
-                <p><strong>Sorted array:</strong> {searchResult.sortedArray.join(", ")}</p>
+                <p>
+                  <strong>Sorted array:</strong> {searchResult.sortedArray.join(", ")}
+                </p>
               )}
               {searchResult.steps && searchResult.steps.length > 0 && (
                 <details>
                   <summary>Steps ({searchResult.steps.length})</summary>
                   {searchResult.steps.map((step, i) => (
                     <div key={i} style={{ fontSize: "0.85rem", marginTop: "0.25rem" }}>
-                      {step.guess !== undefined ? `Guess: ${step.guess} (range: ${step.range?.[0]}-${step.range?.[1]})` : `Checking index ${step.index}...`}
+                      {step.guess !== undefined
+                        ? `Guess: ${step.guess} (range: ${step.range?.[0]}-${step.range?.[1]})`
+                        : `Checking index ${step.index}...`}
                     </div>
                   ))}
                 </details>
@@ -248,20 +331,24 @@ export default function Algorithms() {
           <input
             type="text"
             value={input}
-            onChange={e => setInput(e.target.value)}
+            onChange={(e) => setInput(e.target.value)}
             placeholder="Array (comma separated)"
             style={{ width: "100%", padding: "0.5rem", marginBottom: "0.5rem" }}
           />
           <input
             type="text"
             value={target}
-            onChange={e => setTarget(e.target.value)}
+            onChange={(e) => setTarget(e.target.value)}
             placeholder="Target"
             style={{ width: "100%", padding: "0.5rem", marginBottom: "0.5rem" }}
           />
-          <button className="btn" onClick={runTwoSum}>Find Pair</button>
+          <button className="btn" onClick={runTwoSum}>
+            Find Pair
+          </button>
           {twoSumResult && (
-            <p style={{ marginTop: "0.5rem" }}>Indices: [{twoSumResult[0]}, {twoSumResult[1]}]</p>
+            <p style={{ marginTop: "0.5rem" }}>
+              Indices: [{twoSumResult[0]}, {twoSumResult[1]}]
+            </p>
           )}
         </div>
 
@@ -270,16 +357,28 @@ export default function Algorithms() {
           <input
             type="text"
             value={target}
-            onChange={e => setTarget(e.target.value)}
+            onChange={(e) => setTarget(e.target.value)}
             placeholder="Number"
             style={{ width: "100%", padding: "0.5rem", marginBottom: "0.5rem" }}
           />
           <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-            <button className="btn" onClick={runFactorial}>Factorial</button>
-            <button className="btn" onClick={runFibonacci}>Fibonacci</button>
+            <button className="btn" onClick={runFactorial}>
+              Factorial
+            </button>
+            <button className="btn" onClick={runFibonacci}>
+              Fibonacci
+            </button>
           </div>
-          {factResult !== null && <p style={{ marginTop: "0.5rem" }}>{target}! = {factResult}</p>}
-          {fibResult !== null && <p style={{ marginTop: "0.5rem" }}>F({target}) = {fibResult}</p>}
+          {factResult !== null && (
+            <p style={{ marginTop: "0.5rem" }}>
+              {target}! = {factResult}
+            </p>
+          )}
+          {fibResult !== null && (
+            <p style={{ marginTop: "0.5rem" }}>
+              F({target}) = {fibResult}
+            </p>
+          )}
         </div>
 
         <div>
@@ -287,13 +386,17 @@ export default function Algorithms() {
           <input
             type="text"
             value={word}
-            onChange={e => setWord(e.target.value)}
+            onChange={(e) => setWord(e.target.value)}
             placeholder="Word to check"
             style={{ width: "100%", padding: "0.5rem", marginBottom: "0.5rem" }}
           />
-          <button className="btn" onClick={runPalindrome}>Check Palindrome (Stack)</button>
+          <button className="btn" onClick={runPalindrome}>
+            Check Palindrome (Stack)
+          </button>
           {palindromeResult !== null && (
-            <p style={{ marginTop: "0.5rem" }}>"{word}" is {palindromeResult ? "a palindrome" : "not a palindrome"}</p>
+            <p style={{ marginTop: "0.5rem" }}>
+              "{word}" is {palindromeResult ? "a palindrome" : "not a palindrome"}
+            </p>
           )}
         </div>
       </div>

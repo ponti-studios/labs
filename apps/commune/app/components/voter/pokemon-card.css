@@ -20,7 +20,7 @@
 }
 
 .pokemon-card-image {
-  @apply bg-gradient-to-b from-blue-100 to-blue-200 p-3 flex justify-center items-center;
+  @apply bg-linear-to-b from-blue-100 to-blue-200 p-3 flex justify-center items-center;
   min-height: 140px;
   border-bottom: 3px solid #add8e6;
 }

@@ -7,6 +7,7 @@ export default [
 
   // TFL cameras
   route("/api/tfl", "routes/api.tfl.ts"),
+  route("/api/director/generate", "routes/api.director.generate.ts"),
   route("/tfl", "routes/tfl.tsx"),
   route("/infinite-header", "routes/infinite-header/infinite-header.tsx"),
 

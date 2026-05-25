@@ -1,5 +1,4 @@
-import { Label } from "@pontistudios/ui";
-import { RadioGroup, RadioGroupItem } from "@pontistudios/ui";
+import { Label, RadioGroup, RadioGroupItem } from "@pontistudios/ui";
 import { cn } from "~/lib/utils";
 
 export interface CardTheme {
@@ -67,7 +66,7 @@ export function CardThemePicker({ colorTheme, setColorTheme }: CardThemePickerPr
                 "hover:border-gray-300 transition-all",
               )}
             >
-              <div className={cn("w-full h-8 rounded bg-gradient-to-r mb-1", theme.bg)} />
+              <div className={cn("w-full h-8 rounded bg-linear-to-r mb-1", theme.bg)} />
               <span className="text-xs">{theme.label}</span>
             </Label>
           </div>

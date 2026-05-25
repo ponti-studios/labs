@@ -84,7 +84,7 @@
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:ui",
     "autoprefixer": "catalog:",
-    "oxfmt": "^0.46.0",
+    "oxfmt": "^0.51.0",
     "oxlint": "^1.61.0",
     "postcss": "catalog:",
     "storybook": "^10.4.0",

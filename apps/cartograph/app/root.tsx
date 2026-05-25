@@ -1,4 +1,12 @@
-import { isRouteErrorResponse, Links, Meta, Scripts, ScrollRestoration, Outlet, useLocation } from "react-router";
+import {
+  isRouteErrorResponse,
+  Links,
+  Meta,
+  Scripts,
+  ScrollRestoration,
+  Outlet,
+  useLocation,
+} from "react-router";
 import { useMemo } from "react";
 import LeafletViewer from "./components/LeafletViewer";
 import Controls from "./components/Controls";

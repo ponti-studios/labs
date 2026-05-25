@@ -6,9 +6,7 @@ export default function InfiniteHeader() {
       <header className="container mx-auto px-4 py-16 lg:py-24">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
           <div className="lg:w-1/2 text-center lg:text-left">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 leading-tight">
-              Showcase Your Work Beautifully
-            </h1>
+            <h1 className="mb-4">Showcase Your Work Beautifully</h1>
             <p className="text-lg md:text-xl text-gray-600 mb-8">
               Engage your visitors with a stunning visual display. Our unique scrolling gallery
               captures attention and highlights your best content.

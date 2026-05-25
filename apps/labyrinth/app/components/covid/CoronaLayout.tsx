@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router";
-import { CountryPicker } from "./country-picker/country-picker";
+import { CountryPicker } from "../country-picker/country-picker";
 
 interface CoronaLayoutProps {
   children: React.ReactNode;
@@ -54,12 +54,12 @@ export function CoronaLayout({ children, countryCode }: CoronaLayoutProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/20 to-stone-100">
+    <div className="min-h-screen bg-linear-to-br from-stone-50 via-amber-50/20 to-stone-100">
       {/* Header Section */}
       <div className="pt-32 pb-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-4xl mx-auto mb-12">
-            <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl font-light text-stone-900 mb-6 tracking-tight">
+            <h1 className="mb-6">
               COVID-19
               <span className="block font-sans font-medium text-olive-700 text-3xl md:text-5xl lg:text-6xl mt-2">
                 Analytics

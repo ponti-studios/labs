@@ -160,8 +160,6 @@ export async function getCountryComparisonData(
       throw new Error("At least one country code is required");
     }
 
-    const conditions = countryCodes.map((code) => eq(covidData.isoCode, code));
-
     const records = await db
       .select()
       .from(covidData)

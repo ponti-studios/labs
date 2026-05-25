@@ -46,9 +46,7 @@ export default function StacksDemo() {
             from the same end (top). Like a stack of books - you add to the top and remove from the
             top.
           </p>
-          <h4 className="text-lg font-bold uppercase tracking-widest text-white mt-6 mb-3">
-            Palindrome Checking
-          </h4>
+          <h4 className="mt-6 mb-3">Palindrome Checking</h4>
           <p className="text-sm text-white/80 font-mono">
             A palindrome is a word that reads the same forwards and backwards. We can check this
             using a stack by pushing characters onto the stack and then comparing them as we pop.

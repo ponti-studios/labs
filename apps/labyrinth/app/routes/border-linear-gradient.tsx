@@ -288,7 +288,7 @@ export default function Component() {
         </Card>
         <Card className="p-2 rounded-lg gap-2">
           <div className="flex flex-col gap-2">
-            <h3 className="text-lg font-semibold">Generated CSS</h3>
+            <h3>Generated CSS</h3>
             <div className="flex gap-2">
               <Button
                 onClick={onShareClick}

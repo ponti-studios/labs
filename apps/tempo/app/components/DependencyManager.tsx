@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Task } from '../types';
 import { X, Link as LinkIcon, Check, Plus } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { cn } from '../lib/utils';
 
 interface DependencyManagerProps {

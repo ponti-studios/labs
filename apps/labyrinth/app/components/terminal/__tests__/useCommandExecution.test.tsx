@@ -1,4 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
+import type { Dispatch, ReactNode, SetStateAction } from "react";
 import { BrowserRouter } from "react-router";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import type { TerminalLine } from "../types";
@@ -34,7 +35,7 @@ const mockElement: MockElement = {
 };
 
 // Wrapper component for React Router context
-function RouterWrapper({ children }: { children: React.ReactNode }) {
+function RouterWrapper({ children }: { children: ReactNode }) {
   return <BrowserRouter>{children}</BrowserRouter>;
 }
 
@@ -53,14 +54,18 @@ const applySetLinesUpdate = (
 };
 
 describe("useCommandExecution Hook", () => {
-  let setLines: ReturnType<typeof vi.fn>;
-  let setCommandHistory: ReturnType<typeof vi.fn>;
+  let setLinesMock: ReturnType<typeof vi.fn>;
+  let setLines: Dispatch<SetStateAction<TerminalLine[]>>;
+  let setCommandHistoryMock: ReturnType<typeof vi.fn>;
+  let setCommandHistory: Dispatch<SetStateAction<string[]>>;
   let commandHistory: string[];
   const originalCreateElement = document.createElement.bind(document);
 
   beforeEach(() => {
-    setLines = vi.fn();
-    setCommandHistory = vi.fn();
+    setLinesMock = vi.fn<(value: SetStateAction<TerminalLine[]>) => void>();
+    setLines = setLinesMock as unknown as Dispatch<SetStateAction<TerminalLine[]>>;
+    setCommandHistoryMock = vi.fn<(value: SetStateAction<string[]>) => void>();
+    setCommandHistory = setCommandHistoryMock as unknown as Dispatch<SetStateAction<string[]>>;
     commandHistory = [];
     mockNavigate.mockClear();
     vi.clearAllTimers();
@@ -91,7 +96,7 @@ describe("useCommandExecution Hook", () => {
       result.current.executeCommand("help", commandHistory, setLines, setCommandHistory);
     });
 
-    expect(setCommandHistory).toHaveBeenCalledWith(expect.any(Function));
+    expect(setCommandHistoryMock).toHaveBeenCalledWith(expect.any(Function));
   });
 
   test("executeCommand should handle help command", () => {
@@ -101,11 +106,11 @@ describe("useCommandExecution Hook", () => {
       result.current.executeCommand("help", commandHistory, setLines, setCommandHistory);
     });
 
-    expect(setLines).toHaveBeenCalledWith(expect.any(Function));
+    expect(setLinesMock).toHaveBeenCalledWith(expect.any(Function));
 
     // Get the function passed to setLines and call it with empty array
-    const commandLines = applySetLinesUpdate(setLines, 0, []);
-    const newLines = applySetLinesUpdate(setLines, 1, commandLines);
+    const commandLines = applySetLinesUpdate(setLinesMock, 0, []);
+    const newLines = applySetLinesUpdate(setLinesMock, 1, commandLines);
 
     // Should contain command line and help content
     expect(commandLines[0]).toEqual({
@@ -126,10 +131,10 @@ describe("useCommandExecution Hook", () => {
     });
 
     // Should call setLines twice - once to add command, once to clear
-    expect(setLines).toHaveBeenCalledTimes(2);
+    expect(setLinesMock).toHaveBeenCalledTimes(2);
 
     // Second call should be with empty array (clear)
-    const secondCall = setLines.mock.calls[1];
+    const secondCall = setLinesMock.mock.calls[1];
     expect(secondCall[0]).toEqual([]);
   });
 
@@ -140,8 +145,8 @@ describe("useCommandExecution Hook", () => {
       result.current.executeCommand("gradient", commandHistory, setLines, setCommandHistory);
     });
 
-    const commandLines = applySetLinesUpdate(setLines, 0, []);
-    const newLines = applySetLinesUpdate(setLines, 1, commandLines);
+    const commandLines = applySetLinesUpdate(setLinesMock, 0, []);
+    const newLines = applySetLinesUpdate(setLinesMock, 1, commandLines);
 
     expect(
       newLines.some((line: TerminalLine) =>
@@ -164,8 +169,8 @@ describe("useCommandExecution Hook", () => {
       result.current.executeCommand("meow", commandHistory, setLines, setCommandHistory);
     });
 
-    const commandLines = applySetLinesUpdate(setLines, 0, []);
-    const newLines = applySetLinesUpdate(setLines, 1, commandLines);
+    const commandLines = applySetLinesUpdate(setLinesMock, 0, []);
+    const newLines = applySetLinesUpdate(setLinesMock, 1, commandLines);
 
     expect(
       newLines.some((line: TerminalLine) => line.content.includes("Summoning cyber cats")),
@@ -186,8 +191,8 @@ describe("useCommandExecution Hook", () => {
       result.current.executeCommand("unknown", commandHistory, setLines, setCommandHistory);
     });
 
-    const commandLines = applySetLinesUpdate(setLines, 0, []);
-    const newLines = applySetLinesUpdate(setLines, 1, commandLines);
+    const commandLines = applySetLinesUpdate(setLinesMock, 0, []);
+    const newLines = applySetLinesUpdate(setLinesMock, 1, commandLines);
 
     expect(
       newLines.some((line: TerminalLine) => line.content.includes("Bad command or file name")),
@@ -203,6 +208,6 @@ describe("useCommandExecution Hook", () => {
     });
 
     // Should not call setCommandHistory since "help" is already in history
-    expect(setCommandHistory).not.toHaveBeenCalled();
+    expect(setCommandHistoryMock).not.toHaveBeenCalled();
   });
 });

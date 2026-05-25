@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
-import { CoronaLayout } from "~/components/CoronaLayout";
+import { CoronaLayout } from "~/components/covid/CoronaLayout";
 
 interface Outlier {
   date: string;
@@ -116,7 +116,7 @@ export default function OutlierDetectionPage() {
     <CoronaLayout countryCode={countryCode}>
       <div className="space-y-8">
         <div className="text-center">
-          <h1 className="font-serif text-4xl text-stone-800 mb-4">Outlier Detection Analysis</h1>
+          <h1 className="mb-4">Outlier Detection Analysis</h1>
           <p className="font-light text-stone-600 text-lg max-w-2xl mx-auto">
             Identify anomalies and assess data quality in COVID-19 metrics
           </p>
@@ -181,7 +181,7 @@ export default function OutlierDetectionPage() {
             {/* Overview Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/50 p-8 hover:bg-white/70 transition-all duration-300">
-                <h3 className="font-serif text-xl text-stone-800 mb-3">Data Quality Score</h3>
+                <h3 className="mb-3">Data Quality Score</h3>
                 <p
                   className={`text-4xl font-light mb-2 ${getQualityScoreColor(data.dataQualityScore)}`}
                 >
@@ -189,17 +189,17 @@ export default function OutlierDetectionPage() {
                 </p>
               </div>
               <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/50 p-8 hover:bg-white/70 transition-all duration-300">
-                <h3 className="font-serif text-xl text-stone-800 mb-3">Outliers Found</h3>
+                <h3 className="mb-3">Outliers Found</h3>
                 <p className="text-4xl font-light text-orange-600 mb-2">{data.outliers.length}</p>
               </div>
               <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/50 p-8 hover:bg-white/70 transition-all duration-300">
-                <h3 className="font-serif text-xl text-stone-800 mb-3">Quality Issues</h3>
+                <h3 className="mb-3">Quality Issues</h3>
                 <p className="text-4xl font-light text-red-600 mb-2">
                   {data.dataQualityIssues.length}
                 </p>
               </div>
               <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/50 p-8 hover:bg-white/70 transition-all duration-300">
-                <h3 className="font-serif text-xl text-stone-800 mb-3">Data Points</h3>
+                <h3 className="mb-3">Data Points</h3>
                 <p className="text-4xl font-light text-blue-600 mb-2">
                   {data.statistics.totalDataPoints.toLocaleString()}
                 </p>
@@ -208,7 +208,7 @@ export default function OutlierDetectionPage() {
 
             {/* Statistics */}
             <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/50 p-8">
-              <h2 className="font-serif text-2xl text-stone-800 mb-6">Statistical Summary</h2>
+              <h2 className="mb-6">Statistical Summary</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="text-center">
                   <p className="text-stone-600 font-light mb-2">Mean Value</p>
@@ -228,7 +228,7 @@ export default function OutlierDetectionPage() {
             {/* Outliers List */}
             {data.outliers.length > 0 && (
               <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/50 p-8">
-                <h2 className="font-serif text-2xl text-stone-800 mb-6">Detected Outliers</h2>
+                <h2 className="mb-6">Detected Outliers</h2>
                 <div className="space-y-4 max-h-96 overflow-y-auto">
                   {data.outliers.map((outlier) => (
                     <div
@@ -237,7 +237,7 @@ export default function OutlierDetectionPage() {
                     >
                       <div className="flex justify-between items-start">
                         <div>
-                          <h3 className="font-serif text-lg font-medium mb-2">
+                          <h3 className="mb-2">
                             {new Date(outlier.date).toLocaleDateString()} -{" "}
                             {outlier.type.charAt(0).toUpperCase() + outlier.type.slice(1)}
                           </h3>
@@ -259,7 +259,7 @@ export default function OutlierDetectionPage() {
             {/* Data Quality Issues */}
             {data.dataQualityIssues.length > 0 && (
               <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/50 p-8">
-                <h2 className="font-serif text-2xl text-stone-800 mb-6">Data Quality Issues</h2>
+                <h2 className="mb-6">Data Quality Issues</h2>
                 <div className="space-y-4 max-h-96 overflow-y-auto">
                   {data.dataQualityIssues.map((issue) => (
                     <div
@@ -272,7 +272,7 @@ export default function OutlierDetectionPage() {
                     >
                       <div className="flex justify-between items-start">
                         <div>
-                          <h3 className="font-serif text-lg font-medium mb-2">
+                          <h3 className="mb-2">
                             {issue.issue} - {new Date(issue.date).toLocaleDateString()}
                           </h3>
                           <p className="font-light">{issue.description}</p>
@@ -296,7 +296,7 @@ export default function OutlierDetectionPage() {
             {/* Reporting Artifacts */}
             {data.reportingArtifacts.length > 0 && (
               <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/50 p-8">
-                <h2 className="font-serif text-2xl text-stone-800 mb-6">Reporting Artifacts</h2>
+                <h2 className="mb-6">Reporting Artifacts</h2>
                 <div className="space-y-4">
                   {data.reportingArtifacts.map((artifact) => (
                     <div
@@ -305,7 +305,7 @@ export default function OutlierDetectionPage() {
                     >
                       <div className="flex justify-between items-start">
                         <div>
-                          <h3 className="font-serif text-lg font-medium mb-2">{artifact.type}</h3>
+                          <h3 className="mb-2">{artifact.type}</h3>
                           <p className="font-light">{artifact.description}</p>
                         </div>
                         <span className="text-blue-600 font-medium text-xl">
@@ -337,7 +337,7 @@ export default function OutlierDetectionPage() {
                     </svg>
                   </div>
                   <div>
-                    <h3 className="font-serif text-lg font-medium">Excellent Data Quality!</h3>
+                    <h3>Excellent Data Quality!</h3>
                     <p className="font-light">
                       No significant outliers or data quality issues detected in the selected
                       metric.

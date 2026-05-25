@@ -1,9 +1,7 @@
 import { useState } from "react";
 
 export default function PetersonAcademy() {
-  const [els, setEls] = useState(
-    new Array(6).fill(0).map((_, i) => ({ name: `Image ${i}` })),
-  );
+  const [els, setEls] = useState(Array.from({ length: 6 }, (_, i) => ({ name: `Image ${i}` })));
 
   const handleLeftClick = () => {
     setEls((prev) => {

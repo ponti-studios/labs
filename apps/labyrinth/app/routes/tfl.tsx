@@ -14,16 +14,16 @@ export function meta() {
 
 export default function TFL() {
   if (!GOOGLE_MAPS_API_KEY) {
-    return <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50/30 pt-32" />;
+    return <div className="min-h-screen bg-linear-to-br from-stone-50 to-amber-50/30 pt-32" />;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/20 to-stone-100">
+    <div className="min-h-screen bg-linear-to-br from-stone-50 via-amber-50/20 to-stone-100">
       {/* Header Section */}
       <div className="pt-32 pb-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-4xl mx-auto mb-12">
-            <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl font-light text-stone-900 mb-6 tracking-tight">
+            <h1 className="mb-6">
               London Traffic
               <span className="block font-sans font-medium text-olive-700 text-3xl md:text-5xl lg:text-6xl mt-2">
                 Live Views
@@ -62,7 +62,7 @@ export default function TFL() {
                     />
                   </svg>
                 </div>
-                <h3 className="font-serif text-xl font-medium text-stone-900 mb-3">Live Streams</h3>
+                <h3 className="mb-3">Live Streams</h3>
                 <p className="text-stone-600 font-light leading-relaxed">
                   Real-time footage updated continuously throughout the day, capturing London's
                   dynamic traffic patterns.
@@ -94,9 +94,7 @@ export default function TFL() {
                     />
                   </svg>
                 </div>
-                <h3 className="font-serif text-xl font-medium text-stone-900 mb-3">
-                  City Coverage
-                </h3>
+                <h3 className="mb-3">City Coverage</h3>
                 <p className="text-stone-600 font-light leading-relaxed">
                   Strategically positioned cameras across London's most vital arteries and
                   intersections.
@@ -122,9 +120,7 @@ export default function TFL() {
                     />
                   </svg>
                 </div>
-                <h3 className="font-serif text-xl font-medium text-stone-900 mb-3">
-                  Interactive Experience
-                </h3>
+                <h3 className="mb-3">Interactive Experience</h3>
                 <p className="text-stone-600 font-light leading-relaxed">
                   Seamlessly navigate and explore detailed camera information with elegant,
                   intuitive interactions.

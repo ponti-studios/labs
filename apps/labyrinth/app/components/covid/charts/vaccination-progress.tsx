@@ -45,7 +45,7 @@ export function VaccinationProgress({
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
-      <h3 className="text-lg font-semibold mb-4 text-gray-800">{title}</h3>
+      <h3 className="mb-4">{title}</h3>
       <ResponsiveContainer width="100%" height={height}>
         <AreaChart data={combinedData}>
           <defs>

@@ -539,7 +539,7 @@ const TetrisGame: FC = () => {
 
         {/* Game board */}
         <div className="flex flex-col">
-          <h1 className="text-4xl font-bold mb-6 text-center uppercase tracking-widest">TETRIS</h1>
+          <h1 className="mb-6">TETRIS</h1>
 
           <div
             className="border-2 bg-black relative"

@@ -9,8 +9,7 @@
     "app/components/DependencyManager.tsx",
     "app/components/TaskCard.tsx",
     "app/components/TimelineView.tsx",
-    "app/components/VoiceRecorderOverlay.tsx",
-    "src/**/*"
+    "app/components/VoiceRecorderOverlay.tsx"
   ],
   "compilerOptions": {
     "types": ["node", "vite/client"],

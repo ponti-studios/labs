@@ -202,9 +202,7 @@ export default function RhobhWordleRoute() {
         {/* Header */}
         <header className="flex items-center justify-between border-b border-border pb-4">
           <div>
-            <h1 className="text-xl font-semibold tracking-tight text-foreground">
-              Wordzi - RHOBH
-            </h1>
+            <h1>Wordzi - RHOBH</h1>
           </div>
           <div className="flex items-center gap-2">
             <button

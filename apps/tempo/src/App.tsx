@@ -1,87 +1,89 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
-import React, { useState, useMemo } from 'react';
-import { useChronoFlow } from './hooks/useChronoFlow';
-import { TaskCard } from './components/TaskCard';
-import { AIPrompt } from './components/AIPrompt';
-import { AddTaskModal } from './components/AddTaskModal';
-import { VoiceRecorderOverlay } from './components/VoiceRecorderOverlay';
-import { ContextMenu } from './components/ContextMenu';
-import { DependencyManager } from './components/DependencyManager';
-import { TimelineView } from './components/TimelineView';
-import { 
-  Plus, 
-  Coffee, 
-  Zap,
+import { format } from "date-fns";
+import {
   CheckCircle2,
-  Maximize2,
+  Coffee,
+  GitBranch,
   Link as LinkIcon,
+  Mic,
   Split,
   Trash2,
-  GitBranch,
-  Mic
-} from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
-import { cn } from './lib/utils';
-import { format } from 'date-fns';
+  Zap,
+} from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import React, { useMemo, useState } from "react";
+import { AIPrompt } from "./components/AIPrompt";
+import { AddTaskModal } from "./components/AddTaskModal";
+import { ContextMenu } from "./components/ContextMenu";
+import { DependencyManager } from "./components/DependencyManager";
+import { TimelineView } from "./components/TimelineView";
+import { VoiceRecorderOverlay } from "./components/VoiceRecorderOverlay";
+import { useChronoFlow } from "./hooks/useChronoFlow";
+import { cn } from "./lib/utils";
 
 export default function App() {
-  const { 
-    tasks, 
+  const {
+    tasks,
     setTasks,
-    addTask, 
-    updateTaskStatus, 
+    addTask,
+    updateTaskStatus,
     updateTaskDependencies,
-    isBreakRequired, 
-    finishBreak, 
+    isBreakRequired,
+    finishBreak,
     constraints,
     splitTask,
-    reorderOnDeck
+    reorderOnDeck,
   } = useChronoFlow();
 
   const [splittingTask, setSplittingTask] = useState<string | null>(null);
   const [managingDeps, setManagingDeps] = useState<string | null>(null);
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [isVoiceRecording, setIsVoiceRecording] = useState(false);
-  const [contextMenu, setContextMenu] = useState<{ x: number, y: number, taskId: string } | null>(null);
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; taskId: string } | null>(
+    null,
+  );
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
   const existingTags = useMemo(() => {
     const tags = new Set<string>();
-    tasks.forEach(t => t.tags?.forEach(tag => tags.add(tag)));
+    tasks.forEach((t) => t.tags?.forEach((tag) => tags.add(tag)));
     return Array.from(tags).sort();
   }, [tasks]);
 
   const filteredTasks = useMemo(() => {
-    return tasks.filter(t => {
-      const matchesSearch = t.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                           t.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+    return tasks.filter((t) => {
+      const matchesSearch =
+        t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        t.tags?.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()));
       const matchesTag = !selectedTag || t.tags?.includes(selectedTag);
       return matchesSearch && matchesTag;
     });
   }, [tasks, searchQuery, selectedTag]);
 
   const flowStats = useMemo(() => {
-    const activeTasks = tasks.filter(t => t.status !== 'completed');
+    const activeTasks = tasks.filter((t) => t.status !== "completed");
     const rawTime = activeTasks.reduce((acc, t) => acc + t.estimatedMinutes, 0);
     const bufferTime = activeTasks.reduce((acc, t) => {
-      const b = t.priority === 'P0' ? 0 : t.priority === 'P1' ? 15 : t.priority === 'P2' ? 30 : 60;
+      const b = t.priority === "P0" ? 0 : t.priority === "P1" ? 15 : t.priority === "P2" ? 30 : 60;
       return acc + b;
     }, 0);
     const totalRequired = rawTime + bufferTime;
-    const remainingDay = constraints.maxDailyMinutes - tasks.filter(t => t.status === 'completed').reduce((acc, t) => acc + t.estimatedMinutes, 0);
-    
+    const remainingDay =
+      constraints.maxDailyMinutes -
+      tasks.filter((t) => t.status === "completed").reduce((acc, t) => acc + t.estimatedMinutes, 0);
+
     return {
       rawTime,
       bufferTime,
       totalRequired,
       remainingDay,
       isOverloaded: totalRequired > remainingDay,
-      health: totalRequired > remainingDay ? 'critical' : totalRequired > remainingDay * 0.8 ? 'warning' : 'optimal'
+      health:
+        totalRequired > remainingDay
+          ? "critical"
+          : totalRequired > remainingDay * 0.8
+            ? "warning"
+            : "optimal",
     };
   }, [tasks, constraints.maxDailyMinutes]);
 
@@ -93,7 +95,7 @@ export default function App() {
   };
 
   const deleteTask = (id: string) => {
-    setTasks(prev => prev.filter(t => t.id !== id));
+    setTasks((prev) => prev.filter((t) => t.id !== id));
   };
 
   return (
@@ -110,30 +112,38 @@ export default function App() {
           <div className="flex items-center gap-6">
             <div className="hidden sm:flex items-center gap-4">
               <div className="flex flex-col items-end">
-                <span className="text-[10px] font-mono text-zinc-300 uppercase tracking-widest leading-none mb-1">Internal Health</span>
+                <span className="text-[10px] font-mono text-zinc-300 uppercase tracking-widest leading-none mb-1">
+                  Internal Health
+                </span>
                 <div className="flex items-center gap-1.5">
-                  <div className={cn(
-                    "w-1.5 h-1.5 rounded-full",
-                    flowStats.health === 'critical' ? 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]' :
-                    flowStats.health === 'warning' ? 'bg-amber-400' : 'bg-emerald-500'
-                  )} />
-                  <span className="text-[11px] font-bold uppercase tracking-tight text-zinc-500">{flowStats.health}</span>
+                  <div
+                    className={cn(
+                      "w-1.5 h-1.5 rounded-full",
+                      flowStats.health === "critical"
+                        ? "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]"
+                        : flowStats.health === "warning"
+                          ? "bg-amber-400"
+                          : "bg-emerald-500",
+                    )}
+                  />
+                  <span className="text-[11px] font-bold uppercase tracking-tight text-zinc-500">
+                    {flowStats.health}
+                  </span>
                 </div>
               </div>
               <div className="w-px h-8 bg-zinc-100 mx-2" />
               <div className="flex flex-col items-end text-[11px] font-medium text-zinc-400 uppercase tracking-wider">
                 <span>{Math.floor(dailyMinutesLeft / 60)}h remaining</span>
-                <span className="text-[9px] font-mono mt-0.5 text-zinc-300">Net: {flowStats.totalRequired}M (w/ Buffer)</span>
+                <span className="text-[9px] font-mono mt-0.5 text-zinc-300">
+                  Net: {flowStats.totalRequired}M (w/ Buffer)
+                </span>
               </div>
             </div>
             <div className="hidden sm:block w-1 h-1 rounded-full bg-zinc-200" />
             <div className="hidden sm:block text-[11px] font-medium text-zinc-400 uppercase tracking-wider">
-              {format(new Date(), 'MMM dd')}
+              {format(new Date(), "MMM dd")}
             </div>
-            <button 
-              onClick={() => setIsVoiceRecording(true)}
-              className="mono-button"
-            >
+            <button onClick={() => setIsVoiceRecording(true)} className="mono-button">
               <Mic size={14} className="inline-block mr-1.5" />
               New
             </button>
@@ -146,7 +156,7 @@ export default function App() {
         <div className="mb-12 space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="relative group flex-1 max-w-md">
-              <input 
+              <input
                 type="text"
                 placeholder="Search flow..."
                 value={searchQuery}
@@ -156,22 +166,26 @@ export default function App() {
             </div>
             {existingTags.length > 0 && (
               <div className="flex flex-wrap gap-2">
-                <button 
+                <button
                   onClick={() => setSelectedTag(null)}
                   className={cn(
                     "text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded transition-colors",
-                    !selectedTag ? "bg-black text-white" : "bg-zinc-50 text-zinc-400 hover:text-zinc-950"
+                    !selectedTag
+                      ? "bg-black text-white"
+                      : "bg-zinc-50 text-zinc-400 hover:text-zinc-950",
                   )}
                 >
                   All
                 </button>
-                {existingTags.map(tag => (
-                  <button 
+                {existingTags.map((tag) => (
+                  <button
                     key={tag}
                     onClick={() => setSelectedTag(tag === selectedTag ? null : tag)}
                     className={cn(
                       "text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded transition-colors",
-                      tag === selectedTag ? "bg-black text-white" : "bg-zinc-50 text-zinc-400 hover:text-zinc-950"
+                      tag === selectedTag
+                        ? "bg-black text-white"
+                        : "bg-zinc-50 text-zinc-400 hover:text-zinc-950",
                     )}
                   >
                     {tag}
@@ -183,7 +197,7 @@ export default function App() {
         </div>
 
         {isBreakRequired && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             className="mb-12 p-4 bg-zinc-50 border border-zinc-200 rounded flex items-center justify-between"
@@ -194,37 +208,36 @@ export default function App() {
                 <span className="font-semibold">Reset required.</span> Take a 15-minute break.
               </div>
             </div>
-            <button 
-              onClick={finishBreak}
-              className="text-sm font-bold hover:underline"
-            >
+            <button onClick={finishBreak} className="text-sm font-bold hover:underline">
               Done
             </button>
           </motion.div>
         )}
 
-        <section onContextMenu={(e) => {
-          if (contextMenu) setContextMenu(null);
-        }}>
-          <TimelineView 
-            tasks={filteredTasks} 
+        <section
+          onContextMenu={(e) => {
+            if (contextMenu) setContextMenu(null);
+          }}
+        >
+          <TimelineView
+            tasks={filteredTasks}
             onTaskContextMenu={handleContextMenu}
             onOnDeckReorder={reorderOnDeck}
           />
-          
+
           <footer className="mt-16 pt-8 border-t border-zinc-100 flex justify-center">
-             <p className="text-[10px] font-mono text-zinc-300 uppercase tracking-[0.3em]">
-               Right-click for precision controls
-             </p>
+            <p className="text-[10px] font-mono text-zinc-300 uppercase tracking-[0.3em]">
+              Right-click for precision controls
+            </p>
           </footer>
         </section>
       </main>
 
       <AnimatePresence>
         {splittingTask && (
-          <AIPrompt 
-            taskTitle={tasks.find(t => t.id === splittingTask)?.title || ""}
-            estimatedMinutes={tasks.find(t => t.id === splittingTask)?.estimatedMinutes || 0}
+          <AIPrompt
+            taskTitle={tasks.find((t) => t.id === splittingTask)?.title || ""}
+            estimatedMinutes={tasks.find((t) => t.id === splittingTask)?.estimatedMinutes || 0}
             onAccept={(subTasks) => {
               splitTask(splittingTask, subTasks);
               setSplittingTask(null);
@@ -233,7 +246,7 @@ export default function App() {
           />
         )}
         {isVoiceRecording && (
-          <VoiceRecorderOverlay 
+          <VoiceRecorderOverlay
             onClose={() => setIsVoiceRecording(false)}
             existingTags={existingTags}
             onSwitchToManual={() => {
@@ -243,9 +256,9 @@ export default function App() {
             onTaskCreated={(voiceTask) => {
               addTask({
                 ...voiceTask,
-                status: 'on-deck',
+                status: "on-deck",
                 dependencies: [],
-                tags: [...(voiceTask.tags || []), 'voice-input'],
+                tags: [...(voiceTask.tags || []), "voice-input"],
                 startDateTime: null,
                 endDateTime: null,
               });
@@ -253,51 +266,46 @@ export default function App() {
             }}
           />
         )}
-        {isAddingTask && (
-          <AddTaskModal 
-            onAdd={addTask}
-            onClose={() => setIsAddingTask(false)}
-          />
-        )}
+        {isAddingTask && <AddTaskModal onAdd={addTask} onClose={() => setIsAddingTask(false)} />}
         {managingDeps && (
-          <DependencyManager 
-            task={tasks.find(t => t.id === managingDeps)!}
+          <DependencyManager
+            task={tasks.find((t) => t.id === managingDeps)!}
             allTasks={tasks}
             onUpdate={(deps) => updateTaskDependencies(managingDeps, deps)}
             onClose={() => setManagingDeps(null)}
           />
         )}
         {contextMenu && (
-          <ContextMenu 
+          <ContextMenu
             x={contextMenu.x}
             y={contextMenu.y}
             onClose={() => setContextMenu(null)}
             options={[
-              { 
-                label: 'Manage Dependencies', 
-                icon: <LinkIcon size={14} />, 
-                onClick: () => setManagingDeps(contextMenu.taskId) 
+              {
+                label: "Manage Dependencies",
+                icon: <LinkIcon size={14} />,
+                onClick: () => setManagingDeps(contextMenu.taskId),
               },
-              { 
-                label: 'Split with AI', 
-                icon: <Split size={14} />, 
-                onClick: () => setSplittingTask(contextMenu.taskId) 
+              {
+                label: "Split with AI",
+                icon: <Split size={14} />,
+                onClick: () => setSplittingTask(contextMenu.taskId),
               },
-              { 
-                label: 'Start Task', 
-                icon: <Zap size={14} />, 
-                onClick: () => updateTaskStatus(contextMenu.taskId, 'in-flight')
+              {
+                label: "Start Task",
+                icon: <Zap size={14} />,
+                onClick: () => updateTaskStatus(contextMenu.taskId, "in-flight"),
               },
-              { 
-                label: 'Mark Done', 
-                icon: <CheckCircle2 size={14} />, 
-                onClick: () => updateTaskStatus(contextMenu.taskId, 'completed')
+              {
+                label: "Mark Done",
+                icon: <CheckCircle2 size={14} />,
+                onClick: () => updateTaskStatus(contextMenu.taskId, "completed"),
               },
-              { 
-                label: 'Delete Task', 
-                icon: <Trash2 size={14} />, 
+              {
+                label: "Delete Task",
+                icon: <Trash2 size={14} />,
                 destructive: true,
-                onClick: () => deleteTask(contextMenu.taskId)
+                onClick: () => deleteTask(contextMenu.taskId),
               },
             ]}
           />
@@ -306,4 +314,3 @@ export default function App() {
     </div>
   );
 }
-

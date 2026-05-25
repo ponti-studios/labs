@@ -84,7 +84,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
       <div className="max-w-md w-full text-center">
         <div className="mb-6">
           <div className="text-6xl font-bold text-red-500 mb-2">{status}</div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">{message}</h1>
+          <h1 className="mb-2">{message}</h1>
           <p className="text-gray-600">{details}</p>
         </div>
 

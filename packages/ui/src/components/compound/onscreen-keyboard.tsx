@@ -26,8 +26,7 @@ const STATE_KEY_CLASSES: Record<LetterState, string> = {
   correct: "border-emerald-300 bg-emerald-100 text-emerald-950",
 };
 
-const INACTIVE_KEY =
-  "border-border bg-background text-foreground hover:bg-muted";
+const INACTIVE_KEY = "border-border bg-background text-foreground hover:bg-muted";
 
 const KEY_BASE =
   "flex h-10 w-8 items-center justify-center rounded border text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50";

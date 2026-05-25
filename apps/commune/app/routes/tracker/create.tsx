@@ -581,7 +581,6 @@ export function CardCreator() {
         handleMouseMove={handleMouseMove}
         handleMouseUp={handleMouseUp}
       />
-
     </div>
   );
 }

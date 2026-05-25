@@ -10,7 +10,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { CoronaLayout } from "~/components/CoronaLayout";
+import { CoronaLayout } from "~/components/covid/CoronaLayout";
 
 interface VaccinationEffectiveness {
   overall: number;
@@ -88,9 +88,7 @@ export default function VaccinationEffectivenessPage() {
     <CoronaLayout countryCode={countryCode}>
       <div className="space-y-8">
         <div className="text-center">
-          <h1 className="font-serif text-3xl md:text-4xl font-light text-stone-900 mb-4">
-            Vaccination Effectiveness
-          </h1>
+          <h1 className="mb-4">Vaccination Effectiveness</h1>
           <p className="text-lg text-stone-600 font-light">
             Comprehensive analysis of vaccination impact and effectiveness metrics
           </p>
@@ -123,33 +121,25 @@ export default function VaccinationEffectivenessPage() {
             {/* Effectiveness Metrics */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50 hover:bg-white/50 transition-all duration-300">
-                <h3 className="font-serif text-lg font-medium text-stone-800 mb-2">
-                  Overall Effectiveness
-                </h3>
+                <h3 className="mb-2">Overall Effectiveness</h3>
                 <p className="text-3xl font-light text-olive-600">
                   {data.effectiveness.overall?.toFixed(1) || "0.0"}%
                 </p>
               </div>
               <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50 hover:bg-white/50 transition-all duration-300">
-                <h3 className="font-serif text-lg font-medium text-stone-800 mb-2">
-                  Against Hospitalization
-                </h3>
+                <h3 className="mb-2">Against Hospitalization</h3>
                 <p className="text-3xl font-light text-green-600">
                   {data.effectiveness.againstHospitalization?.toFixed(1) || "0.0"}%
                 </p>
               </div>
               <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50 hover:bg-white/50 transition-all duration-300">
-                <h3 className="font-serif text-lg font-medium text-stone-800 mb-2">
-                  Against Death
-                </h3>
+                <h3 className="mb-2">Against Death</h3>
                 <p className="text-3xl font-light text-purple-600">
                   {data.effectiveness.againstDeath?.toFixed(1) || "0.0"}%
                 </p>
               </div>
               <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50 hover:bg-white/50 transition-all duration-300">
-                <h3 className="font-serif text-lg font-medium text-stone-800 mb-2">
-                  Breakthrough Rate
-                </h3>
+                <h3 className="mb-2">Breakthrough Rate</h3>
                 <p className="text-3xl font-light text-amber-600">
                   {data.effectiveness.breakthroughRate?.toFixed(1) || "0.0"}%
                 </p>
@@ -158,9 +148,7 @@ export default function VaccinationEffectivenessPage() {
 
             {/* Vaccination Progress */}
             <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50">
-              <h2 className="font-serif text-xl font-medium mb-6 text-stone-800">
-                Vaccination Progress
-              </h2>
+              <h2 className="mb-6">Vaccination Progress</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <div className="text-center">
                   <p className="text-stone-600 font-light mb-2">Fully Vaccinated</p>
@@ -186,9 +174,7 @@ export default function VaccinationEffectivenessPage() {
             {/* Timeline Chart */}
             {data.timeline && data.timeline.length > 0 && (
               <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50">
-                <h2 className="font-serif text-xl font-medium mb-6 text-stone-800">
-                  Vaccination vs Cases Timeline
-                </h2>
+                <h2 className="mb-6">Vaccination vs Cases Timeline</h2>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={data.timeline}>
@@ -231,16 +217,14 @@ export default function VaccinationEffectivenessPage() {
 
             {/* Milestones */}
             <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50">
-              <h2 className="font-serif text-xl font-medium mb-6 text-stone-800">
-                Vaccination Milestones
-              </h2>
+              <h2 className="mb-6">Vaccination Milestones</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {data.milestones?.map((milestone) => (
                   <div
                     key={milestone.threshold}
                     className="bg-white/30 border border-stone-200/50 rounded-xl p-4"
                   >
-                    <h3 className="font-medium text-stone-800 mb-2">{milestone.label}</h3>
+                    <h3 className="mb-2">{milestone.label}</h3>
                     <p className="text-stone-600 font-light">
                       {milestone.dateReached
                         ? new Date(milestone.dateReached).toLocaleDateString()

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap");
 @import "tailwindcss";
 
 @theme {
@@ -16,7 +16,7 @@
   .border-subtle {
     @apply border border-zinc-100;
   }
-  
+
   .mono-button {
     @apply px-4 py-2 bg-zinc-950 text-white rounded font-medium text-[13px] tracking-tight hover:bg-zinc-800 transition-all active:scale-[0.98] shadow-sm;
   }
@@ -46,7 +46,7 @@
     background: #f1f1f1;
     border-radius: 10px;
   }
-  
+
   .custom-scrollbar:hover::-webkit-scrollbar-thumb {
     background: #e4e4e7;
   }

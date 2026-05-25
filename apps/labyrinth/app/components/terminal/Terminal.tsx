@@ -120,7 +120,7 @@ export function Terminal() {
       onKeyDown={handleTerminalClick}
     >
       {/* Terminal glow effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-olive-900/20 via-transparent to-stone-900/20 pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-br from-olive-900/20 via-transparent to-stone-900/20 pointer-events-none" />
       <TerminalHeader />
 
       <div

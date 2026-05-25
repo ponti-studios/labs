@@ -15,7 +15,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { CoronaLayout } from "~/components/CoronaLayout";
+import { CoronaLayout } from "~/components/covid/CoronaLayout";
 
 interface SeasonalPattern {
   month: number;
@@ -93,7 +93,7 @@ export default function SeasonalPatternsPage() {
     <CoronaLayout countryCode={countryCode}>
       <div className="space-y-8">
         <div className="text-center">
-          <h1 className="font-serif text-4xl text-stone-800 mb-4">Seasonal Patterns Analysis</h1>
+          <h1 className="mb-4">Seasonal Patterns Analysis</h1>
           <p className="font-light text-stone-600 text-lg max-w-2xl mx-auto">
             Discover seasonal trends and cyclical patterns in COVID-19 data
           </p>
@@ -139,7 +139,7 @@ export default function SeasonalPatternsPage() {
             {/* Key Metrics */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/50 p-8 hover:bg-white/70 transition-all duration-300">
-                <h3 className="font-serif text-xl text-stone-800 mb-3">Seasonality Strength</h3>
+                <h3 className="mb-3">Seasonality Strength</h3>
                 <p className="text-4xl font-light text-amber-700 mb-2">
                   {(data.analysis.seasonalityStrength * 100).toFixed(1)}%
                 </p>
@@ -148,14 +148,14 @@ export default function SeasonalPatternsPage() {
                 </p>
               </div>
               <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/50 p-8 hover:bg-white/70 transition-all duration-300">
-                <h3 className="font-serif text-xl text-stone-800 mb-3">Peak Month</h3>
+                <h3 className="mb-3">Peak Month</h3>
                 <p className="text-4xl font-light text-orange-600 mb-2">
                   {data.analysis.patterns[data.analysis.peakMonth - 1]?.monthName || "N/A"}
                 </p>
                 <p className="text-stone-600 text-sm font-light">Highest average cases</p>
               </div>
               <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/50 p-8 hover:bg-white/70 transition-all duration-300">
-                <h3 className="font-serif text-xl text-stone-800 mb-3">Trough Month</h3>
+                <h3 className="mb-3">Trough Month</h3>
                 <p className="text-4xl font-light text-emerald-600 mb-2">
                   {data.analysis.patterns[data.analysis.troughMonth - 1]?.monthName || "N/A"}
                 </p>
@@ -165,7 +165,7 @@ export default function SeasonalPatternsPage() {
 
             {/* Monthly Patterns Chart */}
             <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/50 p-8">
-              <h2 className="font-serif text-2xl text-stone-800 mb-6">Monthly Case Patterns</h2>
+              <h2 className="mb-6">Monthly Case Patterns</h2>
               <div className="h-80">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={data.analysis.patterns}>
@@ -204,7 +204,7 @@ export default function SeasonalPatternsPage() {
 
             {/* Seasonal Radar Chart */}
             <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/50 p-8">
-              <h2 className="font-serif text-2xl text-stone-800 mb-6">Seasonal Pattern Radar</h2>
+              <h2 className="mb-6">Seasonal Pattern Radar</h2>
               <div className="h-80">
                 <ResponsiveContainer width="100%" height="100%">
                   <RadarChart data={data.analysis.patterns}>
@@ -247,14 +247,14 @@ export default function SeasonalPatternsPage() {
             {/* Pattern Insights */}
             {data.insights.length > 0 && (
               <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/50 p-8">
-                <h2 className="font-serif text-2xl text-stone-800 mb-6">Pattern Insights</h2>
+                <h2 className="mb-6">Pattern Insights</h2>
                 <div className="space-y-6">
                   {data.insights.map((insight) => (
                     <div
                       key={insight.pattern}
                       className="border-l-4 border-amber-600 pl-6 py-4 bg-amber-50/50 rounded-r-2xl"
                     >
-                      <h3 className="font-serif text-lg text-stone-800 mb-2">{insight.pattern}</h3>
+                      <h3 className="mb-2">{insight.pattern}</h3>
                       <p className="text-stone-600 font-light mb-2">{insight.description}</p>
                       <p className="text-amber-700 text-sm font-medium">
                         Strength: {insight.strength}%
@@ -267,7 +267,7 @@ export default function SeasonalPatternsPage() {
 
             {/* Monthly Details Table */}
             <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/50 p-8">
-              <h2 className="font-serif text-2xl text-stone-800 mb-6">Monthly Statistics</h2>
+              <h2 className="mb-6">Monthly Statistics</h2>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm text-left">
                   <thead className="text-xs uppercase bg-stone-100 text-stone-600 font-medium">
@@ -309,7 +309,7 @@ export default function SeasonalPatternsPage() {
 
             {/* Data Quality Info */}
             <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/50 p-8">
-              <h2 className="font-serif text-2xl text-stone-800 mb-6">Data Quality</h2>
+              <h2 className="mb-6">Data Quality</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="text-center">
                   <p className="text-stone-600 font-light mb-2">Total Data Points</p>

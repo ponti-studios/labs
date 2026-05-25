@@ -52,26 +52,20 @@ export default function SwapRoute() {
         <PageSection title="Swap Approaches">
           <GridSection cols={1} gap="lg">
             <div className="border border-white/20 bg-white/2 p-6 space-y-3">
-              <h4 className="text-sm font-bold uppercase tracking-widest text-white/80">
-                [1] BROKEN APPROACH
-              </h4>
+              <h4>[1] BROKEN APPROACH</h4>
               <CodeBlock>{`array[i] = array[j];
 array[j] = array[i]; // WRONG! VALUE ALREADY OVERWRITTEN`}</CodeBlock>
             </div>
 
             <div className="border border-white/20 bg-white/3 p-6 space-y-3">
-              <h4 className="text-sm font-bold uppercase tracking-widest text-white/90">
-                [2] STANDARD APPROACH
-              </h4>
+              <h4>[2] STANDARD APPROACH</h4>
               <CodeBlock>{`const temp = array[i];
 array[i] = array[j];
 array[j] = temp;`}</CodeBlock>
             </div>
 
             <div className="border border-white/20 bg-white/2 p-6 space-y-3">
-              <h4 className="text-sm font-bold uppercase tracking-widest text-white/80">
-                [3] FUNCTIONAL APPROACH
-              </h4>
+              <h4>[3] FUNCTIONAL APPROACH</h4>
               <CodeBlock>{`array.reduce((acc, val, idx) => { ... })`}</CodeBlock>
               <p className="text-xs text-white/60">IMMUTABLE - DOESN'T MODIFY ORIGINAL ARRAY</p>
             </div>

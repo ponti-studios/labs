@@ -9,6 +9,7 @@
  * - Dynamic styling based on the type of stats (followers, following, repos).
  * - Responsive design with a focus on aesthetics and usability.
  */
+import { cn } from "@pontistudios/ui";
 import { useState } from "react";
 
 interface GitHubUser {
@@ -70,12 +71,10 @@ export default function GitHubCardRoute() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-8">
+    <div className="min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-8">
       <div className="max-w-2xl mx-auto space-y-8">
         <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 bg-clip-text text-transparent">
-            GitHub Pokémon Card
-          </h1>
+          <h1>GitHub Pokémon Card</h1>
           <p className="text-slate-400">Enter a GitHub username to generate their card</p>
         </div>
 
@@ -90,7 +89,7 @@ export default function GitHubCardRoute() {
           <button
             type="submit"
             disabled={loading || !username.trim()}
-            className="px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl font-semibold hover:from-orange-600 hover:to-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="px-6 py-3 bg-linear-to-r from-orange-500 to-red-500 rounded-xl font-semibold hover:from-orange-600 hover:to-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             {loading ? "Searching..." : "Search"}
           </button>
@@ -104,7 +103,7 @@ export default function GitHubCardRoute() {
 
         {user && (
           <div className="relative group">
-            <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-3xl blur opacity-25 group-hover:opacity-50 transition-opacity" />
+            <div className="absolute inset-0 bg-linear-to-r from-yellow-400 via-orange-500 to-red-500 rounded-3xl blur opacity-25 group-hover:opacity-50 transition-opacity" />
             <div className="relative bg-slate-800/90 backdrop-blur-sm rounded-3xl p-6 border border-slate-700 shadow-2xl">
               <div className="flex items-start gap-6">
                 <div className="relative">
@@ -113,14 +112,14 @@ export default function GitHubCardRoute() {
                     alt={user.login}
                     className="w-32 h-32 rounded-full border-4 border-slate-700 shadow-lg"
                   />
-                  <div className="absolute -bottom-2 -right-2 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full px-3 py-1 text-xs font-bold text-slate-900 shadow-lg">
+                  <div className="absolute -bottom-2 -right-2 bg-linear-to-r from-yellow-400 to-orange-500 rounded-full px-3 py-1 text-xs font-bold text-slate-900 shadow-lg">
                     #{user.followers}
                   </div>
                 </div>
 
                 <div className="flex-1 space-y-4">
                   <div>
-                    <h2 className="text-2xl font-bold text-white">{user.name || user.login}</h2>
+                    <h2>{user.name || user.login}</h2>
                     <p className="text-orange-400">@{user.login}</p>
                   </div>
 
@@ -169,7 +168,7 @@ export default function GitHubCardRoute() {
               </div>
 
               <div className="absolute top-4 right-4">
-                <div className="bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg px-3 py-1 shadow-lg">
+                <div className="bg-linear-to-br from-yellow-400 to-orange-500 rounded-lg px-3 py-1 shadow-lg">
                   <span className="text-xs font-bold text-slate-900">GITHUB</span>
                 </div>
               </div>
@@ -202,7 +201,7 @@ function StatBadge({
   colors: { bg: string; border: string; text: string };
 }) {
   return (
-    <div className={`bg-gradient-to-r ${colors.bg} rounded-xl px-4 py-2 shadow-lg`}>
+    <div className={cn("bg-linear-to-r rounded-xl px-4 py-2 shadow-lg", colors.bg)}>
       <div className="text-xs font-bold text-white/80 uppercase">{label}</div>
       <div className="text-xl font-bold text-white">{value.toLocaleString()}</div>
     </div>
@@ -211,7 +210,7 @@ function StatBadge({
 
 function LocationIcon() {
   return (
-    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -230,7 +229,7 @@ function LocationIcon() {
 
 function BuildingIcon() {
   return (
-    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -243,7 +242,7 @@ function BuildingIcon() {
 
 function LinkIcon() {
   return (
-    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path
         strokeLinecap="round"
         strokeLinejoin="round"

@@ -1,6 +1,6 @@
-export type TaskStatus = 'in-flight' | 'on-deck' | 'blocked' | 'completed';
-export type Priority = 'P0' | 'P1' | 'P2' | 'P3';
-export type Tag = 'deep-work' | 'admin' | 'meeting' | string;
+export type TaskStatus = "in-flight" | "on-deck" | "blocked" | "completed";
+export type Priority = "P0" | "P1" | "P2" | "P3";
+export type Tag = "deep-work" | "admin" | "meeting" | string;
 
 export interface Task {
   id: string;
@@ -11,10 +11,10 @@ export interface Task {
   estimatedMinutes: number;
   actualMinutes: number;
   startDateTime: string | null; // ISO string
-  endDateTime: string | null;   // ISO string
+  endDateTime: string | null; // ISO string
   dependencies: string[];
-  dueDate?: string;             // ISO string
-  completedDate?: string;       // ISO string
+  dueDate?: string; // ISO string
+  completedDate?: string; // ISO string
   tags?: Tag[];
 }
 
@@ -30,7 +30,7 @@ export interface Constraints {
   breakAfterMinutes: number;
   breakDurationMinutes: number;
   dailyRestStart: string; // "18:00"
-  dailyRestEnd: string;   // "09:00"
+  dailyRestEnd: string; // "09:00"
   skipWeekends: boolean;
   bufferMinutes: Record<Priority, number>;
 }
@@ -46,8 +46,8 @@ export const DEFAULT_CONSTRAINTS: Constraints = {
   maxConsecutiveMinutes: 120,
   breakAfterMinutes: 120,
   breakDurationMinutes: 15,
-  dailyRestStart: '18:00',
-  dailyRestEnd: '09:00',
+  dailyRestStart: "18:00",
+  dailyRestEnd: "09:00",
   skipWeekends: true,
   bufferMinutes: {
     P0: 15,

@@ -93,9 +93,8 @@ export default function ThreeglWebRequest() {
     const init = async () => {
       const THREE = await import("three");
       const { OrbitControls } = await import("three/examples/jsm/controls/OrbitControls.js");
-      const { CSS2DObject, CSS2DRenderer } = await import(
-        "three/examples/jsm/renderers/CSS2DRenderer.js"
-      );
+      const { CSS2DObject, CSS2DRenderer } =
+        await import("three/examples/jsm/renderers/CSS2DRenderer.js");
 
       if (cancelled) return;
 
@@ -210,7 +209,11 @@ export default function ThreeglWebRequest() {
       scene.add(cacheWriteSphere);
 
       const definePath = () => {
-        const path = [client.position.clone(), loadBalancer.position.clone(), server1.position.clone()];
+        const path = [
+          client.position.clone(),
+          loadBalancer.position.clone(),
+          server1.position.clone(),
+        ];
 
         if (simulateCacheHitRef.current) {
           path.push(cache.position.clone(), server1.position.clone());
@@ -402,7 +405,7 @@ export default function ThreeglWebRequest() {
       </div>
 
       <div className="absolute top-4 left-4 z-20 min-w-[220px] rounded-lg border border-white/20 bg-[rgba(40,40,60,0.85)] p-4 text-sm text-zinc-100 shadow-xl">
-        <h3 className="mb-3 border-b border-white/10 pb-2 text-base font-semibold">Controls & Info</h3>
+        <h3 className="mb-3 border-b border-white/10 pb-2">Controls & Info</h3>
         <div>
           <p className="mb-2">Animation Speed:</p>
           <div className="space-y-2">
@@ -431,7 +434,7 @@ export default function ThreeglWebRequest() {
         </label>
 
         <div className="mt-4 border-t border-white/10 pt-3 text-xs text-zinc-300">
-          <h4 className="mb-1 text-sm text-zinc-100">Typical Relative Latency:</h4>
+          <h4 className="mb-1">Typical Relative Latency:</h4>
           <p>Client &lt;-&gt; Server: Medium (WAN)</p>
           <p>Server &lt;-&gt; Cache: Very Fast (LAN/Local)</p>
           <p>Server &lt;-&gt; Database: Fast (LAN)</p>

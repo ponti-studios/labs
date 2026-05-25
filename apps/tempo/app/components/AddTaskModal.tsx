@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, Clock, Flag, Hash } from 'lucide-react';
 import { Priority, Task } from '../types';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 
 interface AddTaskModalProps {
   onAdd: (task: Omit<Task, 'id' | 'actualMinutes'>) => void;

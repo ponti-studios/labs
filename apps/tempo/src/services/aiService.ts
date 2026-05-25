@@ -5,15 +5,15 @@ const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 export interface VoiceTaskResult {
   title: string;
   estimatedMinutes: number;
-  priority: 'P0' | 'P1' | 'P2' | 'P3';
+  priority: "P0" | "P1" | "P2" | "P3";
   description?: string;
   tags: string[];
 }
 
 export const processVoiceTask = async (
-  base64Audio: string, 
-  mimeType: string, 
-  existingTags: string[] = []
+  base64Audio: string,
+  mimeType: string,
+  existingTags: string[] = [],
 ): Promise<VoiceTaskResult | null> => {
   try {
     const response = await ai.models.generateContent({
@@ -30,7 +30,7 @@ export const processVoiceTask = async (
           Respond with a JSON object representing the task.
           
           Context:
-          - Existing tags in the system: ${existingTags.join(', ') || 'None'}
+          - Existing tags in the system: ${existingTags.join(", ") || "None"}
           
           Schema:
           - title (string): A concise, actionable title for the task.
@@ -51,19 +51,19 @@ export const processVoiceTask = async (
           properties: {
             title: { type: Type.STRING },
             estimatedMinutes: { type: Type.NUMBER },
-            priority: { 
+            priority: {
               type: Type.STRING,
-              enum: ["P0", "P1", "P2", "P3"]
+              enum: ["P0", "P1", "P2", "P3"],
             },
             description: { type: Type.STRING },
             tags: {
               type: Type.ARRAY,
-              items: { type: Type.STRING }
-            }
+              items: { type: Type.STRING },
+            },
           },
-          required: ["title", "estimatedMinutes", "priority", "tags"]
-        }
-      }
+          required: ["title", "estimatedMinutes", "priority", "tags"],
+        },
+      },
     });
 
     if (response.text) {

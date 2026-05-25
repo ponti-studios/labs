@@ -191,9 +191,7 @@ export default function MedicareRoute() {
       <div className="relative z-10 max-w-6xl mx-auto p-8">
         {/* Header */}
         <div className="mb-12 border-b border-white/10 pb-8">
-          <h1 className="text-4xl font-mono font-bold tracking-tighter uppercase mb-2">
-            MEDICARE COMPARISON
-          </h1>
+          <h1 className="mb-2">MEDICARE COMPARISON</h1>
           <p className="text-white/70 text-sm">
             ANALYZE COSTS AND BENEFITS FOR 2024. INCOME THRESHOLD ${income.toLocaleString()} / YEAR.
           </p>
@@ -311,9 +309,7 @@ export default function MedicareRoute() {
                 >
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <h3 className="text-lg font-mono font-bold uppercase tracking-tight">
-                        {plan.name}
-                      </h3>
+                      <h3>{plan.name}</h3>
                       <Badge variant="outline" className="mt-2 uppercase text-xs">
                         {plan.type}
                       </Badge>
