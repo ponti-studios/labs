@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "jscpd": "^4.0.9",
+    "jscpd": "^4.2.3",
     "knip": "^6.6.1",
     "oxfmt": "^0.51.0",
     "oxlint": "^1.66.0",
