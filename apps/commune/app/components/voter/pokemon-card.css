@@ -3,7 +3,6 @@
 /* Pokemon card inspired styles */
 .pokemon-card {
   @apply relative rounded-2xl overflow-hidden transition-all duration-300 ease-in-out;
-  background: linear-gradient(135deg, #f8d568 0%, #f6c248 100%);
   border: 8px solid #ffcb05;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
   transform-style: preserve-3d;
@@ -20,7 +19,7 @@
 }
 
 .pokemon-card-image {
-  @apply bg-linear-to-b from-blue-100 to-blue-200 p-3 flex justify-center items-center;
+  @apply p-3 flex justify-center items-center;
   min-height: 140px;
   border-bottom: 3px solid #add8e6;
 }
@@ -45,18 +44,12 @@
 
 .pokemon-card-button {
   @apply text-white font-bold py-2 px-4 rounded-full transition-colors duration-200;
-  background: linear-gradient(135deg, #3d7dca 0%, #2a52be 100%);
   border: 2px solid #003a70;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.pokemon-card-button:hover {
-  background: linear-gradient(135deg, #2a52be 0%, #1a3275 100%);
-}
-
 .pokemon-card-button:disabled {
   @apply opacity-50 cursor-not-allowed;
-  background: linear-gradient(135deg, #808080 0%, #5a5a5a 100%);
   border: 2px solid #4a4a4a;
 }
 
@@ -93,45 +86,12 @@
 
 .pokemon-card-file-input::file-selector-button {
   @apply mr-4 py-2 px-4 rounded-full border-0 text-sm font-semibold;
-  background: linear-gradient(135deg, #3d7dca 0%, #2a52be 100%);
   color: white;
-}
-
-.pokemon-card-file-input::file-selector-button:hover {
-  background: linear-gradient(135deg, #2a52be 0%, #1a3275 100%);
 }
 
 /* Energy type icons - can be used for different statuses */
 .energy-icon {
   @apply inline-block w-6 h-6 rounded-full ml-1;
-}
-
-.energy-fire {
-  background: linear-gradient(135deg, #ff7b00 0%, #ff0000 100%);
-}
-
-.energy-water {
-  background: linear-gradient(135deg, #00bfff 0%, #0000ff 100%);
-}
-
-.energy-electric {
-  background: linear-gradient(135deg, #ffff00 0%, #ffa500 100%);
-}
-
-.energy-grass {
-  background: linear-gradient(135deg, #7fff00 0%, #008000 100%);
-}
-
-.energy-normal {
-  background: linear-gradient(135deg, #a8a878 0%, #8a8a59 100%);
-}
-
-.energy-dark {
-  background: linear-gradient(135deg, #705848 0%, #49392f 100%);
-}
-
-.energy-psychic {
-  background: linear-gradient(135deg, #f85888 0%, #a13959 100%);
 }
 
 /* Pokemon card dialog styles */
@@ -164,7 +124,6 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, #ffcb05 0%, #ffdc5c 100%);
   border: 8px solid #ffcb05;
   border-radius: inherit;
   z-index: -1;

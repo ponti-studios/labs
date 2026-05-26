@@ -2,13 +2,9 @@ import { index, route, type RouteConfig } from "@react-router/dev/routes";
 
 export default [
   index("routes/home.tsx"),
-  route("/border-linear-gradient", "routes/border-linear-gradient.tsx"),
   route("/svg-glass-test", "routes/svg-glass-test.tsx"),
 
-  // TFL cameras
-  route("/api/tfl", "routes/api.tfl.ts"),
   route("/api/director/generate", "routes/api.director.generate.ts"),
-  route("/tfl", "routes/tfl.tsx"),
   route("/infinite-header", "routes/infinite-header/infinite-header.tsx"),
 
   // Other

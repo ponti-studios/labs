@@ -7,16 +7,6 @@ body {
   height: 600px; /* Adjust height as needed */
   overflow: hidden; /* Hide the overflowing content */
   position: relative; /* Needed for absolute positioning if used */
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    black 80%,
-    transparent 100%
-  ); /* Optional: Fade effect at bottom */
-  mask-image: linear-gradient(
-    to bottom,
-    black 80%,
-    transparent 100%
-  ); /* Optional: Fade effect at bottom */
 }
 
 .scroll-column {

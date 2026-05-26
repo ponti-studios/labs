@@ -40,16 +40,6 @@ export const routes = [
     description: "LLM prompts and options",
   },
   {
-    path: "/border-linear-gradient",
-    label: "Border Gradient",
-    description: "CSS border gradient effects",
-  },
-  {
-    path: "/tfl",
-    label: "London Cameras",
-    description: "Live traffic views",
-  },
-  {
     path: "/svg-glass-test",
     label: "SVG Glass Test",
     description: "SVG glass effect test",

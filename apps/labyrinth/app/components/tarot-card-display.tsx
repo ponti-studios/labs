@@ -37,7 +37,7 @@ export const TarotCardDisplay = ({
           {position && <p className="text-xs font-semibold mt-1">{position}</p>}
         </Card>
       ) : (
-        <div className="w-40 h-56 rounded-lg flex items-center justify-center bg-linear-to-b from-purple-900 to-indigo-900">
+        <div className="flex h-56 w-40 items-center justify-center rounded-lg">
           <div className="text-center">
             <div className="text-4xl mb-2">🔮</div>
             <p className="text-white text-xs font-semibold">Click to Reveal</p>

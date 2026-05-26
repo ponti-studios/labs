@@ -13,31 +13,31 @@ export const COLOR_THEMES: CardTheme[] = [
     value: "classic",
     label: "Classic",
     border: "border-yellow-500",
-    bg: "from-yellow-100 to-yellow-300",
+    bg: "",
   },
   {
     value: "galaxy",
     label: "Galaxy",
     border: "border-purple-500",
-    bg: "from-purple-200 to-indigo-400",
+    bg: "",
   },
   {
     value: "fire",
     label: "Fire",
     border: "border-orange-500",
-    bg: "from-orange-200 to-red-400",
+    bg: "",
   },
   {
     value: "water",
     label: "Water",
     border: "border-blue-500",
-    bg: "from-blue-200 to-cyan-400",
+    bg: "",
   },
   {
     value: "forest",
     label: "Forest",
     border: "border-green-500",
-    bg: "from-green-200 to-emerald-400",
+    bg: "",
   },
 ];
 
@@ -66,7 +66,7 @@ export function CardThemePicker({ colorTheme, setColorTheme }: CardThemePickerPr
                 "hover:border-gray-300 transition-all",
               )}
             >
-              <div className={cn("w-full h-8 rounded bg-linear-to-r mb-1", theme.bg)} />
+              <div className={cn("mb-1 h-8 w-full rounded", theme.bg)} />
               <span className="text-xs">{theme.label}</span>
             </Label>
           </div>

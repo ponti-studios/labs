@@ -138,30 +138,6 @@ describe("useCommandExecution Hook", () => {
     expect(secondCall[0]).toEqual([]);
   });
 
-  test("executeCommand should handle gradient command and navigate", () => {
-    const { result } = renderUseCommandExecution();
-
-    act(() => {
-      result.current.executeCommand("gradient", commandHistory, setLines, setCommandHistory);
-    });
-
-    const commandLines = applySetLinesUpdate(setLinesMock, 0, []);
-    const newLines = applySetLinesUpdate(setLinesMock, 1, commandLines);
-
-    expect(
-      newLines.some((line: TerminalLine) =>
-        line.content.includes("Launching Gradient Border Laboratory"),
-      ),
-    ).toBe(true);
-
-    // Fast-forward timers to trigger navigation
-    act(() => {
-      vi.advanceTimersByTime(1500);
-    });
-
-    expect(mockNavigate).toHaveBeenCalledWith("/border-linear-gradient");
-  });
-
   test("executeCommand should handle meow command", () => {
     const { result } = renderUseCommandExecution();
 

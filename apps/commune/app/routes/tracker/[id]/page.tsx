@@ -170,7 +170,7 @@ export function CardRatingsPage() {
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-linear-to-br from-pink-400 to-purple-500 rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg">
                 <span className="text-white font-bold text-lg">{cardName.charAt(0)}</span>
               </div>
               <div>
@@ -248,7 +248,7 @@ export function CardRatingsPage() {
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="w-10 h-10 bg-linear-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center">
                       <span className="text-white font-semibold text-sm">
                         {vote.raterName.charAt(0)}
                       </span>

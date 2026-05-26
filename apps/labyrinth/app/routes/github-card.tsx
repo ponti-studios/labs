@@ -57,21 +57,21 @@ export default function GitHubCardRoute() {
   };
 
   const typeColors: Record<string, { bg: string; border: string; text: string }> = {
-    followers: { bg: "from-red-500 to-pink-500", border: "border-red-500", text: "text-red-500" },
+    followers: { bg: "", border: "border-red-500", text: "text-red-500" },
     following: {
-      bg: "from-blue-500 to-cyan-500",
+      bg: "",
       border: "border-blue-500",
       text: "text-blue-500",
     },
     repos: {
-      bg: "from-green-500 to-emerald-500",
+      bg: "",
       border: "border-green-500",
       text: "text-green-500",
     },
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-8">
+    <div className="min-h-screen text-white p-8">
       <div className="max-w-2xl mx-auto space-y-8">
         <div className="text-center space-y-2">
           <h1>GitHub Pokémon Card</h1>
@@ -89,7 +89,7 @@ export default function GitHubCardRoute() {
           <button
             type="submit"
             disabled={loading || !username.trim()}
-            className="px-6 py-3 bg-linear-to-r from-orange-500 to-red-500 rounded-xl font-semibold hover:from-orange-600 hover:to-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="rounded-xl px-6 py-3 font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? "Searching..." : "Search"}
           </button>
@@ -103,7 +103,6 @@ export default function GitHubCardRoute() {
 
         {user && (
           <div className="relative group">
-            <div className="absolute inset-0 bg-linear-to-r from-yellow-400 via-orange-500 to-red-500 rounded-3xl blur opacity-25 group-hover:opacity-50 transition-opacity" />
             <div className="relative bg-slate-800/90 backdrop-blur-sm rounded-3xl p-6 border border-slate-700 shadow-2xl">
               <div className="flex items-start gap-6">
                 <div className="relative">
@@ -112,7 +111,7 @@ export default function GitHubCardRoute() {
                     alt={user.login}
                     className="w-32 h-32 rounded-full border-4 border-slate-700 shadow-lg"
                   />
-                  <div className="absolute -bottom-2 -right-2 bg-linear-to-r from-yellow-400 to-orange-500 rounded-full px-3 py-1 text-xs font-bold text-slate-900 shadow-lg">
+                  <div className="absolute -bottom-2 -right-2 rounded-full px-3 py-1 text-xs font-bold text-slate-900 shadow-lg">
                     #{user.followers}
                   </div>
                 </div>
@@ -168,7 +167,7 @@ export default function GitHubCardRoute() {
               </div>
 
               <div className="absolute top-4 right-4">
-                <div className="bg-linear-to-br from-yellow-400 to-orange-500 rounded-lg px-3 py-1 shadow-lg">
+                <div className="rounded-lg px-3 py-1 shadow-lg">
                   <span className="text-xs font-bold text-slate-900">GITHUB</span>
                 </div>
               </div>
@@ -201,7 +200,7 @@ function StatBadge({
   colors: { bg: string; border: string; text: string };
 }) {
   return (
-    <div className={cn("bg-linear-to-r rounded-xl px-4 py-2 shadow-lg", colors.bg)}>
+    <div className={cn("rounded-xl px-4 py-2 shadow-lg", colors.bg)}>
       <div className="text-xs font-bold text-white/80 uppercase">{label}</div>
       <div className="text-xl font-bold text-white">{value.toLocaleString()}</div>
     </div>

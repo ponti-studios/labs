@@ -434,7 +434,7 @@ const DirectorApp: React.FC = () => {
                 ${
                   loading
                     ? "bg-slate-700 cursor-not-allowed opacity-50"
-                    : "bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 hover:shadow-blue-500/25"
+                    : "hover:shadow-blue-500/25"
                 }
               `}
             >

@@ -51,24 +51,6 @@ export function PersonCardDisplay({
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      {/* Card background */}
-      <div className={cn("absolute inset-0 bg-linear-to-b", selectedTheme.bg)} />
-
-      {/* Sparkle effects */}
-      <motion.div
-        className="absolute inset-0 pointer-events-none"
-        animate={{
-          background: [
-            "radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 20%)",
-            "radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 20%)",
-            "radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 20%)",
-            "radial-gradient(circle at 20% 70%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 20%)",
-            "radial-gradient(circle at 80% 30%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 20%)",
-          ],
-        }}
-        transition={{ duration: 5, repeat: Number.POSITIVE_INFINITY }}
-      />
-
       {/* Card content */}
       <div className="relative z-10 p-4 flex flex-col h-full">
         {/* Header */}

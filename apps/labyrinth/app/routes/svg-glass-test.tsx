@@ -2,7 +2,7 @@ import type React from "react";
 import { useCallback, useRef, useState } from "react";
 import { cn } from "~/lib/utils";
 
-const DISPLACEMENT_FILTER_ID = "displacementFilter4";
+const DISPLACEMENT_FILTER_ID = "DISPLACEMENT_FILTER";
 
 export default function SVGGlassTest() {
   const [position, setPosition] = useState({ x: 50, y: 50 });
@@ -237,7 +237,7 @@ export default function SVGGlassTest() {
           </div>
         ) : (
           /* Default colorful pattern background */
-          <div className="w-full h-full bg-linear-to-br from-cyan-400 via-purple-500 to-pink-600">
+          <div className="size-full">
             {/* Pattern overlay */}
             <div className="absolute inset-0 opacity-50">
               <PatternedBackground />
@@ -374,7 +374,7 @@ const DisplacementFilter = ({
           result="thing1"
         />
         <feImage
-          href="data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='gradient1' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23000'/%3E%3Cstop offset='100%25' stop-color='%2300F'/%3E%3C/linearGradient%3E%3ClinearGradient id='gradient2' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23000'/%3E%3Cstop offset='100%25' stop-color='%230F0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='0' y='0' width='200' height='200' rx='25' fill='%237F7F7F' /%3E%3Crect x='50' y='50' width='100' height='100' rx='25' fill='%23000' /%3E%3Crect x='50' y='50' width='100' height='100' rx='25' fill='url(%23gradient1)' style='mix-blend-mode: screen' /%3E%3Crect x='50' y='50' width='100' height='100' rx='25' fill='url(%23gradient2)' style='mix-blend-mode: screen' /%3E%3Crect x='50' y='50' width='100' height='100' rx='25' fill='%237F7F7FBB' style='filter:blur(5px)' /%3E%3C/svg%3E"
+          href="data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='50' y='50' width='100' height='100' rx='25' fill='none' stroke='%237F7F7F' /%3E%3Crect x='50' y='50' width='100' height='100' rx='25' fill='%237F7F7FBB' style='filter:blur(5px)' /%3E%3C/svg%3E"
           x="0%"
           y="0%"
           width="100%"

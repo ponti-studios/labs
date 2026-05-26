@@ -65,13 +65,11 @@ export default function App() {
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   let status = 500;
-  let message = "Oops!";
   let details = "An unexpected error occurred.";
   let stack: string | undefined;
 
   if (isRouteErrorResponse(error)) {
     status = error.status;
-    message = error.status === 404 ? "404" : "Error";
     details =
       error.status === 404 ? "The requested page could not be found." : error.statusText || details;
   } else if (import.meta.env.DEV && error && error instanceof Error) {
@@ -84,21 +82,17 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
       <div className="max-w-md w-full text-center">
         <div className="mb-6">
           <div className="text-6xl font-bold text-red-500 mb-2">{status}</div>
-          <h1 className="mb-2">{message}</h1>
           <p className="text-gray-600">{details}</p>
         </div>
 
         <div className="flex gap-4 justify-center">
           <button
             onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-4 py-2 bg-primary text-white rounded-lg "
           >
             Try Again
           </button>
-          <a
-            href="/"
-            className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
-          >
+          <a href="/" className="px-4 py-2 bg-secondary text-gray-800 rounded-lg">
             Go Home
           </a>
         </div>

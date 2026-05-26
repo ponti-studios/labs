@@ -3,14 +3,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap");
 
 .terminal {
-  background:
-    radial-gradient(
-      ellipse at center,
-      rgba(0, 255, 0, 0.03) 0%,
-      rgba(0, 0, 0, 0.8) 70%,
-      rgba(0, 0, 0, 1) 100%
-    ),
-    linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 20, 0, 0.9) 50%, rgba(0, 0, 0, 0.8) 100%);
   background-attachment: fixed;
   color: #00ff41;
   font-family: "Share Tech Mono", "Courier New", monospace;
@@ -41,12 +33,6 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-image:
-    radial-gradient(2px 2px at 20px 30px, rgba(0, 255, 65, 0.1) 0%, transparent 50%),
-    radial-gradient(2px 2px at 40px 70px, rgba(0, 255, 65, 0.05) 0%, transparent 50%),
-    radial-gradient(1px 1px at 90px 40px, rgba(0, 255, 65, 0.08) 0%, transparent 50%);
-  background-repeat: repeat;
-  background-size: 200px 200px;
   animation: matrixRain 20s linear infinite;
   pointer-events: none;
   z-index: -1;
@@ -67,12 +53,6 @@
   padding-bottom: 15px;
   margin-bottom: 20px;
   position: relative;
-  background: linear-gradient(
-    90deg,
-    rgba(0, 255, 65, 0.1) 0%,
-    rgba(0, 255, 65, 0.2) 50%,
-    rgba(0, 255, 65, 0.1) 100%
-  );
   box-shadow:
     0 0 10px rgba(0, 255, 65, 0.3),
     inset 0 0 20px rgba(0, 255, 65, 0.1);
@@ -135,7 +115,6 @@
 }
 
 .cursor {
-  background: linear-gradient(45deg, #00ff41, #40ff80);
   color: #000000;
   animation:
     blink 1s infinite,
@@ -222,17 +201,8 @@
 
 /* ASCII Art and Terminal Effects */
 .asciiArt {
-  background: linear-gradient(
-    45deg,
-    #00ff41 0%,
-    #40ff80 25%,
-    #80ffbf 50%,
-    #40ff80 75%,
-    #00ff41 100%
-  );
   background-clip: text;
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   line-height: 1;
   white-space: pre;
   font-family: "Share Tech Mono", "Courier New", monospace;
@@ -297,15 +267,6 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background:
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0, 255, 65, 0.03) 2px,
-      rgba(0, 255, 65, 0.03) 4px
-    ),
-    linear-gradient(90deg, rgba(0, 255, 65, 0.05) 0%, transparent 50%, rgba(0, 255, 65, 0.05) 100%);
   pointer-events: none;
   animation:
     scan-terminal 0.1s linear infinite,
@@ -340,7 +301,6 @@
   left: -2px;
   right: -2px;
   bottom: -2px;
-  background: radial-gradient(circle at 50% 50%, rgba(0, 255, 65, 0.1) 0%, transparent 70%);
   pointer-events: none;
   animation: pulse 4s ease-in-out infinite;
   z-index: -1;

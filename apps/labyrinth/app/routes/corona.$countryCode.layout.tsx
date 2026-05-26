@@ -47,7 +47,7 @@ export default function CoronaCountryLayout() {
   ];
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-stone-50 via-amber-50/20 to-stone-100">
+    <div className="min-h-screen">
       <div className="pt-32 pb-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-4xl mx-auto mb-12">
