@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "cartograph",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@pontistudios/cartograph", "dev"],
+      "port": 3006
+    }
+  ]
+}

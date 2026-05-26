@@ -58,7 +58,7 @@ body {
   touch-action: none;
 }
 
-.cesium-loading-overlay {
+.map-loading-overlay {
   position: absolute;
   inset: 0;
   z-index: 1;
@@ -72,79 +72,58 @@ body {
   pointer-events: none;
 }
 
-.cesium-viewer-toolbar,
-.cesium-viewer-animationContainer,
-.cesium-viewer-timelineContainer,
-.cesium-viewer-fullscreenContainer,
-.cesium-viewer-vrContainer,
-.cesium-viewer-bottom,
-.cesium-geocoder,
-.cesium-navigation-help,
-.cesium-sceneModePicker,
-.cesium-button,
-.cesium-infoBox,
-.cesium-widget-cesiumInspectorContainer,
-.cesium-performanceDisplay {
-  display: none !important;
-}
-
-.cesium-canvas {
-  background: #000 !important;
-}
-
-.cesium-credit-logoContainer,
-.cesium-credit-textContainer,
-.cesium-credit-logo {
-  opacity: 0.2 !important;
-}
-
-/* Leaflet map styling */
-.leaflet-container {
-  background: #05070a;
+/* MapLibre GL overrides */
+.maplibregl-map {
   font-family: var(--font-sans);
 }
 
-.leaflet-popup-content {
-  color: var(--text-primary);
-  background: var(--bg-app);
-  border-radius: 4px;
-  padding: 8px;
-  font-size: 12px;
+.maplibregl-ctrl-attrib {
+  background: rgba(5, 7, 10, 0.6) !important;
+  color: var(--text-secondary) !important;
+  font-size: 10px;
 }
 
-.leaflet-popup-tip {
-  background: var(--bg-app);
+.maplibregl-ctrl-attrib a {
+  color: var(--text-secondary) !important;
 }
 
-.leaflet-control {
-  background: rgba(5, 7, 10, 0.8);
-  border: 1px solid var(--border-default);
-  border-radius: 4px;
-}
-
-.leaflet-control-zoom-in,
-.leaflet-control-zoom-out {
-  color: var(--text-primary) !important;
+.maplibregl-ctrl-group {
   background: rgba(5, 7, 10, 0.9) !important;
+  border: 1px solid var(--border-default) !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
+}
+
+.maplibregl-ctrl-group button {
+  color: var(--text-primary) !important;
+  background: transparent !important;
   border-bottom: 1px solid var(--border-default) !important;
 }
 
-.leaflet-control-zoom-in:hover,
-.leaflet-control-zoom-out:hover {
+.maplibregl-ctrl-group button:hover {
+  background: rgba(212, 165, 116, 0.1) !important;
   color: var(--accent) !important;
 }
 
-.leaflet-control-attribution {
-  background: rgba(5, 7, 10, 0.6);
-  opacity: 0.7;
+.maplibregl-popup-content {
+  color: var(--text-primary);
+  background: var(--bg-app);
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-family: var(--font-sans);
+  box-shadow: var(--shadow-soft);
 }
 
-.leaflet-popup-pane {
-  z-index: 650;
+.maplibregl-popup-tip {
+  border-top-color: var(--bg-app) !important;
 }
 
-.leaflet-circle-marker {
-  cursor: pointer;
+.maplibregl-popup-close-button {
+  color: var(--text-secondary) !important;
+  font-size: 16px;
+  padding: 2px 6px;
 }
 
 /* Earth dock layout for sidebar */

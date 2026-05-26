@@ -7,10 +7,19 @@ import {
   Outlet,
   useLocation,
 } from "react-router";
-import { useMemo } from "react";
-import LeafletViewer from "./components/LeafletViewer";
+import { useMemo, useEffect, useState } from "react";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "./lib/query-client";
+import MapLibreViewer from "./components/MapLibreViewer";
 import Controls from "./components/Controls";
 import "./app.css";
+
+function ClientOnly({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
+  return <>{children}</>;
+}
 
 export const links = () => [
   { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
@@ -60,15 +69,19 @@ export default function App() {
   }, [location.pathname]);
 
   return (
-    <div className="earth-shell">
-      <LeafletViewer />
-      <div className="earth-dock">
-        <Controls currentTab={currentTab} />
-        <div className="earth-dock-content">
-          <Outlet />
+    <QueryClientProvider client={queryClient}>
+      <div className="earth-shell">
+        <ClientOnly>
+          <MapLibreViewer />
+        </ClientOnly>
+        <div className="earth-dock">
+          <Controls currentTab={currentTab} />
+          <div className="earth-dock-content">
+            <Outlet />
+          </div>
         </div>
       </div>
-    </div>
+    </QueryClientProvider>
   );
 }
 

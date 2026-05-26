@@ -13,10 +13,4 @@ export default defineConfig({
   build: {
     sourcemap: true,
   },
-  define: {
-    CESIUM_BASE_URL: JSON.stringify("/cesium/"),
-  },
-  optimizeDeps: {
-    include: ["cesium"],
-  },
 });
