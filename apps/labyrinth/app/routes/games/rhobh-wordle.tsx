@@ -80,6 +80,9 @@ export default function RhobhWordleRoute() {
   const [currentGuess, setCurrentGuess] = useState("");
   const [hydratedPuzzleKey, setHydratedPuzzleKey] = useState<string | null>(null);
   const [showInstructions, setShowInstructions] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isShaking, setIsShaking] = useState(false);
+  const shakeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const cellRefs = useRef<Array<HTMLInputElement | null>>([]);
 
@@ -145,9 +148,20 @@ export default function RhobhWordleRoute() {
     setCurrentGuess((prev) => prev.slice(0, -1));
   }, [isGameOver]);
 
-  const resetBoard = useCallback(() => {
-    setGuesses([]);
-    setCurrentGuess("");
+  const showError = useCallback((message: string) => {
+    if (shakeTimerRef.current) clearTimeout(shakeTimerRef.current);
+    setErrorMessage(message);
+    setIsShaking(true);
+    shakeTimerRef.current = setTimeout(() => {
+      setIsShaking(false);
+      setErrorMessage(null);
+    }, 700);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (shakeTimerRef.current) clearTimeout(shakeTimerRef.current);
+    };
   }, []);
 
   const submitGuess = useCallback(() => {
@@ -155,11 +169,19 @@ export default function RhobhWordleRoute() {
 
     const guess = normalizeGuess(currentGuess);
 
-    if (guess.length !== answerLength) return;
+    if (guess.length !== answerLength) {
+      showError("Not enough letters");
+      return;
+    }
+
+    if (guesses.includes(guess)) {
+      showError("Already guessed");
+      return;
+    }
 
     setGuesses([...guesses, guess]);
     setCurrentGuess("");
-  }, [answerLength, currentGuess, guesses, isGameOver]);
+  }, [answerLength, currentGuess, guesses, isGameOver, showError]);
 
   const handleCellKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -196,6 +218,15 @@ export default function RhobhWordleRoute() {
   }, [currentGuess.length, answerLength, isGameOver]);
 
   return (
+    <>
+    <style>{`
+      @keyframes rhobh-shake {
+        0%, 100% { transform: translateX(0); }
+        20%, 60% { transform: translateX(-6px); }
+        40%, 80% { transform: translateX(6px); }
+      }
+      .row-shake { animation: rhobh-shake 0.4s ease; }
+    `}</style>
     <div className="py-8">
       <div className="space-y-5 px-4">
         {/* Header */}
@@ -210,15 +241,6 @@ export default function RhobhWordleRoute() {
               variant="secondary"
             >
               {showInstructions ? "Hide rules" : "How to play"}
-            </Button>
-            <Button
-              className="px-3 py-1.5"
-              onClick={resetBoard}
-              size="sm"
-              type="button"
-              variant="secondary"
-            >
-              Reset
             </Button>
           </div>
         </header>
@@ -235,6 +257,15 @@ export default function RhobhWordleRoute() {
           </div>
         )}
 
+        {/* Error toast */}
+        {errorMessage && (
+          <div className="flex justify-center">
+            <p className="rounded bg-foreground px-3 py-1.5 text-sm font-medium text-background">
+              {errorMessage}
+            </p>
+          </div>
+        )}
+
         {/* Board */}
         <div className="mx-auto w-fit space-y-1">
           {Array.from({ length: MAX_GUESSES }).map((_, rowIndex) => {
@@ -243,7 +274,10 @@ export default function RhobhWordleRoute() {
             const states = guess ? evaluateGuess(puzzle.answer, guess) : [];
 
             return (
-              <div key={`row-${rowIndex}`} className="flex gap-1">
+              <div
+                key={`row-${rowIndex}`}
+                className={["flex gap-1", isCurrentRow && isShaking ? "row-shake" : ""].join(" ")}
+              >
                 {Array.from({ length: answerLength }).map((_, cellIndex) => {
                   if (isCurrentRow) {
                     return (
@@ -314,5 +348,6 @@ export default function RhobhWordleRoute() {
         )}
       </div>
     </div>
+    </>
   );
 }
