@@ -1,19 +1,17 @@
 import { Badge, Button } from "@pontistudios/ui";
 import { motion } from "framer-motion";
 import { Edit, Trash2 } from "lucide-react";
-import { useState } from "react";
-import type { TodoCreateData, TodoItem } from "~/lib/todos";
+import type { TodoItem } from "~/lib/todos";
 import { useUpdateTodo } from "~/lib/todos";
-import { TaskFormModal } from "./TaskFormModal";
 
 interface TaskListItemProps {
   todo: TodoItem;
   onDelete: (id: number) => void;
   isDeletePending: boolean;
+  onEdit: (todo: TodoItem) => void;
 }
 
-export function TaskListItem({ todo, onDelete, isDeletePending }: TaskListItemProps) {
-  const [isEditing, setIsEditing] = useState(false);
+export function TaskListItem({ todo, onDelete, isDeletePending, onEdit }: TaskListItemProps) {
   const updateTodoMutation = useUpdateTodo();
 
   const toggleComplete = () => {
@@ -23,89 +21,65 @@ export function TaskListItem({ todo, onDelete, isDeletePending }: TaskListItemPr
     });
   };
 
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
-
-  const handleUpdateTodo = (updatedTodo: TodoCreateData | TodoItem) => {
-    if ("id" in updatedTodo) {
-      updateTodoMutation.mutate(updatedTodo as TodoItem);
-    }
-    setIsEditing(false);
-  };
-
-  const handleCancelEdit = () => {
-    setIsEditing(false);
-  };
-
   return (
-    <>
-      <motion.div whileHover={{ scale: 1.01 }} className="transition-transform">
-        <div
-          className={`p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors ${todo.completed ? "opacity-60" : ""}`}
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-start gap-3">
-              <input
-                type="checkbox"
-                checked={todo.completed ?? false}
-                onChange={toggleComplete}
-                className="size-4 mt-1"
-                disabled={updateTodoMutation.isPending}
-              />
-              <div className="flex flex-col">
-                <h3
-                  className={`text-lg font-medium ${todo.completed ? "line-through text-gray-500" : "text-gray-900"}`}
-                >
-                  {todo.title}
-                </h3>
-                <p className={`text-xs text-gray-600 ${todo.completed ? "line-through" : ""}`}>
-                  {todo.start} - {todo.end}
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-2 items-center">
+    <motion.div whileHover={{ scale: 1.01 }} className="transition-transform">
+      <div
+        className={`rounded-xl border border-border bg-card p-4 transition-colors hover:bg-accent ${todo.completed ? "opacity-60" : ""}`}
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-start gap-3">
+            <input
+              type="checkbox"
+              checked={todo.completed ?? false}
+              onChange={toggleComplete}
+              className="mt-1 size-4"
+              disabled={updateTodoMutation.isPending}
+            />
+            <div className="flex flex-col gap-1">
+              <h3
+                className={`text-lg font-medium ${todo.completed ? "text-muted-foreground line-through" : "text-foreground"}`}
+              >
+                {todo.title}
+              </h3>
+              <p className={`text-xs text-muted-foreground ${todo.completed ? "line-through" : ""}`}>
+                {todo.start} - {todo.end}
+              </p>
               {todo.projectName && (
-                <Badge
-                  variant="secondary"
-                  className={`${todo.completed ? "line-through opacity-60" : ""}`}
-                >
-                  {todo.projectName}
-                </Badge>
+                <div>
+                  <Badge
+                    variant="secondary"
+                    className={`${todo.completed ? "line-through opacity-60" : ""}`}
+                  >
+                    {todo.projectName}
+                  </Badge>
+                </div>
               )}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleEdit}
-                disabled={updateTodoMutation.isPending}
-                className="p-2 hover:bg-gray-100"
-              >
-                <Edit className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onDelete(todo.id)}
-                disabled={isDeletePending}
-                className="p-2 hover:bg-red-50 hover:text-red-600"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
             </div>
           </div>
+          <div className="flex gap-2 items-center">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onEdit(todo)}
+              disabled={updateTodoMutation.isPending}
+              className="p-2"
+              aria-label="Edit task"
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onDelete(todo.id)}
+              disabled={isDeletePending}
+              className="p-2 hover:text-destructive"
+              aria-label="Delete task"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
-      </motion.div>
-
-      {/* Edit Todo Modal */}
-      {isEditing && (
-        <TaskFormModal
-          todo={todo}
-          onSubmit={handleUpdateTodo}
-          isLoading={updateTodoMutation.isPending}
-          open={true}
-          onOpenChange={(open) => !open && handleCancelEdit()}
-        />
-      )}
-    </>
+      </div>
+    </motion.div>
   );
 }

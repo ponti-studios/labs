@@ -1,10 +1,5 @@
 @import "@pontistudios/ui/styles.css";
 
-@theme {
-  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "Geist Mono", ui-monospace, monospace;
-}
-
 .btn-primary {
   background: var(--color-foreground);
   color: var(--color-background);

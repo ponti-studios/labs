@@ -10,7 +10,7 @@ export function PrefetchProvider() {
           prerender: [
             {
               source: "list",
-              urls: ["/projects", "/tasks", "/tarot"],
+              urls: ["/projects", "/tasks"],
             },
           ],
           prefetch: [

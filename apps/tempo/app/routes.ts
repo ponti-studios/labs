@@ -7,4 +7,6 @@ export default [
   route("/projects", "routes/projects.tsx"),
   route("/api/todos", "routes/api.todos.ts"),
   route("/api/projects", "routes/api.projects.ts"),
+  route("/api/ai", "routes/api.ai.ts"),
+  route("/api/voice", "routes/api.voice.ts"),
 ] satisfies RouteConfig;

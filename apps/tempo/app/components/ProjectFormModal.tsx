@@ -47,15 +47,18 @@ export function ProjectFormModal({
     if (onSubmit) {
       onSubmit(newProject);
     } else {
-      createProjectMutation.mutate(newProject);
+      createProjectMutation.mutate(newProject, {
+        onSuccess: () => {
+          setFormData({ name: "", description: "" });
+          setOpen(false);
+        },
+      });
     }
-
-    setFormData({ name: "", description: "" });
-    setOpen(false);
   };
 
   const handleCancel = () => {
     setFormData({ name: "", description: "" });
+    createProjectMutation.reset();
     setOpen(false);
   };
 
@@ -102,6 +105,11 @@ export function ProjectFormModal({
               />
             </div>
           </div>
+          {createProjectMutation.error && (
+            <p role="alert" className="mb-3 text-sm text-red-600">
+              {createProjectMutation.error.message}
+            </p>
+          )}
           <DialogFooter>
             <Button type="button" variant="outline" onClick={handleCancel}>
               Cancel

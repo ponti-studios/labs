@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "build": "react-router build",
-    "dev": "react-router dev",
+    "dev": "react-router dev  --port=3002",
     "lint": "oxlint src --fix",
     "format": "oxfmt src --write",
     "start": "react-router-serve ./build/server/index.js --port=${PORT:-3000}",
-    "test": "vitest run --environment jsdom --coverage --reporter verbose --passWithNoTests",
+    "test": "vitest run --config vitest.config.ts --coverage --reporter verbose",
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {

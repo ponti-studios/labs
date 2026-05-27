@@ -41,7 +41,7 @@ async function fetchProjects(userId: string): Promise<ProjectItem[]> {
       const [countRow] = await db
         .select({ value: count() })
         .from(todos)
-        .where(eq(todos.projectId, project.id));
+        .where(and(eq(todos.projectId, project.id), eq(todos.userId, userId)));
 
       return {
         id: project.id,
@@ -112,7 +112,7 @@ export async function action({ request }: { request: Request }) {
         const [countRow] = await db
           .select({ value: count() })
           .from(todos)
-          .where(eq(todos.projectId, project.id));
+          .where(and(eq(todos.projectId, project.id), eq(todos.userId, DEMO_USER_ID)));
 
         return Response.json({
           id: project.id,

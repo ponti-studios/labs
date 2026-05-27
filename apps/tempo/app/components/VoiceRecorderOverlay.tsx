@@ -1,17 +1,32 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Mic, Square, Loader2, X, AlertCircle, Keyboard } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { processVoiceTask, VoiceTaskResult } from '../services/aiService';
-import { cn } from '../lib/utils';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@pontistudios/ui";
+import { AnimatePresence, motion } from "framer-motion";
+import { AlertCircle, Keyboard, Loader2, Mic, Square } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { cn } from "~/lib/utils";
+import { processVoiceTask } from "~/services/aiService";
+import type { VoiceTaskResult } from "~/services/aiService";
+
+const isVoiceSupported =
+  typeof navigator !== "undefined" &&
+  !!navigator.mediaDevices?.getUserMedia &&
+  typeof window !== "undefined" &&
+  !!window.MediaRecorder;
 
 interface VoiceRecorderOverlayProps {
+  open: boolean;
   onTaskCreated: (task: VoiceTaskResult) => void;
   onClose: () => void;
   onSwitchToManual: () => void;
   existingTags: string[];
 }
 
-export const VoiceRecorderOverlay: React.FC<VoiceRecorderOverlayProps> = ({ onTaskCreated, onClose, onSwitchToManual, existingTags }) => {
+export function VoiceRecorderOverlay({
+  open,
+  onTaskCreated,
+  onClose,
+  onSwitchToManual,
+  existingTags,
+}: VoiceRecorderOverlayProps) {
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -21,21 +36,19 @@ export const VoiceRecorderOverlay: React.FC<VoiceRecorderOverlayProps> = ({ onTa
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const animationFrameRef = useRef<number | null>(null);
-
   const streamRef = useRef<MediaStream | null>(null);
 
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
-      
-      // Setup Audio Context for Visualization
-      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+
+      const audioContext = new AudioContext();
       const source = audioContext.createMediaStreamSource(stream);
       const analyser = audioContext.createAnalyser();
       analyser.fftSize = 256;
       source.connect(analyser);
-      
+
       audioContextRef.current = audioContext;
       analyserRef.current = analyser;
 
@@ -48,18 +61,13 @@ export const VoiceRecorderOverlay: React.FC<VoiceRecorderOverlayProps> = ({ onTa
       };
 
       recorder.onstop = async () => {
-        const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
+        const audioBlob = new Blob(chunksRef.current, { type: "audio/webm" });
         await handleAudioProcessing(audioBlob);
-        
-        // Clean up stream tracks
-        if (streamRef.current) {
-          streamRef.current.getTracks().forEach(track => track.stop());
-          streamRef.current = null;
-        }
-        
-        if (audioContext.state !== 'closed') {
-          audioContext.close();
-        }
+
+        streamRef.current?.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
+
+        if (audioContext.state !== "closed") audioContext.close();
       };
 
       recorder.start();
@@ -76,7 +84,7 @@ export const VoiceRecorderOverlay: React.FC<VoiceRecorderOverlayProps> = ({ onTa
     if (!canvasRef.current || !analyserRef.current) return;
 
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     const analyser = analyserRef.current;
@@ -84,22 +92,16 @@ export const VoiceRecorderOverlay: React.FC<VoiceRecorderOverlayProps> = ({ onTa
     const dataArray = new Uint8Array(bufferLength);
 
     const render = () => {
-      if (!isRecording) return;
       animationFrameRef.current = requestAnimationFrame(render);
       analyser.getByteFrequencyData(dataArray);
-
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      const barWidth = (canvas.width / bufferLength) * 2.5;
-      let barHeight;
-      let x = 0;
 
+      const barWidth = (canvas.width / bufferLength) * 2.5;
+      let x = 0;
       for (let i = 0; i < bufferLength; i++) {
-        barHeight = (dataArray[i] / 255) * canvas.height;
-        
+        const barHeight = (dataArray[i] / 255) * canvas.height;
         ctx.fillStyle = `rgba(0, 0, 0, ${dataArray[i] / 255 + 0.1})`;
         ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-
         x += barWidth + 1;
       }
     };
@@ -123,9 +125,9 @@ export const VoiceRecorderOverlay: React.FC<VoiceRecorderOverlayProps> = ({ onTa
       const reader = new FileReader();
       reader.readAsDataURL(blob);
       reader.onloadend = async () => {
-        const base64Audio = (reader.result as string).split(',')[1];
-        const result = await processVoiceTask(base64Audio, 'audio/webm', existingTags);
-        
+        const base64Audio = (reader.result as string).split(",")[1];
+        const result = await processVoiceTask(base64Audio, "audio/webm", existingTags);
+
         if (result) {
           onTaskCreated(result);
         } else {
@@ -141,17 +143,13 @@ export const VoiceRecorderOverlay: React.FC<VoiceRecorderOverlayProps> = ({ onTa
   };
 
   useEffect(() => {
-    // Component mounted: Mic is IDLE until startRecording is called manually
     return () => {
-      // Force kill everything on unmount
-      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
-        mediaRecorderRef.current.stop();
+      if (mediaRecorderRef.current?.state !== "inactive") {
+        mediaRecorderRef.current?.stop();
       }
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => track.stop());
-      }
-      if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
-        audioContextRef.current.close();
+      streamRef.current?.getTracks().forEach((track) => track.stop());
+      if (audioContextRef.current?.state !== "closed") {
+        audioContextRef.current?.close();
       }
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
@@ -160,96 +158,83 @@ export const VoiceRecorderOverlay: React.FC<VoiceRecorderOverlayProps> = ({ onTa
   }, []);
 
   return (
-    <div className="fixed inset-0 bg-white/95 backdrop-blur-xl z-[100] flex items-center justify-center p-4">
-      <motion.div 
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: 20, opacity: 0 }}
-        className="w-full max-w-md flex flex-col items-center text-center"
-      >
-        <button 
-          onClick={onClose}
-          className="absolute top-8 right-8 p-2 text-zinc-400 hover:text-zinc-950 transition-colors"
-        >
-          <X size={24} />
-        </button>
+    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle className="text-xs font-bold uppercase tracking-[0.3em] text-zinc-400">
+            Voice Interface
+          </DialogTitle>
+          <DialogDescription>
+            {isProcessing
+              ? "Synthesizing objective..."
+              : isRecording
+                ? "Transcribing flux..."
+                : "Ready to record"}
+          </DialogDescription>
+        </DialogHeader>
 
-        <div className="mb-12">
-          <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-zinc-400 mb-2">Voice Interface</h2>
-          <p className="text-xl font-medium text-zinc-900 tracking-tight">
-            {isProcessing ? "Synthesizing Objective..." : isRecording ? "Transcribing Flux..." : "Ready"}
-          </p>
-        </div>
-
-        <div className="relative w-full aspect-[2/1] mb-12 flex items-center justify-center">
-          <canvas 
-            ref={canvasRef} 
-            width={400} 
-            height={100} 
-            className="w-full max-w-xs opacity-40"
-          />
-          
-          <AnimatePresence mode="wait">
-            {isProcessing ? (
-              <motion.div 
-                key="processing"
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.8, opacity: 0 }}
-                className="absolute inset-0 flex items-center justify-center"
-              >
-                <div className="w-16 h-16 rounded-full border border-zinc-100 flex items-center justify-center">
-                  <Loader2 className="animate-spin text-zinc-950" size={24} />
-                </div>
-              </motion.div>
-            ) : null}
-          </AnimatePresence>
-        </div>
-
-        <div className="mb-16">
-          <motion.button
-            key="recording-btn"
-            onClick={isRecording ? stopRecording : startRecording}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className={cn(
-              "w-20 h-20 rounded-full flex items-center justify-center transition-all duration-500 shadow-sm",
-              isRecording 
-                ? "bg-red-500 text-white shadow-[0_0_50px_rgba(239,68,68,0.2)] ring-8 ring-red-50" 
-                : "bg-white border border-zinc-200 text-zinc-400 hover:border-zinc-950 hover:text-zinc-950"
-            )}
-          >
-            {isRecording ? (
-              <div className="relative">
-                <Square size={24} className="fill-current" />
-              </div>
-            ) : (
-              <Mic size={24} />
-            )}
-          </motion.button>
-        </div>
-
-        {error && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="mb-8 flex items-center gap-2 text-red-500 text-sm font-medium"
-          >
-            <AlertCircle size={16} />
-            {error}
-          </motion.div>
-        )}
-
-        <div className="space-y-4">
-          <div className="flex flex-col items-center gap-1">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-300">Prompt Example</span>
-            <p className="text-zinc-500 text-sm italic font-medium">
-              "Meeting notes in 20 minutes, high priority"
+        {!isVoiceSupported ? (
+          <div className="py-8 text-center">
+            <AlertCircle className="mx-auto mb-3 text-zinc-400" size={24} />
+            <p className="text-sm text-zinc-500">
+              Voice recording is not supported in this browser.
             </p>
+            <button
+              onClick={onSwitchToManual}
+              className="mt-4 px-4 py-2 bg-zinc-50 border border-zinc-100 rounded-full text-xs font-bold uppercase tracking-widest text-zinc-400"
+            >
+              Switch to Manual
+            </button>
           </div>
-          
-          <div className="pt-8">
-            <button 
+        ) : (
+          <div className="flex flex-col items-center text-center py-4 gap-8">
+            <div className="relative w-full aspect-[2/1] flex items-center justify-center">
+              <canvas ref={canvasRef} width={400} height={100} className="w-full max-w-xs opacity-40" />
+              <AnimatePresence mode="wait">
+                {isProcessing && (
+                  <motion.div
+                    key="processing"
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.8, opacity: 0 }}
+                    className="absolute inset-0 flex items-center justify-center"
+                  >
+                    <div className="w-16 h-16 rounded-full border border-zinc-100 flex items-center justify-center">
+                      <Loader2 className="animate-spin text-zinc-950" size={24} />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <motion.button
+              onClick={isRecording ? stopRecording : startRecording}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              aria-label={isRecording ? "Stop recording" : "Start recording"}
+              className={cn(
+                "w-20 h-20 rounded-full flex items-center justify-center transition-all duration-500 shadow-sm",
+                isRecording
+                  ? "bg-red-500 text-white ring-8 ring-red-50"
+                  : "bg-white border border-zinc-200 text-zinc-400 hover:border-zinc-950 hover:text-zinc-950",
+              )}
+            >
+              {isRecording ? <Square size={24} className="fill-current" /> : <Mic size={24} />}
+            </motion.button>
+
+            {error && (
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                role="alert"
+                className="flex items-center gap-2 text-red-500 text-sm font-medium"
+              >
+                <AlertCircle size={16} />
+                {error}
+              </motion.p>
+            )}
+
+            <button
               onClick={onSwitchToManual}
               className="px-4 py-2 bg-zinc-50 border border-zinc-100 rounded-full flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-950 hover:border-zinc-300 transition-all"
             >
@@ -257,8 +242,8 @@ export const VoiceRecorderOverlay: React.FC<VoiceRecorderOverlayProps> = ({ onTa
               Manual Override
             </button>
           </div>
-        </div>
-      </motion.div>
-    </div>
+        )}
+      </DialogContent>
+    </Dialog>
   );
-};
+}

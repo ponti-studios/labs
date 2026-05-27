@@ -90,6 +90,17 @@ export async function action({ request }: { request: Request }) {
     switch (request.method) {
       case "POST": {
         const body = (await request.json()) as TodoCreateData;
+
+        if (body.projectId !== null) {
+          const [project] = await db
+            .select({ id: projects.id })
+            .from(projects)
+            .where(and(eq(projects.id, body.projectId), eq(projects.userId, DEMO_USER_ID)));
+          if (!project) {
+            return Response.json({ error: "Project not found" }, { status: 400 });
+          }
+        }
+
         const [todo] = await db
           .insert(todos)
           .values({
@@ -109,6 +120,17 @@ export async function action({ request }: { request: Request }) {
 
       case "PUT": {
         const body = (await request.json()) as TodoItem;
+
+        if (body.projectId !== null) {
+          const [project] = await db
+            .select({ id: projects.id })
+            .from(projects)
+            .where(and(eq(projects.id, body.projectId), eq(projects.userId, DEMO_USER_ID)));
+          if (!project) {
+            return Response.json({ error: "Project not found" }, { status: 400 });
+          }
+        }
+
         const [todo] = await db
           .update(todos)
           .set({

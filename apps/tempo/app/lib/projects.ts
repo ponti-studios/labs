@@ -26,7 +26,7 @@ export const useProjects = () => {
       }
       return (await response.json()) as ProjectItem[];
     },
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 0,
   });
 };
 
@@ -51,6 +51,7 @@ export const useCreateProject = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
     },
   });
 };
@@ -76,6 +77,7 @@ export const useUpdateProject = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
     },
   });
 };
@@ -97,6 +99,7 @@ export const useDeleteProject = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
     },
   });
 };
