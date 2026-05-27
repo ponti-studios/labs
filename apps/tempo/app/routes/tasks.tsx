@@ -27,10 +27,7 @@ function isEditableTarget(target: EventTarget | null): boolean {
     return false;
   }
 
-  return (
-    target.isContentEditable
-    || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName)
-  );
+  return target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName);
 }
 
 export default function TasksPage() {
@@ -83,12 +80,14 @@ export default function TasksPage() {
   };
 
   const openCreateModal = () => {
-    lastFocusedRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    lastFocusedRef.current =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
     setIsCreateOpen(true);
   };
 
   const openSearch = () => {
-    lastFocusedRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    lastFocusedRef.current =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
     setSearchInputValue(buildTaskFilterInput(filters));
     setIsSearchOpen(true);
   };

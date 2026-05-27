@@ -25,12 +25,12 @@ const ROWS = ["QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"] as const;
 const keyboardKeyVariants = cva(
   cn(
     "flex items-center justify-center rounded border font-medium transition-colors",
-    "disabled:cursor-not-allowed disabled:opacity-50 min-w-10",
+    "disabled:cursor-not-allowed disabled:opacity-50",
   ),
   {
     variants: {
       kind: {
-        letter: "h-10 text-sm",
+        letter: "h-10 w-10 shrink-0 text-sm",
         action: "h-10 px-2 text-xs",
       },
       state: {

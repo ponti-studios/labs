@@ -80,7 +80,7 @@ export function ParticleBackground({
   attractRadius = DEFAULT_ATTRACT_RADIUS,
   attractStrength = DEFAULT_ATTRACT_STRENGTH,
   velocity = DEFAULT_VELOCITY,
-  showGradient = true,
+  showGradient: _showGradient = true,
   palettes = DEFAULT_PALETTES,
   ...props
 }: ParticleBackgroundProps) {

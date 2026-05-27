@@ -19,12 +19,7 @@ import {
 import { format } from "date-fns";
 import { CalendarIcon, Plus, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import {
-  DEFAULT_TAG_COLOR,
-  normalizeTagName,
-  useTags,
-  type TagItem,
-} from "~/lib/tags";
+import { DEFAULT_TAG_COLOR, normalizeTagName, useTags, type TagItem } from "~/lib/tags";
 import type { TodoCreateData, TodoItem } from "~/lib/todos";
 
 interface DateRangeValue {
@@ -138,9 +133,10 @@ export function TaskFormModal({
   const normalizedTagInput = normalizeTagName(tagInputValue);
   const selectedTagNames = new Set(selectedTags.map((tag) => tag.normalizedName));
 
-  const duplicateSelectionMessage = normalizedTagInput && selectedTagNames.has(normalizedTagInput)
-    ? `"${normalizedTagInput}" already exists and is selected.`
-    : null;
+  const duplicateSelectionMessage =
+    normalizedTagInput && selectedTagNames.has(normalizedTagInput)
+      ? `"${normalizedTagInput}" already exists and is selected.`
+      : null;
 
   const suggestedTags = useMemo(() => {
     if (!normalizedTagInput) {

@@ -7,5 +7,11 @@
       "runtimeArgs": ["--filter", "@pontistudios/cartograph", "dev"],
       "port": 3006
     }
+  ,{
+      "name": "labyrinth",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@pontistudios/labyrinth", "dev"],
+      "port": 3001
+    }
   ]
 }

@@ -11,13 +11,7 @@ interface TaskListProps {
   emptyStateDescription?: string;
 }
 
-function EmptyTaskList({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
+function EmptyTaskList({ title, description }: { title: string; description: string }) {
   return (
     <div className="text-center py-12">
       <div className="max-w-md mx-auto">
@@ -40,12 +34,7 @@ export function TaskList({
   emptyStateDescription = "Press Ctrl/Cmd+O or use the pencil button to create your first task.",
 }: TaskListProps) {
   if (todos.length === 0) {
-    return (
-      <EmptyTaskList
-        title={emptyStateTitle}
-        description={emptyStateDescription}
-      />
-    );
+    return <EmptyTaskList title={emptyStateTitle} description={emptyStateDescription} />;
   }
 
   const sortedTodos = [...todos].sort(

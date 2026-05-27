@@ -1,9 +1,4 @@
-import {
-  asc,
-  db,
-  eq,
-  tags,
-} from "@pontistudios/db";
+import { asc, db, eq, tags } from "@pontistudios/db";
 import type { TagItem } from "~/lib/tags";
 
 const DEMO_USER_ID = "demo-user";

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { OnscreenKeyboard, type LetterState } from "@pontistudios/ui";
+import { Button, OnscreenKeyboard, type LetterState } from "@pontistudios/ui";
 import {
   evaluateGuess,
   getKeyboardState,
@@ -132,12 +132,6 @@ export default function RhobhWordleRoute() {
     );
   }, [guesses, hydratedPuzzleKey, isSolved, puzzleKey]);
 
-  const resetBoard = useCallback(() => {
-    window.localStorage.removeItem(getStorageKey(puzzleKey));
-    setGuesses([]);
-    setCurrentGuess("");
-  }, [puzzleKey]);
-
   const addLetter = useCallback(
     (value: string) => {
       if (isGameOver) return;
@@ -150,6 +144,11 @@ export default function RhobhWordleRoute() {
     if (isGameOver) return;
     setCurrentGuess((prev) => prev.slice(0, -1));
   }, [isGameOver]);
+
+  const resetBoard = useCallback(() => {
+    setGuesses([]);
+    setCurrentGuess("");
+  }, []);
 
   const submitGuess = useCallback(() => {
     if (isGameOver) return;
@@ -203,20 +202,24 @@ export default function RhobhWordleRoute() {
         <header className="flex items-center justify-between border-b border-border pb-4">
           <h1 className="text-2xl">Wordzi - RHOBH</h1>
           <div className="flex items-center gap-2">
-            <button
-              className="btn-secondary px-3 py-1.5 text-xs"
+            <Button
+              className="px-3 py-1.5"
               onClick={() => setShowInstructions((v) => !v)}
+              size="sm"
               type="button"
+              variant="secondary"
             >
               {showInstructions ? "Hide rules" : "How to play"}
-            </button>
-            <button
-              className="btn-secondary px-3 py-1.5 text-xs"
+            </Button>
+            <Button
+              className="px-3 py-1.5"
               onClick={resetBoard}
+              size="sm"
               type="button"
+              variant="secondary"
             >
               Reset
-            </button>
+            </Button>
           </div>
         </header>
 

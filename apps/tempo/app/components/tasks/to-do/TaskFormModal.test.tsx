@@ -68,10 +68,7 @@ describe("TaskFormModal", () => {
   it("allows creating a task without selecting any tags", async () => {
     const onSubmit = vi.fn();
 
-    render(
-      <TaskFormModal open={true} onOpenChange={vi.fn()} onSubmit={onSubmit} />,
-      { wrapper },
-    );
+    render(<TaskFormModal open={true} onOpenChange={vi.fn()} onSubmit={onSubmit} />, { wrapper });
 
     await userEvent.type(screen.getByLabelText(/title/i), "Inbox zero");
     await userEvent.click(screen.getByRole("button", { name: /add task/i }));
@@ -88,10 +85,7 @@ describe("TaskFormModal", () => {
   it("reuses an existing tag when enter matches it exactly", async () => {
     const onSubmit = vi.fn();
 
-    render(
-      <TaskFormModal open={true} onOpenChange={vi.fn()} onSubmit={onSubmit} />,
-      { wrapper },
-    );
+    render(<TaskFormModal open={true} onOpenChange={vi.fn()} onSubmit={onSubmit} />, { wrapper });
 
     await userEvent.type(screen.getByLabelText(/title/i), "Write essay");
     await userEvent.click(screen.getByRole("button", { name: /tag/i }));
@@ -106,16 +100,19 @@ describe("TaskFormModal", () => {
   });
 
   it("shows duplicate feedback when the entered tag is already selected", async () => {
-    render(
-      <TaskFormModal open={true} onOpenChange={vi.fn()} onSubmit={vi.fn()} />,
-      { wrapper },
-    );
+    render(<TaskFormModal open={true} onOpenChange={vi.fn()} onSubmit={vi.fn()} />, { wrapper });
 
     await userEvent.type(screen.getByLabelText(/title/i), "Plan day");
     await userEvent.click(screen.getByRole("button", { name: /tag/i }));
-    await userEvent.type(screen.getByPlaceholderText(/search or create a tag/i), "deep work{enter}");
+    await userEvent.type(
+      screen.getByPlaceholderText(/search or create a tag/i),
+      "deep work{enter}",
+    );
     await userEvent.click(screen.getByRole("button", { name: /tag/i }));
-    await userEvent.type(screen.getByPlaceholderText(/search or create a tag/i), "deep work{enter}");
+    await userEvent.type(
+      screen.getByPlaceholderText(/search or create a tag/i),
+      "deep work{enter}",
+    );
 
     await waitFor(() => {
       expect(screen.getByRole("status")).toHaveTextContent(/already exists and is selected/i);

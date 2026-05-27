@@ -1,5 +1,5 @@
+import "maplibre-gl/dist/maplibre-gl.css";
 import { useCallback, useState } from "react";
-import { useNavigate } from "react-router";
 import Map, {
   Layer,
   NavigationControl,
@@ -7,7 +7,7 @@ import Map, {
   Source,
   type MapLayerMouseEvent,
 } from "react-map-gl/maplibre";
-import "maplibre-gl/dist/maplibre-gl.css";
+import { useNavigate } from "react-router";
 import { useTflCameras, type TflCamera } from "../lib/hooks/useOrbitData";
 
 const LONDON_CENTER = { longitude: -0.1278, latitude: 51.5074, zoom: 12 };
@@ -20,9 +20,7 @@ interface PopupInfo {
   latitude: number;
 }
 
-function cameraToGeoJSON(
-  cameras: TflCamera[],
-): GeoJSON.FeatureCollection<GeoJSON.Point> {
+function cameraToGeoJSON(cameras: TflCamera[]): GeoJSON.FeatureCollection<GeoJSON.Point> {
   return {
     type: "FeatureCollection",
     features: cameras.map((c) => ({
@@ -47,38 +45,33 @@ export default function MapLibreViewer() {
 
   const geojson = cameras ? cameraToGeoJSON(cameras) : null;
 
-  const onClick = useCallback(
-    (e: MapLayerMouseEvent) => {
-      const feature = e.features?.[0];
-      if (!feature || feature.layer.id !== "cameras") return;
+  const onClick = useCallback((e: MapLayerMouseEvent) => {
+    const feature = e.features?.[0];
+    if (!feature || feature.layer.id !== "cameras") return;
 
-      const props = feature.properties as {
-        id: string;
-        commonName: string;
-        view: string;
-        available: string;
-        lat: number;
-        lng: number;
-      };
-      const [lng, lat] = (
-        feature.geometry as GeoJSON.Point
-      ).coordinates as number[];
+    const props = feature.properties as {
+      id: string;
+      commonName: string;
+      view: string;
+      available: string;
+      lat: number;
+      lng: number;
+    };
+    const [lng, lat] = (feature.geometry as GeoJSON.Point).coordinates as number[];
 
-      setPopup({
-        camera: {
-          id: props.id,
-          commonName: props.commonName,
-          view: props.view,
-          available: props.available,
-          lat: props.lat,
-          lng: props.lng,
-        } as TflCamera,
-        longitude: lng,
-        latitude: lat,
-      });
-    },
-    [],
-  );
+    setPopup({
+      camera: {
+        id: props.id,
+        commonName: props.commonName,
+        view: props.view,
+        available: props.available,
+        lat: props.lat,
+        lng: props.lng,
+      } as TflCamera,
+      longitude: lng,
+      latitude: lat,
+    });
+  }, []);
 
   return (
     <div className="earth-viewport">

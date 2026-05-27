@@ -2,16 +2,3 @@
 @import "tw-animate-css";
 
 @source "../../../packages/ui/src";
-
-@custom-variant dark (&:is(.dark *));
-
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-
-  body {
-    @apply bg-background text-foreground font-sans;
-    line-height: 1.5;
-  }
-}

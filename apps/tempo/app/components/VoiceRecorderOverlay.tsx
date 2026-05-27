@@ -1,4 +1,10 @@
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@pontistudios/ui";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@pontistudios/ui";
 import { AnimatePresence, motion } from "framer-motion";
 import { AlertCircle, Keyboard, Loader2, Mic, Square } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -189,7 +195,12 @@ export function VoiceRecorderOverlay({
         ) : (
           <div className="flex flex-col items-center text-center py-4 gap-8">
             <div className="relative w-full aspect-[2/1] flex items-center justify-center">
-              <canvas ref={canvasRef} width={400} height={100} className="w-full max-w-xs opacity-40" />
+              <canvas
+                ref={canvasRef}
+                width={400}
+                height={100}
+                className="w-full max-w-xs opacity-40"
+              />
               <AnimatePresence mode="wait">
                 {isProcessing && (
                   <motion.div

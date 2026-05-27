@@ -8,11 +8,12 @@
     "build": "react-router build",
     "start": "react-router-serve ./build/server/index.js",
     "lint": "oxlint app --fix",
-    "format": "oxfmt --write .",
+    "format": "oxfmt app --write",
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
     "@pontistudios/db": "workspace:*",
+    "@pontistudios/ui": "workspace:*",
     "@react-router/node": "catalog:",
     "@react-router/serve": "catalog:",
     "@tanstack/react-query": "catalog:",

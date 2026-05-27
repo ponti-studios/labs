@@ -1,36 +1,36 @@
-import { pgSchema, text, timestamp, integer } from 'drizzle-orm/pg-core';
+import { pgSchema, text, timestamp, integer } from "drizzle-orm/pg-core";
 
-const labs = pgSchema('labs');
+const labs = pgSchema("labs");
 
-export const trackers = labs.table('trackers', {
-  id: text('id').primaryKey(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
-  name: text('name').notNull(),
-  hp: text('hp'),
-  cardType: text('card_type'),
-  description: text('description'),
-  attacks: text('attacks'),
-  strengths: text('strengths'),
-  flaws: text('flaws'),
-  commitmentLevel: text('commitment_level'),
-  colorTheme: text('color_theme'),
-  photoUrl: text('photo_url'),
-  imageScale: integer('image_scale'),
-  imagePosition: text('image_position'),
-  userId: text('user_id').notNull(),
+export const trackers = labs.table("trackers", {
+  id: text("id").primaryKey(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  name: text("name").notNull(),
+  hp: text("hp"),
+  cardType: text("card_type"),
+  description: text("description"),
+  attacks: text("attacks"),
+  strengths: text("strengths"),
+  flaws: text("flaws"),
+  commitmentLevel: text("commitment_level"),
+  colorTheme: text("color_theme"),
+  photoUrl: text("photo_url"),
+  imageScale: integer("image_scale"),
+  imagePosition: text("image_position"),
+  userId: text("user_id").notNull(),
 });
 
-export const votes = labs.table('votes', {
-  id: text('id').primaryKey(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
-  trackerId: text('tracker_id').notNull(),
-  userId: text('user_id'),
-  fingerprint: text('fingerprint').notNull(),
-  raterName: text('rater_name').notNull(),
-  value: text('value').notNull(),
-  comment: text('comment'),
+export const votes = labs.table("votes", {
+  id: text("id").primaryKey(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  trackerId: text("tracker_id").notNull(),
+  userId: text("user_id"),
+  fingerprint: text("fingerprint").notNull(),
+  raterName: text("rater_name").notNull(),
+  value: text("value").notNull(),
+  comment: text("comment"),
 });
 
 export type SocialTracker = typeof trackers.$inferSelect;

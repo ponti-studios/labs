@@ -92,9 +92,7 @@ describe("api.todos loader", () => {
       },
     ]);
 
-    mockDb.select
-      .mockReturnValueOnce(todoChain)
-      .mockReturnValueOnce(tagChain);
+    mockDb.select.mockReturnValueOnce(todoChain).mockReturnValueOnce(tagChain);
   });
 
   afterEach(() => vi.clearAllMocks());
@@ -151,9 +149,7 @@ describe("api.todos action", () => {
     const todoTagInsertChain = makeChain();
     todoTagInsertChain.values.mockResolvedValue([]);
 
-    mockDb.insert
-      .mockReturnValueOnce(todoInsertChain)
-      .mockReturnValueOnce(todoTagInsertChain);
+    mockDb.insert.mockReturnValueOnce(todoInsertChain).mockReturnValueOnce(todoTagInsertChain);
 
     const deleteChain = makeChain();
     deleteChain.where.mockResolvedValue([]);
@@ -238,9 +234,7 @@ describe("api.todos action", () => {
     expect(response.status).toBe(200);
     const body = await response.json();
     expect(body.tags).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ name: "deep-work", color: "#64748b" }),
-      ]),
+      expect.arrayContaining([expect.objectContaining({ name: "deep-work", color: "#64748b" })]),
     );
   });
 

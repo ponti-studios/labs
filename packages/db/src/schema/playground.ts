@@ -121,8 +121,12 @@ export const todoTags = labs.table(
   "todo_tags",
   {
     id: serial("id").primaryKey(),
-    todoId: integer("todo_id").notNull().references(() => todos.id, { onDelete: "cascade" }),
-    tagId: integer("tag_id").notNull().references(() => tags.id, { onDelete: "cascade" }),
+    todoId: integer("todo_id")
+      .notNull()
+      .references(() => todos.id, { onDelete: "cascade" }),
+    tagId: integer("tag_id")
+      .notNull()
+      .references(() => tags.id, { onDelete: "cascade" }),
     createdAt: timestamp("created_at"),
   },
   (table) => ({

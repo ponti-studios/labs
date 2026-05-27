@@ -163,6 +163,9 @@ importers:
       '@pontistudios/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@pontistudios/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@react-router/node':
         specifier: 'catalog:'
         version: 7.14.2(react-router@7.14.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(typescript@5.9.3)

@@ -1,4 +1,6 @@
-import { useState, useRef } from "react";
+import { useRef, useState } from "react";
+
+import { Button } from "@pontistudios/ui";
 
 type Direction = "N" | "E" | "S" | "W";
 type Position = [number, number, Direction];
@@ -285,9 +287,9 @@ export default function RedBadger() {
             borderRadius: "4px",
           }}
         />
-        <button onClick={addRobot} className="btn btn-primary">
+        <Button onClick={addRobot} type="button">
           Add Robot
-        </button>
+        </Button>
       </div>
 
       <div className="card" style={{ marginTop: "1rem" }}>

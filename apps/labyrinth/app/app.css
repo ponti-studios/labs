@@ -1,58 +1,6 @@
 @import "@pontistudios/ui/styles.css";
 
-.btn-primary {
-  background: var(--color-foreground);
-  color: var(--color-background);
-  border: 1px solid var(--color-foreground);
-  border-radius: 6px;
-  padding: 8px 14px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition:
-    background-color 120ms ease-out,
-    border-color 120ms ease-out;
-}
-
-.btn-primary:hover {
-  background: var(--color-emphasis-high);
-  border-color: var(--color-emphasis-high);
-}
-
-.btn-secondary {
-  background: var(--color-muted);
-  color: var(--color-foreground);
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  padding: 8px 14px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition:
-    background-color 120ms ease-out,
-    border-color 120ms ease-out;
-}
-
-.btn-secondary:hover {
-  background: var(--color-secondary);
-  border-color: var(--color-emphasis-subtle);
-}
-
-.btn-ghost {
-  background: transparent;
-  color: var(--color-muted-foreground);
-  border: 1px solid transparent;
-  border-radius: 6px;
-  padding: 8px 14px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: color 120ms ease-out;
-}
-
-.btn-ghost:hover {
-  color: var(--color-foreground);
-}
+@source "../../../packages/ui/src";
 
 .scrollbar-thin {
   scrollbar-width: thin;

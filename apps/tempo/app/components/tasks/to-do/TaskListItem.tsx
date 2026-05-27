@@ -42,7 +42,9 @@ export function TaskListItem({ todo, onDelete, isDeletePending, onEdit }: TaskLi
               >
                 {todo.title}
               </h3>
-              <p className={`text-xs text-muted-foreground ${todo.completed ? "line-through" : ""}`}>
+              <p
+                className={`text-xs text-muted-foreground ${todo.completed ? "line-through" : ""}`}
+              >
                 {todo.start} - {todo.end}
               </p>
               {todo.tags.length > 0 && (

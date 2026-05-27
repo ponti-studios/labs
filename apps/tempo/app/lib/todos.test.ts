@@ -14,10 +14,23 @@ describe("todo mutation invalidation", () => {
     vi.spyOn(queryClient, "invalidateQueries");
 
     global.fetch = vi.fn().mockResolvedValue(
-      new Response(JSON.stringify({ id: 1, title: "t", userId: "u", start: "2024-01-01", end: "2024-01-02", completed: false, createdAt: null, updatedAt: null, tags: [] }), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }),
+      new Response(
+        JSON.stringify({
+          id: 1,
+          title: "t",
+          userId: "u",
+          start: "2024-01-01",
+          end: "2024-01-02",
+          completed: false,
+          createdAt: null,
+          updatedAt: null,
+          tags: [],
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        },
+      ),
     );
   });
 

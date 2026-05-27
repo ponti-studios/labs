@@ -51,8 +51,6 @@ describe("api.tags loader", () => {
     const response = await loader();
     const body = await response.json();
 
-    expect(body).toEqual(
-      expect.arrayContaining([expect.objectContaining({ name: "deep-work" })]),
-    );
+    expect(body).toEqual(expect.arrayContaining([expect.objectContaining({ name: "deep-work" })]));
   });
 });

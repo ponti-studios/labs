@@ -1,18 +1,18 @@
+import { QueryClientProvider } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
 import {
   isRouteErrorResponse,
   Links,
   Meta,
+  Outlet,
   Scripts,
   ScrollRestoration,
-  Outlet,
   useLocation,
 } from "react-router";
-import { useMemo, useEffect, useState } from "react";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { queryClient } from "./lib/query-client";
-import MapLibreViewer from "./components/MapLibreViewer";
-import Controls from "./components/Controls";
 import "./app.css";
+import Controls from "./components/Controls";
+import MapLibreViewer from "./components/MapLibreViewer";
+import { queryClient } from "./lib/query-client";
 
 function ClientOnly({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);

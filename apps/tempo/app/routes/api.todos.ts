@@ -1,13 +1,4 @@
-import {
-  and,
-  db,
-  desc,
-  eq,
-  inArray,
-  tags,
-  todoTags,
-  todos,
-} from "@pontistudios/db";
+import { and, db, desc, eq, inArray, tags, todoTags, todos } from "@pontistudios/db";
 import { DEFAULT_TAG_COLOR, normalizeTagName, type TagItem } from "~/lib/tags";
 
 const DEMO_USER_ID = "demo-user";
@@ -151,12 +142,7 @@ async function resolveTagsForUser(tagValues: string[]): Promise<TagItem[]> {
       updatedAt: tags.updatedAt,
     })
     .from(tags)
-    .where(
-      and(
-        eq(tags.userId, DEMO_USER_ID),
-        inArray(tags.normalizedName, normalizedNames),
-      ),
-    );
+    .where(and(eq(tags.userId, DEMO_USER_ID), inArray(tags.normalizedName, normalizedNames)));
 
   const existingByNormalizedName = new Map(
     existingRows.map((row) => [row.normalizedName, toTagItem(row)]),
@@ -234,9 +220,7 @@ export async function loader() {
 
     const todoTagMap = await fetchTagsForTodos(rows.map((row) => row.id));
 
-    return Response.json(
-      rows.map((row) => toTodoItem(row, todoTagMap.get(row.id) ?? [])),
-    );
+    return Response.json(rows.map((row) => toTodoItem(row, todoTagMap.get(row.id) ?? [])));
   } catch (error) {
     console.error("Error fetching todos:", error);
     return Response.json({ error: "Failed to fetch todos" }, { status: 500 });
@@ -263,7 +247,10 @@ export async function action({ request }: { request: Request }) {
           })
           .returning();
 
-        await replaceTodoTagLinks(todo.id, resolvedTags.map((tag) => tag.id));
+        await replaceTodoTagLinks(
+          todo.id,
+          resolvedTags.map((tag) => tag.id),
+        );
 
         return Response.json(toTodoItem(todo, resolvedTags));
       }
@@ -291,7 +278,10 @@ export async function action({ request }: { request: Request }) {
           return Response.json({ error: "Todo not found" }, { status: 404 });
         }
 
-        await replaceTodoTagLinks(todo.id, resolvedTags.map((tag) => tag.id));
+        await replaceTodoTagLinks(
+          todo.id,
+          resolvedTags.map((tag) => tag.id),
+        );
 
         return Response.json(toTodoItem(todo, resolvedTags));
       }

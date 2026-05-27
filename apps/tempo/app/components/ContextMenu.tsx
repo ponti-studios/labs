@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { cn } from '../lib/utils';
-import { Link, Trash2, Split, Clock } from 'lucide-react';
+import React, { useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "../lib/utils";
+import { Link, Trash2, Split, Clock } from "lucide-react";
 
 interface ContextMenuProps {
   x: number;
@@ -24,16 +24,12 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose, options
         onClose();
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [onClose]);
 
   return (
-    <div 
-      className="fixed z-[100]" 
-      style={{ top: y, left: x }}
-      ref={menuRef}
-    >
+    <div className="fixed z-[100]" style={{ top: y, left: x }} ref={menuRef}>
       <motion.div
         initial={{ opacity: 0, y: -5 }}
         animate={{ opacity: 1, y: 0 }}
@@ -48,9 +44,9 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose, options
             }}
             className={cn(
               "w-full flex items-center gap-3 px-3 py-2 text-[13px] font-medium rounded-sm transition-all",
-              option.destructive 
-                ? "text-red-500 hover:bg-red-50" 
-                : "text-zinc-600 hover:bg-zinc-950 hover:text-white"
+              option.destructive
+                ? "text-red-500 hover:bg-red-50"
+                : "text-zinc-600 hover:bg-zinc-950 hover:text-white",
             )}
           >
             <span className="shrink-0">{option.icon}</span>

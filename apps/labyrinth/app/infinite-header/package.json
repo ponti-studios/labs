@@ -13,6 +13,7 @@
   "scripts": {
     "dev": "echo 'Open index.html in browser'",
     "build": "echo 'Static HTML/CSS project - no build needed'",
+    "format": "oxfmt --write .",
     "preview": "echo 'Open index.html in browser'"
   }
 }
