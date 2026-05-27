@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@pontistudios/ui";
 
 export default function Quilt() {
   const [fields, setFields] = useState([]);
@@ -59,25 +60,21 @@ export default function Quilt() {
                   {field.label}
                 </label>
                 {field.type === "select" ? (
-                  <select
-                    id={field.name}
-                    name={field.name}
-                    onChange={(e) => handleChange(field.name, e.target.value)}
-                    style={{
-                      width: "100%",
-                      padding: "0.5rem",
-                      border: "1px solid #ccc",
-                      borderRadius: "4px",
-                      fontSize: "1rem",
-                    }}
+                  <Select
+                    value={formValues[field.name] || undefined}
+                    onValueChange={(value) => handleChange(field.name, value)}
                   >
-                    <option value="">Select...</option>
-                    {field.options.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.text}
-                      </option>
-                    ))}
-                  </select>
+                    <SelectTrigger id={field.name} style={{ width: "100%" }}>
+                      <SelectValue placeholder="Select..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {field.options.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          {opt.text}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 ) : (
                   <input
                     id={field.name}

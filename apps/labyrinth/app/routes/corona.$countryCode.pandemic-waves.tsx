@@ -3,6 +3,7 @@ import { useState } from "react";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@pontistudios/ui";
 
 interface WaveData {
   wave: number;
@@ -79,17 +80,20 @@ export default function PandemicWavesPage() {
         <label htmlFor="metric-select" className="block text-sm font-medium text-stone-700 mb-3">
           Select Metric for Wave Analysis
         </label>
-        <select
-          id="metric-select"
-          value={metric}
-          onChange={(e) => setMetric(e.target.value)}
-          className="w-full bg-white/60 border border-stone-300 text-stone-800 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-olive-500 focus:border-transparent"
-        >
-          <option value="newCasesSmoothed">New Cases (Smoothed)</option>
-          <option value="newDeathsSmoothed">New Deaths (Smoothed)</option>
-          <option value="newCases">New Cases (Raw)</option>
-          <option value="newDeaths">New Deaths (Raw)</option>
-        </select>
+        <Select value={metric} onValueChange={setMetric}>
+          <SelectTrigger
+            id="metric-select"
+            className="h-auto w-full rounded-xl border-stone-300 bg-white/60 px-4 py-3 text-stone-800"
+          >
+            <SelectValue placeholder="Select metric" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="newCasesSmoothed">New Cases (Smoothed)</SelectItem>
+            <SelectItem value="newDeathsSmoothed">New Deaths (Smoothed)</SelectItem>
+            <SelectItem value="newCases">New Cases (Raw)</SelectItem>
+            <SelectItem value="newDeaths">New Deaths (Raw)</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Loading State */}

@@ -49,7 +49,13 @@
  *   /       / \
  *  ●       ●   ●     ← null children represented as ●
  */
-const binaryTree = {
+interface TreeNode {
+  x: number;
+  l: TreeNode | null;
+  r: TreeNode | null;
+}
+
+const binaryTree: TreeNode = {
   // Root node with value 5
   x: 5,
   // Left subtree: node with value 3
@@ -58,13 +64,13 @@ const binaryTree = {
     // Left child of 3: node with value 20 (has children but they're just placeholders)
     l: {
       x: 20,
-      // Left child of 20 is a placeholder object (simulating a node with children)
-      l: [Object],
+      // Left child of 20 is omitted here to keep the sample tree well-typed in TypeScript
+      l: null,
       // Right child of 20 is null (no right child)
-      r: null
+      r: null,
     },
     // Right child of 3 is null (3 has no right child)
-    r: null
+    r: null,
   },
   // Right subtree: node with value 10
   r: {
@@ -72,9 +78,9 @@ const binaryTree = {
     // Left child of 10: node with value 1 (leaf node)
     l: { x: 1, l: null, r: null },
     // Right child of 10: node with value 15 (has children)
-    r: { x: 15, l: [Object], r: [Object] }
-  }
-}
+    r: { x: 15, l: null, r: null },
+  },
+};
 
 // =============================================================================
 // TREE TRAVERSAL (Currently buggy - see notes below)
@@ -106,7 +112,7 @@ const binaryTree = {
  * @param {Object} T - Binary tree with properties x (value), l (left), r (right)
  * @returns {Array} - Array of objects with computed l and r values
  */
-function solution (T) {
+export function solution(T: TreeNode): Array<{ l: number; r: number }> {
   // ISSUE: Object.keys(T) returns ['x', 'l', 'r'] - the property names
   // This iterates over the properties of the root node, not a proper tree traversal!
   //
@@ -118,7 +124,7 @@ function solution (T) {
   // 2. If T.l exists, recursively process it
   // 3. If T.r exists, recursively process it
 
-  return Object.keys(T).map(function (item) {
+  return Object.keys(T).map(function () {
     // BUG: 'item' here is a key string ('x', 'l', or 'r'), not a subtree node
     // So item.l and item.r don't mean what the code thinks they do
     //
@@ -129,10 +135,10 @@ function solution (T) {
 
     return {
       // This will always be 0 due to the bug described above
-      l: item.l != null ? solution(item.l) : 0,
-      r: item.r != null ? solution(item.r) : 0
-    }
-  })
+      l: 0,
+      r: 0,
+    };
+  });
 }
 
 // =============================================================================
@@ -150,28 +156,28 @@ function solution (T) {
  * @param {Object} node - Current node in tree
  * @returns {Array} - Array of node values in preorder
  */
-function preorderTraversal(node) {
+export function preorderTraversal(node: TreeNode | null): number[] {
   // Base case: if node is null or undefined, return empty array
   if (node === null || node === undefined) {
-    return []
+    return [];
   }
 
-  const result = []
+  const result = [];
 
   // Process current node first (root)
-  result.push(node.x)
+  result.push(node.x);
 
   // Then recursively process left subtree
   if (node.l !== null && node.l !== undefined) {
-    result.push(...preorderTraversal(node.l))
+    result.push(...preorderTraversal(node.l));
   }
 
   // Then recursively process right subtree
   if (node.r !== null && node.r !== undefined) {
-    result.push(...preorderTraversal(node.r))
+    result.push(...preorderTraversal(node.r));
   }
 
-  return result
+  return result;
 }
 
 /**
@@ -182,27 +188,27 @@ function preorderTraversal(node) {
  * @param {Object} node - Current node in tree
  * @returns {Array} - Array of node values in postorder
  */
-function postorderTraversal(node) {
+export function postorderTraversal(node: TreeNode | null): number[] {
   if (node === null || node === undefined) {
-    return []
+    return [];
   }
 
-  const result = []
+  const result = [];
 
   // First recursively process left subtree
   if (node.l !== null && node.l !== undefined) {
-    result.push(...postorderTraversal(node.l))
+    result.push(...postorderTraversal(node.l));
   }
 
   // Then recursively process right subtree
   if (node.r !== null && node.r !== undefined) {
-    result.push(...postorderTraversal(node.r))
+    result.push(...postorderTraversal(node.r));
   }
 
   // Finally process current node (root)
-  result.push(node.x)
+  result.push(node.x);
 
-  return result
+  return result;
 }
 
 /**
@@ -215,18 +221,18 @@ function postorderTraversal(node) {
  * @param {Object} node - Current node
  * @returns {number} - Height of the subtree rooted at this node
  */
-function treeHeight(node) {
+export function treeHeight(node: TreeNode | null): number {
   // Base case: null node has height 0
   if (node === null || node === undefined) {
-    return 0
+    return 0;
   }
 
   // Recursive case: height is 1 (for current node) plus max of children's heights
   // If a node has no children, its height is 1
-  const leftHeight = treeHeight(node.l)
-  const rightHeight = treeHeight(node.r)
+  const leftHeight = treeHeight(node.l);
+  const rightHeight = treeHeight(node.r);
 
-  return 1 + Math.max(leftHeight, rightHeight)
+  return 1 + Math.max(leftHeight, rightHeight);
 }
 
 /**
@@ -235,31 +241,31 @@ function treeHeight(node) {
  * @param {Object} node - Current node
  * @returns {number} - Total nodes in subtree
  */
-function countNodes(node) {
+export function countNodes(node: TreeNode | null): number {
   if (node === null || node === undefined) {
-    return 0
+    return 0;
   }
 
   // Count this node (1) plus nodes in left subtree plus nodes in right subtree
-  return 1 + countNodes(node.l) + countNodes(node.r)
+  return 1 + countNodes(node.l) + countNodes(node.r);
 }
 
 // =============================================================================
 // TESTING THE CORRECT IMPLEMENTATIONS
 // =============================================================================
 
-console.log('Preorder traversal:', preorderTraversal(binaryTree))
+console.log("Preorder traversal:", preorderTraversal(binaryTree));
 // Expected: [5, 3, 20, 10, 1, 15]
 
-console.log('Postorder traversal:', postorderTraversal(binaryTree))
+console.log("Postorder traversal:", postorderTraversal(binaryTree));
 // Expected: [20, 3, 1, 15, 10, 5]
 
-console.log('Tree height:', treeHeight(binaryTree))
+console.log("Tree height:", treeHeight(binaryTree));
 // Expected: 4 (root is level 1, 20/15 are level 3, so depth is 3 levels deep)
 
-console.log('Node count:', countNodes(binaryTree))
+console.log("Node count:", countNodes(binaryTree));
 // Expected: 6 (nodes with values: 5, 3, 20, 10, 1, 15)
 
 // NOTE: The original buggy solution() is left in place but should not be used
 // It demonstrates how easy it is to write incorrect tree traversal code
-console.log('Original (buggy) solution:', solution(binaryTree)) // eslint-disable-line
+console.log("Original (buggy) solution:", solution(binaryTree)); // eslint-disable-line

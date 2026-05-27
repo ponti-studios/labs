@@ -8,7 +8,7 @@
  *              only up to the square root of the number.
  */
 
-import { strictEqual } from 'assert';
+import { strictEqual } from "assert";
 
 // =============================================================================
 // PRIMES
@@ -48,7 +48,7 @@ import { strictEqual } from 'assert';
  * @param {number} n - Number to check if is prime
  * @returns {boolean} - true if prime, false otherwise
  */
-function isPrime(n) {
+export function isPrime(n: number): boolean {
   // =============================================================================
   // WHY WE START AT 2
   //
@@ -61,9 +61,9 @@ function isPrime(n) {
   // =============================================================================
 
   // Handle edge cases
-  if (n <= 1) return false;  // 0, 1 are not prime
-  if (n <= 3) return true;  // 2, 3 are prime
-  if (n % 2 === 0) return false;  // Even numbers > 2 are not prime
+  if (n <= 1) return false; // 0, 1 are not prime
+  if (n <= 3) return true; // 2, 3 are prime
+  if (n % 2 === 0) return false; // Even numbers > 2 are not prime
 
   // =============================================================================
   // SQUARE ROOT OPTIMIZATION
@@ -99,7 +99,7 @@ function isPrime(n) {
     // If i divides n evenly, n is not prime
     // n % i === 0 means i is a divisor of n
     if (n % i === 0) {
-      return false;  // Found a divisor, so n is composite
+      return false; // Found a divisor, so n is composite
     }
   }
 
@@ -118,10 +118,10 @@ function isPrime(n) {
  * @param {number} n - Number to check
  * @returns {boolean} - true if prime
  */
-function isPrimeOptimized(n) {
+export function isPrimeOptimized(n: number): boolean {
   if (n <= 1) return false;
   if (n <= 3) return true;
-  if (n % 2 === 0) return false;  // Handle 2 separately
+  if (n % 2 === 0) return false; // Handle 2 separately
 
   // Only check odd numbers: 3, 5, 7, 9, ... up to √n
   // This halves the number of iterations
@@ -144,30 +144,28 @@ function isPrimeOptimized(n) {
  * @param {number} limit - Upper bound to find primes
  * @returns {number[]} - Array of all primes <= limit
  */
-function sieveOfEratosthenes(limit) {
+export function sieveOfEratosthenes(limit: number): number[] {
   // Create boolean array: isPrime[i] = true means i is initially assumed prime
-  const isPrime = new Array(limit + 1).fill(true);
+  const primeFlags = new Array<boolean>(limit + 1).fill(true);
 
   // 0 and 1 are not prime by definition
-  isPrime[0] = false;
-  isPrime[1] = false;
+  primeFlags[0] = false;
+  primeFlags[1] = false;
 
   // Main sieve: mark multiples of each prime as composite
   // Start from 2 (first prime)
   for (let i = 2; i * i <= limit; i++) {
-    if (isPrime[i]) {
+    if (primeFlags[i]) {
       // Mark all multiples of i as composite
       // Start from i*i (smaller multiples were already marked by smaller primes)
       for (let j = i * i; j <= limit; j += i) {
-        isPrime[j] = false;
+        primeFlags[j] = false;
       }
     }
   }
 
   // Collect all numbers still marked as prime
-  return isPrime
-    .map((prime, index) => (prime ? index : -1))
-    .filter((index) => index !== -1);
+  return primeFlags.map((prime, index) => (prime ? index : -1)).filter((index) => index !== -1);
 }
 
 /**
@@ -176,8 +174,8 @@ function sieveOfEratosthenes(limit) {
  * @param {number} count - Number of primes to generate
  * @returns {number[]} - Array of first n primes
  */
-function firstNPrimes(count) {
-  const primes = [];
+export function firstNPrimes(count: number): number[] {
+  const primes: number[] = [];
   let candidate = 2;
 
   while (primes.length < count) {
@@ -201,7 +199,7 @@ strictEqual(isPrime(4), false);
 strictEqual(isPrime(5), true);
 strictEqual(isPrime(17), true);
 strictEqual(isPrime(18), false);
-strictEqual(isPrime(97), true);  // 97 is prime
+strictEqual(isPrime(97), true); // 97 is prime
 strictEqual(isPrime(100), false);
 
 // Test edge cases
@@ -210,7 +208,7 @@ strictEqual(isPrime(1), false);
 strictEqual(isPrime(-5), false);
 
 // Test large numbers
-console.log("Is 15485863 prime?", isPrime(15485863));  // This is the millionth prime!
+console.log("Is 15485863 prime?", isPrime(15485863)); // This is the millionth prime!
 console.log("Is 1000003 prime?", isPrime(1000003));
 
 // Test optimized version
@@ -236,11 +234,3 @@ console.timeEnd("Check if 15485863 is prime (basic)");
 console.time("Check if 15485863 is prime (optimized)");
 isPrimeOptimized(15485863);
 console.timeEnd("Check if 15485863 is prime (optimized)");
-
-// Export
-module.exports = {
-  isPrime,
-  isPrimeOptimized,
-  sieveOfEratosthenes,
-  firstNPrimes
-};

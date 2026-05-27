@@ -37,7 +37,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose, options
       <motion.div
         initial={{ opacity: 0, y: -5 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white border border-zinc-200 shadow-2xl rounded overflow-hidden min-w-[200px] p-1 glass"
+        className="bg-white border border-zinc-200 rounded overflow-hidden min-w-[200px] p-1 glass"
       >
         {options.map((option, i) => (
           <button

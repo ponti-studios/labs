@@ -26,10 +26,12 @@ export type {
 } from './schema/relationships';
 
 export type {
-  PlaygroundProject,
-  NewPlaygroundProject,
   PlaygroundTodo,
   NewPlaygroundTodo,
+  PlaygroundTag,
+  NewPlaygroundTag,
+  PlaygroundTodoTag,
+  NewPlaygroundTodoTag,
   PlaygroundEmbedding,
   NewPlaygroundEmbedding,
   PlaygroundTflCamera,
@@ -59,8 +61,9 @@ export {
   relationshipMetricsDaily,
   covidData,
   tflCameras,
-  projects,
   todos,
+  tags,
+  todoTags,
   embeddings,
   trackers,
   votes,

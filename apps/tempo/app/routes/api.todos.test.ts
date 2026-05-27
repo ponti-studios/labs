@@ -7,26 +7,48 @@ const mockDb = {
   delete: vi.fn(),
 };
 
-const mockChain = {
-  from: vi.fn(),
-  where: vi.fn(),
-  leftJoin: vi.fn(),
-  returning: vi.fn(),
-  values: vi.fn(),
-  set: vi.fn(),
-};
-
-// Wire the chain so each call returns itself (fluent interface)
-for (const key of Object.keys(mockChain) as (keyof typeof mockChain)[]) {
-  mockChain[key].mockReturnValue(mockChain);
+function makeChain() {
+  return {
+    from: vi.fn(),
+    where: vi.fn(),
+    innerJoin: vi.fn(),
+    orderBy: vi.fn(),
+    returning: vi.fn(),
+    values: vi.fn(),
+    set: vi.fn(),
+  };
 }
 
 vi.mock("@pontistudios/db", () => ({
   db: mockDb,
   eq: vi.fn((a, b) => ({ type: "eq", a, b })),
   and: vi.fn((...args) => ({ type: "and", args })),
-  todos: { id: "id", userId: "user_id", projectId: "project_id", title: "title", start: "start", end: "end", completed: "completed", createdAt: "created_at", updatedAt: "updated_at" },
-  projects: { id: "id", userId: "user_id", name: "name" },
+  desc: vi.fn((value) => ({ desc: value })),
+  inArray: vi.fn((column, values) => ({ type: "inArray", column, values })),
+  todos: {
+    id: "id",
+    userId: "user_id",
+    title: "title",
+    start: "start",
+    end: "end",
+    completed: "completed",
+    createdAt: "created_at",
+    updatedAt: "updated_at",
+  },
+  tags: {
+    id: "id",
+    userId: "user_id",
+    name: "name",
+    normalizedName: "normalized_name",
+    color: "color",
+    createdAt: "created_at",
+    updatedAt: "updated_at",
+  },
+  todoTags: {
+    todoId: "todo_id",
+    tagId: "tag_id",
+    createdAt: "created_at",
+  },
 }));
 
 const makeRequest = (method: string, body?: unknown, url = "http://localhost/api/todos"): Request =>
@@ -38,28 +60,46 @@ const makeRequest = (method: string, body?: unknown, url = "http://localhost/api
 
 describe("api.todos loader", () => {
   beforeEach(() => {
-    mockDb.select.mockReturnValue(mockChain);
-    mockChain.from.mockReturnValue(mockChain);
-    mockChain.leftJoin.mockReturnValue(mockChain);
-    mockChain.where.mockResolvedValue([
+    const todoChain = makeChain();
+    todoChain.from.mockReturnValue(todoChain);
+    todoChain.where.mockReturnValue(todoChain);
+    todoChain.orderBy.mockResolvedValue([
       {
         id: 1,
         userId: "demo-user",
-        projectId: 1,
         title: "Test todo",
         start: "2024-01-01",
         end: "2024-01-02",
         completed: 0,
         createdAt: new Date("2024-01-01"),
         updatedAt: new Date("2024-01-01"),
-        projectName: "Test Project",
       },
     ]);
+
+    const tagChain = makeChain();
+    tagChain.from.mockReturnValue(tagChain);
+    tagChain.innerJoin.mockReturnValue(tagChain);
+    tagChain.where.mockResolvedValue([
+      {
+        todoId: 1,
+        id: 3,
+        userId: "demo-user",
+        name: "writing",
+        normalizedName: "writing",
+        color: "#64748b",
+        createdAt: new Date("2024-01-01"),
+        updatedAt: new Date("2024-01-01"),
+      },
+    ]);
+
+    mockDb.select
+      .mockReturnValueOnce(todoChain)
+      .mockReturnValueOnce(tagChain);
   });
 
   afterEach(() => vi.clearAllMocks());
 
-  it("returns todos with project names", async () => {
+  it("returns todos with tags", async () => {
     const { loader } = await import("./api.todos");
     const response = await loader();
     const data = await response.json();
@@ -67,64 +107,141 @@ describe("api.todos loader", () => {
     expect(Array.isArray(data)).toBe(true);
     expect(data[0].title).toBe("Test todo");
     expect(data[0].completed).toBe(false);
-    expect(data[0].projectName).toBe("Test Project");
+    expect(data[0].tags).toEqual(
+      expect.arrayContaining([expect.objectContaining({ name: "writing" })]),
+    );
   });
 });
 
 describe("api.todos action", () => {
   afterEach(() => vi.clearAllMocks());
 
-  it("POST validates projectId ownership before creating", async () => {
-    // Project lookup returns empty (not found / wrong user)
-    mockDb.select.mockReturnValue(mockChain);
-    mockChain.from.mockReturnValue(mockChain);
-    mockChain.where.mockResolvedValue([]);
+  it("POST reuses an existing tag when the normalized value already exists", async () => {
+    const existingTagSelectChain = makeChain();
+    existingTagSelectChain.from.mockReturnValue(existingTagSelectChain);
+    existingTagSelectChain.where.mockResolvedValue([
+      {
+        id: 4,
+        userId: "demo-user",
+        name: "writing",
+        normalizedName: "writing",
+        color: "#64748b",
+        createdAt: new Date("2024-01-01"),
+        updatedAt: new Date("2024-01-01"),
+      },
+    ]);
+
+    mockDb.select.mockReturnValueOnce(existingTagSelectChain);
+
+    const todoInsertChain = makeChain();
+    todoInsertChain.values.mockReturnValue(todoInsertChain);
+    todoInsertChain.returning.mockResolvedValue([
+      {
+        id: 1,
+        userId: "demo-user",
+        title: "Write draft",
+        start: "2024-01-01",
+        end: "2024-01-01",
+        completed: 0,
+        createdAt: new Date("2024-01-01"),
+        updatedAt: new Date("2024-01-01"),
+      },
+    ]);
+
+    const todoTagInsertChain = makeChain();
+    todoTagInsertChain.values.mockResolvedValue([]);
+
+    mockDb.insert
+      .mockReturnValueOnce(todoInsertChain)
+      .mockReturnValueOnce(todoTagInsertChain);
+
+    const deleteChain = makeChain();
+    deleteChain.where.mockResolvedValue([]);
+    mockDb.delete.mockReturnValue(deleteChain);
 
     const { action } = await import("./api.todos");
-    const req = makeRequest("POST", {
-      projectId: 999,
-      title: "Test",
-      start: "2024-01-01",
-      end: "2024-01-02",
-      completed: false,
+    const response = await action({
+      request: makeRequest("POST", {
+        title: "Write draft",
+        start: "2024-01-01",
+        end: "2024-01-01",
+        completed: false,
+        tags: ["Writing"],
+      }),
     });
 
-    const response = await action({ request: req });
-    expect(response.status).toBe(400);
-    const body = await response.json();
-    expect(body.error).toMatch(/Project not found/);
-  });
-
-  it("POST creates todo when projectId is null", async () => {
-    const newTodo = {
-      id: 1,
-      userId: "demo-user",
-      projectId: null,
-      title: "No-project task",
-      start: "2024-01-01",
-      end: "2024-01-02",
-      completed: 0,
-      createdAt: new Date("2024-01-01"),
-      updatedAt: new Date("2024-01-01"),
-    };
-    mockDb.insert.mockReturnValue(mockChain);
-    mockChain.values.mockReturnValue(mockChain);
-    mockChain.returning.mockResolvedValue([newTodo]);
-
-    const { action } = await import("./api.todos");
-    const req = makeRequest("POST", {
-      projectId: null,
-      title: "No-project task",
-      start: "2024-01-01",
-      end: "2024-01-02",
-      completed: false,
-    });
-
-    const response = await action({ request: req });
     expect(response.status).toBe(200);
     const body = await response.json();
-    expect(body.title).toBe("No-project task");
-    expect(body.projectId).toBeNull();
+    expect(body.tags).toEqual(
+      expect.arrayContaining([expect.objectContaining({ name: "writing" })]),
+    );
+  });
+
+  it("POST creates a new tag with the default color when none exists", async () => {
+    const emptyTagSelectChain = makeChain();
+    emptyTagSelectChain.from.mockReturnValue(emptyTagSelectChain);
+    emptyTagSelectChain.where.mockResolvedValue([]);
+    mockDb.select.mockReturnValueOnce(emptyTagSelectChain);
+
+    const tagInsertChain = makeChain();
+    tagInsertChain.values.mockReturnValue(tagInsertChain);
+    tagInsertChain.returning.mockResolvedValue([
+      {
+        id: 8,
+        userId: "demo-user",
+        name: "deep-work",
+        normalizedName: "deep-work",
+        color: "#64748b",
+        createdAt: new Date("2024-01-01"),
+        updatedAt: new Date("2024-01-01"),
+      },
+    ]);
+
+    const todoInsertChain = makeChain();
+    todoInsertChain.values.mockReturnValue(todoInsertChain);
+    todoInsertChain.returning.mockResolvedValue([
+      {
+        id: 2,
+        userId: "demo-user",
+        title: "Focus block",
+        start: "2024-01-01",
+        end: "2024-01-01",
+        completed: 0,
+        createdAt: new Date("2024-01-01"),
+        updatedAt: new Date("2024-01-01"),
+      },
+    ]);
+
+    const todoTagInsertChain = makeChain();
+    todoTagInsertChain.values.mockResolvedValue([]);
+
+    mockDb.insert
+      .mockReturnValueOnce(tagInsertChain)
+      .mockReturnValueOnce(todoInsertChain)
+      .mockReturnValueOnce(todoTagInsertChain);
+
+    const deleteChain = makeChain();
+    deleteChain.where.mockResolvedValue([]);
+    mockDb.delete.mockReturnValue(deleteChain);
+
+    const { action } = await import("./api.todos");
+    const response = await action({
+      request: makeRequest("POST", {
+        title: "Focus block",
+        start: "2024-01-01",
+        end: "2024-01-01",
+        completed: false,
+        tags: ["Deep Work"],
+      }),
+    });
+
+    expect(response.status).toBe(200);
+    const body = await response.json();
+    expect(body.tags).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: "deep-work", color: "#64748b" }),
+      ]),
+    );
   });
 
   it("DELETE returns 400 when id is missing", async () => {

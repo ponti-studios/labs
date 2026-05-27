@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@pontistudios/ui";
 
 interface Outlier {
   date: string;
@@ -125,18 +126,21 @@ export default function OutlierDetectionPage() {
         <label htmlFor="metric-select" className="block text-stone-800 font-serif text-lg mb-4">
           Select Metric to Analyze
         </label>
-        <select
-          id="metric-select"
-          value={selectedMetric}
-          onChange={(e) => setSelectedMetric(e.target.value)}
-          className="w-full bg-white/80 border border-stone-300 text-stone-800 rounded-2xl px-4 py-3 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 font-light"
-        >
-          {metrics.map((metric) => (
-            <option key={metric.value} value={metric.value}>
-              {metric.label}
-            </option>
-          ))}
-        </select>
+        <Select value={selectedMetric} onValueChange={setSelectedMetric}>
+          <SelectTrigger
+            id="metric-select"
+            className="h-auto w-full rounded-2xl border-stone-300 bg-white/80 px-4 py-3 font-light text-stone-800"
+          >
+            <SelectValue placeholder="Select metric" />
+          </SelectTrigger>
+          <SelectContent>
+            {metrics.map((metric) => (
+              <SelectItem key={metric.value} value={metric.value}>
+                {metric.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Loading State */}

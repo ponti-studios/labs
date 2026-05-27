@@ -1,24 +1,24 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { TagItem } from "./tags";
 
 export interface TodoItem {
   id: number;
   userId: string;
-  projectId: number | null;
   title: string;
   start: string;
   end: string;
   completed: boolean;
   createdAt: string | null;
   updatedAt: string | null;
-  projectName?: string | null;
+  tags: TagItem[];
 }
 
 export interface TodoCreateData {
-  projectId: number | null;
   title: string;
   start: string;
   end: string;
   completed: boolean;
+  tags: string[];
 }
 
 export const useTodos = () => {
@@ -56,7 +56,7 @@ export const useCreateTodo = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["todos"] });
-      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: ["tags"] });
     },
   });
 };
@@ -82,7 +82,7 @@ export const useUpdateTodo = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["todos"] });
-      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: ["tags"] });
     },
   });
 };
@@ -104,7 +104,7 @@ export const useDeleteTodo = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["todos"] });
-      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: ["tags"] });
     },
   });
 };

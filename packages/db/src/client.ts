@@ -3,7 +3,7 @@ import { Pool } from 'pg';
 
 import { disasterEvents } from './schema/disaster';
 import { relationshipPeople, relationshipStageHistory, relationshipEvents, relationshipNotes, relationshipCheckins, relationshipFlags, relationshipFriendInvites, relationshipFriendVotes, relationshipMetricsDaily } from './schema/relationships';
-import { covidData, tflCameras, projects, todos, embeddings } from './schema/playground';
+import { covidData, tflCameras, todos, tags, todoTags, embeddings } from './schema/playground';
 import { trackers, votes } from './schema/social';
 import { users, messages } from './schema/kuma';
 
@@ -20,8 +20,9 @@ export interface Database {
   relationship_metrics_daily: typeof relationshipMetricsDaily;
   covid_data: typeof covidData;
   tfl_cameras: typeof tflCameras;
-  projects: typeof projects;
   todos: typeof todos;
+  tags: typeof tags;
+  todo_tags: typeof todoTags;
   embeddings: typeof embeddings;
   trackers: typeof trackers;
   votes: typeof votes;

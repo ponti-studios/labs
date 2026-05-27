@@ -8,7 +8,7 @@
  *              and backwards). Implements both iterative and recursive approaches.
  */
 
-import { strictEqual } from 'assert';
+import { strictEqual } from "assert";
 
 // =============================================================================
 // PALINDROME
@@ -50,7 +50,7 @@ import { strictEqual } from 'assert';
  * @param {string} str - String to check
  * @returns {boolean} - true if palindrome, false otherwise
  */
-function isPalindrome(str) {
+export function isPalindrome(str: string): boolean {
   // Size of the string for easier reference
   var size = str.length;
 
@@ -164,7 +164,7 @@ function isPalindrome(str) {
  * @param {string} str - String to check
  * @returns {boolean} - true if palindrome, false otherwise
  */
-function isPalindromeRecursive(str) {
+export function isPalindromeRecursive(str: string): boolean {
   // BASE CASE 1: Empty string
   // "" is trivially a palindrome (symmetric)
   // Base case 2: Single character
@@ -220,10 +220,10 @@ function isPalindromeRecursive(str) {
  *
  * This is the most intuitive approach but uses extra memory.
  */
-function isPalindromeByReverse(str) {
+export function isPalindromeByReverse(str: string): boolean {
   // Reverse the string and compare
   // Split converts to array, reverse flips order, join converts back to string
-  const reversed = str.split('').reverse().join('');
+  const reversed = str.split("").reverse().join("");
   return str === reversed;
 }
 
@@ -239,9 +239,9 @@ function isPalindromeByReverse(str) {
  *
  * This version ignores non-alphanumeric characters and case.
  */
-function isPalindromeRealWorld(str) {
+export function isPalindromeRealWorld(str: string): boolean {
   // Remove non-alphanumeric and convert to lowercase
-  const cleaned = str.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const cleaned = str.toLowerCase().replace(/[^a-z0-9]/g, "");
 
   // Check if cleaned string is palindrome
   let left = 0;
@@ -274,8 +274,8 @@ strictEqual(isPalindromeRecursive("radar"), true);
 strictEqual(isPalindromeRecursive("hello"), false);
 
 // Test edge cases
-strictEqual(isPalindrome(""), true);  // Empty string
-strictEqual(isPalindrome("a"), true);  // Single character
+strictEqual(isPalindrome(""), true); // Empty string
+strictEqual(isPalindrome("a"), true); // Single character
 strictEqual(isPalindrome("aa"), true); // Two same characters
 strictEqual(isPalindrome("ab"), false); // Two different characters
 
@@ -293,11 +293,3 @@ console.log("Testing with 'racecar':", isPalindrome("racecar"));
 console.log("Testing with 'hello':", isPalindrome("hello"));
 console.log("Testing recursive with 'racecar':", isPalindromeRecursive("racecar"));
 console.log("Testing real-world:", isPalindromeRealWorld("A man, a plan, a canal: Panama"));
-
-// Export for use in other files
-module.exports = {
-  isPalindrome,
-  isPalindromeRecursive,
-  isPalindromeByReverse,
-  isPalindromeRealWorld
-};

@@ -17,7 +17,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
 import { TaskFormModal } from "~/components/tasks/to-do/TaskFormModal";
 import { TaskList } from "~/components/tasks/to-do/TaskList";
-import { buildTaskFilterInput, filterTodos, parseTaskFilterInput, slugifyProjectName } from "~/lib/taskFilters";
+import { buildTaskFilterInput, filterTodos, parseTaskFilterInput } from "~/lib/taskFilters";
+import { normalizeTagName } from "~/lib/tags";
 import type { TodoCreateData, TodoItem } from "~/lib/todos";
 import { useCreateTodo, useDeleteTodo, useTodos, useUpdateTodo } from "~/lib/todos";
 
@@ -49,7 +50,7 @@ export default function TasksPage() {
   const filters = useMemo(
     () => ({
       search: searchParams.get("search") ?? "",
-      project: searchParams.get("project") ?? "",
+      tag: searchParams.get("tag") ?? "",
     }),
     [searchParams],
   );
@@ -61,9 +62,9 @@ export default function TasksPage() {
   }, [filters]);
 
   const filteredTodos = useMemo(() => filterTodos(todos, filters), [filters, todos]);
-  const activeFilterCount = Number(Boolean(filters.search)) + Number(Boolean(filters.project));
+  const activeFilterCount = Number(Boolean(filters.search)) + Number(Boolean(filters.tag));
 
-  const updateFilters = (next: { search: string; project: string }) => {
+  const updateFilters = (next: { search: string; tag: string }) => {
     const params = new URLSearchParams(searchParams);
 
     if (next.search) {
@@ -72,10 +73,10 @@ export default function TasksPage() {
       params.delete("search");
     }
 
-    if (next.project) {
-      params.set("project", next.project);
+    if (next.tag) {
+      params.set("tag", next.tag);
     } else {
-      params.delete("project");
+      params.delete("tag");
     }
 
     setSearchParams(params, { replace: true });
@@ -184,7 +185,7 @@ export default function TasksPage() {
             {activeFilterCount > 0 && (
               <Badge variant="secondary">
                 {filters.search ? `“${filters.search}”` : "Filtered"}
-                {filters.project ? ` #${filters.project}` : ""}
+                {filters.tag ? ` #${filters.tag}` : ""}
               </Badge>
             )}
             <span>Ctrl/Cmd+O create</span>
@@ -212,7 +213,7 @@ export default function TasksPage() {
         emptyStateTitle={activeFilterCount > 0 ? "No matching tasks" : "No tasks yet"}
         emptyStateDescription={
           activeFilterCount > 0
-            ? "Try a different title search or project slug."
+            ? "Try a different title search or tag."
             : "Press Ctrl/Cmd+O or use the pencil button to create your first task."
         }
       />
@@ -257,11 +258,11 @@ export default function TasksPage() {
       >
         <SheetContent
           side="bottom"
-          className="mx-auto max-h-[80vh] w-full max-w-[350px] rounded-t-2xl border border-border bg-popover p-0 shadow-none"
+          className="mx-auto max-h-[80vh] w-full max-w-[350px] rounded-t-2xl border border-border bg-popover p-0"
         >
           <SheetHeader className="sr-only">
             <SheetTitle>Filter tasks</SheetTitle>
-            <SheetDescription>Filter tasks by title or project slug.</SheetDescription>
+            <SheetDescription>Filter tasks by title or tag.</SheetDescription>
           </SheetHeader>
           <Command
             loop
@@ -272,16 +273,17 @@ export default function TasksPage() {
             }}
             className="rounded-2xl"
           >
-            <CommandInput autoFocus placeholder="Filter tasks or type #project-slug" />
+            <CommandInput autoFocus placeholder="Filter tasks or type #tag" />
             <CommandList className="max-h-[22rem] p-2">
               <CommandEmpty>No tasks match this filter.</CommandEmpty>
               {filteredTodos.map((todo) => {
-                const projectSlug = todo.projectName ? slugifyProjectName(todo.projectName) : "";
+                const tagSummary = todo.tags.map((tag) => normalizeTagName(tag.name)).join(" ");
+                const firstTag = todo.tags[0]?.name;
 
                 return (
                   <CommandItem
                     key={todo.id}
-                    value={`${todo.title} ${projectSlug} ${todo.projectName ?? ""}`}
+                    value={`${todo.title} ${tagSummary}`}
                     onSelect={() => {
                       setEditingTodo(todo);
                       setIsSearchOpen(false);
@@ -294,7 +296,7 @@ export default function TasksPage() {
                         {todo.start} - {todo.end}
                       </span>
                     </div>
-                    {todo.projectName && <Badge variant="secondary">#{projectSlug}</Badge>}
+                    {firstTag && <Badge variant="secondary">#{normalizeTagName(firstTag)}</Badge>}
                   </CommandItem>
                 );
               })}

@@ -50,7 +50,7 @@
  * @param {array} array - Array to sort
  * @returns {array} - Original array sorted (mutated in place)
  */
-function insertionSort(array) {
+export function insertionSort(array: number[]): number[] {
   // Start from second element (index 1)
   // Element at index 0 is considered "sorted" initially (single element is trivially sorted)
   for (var i = 1; i < array.length; i++) {
@@ -120,7 +120,7 @@ function insertionSort(array) {
  * Time Complexity: O(n²)
  * Space Complexity: O(n) - creates a new array
  */
-function insertionSortFunctional(array) {
+export function insertionSortFunctional(array: number[]): number[] {
   // reduce processes each element, building up the result
   // Initial value is empty array (sorted portion is empty)
   return array.reduce(function (newArray, element, index) {
@@ -141,7 +141,7 @@ function insertionSortFunctional(array) {
     newArray[i] = element;
 
     return newArray;
-  }, []);  // Start with empty array
+  }, []); // Start with empty array
 }
 
 /**
@@ -166,7 +166,7 @@ function insertionSortFunctional(array) {
  * @param {array} array - Array to sort
  * @returns {array} - Original array sorted
  */
-function selectionSort(array) {
+export function selectionSort(array: number[]): number[] {
   // Outer loop: position where we'll place the next minimum
   for (var i = 0; i < array.length; i++) {
     // Assume current position has minimum
@@ -231,7 +231,7 @@ function selectionSort(array) {
  * @param {number} start - Starting index for search
  * @returns {number} - Index of minimum element
  */
-function getMinimum(array, start) {
+export function getMinimum(array: number[], start: number): number {
   // Initialize with first element in search range
   let minIndex = start;
   let minValue = array[start];
@@ -260,7 +260,7 @@ function getMinimum(array, start) {
  * @param {boolean} getIndex - If true, return index; if false, return value
  * @returns {number} - Either max value or max index (based on getIndex)
  */
-function findLargest(array, getIndex) {
+export function findLargest(array: number[], getIndex = false): number {
   // Start with first element
   let maxValue = array[0];
   let maxIndex = 0;
@@ -285,7 +285,10 @@ function findLargest(array, getIndex) {
 // TESTING
 // =============================================================================
 
-console.log("getMinimum([1,10,4,8,11,5,0,25,3,52,2], 0):", getMinimum([1, 10, 4, 8, 11, 5, 0, 25, 3, 52, 2], 0));
+console.log(
+  "getMinimum([1,10,4,8,11,5,0,25,3,52,2], 0):",
+  getMinimum([1, 10, 4, 8, 11, 5, 0, 25, 3, 52, 2], 0),
+);
 // Should return 6 (index of value 0)
 
 console.log("selectionSort result:", selectionSort([1, 10, 4, 8, 11, 5, 0, 25, 3, 52, 2]));
@@ -294,7 +297,10 @@ console.log("selectionSort result:", selectionSort([1, 10, 4, 8, 11, 5, 0, 25, 3
 console.log("findLargest result:", findLargest([1, 10, 4, 8, 11, 5, 0, 25, 3, 52, 2]));
 // Should return 52
 
-console.log("insertionSortFunctional result:", insertionSortFunctional([1, 10, 4, 8, 11, 5, 0, 25, 3, 52, 2]));
+console.log(
+  "insertionSortFunctional result:",
+  insertionSortFunctional([1, 10, 4, 8, 11, 5, 0, 25, 3, 52, 2]),
+);
 // Should return [0, 1, 2, 3, 4, 5, 8, 10, 11, 25, 52]
 
 /**

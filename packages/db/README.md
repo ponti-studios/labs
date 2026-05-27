@@ -10,7 +10,7 @@ Shared database schema and utilities for all Ponti Studios labs apps. Exports a 
 |---|---|
 | disaster | `disaster_events` |
 | relationships | `relationship_people`, `relationship_stage_history`, `relationship_events`, `relationship_notes`, `relationship_checkins`, `relationship_flags`, `relationship_friend_invites`, `relationship_friend_votes`, `relationship_metrics_daily` |
-| playground | `covid_data`, `tfl_cameras`, `projects`, `todos`, `embeddings` |
+| playground | `covid_data`, `tfl_cameras`, `todos`, `tags`, `todo_tags`, `embeddings` |
 | social | `trackers`, `votes` |
 | kuma | `users`, `messages` |
 

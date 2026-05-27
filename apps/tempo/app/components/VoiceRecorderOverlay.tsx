@@ -213,7 +213,7 @@ export function VoiceRecorderOverlay({
               whileTap={{ scale: 0.95 }}
               aria-label={isRecording ? "Stop recording" : "Start recording"}
               className={cn(
-                "w-20 h-20 rounded-full flex items-center justify-center transition-all duration-500 shadow-sm",
+                "w-20 h-20 rounded-full flex items-center justify-center transition-all duration-500",
                 isRecording
                   ? "bg-red-500 text-white ring-8 ring-red-50"
                   : "bg-white border border-zinc-200 text-zinc-400 hover:border-zinc-950 hover:text-zinc-950",

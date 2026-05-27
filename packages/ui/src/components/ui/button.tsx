@@ -5,20 +5,20 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex min-h-6 min-w-6 items-center justify-center gap-2 whitespace-nowrap rounded-md border text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex min-h-6 min-w-6 items-center justify-center gap-2 whitespace-nowrap rounded-md border text-sm font-medium transition-colors focus-visible:outline-none focus-visible:border-foreground disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "border-border bg-primary text-primary-foreground shadow hover:bg-primary/90",
+        default: "border-border bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:bg-primary/90",
         destructive:
-          "border-transparent bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/90 focus-visible:bg-destructive/90",
         outline:
-          "border-border text-foreground shadow-sm hover:bg-accent hover:text-accent-foreground",
+          "border-border text-foreground hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground",
         secondary:
-          "border-transparent bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
+          "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80 focus-visible:bg-secondary/80",
         ghost:
-          "border-transparent bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground",
-        link: "border-transparent bg-transparent text-foreground underline-offset-4 hover:text-secondary-foreground hover:underline",
+          "border-transparent bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground",
+        link: "border-transparent bg-transparent text-foreground underline-offset-4 hover:text-secondary-foreground hover:underline focus-visible:bg-accent/25",
       },
       size: {
         default: "h-9 px-4 py-2",

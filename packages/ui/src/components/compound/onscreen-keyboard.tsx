@@ -1,5 +1,7 @@
 "use client";
 
+import { cva } from "class-variance-authority";
+
 import { cn } from "../../lib/utils";
 
 export type LetterState = "absent" | "correct" | "present";
@@ -20,19 +22,31 @@ export interface OnscreenKeyboardProps {
 
 const ROWS = ["QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"] as const;
 
-const STATE_KEY_CLASSES: Record<LetterState, string> = {
-  absent: "border-border bg-muted text-muted-foreground",
-  present: "border-amber-300 bg-amber-100 text-amber-950",
-  correct: "border-emerald-300 bg-emerald-100 text-emerald-950",
-};
-
-const INACTIVE_KEY = "border-border bg-background text-foreground hover:bg-muted";
-
-const KEY_BASE =
-  "flex h-10 w-8 items-center justify-center rounded border text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50";
-
-const ACTION_KEY =
-  "flex h-10 items-center justify-center rounded border border-border bg-muted px-2 text-xs font-medium text-foreground transition-colors hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-50";
+const keyboardKeyVariants = cva(
+  cn(
+    "flex items-center justify-center rounded border font-medium transition-colors",
+    "disabled:cursor-not-allowed disabled:opacity-50 min-w-10",
+  ),
+  {
+    variants: {
+      kind: {
+        letter: "h-10 text-sm",
+        action: "h-10 px-2 text-xs",
+      },
+      state: {
+        inactive: "border-border bg-background text-foreground hover:bg-muted",
+        absent: "border-border bg-muted text-muted-foreground",
+        present: "border-amber-300 bg-amber-100 text-amber-950",
+        correct: "border-emerald-300 bg-emerald-100 text-emerald-950",
+        action: "border-border bg-muted text-foreground hover:bg-secondary",
+      },
+    },
+    defaultVariants: {
+      kind: "letter",
+      state: "inactive",
+    },
+  },
+);
 
 export function OnscreenKeyboard({
   letterStates = {},
@@ -47,7 +61,12 @@ export function OnscreenKeyboard({
       {ROWS.map((row, i) => (
         <div key={row} className="flex justify-center gap-1">
           {i === 2 && (
-            <button className={ACTION_KEY} disabled={disabled} onClick={onEnter} type="button">
+            <button
+              className={cn(keyboardKeyVariants({ kind: "action", state: "action" }))}
+              disabled={disabled}
+              onClick={onEnter}
+              type="button"
+            >
               Enter
             </button>
           )}
@@ -55,8 +74,7 @@ export function OnscreenKeyboard({
             <button
               key={letter}
               className={cn(
-                KEY_BASE,
-                letterStates[letter] ? STATE_KEY_CLASSES[letterStates[letter]] : INACTIVE_KEY,
+                keyboardKeyVariants({ kind: "letter", state: letterStates[letter] ?? "inactive" }),
               )}
               disabled={disabled}
               onClick={() => onLetter(letter)}
@@ -66,7 +84,12 @@ export function OnscreenKeyboard({
             </button>
           ))}
           {i === 2 && (
-            <button className={ACTION_KEY} disabled={disabled} onClick={onBackspace} type="button">
+            <button
+              className={cn(keyboardKeyVariants({ kind: "action", state: "action" }))}
+              disabled={disabled}
+              onClick={onBackspace}
+              type="button"
+            >
               ⌫
             </button>
           )}

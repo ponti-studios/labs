@@ -46,7 +46,7 @@
  * @param {number[][]} a - The n×n matrix
  * @returns {number} - Absolute difference of diagonal sums
  */
-function main(n, a) {
+export function main(n: number, a: number[][]): number {
   // =============================================================================
   // PRIMARY DIAGONAL (↘ - top-left to bottom-right)
   //
@@ -56,7 +56,7 @@ function main(n, a) {
   //   a[1][1] = 5   ← row 1, col 1 (1 === 1)
   //   a[2][2] = -12 ← row 2, col 2 (2 === 2)
   // =============================================================================
-  var diagonal1 = []
+  var diagonal1: number[] = [];
 
   // =============================================================================
   // SECONDARY DIAGONAL (↙ - top-right to bottom-left)
@@ -67,7 +67,7 @@ function main(n, a) {
   //   a[1][1] = 5   ← row 1, col 1 (1 + 1 = 2)
   //   a[2][0] = 10  ← row 2, col 0 (2 + 0 = 2)
   // =============================================================================
-  var diagonal2 = []
+  var diagonal2: number[] = [];
 
   /**
    * Maximum valid index for rows/columns.
@@ -76,7 +76,7 @@ function main(n, a) {
    * - Index n-1 is last element
    * For n=3: indices are 0, 1, 2
    */
-  var maximumCellIndex = n - 1
+  var maximumCellIndex = n - 1;
 
   // =============================================================================
   // COLLECT DIAGONAL ELEMENTS
@@ -94,7 +94,7 @@ function main(n, a) {
     //   i=0: a[0][0] = 11
     //   i=1: a[1][1] = 5
     //   i=2: a[2][2] = -12
-    diagonal1.push(a[i][i])
+    diagonal1.push(a[i][i]);
 
     // SECONDARY DIAGONAL
     // For row i, column is (maximumCellIndex - i)
@@ -104,7 +104,7 @@ function main(n, a) {
     //   i=0: a[0][2-0] = a[0][2] = 4  ← first row, last column
     //   i=1: a[1][2-1] = a[1][1] = 5  ← middle row, middle column
     //   i=2: a[2][2-2] = a[2][0] = 10 ← last row, first column
-    diagonal2.push(a[i][maximumCellIndex - i])
+    diagonal2.push(a[i][maximumCellIndex - i]);
   }
 
   /**
@@ -123,10 +123,10 @@ function main(n, a) {
    * @param {number[]} arr - Array to sum
    * @returns {number} - Sum of all elements
    */
-  function arraySum(arr) {
+  function arraySum(arr: number[]): number {
     return arr.reduce(function (accumulator, currentValue) {
-      return accumulator + currentValue
-    }, 0)
+      return accumulator + currentValue;
+    }, 0);
   }
 
   // =============================================================================
@@ -140,7 +140,7 @@ function main(n, a) {
   //
   // Math.abs() converts negative to positive, positive stays positive
   // =============================================================================
-  return Math.abs(arraySum(diagonal1) - arraySum(diagonal2))
+  return Math.abs(arraySum(diagonal1) - arraySum(diagonal2));
 }
 
 /**
@@ -150,7 +150,7 @@ function main(n, a) {
  * Also handles the center element of odd-sized matrices correctly
  * (it's counted once, not twice).
  */
-function diagonalDifferenceOptimized(matrix) {
+export function diagonalDifferenceOptimized(matrix: number[][]): number {
   const n = matrix.length;
   let primarySum = 0;
   let secondarySum = 0;
@@ -198,7 +198,7 @@ console.log(
     [11, 2, 4],
     [4, 5, 6],
     [10, 8, -12],
-  ])
+  ]),
 );
 // Expected output: 15
 
@@ -209,7 +209,7 @@ console.log(
     [11, 2, 4],
     [4, 5, 6],
     [10, 8, -12],
-  ])
+  ]),
 );
 // Expected output: 15
 
@@ -222,7 +222,7 @@ console.log(
     [9, 10, 11, 12, 13],
     [13, 14, 15, 16, 17],
     [17, 18, 19, 20, 21],
-  ])
+  ]),
 );
 // Primary: 1+6+11+16+21 = 55
 // Secondary: 5+8+11+14+17 = 55

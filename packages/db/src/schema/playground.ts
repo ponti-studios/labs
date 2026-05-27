@@ -1,4 +1,4 @@
-import { integer, pgSchema, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { integer, pgSchema, serial, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 
 const labs = pgSchema("labs");
 
@@ -87,19 +87,9 @@ export const tflCameras = labs.table("tfl_cameras", {
   updatedAt: timestamp("updated_at"),
 });
 
-export const projects = labs.table("projects", {
-  id: serial("id").primaryKey(),
-  userId: text("user_id").notNull(),
-  name: text("name").notNull(),
-  description: text("description"),
-  createdAt: timestamp("created_at"),
-  updatedAt: timestamp("updated_at"),
-});
-
 export const todos = labs.table("todos", {
   id: serial("id").primaryKey(),
   userId: text("user_id").notNull(),
-  projectId: integer("project_id").references(() => projects.id, { onDelete: "cascade" }),
   title: text("title").notNull(),
   start: text("start").notNull(),
   end: text("end").notNull(),
@@ -107,6 +97,38 @@ export const todos = labs.table("todos", {
   createdAt: timestamp("created_at"),
   updatedAt: timestamp("updated_at"),
 });
+
+export const tags = labs.table(
+  "tags",
+  {
+    id: serial("id").primaryKey(),
+    userId: text("user_id").notNull(),
+    name: text("name").notNull(),
+    normalizedName: text("normalized_name").notNull(),
+    color: text("color"),
+    createdAt: timestamp("created_at"),
+    updatedAt: timestamp("updated_at"),
+  },
+  (table) => ({
+    userNormalizedNameIdx: uniqueIndex("tags_user_normalized_name_idx").on(
+      table.userId,
+      table.normalizedName,
+    ),
+  }),
+);
+
+export const todoTags = labs.table(
+  "todo_tags",
+  {
+    id: serial("id").primaryKey(),
+    todoId: integer("todo_id").notNull().references(() => todos.id, { onDelete: "cascade" }),
+    tagId: integer("tag_id").notNull().references(() => tags.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at"),
+  },
+  (table) => ({
+    todoTagIdx: uniqueIndex("todo_tags_todo_id_tag_id_idx").on(table.todoId, table.tagId),
+  }),
+);
 
 export const embeddings = labs.table("embeddings", {
   id: serial("id").primaryKey(),
@@ -121,9 +143,11 @@ export type PlaygroundCovidData = typeof covidData.$inferSelect;
 export type NewPlaygroundCovidData = typeof covidData.$inferInsert;
 export type PlaygroundTflCamera = typeof tflCameras.$inferSelect;
 export type NewPlaygroundTflCamera = typeof tflCameras.$inferInsert;
-export type PlaygroundProject = typeof projects.$inferSelect;
-export type NewPlaygroundProject = typeof projects.$inferInsert;
 export type PlaygroundTodo = typeof todos.$inferSelect;
 export type NewPlaygroundTodo = typeof todos.$inferInsert;
+export type PlaygroundTag = typeof tags.$inferSelect;
+export type NewPlaygroundTag = typeof tags.$inferInsert;
+export type PlaygroundTodoTag = typeof todoTags.$inferSelect;
+export type NewPlaygroundTodoTag = typeof todoTags.$inferInsert;
 export type PlaygroundEmbedding = typeof embeddings.$inferSelect;
 export type NewPlaygroundEmbedding = typeof embeddings.$inferInsert;

@@ -44,16 +44,7 @@
  * P=3 is equilibrium: left=[-1,3,-4], right=[1,-6,2,1] both sum to -2
  * P=7 is equilibrium: left=[-1,3,-4,5,1,-6,2], right=[] both sum to 0
  */
-var array = [
-  -1,
-  3,
-  -4,
-  5,
-  1,
-  -6,
-  2,
-  1
-]
+const array: number[] = [-1, 3, -4, 5, 1, -6, 2, 1];
 
 // =============================================================================
 // NAIVE APPROACH (O(N²)) - DON'T USE FOR LARGE ARRAYS
@@ -74,28 +65,28 @@ var array = [
  * @param {number[]} A - Input array
  * @returns {number} - First equilibrium index found, or -1
  */
-function naiveApproach(A) {
+export function naiveApproach(A: number[]): number {
   for (let p = 0; p < A.length; p++) {
-    let leftSum = 0
-    let rightSum = 0
+    let leftSum = 0;
+    let rightSum = 0;
 
     // Calculate sum of elements before index P
     // These are indices 0 to P-1 (P elements)
     for (let i = 0; i < p; i++) {
-      leftSum += A[i]
+      leftSum += A[i];
     }
 
     // Calculate sum of elements after index P
     // These are indices P+1 to N-1
     for (let i = p + 1; i < A.length; i++) {
-      rightSum += A[i]
+      rightSum += A[i];
     }
 
     if (leftSum === rightSum) {
-      return p
+      return p;
     }
   }
-  return -1
+  return -1;
 }
 
 // =============================================================================
@@ -132,33 +123,33 @@ function naiveApproach(A) {
  * @param {number[]} A - Input array
  * @returns {number} - First equilibrium index, or -1 if none exists
  */
-export function solution(A) {
+export function solution(A: number[]): number {
   // Calculate the total sum of all elements in one pass
   // This represents: left sum + A[P] + right sum for any position P
-  const totalSum = A.reduce((sum, val) => sum + val, 0)
+  const totalSum = A.reduce((sum, val) => sum + val, 0);
 
   // leftSum tracks the sum of all elements we've seen so far
   // (elements at indices 0 to P-1)
-  let leftSum = 0
+  let leftSum = 0;
 
   // Iterate through each index and check if it's an equilibrium point
   for (let p = 0; p < A.length; p++) {
     // Right sum = total sum - left sum - current element
     // This is the sum of all elements AFTER index P
-    const rightSum = totalSum - leftSum - A[p]
+    const rightSum = totalSum - leftSum - A[p];
 
     // Check if current index is equilibrium
     if (leftSum === rightSum) {
-      return p  // Found it! Return immediately (first equilibrium)
+      return p; // Found it! Return immediately (first equilibrium)
     }
 
     // Add current element to leftSum for next iteration
     // After this, leftSum = sum of elements at indices 0 to P
-    leftSum += A[p]
+    leftSum += A[p];
   }
 
   // No equilibrium index found
-  return -1
+  return -1;
 }
 
 /**
@@ -170,55 +161,55 @@ export function solution(A) {
  * @param {number[]} A - Input array
  * @returns {number[]} - Array of all equilibrium indices (empty if none)
  */
-export function solutionFindingAllIndexes(A) {
+export function solutionFindingAllIndexes(A: number[]): number[] {
   // Edge cases: arrays with 0 or 1 elements
   // For single element: left and right sums are both 0, so index 0 is always equilibrium
-  if (A.length === 1) return [0]
+  if (A.length === 1) return [0];
 
   // Empty array has no equilibrium
-  if (A.length === 0) return []
+  if (A.length === 0) return [];
 
-  const totalSum = A.reduce((sum, val) => sum + val, 0)
-  let leftSum = 0
-  const indexes = []
+  const totalSum = A.reduce((sum, val) => sum + val, 0);
+  let leftSum = 0;
+  const indexes: number[] = [];
 
   // Same algorithm as solution(), but collect all matches
   for (let p = 0; p < A.length; p++) {
-    const rightSum = totalSum - leftSum - A[p]
+    const rightSum = totalSum - leftSum - A[p];
 
     if (leftSum === rightSum) {
-      indexes.push(p)
+      indexes.push(p);
     }
 
-    leftSum += A[p]
+    leftSum += A[p];
   }
 
-  return indexes
+  return indexes;
 }
 
 // =============================================================================
 // TESTING
 // =============================================================================
 
-console.log('Test array:', array)
-console.log('First equilibrium index:', solution(array))
+console.log("Test array:", array);
+console.log("First equilibrium index:", solution(array));
 // Expected output: 1 (because sum before 1 = -1, sum after 1 = -1)
 
 // Test additional cases
-const testCases = [
-  { input: [1, 2, 3], expected: null },      // No equilibrium
-  { input: [1], expected: 0 },                // Single element (0 === 0)
+const testCases: Array<{ input: number[]; expected: number | null }> = [
+  { input: [1, 2, 3], expected: null }, // No equilibrium
+  { input: [1], expected: 0 }, // Single element (0 === 0)
   { input: [-1, 3, -4, 5, 1, -6, 2, 1], expected: 1 },
-  { input: [1, 2, 1], expected: 1 },          // [1] === [1]
-  { input: [0, 0, 0], expected: 0 },          // [0] === [0,0]
-]
+  { input: [1, 2, 1], expected: 1 }, // [1] === [1]
+  { input: [0, 0, 0], expected: 0 }, // [0] === [0,0]
+];
 
-console.log('\n--- Testing solution() ---')
+console.log("\n--- Testing solution() ---");
 for (const { input, expected } of testCases) {
-  const result = solution(input)
-  console.log(`Input: [${input}] -> Index: ${result} (expected: ${expected})`)
+  const result = solution(input);
+  console.log(`Input: [${input}] -> Index: ${result} (expected: ${expected})`);
 }
 
-console.log('\n--- Testing solutionFindingAllIndexes() ---')
-console.log(`All indices: [${solutionFindingAllIndexes(array)}]`)
+console.log("\n--- Testing solutionFindingAllIndexes() ---");
+console.log(`All indices: [${solutionFindingAllIndexes(array)}]`);
 // Expected: [1, 3, 7]

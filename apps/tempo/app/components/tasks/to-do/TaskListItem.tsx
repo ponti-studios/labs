@@ -1,6 +1,7 @@
 import { Badge, Button } from "@pontistudios/ui";
 import { motion } from "framer-motion";
 import { Edit, Trash2 } from "lucide-react";
+import { resolveTagColor } from "~/lib/tags";
 import type { TodoItem } from "~/lib/todos";
 import { useUpdateTodo } from "~/lib/todos";
 
@@ -44,14 +45,21 @@ export function TaskListItem({ todo, onDelete, isDeletePending, onEdit }: TaskLi
               <p className={`text-xs text-muted-foreground ${todo.completed ? "line-through" : ""}`}>
                 {todo.start} - {todo.end}
               </p>
-              {todo.projectName && (
-                <div>
-                  <Badge
-                    variant="secondary"
-                    className={`${todo.completed ? "line-through opacity-60" : ""}`}
-                  >
-                    {todo.projectName}
-                  </Badge>
+              {todo.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {todo.tags.map((tag) => (
+                    <Badge
+                      key={tag.id}
+                      variant="outline"
+                      className={`${todo.completed ? "line-through opacity-60" : ""}`}
+                      style={{
+                        borderColor: `${resolveTagColor(tag.color)}66`,
+                        backgroundColor: `${resolveTagColor(tag.color)}1A`,
+                      }}
+                    >
+                      {tag.name}
+                    </Badge>
+                  ))}
                 </div>
               )}
             </div>

@@ -8,7 +8,7 @@
  *              tracking connected components and relationships.
  */
 
-import { strictEqual } from 'assert';
+import { strictEqual } from "assert";
 
 // =============================================================================
 // UNION-FIND / DISJOINT SET UNION (DSU)
@@ -45,11 +45,23 @@ import { strictEqual } from 'assert';
  *
  * This is a basic educational version. Production code should use proper DSU.
  */
-class Graph {
-  constructor() {
-    // The "tree" stores elements and their "group id"
-    // In proper DSU, this would be a parent array
-    this.tree = [];
+type PointTuple = [number, number];
+
+type Edge = [number, number];
+
+type PointLike = Point | PointTuple;
+
+export class Graph {
+  private groups: Record<string, number> = {};
+
+  private points: Point[] = [];
+
+  private getKey(point: PointLike): string {
+    if (point instanceof Point) {
+      return `${point.x},${point.y}`;
+    }
+
+    return `${point[0]},${point[1]}`;
   }
 
   /**
@@ -57,11 +69,12 @@ class Graph {
    *
    * @param {Point} point - Point object with x, y coordinates
    */
-  addPoint(point) {
+  addPoint(point: Point): void {
     // Use stringified coordinates as key
     // e.g., point {x:1, y:2} becomes key "1,2"
-    this.tree[[point.x, point.y]] = this.tree.length;
-    this.tree.push(point);
+    const key = this.getKey(point);
+    this.groups[key] = this.points.length;
+    this.points.push(point);
   }
 
   /**
@@ -73,10 +86,10 @@ class Graph {
    * @param {Point} a - First element (will be the "representative")
    * @param {Point} b - Second element (will be attached to a's set)
    */
-  union(a, b) {
+  union(a: PointLike, b: PointLike): void {
     // Simplified: just copy a's group id to b
     // A proper implementation would find roots first
-    this.tree[b] = this.tree[a];
+    this.groups[this.getKey(b)] = this.groups[this.getKey(a)];
   }
 
   /**
@@ -86,33 +99,29 @@ class Graph {
    * @param {Point} b - Second element
    * @returns {boolean} - true if connected
    */
-  connected(a, b) {
-    return this.tree[b] === this.tree[a];
+  connected(a: PointLike, b: PointLike): boolean {
+    return this.groups[this.getKey(b)] === this.groups[this.getKey(a)];
   }
 }
 
 /**
  * Point constructor function
  */
-function Point(x, y) {
-  if (this instanceof Point) {
-    this.x = x;
-    this.y = y;
-  } else {
-    return new Point(x, y);
-  }
+export class Point {
+  constructor(
+    public x: number,
+    public y: number,
+  ) {}
 }
 
 /**
  * Line segment constructor
  */
-function Segment(p1, p2) {
-  if (this instanceof Segment) {
-    this.p1 = p1;
-    this.p2 = p2;
-  } else {
-    return new Segment(p1, p2);
-  }
+export class Segment {
+  constructor(
+    public p1: Point,
+    public p2: Point,
+  ) {}
 }
 
 // =============================================================================
@@ -121,8 +130,14 @@ function Segment(p1, p2) {
 // This is how a production-quality Union-Find should be implemented.
 // =============================================================================
 
-class UnionFind {
-  constructor(size) {
+export class UnionFind {
+  parent: number[];
+
+  rank: number[];
+
+  numSets: number;
+
+  constructor(size: number) {
     // Parent[i] = parent of i, parent[i] = i means i is a root
     this.parent = [];
     // Rank[i] = upper bound on tree height (for union by rank)
@@ -146,7 +161,7 @@ class UnionFind {
    * @param {number} x - Element to find
    * @returns {number} - Root/set representative
    */
-  find(x) {
+  find(x: number): number {
     if (this.parent[x] !== x) {
       // Path compression: make x point directly to its root
       this.parent[x] = this.find(this.parent[x]);
@@ -163,7 +178,7 @@ class UnionFind {
    * @param {number} a - First element
    * @param {number} b - Second element
    */
-  union(a, b) {
+  union(a: number, b: number): void {
     const rootA = this.find(a);
     const rootB = this.find(b);
 
@@ -191,7 +206,7 @@ class UnionFind {
    * @param {number} b - Second element
    * @returns {boolean} - true if connected
    */
-  connected(a, b) {
+  connected(a: number, b: number): boolean {
     return this.find(a) === this.find(b);
   }
 
@@ -200,7 +215,7 @@ class UnionFind {
    *
    * @returns {number} - Number of connected components
    */
-  getNumSets() {
+  getNumSets(): number {
     return this.numSets;
   }
 }
@@ -228,29 +243,29 @@ const uf = new UnionFind(10);
 
 // Initially, each element is in its own set
 console.log("After initialization:");
-console.log("connected(0, 1):", uf.connected(0, 1));  // false
-console.log("Number of sets:", uf.getNumSets());  // 10
+console.log("connected(0, 1):", uf.connected(0, 1)); // false
+console.log("Number of sets:", uf.getNumSets()); // 10
 
 // Union some elements
 uf.union(0, 1);
 uf.union(2, 3);
 uf.union(4, 5);
 uf.union(6, 7);
-uf.union(0, 2);  // Merge sets containing 0 and 2
+uf.union(0, 2); // Merge sets containing 0 and 2
 
 console.log("\nAfter unions (0-1, 2-3, 4-5, 6-7, 0-2):");
-console.log("connected(0, 1):", uf.connected(0, 1));  // true (in same set)
-console.log("connected(1, 2):", uf.connected(1, 2));  // true (0-1 and 0-2, so 1-2 connected)
-console.log("connected(3, 4):", uf.connected(3, 4));  // false
-console.log("Number of sets:", uf.getNumSets());  // 5 (merged two pairs)
+console.log("connected(0, 1):", uf.connected(0, 1)); // true (in same set)
+console.log("connected(1, 2):", uf.connected(1, 2)); // true (0-1 and 0-2, so 1-2 connected)
+console.log("connected(3, 4):", uf.connected(3, 4)); // false
+console.log("Number of sets:", uf.getNumSets()); // 5 (merged two pairs)
 
 // More unions
 uf.union(8, 9);
-uf.union(0, 8);  // Merge sets containing 0 and 8
+uf.union(0, 8); // Merge sets containing 0 and 8
 
 console.log("\nAfter more unions (8-9, 0-8):");
-console.log("connected(1, 9):", uf.connected(1, 9));  // true (all connected now)
-console.log("Number of sets:", uf.getNumSets());  // 4
+console.log("connected(1, 9):", uf.connected(1, 9)); // true (all connected now)
+console.log("Number of sets:", uf.getNumSets()); // 4
 
 // =============================================================================
 // APPLICATION: CYCLE DETECTION IN GRAPH
@@ -267,7 +282,7 @@ console.log("Number of sets:", uf.getNumSets());  // 4
  * @param {Array<[number, number]>} edges - Array of edges as [u, v] pairs
  * @returns {boolean} - true if cycle would be created
  */
-function wouldCreateCycle(edges) {
+export function wouldCreateCycle(edges: Edge[]): boolean {
   const uf = new UnionFind(edges.length + 1);
 
   for (const [u, v] of edges) {
@@ -282,12 +297,20 @@ function wouldCreateCycle(edges) {
 }
 
 // Example: triangle graph has cycle, path graph doesn't
-const triangleEdges = [[0, 1], [1, 2], [2, 0]];
-const pathEdges = [[0, 1], [1, 2], [2, 3]];
+const triangleEdges: Edge[] = [
+  [0, 1],
+  [1, 2],
+  [2, 0],
+];
+const pathEdges: Edge[] = [
+  [0, 1],
+  [1, 2],
+  [2, 3],
+];
 
 console.log("\n--- Cycle Detection ---");
-console.log("Triangle (has cycle):", wouldCreateCycle(triangleEdges));  // true
-console.log("Path (no cycle):", wouldCreateCycle(pathEdges));  // false
+console.log("Triangle (has cycle):", wouldCreateCycle(triangleEdges)); // true
+console.log("Path (no cycle):", wouldCreateCycle(pathEdges)); // false
 
 // =============================================================================
 // APPLICATION: NUMBER OF CONNECTED COMPONENTS
@@ -300,7 +323,7 @@ console.log("Path (no cycle):", wouldCreateCycle(pathEdges));  // false
  * @param {Array<[number, number]>} edges - Array of edges
  * @returns {number} - Number of connected components
  */
-function countComponents(n, edges) {
+export function countComponents(n: number, edges: Edge[]): number {
   const uf = new UnionFind(n);
 
   for (const [u, v] of edges) {
@@ -311,15 +334,10 @@ function countComponents(n, edges) {
 }
 
 // Example
-const componentsEdges = [[0, 1], [2, 3], [4, 5]];
+const componentsEdges: Edge[] = [
+  [0, 1],
+  [2, 3],
+  [4, 5],
+];
 console.log("\n--- Connected Components ---");
-console.log("Count:", countComponents(6, componentsEdges));  // 3
-
-module.exports = {
-  Graph,
-  Point,
-  Segment,
-  UnionFind,
-  wouldCreateCycle,
-  countComponents
-};
+console.log("Count:", countComponents(6, componentsEdges)); // 3

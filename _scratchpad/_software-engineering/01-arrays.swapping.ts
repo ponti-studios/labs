@@ -28,7 +28,7 @@
  * After swapping 5 and 3: [1, 3, 5, 3, 7] - still not sorted!
  * So this should return false.
  */
-var array = [1, 5, 3, 3, 7]
+const array: number[] = [1, 5, 3, 3, 7];
 
 /**
  * Helper function: Checks if an array is sorted in non-descending order.
@@ -43,20 +43,20 @@ var array = [1, 5, 3, 3, 7]
  * @param {number[]} data - The array to check
  * @returns {boolean} - true if sorted, false otherwise
  */
-const isInOrder = data => {
+export const isInOrder = (data: number[]): boolean => {
   // Loop through all adjacent pairs
   // We go from index 0 to length-2 because we compare element i with i+1
   for (var i = 0; i < data.length - 1; i++) {
     // If we find any pair where the left element is GREATER than the right,
     // the array is not sorted (in non-descending order)
     if (data[i] > data[i + 1]) {
-      return false
+      return false;
     }
   }
 
   // If we made it through the loop without returning false, array is sorted
-  return true
-}
+  return true;
+};
 
 /**
  * Main solution function: Determines if array can be sorted with ONE adjacent swap.
@@ -79,10 +79,10 @@ const isInOrder = data => {
  * @param {number[]} A - Input array to check
  * @returns {boolean} - true if one adjacent swap can sort, false otherwise
  */
-function solution (A) {
+export function solution(A: number[]): boolean {
   // EARLY EXIT: If array is already sorted, return true.
   // Zero swaps needed, and this is valid.
-  if (isInOrder(A)) return true
+  if (isInOrder(A)) return true;
 
   // MAIN LOOP: Find the first inversion (out-of-order adjacent pair)
   //
@@ -91,14 +91,14 @@ function solution (A) {
   for (var i = 1; i < A.length; ++i) {
     // Skip pairs that are in correct order (left <= right)
     // Only process when we find an inversion (left > right)
-    if (A[i - 1] <= A[i]) continue
+    if (A[i - 1] <= A[i]) continue;
 
     // FOUND AN INVERSION at positions (i-1, i)
     // Example: In [1, 5, 3, 3, 7], we find 5 > 3 at positions 1 and 2
 
     // Store the value at the left position of the inversion
     // We'll need this value to find where it should go
-    const x = A[i - 1]
+    const x = A[i - 1];
 
     // BACKWARD SEARCH: Find the leftmost position where x can be placed.
     //
@@ -107,13 +107,13 @@ function solution (A) {
     // - But if there are duplicates of x to the left (A[left-1] === x),
     //   x could move further left past its duplicates
     // - This handles cases like [2, 2, 3, 1] where 3 swaps with the first 2
-    let left = i - 1
+    let left = i - 1;
 
     // Move left past any consecutive duplicates of x.
     // Each duplicate that equals x can be swapped, so x can move past them.
     // Continue while: we haven't hit the start AND the previous element equals x
     while (left - 1 >= 0 && A[left - 1] === x) {
-      --left
+      --left;
     }
     // After loop: left points to the leftmost position x could occupy
 
@@ -127,19 +127,21 @@ function solution (A) {
     for (++i; i < A.length; ++i) {
       // When we find an element >= x, we've found where x's right position is
       // The previous element (i-1) is the element that should swap with x
-      if (A[i] >= x) break
+      if (A[i] >= x) break;
     }
     // After loop: i-1 is the rightmost position that should swap with x
 
     // PERFORM THE SWAP: Exchange x with the element at position i-1
     // This puts x in its correct sorted position
-    A[left] = A[i - 1]  // Place the smaller element (originally at i) at left
-    A[i - 1] = x        // Place x at position i-1
+    A[left] = A[i - 1]; // Place the smaller element (originally at i) at left
+    A[i - 1] = x; // Place x at position i-1
 
     // VERIFY: Check if the array is now completely sorted
     // This is the final verification - one swap was made, array must be sorted
-    return isInOrder(A)
+    return isInOrder(A);
   }
+
+  return true;
 }
 
 /**
@@ -155,7 +157,7 @@ function solution (A) {
  *
  * Wait, this IS true for our example! The array CAN be sorted with one swap.
  */
-console.log(solution(array))
+console.log(solution(array));
 
 /**
  * ADDITIONAL TEST CASES to consider:

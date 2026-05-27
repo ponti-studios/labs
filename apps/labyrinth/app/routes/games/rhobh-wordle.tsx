@@ -198,12 +198,10 @@ export default function RhobhWordleRoute() {
 
   return (
     <div className="py-8">
-      <div className="mx-auto max-w-sm space-y-5 px-4">
+      <div className="space-y-5 px-4">
         {/* Header */}
         <header className="flex items-center justify-between border-b border-border pb-4">
-          <div>
-            <h1>Wordzi - RHOBH</h1>
-          </div>
+          <h1 className="text-2xl">Wordzi - RHOBH</h1>
           <div className="flex items-center gap-2">
             <button
               className="btn-secondary px-3 py-1.5 text-xs"

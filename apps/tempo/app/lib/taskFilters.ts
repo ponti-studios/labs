@@ -1,24 +1,17 @@
+import { normalizeTagName } from "./tags";
 import type { TodoItem } from "./todos";
 
-export function slugifyProjectName(name: string): string {
-  return name
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
 export interface TaskFilterState {
-  project: string;
+  tag: string;
   search: string;
 }
 
 export function parseTaskFilterInput(input: string): TaskFilterState {
-  const projectTokens = Array.from(input.matchAll(/#([a-z0-9-]+)/gi));
-  const project = projectTokens.at(-1)?.[1]?.toLowerCase() ?? "";
+  const tagTokens = Array.from(input.matchAll(/#([a-z0-9-]+)/gi));
+  const tag = tagTokens.at(-1)?.[1]?.toLowerCase() ?? "";
   const search = input.replace(/#[a-z0-9-]+/gi, " ").replace(/\s+/g, " ").trim();
 
-  return { project, search };
+  return { tag, search };
 }
 
 export function buildTaskFilterInput(filters: TaskFilterState): string {
@@ -28,8 +21,8 @@ export function buildTaskFilterInput(filters: TaskFilterState): string {
     parts.push(filters.search);
   }
 
-  if (filters.project) {
-    parts.push(`#${filters.project}`);
+  if (filters.tag) {
+    parts.push(`#${filters.tag}`);
   }
 
   return parts.join(" ").trim();
@@ -40,14 +33,14 @@ export function filterTodos(
   filters: TaskFilterState,
 ): TodoItem[] {
   const normalizedSearch = filters.search.trim().toLowerCase();
-  const normalizedProject = filters.project.trim().toLowerCase();
+  const normalizedTag = filters.tag.trim().toLowerCase();
 
   return todos.filter((todo) => {
     const matchesSearch = !normalizedSearch
       || todo.title.toLowerCase().includes(normalizedSearch);
-    const projectSlug = todo.projectName ? slugifyProjectName(todo.projectName) : "";
-    const matchesProject = !normalizedProject || projectSlug === normalizedProject;
+    const matchesTag = !normalizedTag
+      || todo.tags.some((tag) => normalizeTagName(tag.name) === normalizedTag);
 
-    return matchesSearch && matchesProject;
+    return matchesSearch && matchesTag;
   });
 }
