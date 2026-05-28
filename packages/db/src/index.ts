@@ -35,6 +35,8 @@ export type {
   NewPlaygroundTflCamera,
   PlaygroundCovidData,
   NewPlaygroundCovidData,
+  PlaygroundRhobhDailyPuzzle,
+  NewPlaygroundRhobhDailyPuzzle,
 } from "./schema/playground";
 
 export type {
@@ -62,6 +64,7 @@ export {
   tags,
   todoTags,
   embeddings,
+  rhobhDailyPuzzles,
   trackers,
   votes,
   users,

@@ -13,7 +13,15 @@ import {
   relationshipFriendVotes,
   relationshipMetricsDaily,
 } from "./schema/relationships";
-import { covidData, tflCameras, todos, tags, todoTags, embeddings } from "./schema/playground";
+import {
+  covidData,
+  tflCameras,
+  todos,
+  tags,
+  todoTags,
+  embeddings,
+  rhobhDailyPuzzles,
+} from "./schema/playground";
 import { trackers, votes } from "./schema/social";
 import { users, messages } from "./schema/kuma";
 
@@ -34,6 +42,7 @@ export interface Database {
   tags: typeof tags;
   todo_tags: typeof todoTags;
   embeddings: typeof embeddings;
+  rhobh_daily_puzzles: typeof rhobhDailyPuzzles;
   trackers: typeof trackers;
   votes: typeof votes;
   users: typeof users;

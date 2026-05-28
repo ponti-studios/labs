@@ -143,6 +143,36 @@ export const embeddings = labs.table("embeddings", {
   createdAt: timestamp("created_at"),
 });
 
+export const rhobhDailyPuzzles = labs.table(
+  "rhobh_daily_puzzles",
+  {
+    id: serial("id").primaryKey(),
+    dateUtc: text("date_utc").notNull(),
+    franchise: text("franchise").notNull(),
+    answer: text("answer").notNull(),
+    answerType: text("answer_type").notNull(),
+    normalizedAnswer: text("normalized_answer").notNull(),
+    clue: text("clue").notNull(),
+    detail: text("detail").notNull(),
+    role: text("role").notNull(),
+    newsMode: text("news_mode").notNull(),
+    sourceUrls: text("source_urls").notNull(),
+    sourceTitles: text("source_titles").notNull(),
+    sourcePublishedAt: text("source_published_at").notNull(),
+    sourceSummary: text("source_summary").notNull(),
+    generationStatus: text("generation_status").notNull(),
+    validationStatus: text("validation_status").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    franchiseDateIdx: uniqueIndex("rhobh_daily_puzzles_franchise_date_idx").on(
+      table.franchise,
+      table.dateUtc,
+    ),
+  }),
+);
+
 export type PlaygroundCovidData = typeof covidData.$inferSelect;
 export type NewPlaygroundCovidData = typeof covidData.$inferInsert;
 export type PlaygroundTflCamera = typeof tflCameras.$inferSelect;
@@ -155,3 +185,5 @@ export type PlaygroundTodoTag = typeof todoTags.$inferSelect;
 export type NewPlaygroundTodoTag = typeof todoTags.$inferInsert;
 export type PlaygroundEmbedding = typeof embeddings.$inferSelect;
 export type NewPlaygroundEmbedding = typeof embeddings.$inferInsert;
+export type PlaygroundRhobhDailyPuzzle = typeof rhobhDailyPuzzles.$inferSelect;
+export type NewPlaygroundRhobhDailyPuzzle = typeof rhobhDailyPuzzles.$inferInsert;

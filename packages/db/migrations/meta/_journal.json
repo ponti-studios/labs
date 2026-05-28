@@ -15,6 +15,13 @@
       "when": 1779902408755,
       "tag": "0001_tags_first_metadata",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1780000000000,
+      "tag": "0002_rhobh_daily_puzzles",
+      "breakpoints": true
     }
   ]
 }
