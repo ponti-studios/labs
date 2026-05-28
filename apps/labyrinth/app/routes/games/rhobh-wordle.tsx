@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useFetcher } from "react-router";
 
 import { Button, OnscreenKeyboard, type LetterState } from "@pontistudios/ui";
 import {
@@ -9,6 +10,8 @@ import {
   MAX_GUESSES,
   normalizeGuess,
 } from "~/lib/rhobh-wordle";
+import { shareRhobhResult } from "~/lib/rhobh-wordle-share";
+import { cn } from "~/lib/utils";
 
 const STORAGE_PREFIX = "labyrinth:rhobh-wordle:";
 
@@ -20,7 +23,6 @@ const TILE_STATE_CLASSES: Record<LetterState, string> = {
 
 const EMPTY_TILE = "border-border bg-background text-foreground";
 const TILE_BASE = "h-12 w-12 rounded border text-lg font-bold uppercase transition-colors";
-
 interface PersistedGameState {
   puzzleKey: string;
   guesses: string[];
@@ -84,6 +86,10 @@ export default function RhobhWordleRoute() {
   const [isShaking, setIsShaking] = useState(false);
   const shakeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const wordValidator = useFetcher<{ valid: boolean }>();
+  const pendingGuessRef = useRef<string | null>(null);
+  const isValidationPending = wordValidator.state !== "idle";
+
   const cellRefs = useRef<Array<HTMLInputElement | null>>([]);
 
   const keyboardState = useMemo(
@@ -92,6 +98,7 @@ export default function RhobhWordleRoute() {
   );
   const isSolved = guesses.at(-1) === puzzle.answer;
   const isGameOver = isSolved || guesses.length >= MAX_GUESSES;
+  const shouldShowClue = !isGameOver && guesses.length === MAX_GUESSES - 1;
 
   // Keep focus on the next empty cell while the game is active
   useEffect(() => {
@@ -137,26 +144,33 @@ export default function RhobhWordleRoute() {
 
   const addLetter = useCallback(
     (value: string) => {
-      if (isGameOver) return;
+      if (isGameOver || isValidationPending) return;
       setCurrentGuess((prev) => (prev.length >= answerLength ? prev : prev + value));
     },
-    [answerLength, isGameOver],
+    [answerLength, isGameOver, isValidationPending],
   );
 
   const removeLetter = useCallback(() => {
-    if (isGameOver) return;
+    if (isGameOver || isValidationPending) return;
     setCurrentGuess((prev) => prev.slice(0, -1));
-  }, [isGameOver]);
+  }, [isGameOver, isValidationPending]);
 
-  const showError = useCallback((message: string) => {
+  const showToast = useCallback((message: string, shake = false) => {
     if (shakeTimerRef.current) clearTimeout(shakeTimerRef.current);
     setErrorMessage(message);
-    setIsShaking(true);
+    setIsShaking(shake);
     shakeTimerRef.current = setTimeout(() => {
       setIsShaking(false);
       setErrorMessage(null);
     }, 700);
   }, []);
+
+  const showError = useCallback(
+    (message: string) => {
+      showToast(message, true);
+    },
+    [showToast],
+  );
 
   useEffect(() => {
     return () => {
@@ -165,7 +179,7 @@ export default function RhobhWordleRoute() {
   }, []);
 
   const submitGuess = useCallback(() => {
-    if (isGameOver) return;
+    if (isGameOver || isValidationPending) return;
 
     const guess = normalizeGuess(currentGuess);
 
@@ -179,9 +193,34 @@ export default function RhobhWordleRoute() {
       return;
     }
 
-    setGuesses([...guesses, guess]);
-    setCurrentGuess("");
-  }, [answerLength, currentGuess, guesses, isGameOver, showError]);
+    // Fire server-side word validation; result handled in the effect below.
+    pendingGuessRef.current = guess;
+    wordValidator.submit(
+      { word: guess },
+      { method: "POST", action: "/api/words/validate", encType: "application/json" },
+    );
+  }, [
+    answerLength,
+    currentGuess,
+    guesses,
+    isGameOver,
+    isValidationPending,
+    showError,
+    wordValidator,
+  ]);
+
+  // Commit or reject the guess once the server responds.
+  useEffect(() => {
+    if (wordValidator.state !== "idle" || !wordValidator.data || !pendingGuessRef.current) return;
+    const guess = pendingGuessRef.current;
+    pendingGuessRef.current = null;
+    if (wordValidator.data.valid) {
+      setGuesses((prev) => [...prev, guess]);
+      setCurrentGuess("");
+    } else {
+      showError("Not in word list");
+    }
+  }, [wordValidator.state, wordValidator.data, showError]);
 
   const handleCellKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -217,9 +256,33 @@ export default function RhobhWordleRoute() {
     cellRefs.current[idx]?.focus();
   }, [currentGuess.length, answerLength, isGameOver]);
 
+  const handleShare = useCallback(async () => {
+    const result = await shareRhobhResult({
+      answer: puzzle.answer,
+      guesses,
+      isSolved,
+      copyToClipboard: async (text) => {
+        if (!navigator.clipboard?.writeText) {
+          throw new Error("Clipboard unavailable");
+        }
+
+        await navigator.clipboard.writeText(text);
+      },
+      promptCopy: (message, text) => {
+        window.prompt(message, text);
+      },
+    });
+
+    if (result.method === "clipboard") {
+      showToast("Copied!");
+    } else {
+      showToast("Share text ready");
+    }
+  }, [guesses, isSolved, puzzle.answer, showToast]);
+
   return (
     <>
-    <style>{`
+      <style>{`
       @keyframes rhobh-shake {
         0%, 100% { transform: translateX(0); }
         20%, 60% { transform: translateX(-6px); }
@@ -227,127 +290,145 @@ export default function RhobhWordleRoute() {
       }
       .row-shake { animation: rhobh-shake 0.4s ease; }
     `}</style>
-    <div className="py-8">
-      <div className="space-y-5 px-4">
-        {/* Header */}
-        <header className="flex items-center justify-between border-b border-border pb-4">
-          <h1 className="text-2xl">Wordzi - RHOBH</h1>
-          <div className="flex items-center gap-2">
-            <Button
-              className="px-3 py-1.5"
-              onClick={() => setShowInstructions((v) => !v)}
-              size="sm"
-              type="button"
-              variant="secondary"
-            >
-              {showInstructions ? "Hide rules" : "How to play"}
-            </Button>
-          </div>
-        </header>
-
-        {/* Instructions (collapsed by default) */}
-        {showInstructions && (
-          <div className="space-y-2 border border-border bg-background/40 p-4 text-sm leading-6 text-muted-foreground">
-            <p>Guess a Beverly Hills cast or friend name in 6 tries.</p>
-            <p>
-              <span className="font-medium text-emerald-700">Green</span> = right letter, right
-              place. <span className="font-medium text-amber-700">Gold</span> = right letter, wrong
-              place.
-            </p>
-          </div>
-        )}
-
-        {/* Error toast */}
-        {errorMessage && (
-          <div className="flex justify-center">
-            <p className="rounded bg-foreground px-3 py-1.5 text-sm font-medium text-background">
-              {errorMessage}
-            </p>
-          </div>
-        )}
-
-        {/* Board */}
-        <div className="mx-auto w-fit space-y-1">
-          {Array.from({ length: MAX_GUESSES }).map((_, rowIndex) => {
-            const isCurrentRow = rowIndex === guesses.length && !isGameOver;
-            const guess = guesses[rowIndex] ?? "";
-            const states = guess ? evaluateGuess(puzzle.answer, guess) : [];
-
-            return (
-              <div
-                key={`row-${rowIndex}`}
-                className={["flex gap-1", isCurrentRow && isShaking ? "row-shake" : ""].join(" ")}
+      <div className="py-8">
+        <div className="space-y-5 px-4">
+          {/* Header */}
+          <header className="flex items-center justify-between border-b border-border pb-4">
+            <h1 className="text-2xl">Wordzi - RHOBH</h1>
+            <div className="flex items-center gap-2">
+              <Button
+                className="px-3 py-1.5"
+                onClick={() => setShowInstructions((v) => !v)}
+                size="sm"
+                type="button"
+                variant="secondary"
               >
-                {Array.from({ length: answerLength }).map((_, cellIndex) => {
-                  if (isCurrentRow) {
-                    return (
-                      <input
-                        key={`cell-${rowIndex}-${cellIndex}`}
-                        ref={(el) => {
-                          cellRefs.current[cellIndex] = el;
-                        }}
-                        aria-label={`Letter ${cellIndex + 1}`}
-                        autoCapitalize="characters"
-                        autoComplete="off"
-                        className={[
-                          TILE_BASE,
-                          "text-center outline-none caret-transparent",
-                          EMPTY_TILE,
-                        ].join(" ")}
-                        inputMode="text"
-                        maxLength={1}
-                        type="text"
-                        value={currentGuess[cellIndex] ?? ""}
-                        onChange={handleCellChange}
-                        onFocus={redirectToActiveCell}
-                        onKeyDown={handleCellKeyDown}
-                      />
-                    );
-                  }
+                {showInstructions ? "Hide rules" : "How to play"}
+              </Button>
+            </div>
+          </header>
 
-                  return (
-                    <div
-                      key={`cell-${rowIndex}-${cellIndex}`}
-                      className={[
-                        TILE_BASE,
-                        "flex items-center justify-center",
-                        getTileClasses(states[cellIndex]),
-                      ].join(" ")}
-                    >
-                      {guess[cellIndex]?.trim() ?? ""}
-                    </div>
-                  );
-                })}
-              </div>
-            );
-          })}
-        </div>
-
-        {/* On-screen keyboard */}
-        <OnscreenKeyboard
-          disabled={isGameOver}
-          letterStates={keyboardState}
-          onBackspace={removeLetter}
-          onEnter={submitGuess}
-          onLetter={addLetter}
-        />
-
-        {/* Post-game fun fact */}
-        {isGameOver && (
-          <div className="space-y-2 border-t border-border pt-4">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-                {isSolved ? "Today's answer" : "The answer was"}
-              </p>
-              <p className="mt-1 text-2xl font-bold tracking-tight text-foreground">
-                {puzzle.answer}
+          {/* Instructions (collapsed by default) */}
+          {showInstructions && (
+            <div className="space-y-2 border border-border bg-background/40 p-4 text-sm leading-6 text-muted-foreground">
+              <p>Guess a Beverly Hills cast or friend name in 6 tries.</p>
+              <p>
+                <span className="font-medium text-emerald-700">Green</span> = right letter, right
+                place. <span className="font-medium text-amber-700">Gold</span> = right letter,
+                wrong place.
               </p>
             </div>
-            <p className="text-sm leading-6 text-muted-foreground">{puzzle.detail}</p>
+          )}
+
+          {/* Error toast */}
+          {errorMessage && (
+            <div className="flex justify-center">
+              <p className="rounded bg-foreground px-3 py-1.5 text-sm font-medium text-background">
+                {errorMessage}
+              </p>
+            </div>
+          )}
+
+          {shouldShowClue && (
+            <div className="rounded border border-amber-300 bg-amber-50 p-4 text-sm leading-6 text-amber-950">
+              <p className="text-xs font-medium uppercase tracking-[0.2em] text-amber-800">
+                Final guess clue
+              </p>
+              <p className="mt-2">{puzzle.clue}</p>
+            </div>
+          )}
+
+          {/* Board */}
+          <div className="mx-auto w-fit space-y-1">
+            {Array.from({ length: MAX_GUESSES }).map((_, rowIndex) => {
+              const isCurrentRow = rowIndex === guesses.length && !isGameOver;
+              const guess = guesses[rowIndex] ?? "";
+              const states = guess ? evaluateGuess(puzzle.answer, guess) : [];
+
+              return (
+                <div
+                  key={`row-${rowIndex}`}
+                  className={cn(
+                    "flex gap-1 transition-opacity",
+                    isCurrentRow && isShaking && "row-shake",
+                    isCurrentRow && isValidationPending && "opacity-60",
+                  )}
+                >
+                  {Array.from({ length: answerLength }).map((_, cellIndex) => {
+                    if (isCurrentRow) {
+                      return (
+                        <input
+                          key={`cell-${rowIndex}-${cellIndex}`}
+                          ref={(el) => {
+                            cellRefs.current[cellIndex] = el;
+                          }}
+                          aria-label={`Letter ${cellIndex + 1}`}
+                          autoCapitalize="characters"
+                          autoComplete="off"
+                          className={cn(
+                            TILE_BASE,
+                            "text-center outline-none caret-transparent",
+                            EMPTY_TILE,
+                          )}
+                          inputMode="text"
+                          maxLength={1}
+                          type="text"
+                          value={currentGuess[cellIndex] ?? ""}
+                          onChange={handleCellChange}
+                          onFocus={redirectToActiveCell}
+                          onKeyDown={handleCellKeyDown}
+                        />
+                      );
+                    }
+
+                    return (
+                      <div
+                        key={`cell-${rowIndex}-${cellIndex}`}
+                        className={cn(
+                          TILE_BASE,
+                          "flex items-center justify-center",
+                          getTileClasses(states[cellIndex]),
+                        )}
+                      >
+                        {guess[cellIndex]?.trim() ?? ""}
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })}
           </div>
-        )}
+
+          {/* On-screen keyboard */}
+          <OnscreenKeyboard
+            disabled={isGameOver || isValidationPending}
+            letterStates={keyboardState}
+            onBackspace={removeLetter}
+            onEnter={submitGuess}
+            onLetter={addLetter}
+          />
+
+          {/* Post-game fun fact */}
+          {isGameOver && (
+            <div className="space-y-2 border-t border-border pt-4">
+              <div>
+                <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+                  {isSolved ? "Today's answer" : "The answer was"}
+                </p>
+                <p className="mt-1 text-2xl font-bold tracking-tight text-foreground">
+                  {puzzle.answer}
+                </p>
+              </div>
+              <p className="text-sm leading-6 text-muted-foreground">{puzzle.detail}</p>
+              <div className="pt-2">
+                <Button onClick={handleShare} type="button" variant="secondary">
+                  Share result
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
     </>
   );
 }
