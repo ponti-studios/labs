@@ -1,50 +1,89 @@
-import { useState } from "react";
+import { useState, type JSX } from "react";
 
-function feeOrUpfront(numOfPayments, basePayment, percentage, upfront, payments) {
-  const withPercentage = payments.reduce((a, p) => {
-    const pPercent = p * (percentage / 100);
-    return a + (pPercent >= basePayment ? pPercent : basePayment);
-  }, 0);
+type ActiveTab = "bank" | "prime";
+type FeeChoice = "upfront" | "fee";
 
-  return upfront < withPercentage ? "upfront" : "fee";
+interface BankResult {
+  n: number;
+  k: number;
+  x: number;
+  d: number;
+  p: number[];
+  result: FeeChoice;
 }
 
-export default function GoldmanSachs() {
-  const [activeTab, setActiveTab] = useState("bank");
-  const [bankResult, setBankResult] = useState(null);
-  const [primeResult, setPrimeResult] = useState([]);
+function feeOrUpfront(
+  numOfPayments: number,
+  basePayment: number,
+  percentage: number,
+  upfront: number,
+  payments: number[],
+): FeeChoice {
+  const feeTotal = payments.slice(0, numOfPayments).reduce((total, payment) => {
+    const paymentPercentage = payment * (percentage / 100);
+    return total + (paymentPercentage >= basePayment ? paymentPercentage : basePayment);
+  }, 0);
 
-  const runBankExample = () => {
-    const n = 4,
-      k = 2,
-      x = 10,
-      d = 100;
-    const p = [100, 200, 300, 400];
-    const result = feeOrUpfront(n, k, x, d, p);
-    setBankResult({ n, k, x, d, p, result });
+  return upfront < feeTotal ? "upfront" : "fee";
+}
+
+function isPrime(value: number): boolean {
+  if (value < 2) {
+    return false;
+  }
+
+  for (let divisor = 2; divisor <= Math.sqrt(value); divisor += 1) {
+    if (value % divisor === 0) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function* countdownGenerator(start: number): Generator<number, void, void> {
+  for (let value = start - 1; value > 1; value -= 1) {
+    if (isPrime(value)) {
+      yield value;
+    }
+  }
+}
+
+export default function GoldmanSachs(): JSX.Element {
+  const [activeTab, setActiveTab] = useState<ActiveTab>("bank");
+  const [bankResult, setBankResult] = useState<BankResult | null>(null);
+  const [primeResult, setPrimeResult] = useState<number[]>([]);
+
+  const runBankExample = (): void => {
+    const bankExample = {
+      n: 4,
+      k: 2,
+      x: 10,
+      d: 100,
+      p: [100, 200, 300, 400],
+    };
+
+    setBankResult({
+      ...bankExample,
+      result: feeOrUpfront(
+        bankExample.n,
+        bankExample.k,
+        bankExample.x,
+        bankExample.d,
+        bankExample.p,
+      ),
+    });
   };
 
-  const runPrimeGenerator = () => {
-    const isPrime = (n) => {
-      for (let i = n - 1; i > 1; i--) {
-        if (n % i === 0) return false;
-      }
-      return true;
-    };
+  const runPrimeGenerator = (): void => {
+    const generator = countdownGenerator(10);
+    const generatedPrimes: number[] = [];
 
-    const countdownGenerator = function* (n) {
-      for (let i = n - 1; i > 1; i--) {
-        if (isPrime(i)) yield i;
-      }
-    };
-
-    const gen = countdownGenerator(10);
-    const results = [];
-    let val;
-    while ((val = gen.next().value) !== undefined) {
-      results.push(val);
+    for (const prime of generator) {
+      generatedPrimes.push(prime);
     }
-    setPrimeResult(results);
+
+    setPrimeResult(generatedPrimes);
   };
 
   return (
@@ -93,13 +132,15 @@ export default function GoldmanSachs() {
             Run Algorithm
           </button>
 
-          {bankResult && (
+          {bankResult !== null && (
             <div style={{ marginTop: "1rem" }}>
               <p>
                 <strong>Result:</strong>{" "}
                 {bankResult.result === "upfront" ? "Take the upfront!" : "Pay fee based"}
               </p>
-              <p>Calculate: For each payment, charge max(basePayment, payment * {bankResult.x}%)</p>
+              <p>
+                Calculate: For each payment, charge max(basePayment, payment * {bankResult.x}%)
+              </p>
               <p>Compare total fees against upfront of {bankResult.d}</p>
             </div>
           )}

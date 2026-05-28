@@ -1,6 +1,28 @@
-import { useState } from "react";
+import { useState, type ChangeEvent, type JSX } from "react";
 
-const initialAccruals = [
+interface Accrual {
+  ACCRUAL: number;
+  BALANCE: number;
+  DATE: string;
+  RATE: number;
+}
+
+interface Statement {
+  AMENDMENT: number;
+  END_DATE: string;
+  START_DATE: string;
+  TOTAL: number;
+}
+
+interface AccrualDraft {
+  BALANCE: string;
+  DATE: string;
+  RATE: string;
+}
+
+type SelectedTab = "accruals" | "statements";
+
+const initialAccruals: Accrual[] = [
   { DATE: "2017-01-01", RATE: 0.5, BALANCE: 10000, ACCRUAL: 5000 },
   { DATE: "2017-01-02", RATE: 0.5, BALANCE: 12000, ACCRUAL: 6000 },
   { DATE: "2017-01-03", RATE: 0.5, BALANCE: 0, ACCRUAL: 0 },
@@ -8,35 +30,45 @@ const initialAccruals = [
   { DATE: "2017-01-05", RATE: 0.5, BALANCE: 10000, ACCRUAL: 5000 },
 ];
 
-const initialStatements = [
+const initialStatements: Statement[] = [
   { AMENDMENT: -300, START_DATE: "2017-01-01", END_DATE: "2017-01-31", TOTAL: 18200 },
   { AMENDMENT: 0, START_DATE: "2017-02-01", END_DATE: "2017-02-28", TOTAL: 0 },
   { AMENDMENT: 555.55, START_DATE: "2017-01-03", END_DATE: "2017-03-31", TOTAL: 555.55 },
 ];
 
-function getAccrual(balance, rate) {
+function getAccrual(balance: number, rate: number): number {
   return Math.floor(balance * rate);
 }
 
-export default function CloudMargin() {
-  const [accruals, setAccruals] = useState(initialAccruals);
-  const [selectedTab, setSelectedTab] = useState("accruals");
-  const [newAccrual, setNewAccrual] = useState({ DATE: "", RATE: "", BALANCE: "" });
+function createEmptyAccrualDraft(): AccrualDraft {
+  return { DATE: "", RATE: "", BALANCE: "" };
+}
 
-  const addAccrual = () => {
-    const balance = parseFloat(newAccrual.BALANCE) || 0;
-    const rate = parseFloat(newAccrual.RATE) || 0;
-    const accrual = {
+export default function CloudMargin(): JSX.Element {
+  const [accruals, setAccruals] = useState<Accrual[]>(initialAccruals);
+  const [selectedTab, setSelectedTab] = useState<SelectedTab>("accruals");
+  const [newAccrual, setNewAccrual] = useState<AccrualDraft>(createEmptyAccrualDraft);
+
+  const addAccrual = (): void => {
+    const balance = Number.parseFloat(newAccrual.BALANCE) || 0;
+    const rate = Number.parseFloat(newAccrual.RATE) || 0;
+    const accrual: Accrual = {
       DATE: newAccrual.DATE,
       RATE: rate,
       BALANCE: balance,
       ACCRUAL: getAccrual(balance, rate),
     };
+
     setAccruals([...accruals, accrual]);
-    setNewAccrual({ DATE: "", RATE: "", BALANCE: "" });
+    setNewAccrual(createEmptyAccrualDraft());
   };
 
-  const totalAccruals = accruals.reduce((sum, a) => sum + a.ACCRUAL, 0);
+  const handleDraftChange =
+    (field: keyof AccrualDraft) => (event: ChangeEvent<HTMLInputElement>): void => {
+      setNewAccrual((previousDraft) => ({ ...previousDraft, [field]: event.target.value }));
+    };
+
+  const totalAccruals = accruals.reduce((sum, accrual) => sum + accrual.ACCRUAL, 0);
 
   return (
     <div>
@@ -88,7 +120,7 @@ export default function CloudMargin() {
                 <input
                   type="date"
                   value={newAccrual.DATE}
-                  onChange={(e) => setNewAccrual((prev) => ({ ...prev, DATE: e.target.value }))}
+                  onChange={handleDraftChange("DATE")}
                   style={{
                     width: "100%",
                     padding: "0.5rem",
@@ -106,7 +138,7 @@ export default function CloudMargin() {
                   step="0.01"
                   placeholder="0.5"
                   value={newAccrual.RATE}
-                  onChange={(e) => setNewAccrual((prev) => ({ ...prev, RATE: e.target.value }))}
+                  onChange={handleDraftChange("RATE")}
                   style={{
                     width: "100%",
                     padding: "0.5rem",
@@ -123,7 +155,7 @@ export default function CloudMargin() {
                   type="number"
                   placeholder="10000"
                   value={newAccrual.BALANCE}
-                  onChange={(e) => setNewAccrual((prev) => ({ ...prev, BALANCE: e.target.value }))}
+                  onChange={handleDraftChange("BALANCE")}
                   style={{
                     width: "100%",
                     padding: "0.5rem",
@@ -164,8 +196,8 @@ export default function CloudMargin() {
               </tr>
             </thead>
             <tbody>
-              {accruals.map((accrual, idx) => (
-                <tr key={idx} style={{ borderBottom: "1px solid #eee" }}>
+              {accruals.map((accrual, index) => (
+                <tr key={`${accrual.DATE}-${index}`} style={{ borderBottom: "1px solid #eee" }}>
                   <td style={{ padding: "0.75rem" }}>{accrual.DATE}</td>
                   <td style={{ padding: "0.75rem", textAlign: "right" }}>{accrual.RATE}</td>
                   <td style={{ padding: "0.75rem", textAlign: "right" }}>
@@ -213,22 +245,22 @@ export default function CloudMargin() {
               </tr>
             </thead>
             <tbody>
-              {initialStatements.map((stmt, idx) => (
-                <tr key={idx} style={{ borderBottom: "1px solid #eee" }}>
+              {initialStatements.map((statement, index) => (
+                <tr key={`${statement.START_DATE}-${index}`} style={{ borderBottom: "1px solid #eee" }}>
                   <td style={{ padding: "0.75rem" }}>
-                    {stmt.START_DATE} to {stmt.END_DATE}
+                    {statement.START_DATE} to {statement.END_DATE}
                   </td>
                   <td
                     style={{
                       padding: "0.75rem",
                       textAlign: "right",
-                      color: stmt.AMENDMENT < 0 ? "red" : "inherit",
+                      color: statement.AMENDMENT < 0 ? "red" : "inherit",
                     }}
                   >
-                    {stmt.AMENDMENT.toLocaleString()}
+                    {statement.AMENDMENT.toLocaleString()}
                   </td>
                   <td style={{ padding: "0.75rem", textAlign: "right" }}>
-                    {stmt.TOTAL.toLocaleString()}
+                    {statement.TOTAL.toLocaleString()}
                   </td>
                 </tr>
               ))}

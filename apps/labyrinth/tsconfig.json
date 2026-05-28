@@ -13,7 +13,6 @@
     "scripts/**/*"
   ],
   "compilerOptions": {
-    "allowJs": true,
     "types": ["node", "vite/client", "google.maps"],
     "rootDirs": [".", "./.react-router/types"],
     "baseUrl": ".",

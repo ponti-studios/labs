@@ -1,4 +1,6 @@
-export default function GrowthStreet() {
+import type { JSX } from "react";
+
+export default function GrowthStreet(): JSX.Element {
   return (
     <div>
       <h2>Growth Street - Banking System</h2>

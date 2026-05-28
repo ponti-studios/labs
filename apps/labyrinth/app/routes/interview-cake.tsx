@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useState, type JSX } from "react";
 
-const prizes = ["A Unicorn!", "A Hug!", "Fresh Laundry!"];
+const prizes = ["A Unicorn!", "A Hug!", "Fresh Laundry!"] as const;
 
-export default function InterviewCake() {
-  const [message, setMessage] = useState(null);
+export default function InterviewCake(): JSX.Element {
+  const [message, setMessage] = useState<string | null>(null);
 
-  const handleClick = (n) => {
-    setMessage(`You won: ${prizes[n]}!`);
+  const handleClick = (index: number): void => {
+    setMessage(`You won: ${prizes[index]}!`);
   };
 
   return (
@@ -27,9 +27,14 @@ export default function InterviewCake() {
         </div>
       )}
       <div style={{ display: "flex", gap: "1rem" }}>
-        {prizes.map((_, i) => (
-          <button key={i} type="button" className="btn btn-primary" onClick={() => handleClick(i)}>
-            Button {i + 1}!
+        {prizes.map((_, index) => (
+          <button
+            key={index}
+            type="button"
+            className="btn btn-primary"
+            onClick={() => handleClick(index)}
+          >
+            Button {index + 1}!
           </button>
         ))}
       </div>

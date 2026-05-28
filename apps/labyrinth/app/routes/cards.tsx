@@ -1,33 +1,49 @@
-import { useState } from "react";
-import { createDeck } from "./cards-lib";
+import { useState, type JSX } from "react";
 
-export default function Cards() {
-  const [deck, setDeck] = useState(() => createDeck());
-  const [hands, setHands] = useState([]);
-  const [winner, setWinner] = useState(null);
+import { createDeck, type Card } from "./cards-lib";
 
-  const dealHand = () => {
-    if (deck.length < 5) return;
+interface Hand {
+  cards: Card[];
+  id: string;
+  score: number;
+}
+
+interface Winner {
+  id: string;
+  score: number;
+}
+
+export default function Cards(): JSX.Element {
+  const [deck, setDeck] = useState<Card[]>(() => createDeck());
+  const [hands, setHands] = useState<Hand[]>([]);
+  const [winner, setWinner] = useState<Winner | null>(null);
+
+  const dealHand = (): void => {
+    if (deck.length < 5) {
+      return;
+    }
 
     const newDeck = [...deck];
-    const hand = [];
-    for (let i = 0; i < 5; i++) {
-      hand.push(newDeck.pop());
+    const hand: Card[] = [];
+
+    for (let index = 0; index < 5; index += 1) {
+      const card = newDeck.pop();
+      if (!card) {
+        return;
+      }
+
+      hand.push(card);
     }
 
     const score = hand.reduce((sum, card) => sum + card.value, 0);
-
-    let newWinner = winner;
-    if (!winner || score > winner.score) {
-      newWinner = { id: hand[0].id, score };
-    }
+    const nextWinner = !winner || score > winner.score ? { id: hand[0].id, score } : winner;
 
     setDeck(newDeck);
     setHands([...hands, { id: hand[0].id, cards: hand, score }]);
-    setWinner(newWinner);
+    setWinner(nextWinner);
   };
 
-  const collectHands = () => {
+  const collectHands = (): void => {
     setDeck(createDeck());
     setHands([]);
     setWinner(null);

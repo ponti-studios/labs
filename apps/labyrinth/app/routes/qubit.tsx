@@ -1,4 +1,23 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type JSX } from "react";
+
+interface SelectorWindow extends Window {
+  $?: (selector: string) => Element[];
+}
+
+type TagCounts = Record<string, number>;
+
+interface TestCase {
+  selector: string;
+  expected: TagCounts;
+}
+
+interface TestResult {
+  selector: string;
+  expected: TagCounts;
+  found: TagCounts;
+  passed: boolean;
+  error: string | null;
+}
 
 const ANSWER_JS = `
 var $ = function (selector) {
@@ -8,7 +27,7 @@ var $ = function (selector) {
   var tagName;
   var matcher = {
     id: new RegExp('^#'),
-    class: new RegExp('^\\\\.'),
+    class: new RegExp('^\\.'),
   };
   var selectorNames = [];
 
@@ -96,7 +115,7 @@ var $ = function (selector) {
 };
 `;
 
-const TEST_CASES = [
+const TEST_CASES: TestCase[] = [
   { selector: "div", expected: { DIV: 2 } },
   { selector: "img.some_class", expected: { IMG: 1 } },
   { selector: "#some_id", expected: { DIV: 1 } },
@@ -106,42 +125,88 @@ const TEST_CASES = [
   { selector: "div.some_class#some_id", expected: { DIV: 1 } },
 ];
 
-function tagCount(elements) {
-  const tagList = {};
-  for (let i = 0; i < elements.length; i++) {
-    const tag = elements[i].tagName;
-    tagList[tag] = (tagList[tag] || 0) + 1;
+function tagCount(elements: Element[]): TagCounts {
+  const counts: TagCounts = {};
+
+  for (const element of elements) {
+    counts[element.tagName] = (counts[element.tagName] || 0) + 1;
   }
-  return tagList;
+
+  return counts;
 }
 
-function countsEqual(a, b) {
-  const aKeys = Object.keys(a);
-  const bKeys = Object.keys(b);
-  if (aKeys.length !== bKeys.length) return false;
-  return aKeys.every((k) => a[k] === b[k]);
-}
+function countsEqual(left: TagCounts, right: TagCounts): boolean {
+  const leftKeys = Object.keys(left);
+  const rightKeys = Object.keys(right);
 
-function normalizeExpected(expected) {
-  const result = {};
-  for (const [k, v] of Object.entries(expected)) {
-    result[k.toUpperCase()] = v;
+  if (leftKeys.length !== rightKeys.length) {
+    return false;
   }
-  return result;
+
+  return leftKeys.every((key) => left[key] === right[key]);
 }
 
-export default function Qubit() {
-  const iframeRef = useRef(null);
-  const [results, setResults] = useState([]);
+function normalizeExpected(expected: TagCounts): TagCounts {
+  const normalized: TagCounts = {};
+
+  for (const [key, value] of Object.entries(expected)) {
+    normalized[key.toUpperCase()] = value;
+  }
+
+  return normalized;
+}
+
+export default function Qubit(): JSX.Element {
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const [results, setResults] = useState<TestResult[]>([]);
   const [ran, setRan] = useState(false);
 
   useEffect(() => {
     const iframe = iframeRef.current;
-    if (!iframe) return;
+    if (iframe === null) {
+      return;
+    }
 
-    const doc = iframe.contentDocument || iframe.contentWindow.document;
-    doc.open();
-    doc.write(`
+    iframe.onload = () => {
+      const testWindow = iframe.contentWindow as SelectorWindow | null;
+      const select = testWindow?.$;
+      if (select === undefined) {
+        return;
+      }
+
+      const testResults = TEST_CASES.map<TestResult>(({ selector, expected }) => {
+        let found: TagCounts = {};
+        let error: string | null = null;
+
+        try {
+          found = tagCount(select(selector));
+        } catch (caughtError) {
+          error = caughtError instanceof Error ? caughtError.message : String(caughtError);
+        }
+
+        const normalizedExpected = normalizeExpected(expected);
+
+        return {
+          selector,
+          expected: normalizedExpected,
+          found,
+          passed: error === null && countsEqual(found, normalizedExpected),
+          error,
+        };
+      });
+
+      setResults(testResults);
+      setRan(true);
+    };
+
+    const testWindow = iframe.contentWindow as SelectorWindow | null;
+    const documentContext = iframe.contentDocument ?? testWindow?.document;
+    if (documentContext === undefined || documentContext === null) {
+      return;
+    }
+
+    documentContext.open();
+    documentContext.write(`
       <!DOCTYPE html>
       <html>
         <body>
@@ -153,40 +218,24 @@ export default function Qubit() {
         </body>
       </html>
     `);
-    doc.close();
+    documentContext.close();
 
-    iframe.onload = () => {
-      const win = iframe.contentWindow;
-      const testResults = TEST_CASES.map(({ selector, expected }) => {
-        let found = {};
-        let error = null;
-        try {
-          const elements = win.$(selector);
-          found = tagCount(elements);
-        } catch (e) {
-          error = e.message;
-        }
-        const normalized = normalizeExpected(expected);
-        const passed = !error && countsEqual(found, normalized);
-        return { selector, expected: normalized, found, passed, error };
-      });
-      setResults(testResults);
-      setRan(true);
+    return () => {
+      iframe.onload = null;
     };
   }, []);
 
-  const passed = results.filter((r) => r.passed).length;
-  const total = results.length;
+  const passedCount = results.filter((result) => result.passed).length;
+  const totalCount = results.length;
 
   return (
     <div style={{ padding: "2rem", fontFamily: "monospace" }}>
-      <h1 style={{ marginBottom: "0.5rem" }}>Qubit — jQuery-like Selector</h1>
+      <h1 style={{ marginBottom: "0.5rem" }}>Qubit - jQuery-like Selector</h1>
       <p style={{ color: "#666", marginBottom: "1.5rem" }}>
         Implement a <code>$(selector)</code> function that supports tag, class, id, and combined CSS
         selectors without using <code>querySelector</code>.
       </p>
 
-      {/* Hidden iframe provides the DOM context for running the selector */}
       <iframe ref={iframeRef} title="qubit-sandbox" style={{ display: "none" }} />
 
       <h2 style={{ marginBottom: "0.75rem" }}>Test DOM</h2>
@@ -208,7 +257,7 @@ export default function Qubit() {
       {ran && (
         <>
           <h2 style={{ marginBottom: "0.75rem" }}>
-            Results — {passed}/{total} passed
+            Results - {passedCount}/{totalCount} passed
           </h2>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.9rem" }}>
             <thead>
@@ -227,7 +276,11 @@ export default function Qubit() {
                   </td>
                   <td style={td}>{JSON.stringify(expected)}</td>
                   <td style={td}>
-                    {error ? <span style={{ color: "red" }}>{error}</span> : JSON.stringify(found)}
+                    {error !== null ? (
+                      <span style={{ color: "red" }}>{error}</span>
+                    ) : (
+                      JSON.stringify(found)
+                    )}
                   </td>
                   <td style={{ ...td, textAlign: "center" }}>{passed ? "✓" : "✗"}</td>
                 </tr>
@@ -259,10 +312,10 @@ const th = {
   padding: "0.5rem 0.75rem",
   textAlign: "left",
   borderBottom: "1px solid #ccc",
-};
+} as const;
 
 const td = {
   padding: "0.5rem 0.75rem",
   borderBottom: "1px solid #ddd",
   verticalAlign: "top",
-};
+} as const;

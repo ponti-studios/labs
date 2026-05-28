@@ -1,101 +1,148 @@
-import { useState } from "react";
+import { useState, type ChangeEvent, type JSX } from "react";
 
-function charMap(input) {
-  const map = {};
-  if (input.length === 0) return {};
+type CharacterCounts = Record<string, number>;
+
+interface Point {
+  x: number;
+  y: number;
+}
+
+interface Segment {
+  p1: Point;
+  p2: Point;
+}
+
+interface GraphResult {
+  connected: boolean;
+  disconnected: boolean;
+}
+
+type ClosureResult = string | ClosureRunner;
+type ClosureRunner = (input?: string) => ClosureResult;
+
+function charMap(input: string): CharacterCounts {
+  const map: CharacterCounts = {};
+  if (input.length === 0) {
+    return map;
+  }
 
   for (const letter of input.toLowerCase()) {
     if (/[a-z]/.test(letter)) {
       map[letter] = (map[letter] || 0) + 1;
     }
   }
+
   return map;
 }
 
-function f(input) {
+function f(input?: string): ClosureResult {
   let state = "f";
 
-  function q(input) {
-    if (input) {
-      state += input;
+  const q: ClosureRunner = (nextInput?: string) => {
+    if (nextInput) {
+      state += nextInput;
       return state;
-    } else {
-      state += "o";
-      return q;
     }
-  }
+
+    state += "o";
+    return q;
+  };
 
   return q(input);
 }
 
-function Point(x, y) {
-  if (!(this instanceof Point)) return new Point(x, y);
-  this.x = x;
-  this.y = y;
+function createPoint(x: number, y: number): Point {
+  return { x, y };
 }
 
-function Segment(p1, p2) {
-  if (!(this instanceof Segment)) return new Segment(p1, p2);
-  this.p1 = p1;
-  this.p2 = p2;
+function createSegment(p1: Point, p2: Point): Segment {
+  return { p1, p2 };
 }
 
-function testGraph(input) {
-  const points = [];
+function testGraph(input: Segment[]): boolean {
+  const points: string[] = [];
 
-  for (const seg of input) {
-    const point1 = `${seg.p1.x},${seg.p1.y}`;
-    const point2 = `${seg.p2.x},${seg.p2.y}`;
+  for (const segment of input) {
+    const point1 = `${segment.p1.x},${segment.p1.y}`;
+    const point2 = `${segment.p2.x},${segment.p2.y}`;
 
     if (points.length === 0) {
+      points.push(point1, point2);
+      continue;
+    }
+
+    if (!points.includes(point1) && !points.includes(point2)) {
+      return false;
+    }
+
+    if (!points.includes(point1)) {
       points.push(point1);
+    } else if (!points.includes(point2)) {
       points.push(point2);
-    } else {
-      if (points.indexOf(point1) === -1 && points.indexOf(point2) === -1) {
-        return false;
-      } else if (points.indexOf(point1) === -1) {
-        points.push(point1);
-      } else if (points.indexOf(point2) === -1) {
-        points.push(point2);
-      }
     }
   }
+
   return true;
 }
 
-export default function DailyMail() {
+export default function DailyMail(): JSX.Element {
   const [charInput, setCharInput] = useState("Hello World");
-  const [charResult, setCharResult] = useState(null);
+  const [charResult, setCharResult] = useState<CharacterCounts | null>(null);
+  const [fResult, setFResult] = useState<string | null>(null);
+  const [graphResult, setGraphResult] = useState<GraphResult | null>(null);
 
-  const [fResult, setFResult] = useState(null);
-
-  const [graphResult, setGraphResult] = useState(null);
-
-  const runCharMap = () => {
+  const runCharMap = (): void => {
     setCharResult(charMap(charInput));
   };
 
-  const runF = () => {
-    const result = f()()()()("a");
-    setFResult(result);
+  const runF = (): void => {
+    const firstCall = f();
+    if (typeof firstCall !== "function") {
+      return;
+    }
+
+    const secondCall = firstCall();
+    if (typeof secondCall !== "function") {
+      return;
+    }
+
+    const thirdCall = secondCall();
+    if (typeof thirdCall !== "function") {
+      return;
+    }
+
+    const fourthCall = thirdCall();
+    if (typeof fourthCall !== "function") {
+      return;
+    }
+
+    const result = fourthCall("a");
+    if (typeof result === "string") {
+      setFResult(result);
+    }
   };
 
-  const runGraph = () => {
-    const inputA = [
-      Segment(Point(1, 1), Point(2, 2)),
-      Segment(Point(1, 1), Point(0, 0)),
-      Segment(Point(2, 2), Point(2, 4)),
-      Segment(Point(5, 5), Point(2, 4)),
+  const runGraph = (): void => {
+    const inputA: Segment[] = [
+      createSegment(createPoint(1, 1), createPoint(2, 2)),
+      createSegment(createPoint(1, 1), createPoint(0, 0)),
+      createSegment(createPoint(2, 2), createPoint(2, 4)),
+      createSegment(createPoint(5, 5), createPoint(2, 4)),
     ];
-    const inputB = [
-      Segment(Point(1, 1), Point(2, 2)),
-      Segment(Point(2, 2), Point(2, 4)),
-      Segment(Point(5, 5), Point(3, 3)),
+    const inputB: Segment[] = [
+      createSegment(createPoint(1, 1), createPoint(2, 2)),
+      createSegment(createPoint(2, 2), createPoint(2, 4)),
+      createSegment(createPoint(5, 5), createPoint(3, 3)),
     ];
+
     setGraphResult({
       connected: testGraph(inputA),
       disconnected: testGraph(inputB),
     });
+  };
+
+  const handleCharInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    setCharInput(event.target.value);
   };
 
   return (
@@ -114,7 +161,7 @@ export default function DailyMail() {
           <input
             type="text"
             value={charInput}
-            onChange={(e) => setCharInput(e.target.value)}
+            onChange={handleCharInputChange}
             placeholder="Enter text"
             style={{ width: "100%", padding: "0.5rem", marginBottom: "0.5rem" }}
           />

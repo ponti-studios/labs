@@ -1,6 +1,17 @@
-import { useState } from "react";
+import { useState, type ChangeEvent, type JSX } from "react";
 
-const mockBooks = [
+interface Author {
+  name: string;
+}
+
+interface Book {
+  uid: string;
+  title: string;
+  authors: [Author, ...Author[]];
+  cover: string | null;
+}
+
+const mockBooks: Book[] = [
   {
     uid: "OLID:1",
     title: "The Great Gatsby",
@@ -18,15 +29,24 @@ const mockBooks = [
   },
 ];
 
-export default function Vendigo() {
-  const [books] = useState(mockBooks);
+function getBookPrice(): string {
+  return (Math.random() * 100).toFixed(2);
+}
+
+export default function Vendigo(): JSX.Element {
+  const [books] = useState<Book[]>(mockBooks);
   const [searchTerm, setSearchTerm] = useState("");
 
+  const normalizedSearchTerm = searchTerm.toLowerCase();
   const filteredBooks = books.filter(
     (book) =>
-      book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      book.authors[0].name.toLowerCase().includes(searchTerm.toLowerCase()),
+      book.title.toLowerCase().includes(normalizedSearchTerm) ||
+      book.authors[0].name.toLowerCase().includes(normalizedSearchTerm),
   );
+
+  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    setSearchTerm(event.target.value);
+  };
 
   return (
     <div>
@@ -39,7 +59,7 @@ export default function Vendigo() {
             type="text"
             placeholder="Search books..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={handleSearchChange}
             style={{
               width: "100%",
               padding: "0.75rem",
@@ -104,7 +124,7 @@ export default function Vendigo() {
               </div>
               <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
                 <div className="text-center" style={{ flex: 1 }}>
-                  ${(Math.random() * 100).toFixed(2)}
+                  ${getBookPrice()}
                 </div>
                 <button className="btn">Add To Cart</button>
               </div>

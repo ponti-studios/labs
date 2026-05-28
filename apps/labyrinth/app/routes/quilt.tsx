@@ -1,40 +1,77 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState, type FormEvent, type JSX } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@pontistudios/ui";
 
-export default function Quilt() {
-  const [fields, setFields] = useState([]);
+interface SelectOption {
+  value: string;
+  text: string;
+}
+
+interface BaseField {
+  label: string;
+  name: string;
+  value?: string;
+}
+
+interface TextField extends BaseField {
+  type: "text" | "email" | "password";
+}
+
+interface SelectField extends BaseField {
+  type: "select";
+  options: SelectOption[];
+}
+
+type FormField = TextField | SelectField;
+type FormValues = Record<string, string>;
+
+const asyncFields: FormField[] = [
+  { label: "First name", name: "firstName", type: "text", value: "Joe" },
+  { label: "Last name", name: "lastName", type: "text" },
+  { label: "Email", name: "email", type: "email" },
+  { label: "Password", name: "password", type: "password" },
+  {
+    label: "Country",
+    name: "country",
+    type: "select",
+    options: [
+      { value: "us", text: "United States" },
+      { value: "uk", text: "United Kingdom" },
+      { value: "ca", text: "Canada" },
+    ],
+  },
+];
+
+function buildInitialValues(fields: FormField[]): FormValues {
+  return fields.reduce<FormValues>((values, field) => {
+    values[field.name] = field.value ?? "";
+    return values;
+  }, {});
+}
+
+export default function Quilt(): JSX.Element {
+  const [fields, setFields] = useState<FormField[]>([]);
   const [loading, setLoading] = useState(true);
-  const [formValues, setFormValues] = useState({});
+  const [formValues, setFormValues] = useState<FormValues>({});
 
   useEffect(() => {
-    setTimeout(() => {
-      setFields([
-        { label: "First name", name: "firstName", type: "text", value: "Joe" },
-        { label: "Last name", name: "lastName", type: "text" },
-        { label: "Email", name: "email", type: "email" },
-        { label: "Password", name: "password", type: "password" },
-        {
-          label: "Country",
-          name: "country",
-          type: "select",
-          options: [
-            { value: "us", text: "United States" },
-            { value: "uk", text: "United Kingdom" },
-            { value: "ca", text: "Canada" },
-          ],
-        },
-      ]);
+    const timeoutId = window.setTimeout(() => {
+      setFields(asyncFields);
+      setFormValues(buildInitialValues(asyncFields));
       setLoading(false);
     }, 1500);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
   }, []);
 
-  const handleChange = (name, value) => {
-    setFormValues((prev) => ({ ...prev, [name]: value }));
+  const handleChange = (name: string, value: string): void => {
+    setFormValues((previousValues) => ({ ...previousValues, [name]: value }));
     console.log(`${name}: ${value}`);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
+    event.preventDefault();
     console.log("Form submitted:", formValues);
     alert("Form submitted! Check console for values.");
   };
@@ -68,9 +105,9 @@ export default function Quilt() {
                       <SelectValue placeholder="Select..." />
                     </SelectTrigger>
                     <SelectContent>
-                      {field.options.map((opt) => (
-                        <SelectItem key={opt.value} value={opt.value}>
-                          {opt.text}
+                      {field.options.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.text}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -79,9 +116,9 @@ export default function Quilt() {
                   <input
                     id={field.name}
                     name={field.name}
-                    type={field.type === "text" ? "text" : field.type}
-                    defaultValue={field.value}
-                    onChange={(e) => handleChange(field.name, e.target.value)}
+                    type={field.type}
+                    value={formValues[field.name] ?? ""}
+                    onChange={(event) => handleChange(field.name, event.target.value)}
                     style={{
                       width: "100%",
                       padding: "0.5rem",
