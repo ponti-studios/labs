@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { createRoutesStub } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import type { RhobhPuzzleEnvelope, RhobhStoredPuzzle } from "../../lib/rhobh-daily-puzzle";
 import {
   getPuzzleForDate,
   getPuzzleKeyForDate,
@@ -20,11 +21,34 @@ const validationControl = createControlledRouteAction<string, { valid: boolean }
   },
 });
 
+function buildPuzzleEnvelope(
+  puzzle = getPuzzleForDate(new Date("2026-05-20T12:00:00.000Z")),
+  date = new Date("2026-05-20T12:00:00.000Z"),
+  source: RhobhStoredPuzzle["source"] = "static",
+): RhobhPuzzleEnvelope {
+  return {
+    puzzle: {
+      ...puzzle,
+      puzzleKey: getPuzzleKeyForDate(date),
+      source,
+    },
+  };
+}
+
+let routePuzzle = buildPuzzleEnvelope();
+let dailyPuzzle = buildPuzzleEnvelope();
+
 const RoutesStub = createRoutesStub([
   {
     id: "routes/games/rhobh-wordle",
     path: "/",
     Component: RhobhWordleRoute,
+    loader: () => routePuzzle,
+  },
+  {
+    id: "routes/api.games.wordle.rhobh.daily",
+    path: "/api/games/wordle/rhobh/daily",
+    loader: () => dailyPuzzle,
   },
   {
     id: "routes/api.words.validate",
@@ -33,12 +57,17 @@ const RoutesStub = createRoutesStub([
   },
 ]);
 
-function renderRoute() {
+async function renderRoute() {
   const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+  const rendered = render(<RoutesStub initialEntries={["/"]} />);
+
+  await screen.findByRole("button", { name: /how to play/i });
+  await screen.findByLabelText("Letter 1");
+  await screen.findByRole("button", { name: "Enter" });
 
   return {
     user,
-    ...render(<RoutesStub initialEntries={["/"]} />),
+    ...rendered,
   };
 }
 
@@ -105,6 +134,22 @@ function getCurrentPuzzle() {
   return getPuzzleForDate(new Date("2026-05-20T12:00:00.000Z"));
 }
 
+function setRoutePuzzle(
+  puzzle = getCurrentPuzzle(),
+  date = new Date("2026-05-20T12:00:00.000Z"),
+  source: RhobhStoredPuzzle["source"] = "static",
+) {
+  routePuzzle = buildPuzzleEnvelope(puzzle, date, source);
+}
+
+function setDailyPuzzle(
+  puzzle = getCurrentPuzzle(),
+  date = new Date("2026-05-20T12:00:00.000Z"),
+  source: RhobhStoredPuzzle["source"] = "static",
+) {
+  dailyPuzzle = buildPuzzleEnvelope(puzzle, date, source);
+}
+
 function getAlternateValidGuess(answer: string) {
   const match = RHOBH_PUZZLES.find(
     (puzzle) => puzzle.answer.length === answer.length && puzzle.answer !== answer,
@@ -129,11 +174,21 @@ function seedSolvedGame(puzzle = getCurrentPuzzle()) {
   );
 }
 
+async function finishTileReveal(answerLength: number) {
+  for (let step = 0; step < answerLength + 3; step += 1) {
+    await act(async () => {
+      vi.advanceTimersByTime(250);
+    });
+  }
+}
+
 describe("RhobhWordleRoute", () => {
   beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     vi.setSystemTime(new Date("2026-05-20T12:00:00.000Z"));
     validationControl.reset();
+    setRoutePuzzle();
+    setDailyPuzzle();
 
     const localStorage = createMemoryStorage();
     vi.stubGlobal("localStorage", localStorage);
@@ -158,13 +213,14 @@ describe("RhobhWordleRoute", () => {
     const puzzle = getPuzzleForDate(date);
     const puzzleKey = getPuzzleKeyForDate(date);
     const storageKey = `labyrinth:rhobh-wordle:${puzzleKey}`;
-    const { unmount, user } = renderRoute();
+    const { unmount, user } = await renderRoute();
 
     await enterGuess(user, puzzle.answer);
     await submitCurrentGuess(user);
     await expectSubmitCalls([puzzle.answer]);
 
     await resolveValidation(true);
+    await finishTileReveal(puzzle.answer.length);
 
     await waitFor(() => {
       expect(screen.getByText("Today's answer")).toBeInTheDocument();
@@ -173,7 +229,7 @@ describe("RhobhWordleRoute", () => {
     expect(screen.getByText(puzzle.detail)).toBeInTheDocument();
 
     unmount();
-    renderRoute();
+    await renderRoute();
 
     expect(screen.getByText("Today's answer")).toBeInTheDocument();
     expect(screen.getByText(puzzle.answer)).toBeInTheDocument();
@@ -185,7 +241,26 @@ describe("RhobhWordleRoute", () => {
     });
   });
 
-  it("discards stale saved progress for a different puzzle key", () => {
+  it("uses a stored daily puzzle from the loader when one exists", async () => {
+    setRoutePuzzle(
+      {
+        answer: "VILLAROSA",
+        answerType: "place",
+        clue: "A pink mansion with a legendary RHOBH footprint.",
+        detail: "Lisa Vanderpump's home became one of the franchise's most recognizable settings.",
+        newsMode: "archive",
+        role: "Iconic location",
+      },
+      new Date("2026-05-20T12:00:00.000Z"),
+      "database",
+    );
+
+    await renderRoute();
+
+    expect(getTextboxes()).toHaveLength("VILLAROSA".length);
+  });
+
+  it("discards stale saved progress for a different puzzle key", async () => {
     const staleDate = new Date("2026-05-19T12:00:00.000Z");
     const stalePuzzle = getPuzzleForDate(staleDate);
     const stalePuzzleKey = getPuzzleKeyForDate(staleDate);
@@ -199,7 +274,7 @@ describe("RhobhWordleRoute", () => {
       }),
     );
 
-    renderRoute();
+    await renderRoute();
 
     expect(getTextboxes()).toHaveLength(getPuzzleForDate(new Date()).answer.length);
     expect(screen.queryByText(stalePuzzle.answer)).not.toBeInTheDocument();
@@ -209,14 +284,23 @@ describe("RhobhWordleRoute", () => {
     const firstDate = new Date("2026-05-20T12:00:00.000Z");
     const secondDate = new Date("2026-05-21T12:00:00.000Z");
     const firstPuzzle = getPuzzleForDate(firstDate);
-    const secondPuzzle = getPuzzleForDate(secondDate);
+    const secondPuzzle = {
+      answer: "PUPPYGATE",
+      answerType: "storyline" as const,
+      clue: "A rescue-dog scandal that turned into one of RHOBH's defining feuds.",
+      detail: "The fallout consumed the season and permanently shifted friendships.",
+      newsMode: "archive" as const,
+      role: "Infamous scandal",
+    };
+    setDailyPuzzle(secondPuzzle, secondDate, "database");
 
-    const { user } = renderRoute();
+    const { user } = await renderRoute();
 
     await enterGuess(user, firstPuzzle.answer);
     await submitCurrentGuess(user);
     await expectSubmitCalls([firstPuzzle.answer]);
     await resolveValidation(true);
+    await finishTileReveal(firstPuzzle.answer.length);
     await waitFor(() => {
       expect(screen.getByText(firstPuzzle.answer)).toBeInTheDocument();
     });
@@ -227,13 +311,25 @@ describe("RhobhWordleRoute", () => {
     });
 
     expect(screen.queryByText(firstPuzzle.answer)).not.toBeInTheDocument();
-    expect(getTextboxes()).toHaveLength(secondPuzzle.answer.length);
+    await waitFor(() => {
+      expect(getTextboxes()).toHaveLength(secondPuzzle.answer.length);
+    });
+  });
+
+  it("keeps the static fallback when no stored puzzle exists for the day", async () => {
+    const puzzle = getCurrentPuzzle();
+
+    setRoutePuzzle(puzzle, new Date("2026-05-20T12:00:00.000Z"), "static");
+    setDailyPuzzle(puzzle, new Date("2026-05-20T12:00:00.000Z"), "static");
+    await renderRoute();
+
+    expect(getTextboxes()).toHaveLength(puzzle.answer.length);
   });
 
   it("shows an error when the guess is too short", async () => {
     const puzzle = getCurrentPuzzle();
 
-    const { user } = renderRoute();
+    const { user } = await renderRoute();
 
     await enterGuess(user, puzzle.answer.slice(0, Math.max(1, puzzle.answer.length - 1)));
     await submitCurrentGuess(user);
@@ -246,12 +342,13 @@ describe("RhobhWordleRoute", () => {
     const puzzle = getCurrentPuzzle();
     const wrongGuess = getAlternateValidGuess(puzzle.answer);
 
-    const { user } = renderRoute();
+    const { user } = await renderRoute();
 
     await enterGuess(user, wrongGuess);
     await submitCurrentGuess(user);
     await expectSubmitCalls([wrongGuess]);
     await resolveValidation(true);
+    await finishTileReveal(puzzle.answer.length);
 
     await enterGuess(user, wrongGuess);
     await submitCurrentGuess(user);
@@ -263,7 +360,7 @@ describe("RhobhWordleRoute", () => {
   it("shows an error when server validation rejects a guess", async () => {
     const puzzle = getCurrentPuzzle();
 
-    const { user } = renderRoute();
+    const { user } = await renderRoute();
 
     await enterGuess(user, "Z".repeat(puzzle.answer.length));
     await submitCurrentGuess(user);
@@ -281,7 +378,7 @@ describe("RhobhWordleRoute", () => {
     const puzzle = getCurrentPuzzle();
     const wrongGuess = getAlternateValidGuess(puzzle.answer);
 
-    const { user } = renderRoute();
+    const { user } = await renderRoute();
 
     await enterGuess(user, wrongGuess);
     await submitCurrentGuess(user);
@@ -291,6 +388,10 @@ describe("RhobhWordleRoute", () => {
 
     await expectSubmitCalls([wrongGuess]);
     await resolveValidation(true);
+
+    expect(getTextboxes()).toHaveLength(0);
+
+    await finishTileReveal(puzzle.answer.length);
 
     await waitFor(() => {
       expect(getTextboxes()).toHaveLength(puzzle.answer.length);
@@ -315,7 +416,7 @@ describe("RhobhWordleRoute", () => {
       }),
     );
 
-    const { unmount } = renderRoute();
+    const { unmount } = await renderRoute();
 
     expect(screen.queryByText("Final guess clue")).not.toBeInTheDocument();
     expect(screen.queryByText(puzzle.clue)).not.toBeInTheDocument();
@@ -331,7 +432,7 @@ describe("RhobhWordleRoute", () => {
       }),
     );
 
-    renderRoute();
+    await renderRoute();
 
     expect(screen.getByText("Final guess clue")).toBeInTheDocument();
     expect(screen.getByText(puzzle.clue)).toBeInTheDocument();
@@ -340,17 +441,37 @@ describe("RhobhWordleRoute", () => {
   it("shows a share button after the game ends", async () => {
     const puzzle = getCurrentPuzzle();
     seedSolvedGame(puzzle);
-    renderRoute();
+    await renderRoute();
 
     await waitFor(() => {
       expect(screen.getByRole("button", { name: "Share result" })).toBeInTheDocument();
     });
   });
 
+  it("locks the next row until the tile reveal animation finishes", async () => {
+    const puzzle = getCurrentPuzzle();
+    const wrongGuess = getAlternateValidGuess(puzzle.answer);
+    const { user } = await renderRoute();
+
+    await enterGuess(user, wrongGuess);
+    await submitCurrentGuess(user);
+    await expectSubmitCalls([wrongGuess]);
+    await resolveValidation(true);
+
+    expect(getTextboxes()).toHaveLength(0);
+    expect(screen.getByRole("button", { name: "Enter" })).toBeDisabled();
+
+    await finishTileReveal(puzzle.answer.length);
+
+    await waitFor(() => {
+      expect(getTextboxes()).toHaveLength(puzzle.answer.length);
+    });
+  });
+
   it("ignores repeated submit attempts while validation is in flight", async () => {
     const puzzle = getCurrentPuzzle();
 
-    const { user } = renderRoute();
+    const { user } = await renderRoute();
 
     await enterGuess(user, puzzle.answer);
     await submitCurrentGuess(user);
@@ -367,7 +488,7 @@ describe("RhobhWordleRoute", () => {
   it("prevents input changes while validation is in flight", async () => {
     const puzzle = getCurrentPuzzle();
 
-    const { user } = renderRoute();
+    const { user } = await renderRoute();
 
     await enterGuess(user, puzzle.answer);
     await submitCurrentGuess(user);

@@ -12,6 +12,7 @@ import words8 from "../data/words/8.txt?raw";
 import words9 from "../data/words/9.txt?raw";
 import words10 from "../data/words/10.txt?raw";
 
+import { getStoredRhobhAnswersForValidation } from "./server/rhobh-daily-puzzle";
 import { RHOBH_PUZZLES } from "./rhobh-wordle";
 
 const RAW_BY_LENGTH: Record<number, string> = {
@@ -44,7 +45,13 @@ function getWordSet(length: number): Set<string> {
   return set;
 }
 
-export function isValidWord(word: string): boolean {
+export async function isValidWord(word: string): Promise<boolean> {
   const upper = word.toUpperCase().trim();
-  return getWordSet(upper.length).has(upper);
+
+  if (getWordSet(upper.length).has(upper)) {
+    return true;
+  }
+
+  const storedAnswers = await getStoredRhobhAnswersForValidation();
+  return storedAnswers.has(upper);
 }

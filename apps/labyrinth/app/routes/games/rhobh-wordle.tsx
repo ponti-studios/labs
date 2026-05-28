@@ -1,15 +1,21 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useFetcher } from "react-router";
+import { type LoaderFunctionArgs, useFetcher, useLoaderData } from "react-router";
 
 import { Button, OnscreenKeyboard, type LetterState } from "@pontistudios/ui";
 import {
+  getRhobhDateKey,
+  type RhobhPuzzleEnvelope,
+  type RhobhStoredPuzzle,
+} from "~/lib/rhobh-daily-puzzle";
+import {
   evaluateGuess,
   getKeyboardState,
-  getPuzzleForKey,
+  getPuzzleForDate,
   getPuzzleKeyForDate,
   MAX_GUESSES,
   normalizeGuess,
 } from "~/lib/rhobh-wordle";
+import { loadRhobhPuzzleForDate } from "~/lib/server/rhobh-daily-puzzle";
 import { shareRhobhResult } from "~/lib/rhobh-wordle-share";
 import { cn } from "~/lib/utils";
 
@@ -23,10 +29,53 @@ const TILE_STATE_CLASSES: Record<LetterState, string> = {
 
 const EMPTY_TILE = "border-border bg-background text-foreground";
 const TILE_BASE = "h-12 w-12 rounded border text-lg font-bold uppercase transition-colors";
+const TILE_REVEAL_STEP_MS = 250;
+const TILE_REVEAL_STYLES: Record<
+  LetterState,
+  { backgroundColor: string; borderColor: string; color: string }
+> = {
+  absent: {
+    backgroundColor: "var(--muted)",
+    borderColor: "var(--border)",
+    color: "var(--muted-foreground)",
+  },
+  present: {
+    backgroundColor: "#fef3c7",
+    borderColor: "#fcd34d",
+    color: "#451a03",
+  },
+  correct: {
+    backgroundColor: "#d1fae5",
+    borderColor: "#6ee7b7",
+    color: "#022c22",
+  },
+};
 interface PersistedGameState {
   puzzleKey: string;
   guesses: string[];
   status: "playing" | "solved" | "failed";
+}
+
+function buildStaticPuzzleEnvelope(date: Date): RhobhPuzzleEnvelope {
+  const puzzle = getPuzzleForDate(date);
+
+  return {
+    puzzle: {
+      ...puzzle,
+      puzzleKey: getPuzzleKeyForDate(date),
+      source: "static",
+    },
+  };
+}
+
+export async function loader(_args: LoaderFunctionArgs) {
+  const date = new Date();
+
+  try {
+    return Response.json(await loadRhobhPuzzleForDate(date, getPuzzleForDate(date)));
+  } catch {
+    return Response.json(buildStaticPuzzleEnvelope(date));
+  }
 }
 
 export function meta() {
@@ -34,7 +83,7 @@ export function meta() {
     { title: "RHOBH Wordle — Labyrinth" },
     {
       name: "description",
-      content: "Guess a Beverly Hills name from a rotating Wordle-style daily challenge.",
+      content: "Guess a Beverly Hills daily answer from a rotating Wordle-style challenge.",
     },
   ];
 }
@@ -73,10 +122,22 @@ function readPersistedGameState(puzzleKey: string): PersistedGameState | null {
   }
 }
 
+function getTileRevealStyle(state: LetterState): React.CSSProperties {
+  const finalStyle = TILE_REVEAL_STYLES[state];
+
+  return {
+    "--tile-final-background": finalStyle.backgroundColor,
+    "--tile-final-border": finalStyle.borderColor,
+    "--tile-final-color": finalStyle.color,
+  } as React.CSSProperties;
+}
+
 export default function RhobhWordleRoute() {
-  const [puzzleKey, setPuzzleKey] = useState(() => getPuzzleKeyForDate(new Date()));
-  const puzzle = useMemo(() => getPuzzleForKey(puzzleKey), [puzzleKey]);
+  const initialData = useLoaderData<typeof loader>() as RhobhPuzzleEnvelope;
+  const [puzzleKey, setPuzzleKey] = useState(() => initialData.puzzle.puzzleKey);
+  const [puzzle, setPuzzle] = useState<RhobhStoredPuzzle>(() => initialData.puzzle);
   const answerLength = puzzle.answer.length;
+  const dailyPuzzleFetcher = useFetcher<RhobhPuzzleEnvelope>();
 
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentGuess, setCurrentGuess] = useState("");
@@ -84,42 +145,64 @@ export default function RhobhWordleRoute() {
   const [showInstructions, setShowInstructions] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isShaking, setIsShaking] = useState(false);
+  const [revealingGuessIndex, setRevealingGuessIndex] = useState<number | null>(null);
+  const [revealedTileCount, setRevealedTileCount] = useState(0);
   const shakeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const revealTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const wordValidator = useFetcher<{ valid: boolean }>();
   const pendingGuessRef = useRef<string | null>(null);
   const isValidationPending = wordValidator.state !== "idle";
+  const isRevealingRow = revealingGuessIndex !== null;
 
   const cellRefs = useRef<Array<HTMLInputElement | null>>([]);
 
-  const keyboardState = useMemo(
-    () => getKeyboardState(puzzle.answer, guesses),
-    [guesses, puzzle.answer],
-  );
-  const isSolved = guesses.at(-1) === puzzle.answer;
-  const isGameOver = isSolved || guesses.length >= MAX_GUESSES;
+  const keyboardState = useMemo(() => getKeyboardState(puzzle.answer, guesses), [guesses, puzzle.answer]);
+  const hasSolvedGuess = guesses.at(-1) === puzzle.answer;
+  const isSolved = !isRevealingRow && hasSolvedGuess;
+  const isGameOver = !isRevealingRow && (hasSolvedGuess || guesses.length >= MAX_GUESSES);
   const shouldShowClue = !isGameOver && guesses.length === MAX_GUESSES - 1;
+
+  useEffect(() => {
+    setPuzzle(initialData.puzzle);
+    setPuzzleKey(initialData.puzzle.puzzleKey);
+  }, [initialData]);
+
+  useEffect(() => {
+    if (!dailyPuzzleFetcher.data?.puzzle) return;
+    setPuzzle(dailyPuzzleFetcher.data.puzzle);
+    setPuzzleKey(dailyPuzzleFetcher.data.puzzle.puzzleKey);
+  }, [dailyPuzzleFetcher.data]);
 
   // Keep focus on the next empty cell while the game is active
   useEffect(() => {
-    if (isGameOver) return;
+    if (isGameOver || isRevealingRow) return;
     const idx = Math.min(currentGuess.length, answerLength - 1);
     cellRefs.current[idx]?.focus();
-  }, [currentGuess.length, answerLength, isGameOver]);
+  }, [currentGuess.length, answerLength, isGameOver, isRevealingRow]);
 
   // Rotate puzzle every minute and on tab-focus
   useEffect(() => {
     function sync() {
-      const next = getPuzzleKeyForDate(new Date());
-      setPuzzleKey((cur) => (cur === next ? cur : next));
+      const now = new Date();
+      const nextKey = getPuzzleKeyForDate(now);
+
+      if (puzzleKey === nextKey) {
+        return;
+      }
+
+      setPuzzleKey(nextKey);
+      setPuzzle(buildStaticPuzzleEnvelope(now).puzzle);
+      dailyPuzzleFetcher.load(`/api/games/wordle/rhobh/daily?date=${getRhobhDateKey(now)}`);
     }
+
     const id = window.setInterval(sync, 60_000);
     document.addEventListener("visibilitychange", sync);
     return () => {
       window.clearInterval(id);
       document.removeEventListener("visibilitychange", sync);
     };
-  }, []);
+  }, [dailyPuzzleFetcher, puzzleKey]);
 
   // Hydrate from localStorage on puzzle change
   useEffect(() => {
@@ -127,6 +210,8 @@ export default function RhobhWordleRoute() {
     setCurrentGuess("");
     setGuesses(saved?.guesses ?? []);
     setHydratedPuzzleKey(puzzleKey);
+    setRevealingGuessIndex(null);
+    setRevealedTileCount(0);
   }, [answerLength, puzzleKey]);
 
   // Persist on every state change after hydration
@@ -144,16 +229,16 @@ export default function RhobhWordleRoute() {
 
   const addLetter = useCallback(
     (value: string) => {
-      if (isGameOver || isValidationPending) return;
+      if (isGameOver || isValidationPending || isRevealingRow) return;
       setCurrentGuess((prev) => (prev.length >= answerLength ? prev : prev + value));
     },
-    [answerLength, isGameOver, isValidationPending],
+    [answerLength, isGameOver, isRevealingRow, isValidationPending],
   );
 
   const removeLetter = useCallback(() => {
-    if (isGameOver || isValidationPending) return;
+    if (isGameOver || isValidationPending || isRevealingRow) return;
     setCurrentGuess((prev) => prev.slice(0, -1));
-  }, [isGameOver, isValidationPending]);
+  }, [isGameOver, isRevealingRow, isValidationPending]);
 
   const showToast = useCallback((message: string, shake = false) => {
     if (shakeTimerRef.current) clearTimeout(shakeTimerRef.current);
@@ -175,11 +260,12 @@ export default function RhobhWordleRoute() {
   useEffect(() => {
     return () => {
       if (shakeTimerRef.current) clearTimeout(shakeTimerRef.current);
+      if (revealTimerRef.current) clearTimeout(revealTimerRef.current);
     };
   }, []);
 
   const submitGuess = useCallback(() => {
-    if (isGameOver || isValidationPending) return;
+    if (isGameOver || isValidationPending || isRevealingRow) return;
 
     const guess = normalizeGuess(currentGuess);
 
@@ -204,6 +290,7 @@ export default function RhobhWordleRoute() {
     currentGuess,
     guesses,
     isGameOver,
+    isRevealingRow,
     isValidationPending,
     showError,
     wordValidator,
@@ -215,12 +302,38 @@ export default function RhobhWordleRoute() {
     const guess = pendingGuessRef.current;
     pendingGuessRef.current = null;
     if (wordValidator.data.valid) {
-      setGuesses((prev) => [...prev, guess]);
+      setGuesses((prev) => {
+        setRevealingGuessIndex(prev.length);
+        setRevealedTileCount(0);
+        return [...prev, guess];
+      });
       setCurrentGuess("");
     } else {
       showError("Not in word list");
     }
   }, [wordValidator.state, wordValidator.data, showError]);
+
+  useEffect(() => {
+    if (revealingGuessIndex === null) return;
+
+    if (revealedTileCount >= answerLength) {
+      revealTimerRef.current = setTimeout(() => {
+        setRevealingGuessIndex(null);
+        setRevealedTileCount(0);
+      }, TILE_REVEAL_STEP_MS);
+      return () => {
+        if (revealTimerRef.current) clearTimeout(revealTimerRef.current);
+      };
+    }
+
+    revealTimerRef.current = setTimeout(() => {
+      setRevealedTileCount((count) => count + 1);
+    }, TILE_REVEAL_STEP_MS);
+
+    return () => {
+      if (revealTimerRef.current) clearTimeout(revealTimerRef.current);
+    };
+  }, [answerLength, revealedTileCount, revealingGuessIndex]);
 
   const handleCellKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -251,10 +364,10 @@ export default function RhobhWordleRoute() {
   );
 
   const redirectToActiveCell = useCallback(() => {
-    if (isGameOver) return;
+    if (isGameOver || isRevealingRow) return;
     const idx = Math.min(currentGuess.length, answerLength - 1);
     cellRefs.current[idx]?.focus();
-  }, [currentGuess.length, answerLength, isGameOver]);
+  }, [currentGuess.length, answerLength, isGameOver, isRevealingRow]);
 
   const handleShare = useCallback(async () => {
     const result = await shareRhobhResult({
@@ -289,6 +402,36 @@ export default function RhobhWordleRoute() {
         40%, 80% { transform: translateX(6px); }
       }
       .row-shake { animation: rhobh-shake 0.4s ease; }
+      @keyframes rhobh-tile-reveal {
+        0% {
+          transform: rotateX(0deg);
+          background-color: var(--background);
+          border-color: var(--border);
+          color: var(--foreground);
+        }
+        49% {
+          transform: rotateX(90deg);
+          background-color: var(--background);
+          border-color: var(--border);
+          color: var(--foreground);
+        }
+        50% {
+          transform: rotateX(90deg);
+          background-color: var(--tile-final-background);
+          border-color: var(--tile-final-border);
+          color: var(--tile-final-color);
+        }
+        100% {
+          transform: rotateX(0deg);
+          background-color: var(--tile-final-background);
+          border-color: var(--tile-final-border);
+          color: var(--tile-final-color);
+        }
+      }
+      .tile-reveal {
+        animation: rhobh-tile-reveal ${TILE_REVEAL_STEP_MS}ms ease forwards;
+        transform-style: preserve-3d;
+      }
     `}</style>
       <div className="py-8">
         <div className="space-y-5 px-4">
@@ -311,7 +454,7 @@ export default function RhobhWordleRoute() {
           {/* Instructions (collapsed by default) */}
           {showInstructions && (
             <div className="space-y-2 border border-border bg-background/40 p-4 text-sm leading-6 text-muted-foreground">
-              <p>Guess a Beverly Hills cast or friend name in 6 tries.</p>
+              <p>Guess the Beverly Hills answer in 6 tries.</p>
               <p>
                 <span className="font-medium text-emerald-700">Green</span> = right letter, right
                 place. <span className="font-medium text-amber-700">Gold</span> = right letter,
@@ -341,9 +484,10 @@ export default function RhobhWordleRoute() {
           {/* Board */}
           <div className="mx-auto w-fit space-y-1">
             {Array.from({ length: MAX_GUESSES }).map((_, rowIndex) => {
-              const isCurrentRow = rowIndex === guesses.length && !isGameOver;
+              const isCurrentRow = rowIndex === guesses.length && !isGameOver && !isRevealingRow;
               const guess = guesses[rowIndex] ?? "";
               const states = guess ? evaluateGuess(puzzle.answer, guess) : [];
+              const isRevealingThisRow = rowIndex === revealingGuessIndex;
 
               return (
                 <div
@@ -381,14 +525,23 @@ export default function RhobhWordleRoute() {
                       );
                     }
 
+                    const isTileRevealed = !isRevealingThisRow || cellIndex < revealedTileCount;
+                    const isAnimatingTile =
+                      isRevealingThisRow &&
+                      revealedTileCount > 0 &&
+                      cellIndex === revealedTileCount - 1;
+                    const tileState = isTileRevealed ? states[cellIndex] : undefined;
+
                     return (
                       <div
                         key={`cell-${rowIndex}-${cellIndex}`}
                         className={cn(
                           TILE_BASE,
                           "flex items-center justify-center",
-                          getTileClasses(states[cellIndex]),
+                          getTileClasses(tileState),
+                          isAnimatingTile && "tile-reveal",
                         )}
+                        style={isAnimatingTile ? getTileRevealStyle(states[cellIndex]) : undefined}
                       >
                         {guess[cellIndex]?.trim() ?? ""}
                       </div>
@@ -401,7 +554,7 @@ export default function RhobhWordleRoute() {
 
           {/* On-screen keyboard */}
           <OnscreenKeyboard
-            disabled={isGameOver || isValidationPending}
+            disabled={isGameOver || isValidationPending || isRevealingRow}
             letterStates={keyboardState}
             onBackspace={removeLetter}
             onEnter={submitGuess}

@@ -19,6 +19,8 @@
     "@preact/signals-react": "^3.10.0",
     "@react-router/node": "catalog:",
     "@react-router/serve": "catalog:",
+    "@tanstack/ai": "^0.22.1",
+    "@tanstack/ai-openrouter": "^0.9.8",
     "@tanstack/react-query": "catalog:",
     "@testing-library/jest-dom": "catalog:",
     "@types/three": "^0.184.0",

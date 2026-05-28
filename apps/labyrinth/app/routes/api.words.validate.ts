@@ -7,16 +7,15 @@ export async function action({ request }: ActionFunctionArgs) {
     return Response.json({ error: "Method not allowed" }, { status: 405 });
   }
 
-  let word: unknown;
   try {
-    ({ word } = (await request.json()) as { word: unknown });
+    const { word } = (await request.json()) as { word?: unknown };
+
+    if (typeof word !== "string") {
+      return Response.json({ error: "Invalid word payload" }, { status: 400 });
+    }
+
+    return Response.json({ valid: await isValidWord(word) });
   } catch {
-    return Response.json({ error: "Invalid JSON" }, { status: 400 });
+    return Response.json({ error: "Invalid JSON payload" }, { status: 400 });
   }
-
-  if (typeof word !== "string" || word.trim().length === 0) {
-    return Response.json({ error: "word must be a non-empty string" }, { status: 400 });
-  }
-
-  return Response.json({ valid: isValidWord(word) });
 }

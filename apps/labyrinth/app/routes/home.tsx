@@ -8,6 +8,7 @@ const routeEntries: RouteEntry[] = [
   { path: "/", href: "/", kind: "page" },
   { path: "/svg-glass-test", href: "/svg-glass-test", kind: "page" },
   { path: "/api/director/generate", kind: "api" },
+  { path: "/api/words/validate", kind: "api" },
   { path: "/infinite-header", href: "/infinite-header", kind: "page" },
   { path: "/tarot", href: "/tarot", kind: "page" },
   { path: "/api/tarot", kind: "api" },

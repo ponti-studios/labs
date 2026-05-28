@@ -1,10 +1,14 @@
 export type LetterState = "absent" | "correct" | "present";
+export type RhobhAnswerType = "moment" | "object" | "person" | "phrase" | "place" | "storyline";
+export type RhobhNewsMode = "archive" | "current";
 
 export interface RhobhPuzzle {
   answer: string;
   clue: string;
   detail: string;
   role: string;
+  answerType?: RhobhAnswerType;
+  newsMode?: RhobhNewsMode;
 }
 
 export const MAX_GUESSES = 6;
@@ -74,6 +78,10 @@ export const RHOBH_PUZZLES: RhobhPuzzle[] = [
 
 export function normalizeGuess(value: string): string {
   return value.replaceAll(/[^a-z]/gi, "").toUpperCase();
+}
+
+export function normalizeRhobhAnswer(value: string): string {
+  return normalizeGuess(value);
 }
 
 export function getPuzzleKeyForDate(date: Date): string {
