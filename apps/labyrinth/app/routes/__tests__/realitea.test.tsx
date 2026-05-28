@@ -11,7 +11,7 @@ import {
   normalizeGuess,
   RHOBH_PUZZLES,
 } from "../../lib/rhobh-wordle";
-import RhobhWordleRoute from "../games/rhobh-wordle";
+import RealiTeaRoute from "../games/realitea";
 import { createControlledRouteAction } from "./controlled-route-action";
 
 const validationControl = createControlledRouteAction<string, { valid: boolean }>({
@@ -40,14 +40,14 @@ let dailyPuzzle = buildPuzzleEnvelope();
 
 const RoutesStub = createRoutesStub([
   {
-    id: "routes/games/rhobh-wordle",
+    id: "routes/games/realitea",
     path: "/",
-    Component: RhobhWordleRoute,
+    Component: RealiTeaRoute,
     loader: () => routePuzzle,
   },
   {
-    id: "routes/api.games.wordle.rhobh.daily",
-    path: "/api/games/wordle/rhobh/daily",
+    id: "routes/api.games.wordle.realitea.daily",
+    path: "/api/games/wordle/realitea/daily",
     loader: () => dailyPuzzle,
   },
   {
@@ -62,8 +62,13 @@ async function renderRoute() {
   const rendered = render(<RoutesStub initialEntries={["/"]} />);
 
   await screen.findByRole("button", { name: /how to play/i });
-  await screen.findByLabelText("Letter 1");
-  await screen.findByRole("button", { name: "Enter" });
+  await waitFor(() => {
+    expect(
+      screen.queryByLabelText("Letter 1") ??
+        screen.queryByText("Today's answer") ??
+        screen.queryByText("The answer was"),
+    ).toBeTruthy();
+  });
 
   return {
     user,
@@ -165,7 +170,7 @@ function getAlternateValidGuess(answer: string) {
 function seedSolvedGame(puzzle = getCurrentPuzzle()) {
   const puzzleKey = getPuzzleKeyForDate(new Date("2026-05-20T12:00:00.000Z"));
   window.localStorage.setItem(
-    `labyrinth:rhobh-wordle:${puzzleKey}`,
+    `labyrinth:realitea:${puzzleKey}`,
     JSON.stringify({
       puzzleKey,
       guesses: [puzzle.answer],
@@ -182,7 +187,7 @@ async function finishTileReveal(answerLength: number) {
   }
 }
 
-describe("RhobhWordleRoute", () => {
+describe("RealiTeaRoute", () => {
   beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     vi.setSystemTime(new Date("2026-05-20T12:00:00.000Z"));
@@ -197,7 +202,6 @@ describe("RhobhWordleRoute", () => {
       configurable: true,
     });
     window.localStorage.clear();
-
   });
 
   afterEach(() => {
@@ -212,7 +216,7 @@ describe("RhobhWordleRoute", () => {
     const date = new Date("2026-05-20T12:00:00.000Z");
     const puzzle = getPuzzleForDate(date);
     const puzzleKey = getPuzzleKeyForDate(date);
-    const storageKey = `labyrinth:rhobh-wordle:${puzzleKey}`;
+    const storageKey = `labyrinth:realitea:${puzzleKey}`;
     const { unmount, user } = await renderRoute();
 
     await enterGuess(user, puzzle.answer);
@@ -241,6 +245,26 @@ describe("RhobhWordleRoute", () => {
     });
   });
 
+  it("restores legacy rhobh progress for the same puzzle key", async () => {
+    const date = new Date("2026-05-20T12:00:00.000Z");
+    const puzzle = getPuzzleForDate(date);
+    const puzzleKey = getPuzzleKeyForDate(date);
+
+    window.localStorage.setItem(
+      `labyrinth:rhobh-wordle:${puzzleKey}`,
+      JSON.stringify({
+        puzzleKey,
+        guesses: [puzzle.answer],
+        status: "solved",
+      }),
+    );
+
+    await renderRoute();
+
+    expect(screen.getByText("Today's answer")).toBeInTheDocument();
+    expect(screen.getByText(puzzle.answer)).toBeInTheDocument();
+  });
+
   it("uses a stored daily puzzle from the loader when one exists", async () => {
     setRoutePuzzle(
       {
@@ -266,7 +290,7 @@ describe("RhobhWordleRoute", () => {
     const stalePuzzleKey = getPuzzleKeyForDate(staleDate);
 
     window.localStorage.setItem(
-      `labyrinth:rhobh-wordle:${stalePuzzleKey}`,
+      `labyrinth:realitea:${stalePuzzleKey}`,
       JSON.stringify({
         puzzleKey: stalePuzzleKey,
         guesses: [stalePuzzle.answer],
@@ -408,7 +432,7 @@ describe("RhobhWordleRoute", () => {
     );
 
     window.localStorage.setItem(
-      `labyrinth:rhobh-wordle:${puzzleKey}`,
+      `labyrinth:realitea:${puzzleKey}`,
       JSON.stringify({
         puzzleKey,
         guesses: seededGuesses.slice(0, MAX_GUESSES - 2),
@@ -424,7 +448,7 @@ describe("RhobhWordleRoute", () => {
     unmount();
 
     window.localStorage.setItem(
-      `labyrinth:rhobh-wordle:${puzzleKey}`,
+      `labyrinth:realitea:${puzzleKey}`,
       JSON.stringify({
         puzzleKey,
         guesses: seededGuesses,

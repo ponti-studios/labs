@@ -1,7 +1,7 @@
 ---
-title: RHOBH Wordle Case Study
-slug: rhobh-wordle
-summary: How RHOBH Wordle evolved from a static novelty into a reliable daily game with server-side validation, AI-assisted puzzle generation, and production-grade interaction polish.
+title: RealiTea Case Study
+slug: realitea
+summary: How a franchise-specific RHOBH Wordle experiment turned into RealiTea, a broader daily reality TV game with server-side validation, resilient publishing, and cleaner product boundaries.
 date: 2026-05-28
 tags:
   - case-study
@@ -17,22 +17,22 @@ source:
   - ../../../apps/labyrinth/RHOBH_WORDLE.md
 ---
 
-# RHOBH Wordle
+# RealiTea
 
-RHOBH Wordle started as a joke with good bones. The assignment was not to make it bigger. It was to make it hold up.
+RealiTea started as RHOBH Wordle, which is to say it started as a joke with good bones. The assignment was not to make it bigger. It was to make it hold.
 
-That meant giving a small, highly legible game the kinds of systems polish players mostly notice when it is missing: the right puzzle on the right day, validation that feels fair, input that never gets weird, and a publishing pipeline that can miss a step without taking the product down with it.
+That meant giving a small, highly legible game the kind of systems polish players mostly notice when it is missing: the right puzzle on the right day, validation that feels fair, input that never gets strange, and a publishing pipeline that can miss a step without taking the product down with it.
 
 ## The problem
 
-The concept already worked. The problem was durability. A themed word game can get away with a lot in prototype form. A daily game cannot.
+The concept already worked. The problem was durability. A themed word game can get away with a lot in prototype form. A daily one cannot.
 
 The main constraints were straightforward:
 
 - The puzzle had to rotate on UTC day boundaries.
 - A browser tab left open overnight had to recover cleanly.
 - Guess validation had to be authoritative, not only client-side.
-- Proper nouns and RHOBH-specific answers had to remain playable even when they were not in a standard dictionary.
+- Proper nouns and franchise-specific answers had to remain playable even when they were not in a standard dictionary.
 - Interaction quality had to feel deliberate on both desktop and mobile.
 - The daily content pipeline needed a safe fallback whenever AI generation or current-news sourcing came up short.
 
@@ -44,7 +44,7 @@ First, it became properly daily. Puzzle loading respects UTC rollover, open tabs
 
 Second, validation moved behind the server. The browser still handles immediate feedback, but the source of truth is no longer up for debate.
 
-Third, the interaction model got stricter. Reveal pacing, locked input, and post-game behavior all became parts of the product rather than loose flourishes around it.
+Third, the interaction model got stricter. Reveal pacing, locked input, and post-game behavior became parts of the product rather than flourishes around it.
 
 ## Product decisions that mattered
 
@@ -56,7 +56,7 @@ The route tries the database-backed daily puzzle first, but it never depends on 
 
 ### Validation moved to the server, not the browser
 
-Shipping the word list to the client would have made the game easier to reverse-engineer and harder to trust. Keeping validation on the server solved both problems while still making room for RHOBH-specific answers.
+Shipping the word list to the client would have made the game easier to reverse-engineer and harder to trust. Keeping validation on the server solved both while still making room for franchise-specific answers.
 
 ### Feature polish followed gameplay, not the other way around
 
@@ -64,7 +64,7 @@ Several smaller features only worked once they were tied to actual game rules. C
 
 ## What made it hold together
 
-The project became manageable once responsibilities were split cleanly. Game rules stayed pure, validation stayed server-side, daily puzzle rules lived in a shared domain layer, and the route focused on orchestration. That separation kept the project from turning into one very stressed component.
+The project became manageable once responsibilities were split cleanly. Game rules stayed pure, validation stayed server-side, daily puzzle rules lived in a shared domain layer, and the route focused on orchestration. That separation kept the project from turning into one very stressed file.
 
 ## The hardest fixes
 
@@ -83,7 +83,7 @@ The final game behaves like a daily product:
 - it loads the right puzzle for the UTC day,
 - keeps tabs in sync across rollover,
 - validates guesses on the server,
-- handles RHOBH-specific answers safely,
+- handles franchise-specific answers safely,
 - reveals results with controlled pacing,
 - offers a last-chance clue,
 - supports spoiler-free sharing,

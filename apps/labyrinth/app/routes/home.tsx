@@ -18,7 +18,7 @@ const routeEntries: RouteEntry[] = [
   { path: "/corona/:countryCode/vaccination-effectiveness", kind: "dynamic" },
   { path: "/corona/:countryCode/seasonal-patterns", kind: "dynamic" },
   { path: "/corona/:countryCode/outlier-detection", kind: "dynamic" },
-  { path: "/games/wordle/rhobh", href: "/games/wordle/rhobh", kind: "page" },
+  { path: "/games/wordle/realitea", href: "/games/wordle/realitea", kind: "page" },
   { path: "/experiments", href: "/experiments", kind: "page" },
   {
     path: "/experiments/threegl-web-request",

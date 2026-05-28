@@ -8,7 +8,7 @@ vi.mock("../../lib/server/rhobh-daily-puzzle", () => ({
   generateRhobhDailyPuzzle,
 }));
 
-describe("RHOBH daily puzzle generation action", () => {
+describe("RealiTea daily puzzle generation action", () => {
   beforeEach(() => {
     generateRhobhDailyPuzzle.mockReset();
     process.env = {
@@ -32,10 +32,10 @@ describe("RHOBH daily puzzle generation action", () => {
   }
 
   it("returns 405 for non-post requests", async () => {
-    const { action } = await import("../api.games.wordle.rhobh.generate");
+    const { action } = await import("../api.games.wordle.realitea.generate");
     const response = await action(
       createActionArgs(
-        new Request("http://localhost/api/games/wordle/rhobh/generate", {
+        new Request("http://localhost/api/games/wordle/realitea/generate", {
           method: "GET",
         }),
       ),
@@ -45,10 +45,10 @@ describe("RHOBH daily puzzle generation action", () => {
   });
 
   it("returns 401 when the scheduler token is missing or invalid", async () => {
-    const { action } = await import("../api.games.wordle.rhobh.generate");
+    const { action } = await import("../api.games.wordle.realitea.generate");
     const response = await action(
       createActionArgs(
-        new Request("http://localhost/api/games/wordle/rhobh/generate", {
+        new Request("http://localhost/api/games/wordle/realitea/generate", {
           body: JSON.stringify({ dateUtc: "2026-05-27" }),
           headers: { "Content-Type": "application/json" },
           method: "POST",
@@ -82,10 +82,10 @@ describe("RHOBH daily puzzle generation action", () => {
       validationStatus: "approved",
     });
 
-    const { action } = await import("../api.games.wordle.rhobh.generate");
+    const { action } = await import("../api.games.wordle.realitea.generate");
     const response = await action(
       createActionArgs(
-        new Request("http://localhost/api/games/wordle/rhobh/generate", {
+        new Request("http://localhost/api/games/wordle/realitea/generate", {
           body: JSON.stringify({ dateUtc: "2026-05-27" }),
           headers: {
             Authorization: "Bearer test-token",
@@ -105,10 +105,10 @@ describe("RHOBH daily puzzle generation action", () => {
   it("returns fallback status when generation publishes nothing", async () => {
     generateRhobhDailyPuzzle.mockResolvedValue(null);
 
-    const { action } = await import("../api.games.wordle.rhobh.generate");
+    const { action } = await import("../api.games.wordle.realitea.generate");
     const response = await action(
       createActionArgs(
-        new Request("http://localhost/api/games/wordle/rhobh/generate", {
+        new Request("http://localhost/api/games/wordle/realitea/generate", {
           body: JSON.stringify({ dateUtc: "2026-05-27" }),
           headers: {
             Authorization: "Bearer test-token",

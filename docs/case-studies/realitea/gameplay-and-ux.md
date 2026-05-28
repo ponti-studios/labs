@@ -1,7 +1,7 @@
 ---
-title: RHOBH Wordle Gameplay and UX
-slug: rhobh-wordle-gameplay-and-ux
-summary: The interaction design decisions that made RHOBH Wordle feel fair, legible, and polished across desktop and mobile.
+title: RealiTea Gameplay and UX
+slug: realitea-gameplay-and-ux
+summary: The interaction design decisions that made RealiTea feel fair, legible, and polished across desktop and mobile.
 date: 2026-05-28
 tags:
   - ux
@@ -15,9 +15,9 @@ source:
   - ../../../apps/labyrinth/RHOBH_WORDLE.md
 ---
 
-# RHOBH Wordle Gameplay and UX
+# RealiTea Gameplay and UX
 
-Word games are judged on feel. RHOBH Wordle had to stay readable under fast input, hold together on mobile, and make each resolved guess feel earned.
+Word games are judged on feel. RealiTea had to stay readable under fast input, hold together on mobile, and make each guess feel earned.
 
 ## Feedback rules were made explicit
 
@@ -27,7 +27,7 @@ The route handles three classes of submission failure before a guess is accepted
 - already guessed,
 - not in the word list.
 
-Each failure uses the same feedback pattern: a toast plus a shake on the active row. That consistency teaches the rules quickly and keeps error handling from becoming its own separate interface.
+Each failure uses the same feedback pattern: a toast plus a shake on the active row. That consistency teaches the rules quickly and keeps error handling from becoming its own interface.
 
 ## The board had to behave well on real keyboards and soft keyboards
 
@@ -35,7 +35,7 @@ Desktop input is handled through per-cell keydown events, but that is not enough
 
 The board also keeps focus pinned to the correct active cell. As letters are added or removed, focus moves to the next empty input. If the player clicks elsewhere in the active row, focus is redirected back to the current insertion point.
 
-That detail is easy to miss on paper and obvious to feel in a broken build.
+That detail is easy to miss on paper and obvious in a broken build.
 
 ## Reveal pacing was treated as part of the game loop
 
@@ -50,13 +50,13 @@ The reveal is not decoration. It is part of the game loop.
 
 ## Clues were hidden until they became useful
 
-The game includes `clue` data for each puzzle, but surfacing it too early would flatten the challenge. The final design reveals the clue only when the player has one guess remaining and the game is still active.
+The game includes `clue` data for each puzzle, but surfacing it too early would flatten the challenge. The final design reveals the clue only when the player has one guess left and the game is still active.
 
 That makes the clue feel earned and gives the final turn a sharper shape.
 
 ## Sharing stayed faithful to the genre
 
-The share flow copies a spoiler-free emoji grid rather than exposing the answer. That keeps the social ritual of Wordle intact while fitting the RHOBH theme.
+The share flow copies a spoiler-free emoji grid rather than exposing the answer. That keeps the social ritual of Wordle intact while fitting the RealiTea setting.
 
 It also takes a pragmatic fallback path: clipboard first, prompt second, the existing toast system for both outcomes.
 

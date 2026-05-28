@@ -14,7 +14,7 @@ This directory holds the markdown artifacts prepared for publishing.
 
 ## Available studies
 
-- [RHOBH Wordle](./rhobh-wordle/index.md)
+- [RealiTea](./realitea/index.md)
 
 ## Publishing notes
 

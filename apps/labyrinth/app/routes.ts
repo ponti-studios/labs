@@ -5,6 +5,8 @@ export default [
   route("/svg-glass-test", "routes/svg-glass-test.tsx"),
 
   route("/api/director/generate", "routes/api.director.generate.ts"),
+  route("/api/games/wordle/realitea/daily", "routes/api.games.wordle.realitea.daily.ts"),
+  route("/api/games/wordle/realitea/generate", "routes/api.games.wordle.realitea.generate.ts"),
   route("/api/games/wordle/rhobh/daily", "routes/api.games.wordle.rhobh.daily.ts"),
   route("/api/games/wordle/rhobh/generate", "routes/api.games.wordle.rhobh.generate.ts"),
   route("/api/words/validate", "routes/api.words.validate.ts"),
@@ -21,6 +23,7 @@ export default [
     route("seasonal-patterns", "routes/corona.$countryCode.seasonal-patterns.tsx"),
     route("outlier-detection", "routes/corona.$countryCode.outlier-detection.tsx"),
   ]),
+  route("/games/wordle/realitea", "routes/games/realitea.tsx"),
   route("/games/wordle/rhobh", "routes/games/rhobh-wordle.tsx"),
 
   // Experiments

@@ -6,7 +6,7 @@ const SHARE_TILES: Record<LetterState, string> = {
   correct: "🟩",
 };
 
-export interface ShareRhobhResultOptions {
+export interface ShareRealiTeaResultOptions {
   answer: string;
   guesses: string[];
   isSolved: boolean;
@@ -24,7 +24,7 @@ function formatShareDate(date: Date) {
   }).format(date);
 }
 
-export function buildRhobhShareText(
+export function buildRealiTeaShareText(
   answer: string,
   guesses: string[],
   isSolved: boolean,
@@ -37,24 +37,24 @@ export function buildRhobhShareText(
       .join(""),
   );
 
-  return [`RHOBH Wordle - ${formatShareDate(date)}`, score, "", ...rows].join("\n");
+  return [`RealiTea - ${formatShareDate(date)}`, score, "", ...rows].join("\n");
 }
 
-export async function shareRhobhResult({
+export async function shareRealiTeaResult({
   answer,
   guesses,
   isSolved,
   date = new Date(),
   copyToClipboard,
   promptCopy,
-}: ShareRhobhResultOptions) {
-  const shareText = buildRhobhShareText(answer, guesses, isSolved, date);
+}: ShareRealiTeaResultOptions) {
+  const shareText = buildRealiTeaShareText(answer, guesses, isSolved, date);
 
   try {
     await copyToClipboard(shareText);
     return { method: "clipboard" as const, shareText };
   } catch {
-    promptCopy("Copy your RHOBH result:", shareText);
+    promptCopy("Copy your RealiTea result:", shareText);
     return { method: "prompt" as const, shareText };
   }
 }

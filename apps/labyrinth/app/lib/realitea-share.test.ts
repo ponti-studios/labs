@@ -1,17 +1,17 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { buildRhobhShareText, shareRhobhResult } from "./rhobh-wordle-share";
+import { buildRealiTeaShareText, shareRealiTeaResult } from "./realitea-share";
 
-describe("rhobh-wordle share helpers", () => {
+describe("realitea share helpers", () => {
   it("builds a solved share grid without revealing the answer text", () => {
-    expect(buildRhobhShareText("ERIKA", ["ERIKA"], true, new Date("2026-05-20T12:00:00.000Z"))).toBe(
-      "RHOBH Wordle - 20 May 2026\n1/6\n\n🟩🟩🟩🟩🟩",
+    expect(buildRealiTeaShareText("ERIKA", ["ERIKA"], true, new Date("2026-05-20T12:00:00.000Z"))).toBe(
+      "RealiTea - 20 May 2026\n1/6\n\n🟩🟩🟩🟩🟩",
     );
   });
 
   it("uses X score when the puzzle is lost", () => {
     expect(
-      buildRhobhShareText(
+      buildRealiTeaShareText(
         "ERIKA",
         ["DORIT", "KYLEE", "TILLY", "DORIT", "KYLEE", "TILLY"],
         false,
@@ -24,7 +24,7 @@ describe("rhobh-wordle share helpers", () => {
     const copyToClipboard = vi.fn().mockResolvedValue(undefined);
     const promptCopy = vi.fn();
 
-    const result = await shareRhobhResult({
+    const result = await shareRealiTeaResult({
       answer: "ERIKA",
       guesses: ["ERIKA"],
       isSolved: true,
@@ -33,7 +33,7 @@ describe("rhobh-wordle share helpers", () => {
       promptCopy,
     });
 
-    expect(copyToClipboard).toHaveBeenCalledWith("RHOBH Wordle - 20 May 2026\n1/6\n\n🟩🟩🟩🟩🟩");
+    expect(copyToClipboard).toHaveBeenCalledWith("RealiTea - 20 May 2026\n1/6\n\n🟩🟩🟩🟩🟩");
     expect(promptCopy).not.toHaveBeenCalled();
     expect(result.method).toBe("clipboard");
   });
@@ -42,7 +42,7 @@ describe("rhobh-wordle share helpers", () => {
     const copyToClipboard = vi.fn().mockRejectedValue(new Error("denied"));
     const promptCopy = vi.fn();
 
-    const result = await shareRhobhResult({
+    const result = await shareRealiTeaResult({
       answer: "ERIKA",
       guesses: ["ERIKA"],
       isSolved: true,
@@ -52,8 +52,8 @@ describe("rhobh-wordle share helpers", () => {
     });
 
     expect(promptCopy).toHaveBeenCalledWith(
-      "Copy your RHOBH result:",
-      "RHOBH Wordle - 20 May 2026\n1/6\n\n🟩🟩🟩🟩🟩",
+      "Copy your RealiTea result:",
+      "RealiTea - 20 May 2026\n1/6\n\n🟩🟩🟩🟩🟩",
     );
     expect(result.method).toBe("prompt");
   });

@@ -1,4 +1,4 @@
-name: schedule-rhobh-daily-puzzle
+name: schedule-realitea-daily-puzzle
 
 on:
   schedule:
@@ -28,7 +28,7 @@ jobs:
             echo "date_utc=$(date -u +%F)" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: trigger-rhobh-daily-generation
+      - name: trigger-realitea-daily-generation
         env:
           LABYRINTH_BASE_URL: ${{ secrets.LABYRINTH_BASE_URL }}
           RHOBH_DAILY_PUZZLE_TOKEN: ${{ secrets.RHOBH_DAILY_PUZZLE_TOKEN }}
@@ -44,7 +44,7 @@ jobs:
             curl -sS \
               -o "$response_file" \
               -w "%{http_code}" \
-              -X POST "${LABYRINTH_BASE_URL%/}/api/games/wordle/rhobh/generate" \
+              -X POST "${LABYRINTH_BASE_URL%/}/api/games/wordle/realitea/generate" \
               -H "Authorization: Bearer $RHOBH_DAILY_PUZZLE_TOKEN" \
               -H "Content-Type: application/json" \
               -d "{\"dateUtc\":\"$DATE_UTC\"}"
@@ -54,6 +54,6 @@ jobs:
 
           if [ "$status_code" -lt 200 ] || [ "$status_code" -ge 300 ]; then
             echo
-            echo "RHOBH daily generation failed with HTTP $status_code" >&2
+            echo "RealiTea daily generation failed with HTTP $status_code" >&2
             exit 1
           fi

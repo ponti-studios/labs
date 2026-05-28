@@ -1,0 +1,1 @@
+export { loader } from "./api.games.wordle.rhobh.daily";
