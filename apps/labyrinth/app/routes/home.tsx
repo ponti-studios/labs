@@ -30,7 +30,7 @@ const routeEntries: RouteEntry[] = [
     href: "/experiments/threegl-image-gallery",
     kind: "page",
   },
-  { path: "/challenges/algorithms", href: "/challenges/algorithms", kind: "page" },
+
   { path: "/challenges/cards", href: "/challenges/cards", kind: "page" },
   { path: "/challenges/chart-hop", href: "/challenges/chart-hop", kind: "page" },
   { path: "/challenges/click-therapeutics", href: "/challenges/click-therapeutics", kind: "page" },
@@ -85,7 +85,7 @@ export default function Home() {
                   href={route.href}
                   target="_blank"
                   rel="noreferrer"
-                  className="transition-colors duration-150 hover:text-muted-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                  className="transition-colors duration-150 hover:text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                 >
                   {route.path}
                 </a>

@@ -7,7 +7,7 @@ export const routes = [
   {
     path: "/tools",
     label: "Tools & Features",
-    description: "Hub for games, algorithms, and utilities",
+    description: "Hub for games, business tools, and AI",
   },
   {
     path: "/games/tetris",
@@ -19,16 +19,7 @@ export const routes = [
     label: "RealiTea",
     description: "Daily reality TV guessing game",
   },
-  {
-    path: "/algorithms",
-    label: "Algorithms Explorer",
-    description: "Learn sorting and searching",
-  },
-  {
-    path: "/problems",
-    label: "Problem Solver",
-    description: "Coding challenges and solutions",
-  },
+
   {
     path: "/business-tools",
     label: "Business Tools",

@@ -37,7 +37,6 @@ const experimentRoutes = [
 ] satisfies RouteConfig;
 
 const challengeRoutes = [
-  route("/challenges/algorithms", "routes/algorithms.tsx"),
   route("/challenges/cards", "routes/cards.tsx"),
   route("/challenges/chart-hop", "routes/chart-hop.tsx"),
   route("/challenges/click-therapeutics", "routes/click-therapeutics.tsx"),

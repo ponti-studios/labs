@@ -33,6 +33,18 @@ Dynamic Programming
 Graph Algorithms
 └── 15: BFS/DFS
 
+Migrated Algorithms Explorer Lessons
+├── 17: Binary Search
+├── 18: Selection Sort
+├── 19: Stack Palindrome
+└── 20: Algorithms Explorer
+
+Practice Problems
+├── 21: Two Sum
+├── 22: Swap Elements
+├── 23: Sum Array
+└── 24: Problem Solver
+
 Special Topics
 ├── 04: Maximum Subarray
 └── 09: Sorting Algorithms
@@ -70,6 +82,15 @@ Special Topics
 | 14 | [Linked Lists](./14-data-structures.linked-lists.ts) | Data Structures | List operations, pointers |
 | 15 | [BFS/DFS](./15-graphs.bfs-dfs.ts) | Graphs | Graph traversal |
 | 16 | [Stack/Queue](./16-data-structures.stack-queue.ts) | Data Structures | LIFO/FIFO, applications |
+
+### Practice Problems
+
+| Lesson | Title | Category | Topics |
+|--------|-------|----------|--------|
+| 21 | [Two Sum](./21-problems.two-sum.ts) | Problems | Hash maps, complements |
+| 22 | [Swap Elements](./22-problems.swap-elements.ts) | Problems | Mutation, immutability |
+| 23 | [Sum Array](./23-problems.sum-array.ts) | Problems | Iteration, arithmetic series |
+| 24 | [Problem Solver](./24-problems.problem-solver.ts) | Problems | Problem decomposition, review |
 
 ## Prerequisites
 
