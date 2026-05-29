@@ -3,10 +3,10 @@ import { type LoaderFunctionArgs, useFetcher, useLoaderData } from "react-router
 
 import { Button, OnscreenKeyboard, type LetterState } from "@pontistudios/ui";
 import {
-  getRhobhDateKey,
-  type RhobhPuzzleEnvelope,
-  type RhobhStoredPuzzle,
-} from "~/lib/rhobh-daily-puzzle";
+  getDateKey,
+  type PuzzleEnvelope,
+  type StoredPuzzle,
+} from "~/lib/realitea-daily-puzzle";
 import {
   evaluateGuess,
   getKeyboardState,
@@ -16,7 +16,7 @@ import {
   normalizeGuess,
 } from "~/lib/realitea";
 import { shareRealiTeaResult } from "~/lib/realitea-share";
-import { loadRhobhPuzzleForDate } from "~/lib/server/rhobh-daily-puzzle";
+import { loadPuzzleForDate } from "~/lib/realitea-daily-puzzle.server";
 import { cn } from "~/lib/utils";
 
 const STORAGE_PREFIX = "labyrinth:realitea:";
@@ -57,7 +57,7 @@ interface PersistedGameState {
   status: "playing" | "solved" | "failed";
 }
 
-function buildStaticPuzzleEnvelope(date: Date): RhobhPuzzleEnvelope {
+function buildStaticPuzzleEnvelope(date: Date): PuzzleEnvelope {
   const puzzle = getPuzzleForDate(date);
 
   return {
@@ -73,7 +73,7 @@ export async function loader(_args: LoaderFunctionArgs) {
   const date = new Date();
 
   try {
-    return Response.json(await loadRhobhPuzzleForDate(date, getPuzzleForDate(date)));
+    return Response.json(await loadPuzzleForDate(date, getPuzzleForDate(date)));
   } catch {
     return Response.json(buildStaticPuzzleEnvelope(date));
   }
@@ -141,11 +141,11 @@ function getTileRevealStyle(state: LetterState): React.CSSProperties {
 }
 
 export default function RealiTeaRoute() {
-  const initialData = useLoaderData<typeof loader>() as RhobhPuzzleEnvelope;
+  const initialData = useLoaderData<typeof loader>() as PuzzleEnvelope;
   const [puzzleKey, setPuzzleKey] = useState(() => initialData.puzzle.puzzleKey);
-  const [puzzle, setPuzzle] = useState<RhobhStoredPuzzle>(() => initialData.puzzle);
+  const [puzzle, setPuzzle] = useState<StoredPuzzle>(() => initialData.puzzle);
   const answerLength = puzzle.answer.length;
-  const dailyPuzzleFetcher = useFetcher<RhobhPuzzleEnvelope>();
+  const dailyPuzzleFetcher = useFetcher<PuzzleEnvelope>();
 
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentGuess, setCurrentGuess] = useState("");
@@ -199,7 +199,7 @@ export default function RealiTeaRoute() {
 
       setPuzzleKey(nextKey);
       setPuzzle(buildStaticPuzzleEnvelope(now).puzzle);
-      dailyPuzzleFetcher.load(`/api/games/realitea/daily?date=${getRhobhDateKey(now)}`);
+      dailyPuzzleFetcher.load(`/api/games/realitea/daily?date=${getDateKey(now)}`);
     }
 
     const id = window.setInterval(sync, 60_000);

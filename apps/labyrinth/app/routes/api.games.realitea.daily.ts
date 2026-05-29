@@ -1,8 +1,8 @@
 import type { LoaderFunctionArgs } from "react-router";
 
-import { parseRhobhDate } from "~/lib/rhobh-daily-puzzle";
+import { parseDate } from "~/lib/realitea-daily-puzzle";
 import { getPuzzleForDate, getPuzzleKeyForDate } from "~/lib/realitea";
-import { loadRhobhPuzzleForDate } from "~/lib/server/rhobh-daily-puzzle";
+import { loadPuzzleForDate } from "~/lib/realitea-daily-puzzle.server";
 
 function buildStaticResponse(date: Date) {
   const puzzle = getPuzzleForDate(date);
@@ -18,10 +18,10 @@ function buildStaticResponse(date: Date) {
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
-  const date = parseRhobhDate(url.searchParams.get("date")) ?? new Date();
+  const date = parseDate(url.searchParams.get("date")) ?? new Date();
 
   try {
-    return Response.json(await loadRhobhPuzzleForDate(date, getPuzzleForDate(date)));
+    return Response.json(await loadPuzzleForDate(date, getPuzzleForDate(date)));
   } catch {
     return Response.json(buildStaticResponse(date));
   }

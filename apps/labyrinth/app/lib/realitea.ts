@@ -1,19 +1,19 @@
 export type LetterState = "absent" | "correct" | "present";
-export type RhobhAnswerType = "moment" | "object" | "person" | "phrase" | "place" | "storyline";
-export type RhobhNewsMode = "archive" | "current";
+export type PuzzleAnswerType = "moment" | "object" | "person" | "phrase" | "place" | "storyline";
+export type PuzzleNewsMode = "archive" | "current";
 
-export interface RhobhPuzzle {
+export interface Puzzle {
   answer: string;
   clue: string;
   detail: string;
   role: string;
-  answerType?: RhobhAnswerType;
-  newsMode?: RhobhNewsMode;
+  answerType?: PuzzleAnswerType;
+  newsMode?: PuzzleNewsMode;
 }
 
 export const MAX_GUESSES = 6;
 
-export const RHOBH_PUZZLES: RhobhPuzzle[] = [
+export const RHOBH_PUZZLES: Puzzle[] = [
   {
     answer: "KYLE",
     clue: "OG diamond holder navigating a high-profile separation storyline.",
@@ -80,7 +80,7 @@ export function normalizeGuess(value: string): string {
   return value.replaceAll(/[^a-z]/gi, "").toUpperCase();
 }
 
-export function normalizeRhobhAnswer(value: string): string {
+export function normalizeAnswer(value: string): string {
   return normalizeGuess(value);
 }
 
@@ -92,7 +92,7 @@ export function getPuzzleKeyForDate(date: Date): string {
   return `rhobh-${utcDay}`;
 }
 
-export function getPuzzleForKey(puzzleKey: string): RhobhPuzzle {
+export function getPuzzleForKey(puzzleKey: string): Puzzle {
   const utcDay = Number.parseInt(puzzleKey.replace("rhobh-", ""), 10);
 
   if (Number.isNaN(utcDay)) {
@@ -102,7 +102,7 @@ export function getPuzzleForKey(puzzleKey: string): RhobhPuzzle {
   return RHOBH_PUZZLES[utcDay % RHOBH_PUZZLES.length];
 }
 
-export function getPuzzleForDate(date: Date): RhobhPuzzle {
+export function getPuzzleForDate(date: Date): Puzzle {
   return getPuzzleForKey(getPuzzleKeyForDate(date));
 }
 

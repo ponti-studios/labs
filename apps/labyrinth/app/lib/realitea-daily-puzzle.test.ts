@@ -2,11 +2,11 @@ import { describe, expect, it } from "vitest";
 
 import {
   chooseArchivePuzzle,
-  getRhobhArchiveMoments,
-  parseRhobhGenerationResponse,
+  getArchiveMoments,
+  parseGenerationResponse,
   RHOBH_PRIMARY_SOURCE_DOMAIN,
-  validateRhobhCandidate,
-} from "./rhobh-daily-puzzle";
+  validateCandidate,
+} from "./realitea-daily-puzzle";
 
 describe("rhobh daily puzzle helpers", () => {
   it("accepts collapsed multi-word answers that normalize cleanly", () => {
@@ -24,7 +24,7 @@ describe("rhobh daily puzzle helpers", () => {
       sourceUrls: [],
     };
 
-    const result = validateRhobhCandidate(candidate, {
+    const result = validateCandidate(candidate, {
       archiveAnswers: new Set(["VILLAROSA"]),
     });
 
@@ -47,7 +47,7 @@ describe("rhobh daily puzzle helpers", () => {
       sourceUrls: [],
     };
 
-    const result = validateRhobhCandidate(candidate, {
+    const result = validateCandidate(candidate, {
       archiveAnswers: new Set(["RH"]),
     });
 
@@ -70,7 +70,7 @@ describe("rhobh daily puzzle helpers", () => {
       sourceUrls: [],
     };
 
-    const result = validateRhobhCandidate(candidate, {
+    const result = validateCandidate(candidate, {
       archiveAnswers: new Set(["PUPPYGATE"]),
     });
 
@@ -93,7 +93,7 @@ describe("rhobh daily puzzle helpers", () => {
       sourceUrls: [],
     };
 
-    const result = validateRhobhCandidate(candidate, {
+    const result = validateCandidate(candidate, {
       archiveAnswers: new Set(["ASPEN"]),
       previousAnswers: new Set(["ASPEN"]),
     });
@@ -117,7 +117,7 @@ describe("rhobh daily puzzle helpers", () => {
       sourceUrls: ["https://people.com/latest-rhobh-story"],
     };
 
-    const result = validateRhobhCandidate(candidate);
+    const result = validateCandidate(candidate);
 
     expect(result.valid).toBe(false);
     expect(result.reasons).toContain("current candidate is missing Bravo primary coverage");
@@ -142,7 +142,7 @@ describe("rhobh daily puzzle helpers", () => {
       ],
     };
 
-    const result = validateRhobhCandidate(candidate);
+    const result = validateCandidate(candidate);
 
     expect(result.valid).toBe(true);
   });
@@ -162,18 +162,18 @@ describe("rhobh daily puzzle helpers", () => {
       sourceUrls: [],
     };
 
-    const result = validateRhobhCandidate(candidate);
+    const result = validateCandidate(candidate);
 
     expect(result.valid).toBe(false);
     expect(result.reasons).toContain("archive candidate is not backed by the curated archive pool");
   });
 
   it("parses a strict generation response", () => {
-    const archiveCandidate = getRhobhArchiveMoments()[0];
-    const secondArchiveCandidate = getRhobhArchiveMoments()[1];
-    const thirdArchiveCandidate = getRhobhArchiveMoments()[2];
+    const archiveCandidate = getArchiveMoments()[0];
+    const secondArchiveCandidate = getArchiveMoments()[1];
+    const thirdArchiveCandidate = getArchiveMoments()[2];
 
-    const parsed = parseRhobhGenerationResponse(
+    const parsed = parseGenerationResponse(
       JSON.stringify([archiveCandidate, secondArchiveCandidate, thirdArchiveCandidate]),
     );
 
@@ -183,7 +183,7 @@ describe("rhobh daily puzzle helpers", () => {
 
   it("rejects malformed generation payloads", () => {
     expect(() =>
-      parseRhobhGenerationResponse(
+      parseGenerationResponse(
         JSON.stringify([
           {
             answer: "Puppygate",
@@ -195,7 +195,7 @@ describe("rhobh daily puzzle helpers", () => {
   });
 
   it("chooses a deterministic archive puzzle while respecting recent repeats", () => {
-    const archivePool = getRhobhArchiveMoments();
+    const archivePool = getArchiveMoments();
     const skipped = archivePool[0];
     const chosen = chooseArchivePuzzle(new Date("2026-05-27T12:00:00.000Z"), new Set([skipped.answer]), [
       skipped,

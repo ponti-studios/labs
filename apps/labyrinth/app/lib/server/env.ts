@@ -12,12 +12,12 @@ export const LabyrinthServerEnv = z
 
 export type LabyrinthServerEnv = z.infer<typeof LabyrinthServerEnv>;
 
-export const RhobhSchedulerEnv = z
+export const DailyPuzzleSchedulerEnv = z
   .object({
     RHOBH_DAILY_PUZZLE_TOKEN: z.string().min(1),
   })
   .transform((env) => ({
-    rhobhDailyPuzzleToken: env.RHOBH_DAILY_PUZZLE_TOKEN,
+    dailyPuzzleToken: env.RHOBH_DAILY_PUZZLE_TOKEN,
   }));
 
-export type RhobhSchedulerEnv = z.infer<typeof RhobhSchedulerEnv>;
+export type DailyPuzzleSchedulerEnv = z.infer<typeof DailyPuzzleSchedulerEnv>;

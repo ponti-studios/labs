@@ -1,23 +1,23 @@
 import type { ActionFunctionArgs } from "react-router";
 
-import { mapPuzzleRecordToStoredPuzzle, parseRhobhDate } from "~/lib/rhobh-daily-puzzle";
-import { RhobhSchedulerEnv } from "~/lib/server/env";
-import { generateRhobhDailyPuzzle } from "~/lib/server/rhobh-daily-puzzle";
+import { mapRecordToStoredPuzzle, parseDate } from "~/lib/realitea-daily-puzzle";
+import { DailyPuzzleSchedulerEnv } from "~/lib/server/env";
+import { generateDailyPuzzle } from "~/lib/realitea-daily-puzzle.server";
 
-interface GenerateRhobhPuzzlePayload {
+interface GeneratePuzzlePayload {
   date?: string;
   dateUtc?: string;
 }
 
 function isAuthorizedRequest(request: Request): boolean {
-  const env = RhobhSchedulerEnv.safeParse(process.env);
+  const env = DailyPuzzleSchedulerEnv.safeParse(process.env);
 
   if (!env.success) {
     return false;
   }
 
   const authorization = request.headers.get("authorization");
-  return authorization === `Bearer ${env.data.rhobhDailyPuzzleToken}`;
+  return authorization === `Bearer ${env.data.dailyPuzzleToken}`;
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -29,18 +29,18 @@ export async function action({ request }: ActionFunctionArgs) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let payload: GenerateRhobhPuzzlePayload = {};
+  let payload: GeneratePuzzlePayload = {};
 
   try {
-    payload = (await request.json()) as GenerateRhobhPuzzlePayload;
+    payload = (await request.json()) as GeneratePuzzlePayload;
   } catch {
     payload = {};
   }
 
-  const date = parseRhobhDate(payload.dateUtc ?? payload.date ?? null) ?? new Date();
+  const date = parseDate(payload.dateUtc ?? payload.date ?? null) ?? new Date();
 
   try {
-    const puzzle = await generateRhobhDailyPuzzle(date);
+    const puzzle = await generateDailyPuzzle(date);
 
     if (!puzzle) {
       return Response.json(
@@ -54,7 +54,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
     return Response.json({
       dateUtc: puzzle.dateUtc,
-      puzzle: mapPuzzleRecordToStoredPuzzle(puzzle),
+      puzzle: mapRecordToStoredPuzzle(puzzle),
       status: "published",
     });
   } catch (error) {

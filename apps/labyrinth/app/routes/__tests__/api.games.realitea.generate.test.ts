@@ -1,16 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ActionFunctionArgs } from "react-router";
 
-const generateRhobhDailyPuzzle = vi.fn();
+const generateDailyPuzzle = vi.fn();
 const originalEnv = process.env;
 
-vi.mock("../../lib/server/rhobh-daily-puzzle", () => ({
-  generateRhobhDailyPuzzle,
+vi.mock("../../lib/realitea-daily-puzzle.server", () => ({
+  generateDailyPuzzle,
 }));
 
 describe("RealiTea daily puzzle generation action", () => {
   beforeEach(() => {
-    generateRhobhDailyPuzzle.mockReset();
+    generateDailyPuzzle.mockReset();
     process.env = {
       ...originalEnv,
       RHOBH_DAILY_PUZZLE_TOKEN: "test-token",
@@ -57,11 +57,11 @@ describe("RealiTea daily puzzle generation action", () => {
     );
 
     expect(response.status).toBe(401);
-    expect(generateRhobhDailyPuzzle).not.toHaveBeenCalled();
+    expect(generateDailyPuzzle).not.toHaveBeenCalled();
   });
 
   it("returns a published puzzle when generation succeeds", async () => {
-    generateRhobhDailyPuzzle.mockResolvedValue({
+    generateDailyPuzzle.mockResolvedValue({
       answer: "PUPPYGATE",
       answerType: "storyline",
       clue: "A rescue-dog scandal with long-lasting fallout.",
@@ -103,7 +103,7 @@ describe("RealiTea daily puzzle generation action", () => {
   });
 
   it("returns fallback status when generation publishes nothing", async () => {
-    generateRhobhDailyPuzzle.mockResolvedValue(null);
+    generateDailyPuzzle.mockResolvedValue(null);
 
     const { action } = await import("../api.games.realitea.generate");
     const response = await action(

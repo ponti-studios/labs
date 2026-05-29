@@ -12,7 +12,7 @@ import words8 from "../data/words/8.txt?raw";
 import words9 from "../data/words/9.txt?raw";
 import words10 from "../data/words/10.txt?raw";
 
-import { getStoredRhobhAnswersForValidation } from "./server/rhobh-daily-puzzle";
+import { getStoredAnswersForValidation } from "./realitea-daily-puzzle.server";
 import { RHOBH_PUZZLES } from "./realitea";
 
 const RAW_BY_LENGTH: Record<number, string> = {
@@ -52,6 +52,6 @@ export async function isValidWord(word: string): Promise<boolean> {
     return true;
   }
 
-  const storedAnswers = await getStoredRhobhAnswersForValidation();
+  const storedAnswers = await getStoredAnswersForValidation();
   return storedAnswers.has(upper);
 }

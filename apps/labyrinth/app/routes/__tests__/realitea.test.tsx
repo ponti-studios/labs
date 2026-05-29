@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { createRoutesStub } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import type { RhobhPuzzleEnvelope, RhobhStoredPuzzle } from "../../lib/rhobh-daily-puzzle";
+import type { PuzzleEnvelope, StoredPuzzle } from "../../lib/realitea-daily-puzzle";
 import {
   getPuzzleForDate,
   getPuzzleKeyForDate,
@@ -24,8 +24,8 @@ const validationControl = createControlledRouteAction<string, { valid: boolean }
 function buildPuzzleEnvelope(
   puzzle = getPuzzleForDate(new Date("2026-05-20T12:00:00.000Z")),
   date = new Date("2026-05-20T12:00:00.000Z"),
-  source: RhobhStoredPuzzle["source"] = "static",
-): RhobhPuzzleEnvelope {
+  source: StoredPuzzle["source"] = "static",
+): PuzzleEnvelope {
   return {
     puzzle: {
       ...puzzle,
@@ -142,7 +142,7 @@ function getCurrentPuzzle() {
 function setRoutePuzzle(
   puzzle = getCurrentPuzzle(),
   date = new Date("2026-05-20T12:00:00.000Z"),
-  source: RhobhStoredPuzzle["source"] = "static",
+  source: StoredPuzzle["source"] = "static",
 ) {
   routePuzzle = buildPuzzleEnvelope(puzzle, date, source);
 }
@@ -150,7 +150,7 @@ function setRoutePuzzle(
 function setDailyPuzzle(
   puzzle = getCurrentPuzzle(),
   date = new Date("2026-05-20T12:00:00.000Z"),
-  source: RhobhStoredPuzzle["source"] = "static",
+  source: StoredPuzzle["source"] = "static",
 ) {
   dailyPuzzle = buildPuzzleEnvelope(puzzle, date, source);
 }
