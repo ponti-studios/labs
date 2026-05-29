@@ -20,7 +20,7 @@
   "scripts": {
     "build": "vite build && tsc --emitDeclarationOnly",
     "dev": "vite",
-    "storybook": "mise exec node@24.14.1 -- ./node_modules/.bin/storybook dev -p 6006",
+    "storybook": "storybook dev -p 6006",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint src --fix",
     "format": "oxfmt src --write"
