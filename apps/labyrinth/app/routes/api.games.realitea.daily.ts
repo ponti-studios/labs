@@ -1,7 +1,7 @@
 import type { LoaderFunctionArgs } from "react-router";
 
 import { parseRhobhDate } from "~/lib/rhobh-daily-puzzle";
-import { getPuzzleForDate, getPuzzleKeyForDate } from "~/lib/rhobh-wordle";
+import { getPuzzleForDate, getPuzzleKeyForDate } from "~/lib/realitea";
 import { loadRhobhPuzzleForDate } from "~/lib/server/rhobh-daily-puzzle";
 
 function buildStaticResponse(date: Date) {

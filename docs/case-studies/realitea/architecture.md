@@ -11,8 +11,6 @@ tags:
 related:
   - ./index.md
   - ./reliability-and-testing.md
-source:
-  - ../../../apps/labyrinth/RHOBH_WORDLE.md
 ---
 
 # RealiTea Architecture
@@ -80,8 +78,8 @@ The route can render a known-safe puzzle even when the daily job has not publish
 The game relies on a small API surface rather than a large backend.
 
 - `POST /api/words/validate` checks whether a guess is playable.
-- `GET /api/games/wordle/realitea/daily?date=YYYY-MM-DD` returns the approved puzzle for a UTC date or the static fallback.
-- `POST /api/games/wordle/realitea/generate` runs the daily publishing job for a specific UTC date.
+- `GET /api/games/realitea/daily?date=YYYY-MM-DD` returns the approved puzzle for a UTC date or the static fallback.
+- `POST /api/games/realitea/generate` runs the daily publishing job for a specific UTC date.
 
 The small API surface is deliberate. Each endpoint has one job and a clear owner.
 

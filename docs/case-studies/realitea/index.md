@@ -1,7 +1,7 @@
 ---
 title: RealiTea Case Study
 slug: realitea
-summary: How a franchise-specific RHOBH Wordle experiment turned into RealiTea, a broader daily reality TV game with server-side validation, resilient publishing, and cleaner product boundaries.
+summary: How a franchise-specific RHOBH guessing game turned into RealiTea, a broader daily reality TV game with server-side validation, resilient publishing, and cleaner product boundaries.
 date: 2026-05-28
 tags:
   - case-study
@@ -13,13 +13,11 @@ related:
   - ./architecture.md
   - ./gameplay-and-ux.md
   - ./reliability-and-testing.md
-source:
-  - ../../../apps/labyrinth/RHOBH_WORDLE.md
 ---
 
 # RealiTea
 
-RealiTea started as RHOBH Wordle, which is to say it started as a joke with good bones. The assignment was not to make it bigger. It was to make it hold.
+RealiTea started as a franchise-specific RHOBH guessing game, which is to say it started as a joke with good bones. The assignment was not to make it bigger. It was to make it hold.
 
 That meant giving a small, highly legible game the kind of systems polish players mostly notice when it is missing: the right puzzle on the right day, validation that feels fair, input that never gets strange, and a publishing pipeline that can miss a step without taking the product down with it.
 

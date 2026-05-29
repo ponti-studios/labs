@@ -44,7 +44,7 @@ jobs:
             curl -sS \
               -o "$response_file" \
               -w "%{http_code}" \
-              -X POST "${LABYRINTH_BASE_URL%/}/api/games/wordle/realitea/generate" \
+              -X POST "${LABYRINTH_BASE_URL%/}/api/games/realitea/generate" \
               -H "Authorization: Bearer $RHOBH_DAILY_PUZZLE_TOKEN" \
               -H "Content-Type: application/json" \
               -d "{\"dateUtc\":\"$DATE_UTC\"}"

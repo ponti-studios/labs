@@ -1,4 +1,4 @@
-import { MAX_GUESSES, evaluateGuess, type LetterState } from "./rhobh-wordle";
+import { MAX_GUESSES, evaluateGuess, type LetterState } from "./realitea";
 
 const SHARE_TILES: Record<LetterState, string> = {
   absent: "⬜",

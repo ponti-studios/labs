@@ -13,7 +13,7 @@ import words9 from "../data/words/9.txt?raw";
 import words10 from "../data/words/10.txt?raw";
 
 import { getStoredRhobhAnswersForValidation } from "./server/rhobh-daily-puzzle";
-import { RHOBH_PUZZLES } from "./rhobh-wordle";
+import { RHOBH_PUZZLES } from "./realitea";
 
 const RAW_BY_LENGTH: Record<number, string> = {
   4: words4,

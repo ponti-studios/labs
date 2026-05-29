@@ -38,9 +38,9 @@ describe("RealiTea daily puzzle loader", () => {
       },
     });
 
-    const { loader } = await import("../api.games.wordle.realitea.daily");
+    const { loader } = await import("../api.games.realitea.daily");
     const response = await loader(
-      createLoaderArgs("http://localhost/api/games/wordle/realitea/daily?date=2026-05-27"),
+      createLoaderArgs("http://localhost/api/games/realitea/daily?date=2026-05-27"),
     );
     const payload = await response.json();
 
@@ -52,9 +52,9 @@ describe("RealiTea daily puzzle loader", () => {
   it("falls back to the static puzzle envelope when the loader throws", async () => {
     loadRhobhPuzzleForDate.mockRejectedValue(new Error("db unavailable"));
 
-    const { loader } = await import("../api.games.wordle.realitea.daily");
+    const { loader } = await import("../api.games.realitea.daily");
     const response = await loader(
-      createLoaderArgs("http://localhost/api/games/wordle/realitea/daily?date=2026-05-27"),
+      createLoaderArgs("http://localhost/api/games/realitea/daily?date=2026-05-27"),
     );
     const payload = await response.json();
 

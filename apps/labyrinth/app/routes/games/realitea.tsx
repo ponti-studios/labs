@@ -14,13 +14,12 @@ import {
   getPuzzleKeyForDate,
   MAX_GUESSES,
   normalizeGuess,
-} from "~/lib/rhobh-wordle";
+} from "~/lib/realitea";
 import { shareRealiTeaResult } from "~/lib/realitea-share";
 import { loadRhobhPuzzleForDate } from "~/lib/server/rhobh-daily-puzzle";
 import { cn } from "~/lib/utils";
 
 const STORAGE_PREFIX = "labyrinth:realitea:";
-const LEGACY_STORAGE_PREFIX = "labyrinth:rhobh-wordle:";
 
 const TILE_STATE_CLASSES: Record<LetterState, string> = {
   absent: "border-border bg-muted text-muted-foreground",
@@ -102,10 +101,6 @@ function getStorageKey(puzzleKey: string) {
   return buildStorageKey(STORAGE_PREFIX, puzzleKey);
 }
 
-function getLegacyStorageKey(puzzleKey: string) {
-  return buildStorageKey(LEGACY_STORAGE_PREFIX, puzzleKey);
-}
-
 function parsePersistedGameState(saved: string | null, puzzleKey: string): PersistedGameState | null {
   if (!saved) return null;
 
@@ -132,10 +127,7 @@ function parsePersistedGameState(saved: string | null, puzzleKey: string): Persi
 function readPersistedGameState(puzzleKey: string): PersistedGameState | null {
   if (typeof window === "undefined") return null;
 
-  return (
-    parsePersistedGameState(window.localStorage.getItem(getStorageKey(puzzleKey)), puzzleKey) ??
-    parsePersistedGameState(window.localStorage.getItem(getLegacyStorageKey(puzzleKey)), puzzleKey)
-  );
+  return parsePersistedGameState(window.localStorage.getItem(getStorageKey(puzzleKey)), puzzleKey);
 }
 
 function getTileRevealStyle(state: LetterState): React.CSSProperties {
@@ -207,7 +199,7 @@ export default function RealiTeaRoute() {
 
       setPuzzleKey(nextKey);
       setPuzzle(buildStaticPuzzleEnvelope(now).puzzle);
-      dailyPuzzleFetcher.load(`/api/games/wordle/realitea/daily?date=${getRhobhDateKey(now)}`);
+      dailyPuzzleFetcher.load(`/api/games/realitea/daily?date=${getRhobhDateKey(now)}`);
     }
 
     const id = window.setInterval(sync, 60_000);
@@ -237,7 +229,6 @@ export default function RealiTeaRoute() {
         status: isSolved ? "solved" : guesses.length >= MAX_GUESSES ? "failed" : "playing",
       } satisfies PersistedGameState),
     );
-    window.localStorage.removeItem(getLegacyStorageKey(puzzleKey));
   }, [guesses, hydratedPuzzleKey, isSolved, puzzleKey]);
 
   const addLetter = useCallback(

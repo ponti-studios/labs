@@ -12,8 +12,6 @@ related:
   - ./index.md
   - ./architecture.md
   - ./gameplay-and-ux.md
-source:
-  - ../../../apps/labyrinth/RHOBH_WORDLE.md
 ---
 
 # RealiTea Reliability and Testing

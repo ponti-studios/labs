@@ -32,10 +32,10 @@ describe("RealiTea daily puzzle generation action", () => {
   }
 
   it("returns 405 for non-post requests", async () => {
-    const { action } = await import("../api.games.wordle.realitea.generate");
+    const { action } = await import("../api.games.realitea.generate");
     const response = await action(
       createActionArgs(
-        new Request("http://localhost/api/games/wordle/realitea/generate", {
+        new Request("http://localhost/api/games/realitea/generate", {
           method: "GET",
         }),
       ),
@@ -45,10 +45,10 @@ describe("RealiTea daily puzzle generation action", () => {
   });
 
   it("returns 401 when the scheduler token is missing or invalid", async () => {
-    const { action } = await import("../api.games.wordle.realitea.generate");
+    const { action } = await import("../api.games.realitea.generate");
     const response = await action(
       createActionArgs(
-        new Request("http://localhost/api/games/wordle/realitea/generate", {
+        new Request("http://localhost/api/games/realitea/generate", {
           body: JSON.stringify({ dateUtc: "2026-05-27" }),
           headers: { "Content-Type": "application/json" },
           method: "POST",
@@ -82,10 +82,10 @@ describe("RealiTea daily puzzle generation action", () => {
       validationStatus: "approved",
     });
 
-    const { action } = await import("../api.games.wordle.realitea.generate");
+    const { action } = await import("../api.games.realitea.generate");
     const response = await action(
       createActionArgs(
-        new Request("http://localhost/api/games/wordle/realitea/generate", {
+        new Request("http://localhost/api/games/realitea/generate", {
           body: JSON.stringify({ dateUtc: "2026-05-27" }),
           headers: {
             Authorization: "Bearer test-token",
@@ -105,10 +105,10 @@ describe("RealiTea daily puzzle generation action", () => {
   it("returns fallback status when generation publishes nothing", async () => {
     generateRhobhDailyPuzzle.mockResolvedValue(null);
 
-    const { action } = await import("../api.games.wordle.realitea.generate");
+    const { action } = await import("../api.games.realitea.generate");
     const response = await action(
       createActionArgs(
-        new Request("http://localhost/api/games/wordle/realitea/generate", {
+        new Request("http://localhost/api/games/realitea/generate", {
           body: JSON.stringify({ dateUtc: "2026-05-27" }),
           headers: {
             Authorization: "Bearer test-token",

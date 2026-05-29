@@ -20,7 +20,7 @@ import {
   type RhobhSourceItem,
   validateRhobhCandidate,
 } from "../rhobh-daily-puzzle";
-import { normalizeRhobhAnswer, type RhobhPuzzle } from "../rhobh-wordle";
+import { normalizeRhobhAnswer, type RhobhPuzzle } from "../realitea";
 import { LabyrinthServerEnv } from "./env";
 
 interface RhobhGenerationDependencies {
@@ -107,7 +107,7 @@ async function searchSources(fetchImpl: typeof fetch, query: string): Promise<Ar
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
-      "User-Agent": "Mozilla/5.0 RHOBHWordleBot/1.0",
+      "User-Agent": "Mozilla/5.0 RealiTeaBot/1.0",
     },
     body,
   });
@@ -122,7 +122,7 @@ async function searchSources(fetchImpl: typeof fetch, query: string): Promise<Ar
 async function fetchArticleSummary(fetchImpl: typeof fetch, url: string): Promise<string> {
   const response = await fetchImpl(url, {
     headers: {
-      "User-Agent": "Mozilla/5.0 RHOBHWordleBot/1.0",
+      "User-Agent": "Mozilla/5.0 RealiTeaBot/1.0",
     },
   });
 
@@ -186,7 +186,7 @@ async function generateRhobhCandidatesFromSources(
         env.data.openRouterApiKey,
       ),
       systemPrompts: [
-        "You create daily RHOBH Wordle-style puzzles. Prefer current RHOBH news when source support is strong. Use the curated archive pool only when fresh news is thin. Never leak the answer in the clue or detail. Return only well-supported RHOBH-specific candidates.",
+        "You create daily RealiTea puzzles for RHOBH. Prefer current RHOBH news when source support is strong. Use the curated archive pool only when fresh news is thin. Never leak the answer in the clue or detail. Return only well-supported RHOBH-specific candidates.",
       ],
       messages: [
         {

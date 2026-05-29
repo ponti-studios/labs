@@ -9,8 +9,8 @@ const labRoutes = [
 
 const apiRoutes = [
   route("/api/director/generate", "routes/api.director.generate.ts"),
-  route("/api/games/wordle/realitea/daily", "routes/api.games.wordle.realitea.daily.ts"),
-  route("/api/games/wordle/realitea/generate", "routes/api.games.wordle.realitea.generate.ts"),
+  route("/api/games/realitea/daily", "routes/api.games.realitea.daily.ts"),
+  route("/api/games/realitea/generate", "routes/api.games.realitea.generate.ts"),
   route("/api/tarot", "routes/api.tarot.ts"),
   route("/api/words/validate", "routes/api.words.validate.ts"),
 ] satisfies RouteConfig;
@@ -28,7 +28,7 @@ const featureRoutes = [
   route("/corona", "routes/corona.tsx"),
   route("/corona/:countryCode", "routes/corona.$countryCode.layout.tsx", coronaRoutes),
   route("/games/tetris", "routes/games/tetris.tsx"),
-  route("/games/wordle/realitea", "routes/games/realitea.tsx"),
+  route("/games/realitea", "routes/games/realitea.tsx"),
   route("/business-tools", "routes/business-tools/index.tsx"),
   route("/business-tools/marketing", "routes/business-tools/marketing.tsx"),
 ] satisfies RouteConfig;

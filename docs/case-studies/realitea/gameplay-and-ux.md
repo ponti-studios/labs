@@ -11,8 +11,6 @@ tags:
 related:
   - ./index.md
   - ./reliability-and-testing.md
-source:
-  - ../../../apps/labyrinth/RHOBH_WORDLE.md
 ---
 
 # RealiTea Gameplay and UX
@@ -56,7 +54,7 @@ That makes the clue feel earned and gives the final turn a sharper shape.
 
 ## Sharing stayed faithful to the genre
 
-The share flow copies a spoiler-free emoji grid rather than exposing the answer. That keeps the social ritual of Wordle intact while fitting the RealiTea setting.
+The share flow copies a spoiler-free emoji grid rather than exposing the answer. That keeps the social ritual intact while fitting the RealiTea setting.
 
 It also takes a pragmatic fallback path: clipboard first, prompt second, the existing toast system for both outcomes.
 

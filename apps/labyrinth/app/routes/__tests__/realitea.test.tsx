@@ -10,7 +10,7 @@ import {
   MAX_GUESSES,
   normalizeGuess,
   RHOBH_PUZZLES,
-} from "../../lib/rhobh-wordle";
+} from "../../lib/realitea";
 import RealiTeaRoute from "../games/realitea";
 import { createControlledRouteAction } from "./controlled-route-action";
 
@@ -46,8 +46,8 @@ const RoutesStub = createRoutesStub([
     loader: () => routePuzzle,
   },
   {
-    id: "routes/api.games.wordle.realitea.daily",
-    path: "/api/games/wordle/realitea/daily",
+    id: "routes/api.games.realitea.daily",
+    path: "/api/games/realitea/daily",
     loader: () => dailyPuzzle,
   },
   {
@@ -243,26 +243,6 @@ describe("RealiTeaRoute", () => {
       guesses: [puzzle.answer],
       status: "solved",
     });
-  });
-
-  it("restores legacy rhobh progress for the same puzzle key", async () => {
-    const date = new Date("2026-05-20T12:00:00.000Z");
-    const puzzle = getPuzzleForDate(date);
-    const puzzleKey = getPuzzleKeyForDate(date);
-
-    window.localStorage.setItem(
-      `labyrinth:rhobh-wordle:${puzzleKey}`,
-      JSON.stringify({
-        puzzleKey,
-        guesses: [puzzle.answer],
-        status: "solved",
-      }),
-    );
-
-    await renderRoute();
-
-    expect(screen.getByText("Today's answer")).toBeInTheDocument();
-    expect(screen.getByText(puzzle.answer)).toBeInTheDocument();
   });
 
   it("uses a stored daily puzzle from the loader when one exists", async () => {

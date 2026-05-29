@@ -5,7 +5,7 @@ import {
   type RhobhNewsMode,
   normalizeRhobhAnswer,
   type RhobhPuzzle,
-} from "./rhobh-wordle";
+} from "./realitea";
 
 export const RHOBH_FRANCHISE = "rhobh";
 export const RHOBH_DATE_FORMAT = /^\d{4}-\d{2}-\d{2}$/;

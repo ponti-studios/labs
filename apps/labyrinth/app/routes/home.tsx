@@ -29,7 +29,7 @@ const featuredEntries: FeaturedEntry[] = [
   {
     title: "RealiTea",
     description: "Play the daily reality TV guessing game from the home screen.",
-    href: "/games/wordle/realitea",
+    href: "/games/realitea",
     eyebrow: "Daily game",
   },
 ] as const;
@@ -43,13 +43,13 @@ const routeEntries: RouteEntry[] = [
   { path: "/tarot", href: "/tarot", kind: "page" },
   { path: "/api/tarot", kind: "api" },
   { path: "/corona", href: "/corona", kind: "page" },
-  { path: "/corona/:countryCode", kind: "dynamic" },
-  { path: "/corona/:countryCode/pandemic-waves", kind: "dynamic" },
-  { path: "/corona/:countryCode/vaccination-effectiveness", kind: "dynamic" },
-  { path: "/corona/:countryCode/seasonal-patterns", kind: "dynamic" },
-  { path: "/corona/:countryCode/outlier-detection", kind: "dynamic" },
+  //   { path: "/corona/:countryCode", kind: "dynamic" },
+  //   { path: "/corona/:countryCode/pandemic-waves", kind: "dynamic" },
+  //   { path: "/corona/:countryCode/vaccination-effectiveness", kind: "dynamic" },
+  //   { path: "/corona/:countryCode/seasonal-patterns", kind: "dynamic" },
+  //   { path: "/corona/:countryCode/outlier-detection", kind: "dynamic" },
   { path: "/games/tetris", href: "/games/tetris", kind: "page" },
-  { path: "/games/wordle/realitea", href: "/games/wordle/realitea", kind: "page" },
+  { path: "/games/realitea", href: "/games/realitea", kind: "page" },
   { path: "/business-tools", href: "/business-tools", kind: "page" },
   { path: "/business-tools/marketing", href: "/business-tools/marketing", kind: "page" },
   { path: "/experiments", href: "/experiments", kind: "page" },
@@ -115,7 +115,9 @@ export default function Home() {
               className="group flex min-h-44 flex-col justify-between rounded-xl border border-border bg-muted/20 p-5 transition-colors duration-150 hover:bg-muted/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
               <div>
-                <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">{entry.eyebrow}</p>
+                <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                  {entry.eyebrow}
+                </p>
                 <h2 className="mt-3 text-xl text-foreground">{entry.title}</h2>
                 <p className="mt-3 max-w-[32ch] text-sm leading-6 text-muted-foreground">
                   {entry.description}

@@ -8,9 +8,9 @@ import {
   getPuzzleKeyForDate,
   getPuzzleForDate,
   normalizeGuess,
-} from "./rhobh-wordle";
+} from "./realitea";
 
-describe("rhobh-wordle helpers", () => {
+describe("realitea helpers", () => {
   it("normalizes guesses to uppercase letters", () => {
     expect(normalizeGuess(" Er!ika 123 ")).toBe("ERIKA");
   });
@@ -31,7 +31,7 @@ describe("rhobh-wordle helpers", () => {
     expect(morning).toMatch(/^rhobh-\d+$/);
   });
 
-  it("evaluates guesses with wordle-style duplicate handling", () => {
+  it("evaluates guesses with duplicate-letter handling", () => {
     expect(evaluateGuess("TILLY", "TULLY")).toEqual([
       "correct",
       "absent",
