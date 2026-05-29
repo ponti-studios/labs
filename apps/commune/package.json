@@ -8,7 +8,7 @@
     "dev": "react-router dev",
     "lint": "oxlint app --fix",
     "format": "oxfmt app --write",
-    "start": "tsx server.ts",
+    "start": "node server.js",
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
