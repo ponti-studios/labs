@@ -1,4 +1,6 @@
 import { useState, type ChangeEvent, type JSX } from "react";
+import { Button, Input } from "@pontistudios/ui";
+
 
 type CharacterCounts = Record<string, number>;
 
@@ -85,6 +87,12 @@ function testGraph(input: Segment[]): boolean {
   return true;
 }
 
+/**
+ * Daily Mail Take-Home Challenge
+ *
+ * Task: Solve a series of algorithmic and logic problems including character mapping 
+ * and graphing/closure challenges, and visualize the results.
+ */
 export default function DailyMail(): JSX.Element {
   const [charInput, setCharInput] = useState("Hello World");
   const [charResult, setCharResult] = useState<CharacterCounts | null>(null);
@@ -151,33 +159,26 @@ export default function DailyMail(): JSX.Element {
       <p>Coding challenges from Daily Mail interview.</p>
 
       <div
-        style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", marginTop: "1rem" }}
+        className="grid grid-cols-2 gap-8 mt-4"
       >
         <div>
           <h3>Character Map</h3>
-          <p style={{ fontSize: "0.9rem", color: "#666" }}>
+          <p className="text-[0.9rem] text-[#666]">
             Count occurrences of each letter in a string.
           </p>
-          <input
+          <Input
             type="text"
             value={charInput}
             onChange={handleCharInputChange}
-            placeholder="Enter text"
-            style={{ width: "100%", padding: "0.5rem", marginBottom: "0.5rem" }}
-          />
-          <button className="btn btn-primary" onClick={runCharMap}>
+            placeholder="Enter text" />
+          <Button className="btn btn-primary" onClick={runCharMap}>
             Run
-          </button>
+          </Button>
           {charResult && (
             <div
-              style={{
-                marginTop: "0.5rem",
-                padding: "0.75rem",
-                background: "#f0f0f0",
-                borderRadius: "4px",
-              }}
+              className="mt-2 p-3 bg-[#f0f0f0] rounded-[4px]"
             >
-              <pre style={{ margin: 0, fontSize: "0.85rem" }}>
+              <pre className="m-0 text-[0.85rem]">
                 {JSON.stringify(charResult, null, 2)}
               </pre>
             </div>
@@ -186,23 +187,18 @@ export default function DailyMail(): JSX.Element {
 
         <div>
           <h3>Closure Function</h3>
-          <p style={{ fontSize: "0.9rem", color: "#666" }}>
+          <p className="text-[0.9rem] text-[#666]">
             <code>f()()()()("a")</code> returns <code>"fooooa"</code> - each empty call adds
             &quot;o&quot;, final call appends the argument.
           </p>
-          <button className="btn btn-primary" onClick={runF}>
+          <Button className="btn btn-primary" onClick={runF}>
             Run f()()()()("a")
-          </button>
+          </Button>
           {fResult !== null && (
             <div
-              style={{
-                marginTop: "0.5rem",
-                padding: "0.75rem",
-                background: "#f0f0f0",
-                borderRadius: "4px",
-              }}
+              className="mt-2 p-3 bg-[#f0f0f0] rounded-[4px]"
             >
-              <p style={{ margin: 0 }}>
+              <p className="m-0">
                 <strong>Result:</strong> <code>{fResult}</code>
               </p>
             </div>
@@ -211,25 +207,20 @@ export default function DailyMail(): JSX.Element {
 
         <div>
           <h3>Graph Connectivity</h3>
-          <p style={{ fontSize: "0.9rem", color: "#666" }}>
+          <p className="text-[0.9rem] text-[#666]">
             Check if segments form a connected graph (no orphan segments).
           </p>
-          <button className="btn btn-primary" onClick={runGraph}>
+          <Button className="btn btn-primary" onClick={runGraph}>
             Test
-          </button>
+          </Button>
           {graphResult !== null && (
             <div
-              style={{
-                marginTop: "0.5rem",
-                padding: "0.75rem",
-                background: "#f0f0f0",
-                borderRadius: "4px",
-              }}
+              className="mt-2 p-3 bg-[#f0f0f0] rounded-[4px]"
             >
-              <p style={{ margin: "0.25rem 0" }}>
+              <p className="my-1">
                 <strong>Connected graph:</strong> {graphResult.connected ? "true" : "false"}
               </p>
-              <p style={{ margin: "0.25rem 0" }}>
+              <p className="my-1">
                 <strong>Disconnected graph:</strong> {graphResult.disconnected ? "true" : "false"}
               </p>
             </div>

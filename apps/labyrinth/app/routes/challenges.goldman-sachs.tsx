@@ -1,4 +1,6 @@
 import { useState, type JSX } from "react";
+import { Button } from "@pontistudios/ui";
+
 
 type ActiveTab = "bank" | "prime";
 type FeeChoice = "upfront" | "fee";
@@ -49,6 +51,12 @@ function* countdownGenerator(start: number): Generator<number, void, void> {
   }
 }
 
+/**
+ * Goldman Sachs Take-Home Challenge
+ *
+ * Task: Implement a calculator to determine the most cost-effective fee structure 
+ * (upfront vs percentage-based) given a series of payments and base thresholds.
+ */
 export default function GoldmanSachs(): JSX.Element {
   const [activeTab, setActiveTab] = useState<ActiveTab>("bank");
   const [bankResult, setBankResult] = useState<BankResult | null>(null);
@@ -91,19 +99,19 @@ export default function GoldmanSachs(): JSX.Element {
       <h2>Goldman Sachs</h2>
       <p>JavaScript algorithm challenges from Goldman Sachs interviews.</p>
 
-      <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
-        <button
+      <div className="flex gap-2 mb-4">
+        <Button
           onClick={() => setActiveTab("bank")}
           className={`btn ${activeTab === "bank" ? "btn-primary" : ""}`}
         >
           Bank Accounts
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => setActiveTab("prime")}
           className={`btn ${activeTab === "prime" ? "btn-primary" : ""}`}
         >
           Prime Countdown
-        </button>
+        </Button>
       </div>
 
       {activeTab === "bank" ? (
@@ -114,12 +122,7 @@ export default function GoldmanSachs(): JSX.Element {
           </p>
 
           <div
-            style={{
-              background: "#f5f5f5",
-              padding: "1rem",
-              borderRadius: "4px",
-              marginBottom: "1rem",
-            }}
+            className="bg-[#f5f5f5] p-4 rounded-[4px] mb-4"
           >
             <p>
               <strong>Example Input:</strong>
@@ -128,12 +131,12 @@ export default function GoldmanSachs(): JSX.Element {
             <p>payments: [100, 200, 300, 400]</p>
           </div>
 
-          <button onClick={runBankExample} className="btn btn-primary">
+          <Button onClick={runBankExample} className="btn btn-primary">
             Run Algorithm
-          </button>
+          </Button>
 
           {bankResult !== null && (
-            <div style={{ marginTop: "1rem" }}>
+            <div className="mt-4">
               <p>
                 <strong>Result:</strong>{" "}
                 {bankResult.result === "upfront" ? "Take the upfront!" : "Pay fee based"}
@@ -151,12 +154,7 @@ export default function GoldmanSachs(): JSX.Element {
           <p>Generate prime numbers in descending order from n-1 down to 2.</p>
 
           <div
-            style={{
-              background: "#f5f5f5",
-              padding: "1rem",
-              borderRadius: "4px",
-              marginBottom: "1rem",
-            }}
+            className="bg-[#f5f5f5] p-4 rounded-[4px] mb-4"
           >
             <p>
               <strong>n = 10</strong>
@@ -164,12 +162,12 @@ export default function GoldmanSachs(): JSX.Element {
             <p>Primes below 10: 7, 5, 3, 2</p>
           </div>
 
-          <button onClick={runPrimeGenerator} className="btn btn-primary">
+          <Button onClick={runPrimeGenerator} className="btn btn-primary">
             Generate Primes
-          </button>
+          </Button>
 
           {primeResult.length > 0 && (
-            <div style={{ marginTop: "1rem" }}>
+            <div className="mt-4">
               <p>
                 <strong>Output:</strong> [{primeResult.join(", ")}]
               </p>

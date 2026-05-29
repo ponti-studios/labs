@@ -1,3 +1,4 @@
+import { Button } from "@pontistudios/ui";
 import { useState, type JSX } from "react";
 
 interface CarouselItem {
@@ -8,6 +9,12 @@ function createInitialItems(): CarouselItem[] {
   return Array.from({ length: 6 }, (_, index) => ({ name: `Image ${index}` }));
 }
 
+/**
+ * Peterson Academy Take-Home Challenge
+ *
+ * Task: Build a React carousel component that supports infinite left and right
+ * navigation through a list of images/items.
+ */
 export default function PetersonAcademy(): JSX.Element {
   const [items, setItems] = useState<CarouselItem[]>(createInitialItems);
 
@@ -30,27 +37,19 @@ export default function PetersonAcademy(): JSX.Element {
         {items.map((item, index) => (
           <div
             key={item.name}
-            style={{
-              width: "300px",
-              height: "400px",
-              border: "1px solid black",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              marginTop: index * 70 + 20,
-            }}
+            className={`col-span-1 w-[300px] h-[400px] border border-black flex items-center justify-center mt-[${index * 70 + 20}px]`}
           >
             {item.name}
           </div>
         ))}
       </main>
-      <div className="flex justify-center gap-8" style={{ marginTop: "1rem" }}>
-        <button type="button" className="btn" onClick={handleLeftClick}>
+      <div className="flex justify-center gap-8 mt-4">
+        <Button type="button" className="btn" onClick={handleLeftClick}>
           Left
-        </button>
-        <button type="button" className="btn" onClick={handleRightClick}>
+        </Button>
+        <Button type="button" className="btn" onClick={handleRightClick}>
           Right
-        </button>
+        </Button>
       </div>
     </div>
   );

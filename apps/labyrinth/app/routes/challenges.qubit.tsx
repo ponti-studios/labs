@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState, type JSX } from "react";
+import { Input, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@pontistudios/ui";
+
 
 interface SelectorWindow extends Window {
   $?: (selector: string) => Element[];
@@ -156,6 +158,12 @@ function normalizeExpected(expected: TagCounts): TagCounts {
   return normalized;
 }
 
+/**
+ * Qubit Take-Home Challenge
+ *
+ * Task: Implement a lightweight DOM querying engine (like jQuery's $) from scratch 
+ * to parse and match tag and class selectors without relying on document.querySelector.
+ */
 export default function Qubit(): JSX.Element {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const [results, setResults] = useState<TestResult[]>([]);
@@ -213,7 +221,7 @@ export default function Qubit(): JSX.Element {
           <div></div>
           <div id="some_id" class="some_class some_other_class"></div>
           <img id="some_other_id" class="some_class some_other_class" />
-          <input type="text" />
+          <Input type="text" />
           <script>${ANSWER_JS}</script>
         </body>
       </html>
@@ -229,78 +237,64 @@ export default function Qubit(): JSX.Element {
   const totalCount = results.length;
 
   return (
-    <div style={{ padding: "2rem", fontFamily: "monospace" }}>
-      <h1 style={{ marginBottom: "0.5rem" }}>Qubit - jQuery-like Selector</h1>
-      <p style={{ color: "#666", marginBottom: "1.5rem" }}>
+    <div className="p-8 font-mono">
+      <h1 className="mb-2">Qubit - jQuery-like Selector</h1>
+      <p className="text-[#666] mb-6">
         Implement a <code>$(selector)</code> function that supports tag, class, id, and combined CSS
         selectors without using <code>querySelector</code>.
       </p>
 
-      <iframe ref={iframeRef} title="qubit-sandbox" style={{ display: "none" }} />
+      <iframe ref={iframeRef} title="qubit-sandbox" className="hidden" />
 
-      <h2 style={{ marginBottom: "0.75rem" }}>Test DOM</h2>
+      <h2 className="mb-3">Test DOM</h2>
       <pre
-        style={{
-          background: "#f4f4f4",
-          padding: "1rem",
-          borderRadius: "4px",
-          marginBottom: "1.5rem",
-          fontSize: "0.85rem",
-        }}
+        className="bg-[#f4f4f4] p-4 rounded-[4px] mb-[1.5rem] text-[0.85rem]"
       >
         {`<div></div>
 <div id="some_id" class="some_class some_other_class"></div>
 <img id="some_other_id" class="some_class some_other_class" />
-<input type="text" />`}
+<Input type="text" />`}
       </pre>
 
       {ran && (
         <>
-          <h2 style={{ marginBottom: "0.75rem" }}>
+          <h2 className="mb-3">
             Results - {passedCount}/{totalCount} passed
           </h2>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.9rem" }}>
-            <thead>
-              <tr style={{ background: "#eee" }}>
-                <th style={th}>Selector</th>
-                <th style={th}>Expected</th>
-                <th style={th}>Found</th>
-                <th style={th}>Pass</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table className="w-full border-collapse text-[0.9rem]">
+            <TableHeader>
+              <TableRow className="bg-[#eee]">
+                <TableHead className="px-3 py-2 text-left border-b border-[#ccc]">Selector</TableHead>
+                <TableHead className="px-3 py-2 text-left border-b border-[#ccc]">Expected</TableHead>
+                <TableHead className="px-3 py-2 text-left border-b border-[#ccc]">Found</TableHead>
+                <TableHead className="px-3 py-2 text-left border-b border-[#ccc]">Pass</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {results.map(({ selector, expected, found, passed, error }) => (
-                <tr key={selector} style={{ background: passed ? "#e6ffe6" : "#ffe6e6" }}>
-                  <td style={td}>
+                <TableRow key={selector} className={passed ? "bg-[#e6ffe6]" : "bg-[#ffe6e6]"}>
+                  <TableCell className="px-3 py-2 border-b border-[#ddd] align-top">
                     <code>{selector}</code>
-                  </td>
-                  <td style={td}>{JSON.stringify(expected)}</td>
-                  <td style={td}>
+                  </TableCell>
+                  <TableCell className="px-3 py-2 border-b border-[#ddd] align-top">{JSON.stringify(expected)}</TableCell>
+                  <TableCell className="px-3 py-2 border-b border-[#ddd] align-top">
                     {error !== null ? (
-                      <span style={{ color: "red" }}>{error}</span>
+                      <span className="text-red-500">{error}</span>
                     ) : (
                       JSON.stringify(found)
                     )}
-                  </td>
-                  <td style={{ ...td, textAlign: "center" }}>{passed ? "✓" : "✗"}</td>
-                </tr>
+                  </TableCell>
+                  <TableCell className="px-3 py-2 border-b border-[#ddd] align-top text-center">{passed ? "✓" : "✗"}</TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </>
       )}
 
-      <h2 style={{ margin: "2rem 0 0.75rem" }}>Implementation</h2>
+      <h2 className="my-8 mb-3">Implementation</h2>
       <pre
-        style={{
-          background: "#1e1e1e",
-          color: "#d4d4d4",
-          padding: "1.25rem",
-          borderRadius: "4px",
-          overflowX: "auto",
-          fontSize: "0.8rem",
-          lineHeight: 1.5,
-        }}
+        className="bg-[#1e1e1e] text-[#d4d4d4] p-5 rounded-md overflow-x-auto text-[0.8rem] leading-relaxed"
       >
         {ANSWER_JS.trim()}
       </pre>

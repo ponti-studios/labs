@@ -1,5 +1,11 @@
 import type { JSX } from "react";
 
+/**
+ * Growth Street Take-Home Challenge
+ *
+ * Task: Implement a basic banking system with User, Account, Admin, and Payment classes 
+ * that processes asynchronous deposits, withdrawals, and transfers between accounts.
+ */
 export default function GrowthStreet(): JSX.Element {
   return (
     <div>
@@ -11,7 +17,7 @@ export default function GrowthStreet(): JSX.Element {
 
       <div className="card">
         <h3>Class Structure</h3>
-        <ul style={{ textAlign: "left" }}>
+        <ul className="text-left">
           <li>
             <strong>User</strong> - Has an account, can deposit/withdraw
           </li>
@@ -30,7 +36,7 @@ export default function GrowthStreet(): JSX.Element {
       <div className="card">
         <h3>Code Example</h3>
         <pre
-          style={{ background: "#f5f5f5", padding: "1rem", borderRadius: "4px", overflow: "auto" }}
+          className="bg-[#f5f5f5] p-4 rounded overflow-auto"
         >
           {`const user1 = new User()
 const user2 = new User()

@@ -143,6 +143,12 @@ function formatCurrency(amount: number) {
   }).format(amount);
 }
 
+/**
+ * Medicare Take-Home Challenge
+ *
+ * Task: Create an interface to calculate Medicare premiums and deductibles 
+ * adjusting for income brackets and standard baseline values.
+ */
 export default function MedicareRoute() {
   const [income, setIncome] = useState(90000);
   const [age, setAge] = useState(65);
@@ -170,8 +176,7 @@ export default function MedicareRoute() {
     <div className="min-h-screen bg-black text-white font-mono cursor-crosshair">
       {/* ASCII texture */}
       <div
-        className="fixed inset-0 pointer-events-none opacity-10 whitespace-pre font-mono text-xs leading-none overflow-hidden"
-        style={{ color: "rgba(255,255,255,0.1)" }}
+        className="fixed inset-0 pointer-events-none opacity-10 whitespace-pre font-mono text-xs leading-none overflow-hidden text-white/10"
       >
         {Array(50)
           .fill(0)

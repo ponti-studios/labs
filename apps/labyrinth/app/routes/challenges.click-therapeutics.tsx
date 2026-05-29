@@ -1,4 +1,6 @@
 import { useState, type JSX } from "react";
+import { Button, Input, Label, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@pontistudios/ui";
+
 
 interface Vote {
   name: string;
@@ -55,6 +57,12 @@ function findWinningCandidate(
   );
 }
 
+/**
+ * Click Therapeutics Take-Home Challenge
+ * 
+ * Task: Design an algorithm to process a list of votes and find the winning candidate 
+ * or top N candidates based on votes cast before a specific timestamp.
+ */
 export default function ClickTherapeutics(): JSX.Element {
   const [timestamp, setTimestamp] = useState(15);
   const [numCandidates, setNumCandidates] = useState(3);
@@ -70,66 +78,60 @@ export default function ClickTherapeutics(): JSX.Element {
       <p>Find winning candidates based on votes before a timestamp.</p>
 
       <div
-        style={{
-          display: "flex",
-          gap: "1rem",
-          alignItems: "center",
-          marginBottom: "1rem",
-          flexWrap: "wrap",
-        }}
+        className="flex gap-4 items-center mb-4 flex-wrap"
       >
-        <label>
+        <Label>
           Timestamp:
-          <input
+          <Input
             type="number"
             value={timestamp}
             onChange={(event) => setTimestamp(Number(event.target.value))}
-            style={{ marginLeft: "0.5rem", padding: "0.25rem", width: "60px" }}
+            
           />
-        </label>
-        <label>
+        </Label>
+        <Label>
           Top N:
-          <input
+          <Input
             type="number"
             value={numCandidates}
             onChange={(event) => setNumCandidates(Number(event.target.value))}
-            style={{ marginLeft: "0.5rem", padding: "0.25rem", width: "60px" }}
+            
           />
-        </label>
-        <button className="btn btn-primary" onClick={run}>
+        </Label>
+        <Button className="btn btn-primary" onClick={run}>
           Run
-        </button>
+        </Button>
       </div>
 
-      <div style={{ marginBottom: "1rem" }}>
+      <div className="mb-4">
         <h4>Votes:</h4>
-        <table style={{ borderCollapse: "collapse", fontSize: "0.9rem" }}>
-          <thead>
-            <tr>
-              <th style={{ border: "1px solid #ccc", padding: "0.25rem 0.5rem" }}>Name</th>
-              <th style={{ border: "1px solid #ccc", padding: "0.25rem 0.5rem" }}>Timestamp</th>
-            </tr>
-          </thead>
-          <tbody>
+        <Table className="border-collapse text-[0.9rem]">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="border border-[#ccc] py-1 px-2">Name</TableHead>
+              <TableHead className="border border-[#ccc] py-1 px-2">Timestamp</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {sampleVotes.map((vote, index) => (
-              <tr
+              <TableRow
                 key={`${vote.name}-${vote.timestamp}-${index}`}
-                style={{ background: vote.timestamp < timestamp ? "#d4edda" : "transparent" }}
+                className={vote.timestamp < timestamp ? "bg-[#d4edda]" : "bg-transparent"}
               >
-                <td style={{ border: "1px solid #ccc", padding: "0.25rem 0.5rem" }}>
+                <TableCell className="border border-[#ccc] py-1 px-2">
                   {vote.name}
-                </td>
-                <td style={{ border: "1px solid #ccc", padding: "0.25rem 0.5rem" }}>
+                </TableCell>
+                <TableCell className="border border-[#ccc] py-1 px-2">
                   {vote.timestamp}
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
 
       {result !== null && (
-        <div style={{ padding: "1rem", background: "#f0f0f0", borderRadius: "4px" }}>
+        <div className="p-4 bg-[#f0f0f0] rounded">
           {Array.isArray(result) ? (
             <>
               <h4>Leaderboard (Top {numCandidates}):</h4>

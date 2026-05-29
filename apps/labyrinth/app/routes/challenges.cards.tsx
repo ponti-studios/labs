@@ -1,3 +1,4 @@
+import { Button } from "@pontistudios/ui";
 import { useState } from "react";
 
 const RANKS = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"];
@@ -85,45 +86,29 @@ export default function Cards() {
     <div>
       <h2>Luck of the Draw</h2>
       <p>Deal hands and track the winner based on card values.</p>
-      <div style={{ marginBottom: "1rem" }}>
-        <button className="btn btn-primary" onClick={dealHand} disabled={deck.length < 5}>
+      <div className="mb-4">
+        <Button className="btn btn-primary" onClick={dealHand} disabled={deck.length < 5}>
           Deal Hand ({deck.length} cards left)
-        </button>
-        <button className="btn" onClick={collectHands} style={{ marginLeft: "0.5rem" }}>
+        </Button>
+        <Button className="btn ml-2" onClick={collectHands}>
           Collect Hands
-        </button>
+        </Button>
       </div>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
+      <div className="flex flex-wrap gap-4">
         {hands.map((hand) => (
           <div
             key={hand.id}
-            className="card"
-            style={{
-              background: winner?.id === hand.id ? "#d4edda" : "#f8d7da",
-              borderColor: winner?.id === hand.id ? "#c3e6cb" : "#f5c6cb",
-            }}
+            className={`card ${winner?.id === hand.id ? "bg-[#d4edda] border-[#c3e6cb]" : "bg-[#f8d7da] border-[#f5c6cb]"}`}
           >
-            <div style={{ marginBottom: "0.5rem" }}>
+            <div className="mb-2">
               <strong>Score: {hand.score}</strong>
               {winner?.id === hand.id && <span> - WINNER!</span>}
             </div>
-            <div style={{ display: "flex", gap: "0.5rem" }}>
+            <div className="flex gap-2">
               {hand.cards.map((card) => (
                 <div
                   key={card.id}
-                  style={{
-                    width: "60px",
-                    height: "84px",
-                    background: "white",
-                    border: "1px solid #ccc",
-                    borderRadius: "4px",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "1.2rem",
-                    color: card.suit === "♥" || card.suit === "♦" ? "red" : "black",
-                  }}
+                  className={`w-[60px] border border-[#ccc] p-1 rounded-md bg-white ${card.suit === "♥" || card.suit === "♦" ? "text-red-500" : "text-black"}`}
                 >
                   <span>{card.rank}</span>
                   <span>{card.suit}</span>

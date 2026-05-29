@@ -20,6 +20,7 @@
       "~/*": ["./app/*"],
       "@pontistudios/db": ["../../packages/db/src/index.ts"]
     },
-    "noEmit": true
+    "noEmit": true,
+    "ignoreDeprecations": "6.0"
   }
 }

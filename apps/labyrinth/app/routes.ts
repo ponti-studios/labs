@@ -40,20 +40,21 @@ const experimentRoutes = [
 ] satisfies RouteConfig;
 
 const challengeRoutes = [
-  route("/challenges/cards", "routes/cards.tsx"),
-  route("/challenges/chart-hop", "routes/chart-hop.tsx"),
-  route("/challenges/click-therapeutics", "routes/click-therapeutics.tsx"),
-  route("/challenges/cloudmargin", "routes/cloudmargin.tsx"),
-  route("/challenges/daily-mail", "routes/daily-mail.tsx"),
-  route("/challenges/goldman-sachs", "routes/goldman-sachs.tsx"),
-  route("/challenges/growth-street", "routes/growth-street.tsx"),
-  route("/challenges/interview-cake", "routes/interview-cake.tsx"),
-  route("/challenges/kensho", "routes/kensho.tsx"),
-  route("/challenges/peterson-academy", "routes/peterson-academy.tsx"),
-  route("/challenges/qubit", "routes/qubit.tsx"),
-  route("/challenges/quilt", "routes/quilt.tsx"),
-  route("/challenges/red-badger", "routes/red-badger.tsx"),
-  route("/challenges/vendigo", "routes/vendigo.tsx"),
+  route("/challenges/cards", "routes/challenges.cards.tsx"),
+  route("/challenges/chart-hop", "routes/challenges.chart-hop.tsx"),
+  route("/challenges/click-therapeutics", "routes/challenges.click-therapeutics.tsx"),
+  route("/challenges/cloudmargin", "routes/challenges.cloudmargin.tsx"),
+  route("/challenges/daily-mail", "routes/challenges.daily-mail.tsx"),
+  route("/challenges/goldman-sachs", "routes/challenges.goldman-sachs.tsx"),
+  route("/challenges/growth-street", "routes/challenges.growth-street.tsx"),
+  route("/challenges/interview-cake", "routes/challenges.interview-cake.tsx"),
+  route("/challenges/kensho", "routes/challenges.kensho.tsx"),
+  route("/challenges/peterson-academy", "routes/challenges.peterson-academy.tsx"),
+  route("/challenges/qubit", "routes/challenges.qubit.tsx"),
+  route("/challenges/quilt", "routes/challenges.quilt.tsx"),
+  route("/challenges/medicare", "routes/challenges.medicare.tsx"),
+  route("/challenges/red-badger", "routes/challenges.red-badger.tsx"),
+  route("/challenges/vendigo", "routes/challenges.vendigo.tsx"),
 ] satisfies RouteConfig;
 
 export default [

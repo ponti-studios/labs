@@ -1,6 +1,5 @@
+import { Button, Input } from "@pontistudios/ui";
 import { useRef, useState } from "react";
-
-import { Button } from "@pontistudios/ui";
 
 type Direction = "N" | "E" | "S" | "W";
 type Position = [number, number, Direction];
@@ -122,41 +121,19 @@ function Robot({
   const orientationArrow: Record<Direction, string> = { N: "↑", E: "→", S: "↓", W: "←" };
 
   return (
-    <div style={{ position: "absolute" }}>
-      <input
+    <div className="absolute">
+      <Input
         type="text"
         placeholder={`${initialPos[0]} ${initialPos[1]} ${initialPos[2]}`}
         value={instructions}
         onChange={(e) => setInstructions(e.target.value)}
         onKeyUp={handleKeyUp}
         disabled={lost}
-        style={{
-          position: "absolute",
-          top: "450px",
-          width: "100%",
-          fontSize: "1.3rem",
-          padding: "0.5rem",
-        }}
+        
       />
       <div
         ref={robotRef}
-        className={`robot ${orientation}`}
-        style={{
-          position: "absolute",
-          top: position.top,
-          left: position.left,
-          width: "50px",
-          height: "50px",
-          background: lost ? "#666" : "#333",
-          borderRadius: "50%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          color: "white",
-          fontSize: "1.5rem",
-          transition: "all 0.2s",
-          opacity: lost ? 0.5 : 1,
-        }}
+        className={`robot ${orientation} absolute w-[50px] h-[50px] rounded-full flex items-center justify-center text-white text-[1.5rem] transition-all duration-200 top-[${position.top}px] left-[${position.left}px] ${lost ? "bg-[#666] opacity-50" : "bg-[#333] opacity-100"}`}
       >
         {lost ? "☠" : orientationArrow[orientation]}
       </div>
@@ -164,6 +141,13 @@ function Robot({
   );
 }
 
+/**
+ * Red Badger Take-Home Challenge (Martian Robots)
+ *
+ * Task: Implement the "Martian Robots" problem where robots navigate a grid based on instructions.
+ * If a robot falls off the grid, it leaves a "scent" that prevents future robots from
+ * falling off at the same location.
+ */
 export default function RedBadger() {
   const [robots, setRobots] = useState<RobotState[]>([]);
   const [input, setInput] = useState("");
@@ -217,27 +201,10 @@ export default function RedBadger() {
 
       <div
         ref={planetRef}
-        className="card"
-        style={{
-          position: "relative",
-          height: "500px",
-          background: "#d4a574",
-          border: "4px solid #8b5a2b",
-          borderRadius: "8px",
-          overflow: "hidden",
-        }}
+        className="card relative h-[500px] bg-[#d4a574] border-4 border-[#8b5a2b] rounded-lg overflow-hidden"
       >
         <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            display: "grid",
-            gridTemplateColumns: `repeat(${GRID_SIZE}, 1fr)`,
-            gridTemplateRows: `repeat(${GRID_SIZE}, 1fr)`,
-          }}
+          className={`absolute top-0 left-0 right-0 bottom-0 grid grid-cols-[repeat(${GRID_SIZE},_1fr)] grid-rows-[repeat(${GRID_SIZE},_1fr)]`}
         >
           {Array.from({ length: GRID_SIZE * GRID_SIZE }, (_, i) => {
             const row = Math.floor(i / GRID_SIZE) + 1;
@@ -246,14 +213,9 @@ export default function RedBadger() {
             return (
               <div
                 key={i}
-                style={{
-                  border: "1px solid rgba(0,0,0,0.1)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
+                className="border border-[rgba(0,0,0,0.1)] flex items-center justify-center"
               >
-                {isScent && <span style={{ fontSize: "0.8rem", opacity: 0.3 }}>⚠</span>}
+                {isScent && <span className="text-[0.8rem] opacity-30">⚠</span>}
               </div>
             );
           })}
@@ -272,29 +234,23 @@ export default function RedBadger() {
         ))}
       </div>
 
-      <div style={{ marginTop: "1rem", display: "flex", gap: "0.5rem" }}>
-        <input
+      <div className="mt-4 flex gap-2">
+        <Input
           type="text"
           placeholder="1 1 N"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyUp={(e) => e.key === "Enter" && addRobot()}
-          style={{
-            flex: 1,
-            padding: "0.5rem",
-            fontSize: "1.2rem",
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-          }}
+          
         />
         <Button onClick={addRobot} type="button">
           Add Robot
         </Button>
       </div>
 
-      <div className="card" style={{ marginTop: "1rem" }}>
+      <div className="card mt-4">
         <h4>Instructions</h4>
-        <ul style={{ margin: 0, paddingLeft: "1.5rem" }}>
+        <ul className="m-0 pl-6">
           <li>
             <strong>Position:</strong> "row col direction" (e.g., "1 1 N")
           </li>
@@ -310,9 +266,7 @@ export default function RedBadger() {
             at that point
           </li>
         </ul>
-        {lostCount > 0 && (
-          <p style={{ marginTop: "0.5rem", color: "#666" }}>Robots lost: {lostCount}</p>
-        )}
+        {lostCount > 0 && <p className="mt-2 text-[#666]">Robots lost: {lostCount}</p>}
       </div>
     </div>
   );

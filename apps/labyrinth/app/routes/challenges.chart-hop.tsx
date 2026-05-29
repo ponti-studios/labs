@@ -1,4 +1,6 @@
 import { useState, type ChangeEvent, type JSX } from "react";
+import { Button } from "@pontistudios/ui";
+
 
 type AnagramGroup = string[];
 
@@ -91,55 +93,35 @@ export default function ChartHop(): JSX.Element {
         onChange={handleInputChange}
         placeholder="Enter words separated by commas"
         rows={3}
-        style={{
-          width: "100%",
-          padding: "0.5rem",
-          marginBottom: "0.5rem",
-          fontFamily: "monospace",
-        }}
+        className="w-full p-2 mb-2 font-mono"
       />
 
-      <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
-        <button className="btn btn-primary" onClick={runEfficient}>
+      <div className="flex gap-2 mb-4">
+        <Button className="btn btn-primary" onClick={runEfficient}>
           Group (Sort Method)
-        </button>
-        <button className="btn" onClick={runManual}>
+        </Button>
+        <Button className="btn" onClick={runManual}>
           Group (Manual)
-        </button>
+        </Button>
       </div>
 
       {result && (
         <div>
           <h4>Results:</h4>
-          <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+          <div className="flex gap-4 flex-wrap">
             {result.map((group, groupIndex) => (
               <div
                 key={groupIndex}
-                style={{
-                  padding: "0.75rem",
-                  background: "#f0f0f0",
-                  borderRadius: "4px",
-                  minWidth: "120px",
-                }}
+                className="p-3 bg-[#f0f0f0] rounded-md min-w-[120px]"
               >
                 <strong>Group {groupIndex + 1}:</strong>
                 <div
-                  style={{
-                    display: "flex",
-                    gap: "0.25rem",
-                    flexWrap: "wrap",
-                    marginTop: "0.25rem",
-                  }}
+                  className="flex gap-1 flex-wrap mt-1"
                 >
                   {group.map((word, wordIndex) => (
                     <span
                       key={wordIndex}
-                      style={{
-                        padding: "0.125rem 0.375rem",
-                        background: "white",
-                        borderRadius: "2px",
-                        marginTop: "0.25rem",
-                      }}
+                      className="p-[0.125rem 0.375rem] bg-[white] rounded-[2px] mt-1"
                     >
                       {word}
                     </span>
@@ -151,16 +133,10 @@ export default function ChartHop(): JSX.Element {
         </div>
       )}
 
-      <details style={{ marginTop: "1rem" }}>
-        <summary style={{ cursor: "pointer", color: "#666" }}>About the Algorithms</summary>
+      <details className="mt-4">
+        <summary className="cursor-pointer text-[#666]">About the Algorithms</summary>
         <div
-          style={{
-            marginTop: "0.5rem",
-            padding: "0.75rem",
-            background: "#fafafa",
-            borderRadius: "4px",
-            fontSize: "0.9rem",
-          }}
+          className="mt-2 p-3 bg-[#fafafa] rounded-[4px] text-[0.9rem]"
         >
           <p>
             <strong>Sort Method:</strong> Sort each word&apos;s characters to create a key. Words
