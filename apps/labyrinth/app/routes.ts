@@ -27,7 +27,10 @@ const featureRoutes = [
   route("/tarot", "routes/tarot.tsx"),
   route("/corona", "routes/corona.tsx"),
   route("/corona/:countryCode", "routes/corona.$countryCode.layout.tsx", coronaRoutes),
+  route("/games/tetris", "routes/games/tetris.tsx"),
   route("/games/wordle/realitea", "routes/games/realitea.tsx"),
+  route("/business-tools", "routes/business-tools/index.tsx"),
+  route("/business-tools/marketing", "routes/business-tools/marketing.tsx"),
 ] satisfies RouteConfig;
 
 const experimentRoutes = [

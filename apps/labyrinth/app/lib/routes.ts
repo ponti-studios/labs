@@ -5,11 +5,6 @@ export const routes = [
     description: "Direct access to the available tools and demos",
   },
   {
-    path: "/tools",
-    label: "Tools & Features",
-    description: "Hub for games, business tools, and AI",
-  },
-  {
     path: "/games/tetris",
     label: "Tetris Game",
     description: "Classic Tetris with React",

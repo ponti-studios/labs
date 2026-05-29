@@ -1,8 +1,38 @@
+import { Link } from "react-router";
+
 type RouteEntry = {
   path: string;
   href?: string;
   kind: "page" | "api" | "dynamic";
 };
+
+type FeaturedEntry = {
+  title: string;
+  description: string;
+  href: string;
+  eyebrow: string;
+};
+
+const featuredEntries: FeaturedEntry[] = [
+  {
+    title: "Games & Recreation",
+    description: "Jump straight into interactive play and lightweight experiments.",
+    href: "/games/tetris",
+    eyebrow: "Featured",
+  },
+  {
+    title: "Business Tools",
+    description: "Open planning calculators for marketing and operator workflows.",
+    href: "/business-tools",
+    eyebrow: "Featured",
+  },
+  {
+    title: "RealiTea",
+    description: "Play the daily reality TV guessing game from the home screen.",
+    href: "/games/wordle/realitea",
+    eyebrow: "Daily game",
+  },
+] as const;
 
 const routeEntries: RouteEntry[] = [
   { path: "/", href: "/", kind: "page" },
@@ -18,7 +48,10 @@ const routeEntries: RouteEntry[] = [
   { path: "/corona/:countryCode/vaccination-effectiveness", kind: "dynamic" },
   { path: "/corona/:countryCode/seasonal-patterns", kind: "dynamic" },
   { path: "/corona/:countryCode/outlier-detection", kind: "dynamic" },
+  { path: "/games/tetris", href: "/games/tetris", kind: "page" },
   { path: "/games/wordle/realitea", href: "/games/wordle/realitea", kind: "page" },
+  { path: "/business-tools", href: "/business-tools", kind: "page" },
+  { path: "/business-tools/marketing", href: "/business-tools/marketing", kind: "page" },
   { path: "/experiments", href: "/experiments", kind: "page" },
   {
     path: "/experiments/threegl-web-request",
@@ -69,10 +102,38 @@ export default function Home() {
           <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground">Labyrinth</p>
           <h1 className="text-2xl text-foreground sm:text-3xl">Available routes</h1>
           <p className="max-w-3xl text-sm leading-6 text-muted-foreground">
-            Every route from the current router config is listed below. Static pages are linked. API
-            and dynamic routes are shown as plain text.
+            Start with the primary destinations below, then use the full route index for direct
+            access to everything currently configured in Labyrinth.
           </p>
         </header>
+
+        <div className="mb-10 grid gap-4 lg:grid-cols-3">
+          {featuredEntries.map((entry) => (
+            <Link
+              key={entry.href}
+              to={entry.href}
+              className="group flex min-h-44 flex-col justify-between rounded-xl border border-border bg-muted/20 p-5 transition-colors duration-150 hover:bg-muted/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            >
+              <div>
+                <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">{entry.eyebrow}</p>
+                <h2 className="mt-3 text-xl text-foreground">{entry.title}</h2>
+                <p className="mt-3 max-w-[32ch] text-sm leading-6 text-muted-foreground">
+                  {entry.description}
+                </p>
+              </div>
+              <span className="mt-6 text-sm text-foreground transition-colors duration-150 group-hover:text-muted-foreground">
+                Open route
+              </span>
+            </Link>
+          ))}
+        </div>
+
+        <div className="mb-4 flex items-center justify-between gap-4 border-t border-border pt-6 font-mono">
+          <h2 className="text-lg text-foreground">Full route index</h2>
+          <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+            Pages, APIs, and dynamic paths
+          </span>
+        </div>
 
         <ul className="space-y-3 font-mono text-sm text-foreground">
           {routeEntries.map((route) => (
