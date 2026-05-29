@@ -2,18 +2,18 @@ import "./main.css";
 
 export default function InfiniteHeader() {
   return (
-    <div className="bg-gray-100 min-h-screen">
-      <header className="container mx-auto px-4 py-16 lg:py-24">
+    <div className="border border-secondary rounded-lg">
+      <header className="container mx-auto px-4">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
           <div className="lg:w-1/2 text-center lg:text-left">
             <h1 className="mb-4">Showcase Your Work Beautifully</h1>
-            <p className="text-lg md:text-xl text-gray-600 mb-8">
+            <p className="text-lg text-gray-600 mb-8">
               Engage your visitors with a stunning visual display. Our unique scrolling gallery
               captures attention and highlights your best content.
             </p>
             <a
               href="/"
-              className="inline-block bg-blue-600 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-blue-700 transition duration-300"
+              className="inline-block bg-primary text-white font-bold py-3 px-8 rounded-lg shadow-md transition duration-300"
             >
               Get Started
             </a>
