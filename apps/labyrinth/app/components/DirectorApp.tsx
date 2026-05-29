@@ -142,12 +142,16 @@ const DirectorApp: React.FC = () => {
       const newState = { ...prev } as any;
       let current: any = newState;
       const keys = path.split(".");
+      const forbidden = new Set(["__proto__", "constructor", "prototype"]);
 
       for (let i = 0; i < keys.length - 1; i++) {
+        if (forbidden.has(keys[i])) return prev;
         current = current[keys[i]];
       }
 
-      current[keys[keys.length - 1]] = value;
+      const lastKey = keys[keys.length - 1];
+      if (forbidden.has(lastKey)) return prev;
+      current[lastKey] = value;
       return newState as Config;
     });
   };
