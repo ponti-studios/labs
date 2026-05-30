@@ -16,7 +16,7 @@ export default function TimeTogetherRoute() {
   }, [yearsTogether, majorVacation, miniVacation, hangsPerWeek, variance]);
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 p-8">
+    <div className="min-h-screen p-8">
       <Card className="w-full max-w-md mx-auto">
         <CardHeader>
           <CardTitle>Time Together Calculator</CardTitle>

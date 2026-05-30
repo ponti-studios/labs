@@ -10,8 +10,7 @@
     "format": "oxfmt app --write",
     "start": "react-router-serve ./build/server/index.js --port=${PORT:-3000}",
     "test": "vitest run --environment jsdom --coverage --reporter verbose --passWithNoTests",
-    "typecheck": "react-router typegen && tsc",
-    "db:populate-tfl": "tsx scripts/populate-tfl.ts"
+    "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
     "@emotion/styled": "^11.14.1",
@@ -20,6 +19,8 @@
     "@preact/signals-react": "^3.10.0",
     "@react-router/node": "catalog:",
     "@react-router/serve": "catalog:",
+    "@tanstack/ai": "^0.22.1",
+    "@tanstack/ai-openrouter": "^0.9.8",
     "isbot": "^5.1.40",
     "@tanstack/react-query": "catalog:",
     "@testing-library/jest-dom": "catalog:",

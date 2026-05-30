@@ -1,16 +1,16 @@
 {
-  "name": "@pontistudios/toys",
+  "name": "@pontistudios/labs",
   "version": "0.0.0",
   "private": true,
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "dev:earth": "turbo run dev --filter=@pontistudios/earth",
-    "dev:social": "turbo run dev --filter=social",
-    "dev:playground": "turbo run dev --filter=playground",
-    "dev:rocco": "turbo run dev --filter=@pontistudios/rocco",
-    "earth:tiles:imagery": "pnpm --filter @pontistudios/earth tiles:imagery",
-    "earth:tiles:terrain": "pnpm --filter @pontistudios/earth tiles:terrain",
+    "dev:cartograph": "turbo run dev --filter=@pontistudios/cartograph",
+    "dev:commune": "turbo run dev --filter=@pontistudios/commune",
+    "dev:labyrinth": "turbo run dev --filter=@pontistudios/labyrinth",
+    "dev:tempo": "turbo run dev --filter=@pontistudios/tempo",
+    "dev:ui": "turbo run storybook --filter=@pontistudios/ui",
+    "dev:vitalis": "turbo run dev --filter=@pontistudios/vitalis",
     "lint": "turbo run lint",
     "format": "turbo run format",
     "knip": "knip",
@@ -21,19 +21,25 @@
     "prerelease": "pnpm test",
     "test": "turbo run test",
     "test:e2e:ci": "turbo run test:e2e:ci",
-    "test:update": "turbo run test:update"
+    "test:update": "turbo run test:update",
+    "typecheck": "turbo run typecheck",
+    "ui:storybook": "pnpm --filter @pontistudios/ui storybook"
   },
   "devDependencies": {
     "@types/node": "catalog:",
     "jscpd": "^4.2.3",
     "knip": "^6.6.1",
-    "oxfmt": "^0.46.0",
+    "oxfmt": "^0.51.0",
     "oxlint": "^1.66.0",
     "pm2": "^7.0.1",
     "rolldown": "1.0.0-rc.17",
     "turbo": "^2.9.6",
     "typescript": "catalog:"
   },
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "packageManager": "pnpm@10.30.3",
   "pnpm": {
     "overrides": {
       "esbuild": "^0.27.3",
@@ -51,9 +57,5 @@
       "next": ">=16.2.5",
       "kysely": ">=0.28.17"
     }
-  },
-  "engines": {
-    "node": ">=24.0.0"
-  },
-  "packageManager": "pnpm@10.30.3"
+  }
 }

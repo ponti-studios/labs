@@ -1,22 +1,18 @@
 import { reactRouter } from "@react-router/dev/vite";
 import { defineConfig } from "vite";
-import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
-  plugins: [reactRouter(), tsconfigPaths()],
+  plugins: [reactRouter()],
+  resolve: {
+    tsconfigPaths: true,
+  },
+  build: {
+    cssMinify: "esbuild",
+  },
   server: {
     port: 3006,
     fs: {
       strict: false,
     },
-  },
-  build: {
-    sourcemap: true,
-  },
-  define: {
-    CESIUM_BASE_URL: JSON.stringify("/cesium/"),
-  },
-  optimizeDeps: {
-    include: ["cesium"],
   },
 });

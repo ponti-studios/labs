@@ -13,6 +13,7 @@
     "build": "tsc && cp -R src/migrations dist/migrations",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "format": "oxfmt src --write",
     "db:migrate": "drizzle-kit migrate",
     "db:generate": "drizzle-kit generate",
     "db:check": "drizzle-kit check",

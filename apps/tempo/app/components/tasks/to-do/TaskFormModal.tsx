@@ -1,31 +1,68 @@
 import {
   Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  Calendar,
   Input,
   Label,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  TokenInput,
+  type TokenInputItem,
 } from "@pontistudios/ui";
-import { useEffect, useState } from "react";
-import { useProjects } from "~/lib/projects";
+import { format } from "date-fns";
+import { CalendarIcon, Plus, X } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { DEFAULT_TAG_COLOR, normalizeTagName, useTags, type TagItem } from "~/lib/tags";
 import type { TodoCreateData, TodoItem } from "~/lib/todos";
+
+interface DateRangeValue {
+  from: Date | undefined;
+  to?: Date;
+}
 
 interface TaskFormModalProps {
   onSubmit: (todo: TodoCreateData | TodoItem) => void;
   isLoading?: boolean;
+  error?: string | null;
   trigger?: React.ReactNode;
-  todo?: TodoItem; // For editing mode
-  open?: boolean; // For controlled open state
-  onOpenChange?: (open: boolean) => void; // For controlled open state
+  todo?: TodoItem;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+function createLocalTag(name: string): TagItem {
+  const normalizedName = normalizeTagName(name);
+
+  return {
+    id: -Date.now(),
+    userId: "demo-user",
+    name: normalizedName,
+    normalizedName,
+    color: DEFAULT_TAG_COLOR,
+    createdAt: null,
+    updatedAt: null,
+  };
+}
+
+function toTokenItem(tag: TagItem): TokenInputItem {
+  return {
+    value: tag.normalizedName,
+    label: tag.name,
+    color: tag.color,
+  };
 }
 
 export function TaskFormModal({
   onSubmit,
   isLoading = false,
+  error: externalError,
   trigger,
   todo,
   open: controlledOpen,
@@ -33,181 +70,319 @@ export function TaskFormModal({
 }: TaskFormModalProps) {
   const [internalOpen, setInternalOpen] = useState(false);
   const [formData, setFormData] = useState({
-    projectId: "",
     title: "",
     start: "",
     end: "",
   });
+  const [selectedTags, setSelectedTags] = useState<TagItem[]>([]);
+  const [tagInputValue, setTagInputValue] = useState("");
+  const [tagMessage, setTagMessage] = useState<string | null>(null);
+  const [dateRange, setDateRange] = useState<DateRangeValue | undefined>(undefined);
+  const [showTagField, setShowTagField] = useState(false);
+  const [showDateField, setShowDateField] = useState(false);
 
   const isEditing = !!todo;
   const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
   const setOpen = onOpenChange || setInternalOpen;
 
-  const { data: projects = [], isLoading: projectsLoading } = useProjects();
+  const { data: tags = [] } = useTags();
 
-  // Initialize form data when editing
   useEffect(() => {
     if (todo) {
       setFormData({
-        projectId: todo.projectId?.toString() || "",
         title: todo.title,
         start: todo.start,
         end: todo.end,
       });
+      setSelectedTags(todo.tags);
+      setDateRange({
+        from: todo.start ? new Date(`${todo.start}T00:00:00`) : undefined,
+        to: todo.end ? new Date(`${todo.end}T00:00:00`) : undefined,
+      });
+      setShowTagField(false);
+      setShowDateField(!!todo.start || !!todo.end);
+      setTagInputValue("");
+      setTagMessage(null);
     }
   }, [todo]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  useEffect(() => {
+    if (!open && !isEditing) {
+      setFormData({ title: "", start: "", end: "" });
+      setSelectedTags([]);
+      setTagInputValue("");
+      setTagMessage(null);
+      setDateRange(undefined);
+      setShowTagField(false);
+      setShowDateField(false);
+    }
+  }, [isEditing, open]);
 
-    if (!formData.projectId || !formData.title) return;
+  const dateRangeLabel = useMemo(() => {
+    if (dateRange?.from && dateRange?.to) {
+      return `${format(dateRange.from, "MMM dd, yyyy")} - ${format(dateRange.to, "MMM dd, yyyy")}`;
+    }
 
-    const projectId = Number.parseInt(formData.projectId);
-    if (Number.isNaN(projectId)) {
-      alert("Please select a valid project");
+    if (dateRange?.from) {
+      return format(dateRange.from, "MMM dd, yyyy");
+    }
+
+    return "Pick a date range";
+  }, [dateRange]);
+
+  const normalizedTagInput = normalizeTagName(tagInputValue);
+  const selectedTagNames = new Set(selectedTags.map((tag) => tag.normalizedName));
+
+  const duplicateSelectionMessage =
+    normalizedTagInput && selectedTagNames.has(normalizedTagInput)
+      ? `"${normalizedTagInput}" already exists and is selected.`
+      : null;
+
+  const suggestedTags = useMemo(() => {
+    if (!normalizedTagInput) {
+      return [];
+    }
+
+    return tags.filter((tag) => {
+      if (selectedTagNames.has(tag.normalizedName)) {
+        return false;
+      }
+
+      return tag.normalizedName.includes(normalizedTagInput);
+    });
+  }, [normalizedTagInput, selectedTagNames, tags]);
+
+  const addTag = (tag: TagItem) => {
+    setSelectedTags((current) => [...current, tag]);
+    setTagInputValue("");
+    setTagMessage(null);
+    setShowTagField(false);
+  };
+
+  const handleAddTag = () => {
+    if (!normalizedTagInput) {
+      return;
+    }
+
+    if (selectedTagNames.has(normalizedTagInput)) {
+      setTagMessage(`"${normalizedTagInput}" already exists and is selected.`);
+      return;
+    }
+
+    const existingTag = tags.find((tag) => tag.normalizedName === normalizedTagInput);
+    addTag(existingTag ?? createLocalTag(normalizedTagInput));
+  };
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!formData.title.trim()) {
       return;
     }
 
     if (isEditing && todo) {
-      // Update existing todo
-      const updatedTodo: TodoItem = {
+      onSubmit({
         ...todo,
-        projectId: projectId,
-        title: formData.title,
+        title: formData.title.trim(),
         start: formData.start || new Date().toISOString().split("T")[0],
         end: formData.end || new Date().toISOString().split("T")[0],
-      };
-      onSubmit(updatedTodo);
-    } else {
-      // Create new todo
-      const newTodo: TodoCreateData = {
-        projectId: projectId,
-        title: formData.title,
-        start: formData.start || new Date().toISOString().split("T")[0],
-        end: formData.end || new Date().toISOString().split("T")[0],
-        completed: false,
-      };
-      onSubmit(newTodo);
+        tags: selectedTags,
+      } satisfies TodoItem);
+      return;
     }
 
-    if (!isEditing) {
-      setFormData({ projectId: "", title: "", start: "", end: "" });
-    }
-    setOpen(false);
+    onSubmit({
+      title: formData.title.trim(),
+      start: formData.start || new Date().toISOString().split("T")[0],
+      end: formData.end || new Date().toISOString().split("T")[0],
+      tags: selectedTags.map((tag) => tag.name),
+      completed: false,
+    } satisfies TodoCreateData);
   };
 
   const handleCancel = () => {
+    setTagInputValue("");
+    setTagMessage(null);
     if (!isEditing) {
-      setFormData({ projectId: "", title: "", start: "", end: "" });
+      setFormData({ title: "", start: "", end: "" });
+      setSelectedTags([]);
+      setDateRange(undefined);
+      setShowTagField(false);
+      setShowDateField(false);
     }
     setOpen(false);
   };
 
-  const dialogContent = (
-    <DialogContent className="sm:max-w-[425px]">
-      <DialogHeader>
-        <DialogTitle>{isEditing ? "Edit Todo" : "Add New Todo"}</DialogTitle>
-        <DialogDescription>
+  const tagFeedback = tagMessage || duplicateSelectionMessage;
+
+  const modalContent = (
+    <SheetContent
+      side="bottom"
+      className="mx-auto max-h-[90vh] w-full max-w-96 rounded-t-2xl border border-border bg-popover"
+    >
+      <SheetHeader>
+        <SheetTitle>{isEditing ? "Edit task" : "Add new task"}</SheetTitle>
+        <SheetDescription>
           {isEditing
-            ? "Update the todo details below."
-            : "Create a new todo item. Fill in the details below."}
-        </DialogDescription>
-      </DialogHeader>
+            ? "Update the task details below."
+            : "Create a new task. Only the title is required."}
+        </SheetDescription>
+      </SheetHeader>
       <form onSubmit={handleSubmit}>
         <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="project" className="text-right">
-              Project
-            </Label>
-            <select
-              id="project"
-              value={formData.projectId}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                setFormData({ ...formData, projectId: e.target.value })
-              }
-              className="col-span-3 flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring"
-              required
-              disabled={projectsLoading}
-              aria-describedby="project-error"
-            >
-              <option value="">Select a project</option>
-              {projects.map((project) => (
-                <option key={project.id} value={project.id}>
-                  {project.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="title" className="text-right">
-              Title
-            </Label>
+          <div className="grid gap-2">
+            <Label htmlFor="title">Title</Label>
             <Input
               id="title"
               value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="col-span-3"
+              onChange={(event) => setFormData({ ...formData, title: event.target.value })}
+              className="w-full"
               placeholder="Enter task title"
+              autoFocus
               required
             />
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="start" className="text-right">
-              Start Date
-            </Label>
-            <Input
-              id="start"
-              type="date"
-              value={formData.start}
-              onChange={(e) => setFormData({ ...formData, start: e.target.value })}
-              className="col-span-3"
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="end" className="text-right">
-              End Date
-            </Label>
-            <Input
-              id="end"
-              type="date"
-              value={formData.end}
-              onChange={(e) => setFormData({ ...formData, end: e.target.value })}
-              className="col-span-3"
-            />
+
+          <TokenInput
+            tokens={selectedTags.map(toTokenItem)}
+            suggestions={suggestedTags.map(toTokenItem)}
+            inputValue={tagInputValue}
+            isOpen={showTagField}
+            addLabel="Tag"
+            placeholder="Search or create a tag"
+            emptyMessage="No matching tags"
+            duplicateMessage={tagFeedback}
+            helperMessage={
+              normalizedTagInput && suggestedTags.length === 0
+                ? `Press Enter to create "${normalizedTagInput}"`
+                : null
+            }
+            onOpenChange={(nextOpen) => {
+              setShowTagField(nextOpen);
+              if (!nextOpen) {
+                setTagInputValue("");
+                setTagMessage(null);
+              }
+            }}
+            onInputValueChange={(value) => {
+              setTagInputValue(value);
+              setTagMessage(null);
+            }}
+            onAdd={handleAddTag}
+            onSelectSuggestion={(item) => {
+              const existingTag = tags.find((tag) => tag.normalizedName === item.value);
+              if (existingTag) {
+                addTag(existingTag);
+              }
+            }}
+            onRemove={(item) => {
+              setSelectedTags((current) =>
+                current.filter((tag) => tag.normalizedName !== item.value),
+              );
+              setTagMessage(null);
+            }}
+          />
+
+          <div className="flex flex-wrap gap-2">
+            {showDateField ? (
+              <div className="flex w-full items-center gap-2">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setDateRange(undefined);
+                    setFormData({ ...formData, start: "", end: "" });
+                    setShowDateField(false);
+                  }}
+                  className="rounded-full px-3"
+                >
+                  <span>{dateRangeLabel}</span>
+                  <X className="size-3.5" />
+                </Button>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="flex-1 justify-start text-left font-normal"
+                    >
+                      <CalendarIcon className="size-4" />
+                      <span>{dateRange?.from ? "Edit dates" : "Choose dates"}</span>
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="range"
+                      defaultMonth={dateRange?.from}
+                      selected={dateRange}
+                      onSelect={(range) => {
+                        setDateRange(range);
+                        setFormData({
+                          ...formData,
+                          start: range?.from ? format(range.from, "yyyy-MM-dd") : "",
+                          end: range?.to
+                            ? format(range.to, "yyyy-MM-dd")
+                            : range?.from
+                              ? format(range.from, "yyyy-MM-dd")
+                              : "",
+                        });
+                      }}
+                      numberOfMonths={1}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+            ) : (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowDateField(true)}
+                className="rounded-full px-3"
+              >
+                <Plus className="size-3.5" />
+                <span>Dates</span>
+              </Button>
+            )}
           </div>
         </div>
-        <DialogFooter>
+
+        {externalError && (
+          <p role="alert" className="mb-3 text-sm text-red-600">
+            {externalError}
+          </p>
+        )}
+
+        <SheetFooter>
           <Button type="button" variant="outline" onClick={handleCancel}>
             Cancel
           </Button>
-          <Button type="submit" disabled={isLoading || projectsLoading}>
+          <Button type="submit" disabled={isLoading}>
             {isLoading
               ? isEditing
                 ? "Updating..."
                 : "Adding..."
               : isEditing
-                ? "Update Todo"
-                : "Add Todo"}
+                ? "Update task"
+                : "Add task"}
           </Button>
-        </DialogFooter>
+        </SheetFooter>
       </form>
-    </DialogContent>
+    </SheetContent>
   );
 
-  // If controlled (for editing), render without trigger
   if (controlledOpen !== undefined) {
     return (
-      <Dialog open={open} onOpenChange={setOpen}>
-        {dialogContent}
-      </Dialog>
+      <Sheet open={open} onOpenChange={setOpen}>
+        {modalContent}
+      </Sheet>
     );
   }
 
-  // If uncontrolled (for creating), render with trigger
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{trigger || <Button size="sm">Add New Todo</Button>}</DialogTrigger>
-      {dialogContent}
-    </Dialog>
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>{trigger || <Button size="sm">Add new task</Button>}</SheetTrigger>
+      {modalContent}
+    </Sheet>
   );
 }

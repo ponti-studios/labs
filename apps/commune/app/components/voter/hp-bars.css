@@ -22,31 +22,22 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.5) 0%,
-    rgba(255, 255, 255, 0.2) 50%,
-    rgba(255, 255, 255, 0.5) 100%
-  );
   border-radius: inherit;
   background-size: 200% 100%;
 }
 
 /* High HP (green) with Pokemon-style gradient */
 .hp-bar-high {
-  background: linear-gradient(90deg, #38a169 0%, #4fd1c5 50%, #38a169 100%);
   color: rgb(72, 187, 120);
 }
 
 /* Medium HP (yellow/orange) with Pokemon-style gradient */
 .hp-bar-medium {
-  background: linear-gradient(90deg, #ed8936 0%, #ecc94b 50%, #ed8936 100%);
   color: rgb(245, 158, 11);
 }
 
 /* Low HP (red) with Pokemon-style gradient */
 .hp-bar-low {
-  background: linear-gradient(90deg, #e53e3e 0%, #f56565 50%, #e53e3e 100%);
   color: rgb(239, 68, 68);
 }
 
@@ -72,6 +63,5 @@
 
 /* Neutral HP bar (for new trackers) */
 .hp-bar-neutral {
-  background: linear-gradient(90deg, #718096 0%, #a0aec0 50%, #718096 100%);
   color: rgb(107, 114, 128);
 }

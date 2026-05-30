@@ -1,11 +1,11 @@
 import { motion } from "framer-motion";
-import type { TarotCard } from "~/lib/tarot-cards";
-import { TAROT_SPREADS } from "~/lib/tarot-cards";
+import type { TarotCard } from "~/lib/tarot-types";
+import { TAROT_SPREADS, type TarotSpreadType } from "~/lib/tarot-spreads";
 import { TarotCardDisplay } from "./tarot-card-display";
 
 interface TarotSpreadProps {
   cards: TarotCard[];
-  spreadType: keyof typeof TAROT_SPREADS;
+  spreadType: TarotSpreadType;
   revealedCards: boolean[];
   onCardClick: (index: number) => void;
 }
@@ -27,12 +27,12 @@ export const TarotSpread = ({
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{spread.name}</h2>
+        <h2 className="mb-2">{spread.name}</h2>
         <p className="text-gray-600 dark:text-gray-400">{spread.description}</p>
       </div>
 
       <motion.div
-        className={spreadLayouts[spreadType as keyof typeof spreadLayouts]}
+        className={spreadLayouts[spreadType]}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}

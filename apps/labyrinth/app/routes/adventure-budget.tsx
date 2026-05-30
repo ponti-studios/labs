@@ -82,9 +82,7 @@ export default function AdventureBudgetRoute() {
       <div className="relative z-10 max-w-6xl mx-auto p-8">
         {/* Header */}
         <div className="mb-12 border-b border-white/10 pb-8">
-          <h1 className="text-4xl font-mono font-bold tracking-tighter uppercase mb-2">
-            ADVENTURE BUDGET PLANNER
-          </h1>
+          <h1 className="mb-2">ADVENTURE BUDGET PLANNER</h1>
           <p className="text-white/70 text-sm">TRACK ADVENTURES AND FORECAST FINANCIAL IMPACT</p>
         </div>
 
@@ -241,7 +239,7 @@ export default function AdventureBudgetRoute() {
                   className="flex justify-between items-start p-4 border border-white/10 bg-white/2 hover:bg-white/5 transition"
                 >
                   <div>
-                    <h3 className="font-mono font-bold text-white uppercase">{adventure.name}</h3>
+                    <h3>{adventure.name}</h3>
                     <p className="text-2xl font-mono font-bold text-white mt-1">
                       {formatCurrency(adventure.cost)}
                     </p>

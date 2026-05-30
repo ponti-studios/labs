@@ -1,21 +1,14 @@
 "use client";
 
+import type { SocialTrackerParsed } from "@pontistudios/db";
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { cn } from "~/lib/utils";
-import type { SocialTrackerParsed } from "@pontistudios/db";
 import type { CardTheme } from "./card-theme-picker";
 
 type CardDisplayData = Pick<
   SocialTrackerParsed,
-  | "name"
-  | "hp"
-  | "cardType"
-  | "description"
-  | "attacks"
-  | "strengths"
-  | "flaws"
-  | "commitmentLevel"
+  "name" | "hp" | "cardType" | "description" | "attacks" | "strengths" | "flaws" | "commitmentLevel"
 >;
 
 interface PersonalityType {
@@ -45,7 +38,7 @@ export function PersonCardDisplay({
     <motion.div
       data-testid="person-card"
       className={cn(
-        "w-[350px] min-h-[500px] rounded-xl overflow-hidden border-8",
+        "w-87.5 min-h-125 rounded-xl overflow-hidden border-8",
         selectedTheme.border,
         "shadow-xl relative",
       )}
@@ -58,24 +51,6 @@ export function PersonCardDisplay({
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      {/* Card background */}
-      <div className={cn("absolute inset-0 bg-gradient-to-b", selectedTheme.bg)} />
-
-      {/* Sparkle effects */}
-      <motion.div
-        className="absolute inset-0 pointer-events-none"
-        animate={{
-          background: [
-            "radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 20%)",
-            "radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 20%)",
-            "radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 20%)",
-            "radial-gradient(circle at 20% 70%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 20%)",
-            "radial-gradient(circle at 80% 30%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 20%)",
-          ],
-        }}
-        transition={{ duration: 5, repeat: Number.POSITIVE_INFINITY }}
-      />
-
       {/* Card content */}
       <div className="relative z-10 p-4 flex flex-col h-full">
         {/* Header */}
@@ -126,16 +101,16 @@ export function PersonCardDisplay({
         {/* Attacks */}
         <div className="space-y-2 text-sm leading-snug mb-2">
           {cardData.attacks.map((attack, index: number) => (
-              <div
-                key={attack.name}
-                className={`flex justify-between items-center ${
-                  index < cardData.attacks.length - 1 ? "border-b border-gray-400/50 pb-1" : ""
-                }`}
-              >
-                <span>{attack.name}</span>
-                <span className="font-bold">{attack.damage}</span>
-              </div>
-            ))}
+            <div
+              key={attack.name}
+              className={`flex justify-between items-center ${
+                index < cardData.attacks.length - 1 ? "border-b border-gray-400/50 pb-1" : ""
+              }`}
+            >
+              <span>{attack.name}</span>
+              <span className="font-bold">{attack.damage}</span>
+            </div>
+          ))}
         </div>
 
         {/* Flaws & Strengths */}

@@ -48,9 +48,7 @@ export function useMonitoredSymptoms() {
         ...symptom,
         updatedAt: new Date().toISOString(),
       };
-      inMemorySymptoms = inMemorySymptoms.map((s) =>
-        s.id === symptom.id ? updated : s,
-      );
+      inMemorySymptoms = inMemorySymptoms.map((s) => (s.id === symptom.id ? updated : s));
       return updated;
     },
     onSuccess: () => {
@@ -83,9 +81,7 @@ export function useMonitoredSymptoms() {
         ...symptom,
         resolvedAt: new Date().toISOString(),
       };
-      inMemorySymptoms = inMemorySymptoms.map((s) =>
-        s.id === symptom.id ? updated : s,
-      );
+      inMemorySymptoms = inMemorySymptoms.map((s) => (s.id === symptom.id ? updated : s));
       return updated;
     },
     onSuccess: () => {
