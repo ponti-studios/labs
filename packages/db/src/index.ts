@@ -1,7 +1,4 @@
-export type {
-  DisasterEvent,
-  NewDisasterEvent,
-} from './schema/disaster';
+export type { DisasterEvent, NewDisasterEvent } from "./schema/disaster";
 
 export type {
   RelationshipPerson,
@@ -23,20 +20,24 @@ export type {
   NewRelationshipVote,
   RelationshipMetricDaily,
   NewRelationshipMetricDaily,
-} from './schema/relationships';
+} from "./schema/relationships";
 
 export type {
-  PlaygroundProject,
-  NewPlaygroundProject,
   PlaygroundTodo,
   NewPlaygroundTodo,
+  PlaygroundTag,
+  NewPlaygroundTag,
+  PlaygroundTodoTag,
+  NewPlaygroundTodoTag,
   PlaygroundEmbedding,
   NewPlaygroundEmbedding,
   PlaygroundTflCamera,
   NewPlaygroundTflCamera,
   PlaygroundCovidData,
   NewPlaygroundCovidData,
-} from './schema/playground';
+  PlaygroundRhobhDailyPuzzle,
+  NewPlaygroundRhobhDailyPuzzle,
+} from "./schema/playground";
 
 export type {
   SocialTracker,
@@ -44,7 +45,7 @@ export type {
   SocialVote,
   NewSocialVote,
   SocialTrackerParsed,
-} from './schema/social';
+} from "./schema/social";
 
 export {
   disasterEvents,
@@ -59,18 +60,20 @@ export {
   relationshipMetricsDaily,
   covidData,
   tflCameras,
-  projects,
   todos,
+  tags,
+  todoTags,
   embeddings,
+  rhobhDailyPuzzles,
   trackers,
   votes,
   users,
   messages,
-} from './schema';
+} from "./schema";
 
-export type { Database } from './client';
-export { createDb, withDb, getDb, closeDb } from './client';
-export type { DbConfig } from './client';
-export * from './env';
-export { db } from './drizzle';
-export * from 'drizzle-orm';
+export type { Database } from "./client";
+export { createDb, withDb, getDb, closeDb } from "./client";
+export type { DbConfig } from "./client";
+export * from "./env";
+export { db } from "./drizzle";
+export * from "drizzle-orm";

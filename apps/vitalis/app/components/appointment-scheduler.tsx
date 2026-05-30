@@ -25,9 +25,9 @@ export function AppointmentScheduler({
 }) {
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [mounted, setMounted] = useState(false);
-  const [selectedSlot, setSelectedSlot] = useState<(typeof doctorData.availabilities)[number] | null>(
-    null,
-  );
+  const [selectedSlot, setSelectedSlot] = useState<
+    (typeof doctorData.availabilities)[number] | null
+  >(null);
 
   // Handle hydration mismatch
   useEffect(() => {

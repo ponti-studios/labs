@@ -1,70 +1,51 @@
-# Makefile for Node.js, Docker, Fastify, and Drizzle project
+.PHONY: install dev dev-cartograph dev-commune dev-labyrinth dev-tempo dev-ui dev-vitalis build test lint format typecheck check clean reset
 
-# Variables
-APP_DB_URL=postgresql://postgres:devpassword@localhost:5434/hominem
-TEST_DB_URL=postgresql://postgres:devpassword@localhost:4433/hominem-test
-DOCKER_COMPOSE = docker compose
-NODE_ENV ?= development
-
-# Phony targets
-.PHONY: install start dev build test lint format clean docker-up docker-down check reset all
-
-# Install dependencies
 install:
 	pnpm install
 
-# Start the application in production mode
-start:
-	pnpm start
-
-# Start the application in development mode
 dev:
-	@echo "Starting development server..."
-	pm2 start pnpm --name="hominem" -- run dev
+	pnpm dev
 
-dev-home:
-	@echo "Starting development server for hominem..."
-	pm2 start pnpm --name="@pontistudios/home" -- run dev:home
+dev-cartograph:
+	pnpm dev:cartograph
 
-run-redis:
-	@echo "Starting Redis..."
-	pm2 start pnpm --name="hominem-redis" -- run redis
+dev-commune:
+	pnpm dev:commune
 
-# Run tests
-test:
-	pnpm run test
+dev-labyrinth:
+	pnpm dev:labyrinth
 
-# Build the application
+dev-tempo:
+	pnpm dev:tempo
+
+dev-ui:
+	pnpm dev:ui
+
+dev-vitalis:
+	pnpm dev:vitalis
+
 build:
-	pnpm turbo run lint --force --parallel
-	pnpm turbo run build --force
+	pnpm build
 
-# Run linter
+test:
+	pnpm test
+
 lint:
-	pnpm turbo run lint --force --parallel
+	pnpm lint
 
-# Clean build artifacts and dependencies
+format:
+	pnpm format
+
+typecheck:
+	pnpm typecheck
+
+check:
+	pnpm lint
+	pnpm typecheck
+	pnpm test
+
 clean:
-	find . -type d -name "node_modules" -exec rm -rf {} +
-	find . -type d -name "dist" -exec rm -rf {} +
-	find . -type d -name "build" -exec rm -rf {} +
-	find . -type d -name "logs" -exec rm -rf {} +
-	find . -type d -name "coverage" -exec rm -rf {} +
-	find . -type d -name ".next" -exec rm -rf {} +
-	find . -type d -name ".turbo" -exec rm -rf {} +
-	find . -type d -name ".react-router" -exec rm -rf {} +
-	find . -name "pnpm-lock.yaml" -exec rm -rf {} +
-	find . -name "package-lock.json" -exec rm -rf {} +
+	find . -type d -name "node_modules" -prune -exec rm -rf {} +
+	find . -type d \( -name "dist" -o -name "build" -o -name "coverage" -o -name ".turbo" -o -name ".react-router" \) -prune -exec rm -rf {} +
 
-# Stop Docker containers
-docker-down:
-	$(DOCKER_COMPOSE) down
-
-# Run all tests and linting
-check: test lint
-
-# Full cleanup and reinstall
 reset: clean install
-
-# Default target
-all: install build

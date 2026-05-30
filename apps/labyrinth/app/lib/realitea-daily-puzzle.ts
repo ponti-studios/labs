@@ -1,0 +1,487 @@
+import { z } from "zod";
+import archiveMoments from "../data/rhobh-archive-moments.json";
+import {
+  normalizeAnswer,
+  type Puzzle,
+  type PuzzleAnswerType,
+  type PuzzleNewsMode,
+} from "./realitea";
+
+/**
+ * RHOBH daily puzzle helpers.
+ *
+ * This module owns the full lifecycle for a daily puzzle:
+ *
+ *   archive JSON / generated response / DB record
+ *                  |
+ *                  v
+ *          normalized candidate data
+ *                  |
+ *          +-------+--------+
+ *          |                |
+ *          v                v
+ *      validate()      build/store puzzle
+ *          |                |
+ *          +-------+--------+
+ *                  |
+ *                  v
+ *            puzzle for a day
+ *
+ * The rest of the file is split into a few predictable jobs:
+ * - date helpers for stable day-based keys
+ * - schema parsing for generated responses and source items
+ * - archive selection for fallback puzzles
+ * - validation for clue leakage, source coverage, and cooldown rules
+ * - mapping helpers for moving between stored records and in-memory puzzles
+ *
+ * Two ASCII models are especially important:
+ *
+ * 1. Date bucketing
+ *
+ *   UTC day
+ *   2026-05-29
+ *        |
+ *        v
+ *   rhobh-<day-index>
+ *        |
+ *        v
+ *   puzzleKey / storage lookup
+ *
+ *   The day index is derived from midnight UTC so the same date always maps
+ *   to the same puzzle regardless of local timezone.
+ *
+ * 2. Validation flow
+ *
+ *   candidate
+ *      |
+ *      v
+ *   normalize answer
+ *      |
+ *      +-----------------------------+
+ *      | length / character checks    |
+ *      | clue and detail leakage      |
+ *      | repeat window                |
+ *      | archive membership or        |
+ *      | current-source corroboration |
+ *      +-----------------------------+
+ *      |
+ *      v
+ *   valid or rejected with reasons
+ */
+
+export const RHOBH_FRANCHISE = "rhobh";
+export const RHOBH_DATE_FORMAT = /^\d{4}-\d{2}-\d{2}$/;
+export const RHOBH_ALLOWED_SOURCE_DOMAINS = [
+  "bravotv.com",
+  "people.com",
+  "ew.com",
+  "eonline.com",
+  "usmagazine.com",
+] as const;
+export const RHOBH_PRIMARY_SOURCE_DOMAIN = "bravotv.com";
+export const RHOBH_REPEAT_WINDOW_DAYS = 90;
+export const RHOBH_MIN_ANSWER_LENGTH = 4;
+export const RHOBH_MAX_ANSWER_LENGTH = 10;
+
+/**
+ * Stored and generated puzzle records are intentionally separated from the
+ * UI-facing puzzle shape. That keeps source metadata and persistence details
+ * out of the domain object used by the gameplay layer.
+ */
+export type PuzzleSource = "database" | "static";
+export type GenerationStatus = "failed" | "published";
+export type ValidationStatus = "approved" | "rejected";
+
+export interface SourceItem {
+  title: string;
+  url: string;
+  publishedAt: string;
+  summary: string;
+  domain: string;
+}
+
+export const sourceItemSchema = z
+  .object({
+    domain: z.string().min(1).optional(),
+    published: z.string().min(1).optional(),
+    publishedAt: z.string().min(1).optional(),
+    source: z.string().min(1).optional(),
+    summary: z.string().min(1),
+    title: z.string().min(1),
+    url: z.string().url(),
+  })
+  .transform(({ domain, published, publishedAt, source, ...item }) => ({
+    ...item,
+     domain: domain ?? source ?? "",
+    publishedAt: publishedAt ?? published ?? "",
+  }))
+  .refine((item) => item.domain.length > 0, {
+    message: "domain is required",
+    path: ["domain"],
+  })
+  .refine((item) => item.publishedAt.length > 0, {
+    message: "publishedAt is required",
+    path: ["publishedAt"],
+  });
+
+export const sourceItemListSchema = z.array(sourceItemSchema).max(10);
+
+export interface GeneratedCandidate extends Puzzle {
+  answerType: PuzzleAnswerType;
+  newsMode: PuzzleNewsMode;
+  rationale: string;
+  sourceUrls: string[];
+  sourceTitles: string[];
+  sourcePublishedAt: string[];
+  sourceSummary: string[];
+}
+
+export interface StoredPuzzle extends Puzzle {
+  answerType?: PuzzleAnswerType;
+  newsMode?: PuzzleNewsMode;
+  puzzleKey: string;
+  source: PuzzleSource;
+}
+
+export interface PuzzleRecord {
+  answer: string;
+  answerType: PuzzleAnswerType;
+  clue: string;
+  createdAt?: Date | null;
+  dateUtc: string;
+  detail: string;
+  franchise: string;
+  generationStatus: GenerationStatus | string;
+  id?: number;
+  newsMode: PuzzleNewsMode;
+  normalizedAnswer: string;
+  role: string;
+  sourcePublishedAt: string;
+  sourceSummary: string;
+  sourceTitles: string;
+  sourceUrls: string;
+  updatedAt?: Date | null;
+  validationStatus: ValidationStatus | string;
+}
+
+export interface ValidationContext {
+  archiveAnswers?: Set<string>;
+  previousAnswers?: Set<string>;
+  sources?: SourceItem[];
+}
+
+export interface ValidationResult {
+  normalizedAnswer: string;
+  reasons: string[];
+  valid: boolean;
+}
+
+export interface PuzzleEnvelope {
+  puzzle: StoredPuzzle;
+}
+
+/**
+ * Generated responses are constrained to a small, explicit schema so the
+ * backend can reject malformed model output before it reaches storage.
+ */
+const rhobhGeneratedCandidateSchema = z.object({
+  answer: z.string().min(1),
+  answerType: z.enum(["moment", "object", "person", "phrase", "place", "storyline"]),
+  clue: z.string().min(1),
+  detail: z.string().min(1),
+  newsMode: z.enum(["archive", "current"]),
+  rationale: z.string().min(1),
+  role: z.string().min(1),
+  sourcePublishedAt: z.array(z.string()),
+  sourceSummary: z.array(z.string()),
+  sourceTitles: z.array(z.string()),
+  sourceUrls: z.array(z.string()),
+});
+
+const rhobhGeneratedCandidateListSchema = z.array(rhobhGeneratedCandidateSchema).min(3).max(5);
+
+/**
+ * Convert a Date into the canonical YYYY-MM-DD key used by the daily puzzle
+ * pipeline.
+ *
+ * The key is derived from UTC, not local time.
+ *
+ * Example:
+ *
+ *   local time: 2026-05-29 23:30 -0700
+ *   UTC time:   2026-05-30 06:30 Z
+ *   key:        2026-05-30
+ */
+export function getDateKey(date: Date): string {
+  return date.toISOString().slice(0, 10);
+}
+
+/**
+ * Check whether a string matches the canonical daily puzzle date key format.
+ */
+export function isDateKey(value: string): boolean {
+  return RHOBH_DATE_FORMAT.test(value);
+}
+
+/**
+ * Parse a canonical date key back into a UTC midnight Date.
+ *
+ * This accepts only YYYY-MM-DD strings, so it stays aligned with getDateKey().
+ */
+export function parseDate(value: string | null | undefined): Date | null {
+  if (!value || !isDateKey(value)) {
+    return null;
+  }
+
+  const parsed = new Date(`${value}T00:00:00.000Z`);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+export function parseStringArray(raw: string): string[] {
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    return Array.isArray(parsed)
+      ? parsed.filter((item): item is string => typeof item === "string")
+      : [];
+  } catch {
+    return [];
+  }
+}
+
+export function serializeStringArray(values: string[]): string {
+  return JSON.stringify(values);
+}
+
+/**
+ * Load the curated archive fallback pool.
+ *
+ * Archive moments are shaped into GeneratedCandidate objects so the rest of
+ * the puzzle pipeline can treat archive and generated content uniformly.
+ */
+export function getArchiveMoments(): GeneratedCandidate[] {
+  return (
+    archiveMoments as Array<{
+      answer: string;
+      answerType: PuzzleAnswerType;
+      clue: string;
+      detail: string;
+      role: string;
+      newsMode: PuzzleNewsMode;
+    }>
+  ).map((moment) => ({
+    ...moment,
+    rationale: "Curated RHOBH archive fallback",
+    sourceUrls: [],
+    sourceTitles: [],
+    sourcePublishedAt: [],
+    sourceSummary: [],
+  }));
+}
+
+/**
+ * Resolve the allowed source domain for a URL.
+ *
+ * A URL counts if it matches one of the approved domains exactly or is a
+ * subdomain of one of them.
+ */
+export function getAllowedSourceDomain(url: string): string | null {
+  try {
+    const hostname = new URL(url).hostname.replace(/^www\./, "");
+    return (
+      RHOBH_ALLOWED_SOURCE_DOMAINS.find(
+        (domain) => hostname === domain || hostname.endsWith(`.${domain}`),
+      ) ?? null
+    );
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Validate a candidate puzzle.
+ *
+ * The rules are intentionally layered so the caller gets a precise reason for
+ * rejection instead of a single opaque failure.
+ *
+ * Validation checklist:
+ *
+ *   1. Normalize the answer.
+ *   2. Ensure the answer length is within bounds.
+ *   3. Ensure the normalized answer is letters only.
+ *   4. Ensure the answer is not leaked in clue or detail.
+ *   5. Ensure the answer does not repeat inside the cooldown window.
+ *   6. Ensure current candidates have Bravo plus corroboration.
+ *   7. Ensure archive candidates exist in the curated archive pool.
+ */
+export function validateCandidate(
+  candidate: GeneratedCandidate,
+  context: ValidationContext = {},
+): ValidationResult {
+  const reasons: string[] = [];
+  const normalizedAnswer = normalizeAnswer(candidate.answer);
+  const clueUpper = candidate.clue.toUpperCase();
+  const detailUpper = candidate.detail.toUpperCase();
+  const archiveAnswers =
+    context.archiveAnswers ??
+    new Set(getArchiveMoments().map((moment) => normalizeAnswer(moment.answer)));
+  const previousAnswers = context.previousAnswers ?? new Set<string>();
+  const sources = context.sources ?? [];
+
+  if (
+    normalizedAnswer.length < RHOBH_MIN_ANSWER_LENGTH ||
+    normalizedAnswer.length > RHOBH_MAX_ANSWER_LENGTH
+  ) {
+    reasons.push("answer length is unsupported");
+  }
+
+  if (!normalizedAnswer || /[^A-Z]/.test(normalizedAnswer)) {
+    reasons.push("answer does not normalize cleanly to letters");
+  }
+
+  if (!candidate.answerType) {
+    reasons.push("answer type is missing");
+  }
+
+  // The normalized answer is the canonical comparison form used by all rules.
+  if (clueUpper.includes(normalizedAnswer) || detailUpper.includes(normalizedAnswer)) {
+    reasons.push("answer is leaked in clue or detail");
+  }
+
+  if (previousAnswers.has(normalizedAnswer)) {
+    reasons.push("answer repeats inside cooldown window");
+  }
+
+  if (candidate.newsMode === "current") {
+    const sourceDomains = new Set(
+      candidate.sourceUrls.map((url) => getAllowedSourceDomain(url) ?? "").filter(Boolean),
+    );
+    const domains = new Set(
+      sources
+        .map((source) => source.domain || getAllowedSourceDomain(source.url) || "")
+        .filter(Boolean),
+    );
+    const effectiveDomains = sourceDomains.size > 0 ? sourceDomains : domains;
+
+    if (!effectiveDomains.has(RHOBH_PRIMARY_SOURCE_DOMAIN)) {
+      reasons.push("current candidate is missing Bravo primary coverage");
+    }
+
+    if (effectiveDomains.size < 2) {
+      reasons.push("current candidate is missing a corroborating source");
+    }
+  }
+
+  if (candidate.newsMode === "archive" && !archiveAnswers.has(normalizedAnswer)) {
+    reasons.push("archive candidate is not backed by the curated archive pool");
+  }
+
+  return {
+    normalizedAnswer,
+    reasons,
+    valid: reasons.length === 0,
+  };
+}
+
+/**
+ * Parse a generated response payload and enforce the response contract.
+ *
+ * The JSON shape is expected to be a candidate list:
+ *
+ *   [
+ *     { candidate 1 },
+ *     { candidate 2 },
+ *     { candidate 3 }
+ *   ]
+ *
+ * The min/max bounds are deliberate: enough candidates to choose from, but
+ * not so many that downstream selection becomes ambiguous.
+ */
+export function parseGenerationResponse(text: string): GeneratedCandidate[] {
+  return rhobhGeneratedCandidateListSchema.parse(JSON.parse(text));
+}
+
+/**
+ * Choose a fallback archive puzzle for a day.
+ *
+ * The selection strategy is:
+ *
+ *   archive pool
+ *       |
+ *       v
+ *   remove recently used answers
+ *       |
+ *       v
+ *   if anything remains, use that subset
+ *       |
+ *       v
+ *   otherwise, fall back to the full archive pool
+ *       |
+ *       v
+ *   index by UTC day number
+ *
+ * This makes the selection deterministic for a given date while still
+ * honoring the repeat window when possible.
+ */
+export function chooseArchivePuzzle(
+  date: Date,
+  previousAnswers: Set<string>,
+  archivePool = getArchiveMoments(),
+): GeneratedCandidate {
+  const eligible = archivePool.filter(
+    (moment) => !previousAnswers.has(normalizeAnswer(moment.answer)),
+  );
+  const pool = eligible.length > 0 ? eligible : archivePool;
+  const dayIndex = Math.floor(
+    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()) / 86_400_000,
+  );
+  return pool[dayIndex % pool.length];
+}
+
+/**
+ * Build the persisted puzzle shape from a validated candidate.
+ *
+ * Diagram:
+ *
+ *   validated candidate + date + source
+ *                 |
+ *                 v
+ *            StoredPuzzle
+ *                 |
+ *                 v
+ *         stable puzzleKey for the day
+ */
+export function buildStoredPuzzle(
+  date: Date,
+  candidate: GeneratedCandidate,
+  source: PuzzleSource,
+): StoredPuzzle {
+  return {
+    answer: candidate.answer,
+    answerType: candidate.answerType,
+    clue: candidate.clue,
+    detail: candidate.detail,
+    newsMode: candidate.newsMode,
+    puzzleKey: `rhobh-${Math.floor(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()) / 86_400_000)}`,
+    role: candidate.role,
+    source,
+  };
+}
+
+/**
+ * Map a database record back into the in-memory stored puzzle shape.
+ *
+ * This is the inverse of the storage-facing portion of buildStoredPuzzle().
+ * It keeps the puzzle key stable by deriving it from the record's UTC date.
+ */
+export function mapRecordToStoredPuzzle(record: PuzzleRecord): StoredPuzzle {
+  return {
+    answer: record.answer,
+    answerType: record.answerType,
+    clue: record.clue,
+    detail: record.detail,
+    newsMode: record.newsMode,
+    puzzleKey: `rhobh-${Math.floor(Date.UTC(new Date(record.dateUtc).getUTCFullYear(), new Date(record.dateUtc).getUTCMonth(), new Date(record.dateUtc).getUTCDate()) / 86_400_000)}`,
+    role: record.role,
+    source: "database",
+  };
+}

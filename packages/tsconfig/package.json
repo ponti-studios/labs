@@ -2,13 +2,14 @@
   "name": "@pontistudios/tsconfig",
   "version": "1.0.0",
   "description": "Shared TypeScript configurations",
-  "main": "index.js",
   "files": [
     "base.json",
     "react.json",
     "next.json"
   ],
+  "main": "index.js",
   "scripts": {
+    "format": "echo 'No formatting needed'",
     "test": "echo 'No tests'"
   },
   "packageManager": "pnpm@10.30.3"

@@ -1,0 +1,82 @@
+[
+  {
+    "answer": "PUPPYGATE",
+    "answerType": "storyline",
+    "clue": "A rescue-dog scandal that fractured the cast and dominated confessionals.",
+    "detail": "Puppygate became one of RHOBH's defining modern scandals, dragging friendships and loyalties into a season-long spiral.",
+    "role": "Iconic cast fracture",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "VILLAROSA",
+    "answerType": "place",
+    "clue": "This pink-toned estate is practically a cast member in its own right.",
+    "detail": "Villa Rosa is Lisa Vanderpump's famously lavish home and a signature setting in RHOBH history.",
+    "role": "Signature mansion",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "BUNNY",
+    "answerType": "object",
+    "clue": "A small gift turned reunion seating into an all-time uncomfortable moment.",
+    "detail": "The returned bunny became one of the show's most memorable symbols of unresolved hurt and public fallout.",
+    "role": "Reunion prop",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "MUNCHAUSEN",
+    "answerType": "storyline",
+    "clue": "A deeply controversial accusation turned health conversations into a cast war.",
+    "detail": "The Munchausen storyline marked one of RHOBH's most intense and divisive seasons.",
+    "role": "Controversial allegation",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "CAMILLE",
+    "answerType": "person",
+    "clue": "Season 1 chaos and razor-sharp confessionals made this Housewife unforgettable.",
+    "detail": "Camille Grammer helped define the original RHOBH energy with conflict, glamour, and memorable reads.",
+    "role": "Original scene-stealer",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "DENISE",
+    "answerType": "person",
+    "clue": "A casual backyard vibe and escalating cast suspicion became her RHOBH legacy.",
+    "detail": "Denise Richards' seasons delivered some of the franchise's most debated loyalty and truth-telling fights.",
+    "role": "Polarizing cast era",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "ASPEN",
+    "answerType": "place",
+    "clue": "A cold-weather getaway that somehow made the cast dynamics even hotter.",
+    "detail": "Aspen trips have produced some of RHOBH's most quoted feuds, meltdowns, and post-trip fallout.",
+    "role": "Trip disaster zone",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "LIMO",
+    "answerType": "moment",
+    "clue": "One late-night ride gave RHOBH an original-season family blowup for the ages.",
+    "detail": "The limo fight remains one of the most iconic early RHOBH scenes and set the tone for the franchise's emotional intensity.",
+    "role": "Foundational fight",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "DIAMONDS",
+    "answerType": "phrase",
+    "clue": "The franchise's signature symbol shows up in taglines, casting, and status politics.",
+    "detail": "In RHOBH, holding a diamond is shorthand for full-time power, relevance, and a place in the opening credits.",
+    "role": "Franchise currency",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "GLAM",
+    "answerType": "phrase",
+    "clue": "This four-letter RHOBH obsession can be both a flex and a flashpoint.",
+    "detail": "Professional glam has become part of the Beverly Hills image, and cast debates over it often double as status commentary.",
+    "role": "Lifestyle flashpoint",
+    "newsMode": "archive"
+  }
+]

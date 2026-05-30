@@ -56,7 +56,7 @@ export function TopCountriesChart({
   if (chartData.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-semibold mb-4 text-gray-800">{title}</h3>
+        <h3 className="mb-4">{title}</h3>
         <div className="flex items-center justify-center h-64 text-gray-500">
           <div className="text-center">
             <div className="text-4xl mb-2">📊</div>
@@ -71,7 +71,7 @@ export function TopCountriesChart({
   if (chartData.length < 3) {
     return (
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-semibold mb-4 text-gray-800">{title}</h3>
+        <h3 className="mb-4">{title}</h3>
         <div className="flex items-center justify-center h-64 text-gray-500">
           <div className="text-center">
             <div className="text-4xl mb-2">⚠️</div>
@@ -97,7 +97,7 @@ export function TopCountriesChart({
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
-      <h3 className="text-lg font-semibold mb-4 text-gray-800">{title}</h3>
+      <h3 className="mb-4">{title}</h3>
       <ResponsiveContainer width="100%" height={height}>
         <BarChart data={chartData} layout="horizontal">
           <XAxis type="number" tickFormatter={formatValue} tick={{ fontSize: 12 }} />

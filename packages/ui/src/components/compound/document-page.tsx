@@ -51,7 +51,7 @@ export function DocumentPage({
         {eyebrow && (
           <p className="mb-4 text-sm uppercase tracking-widest text-muted-foreground">{eyebrow}</p>
         )}
-        <h1 className="max-w-3xl text-4xl font-bold tracking-tight md:text-6xl">{title}</h1>
+        <h1 className="max-w-3xl">{title}</h1>
         {description && (
           <p className="mt-6 max-w-3xl text-lg leading-8 text-muted-foreground">{description}</p>
         )}
@@ -76,7 +76,7 @@ export function InfoGrid({ items, className, ...props }: InfoGridProps) {
     <div className={cn("grid gap-4", className)} {...props}>
       {items.map((item) => (
         <div key={item.id} className="border border-border p-5">
-          <h3 className="font-bold">{item.title}</h3>
+          <h3>{item.title}</h3>
           <p className="mt-2 leading-7 text-muted-foreground">{item.description}</p>
         </div>
       ))}

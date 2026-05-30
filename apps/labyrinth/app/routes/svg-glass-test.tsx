@@ -2,7 +2,7 @@ import type React from "react";
 import { useCallback, useRef, useState } from "react";
 import { cn } from "~/lib/utils";
 
-const DISPLACEMENT_FILTER_ID = "displacementFilter4";
+const DISPLACEMENT_FILTER_ID = "DISPLACEMENT_FILTER";
 
 export default function SVGGlassTest() {
   const [position, setPosition] = useState({ x: 50, y: 50 });
@@ -57,7 +57,7 @@ export default function SVGGlassTest() {
     <div className="relative w-full h-screen overflow-hidden pt-16">
       {/* Instructions */}
       <div className="absolute top-4 right-4 z-50 bg-black/50 text-white p-4 rounded-lg backdrop-blur-sm max-w-sm">
-        <h3 className="font-semibold mb-2">Draggable Glass Effect</h3>
+        <h3 className="mb-2">Draggable Glass Effect</h3>
         <p className="text-sm text-white/80 mb-3">
           Click and drag the glass overlay to move it around the image. Add a custom background
           image URL or drag & drop a URL into the input field. The glass effect creates chromatic
@@ -75,7 +75,7 @@ export default function SVGGlassTest() {
       {/* Displacement Controls */}
       {showControls && (
         <div className="absolute bottom-4 left-4 z-50 bg-black/80 text-white p-4 rounded-lg backdrop-blur-sm min-w-80">
-          <h3 className="font-semibold mb-3">Controls</h3>
+          <h3 className="mb-3">Controls</h3>
 
           {/* Background Image URL Input */}
           <div className="mb-4 pb-3 border-b border-white/20">
@@ -121,7 +121,7 @@ export default function SVGGlassTest() {
           </div>
 
           {/* Displacement Controls */}
-          <h4 className="font-medium mb-3">Displacement Settings</h4>
+          <h4 className="mb-3">Displacement Settings</h4>
           <div className="space-y-3">
             <div>
               <label htmlFor="red-displacement" className="block text-sm mb-1">
@@ -213,21 +213,21 @@ export default function SVGGlassTest() {
               {/* Text content over custom image */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center text-white">
-                  <h1 className="text-6xl font-bold mb-4 drop-shadow-2xl">Glass Effect Test</h1>
+                  <h1 className="mb-4 drop-shadow-2xl">Glass Effect Test</h1>
                   <p className="text-2xl drop-shadow-lg">
                     Drag the glass overlay around this custom background
                   </p>
                   <div className="mt-8 grid grid-cols-3 gap-4 text-lg">
                     <div className="bg-black/40 p-4 rounded-lg backdrop-blur-sm">
-                      <h3 className="font-bold">Red Channel</h3>
+                      <h3>Red Channel</h3>
                       <p>Displacement {displacements.red}</p>
                     </div>
                     <div className="bg-black/40 p-4 rounded-lg backdrop-blur-sm">
-                      <h3 className="font-bold">Green Channel</h3>
+                      <h3>Green Channel</h3>
                       <p>Displacement {displacements.green}</p>
                     </div>
                     <div className="bg-black/40 p-4 rounded-lg backdrop-blur-sm">
-                      <h3 className="font-bold">Blue Channel</h3>
+                      <h3>Blue Channel</h3>
                       <p>Displacement {displacements.blue}</p>
                     </div>
                   </div>
@@ -237,7 +237,7 @@ export default function SVGGlassTest() {
           </div>
         ) : (
           /* Default colorful pattern background */
-          <div className="w-full h-full bg-linear-to-br from-cyan-400 via-purple-500 to-pink-600">
+          <div className="size-full">
             {/* Pattern overlay */}
             <div className="absolute inset-0 opacity-50">
               <PatternedBackground />
@@ -246,21 +246,21 @@ export default function SVGGlassTest() {
             {/* Text content */}
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center text-white">
-                <h1 className="text-6xl font-bold mb-4 drop-shadow-lg">Glass Effect Test</h1>
+                <h1 className="mb-4 drop-shadow-lg">Glass Effect Test</h1>
                 <p className="text-2xl drop-shadow-md">
                   Drag the glass overlay around this colorful background
                 </p>
                 <div className="mt-8 grid grid-cols-3 gap-4 text-lg">
                   <div className="bg-white/20 p-4 rounded-lg backdrop-blur-sm">
-                    <h3 className="font-bold">Red Channel</h3>
+                    <h3>Red Channel</h3>
                     <p>Displacement {displacements.red}</p>
                   </div>
                   <div className="bg-white/20 p-4 rounded-lg backdrop-blur-sm">
-                    <h3 className="font-bold">Green Channel</h3>
+                    <h3>Green Channel</h3>
                     <p>Displacement {displacements.green}</p>
                   </div>
                   <div className="bg-white/20 p-4 rounded-lg backdrop-blur-sm">
-                    <h3 className="font-bold">Blue Channel</h3>
+                    <h3>Blue Channel</h3>
                     <p>Displacement {displacements.blue}</p>
                   </div>
                 </div>
@@ -374,7 +374,7 @@ const DisplacementFilter = ({
           result="thing1"
         />
         <feImage
-          href="data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='gradient1' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23000'/%3E%3Cstop offset='100%25' stop-color='%2300F'/%3E%3C/linearGradient%3E%3ClinearGradient id='gradient2' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23000'/%3E%3Cstop offset='100%25' stop-color='%230F0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='0' y='0' width='200' height='200' rx='25' fill='%237F7F7F' /%3E%3Crect x='50' y='50' width='100' height='100' rx='25' fill='%23000' /%3E%3Crect x='50' y='50' width='100' height='100' rx='25' fill='url(%23gradient1)' style='mix-blend-mode: screen' /%3E%3Crect x='50' y='50' width='100' height='100' rx='25' fill='url(%23gradient2)' style='mix-blend-mode: screen' /%3E%3Crect x='50' y='50' width='100' height='100' rx='25' fill='%237F7F7FBB' style='filter:blur(5px)' /%3E%3C/svg%3E"
+          href="data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='50' y='50' width='100' height='100' rx='25' fill='none' stroke='%237F7F7F' /%3E%3Crect x='50' y='50' width='100' height='100' rx='25' fill='%237F7F7FBB' style='filter:blur(5px)' /%3E%3C/svg%3E"
           x="0%"
           y="0%"
           width="100%"

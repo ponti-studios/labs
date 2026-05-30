@@ -30,7 +30,7 @@ export function InteractiveCard({
 
   return (
     <article className="p-6 bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-      <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
+      <h3 className="mb-2">{title}</h3>
 
       <div
         className={`text-gray-600 mb-4 overflow-hidden transition-all duration-300 ${isExpanded ? "max-h-full" : "max-h-20"}`}

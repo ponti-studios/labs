@@ -2,17 +2,15 @@ import {
   isRouteErrorResponse,
   Links,
   Meta,
-  NavLink,
   Outlet,
   Scripts,
   ScrollRestoration,
 } from "react-router";
 
 import type { Route } from "./+types/root";
+import "./app.css";
 import { PrefetchProvider } from "./components/prefetch-provider";
 import QueryProvider from "./components/QueryProvider";
-import { routes } from "./lib/routes";
-import "./app.css";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -37,7 +35,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
         <PrefetchProvider />
       </head>
-      <body className="bg-bg-app text-text-primary font-body">
+      <body className="bg-background text-foreground font-sans">
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -49,37 +47,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <QueryProvider>
-      <div className="border-b border-border-default bg-bg-panel-0/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between gap-4">
-            <NavLink to="/" className="text-lg font-semibold text-text-primary">
-              Tempo
-            </NavLink>
-            <p className="hidden text-sm text-text-secondary md:block">
-              Projects and tasks without sidebar ceremony.
-            </p>
-          </div>
-          <nav aria-label="Primary" className="flex flex-wrap gap-2">
-            {routes.map((route) => (
-              <NavLink
-                key={route.path}
-                to={route.path}
-                prefetch="intent"
-                className={({ isActive }) =>
-                  [
-                    "rounded-full border px-3 py-2 text-sm transition-colors duration-150",
-                    isActive
-                      ? "border-border-accent bg-bg-panel-2 text-text-primary"
-                      : "border-border-default text-text-secondary hover:bg-bg-panel-1 hover:text-text-primary",
-                  ].join(" ")
-                }
-              >
-                {route.label}
-              </NavLink>
-            ))}
-          </nav>
-        </div>
-      </div>
       <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
         <Outlet />
       </main>

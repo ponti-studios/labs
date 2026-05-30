@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, test } from "vitest";
 import { TerminalLine } from "../TerminalLine";
 import type { TerminalLine as TerminalLineType } from "../types";
 
@@ -57,7 +57,13 @@ describe("TerminalLine Component", () => {
     const { container } = render(<TerminalLine line={line} index={0} />);
     const element = container.firstChild as HTMLElement;
 
-    expect(element).toHaveClass("font-mono", "text-sm", "leading-relaxed", "text-olive-200", "font-medium");
+    expect(element).toHaveClass(
+      "font-mono",
+      "text-sm",
+      "leading-relaxed",
+      "text-olive-200",
+      "font-medium",
+    );
   });
 
   test("applies correct CSS class for error type", () => {
@@ -81,7 +87,13 @@ describe("TerminalLine Component", () => {
     const { container } = render(<TerminalLine line={line} index={0} />);
     const element = container.firstChild as HTMLElement;
 
-    expect(element).toHaveClass("font-mono", "text-sm", "leading-relaxed", "text-amber-300/90", "font-light");
+    expect(element).toHaveClass(
+      "font-mono",
+      "text-sm",
+      "leading-relaxed",
+      "text-amber-300/90",
+      "font-light",
+    );
   });
 
   test("applies correct CSS class for output type", () => {

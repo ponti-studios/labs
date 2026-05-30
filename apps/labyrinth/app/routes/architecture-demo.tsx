@@ -26,7 +26,7 @@ export default function ArchitectureDemo() {
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
       <header>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Islands Architecture Demo</h1>
+        <h1 className="mb-2">Islands Architecture Demo</h1>
         <p className="text-gray-600">
           Server Components (zero JS) + Islands (hydrated) working together
         </p>
@@ -35,9 +35,7 @@ export default function ArchitectureDemo() {
       <section className="grid md:grid-cols-2 gap-6">
         {/* Server Component - Zero JavaScript */}
         <div>
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-            Server Component (Static)
-          </h2>
+          <h2 className="mb-3">Server Component (Static)</h2>
           <StaticCard
             title={serverContent.title}
             description={serverContent.description}
@@ -50,9 +48,7 @@ export default function ArchitectureDemo() {
 
         {/* Island Component - Hydrated */}
         <div>
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-            Island (Interactive)
-          </h2>
+          <h2 className="mb-3">Island (Interactive)</h2>
           <InteractiveCard
             title={islandContent.title}
             description={islandContent.description}
@@ -66,7 +62,7 @@ export default function ArchitectureDemo() {
       </section>
 
       <section className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-900 mb-3">How It Works</h2>
+        <h2 className="mb-3">How It Works</h2>
         <ul className="space-y-2 text-gray-700">
           <li className="flex items-start gap-2">
             <span className="text-green-500 font-bold">✓</span>
@@ -93,7 +89,7 @@ export default function ArchitectureDemo() {
       </section>
 
       <section>
-        <h2 className="text-lg font-semibold text-gray-900 mb-3">Code Example</h2>
+        <h2 className="mb-3">Code Example</h2>
         <div className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm">
           <pre>{`// Server Component (components/server/StaticCard.tsx)
 // No 'use client' - renders on server, zero JS

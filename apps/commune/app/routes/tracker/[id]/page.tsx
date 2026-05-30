@@ -8,18 +8,17 @@
  * - Real-time vote stats with optimized SQL
  */
 
-import { useLoaderData } from "react-router";
-import type { Route } from "./+types/page";
+import type { SocialVote } from "@pontistudios/db";
+import { Button, Progress } from "@pontistudios/ui";
 import { MessageSquare, Share2, Users } from "lucide-react";
 import { useState } from "react";
-import { Button } from "@pontistudios/ui";
-import { Progress } from "@pontistudios/ui";
+import { useLoaderData } from "react-router";
 import { AddRatingDialog } from "~/components/voter/add-rating-dialog";
 import { ShareDialog } from "~/components/voter/share-dialog";
-import { cn } from "~/lib/utils";
+import { CACHE_TTL, withCache } from "~/lib/server/cache";
 import { getTrackerWithStats, getVotesByTracker } from "~/lib/server/queries-optimized";
-import { withCache, CACHE_TTL } from "~/lib/server/cache";
-import type { SocialVote } from "@pontistudios/db";
+import { cn } from "~/lib/utils";
+import type { Route } from "./+types/page";
 
 interface LoaderData {
   tracker: {
@@ -97,10 +96,8 @@ export function CardRatingsPage() {
   const localStayPercentage = localTotal > 0 ? Math.round((localStayCount / localTotal) * 100) : 0;
 
   // Use server stats as base, but update with local changes
-  const displayStayCount =
-    localSocialVotes.length > votes.length ? localStayCount : voteStats.stay;
-  const displayDumpCount =
-    localSocialVotes.length > votes.length ? localDumpCount : voteStats.dump;
+  const displayStayCount = localSocialVotes.length > votes.length ? localStayCount : voteStats.stay;
+  const displayDumpCount = localSocialVotes.length > votes.length ? localDumpCount : voteStats.dump;
   const displayTotal = localSocialVotes.length > votes.length ? localTotal : voteStats.total;
   const displayStayPercentage =
     localSocialVotes.length > votes.length ? localStayPercentage : voteStats.stayPercentage;
@@ -173,7 +170,7 @@ export function CardRatingsPage() {
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-pink-400 to-purple-500 rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg">
                 <span className="text-white font-bold text-lg">{cardName.charAt(0)}</span>
               </div>
               <div>
@@ -251,7 +248,7 @@ export function CardRatingsPage() {
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center">
                       <span className="text-white font-semibold text-sm">
                         {vote.raterName.charAt(0)}
                       </span>

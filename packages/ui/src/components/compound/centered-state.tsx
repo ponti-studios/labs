@@ -41,7 +41,7 @@ export function CenteredState({
             {eyebrow}
           </p>
         )}
-        <h1 className="mt-4 text-4xl font-normal uppercase text-foreground">{title}</h1>
+        <h1 className="mt-4">{title}</h1>
         {description && (
           <p className="mt-4 text-base leading-7 text-muted-foreground">{description}</p>
         )}

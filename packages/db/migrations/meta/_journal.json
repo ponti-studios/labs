@@ -8,6 +8,20 @@
       "when": 1776371815557,
       "tag": "0000_amused_sasquatch",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1779902408755,
+      "tag": "0001_tags_first_metadata",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1780000000000,
+      "tag": "0002_rhobh_daily_puzzles",
+      "breakpoints": true
     }
   ]
 }

@@ -1,11 +1,29 @@
-import { Kysely, PostgresDialect } from 'kysely';
-import { Pool } from 'pg';
+import { Kysely, PostgresDialect } from "kysely";
+import { Pool } from "pg";
 
-import { disasterEvents } from './schema/disaster';
-import { relationshipPeople, relationshipStageHistory, relationshipEvents, relationshipNotes, relationshipCheckins, relationshipFlags, relationshipFriendInvites, relationshipFriendVotes, relationshipMetricsDaily } from './schema/relationships';
-import { covidData, tflCameras, projects, todos, embeddings } from './schema/playground';
-import { trackers, votes } from './schema/social';
-import { users, messages } from './schema/kuma';
+import { disasterEvents } from "./schema/disaster";
+import {
+  relationshipPeople,
+  relationshipStageHistory,
+  relationshipEvents,
+  relationshipNotes,
+  relationshipCheckins,
+  relationshipFlags,
+  relationshipFriendInvites,
+  relationshipFriendVotes,
+  relationshipMetricsDaily,
+} from "./schema/relationships";
+import {
+  covidData,
+  tflCameras,
+  todos,
+  tags,
+  todoTags,
+  embeddings,
+  rhobhDailyPuzzles,
+} from "./schema/playground";
+import { trackers, votes } from "./schema/social";
+import { users, messages } from "./schema/kuma";
 
 export interface Database {
   disaster_events: typeof disasterEvents;
@@ -20,9 +38,11 @@ export interface Database {
   relationship_metrics_daily: typeof relationshipMetricsDaily;
   covid_data: typeof covidData;
   tfl_cameras: typeof tflCameras;
-  projects: typeof projects;
   todos: typeof todos;
+  tags: typeof tags;
+  todo_tags: typeof todoTags;
   embeddings: typeof embeddings;
+  rhobh_daily_puzzles: typeof rhobhDailyPuzzles;
   trackers: typeof trackers;
   votes: typeof votes;
   users: typeof users;
@@ -38,18 +58,22 @@ let defaultDb: Kysely<Database> | null = null;
 function parseConnectionUrl(url: string) {
   const parsed = new URL(url);
   return {
-    host: parsed.hostname || 'localhost',
-    port: parseInt(parsed.port || '5432', 10),
-    user: parsed.username || 'postgres',
-    password: parsed.password || '',
-    database: parsed.pathname?.slice(1) || 'test',
+    host: parsed.hostname || "localhost",
+    port: parseInt(parsed.port || "5432", 10),
+    user: parsed.username || "postgres",
+    password: parsed.password || "",
+    database: parsed.pathname?.slice(1) || "test",
   };
 }
 
 export function createDb(config: DbConfig): Kysely<Database> {
-  if (!config.databaseUrl || !config.databaseUrl.startsWith('postgres://') && !config.databaseUrl.startsWith('postgresql://')) {
+  if (
+    !config.databaseUrl ||
+    (!config.databaseUrl.startsWith("postgres://") &&
+      !config.databaseUrl.startsWith("postgresql://"))
+  ) {
     throw new Error(
-      'databaseUrl must point to a PostgreSQL database (postgres://user:password@host:port/database)'
+      "databaseUrl must point to a PostgreSQL database (postgres://user:password@host:port/database)",
     );
   }
 
@@ -77,7 +101,7 @@ async function closeDbInstance(db: Kysely<Database>): Promise<void> {
 
 export async function withDb<T>(
   config: DbConfig,
-  fn: (db: Kysely<Database>) => Promise<T>
+  fn: (db: Kysely<Database>) => Promise<T>,
 ): Promise<T> {
   const db = createDb(config);
   try {
@@ -89,9 +113,12 @@ export async function withDb<T>(
 
 function getDatabaseUrlFromEnv(): string {
   const databaseUrl = process.env.DATABASE_URL;
-  if (!databaseUrl || (!databaseUrl.startsWith('postgres://') && !databaseUrl.startsWith('postgresql://'))) {
+  if (
+    !databaseUrl ||
+    (!databaseUrl.startsWith("postgres://") && !databaseUrl.startsWith("postgresql://"))
+  ) {
     throw new Error(
-      'DATABASE_URL must be set and point to a PostgreSQL database (postgres://user:password@host:port/database)'
+      "DATABASE_URL must be set and point to a PostgreSQL database (postgres://user:password@host:port/database)",
     );
   }
   return databaseUrl;

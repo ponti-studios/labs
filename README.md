@@ -48,6 +48,10 @@ Foundation runs:
 
 Credentials: `postgres` / `postgres`
 
+Labs uses the `hominem` PostgreSQL database locally. The app tables live under the
+`labs` schema inside that database, so `DATABASE_URL` should point to
+`postgresql://postgres:postgres@localhost:5434/hominem`, not `.../labs`.
+
 ### 2. Start labs
 
 ```bash

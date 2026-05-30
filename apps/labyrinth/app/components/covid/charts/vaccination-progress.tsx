@@ -45,23 +45,9 @@ export function VaccinationProgress({
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
-      <h3 className="text-lg font-semibold mb-4 text-gray-800">{title}</h3>
+      <h3 className="mb-4">{title}</h3>
       <ResponsiveContainer width="100%" height={height}>
         <AreaChart data={combinedData}>
-          <defs>
-            <linearGradient id="colorPartial" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8} />
-              <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.2} />
-            </linearGradient>
-            <linearGradient id="colorFull" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
-              <stop offset="95%" stopColor="#10b981" stopOpacity={0.2} />
-            </linearGradient>
-            <linearGradient id="colorBoosters" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.8} />
-              <stop offset="95%" stopColor="#f59e0b" stopOpacity={0.2} />
-            </linearGradient>
-          </defs>
           <XAxis
             dataKey="date"
             tickFormatter={formatDate}
@@ -94,24 +80,24 @@ export function VaccinationProgress({
             dataKey="boosters"
             stackId="1"
             stroke="#f59e0b"
-            fillOpacity={1}
-            fill="url(#colorBoosters)"
+            fillOpacity={0}
+            fill="none"
           />
           <Area
             type="monotone"
             dataKey="fullyVaccinated"
             stackId="1"
             stroke="#10b981"
-            fillOpacity={1}
-            fill="url(#colorFull)"
+            fillOpacity={0}
+            fill="none"
           />
           <Area
             type="monotone"
             dataKey="partiallyVaccinated"
             stackId="1"
             stroke="#3b82f6"
-            fillOpacity={1}
-            fill="url(#colorPartial)"
+            fillOpacity={0}
+            fill="none"
           />
         </AreaChart>
       </ResponsiveContainer>

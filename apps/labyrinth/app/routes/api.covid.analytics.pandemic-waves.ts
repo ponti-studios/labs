@@ -60,7 +60,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const smoothedData = metric.includes("Smoothed") ? validData : applySmoothing(validData);
 
     // Detect waves using peak detection algorithm
-    const waves = detectWaves(smoothedData, metric);
+    const waves = detectWaves(smoothedData);
 
     return Response.json({
       country,
@@ -98,10 +98,7 @@ function applySmoothing(data: Array<{ date: string; value: number; totalCases: n
   return smoothed;
 }
 
-function detectWaves(
-  data: Array<{ date: string; value: number; totalCases: number }>,
-  metric: string,
-): WaveData[] {
+function detectWaves(data: Array<{ date: string; value: number; totalCases: number }>): WaveData[] {
   if (data.length < 21) return []; // Need at least 3 weeks of data
 
   const waves: WaveData[] = [];

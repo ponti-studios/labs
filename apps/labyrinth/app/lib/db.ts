@@ -4,11 +4,11 @@ export const db = await getDb();
 
 export type {
   NewPlaygroundEmbedding,
-  NewPlaygroundProject,
+  NewPlaygroundRhobhDailyPuzzle,
   NewPlaygroundTflCamera,
   NewPlaygroundTodo,
   PlaygroundEmbedding,
-  PlaygroundProject,
+  PlaygroundRhobhDailyPuzzle,
   PlaygroundTflCamera,
   PlaygroundTodo,
 } from "@pontistudios/db";

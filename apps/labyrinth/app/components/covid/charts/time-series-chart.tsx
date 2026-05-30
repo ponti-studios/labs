@@ -44,7 +44,7 @@ export function TimeSeriesChart({
   if (chartData.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-semibold mb-4 text-gray-800">{title}</h3>
+        <h3 className="mb-4">{title}</h3>
         <div className="flex items-center justify-center h-64 text-gray-500">
           <div className="text-center">
             <div className="text-4xl mb-2">📊</div>
@@ -59,7 +59,7 @@ export function TimeSeriesChart({
   if (chartData.length < 3) {
     return (
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-semibold mb-4 text-gray-800">{title}</h3>
+        <h3 className="mb-4">{title}</h3>
         <div className="flex items-center justify-center h-64 text-gray-500">
           <div className="text-center">
             <div className="text-4xl mb-2">⚠️</div>
@@ -91,7 +91,7 @@ export function TimeSeriesChart({
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
-      <h3 className="text-lg font-semibold mb-4 text-gray-800">{title}</h3>
+      <h3 className="mb-4">{title}</h3>
       <ResponsiveContainer width="100%" height={height}>
         <LineChart data={chartData}>
           <XAxis

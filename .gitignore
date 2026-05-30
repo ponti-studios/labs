@@ -37,6 +37,7 @@ dist
 dist-storybook
 tsconfig.tsbuildinfo
 build-analysis.txt
+target/
 
 # misc
 .DS_Store

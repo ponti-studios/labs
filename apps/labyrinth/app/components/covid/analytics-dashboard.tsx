@@ -103,7 +103,7 @@ export function CovidAnalyticsDashboard({ countryCode }: CovidAnalyticsDashboard
   if (isError) {
     return (
       <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-        <h3 className="text-red-800 font-semibold">Error Loading Data</h3>
+        <h3>Error Loading Data</h3>
         <p className="text-red-600 mt-2">
           {errorStats instanceof Error ? errorStats.message : "Failed to load COVID data"}
         </p>
@@ -119,15 +119,13 @@ export function CovidAnalyticsDashboard({ countryCode }: CovidAnalyticsDashboard
   if (!displayData || displayData.length === 0) {
     return (
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-        <h3 className="text-yellow-800 font-semibold">No Data Available</h3>
+        <h3>No Data Available</h3>
         <p className="text-yellow-600 mt-2">
           No COVID data is currently available for the selected filters.
         </p>
       </div>
     );
   }
-
-  const countryName = countryCode === "OWID_WRL" ? "World" : statsData?.location || "Unknown";
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto px-4">
@@ -167,7 +165,7 @@ export function CovidAnalyticsDashboard({ countryCode }: CovidAnalyticsDashboard
       {/* Global Comparisons - Only show for specific countries */}
       {countryCode !== "OWID_WRL" && (
         <div className="space-y-6">
-          <h2 className="text-2xl font-bold text-gray-800 border-b pb-2">Global Comparisons</h2>
+          <h2 className="border-b pb-2">Global Comparisons</h2>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <TopCountriesChart

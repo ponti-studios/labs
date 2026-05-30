@@ -1,6 +1,6 @@
 import { Card } from "@pontistudios/ui";
 import { motion } from "framer-motion";
-import type { TarotCard } from "~/lib/tarot-cards";
+import type { TarotCard } from "~/lib/tarot-types";
 
 interface TarotCardDisplayProps {
   card: TarotCard;
@@ -32,12 +32,12 @@ export const TarotCardDisplay = ({
             alt={card.name}
             className="w-32 h-40 object-cover rounded mb-2"
           />
-          <h3 className="text-sm font-bold text-center">{card.name}</h3>
+          <h3>{card.name}</h3>
           <p className="text-xs text-muted-foreground text-center">{card.arcana}</p>
           {position && <p className="text-xs font-semibold mt-1">{position}</p>}
         </Card>
       ) : (
-        <div className="w-40 h-56 rounded-lg flex items-center justify-center bg-gradient-to-b from-purple-900 to-indigo-900">
+        <div className="flex h-56 w-40 items-center justify-center rounded-lg">
           <div className="text-center">
             <div className="text-4xl mb-2">🔮</div>
             <p className="text-white text-xs font-semibold">Click to Reveal</p>

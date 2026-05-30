@@ -110,19 +110,6 @@ export function useCommandExecution() {
           break;
         }
 
-        case "gradient":
-          setLines((prev) => [
-            ...prev,
-            {
-              type: "output",
-              content: "Launching Gradient Border Laboratory...",
-            },
-            { type: "output", content: "Loading GRADIENT.EXE..." },
-            { type: "output", content: "" },
-          ]);
-          setTimeout(() => navigate("/border-linear-gradient"), NAVIGATION_DELAY);
-          break;
-
         case "glass":
           setLines((prev) => [
             ...prev,

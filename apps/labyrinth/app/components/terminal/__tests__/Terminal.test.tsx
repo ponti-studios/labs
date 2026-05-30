@@ -1,17 +1,8 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { BOOT_SEQUENCE, NAVIGATION_DELAY } from "../constants";
+import { BOOT_SEQUENCE } from "../constants";
 import { Terminal } from "../Terminal";
-
-const mockNavigate = vi.fn();
-vi.mock("react-router", async () => {
-  const actual = await vi.importActual("react-router");
-  return {
-    ...actual,
-    useNavigate: () => mockNavigate,
-  };
-});
 
 function renderTerminal() {
   return render(
@@ -39,7 +30,6 @@ function submitCommand(input: HTMLInputElement, command: string) {
 describe("Terminal", () => {
   beforeEach(() => {
     vi.useFakeTimers();
-    mockNavigate.mockClear();
     vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => {
       cb(0);
       return 0;
@@ -59,21 +49,6 @@ describe("Terminal", () => {
 
     expect(screen.getByText("C:\\CHUCK> help")).toBeInTheDocument();
     expect(screen.getByText("║ AVAILABLE COMMANDS ║")).toBeInTheDocument();
-  });
-
-  test("navigates after the gradient command", async () => {
-    renderTerminal();
-
-    const input = (await bootTerminal()) as HTMLInputElement;
-    submitCommand(input, "gradient");
-
-    expect(screen.getByText("Launching Gradient Border Laboratory...")).toBeInTheDocument();
-
-    act(() => {
-      vi.advanceTimersByTime(NAVIGATION_DELAY);
-    });
-
-    expect(mockNavigate).toHaveBeenCalledWith("/border-linear-gradient");
   });
 
   test("renders the error output for an unknown command", async () => {

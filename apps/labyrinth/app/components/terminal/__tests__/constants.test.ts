@@ -92,7 +92,6 @@ describe("Terminal Constants", () => {
     test("DIRECTORY_LISTING should contain file info", () => {
       expect(Array.isArray(DIRECTORY_LISTING)).toBe(true);
       expect(DIRECTORY_LISTING).toContain("Directory of C:\\CHUCK\\PROJECTS");
-      expect(DIRECTORY_LISTING.some((line) => line.includes("GRADIENT.EXE"))).toBe(true);
       expect(DIRECTORY_LISTING.some((line) => line.includes("GLASS.EXE"))).toBe(true);
     });
   });

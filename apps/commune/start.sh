@@ -5,16 +5,16 @@
 
 set -e
 
-echo "🚀 Starting Social..."
+echo "Starting Commune..."
 
 # Run database migrations
-echo "🔄 Running database migrations..."
+echo "Running database migrations..."
 if npx drizzle-kit migrate; then
-  echo "✅ Migrations complete"
+  echo "Migrations complete"
 else
-  echo "⚠️  Migration warning (may be already applied or error)"
+  echo "Migration warning (may be already applied or non-fatal error)"
 fi
 
 # Start the server
-echo "🌐 Starting server..."
+echo "Starting server..."
 exec npm start

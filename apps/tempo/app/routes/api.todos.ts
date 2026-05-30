@@ -1,62 +1,204 @@
-import {
-  and,
-  db,
-  eq,
-  projects,
-  todos,
-} from "@pontistudios/db";
+import { and, db, desc, eq, inArray, tags, todoTags, todos } from "@pontistudios/db";
+import { DEFAULT_TAG_COLOR, normalizeTagName, type TagItem } from "~/lib/tags";
 
 const DEMO_USER_ID = "demo-user";
 
 interface TodoItem {
   id: number;
   userId: string;
-  projectId: number | null;
   title: string;
   start: string;
   end: string;
   completed: boolean;
   createdAt: string | null;
   updatedAt: string | null;
-  projectName?: string | null;
+  tags: TagItem[];
 }
 
 interface TodoCreateData {
-  projectId: number | null;
   title: string;
   start: string;
   end: string;
   completed: boolean;
+  tags: string[];
 }
 
 function toIsoString(value: Date | null): string | null {
   return value ? value.toISOString() : null;
 }
 
-function toTodoItem(row: {
+function toTagItem(row: {
   id: number;
   userId: string;
-  projectId: number | null;
-  title: string;
-  start: string;
-  end: string;
-  completed: number | null;
+  name: string;
+  normalizedName: string;
+  color: string | null;
   createdAt: Date | null;
   updatedAt: Date | null;
-  projectName?: string | null;
-}): TodoItem {
+}): TagItem {
   return {
     id: row.id,
     userId: row.userId,
-    projectId: row.projectId,
+    name: row.name,
+    normalizedName: row.normalizedName,
+    color: row.color,
+    createdAt: toIsoString(row.createdAt),
+    updatedAt: toIsoString(row.updatedAt),
+  };
+}
+
+function toTodoItem(
+  row: {
+    id: number;
+    userId: string;
+    title: string;
+    start: string;
+    end: string;
+    completed: number | null;
+    createdAt: Date | null;
+    updatedAt: Date | null;
+  },
+  todoTagsForRow: TagItem[],
+): TodoItem {
+  return {
+    id: row.id,
+    userId: row.userId,
     title: row.title,
     start: row.start,
     end: row.end,
     completed: Boolean(row.completed),
     createdAt: toIsoString(row.createdAt),
     updatedAt: toIsoString(row.updatedAt),
-    projectName: row.projectName ?? null,
+    tags: todoTagsForRow,
   };
+}
+
+function normalizeRequestedTags(values: string[]): string[] {
+  const deduped = new Set<string>();
+
+  for (const value of values) {
+    const normalized = normalizeTagName(value);
+    if (normalized) {
+      deduped.add(normalized);
+    }
+  }
+
+  return Array.from(deduped);
+}
+
+async function fetchTagsForTodos(todoIds: number[]): Promise<Map<number, TagItem[]>> {
+  if (todoIds.length === 0) {
+    return new Map();
+  }
+
+  const rows = await db
+    .select({
+      todoId: todoTags.todoId,
+      id: tags.id,
+      userId: tags.userId,
+      name: tags.name,
+      normalizedName: tags.normalizedName,
+      color: tags.color,
+      createdAt: tags.createdAt,
+      updatedAt: tags.updatedAt,
+    })
+    .from(todoTags)
+    .innerJoin(tags, eq(todoTags.tagId, tags.id))
+    .where(inArray(todoTags.todoId, todoIds));
+
+  const grouped = new Map<number, TagItem[]>();
+
+  for (const row of rows) {
+    const existing = grouped.get(row.todoId) ?? [];
+    existing.push(toTagItem(row));
+    grouped.set(row.todoId, existing);
+  }
+
+  for (const [todoId, todoTagItems] of grouped) {
+    grouped.set(
+      todoId,
+      [...todoTagItems].sort((left, right) => left.name.localeCompare(right.name)),
+    );
+  }
+
+  return grouped;
+}
+
+async function resolveTagsForUser(tagValues: string[]): Promise<TagItem[]> {
+  const normalizedNames = normalizeRequestedTags(tagValues);
+
+  if (normalizedNames.length === 0) {
+    return [];
+  }
+
+  const existingRows = await db
+    .select({
+      id: tags.id,
+      userId: tags.userId,
+      name: tags.name,
+      normalizedName: tags.normalizedName,
+      color: tags.color,
+      createdAt: tags.createdAt,
+      updatedAt: tags.updatedAt,
+    })
+    .from(tags)
+    .where(and(eq(tags.userId, DEMO_USER_ID), inArray(tags.normalizedName, normalizedNames)));
+
+  const existingByNormalizedName = new Map(
+    existingRows.map((row) => [row.normalizedName, toTagItem(row)]),
+  );
+
+  const resolved: TagItem[] = [];
+
+  for (const normalizedName of normalizedNames) {
+    const existing = existingByNormalizedName.get(normalizedName);
+    if (existing) {
+      resolved.push(existing);
+      continue;
+    }
+
+    const [createdTag] = await db
+      .insert(tags)
+      .values({
+        userId: DEMO_USER_ID,
+        name: normalizedName,
+        normalizedName,
+        color: DEFAULT_TAG_COLOR,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning({
+        id: tags.id,
+        userId: tags.userId,
+        name: tags.name,
+        normalizedName: tags.normalizedName,
+        color: tags.color,
+        createdAt: tags.createdAt,
+        updatedAt: tags.updatedAt,
+      });
+
+    const tagItem = toTagItem(createdTag);
+    existingByNormalizedName.set(normalizedName, tagItem);
+    resolved.push(tagItem);
+  }
+
+  return resolved;
+}
+
+async function replaceTodoTagLinks(todoId: number, tagIds: number[]) {
+  await db.delete(todoTags).where(eq(todoTags.todoId, todoId));
+
+  if (tagIds.length === 0) {
+    return;
+  }
+
+  await db.insert(todoTags).values(
+    tagIds.map((tagId) => ({
+      todoId,
+      tagId,
+      createdAt: new Date(),
+    })),
+  );
 }
 
 export async function loader() {
@@ -65,20 +207,20 @@ export async function loader() {
       .select({
         id: todos.id,
         userId: todos.userId,
-        projectId: todos.projectId,
         title: todos.title,
         start: todos.start,
         end: todos.end,
         completed: todos.completed,
         createdAt: todos.createdAt,
         updatedAt: todos.updatedAt,
-        projectName: projects.name,
       })
       .from(todos)
-      .leftJoin(projects, eq(todos.projectId, projects.id))
-      .where(eq(todos.userId, DEMO_USER_ID));
+      .where(eq(todos.userId, DEMO_USER_ID))
+      .orderBy(desc(todos.createdAt));
 
-    return Response.json(rows.map(toTodoItem));
+    const todoTagMap = await fetchTagsForTodos(rows.map((row) => row.id));
+
+    return Response.json(rows.map((row) => toTodoItem(row, todoTagMap.get(row.id) ?? [])));
   } catch (error) {
     console.error("Error fetching todos:", error);
     return Response.json({ error: "Failed to fetch todos" }, { status: 500 });
@@ -90,11 +232,12 @@ export async function action({ request }: { request: Request }) {
     switch (request.method) {
       case "POST": {
         const body = (await request.json()) as TodoCreateData;
+        const resolvedTags = await resolveTagsForUser(body.tags ?? []);
+
         const [todo] = await db
           .insert(todos)
           .values({
             userId: DEMO_USER_ID,
-            projectId: body.projectId,
             title: body.title,
             start: body.start,
             end: body.end,
@@ -104,15 +247,24 @@ export async function action({ request }: { request: Request }) {
           })
           .returning();
 
-        return Response.json(toTodoItem(todo));
+        await replaceTodoTagLinks(
+          todo.id,
+          resolvedTags.map((tag) => tag.id),
+        );
+
+        return Response.json(toTodoItem(todo, resolvedTags));
       }
 
       case "PUT": {
-        const body = (await request.json()) as TodoItem;
+        const body = (await request.json()) as TodoItem & { tags: string[] | TagItem[] };
+        const requestedTagValues = (body.tags ?? []).map((tagValue) =>
+          typeof tagValue === "string" ? tagValue : tagValue.name,
+        );
+        const resolvedTags = await resolveTagsForUser(requestedTagValues);
+
         const [todo] = await db
           .update(todos)
           .set({
-            projectId: body.projectId,
             title: body.title,
             start: body.start,
             end: body.end,
@@ -126,7 +278,12 @@ export async function action({ request }: { request: Request }) {
           return Response.json({ error: "Todo not found" }, { status: 404 });
         }
 
-        return Response.json(toTodoItem(todo));
+        await replaceTodoTagLinks(
+          todo.id,
+          resolvedTags.map((tag) => tag.id),
+        );
+
+        return Response.json(toTodoItem(todo, resolvedTags));
       }
 
       case "DELETE": {
