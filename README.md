@@ -7,7 +7,7 @@
 | App / Service | Port | URL                   |
 | ------------- | ---- | --------------------- |
 | Home          | 3000 | http://localhost:3000 |
-| Playground    | 3001 | http://localhost:3001 |
+|     | 3001 | http://localhost:3001 |
 | Health        | 3003 | http://localhost:3003 |
 | Social       | 3005 | http://localhost:3005 |
 | Earth         | 3006 | http://localhost:3006 |

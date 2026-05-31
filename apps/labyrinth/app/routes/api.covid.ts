@@ -1,7 +1,5 @@
-import { and, eq, gte, lte, sql } from "@pontistudios/db";
+import { and, covidData, db, eq, gte, lte, sql, type CovidData } from "@pontistudios/db";
 import type { LoaderFunctionArgs } from "react-router";
-import { covidData, db } from "@pontistudios/db";
-import type { CovidDataSelect } from "~/db/schema";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
@@ -48,7 +46,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     }
 
     // Build the query based on whether we have conditions
-    let records: CovidDataSelect[];
+    let records: CovidData[];
     let totalResult: { count: number }[];
 
     if (conditions.length > 0) {

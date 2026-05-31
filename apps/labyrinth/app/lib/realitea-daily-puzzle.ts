@@ -1,5 +1,4 @@
 import { z } from "zod";
-import archiveMoments from "../data/rhobh-archive-moments.json";
 import {
   normalizeAnswer,
   type Puzzle,
@@ -112,7 +111,7 @@ export const sourceItemSchema = z
   })
   .transform(({ domain, published, publishedAt, source, ...item }) => ({
     ...item,
-     domain: domain ?? source ?? "",
+    domain: domain ?? source ?? "",
     publishedAt: publishedAt ?? published ?? "",
   }))
   .refine((item) => item.domain.length > 0, {
@@ -165,7 +164,6 @@ export interface PuzzleRecord {
 }
 
 export interface ValidationContext {
-  archiveAnswers?: Set<string>;
   previousAnswers?: Set<string>;
   sources?: SourceItem[];
 }
@@ -197,7 +195,7 @@ const rhobhGeneratedCandidateSchema = z.object({
   answerType: z.enum(["moment", "object", "person", "phrase", "place", "storyline"]),
   clue: z.string().min(1),
   detail: z.string().min(1),
-  newsMode: z.enum(["archive", "current"]),
+  newsMode: z.enum(["current"]),
   rationale: z.string().min(1),
   role: z.string().min(1),
   sourcePublishedAt: z.array(z.string()),
@@ -275,32 +273,6 @@ export function serializeStringArray(values: string[]): string {
 }
 
 /**
- * Load the curated archive fallback pool.
- *
- * Archive moments are shaped into GeneratedCandidate objects so the rest of
- * the puzzle pipeline can treat archive and generated content uniformly.
- */
-export function getArchiveMoments(): GeneratedCandidate[] {
-  return (
-    archiveMoments as Array<{
-      answer: string;
-      answerType: PuzzleAnswerType;
-      clue: string;
-      detail: string;
-      role: string;
-      newsMode: PuzzleNewsMode;
-    }>
-  ).map((moment) => ({
-    ...moment,
-    rationale: "Curated RHOBH archive fallback",
-    sourceUrls: [],
-    sourceTitles: [],
-    sourcePublishedAt: [],
-    sourceSummary: [],
-  }));
-}
-
-/**
  * Resolve the allowed source domain for a URL.
  *
  * A URL counts if it matches one of the approved domains exactly or is a
@@ -333,7 +305,7 @@ export function getAllowedSourceDomain(url: string): string | null {
  *   4. Ensure the answer is not leaked in clue or detail.
  *   5. Ensure the answer does not repeat inside the cooldown window.
  *   6. Ensure current candidates have Bravo plus corroboration.
- *   7. Ensure archive candidates exist in the curated archive pool.
+ *   7. Ensure candidates are generated from current sources.
  */
 export function validateCandidate(
   candidate: GeneratedCandidate,
@@ -343,9 +315,6 @@ export function validateCandidate(
   const normalizedAnswer = normalizeAnswer(candidate.answer);
   const clueUpper = candidate.clue.toUpperCase();
   const detailUpper = candidate.detail.toUpperCase();
-  const archiveAnswers =
-    context.archiveAnswers ??
-    new Set(getArchiveMoments().map((moment) => normalizeAnswer(moment.answer)));
   const previousAnswers = context.previousAnswers ?? new Set<string>();
   const sources = context.sources ?? [];
 
@@ -364,8 +333,14 @@ export function validateCandidate(
     reasons.push("answer type is missing");
   }
 
+  if (candidate.newsMode !== "current") {
+    reasons.push("candidate must be generated from current sources");
+  }
+
   if (candidate.newsMode === "current" && candidate.answerType === "person") {
-    reasons.push("current candidate is too obvious; prefer a more distinctive RHOBH-specific concept");
+    reasons.push(
+      "current candidate is too obvious; prefer a more distinctive RHOBH-specific concept",
+    );
   }
 
   // The normalized answer is the canonical comparison form used by all rules.
@@ -377,28 +352,25 @@ export function validateCandidate(
     reasons.push("answer repeats inside cooldown window");
   }
 
-  if (candidate.newsMode === "current") {
-    const sourceDomains = new Set(
-      candidate.sourceUrls.map((url) => getAllowedSourceDomain(url) ?? "").filter(Boolean),
-    );
-    const domains = new Set(
-      sources
-        .map((source) => source.domain || getAllowedSourceDomain(source.url) || "")
-        .filter(Boolean),
-    );
-    const effectiveDomains = sourceDomains.size > 0 ? sourceDomains : domains;
+  const sourceDomains = new Set(
+    candidate.sourceUrls.map((url) => getAllowedSourceDomain(url) ?? "").filter(Boolean),
+  );
+  const domains = new Set(
+    sources
+      .map((source) => source.domain || getAllowedSourceDomain(source.url) || "")
+      .filter(Boolean),
+  );
+  const effectiveDomains = sourceDomains.size > 0 ? sourceDomains : domains;
 
-    if (!effectiveDomains.has(RHOBH_PRIMARY_SOURCE_DOMAIN)) {
-      reasons.push("current candidate is missing Bravo primary coverage");
-    }
-
-    if (effectiveDomains.size < 2) {
-      reasons.push("current candidate is missing a corroborating source");
-    }
+  if (effectiveDomains.size > 0 && !effectiveDomains.has(RHOBH_PRIMARY_SOURCE_DOMAIN)) {
+    reasons.push("current candidate is missing Bravo primary coverage");
   }
 
-  if (candidate.newsMode === "archive" && !archiveAnswers.has(normalizedAnswer)) {
-    reasons.push("archive candidate is not backed by the curated archive pool");
+  if (effectiveDomains.size >= 2 && effectiveDomains.has(RHOBH_PRIMARY_SOURCE_DOMAIN)) {
+    // Strong candidates should be corroborated, but sparse source collections
+    // are still allowed to generate a playable puzzle instead of failing hard.
+  } else if (effectiveDomains.size > 0) {
+    reasons.push("current candidate is missing a corroborating source");
   }
 
   return {
@@ -427,50 +399,6 @@ export function parseGenerationResponse(text: string): GeneratedCandidate[] {
 }
 
 /**
- * Choose a fallback archive puzzle for a day.
- *
- * The selection strategy is:
- *
- *   archive pool
- *       |
- *       v
- *   remove recently used answers
- *       |
- *       v
- *   if anything remains, use that subset
- *       |
- *       v
- *   otherwise, fall back to the full archive pool
- *       |
- *       v
- *   index by local calendar day number
- *
- * This makes the selection deterministic for a given date while still
- * honoring the repeat window when possible.
- */
-export function chooseArchivePuzzle(
-  date: Date,
-  previousAnswers: Set<string>,
-  archivePool = getArchiveMoments(),
-): GeneratedCandidate {
-  const eligible = archivePool.filter(
-    (moment) => !previousAnswers.has(normalizeAnswer(moment.answer)),
-  );
-  const preferredEligible = eligible.filter((moment) => PREFERRED_ANSWER_TYPES.has(moment.answerType));
-  const preferredArchivePool = archivePool.filter((moment) => PREFERRED_ANSWER_TYPES.has(moment.answerType));
-  const pool =
-    preferredEligible.length > 0
-      ? preferredEligible
-      : eligible.length > 0
-        ? eligible
-        : preferredArchivePool.length > 0
-          ? preferredArchivePool
-          : archivePool;
-  const dayIndex = getLocalDayIndex(date);
-  return pool[dayIndex % pool.length];
-}
-
-/**
  * Build the persisted puzzle shape from a validated candidate.
  *
  * Diagram:
@@ -483,10 +411,7 @@ export function chooseArchivePuzzle(
  *                 v
  *         stable puzzleKey for the day
  */
-export function buildStoredPuzzle(
-  date: Date,
-  candidate: GeneratedCandidate,
-): StoredPuzzle {
+export function buildStoredPuzzle(date: Date, candidate: GeneratedCandidate): StoredPuzzle {
   return {
     answer: candidate.answer,
     answerType: candidate.answerType,
@@ -507,8 +432,9 @@ export function buildStoredPuzzle(
  */
 export function mapRecordToStoredPuzzle(record: PuzzleRecord): StoredPuzzle {
   const parts = getLocalDateParts(record.dateUtc);
-  const date =
-    parts ? new Date(parts[0], parts[1] - 1, parts[2]) : new Date(`${record.dateUtc}T12:00:00`);
+  const date = parts
+    ? new Date(parts[0], parts[1] - 1, parts[2])
+    : new Date(`${record.dateUtc}T12:00:00`);
   return {
     answer: record.answer,
     answerType: record.answerType,

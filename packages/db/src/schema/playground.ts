@@ -173,17 +173,17 @@ export const rhobhDailyPuzzles = labs.table(
   }),
 );
 
-export type PlaygroundCovidData = typeof covidData.$inferSelect;
-export type NewPlaygroundCovidData = typeof covidData.$inferInsert;
-export type PlaygroundTflCamera = typeof tflCameras.$inferSelect;
-export type NewPlaygroundTflCamera = typeof tflCameras.$inferInsert;
-export type PlaygroundTodo = typeof todos.$inferSelect;
-export type NewPlaygroundTodo = typeof todos.$inferInsert;
-export type PlaygroundTag = typeof tags.$inferSelect;
-export type NewPlaygroundTag = typeof tags.$inferInsert;
-export type PlaygroundTodoTag = typeof todoTags.$inferSelect;
-export type NewPlaygroundTodoTag = typeof todoTags.$inferInsert;
-export type PlaygroundEmbedding = typeof embeddings.$inferSelect;
-export type NewPlaygroundEmbedding = typeof embeddings.$inferInsert;
-export type PlaygroundRhobhDailyPuzzle = typeof rhobhDailyPuzzles.$inferSelect;
-export type NewPlaygroundRhobhDailyPuzzle = typeof rhobhDailyPuzzles.$inferInsert;
+export type CovidData = typeof covidData.$inferSelect;
+export type NewCovidData = typeof covidData.$inferInsert;
+export type TflCamera = typeof tflCameras.$inferSelect;
+export type NewTflCamera = typeof tflCameras.$inferInsert;
+export type Todo = typeof todos.$inferSelect;
+export type NewTodo = typeof todos.$inferInsert;
+export type Tag = typeof tags.$inferSelect;
+export type NewTag = typeof tags.$inferInsert;
+export type TodoTag = typeof todoTags.$inferSelect;
+export type NewTodoTag = typeof todoTags.$inferInsert;
+export type Embedding = typeof embeddings.$inferSelect;
+export type NewEmbedding = typeof embeddings.$inferInsert;
+export type RhobhDailyPuzzle = typeof rhobhDailyPuzzles.$inferSelect;
+export type NewRhobhDailyPuzzle = typeof rhobhDailyPuzzles.$inferInsert;

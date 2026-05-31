@@ -1,6 +1,13 @@
 import { useEffect, useRef, useState, type JSX } from "react";
-import { Input, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@pontistudios/ui";
-
+import {
+  Input,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@pontistudios/ui";
 
 interface SelectorWindow extends Window {
   $?: (selector: string) => Element[];
@@ -161,7 +168,7 @@ function normalizeExpected(expected: TagCounts): TagCounts {
 /**
  * Qubit Take-Home Challenge
  *
- * Task: Implement a lightweight DOM querying engine (like jQuery's $) from scratch 
+ * Task: Implement a lightweight DOM querying engine (like jQuery's $) from scratch
  * to parse and match tag and class selectors without relying on document.querySelector.
  */
 export default function Qubit(): JSX.Element {
@@ -247,9 +254,7 @@ export default function Qubit(): JSX.Element {
       <iframe ref={iframeRef} title="qubit-sandbox" className="hidden" />
 
       <h2 className="mb-3">Test DOM</h2>
-      <pre
-        className="bg-[#f4f4f4] p-4 rounded-[4px] mb-[1.5rem] text-[0.85rem]"
-      >
+      <pre className="bg-[#f4f4f4] p-4 rounded-[4px] mb-[1.5rem] text-[0.85rem]">
         {`<div></div>
 <div id="some_id" class="some_class some_other_class"></div>
 <img id="some_other_id" class="some_class some_other_class" />
@@ -264,8 +269,12 @@ export default function Qubit(): JSX.Element {
           <Table className="w-full border-collapse text-[0.9rem]">
             <TableHeader>
               <TableRow className="bg-[#eee]">
-                <TableHead className="px-3 py-2 text-left border-b border-[#ccc]">Selector</TableHead>
-                <TableHead className="px-3 py-2 text-left border-b border-[#ccc]">Expected</TableHead>
+                <TableHead className="px-3 py-2 text-left border-b border-[#ccc]">
+                  Selector
+                </TableHead>
+                <TableHead className="px-3 py-2 text-left border-b border-[#ccc]">
+                  Expected
+                </TableHead>
                 <TableHead className="px-3 py-2 text-left border-b border-[#ccc]">Found</TableHead>
                 <TableHead className="px-3 py-2 text-left border-b border-[#ccc]">Pass</TableHead>
               </TableRow>
@@ -276,7 +285,9 @@ export default function Qubit(): JSX.Element {
                   <TableCell className="px-3 py-2 border-b border-[#ddd] align-top">
                     <code>{selector}</code>
                   </TableCell>
-                  <TableCell className="px-3 py-2 border-b border-[#ddd] align-top">{JSON.stringify(expected)}</TableCell>
+                  <TableCell className="px-3 py-2 border-b border-[#ddd] align-top">
+                    {JSON.stringify(expected)}
+                  </TableCell>
                   <TableCell className="px-3 py-2 border-b border-[#ddd] align-top">
                     {error !== null ? (
                       <span className="text-red-500">{error}</span>
@@ -284,7 +295,9 @@ export default function Qubit(): JSX.Element {
                       JSON.stringify(found)
                     )}
                   </TableCell>
-                  <TableCell className="px-3 py-2 border-b border-[#ddd] align-top text-center">{passed ? "✓" : "✗"}</TableCell>
+                  <TableCell className="px-3 py-2 border-b border-[#ddd] align-top text-center">
+                    {passed ? "✓" : "✗"}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -293,9 +306,7 @@ export default function Qubit(): JSX.Element {
       )}
 
       <h2 className="my-8 mb-3">Implementation</h2>
-      <pre
-        className="bg-[#1e1e1e] text-[#d4d4d4] p-5 rounded-md overflow-x-auto text-[0.8rem] leading-relaxed"
-      >
+      <pre className="bg-[#1e1e1e] text-[#d4d4d4] p-5 rounded-md overflow-x-auto text-[0.8rem] leading-relaxed">
         {ANSWER_JS.trim()}
       </pre>
     </div>

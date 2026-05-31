@@ -1,28 +1,23 @@
-import { and, desc, eq, gte } from "@pontistudios/db";
-import { db, rhobhDailyPuzzles } from "@pontistudios/db";
-import { chat } from "@tanstack/ai";
-import { createOpenRouterText } from "@tanstack/ai-openrouter";
-import { webFetchTool, webSearchTool } from "@tanstack/ai-openrouter/tools";
+import { chat, createOpenRouterTextAdapter, webFetchTool, webSearchTool } from "@pontistudios/ai";
+import { and, db, desc, eq, gte, rhobhDailyPuzzles } from "@pontistudios/db";
 import { z } from "zod";
 
+import { normalizeAnswer } from "./realitea";
 import {
-  chooseArchivePuzzle,
   getAllowedSourceDomain,
-  getArchiveMoments,
   getDateKey,
   mapRecordToStoredPuzzle,
   RHOBH_FRANCHISE,
   RHOBH_PRIMARY_SOURCE_DOMAIN,
   RHOBH_REPEAT_WINDOW_DAYS,
-  sourceItemListSchema,
   serializeStringArray,
+  sourceItemListSchema,
+  validateCandidate,
   type GeneratedCandidate,
   type PuzzleEnvelope,
   type PuzzleRecord,
   type SourceItem,
-  validateCandidate,
 } from "./realitea-daily-puzzle";
-import { normalizeAnswer } from "./realitea";
 import { LabyrinthServerEnv } from "./server/env";
 
 interface GenerationDependencies {
@@ -92,7 +87,10 @@ const sourceCollectionResponseSchema = {
 } as const;
 
 function getOpenRouterAdapter(env: LabyrinthServerEnv) {
-  return createOpenRouterText(env.openRouterModel as "openai/gpt-5.1", env.openRouterApiKey);
+  return createOpenRouterTextAdapter({
+    model: env.openRouterModel as "openai/gpt-5.1",
+    apiKey: env.openRouterApiKey,
+  });
 }
 
 export async function collectCurrentSources(
@@ -212,7 +210,6 @@ export async function collectCurrentSources(
 async function generateCandidatesFromSources(
   dateKey: string,
   sources: SourceItem[],
-  archivePool = getArchiveMoments(),
   excludedAnswers: string[] = [],
 ): Promise<GeneratedCandidate[]> {
   const env = LabyrinthServerEnv.safeParse(process.env);
@@ -226,7 +223,7 @@ async function generateCandidatesFromSources(
       adapter: getOpenRouterAdapter(env.data),
       systemPrompts: [
         "You create daily RealiTea puzzles for RHOBH.",
-        "Prefer current RHOBH news when source support is strong. Use the curated archive pool only when fresh news is thin.",
+        "Prefer current RHOBH news when source support is strong.",
         "Return 3 to 5 candidates inside the schema field exactly.",
         "For current candidates, every answer must be supported by at least two distinct allowed-source domains, and one of them must be bravotv.com.",
         "For current candidates, do not use a cast member's name as the answer. Prefer the underlying storyline, object, place, phrase, or moment instead.",
@@ -240,13 +237,6 @@ async function generateCandidatesFromSources(
           role: "user",
           content: JSON.stringify(
             {
-              archivePool: archivePool.map((moment) => ({
-                answer: moment.answer,
-                answerType: moment.answerType,
-                clue: moment.clue,
-                detail: moment.detail,
-                role: moment.role,
-              })),
               dateKey,
               excludedAnswers,
               sources,
@@ -375,19 +365,11 @@ export async function generateDailyPuzzle(
   const dateKey = getDateKey(date);
   const previousAnswers = await getRecentAnswers(date);
   const sources = await collectCurrentSources({ now: dependencies.now });
-  const sourceDomains = new Set(sources.map((source) => source.domain).filter(Boolean));
-  const hasCurrentCoverage =
-    sourceDomains.has(RHOBH_PRIMARY_SOURCE_DOMAIN) && sourceDomains.size >= 2;
 
-  if (!hasCurrentCoverage) {
-    return persistPuzzle(date, chooseArchivePuzzle(date, previousAnswers));
-  }
-
-  const archivePool = getArchiveMoments();
   const rejectedCandidates = new Set<string>();
 
   for (let attempt = 0; attempt < 2; attempt += 1) {
-    const candidates = await generateCandidatesFromSources(dateKey, sources, archivePool, [
+    const candidates = await generateCandidatesFromSources(dateKey, sources, [
       ...previousAnswers,
       ...rejectedCandidates,
     ]);
@@ -429,7 +411,7 @@ export async function generateDailyPuzzle(
     }
   }
 
-  console.warn("RHOBH daily puzzle generation failed; using static runtime fallback", {
+  console.warn("RHOBH daily puzzle generation failed; using database fallback", {
     dateKey,
     rejectedCandidates: [...rejectedCandidates],
   });

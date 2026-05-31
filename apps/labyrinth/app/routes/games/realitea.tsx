@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useFetcher, useLoaderData, type LoaderFunctionArgs } from "react-router";
 import { cva } from "class-variance-authority";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useFetcher, useLoaderData, type LoaderFunctionArgs } from "react-router";
 
 import { Button, OnscreenKeyboard, type LetterState } from "@pontistudios/ui";
 import {
@@ -87,6 +87,121 @@ function getTileRevealStyle(state: LetterState): React.CSSProperties {
     "--tile-final-color": finalStyle.color,
   } as React.CSSProperties;
 }
+
+type EmptyGuessRowProps = {
+  answerLength: number;
+};
+
+const EmptyGuessRow = memo(function EmptyGuessRow({ answerLength }: EmptyGuessRowProps) {
+  return (
+    <div className="flex gap-1">
+      {Array.from({ length: answerLength }).map((_, cellIndex) => (
+        <div
+          key={`empty-cell-${cellIndex}`}
+          className={cn(TILE_BASE({ state: "empty" }), "flex items-center justify-center")}
+        />
+      ))}
+    </div>
+  );
+});
+
+type RevealedGuessRowProps = {
+  answer: string;
+  answerLength: number;
+  guess: string;
+  isRevealingThisRow: boolean;
+  revealedTileCount: number;
+};
+
+const RevealedGuessRow = memo(function RevealedGuessRow({
+  answer,
+  answerLength,
+  guess,
+  isRevealingThisRow,
+  revealedTileCount,
+}: RevealedGuessRowProps) {
+  const states = evaluateGuess(answer, guess);
+
+  return (
+    <div className="flex gap-1">
+      {Array.from({ length: answerLength }).map((_, cellIndex) => {
+        const isTileRevealed = !isRevealingThisRow || cellIndex < revealedTileCount;
+        const isAnimatingTile =
+          isRevealingThisRow && revealedTileCount > 0 && cellIndex === revealedTileCount - 1;
+        const tileState = isTileRevealed ? states[cellIndex] : undefined;
+
+        return (
+          <div
+            key={`revealed-cell-${cellIndex}`}
+            className={cn(
+              TILE_BASE({ state: tileState ?? "empty" }),
+              "flex items-center justify-center",
+              isAnimatingTile && "tile-reveal",
+            )}
+            style={isAnimatingTile ? getTileRevealStyle(states[cellIndex]) : undefined}
+          >
+            {guess[cellIndex]?.trim() ?? ""}
+          </div>
+        );
+      })}
+    </div>
+  );
+});
+
+type CurrentGuessRowProps = {
+  answerLength: number;
+  currentGuess: string;
+  isShaking: boolean;
+  isValidationPending: boolean;
+  onCellChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onCellFocus: () => void;
+  onCellKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  cellRefs: React.MutableRefObject<Array<HTMLInputElement | null>>;
+};
+
+const CurrentGuessRow = memo(function CurrentGuessRow({
+  answerLength,
+  currentGuess,
+  isShaking,
+  isValidationPending,
+  onCellChange,
+  onCellFocus,
+  onCellKeyDown,
+  cellRefs,
+}: CurrentGuessRowProps) {
+  return (
+    <div
+      className={cn(
+        "flex gap-1 transition-opacity",
+        isShaking && "row-shake",
+        isValidationPending && "opacity-60",
+      )}
+    >
+      {Array.from({ length: answerLength }).map((_, cellIndex) => (
+        <input
+          key={`current-cell-${cellIndex}`}
+          ref={(el) => {
+            cellRefs.current[cellIndex] = el;
+          }}
+          aria-label={`Letter ${cellIndex + 1}`}
+          autoCapitalize="characters"
+          autoComplete="off"
+          className={cn(
+            TILE_BASE({ state: "empty" }),
+            "text-center outline-none caret-transparent",
+          )}
+          inputMode="text"
+          maxLength={1}
+          type="text"
+          value={currentGuess[cellIndex] ?? ""}
+          onChange={onCellChange}
+          onFocus={onCellFocus}
+          onKeyDown={onCellKeyDown}
+        />
+      ))}
+    </div>
+  );
+});
 
 export default function RealiTeaRoute() {
   const initialData = useLoaderData<typeof loader>() as PuzzleEnvelope;
@@ -433,67 +548,38 @@ export default function RealiTeaRoute() {
             {Array.from({ length: MAX_GUESSES }).map((_, rowIndex) => {
               const isCurrentRow = rowIndex === guesses.length && !isGameOver && !isRevealingRow;
               const guess = guesses[rowIndex] ?? "";
-              const states = guess ? evaluateGuess(puzzle.answer, guess) : [];
               const isRevealingThisRow = rowIndex === revealingGuessIndex;
 
-              return (
-                <div
-                  key={`row-${rowIndex}`}
-                  className={cn(
-                    "flex gap-1 transition-opacity",
-                    isCurrentRow && isShaking && "row-shake",
-                    isCurrentRow && isValidationPending && "opacity-60",
-                  )}
-                >
-                  {Array.from({ length: answerLength }).map((_, cellIndex) => {
-                    if (isCurrentRow) {
-                      return (
-                        <input
-                          key={`cell-${rowIndex}-${cellIndex}`}
-                          ref={(el) => {
-                            cellRefs.current[cellIndex] = el;
-                          }}
-                          aria-label={`Letter ${cellIndex + 1}`}
-                          autoCapitalize="characters"
-                          autoComplete="off"
-                          className={cn(
-                            TILE_BASE({ state: "empty" }),
-                            "text-center outline-none caret-transparent",
-                          )}
-                          inputMode="text"
-                          maxLength={1}
-                          type="text"
-                          value={currentGuess[cellIndex] ?? ""}
-                          onChange={handleCellChange}
-                          onFocus={redirectToActiveCell}
-                          onKeyDown={handleCellKeyDown}
-                        />
-                      );
-                    }
+              if (rowIndex < guesses.length) {
+                return (
+                  <RevealedGuessRow
+                    key={`row-${rowIndex}`}
+                    answer={puzzle.answer}
+                    answerLength={answerLength}
+                    guess={guess}
+                    isRevealingThisRow={isRevealingThisRow}
+                    revealedTileCount={revealedTileCount}
+                  />
+                );
+              }
 
-                    const isTileRevealed = !isRevealingThisRow || cellIndex < revealedTileCount;
-                    const isAnimatingTile =
-                      isRevealingThisRow &&
-                      revealedTileCount > 0 &&
-                      cellIndex === revealedTileCount - 1;
-                    const tileState = isTileRevealed ? states[cellIndex] : undefined;
+              if (isCurrentRow) {
+                return (
+                  <CurrentGuessRow
+                    key={`row-${rowIndex}`}
+                    answerLength={answerLength}
+                    cellRefs={cellRefs}
+                    currentGuess={currentGuess}
+                    isShaking={isShaking}
+                    isValidationPending={isValidationPending}
+                    onCellChange={handleCellChange}
+                    onCellFocus={redirectToActiveCell}
+                    onCellKeyDown={handleCellKeyDown}
+                  />
+                );
+              }
 
-                    return (
-                      <div
-                        key={`cell-${rowIndex}-${cellIndex}`}
-                        className={cn(
-                          TILE_BASE({ state: tileState ?? "empty" }),
-                          "flex items-center justify-center",
-                          isAnimatingTile && "tile-reveal",
-                        )}
-                        style={isAnimatingTile ? getTileRevealStyle(states[cellIndex]) : undefined}
-                      >
-                        {guess[cellIndex]?.trim() ?? ""}
-                      </div>
-                    );
-                  })}
-                </div>
-              );
+              return <EmptyGuessRow key={`row-${rowIndex}`} answerLength={answerLength} />;
             })}
           </div>
 

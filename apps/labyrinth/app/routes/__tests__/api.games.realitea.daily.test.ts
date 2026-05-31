@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { LoaderFunctionArgs } from "react-router";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const loadPuzzleForDate = vi.fn();
 
@@ -59,6 +59,6 @@ describe("RealiTea daily puzzle loader", () => {
     const payload = await response.json();
 
     expect(response.status).toBe(404);
-    expect(payload.error).toContain("No RealiTea puzzle found");
+    expect(payload.error).toBe("No RealiTea puzzle found for today");
   });
 });

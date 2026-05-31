@@ -82,13 +82,63 @@ describe("realitea daily puzzle server helpers", () => {
     });
   });
 
-  it("loads a generated puzzle when no stored puzzle exists", async () => {
+  it("loads a stored puzzle when one exists", async () => {
+    dbMock.select.mockImplementation((selection?: unknown) => {
+      if (selection) {
+        return {
+          from: () => ({
+            where: async () => [],
+          }),
+        };
+      }
+
+      return {
+        from: () => ({
+          where: () => ({
+            orderBy: () => ({
+              limit: async () => [
+                {
+                  answer: "ERIKA",
+                  answerType: "person",
+                  clue: "The Pretty Mess performer never misses a sharp confessional.",
+                  createdAt: new Date("2026-05-20T12:00:00.000Z"),
+                  dateUtc: "2026-05-20",
+                  detail:
+                    "Erika Jayne keeps the glam, the one-liners, and the pop-star energy turned all the way up.",
+                  franchise: "rhobh",
+                  generationStatus: "published",
+                  id: 1,
+                  newsMode: "current",
+                  normalizedAnswer: "ERIKA",
+                  role: "Pop diva energy",
+                  sourcePublishedAt: "[]",
+                  sourceSummary: "[]",
+                  sourceTitles: "[]",
+                  sourceUrls: "[]",
+                  updatedAt: new Date("2026-05-20T12:00:00.000Z"),
+                  validationStatus: "approved",
+                },
+              ],
+            }),
+          }),
+        }),
+      };
+    });
+
     const { loadPuzzleForDate } = await import("./realitea-daily-puzzle.server");
 
     const envelope = await loadPuzzleForDate(new Date("2026-05-20T12:00:00.000Z"));
 
     expect(envelope).not.toBeNull();
+    expect(envelope?.puzzle.answer).toBe("ERIKA");
     expect(envelope?.puzzle.source).toBe("database");
-    expect(dbMock.insert).toHaveBeenCalled();
+  });
+
+  it("returns null when no stored puzzle exists and generation is unavailable", async () => {
+    const { loadPuzzleForDate } = await import("./realitea-daily-puzzle.server");
+
+    const envelope = await loadPuzzleForDate(new Date("2026-05-20T12:00:00.000Z"));
+
+    expect(envelope).toBeNull();
   });
 });

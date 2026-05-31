@@ -1,6 +1,14 @@
 import { Link } from "react-router";
 import { ArrowRight, Calculator, Clock3, Target } from "lucide-react";
-import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@pontistudios/ui";
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@pontistudios/ui";
 
 const businessTools = [
   {
@@ -71,10 +79,12 @@ export default function BusinessToolsHub() {
           <Card className="bg-card">
             <CardHeader>
               <div className="ui-eyebrow">What this area is for</div>
-              <CardTitle className="text-xl">Built for crisp planning, not dashboard theater.</CardTitle>
+              <CardTitle className="text-xl">
+                Built for crisp planning, not dashboard theater.
+              </CardTitle>
               <CardDescription className="text-sm leading-6 text-muted-foreground">
-                Each tool is designed to answer one practical question with enough context to act
-                on the result immediately.
+                Each tool is designed to answer one practical question with enough context to act on
+                the result immediately.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 pt-0">
@@ -170,7 +180,9 @@ export default function BusinessToolsHub() {
                   <CardTitle className="text-xl">{item.title}</CardTitle>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <p className="max-w-[56ch] text-sm leading-6 text-muted-foreground">{item.body}</p>
+                  <p className="max-w-[56ch] text-sm leading-6 text-muted-foreground">
+                    {item.body}
+                  </p>
                 </CardContent>
               </Card>
             ))}

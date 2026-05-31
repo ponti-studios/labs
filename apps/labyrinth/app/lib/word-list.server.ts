@@ -31,7 +31,12 @@ function getWordSet(length: number): Set<string> {
 
   const raw = RAW_BY_LENGTH[length];
   const set: Set<string> = raw
-    ? new Set(raw.split("\n").map((w) => w.trim()).filter(Boolean))
+    ? new Set(
+        raw
+          .split("\n")
+          .map((w) => w.trim())
+          .filter(Boolean),
+      )
     : new Set();
 
   cache.set(length, set);

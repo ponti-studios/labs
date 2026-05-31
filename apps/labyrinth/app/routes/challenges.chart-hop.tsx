@@ -1,7 +1,6 @@
 import { useState, type ChangeEvent, type JSX } from "react";
 import { Button } from "@pontistudios/ui";
 
-
 type AnagramGroup = string[];
 
 function groupAnagrams(words: string[]): AnagramGroup[] {
@@ -110,14 +109,9 @@ export default function ChartHop(): JSX.Element {
           <h4>Results:</h4>
           <div className="flex gap-4 flex-wrap">
             {result.map((group, groupIndex) => (
-              <div
-                key={groupIndex}
-                className="p-3 bg-[#f0f0f0] rounded-md min-w-[120px]"
-              >
+              <div key={groupIndex} className="p-3 bg-[#f0f0f0] rounded-md min-w-[120px]">
                 <strong>Group {groupIndex + 1}:</strong>
-                <div
-                  className="flex gap-1 flex-wrap mt-1"
-                >
+                <div className="flex gap-1 flex-wrap mt-1">
                   {group.map((word, wordIndex) => (
                     <span
                       key={wordIndex}
@@ -135,9 +129,7 @@ export default function ChartHop(): JSX.Element {
 
       <details className="mt-4">
         <summary className="cursor-pointer text-[#666]">About the Algorithms</summary>
-        <div
-          className="mt-2 p-3 bg-[#fafafa] rounded-[4px] text-[0.9rem]"
-        >
+        <div className="mt-2 p-3 bg-[#fafafa] rounded-[4px] text-[0.9rem]">
           <p>
             <strong>Sort Method:</strong> Sort each word&apos;s characters to create a key. Words
             with the same sorted key are anagrams.

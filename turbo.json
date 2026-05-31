@@ -23,7 +23,7 @@
     "NEXT_PUBLIC_API_URL",
     "VERCEL_URL",
     "VITE_API_URL",
-    "VITE_GOOGLE_API_KEY",
+    "OPENROUTER_API_KEY",
     "ANTHROPIC_API_KEY"
   ],
   "tasks": {

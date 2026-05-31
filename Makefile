@@ -1,10 +1,4 @@
-.PHONY: install dev dev-cartograph dev-commune dev-labyrinth dev-tempo dev-ui dev-vitalis build test lint format typecheck check clean reset
-
-install:
-	pnpm install
-
-dev:
-	pnpm dev
+.PHONY: dev-cartograph dev-commune dev-labyrinth dev-tempo dev-ui dev-vitalis check clean reset
 
 dev-cartograph:
 	pnpm dev:cartograph
@@ -23,21 +17,6 @@ dev-ui:
 
 dev-vitalis:
 	pnpm dev:vitalis
-
-build:
-	pnpm build
-
-test:
-	pnpm test
-
-lint:
-	pnpm lint
-
-format:
-	pnpm format
-
-typecheck:
-	pnpm typecheck
 
 check:
 	pnpm lint
