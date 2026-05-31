@@ -47,7 +47,6 @@ export default function Vendigo() {
             placeholder="Search books..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            
           />
         </div>
 

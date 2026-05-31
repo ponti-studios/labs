@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { LoaderFunctionArgs } from "react-router";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const loadPuzzleForDate = vi.fn();
 
@@ -31,7 +31,7 @@ describe("RealiTea daily puzzle loader", () => {
         answerType: "storyline",
         clue: "A rescue-dog scandal with long-lasting fallout.",
         detail: "The fallout became one of RHOBH's defining storylines.",
-        newsMode: "archive",
+        newsMode: "current",
         puzzleKey: "rhobh-20599",
         role: "Infamous feud",
         source: "database",
@@ -49,8 +49,8 @@ describe("RealiTea daily puzzle loader", () => {
     expect(payload.puzzle.source).toBe("database");
   });
 
-  it("falls back to the static puzzle envelope when the loader throws", async () => {
-    loadPuzzleForDate.mockRejectedValue(new Error("db unavailable"));
+  it("returns 404 when no puzzle exists for the requested day", async () => {
+    loadPuzzleForDate.mockResolvedValue(null);
 
     const { loader } = await import("../api.games.realitea.daily");
     const response = await loader(
@@ -58,8 +58,7 @@ describe("RealiTea daily puzzle loader", () => {
     );
     const payload = await response.json();
 
-    expect(response.status).toBe(200);
-    expect(payload.puzzle.source).toBe("static");
-    expect(typeof payload.puzzle.answer).toBe("string");
+    expect(response.status).toBe(404);
+    expect(payload.error).toBe("No RealiTea puzzle found for today");
   });
 });

@@ -61,6 +61,15 @@ npm --workspace packages/db run build
 
 Build output goes to `dist/`. The workspace root `.gitignore` ignores `dist`.
 
+## Data loading
+
+The DB package now owns the seed/load routines for the shared playground data.
+
+```bash
+pnpm --filter @pontistudios/db load:covid
+pnpm --filter @pontistudios/db load:tfl
+```
+
 ## Testing
 
 ```bash

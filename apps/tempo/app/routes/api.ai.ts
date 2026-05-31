@@ -1,4 +1,5 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import { chat, createOpenRouterTextAdapter } from "@pontistudios/ai";
+import { z } from "zod";
 
 interface SubTask {
   title: string;
@@ -15,7 +16,7 @@ export async function action({ request }: { request: Request }) {
     return Response.json({ error: "Method not allowed" }, { status: 405 });
   }
 
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) {
     return Response.json({ error: "AI service not configured" }, { status: 503 });
   }
@@ -24,10 +25,13 @@ export async function action({ request }: { request: Request }) {
     const body = (await request.json()) as AiSplitRequest;
     const { taskTitle, estimatedMinutes } = body;
 
-    const ai = new GoogleGenAI({ apiKey });
-    const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
-      contents: `Decompose the following task into a logical sequence of sub-tasks for a deep work session.
+    const subtasks = await chat({
+      adapter: createOpenRouterTextAdapter({ apiKey }),
+      stream: false,
+      messages: [
+        {
+          role: "user",
+          content: `Decompose the following task into a logical sequence of sub-tasks for a deep work session.
 Original Task: "${taskTitle}"
 Total Available Time: ${estimatedMinutes} minutes.
 
@@ -36,24 +40,17 @@ Requirements:
 2. The sum of sub-task durations should equal approximately ${estimatedMinutes} minutes.
 3. Sub-tasks should be between 30 and 90 minutes each if possible.
 4. Ensure the sequence is logical for completion.`,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.ARRAY,
-          items: {
-            type: Type.OBJECT,
-            properties: {
-              title: { type: Type.STRING },
-              estimatedMinutes: { type: Type.NUMBER },
-            },
-            required: ["title", "estimatedMinutes"],
-          },
         },
-      },
+      ],
+      outputSchema: z.array(
+        z.object({
+          title: z.string(),
+          estimatedMinutes: z.number(),
+        }),
+      ),
     });
 
-    const subtasks = JSON.parse(response.text || "[]") as SubTask[];
-    return Response.json(subtasks);
+    return Response.json(subtasks as SubTask[]);
   } catch (error) {
     console.error("AI split failed:", error);
     return Response.json({ error: "Failed to generate breakdown" }, { status: 500 });

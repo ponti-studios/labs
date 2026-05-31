@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router";
 import { ArrowLeft, ArrowRight, BarChart3, Target, TrendingUp } from "lucide-react";
-import { calculateMarketingSpend, type MarketingProjectionOutput } from "~/lib/business/marketing-calculator";
+import {
+  calculateMarketingSpend,
+  type MarketingProjectionOutput,
+} from "~/lib/business/marketing-calculator";
 import {
   Accordion,
   AccordionContent,
@@ -275,7 +278,10 @@ export default function MarketingCalculator() {
                 <AccordionContent className="pb-0 pl-0">
                   <div className="grid gap-3 md:grid-cols-3">
                     {assumptions.map((assumption) => (
-                      <div key={assumption} className="border-l-2 border-border pl-4 text-sm leading-6 text-muted-foreground">
+                      <div
+                        key={assumption}
+                        className="border-l-2 border-border pl-4 text-sm leading-6 text-muted-foreground"
+                      >
                         {assumption}
                       </div>
                     ))}
@@ -288,7 +294,10 @@ export default function MarketingCalculator() {
                 <AccordionContent className="pb-0 pl-0">
                   <div className="grid gap-3">
                     {formulaSteps.map((step) => (
-                      <div key={step} className="border-l-2 border-border pl-4 text-sm leading-6 text-foreground">
+                      <div
+                        key={step}
+                        className="border-l-2 border-border pl-4 text-sm leading-6 text-foreground"
+                      >
                         {step}
                       </div>
                     ))}
@@ -302,11 +311,15 @@ export default function MarketingCalculator() {
                   <div className="grid gap-4 md:grid-cols-3">
                     <div className="flex items-start gap-3 border-l-2 border-border pl-4">
                       <Target className="mt-0.5 size-4 text-muted-foreground" />
-                      <p className="text-sm leading-6 text-muted-foreground">{interpretationNotes[0]}</p>
+                      <p className="text-sm leading-6 text-muted-foreground">
+                        {interpretationNotes[0]}
+                      </p>
                     </div>
                     <div className="flex items-start gap-3 border-l-2 border-border pl-4">
                       <TrendingUp className="mt-0.5 size-4 text-muted-foreground" />
-                      <p className="text-sm leading-6 text-muted-foreground">{interpretationNotes[1]}</p>
+                      <p className="text-sm leading-6 text-muted-foreground">
+                        {interpretationNotes[1]}
+                      </p>
                     </div>
                     <div className="border-l-2 border-border pl-4 text-sm leading-6 text-muted-foreground">
                       {interpretationNotes[2]}

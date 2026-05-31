@@ -107,7 +107,6 @@ export default function Quilt() {
                     type={field.type === "text" ? "text" : field.type}
                     defaultValue={field.value}
                     onChange={(e) => handleChange(field.name, e.target.value)}
-                    
                   />
                 )}
               </div>

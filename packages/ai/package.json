@@ -1,0 +1,29 @@
+{
+  "name": "@pontistudios/ai",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint src --fix",
+    "format": "oxfmt src --write"
+  },
+  "dependencies": {
+    "@openrouter/sdk": "^0.12.35",
+    "@tanstack/ai": "^0.22.1",
+    "@tanstack/ai-openrouter": "^0.9.8",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@pontistudios/tsconfig": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  },
+  "packageManager": "pnpm@10.30.3"
+}

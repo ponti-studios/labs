@@ -91,7 +91,6 @@ export default function CloudMargin() {
                   type="date"
                   value={newAccrual.DATE}
                   onChange={(e) => setNewAccrual((prev) => ({ ...prev, DATE: e.target.value }))}
-                  
                 />
               </div>
               <div>
@@ -102,7 +101,6 @@ export default function CloudMargin() {
                   placeholder="0.5"
                   value={newAccrual.RATE}
                   onChange={(e) => setNewAccrual((prev) => ({ ...prev, RATE: e.target.value }))}
-                  
                 />
               </div>
               <div>
@@ -112,7 +110,6 @@ export default function CloudMargin() {
                   placeholder="10000"
                   value={newAccrual.BALANCE}
                   onChange={(e) => setNewAccrual((prev) => ({ ...prev, BALANCE: e.target.value }))}
-                  
                 />
               </div>
               <Button onClick={addAccrual} className="btn btn-primary">

@@ -129,7 +129,6 @@ function Robot({
         onChange={(e) => setInstructions(e.target.value)}
         onKeyUp={handleKeyUp}
         disabled={lost}
-        
       />
       <div
         ref={robotRef}
@@ -241,7 +240,6 @@ export default function RedBadger() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyUp={(e) => e.key === "Enter" && addRobot()}
-          
         />
         <Button onClick={addRobot} type="button">
           Add Robot

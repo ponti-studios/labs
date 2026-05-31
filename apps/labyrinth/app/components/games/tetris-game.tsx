@@ -94,13 +94,13 @@ const PIECES: Record<string, Piece> = {
 
 // Map each piece's opacity to a design-system gray
 function pieceColor(opacity: number): string {
-  if (opacity >= 1.0) return "#f9fafb";  // I — near white
-  if (opacity >= 0.9) return "#e5e7eb";  // O
+  if (opacity >= 1.0) return "#f9fafb"; // I — near white
+  if (opacity >= 0.9) return "#e5e7eb"; // O
   if (opacity >= 0.85) return "#d1d5db"; // T
-  if (opacity >= 0.8) return "#9ca3af";  // L
+  if (opacity >= 0.8) return "#9ca3af"; // L
   if (opacity >= 0.75) return "#6b7280"; // J
-  if (opacity >= 0.7) return "#4b5563";  // S
-  return "#374151";                       // Z
+  if (opacity >= 0.7) return "#4b5563"; // S
+  return "#374151"; // Z
 }
 
 // Game logic utilities
@@ -278,11 +278,7 @@ const Cell = memo<{ opacity: number | null; isGhost: boolean }>(({ opacity, isGh
     <div
       className="w-6 h-6 transition-all duration-75"
       style={{
-        backgroundColor: color
-          ? isGhost
-            ? `${color}33`
-            : color
-          : "transparent",
+        backgroundColor: color ? (isGhost ? `${color}33` : color) : "transparent",
         boxShadow: color && !isGhost ? `inset 0 1px 0 rgba(255,255,255,0.15)` : undefined,
         outline: isGhost && color ? `1px solid ${color}40` : "1px solid rgba(255,255,255,0.06)",
         outlineOffset: "-1px",
@@ -390,7 +386,16 @@ const TetrisGame: FC = () => {
         lockTimer.current = null;
       }
     };
-  }, [state.started, state.gameOver, state.paused, state.level, state.current, state.grid, state.x, state.y]);
+  }, [
+    state.started,
+    state.gameOver,
+    state.paused,
+    state.level,
+    state.current,
+    state.grid,
+    state.x,
+    state.y,
+  ]);
 
   useEffect(() => {
     if (state.started && !state.current && !state.gameOver) {
@@ -402,16 +407,45 @@ const TetrisGame: FC = () => {
   const handleKeyDown = useCallback(
     (e: Event) => {
       const ev = e as KeyboardEvent;
-      if (!state.started && ev.key === "Enter") { dispatch({ type: "START" }); return; }
-      if (state.gameOver && (ev.key === "r" || ev.key === "R")) { dispatch({ type: "START" }); return; }
+      if (!state.started && ev.key === "Enter") {
+        dispatch({ type: "START" });
+        return;
+      }
+      if (state.gameOver && (ev.key === "r" || ev.key === "R")) {
+        dispatch({ type: "START" });
+        return;
+      }
       switch (ev.key) {
-        case "ArrowLeft":  ev.preventDefault(); dispatch({ type: "MOVE", dx: -1, dy: 0 }); break;
-        case "ArrowRight": ev.preventDefault(); dispatch({ type: "MOVE", dx: 1, dy: 0 }); break;
-        case "ArrowDown":  ev.preventDefault(); dispatch({ type: "MOVE", dx: 0, dy: 1 }); break;
-        case "ArrowUp":    ev.preventDefault(); dispatch({ type: "ROTATE" }); break;
-        case " ":          ev.preventDefault(); dispatch({ type: "DROP" }); break;
-        case "c": case "C": ev.preventDefault(); dispatch({ type: "HOLD" }); break;
-        case "p": case "P": ev.preventDefault(); dispatch({ type: "PAUSE" }); break;
+        case "ArrowLeft":
+          ev.preventDefault();
+          dispatch({ type: "MOVE", dx: -1, dy: 0 });
+          break;
+        case "ArrowRight":
+          ev.preventDefault();
+          dispatch({ type: "MOVE", dx: 1, dy: 0 });
+          break;
+        case "ArrowDown":
+          ev.preventDefault();
+          dispatch({ type: "MOVE", dx: 0, dy: 1 });
+          break;
+        case "ArrowUp":
+          ev.preventDefault();
+          dispatch({ type: "ROTATE" });
+          break;
+        case " ":
+          ev.preventDefault();
+          dispatch({ type: "DROP" });
+          break;
+        case "c":
+        case "C":
+          ev.preventDefault();
+          dispatch({ type: "HOLD" });
+          break;
+        case "p":
+        case "P":
+          ev.preventDefault();
+          dispatch({ type: "PAUSE" });
+          break;
       }
     },
     [state.started, state.gameOver],
@@ -425,7 +459,6 @@ const TetrisGame: FC = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-6">
       <div className="flex items-start gap-5">
-
         {/* Left panel */}
         <div className="flex w-32 flex-col gap-3">
           <Preview piece={state.held} title="Hold" />
@@ -442,13 +475,12 @@ const TetrisGame: FC = () => {
 
         {/* Board column */}
         <div className="flex flex-col items-center gap-3">
-          <h3 className="tracking-widest uppercase text-sm font-semibold text-foreground">Tetris</h3>
+          <h3 className="tracking-widest uppercase text-sm font-semibold text-foreground">
+            Tetris
+          </h3>
 
           <div className="relative rounded-xl border border-border bg-zinc-950 overflow-hidden p-1">
-            <div
-              className="grid"
-              style={{ gridTemplateColumns: `repeat(${COLS}, 1.5rem)` }}
-            >
+            <div className="grid" style={{ gridTemplateColumns: `repeat(${COLS}, 1.5rem)` }}>
               {displayGrid.map((row: GameCell[], i: number) =>
                 row.map((cell: GameCell, j: number) => {
                   const opacity =
@@ -469,11 +501,7 @@ const TetrisGame: FC = () => {
                 <p className="text-xs font-medium uppercase tracking-[0.16em] text-zinc-400">
                   Ready to play
                 </p>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => dispatch({ type: "START" })}
-                >
+                <Button variant="secondary" size="sm" onClick={() => dispatch({ type: "START" })}>
                   Start game
                 </Button>
                 <p className="text-xs text-zinc-500">or press Enter</p>
@@ -484,11 +512,7 @@ const TetrisGame: FC = () => {
             {state.paused && (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-zinc-950/90">
                 <p className="text-sm font-semibold uppercase tracking-widest text-white">Paused</p>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => dispatch({ type: "PAUSE" })}
-                >
+                <Button variant="secondary" size="sm" onClick={() => dispatch({ type: "PAUSE" })}>
                   Resume
                 </Button>
               </div>
@@ -497,13 +521,11 @@ const TetrisGame: FC = () => {
             {/* Game over overlay */}
             {state.gameOver && (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-zinc-950/90">
-                <p className="text-sm font-semibold uppercase tracking-widest text-white">Game Over</p>
+                <p className="text-sm font-semibold uppercase tracking-widest text-white">
+                  Game Over
+                </p>
                 <p className="text-xs text-zinc-400 tabular-nums">Score: {state.score}</p>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => dispatch({ type: "START" })}
-                >
+                <Button variant="secondary" size="sm" onClick={() => dispatch({ type: "START" })}>
                   Play again
                 </Button>
               </div>
@@ -529,7 +551,6 @@ const TetrisGame: FC = () => {
             </ul>
           </div>
         </div>
-
       </div>
     </div>
   );

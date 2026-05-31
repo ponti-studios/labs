@@ -313,7 +313,6 @@ export default function Kensho() {
                         }
                         placeholder={`Filter ${col.name}...`}
                         autoFocus
-                        
                       />
                     </div>
                   )}

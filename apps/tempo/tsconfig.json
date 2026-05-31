@@ -1,15 +1,15 @@
 {
   "extends": "@pontistudios/tsconfig/react.json",
   "include": ["**/*", "**/.server/**/*", "**/.client/**/*", ".react-router/types/**/*"],
-  "exclude": [
-    "app/routes/svelte/**/*"
-  ],
+  "exclude": ["app/routes/svelte/**/*"],
   "compilerOptions": {
     "types": ["node", "vite/client", "@testing-library/jest-dom", "vitest/globals"],
     "rootDirs": [".", "./.react-router/types"],
     "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
     "paths": {
-      "~/*": ["./app/*"]
+      "~/*": ["./app/*"],
+      "@pontistudios/ai": ["../../packages/ai/src/index.ts"]
     },
     "noEmit": true
   }

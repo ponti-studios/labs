@@ -1,3 +1,4 @@
+import { generateImageFromPrompt } from "@pontistudios/ai";
 import type { ActionFunctionArgs } from "react-router";
 import { z } from "zod";
 
@@ -42,12 +43,7 @@ const requestSchema = z.object({
 });
 
 function getImagenApiKey() {
-  return (
-    process.env.GOOGLE_IMAGEN_API_KEY ||
-    process.env.GOOGLE_API_KEY ||
-    process.env.VITE_GOOGLE_API_KEY ||
-    null
-  );
+  return process.env.OPENROUTER_API_KEY || null;
 }
 
 function isAllowedOrigin(request: Request) {
@@ -72,7 +68,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const apiKey = getImagenApiKey();
 
   if (!apiKey) {
-    return Response.json({ error: "Missing Google Imagen API key" }, { status: 500 });
+    return Response.json({ error: "Missing OpenRouter API key" }, { status: 500 });
   }
 
   try {
@@ -82,43 +78,16 @@ export async function action({ request }: ActionFunctionArgs) {
       null,
       2,
     )}`;
+    const imageData = await generateImageFromPrompt(promptText, {
+      apiKey,
+      imageModel: "x-ai/grok-imagine-image-quality",
+      model: "openai/gpt-5.1",
+      outputFormat: "png",
+      quality: "high",
+      size: "1024x1024",
+    });
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          instances: [
-            {
-              prompt: promptText,
-            },
-          ],
-          parameters: {
-            sampleCount: 1,
-          },
-        }),
-      },
-    );
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      return Response.json(
-        { error: `Generation failed: ${response.status} ${errorText}` },
-        { status: response.status },
-      );
-    }
-
-    const data = await response.json();
-    const imageBytes = data?.predictions?.[0]?.bytesBase64Encoded;
-
-    if (typeof imageBytes !== "string" || imageBytes.length === 0) {
-      return Response.json({ error: "No image data received from the API." }, { status: 502 });
-    }
-
-    return Response.json({ imageData: `data:image/png;base64,${imageBytes}` });
+    return Response.json({ imageData });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return Response.json({ error: "Invalid request payload" }, { status: 400 });

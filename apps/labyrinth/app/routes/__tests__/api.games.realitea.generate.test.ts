@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ActionFunctionArgs } from "react-router";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const generateDailyPuzzle = vi.fn();
 const originalEnv = process.env;
@@ -71,7 +71,7 @@ describe("RealiTea daily puzzle generation action", () => {
       franchise: "rhobh",
       generationStatus: "published",
       id: 1,
-      newsMode: "archive",
+      newsMode: "current",
       normalizedAnswer: "PUPPYGATE",
       role: "Infamous feud",
       sourcePublishedAt: "[]",

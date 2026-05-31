@@ -1,6 +1,15 @@
 import { useState, type JSX } from "react";
-import { Button, Input, Label, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@pontistudios/ui";
-
+import {
+  Button,
+  Input,
+  Label,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@pontistudios/ui";
 
 interface Vote {
   name: string;
@@ -59,8 +68,8 @@ function findWinningCandidate(
 
 /**
  * Click Therapeutics Take-Home Challenge
- * 
- * Task: Design an algorithm to process a list of votes and find the winning candidate 
+ *
+ * Task: Design an algorithm to process a list of votes and find the winning candidate
  * or top N candidates based on votes cast before a specific timestamp.
  */
 export default function ClickTherapeutics(): JSX.Element {
@@ -77,16 +86,13 @@ export default function ClickTherapeutics(): JSX.Element {
       <h2>Click Therapeutics - Voting</h2>
       <p>Find winning candidates based on votes before a timestamp.</p>
 
-      <div
-        className="flex gap-4 items-center mb-4 flex-wrap"
-      >
+      <div className="flex gap-4 items-center mb-4 flex-wrap">
         <Label>
           Timestamp:
           <Input
             type="number"
             value={timestamp}
             onChange={(event) => setTimestamp(Number(event.target.value))}
-            
           />
         </Label>
         <Label>
@@ -95,7 +101,6 @@ export default function ClickTherapeutics(): JSX.Element {
             type="number"
             value={numCandidates}
             onChange={(event) => setNumCandidates(Number(event.target.value))}
-            
           />
         </Label>
         <Button className="btn btn-primary" onClick={run}>
@@ -118,12 +123,8 @@ export default function ClickTherapeutics(): JSX.Element {
                 key={`${vote.name}-${vote.timestamp}-${index}`}
                 className={vote.timestamp < timestamp ? "bg-[#d4edda]" : "bg-transparent"}
               >
-                <TableCell className="border border-[#ccc] py-1 px-2">
-                  {vote.name}
-                </TableCell>
-                <TableCell className="border border-[#ccc] py-1 px-2">
-                  {vote.timestamp}
-                </TableCell>
+                <TableCell className="border border-[#ccc] py-1 px-2">{vote.name}</TableCell>
+                <TableCell className="border border-[#ccc] py-1 px-2">{vote.timestamp}</TableCell>
               </TableRow>
             ))}
           </TableBody>

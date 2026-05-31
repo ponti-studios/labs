@@ -1,7 +1,6 @@
 import { useState, type JSX } from "react";
 import { Button } from "@pontistudios/ui";
 
-
 type ActiveTab = "bank" | "prime";
 type FeeChoice = "upfront" | "fee";
 
@@ -54,7 +53,7 @@ function* countdownGenerator(start: number): Generator<number, void, void> {
 /**
  * Goldman Sachs Take-Home Challenge
  *
- * Task: Implement a calculator to determine the most cost-effective fee structure 
+ * Task: Implement a calculator to determine the most cost-effective fee structure
  * (upfront vs percentage-based) given a series of payments and base thresholds.
  */
 export default function GoldmanSachs(): JSX.Element {
@@ -121,9 +120,7 @@ export default function GoldmanSachs(): JSX.Element {
             Given loan parameters, determine if an upfront fee or percentage-based fee is better.
           </p>
 
-          <div
-            className="bg-[#f5f5f5] p-4 rounded-[4px] mb-4"
-          >
+          <div className="bg-[#f5f5f5] p-4 rounded-[4px] mb-4">
             <p>
               <strong>Example Input:</strong>
             </p>
@@ -141,9 +138,7 @@ export default function GoldmanSachs(): JSX.Element {
                 <strong>Result:</strong>{" "}
                 {bankResult.result === "upfront" ? "Take the upfront!" : "Pay fee based"}
               </p>
-              <p>
-                Calculate: For each payment, charge max(basePayment, payment * {bankResult.x}%)
-              </p>
+              <p>Calculate: For each payment, charge max(basePayment, payment * {bankResult.x}%)</p>
               <p>Compare total fees against upfront of {bankResult.d}</p>
             </div>
           )}
@@ -153,9 +148,7 @@ export default function GoldmanSachs(): JSX.Element {
           <h3>Prime Number Countdown Generator</h3>
           <p>Generate prime numbers in descending order from n-1 down to 2.</p>
 
-          <div
-            className="bg-[#f5f5f5] p-4 rounded-[4px] mb-4"
-          >
+          <div className="bg-[#f5f5f5] p-4 rounded-[4px] mb-4">
             <p>
               <strong>n = 10</strong>
             </p>

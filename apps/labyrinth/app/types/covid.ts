@@ -1,6 +1,6 @@
-import type { PlaygroundCovidData } from "@pontistudios/db";
+import type { CovidData } from "@pontistudios/db";
 
-export type CovidDataRecord = PlaygroundCovidData & {
+export type CovidDataRecord = CovidData & {
   vaccinationDataDate?: string | null;
 };
 

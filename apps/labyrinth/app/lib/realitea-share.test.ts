@@ -4,9 +4,9 @@ import { buildRealiTeaShareText, shareRealiTeaResult } from "./realitea-share";
 
 describe("realitea share helpers", () => {
   it("builds a solved share grid without revealing the answer text", () => {
-    expect(buildRealiTeaShareText("ERIKA", ["ERIKA"], true, new Date("2026-05-20T12:00:00.000Z"))).toBe(
-      "RealiTea - 20 May 2026\n1/6\n\n🟩🟩🟩🟩🟩",
-    );
+    expect(
+      buildRealiTeaShareText("ERIKA", ["ERIKA"], true, new Date("2026-05-20T12:00:00.000Z")),
+    ).toBe("RealiTea - 20 May 2026\n1/6\n\n🟩🟩🟩🟩🟩");
   });
 
   it("uses X score when the puzzle is lost", () => {

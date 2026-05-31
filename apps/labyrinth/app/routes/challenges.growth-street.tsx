@@ -3,7 +3,7 @@ import type { JSX } from "react";
 /**
  * Growth Street Take-Home Challenge
  *
- * Task: Implement a basic banking system with User, Account, Admin, and Payment classes 
+ * Task: Implement a basic banking system with User, Account, Admin, and Payment classes
  * that processes asynchronous deposits, withdrawals, and transfers between accounts.
  */
 export default function GrowthStreet(): JSX.Element {
@@ -35,9 +35,7 @@ export default function GrowthStreet(): JSX.Element {
 
       <div className="card">
         <h3>Code Example</h3>
-        <pre
-          className="bg-[#f5f5f5] p-4 rounded overflow-auto"
-        >
+        <pre className="bg-[#f5f5f5] p-4 rounded overflow-auto">
           {`const user1 = new User()
 const user2 = new User()
 

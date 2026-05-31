@@ -1,10 +1,10 @@
+import type { CovidData } from "@pontistudios/db";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
 import { StatsOverview } from "~/components/covid/charts/stats-overview";
 import { TimeSeriesChart } from "~/components/covid/charts/time-series-chart";
 import { TopCountriesChart } from "~/components/covid/charts/top-countries-chart";
 import { VaccinationProgress } from "~/components/covid/charts/vaccination-progress";
-import type { CovidDataSelect } from "~/db/schema";
 import {
   getAvailableCountries,
   getCovidStats,
@@ -211,9 +211,7 @@ export default function CoronaDashboardPage() {
           </div>
 
           {/* Conditionally show based on data availability */}
-          {timeSeriesData.some(
-            (record: CovidDataSelect) => record.newVaccinationsSmoothed !== null,
-          ) ? (
+          {timeSeriesData.some((record: CovidData) => record.newVaccinationsSmoothed !== null) ? (
             <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50 hover:bg-white/50 transition-all duration-300">
               <h3 className="mb-4">New Vaccinations (7-day average)</h3>
               <TimeSeriesChart
@@ -236,7 +234,7 @@ export default function CoronaDashboardPage() {
           )}
 
           {/* Show test positivity if available, otherwise show ICU patients */}
-          {timeSeriesData.some((record: CovidDataSelect) => record.positiveRate !== null) ? (
+          {timeSeriesData.some((record: CovidData) => record.positiveRate !== null) ? (
             <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50 hover:bg-white/50 transition-all duration-300">
               <h3 className="mb-4">Test Positivity Rate</h3>
               <TimeSeriesChart
@@ -246,9 +244,7 @@ export default function CoronaDashboardPage() {
                 color="#f59e0b"
               />
             </div>
-          ) : timeSeriesData.some(
-              (record: CovidDataSelect) => record.icuPatientsPerMillion !== null,
-            ) ? (
+          ) : timeSeriesData.some((record: CovidData) => record.icuPatientsPerMillion !== null) ? (
             <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50 hover:bg-white/50 transition-all duration-300">
               <h3 className="mb-4">ICU Patients per Million</h3>
               <TimeSeriesChart
