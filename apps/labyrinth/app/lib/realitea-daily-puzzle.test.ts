@@ -10,11 +10,11 @@ import {
 const currentPool: GeneratedCandidate[] = [
   {
     answer: "PUPPYGATE",
-    answerType: "storyline" as const,
+    answerType: "storyline",
     clue: "A rescue-dog scandal that fractured the cast and dominated confessionals.",
     detail:
       "Puppygate became one of RHOBH's defining modern scandals, dragging friendships and loyalties into a season-long spiral.",
-    newsMode: "current" as const,
+    newsMode: "current",
     rationale: "Archive fixture",
     role: "Iconic cast fracture",
     sourcePublishedAt: [],
@@ -24,11 +24,11 @@ const currentPool: GeneratedCandidate[] = [
   },
   {
     answer: "VILLAROSA",
-    answerType: "place" as const,
+    answerType: "place",
     clue: "This pink-toned estate is practically a cast member in its own right.",
     detail:
       "Villa Rosa is Lisa Vanderpump's famously lavish home and a signature setting in RHOBH history.",
-    newsMode: "current" as const,
+    newsMode: "current",
     rationale: "Archive fixture",
     role: "Signature mansion",
     sourcePublishedAt: [],
@@ -38,11 +38,11 @@ const currentPool: GeneratedCandidate[] = [
   },
   {
     answer: "BUNNY",
-    answerType: "object" as const,
+    answerType: "object",
     clue: "A small gift turned reunion seating into an all-time uncomfortable moment.",
     detail:
       "The returned bunny became one of the show's most memorable symbols of unresolved hurt and public fallout.",
-    newsMode: "current" as const,
+    newsMode: "current",
     rationale: "Archive fixture",
     role: "Reunion prop",
     sourcePublishedAt: [],
@@ -54,12 +54,12 @@ const currentPool: GeneratedCandidate[] = [
 
 describe("rhobh daily puzzle helpers", () => {
   it("accepts collapsed multi-word answers that normalize cleanly", () => {
-    const candidate = {
+    const candidate: GeneratedCandidate = {
       answer: "Villa Rosa",
-      answerType: "place" as const,
+      answerType: "place",
       clue: "A legendary pink mansion with plenty of swans and RHOBH lore.",
       detail: "Lisa Vanderpump's home became one of the most iconic locations in the franchise.",
-      newsMode: "current" as const,
+      newsMode: "current",
       rationale: "Iconic RHOBH place",
       role: "Iconic home base",
       sourcePublishedAt: [],
@@ -75,12 +75,12 @@ describe("rhobh daily puzzle helpers", () => {
   });
 
   it("rejects answers with unsupported normalized length", () => {
-    const candidate = {
+    const candidate: GeneratedCandidate = {
       answer: "RH",
-      answerType: "phrase" as const,
+      answerType: "phrase",
       clue: "Too short to qualify.",
       detail: "This should never pass validation.",
-      newsMode: "current" as const,
+      newsMode: "current",
       rationale: "Invalid",
       role: "Invalid",
       sourcePublishedAt: [],
@@ -96,12 +96,12 @@ describe("rhobh daily puzzle helpers", () => {
   });
 
   it("rejects candidates that leak the answer in the clue or detail", () => {
-    const candidate = {
+    const candidate: GeneratedCandidate = {
       answer: "Puppygate",
-      answerType: "storyline" as const,
+      answerType: "storyline",
       clue: "Puppygate became one of the biggest RHOBH scandals ever.",
       detail: "The Puppygate fallout split the cast.",
-      newsMode: "current" as const,
+      newsMode: "current",
       rationale: "Spoiler",
       role: "Infamous scandal",
       sourcePublishedAt: [],
@@ -117,12 +117,12 @@ describe("rhobh daily puzzle helpers", () => {
   });
 
   it("rejects answers that repeat inside the cooldown window", () => {
-    const candidate = {
+    const candidate: GeneratedCandidate = {
       answer: "Aspen",
-      answerType: "place" as const,
+      answerType: "place",
       clue: "A snowy trip that detonated into one of the franchise's biggest fights.",
       detail: "The aftermath of this cast trip lingered all season.",
-      newsMode: "current" as const,
+      newsMode: "current",
       rationale: "Repeat test",
       role: "Trip destination",
       sourcePublishedAt: [],
@@ -140,12 +140,12 @@ describe("rhobh daily puzzle helpers", () => {
   });
 
   it("requires Bravo plus one corroborator for current-news candidates", () => {
-    const candidate = {
+    const candidate: GeneratedCandidate = {
       answer: "Separation",
-      answerType: "storyline" as const,
+      answerType: "storyline",
       clue: "A relationship update is suddenly the center of the latest RHOBH coverage.",
       detail: "This story is dominating the RHOBH news cycle.",
-      newsMode: "current" as const,
+      newsMode: "current",
       rationale: "Current news test",
       role: "Trending headline",
       sourcePublishedAt: ["2026-05-27T00:00:00.000Z"],
@@ -162,12 +162,12 @@ describe("rhobh daily puzzle helpers", () => {
   });
 
   it("accepts current-news candidates with Bravo and a corroborating source", () => {
-    const candidate = {
+    const candidate: GeneratedCandidate = {
       answer: "Reunion",
-      answerType: "moment" as const,
+      answerType: "moment",
       clue: "The latest RHOBH fallout is barreling toward this must-watch taping.",
       detail: "The current RHOBH conversation is building toward the next big sit-down.",
-      newsMode: "current" as const,
+      newsMode: "current",
       rationale: "Current news test",
       role: "High-stakes event",
       sourcePublishedAt: ["2026-05-27T00:00:00.000Z", "2026-05-27T00:00:00.000Z"],
@@ -185,13 +185,13 @@ describe("rhobh daily puzzle helpers", () => {
   });
 
   it("rejects current-news person answers as too obvious", () => {
-    const candidate = {
+    const candidate: GeneratedCandidate = {
       answer: "Dorit",
-      answerType: "person" as const,
+      answerType: "person",
       clue: "A Beverly Hills diamond is dealing with friendship fallout and divorce headlines.",
       detail:
         "She remains central to the post-reunion conversation and a messy financial storyline.",
-      newsMode: "current" as const,
+      newsMode: "current",
       rationale: "Current news test",
       role: "Cast member",
       sourcePublishedAt: ["2026-05-27T00:00:00.000Z", "2026-05-27T00:00:00.000Z"],
@@ -212,12 +212,12 @@ describe("rhobh daily puzzle helpers", () => {
   });
 
   it("rejects non-current candidates", () => {
-    const candidate = {
+    const candidate: GeneratedCandidate = {
       answer: "Random Moment",
-      answerType: "moment" as const,
+      answerType: "moment",
       clue: "A made-up callback with no curated provenance.",
       detail: "This should be rejected because it is not generated from current sources.",
-      newsMode: "archive" as const,
+      newsMode: "archive",
       rationale: "Current-only test",
       role: "Invalid archive entry",
       sourcePublishedAt: [],

@@ -24,7 +24,7 @@ const DEFAULT_ROUTE_PUZZLE: Puzzle = {
   clue: "The Pretty Mess performer never misses a sharp confessional.",
   detail:
     "Erika Jayne keeps the glam, the one-liners, and the pop-star energy turned all the way up.",
-  newsMode: "archive",
+  newsMode: "current",
   role: "Pop diva energy",
 };
 
@@ -34,7 +34,7 @@ const STALE_ROUTE_PUZZLE: Puzzle = {
   clue: "OG diamond holder navigating a high-profile separation storyline.",
   detail:
     "Kyle Richards remains the show's center of gravity and one of the most recognizable names in Beverly Hills.",
-  newsMode: "archive",
+  newsMode: "current",
   role: "Original cast anchor",
 };
 
@@ -260,7 +260,7 @@ describe("RealiTeaRoute", () => {
         answerType: "place",
         clue: "A pink mansion with a legendary RHOBH footprint.",
         detail: "Lisa Vanderpump's home became one of the franchise's most recognizable settings.",
-        newsMode: "archive",
+        newsMode: "current",
         role: "Iconic location",
       },
       new Date("2026-05-20T12:00:00.000Z"),
@@ -295,12 +295,12 @@ describe("RealiTeaRoute", () => {
   it("rotates to a new puzzle when the local day changes", async () => {
     const secondDate = new Date("2026-05-21T12:00:00.000Z");
     const firstPuzzle = getCurrentPuzzle();
-    const secondPuzzle = {
+    const secondPuzzle: Puzzle = {
       answer: "PUPPYGATE",
-      answerType: "storyline" as const,
+      answerType: "storyline",
       clue: "A rescue-dog scandal that turned into one of RHOBH's defining feuds.",
       detail: "The fallout consumed the season and permanently shifted friendships.",
-      newsMode: "archive" as const,
+      newsMode: "current",
       role: "Infamous scandal",
     };
     setDailyPuzzle(secondPuzzle, secondDate, "database");
@@ -330,12 +330,12 @@ describe("RealiTeaRoute", () => {
   it("keeps the current puzzle visible if the next day is missing from the database", async () => {
     const firstDate = new Date("2026-05-20T12:00:00.000Z");
     const secondDate = new Date("2026-05-21T12:00:00.000Z");
-    const firstPuzzle = {
+    const firstPuzzle: Puzzle = {
       answer: "PUPPYGATE",
-      answerType: "storyline" as const,
+      answerType: "storyline",
       clue: "A rescue-dog scandal that turned into one of RHOBH's defining feuds.",
       detail: "The fallout consumed the season and permanently shifted friendships.",
-      newsMode: "archive" as const,
+      newsMode: "current",
       role: "Infamous scandal",
     };
     const queryClient = new QueryClient({

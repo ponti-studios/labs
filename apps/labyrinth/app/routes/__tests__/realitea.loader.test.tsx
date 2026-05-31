@@ -33,7 +33,7 @@ describe("RealiTea route loader", () => {
         answerType: "storyline",
         clue: "A rescue-dog scandal with long-lasting fallout.",
         detail: "The fallout became one of RHOBH's defining storylines.",
-        newsMode: "archive",
+        newsMode: "current",
         puzzleKey: "rhobh-20599",
         role: "Infamous feud",
         source: "database",
