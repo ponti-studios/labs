@@ -9,7 +9,8 @@ import {
 } from "@pontistudios/ui";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { getDailyTarotStorageKey, getLocalDateKey, isDailyTarotResult } from "~/lib/tarot-daily";
+import { getLocalDateKey, isDailyTarotResult } from "~/lib/tarot-daily";
+import { readDailyTarotResult, saveDailyTarotResult } from "~/lib/tarot-state";
 import type { DailyTarotResult } from "~/lib/tarot-types";
 
 function formatDate(dateKey: string) {
@@ -40,31 +41,8 @@ export default function TarotRoute() {
   }, []);
 
   useEffect(() => {
-    const storageKey = getDailyTarotStorageKey(dateKey);
-    const raw = window.localStorage.getItem(storageKey);
-
-    if (!raw) {
-      setResult(null);
-      setError(null);
-      setIsHydrated(true);
-      return;
-    }
-
-    try {
-      const parsed = JSON.parse(raw);
-
-      if (isDailyTarotResult(parsed) && parsed.date === dateKey) {
-        setResult(parsed);
-        setError(null);
-      } else {
-        window.localStorage.removeItem(storageKey);
-        setResult(null);
-      }
-    } catch {
-      window.localStorage.removeItem(storageKey);
-      setResult(null);
-    }
-
+    setResult(readDailyTarotResult(dateKey));
+    setError(null);
     setIsHydrated(true);
   }, [dateKey]);
 
@@ -85,7 +63,7 @@ export default function TarotRoute() {
         throw new Error("Received an invalid tarot reading");
       }
 
-      window.localStorage.setItem(getDailyTarotStorageKey(dateKey), JSON.stringify(payload));
+      saveDailyTarotResult(dateKey, payload);
       setResult(payload);
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "Failed to draw your card");
@@ -122,7 +100,7 @@ export default function TarotRoute() {
           <DailyTarotReadingView result={result} />
         ) : (
           <div className="grid gap-6 border-b border-border pb-8 lg:grid-cols-[240px_minmax(0,1fr)] lg:items-center">
-            <div className="mx-auto flex h-[18rem] w-52 items-center justify-center border border-border bg-muted">
+            <div className="mx-auto flex h-72 w-52 items-center justify-center border border-border bg-muted">
               <div className="text-center">
                 <div className="text-4xl text-muted-foreground">✦</div>
                 <div className="ui-eyebrow mt-3">Daily draw</div>
@@ -171,7 +149,7 @@ function DailyTarotReadingView({ result }: { result: DailyTarotResult }) {
   return (
     <div className="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
       <aside className="space-y-4">
-        <div className="mx-auto max-w-[17rem]">
+        <div className="mx-auto max-w-68">
           <img
             src={`/tarot-cards/${card.img}`}
             alt={card.name}

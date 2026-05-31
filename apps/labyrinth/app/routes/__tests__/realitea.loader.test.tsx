@@ -7,9 +7,11 @@ vi.mock("../../lib/realitea-daily-puzzle.server", () => ({
   loadPuzzleForDate,
 }));
 
-describe("RealiTea daily puzzle loader", () => {
+describe("RealiTea route loader", () => {
   beforeEach(() => {
     loadPuzzleForDate.mockReset();
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-05-20T12:00:00.000Z"));
   });
 
   function createLoaderArgs(url: string): LoaderFunctionArgs {
@@ -38,27 +40,11 @@ describe("RealiTea daily puzzle loader", () => {
       },
     });
 
-    const { loader } = await import("../api.games.realitea.daily");
-    const response = await loader(
-      createLoaderArgs("http://localhost/api/games/realitea/daily?date=2026-05-27"),
-    );
+    const { loader } = await import("../games/realitea");
+    const response = await loader(createLoaderArgs("http://localhost/games/realitea"));
     const payload = await response.json();
 
     expect(response.status).toBe(200);
     expect(payload.puzzle.answer).toBe("PUPPYGATE");
-    expect(payload.puzzle.source).toBe("database");
-  });
-
-  it("returns 404 when no puzzle exists for the requested day", async () => {
-    loadPuzzleForDate.mockResolvedValue(null);
-
-    const { loader } = await import("../api.games.realitea.daily");
-    const response = await loader(
-      createLoaderArgs("http://localhost/api/games/realitea/daily?date=2026-05-27"),
-    );
-    const payload = await response.json();
-
-    expect(response.status).toBe(404);
-    expect(payload.error).toBe("No RealiTea puzzle found for today");
   });
 });

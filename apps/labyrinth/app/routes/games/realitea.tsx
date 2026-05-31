@@ -1,25 +1,20 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { type LoaderFunctionArgs, useFetcher, useLoaderData } from "react-router";
+import { cva } from "class-variance-authority";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useFetcher, useLoaderData, type LoaderFunctionArgs } from "react-router";
 
 import { Button, OnscreenKeyboard, type LetterState } from "@pontistudios/ui";
 import {
-  getDateKey,
-  type PuzzleEnvelope,
-  type StoredPuzzle,
-} from "~/lib/realitea-daily-puzzle";
-import {
   evaluateGuess,
   getKeyboardState,
-  getPuzzleForDate,
   getPuzzleKeyForDate,
   MAX_GUESSES,
   normalizeGuess,
 } from "~/lib/realitea";
-import { shareRealiTeaResult } from "~/lib/realitea-share";
+import { getDateKey, type PuzzleEnvelope, type StoredPuzzle } from "~/lib/realitea-daily-puzzle";
 import { loadPuzzleForDate } from "~/lib/realitea-daily-puzzle.server";
+import { shareRealiTeaResult } from "~/lib/realitea-share";
 import { cn } from "~/lib/utils";
-
-const STORAGE_PREFIX = "labyrinth:realitea:";
+import { useGameState } from "./game-state";
 
 const TILE_STATE_CLASSES: Record<LetterState, string> = {
   absent: "border-border bg-muted text-muted-foreground",
@@ -27,8 +22,19 @@ const TILE_STATE_CLASSES: Record<LetterState, string> = {
   correct: "border-emerald-300 bg-emerald-100 text-emerald-950",
 };
 
-const EMPTY_TILE = "border-border bg-background text-foreground";
-const TILE_BASE = "h-12 w-12 rounded border text-lg font-bold uppercase transition-colors";
+const TILE_BASE = cva("h-12 w-12 rounded border text-lg font-bold uppercase transition-colors", {
+  variants: {
+    state: {
+      absent: TILE_STATE_CLASSES.absent,
+      correct: TILE_STATE_CLASSES.correct,
+      empty: "border-border bg-background text-foreground",
+      present: TILE_STATE_CLASSES.present,
+    },
+  },
+  defaultVariants: {
+    state: "empty",
+  },
+});
 const TILE_REVEAL_STEP_MS = 250;
 const TILE_REVEAL_STYLES: Record<
   LetterState,
@@ -51,32 +57,15 @@ const TILE_REVEAL_STYLES: Record<
   },
 };
 
-interface PersistedGameState {
-  puzzleKey: string;
-  guesses: string[];
-  status: "playing" | "solved" | "failed";
-}
-
-function buildStaticPuzzleEnvelope(date: Date): PuzzleEnvelope {
-  const puzzle = getPuzzleForDate(date);
-
-  return {
-    puzzle: {
-      ...puzzle,
-      puzzleKey: getPuzzleKeyForDate(date),
-      source: "static",
-    },
-  };
-}
-
 export async function loader(_args: LoaderFunctionArgs) {
   const date = new Date();
+  const puzzle = await loadPuzzleForDate(date);
 
-  try {
-    return Response.json(await loadPuzzleForDate(date, getPuzzleForDate(date)));
-  } catch {
-    return Response.json(buildStaticPuzzleEnvelope(date));
+  if (!puzzle) {
+    throw new Response("Today's RealiTea puzzle is not available yet.", { status: 404 });
   }
+
+  return Response.json(puzzle);
 }
 
 export function meta() {
@@ -89,47 +78,6 @@ export function meta() {
   ];
 }
 
-function getTileClasses(state?: LetterState) {
-  return state ? TILE_STATE_CLASSES[state] : EMPTY_TILE;
-}
-
-function buildStorageKey(prefix: string, puzzleKey: string) {
-  return `${prefix}${puzzleKey}`;
-}
-
-function getStorageKey(puzzleKey: string) {
-  return buildStorageKey(STORAGE_PREFIX, puzzleKey);
-}
-
-function parsePersistedGameState(saved: string | null, puzzleKey: string): PersistedGameState | null {
-  if (!saved) return null;
-
-  try {
-    const parsed = JSON.parse(saved) as Partial<PersistedGameState>;
-    if (
-      parsed.puzzleKey !== puzzleKey ||
-      !Array.isArray(parsed.guesses) ||
-      (parsed.status !== "playing" && parsed.status !== "solved" && parsed.status !== "failed")
-    ) {
-      return null;
-    }
-
-    return {
-      puzzleKey,
-      guesses: parsed.guesses.map((guess) => normalizeGuess(String(guess))).filter(Boolean),
-      status: parsed.status,
-    };
-  } catch {
-    return null;
-  }
-}
-
-function readPersistedGameState(puzzleKey: string): PersistedGameState | null {
-  if (typeof window === "undefined") return null;
-
-  return parsePersistedGameState(window.localStorage.getItem(getStorageKey(puzzleKey)), puzzleKey);
-}
-
 function getTileRevealStyle(state: LetterState): React.CSSProperties {
   const finalStyle = TILE_REVEAL_STYLES[state];
 
@@ -140,16 +88,131 @@ function getTileRevealStyle(state: LetterState): React.CSSProperties {
   } as React.CSSProperties;
 }
 
+type EmptyGuessRowProps = {
+  answerLength: number;
+};
+
+const EmptyGuessRow = memo(function EmptyGuessRow({ answerLength }: EmptyGuessRowProps) {
+  return (
+    <div className="flex gap-1">
+      {Array.from({ length: answerLength }).map((_, cellIndex) => (
+        <div
+          key={`empty-cell-${cellIndex}`}
+          className={cn(TILE_BASE({ state: "empty" }), "flex items-center justify-center")}
+        />
+      ))}
+    </div>
+  );
+});
+
+type RevealedGuessRowProps = {
+  answer: string;
+  answerLength: number;
+  guess: string;
+  isRevealingThisRow: boolean;
+  revealedTileCount: number;
+};
+
+const RevealedGuessRow = memo(function RevealedGuessRow({
+  answer,
+  answerLength,
+  guess,
+  isRevealingThisRow,
+  revealedTileCount,
+}: RevealedGuessRowProps) {
+  const states = evaluateGuess(answer, guess);
+
+  return (
+    <div className="flex gap-1">
+      {Array.from({ length: answerLength }).map((_, cellIndex) => {
+        const isTileRevealed = !isRevealingThisRow || cellIndex < revealedTileCount;
+        const isAnimatingTile =
+          isRevealingThisRow && revealedTileCount > 0 && cellIndex === revealedTileCount - 1;
+        const tileState = isTileRevealed ? states[cellIndex] : undefined;
+
+        return (
+          <div
+            key={`revealed-cell-${cellIndex}`}
+            className={cn(
+              TILE_BASE({ state: tileState ?? "empty" }),
+              "flex items-center justify-center",
+              isAnimatingTile && "tile-reveal",
+            )}
+            style={isAnimatingTile ? getTileRevealStyle(states[cellIndex]) : undefined}
+          >
+            {guess[cellIndex]?.trim() ?? ""}
+          </div>
+        );
+      })}
+    </div>
+  );
+});
+
+type CurrentGuessRowProps = {
+  answerLength: number;
+  currentGuess: string;
+  isShaking: boolean;
+  isValidationPending: boolean;
+  onCellChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onCellFocus: () => void;
+  onCellKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  cellRefs: React.MutableRefObject<Array<HTMLInputElement | null>>;
+};
+
+const CurrentGuessRow = memo(function CurrentGuessRow({
+  answerLength,
+  currentGuess,
+  isShaking,
+  isValidationPending,
+  onCellChange,
+  onCellFocus,
+  onCellKeyDown,
+  cellRefs,
+}: CurrentGuessRowProps) {
+  return (
+    <div
+      className={cn(
+        "flex gap-1 transition-opacity",
+        isShaking && "row-shake",
+        isValidationPending && "opacity-60",
+      )}
+    >
+      {Array.from({ length: answerLength }).map((_, cellIndex) => (
+        <input
+          key={`current-cell-${cellIndex}`}
+          ref={(el) => {
+            cellRefs.current[cellIndex] = el;
+          }}
+          aria-label={`Letter ${cellIndex + 1}`}
+          autoCapitalize="characters"
+          autoComplete="off"
+          className={cn(
+            TILE_BASE({ state: "empty" }),
+            "text-center outline-none caret-transparent",
+          )}
+          inputMode="text"
+          maxLength={1}
+          type="text"
+          value={currentGuess[cellIndex] ?? ""}
+          onChange={onCellChange}
+          onFocus={onCellFocus}
+          onKeyDown={onCellKeyDown}
+        />
+      ))}
+    </div>
+  );
+});
+
 export default function RealiTeaRoute() {
   const initialData = useLoaderData<typeof loader>() as PuzzleEnvelope;
   const [puzzleKey, setPuzzleKey] = useState(() => initialData.puzzle.puzzleKey);
   const [puzzle, setPuzzle] = useState<StoredPuzzle>(() => initialData.puzzle);
   const answerLength = puzzle.answer.length;
   const dailyPuzzleFetcher = useFetcher<PuzzleEnvelope>();
+  const { gameState: GameState, saveGameState } = useGameState(puzzleKey);
 
-  const [guesses, setGuesses] = useState<string[]>([]);
+  const guesses = GameState?.guesses ?? [];
   const [currentGuess, setCurrentGuess] = useState("");
-  const [hydratedPuzzleKey, setHydratedPuzzleKey] = useState<string | null>(null);
   const [showInstructions, setShowInstructions] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isShaking, setIsShaking] = useState(false);
@@ -165,7 +228,10 @@ export default function RealiTeaRoute() {
 
   const cellRefs = useRef<Array<HTMLInputElement | null>>([]);
 
-  const keyboardState = useMemo(() => getKeyboardState(puzzle.answer, guesses), [guesses, puzzle.answer]);
+  const keyboardState = useMemo(
+    () => getKeyboardState(puzzle.answer, guesses),
+    [guesses, puzzle.answer],
+  );
   const hasSolvedGuess = guesses.at(-1) === puzzle.answer;
   const isSolved = !isRevealingRow && hasSolvedGuess;
   const isGameOver = !isRevealingRow && (hasSolvedGuess || guesses.length >= MAX_GUESSES);
@@ -183,6 +249,12 @@ export default function RealiTeaRoute() {
   }, [dailyPuzzleFetcher.data]);
 
   useEffect(() => {
+    setCurrentGuess("");
+    setRevealingGuessIndex(null);
+    setRevealedTileCount(0);
+  }, [puzzleKey]);
+
+  useEffect(() => {
     if (isGameOver || isRevealingRow) return;
     const idx = Math.min(currentGuess.length, answerLength - 1);
     cellRefs.current[idx]?.focus();
@@ -197,8 +269,6 @@ export default function RealiTeaRoute() {
         return;
       }
 
-      setPuzzleKey(nextKey);
-      setPuzzle(buildStaticPuzzleEnvelope(now).puzzle);
       dailyPuzzleFetcher.load(`/api/games/realitea/daily?date=${getDateKey(now)}`);
     }
 
@@ -209,27 +279,6 @@ export default function RealiTeaRoute() {
       document.removeEventListener("visibilitychange", sync);
     };
   }, [dailyPuzzleFetcher, puzzleKey]);
-
-  useEffect(() => {
-    const saved = readPersistedGameState(puzzleKey);
-    setCurrentGuess("");
-    setGuesses(saved?.guesses ?? []);
-    setHydratedPuzzleKey(puzzleKey);
-    setRevealingGuessIndex(null);
-    setRevealedTileCount(0);
-  }, [answerLength, puzzleKey]);
-
-  useEffect(() => {
-    if (hydratedPuzzleKey !== puzzleKey) return;
-    window.localStorage.setItem(
-      getStorageKey(puzzleKey),
-      JSON.stringify({
-        puzzleKey,
-        guesses,
-        status: isSolved ? "solved" : guesses.length >= MAX_GUESSES ? "failed" : "playing",
-      } satisfies PersistedGameState),
-    );
-  }, [guesses, hydratedPuzzleKey, isSolved, puzzleKey]);
 
   const addLetter = useCallback(
     (value: string) => {
@@ -304,16 +353,32 @@ export default function RealiTeaRoute() {
     const guess = pendingGuessRef.current;
     pendingGuessRef.current = null;
     if (wordValidator.data.valid) {
-      setGuesses((prev) => {
-        setRevealingGuessIndex(prev.length);
-        setRevealedTileCount(0);
-        return [...prev, guess];
+      const nextGuesses = [...guesses, guess];
+      setRevealingGuessIndex(guesses.length);
+      setRevealedTileCount(0);
+      saveGameState({
+        puzzleKey,
+        guesses: nextGuesses,
+        status:
+          guess === puzzle.answer
+            ? "solved"
+            : nextGuesses.length >= MAX_GUESSES
+              ? "failed"
+              : "playing",
       });
       setCurrentGuess("");
     } else {
       showError("Not in word list");
     }
-  }, [wordValidator.state, wordValidator.data, showError]);
+  }, [
+    guesses,
+    puzzle.answer,
+    puzzleKey,
+    saveGameState,
+    showError,
+    wordValidator.data,
+    wordValidator.state,
+  ]);
 
   useEffect(() => {
     if (revealingGuessIndex === null) return;
@@ -483,69 +548,38 @@ export default function RealiTeaRoute() {
             {Array.from({ length: MAX_GUESSES }).map((_, rowIndex) => {
               const isCurrentRow = rowIndex === guesses.length && !isGameOver && !isRevealingRow;
               const guess = guesses[rowIndex] ?? "";
-              const states = guess ? evaluateGuess(puzzle.answer, guess) : [];
               const isRevealingThisRow = rowIndex === revealingGuessIndex;
 
-              return (
-                <div
-                  key={`row-${rowIndex}`}
-                  className={cn(
-                    "flex gap-1 transition-opacity",
-                    isCurrentRow && isShaking && "row-shake",
-                    isCurrentRow && isValidationPending && "opacity-60",
-                  )}
-                >
-                  {Array.from({ length: answerLength }).map((_, cellIndex) => {
-                    if (isCurrentRow) {
-                      return (
-                        <input
-                          key={`cell-${rowIndex}-${cellIndex}`}
-                          ref={(el) => {
-                            cellRefs.current[cellIndex] = el;
-                          }}
-                          aria-label={`Letter ${cellIndex + 1}`}
-                          autoCapitalize="characters"
-                          autoComplete="off"
-                          className={cn(
-                            TILE_BASE,
-                            "text-center outline-none caret-transparent",
-                            EMPTY_TILE,
-                          )}
-                          inputMode="text"
-                          maxLength={1}
-                          type="text"
-                          value={currentGuess[cellIndex] ?? ""}
-                          onChange={handleCellChange}
-                          onFocus={redirectToActiveCell}
-                          onKeyDown={handleCellKeyDown}
-                        />
-                      );
-                    }
+              if (rowIndex < guesses.length) {
+                return (
+                  <RevealedGuessRow
+                    key={`row-${rowIndex}`}
+                    answer={puzzle.answer}
+                    answerLength={answerLength}
+                    guess={guess}
+                    isRevealingThisRow={isRevealingThisRow}
+                    revealedTileCount={revealedTileCount}
+                  />
+                );
+              }
 
-                    const isTileRevealed = !isRevealingThisRow || cellIndex < revealedTileCount;
-                    const isAnimatingTile =
-                      isRevealingThisRow &&
-                      revealedTileCount > 0 &&
-                      cellIndex === revealedTileCount - 1;
-                    const tileState = isTileRevealed ? states[cellIndex] : undefined;
+              if (isCurrentRow) {
+                return (
+                  <CurrentGuessRow
+                    key={`row-${rowIndex}`}
+                    answerLength={answerLength}
+                    cellRefs={cellRefs}
+                    currentGuess={currentGuess}
+                    isShaking={isShaking}
+                    isValidationPending={isValidationPending}
+                    onCellChange={handleCellChange}
+                    onCellFocus={redirectToActiveCell}
+                    onCellKeyDown={handleCellKeyDown}
+                  />
+                );
+              }
 
-                    return (
-                      <div
-                        key={`cell-${rowIndex}-${cellIndex}`}
-                        className={cn(
-                          TILE_BASE,
-                          "flex items-center justify-center",
-                          getTileClasses(tileState),
-                          isAnimatingTile && "tile-reveal",
-                        )}
-                        style={isAnimatingTile ? getTileRevealStyle(states[cellIndex]) : undefined}
-                      >
-                        {guess[cellIndex]?.trim() ?? ""}
-                      </div>
-                    );
-                  })}
-                </div>
-              );
+              return <EmptyGuessRow key={`row-${rowIndex}`} answerLength={answerLength} />;
             })}
           </div>
 

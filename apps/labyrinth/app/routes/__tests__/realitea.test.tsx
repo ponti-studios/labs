@@ -1,16 +1,13 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createRoutesStub } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { createMemoryStorage } from "@pontistudios/ui";
+import { getPuzzleKeyForDate, MAX_GUESSES, normalizeGuess, type Puzzle } from "../../lib/realitea";
 import type { PuzzleEnvelope, StoredPuzzle } from "../../lib/realitea-daily-puzzle";
-import {
-  getPuzzleForDate,
-  getPuzzleKeyForDate,
-  MAX_GUESSES,
-  normalizeGuess,
-  RHOBH_PUZZLES,
-} from "../../lib/realitea";
+import { readGameState } from "../games/game-state";
 import RealiTeaRoute from "../games/realitea";
 import { createControlledRouteAction } from "./controlled-route-action";
 
@@ -21,10 +18,32 @@ const validationControl = createControlledRouteAction<string, { valid: boolean }
   },
 });
 
+const DEFAULT_ROUTE_PUZZLE: Puzzle = {
+  answer: "ERIKA",
+  answerType: "person",
+  clue: "The Pretty Mess performer never misses a sharp confessional.",
+  detail:
+    "Erika Jayne keeps the glam, the one-liners, and the pop-star energy turned all the way up.",
+  newsMode: "current",
+  role: "Pop diva energy",
+};
+
+const STALE_ROUTE_PUZZLE: Puzzle = {
+  answer: "KYLE",
+  answerType: "person",
+  clue: "OG diamond holder navigating a high-profile separation storyline.",
+  detail:
+    "Kyle Richards remains the show's center of gravity and one of the most recognizable names in Beverly Hills.",
+  newsMode: "current",
+  role: "Original cast anchor",
+};
+
+const ALTERNATE_VALID_GUESSES = ["DORIT", "SUTTON", "KATHY"];
+
 function buildPuzzleEnvelope(
-  puzzle = getPuzzleForDate(new Date("2026-05-20T12:00:00.000Z")),
+  puzzle = DEFAULT_ROUTE_PUZZLE,
   date = new Date("2026-05-20T12:00:00.000Z"),
-  source: StoredPuzzle["source"] = "static",
+  source: StoredPuzzle["source"] = "database",
 ): PuzzleEnvelope {
   return {
     puzzle: {
@@ -38,27 +57,40 @@ function buildPuzzleEnvelope(
 let routePuzzle = buildPuzzleEnvelope();
 let dailyPuzzle = buildPuzzleEnvelope();
 
-const RoutesStub = createRoutesStub([
-  {
-    id: "routes/games/realitea",
-    path: "/",
-    Component: RealiTeaRoute,
-    loader: () => routePuzzle,
-  },
-  {
-    id: "routes/api.games.realitea.daily",
-    path: "/api/games/realitea/daily",
-    loader: () => dailyPuzzle,
-  },
-  {
-    id: "routes/api.words.validate",
-    path: "/api/words/validate",
-    action: validationControl.action,
-  },
-]);
-
 async function renderRoute() {
   const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchOnWindowFocus: false,
+        retry: false,
+      },
+    },
+  });
+  const RoutesStub = createRoutesStub([
+    {
+      id: "routes/games/realitea",
+      path: "/",
+      Component: function QueryWrappedRealiTeaRoute() {
+        return (
+          <QueryClientProvider client={queryClient}>
+            <RealiTeaRoute />
+          </QueryClientProvider>
+        );
+      },
+      loader: () => routePuzzle,
+    },
+    {
+      id: "routes/api.games.realitea.daily",
+      path: "/api/games/realitea/daily",
+      loader: () => dailyPuzzle,
+    },
+    {
+      id: "routes/api.words.validate",
+      path: "/api/words/validate",
+      action: validationControl.action,
+    },
+  ]);
   const rendered = render(<RoutesStub initialEntries={["/"]} />);
 
   await screen.findByRole("button", { name: /how to play/i });
@@ -73,31 +105,6 @@ async function renderRoute() {
   return {
     user,
     ...rendered,
-  };
-}
-
-function createMemoryStorage(): Storage {
-  const store = new Map<string, string>();
-
-  return {
-    get length() {
-      return store.size;
-    },
-    clear() {
-      store.clear();
-    },
-    getItem(key) {
-      return store.get(key) ?? null;
-    },
-    key(index) {
-      return Array.from(store.keys())[index] ?? null;
-    },
-    removeItem(key) {
-      store.delete(key);
-    },
-    setItem(key, value) {
-      store.set(key, value);
-    },
   };
 }
 
@@ -136,13 +143,13 @@ function getTextboxValues() {
 }
 
 function getCurrentPuzzle() {
-  return getPuzzleForDate(new Date("2026-05-20T12:00:00.000Z"));
+  return DEFAULT_ROUTE_PUZZLE;
 }
 
 function setRoutePuzzle(
   puzzle = getCurrentPuzzle(),
   date = new Date("2026-05-20T12:00:00.000Z"),
-  source: StoredPuzzle["source"] = "static",
+  source: StoredPuzzle["source"] = "database",
 ) {
   routePuzzle = buildPuzzleEnvelope(puzzle, date, source);
 }
@@ -150,21 +157,21 @@ function setRoutePuzzle(
 function setDailyPuzzle(
   puzzle = getCurrentPuzzle(),
   date = new Date("2026-05-20T12:00:00.000Z"),
-  source: StoredPuzzle["source"] = "static",
+  source: StoredPuzzle["source"] = "database",
 ) {
   dailyPuzzle = buildPuzzleEnvelope(puzzle, date, source);
 }
 
 function getAlternateValidGuess(answer: string) {
-  const match = RHOBH_PUZZLES.find(
-    (puzzle) => puzzle.answer.length === answer.length && puzzle.answer !== answer,
+  const match = ALTERNATE_VALID_GUESSES.find(
+    (guess) => guess.length === answer.length && guess !== answer,
   );
 
   if (!match) {
-    throw new Error(`No alternate RHOBH answer found for ${answer.length}-letter puzzle`);
+    throw new Error(`No alternate test guess found for ${answer.length}-letter puzzle`);
   }
 
-  return match.answer;
+  return match;
 }
 
 function seedSolvedGame(puzzle = getCurrentPuzzle()) {
@@ -214,9 +221,8 @@ describe("RealiTeaRoute", () => {
 
   it("restores saved progress for the same puzzle key after reload", async () => {
     const date = new Date("2026-05-20T12:00:00.000Z");
-    const puzzle = getPuzzleForDate(date);
+    const puzzle = getCurrentPuzzle();
     const puzzleKey = getPuzzleKeyForDate(date);
-    const storageKey = `labyrinth:realitea:${puzzleKey}`;
     const { unmount, user } = await renderRoute();
 
     await enterGuess(user, puzzle.answer);
@@ -235,13 +241,15 @@ describe("RealiTeaRoute", () => {
     unmount();
     await renderRoute();
 
-    expect(screen.getByText("Today's answer")).toBeInTheDocument();
-    expect(screen.getByText(puzzle.answer)).toBeInTheDocument();
-    expect(screen.getByText(puzzle.detail)).toBeInTheDocument();
-    expect(JSON.parse(window.localStorage.getItem(storageKey) ?? "{}")).toMatchObject({
-      puzzleKey,
-      guesses: [puzzle.answer],
-      status: "solved",
+    await waitFor(() => {
+      expect(screen.getByText("Today's answer")).toBeInTheDocument();
+      expect(screen.getByText(puzzle.answer)).toBeInTheDocument();
+      expect(screen.getByText(puzzle.detail)).toBeInTheDocument();
+      expect(readGameState(puzzleKey)).toMatchObject({
+        puzzleKey,
+        guesses: [puzzle.answer],
+        status: "solved",
+      });
     });
   });
 
@@ -252,7 +260,7 @@ describe("RealiTeaRoute", () => {
         answerType: "place",
         clue: "A pink mansion with a legendary RHOBH footprint.",
         detail: "Lisa Vanderpump's home became one of the franchise's most recognizable settings.",
-        newsMode: "archive",
+        newsMode: "current",
         role: "Iconic location",
       },
       new Date("2026-05-20T12:00:00.000Z"),
@@ -266,7 +274,7 @@ describe("RealiTeaRoute", () => {
 
   it("discards stale saved progress for a different puzzle key", async () => {
     const staleDate = new Date("2026-05-19T12:00:00.000Z");
-    const stalePuzzle = getPuzzleForDate(staleDate);
+    const stalePuzzle = STALE_ROUTE_PUZZLE;
     const stalePuzzleKey = getPuzzleKeyForDate(staleDate);
 
     window.localStorage.setItem(
@@ -280,20 +288,19 @@ describe("RealiTeaRoute", () => {
 
     await renderRoute();
 
-    expect(getTextboxes()).toHaveLength(getPuzzleForDate(new Date()).answer.length);
+    expect(getTextboxes()).toHaveLength(getCurrentPuzzle().answer.length);
     expect(screen.queryByText(stalePuzzle.answer)).not.toBeInTheDocument();
   });
 
-  it("rotates to a new puzzle when the utc day changes", async () => {
-    const firstDate = new Date("2026-05-20T12:00:00.000Z");
+  it("rotates to a new puzzle when the local day changes", async () => {
     const secondDate = new Date("2026-05-21T12:00:00.000Z");
-    const firstPuzzle = getPuzzleForDate(firstDate);
-    const secondPuzzle = {
+    const firstPuzzle = getCurrentPuzzle();
+    const secondPuzzle: Puzzle = {
       answer: "PUPPYGATE",
-      answerType: "storyline" as const,
+      answerType: "storyline",
       clue: "A rescue-dog scandal that turned into one of RHOBH's defining feuds.",
       detail: "The fallout consumed the season and permanently shifted friendships.",
-      newsMode: "archive" as const,
+      newsMode: "current",
       role: "Infamous scandal",
     };
     setDailyPuzzle(secondPuzzle, secondDate, "database");
@@ -314,20 +321,76 @@ describe("RealiTeaRoute", () => {
       vi.advanceTimersByTime(60_000);
     });
 
-    expect(screen.queryByText(firstPuzzle.answer)).not.toBeInTheDocument();
     await waitFor(() => {
+      expect(screen.queryByText(firstPuzzle.answer)).not.toBeInTheDocument();
       expect(getTextboxes()).toHaveLength(secondPuzzle.answer.length);
     });
   });
 
-  it("keeps the static fallback when no stored puzzle exists for the day", async () => {
-    const puzzle = getCurrentPuzzle();
+  it("keeps the current puzzle visible if the next day is missing from the database", async () => {
+    const firstDate = new Date("2026-05-20T12:00:00.000Z");
+    const secondDate = new Date("2026-05-21T12:00:00.000Z");
+    const firstPuzzle: Puzzle = {
+      answer: "PUPPYGATE",
+      answerType: "storyline",
+      clue: "A rescue-dog scandal that turned into one of RHOBH's defining feuds.",
+      detail: "The fallout consumed the season and permanently shifted friendships.",
+      newsMode: "current",
+      role: "Infamous scandal",
+    };
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          refetchOnWindowFocus: false,
+          retry: false,
+        },
+      },
+    });
 
-    setRoutePuzzle(puzzle, new Date("2026-05-20T12:00:00.000Z"), "static");
-    setDailyPuzzle(puzzle, new Date("2026-05-20T12:00:00.000Z"), "static");
-    await renderRoute();
+    const RoutesWithoutNextDay = createRoutesStub([
+      {
+        id: "routes/games/realitea",
+        path: "/",
+        Component: function QueryWrappedRealiTeaRoute() {
+          return (
+            <QueryClientProvider client={queryClient}>
+              <RealiTeaRoute />
+            </QueryClientProvider>
+          );
+        },
+        loader: () => buildPuzzleEnvelope(firstPuzzle, firstDate, "database"),
+      },
+      {
+        id: "routes/api.games.realitea.daily",
+        path: "/api/games/realitea/daily",
+        loader: () => new Response(JSON.stringify({ error: "missing" }), { status: 404 }),
+      },
+      {
+        id: "routes/api.words.validate",
+        path: "/api/words/validate",
+        action: validationControl.action,
+      },
+    ]);
 
-    expect(getTextboxes()).toHaveLength(puzzle.answer.length);
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    render(<RoutesWithoutNextDay initialEntries={["/"]} />);
+    await screen.findByRole("button", { name: /how to play/i });
+    await waitFor(() => {
+      expect(getTextboxes()).toHaveLength(firstPuzzle.answer.length);
+    });
+
+    await enterGuess(user, "PUP");
+    expect(getTextboxValues().slice(0, 3)).toEqual(["P", "U", "P"]);
+
+    act(() => {
+      vi.setSystemTime(secondDate);
+      vi.advanceTimersByTime(60_000);
+    });
+
+    await waitFor(() => {
+      expect(getTextboxes()).toHaveLength(firstPuzzle.answer.length);
+      expect(getTextboxValues().slice(0, 3)).toEqual(["P", "U", "P"]);
+    });
   });
 
   it("shows an error when the guess is too short", async () => {

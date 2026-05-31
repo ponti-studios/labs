@@ -3,12 +3,12 @@ import { getDb } from "@pontistudios/db";
 export const db = await getDb();
 
 export type {
-  NewPlaygroundEmbedding,
-  NewPlaygroundRhobhDailyPuzzle,
-  NewPlaygroundTflCamera,
-  NewPlaygroundTodo,
-  PlaygroundEmbedding,
-  PlaygroundRhobhDailyPuzzle,
-  PlaygroundTflCamera,
-  PlaygroundTodo,
+  Embedding,
+  NewEmbedding,
+  NewRhobhDailyPuzzle,
+  NewTflCamera,
+  NewTodo,
+  RhobhDailyPuzzle,
+  TflCamera,
+  Todo,
 } from "@pontistudios/db";

@@ -1,7 +1,6 @@
 import { useState, type ChangeEvent, type JSX } from "react";
 import { Button, Input } from "@pontistudios/ui";
 
-
 type CharacterCounts = Record<string, number>;
 
 interface Point {
@@ -90,7 +89,7 @@ function testGraph(input: Segment[]): boolean {
 /**
  * Daily Mail Take-Home Challenge
  *
- * Task: Solve a series of algorithmic and logic problems including character mapping 
+ * Task: Solve a series of algorithmic and logic problems including character mapping
  * and graphing/closure challenges, and visualize the results.
  */
 export default function DailyMail(): JSX.Element {
@@ -158,29 +157,22 @@ export default function DailyMail(): JSX.Element {
       <h2>Daily Mail - Challenges</h2>
       <p>Coding challenges from Daily Mail interview.</p>
 
-      <div
-        className="grid grid-cols-2 gap-8 mt-4"
-      >
+      <div className="grid grid-cols-2 gap-8 mt-4">
         <div>
           <h3>Character Map</h3>
-          <p className="text-[0.9rem] text-[#666]">
-            Count occurrences of each letter in a string.
-          </p>
+          <p className="text-[0.9rem] text-[#666]">Count occurrences of each letter in a string.</p>
           <Input
             type="text"
             value={charInput}
             onChange={handleCharInputChange}
-            placeholder="Enter text" />
+            placeholder="Enter text"
+          />
           <Button className="btn btn-primary" onClick={runCharMap}>
             Run
           </Button>
           {charResult && (
-            <div
-              className="mt-2 p-3 bg-[#f0f0f0] rounded-[4px]"
-            >
-              <pre className="m-0 text-[0.85rem]">
-                {JSON.stringify(charResult, null, 2)}
-              </pre>
+            <div className="mt-2 p-3 bg-[#f0f0f0] rounded-[4px]">
+              <pre className="m-0 text-[0.85rem]">{JSON.stringify(charResult, null, 2)}</pre>
             </div>
           )}
         </div>
@@ -195,9 +187,7 @@ export default function DailyMail(): JSX.Element {
             Run f()()()()("a")
           </Button>
           {fResult !== null && (
-            <div
-              className="mt-2 p-3 bg-[#f0f0f0] rounded-[4px]"
-            >
+            <div className="mt-2 p-3 bg-[#f0f0f0] rounded-[4px]">
               <p className="m-0">
                 <strong>Result:</strong> <code>{fResult}</code>
               </p>
@@ -214,9 +204,7 @@ export default function DailyMail(): JSX.Element {
             Test
           </Button>
           {graphResult !== null && (
-            <div
-              className="mt-2 p-3 bg-[#f0f0f0] rounded-[4px]"
-            >
+            <div className="mt-2 p-3 bg-[#f0f0f0] rounded-[4px]">
               <p className="my-1">
                 <strong>Connected graph:</strong> {graphResult.connected ? "true" : "false"}
               </p>

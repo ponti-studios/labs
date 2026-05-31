@@ -1,4 +1,5 @@
-import { GoogleGenAI } from "@google/genai";
+import { chat, createOpenRouterTextAdapter, transcribeAudio } from "@pontistudios/ai";
+import { z } from "zod";
 
 interface VoiceRequest {
   audioBase64: string;
@@ -17,7 +18,7 @@ export async function action({ request }: { request: Request }) {
     return Response.json({ error: "Method not allowed" }, { status: 405 });
   }
 
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) {
     return Response.json({ error: "AI service not configured" }, { status: 503 });
   }
@@ -26,31 +27,29 @@ export async function action({ request }: { request: Request }) {
     const body = (await request.json()) as VoiceRequest;
     const { audioBase64, mimeType, existingTags } = body;
 
-    const ai = new GoogleGenAI({ apiKey });
-    const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
-      contents: [
+    const transcript = await transcribeAudio(audioBase64, mimeType, { apiKey });
+    const result = await chat({
+      adapter: createOpenRouterTextAdapter({ apiKey }),
+      stream: false,
+      messages: [
         {
-          parts: [
-            {
-              text: `You are a task extraction assistant. Listen to this audio and extract a task description.
-Return JSON with: title (string), estimatedMinutes (number), tags (array of strings from: ${existingTags.join(", ") || "none"}).
+          role: "user",
+          content: `You are a task extraction assistant. Convert this voice transcript into a task.
+Transcript: ${transcript}
+
+Return JSON with title (string), estimatedMinutes (number), and tags (array of strings from: ${existingTags.join(", ") || "none"}).
 If no task is found, return null.`,
-            },
-            {
-              inlineData: {
-                mimeType,
-                data: audioBase64,
-              },
-            },
-          ],
         },
       ],
-      config: { responseMimeType: "application/json" },
+      outputSchema: z
+        .object({
+          title: z.string(),
+          estimatedMinutes: z.number(),
+          tags: z.array(z.string()),
+        })
+        .nullable(),
     });
 
-    const text = response.text || "null";
-    const result = JSON.parse(text) as VoiceTaskResult | null;
     return Response.json(result);
   } catch (error) {
     console.error("Voice processing failed:", error);
