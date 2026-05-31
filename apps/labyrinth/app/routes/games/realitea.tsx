@@ -1,25 +1,20 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { type LoaderFunctionArgs, useFetcher, useLoaderData } from "react-router";
+import { useFetcher, useLoaderData, type LoaderFunctionArgs } from "react-router";
+import { cva } from "class-variance-authority";
 
 import { Button, OnscreenKeyboard, type LetterState } from "@pontistudios/ui";
 import {
-  getDateKey,
-  type PuzzleEnvelope,
-  type StoredPuzzle,
-} from "~/lib/realitea-daily-puzzle";
-import {
   evaluateGuess,
   getKeyboardState,
-  getPuzzleForDate,
   getPuzzleKeyForDate,
   MAX_GUESSES,
   normalizeGuess,
 } from "~/lib/realitea";
-import { shareRealiTeaResult } from "~/lib/realitea-share";
+import { getDateKey, type PuzzleEnvelope, type StoredPuzzle } from "~/lib/realitea-daily-puzzle";
 import { loadPuzzleForDate } from "~/lib/realitea-daily-puzzle.server";
+import { shareRealiTeaResult } from "~/lib/realitea-share";
 import { cn } from "~/lib/utils";
-
-const STORAGE_PREFIX = "labyrinth:realitea:";
+import { useGameState } from "./game-state";
 
 const TILE_STATE_CLASSES: Record<LetterState, string> = {
   absent: "border-border bg-muted text-muted-foreground",
@@ -27,8 +22,19 @@ const TILE_STATE_CLASSES: Record<LetterState, string> = {
   correct: "border-emerald-300 bg-emerald-100 text-emerald-950",
 };
 
-const EMPTY_TILE = "border-border bg-background text-foreground";
-const TILE_BASE = "h-12 w-12 rounded border text-lg font-bold uppercase transition-colors";
+const TILE_BASE = cva("h-12 w-12 rounded border text-lg font-bold uppercase transition-colors", {
+  variants: {
+    state: {
+      absent: TILE_STATE_CLASSES.absent,
+      correct: TILE_STATE_CLASSES.correct,
+      empty: "border-border bg-background text-foreground",
+      present: TILE_STATE_CLASSES.present,
+    },
+  },
+  defaultVariants: {
+    state: "empty",
+  },
+});
 const TILE_REVEAL_STEP_MS = 250;
 const TILE_REVEAL_STYLES: Record<
   LetterState,
@@ -51,32 +57,15 @@ const TILE_REVEAL_STYLES: Record<
   },
 };
 
-interface PersistedGameState {
-  puzzleKey: string;
-  guesses: string[];
-  status: "playing" | "solved" | "failed";
-}
-
-function buildStaticPuzzleEnvelope(date: Date): PuzzleEnvelope {
-  const puzzle = getPuzzleForDate(date);
-
-  return {
-    puzzle: {
-      ...puzzle,
-      puzzleKey: getPuzzleKeyForDate(date),
-      source: "static",
-    },
-  };
-}
-
 export async function loader(_args: LoaderFunctionArgs) {
   const date = new Date();
+  const puzzle = await loadPuzzleForDate(date);
 
-  try {
-    return Response.json(await loadPuzzleForDate(date, getPuzzleForDate(date)));
-  } catch {
-    return Response.json(buildStaticPuzzleEnvelope(date));
+  if (!puzzle) {
+    throw new Response("Today's RealiTea puzzle is not available yet.", { status: 404 });
   }
+
+  return Response.json(puzzle);
 }
 
 export function meta() {
@@ -87,47 +76,6 @@ export function meta() {
       content: "Guess today's reality TV answer from a rotating daily word game.",
     },
   ];
-}
-
-function getTileClasses(state?: LetterState) {
-  return state ? TILE_STATE_CLASSES[state] : EMPTY_TILE;
-}
-
-function buildStorageKey(prefix: string, puzzleKey: string) {
-  return `${prefix}${puzzleKey}`;
-}
-
-function getStorageKey(puzzleKey: string) {
-  return buildStorageKey(STORAGE_PREFIX, puzzleKey);
-}
-
-function parsePersistedGameState(saved: string | null, puzzleKey: string): PersistedGameState | null {
-  if (!saved) return null;
-
-  try {
-    const parsed = JSON.parse(saved) as Partial<PersistedGameState>;
-    if (
-      parsed.puzzleKey !== puzzleKey ||
-      !Array.isArray(parsed.guesses) ||
-      (parsed.status !== "playing" && parsed.status !== "solved" && parsed.status !== "failed")
-    ) {
-      return null;
-    }
-
-    return {
-      puzzleKey,
-      guesses: parsed.guesses.map((guess) => normalizeGuess(String(guess))).filter(Boolean),
-      status: parsed.status,
-    };
-  } catch {
-    return null;
-  }
-}
-
-function readPersistedGameState(puzzleKey: string): PersistedGameState | null {
-  if (typeof window === "undefined") return null;
-
-  return parsePersistedGameState(window.localStorage.getItem(getStorageKey(puzzleKey)), puzzleKey);
 }
 
 function getTileRevealStyle(state: LetterState): React.CSSProperties {
@@ -146,10 +94,10 @@ export default function RealiTeaRoute() {
   const [puzzle, setPuzzle] = useState<StoredPuzzle>(() => initialData.puzzle);
   const answerLength = puzzle.answer.length;
   const dailyPuzzleFetcher = useFetcher<PuzzleEnvelope>();
+  const { gameState: GameState, saveGameState } = useGameState(puzzleKey);
 
-  const [guesses, setGuesses] = useState<string[]>([]);
+  const guesses = GameState?.guesses ?? [];
   const [currentGuess, setCurrentGuess] = useState("");
-  const [hydratedPuzzleKey, setHydratedPuzzleKey] = useState<string | null>(null);
   const [showInstructions, setShowInstructions] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isShaking, setIsShaking] = useState(false);
@@ -165,7 +113,10 @@ export default function RealiTeaRoute() {
 
   const cellRefs = useRef<Array<HTMLInputElement | null>>([]);
 
-  const keyboardState = useMemo(() => getKeyboardState(puzzle.answer, guesses), [guesses, puzzle.answer]);
+  const keyboardState = useMemo(
+    () => getKeyboardState(puzzle.answer, guesses),
+    [guesses, puzzle.answer],
+  );
   const hasSolvedGuess = guesses.at(-1) === puzzle.answer;
   const isSolved = !isRevealingRow && hasSolvedGuess;
   const isGameOver = !isRevealingRow && (hasSolvedGuess || guesses.length >= MAX_GUESSES);
@@ -183,6 +134,12 @@ export default function RealiTeaRoute() {
   }, [dailyPuzzleFetcher.data]);
 
   useEffect(() => {
+    setCurrentGuess("");
+    setRevealingGuessIndex(null);
+    setRevealedTileCount(0);
+  }, [puzzleKey]);
+
+  useEffect(() => {
     if (isGameOver || isRevealingRow) return;
     const idx = Math.min(currentGuess.length, answerLength - 1);
     cellRefs.current[idx]?.focus();
@@ -197,8 +154,6 @@ export default function RealiTeaRoute() {
         return;
       }
 
-      setPuzzleKey(nextKey);
-      setPuzzle(buildStaticPuzzleEnvelope(now).puzzle);
       dailyPuzzleFetcher.load(`/api/games/realitea/daily?date=${getDateKey(now)}`);
     }
 
@@ -209,27 +164,6 @@ export default function RealiTeaRoute() {
       document.removeEventListener("visibilitychange", sync);
     };
   }, [dailyPuzzleFetcher, puzzleKey]);
-
-  useEffect(() => {
-    const saved = readPersistedGameState(puzzleKey);
-    setCurrentGuess("");
-    setGuesses(saved?.guesses ?? []);
-    setHydratedPuzzleKey(puzzleKey);
-    setRevealingGuessIndex(null);
-    setRevealedTileCount(0);
-  }, [answerLength, puzzleKey]);
-
-  useEffect(() => {
-    if (hydratedPuzzleKey !== puzzleKey) return;
-    window.localStorage.setItem(
-      getStorageKey(puzzleKey),
-      JSON.stringify({
-        puzzleKey,
-        guesses,
-        status: isSolved ? "solved" : guesses.length >= MAX_GUESSES ? "failed" : "playing",
-      } satisfies PersistedGameState),
-    );
-  }, [guesses, hydratedPuzzleKey, isSolved, puzzleKey]);
 
   const addLetter = useCallback(
     (value: string) => {
@@ -304,16 +238,32 @@ export default function RealiTeaRoute() {
     const guess = pendingGuessRef.current;
     pendingGuessRef.current = null;
     if (wordValidator.data.valid) {
-      setGuesses((prev) => {
-        setRevealingGuessIndex(prev.length);
-        setRevealedTileCount(0);
-        return [...prev, guess];
+      const nextGuesses = [...guesses, guess];
+      setRevealingGuessIndex(guesses.length);
+      setRevealedTileCount(0);
+      saveGameState({
+        puzzleKey,
+        guesses: nextGuesses,
+        status:
+          guess === puzzle.answer
+            ? "solved"
+            : nextGuesses.length >= MAX_GUESSES
+              ? "failed"
+              : "playing",
       });
       setCurrentGuess("");
     } else {
       showError("Not in word list");
     }
-  }, [wordValidator.state, wordValidator.data, showError]);
+  }, [
+    guesses,
+    puzzle.answer,
+    puzzleKey,
+    saveGameState,
+    showError,
+    wordValidator.data,
+    wordValidator.state,
+  ]);
 
   useEffect(() => {
     if (revealingGuessIndex === null) return;
@@ -507,9 +457,8 @@ export default function RealiTeaRoute() {
                           autoCapitalize="characters"
                           autoComplete="off"
                           className={cn(
-                            TILE_BASE,
+                            TILE_BASE({ state: "empty" }),
                             "text-center outline-none caret-transparent",
-                            EMPTY_TILE,
                           )}
                           inputMode="text"
                           maxLength={1}
@@ -533,9 +482,8 @@ export default function RealiTeaRoute() {
                       <div
                         key={`cell-${rowIndex}-${cellIndex}`}
                         className={cn(
-                          TILE_BASE,
+                          TILE_BASE({ state: tileState ?? "empty" }),
                           "flex items-center justify-center",
-                          getTileClasses(tileState),
                           isAnimatingTile && "tile-reveal",
                         )}
                         style={isAnimatingTile ? getTileRevealStyle(states[cellIndex]) : undefined}

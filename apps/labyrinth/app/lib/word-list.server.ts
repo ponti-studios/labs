@@ -13,7 +13,6 @@ import words9 from "../data/words/9.txt?raw";
 import words10 from "../data/words/10.txt?raw";
 
 import { getStoredAnswersForValidation } from "./realitea-daily-puzzle.server";
-import { RHOBH_PUZZLES } from "./realitea";
 
 const RAW_BY_LENGTH: Record<number, string> = {
   4: words4,
@@ -34,12 +33,6 @@ function getWordSet(length: number): Set<string> {
   const set: Set<string> = raw
     ? new Set(raw.split("\n").map((w) => w.trim()).filter(Boolean))
     : new Set();
-
-  // Always accept RHOBH puzzle answers regardless of whether they appear
-  // in the standard dictionary (they are proper names so they won't).
-  for (const puzzle of RHOBH_PUZZLES) {
-    if (puzzle.answer.length === length) set.add(puzzle.answer);
-  }
 
   cache.set(length, set);
   return set;

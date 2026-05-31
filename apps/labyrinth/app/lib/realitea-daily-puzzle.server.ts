@@ -22,7 +22,7 @@ import {
   type SourceItem,
   validateCandidate,
 } from "./realitea-daily-puzzle";
-import { normalizeAnswer, type Puzzle } from "./realitea";
+import { normalizeAnswer } from "./realitea";
 import { LabyrinthServerEnv } from "./server/env";
 
 interface GenerationDependencies {
@@ -30,11 +30,17 @@ interface GenerationDependencies {
 }
 
 const RHOBH_CURRENT_SOURCE_QUERIES = [
-  { domain: RHOBH_PRIMARY_SOURCE_DOMAIN, query: 'site:bravotv.com/the-daily-dish RHOBH OR "Real Housewives of Beverly Hills"' },
+  {
+    domain: RHOBH_PRIMARY_SOURCE_DOMAIN,
+    query: 'site:bravotv.com/the-daily-dish RHOBH OR "Real Housewives of Beverly Hills"',
+  },
   { domain: "people.com", query: 'site:people.com RHOBH OR "Real Housewives of Beverly Hills"' },
   { domain: "ew.com", query: 'site:ew.com RHOBH OR "Real Housewives of Beverly Hills"' },
   { domain: "eonline.com", query: 'site:eonline.com RHOBH OR "Real Housewives of Beverly Hills"' },
-  { domain: "usmagazine.com", query: 'site:usmagazine.com RHOBH OR "Real Housewives of Beverly Hills"' },
+  {
+    domain: "usmagazine.com",
+    query: 'site:usmagazine.com RHOBH OR "Real Housewives of Beverly Hills"',
+  },
 ] as const;
 const RHOBH_SOURCE_COLLECTION_MAX_ITEMS = 5;
 
@@ -43,10 +49,7 @@ const rhobhGenerationCandidateSchema = z.object({
   answerType: z
     .enum(["moment", "object", "person", "phrase", "place", "storyline"])
     .meta({ description: "The answer taxonomy." }),
-  clue: z
-    .string()
-    .min(1)
-    .meta({ description: "A non-spoiler clue for the final guess only." }),
+  clue: z.string().min(1).meta({ description: "A non-spoiler clue for the final guess only." }),
   detail: z
     .string()
     .min(1)
@@ -120,7 +123,9 @@ export async function collectCurrentSources(
             role: "user",
             content: JSON.stringify(
               {
-                allowedDomains: RHOBH_CURRENT_SOURCE_QUERIES.map((sourceQuery) => sourceQuery.domain),
+                allowedDomains: RHOBH_CURRENT_SOURCE_QUERIES.map(
+                  (sourceQuery) => sourceQuery.domain,
+                ),
                 maxItems: RHOBH_SOURCE_COLLECTION_MAX_ITEMS,
                 queries: RHOBH_CURRENT_SOURCE_QUERIES.map((sourceQuery) => sourceQuery.query),
                 todayUtc: (dependencies.now ?? new Date()).toISOString(),
@@ -142,7 +147,9 @@ export async function collectCurrentSources(
           {
             type: "openrouter:web_search",
             parameters: {
-              allowed_domains: RHOBH_CURRENT_SOURCE_QUERIES.map((sourceQuery) => sourceQuery.domain),
+              allowed_domains: RHOBH_CURRENT_SOURCE_QUERIES.map(
+                (sourceQuery) => sourceQuery.domain,
+              ),
               engine: "auto",
               max_results: 8,
               max_total_results: 20,
@@ -152,7 +159,9 @@ export async function collectCurrentSources(
           {
             type: "openrouter:web_fetch",
             parameters: {
-              allowed_domains: RHOBH_CURRENT_SOURCE_QUERIES.map((sourceQuery) => sourceQuery.domain),
+              allowed_domains: RHOBH_CURRENT_SOURCE_QUERIES.map(
+                (sourceQuery) => sourceQuery.domain,
+              ),
               engine: "openrouter",
               max_content_tokens: 4000,
               max_uses: 8,
@@ -220,8 +229,9 @@ async function generateCandidatesFromSources(
         "Prefer current RHOBH news when source support is strong. Use the curated archive pool only when fresh news is thin.",
         "Return 3 to 5 candidates inside the schema field exactly.",
         "For current candidates, every answer must be supported by at least two distinct allowed-source domains, and one of them must be bravotv.com.",
+        "For current candidates, do not use a cast member's name as the answer. Prefer the underlying storyline, object, place, phrase, or moment instead.",
         "Choose answers that normalize to only letters and stay between 4 and 10 letters after removing spaces and punctuation.",
-        "Prefer concise single-word or two-word answers like a cast name, place, object, event, or short franchise term.",
+        "Prefer concise single-word or two-word answers like a place, object, event, or short franchise term.",
         "Never leak the exact answer text in the clue or detail. Before returning, self-check that neither field contains the answer or a trivial restatement of it.",
         "If a candidate cannot satisfy all of those rules, do not include it.",
       ],
@@ -256,7 +266,7 @@ async function generateCandidatesFromSources(
 
 export async function getRecentAnswers(date: Date): Promise<Set<string>> {
   const cutoff = new Date(date);
-  cutoff.setUTCDate(cutoff.getUTCDate() - RHOBH_REPEAT_WINDOW_DAYS);
+  cutoff.setDate(cutoff.getDate() - RHOBH_REPEAT_WINDOW_DAYS);
 
   const rows = await db
     .select({ normalizedAnswer: rhobhDailyPuzzles.normalizedAnswer })
@@ -299,10 +309,7 @@ export async function getAllStoredAnswers(): Promise<Set<string>> {
   return new Set(rows.map((row) => row.normalizedAnswer));
 }
 
-export async function loadPuzzleForDate(
-  date: Date,
-  fallbackPuzzle: Puzzle,
-): Promise<PuzzleEnvelope> {
+export async function loadPuzzleForDate(date: Date): Promise<PuzzleEnvelope | null> {
   const stored = await getStoredPuzzleForDate(date);
 
   if (stored) {
@@ -311,28 +318,14 @@ export async function loadPuzzleForDate(
     };
   }
 
+  const generated = await generateDailyPuzzle(date);
+
+  if (!generated) {
+    return null;
+  }
+
   return {
-    puzzle: {
-      ...fallbackPuzzle,
-      puzzleKey: mapRecordToStoredPuzzle({
-        answer: fallbackPuzzle.answer,
-        answerType: fallbackPuzzle.answerType ?? "person",
-        clue: fallbackPuzzle.clue,
-        dateUtc: getDateKey(date),
-        detail: fallbackPuzzle.detail,
-        franchise: RHOBH_FRANCHISE,
-        generationStatus: "published",
-        newsMode: fallbackPuzzle.newsMode ?? "archive",
-        normalizedAnswer: normalizeAnswer(fallbackPuzzle.answer),
-        role: fallbackPuzzle.role,
-        sourcePublishedAt: "[]",
-        sourceSummary: "[]",
-        sourceTitles: "[]",
-        sourceUrls: "[]",
-        validationStatus: "approved",
-      }).puzzleKey,
-      source: "static",
-    },
+    puzzle: mapRecordToStoredPuzzle(generated),
   };
 }
 
@@ -345,7 +338,9 @@ export async function persistPuzzle(
 
   await db
     .delete(rhobhDailyPuzzles)
-    .where(and(eq(rhobhDailyPuzzles.franchise, RHOBH_FRANCHISE), eq(rhobhDailyPuzzles.dateUtc, dateKey)));
+    .where(
+      and(eq(rhobhDailyPuzzles.franchise, RHOBH_FRANCHISE), eq(rhobhDailyPuzzles.dateUtc, dateKey)),
+    );
 
   const inserted = await db
     .insert(rhobhDailyPuzzles)
@@ -392,12 +387,10 @@ export async function generateDailyPuzzle(
   const rejectedCandidates = new Set<string>();
 
   for (let attempt = 0; attempt < 2; attempt += 1) {
-    const candidates = await generateCandidatesFromSources(
-      dateKey,
-      sources,
-      archivePool,
-      [...previousAnswers, ...rejectedCandidates],
-    );
+    const candidates = await generateCandidatesFromSources(dateKey, sources, archivePool, [
+      ...previousAnswers,
+      ...rejectedCandidates,
+    ]);
 
     if (candidates.length === 0) {
       break;
@@ -411,6 +404,14 @@ export async function generateDailyPuzzle(
       .sort((left, right) => {
         if (left.validation.valid !== right.validation.valid) {
           return left.validation.valid ? -1 : 1;
+        }
+        if (left.candidate.answerType !== right.candidate.answerType) {
+          if (left.candidate.answerType === "person") {
+            return 1;
+          }
+          if (right.candidate.answerType === "person") {
+            return -1;
+          }
         }
         return right.candidate.sourceUrls.length - left.candidate.sourceUrls.length;
       });

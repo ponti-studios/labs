@@ -2,41 +2,18 @@ import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { createMemoryStorage } from "@pontistudios/ui";
 import { DAILY_TAROT_CARDS } from "../../lib/tarot-cards";
 import {
   buildFallbackDailyReading,
   getDailyTarotStorageKey,
   getLocalDateKey,
 } from "../../lib/tarot-daily";
+import { setDailyTarotResult } from "../../lib/tarot-state";
 import type { DailyTarotResult } from "../../lib/tarot-types";
 import TarotRoute from "../tarot";
 
 const sampleCard = DAILY_TAROT_CARDS[0];
-
-function createMemoryStorage(): Storage {
-  const store = new Map<string, string>();
-
-  return {
-    get length() {
-      return store.size;
-    },
-    clear() {
-      store.clear();
-    },
-    getItem(key) {
-      return store.get(key) ?? null;
-    },
-    key(index) {
-      return Array.from(store.keys())[index] ?? null;
-    },
-    removeItem(key) {
-      store.delete(key);
-    },
-    setItem(key, value) {
-      store.set(key, value);
-    },
-  };
-}
 
 function createResult(date: string): DailyTarotResult {
   return {
@@ -108,7 +85,7 @@ describe("TarotRoute", () => {
     const dateKey = getLocalDateKey();
     const result = createResult(dateKey);
 
-    window.localStorage.setItem(getDailyTarotStorageKey(dateKey), JSON.stringify(result));
+    setDailyTarotResult(dateKey, result);
 
     const { unmount } = renderRoute();
 
@@ -130,7 +107,7 @@ describe("TarotRoute", () => {
     const firstDateKey = getLocalDateKey();
     const result = createResult(firstDateKey);
 
-    window.localStorage.setItem(getDailyTarotStorageKey(firstDateKey), JSON.stringify(result));
+    setDailyTarotResult(firstDateKey, result);
 
     renderRoute();
     await waitFor(() => {

@@ -88,7 +88,7 @@ export const RHOBH_MAX_ANSWER_LENGTH = 10;
  * UI-facing puzzle shape. That keeps source metadata and persistence details
  * out of the domain object used by the gameplay layer.
  */
-export type PuzzleSource = "database" | "static";
+export type PuzzleSource = "database";
 export type GenerationStatus = "failed" | "published";
 export type ValidationStatus = "approved" | "rejected";
 
@@ -180,6 +180,14 @@ export interface PuzzleEnvelope {
   puzzle: StoredPuzzle;
 }
 
+const PREFERRED_ANSWER_TYPES = new Set<PuzzleAnswerType>([
+  "moment",
+  "object",
+  "phrase",
+  "place",
+  "storyline",
+]);
+
 /**
  * Generated responses are constrained to a small, explicit schema so the
  * backend can reject malformed model output before it reaches storage.
@@ -200,20 +208,32 @@ const rhobhGeneratedCandidateSchema = z.object({
 
 const rhobhGeneratedCandidateListSchema = z.array(rhobhGeneratedCandidateSchema).min(3).max(5);
 
+function getLocalDayIndex(date: Date): number {
+  return Math.floor(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / 86_400_000);
+}
+
+function getLocalDateParts(value: string): [number, number, number] | null {
+  if (!RHOBH_DATE_FORMAT.test(value)) {
+    return null;
+  }
+
+  const [year, month, day] = value.split("-").map((part) => Number.parseInt(part, 10));
+  if ([year, month, day].some((part) => Number.isNaN(part))) {
+    return null;
+  }
+
+  return [year, month, day];
+}
+
 /**
  * Convert a Date into the canonical YYYY-MM-DD key used by the daily puzzle
- * pipeline.
- *
- * The key is derived from UTC, not local time.
- *
- * Example:
- *
- *   local time: 2026-05-29 23:30 -0700
- *   UTC time:   2026-05-30 06:30 Z
- *   key:        2026-05-30
+ * pipeline, based on the local calendar day.
  */
 export function getDateKey(date: Date): string {
-  return date.toISOString().slice(0, 10);
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, "0");
+  const day = `${date.getDate()}`.padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 /**
@@ -224,16 +244,18 @@ export function isDateKey(value: string): boolean {
 }
 
 /**
- * Parse a canonical date key back into a UTC midnight Date.
- *
- * This accepts only YYYY-MM-DD strings, so it stays aligned with getDateKey().
+ * Parse a canonical date key back into a local-midnight Date.
  */
 export function parseDate(value: string | null | undefined): Date | null {
   if (!value || !isDateKey(value)) {
     return null;
   }
-
-  const parsed = new Date(`${value}T00:00:00.000Z`);
+  const parts = getLocalDateParts(value);
+  if (!parts) {
+    return null;
+  }
+  const [year, month, day] = parts;
+  const parsed = new Date(year, month - 1, day);
   return Number.isNaN(parsed.getTime()) ? null : parsed;
 }
 
@@ -342,6 +364,10 @@ export function validateCandidate(
     reasons.push("answer type is missing");
   }
 
+  if (candidate.newsMode === "current" && candidate.answerType === "person") {
+    reasons.push("current candidate is too obvious; prefer a more distinctive RHOBH-specific concept");
+  }
+
   // The normalized answer is the canonical comparison form used by all rules.
   if (clueUpper.includes(normalizedAnswer) || detailUpper.includes(normalizedAnswer)) {
     reasons.push("answer is leaked in clue or detail");
@@ -417,7 +443,7 @@ export function parseGenerationResponse(text: string): GeneratedCandidate[] {
  *   otherwise, fall back to the full archive pool
  *       |
  *       v
- *   index by UTC day number
+ *   index by local calendar day number
  *
  * This makes the selection deterministic for a given date while still
  * honoring the repeat window when possible.
@@ -430,10 +456,17 @@ export function chooseArchivePuzzle(
   const eligible = archivePool.filter(
     (moment) => !previousAnswers.has(normalizeAnswer(moment.answer)),
   );
-  const pool = eligible.length > 0 ? eligible : archivePool;
-  const dayIndex = Math.floor(
-    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()) / 86_400_000,
-  );
+  const preferredEligible = eligible.filter((moment) => PREFERRED_ANSWER_TYPES.has(moment.answerType));
+  const preferredArchivePool = archivePool.filter((moment) => PREFERRED_ANSWER_TYPES.has(moment.answerType));
+  const pool =
+    preferredEligible.length > 0
+      ? preferredEligible
+      : eligible.length > 0
+        ? eligible
+        : preferredArchivePool.length > 0
+          ? preferredArchivePool
+          : archivePool;
+  const dayIndex = getLocalDayIndex(date);
   return pool[dayIndex % pool.length];
 }
 
@@ -442,7 +475,7 @@ export function chooseArchivePuzzle(
  *
  * Diagram:
  *
- *   validated candidate + date + source
+ *   validated candidate + date
  *                 |
  *                 v
  *            StoredPuzzle
@@ -453,7 +486,6 @@ export function chooseArchivePuzzle(
 export function buildStoredPuzzle(
   date: Date,
   candidate: GeneratedCandidate,
-  source: PuzzleSource,
 ): StoredPuzzle {
   return {
     answer: candidate.answer,
@@ -461,9 +493,9 @@ export function buildStoredPuzzle(
     clue: candidate.clue,
     detail: candidate.detail,
     newsMode: candidate.newsMode,
-    puzzleKey: `rhobh-${Math.floor(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()) / 86_400_000)}`,
+    puzzleKey: `rhobh-${getLocalDayIndex(date)}`,
     role: candidate.role,
-    source,
+    source: "database",
   };
 }
 
@@ -471,16 +503,19 @@ export function buildStoredPuzzle(
  * Map a database record back into the in-memory stored puzzle shape.
  *
  * This is the inverse of the storage-facing portion of buildStoredPuzzle().
- * It keeps the puzzle key stable by deriving it from the record's UTC date.
+ * It keeps the puzzle key stable by deriving it from the record's local date key.
  */
 export function mapRecordToStoredPuzzle(record: PuzzleRecord): StoredPuzzle {
+  const parts = getLocalDateParts(record.dateUtc);
+  const date =
+    parts ? new Date(parts[0], parts[1] - 1, parts[2]) : new Date(`${record.dateUtc}T12:00:00`);
   return {
     answer: record.answer,
     answerType: record.answerType,
     clue: record.clue,
     detail: record.detail,
     newsMode: record.newsMode,
-    puzzleKey: `rhobh-${Math.floor(Date.UTC(new Date(record.dateUtc).getUTCFullYear(), new Date(record.dateUtc).getUTCMonth(), new Date(record.dateUtc).getUTCDate()) / 86_400_000)}`,
+    puzzleKey: `rhobh-${getLocalDayIndex(date)}`,
     role: record.role,
     source: "database",
   };

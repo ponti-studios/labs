@@ -147,6 +147,32 @@ describe("rhobh daily puzzle helpers", () => {
     expect(result.valid).toBe(true);
   });
 
+  it("rejects current-news person answers as too obvious", () => {
+    const candidate = {
+      answer: "Dorit",
+      answerType: "person" as const,
+      clue: "A Beverly Hills diamond is dealing with friendship fallout and divorce headlines.",
+      detail: "She remains central to the post-reunion conversation and a messy financial storyline.",
+      newsMode: "current" as const,
+      rationale: "Current news test",
+      role: "Cast member",
+      sourcePublishedAt: ["2026-05-27T00:00:00.000Z", "2026-05-27T00:00:00.000Z"],
+      sourceSummary: ["Bravo summary", "People summary"],
+      sourceTitles: ["Bravo title", "People title"],
+      sourceUrls: [
+        `https://www.${RHOBH_PRIMARY_SOURCE_DOMAIN}/the-daily-dish/rhobh-dorit-story`,
+        "https://people.com/rhobh-dorit-story",
+      ],
+    };
+
+    const result = validateCandidate(candidate);
+
+    expect(result.valid).toBe(false);
+    expect(result.reasons).toContain(
+      "current candidate is too obvious; prefer a more distinctive RHOBH-specific concept",
+    );
+  });
+
   it("requires archive candidates to come from the curated archive pool", () => {
     const candidate = {
       answer: "Random Moment",
@@ -204,5 +230,38 @@ describe("rhobh daily puzzle helpers", () => {
     ]);
 
     expect(chosen.answer).not.toBe(skipped.answer);
+  });
+
+  it("prefers non-person archive answers when available", () => {
+    const chosen = chooseArchivePuzzle(new Date("2026-05-27T12:00:00.000Z"), new Set(), [
+      {
+        answer: "CAMILLE",
+        answerType: "person",
+        clue: "A person clue.",
+        detail: "A person detail.",
+        newsMode: "archive",
+        rationale: "Archive",
+        role: "Person",
+        sourcePublishedAt: [],
+        sourceSummary: [],
+        sourceTitles: [],
+        sourceUrls: [],
+      },
+      {
+        answer: "BUNNY",
+        answerType: "object",
+        clue: "An object clue.",
+        detail: "An object detail.",
+        newsMode: "archive",
+        rationale: "Archive",
+        role: "Object",
+        sourcePublishedAt: [],
+        sourceSummary: [],
+        sourceTitles: [],
+        sourceUrls: [],
+      },
+    ]);
+
+    expect(chosen.answer).toBe("BUNNY");
   });
 });
