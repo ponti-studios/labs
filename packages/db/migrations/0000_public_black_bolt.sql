@@ -1,4 +1,4 @@
-CREATE SCHEMA "labs";
+CREATE SCHEMA IF NOT EXISTS "labs";
 --> statement-breakpoint
 CREATE TABLE "labs"."covid_data" (
 	"id" serial PRIMARY KEY NOT NULL,
