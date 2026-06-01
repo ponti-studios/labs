@@ -52,7 +52,7 @@ const experimentRoutes = [
 
 const challengeRoutes = [
   route("/challenges/cards", "routes/challenges.cards.tsx"),
-  route("/challenges/chart-hop", "routes/challenges.chart-hop.tsx"),
+  route("/challenges/anagrams", "routes/challenges.anagrams.tsx"),
   route("/challenges/click-therapeutics", "routes/challenges.click-therapeutics.tsx"),
   route("/challenges/cloudmargin", "routes/challenges.cloudmargin.tsx"),
   route("/challenges/daily-mail", "routes/challenges.daily-mail.tsx"),

@@ -37,7 +37,7 @@ const routeEntries: RouteEntry[] = [
   },
 
   { path: "/challenges/cards", href: "/challenges/cards", kind: "page" },
-  { path: "/challenges/chart-hop", href: "/challenges/chart-hop", kind: "page" },
+  { path: "/challenges/anagrams", href: "/challenges/anagrams", kind: "page" },
   { path: "/challenges/click-therapeutics", href: "/challenges/click-therapeutics", kind: "page" },
   { path: "/challenges/cloudmargin", href: "/challenges/cloudmargin", kind: "page" },
   { path: "/challenges/daily-mail", href: "/challenges/daily-mail", kind: "page" },
