@@ -1,5 +1,3 @@
-CREATE SCHEMA IF NOT EXISTS labs;
-
 CREATE TABLE "labs"."disaster_events" (
 	"id" text PRIMARY KEY NOT NULL,
 	"title" text NOT NULL,
