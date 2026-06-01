@@ -1,3 +1,4 @@
+import { ParticleBackground } from "@pontistudios/ui";
 import { Link } from "react-router";
 
 type RouteEntry = {
@@ -96,46 +97,13 @@ export function meta(): Array<{
 
 export default function Home() {
   return (
-    <section className="mx-auto flex min-h-[calc(100vh-7rem)] w-full items-start justify-center">
+    <section className="relative mx-auto flex min-h-[calc(100vh-7rem)] w-full items-start justify-center">
+      <ParticleBackground />
       <div className="w-full rounded-2xl border border-border bg-background p-6 sm:p-8">
         <header className="mb-8 space-y-2 font-mono">
           <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground">Labyrinth</p>
           <h1 className="text-2xl text-foreground sm:text-3xl">Available routes</h1>
-          <p className="max-w-3xl text-sm leading-6 text-muted-foreground">
-            Start with the primary destinations below, then use the full route index for direct
-            access to everything currently configured in Labyrinth.
-          </p>
         </header>
-
-        <div className="mb-10 grid gap-4 lg:grid-cols-3">
-          {featuredEntries.map((entry) => (
-            <Link
-              key={entry.href}
-              to={entry.href}
-              className="group flex min-h-44 flex-col justify-between rounded-xl border border-border bg-muted/20 p-5 transition-colors duration-150 hover:bg-muted/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-            >
-              <div>
-                <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                  {entry.eyebrow}
-                </p>
-                <h2 className="mt-3 text-xl text-foreground">{entry.title}</h2>
-                <p className="mt-3 max-w-[32ch] text-sm leading-6 text-muted-foreground">
-                  {entry.description}
-                </p>
-              </div>
-              <span className="mt-6 text-sm text-foreground transition-colors duration-150 group-hover:text-muted-foreground">
-                Open route
-              </span>
-            </Link>
-          ))}
-        </div>
-
-        <div className="mb-4 flex items-center justify-between gap-4 border-t border-border pt-6 font-mono">
-          <h2 className="text-lg text-foreground">Full route index</h2>
-          <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-            Pages, APIs, and dynamic paths
-          </span>
-        </div>
 
         <ul className="space-y-3 font-mono text-sm text-foreground">
           {routeEntries.map((route) => (
