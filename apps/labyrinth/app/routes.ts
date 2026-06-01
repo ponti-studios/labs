@@ -2,12 +2,23 @@ import { index, route, type RouteConfig } from "@react-router/dev/routes";
 
 const homeRoutes = [index("routes/home.tsx")] satisfies RouteConfig;
 
-const labRoutes = [
-  route("/svg-glass-test", "routes/svg-glass-test.tsx"),
-  route("/infinite-header", "routes/infinite-header/infinite-header.tsx"),
-] satisfies RouteConfig;
-
 const apiRoutes = [
+  route("/api/countries/list", "routes/api.countries.list.ts"),
+  route("/api/covid", "routes/api.covid.ts"),
+  route("/api/covid/analytics/dashboard", "routes/api.covid.analytics.dashboard.ts"),
+  route(
+    "/api/covid/analytics/outlier-detection",
+    "routes/api.covid.analytics.outlier-detection.ts",
+  ),
+  route("/api/covid/analytics/pandemic-waves", "routes/api.covid.analytics.pandemic-waves.ts"),
+  route(
+    "/api/covid/analytics/seasonal-patterns",
+    "routes/api.covid.analytics.seasonal-patterns.ts",
+  ),
+  route(
+    "/api/covid/analytics/vaccination-effectiveness",
+    "routes/api.covid.analytics.vaccination-effectiveness.ts",
+  ),
   route("/api/director/generate", "routes/api.director.generate.ts"),
   route("/api/games/realitea/daily", "routes/api.games.realitea.daily.ts"),
   route("/api/games/realitea/generate", "routes/api.games.realitea.generate.ts"),
@@ -15,18 +26,16 @@ const apiRoutes = [
   route("/api/words/validate", "routes/api.words.validate.ts"),
 ] satisfies RouteConfig;
 
-const coronaRoutes = [
-  index("routes/corona.$countryCode.tsx"),
-  route("pandemic-waves", "routes/corona.$countryCode.pandemic-waves.tsx"),
-  route("vaccination-effectiveness", "routes/corona.$countryCode.vaccination-effectiveness.tsx"),
-  route("seasonal-patterns", "routes/corona.$countryCode.seasonal-patterns.tsx"),
-  route("outlier-detection", "routes/corona.$countryCode.outlier-detection.tsx"),
-] satisfies RouteConfig;
-
 const featureRoutes = [
   route("/tarot", "routes/tarot.tsx"),
-  route("/corona", "routes/corona.tsx"),
-  route("/corona/:countryCode", "routes/corona.$countryCode.layout.tsx", coronaRoutes),
+  route("/covid", "routes/covid.tsx"),
+  route("/covid/:countryCode", "routes/covid.$countryCode.layout.tsx", [
+    index("routes/covid.$countryCode.tsx"),
+    route("pandemic-waves", "routes/covid.$countryCode.pandemic-waves.tsx"),
+    route("vaccination-effectiveness", "routes/covid.$countryCode.vaccination-effectiveness.tsx"),
+    route("seasonal-patterns", "routes/covid.$countryCode.seasonal-patterns.tsx"),
+    route("outlier-detection", "routes/covid.$countryCode.outlier-detection.tsx"),
+  ]),
   route("/games/tetris", "routes/games/tetris.tsx"),
   route("/games/realitea", "routes/games/realitea.tsx"),
   route("/business-tools", "routes/business-tools/index.tsx"),
@@ -35,6 +44,8 @@ const featureRoutes = [
 
 const experimentRoutes = [
   route("/experiments", "routes/experiments.tsx"),
+  route("/experiments/svg-glass-test", "routes/svg-glass-test.tsx"),
+  route("/experiments/infinite-scroll", "routes/infinite-scroll/index.tsx"),
   route("/experiments/threegl-web-request", "routes/experiments.threegl-web-request.tsx"),
   route("/experiments/threegl-image-gallery", "routes/experiments.threegl-image-gallery.tsx"),
 ] satisfies RouteConfig;
@@ -59,7 +70,6 @@ const challengeRoutes = [
 
 export default [
   ...homeRoutes,
-  ...labRoutes,
   ...apiRoutes,
   ...featureRoutes,
   ...experimentRoutes,

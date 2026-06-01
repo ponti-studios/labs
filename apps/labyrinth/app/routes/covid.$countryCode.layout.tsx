@@ -1,7 +1,7 @@
 import { Link, Outlet, useLocation, useNavigate, useParams } from "react-router";
 import { CountryPicker } from "~/components/country-picker/country-picker";
 
-export default function CoronaCountryLayout() {
+export default function CovidCountryLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const { countryCode = "OWID_WRL" } = useParams();
@@ -9,38 +9,38 @@ export default function CoronaCountryLayout() {
   const handleCountryChange = (newCountryCode: string) => {
     const pathParts = location.pathname.split("/");
 
-    if (pathParts.length >= 3 && pathParts[1] === "corona") {
+    if (pathParts.length >= 3 && pathParts[1] === "covid") {
       pathParts[2] = newCountryCode;
       navigate(pathParts.join("/"));
       return;
     }
 
-    navigate(`/corona/${newCountryCode}`);
+    navigate(`/covid/${newCountryCode}`);
   };
 
   const navigationItems = [
     {
-      href: `/corona/${countryCode}`,
+      href: `/covid/${countryCode}`,
       icon: "📊",
       title: "Dashboard",
     },
     {
-      href: `/corona/${countryCode}/pandemic-waves`,
+      href: `/covid/${countryCode}/pandemic-waves`,
       icon: "🌊",
       title: "Pandemic Waves",
     },
     {
-      href: `/corona/${countryCode}/vaccination-effectiveness`,
+      href: `/covid/${countryCode}/vaccination-effectiveness`,
       icon: "💉",
       title: "Vaccination Impact",
     },
     {
-      href: `/corona/${countryCode}/seasonal-patterns`,
+      href: `/covid/${countryCode}/seasonal-patterns`,
       icon: "📅",
       title: "Seasonal Analysis",
     },
     {
-      href: `/corona/${countryCode}/outlier-detection`,
+      href: `/covid/${countryCode}/outlier-detection`,
       icon: "⚡",
       title: "Outlier Detection",
     },
