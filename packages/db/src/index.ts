@@ -72,8 +72,6 @@ export {
 } from "./schema";
 
 export * from "drizzle-orm";
-export { closeDb, createDb, getDb, withDb } from "./client";
-export type { Database, DbConfig } from "./client";
 export { db } from "./drizzle";
 export * from "./env";
 export { populateCovidData, populateTflCameras } from "./loaders";
