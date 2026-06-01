@@ -6,7 +6,7 @@ import { pipeline } from "node:stream/promises";
 import { parse } from "csv-parse";
 
 import { db, sql } from "../drizzle";
-import { covidData, type NewCovidData } from "../schema/playground";
+import { covidData, type NewCovidData } from "../schema/covid";
 
 export type PopulateCovidOptions = {
   csvPath?: string;
@@ -154,7 +154,7 @@ export async function populateCovidData(options: PopulateCovidOptions = {}) {
           totalDeathsPerMillion: safeParseNumber(chunk.total_deaths_per_million),
           newDeathsPerMillion: safeParseNumber(chunk.new_deaths_per_million),
           newDeathsSmoothedPerMillion: safeParseNumber(chunk.new_deaths_smoothed_per_million),
-          reproductionRate: safeParseText(chunk.reproduction_rate),
+          reproductionRate: safeParseNumber(chunk.reproduction_rate),
           icuPatients: safeParseNumber(chunk.icu_patients),
           icuPatientsPerMillion: safeParseNumber(chunk.icu_patients_per_million),
           hospPatients: safeParseNumber(chunk.hosp_patients),
@@ -165,12 +165,12 @@ export async function populateCovidData(options: PopulateCovidOptions = {}) {
           weeklyHospAdmissionsPerMillion: safeParseNumber(chunk.weekly_hosp_admissions_per_million),
           totalTests: safeParseNumber(chunk.total_tests),
           newTests: safeParseNumber(chunk.new_tests),
-          totalTestsPerThousand: safeParseText(chunk.total_tests_per_thousand),
-          newTestsPerThousand: safeParseText(chunk.new_tests_per_thousand),
+          totalTestsPerThousand: safeParseNumber(chunk.total_tests_per_thousand),
+          newTestsPerThousand: safeParseNumber(chunk.new_tests_per_thousand),
           newTestsSmoothed: safeParseNumber(chunk.new_tests_smoothed),
-          newTestsSmoothedPerThousand: safeParseText(chunk.new_tests_smoothed_per_thousand),
-          positiveRate: safeParseText(chunk.positive_rate),
-          testsPerCase: safeParseText(chunk.tests_per_case),
+          newTestsSmoothedPerThousand: safeParseNumber(chunk.new_tests_smoothed_per_thousand),
+          positiveRate: safeParseNumber(chunk.positive_rate),
+          testsPerCase: safeParseNumber(chunk.tests_per_case),
           testsUnits: chunk.tests_units || null,
           totalVaccinations: safeParseNumber(chunk.total_vaccinations),
           peopleVaccinated: safeParseNumber(chunk.people_vaccinated),
@@ -178,39 +178,39 @@ export async function populateCovidData(options: PopulateCovidOptions = {}) {
           totalBoosters: safeParseNumber(chunk.total_boosters),
           newVaccinations: safeParseNumber(chunk.new_vaccinations),
           newVaccinationsSmoothed: safeParseNumber(chunk.new_vaccinations_smoothed),
-          totalVaccinationsPerHundred: safeParseText(chunk.total_vaccinations_per_hundred),
-          peopleVaccinatedPerHundred: safeParseText(chunk.people_vaccinated_per_hundred),
-          peopleFullyVaccinatedPerHundred: safeParseText(chunk.people_fully_vaccinated_per_hundred),
-          totalBoostersPerHundred: safeParseText(chunk.total_boosters_per_hundred),
+          totalVaccinationsPerHundred: safeParseNumber(chunk.total_vaccinations_per_hundred),
+          peopleVaccinatedPerHundred: safeParseNumber(chunk.people_vaccinated_per_hundred),
+          peopleFullyVaccinatedPerHundred: safeParseNumber(chunk.people_fully_vaccinated_per_hundred),
+          totalBoostersPerHundred: safeParseNumber(chunk.total_boosters_per_hundred),
           newVaccinationsSmoothedPerMillion: safeParseNumber(
             chunk.new_vaccinations_smoothed_per_million,
           ),
           newPeopleVaccinatedSmoothed: safeParseNumber(chunk.new_people_vaccinated_smoothed),
-          newPeopleVaccinatedSmoothedPerHundred: safeParseText(
+          newPeopleVaccinatedSmoothedPerHundred: safeParseNumber(
             chunk.new_people_vaccinated_smoothed_per_hundred,
           ),
-          stringencyIndex: safeParseText(chunk.stringency_index),
-          populationDensity: safeParseText(chunk.population_density),
-          medianAge: safeParseText(chunk.median_age),
-          aged65Older: safeParseText(chunk.aged_65_older),
-          aged70Older: safeParseText(chunk.aged_70_older),
-          gdpPerCapita: safeParseText(chunk.gdp_per_capita),
-          extremePoverty: safeParseText(chunk.extreme_poverty),
-          cardiovascDeathRate: safeParseText(chunk.cardiovasc_death_rate),
-          diabetesPrevalence: safeParseText(chunk.diabetes_prevalence),
-          femaleSmokers: safeParseText(chunk.female_smokers),
-          maleSmokers: safeParseText(chunk.male_smokers),
-          handwashingFacilities: safeParseText(chunk.handwashing_facilities),
-          hospitalBedsPerThousand: safeParseText(chunk.hospital_beds_per_thousand),
-          lifeExpectancy: safeParseText(chunk.life_expectancy),
-          humanDevelopmentIndex: safeParseText(chunk.human_development_index),
+          stringencyIndex: safeParseNumber(chunk.stringency_index),
+          populationDensity: safeParseNumber(chunk.population_density),
+          medianAge: safeParseNumber(chunk.median_age),
+          aged65Older: safeParseNumber(chunk.aged_65_older),
+          aged70Older: safeParseNumber(chunk.aged_70_older),
+          gdpPerCapita: safeParseNumber(chunk.gdp_per_capita),
+          extremePoverty: safeParseNumber(chunk.extreme_poverty),
+          cardiovascDeathRate: safeParseNumber(chunk.cardiovasc_death_rate),
+          diabetesPrevalence: safeParseNumber(chunk.diabetes_prevalence),
+          femaleSmokers: safeParseNumber(chunk.female_smokers),
+          maleSmokers: safeParseNumber(chunk.male_smokers),
+          handwashingFacilities: safeParseNumber(chunk.handwashing_facilities),
+          hospitalBedsPerThousand: safeParseNumber(chunk.hospital_beds_per_thousand),
+          lifeExpectancy: safeParseNumber(chunk.life_expectancy),
+          humanDevelopmentIndex: safeParseNumber(chunk.human_development_index),
           population: safeParseNumber(chunk.population),
-          excessMortalityCumulativeAbsolute: safeParseText(
+          excessMortalityCumulativeAbsolute: safeParseNumber(
             chunk.excess_mortality_cumulative_absolute,
           ),
-          excessMortalityCumulative: safeParseText(chunk.excess_mortality_cumulative),
-          excessMortality: safeParseText(chunk.excess_mortality),
-          excessMortalityCumulativePerMillion: safeParseText(
+          excessMortalityCumulative: safeParseNumber(chunk.excess_mortality_cumulative),
+          excessMortality: safeParseNumber(chunk.excess_mortality),
+          excessMortalityCumulativePerMillion: safeParseNumber(
             chunk.excess_mortality_cumulative_per_million,
           ),
         };

@@ -1,11 +1,10 @@
 import { type RouteConfig, index, route } from "@react-router/dev/routes";
 
 export default [
-  index("routes/all-trackers.tsx"),
+  index("routes/all-cases.tsx"),
   route("/profile", "routes/profile.tsx"),
-  route("/tracker/create", "routes/tracker/create.tsx"),
-  route("/tracker/:id", "routes/tracker/[id]/page.tsx"),
-  route("/tracker/:id/vote", "routes/tracker/[id]/vote.tsx"),
+  route("/case/create", "routes/case/create.tsx"),
+  route("/case/:id", "routes/case/[id]/page.tsx"),
+  route("/case/:id/verdict", "routes/case/[id]/verdict.tsx"),
   route("/time-together", "routes/time-together.tsx"),
-  // API routes are handled by Hono server
 ] satisfies RouteConfig;

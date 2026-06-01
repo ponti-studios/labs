@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 import { db } from "../drizzle";
-import { tflCameras, type NewTflCamera } from "../schema/playground";
+import { tflCameras, type NewTflCamera } from "../schema/tfl";
 
 export interface FormattedTflCamera {
   commonName: string;
@@ -46,12 +46,12 @@ export async function populateTflCameras(options: PopulateTflOptions = {}) {
   const insertData: NewTflCamera[] = formattedCameras.map((camera) => ({
     tflId: camera.id,
     commonName: camera.commonName,
-    available: camera.available === "true" ? 1 : 0,
+    available: camera.available === "true",
     imageUrl: camera.imageUrl,
     videoUrl: camera.videoUrl,
     view: camera.view,
-    lat: String(camera.lat),
-    lng: String(camera.lng),
+    lat: Number(camera.lat),
+    lng: Number(camera.lng),
   }));
 
   const batchSize = 100;

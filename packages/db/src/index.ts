@@ -1,74 +1,20 @@
-export type { DisasterEvent, NewDisasterEvent } from "./schema/disaster";
-
+export type { CovidData, NewCovidData } from "./schema/covid";
+export type { NewRhobhDailyPuzzle, RhobhDailyPuzzle } from "./schema/puzzles";
+export type { NewTflCamera, TflCamera } from "./schema/tfl";
 export type {
-  NewRelationshipCheckin,
-  NewRelationshipEvent,
-  NewRelationshipFlag,
-  NewRelationshipInvite,
-  NewRelationshipMetricDaily,
-  NewRelationshipNote,
-  NewRelationshipPerson,
-  NewRelationshipStageHistory,
-  NewRelationshipVote,
-  RelationshipCheckin,
-  RelationshipEvent,
-  RelationshipFlag,
-  RelationshipInvite,
-  RelationshipMetricDaily,
-  RelationshipNote,
-  RelationshipPerson,
-  RelationshipPersonUpdate,
-  RelationshipStageHistory,
-  RelationshipVote,
-} from "./schema/relationships";
-
-export type {
-  CovidData,
-  Embedding,
-  NewCovidData,
-  NewEmbedding,
-  NewRhobhDailyPuzzle,
-  NewTag,
-  NewTflCamera,
-  NewTodo,
-  NewTodoTag,
-  RhobhDailyPuzzle,
-  Tag,
-  TflCamera,
-  Todo,
-  TodoTag,
-} from "./schema/playground";
-
-export type {
-  NewSocialTracker,
-  NewSocialVote,
-  SocialTracker,
-  SocialTrackerParsed,
-  SocialVote,
-} from "./schema/social";
+  NewRelationshipCase,
+  NewRelationshipVerdict,
+  RelationshipCase,
+  RelationshipCaseParsed,
+  RelationshipVerdict,
+} from "./schema/relationship-cases";
 
 export {
   covidData,
-  disasterEvents,
-  embeddings,
-  messages,
-  relationshipCheckins,
-  relationshipEvents,
-  relationshipFlags,
-  relationshipFriendInvites,
-  relationshipFriendVotes,
-  relationshipMetricsDaily,
-  relationshipNotes,
-  relationshipPeople,
-  relationshipStageHistory,
+  relationshipCases,
+  relationshipVerdicts,
   rhobhDailyPuzzles,
-  tags,
   tflCameras,
-  todos,
-  todoTags,
-  trackers,
-  users,
-  votes,
 } from "./schema";
 
 export * from "drizzle-orm";

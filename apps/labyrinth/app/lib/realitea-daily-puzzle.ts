@@ -155,10 +155,10 @@ export interface PuzzleRecord {
   newsMode: PuzzleNewsMode;
   normalizedAnswer: string;
   role: string;
-  sourcePublishedAt: string;
-  sourceSummary: string;
-  sourceTitles: string;
-  sourceUrls: string;
+  sourcePublishedAt: string[];
+  sourceSummary: string[];
+  sourceTitles: string[];
+  sourceUrls: string[];
   updatedAt?: Date | null;
   validationStatus: ValidationStatus | string;
 }
