@@ -1,7 +1,6 @@
 @import "@pontistudios/ui/styles.css";
-@import "tw-animate-css";
-@import "./components/voter/pokemon-card.css";
-@import "./components/voter/hp-bars.css";
-@import "./components/voter/pokemon-themes.css";
+@import "./components/verdict/pokemon-card.css";
+@import "./components/verdict/hp-bars.css";
+@import "./components/verdict/pokemon-themes.css";
 
 @source "../../../packages/ui/src";

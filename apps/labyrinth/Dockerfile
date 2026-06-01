@@ -11,6 +11,7 @@ WORKDIR /app
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY apps/labyrinth/package.json apps/labyrinth/package.json
+COPY packages/ai/package.json packages/ai/package.json
 COPY packages/db/package.json packages/db/package.json
 COPY packages/ui/package.json packages/ui/package.json
 COPY packages/tsconfig/package.json packages/tsconfig/package.json
@@ -22,11 +23,14 @@ FROM deps AS builder
 
 WORKDIR /app
 
+COPY tsconfig.base.json ./
 COPY packages/tsconfig/ packages/tsconfig/
+COPY packages/ai/ packages/ai/
 COPY packages/db/ packages/db/
 COPY packages/ui/ packages/ui/
 COPY apps/labyrinth/ apps/labyrinth/
 
+RUN pnpm run build --filter @pontistudios/ai
 RUN pnpm run build --filter @pontistudios/db
 RUN pnpm run build --filter @pontistudios/ui
 RUN pnpm run build --filter @pontistudios/labyrinth

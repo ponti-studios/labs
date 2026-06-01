@@ -1,39 +1,10 @@
 import { ParticleBackground } from "@pontistudios/ui";
-import { Link } from "react-router";
 
 type RouteEntry = {
   path: string;
   href?: string;
   kind: "page" | "api" | "dynamic";
 };
-
-type FeaturedEntry = {
-  title: string;
-  description: string;
-  href: string;
-  eyebrow: string;
-};
-
-const featuredEntries: FeaturedEntry[] = [
-  {
-    title: "Games & Recreation",
-    description: "Jump straight into interactive play and lightweight experiments.",
-    href: "/games/tetris",
-    eyebrow: "Featured",
-  },
-  {
-    title: "Business Tools",
-    description: "Open planning calculators for marketing and operator workflows.",
-    href: "/business-tools",
-    eyebrow: "Featured",
-  },
-  {
-    title: "RealiTea",
-    description: "Play the daily reality TV guessing game from the home screen.",
-    href: "/games/realitea",
-    eyebrow: "Daily game",
-  },
-] as const;
 
 const routeEntries: RouteEntry[] = [
   { path: "/", href: "/", kind: "page" },

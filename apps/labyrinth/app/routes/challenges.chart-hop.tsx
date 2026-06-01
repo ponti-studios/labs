@@ -1,5 +1,5 @@
-import { useState, type ChangeEvent, type JSX } from "react";
 import { Button } from "@pontistudios/ui";
+import { useState, type ChangeEvent, type JSX } from "react";
 
 type AnagramGroup = string[];
 
@@ -105,31 +105,28 @@ export default function ChartHop(): JSX.Element {
       </div>
 
       {result && (
-        <div>
-          <h4>Results:</h4>
-          <div className="flex gap-4 flex-wrap">
-            {result.map((group, groupIndex) => (
-              <div key={groupIndex} className="p-3 bg-[#f0f0f0] rounded-md min-w-[120px]">
-                <strong>Group {groupIndex + 1}:</strong>
-                <div className="flex gap-1 flex-wrap mt-1">
-                  {group.map((word, wordIndex) => (
-                    <span
-                      key={wordIndex}
-                      className="p-[0.125rem 0.375rem] bg-[white] rounded-[2px] mt-1"
-                    >
-                      {word}
-                    </span>
-                  ))}
-                </div>
+        <div className="flex gap-4 flex-wrap">
+          {result.map((group, groupIndex) => (
+            <div
+              key={groupIndex}
+              className="flex flex-col gap-2 p-3 border bg-secondary rounded min-w-30"
+            >
+              <strong>Group {groupIndex + 1}:</strong>
+              <div className="flex gap-2 flex-wrap">
+                {group.map((word, wordIndex) => (
+                  <span key={wordIndex} className="p-2 bg-[white] rounded">
+                    {word}
+                  </span>
+                ))}
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       )}
 
-      <details className="mt-4">
+      <details className="space-x-4">
         <summary className="cursor-pointer text-[#666]">About the Algorithms</summary>
-        <div className="mt-2 p-3 bg-[#fafafa] rounded-[4px] text-[0.9rem]">
+        <div className="flex flex-col gap-3 text-[0.9rem] pt-2 pl-3">
           <p>
             <strong>Sort Method:</strong> Sort each word&apos;s characters to create a key. Words
             with the same sorted key are anagrams.

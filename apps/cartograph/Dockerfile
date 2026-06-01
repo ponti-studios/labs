@@ -9,23 +9,29 @@ RUN npm install -g pnpm@10.30.3
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY apps/cartograph/package.json apps/cartograph/package.json
 COPY packages/db/package.json packages/db/package.json
+COPY packages/ui/package.json packages/ui/package.json
 COPY packages/tsconfig/package.json packages/tsconfig/package.json
 
 RUN pnpm install --frozen-lockfile --ignore-scripts
 
+# Build the apps after installing the dependencies so they dependencies can be cached
+# since they will change less frequently than application code.
 # ─── Stage 2: Build ──────────────────────────────────────────────────────────
 FROM deps AS builder
 
 WORKDIR /app
 
+COPY tsconfig.base.json ./
 COPY packages/tsconfig/ packages/tsconfig/
 COPY packages/db/ packages/db/
+COPY packages/ui/ packages/ui/
 COPY apps/cartograph/ apps/cartograph/
 
 RUN pnpm run build --filter @pontistudios/db
+RUN pnpm run build --filter @pontistudios/ui
 RUN pnpm run build --filter @pontistudios/cartograph
 
 # ─── Stage 3: Production image ───────────────────────────────────────────────
