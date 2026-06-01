@@ -21,7 +21,7 @@ export const meta: MetaFunction<typeof loader> = ({ params }) => {
   }
 
   return [
-    { title: `COVID-19 Dashboard - ${countryName} | Ponti Studios` },
+    { title: `COVID-19 - ${countryName} | Ponti Studios` },
     {
       name: "description",
       content: `Comprehensive COVID-19 analytics and statistics for ${countryName}. View cases, deaths, vaccinations, and trends over time.`,
@@ -30,7 +30,7 @@ export const meta: MetaFunction<typeof loader> = ({ params }) => {
       name: "keywords",
       content: `covid-19,coronavirus,dashboard,statistics,${countryName},analytics`,
     },
-    { property: "og:title", content: `COVID-19 Dashboard - ${countryName}` },
+    { property: "og:title", content: `COVID-19 - ${countryName}` },
     {
       property: "og:description",
       content: `Comprehensive COVID-19 analytics for ${countryName}`,
@@ -81,7 +81,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   }
 }
 
-export default function CoronaDashboardPage() {
+export default function CovidPage() {
   const { countryCode, statsData, timeSeriesData, globalComparisonData } =
     useLoaderData() as Awaited<ReturnType<typeof loader>>;
 

@@ -1,8 +1,7 @@
-import { and, desc, eq, isNotNull } from "@pontistudios/db";
+import { and, covidData, db, desc, eq, isNotNull } from "@pontistudios/db";
 import type { LoaderFunctionArgs } from "react-router";
-import { covidData, db } from "@pontistudios/db";
 
-interface DashboardSummary {
+interface Summary {
   totalCases: number;
   totalDeaths: number;
   totalVaccinations: number;
@@ -11,7 +10,7 @@ interface DashboardSummary {
   vaccinationRate: number;
 }
 
-interface DashboardMetrics {
+interface Metrics {
   newCasesDaily: number;
   newDeathsDaily: number;
   newVaccinationsDaily: number;
@@ -66,7 +65,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const latest = latestData[0];
 
     // Calculate summary metrics
-    const summary: DashboardSummary = {
+    const summary: Summary = {
       totalCases: latest.totalCases || 0,
       totalDeaths: latest.totalDeaths || 0,
       totalVaccinations: latest.totalVaccinations || 0,
@@ -82,7 +81,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     };
 
     // Get current metrics (daily values)
-    const metrics: DashboardMetrics = {
+    const metrics: Metrics = {
       newCasesDaily: toNumber(latest.newCases),
       newDeathsDaily: toNumber(latest.newDeaths),
       newVaccinationsDaily: toNumber(latest.newVaccinations),
@@ -148,7 +147,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       },
     });
   } catch (error) {
-    console.error("Error in dashboard analytics:", error);
-    return Response.json({ error: "Failed to load dashboard analytics" }, { status: 500 });
+    console.error("Error in  analytics:", error);
+    return Response.json({ error: "Failed to load  analytics" }, { status: 500 });
   }
 }

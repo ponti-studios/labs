@@ -7,7 +7,7 @@ import { TimeSeriesChart } from "./charts/time-series-chart";
 import { TopCountriesChart } from "./charts/top-countries-chart";
 import { VaccinationProgress } from "./charts/vaccination-progress";
 
-interface CovidAnalyticsDashboardProps {
+interface CovidAnalyticsProps {
   countryCode: string;
 }
 
@@ -28,7 +28,7 @@ interface ApiResponse {
   };
 }
 
-export function CovidAnalyticsDashboard({ countryCode }: CovidAnalyticsDashboardProps) {
+export function CovidAnalytics({ countryCode }: CovidAnalyticsProps) {
   // Fetch latest stats for the selected country
   const {
     data: statsResponse,
@@ -43,7 +43,7 @@ export function CovidAnalyticsDashboard({ countryCode }: CovidAnalyticsDashboard
       // Always pass the country code - API will handle OWID_WRL for world data
       params.append("country", countryCode);
 
-      return fetch(`/api/covid/analytics/dashboard?${params}`).then((res) => res.json());
+      return fetch(`/api/covid/analytics/?${params}`).then((res) => res.json());
     },
     staleTime: 1000 * 60 * 60, // Cache for 1 hour
   });
@@ -62,7 +62,7 @@ export function CovidAnalyticsDashboard({ countryCode }: CovidAnalyticsDashboard
       params.append("country", countryCode);
       params.append("limit", "2000"); // Get more data for time series
 
-      return fetch(`/api/covid/analytics/dashboard?${params}`).then((res) => res.json());
+      return fetch(`/api/covid/analytics/?${params}`).then((res) => res.json());
     },
     staleTime: 1000 * 60 * 60, // Cache for 1 hour
   });
@@ -79,7 +79,7 @@ export function CovidAnalyticsDashboard({ countryCode }: CovidAnalyticsDashboard
       params.append("type", "latest");
       params.append("limit", "200"); // Get top countries
 
-      return fetch(`/api/covid/analytics/dashboard?${params}`).then((res) => res.json());
+      return fetch(`/api/covid/analytics/?${params}`).then((res) => res.json());
     },
     staleTime: 1000 * 60 * 60, // Cache for 1 hour
     enabled: countryCode !== "OWID_WRL", // Only fetch if we're looking at a specific country
