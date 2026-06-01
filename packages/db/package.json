@@ -12,7 +12,6 @@
   "scripts": {
     "build": "tsc && cp -R src/migrations dist/migrations",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
     "format": "oxfmt src --write",
     "load:covid": "tsx src/bin/load-covid.ts",
     "load:tfl": "tsx src/bin/load-tfl.ts",
