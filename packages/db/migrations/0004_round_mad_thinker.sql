@@ -1,1 +1,0 @@
-ALTER TABLE "labs"."covid_data" ALTER COLUMN "date" SET DATA TYPE date USING date::date;

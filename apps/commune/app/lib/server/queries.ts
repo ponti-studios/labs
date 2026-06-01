@@ -1,84 +1,112 @@
-/**
- * Server-side queries for social
- * Uses Drizzle ORM with Postgres
- */
+import { sql, desc, eq, inArray } from "@pontistudios/db";
+import { db, relationshipCases, relationshipVerdicts } from "@pontistudios/db";
+import type { RelationshipCase, RelationshipCaseParsed, RelationshipVerdict } from "@pontistudios/db";
 
-import { desc, eq } from "@pontistudios/db";
-import { db, trackers, votes } from "@pontistudios/db";
-import type { SocialTrackerParsed, SocialVote, SocialTracker } from "@pontistudios/db";
-
-function parseTracker(raw: SocialTracker): SocialTrackerParsed {
+function parseCase(raw: RelationshipCase): RelationshipCaseParsed {
   return {
-    ...(raw as unknown as Omit<
-      SocialTrackerParsed,
-      "attacks" | "strengths" | "flaws" | "imagePosition"
-    >),
+    ...(raw as unknown as Omit<RelationshipCaseParsed, "attacks" | "strengths" | "flaws" | "imagePosition">),
     attacks: typeof raw.attacks === "string" ? JSON.parse(raw.attacks) : (raw.attacks ?? []),
-    strengths:
-      typeof raw.strengths === "string" ? JSON.parse(raw.strengths) : (raw.strengths ?? []),
+    strengths: typeof raw.strengths === "string" ? JSON.parse(raw.strengths) : (raw.strengths ?? []),
     flaws: typeof raw.flaws === "string" ? JSON.parse(raw.flaws) : (raw.flaws ?? []),
     imagePosition:
-      typeof raw.imagePosition === "string"
-        ? JSON.parse(raw.imagePosition)
-        : (raw.imagePosition ?? null),
+      typeof raw.imagePosition === "string" ? JSON.parse(raw.imagePosition) : (raw.imagePosition ?? null),
   };
 }
 
-// Trackers
-export async function getTrackers(): Promise<SocialTrackerParsed[]> {
-  const rows = await db.select().from(trackers).orderBy(desc(trackers.createdAt)).execute();
-  return rows.map((r) => parseTracker(r));
+export async function getCases(): Promise<RelationshipCaseParsed[]> {
+  const rows = await db.select().from(relationshipCases).orderBy(desc(relationshipCases.createdAt)).execute();
+  return rows.map(parseCase);
 }
 
-export async function getTracker(
-  id: string,
-): Promise<(SocialTrackerParsed & { votes: SocialVote[] }) | null> {
-  const row = await db.select().from(trackers).where(eq(trackers.id, id)).execute();
-
-  const trackerRow = row[0];
-  if (!trackerRow) return null;
-
-  const tracker = parseTracker(trackerRow);
-  const trackerVotes = await getVotesByTracker(id);
-
-  return { ...tracker, votes: trackerVotes };
+export async function getCase(id: string): Promise<RelationshipCaseParsed | null> {
+  const row = await db.select().from(relationshipCases).where(eq(relationshipCases.id, id)).execute();
+  return row[0] ? parseCase(row[0]) : null;
 }
 
-export async function getTrackersByUser(userId: string): Promise<SocialTrackerParsed[]> {
+export async function getCasesByUser(userId: string): Promise<RelationshipCaseParsed[]> {
   const rows = await db
     .select()
-    .from(trackers)
-    .where(eq(trackers.userId, userId))
-    .orderBy(desc(trackers.createdAt))
+    .from(relationshipCases)
+    .where(eq(relationshipCases.userId, userId))
+    .orderBy(desc(relationshipCases.createdAt))
     .execute();
-  return rows.map((r) => parseTracker(r));
+  return rows.map(parseCase);
 }
 
-// Votes
-export async function getVotesByTracker(trackerId: string): Promise<SocialVote[]> {
+export async function getVerdictsByCase(caseId: string): Promise<RelationshipVerdict[]> {
   return db
     .select()
-    .from(votes)
-    .where(eq(votes.trackerId, trackerId))
-    .orderBy(desc(votes.createdAt))
+    .from(relationshipVerdicts)
+    .where(eq(relationshipVerdicts.caseId, caseId))
+    .orderBy(desc(relationshipVerdicts.createdAt))
     .execute();
 }
 
-export async function getVoteStats(trackerId: string): Promise<{
+export async function getVerdictStats(caseId: string): Promise<{
   total: number;
   stay: number;
   dump: number;
   stayPercentage: number;
 }> {
-  const allVotes = await getVotesByTracker(trackerId);
+  const result = await db
+    .select({
+      total: sql<number>`count(*)`.as("total"),
+      stay: sql<number>`sum(case when value = 'stay' then 1 else 0 end)`.as("stay"),
+      dump: sql<number>`sum(case when value = 'dump' then 1 else 0 end)`.as("dump"),
+    })
+    .from(relationshipVerdicts)
+    .where(eq(relationshipVerdicts.caseId, caseId))
+    .execute();
 
-  const stayVotes = allVotes.filter((v) => v.value === "stay").length;
-  const dumpVotes = allVotes.filter((v) => v.value === "dump").length;
+  const row = result[0];
+  const total = Number(row?.total) || 0;
+  const stay = Number(row?.stay) || 0;
+  const dump = Number(row?.dump) || 0;
+  return { total, stay, dump, stayPercentage: total > 0 ? Math.round((stay / total) * 100) : 0 };
+}
 
-  return {
-    total: allVotes.length,
-    stay: stayVotes,
-    dump: dumpVotes,
-    stayPercentage: allVotes.length > 0 ? Math.round((stayVotes / allVotes.length) * 100) : 0,
-  };
+export async function getCasesWithStats(): Promise<
+  (RelationshipCaseParsed & { voteStats: { total: number; stay: number; stayPercentage: number } })[]
+> {
+  const allCases = await getCases();
+  if (allCases.length === 0) return [];
+
+  const caseIds = allCases.map((c) => c.id);
+  const verdictStats = await db
+    .select({
+      caseId: relationshipVerdicts.caseId,
+      total: sql<number>`count(*)`.as("total"),
+      stay: sql<number>`sum(case when value = 'stay' then 1 else 0 end)`.as("stay"),
+    })
+    .from(relationshipVerdicts)
+    .where(inArray(relationshipVerdicts.caseId, caseIds))
+    .groupBy(relationshipVerdicts.caseId)
+    .execute();
+
+  const statsMap = new Map(
+    verdictStats.map((s) => [
+      s.caseId,
+      {
+        total: Number(s.total) || 0,
+        stay: Number(s.stay) || 0,
+        stayPercentage: Number(s.total) > 0 ? Math.round((Number(s.stay) / Number(s.total)) * 100) : 0,
+      },
+    ]),
+  );
+
+  return allCases.map((c) => ({
+    ...c,
+    voteStats: statsMap.get(c.id) || { total: 0, stay: 0, stayPercentage: 0 },
+  }));
+}
+
+export async function getCaseWithStats(id: string): Promise<
+  | (RelationshipCaseParsed & {
+      voteStats: { total: number; stay: number; dump: number; stayPercentage: number };
+    })
+  | null
+> {
+  const [caseRecord, stats] = await Promise.all([getCase(id), getVerdictStats(id)]);
+  if (!caseRecord) return null;
+  return { ...caseRecord, voteStats: stats };
 }

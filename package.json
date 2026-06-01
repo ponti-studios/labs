@@ -8,7 +8,6 @@
     "dev:cartograph": "turbo run dev --filter=@pontistudios/cartograph",
     "dev:commune": "turbo run dev --filter=@pontistudios/commune",
     "dev:labyrinth": "turbo run dev --filter=@pontistudios/labyrinth",
-    "dev:tempo": "turbo run dev --filter=@pontistudios/tempo",
     "dev:ui": "turbo run storybook --filter=@pontistudios/ui",
     "dev:vitalis": "turbo run dev --filter=@pontistudios/vitalis",
     "lint": "turbo run lint",

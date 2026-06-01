@@ -12,7 +12,7 @@ import { join } from "path";
 import { existsSync } from "fs";
 import { httpErrors, httpSuccess } from "~/lib/api/response";
 
-const UPLOAD_DIR = join(process.cwd(), "public", "uploads", "trackers");
+const UPLOAD_DIR = join(process.cwd(), "public", "uploads", "cases");
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"];
 
@@ -75,7 +75,7 @@ export const action = async ({ request }: { request: Request }) => {
     await writeFile(filePath, Buffer.from(arrayBuffer));
 
     // Return public URL
-    return httpSuccess.ok({ url: `/uploads/trackers/${fileName}` });
+    return httpSuccess.ok({ url: `/uploads/cases/${fileName}` });
   } catch (error) {
     console.error("Upload error:", error);
     return httpErrors.internalError("Upload failed");
