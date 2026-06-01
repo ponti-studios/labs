@@ -1,4 +1,4 @@
-import { bigint, integer, pgSchema, real, serial, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
+import { bigint, date, integer, pgSchema, real, serial, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 
 const labs = pgSchema("labs");
 
@@ -7,7 +7,7 @@ export const covidData = labs.table("covid_data", {
   isoCode: text("iso_code"),
   continent: text("continent"),
   location: text("location"),
-  date: text("date"),
+  date: date("date"),
   totalCases: real("total_cases"),
   newCases: real("new_cases"),
   newCasesSmoothed: real("new_cases_smoothed"),

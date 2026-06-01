@@ -73,5 +73,5 @@ export function SectionHeader({
 }
 
 export function PlainCard({ className, ...props }: React.ComponentProps<"div">) {
-  return <div className={cn("border border-border p-7", className)} {...props} />;
+  return <div className={cn("ui-flat-card", className)} {...props} />;
 }

@@ -11,6 +11,8 @@ export * from "./dash-list";
 export * from "./document-page";
 export * from "./form-field";
 export * from "./marketing-nav";
+export * from "./metric-card";
 export * from "./page-layout";
 export * from "./particle-background";
 export * from "./section";
+export * from "./spinner";

@@ -18,102 +18,89 @@ function toNumber(value: unknown): number | null {
   return null;
 }
 
+const tooltipStyle = {
+  backgroundColor: "var(--color-card)",
+  border: "1px solid var(--color-border)",
+  borderRadius: "2px",
+  fontSize: "12px",
+  color: "var(--color-emphasis-medium)",
+  padding: "6px 10px",
+  boxShadow: "none",
+};
+
+const tickStyle = { fill: "var(--color-emphasis-low)", fontSize: 11 };
+
+const legendItems = [
+  { key: "partial", label: "Partial", color: "#60a5fa" },
+  { key: "full", label: "Full", color: "#34d399" },
+  { key: "boosters", label: "Boosters", color: "#fbbf24" },
+];
+
 export function VaccinationProgress({
   data,
   title = "Vaccination Progress",
-  height = 300,
+  height = 220,
 }: VaccinationProgressProps) {
-  // Transform and combine vaccination data
-  const sortedData = data
+  const formatDate = (d: string) =>
+    new Date(d).toLocaleDateString("en-US", { month: "short", year: "numeric" });
+
+  const combinedData = data
     .filter((item) => item.date)
-    .sort((a, b) => new Date(a.date as string).getTime() - new Date(b.date as string).getTime());
+    .sort((a, b) => new Date(a.date as string).getTime() - new Date(b.date as string).getTime())
+    .map((item) => ({
+      date: item.date as string,
+      partial: toNumber(item.peopleVaccinatedPerHundred),
+      full: toNumber(item.peopleFullyVaccinatedPerHundred),
+      boosters: toNumber(item.totalBoostersPerHundred),
+    }));
 
-  const combinedData = sortedData.map((item) => ({
-    date: item.date as string,
-    partiallyVaccinated: toNumber(item.peopleVaccinatedPerHundred),
-    fullyVaccinated: toNumber(item.peopleFullyVaccinatedPerHundred),
-    boosters: toNumber(item.totalBoostersPerHundred),
-  }));
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      year: "numeric",
-    });
-  };
+  if (combinedData.length < 3) return null;
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h3 className="mb-4">{title}</h3>
+    <div className="ui-flat-card">
+      {title && <p className="ui-data-label mb-3">{title}</p>}
       <ResponsiveContainer width="100%" height={height}>
-        <AreaChart data={combinedData}>
+        <AreaChart data={combinedData} margin={{ top: 0, right: 8, bottom: 0, left: 0 }}>
           <XAxis
             dataKey="date"
             tickFormatter={formatDate}
-            tick={{ fontSize: 12 }}
+            tick={tickStyle}
+            axisLine={false}
+            tickLine={false}
             interval="preserveStartEnd"
           />
           <YAxis
-            tick={{ fontSize: 12 }}
-            width={40}
-            label={{ value: "%", angle: -90, position: "insideLeft" }}
+            tick={tickStyle}
+            axisLine={false}
+            tickLine={false}
+            width={32}
+            tickFormatter={(v) => `${v}%`}
           />
           <Tooltip
             labelFormatter={(label) => formatDate(label as string)}
             formatter={(value, name) => [
               toNumber(value) !== null ? `${(toNumber(value) ?? 0).toFixed(1)}%` : "N/A",
-              name === "partiallyVaccinated"
+              name === "partial"
                 ? "Partially Vaccinated"
-                : name === "fullyVaccinated"
+                : name === "full"
                   ? "Fully Vaccinated"
                   : "Boosters",
             ]}
-            contentStyle={{
-              backgroundColor: "rgba(255, 255, 255, 0.95)",
-              border: "1px solid #e5e7eb",
-              borderRadius: "8px",
-            }}
+            contentStyle={tooltipStyle}
+            cursor={{ stroke: "var(--color-border)", strokeWidth: 1 }}
           />
-          <Area
-            type="monotone"
-            dataKey="boosters"
-            stackId="1"
-            stroke="#f59e0b"
-            fillOpacity={0}
-            fill="none"
-          />
-          <Area
-            type="monotone"
-            dataKey="fullyVaccinated"
-            stackId="1"
-            stroke="#10b981"
-            fillOpacity={0}
-            fill="none"
-          />
-          <Area
-            type="monotone"
-            dataKey="partiallyVaccinated"
-            stackId="1"
-            stroke="#3b82f6"
-            fillOpacity={0}
-            fill="none"
-          />
+          <Area type="monotone" dataKey="boosters" stroke="#fbbf24" strokeWidth={1.5} fill="none" />
+          <Area type="monotone" dataKey="full" stroke="#34d399" strokeWidth={1.5} fill="none" />
+          <Area type="monotone" dataKey="partial" stroke="#60a5fa" strokeWidth={1.5} fill="none" />
         </AreaChart>
       </ResponsiveContainer>
-      <div className="flex justify-center mt-4 space-x-6 text-sm">
-        <div className="flex items-center">
-          <div className="w-3 h-3 bg-blue-500 rounded mr-2" />
-          <span>Partially Vaccinated</span>
-        </div>
-        <div className="flex items-center">
-          <div className="w-3 h-3 bg-green-500 rounded mr-2" />
-          <span>Fully Vaccinated</span>
-        </div>
-        <div className="flex items-center">
-          <div className="w-3 h-3 bg-yellow-500 rounded mr-2" />
-          <span>Boosters</span>
-        </div>
+      <div className="flex gap-4 mt-3">
+        {legendItems.map(({ key, label, color }) => (
+          <div key={key} className="flex items-center gap-1.5">
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
+            <span className="text-xs text-muted-foreground">{label}</span>
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -14,27 +14,16 @@ import {
 
 export const meta: MetaFunction<typeof loader> = ({ params }) => {
   const countryCode = params.countryCode || "OWID_WRL";
-
-  let countryName = "World";
-  if (countryCode !== "OWID_WRL") {
-    countryName = countryCode;
-  }
+  const countryName = countryCode !== "OWID_WRL" ? countryCode : "World";
 
   return [
-    { title: `COVID-19 - ${countryName} | Ponti Studios` },
+    { title: `COVID-19 — ${countryName} | Ponti Studios` },
     {
       name: "description",
-      content: `Comprehensive COVID-19 analytics and statistics for ${countryName}. View cases, deaths, vaccinations, and trends over time.`,
+      content: `COVID-19 analytics for ${countryName}: cases, deaths, vaccinations, and trends.`,
     },
-    {
-      name: "keywords",
-      content: `covid-19,coronavirus,dashboard,statistics,${countryName},analytics`,
-    },
-    { property: "og:title", content: `COVID-19 - ${countryName}` },
-    {
-      property: "og:description",
-      content: `Comprehensive COVID-19 analytics for ${countryName}`,
-    },
+    { name: "keywords", content: `covid-19,coronavirus,${countryName},analytics` },
+    { property: "og:title", content: `COVID-19 — ${countryName}` },
     { property: "og:type", content: "website" },
   ];
 };
@@ -42,11 +31,8 @@ export const meta: MetaFunction<typeof loader> = ({ params }) => {
 export async function loader({ params }: LoaderFunctionArgs) {
   const { countryCode } = params;
 
-  if (!countryCode) {
-    throw new Response("Country code is required", { status: 400 });
-  }
+  if (!countryCode) throw new Response("Country code is required", { status: 400 });
 
-  // Validate country code exists
   try {
     const availableCountries = await getAvailableCountries();
     if (!availableCountries.includes(countryCode) && countryCode !== "OWID_WRL") {
@@ -54,26 +40,20 @@ export async function loader({ params }: LoaderFunctionArgs) {
     }
   } catch (error) {
     console.error("Error validating country code:", error);
-    // If validation fails, still continue but the dashboard will handle the error
   }
 
-  // Fetch all data in parallel for better performance
   try {
     const [statsResponse, timeSeriesResponse, globalComparisonResponse] = await Promise.all([
       getCovidStats(countryCode),
-      getCovidTimeSeries(countryCode, 500), // Reduced limit to manage size
+      getCovidTimeSeries(countryCode, 500),
       countryCode !== "OWID_WRL" ? getGlobalCovidData() : Promise.resolve({ data: [] }),
     ]);
 
-    const statsData = statsResponse.data?.[0] || null;
-    const timeSeriesData = timeSeriesResponse.data || [];
-    const globalComparisonData = globalComparisonResponse.data || [];
-
     return {
       countryCode,
-      statsData,
-      timeSeriesData,
-      globalComparisonData,
+      statsData: statsResponse.data?.[0] || null,
+      timeSeriesData: timeSeriesResponse.data || [],
+      globalComparisonData: globalComparisonResponse.data || [],
     };
   } catch (error) {
     console.error("Error fetching COVID data:", error);
@@ -87,185 +67,117 @@ export default function CovidPage() {
 
   if (!timeSeriesData || timeSeriesData.length === 0) {
     return (
-      <div className="bg-amber-50/50 border border-amber-200 rounded-2xl p-8 text-center">
-        <h3 className="mb-3">No Data Available</h3>
-        <p className="text-amber-700 font-light">
-          No COVID data is currently available for the selected country.
+      <div className="ui-flat-card text-center">
+        <p className="text-sm text-muted-foreground">
+          No COVID data available for the selected country.
         </p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
-      {/* Stats Overview */}
-      <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50">
-        <StatsOverview data={statsData ? [statsData] : []} countryCode={countryCode} />
+    <div className="space-y-6">
+      <StatsOverview data={statsData ? [statsData] : []} countryCode={countryCode} />
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <TimeSeriesChart data={timeSeriesData} metric="totalCases" title="Total Cases" color="#3b82f6" />
+        <TimeSeriesChart data={timeSeriesData} metric="totalDeaths" title="Total Deaths" color="#ef4444" />
+        <TimeSeriesChart
+          data={timeSeriesData}
+          metric="newCasesSmoothed"
+          title="New Cases (7-day avg)"
+          color="#f59e0b"
+        />
+        <VaccinationProgress data={timeSeriesData} title="Vaccination Progress" />
       </div>
 
-      {/* Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Cases Timeline */}
-        <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50 hover:bg-white/50 transition-all duration-300">
-          <h3 className="mb-4">Total Cases Over Time</h3>
-          <TimeSeriesChart data={timeSeriesData} metric="totalCases" title="" color="#3b82f6" />
-        </div>
-
-        {/* Deaths Timeline */}
-        <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50 hover:bg-white/50 transition-all duration-300">
-          <h3 className="mb-4">Total Deaths Over Time</h3>
-          <TimeSeriesChart data={timeSeriesData} metric="totalDeaths" title="" color="#ef4444" />
-        </div>
-
-        {/* New Cases Timeline */}
-        <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50 hover:bg-white/50 transition-all duration-300">
-          <h3 className="mb-4">New Cases (7-day average)</h3>
-          <TimeSeriesChart
-            data={timeSeriesData}
-            metric="newCasesSmoothed"
-            title=""
-            color="#f59e0b"
-          />
-        </div>
-
-        {/* Vaccination Progress */}
-        <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50 hover:bg-white/50 transition-all duration-300">
-          <h3 className="mb-4">Vaccination Progress (%)</h3>
-          <VaccinationProgress data={timeSeriesData} title="" />
-        </div>
-      </div>
-
-      {/* Global Comparisons - Only show for specific countries */}
       {countryCode !== "OWID_WRL" && globalComparisonData.length > 0 && (
-        <div className="space-y-6">
-          <h2 className="border-b border-stone-200 pb-4">Global Comparisons</h2>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50 hover:bg-white/50 transition-all duration-300">
-              <TopCountriesChart
-                data={globalComparisonData}
-                metric="totalCasesPerMillion"
-                title="Top Countries by Cases per Million"
-                color="#3b82f6"
-                limit={15}
-              />
-            </div>
-
-            <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50 hover:bg-white/50 transition-all duration-300">
-              <TopCountriesChart
-                data={globalComparisonData}
-                metric="totalDeathsPerMillion"
-                title="Top Countries by Deaths per Million"
-                color="#ef4444"
-                limit={15}
-              />
-            </div>
-
-            <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50 hover:bg-white/50 transition-all duration-300">
-              <TopCountriesChart
-                data={globalComparisonData}
-                metric="peopleFullyVaccinatedPerHundred"
-                title="Top Countries by Vaccination Rate"
-                color="#10b981"
-                limit={15}
-              />
-            </div>
-
-            <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50 hover:bg-white/50 transition-all duration-300">
-              <TopCountriesChart
-                data={globalComparisonData}
-                metric="stringencyIndex"
-                title="Current Government Response Stringency"
-                color="#8b5cf6"
-                limit={15}
-              />
-            </div>
+        <>
+          <p className="ui-data-label pt-2">Global Comparisons</p>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <TopCountriesChart
+              data={globalComparisonData}
+              metric="totalCasesPerMillion"
+              title="Cases per Million"
+              color="#3b82f6"
+              limit={15}
+            />
+            <TopCountriesChart
+              data={globalComparisonData}
+              metric="totalDeathsPerMillion"
+              title="Deaths per Million"
+              color="#ef4444"
+              limit={15}
+            />
+            <TopCountriesChart
+              data={globalComparisonData}
+              metric="peopleFullyVaccinatedPerHundred"
+              title="Vaccination Rate"
+              color="#10b981"
+              limit={15}
+            />
+            <TopCountriesChart
+              data={globalComparisonData}
+              metric="stringencyIndex"
+              title="Government Response Stringency"
+              color="#8b5cf6"
+              limit={15}
+            />
           </div>
-        </div>
+        </>
       )}
 
-      {/* Additional Metrics */}
-      <div className="space-y-6">
-        <h2 className="border-b border-stone-200 pb-4">Additional Metrics</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* New Deaths Timeline */}
-          <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50 hover:bg-white/50 transition-all duration-300">
-            <h3 className="mb-4">New Deaths (7-day average)</h3>
-            <TimeSeriesChart
-              data={timeSeriesData}
-              metric="newDeathsSmoothed"
-              title=""
-              color="#dc2626"
-            />
-          </div>
-
-          {/* Reproduction Rate */}
-          <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50 hover:bg-white/50 transition-all duration-300">
-            <h3 className="mb-4">Reproduction Rate (R)</h3>
-            <TimeSeriesChart
-              data={timeSeriesData}
-              metric="reproductionRate"
-              title=""
-              color="#8b5cf6"
-            />
-          </div>
-
-          {/* Conditionally show based on data availability */}
-          {timeSeriesData.some((record: CovidData) => record.newVaccinationsSmoothed !== null) ? (
-            <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50 hover:bg-white/50 transition-all duration-300">
-              <h3 className="mb-4">New Vaccinations (7-day average)</h3>
-              <TimeSeriesChart
-                data={timeSeriesData}
-                metric="newVaccinationsSmoothed"
-                title=""
-                color="#059669"
-              />
-            </div>
-          ) : (
-            <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50 hover:bg-white/50 transition-all duration-300">
-              <h3 className="mb-4">Total Deaths per Million</h3>
-              <TimeSeriesChart
-                data={timeSeriesData}
-                metric="totalDeathsPerMillion"
-                title=""
-                color="#f59e0b"
-              />
-            </div>
-          )}
-
-          {/* Show test positivity if available, otherwise show ICU patients */}
-          {timeSeriesData.some((record: CovidData) => record.positiveRate !== null) ? (
-            <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50 hover:bg-white/50 transition-all duration-300">
-              <h3 className="mb-4">Test Positivity Rate</h3>
-              <TimeSeriesChart
-                data={timeSeriesData}
-                metric="positiveRate"
-                title=""
-                color="#f59e0b"
-              />
-            </div>
-          ) : timeSeriesData.some((record: CovidData) => record.icuPatientsPerMillion !== null) ? (
-            <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50 hover:bg-white/50 transition-all duration-300">
-              <h3 className="mb-4">ICU Patients per Million</h3>
-              <TimeSeriesChart
-                data={timeSeriesData}
-                metric="icuPatientsPerMillion"
-                title=""
-                color="#ef4444"
-              />
-            </div>
-          ) : (
-            <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50 hover:bg-white/50 transition-all duration-300">
-              <h3 className="mb-4">Total Cases per Million</h3>
-              <TimeSeriesChart
-                data={timeSeriesData}
-                metric="totalCasesPerMillion"
-                title=""
-                color="#8b5cf6"
-              />
-            </div>
-          )}
-        </div>
+      <p className="ui-data-label pt-2">Additional Metrics</p>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <TimeSeriesChart
+          data={timeSeriesData}
+          metric="newDeathsSmoothed"
+          title="New Deaths (7-day avg)"
+          color="#dc2626"
+        />
+        <TimeSeriesChart
+          data={timeSeriesData}
+          metric="reproductionRate"
+          title="Reproduction Rate (R)"
+          color="#8b5cf6"
+        />
+        {timeSeriesData.some((record: CovidData) => record.newVaccinationsSmoothed !== null) ? (
+          <TimeSeriesChart
+            data={timeSeriesData}
+            metric="newVaccinationsSmoothed"
+            title="New Vaccinations (7-day avg)"
+            color="#059669"
+          />
+        ) : (
+          <TimeSeriesChart
+            data={timeSeriesData}
+            metric="totalDeathsPerMillion"
+            title="Total Deaths per Million"
+            color="#f59e0b"
+          />
+        )}
+        {timeSeriesData.some((record: CovidData) => record.positiveRate !== null) ? (
+          <TimeSeriesChart
+            data={timeSeriesData}
+            metric="positiveRate"
+            title="Test Positivity Rate"
+            color="#f59e0b"
+          />
+        ) : timeSeriesData.some((record: CovidData) => record.icuPatientsPerMillion !== null) ? (
+          <TimeSeriesChart
+            data={timeSeriesData}
+            metric="icuPatientsPerMillion"
+            title="ICU Patients per Million"
+            color="#ef4444"
+          />
+        ) : (
+          <TimeSeriesChart
+            data={timeSeriesData}
+            metric="totalCasesPerMillion"
+            title="Total Cases per Million"
+            color="#8b5cf6"
+          />
+        )}
       </div>
     </div>
   );

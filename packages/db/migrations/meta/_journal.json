@@ -29,6 +29,13 @@
       "when": 1780279823151,
       "tag": "0003_pink_energizer",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1780285546490,
+      "tag": "0004_round_mad_thinker",
+      "breakpoints": true
     }
   ]
 }

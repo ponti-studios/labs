@@ -21,18 +21,31 @@ function toNumber(value: unknown): number | null {
   return null;
 }
 
+const tooltipStyle = {
+  backgroundColor: "var(--color-card)",
+  border: "1px solid var(--color-border)",
+  borderRadius: "2px",
+  fontSize: "12px",
+  color: "var(--color-emphasis-medium)",
+  padding: "6px 10px",
+  boxShadow: "none",
+};
+
 export function TopCountriesChart({
   data,
   metric,
   title,
   color = "#ef4444",
   limit = 10,
-  height = 400,
+  height = 320,
 }: TopCountriesChartProps) {
-  // Get latest data for each country and find top countries by metric
-  const countryLatestData = new Map<string, CovidDataRecord>();
+  const formatValue = (value: number) => {
+    if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`;
+    if (value >= 1_000) return `${(value / 1_000).toFixed(1)}K`;
+    return value.toLocaleString();
+  };
 
-  // Build map of latest data per country
+  const countryLatestData = new Map<string, CovidDataRecord>();
   for (const record of data) {
     if (record.location && toNumber(record[metric]) !== null) {
       const existing = countryLatestData.get(record.location);
@@ -42,75 +55,44 @@ export function TopCountriesChart({
     }
   }
 
-  // Convert to array and get top countries
   const chartData = Array.from(countryLatestData.values())
     .filter((record) => toNumber(record[metric]) !== null)
     .sort((a, b) => (toNumber(b[metric]) ?? 0) - (toNumber(a[metric]) ?? 0))
     .slice(0, limit)
-    .map((record) => ({
-      country: record.location,
-      value: toNumber(record[metric]) ?? 0,
-    }));
+    .map((record) => ({ country: record.location, value: toNumber(record[metric]) ?? 0 }));
 
-  // Check if we have enough data points
-  if (chartData.length === 0) {
-    return (
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="mb-4">{title}</h3>
-        <div className="flex items-center justify-center h-64 text-gray-500">
-          <div className="text-center">
-            <div className="text-4xl mb-2">📊</div>
-            <p>No data available for comparison</p>
-            <p className="text-sm mt-1">No countries have data for {title.toLowerCase()}</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (chartData.length < 3) {
-    return (
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="mb-4">{title}</h3>
-        <div className="flex items-center justify-center h-64 text-gray-500">
-          <div className="text-center">
-            <div className="text-4xl mb-2">⚠️</div>
-            <p>Limited data for comparison</p>
-            <p className="text-sm mt-1">
-              Only {chartData.length} countries have data for this metric
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const formatValue = (value: number) => {
-    if (value >= 1000000) {
-      return `${(value / 1000000).toFixed(1)}M`;
-    }
-    if (value >= 1000) {
-      return `${(value / 1000).toFixed(1)}K`;
-    }
-    return value.toLocaleString();
-  };
+  if (chartData.length < 3) return null;
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h3 className="mb-4">{title}</h3>
+    <div className="ui-flat-card">
+      {title && <p className="ui-data-label mb-3">{title}</p>}
       <ResponsiveContainer width="100%" height={height}>
-        <BarChart data={chartData} layout="horizontal">
-          <XAxis type="number" tickFormatter={formatValue} tick={{ fontSize: 12 }} />
-          <YAxis type="category" dataKey="country" tick={{ fontSize: 12 }} width={100} />
+        <BarChart
+          data={chartData}
+          layout="horizontal"
+          margin={{ top: 0, right: 8, bottom: 0, left: 0 }}
+        >
+          <XAxis
+            type="number"
+            tickFormatter={formatValue}
+            tick={{ fill: "var(--color-emphasis-low)", fontSize: 11 }}
+            axisLine={false}
+            tickLine={false}
+          />
+          <YAxis
+            type="category"
+            dataKey="country"
+            tick={{ fill: "var(--color-emphasis-high)", fontSize: 11 }}
+            axisLine={false}
+            tickLine={false}
+            width={90}
+          />
           <Tooltip
             formatter={(value) => [formatValue(toNumber(value) ?? 0), title]}
-            contentStyle={{
-              backgroundColor: "rgba(255, 255, 255, 0.95)",
-              border: "1px solid #e5e7eb",
-              borderRadius: "8px",
-            }}
+            contentStyle={tooltipStyle}
+            cursor={{ fill: "var(--color-muted)" }}
           />
-          <Bar dataKey="value" fill={color} />
+          <Bar dataKey="value" fill={color} radius={[0, 2, 2, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>

@@ -4,12 +4,12 @@ on:
   push:
     branches: [main]
     paths:
-      - 'apps/labyrinth/**'
-      - 'packages/**'
-      - 'package.json'
-      - 'pnpm-lock.yaml'
-      - '.github/workflows/deploy-playground-prod.yml'
-      - '.github/workflows/reusable-railway-deploy.yml'
+      - "apps/labyrinth/**"
+      - "packages/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/deploy-playground-prod.yml"
+      - ".github/workflows/reusable-railway-deploy.yml"
   workflow_dispatch:
 
 permissions:
@@ -20,12 +20,36 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.30.3
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "pnpm"
+
+      - name: install-dependencies
+        run: pnpm install --frozen-lockfile --filter @pontistudios/db...
+
+      - name: run-migrations
+        run: pnpm --filter @pontistudios/db db:migrate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
   deploy:
+    needs: migrate
     uses: ./.github/workflows/reusable-railway-deploy.yml
     with:
       config_path: apps/labyrinth/railway.json
-      node-version: '24'
-      railway-cli-version: '4.58.0'
+      node-version: "24"
+      railway-cli-version: "4.58.0"
       timeout-minutes: 10
     secrets:
       railway_token: ${{ secrets.RAILWAY_TOKEN }}

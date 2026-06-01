@@ -1,7 +1,5 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { Check, ChevronsUpDown, Globe, Search } from "lucide-react";
 import {
   Button,
   Command,
@@ -14,8 +12,29 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@pontistudios/ui";
+import { useQuery } from "@tanstack/react-query";
+import iso3166 from "iso-3166-1";
+import { Check, ChevronsUpDown, Search } from "lucide-react";
 import { type ReactNode, useCallback, useState } from "react";
 import { cn } from "~/lib/utils";
+
+function countryFlag(alpha3: string): string {
+  // Look up the ISO 3166-1 entry by alpha-3 code (e.g. "USA") to get the alpha-2 code ("US")
+  // needed for flag emoji generation — OWID uses alpha-3, but flag emojis are keyed on alpha-2.
+  const entry = iso3166.whereAlpha3(alpha3);
+  if (!entry) return "🏳";
+
+  // Flag emojis are pairs of Unicode "Regional Indicator" characters, one per letter of the
+  // alpha-2 code. Regional Indicators start at U+1F1E6 ("A"), so the offset from plain ASCII
+  // 'A' (65) to the Regional Indicator 'A' is 0x1F1E6 − 65.
+  const flagBase = 0x1f1e6 - 65;
+
+  // Split the two-letter code, shift each character from its ASCII code point into the
+  // Regional Indicator block, then join — the OS/browser renders the pair as a single flag emoji.
+  return [...entry.alpha2.toUpperCase()]
+    .map((c) => String.fromCodePoint(flagBase + c.charCodeAt(0)))
+    .join("");
+}
 
 type Country = {
   name: string;
@@ -56,23 +75,18 @@ export function CountryPicker({ onChange, countryCode, className }: CountryPicke
     [onChange],
   );
 
-  const getCountryFlag = (countryCode: string) => {
-    if (countryCode === "OWID_WRL") {
-      return <Globe className="w-4 h-4" />;
-    }
-    // For real country codes, we could use flag emojis or flag icons
-    // For now, just show a generic icon
-    return <span className="w-4 h-4 text-gray-400">🏴</span>;
+  const getCountryFlag = (code: string) => {
+    return <span>{countryFlag(code)}</span>;
   };
 
   if (isLoading) {
     return (
       <Button variant="outline" className={cn("w-full justify-between h-10", className)} disabled>
         <span className="flex items-center">
-          <div className="w-4 h-4 mr-2 animate-spin border-2 border-gray-300 border-t-gray-600 rounded-full" />
+          <div className="size-4 mr-2 animate-spin border-2 border-gray-300 border-t-gray-600 rounded-full" />
           <span className="text-gray-600">Loading countries...</span>
         </span>
-        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-30" />
+        <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-30" />
       </Button>
     );
   }
@@ -106,15 +120,15 @@ export function CountryPicker({ onChange, countryCode, className }: CountryPicke
           aria-expanded={open}
           className={cn("w-full justify-between", className)}
         >
-          <span className="flex items-center text-black">
+          <span className="flex gap-2 items-center text-black">
             {selectedCountry ? (
               <>
                 {getCountryFlag(selectedCountry.code)}
-                <span className="ml-2">{selectedCountry.name}</span>
+                <span>{selectedCountry.name}</span>
               </>
             ) : (
               <>
-                <Search className="w-4 h-4 mr-2" />
+                <Search className="size-4" />
                 Select country...
               </>
             )}
@@ -122,7 +136,7 @@ export function CountryPicker({ onChange, countryCode, className }: CountryPicke
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-full p-0" align="start">
+      <PopoverContent className="w-full p-0" align="start" side="bottom" avoidCollisions={false}>
         <Command>
           <CommandInput
             placeholder="Search countries..."
