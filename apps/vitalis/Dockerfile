@@ -9,7 +9,7 @@ RUN npm install -g pnpm@10.30.3
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY apps/vitalis/package.json apps/vitalis/package.json
 COPY packages/ui/package.json packages/ui/package.json
 COPY packages/tsconfig/package.json packages/tsconfig/package.json
@@ -21,6 +21,7 @@ FROM deps AS builder
 
 WORKDIR /app
 
+COPY tsconfig.base.json ./
 COPY packages/ui/ packages/ui/
 COPY apps/vitalis/ apps/vitalis/
 
