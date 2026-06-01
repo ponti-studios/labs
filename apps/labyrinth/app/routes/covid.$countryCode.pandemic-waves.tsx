@@ -3,7 +3,7 @@ import { useState } from "react";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@pontistudios/ui";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Spinner } from "@pontistudios/ui";
 
 interface WaveData {
   wave: number;
@@ -25,30 +25,30 @@ interface WaveAnalysisResponse {
 
 export const meta: MetaFunction<typeof loader> = ({ params }) => {
   const countryCode = params.countryCode || "OWID_WRL";
-
-  let countryName = "World";
-  if (countryCode !== "OWID_WRL") {
-    countryName = countryCode;
-  }
-
+  const countryName = countryCode !== "OWID_WRL" ? countryCode : "World";
   return [
-    { title: `Pandemic Waves - ${countryName} | Ponti Studios` },
-    {
-      name: "description",
-      content: `Pandemic wave analysis for ${countryName}. View wave patterns, peak dates, and duration.`,
-    },
+    { title: `Pandemic Waves — ${countryName} | Ponti Studios` },
+    { name: "description", content: `Pandemic wave analysis for ${countryName}.` },
   ];
 };
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const { countryCode } = params;
-
-  if (!countryCode) {
-    throw new Response("Country code is required", { status: 400 });
-  }
-
+  if (!countryCode) throw new Response("Country code is required", { status: 400 });
   return { countryCode };
 }
+
+const tooltipStyle = {
+  backgroundColor: "var(--color-card)",
+  border: "1px solid var(--color-border)",
+  borderRadius: "2px",
+  fontSize: "12px",
+  color: "var(--color-emphasis-medium)",
+  padding: "6px 10px",
+  boxShadow: "none",
+};
+
+const tickStyle = { fill: "var(--color-emphasis-low)", fontSize: 11 };
 
 export default function PandemicWavesPage() {
   const { countryCode } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
@@ -60,32 +60,18 @@ export default function PandemicWavesPage() {
       const params = new URLSearchParams();
       params.append("country", countryCode);
       params.append("metric", metric);
-
       return fetch(`/api/covid/analytics/pandemic-waves?${params}`).then((res) => res.json());
     },
-    staleTime: 1000 * 60 * 60, // Cache for 1 hour
+    staleTime: 1000 * 60 * 60,
   });
 
   return (
-    <div className="space-y-8">
-      <div className="text-center">
-        <h1 className="mb-4">Pandemic Waves Analysis</h1>
-        <p className="text-lg text-stone-600 font-light">
-          Detailed analysis of pandemic wave patterns and intensity
-        </p>
-      </div>
-
-      {/* Metric Selection */}
-      <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50">
-        <label htmlFor="metric-select" className="block text-sm font-medium text-stone-700 mb-3">
-          Select Metric for Wave Analysis
-        </label>
+    <div className="space-y-6">
+      <div className="flex items-center gap-3">
+        <label className="ui-data-label">Metric</label>
         <Select value={metric} onValueChange={setMetric}>
-          <SelectTrigger
-            id="metric-select"
-            className="h-auto w-full rounded-xl border-stone-300 bg-white/60 px-4 py-3 text-stone-800"
-          >
-            <SelectValue placeholder="Select metric" />
+          <SelectTrigger className="w-52 h-7 text-xs border-border bg-card text-foreground rounded">
+            <SelectValue />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="newCasesSmoothed">New Cases (Smoothed)</SelectItem>
@@ -96,92 +82,67 @@ export default function PandemicWavesPage() {
         </Select>
       </div>
 
-      {/* Loading State */}
-      {isLoading && (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-olive-500" />
-        </div>
-      )}
+      {isLoading && <Spinner />}
 
-      {/* Error State */}
       {isError && (
-        <div className="bg-red-50/50 border border-red-200 text-red-700 px-6 py-4 rounded-2xl">
-          Failed to load pandemic waves data. Please try again.
-        </div>
+        <p className="text-sm text-muted-foreground py-4">
+          Failed to load wave data. Please try again.
+        </p>
       )}
 
-      {/* Wave Analysis Results */}
       {data?.waves && (
-        <div className="space-y-8">
-          {/* Wave Chart */}
-          <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50">
-            <h2 className="mb-6">Wave Intensity Comparison</h2>
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data.waves}>
-                  <XAxis
-                    dataKey="wave"
-                    tick={{ fill: "#57534e" }}
-                    axisLine={{ stroke: "#a8a29e" }}
-                    tickFormatter={(value) => `Wave ${value}`}
-                  />
-                  <YAxis tick={{ fill: "#57534e" }} axisLine={{ stroke: "#a8a29e" }} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "rgba(255, 255, 255, 0.95)",
-                      border: "1px solid #d6d3d1",
-                      borderRadius: "12px",
-                      color: "#1c1917",
-                    }}
-                    labelFormatter={(value) => `Wave ${value}`}
-                  />
-                  <Bar dataKey="peakValue" fill="#8b5cf6" radius={[4, 4, 0, 0]} name="Peak Value" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+        <div className="space-y-6">
+          <div className="ui-flat-card">
+            <p className="ui-data-label mb-3">Wave Intensity</p>
+            <ResponsiveContainer width="100%" height={260}>
+              <BarChart data={data.waves} margin={{ top: 0, right: 8, bottom: 0, left: 0 }}>
+                <XAxis
+                  dataKey="wave"
+                  tick={tickStyle}
+                  axisLine={false}
+                  tickLine={false}
+                  tickFormatter={(v) => `Wave ${v}`}
+                />
+                <YAxis tick={tickStyle} axisLine={false} tickLine={false} />
+                <Tooltip
+                  contentStyle={tooltipStyle}
+                  cursor={{ fill: "var(--color-muted)" }}
+                  labelFormatter={(v) => `Wave ${v}`}
+                />
+                <Bar dataKey="peakValue" fill="#8b5cf6" radius={[2, 2, 0, 0]} name="Peak Value" />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
 
-          {/* Wave Details Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
             {data.waves.map((wave) => (
-              <div
-                key={wave.wave}
-                className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50 hover:bg-white/50 transition-all duration-300"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <h3>Wave {wave.wave}</h3>
-                  <span className="bg-olive-100 text-olive-700 px-3 py-1 rounded-full text-sm font-medium">
-                    {wave.duration} days
-                  </span>
+              <div key={wave.wave} className="ui-flat-card">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="ui-data-label">Wave {wave.wave}</p>
+                  <span className="text-xs text-muted-foreground">{wave.duration} days</span>
                 </div>
-
-                <div className="space-y-3">
+                <p className="ui-data-value mb-3">{wave.peakValue.toLocaleString()}</p>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                   <div>
-                    <p className="text-sm text-stone-600 font-light">Peak Value</p>
-                    <p className="text-xl font-light text-stone-800">
-                      {wave.peakValue.toLocaleString()}
+                    <p className="text-xs text-muted-foreground">Peak Date</p>
+                    <p className="text-xs text-foreground">
+                      {new Date(wave.peakDate).toLocaleDateString()}
                     </p>
                   </div>
-
                   <div>
-                    <p className="text-sm text-stone-600 font-light">Peak Date</p>
-                    <p className="text-stone-700">{new Date(wave.peakDate).toLocaleDateString()}</p>
+                    <p className="text-xs text-muted-foreground">Total Cases</p>
+                    <p className="text-xs text-foreground tabular-nums">
+                      {wave.totalCases.toLocaleString()}
+                    </p>
                   </div>
-
                   <div>
-                    <p className="text-sm text-stone-600 font-light">Total Cases</p>
-                    <p className="text-stone-700">{wave.totalCases.toLocaleString()}</p>
+                    <p className="text-xs text-muted-foreground">Avg Growth</p>
+                    <p className="text-xs text-foreground">{wave.avgDailyGrowth.toFixed(2)}%</p>
                   </div>
-
                   <div>
-                    <p className="text-sm text-stone-600 font-light">Avg Daily Growth</p>
-                    <p className="text-stone-700">{wave.avgDailyGrowth.toFixed(2)}%</p>
-                  </div>
-
-                  <div className="pt-2 border-t border-stone-200/50">
-                    <p className="text-sm text-stone-600 font-light">Duration</p>
-                    <p className="text-stone-700">
-                      {new Date(wave.startDate).toLocaleDateString()} →{" "}
+                    <p className="text-xs text-muted-foreground">Period</p>
+                    <p className="text-xs text-foreground">
+                      {new Date(wave.startDate).toLocaleDateString()} –{" "}
                       {new Date(wave.endDate).toLocaleDateString()}
                     </p>
                   </div>
@@ -190,25 +151,22 @@ export default function PandemicWavesPage() {
             ))}
           </div>
 
-          {/* Summary Statistics */}
-          <div className="bg-white/40 backdrop-blur-sm rounded-2xl p-6 border border-stone-200/50">
-            <h2 className="mb-6">Wave Analysis Summary</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center">
-                <p className="text-stone-600 font-light mb-2">Total Waves Detected</p>
-                <p className="text-3xl font-light text-stone-800">{data.waves.length}</p>
+          <div className="ui-flat-card">
+            <p className="ui-data-label mb-4">Summary</p>
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <p className="text-xs text-muted-foreground mb-1">Total Waves</p>
+                <p className="ui-data-value">{data.waves.length}</p>
               </div>
-              <div className="text-center">
-                <p className="text-stone-600 font-light mb-2">Highest Peak</p>
-                <p className="text-3xl font-light text-stone-800">
+              <div>
+                <p className="text-xs text-muted-foreground mb-1">Highest Peak</p>
+                <p className="ui-data-value">
                   {Math.max(...data.waves.map((w) => w.peakValue)).toLocaleString()}
                 </p>
               </div>
-              <div className="text-center">
-                <p className="text-stone-600 font-light mb-2">Data Points Analyzed</p>
-                <p className="text-3xl font-light text-stone-800">
-                  {data.totalDataPoints.toLocaleString()}
-                </p>
+              <div>
+                <p className="text-xs text-muted-foreground mb-1">Data Points</p>
+                <p className="ui-data-value">{data.totalDataPoints.toLocaleString()}</p>
               </div>
             </div>
           </div>
