@@ -10,7 +10,6 @@ const routeEntries: RouteEntry[] = [
   { path: "/", href: "/", kind: "page" },
   { path: "/api/director/generate", kind: "api" },
   { path: "/api/words/validate", kind: "api" },
-  { path: "/infinite-scroll", href: "/infinite-scroll", kind: "page" },
   { path: "/tarot", href: "/tarot", kind: "page" },
   { path: "/api/tarot", kind: "api" },
   { path: "/covid", href: "/covid", kind: "page" },
@@ -25,6 +24,7 @@ const routeEntries: RouteEntry[] = [
   { path: "/business-tools/marketing", href: "/business-tools/marketing", kind: "page" },
   { path: "/experiments", href: "/experiments", kind: "page" },
   { path: "/experiments/glass", href: "/experiments/glass", kind: "page" },
+  { path: "/experiments/infinite-scroll", href: "/experiments/infinite-scroll", kind: "page" },
   {
     path: "/experiments/threegl-web-request",
     href: "/experiments/threegl-web-request",

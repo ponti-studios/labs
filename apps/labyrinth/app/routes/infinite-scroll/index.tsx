@@ -14,23 +14,26 @@ import "./main.css";
  */
 
 const galleryColumns: string[][] = [
+  // LV: monogram browns, canvas tan, ivory
   [
-    "https://placehold.co/300x400/d1d5db/374151?text=Image+1",
-    "https://placehold.co/300x500/9ca3af/374151?text=Image+2",
-    "https://placehold.co/300x350/6b7280/ffffff?text=Image+3",
-    "https://placehold.co/300x450/4b5563/ffffff?text=Image+4",
+    "https://placehold.co/300x400/5C3D2E/F5ECD7?text=I",
+    "https://placehold.co/300x500/C8A882/3D2010?text=II",
+    "https://placehold.co/300x350/F5ECD7/5C3D2E?text=III",
+    "https://placehold.co/300x450/1A1208/C8A882?text=IV",
   ],
+  // Hermès: brique orange, saddle tan, rouge casaque, chocolate
   [
-    "https://placehold.co/300x400/d1d5db/374151?text=Image+5",
-    "https://placehold.co/300x500/9ca3af/374151?text=Image+6",
-    "https://placehold.co/300x350/6b7280/ffffff?text=Image+7",
-    "https://placehold.co/300x450/4b5563/ffffff?text=Image+8",
+    "https://placehold.co/300x400/C4602A/F5ECD7?text=V",
+    "https://placehold.co/300x500/3D2010/C8A882?text=VI",
+    "https://placehold.co/300x350/8C1C1C/F5ECD7?text=VII",
+    "https://placehold.co/300x450/A0703A/F5ECD7?text=VIII",
   ],
+  // Luxury accents: Prussian blue, cypress green, noir, champagne
   [
-    "https://placehold.co/300x400/d1d5db/374151?text=Image+9",
-    "https://placehold.co/300x500/9ca3af/374151?text=Image+10",
-    "https://placehold.co/300x350/6b7280/ffffff?text=Image+11",
-    "https://placehold.co/300x450/4b5563/ffffff?text=Image+12",
+    "https://placehold.co/300x400/2C3E55/E8D5B5?text=IX",
+    "https://placehold.co/300x500/4A5C3C/E8D5B5?text=X",
+    "https://placehold.co/300x350/1A1208/B8955A?text=XI",
+    "https://placehold.co/300x450/B8955A/1A1208?text=XII",
   ],
 ];
 
@@ -59,7 +62,12 @@ function ScrollColumn({ urls, direction }: { urls: string[]; direction: "up" | "
     <div className={`scroll-container ${animationClass}`}>
       <div className="scroll-column">
         {items.map((item, index) => (
-          <img key={`${item.src}-${index}`} src={item.src} alt={item.alt} className={item.className} />
+          <img
+            key={`${item.src}-${index}`}
+            src={item.src}
+            alt={item.alt}
+            className={item.className}
+          />
         ))}
       </div>
     </div>
@@ -68,14 +76,12 @@ function ScrollColumn({ urls, direction }: { urls: string[]; direction: "up" | "
 
 export default function InfiniteScroll() {
   return (
-    <div className="rounded-lg border border-secondary">
-      <header className="container mx-auto px-4 py-10 lg:py-16">
-        <div className="w-full lg:w-1/2">
-          <div className="grid grid-cols-3 gap-4">
-            <ScrollColumn urls={galleryColumns[0]} direction="up" />
-            <ScrollColumn urls={galleryColumns[1]} direction="down" />
-            <ScrollColumn urls={galleryColumns[2]} direction="up" />
-          </div>
+    <div className="rounded-lg border border-gray-400">
+      <header className="container mx-auto px-4">
+        <div className="grid grid-cols-3 gap-4">
+          <ScrollColumn urls={galleryColumns[0]} direction="up" />
+          <ScrollColumn urls={galleryColumns[1]} direction="down" />
+          <ScrollColumn urls={galleryColumns[2]} direction="up" />
         </div>
       </header>
     </div>

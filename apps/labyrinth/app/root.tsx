@@ -47,7 +47,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <QueryProvider>
-      <div className="border-b border-border bg-background/95 backdrop-blur">
+      <div className="border bg-background/50 backdrop-blur max-w-7xl mx-auto rounded-2xl mt-4 px-4">
         <div className="mx-auto max-w-7xl p-4 sm:px-0">
           <div className="flex items-center justify-between gap-4">
             <a href="/" className="text-lg font-semibold text-foreground">
