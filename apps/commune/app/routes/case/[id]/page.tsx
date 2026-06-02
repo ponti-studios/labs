@@ -51,9 +51,10 @@ export function CaseDetailPage() {
 
   const cardName = caseRecord.name || "Partner";
   const { voteStats } = caseRecord;
-  const shareUrl = typeof window !== "undefined"
-    ? `${window.location.origin}/case/${caseRecord.id}`
-    : `/case/${caseRecord.id}`;
+  const shareUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/case/${caseRecord.id}`
+      : `/case/${caseRecord.id}`;
 
   const [localVerdicts, setLocalVerdicts] = useState<RelationshipVerdict[]>(verdicts);
   const [newRating, setNewRating] = useState({ verdict: "" as "stay" | "dump" | "", comment: "" });
@@ -118,9 +119,12 @@ export function CaseDetailPage() {
 
   const getVerdictColor = (verdict: string) => {
     switch (verdict) {
-      case "stay": return "bg-green-100 text-green-800 border-green-200";
-      case "dump": return "bg-red-100 text-red-800 border-red-200";
-      default: return "bg-gray-100 text-gray-800 border-gray-200";
+      case "stay":
+        return "bg-green-100 text-green-800 border-green-200";
+      case "dump":
+        return "bg-red-100 text-red-800 border-red-200";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
@@ -138,7 +142,12 @@ export function CaseDetailPage() {
                 <p className="text-sm text-gray-500">Verdict Results</p>
               </div>
             </div>
-            <Button variant="outline" size="sm" onClick={() => setShareDialogOpen(true)} className="gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShareDialogOpen(true)}
+              className="gap-2"
+            >
               <Share2 className="w-4 h-4" />
               Share
             </Button>
@@ -192,7 +201,9 @@ export function CaseDetailPage() {
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <p className="text-sm text-gray-500">{new Date(v.createdAt).toLocaleDateString()}</p>
+                  <p className="text-sm text-gray-500">
+                    {new Date(v.createdAt).toLocaleDateString()}
+                  </p>
                   {v.comment && (
                     <p className="text-gray-700 mt-2 leading-relaxed">&ldquo;{v.comment}&rdquo;</p>
                   )}

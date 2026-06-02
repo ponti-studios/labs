@@ -20,7 +20,9 @@ function validateCaseData(body: Record<string, unknown>): {
     hp: typeof body.hp === "string" ? body.hp : null,
     cardType: typeof body.cardType === "string" ? body.cardType : null,
     description: typeof body.description === "string" ? body.description : null,
-    attacks: Array.isArray(body.attacks) ? (body.attacks as { name: string; damage: number }[]) : null,
+    attacks: Array.isArray(body.attacks)
+      ? (body.attacks as { name: string; damage: number }[])
+      : null,
     strengths: Array.isArray(body.strengths) ? (body.strengths as string[]) : null,
     flaws: Array.isArray(body.flaws) ? (body.flaws as string[]) : null,
     commitmentLevel: typeof body.commitmentLevel === "string" ? body.commitmentLevel : null,

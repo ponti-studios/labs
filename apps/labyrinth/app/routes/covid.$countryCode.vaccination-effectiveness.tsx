@@ -100,7 +100,10 @@ export default function VaccinationEffectivenessPage() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {[
               { label: "Overall Effectiveness", value: data.effectiveness.overall },
-              { label: "Against Hospitalization", value: data.effectiveness.againstHospitalization },
+              {
+                label: "Against Hospitalization",
+                value: data.effectiveness.againstHospitalization,
+              },
               { label: "Against Death", value: data.effectiveness.againstDeath },
               { label: "Breakthrough Rate", value: data.effectiveness.breakthroughRate },
             ].map(({ label, value }) => (

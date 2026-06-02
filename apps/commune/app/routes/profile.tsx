@@ -37,8 +37,10 @@ export function ProfilePage() {
                 strengths: Array.isArray(c.strengths) ? c.strengths : [],
                 commitmentLevel: c.commitmentLevel,
               };
-              const selectedTheme = COLOR_THEMES.find((t) => t.value === c.colorTheme) || COLOR_THEMES[0];
-              const selectedType = PERSONALITY_TYPES.find((t) => t.value === c.cardType) || PERSONALITY_TYPES[0];
+              const selectedTheme =
+                COLOR_THEMES.find((t) => t.value === c.colorTheme) || COLOR_THEMES[0];
+              const selectedType =
+                PERSONALITY_TYPES.find((t) => t.value === c.cardType) || PERSONALITY_TYPES[0];
               return (
                 <div key={c.id} className="flex justify-center">
                   <PersonCardDisplay

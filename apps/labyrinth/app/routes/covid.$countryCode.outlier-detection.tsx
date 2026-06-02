@@ -190,7 +190,9 @@ export default function OutlierDetectionPage() {
                           {new Date(outlier.date).toLocaleDateString()}
                         </span>
                       </div>
-                      <p className="text-xs text-muted-foreground truncate">{outlier.description}</p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {outlier.description}
+                      </p>
                     </div>
                     <div className="text-right shrink-0">
                       <p className="text-sm font-light text-foreground tabular-nums">

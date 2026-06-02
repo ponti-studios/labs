@@ -180,7 +180,9 @@ export async function populateCovidData(options: PopulateCovidOptions = {}) {
           newVaccinationsSmoothed: safeParseNumber(chunk.new_vaccinations_smoothed),
           totalVaccinationsPerHundred: safeParseNumber(chunk.total_vaccinations_per_hundred),
           peopleVaccinatedPerHundred: safeParseNumber(chunk.people_vaccinated_per_hundred),
-          peopleFullyVaccinatedPerHundred: safeParseNumber(chunk.people_fully_vaccinated_per_hundred),
+          peopleFullyVaccinatedPerHundred: safeParseNumber(
+            chunk.people_fully_vaccinated_per_hundred,
+          ),
           totalBoostersPerHundred: safeParseNumber(chunk.total_boosters_per_hundred),
           newVaccinationsSmoothedPerMillion: safeParseNumber(
             chunk.new_vaccinations_smoothed_per_million,
