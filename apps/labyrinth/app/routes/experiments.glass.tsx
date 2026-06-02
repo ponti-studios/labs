@@ -177,48 +177,14 @@ export default function ExperimentsGlass() {
 
       {/* Large Background Image - Using a colorful pattern or custom image */}
       <div className="absolute inset-0 w-full h-full">
-        {backgroundImage ? (
-          /* Custom background image */
-          <div
-            className="w-full h-full bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: `url(${backgroundImage})` }}
-          >
-            {/* Overlay for better text visibility */}
-            <div className="absolute inset-0 bg-black/20">
-              {/* Text content over custom image */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center text-white">
-                  <h1 className="mb-4 drop-shadow-2xl">Glass Effect Test</h1>
-                  <p className="text-2xl drop-shadow-lg">
-                    Drag the glass overlay around this custom background
-                  </p>
-                  <div className="mt-8 grid grid-cols-3 gap-4 text-lg">
-                    <div className="bg-black/40 p-4 rounded-lg backdrop-blur-sm">
-                      <h3>Red Channel</h3>
-                      <p>Displacement {displacements.red}</p>
-                    </div>
-                    <div className="bg-black/40 p-4 rounded-lg backdrop-blur-sm">
-                      <h3>Green Channel</h3>
-                      <p>Displacement {displacements.green}</p>
-                    </div>
-                    <div className="bg-black/40 p-4 rounded-lg backdrop-blur-sm">
-                      <h3>Blue Channel</h3>
-                      <p>Displacement {displacements.blue}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : (
-          /* Default: Raphael's School of Athens (1509–1511) — public domain */
           <div
             className="w-full h-full bg-cover bg-center bg-no-repeat"
             style={{
-              backgroundImage: `url(https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg/1280px-%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg)`,
+            backgroundImage:
+              backgroundImage ||
+              `url(https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg/1280px-%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg)`,
             }}
           />
-        )}
       </div>
 
       {/* Draggable Glass Overlay */}
