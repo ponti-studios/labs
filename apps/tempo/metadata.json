@@ -1,6 +1,0 @@
-{
-  "name": "ChronoFlow",
-  "description": "A time-based task management system with forced breaks, priority buffer logic, and AI-assisted task splitting for deep work optimization.",
-  "requestFramePermissions": ["microphone"],
-  "majorCapabilities": []
-}

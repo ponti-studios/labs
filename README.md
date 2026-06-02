@@ -7,7 +7,7 @@
 | App / Service | Port | URL                   |
 | ------------- | ---- | --------------------- |
 | Home          | 3000 | http://localhost:3000 |
-| Playground    | 3001 | http://localhost:3001 |
+|     | 3001 | http://localhost:3001 |
 | Health        | 3003 | http://localhost:3003 |
 | Social       | 3005 | http://localhost:3005 |
 | Earth         | 3006 | http://localhost:3006 |
@@ -47,6 +47,12 @@ Foundation runs:
 - Redis on `localhost:6379`
 
 Credentials: `postgres` / `postgres`
+
+Labs uses the `hominem` PostgreSQL database locally.
+
+The app tables live under the
+`labs` schema inside that database, so `DATABASE_URL` should point to
+`postgresql://postgres:postgres@localhost:5434/hominem`.
 
 ### 2. Start labs
 

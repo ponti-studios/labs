@@ -1,0 +1,63 @@
+body {
+  font-family: "Geist", sans-serif;
+}
+
+.scroll-container {
+  height: 600px;
+  overflow: hidden;
+  position: relative;
+  mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 5%,
+    black 95%,
+    transparent 100%
+  );
+}
+
+.scroll-container:hover .scroll-column {
+  animation-play-state: paused;
+}
+
+.scroll-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  will-change: transform;
+}
+
+@keyframes scroll-up {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes scroll-down {
+  0% {
+    transform: translateY(-50%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.animate-scroll-up .scroll-column {
+  animation: scroll-up 20s linear infinite;
+}
+
+.animate-scroll-down .scroll-column {
+  animation: scroll-down 20s linear infinite;
+}
+
+.scroll-column img {
+  width: 100%;
+  height: auto;
+  object-fit: cover; /* Cover the area, cropping if needed */
+  display: block;
+  border-radius: 0.5rem; /* Rounded corners for images */
+}

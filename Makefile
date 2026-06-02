@@ -1,70 +1,31 @@
-# Makefile for Node.js, Docker, Fastify, and Drizzle project
+.PHONY: dev-cartograph dev-commune dev-labyrinth dev-tempo dev-ui dev-vitalis check clean reset
 
-# Variables
-APP_DB_URL=postgresql://postgres:devpassword@localhost:5434/hominem
-TEST_DB_URL=postgresql://postgres:devpassword@localhost:4433/hominem-test
-DOCKER_COMPOSE = docker compose
-NODE_ENV ?= development
+dev-cartograph:
+	pnpm dev:cartograph
 
-# Phony targets
-.PHONY: install start dev build test lint format clean docker-up docker-down check reset all
+dev-commune:
+	pnpm dev:commune
 
-# Install dependencies
-install:
-	pnpm install
+dev-labyrinth:
+	pnpm dev:labyrinth
 
-# Start the application in production mode
-start:
-	pnpm start
+dev-tempo:
+	pnpm dev:tempo
 
-# Start the application in development mode
-dev:
-	@echo "Starting development server..."
-	pm2 start pnpm --name="hominem" -- run dev
+dev-ui:
+	pnpm dev:ui
 
-dev-home:
-	@echo "Starting development server for hominem..."
-	pm2 start pnpm --name="@pontistudios/home" -- run dev:home
+dev-vitalis:
+	pnpm dev:vitalis
 
-run-redis:
-	@echo "Starting Redis..."
-	pm2 start pnpm --name="hominem-redis" -- run redis
+check:
+	pnpm lint
+	pnpm typecheck
+	pnpm test
 
-# Run tests
-test:
-	pnpm run test
-
-# Build the application
-build:
-	pnpm turbo run lint --force --parallel
-	pnpm turbo run build --force
-
-# Run linter
-lint:
-	pnpm turbo run lint --force --parallel
-
-# Clean build artifacts and dependencies
 clean:
-	find . -type d -name "node_modules" -exec rm -rf {} +
-	find . -type d -name "dist" -exec rm -rf {} +
-	find . -type d -name "build" -exec rm -rf {} +
-	find . -type d -name "logs" -exec rm -rf {} +
-	find . -type d -name "coverage" -exec rm -rf {} +
-	find . -type d -name ".next" -exec rm -rf {} +
-	find . -type d -name ".turbo" -exec rm -rf {} +
-	find . -type d -name ".react-router" -exec rm -rf {} +
-	find . -name "pnpm-lock.yaml" -exec rm -rf {} +
-	find . -name "package-lock.json" -exec rm -rf {} +
+	find . -type d -name "node_modules" -prune -exec rm -rf {} +
+	find . -type d \( -name "dist" -o -name "build" -o -name "coverage" -o -name ".turbo" -o -name ".react-router" \) -prune -exec rm -rf {} +
 
-# Stop Docker containers
-docker-down:
-	$(DOCKER_COMPOSE) down
-
-# Run all tests and linting
-check: test lint
-
-# Full cleanup and reinstall
 reset: clean install
-
-# Default target
-all: install build
+	docker build -f docker/workspace-base.Dockerfile --target workspace-runtime-base -t pontistudios/labs-workspace-runtime:latest .

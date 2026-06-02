@@ -5,7 +5,7 @@ import type { CovidDataRecord } from "~/types/covid";
 
 interface CombinedDataItem {
   date: string;
-  [key: string]: number | string; // For dynamic metric keys
+  [key: string]: number | string;
 }
 
 interface ComparativeChartProps {
@@ -28,31 +28,42 @@ function toNumber(value: unknown): number | null {
   return null;
 }
 
-export function ComparativeChart({ data, metrics, title, height = 400 }: ComparativeChartProps) {
-  // Combine data for all metrics
-  const combinedData = new Map<string, CombinedDataItem>();
+const tooltipStyle = {
+  backgroundColor: "var(--color-card)",
+  border: "1px solid var(--color-border)",
+  borderRadius: "2px",
+  fontSize: "12px",
+  color: "var(--color-emphasis-medium)",
+  padding: "6px 10px",
+  boxShadow: "none",
+};
 
+const tickStyle = { fill: "var(--color-emphasis-low)", fontSize: 11 };
+
+export function ComparativeChart({ data, metrics, title, height = 280 }: ComparativeChartProps) {
+  const formatValue = (value: number) => {
+    if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`;
+    if (value >= 1_000) return `${(value / 1_000).toFixed(1)}K`;
+    return value.toLocaleString();
+  };
+
+  const formatDate = (d: string) =>
+    new Date(d).toLocaleDateString("en-US", { month: "short", year: "numeric" });
+
+  const combinedData = new Map<string, CombinedDataItem>();
   for (const { key, name } of metrics) {
     const metricData = data
-      .map((item) => ({
-        date: item.date,
-        value: toNumber(item[key]),
-      }))
-      .filter((item) => item.date && item.value !== null)
-      .map((item) => ({
-        date: item.date as string,
-        value: item.value as number,
-      }))
+      .map((item) => ({ date: item.date, value: toNumber(item[key]) }))
+      .filter(
+        (item): item is { date: string; value: number } =>
+          item.date != null && item.value !== null,
+      )
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
     for (const { date, value } of metricData) {
-      if (!combinedData.has(date)) {
-        combinedData.set(date, { date });
-      }
+      if (!combinedData.has(date)) combinedData.set(date, { date });
       const entry = combinedData.get(date);
-      if (entry) {
-        entry[name] = value;
-      }
+      if (entry) entry[name] = value;
     }
   }
 
@@ -60,55 +71,42 @@ export function ComparativeChart({ data, metrics, title, height = 400 }: Compara
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
   );
 
-  const formatValue = (value: number) => {
-    if (value >= 1000000) {
-      return `${(value / 1000000).toFixed(1)}M`;
-    }
-    if (value >= 1000) {
-      return `${(value / 1000).toFixed(1)}K`;
-    }
-    return value.toLocaleString();
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      year: "numeric",
-    });
-  };
-
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h3 className="text-lg font-semibold mb-4 text-gray-800">{title}</h3>
+    <div className="ui-flat-card">
+      {title && <p className="ui-data-label mb-3">{title}</p>}
       <ResponsiveContainer width="100%" height={height}>
-        <LineChart data={chartData}>
+        <LineChart data={chartData} margin={{ top: 0, right: 8, bottom: 0, left: 0 }}>
           <XAxis
             dataKey="date"
             tickFormatter={formatDate}
-            tick={{ fontSize: 12 }}
+            tick={tickStyle}
+            axisLine={false}
+            tickLine={false}
             interval="preserveStartEnd"
           />
-          <YAxis tickFormatter={formatValue} tick={{ fontSize: 12 }} width={60} />
+          <YAxis
+            tickFormatter={formatValue}
+            tick={tickStyle}
+            axisLine={false}
+            tickLine={false}
+            width={50}
+          />
           <Tooltip
             labelFormatter={(label) => formatDate(label as string)}
             formatter={(value, name) => [formatValue(toNumber(value) ?? 0), String(name)]}
-            contentStyle={{
-              backgroundColor: "rgba(255, 255, 255, 0.95)",
-              border: "1px solid #e5e7eb",
-              borderRadius: "8px",
-            }}
+            contentStyle={tooltipStyle}
+            cursor={{ stroke: "var(--color-border)", strokeWidth: 1 }}
           />
-          <Legend />
+          <Legend iconType="plainline" wrapperStyle={{ fontSize: "11px", color: "var(--color-emphasis-low)" }} />
           {metrics.map(({ name, color }) => (
             <Line
               key={name}
               type="monotone"
               dataKey={name}
               stroke={color}
-              strokeWidth={2}
+              strokeWidth={1.5}
               dot={false}
-              activeDot={{ r: 4, stroke: color, strokeWidth: 2 }}
+              activeDot={{ r: 3, stroke: color, strokeWidth: 1.5, fill: "var(--color-card)" }}
             />
           ))}
         </LineChart>

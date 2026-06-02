@@ -16,7 +16,6 @@ interface Particle {
 export interface ParticleBackgroundPalette {
   particle: string;
   link: string;
-  gradient: string;
 }
 
 export interface ParticleBackgroundProps extends React.ComponentProps<"div"> {
@@ -46,12 +45,10 @@ const DEFAULT_PALETTES = {
   dark: {
     particle: "255,255,255",
     link: "255,255,255",
-    gradient: "radial-gradient(circle at top, rgba(255,255,255,0.08), rgba(255,255,255,0) 58%)",
   },
   light: {
     particle: "15,23,42",
     link: "15,23,42",
-    gradient: "radial-gradient(circle at top, rgba(15,23,42,0.06), rgba(15,23,42,0) 58%)",
   },
 };
 
@@ -83,7 +80,7 @@ export function ParticleBackground({
   attractRadius = DEFAULT_ATTRACT_RADIUS,
   attractStrength = DEFAULT_ATTRACT_STRENGTH,
   velocity = DEFAULT_VELOCITY,
-  showGradient = true,
+  showGradient: _showGradient = true,
   palettes = DEFAULT_PALETTES,
   ...props
 }: ParticleBackgroundProps) {
@@ -241,12 +238,6 @@ export function ParticleBackground({
       aria-hidden="true"
       {...props}
     >
-      {showGradient && (
-        <div
-          className="absolute inset-0"
-          style={{ background: palettes[resolvedTheme].gradient }}
-        />
-      )}
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
     </div>
   );

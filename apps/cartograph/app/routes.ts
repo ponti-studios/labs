@@ -9,4 +9,5 @@ export default [
   route("tfl", "routes/tfl.tsx"),
   route("tfl/:cameraId", "routes/tfl.$cameraId.tsx"),
   route("geospatial", "routes/geospatial.tsx"),
+  route("api/tfl", "routes/api.tfl.ts"),
 ] satisfies RouteConfig;

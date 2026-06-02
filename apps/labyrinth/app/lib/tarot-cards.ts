@@ -1,30 +1,141 @@
-export interface TarotCard {
-  name: string;
-  number: string;
-  arcana: string;
-  suit: string;
-  img: string;
-  fortune_telling: string[];
-  keywords: string[];
-  meanings: {
-    light: string[];
-    shadow: string[];
+import tarotData from "../data/tarot-cards.json";
+import type {
+  CourtRank,
+  CuratedDailyReading,
+  DailyTarotCard,
+  MinorPipRank,
+  RawTarotCard,
+  TarotCard,
+  TarotStudyNotes,
+} from "./tarot-types";
+
+const PIP_VALUES: Record<MinorPipRank, 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10> = {
+  Ace: 1,
+  Two: 2,
+  Three: 3,
+  Four: 4,
+  Five: 5,
+  Six: 6,
+  Seven: 7,
+  Eight: 8,
+  Nine: 9,
+  Ten: 10,
+};
+
+const COURT_RANKS: CourtRank[] = ["Page", "Knight", "Queen", "King"];
+
+function buildStudyNotes(card: RawTarotCard): TarotStudyNotes | undefined {
+  const studyNotes: TarotStudyNotes = {
+    archetype: card.Archetype,
+    numerology: card.Numerology,
+    elemental: card.Elemental,
+    astrology: card.Astrology,
+    hebrewAlphabet: card["Hebrew Alphabet"],
+    mythicalSpiritual: card["Mythical/Spiritual"],
+    affirmation: card.Affirmation,
   };
-  Archetype: string;
-  "Hebrew Alphabet": string;
-  Numerology: string;
-  Elemental: string;
-  "Mythical/Spiritual": string;
-  "Questions to Ask": string[];
+
+  return Object.values(studyNotes).some(Boolean) ? studyNotes : undefined;
 }
 
-// Import the tarot data
-const tarotData = require("../data/tarot-cards.json");
+function buildCuratedReading(card: RawTarotCard): CuratedDailyReading {
+  return {
+    uprightSummary: card.meanings.light[0] ?? card.keywords[0] ?? card.name,
+    uprightDetails: card.meanings.light,
+    shadowSummary: card.meanings.shadow[0] ?? card.keywords[1] ?? card.name,
+    shadowDetails: card.meanings.shadow,
+    fortuneTelling: card.fortune_telling,
+  };
+}
 
-export const TAROT_CARDS: TarotCard[] = tarotData.cards;
+function getCardId(card: RawTarotCard) {
+  return card.img.replace(/\.jpg$/i, "");
+}
+
+function normalizeMinorCard(card: RawTarotCard): TarotCard {
+  if (card.suit === "Trump") {
+    throw new Error(`Minor arcana card ${card.name} cannot use Trump as its suit`);
+  }
+
+  const [rankToken] = card.name.split(" of ");
+  const suit = card.suit;
+
+  if ((Object.keys(PIP_VALUES) as MinorPipRank[]).includes(rankToken as MinorPipRank)) {
+    const rank = rankToken as MinorPipRank;
+
+    return {
+      ...card,
+      id: getCardId(card),
+      kind: "minor-pip",
+      suit,
+      arcana: "Minor Arcana",
+      rank,
+      pipValue: PIP_VALUES[rank],
+      studyNotes: buildStudyNotes(card),
+    };
+  }
+
+  if (COURT_RANKS.includes(rankToken as CourtRank)) {
+    return {
+      ...card,
+      id: getCardId(card),
+      kind: "minor-court",
+      suit,
+      arcana: "Minor Arcana",
+      rank: rankToken as CourtRank,
+      studyNotes: buildStudyNotes(card),
+    };
+  }
+
+  throw new Error(`Unsupported minor arcana rank for ${card.name}`);
+}
+
+function normalizeCard(card: RawTarotCard): TarotCard {
+  if (card.arcana === "Major Arcana") {
+    return {
+      ...card,
+      id: getCardId(card),
+      kind: "major",
+      arcana: "Major Arcana",
+      suit: "Trump",
+      majorIndex: Number.parseInt(card.number, 10),
+      studyNotes: buildStudyNotes(card),
+    };
+  }
+
+  return normalizeMinorCard(card);
+}
+
+function getDisplayRank(card: TarotCard): string {
+  if (card.kind === "major") {
+    return card.name;
+  }
+
+  return card.rank;
+}
+
+export const TAROT_CARDS: TarotCard[] = (tarotData.cards as RawTarotCard[]).map(normalizeCard);
+
+export const DAILY_TAROT_CARDS: DailyTarotCard[] = TAROT_CARDS.map((card) => ({
+  id: card.id,
+  name: card.name,
+  arcana: card.arcana,
+  suit: card.suit,
+  rank: getDisplayRank(card),
+  img: card.img,
+  keywords: card.keywords,
+  reflectionQuestions: card["Questions to Ask"],
+  curatedReading: buildCuratedReading(card),
+  studyNotes: card.studyNotes,
+  card,
+}));
 
 export const getCardByName = (name: string): TarotCard | undefined => {
   return TAROT_CARDS.find((card) => card.name.toLowerCase() === name.toLowerCase());
+};
+
+export const getDailyTarotCardById = (id: string): DailyTarotCard | undefined => {
+  return DAILY_TAROT_CARDS.find((card) => card.id === id);
 };
 
 export const getRandomCard = (): TarotCard => {
@@ -46,31 +157,6 @@ export const getRandomCards = (count: number): TarotCard[] => {
   return cards;
 };
 
-export const TAROT_SPREADS = {
-  three_card: {
-    name: "Three Card Spread",
-    positions: ["Past", "Present", "Future"],
-    description: "A classic spread to understand the past, present, and future of a situation.",
-  },
-  celtic_cross: {
-    name: "Celtic Cross",
-    positions: [
-      "Present Situation",
-      "Challenge",
-      "Distant Past",
-      "Recent Past",
-      "Possible Outcome",
-      "Near Future",
-      "Your Attitude",
-      "Outside Influences",
-      "Hopes & Fears",
-      "Final Outcome",
-    ],
-    description: "A comprehensive spread exploring all aspects of a situation.",
-  },
-  one_card: {
-    name: "One Card Draw",
-    positions: ["Daily Guidance"],
-    description: "A simple daily card for guidance and reflection.",
-  },
+export const getRandomDailyTarotCard = (): DailyTarotCard => {
+  return DAILY_TAROT_CARDS[Math.floor(Math.random() * DAILY_TAROT_CARDS.length)];
 };

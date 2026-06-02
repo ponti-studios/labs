@@ -1,76 +1,23 @@
+export type { CovidData, NewCovidData } from "./schema/covid";
+export type { NewRhobhDailyPuzzle, RhobhDailyPuzzle } from "./schema/puzzles";
+export type { NewTflCamera, TflCamera } from "./schema/tfl";
 export type {
-  DisasterEvent,
-  NewDisasterEvent,
-} from './schema/disaster';
-
-export type {
-  RelationshipPerson,
-  NewRelationshipPerson,
-  RelationshipPersonUpdate,
-  RelationshipStageHistory,
-  NewRelationshipStageHistory,
-  RelationshipEvent,
-  NewRelationshipEvent,
-  RelationshipNote,
-  NewRelationshipNote,
-  RelationshipCheckin,
-  NewRelationshipCheckin,
-  RelationshipFlag,
-  NewRelationshipFlag,
-  RelationshipInvite,
-  NewRelationshipInvite,
-  RelationshipVote,
-  NewRelationshipVote,
-  RelationshipMetricDaily,
-  NewRelationshipMetricDaily,
-} from './schema/relationships';
-
-export type {
-  PlaygroundProject,
-  NewPlaygroundProject,
-  PlaygroundTodo,
-  NewPlaygroundTodo,
-  PlaygroundEmbedding,
-  NewPlaygroundEmbedding,
-  PlaygroundTflCamera,
-  NewPlaygroundTflCamera,
-  PlaygroundCovidData,
-  NewPlaygroundCovidData,
-} from './schema/playground';
-
-export type {
-  SocialTracker,
-  NewSocialTracker,
-  SocialVote,
-  NewSocialVote,
-  SocialTrackerParsed,
-} from './schema/social';
+  NewRelationshipCase,
+  NewRelationshipVerdict,
+  RelationshipCase,
+  RelationshipCaseParsed,
+  RelationshipVerdict,
+} from "./schema/relationship-cases";
 
 export {
-  disasterEvents,
-  relationshipPeople,
-  relationshipStageHistory,
-  relationshipEvents,
-  relationshipNotes,
-  relationshipCheckins,
-  relationshipFlags,
-  relationshipFriendInvites,
-  relationshipFriendVotes,
-  relationshipMetricsDaily,
   covidData,
+  relationshipCases,
+  relationshipVerdicts,
+  rhobhDailyPuzzles,
   tflCameras,
-  projects,
-  todos,
-  embeddings,
-  trackers,
-  votes,
-  users,
-  messages,
-} from './schema';
+} from "./schema";
 
-export type { Database } from './client';
-export { createDb, withDb, getDb, closeDb } from './client';
-export type { DbConfig } from './client';
-export * from './env';
-export { db } from './drizzle';
-export * from 'drizzle-orm';
+export * from "drizzle-orm";
+export { db } from "./drizzle";
+export * from "./env";
+export { populateCovidData, populateTflCameras } from "./loaders";

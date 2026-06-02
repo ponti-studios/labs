@@ -5,22 +5,21 @@
     "app/routes/svelte/**/*",
     "app/routes/api.search.ts",
     "app/components/VectorSearch.tsx",
-    "app/lib/embeddings.ts",
     "app/lib/semantic-search.ts",
     "app/lib/server/**/*",
-    "app/db/**/*",
-    "app/components/terminal/__tests__/**/*",
-    "app/routes/__tests__/**/*",
+    "coverage/**/*",
     "scripts/**/*"
   ],
   "compilerOptions": {
-    "allowJs": true,
     "types": ["node", "vite/client", "google.maps"],
     "rootDirs": [".", "./.react-router/types"],
     "baseUrl": ".",
     "paths": {
-      "~/*": ["./app/*"]
+      "~/*": ["./app/*"],
+      "@pontistudios/ai": ["../../packages/ai/src/index.ts"],
+      "@pontistudios/db": ["../../packages/db/src/index.ts"]
     },
-    "noEmit": true
+    "noEmit": true,
+    "ignoreDeprecations": "6.0"
   }
 }

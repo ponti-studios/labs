@@ -1,8 +1,25 @@
-import { isRouteErrorResponse, Links, Meta, Scripts, ScrollRestoration, Outlet, useLocation } from "react-router";
-import { useMemo } from "react";
-import LeafletViewer from "./components/LeafletViewer";
-import Controls from "./components/Controls";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
+import {
+  isRouteErrorResponse,
+  Links,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  useLocation,
+} from "react-router";
 import "./app.css";
+import Controls from "./components/Controls";
+import MapLibreViewer from "./components/MapLibreViewer";
+import { queryClient } from "./lib/query-client";
+
+function ClientOnly({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
+  return <>{children}</>;
+}
 
 export const links = () => [
   { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
@@ -28,7 +45,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="dark">
+      <body>
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -52,15 +69,19 @@ export default function App() {
   }, [location.pathname]);
 
   return (
-    <div className="earth-shell">
-      <LeafletViewer />
-      <div className="earth-dock">
-        <Controls currentTab={currentTab} />
-        <div className="earth-dock-content">
-          <Outlet />
+    <QueryClientProvider client={queryClient}>
+      <div className="earth-shell">
+        <ClientOnly>
+          <MapLibreViewer />
+        </ClientOnly>
+        <div className="earth-dock">
+          <Controls currentTab={currentTab} />
+          <div className="earth-dock-content">
+            <Outlet />
+          </div>
         </div>
       </div>
-    </div>
+    </QueryClientProvider>
   );
 }
 

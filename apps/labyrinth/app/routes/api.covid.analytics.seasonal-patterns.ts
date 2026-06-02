@@ -113,8 +113,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
     // Calculate seasonality metrics
     const caseAverages = patterns.map((p) => p.averageCases).filter((avg) => avg > 0);
-    const deathAverages = patterns.map((p) => p.averageDeaths).filter((avg) => avg > 0);
-
     let seasonalityStrength = 0;
     let peakMonth = 1;
     let troughMonth = 1;

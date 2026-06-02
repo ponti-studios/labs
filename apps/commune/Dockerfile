@@ -9,7 +9,7 @@ RUN npm install -g pnpm@10.30.3
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY apps/commune/package.json apps/commune/package.json
 COPY packages/db/package.json packages/db/package.json
 COPY packages/ui/package.json packages/ui/package.json
@@ -32,6 +32,16 @@ RUN pnpm run build --filter @pontistudios/db
 RUN pnpm run build --filter @pontistudios/ui
 RUN pnpm run build --filter @pontistudios/commune
 
+# Compile Hono server to JS — bundles local app/lib imports, externalises npm packages
+RUN cd apps/commune && \
+  node_modules/.bin/esbuild server.ts \
+  --bundle \
+  --platform=node \
+  --format=esm \
+  --packages=external \
+  "--external:./build/*" \
+  --outfile=server.js
+
 # ─── Stage 3: Production image ───────────────────────────────────────────────
 FROM node:24-bookworm-slim AS runner
 
@@ -51,7 +61,7 @@ RUN pnpm install --frozen-lockfile --prod --ignore-scripts
 COPY --from=builder /app/packages/db/dist packages/db/dist
 COPY --from=builder /app/packages/ui/dist packages/ui/dist
 COPY --from=builder /app/apps/commune/build apps/commune/build
-COPY --from=builder /app/apps/commune/server.ts apps/commune/server.ts
+COPY --from=builder /app/apps/commune/server.js apps/commune/server.js
 
 RUN groupadd -r app && useradd -r -g app app
 

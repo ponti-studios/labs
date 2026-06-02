@@ -1,10 +1,10 @@
 export const ASCII_LOGO = `
  ██████╗██╗  ██╗██╗   ██╗ ██████╗██╗  ██╗██╗███████╗
 ██╔════╝██║  ██║██║   ██║██╔════╝██║ ██╔╝██║██╔════╝
-██║     ███████║██║   ██║██║     █████╔╝ ██║███████╗
-██║     ██╔══██║██║   ██║██║     ██╔═██╗ ██║╚════██║
-╚██████╗██║  ██║╚██████╔╝╚██████╗██║  ██╗██║███████║
- ╚═════╝╚═╝  ╚═╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝╚═╝╚══════╝
+██║     ███████║██║   ██║██║     █████╔╝ ╚═║███████╗
+██║     ██╔══██║██║   ██║██║     ██╔═██╗   ╚═════██║
+╚██████╗██║  ██║╚██████╔╝╚██████╗██║  ██╗  ████████║
+ ╚═════╝╚═╝  ╚═╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝  ╚═══════╝
     ██████╗ ██████╗ ██████╗ ███████╗    ██╗      █████╗ ██████╗ 
    ██╔════╝██╔═══██╗██╔══██╗██╔════╝    ██║     ██╔══██╗██╔══██╗
    ██║     ██║   ██║██║  ██║█████╗      ██║     ███████║██████╔╝
@@ -66,7 +66,6 @@ export const HELP_COMMANDS = [
   { command: "CLS", description: "Clear screen" },
   { command: "VER", description: "Show system version" },
   { command: "TIME", description: "Show current time" },
-  { command: "GRADIENT", description: "Launch gradient border lab" },
   { command: "GLASS", description: "Launch SVG glass effects" },
   { command: "MATRIX", description: "Enter the Matrix" },
   { command: "HACK", description: "Initiate cyber sequence" },
@@ -82,11 +81,10 @@ export const TECH_STACK = ["• React Router v7", "• TypeScript", "• Vite", 
 export const DIRECTORY_LISTING = [
   "Directory of C:\\CHUCK\\PROJECTS",
   "",
-  "GRADIENT.EXE    1,024 bytes  Gradient Border Laboratory",
   "GLASS.EXE       2,048 bytes  SVG Glass Effects Studio",
   "TERMINAL.EXE    4,096 bytes  This Terminal Interface",
   "",
-  "        3 File(s)     7,168 bytes",
+  "        2 File(s)     6,144 bytes",
   "        0 Dir(s)    999,999 bytes free",
   "",
 ];

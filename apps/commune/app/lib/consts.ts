@@ -1,1 +1,1 @@
-export const TRACKER_PHOTO_BUCKET = "social-tracker-photos";
+export const CASE_PHOTO_BUCKET = "relationship-case-photos";

@@ -28,11 +28,7 @@ export async function loader() {
 // Individual camera endpoint
 export async function getCameraById(id: string): Promise<TflCamera | undefined> {
   try {
-    const camera = await db
-      .select()
-      .from(tflCameras)
-      .where(eq(tflCameras.tflId, id))
-      .limit(1);
+    const camera = await db.select().from(tflCameras).where(eq(tflCameras.tflId, id)).limit(1);
 
     if (camera.length === 0) return undefined;
 

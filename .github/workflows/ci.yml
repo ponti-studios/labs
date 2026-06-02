@@ -42,8 +42,6 @@ jobs:
           done
       - name: Verify postgres connection
         run: docker exec postgres-test psql -U postgres -d hominem -c 'SELECT 1'
-      - name: Create labs schema
-        run: docker exec postgres-test psql -U postgres -d hominem -c 'CREATE SCHEMA IF NOT EXISTS labs'
       - name: Run migrations
         run: pnpm --filter @pontistudios/db db:migrate
         env:

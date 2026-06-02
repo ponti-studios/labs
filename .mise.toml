@@ -1,47 +1,4 @@
 [tools]
 node = "24.14.1"
 npm = "latest"
-
-[env]
-NODE_ENV = "development"
-
-# Foundation postgres (run `just docker-up` in ../foundation first)
-DATABASE_URL = "postgresql://postgres:postgres@localhost:5434/labs"
-TEST_DATABASE_URL = "postgresql://postgres:postgres@localhost:4433/labs-test"
-REDIS_URL = "redis://localhost:6379"
-
-[tasks.dev]
-description = "Start all apps in development mode"
-run = "pnpm dev"
-
-[tasks.test]
-description = "Run tests"
-run = "pnpm test"
-
-[tasks.lint]
-description = "Run linter"
-run = "pnpm turbo run lint --force --parallel"
-
-[tasks.build]
-description = "Lint and build the application"
-depends = ["lint"]
-run = "pnpm turbo run build --force"
-
-[tasks.clean]
-description = "Clean build artifacts and dependencies"
-run = """
-rm -rf **/node_modules **/dist **/build **/logs **/coverage **/.next **/.turbo **/.react-router pnpm-lock.yaml package-lock.json
-"""
-
-[tasks.check]
-description = "Run all tests and linting"
-depends = ["test", "lint"]
-
-[tasks.reset]
-description = "Full cleanup and reinstall"
-depends = ["clean"]
-run = "mise run install"
-
-[tasks.all]
-alias = "default"
-depends = ["install", "build"]
+pnpm = "10.33.0"

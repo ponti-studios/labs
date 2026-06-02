@@ -1,11 +1,9 @@
 // React Router compatible version of covid actions
 
-import { and, eq, isNotNull, sql } from "@pontistudios/db";
-import { covidData, db } from "@pontistudios/db";
-import type { CovidDataSelect } from "~/db/schema";
+import { and, covidData, db, eq, isNotNull, sql, type CovidData } from "@pontistudios/db";
 
 interface ApiResponse {
-  data: CovidDataSelect[];
+  data: CovidData[];
   pagination: {
     page: number;
     limit: number;
@@ -159,8 +157,6 @@ export async function getCountryComparisonData(
     if (countryCodes.length === 0) {
       throw new Error("At least one country code is required");
     }
-
-    const conditions = countryCodes.map((code) => eq(covidData.isoCode, code));
 
     const records = await db
       .select()
