@@ -64,14 +64,13 @@ export function StatsOverview({ data, countryCode: _countryCode }: StatsOverview
       {latestData.date && (
         <p className="text-xs text-stone-400">
           Data as of {new Date(latestData.date).toLocaleDateString()}
-          {latestData.vaccinationDataDate &&
-            latestData.vaccinationDataDate !== latestData.date && (
-              <>
-                {" "}
-                · Vaccination data as of{" "}
-                {new Date(latestData.vaccinationDataDate).toLocaleDateString()}
-              </>
-            )}
+          {latestData.vaccinationDataDate && latestData.vaccinationDataDate !== latestData.date && (
+            <>
+              {" "}
+              · Vaccination data as of{" "}
+              {new Date(latestData.vaccinationDataDate).toLocaleDateString()}
+            </>
+          )}
         </p>
       )}
     </div>

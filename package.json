@@ -28,7 +28,7 @@
     "@types/node": "catalog:",
     "jscpd": "^4.2.3",
     "knip": "^6.6.1",
-    "oxfmt": "^0.51.0",
+    "oxfmt": "0.53.0",
     "oxlint": "^1.66.0",
     "pm2": "^7.0.1",
     "rolldown": "1.0.0-rc.17",

@@ -29,3 +29,8 @@ clean:
 
 reset: clean install
 	docker build -f docker/workspace-base.Dockerfile --target workspace-runtime-base -t pontistudios/labs-workspace-runtime:latest .
+
+setup-minio:
+	docker exec foundation-minio mc alias set local http://localhost:9000 minioadmin minioadmin
+	docker exec foundation-minio mc mb local/labyrinth
+	docker exec foundation-minio mc anonymous set public local/labyrinth

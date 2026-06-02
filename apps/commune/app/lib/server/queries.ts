@@ -1,25 +1,43 @@
 import { sql, desc, eq, inArray } from "@pontistudios/db";
 import { db, relationshipCases, relationshipVerdicts } from "@pontistudios/db";
-import type { RelationshipCase, RelationshipCaseParsed, RelationshipVerdict } from "@pontistudios/db";
+import type {
+  RelationshipCase,
+  RelationshipCaseParsed,
+  RelationshipVerdict,
+} from "@pontistudios/db";
 
 function parseCase(raw: RelationshipCase): RelationshipCaseParsed {
   return {
-    ...(raw as unknown as Omit<RelationshipCaseParsed, "attacks" | "strengths" | "flaws" | "imagePosition">),
+    ...(raw as unknown as Omit<
+      RelationshipCaseParsed,
+      "attacks" | "strengths" | "flaws" | "imagePosition"
+    >),
     attacks: typeof raw.attacks === "string" ? JSON.parse(raw.attacks) : (raw.attacks ?? []),
-    strengths: typeof raw.strengths === "string" ? JSON.parse(raw.strengths) : (raw.strengths ?? []),
+    strengths:
+      typeof raw.strengths === "string" ? JSON.parse(raw.strengths) : (raw.strengths ?? []),
     flaws: typeof raw.flaws === "string" ? JSON.parse(raw.flaws) : (raw.flaws ?? []),
     imagePosition:
-      typeof raw.imagePosition === "string" ? JSON.parse(raw.imagePosition) : (raw.imagePosition ?? null),
+      typeof raw.imagePosition === "string"
+        ? JSON.parse(raw.imagePosition)
+        : (raw.imagePosition ?? null),
   };
 }
 
 export async function getCases(): Promise<RelationshipCaseParsed[]> {
-  const rows = await db.select().from(relationshipCases).orderBy(desc(relationshipCases.createdAt)).execute();
+  const rows = await db
+    .select()
+    .from(relationshipCases)
+    .orderBy(desc(relationshipCases.createdAt))
+    .execute();
   return rows.map(parseCase);
 }
 
 export async function getCase(id: string): Promise<RelationshipCaseParsed | null> {
-  const row = await db.select().from(relationshipCases).where(eq(relationshipCases.id, id)).execute();
+  const row = await db
+    .select()
+    .from(relationshipCases)
+    .where(eq(relationshipCases.id, id))
+    .execute();
   return row[0] ? parseCase(row[0]) : null;
 }
 
@@ -66,7 +84,9 @@ export async function getVerdictStats(caseId: string): Promise<{
 }
 
 export async function getCasesWithStats(): Promise<
-  (RelationshipCaseParsed & { voteStats: { total: number; stay: number; stayPercentage: number } })[]
+  (RelationshipCaseParsed & {
+    voteStats: { total: number; stay: number; stayPercentage: number };
+  })[]
 > {
   const allCases = await getCases();
   if (allCases.length === 0) return [];
@@ -89,7 +109,8 @@ export async function getCasesWithStats(): Promise<
       {
         total: Number(s.total) || 0,
         stay: Number(s.stay) || 0,
-        stayPercentage: Number(s.total) > 0 ? Math.round((Number(s.stay) / Number(s.total)) * 100) : 0,
+        stayPercentage:
+          Number(s.total) > 0 ? Math.round((Number(s.stay) / Number(s.total)) * 100) : 0,
       },
     ]),
   );

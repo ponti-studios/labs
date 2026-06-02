@@ -196,7 +196,9 @@ export default function SeasonalPatternsPage() {
                   <div key={insight.pattern} className="border-l-2 border-border pl-4 py-0.5">
                     <p className="text-sm font-medium text-foreground">{insight.pattern}</p>
                     <p className="text-xs text-muted-foreground mt-0.5">{insight.description}</p>
-                    <p className="text-xs text-muted-foreground mt-1">{insight.strength}% strength</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {insight.strength}% strength
+                    </p>
                   </div>
                 ))}
               </div>
@@ -217,9 +219,7 @@ export default function SeasonalPatternsPage() {
               <tbody>
                 {data.analysis.patterns.map((pattern) => (
                   <tr key={pattern.month} className="border-b border-border last:border-0">
-                    <td className="px-4 py-2.5 font-medium text-foreground">
-                      {pattern.monthName}
-                    </td>
+                    <td className="px-4 py-2.5 font-medium text-foreground">{pattern.monthName}</td>
                     <td className="px-4 py-2.5 text-right text-muted-foreground tabular-nums">
                       {pattern.averageCases.toLocaleString()}
                     </td>

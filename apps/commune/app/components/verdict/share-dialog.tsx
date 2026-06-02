@@ -10,7 +10,13 @@ interface ShareDialogProps {
   copyShareLink: () => void;
 }
 
-export function ShareDialog({ open, onOpenChange, cardName, shareUrl, copyShareLink }: ShareDialogProps) {
+export function ShareDialog({
+  open,
+  onOpenChange,
+  cardName,
+  shareUrl,
+  copyShareLink,
+}: ShareDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">

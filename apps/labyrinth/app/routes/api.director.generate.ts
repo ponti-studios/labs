@@ -1,6 +1,8 @@
 import { generateImageFromPrompt } from "@pontistudios/ai";
 import type { ActionFunctionArgs } from "react-router";
 import { z } from "zod";
+import { LabyrinthServerEnv } from "~/lib/server/env";
+import { uploadImage } from "~/lib/server/storage";
 
 const directorConfigSchema = z.object({
   image_specifications: z.object({
@@ -42,17 +44,9 @@ const requestSchema = z.object({
   config: directorConfigSchema,
 });
 
-function getImagenApiKey() {
-  return process.env.OPENROUTER_API_KEY || null;
-}
-
 function isAllowedOrigin(request: Request) {
   const origin = request.headers.get("Origin");
-
-  if (!origin) {
-    return false;
-  }
-
+  if (!origin) return false;
   return origin === new URL(request.url).origin;
 }
 
@@ -65,11 +59,7 @@ export async function action({ request }: ActionFunctionArgs) {
     return Response.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const apiKey = getImagenApiKey();
-
-  if (!apiKey) {
-    return Response.json({ error: "Missing OpenRouter API key" }, { status: 500 });
-  }
+  const env = LabyrinthServerEnv.parse(process.env);
 
   try {
     const body = requestSchema.parse(await request.json());
@@ -77,23 +67,24 @@ export async function action({ request }: ActionFunctionArgs) {
       body.config.image_specifications.dimensions.replace(/px$/i, "").trim() || "1024x1024";
     const promptText = `Generate a photorealistic image based on these strict specifications:\n${JSON.stringify(body.config, null, 2)}`;
     const imageData = await generateImageFromPrompt(promptText, {
-      apiKey,
+      apiKey: env.openRouterApiKey,
       imageModel: "x-ai/grok-imagine-image-quality",
       outputFormat: "png",
       quality: "high",
       size,
     });
 
-    return Response.json({ imageData });
+    const key = `director/${Date.now()}.png`;
+    const imageUrl = await uploadImage(imageData, key, env);
+
+    return Response.json({ imageUrl });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return Response.json({ error: "Invalid request payload" }, { status: 400 });
     }
 
     return Response.json(
-      {
-        error: error instanceof Error ? error.message : "Unexpected image generation failure",
-      },
+      { error: error instanceof Error ? error.message : "Unexpected image generation failure" },
       { status: 500 },
     );
   }

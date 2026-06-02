@@ -80,8 +80,18 @@ export default function CovidPage() {
       <StatsOverview data={statsData ? [statsData] : []} countryCode={countryCode} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <TimeSeriesChart data={timeSeriesData} metric="totalCases" title="Total Cases" color="#3b82f6" />
-        <TimeSeriesChart data={timeSeriesData} metric="totalDeaths" title="Total Deaths" color="#ef4444" />
+        <TimeSeriesChart
+          data={timeSeriesData}
+          metric="totalCases"
+          title="Total Cases"
+          color="#3b82f6"
+        />
+        <TimeSeriesChart
+          data={timeSeriesData}
+          metric="totalDeaths"
+          title="Total Deaths"
+          color="#ef4444"
+        />
         <TimeSeriesChart
           data={timeSeriesData}
           metric="newCasesSmoothed"

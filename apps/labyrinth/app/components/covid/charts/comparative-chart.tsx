@@ -55,8 +55,7 @@ export function ComparativeChart({ data, metrics, title, height = 280 }: Compara
     const metricData = data
       .map((item) => ({ date: item.date, value: toNumber(item[key]) }))
       .filter(
-        (item): item is { date: string; value: number } =>
-          item.date != null && item.value !== null,
+        (item): item is { date: string; value: number } => item.date != null && item.value !== null,
       )
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
@@ -97,7 +96,10 @@ export function ComparativeChart({ data, metrics, title, height = 280 }: Compara
             contentStyle={tooltipStyle}
             cursor={{ stroke: "var(--color-border)", strokeWidth: 1 }}
           />
-          <Legend iconType="plainline" wrapperStyle={{ fontSize: "11px", color: "var(--color-emphasis-low)" }} />
+          <Legend
+            iconType="plainline"
+            wrapperStyle={{ fontSize: "11px", color: "var(--color-emphasis-low)" }}
+          />
           {metrics.map(({ name, color }) => (
             <Line
               key={name}

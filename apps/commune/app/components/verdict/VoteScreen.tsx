@@ -86,7 +86,6 @@ const VoteScreen: React.FC<VoteScreenProps> = ({
       formData.append("fingerprint", fingerprint);
       if (userId) formData.append("userId", userId);
 
-
       fetcher.submit(formData, { method: "post" });
     } catch (e: any) {
       console.error("Error submitting vote:", e);

@@ -1,6 +1,11 @@
 import { eq } from "@pontistudios/db";
 import { db, relationshipCases, relationshipVerdicts } from "@pontistudios/db";
-import type { NewRelationshipCase, NewRelationshipVerdict, RelationshipCase, RelationshipVerdict } from "@pontistudios/db";
+import type {
+  NewRelationshipCase,
+  NewRelationshipVerdict,
+  RelationshipCase,
+  RelationshipVerdict,
+} from "@pontistudios/db";
 import { queryCache, invalidateCaseCache } from "./cache";
 
 export type CaseCreateInput = Omit<NewRelationshipCase, "id" | "createdAt" | "updatedAt">;

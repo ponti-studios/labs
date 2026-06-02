@@ -442,12 +442,12 @@ export default function DirectorRoute() {
         throw new Error(payload?.error || `Generation failed: ${response.statusText}`);
       }
 
-      const data = (await response.json()) as { imageData?: string };
+      const data = (await response.json()) as { imageUrl?: string };
 
-      if (data.imageData) {
-        setGeneratedImage(data.imageData);
+      if (data.imageUrl) {
+        setGeneratedImage(data.imageUrl);
       } else {
-        throw new Error("No image data received from the API.");
+        throw new Error("No image URL received from the API.");
       }
     } catch (caughtError: unknown) {
       setError(

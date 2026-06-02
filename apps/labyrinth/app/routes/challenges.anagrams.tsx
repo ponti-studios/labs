@@ -187,7 +187,10 @@ export default function Anagrams(): JSX.Element {
                     return (
                       <TableRow
                         key={i}
-                        style={{ animation: `fade-slide-in 300ms ease-out both`, animationDelay: `${i * ROW_STAGGER_MS}ms` }}
+                        style={{
+                          animation: `fade-slide-in 300ms ease-out both`,
+                          animationDelay: `${i * ROW_STAGGER_MS}ms`,
+                        }}
                       >
                         <TableCell className={`font-mono font-medium ${color.row}`}>
                           {step.word}

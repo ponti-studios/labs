@@ -51,8 +51,7 @@ export function TimeSeriesChart({
   const chartData = data
     .map((item) => ({ date: item.date, value: toNumber(item[metric]) }))
     .filter(
-      (item): item is { date: string; value: number } =>
-        item.date != null && item.value !== null,
+      (item): item is { date: string; value: number } => item.date != null && item.value !== null,
     )
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 

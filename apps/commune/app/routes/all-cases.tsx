@@ -7,11 +7,7 @@ import { getCasesWithStats } from "~/lib/server/queries";
 import { withCache, CACHE_TTL } from "~/lib/server/cache";
 
 export async function loader(_args: Route.LoaderArgs) {
-  const cases = await withCache(
-    "cases:list:all",
-    () => getCasesWithStats(),
-    CACHE_TTL.CASE_LIST,
-  );
+  const cases = await withCache("cases:list:all", () => getCasesWithStats(), CACHE_TTL.CASE_LIST);
   return { cases };
 }
 
@@ -37,8 +33,10 @@ export default function AllCasesPage() {
             strengths: c.strengths,
             commitmentLevel: c.commitmentLevel,
           };
-          const selectedTheme = COLOR_THEMES.find((t) => t.value === c.colorTheme) || COLOR_THEMES[0];
-          const selectedType = PERSONALITY_TYPES.find((t) => t.value === c.cardType) || PERSONALITY_TYPES[0];
+          const selectedTheme =
+            COLOR_THEMES.find((t) => t.value === c.colorTheme) || COLOR_THEMES[0];
+          const selectedType =
+            PERSONALITY_TYPES.find((t) => t.value === c.cardType) || PERSONALITY_TYPES[0];
           return (
             <div key={c.id} className="flex justify-center">
               <PersonCardDisplay
