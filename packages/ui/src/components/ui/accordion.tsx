@@ -85,9 +85,9 @@ function AccordionContent({
       className="grid overflow-hidden text-sm transition-[grid-template-rows,opacity] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] data-[state=closed]:grid-rows-[0fr] data-[state=closed]:opacity-0 data-[state=open]:grid-rows-[1fr] data-[state=open]:opacity-100"
       {...props}
     >
-      <div className={cn("min-h-0 pb-6 pl-14", className)}>{children}</div>
+      <div className={cn("min-h-0 pb-6 pl-6", className)}>{children}</div>
     </AccordionPrimitive.Content>
   );
 }
 
-export { Accordion, AccordionItem, AccordionTrigger, AccordionContent };
+export { Accordion, AccordionContent, AccordionItem, AccordionTrigger };

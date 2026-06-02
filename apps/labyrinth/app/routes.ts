@@ -27,6 +27,7 @@ const apiRoutes = [
 ] satisfies RouteConfig;
 
 const featureRoutes = [
+  route("/director", "routes/director.tsx"),
   route("/tarot", "routes/tarot.tsx"),
   route("/covid", "routes/covid.tsx"),
   route("/covid/:countryCode", "routes/covid.$countryCode.layout.tsx", [
@@ -44,7 +45,6 @@ const featureRoutes = [
 ] satisfies RouteConfig;
 
 const experimentRoutes = [
-  route("/experiments", "routes/experiments.tsx"),
   route("/experiments/glass", "routes/experiments.glass.tsx"),
   route("/experiments/infinite-scroll", "routes/infinite-scroll/index.tsx"),
   route("/experiments/threegl-web-request", "routes/experiments.threegl-web-request.tsx"),

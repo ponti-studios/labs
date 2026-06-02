@@ -8,6 +8,7 @@ type RouteEntry = {
 
 const routeEntries: RouteEntry[] = [
   { path: "/", href: "/", kind: "page" },
+  { path: "/director", href: "/director", kind: "page" },
   { path: "/api/director/generate", kind: "api" },
   { path: "/api/words/validate", kind: "api" },
   { path: "/tarot", href: "/tarot", kind: "page" },
@@ -18,11 +19,11 @@ const routeEntries: RouteEntry[] = [
   //   { path: "/covid/:countryCode/vaccination-effectiveness", kind: "dynamic" },
   //   { path: "/covid/:countryCode/seasonal-patterns", kind: "dynamic" },
   //   { path: "/covid/:countryCode/outlier-detection", kind: "dynamic" },
+  { path: "/games/cards", href: "/games/cards", kind: "page" },
   { path: "/games/tetris", href: "/games/tetris", kind: "page" },
   { path: "/games/realitea", href: "/games/realitea", kind: "page" },
   { path: "/business-tools", href: "/business-tools", kind: "page" },
   { path: "/business-tools/marketing", href: "/business-tools/marketing", kind: "page" },
-  { path: "/experiments", href: "/experiments", kind: "page" },
   { path: "/experiments/glass", href: "/experiments/glass", kind: "page" },
   { path: "/experiments/infinite-scroll", href: "/experiments/infinite-scroll", kind: "page" },
   {
@@ -36,7 +37,6 @@ const routeEntries: RouteEntry[] = [
     kind: "page",
   },
 
-  { path: "/games/cards", href: "/games/cards", kind: "page" },
   { path: "/challenges/anagrams", href: "/challenges/anagrams", kind: "page" },
   { path: "/challenges/click-therapeutics", href: "/challenges/click-therapeutics", kind: "page" },
   { path: "/challenges/cloudmargin", href: "/challenges/cloudmargin", kind: "page" },

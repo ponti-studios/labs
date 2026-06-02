@@ -14,10 +14,10 @@ export type LabyrinthServerEnv = z.infer<typeof LabyrinthServerEnv>;
 
 export const DailyPuzzleSchedulerEnv = z
   .object({
-    RHOBH_DAILY_PUZZLE_TOKEN: z.string().min(1),
+    REALITEA_TOKEN: z.string().min(1),
   })
   .transform((env) => ({
-    dailyPuzzleToken: env.RHOBH_DAILY_PUZZLE_TOKEN,
+    dailyPuzzleToken: env.REALITEA_TOKEN,
   }));
 
 export type DailyPuzzleSchedulerEnv = z.infer<typeof DailyPuzzleSchedulerEnv>;

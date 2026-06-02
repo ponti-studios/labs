@@ -15,6 +15,7 @@
 		"types": ["node", "vite/client"],
 		"rootDirs": [".", "./.react-router/types"],
 		"baseUrl": ".",
+		"ignoreDeprecations": "6.0",
 		"incremental": true,
 		"plugins": [
 			{

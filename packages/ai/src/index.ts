@@ -150,80 +150,83 @@ export async function generateImageFromPrompt(
   options: ImageGenerationOptions = {},
 ) {
   const client = createOpenRouterClient(options);
-  const additionalProperties: Record<string, string | number> = {};
+  const imageConfig: Record<string, string | number> = {};
 
   if (options.aspectRatio) {
-    additionalProperties.aspect_ratio = options.aspectRatio;
+    imageConfig.aspect_ratio = options.aspectRatio;
   }
 
   if (options.background) {
-    additionalProperties.background = options.background;
+    imageConfig.background = options.background;
   }
 
   if (options.moderation) {
-    additionalProperties.moderation = options.moderation;
+    imageConfig.moderation = options.moderation;
   }
 
   if (options.outputCompression !== undefined) {
-    additionalProperties.output_compression = options.outputCompression;
+    imageConfig.output_compression = options.outputCompression;
   }
 
   if (options.outputFormat) {
-    additionalProperties.output_format = options.outputFormat;
+    imageConfig.output_format = options.outputFormat;
   }
 
   if (options.partialImages !== undefined) {
-    additionalProperties.partial_images = options.partialImages;
+    imageConfig.partial_images = options.partialImages;
   }
 
   if (options.quality) {
-    additionalProperties.quality = options.quality;
+    imageConfig.quality = options.quality;
   }
 
   if (options.size) {
-    additionalProperties.size = options.size;
+    imageConfig.size = options.size;
   }
 
-  const response = await client.beta.responses.send({
-    responsesRequest: {
-      model: options.model ?? DEFAULT_TEXT_MODEL,
-      input: prompt,
+  const response = await client.chat.send({
+    httpReferer: options.httpReferer,
+    appTitle: options.appTitle,
+    appCategories: options.appCategories,
+    chatRequest: {
+      model: options.imageModel ?? options.model ?? DEFAULT_IMAGE_MODEL,
+      messages: [{ role: "user", content: prompt }],
       modalities: ["image"],
-      tools: [
-        {
-          type: "openrouter:image_generation",
-          parameters: {
-            model: options.imageModel ?? DEFAULT_IMAGE_MODEL,
-            ...(Object.keys(additionalProperties).length > 0 ? { additionalProperties } : {}),
-          },
-        },
-      ],
+      stream: false,
+      ...(Object.keys(imageConfig).length > 0 ? { imageConfig } : {}),
     },
   });
 
-  const imageItem = (
-    response.output as Array<{
-      type: string;
-      imageB64?: string;
-      imageUrl?: string;
-      result?: string | null;
-    }>
-  ).find((item) => item.type === "openrouter:image_generation");
+  const imageUrl = response.choices?.[0]?.message.images?.[0]?.imageUrl.url;
 
-  if (!imageItem) {
-    throw new Error("No image data received from OpenRouter");
+  if (imageUrl) {
+    return imageUrl;
   }
 
-  if (imageItem.imageB64) {
-    return `data:image/png;base64,${imageItem.imageB64}`;
+  const content = response.choices?.[0]?.message.content;
+
+  if (
+    typeof content === "string" &&
+    (content.startsWith("data:image/") || content.startsWith("http"))
+  ) {
+    return content;
   }
 
-  if (imageItem.imageUrl) {
-    return imageItem.imageUrl;
-  }
+  const imageItem = Array.isArray(content)
+    ? (
+        content as Array<{
+          type?: string;
+          imageUrl?: { url?: string };
+          image_url?: { url?: string };
+          url?: string;
+        }>
+      ).find((item) => item.type === "image_url" || item.imageUrl || item.image_url || item.url)
+    : null;
 
-  if (imageItem.result) {
-    return imageItem.result;
+  const contentImageUrl = imageItem?.imageUrl?.url ?? imageItem?.image_url?.url ?? imageItem?.url;
+
+  if (contentImageUrl) {
+    return contentImageUrl;
   }
 
   throw new Error("No image data received from OpenRouter");

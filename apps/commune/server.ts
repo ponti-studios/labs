@@ -36,16 +36,16 @@ api.post("/cases", async (c) => {
       hp: typeof body.hp === "string" ? body.hp : null,
       cardType: typeof body.cardType === "string" ? body.cardType : null,
       description: typeof body.description === "string" ? body.description : null,
-      attacks: Array.isArray(body.attacks) ? JSON.stringify(body.attacks) : null,
-      strengths: Array.isArray(body.strengths) ? JSON.stringify(body.strengths) : null,
-      flaws: Array.isArray(body.flaws) ? JSON.stringify(body.flaws) : null,
+      attacks: Array.isArray(body.attacks) ? (body.attacks as { name: string; damage: number }[]) : null,
+      strengths: Array.isArray(body.strengths) ? (body.strengths as string[]) : null,
+      flaws: Array.isArray(body.flaws) ? (body.flaws as string[]) : null,
       commitmentLevel: typeof body.commitmentLevel === "string" ? body.commitmentLevel : null,
       colorTheme: typeof body.colorTheme === "string" ? body.colorTheme : null,
       photoUrl: typeof body.photoUrl === "string" ? body.photoUrl : null,
       imageScale: typeof body.imageScale === "number" ? body.imageScale : null,
       imagePosition:
         typeof body.imagePosition === "object" && body.imagePosition !== null
-          ? JSON.stringify(body.imagePosition as { x: number; y: number })
+          ? (body.imagePosition as { x: number; y: number })
           : null,
       userId: body.userId,
     };
