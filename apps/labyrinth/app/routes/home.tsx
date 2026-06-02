@@ -8,7 +8,6 @@ type RouteEntry = {
 
 const routeEntries: RouteEntry[] = [
   { path: "/", href: "/", kind: "page" },
-  { path: "/svg-glass-test", href: "/svg-glass-test", kind: "page" },
   { path: "/api/director/generate", kind: "api" },
   { path: "/api/words/validate", kind: "api" },
   { path: "/infinite-scroll", href: "/infinite-scroll", kind: "page" },
@@ -25,6 +24,7 @@ const routeEntries: RouteEntry[] = [
   { path: "/business-tools", href: "/business-tools", kind: "page" },
   { path: "/business-tools/marketing", href: "/business-tools/marketing", kind: "page" },
   { path: "/experiments", href: "/experiments", kind: "page" },
+  { path: "/experiments/glass", href: "/experiments/glass", kind: "page" },
   {
     path: "/experiments/threegl-web-request",
     href: "/experiments/threegl-web-request",

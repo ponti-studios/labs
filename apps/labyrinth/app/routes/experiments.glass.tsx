@@ -1,4 +1,4 @@
-import { Button, cn, Input, Label, Slider, Tag } from "@pontistudios/ui";
+import { Button, cn, Input, Label, Slider } from "@pontistudios/ui";
 import type React from "react";
 import { useCallback, useRef, useState } from "react";
 
@@ -7,11 +7,7 @@ const DISPLACEMENT_FILTER_ID = "DISPLACEMENT_FILTER";
 export default function ExperimentsGlass() {
   const [position, setPosition] = useState({ x: 50, y: 50 });
   const [isDragging, setIsDragging] = useState(false);
-  const [displacements, setDisplacements] = useState({
-    red: -148,
-    green: -150,
-    blue: -152,
-  });
+  const [displacements, setDisplacements] = useState(() => computeDisplacements(20, 2));
   const [showControls, setShowControls] = useState(true);
   const [backgroundImage, setBackgroundImage] = useState("");
   const dragRef = useRef({
@@ -55,9 +51,6 @@ export default function ExperimentsGlass() {
 
   return (
     <div className="relative w-full h-screen overflow-hidden pt-16 rounded-3xl">
-      {/* SVG Filter Definition */}
-      <DisplacementFilter displacements={displacements} />
-
       {/* Instructions */}
       <div className="absolute top-4 right-4 z-50 bg-card/95 backdrop-blur-sm border border-border rounded-lg p-4 max-w-xs">
         <p className="ui-eyebrow mb-3">Draggable Glass Effect</p>
@@ -120,11 +113,7 @@ export default function ExperimentsGlass() {
             {(
               [
                 { channel: "red", color: "bg-red-500", label: "Red" },
-                {
-                  channel: "green",
-                  color: "bg-green-500",
-                  label: "Green",
-                },
+                { channel: "green", color: "bg-green-500", label: "Green" },
                 { channel: "blue", color: "bg-blue-500", label: "Blue" },
               ] as const
             ).map(({ channel, color, label }) => (
@@ -159,7 +148,7 @@ export default function ExperimentsGlass() {
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => setDisplacements({ red: -148, green: -150, blue: -152 })}
+              onClick={() => setDisplacements(computeDisplacements(20, 2))}
             >
               Reset
             </Button>
@@ -177,142 +166,217 @@ export default function ExperimentsGlass() {
 
       {/* Large Background Image - Using a colorful pattern or custom image */}
       <div className="absolute inset-0 w-full h-full">
-          <div
-            className="w-full h-full bg-cover bg-center bg-no-repeat"
-            style={{
+        <div
+          className="w-full h-full bg-cover bg-center bg-no-repeat"
+          style={{
             backgroundImage:
               backgroundImage ||
               `url(https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg/1280px-%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg)`,
-            }}
-          />
+          }}
+        />
       </div>
 
-      {/* Draggable Glass Overlay */}
-      <button
-        type="button"
+      {/* Draggable Glass SVG — filter defined inline in defs, applied to the SVG element itself */}
+      <svg
+        role="button"
+        tabIndex={0}
+        width="200"
+        height="200"
+        viewBox="0 0 220 220"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-label="Draggable glass effect"
         style={{
           left: `${position.x}px`,
           top: `${position.y}px`,
           cursor: isDragging ? "grabbing" : "grab",
+          backdropFilter: `url(#${DISPLACEMENT_FILTER_ID})`,
         }}
-        className="absolute size-50 z-90"
+        className="absolute z-90 rounded-lg border"
         onMouseUp={handleMouseUp}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseUp}
       >
-        <div
-          className="w-full h-full rounded-lg border"
-          style={{
-            backdropFilter: `url(#${DISPLACEMENT_FILTER_ID})`,
-          }}
-        />
-        {/* Drag handle indicator */}
-        <Tag className="absolute top-2 left-2 pointer-events-none">Drag me</Tag>
-      </button>
+        <defs>
+          <GlassFilter displacements={displacements} />
+        </defs>
+        <text
+          x="10"
+          y="20"
+          fontSize="10"
+          fill="currentColor"
+          style={{ pointerEvents: "none", userSelect: "none" }}
+        >
+          Drag me
+        </text>
+      </svg>
     </div>
   );
 }
 
-const DisplacementFilter = ({
+/**
+ * Converts a desired pixel refraction amount into feDisplacementMap scale values,
+ * one per RGB channel, with a small spread between them to simulate chromatic aberration.
+ *
+ * HOW `feDisplacementMap` WORKS
+ * ───────────────────────────
+ * For every pixel (x, y) in the source image, `feDisplacementMap` looks up the
+ * corresponding pixel in the displacement map and shifts the source pixel by:
+ *
+ *   x' = x + scale × (B_channel / 255 − 0.5)
+ *   y' = y + scale × (G_channel / 255 − 0.5)
+ *
+ * The "−0.5" centres the range:
+ *   - value of 0.5 (neutral gray, #7F7F7F) = no shift
+ *   - values below 0.5 shift negative
+ *   - values above 0.5 shift positive
+ *
+ * DERIVING `scale` FROM A DESIRED PIXEL SHIFT
+ * ──────────────────────────────────────────
+ * Our displacement map is filled with near-neutral gray (#7F7F7F ≈ 127/255 ≈ 0.498).
+ * At transparent edges the channel value drops to 0, giving a maximum deviation of 0.5:
+ *
+ *   max_shift = scale × 0.5
+ *   → scale = refractionPx / 0.5 = refractionPx × 2
+ *
+ * WHY THREE SLIGHTLY DIFFERENT SCALES
+ * ─────────────────────────────────────
+ * Real glass disperses light: short wavelengths (blue) refract more than long ones (red).
+ * Giving each RGB channel a slightly different scale recreates that colour fringing.
+ * `aberrationPx` controls the total spread between the red and blue channels.
+ */
+function computeDisplacements(
+  refractionPx: number,
+  aberrationPx = 2,
+): { red: number; green: number; blue: number } {
+  const toScale = (px: number) => px / 0.5; // max channel deviation is 0.5
+
+  return {
+    red: toScale(refractionPx - aberrationPx), // least refraction (longest wavelength)
+    green: toScale(refractionPx),
+    blue: toScale(refractionPx + aberrationPx), // most refraction (shortest wavelength)
+  };
+}
+
+// Shared props for all feImage elements in the displacement filter
+const FILTER_IMAGE_PROPS = { x: "0%", y: "0%", width: "100%", height: "100%" } as const;
+
+// Color matrices that isolate a single RGB channel (alpha row is always preserved)
+const CHANNEL_MATRICES = {
+  red: "1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0",
+  green: "0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0",
+  blue: "0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0",
+} as const;
+
+const ChannelDisplacement = ({
+  scale,
+  result,
+  channel,
+}: {
+  scale: number;
+  result: string;
+  channel: keyof typeof CHANNEL_MATRICES;
+}) => (
+  <>
+    <feDisplacementMap
+      in2="dispMap"
+      in="SourceGraphic"
+      scale={scale.toString()}
+      xChannelSelector="B"
+      yChannelSelector="G"
+    />
+    <feColorMatrix type="matrix" values={CHANNEL_MATRICES[channel]} result={result} />
+  </>
+);
+
+interface FilterRect {
+  // Fill color. Use a hex string (e.g. "#FFF") or "none" for a stroke-only rect.
+  fill: string;
+  // Optional stroke color. Produces a visible outline without affecting the fill area.
+  stroke?: string;
+  // Optional CSS blur radius in px, applied via style="filter:blur(Xpx)".
+  // Blur is rendered before compositing, so it bleeds outside the rect boundary.
+  blur?: number;
+}
+
+/**
+ * Builds a URL-encoded SVG data URI for use as an feImage href.
+ *
+ * All filter layer SVGs share:
+ *   - A fixed 200×200 canvas with a 220×220 viewBox (extra space absorbs blur bleed)
+ *   - A single rounded-rectangle shape: x=50 y=50 w=100 h=100 rx=25
+ *
+ * Multiple rects are layered in order (first = bottom).
+ */
+function makeFilterSvg(rects: FilterRect[]): string {
+  const rectMarkup = rects
+    .map(({ fill, stroke, blur }) => {
+      const strokeAttr = stroke ? ` stroke='${stroke}'` : "";
+      const styleAttr = blur != null ? ` style='filter:blur(${blur}px)'` : "";
+      return `<rect x='0' y='0' width='220' height='220' rx='8' fill='${fill}'${strokeAttr}${styleAttr} />`;
+    })
+    .join("");
+
+  // Compact — no extra whitespace so the encoded URI stays short
+  const svg = `<svg width='200' height='200' viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'>${rectMarkup}</svg>`;
+  return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+}
+
+// Glass surface highlight: near-invisible dark tint + soft white glow, used with multiply blend
+const FILTER_HREF_HIGHLIGHT = makeFilterSvg([{ fill: "#0001" }, { fill: "#FFF", blur: 5 }]);
+
+// Outer glow: heavily blurred near-transparent white, used with screen blend after gaussian blur
+const FILTER_HREF_GLOW = makeFilterSvg([{ fill: "#FFF1", blur: 15 }]);
+
+// Shape mask: solid black rect used as the composite `in` operator boundary
+const FILTER_HREF_MASK = makeFilterSvg([{ fill: "#000" }]);
+
+// Displacement map source: gray outline edge + blurred gray interior drives the refraction vectors
+const FILTER_HREF_DISPLACEMENT = makeFilterSvg([
+  { fill: "none", stroke: "#7F7F7F" },
+  { fill: "#7F7F7FBB", blur: 5 },
+]);
+
+const GlassFilter = ({
   displacements,
 }: {
   displacements: { red: number; green: number; blue: number };
-}) => {
-  return (
-    <svg
-      width="200"
-      height="200"
-      viewBox="0 0 220 220"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <filter id={DISPLACEMENT_FILTER_ID}>
-        <feImage
-          href="data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='50' y='50' width='100' height='100' rx='25' fill='%230001' /%3E%3Crect x='50' y='50' width='100' height='100' rx='25' fill='%23FFF' style='filter:blur(5px)' /%3E%3C/svg%3E"
-          x="0%"
-          y="0%"
-          width="100%"
-          height="100%"
-          result="thing9"
-        />
-        <feImage
-          href="data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='50' y='50' width='100' height='100' rx='25' fill='%23FFF1' style='filter:blur(15px)' /%3E%3C/svg%3E"
-          x="0%"
-          y="0%"
-          width="100%"
-          height="100%"
-          result="thing0"
-        />
-        <feImage
-          href="data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='50' y='50' width='100' height='100' rx='25' fill='%23000' /%3E%3C/svg%3E"
-          x="0%"
-          y="0%"
-          width="100%"
-          height="100%"
-          result="thing1"
-        />
-        <feImage
-          href="data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='50' y='50' width='100' height='100' rx='25' fill='none' stroke='%237F7F7F' /%3E%3Crect x='50' y='50' width='100' height='100' rx='25' fill='%237F7F7FBB' style='filter:blur(5px)' /%3E%3C/svg%3E"
-          x="0%"
-          y="0%"
-          width="100%"
-          height="100%"
-          result="thing2"
-        />
-        <feDisplacementMap
-          in2="thing2"
-          in="SourceGraphic"
-          scale={displacements.red.toString()}
-          xChannelSelector="B"
-          yChannelSelector="G"
-        />
-        <feColorMatrix
-          type="matrix"
-          values="1 0 0 0 0
-									0 0 0 0 0
-									0 0 0 0 0
-									0 0 0 1 0"
-          result="disp1"
-        />
-        <feDisplacementMap
-          in2="thing2"
-          in="SourceGraphic"
-          scale={displacements.green.toString()}
-          xChannelSelector="B"
-          yChannelSelector="G"
-        />
-        <feColorMatrix
-          type="matrix"
-          values="0 0 0 0 0
-									0 1 0 0 0
-									0 0 0 0 0
-									0 0 0 1 0"
-          result="disp2"
-        />
-        <feDisplacementMap
-          in2="thing2"
-          in="SourceGraphic"
-          scale={displacements.blue.toString()}
-          xChannelSelector="B"
-          yChannelSelector="G"
-        />
-        <feColorMatrix
-          type="matrix"
-          values="0 0 0 0 0
-									0 0 0 0 0
-									0 0 1 0 0
-									0 0 0 1 0"
-          result="disp3"
-        />
-        <feBlend in2="disp2" mode="screen" />
-        <feBlend in2="disp1" mode="screen" />
-        <feGaussianBlur stdDeviation="0.7" />
-        <feBlend in2="thing0" mode="screen" />
-        <feBlend in2="thing9" mode="multiply" />
-        <feComposite in2="thing1" operator="in" />
-        <feOffset dx="43" dy="43" />
-      </filter>
-    </svg>
-  );
-};
+}) => (
+  <filter id={DISPLACEMENT_FILTER_ID} x="0%" y="0%" width="100%" height="100%">
+    {/* --- Stage 1: Load texture layers --- */}
+    {/* Surface shimmer: dark tint + soft white glow; composited last via multiply */}
+    <feImage {...FILTER_IMAGE_PROPS} href={FILTER_HREF_HIGHLIGHT} result="highlight" />
+    {/* Edge glow: heavily blurred white; adds bright halo of refracted light */}
+    <feImage {...FILTER_IMAGE_PROPS} href={FILTER_HREF_GLOW} result="glow" />
+    {/* Shape mask: solid black rect; used to clip the final output to the glass boundary */}
+    <feImage {...FILTER_IMAGE_PROPS} href={FILTER_HREF_MASK} result="mask" />
+    {/* Displacement map: gray rounded-rect edge + blurred fill; gray 0x7F7F7F = no shift, lighter = push right/down, darker = push left/up */}
+    <feImage {...FILTER_IMAGE_PROPS} href={FILTER_HREF_DISPLACEMENT} result="dispMap" />
+
+    {/* --- Stage 2: Chromatic aberration — each channel displaced by a slightly different amount --- */}
+    {/* Displace SourceGraphic using dispMap, then strip to red channel only */}
+    <ChannelDisplacement scale={displacements.red} result="red-displacement" channel="red" />
+    {/* Same displacement pass at a different scale, strip to green only */}
+    <ChannelDisplacement scale={displacements.green} result="green-displacement" channel="green" />
+    {/* Same for blue; left as implicit `in` for the next blend */}
+    <ChannelDisplacement scale={displacements.blue} result="blue-displacement" channel="blue" />
+
+    {/* --- Stage 3: Recombine the aberrated channels --- */}
+    {/* Screen blue (implicit in=blue-displacement) with green: screen adds both without over-brightening */}
+    <feBlend in2="green-displacement" mode="screen" />
+    {/* Screen the blue+green mix with red to reconstruct a full-color image with split-channel offsets */}
+    <feBlend in2="red-displacement" mode="screen" />
+    {/* Subtle blur softens the color fringing at the displaced edges */}
+    <feGaussianBlur stdDeviation="0.7" />
+
+    {/* --- Stage 4: Surface appearance --- */}
+    {/* Screen the edge glow over the blurred image: brightens the rim to simulate refracted light */}
+    <feBlend in2="glow" mode="screen" />
+    {/* Multiply the highlight (dark tint + inner glow) to add depth and a glass-surface sheen */}
+    <feBlend in2="highlight" mode="multiply" />
+
+    {/* --- Stage 5: Clip and position --- */}
+    {/* Composite with the solid-black mask using "in": discards everything outside the glass shape */}
+    <feComposite in2="mask" operator="in" />
+  </filter>
+);
