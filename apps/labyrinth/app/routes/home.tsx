@@ -36,7 +36,7 @@ const routeEntries: RouteEntry[] = [
     kind: "page",
   },
 
-  { path: "/challenges/cards", href: "/challenges/cards", kind: "page" },
+  { path: "/games/cards", href: "/games/cards", kind: "page" },
   { path: "/challenges/anagrams", href: "/challenges/anagrams", kind: "page" },
   { path: "/challenges/click-therapeutics", href: "/challenges/click-therapeutics", kind: "page" },
   { path: "/challenges/cloudmargin", href: "/challenges/cloudmargin", kind: "page" },

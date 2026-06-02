@@ -1,10 +1,10 @@
+import { Button, cn, Input, Label, Slider, Tag } from "@pontistudios/ui";
 import type React from "react";
 import { useCallback, useRef, useState } from "react";
-import { cn } from "~/lib/utils";
 
 const DISPLACEMENT_FILTER_ID = "DISPLACEMENT_FILTER";
 
-export default function SVGGlassTest() {
+export default function ExperimentsGlass() {
   const [position, setPosition] = useState({ x: 50, y: 50 });
   const [isDragging, setIsDragging] = useState(false);
   const [displacements, setDisplacements] = useState({
@@ -54,148 +54,123 @@ export default function SVGGlassTest() {
   }, []);
 
   return (
-    <div className="relative w-full h-screen overflow-hidden pt-16">
+    <div className="relative w-full h-screen overflow-hidden pt-16 rounded-3xl">
+      {/* SVG Filter Definition */}
+      <DisplacementFilter displacements={displacements} />
+
       {/* Instructions */}
-      <div className="absolute top-4 right-4 z-50 bg-black/50 text-white p-4 rounded-lg backdrop-blur-sm max-w-sm">
-        <h3 className="mb-2">Draggable Glass Effect</h3>
-        <p className="text-sm text-white/80 mb-3">
-          Click and drag the glass overlay to move it around the image. Add a custom background
-          image URL or drag & drop a URL into the input field. The glass effect creates chromatic
-          aberration and distortion.
+      <div className="absolute top-4 right-4 z-50 bg-card/95 backdrop-blur-sm border border-border rounded-lg p-4 max-w-xs">
+        <p className="ui-eyebrow mb-3">Draggable Glass Effect</p>
+        <p className="text-sm text-muted-foreground mb-3">
+          Click and drag the glass overlay to move it around the painting. The glass effect creates
+          chromatic aberration and distortion.
         </p>
-        <button
+        <Button
           type="button"
+          variant="outline"
+          size="sm"
           onClick={() => setShowControls(!showControls)}
-          className="px-3 py-1 bg-white/20 rounded text-xs hover:bg-white/30 transition-colors"
         >
           {showControls ? "Hide" : "Show"} Controls
-        </button>
+        </Button>
       </div>
 
       {/* Displacement Controls */}
       {showControls && (
-        <div className="absolute bottom-4 left-4 z-50 bg-black/80 text-white p-4 rounded-lg backdrop-blur-sm min-w-80">
-          <h3 className="mb-3">Controls</h3>
+        <div className="absolute bottom-4 left-4 z-50 bg-card/50 backdrop-blur-sm border border-border rounded-lg p-4 min-w-72">
+          <p className="ui-eyebrow mb-4">Controls</p>
 
-          {/* Background Image URL Input */}
-          <div className="mb-4 pb-3 border-b border-white/20">
-            <label htmlFor="background-url" className="block text-sm mb-2 font-medium">
-              Background Image URL
-            </label>
-            <input
+          {/* Background Image URL */}
+          <div className="mb-4 pb-4 border-b border-border space-y-2">
+            <Label htmlFor="background-url">Background Image URL</Label>
+            <Input
               id="background-url"
               type="url"
-              placeholder="https://example.com/image.jpg or drag & drop URL"
+              placeholder="https://example.com/image.jpg"
               value={backgroundImage}
               onChange={(e) => setBackgroundImage(e.target.value)}
               onDrop={(e) => {
                 e.preventDefault();
                 const url = e.dataTransfer.getData("text/plain");
-                if (url.startsWith("http")) {
-                  setBackgroundImage(url);
-                }
+                if (url.startsWith("http")) setBackgroundImage(url);
               }}
               onDragOver={(e) => e.preventDefault()}
-              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded text-white placeholder-white/50 text-sm focus:outline-none focus:border-white/40 focus:bg-white/20"
             />
-            <div className="flex gap-2 mt-2">
-              <button
-                type="button"
-                onClick={() => setBackgroundImage("")}
-                className="px-2 py-1 bg-white/20 rounded text-xs hover:bg-white/30 transition-colors"
-              >
+            <div className="flex gap-2">
+              <Button variant="ghost" size="sm" onClick={() => setBackgroundImage("")}>
                 Clear
-              </button>
-              <button
-                type="button"
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() =>
                   setBackgroundImage(
                     "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200",
                   )
                 }
-                className="px-2 py-1 bg-white/20 rounded text-xs hover:bg-white/30 transition-colors"
               >
                 Sample Image
-              </button>
+              </Button>
             </div>
           </div>
 
-          {/* Displacement Controls */}
-          <h4 className="mb-3">Displacement Settings</h4>
-          <div className="space-y-3">
-            <div>
-              <label htmlFor="red-displacement" className="block text-sm mb-1">
-                Red Channel: {displacements.red}
-              </label>
-              <input
-                id="red-displacement"
-                type="range"
-                min="-300"
-                max="300"
-                value={displacements.red}
-                onChange={(e) =>
-                  setDisplacements((prev) => ({
-                    ...prev,
-                    red: Number.parseInt(e.target.value, 10),
-                  }))
-                }
-                className="w-full h-2 bg-red-500/50 rounded-lg appearance-none cursor-pointer"
-              />
-            </div>
-            <div>
-              <label htmlFor="green-displacement" className="block text-sm mb-1">
-                Green Channel: {displacements.green}
-              </label>
-              <input
-                id="green-displacement"
-                type="range"
-                min="-300"
-                max="300"
-                value={displacements.green}
-                onChange={(e) =>
-                  setDisplacements((prev) => ({
-                    ...prev,
-                    green: Number.parseInt(e.target.value, 10),
-                  }))
-                }
-                className="w-full h-2 bg-green-500/50 rounded-lg appearance-none cursor-pointer"
-              />
-            </div>
-            <div>
-              <label htmlFor="blue-displacement" className="block text-sm mb-1">
-                Blue Channel: {displacements.blue}
-              </label>
-              <input
-                id="blue-displacement"
-                type="range"
-                min="-300"
-                max="300"
-                value={displacements.blue}
-                onChange={(e) =>
-                  setDisplacements((prev) => ({
-                    ...prev,
-                    blue: Number.parseInt(e.target.value, 10),
-                  }))
-                }
-                className="w-full h-2 bg-blue-500/50 rounded-lg appearance-none cursor-pointer"
-              />
-            </div>
-            <div className="pt-2 border-t border-white/20">
-              <button
-                type="button"
-                onClick={() => setDisplacements({ red: -148, green: -150, blue: -152 })}
-                className="px-3 py-1 bg-white/20 rounded text-xs hover:bg-white/30 transition-colors mr-2"
-              >
-                Reset to Default
-              </button>
-              <button
-                type="button"
-                onClick={() => setDisplacements({ red: 0, green: 0, blue: 0 })}
-                className="px-3 py-1 bg-white/20 rounded text-xs hover:bg-white/30 transition-colors"
-              >
-                No Effect
-              </button>
-            </div>
+          {/* Displacement sliders */}
+          <p className="ui-eyebrow mb-3">Displacement</p>
+          <div className="space-y-4">
+            {(
+              [
+                { channel: "red", color: "bg-red-500", label: "Red" },
+                {
+                  channel: "green",
+                  color: "bg-green-500",
+                  label: "Green",
+                },
+                { channel: "blue", color: "bg-blue-500", label: "Blue" },
+              ] as const
+            ).map(({ channel, color, label }) => (
+              <div key={channel} className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label
+                    htmlFor={channel}
+                    className="flex items-center gap-2 text-muted-foreground"
+                  >
+                    <span className={cn("size-2 rounded-full inline-block", color)} />
+                    {label}
+                  </Label>
+                  <span className="text-sm text-muted-foreground tabular-nums">
+                    {displacements[channel]}
+                  </span>
+                </div>
+                <Slider
+                  id={channel}
+                  min={-300}
+                  max={300}
+                  value={[displacements[channel]]}
+                  onValueChange={([val]) =>
+                    setDisplacements((prev) => ({ ...prev, [channel]: val }))
+                  }
+                />
+              </div>
+            ))}
+          </div>
+
+          <div className="flex gap-2 mt-4 pt-3 border-t border-border">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setDisplacements({ red: -148, green: -150, blue: -152 })}
+            >
+              Reset
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setDisplacements({ red: 0, green: 0, blue: 0 })}
+            >
+              No Effect
+            </Button>
           </div>
         </div>
       )}
@@ -236,46 +211,14 @@ export default function SVGGlassTest() {
             </div>
           </div>
         ) : (
-          /* Default colorful pattern background */
-          <div className="size-full">
-            {/* Pattern overlay */}
-            <div className="absolute inset-0 opacity-50">
-              <PatternedBackground />
-            </div>
-
-            {/* Text content */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center text-white">
-                <h1 className="mb-4 drop-shadow-lg">Glass Effect Test</h1>
-                <p className="text-2xl drop-shadow-md">
-                  Drag the glass overlay around this colorful background
-                </p>
-                <div className="mt-8 grid grid-cols-3 gap-4 text-lg">
-                  <div className="bg-white/20 p-4 rounded-lg backdrop-blur-sm">
-                    <h3>Red Channel</h3>
-                    <p>Displacement {displacements.red}</p>
-                  </div>
-                  <div className="bg-white/20 p-4 rounded-lg backdrop-blur-sm">
-                    <h3>Green Channel</h3>
-                    <p>Displacement {displacements.green}</p>
-                  </div>
-                  <div className="bg-white/20 p-4 rounded-lg backdrop-blur-sm">
-                    <h3>Blue Channel</h3>
-                    <p>Displacement {displacements.blue}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Additional visual elements */}
-            <div className="absolute top-1/2 left-1/6 w-24 h-64 bg-yellow-400/50 rounded-full transform -rotate-12" />
-          </div>
+          /* Default: Raphael's School of Athens (1509–1511) — public domain */
+          <div
+            className="w-full h-full bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: `url(https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg/1280px-%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg)`,
+            }}
+          />
         )}
-      </div>
-
-      {/* SVG Filter Definition */}
-      <div style={{ position: "absolute", top: "-999px", left: "-999px" }}>
-        <DisplacementFilter displacements={displacements} />
       </div>
 
       {/* Draggable Glass Overlay */}
@@ -293,47 +236,17 @@ export default function SVGGlassTest() {
         onMouseLeave={handleMouseUp}
       >
         <div
+          className="w-full h-full rounded-lg border"
           style={{
-            width: "100%",
-            height: "100%",
             backdropFilter: `url(#${DISPLACEMENT_FILTER_ID})`,
-            border: "2px solid rgba(255, 255, 255, 0.3)",
-            borderRadius: "8px",
-            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
           }}
         />
         {/* Drag handle indicator */}
-        <div className="absolute top-2 left-2 text-white text-xs bg-black/50 px-2 py-1 rounded pointer-events-none">
-          Drag me
-        </div>
+        <Tag className="absolute top-2 left-2 pointer-events-none">Drag me</Tag>
       </button>
     </div>
   );
 }
-
-const patternedSwatches = Array.from({ length: 64 }, (_, index) => ({
-  key: `static-pattern-${index}`,
-  className: cn({
-    "bg-red-500": index % 8 === 0,
-    "bg-orange-500": index % 8 === 1,
-    "bg-yellow-500": index % 8 === 2,
-    "bg-green-500": index % 8 === 3,
-    "bg-blue-500": index % 8 === 4,
-    "bg-indigo-500": index % 8 === 5,
-    "bg-purple-500": index % 8 === 6,
-    "bg-pink-500": index % 8 === 7,
-  }),
-}));
-
-const PatternedBackground = () => {
-  return (
-    <div className="grid grid-cols-8 h-full">
-      {patternedSwatches.map((swatch) => (
-        <div key={swatch.key} className={swatch.className} />
-      ))}
-    </div>
-  );
-};
 
 const DisplacementFilter = ({
   displacements,

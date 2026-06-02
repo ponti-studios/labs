@@ -36,6 +36,7 @@ const featureRoutes = [
     route("seasonal-patterns", "routes/covid.$countryCode.seasonal-patterns.tsx"),
     route("outlier-detection", "routes/covid.$countryCode.outlier-detection.tsx"),
   ]),
+  route("/games/cards", "routes/games/cards.tsx"),
   route("/games/tetris", "routes/games/tetris.tsx"),
   route("/games/realitea", "routes/games/realitea.tsx"),
   route("/business-tools", "routes/business-tools/index.tsx"),
@@ -44,14 +45,13 @@ const featureRoutes = [
 
 const experimentRoutes = [
   route("/experiments", "routes/experiments.tsx"),
-  route("/experiments/svg-glass-test", "routes/svg-glass-test.tsx"),
+  route("/experiments/glass", "routes/experiments.glass.tsx"),
   route("/experiments/infinite-scroll", "routes/infinite-scroll/index.tsx"),
   route("/experiments/threegl-web-request", "routes/experiments.threegl-web-request.tsx"),
   route("/experiments/threegl-image-gallery", "routes/experiments.threegl-image-gallery.tsx"),
 ] satisfies RouteConfig;
 
 const challengeRoutes = [
-  route("/challenges/cards", "routes/challenges.cards.tsx"),
   route("/challenges/anagrams", "routes/challenges.anagrams.tsx"),
   route("/challenges/click-therapeutics", "routes/challenges.click-therapeutics.tsx"),
   route("/challenges/cloudmargin", "routes/challenges.cloudmargin.tsx"),
