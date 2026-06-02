@@ -1,6 +1,16 @@
-import { Button, cn, Input, Label, Slider } from "@pontistudios/ui";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+  Button,
+  cn,
+  Input,
+  Label,
+  Slider,
+} from "@pontistudios/ui";
 import type React from "react";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const DISPLACEMENT_FILTER_ID = "DISPLACEMENT_FILTER";
 
@@ -8,8 +18,9 @@ export default function ExperimentsGlass() {
   const [position, setPosition] = useState({ x: 50, y: 50 });
   const [isDragging, setIsDragging] = useState(false);
   const [displacements, setDisplacements] = useState(() => computeDisplacements(20, 2));
-  const [showControls, setShowControls] = useState(true);
-  const [backgroundImage, setBackgroundImage] = useState("");
+  const [backgroundImage, setBackgroundImage] = useState(
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg/1280px-%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg",
+  );
   const dragRef = useRef({
     startX: 0,
     startY: 0,
@@ -30,148 +41,124 @@ export default function ExperimentsGlass() {
     [position.x, position.y],
   );
 
-  const handleMouseMove = useCallback(
-    (e: React.MouseEvent) => {
-      if (!isDragging) return;
+  // Attach move/up to window so fast drags don't lose tracking when the cursor outruns the element
+  useEffect(() => {
+    if (!isDragging) return;
 
-      const deltaX = e.clientX - dragRef.current.startMouseX;
-      const deltaY = e.clientY - dragRef.current.startMouseY;
-
+    const onMove = (e: MouseEvent) => {
       setPosition({
-        x: dragRef.current.startX + deltaX,
-        y: dragRef.current.startY + deltaY,
+        x: dragRef.current.startX + e.clientX - dragRef.current.startMouseX,
+        y: dragRef.current.startY + e.clientY - dragRef.current.startMouseY,
       });
-    },
-    [isDragging],
-  );
+    };
+    const onUp = () => setIsDragging(false);
 
-  const handleMouseUp = useCallback(() => {
-    setIsDragging(false);
-  }, []);
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
+  }, [isDragging]);
 
   return (
     <div className="relative w-full h-screen overflow-hidden pt-16 rounded-3xl">
-      {/* Instructions */}
-      <div className="absolute top-4 right-4 z-50 bg-card/95 backdrop-blur-sm border border-border rounded-lg p-4 max-w-xs">
-        <p className="ui-eyebrow mb-3">Draggable Glass Effect</p>
+      {/* Controls panel */}
+      <div className="absolute top-4 right-4 z-50 bg-card/95 backdrop-blur-sm border border-border rounded-lg p-4 w-72">
+        <p className="ui-eyebrow mb-1">Draggable Glass Effect</p>
         <p className="text-sm text-muted-foreground mb-3">
-          Click and drag the glass overlay to move it around the painting. The glass effect creates
-          chromatic aberration and distortion.
+          Drag the glass overlay to move it. The effect creates chromatic aberration via SVG
+          displacement maps.
         </p>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => setShowControls(!showControls)}
-        >
-          {showControls ? "Hide" : "Show"} Controls
-        </Button>
-      </div>
 
-      {/* Displacement Controls */}
-      {showControls && (
-        <div className="absolute bottom-4 left-4 z-50 bg-card/50 backdrop-blur-sm border border-border rounded-lg p-4 min-w-72">
-          <p className="ui-eyebrow mb-4">Controls</p>
-
-          {/* Background Image URL */}
-          <div className="mb-4 pb-4 border-b border-border space-y-2">
-            <Label htmlFor="background-url">Background Image URL</Label>
-            <Input
-              id="background-url"
-              type="url"
-              placeholder="https://example.com/image.jpg"
-              value={backgroundImage}
-              onChange={(e) => setBackgroundImage(e.target.value)}
-              onDrop={(e) => {
-                e.preventDefault();
-                const url = e.dataTransfer.getData("text/plain");
-                if (url.startsWith("http")) setBackgroundImage(url);
-              }}
-              onDragOver={(e) => e.preventDefault()}
-            />
-            <div className="flex gap-2">
-              <Button variant="ghost" size="sm" onClick={() => setBackgroundImage("")}>
-                Clear
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() =>
-                  setBackgroundImage(
-                    "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200",
-                  )
-                }
-              >
-                Sample Image
-              </Button>
-            </div>
-          </div>
-
-          {/* Displacement sliders */}
-          <p className="ui-eyebrow mb-3">Displacement</p>
-          <div className="space-y-4">
-            {(
-              [
-                { channel: "red", color: "bg-red-500", label: "Red" },
-                { channel: "green", color: "bg-green-500", label: "Green" },
-                { channel: "blue", color: "bg-blue-500", label: "Blue" },
-              ] as const
-            ).map(({ channel, color, label }) => (
-              <div key={channel} className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label
-                    htmlFor={channel}
-                    className="flex items-center gap-2 text-muted-foreground"
-                  >
-                    <span className={cn("size-2 rounded-full inline-block", color)} />
-                    {label}
-                  </Label>
-                  <span className="text-sm text-muted-foreground tabular-nums">
-                    {displacements[channel]}
-                  </span>
-                </div>
-                <Slider
-                  id={channel}
-                  min={-300}
-                  max={300}
-                  value={[displacements[channel]]}
-                  onValueChange={([val]) =>
-                    setDisplacements((prev) => ({ ...prev, [channel]: val }))
-                  }
-                />
+        <Accordion type="multiple" className="w-full">
+          <AccordionItem value="background">
+            <AccordionTrigger>Background</AccordionTrigger>
+            <AccordionContent className="space-y-2 pl-0">
+              <Input
+                id="background-url"
+                type="url"
+                placeholder="https://example.com/image.jpg"
+                value={backgroundImage}
+                onChange={(e) => setBackgroundImage(e.target.value)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const url = e.dataTransfer.getData("text/plain");
+                  if (url.startsWith("http")) setBackgroundImage(url);
+                }}
+                onDragOver={(e) => e.preventDefault()}
+              />
+              <div className="flex justify-end gap-2">
+                <Button size="sm" onClick={() => setBackgroundImage("")}>
+                  Clear
+                </Button>
               </div>
-            ))}
-          </div>
+            </AccordionContent>
+          </AccordionItem>
 
-          <div className="flex gap-2 mt-4 pt-3 border-t border-border">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setDisplacements(computeDisplacements(20, 2))}
-            >
-              Reset
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => setDisplacements({ red: 0, green: 0, blue: 0 })}
-            >
-              No Effect
-            </Button>
-          </div>
-        </div>
-      )}
+          <AccordionItem value="displacement">
+            <AccordionTrigger>Displacement</AccordionTrigger>
+            <AccordionContent className="space-y-4 pl-0">
+              {(
+                [
+                  { channel: "red", color: "bg-red-500", label: "Red" },
+                  { channel: "green", color: "bg-green-500", label: "Green" },
+                  { channel: "blue", color: "bg-blue-500", label: "Blue" },
+                ] as const
+              ).map(({ channel, color, label }) => (
+                <div key={channel} className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label
+                      htmlFor={channel}
+                      className="flex items-center gap-2 text-muted-foreground"
+                    >
+                      <span className={cn("size-2 rounded-full inline-block", color)} />
+                      {label}
+                    </Label>
+                    <span className="text-sm text-muted-foreground tabular-nums">
+                      {displacements[channel]}
+                    </span>
+                  </div>
+                  <Slider
+                    id={channel}
+                    min={-300}
+                    max={300}
+                    value={[displacements[channel]]}
+                    onValueChange={([val]) =>
+                      setDisplacements((prev) => ({ ...prev, [channel]: val }))
+                    }
+                  />
+                </div>
+              ))}
+              <div className="flex gap-2 pt-1">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setDisplacements(computeDisplacements(20, 2))}
+                >
+                  Reset
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setDisplacements({ red: 0, green: 0, blue: 0 })}
+                >
+                  No Effect
+                </Button>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </div>
 
       {/* Large Background Image - Using a colorful pattern or custom image */}
       <div className="absolute inset-0 w-full h-full">
         <div
           className="w-full h-full bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage:
-              backgroundImage ||
-              `url(https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg/1280px-%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg)`,
+            backgroundImage: `url(${backgroundImage})`,
           }}
         />
       </div>
@@ -192,10 +179,7 @@ export default function ExperimentsGlass() {
           backdropFilter: `url(#${DISPLACEMENT_FILTER_ID})`,
         }}
         className="absolute z-90 rounded-lg border"
-        onMouseUp={handleMouseUp}
         onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseUp}
       >
         <defs>
           <GlassFilter displacements={displacements} />
