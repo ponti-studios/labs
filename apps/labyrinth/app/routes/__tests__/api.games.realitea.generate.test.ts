@@ -13,7 +13,7 @@ describe("RealiTea daily puzzle generation action", () => {
     generateDailyPuzzle.mockReset();
     process.env = {
       ...originalEnv,
-      RHOBH_DAILY_PUZZLE_TOKEN: "test-token",
+      REALITEA_TOKEN: "test-token",
     };
   });
 

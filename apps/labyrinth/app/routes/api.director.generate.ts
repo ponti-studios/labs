@@ -73,18 +73,15 @@ export async function action({ request }: ActionFunctionArgs) {
 
   try {
     const body = requestSchema.parse(await request.json());
-    const promptText = `Generate a photorealistic image based on these strict specifications: ${JSON.stringify(
-      body.config,
-      null,
-      2,
-    )}`;
+    const size =
+      body.config.image_specifications.dimensions.replace(/px$/i, "").trim() || "1024x1024";
+    const promptText = `Generate a photorealistic image based on these strict specifications:\n${JSON.stringify(body.config, null, 2)}`;
     const imageData = await generateImageFromPrompt(promptText, {
       apiKey,
       imageModel: "x-ai/grok-imagine-image-quality",
-      model: "openai/gpt-5.1",
       outputFormat: "png",
       quality: "high",
-      size: "1024x1024",
+      size,
     });
 
     return Response.json({ imageData });

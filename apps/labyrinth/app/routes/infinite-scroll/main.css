@@ -6,6 +6,18 @@ body {
   height: 600px;
   overflow: hidden;
   position: relative;
+  mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 5%,
+    black 95%,
+    transparent 100%
+  );
+}
+
+.scroll-container:hover .scroll-column {
+  animation-play-state: paused;
 }
 
 .scroll-column {

@@ -1,4 +1,4 @@
-name: schedule-realitea-daily-puzzle
+name: cron-realitea-rhobh-daily-puzzle
 
 on:
   schedule:
@@ -28,15 +28,15 @@ jobs:
             echo "date_utc=$(date -u +%F)" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: trigger-realitea-daily-generation
+      - name: trigger-generation
         env:
           LABYRINTH_BASE_URL: ${{ secrets.LABYRINTH_BASE_URL }}
-          RHOBH_DAILY_PUZZLE_TOKEN: ${{ secrets.RHOBH_DAILY_PUZZLE_TOKEN }}
+          REALITEA_TOKEN: ${{ secrets.REALITEA_TOKEN }}
           DATE_UTC: ${{ steps.resolve-date.outputs.date_utc }}
         shell: bash
         run: |
           test -n "$LABYRINTH_BASE_URL"
-          test -n "$RHOBH_DAILY_PUZZLE_TOKEN"
+          test -n "$REALITEA_TOKEN"
           test -n "$DATE_UTC"
 
           response_file="$(mktemp)"
@@ -45,7 +45,7 @@ jobs:
               -o "$response_file" \
               -w "%{http_code}" \
               -X POST "${LABYRINTH_BASE_URL%/}/api/games/realitea/generate" \
-              -H "Authorization: Bearer $RHOBH_DAILY_PUZZLE_TOKEN" \
+              -H "Authorization: Bearer $REALITEA_TOKEN" \
               -H "Content-Type: application/json" \
               -d "{\"dateUtc\":\"$DATE_UTC\"}"
           )"
