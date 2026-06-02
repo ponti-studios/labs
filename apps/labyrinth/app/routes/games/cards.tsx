@@ -67,13 +67,14 @@ function CardFace({
   card,
   isWinner,
   index,
-  animation = "fade-slide-in",
+  show = false,
 }: {
   card: PlayingCard;
   isWinner: boolean;
   index: number;
-  animation?: string;
+  show?: boolean;
 }) {
+  const animation = show ? "card-flip" : "fade-slide-in";
   return (
     <div
       className={cn(
@@ -136,7 +137,7 @@ export default function Cards() {
   const houseWins = outcome === "house";
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 md:w-3xl mx-auto">
       <header>
         <h2 className="text-xl font-semibold">Luck of the Draw</h2>
         <p className="text-muted-foreground">Beat the house. Challenge or fold.</p>
@@ -186,13 +187,7 @@ export default function Cards() {
                 {phase === "dealt"
                   ? Array.from({ length: 5 }, (_, i) => <CardBack key={i} index={i} />)
                   : houseHand.map((card, i) => (
-                      <CardFace
-                        key={card.id}
-                        card={card}
-                        isWinner={houseWins}
-                        index={i}
-                        animation="card-flip"
-                      />
+                      <CardFace key={card.id} card={card} isWinner={houseWins} index={i} show />
                     ))}
               </CardContent>
             </Card>
