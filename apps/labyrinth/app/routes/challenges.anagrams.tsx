@@ -27,7 +27,7 @@ import {
   TableHeader,
   TableRow,
 } from "@pontistudios/ui";
-import { useEffect, useState, type ChangeEvent, type CSSProperties, type JSX } from "react";
+import { useState, type ChangeEvent, type JSX } from "react";
 
 // A set of words that are all anagrams of each other
 type WordGroup = string[];
@@ -124,7 +124,6 @@ export default function Anagrams(): JSX.Element {
   const [input, setInput] = useState("eat, tea, tan, ate, nat, bat");
   const [isRunning, setIsRunning] = useState(false);
   const [result, setResult] = useState<AlgorithmResult | null>(null);
-  const [visibleRows, setVisibleRows] = useState(0);
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
     setInput(event.target.value);
@@ -133,25 +132,12 @@ export default function Anagrams(): JSX.Element {
   const run = (): void => {
     setIsRunning(true);
     setResult(null);
-    setVisibleRows(0);
 
     setTimeout(() => {
       setResult(groupBySortKey(tokenizeInput(input)));
       setIsRunning(false);
     }, RUN_DELAY_MS);
   };
-
-  // Reveal step rows one at a time so the user sees each word being processed in sequence
-  useEffect(() => {
-    if (!result) return;
-    let count = 0;
-    const interval = setInterval(() => {
-      count += 1;
-      setVisibleRows(count);
-      if (count >= result.steps.length) clearInterval(interval);
-    }, ROW_STAGGER_MS);
-    return () => clearInterval(interval);
-  }, [result]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -198,17 +184,10 @@ export default function Anagrams(): JSX.Element {
                 <TableBody>
                   {result.steps.map((step, i) => {
                     const color = colorFor(step.groupIndex);
-                    const visible = i < visibleRows;
                     return (
                       <TableRow
                         key={i}
-                        className="transition-all duration-300"
-                        style={
-                          {
-                            opacity: visible ? 1 : 0,
-                            transform: visible ? "translateX(0)" : "translateX(-6px)",
-                          } as CSSProperties
-                        }
+                        style={{ animation: `fade-slide-in 300ms ease-out both`, animationDelay: `${i * ROW_STAGGER_MS}ms` }}
                       >
                         <TableCell className={`font-mono font-medium ${color.row}`}>
                           {step.word}

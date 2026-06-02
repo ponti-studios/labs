@@ -2,6 +2,16 @@
 
 @source "../../../packages/ui/src";
 
+@keyframes fade-slide-in {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes card-flip {
+  from { opacity: 0; transform: rotateY(90deg) scale(0.9); }
+  to   { opacity: 1; transform: rotateY(0deg) scale(1); }
+}
+
 .scrollbar-thin {
   scrollbar-width: thin;
 }
