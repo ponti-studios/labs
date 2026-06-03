@@ -25,8 +25,8 @@ catalogs:
       specifier: ^4.2.4
       version: 4.2.4
     '@tanstack/react-query':
-      specifier: ^5.99.2
-      version: 5.99.2
+      specifier: ^5.101.0
+      version: 5.101.0
     '@tanstack/react-query-devtools':
       specifier: ^5.100.14
       version: 5.100.14
@@ -177,7 +177,7 @@ importers:
         version: 7.14.2(react-router@7.14.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(typescript@6.0.3)
       '@tanstack/react-query':
         specifier: 'catalog:'
-        version: 5.99.2(react@19.2.6)
+        version: 5.101.0(react@19.2.6)
       better-auth:
         specifier: ^1.6.7
         version: 1.6.7(@opentelemetry/api@1.9.0)(drizzle-kit@0.31.10)(drizzle-orm@0.45.2(@opentelemetry/api@1.9.0)(@types/pg@8.20.0)(kysely@0.28.17)(mysql2@3.22.2(@types/node@25.9.1))(pg@8.20.0)(postgres@3.4.9))(mysql2@3.22.2(@types/node@25.9.1))(pg@8.20.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(vitest@4.1.5)
@@ -259,7 +259,7 @@ importers:
         version: 7.14.2(react-router@7.14.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(typescript@6.0.3)
       '@tanstack/react-query':
         specifier: 'catalog:'
-        version: 5.99.2(react@19.2.6)
+        version: 5.101.0(react@19.2.6)
       isbot:
         specifier: ^5.1.40
         version: 5.1.40
@@ -320,10 +320,10 @@ importers:
         version: 7.14.2(react-router@7.14.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(typescript@6.0.3)
       '@tanstack/react-query':
         specifier: 'catalog:'
-        version: 5.99.2(react@19.2.6)
+        version: 5.101.0(react@19.2.6)
       '@tanstack/react-query-devtools':
         specifier: 'catalog:'
-        version: 5.100.14(@tanstack/react-query@5.99.2(react@19.2.6))(react@19.2.6)
+        version: 5.100.14(@tanstack/react-query@5.101.0(react@19.2.6))(react@19.2.6)
       date-fns:
         specifier: ^4.1.0
         version: 4.3.0
@@ -423,7 +423,7 @@ importers:
         version: 7.14.2(react-router@7.14.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(typescript@6.0.3)
       '@tanstack/react-query':
         specifier: 'catalog:'
-        version: 5.99.2(react@19.2.6)
+        version: 5.101.0(react@19.2.6)
       '@testing-library/jest-dom':
         specifier: 'catalog:'
         version: 6.9.1
@@ -3700,8 +3700,8 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  '@tanstack/query-core@5.99.2':
-    resolution: {integrity: sha512-1HunU0bXVsR1ZJMZbcOPE6VtaBJxsW809RE9xPe4Gz7MlB0GWwQvuTPhMoEmQ/hIzFKJ/DWAuttIe7BOaWx0tA==}
+  '@tanstack/query-core@5.101.0':
+    resolution: {integrity: sha512-cQetA74EB+seWySv1TTKr828TnP0u39m6LykwDXIo84SNortpDkp30TMEjkqtYCNP9c40uT/iwl6MLiufEt0Ow==}
 
   '@tanstack/query-devtools@5.100.14':
     resolution: {integrity: sha512-g96SmSSQecYTYcyuAMRXr895GplJv01UGt7qttQWPOUyZ5EGz5tbRc589bMc2m5BsPFD6O0PCEAHdbDYNP6UBw==}
@@ -3712,8 +3712,8 @@ packages:
       '@tanstack/react-query': ^5.100.14
       react: ^18 || ^19
 
-  '@tanstack/react-query@5.99.2':
-    resolution: {integrity: sha512-vM91UEe45QUS9ED6OklsVL15i8qKcRqNwpWzPTVWvRPRSEgDudDgHpvyTjcdlwHcrKNa80T+xXYcchT2noPnZA==}
+  '@tanstack/react-query@5.101.0':
+    resolution: {integrity: sha512-rLlJXSpkqfizLWgkR5+eLeIk0MvTx/meEIR7LRjxic+qxiQP8zVjq7BqQkiCMNLQBlLfuOLqqr6KO5GtrDlmSg==}
     peerDependencies:
       react: ^18 || ^19
 
@@ -9927,19 +9927,19 @@ snapshots:
 
   '@tanstack/devtools-event-client@0.4.3': {}
 
-  '@tanstack/query-core@5.99.2': {}
+  '@tanstack/query-core@5.101.0': {}
 
   '@tanstack/query-devtools@5.100.14': {}
 
-  '@tanstack/react-query-devtools@5.100.14(@tanstack/react-query@5.99.2(react@19.2.6))(react@19.2.6)':
+  '@tanstack/react-query-devtools@5.100.14(@tanstack/react-query@5.101.0(react@19.2.6))(react@19.2.6)':
     dependencies:
       '@tanstack/query-devtools': 5.100.14
-      '@tanstack/react-query': 5.99.2(react@19.2.6)
+      '@tanstack/react-query': 5.101.0(react@19.2.6)
       react: 19.2.6
 
-  '@tanstack/react-query@5.99.2(react@19.2.6)':
+  '@tanstack/react-query@5.101.0(react@19.2.6)':
     dependencies:
-      '@tanstack/query-core': 5.99.2
+      '@tanstack/query-core': 5.101.0
       react: 19.2.6
 
   '@testing-library/dom@10.4.1':
