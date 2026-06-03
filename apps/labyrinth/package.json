@@ -24,7 +24,7 @@
     "@react-router/serve": "catalog:",
     "@tanstack/react-query": "catalog:",
     "@testing-library/jest-dom": "catalog:",
-    "@types/three": "^0.184.0",
+    "@types/three": "^0.184.1",
     "class-variance-authority": "^0.7.1",
     "dotenv": "^17.4.2",
     "framer-motion": "^12.40.0",
