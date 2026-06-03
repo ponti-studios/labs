@@ -25,7 +25,7 @@ catalog:
   postcss: ^8.5.10
   postgres: ^3.4.9
   react: ^19.2.6
-  react-dom: ^19.2.6
+  react-dom: ^19.2.7
   react-router: ^7.14.2
   tailwind-merge: ^3.5.0
   tailwindcss: ^4.2.4
