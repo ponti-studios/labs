@@ -464,10 +464,7 @@ export default function DirectorRoute() {
     <div className="p-4">
       <div className="mx-auto max-w-7xl space-y-6">
         <header className="flex items-center justify-between border-b border-border pb-6">
-          <div>
-            <p className="ui-eyebrow">Director&apos;s Console</p>
-            <h1 className="mt-1">Parametric Image Generation</h1>
-          </div>
+          <h1 className="mt-1">Parametric Image Generation</h1>
           <button
             type="button"
             onClick={() => setShowPrompt((c) => !c)}
