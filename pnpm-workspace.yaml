@@ -34,7 +34,7 @@ catalog:
   vite: ^8.0.12
   vite-tsconfig-paths: ^6.1.1
   vitest: ^4.1.5
-  zod: ^4.3.6
+  zod: ^4.4.3
 catalogs:
   ui:
     "@vitejs/plugin-react": ^5.2.0
