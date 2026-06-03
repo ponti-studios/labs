@@ -1,78 +1,57 @@
 # syntax=docker/dockerfile:1
-# Build context: monorepo root
-# docker build -f apps/commune/Dockerfile .
 
-# ─── Stage 1: Install dependencies ───────────────────────────────────────────
-FROM node:24-bookworm-slim AS deps
+ARG NODE_VERSION=24-bookworm-slim
 
-RUN npm install -g pnpm@10.30.3
-
+FROM node:${NODE_VERSION} AS base
 WORKDIR /app
+ENV PNPM_HOME=/pnpm \
+    PATH=/pnpm:$PATH
+RUN corepack enable
+
+FROM base AS builder
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY apps/commune/package.json apps/commune/package.json
 COPY packages/db/package.json packages/db/package.json
 COPY packages/ui/package.json packages/ui/package.json
 COPY packages/tsconfig/package.json packages/tsconfig/package.json
-
-RUN pnpm install --frozen-lockfile --ignore-scripts
-
-# ─── Stage 2: Build ──────────────────────────────────────────────────────────
-FROM deps AS builder
-
-WORKDIR /app
-
 COPY tsconfig.base.json ./
 COPY packages/tsconfig/ packages/tsconfig/
 COPY packages/db/ packages/db/
 COPY packages/ui/ packages/ui/
 COPY apps/commune/ apps/commune/
 
-RUN pnpm run build --filter @pontistudios/db
-RUN pnpm run build --filter @pontistudios/ui
-RUN pnpm run build --filter @pontistudios/commune
-
-# Compile Hono server to JS — bundles local app/lib imports, externalises npm packages
+RUN pnpm install --frozen-lockfile --filter @pontistudios/commune...
+RUN pnpm --filter @pontistudios/commune build
 RUN cd apps/commune && \
-  node_modules/.bin/esbuild server.ts \
-  --bundle \
-  --platform=node \
-  --format=esm \
-  --packages=external \
-  "--external:./build/*" \
-  --outfile=server.js
+    node_modules/.bin/esbuild server.ts \
+    --bundle \
+    --platform=node \
+    --format=esm \
+    "--external:./build/*" \
+    --outfile=server.js
+RUN pnpm deploy --legacy --filter @pontistudios/commune --prod /prod/commune
 
-# ─── Stage 3: Production image ───────────────────────────────────────────────
-FROM node:24-bookworm-slim AS runner
-
-RUN npm install -g pnpm@10.30.3
-
-ENV NODE_ENV=production
+FROM node:${NODE_VERSION} AS runner
 WORKDIR /app
+ENV NODE_ENV=production \
+    PORT=3000
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY apps/commune/package.json apps/commune/package.json
-COPY packages/db/package.json packages/db/package.json
-COPY packages/ui/package.json packages/ui/package.json
-COPY packages/tsconfig/package.json packages/tsconfig/package.json
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ca-certificates curl && \
+    rm -rf /var/lib/apt/lists/* && \
+    groupadd --system --gid 1001 app && \
+    useradd --system --uid 1001 --gid app --home-dir /app --shell /usr/sbin/nologin app
 
-RUN pnpm install --frozen-lockfile --prod --ignore-scripts
-
-COPY --from=builder /app/packages/db/dist packages/db/dist
-COPY --from=builder /app/packages/ui/dist packages/ui/dist
-COPY --from=builder /app/apps/commune/build apps/commune/build
-COPY --from=builder /app/apps/commune/server.js apps/commune/server.js
-
-RUN groupadd -r app && useradd -r -g app app
-
-WORKDIR /app/apps/commune
-
-EXPOSE 3000
-ENV PORT=3000
-
-HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3000', (r) => {if (r.statusCode >= 500) throw new Error(r.statusCode)})"
+COPY --from=builder --chown=app:app /prod/commune/node_modules ./node_modules
+COPY --from=builder --chown=app:app /prod/commune/package.json ./package.json
+COPY --from=builder --chown=app:app /app/apps/commune/build ./build
+COPY --from=builder --chown=app:app /app/apps/commune/server.js ./server.js
 
 USER app
+EXPOSE 3000
 
-CMD ["pnpm", "start"]
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f -s -m 2 http://localhost:${PORT}/api/health || exit 1
+
+CMD ["node", "./server.js"]
