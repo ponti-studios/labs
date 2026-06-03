@@ -1,4 +1,4 @@
-name: deploy-vitalis-prod
+name: deploy-health-prod
 
 on:
   workflow_dispatch:
@@ -7,14 +7,14 @@ permissions:
   contents: read
 
 concurrency:
-  group: deploy-vitalis-prod-${{ github.ref }}
+  group: deploy-health-prod-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   deploy:
     uses: ./.github/workflows/reusable-railway-deploy.yml
     with:
-      config_path: apps/vitalis/railway.json
+      config_path: apps/health/railway.json
       node-version: '24'
       railway-cli-version: '4.58.0'
       timeout-minutes: 10

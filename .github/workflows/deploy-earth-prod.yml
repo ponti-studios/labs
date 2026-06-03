@@ -1,4 +1,4 @@
-name: deploy-cartograph-prod
+name: deploy-earth-prod
 
 on:
   workflow_dispatch:
@@ -7,17 +7,17 @@ permissions:
   contents: read
 
 concurrency:
-  group: deploy-cartograph-prod-${{ github.ref }}
+  group: deploy-earth-prod-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   deploy:
     uses: ./.github/workflows/reusable-railway-deploy.yml
     with:
-      config_path: apps/cartograph/railway.json
+      config_path: apps/earth/railway.json
       node-version: '24'
       railway-cli-version: '4.58.0'
       timeout-minutes: 10
     secrets:
       railway_token: ${{ secrets.RAILWAY_TOKEN }}
-      railway_service: ${{ secrets.RAILWAY_SERVICE_EARTH_INTELLIGENCE }}
+      railway_service: ${{ secrets.RAILWAY_SERVICE_EARTH }}

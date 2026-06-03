@@ -158,70 +158,6 @@ importers:
         specifier: 'catalog:'
         version: 6.0.3
 
-  apps/cartograph:
-    dependencies:
-      '@pontistudios/db':
-        specifier: workspace:*
-        version: link:../../packages/db
-      '@pontistudios/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
-      '@react-router/node':
-        specifier: 'catalog:'
-        version: 7.14.2(react-router@7.14.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(typescript@6.0.3)
-      '@react-router/serve':
-        specifier: 'catalog:'
-        version: 7.14.2(react-router@7.14.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(typescript@6.0.3)
-      '@tanstack/react-query':
-        specifier: 'catalog:'
-        version: 5.99.2(react@19.2.6)
-      isbot:
-        specifier: ^5.1.40
-        version: 5.1.40
-      maplibre-gl:
-        specifier: ^5.24.0
-        version: 5.24.0
-      react:
-        specifier: 'catalog:'
-        version: 19.2.6
-      react-dom:
-        specifier: 'catalog:'
-        version: 19.2.6(react@19.2.6)
-      react-map-gl:
-        specifier: ^8.1.1
-        version: 8.1.1(maplibre-gl@5.24.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      react-router:
-        specifier: 'catalog:'
-        version: 7.14.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-    devDependencies:
-      '@pontistudios/tsconfig':
-        specifier: workspace:*
-        version: link:../../packages/tsconfig
-      '@react-router/dev':
-        specifier: 'catalog:'
-        version: 7.14.2(@react-router/serve@7.14.2(react-router@7.14.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(typescript@6.0.3))(@types/node@25.9.1)(babel-plugin-macros@3.1.0)(jiti@2.6.1)(lightningcss@1.32.0)(react-router@7.14.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(terser@5.46.1)(tsx@4.21.0)(typescript@6.0.3)(vite@8.0.12(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.6.1)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(yaml@2.8.3)
-      '@types/leaflet':
-        specifier: ^1.9.8
-        version: 1.9.21
-      '@types/node':
-        specifier: 'catalog:'
-        version: 25.9.1
-      '@types/react':
-        specifier: 'catalog:'
-        version: 19.2.15
-      '@types/react-dom':
-        specifier: 'catalog:'
-        version: 19.2.3(@types/react@19.2.15)
-      '@vitejs/plugin-react':
-        specifier: 'catalog:'
-        version: 6.0.1(babel-plugin-react-compiler@1.0.0)(vite@8.0.12(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.6.1)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
-      typescript:
-        specifier: 'catalog:'
-        version: 6.0.3
-      vite:
-        specifier: 'catalog:'
-        version: 8.0.12(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.6.1)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3)
-
   apps/commune:
     dependencies:
       '@hono/node-server':
@@ -306,6 +242,158 @@ importers:
       vite:
         specifier: 'catalog:'
         version: 8.0.12(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.6.1)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3)
+
+  apps/earth:
+    dependencies:
+      '@pontistudios/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@pontistudios/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      '@react-router/node':
+        specifier: 'catalog:'
+        version: 7.14.2(react-router@7.14.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(typescript@6.0.3)
+      '@react-router/serve':
+        specifier: 'catalog:'
+        version: 7.14.2(react-router@7.14.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(typescript@6.0.3)
+      '@tanstack/react-query':
+        specifier: 'catalog:'
+        version: 5.99.2(react@19.2.6)
+      isbot:
+        specifier: ^5.1.40
+        version: 5.1.40
+      maplibre-gl:
+        specifier: ^5.24.0
+        version: 5.24.0
+      react:
+        specifier: 'catalog:'
+        version: 19.2.6
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.2.6(react@19.2.6)
+      react-map-gl:
+        specifier: ^8.1.1
+        version: 8.1.1(maplibre-gl@5.24.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      react-router:
+        specifier: 'catalog:'
+        version: 7.14.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+    devDependencies:
+      '@pontistudios/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
+      '@react-router/dev':
+        specifier: 'catalog:'
+        version: 7.14.2(@react-router/serve@7.14.2(react-router@7.14.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(typescript@6.0.3))(@types/node@25.9.1)(babel-plugin-macros@3.1.0)(jiti@2.6.1)(lightningcss@1.32.0)(react-router@7.14.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(terser@5.46.1)(tsx@4.21.0)(typescript@6.0.3)(vite@8.0.12(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.6.1)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(yaml@2.8.3)
+      '@types/leaflet':
+        specifier: ^1.9.8
+        version: 1.9.21
+      '@types/node':
+        specifier: 'catalog:'
+        version: 25.9.1
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.2.15
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.2.3(@types/react@19.2.15)
+      '@vitejs/plugin-react':
+        specifier: 'catalog:'
+        version: 6.0.1(babel-plugin-react-compiler@1.0.0)(vite@8.0.12(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.6.1)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+      vite:
+        specifier: 'catalog:'
+        version: 8.0.12(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.6.1)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3)
+
+  apps/health:
+    dependencies:
+      '@pontistudios/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      '@react-router/node':
+        specifier: 'catalog:'
+        version: 7.14.2(react-router@7.14.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(typescript@6.0.3)
+      '@react-router/serve':
+        specifier: 'catalog:'
+        version: 7.14.2(react-router@7.14.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(typescript@6.0.3)
+      '@tanstack/react-query':
+        specifier: 'catalog:'
+        version: 5.99.2(react@19.2.6)
+      '@tanstack/react-query-devtools':
+        specifier: 'catalog:'
+        version: 5.100.14(@tanstack/react-query@5.99.2(react@19.2.6))(react@19.2.6)
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.3.0
+      isbot:
+        specifier: ^5
+        version: 5.1.40
+      react:
+        specifier: 'catalog:'
+        version: 19.2.6
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.2.6(react@19.2.6)
+      react-router:
+        specifier: 'catalog:'
+        version: 7.14.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      sonner:
+        specifier: ^2.0.7
+        version: 2.0.7(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      zod:
+        specifier: ^4.2.0
+        version: 4.3.6
+    devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.59.1
+      '@react-router/dev':
+        specifier: 'catalog:'
+        version: 7.14.2(@react-router/serve@7.14.2(react-router@7.14.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(typescript@6.0.3))(@types/node@25.9.1)(babel-plugin-macros@3.1.0)(jiti@2.6.1)(lightningcss@1.32.0)(react-router@7.14.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(terser@5.46.1)(tsx@4.21.0)(typescript@6.0.3)(vite@8.0.12(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.6.1)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(yaml@2.8.3)
+      '@tailwindcss/vite':
+        specifier: 'catalog:'
+        version: 4.2.4(vite@8.0.12(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.6.1)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
+      '@types/node':
+        specifier: 'catalog:'
+        version: 25.9.1
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.2.15
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.2.3(@types/react@19.2.15)
+      '@vitest/coverage-v8':
+        specifier: 'catalog:'
+        version: 4.1.5(vitest@4.1.5)
+      autoprefixer:
+        specifier: 'catalog:'
+        version: 10.5.0(postcss@8.5.10)
+      jsdom:
+        specifier: 'catalog:'
+        version: 29.0.2(@noble/hashes@2.2.0)
+      postcss:
+        specifier: 'catalog:'
+        version: 8.5.10
+      tailwindcss:
+        specifier: 'catalog:'
+        version: 4.2.4
+      tsx:
+        specifier: 'catalog:'
+        version: 4.21.0
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+      vite:
+        specifier: 'catalog:'
+        version: 8.0.12(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.6.1)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3)
+      vite-tsconfig-paths:
+        specifier: 'catalog:'
+        version: 6.1.1(typescript@6.0.3)(vite@8.0.12(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.6.1)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.5(@opentelemetry/api@1.9.0)(@types/node@25.9.1)(@vitest/coverage-v8@4.1.5)(jsdom@29.0.2(@noble/hashes@2.2.0))(msw@2.13.5(@types/node@25.9.1)(typescript@6.0.3))(vite@8.0.12(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.6.1)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
 
   apps/labyrinth:
     dependencies:
@@ -436,94 +524,6 @@ importers:
       vite-tsconfig-paths:
         specifier: 'catalog:'
         version: 6.1.1(typescript@6.0.3)(vite@8.0.12(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.6.1)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
-
-  apps/vitalis:
-    dependencies:
-      '@pontistudios/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
-      '@react-router/node':
-        specifier: 'catalog:'
-        version: 7.14.2(react-router@7.14.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(typescript@6.0.3)
-      '@react-router/serve':
-        specifier: 'catalog:'
-        version: 7.14.2(react-router@7.14.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(typescript@6.0.3)
-      '@tanstack/react-query':
-        specifier: 'catalog:'
-        version: 5.99.2(react@19.2.6)
-      '@tanstack/react-query-devtools':
-        specifier: 'catalog:'
-        version: 5.100.14(@tanstack/react-query@5.99.2(react@19.2.6))(react@19.2.6)
-      date-fns:
-        specifier: ^4.1.0
-        version: 4.1.0
-      isbot:
-        specifier: ^5
-        version: 5.1.40
-      react:
-        specifier: 'catalog:'
-        version: 19.2.6
-      react-dom:
-        specifier: 'catalog:'
-        version: 19.2.6(react@19.2.6)
-      react-router:
-        specifier: 'catalog:'
-        version: 7.14.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      sonner:
-        specifier: ^2.0.7
-        version: 2.0.7(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      zod:
-        specifier: ^4.2.0
-        version: 4.3.6
-    devDependencies:
-      '@playwright/test':
-        specifier: 'catalog:'
-        version: 1.59.1
-      '@react-router/dev':
-        specifier: 'catalog:'
-        version: 7.14.2(@react-router/serve@7.14.2(react-router@7.14.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(typescript@6.0.3))(@types/node@25.9.1)(babel-plugin-macros@3.1.0)(jiti@2.6.1)(lightningcss@1.32.0)(react-router@7.14.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(terser@5.46.1)(tsx@4.21.0)(typescript@6.0.3)(vite@8.0.12(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.6.1)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(yaml@2.8.3)
-      '@tailwindcss/vite':
-        specifier: 'catalog:'
-        version: 4.2.4(vite@8.0.12(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.6.1)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
-      '@types/node':
-        specifier: 'catalog:'
-        version: 25.9.1
-      '@types/react':
-        specifier: 'catalog:'
-        version: 19.2.15
-      '@types/react-dom':
-        specifier: 'catalog:'
-        version: 19.2.3(@types/react@19.2.15)
-      '@vitest/coverage-v8':
-        specifier: 'catalog:'
-        version: 4.1.5(vitest@4.1.5)
-      autoprefixer:
-        specifier: 'catalog:'
-        version: 10.5.0(postcss@8.5.10)
-      jsdom:
-        specifier: 'catalog:'
-        version: 29.0.2(@noble/hashes@2.2.0)
-      postcss:
-        specifier: 'catalog:'
-        version: 8.5.10
-      tailwindcss:
-        specifier: 'catalog:'
-        version: 4.2.4
-      tsx:
-        specifier: 'catalog:'
-        version: 4.21.0
-      typescript:
-        specifier: 'catalog:'
-        version: 6.0.3
-      vite:
-        specifier: 'catalog:'
-        version: 8.0.12(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.6.1)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3)
-      vite-tsconfig-paths:
-        specifier: 'catalog:'
-        version: 6.1.1(typescript@6.0.3)(vite@8.0.12(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.6.1)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
-      vitest:
-        specifier: 'catalog:'
-        version: 4.1.5(@opentelemetry/api@1.9.0)(@types/node@25.9.1)(@vitest/coverage-v8@4.1.5)(jsdom@29.0.2(@noble/hashes@2.2.0))(msw@2.13.5(@types/node@25.9.1)(typescript@6.0.3))(vite@8.0.12(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.6.1)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
 
   packages/ai:
     dependencies:
@@ -4667,9 +4667,6 @@ packages:
   data-urls@7.0.0:
     resolution: {integrity: sha512-23XHcCF+coGYevirZceTVD7NdJOqVn+49IHyxgszm+JIiHLoB2TkmPtsYkNWT1pvRSGkc35L6NHs0yHkN2SumA==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
-
-  date-fns@4.1.0:
-    resolution: {integrity: sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==}
 
   date-fns@4.3.0:
     resolution: {integrity: sha512-OYcL+3N/jyWbYdFGqoMAhytDgxP9pbYPUUiRCOgn4Fewaadk9l/Wam4Avciiyp2BgkpfQyBV9B+ehnVJych+eQ==}
@@ -9843,7 +9840,7 @@ snapshots:
       '@alloc/quick-lru': 5.2.0
       '@tailwindcss/node': 4.2.4
       '@tailwindcss/oxide': 4.2.4
-      postcss: 8.5.10
+      postcss: 8.5.14
       tailwindcss: 4.2.4
 
   '@tailwindcss/vite@4.2.4(vite@6.4.2(@types/node@25.9.1)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))':
@@ -10918,8 +10915,6 @@ snapshots:
       whatwg-url: 16.0.1(@noble/hashes@2.2.0)
     transitivePeerDependencies:
       - '@noble/hashes'
-
-  date-fns@4.1.0: {}
 
   date-fns@4.3.0: {}
 
@@ -13280,7 +13275,7 @@ snapshots:
       esbuild: 0.27.7
       fdir: 6.5.0(picomatch@4.0.4)
       picomatch: 4.0.4
-      postcss: 8.5.10
+      postcss: 8.5.14
       rollup: 4.60.2
       tinyglobby: 0.2.16
     optionalDependencies:

@@ -3,7 +3,6 @@
   "globalDependencies": ["**/.env"],
   "globalEnv": [
     "ANALYZE",
-    "APP_URL",
     "APP_USER_ID",
     "COOKIE_NAME",
     "COOKIE_SALT",
@@ -22,7 +21,6 @@
     "SENDGRID_SENDER_NAME",
     "NEXT_PUBLIC_API_URL",
     "VERCEL_URL",
-    "VITE_API_URL",
     "OPENROUTER_API_KEY",
     "ANTHROPIC_API_KEY"
   ],

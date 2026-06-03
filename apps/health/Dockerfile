@@ -11,19 +11,17 @@ RUN corepack enable
 FROM base AS builder
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
-COPY apps/cartograph/package.json apps/cartograph/package.json
-COPY packages/db/package.json packages/db/package.json
+COPY apps/health/package.json apps/health/package.json
 COPY packages/ui/package.json packages/ui/package.json
 COPY packages/tsconfig/package.json packages/tsconfig/package.json
 COPY tsconfig.base.json ./
 COPY packages/tsconfig/ packages/tsconfig/
-COPY packages/db/ packages/db/
 COPY packages/ui/ packages/ui/
-COPY apps/cartograph/ apps/cartograph/
+COPY apps/health/ apps/health/
 
-RUN pnpm install --frozen-lockfile --filter @pontistudios/cartograph...
-RUN pnpm --filter @pontistudios/cartograph build
-RUN pnpm deploy --legacy --filter @pontistudios/cartograph --prod /prod/cartograph
+RUN pnpm install --frozen-lockfile --filter @pontistudios/health...
+RUN pnpm --filter @pontistudios/health build
+RUN pnpm deploy --legacy --filter @pontistudios/health --prod /prod/health
 
 FROM node:${NODE_VERSION} AS runner
 WORKDIR /app
@@ -36,9 +34,9 @@ RUN apt-get update && \
     groupadd --system --gid 1001 app && \
     useradd --system --uid 1001 --gid app --home-dir /app --shell /usr/sbin/nologin app
 
-COPY --from=builder --chown=app:app /prod/cartograph/node_modules ./node_modules
-COPY --from=builder --chown=app:app /prod/cartograph/package.json ./package.json
-COPY --from=builder --chown=app:app /app/apps/cartograph/build ./build
+COPY --from=builder --chown=app:app /prod/health/node_modules ./node_modules
+COPY --from=builder --chown=app:app /prod/health/package.json ./package.json
+COPY --from=builder --chown=app:app /app/apps/health/build ./build
 
 USER app
 EXPOSE 3000

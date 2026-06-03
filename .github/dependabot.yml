@@ -33,7 +33,7 @@ updates:
       prefix: "chore(deps)"
 
   - package-ecosystem: docker
-    directory: /apps/vitalis
+    directory: /apps/health
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
@@ -41,7 +41,7 @@ updates:
       prefix: "chore(deps)"
 
   - package-ecosystem: docker
-    directory: /apps/cartograph
+    directory: /apps/earth
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
