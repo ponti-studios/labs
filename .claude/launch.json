@@ -2,9 +2,9 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "cartograph",
+      "name": "earth",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@pontistudios/cartograph", "dev"],
+      "runtimeArgs": ["--filter", "@pontistudios/earth", "dev"],
       "port": 3006
     }
   ,{

@@ -5,11 +5,11 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "dev:cartograph": "turbo run dev --filter=@pontistudios/cartograph",
+    "dev:earth": "turbo run dev --filter=@pontistudios/earth",
     "dev:commune": "turbo run dev --filter=@pontistudios/commune",
     "dev:labyrinth": "turbo run dev --filter=@pontistudios/labyrinth",
     "dev:ui": "turbo run storybook --filter=@pontistudios/ui",
-    "dev:vitalis": "turbo run dev --filter=@pontistudios/vitalis",
+    "dev:health": "turbo run dev --filter=@pontistudios/health",
     "lint": "turbo run lint",
     "format": "turbo run format",
     "knip": "knip",

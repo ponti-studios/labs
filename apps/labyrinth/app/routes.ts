@@ -21,7 +21,6 @@ const apiRoutes = [
   ),
   route("/api/director/generate", "routes/api.director.generate.ts"),
   route("/api/games/realitea/daily", "routes/api.games.realitea.daily.ts"),
-  route("/api/games/realitea/generate", "routes/api.games.realitea.generate.ts"),
   route("/api/tarot", "routes/api.tarot.ts"),
   route("/api/words/validate", "routes/api.words.validate.ts"),
 ] satisfies RouteConfig;

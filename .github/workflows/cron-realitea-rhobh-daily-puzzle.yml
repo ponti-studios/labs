@@ -16,8 +16,22 @@ permissions:
 jobs:
   generate:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24.14.1"
+          cache: "pnpm"
+
+      - name: install-dependencies
+        run: pnpm install --frozen-lockfile --filter @pontistudios/labyrinth...
+
       - name: resolve-date
         id: resolve-date
         shell: bash
@@ -30,30 +44,7 @@ jobs:
 
       - name: trigger-generation
         env:
-          LABYRINTH_BASE_URL: ${{ secrets.LABYRINTH_BASE_URL }}
-          REALITEA_TOKEN: ${{ secrets.REALITEA_TOKEN }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           DATE_UTC: ${{ steps.resolve-date.outputs.date_utc }}
-        shell: bash
-        run: |
-          test -n "$LABYRINTH_BASE_URL"
-          test -n "$REALITEA_TOKEN"
-          test -n "$DATE_UTC"
-
-          response_file="$(mktemp)"
-          status_code="$(
-            curl -sS \
-              -o "$response_file" \
-              -w "%{http_code}" \
-              -X POST "${LABYRINTH_BASE_URL%/}/api/games/realitea/generate" \
-              -H "Authorization: Bearer $REALITEA_TOKEN" \
-              -H "Content-Type: application/json" \
-              -d "{\"dateUtc\":\"$DATE_UTC\"}"
-          )"
-
-          cat "$response_file"
-
-          if [ "$status_code" -lt 200 ] || [ "$status_code" -ge 300 ]; then
-            echo
-            echo "RealiTea daily generation failed with HTTP $status_code" >&2
-            exit 1
-          fi
+        run: pnpm --filter @pontistudios/labyrinth realitea:generate-daily -- --date-utc="$DATE_UTC"

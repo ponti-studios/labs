@@ -1,0 +1,39 @@
+{
+  "name": "@pontistudios/earth",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "react-router dev",
+    "build": "react-router build",
+    "start": "react-router-serve ./build/server/index.js",
+    "lint": "oxlint app --fix",
+    "format": "oxfmt app --write",
+    "typecheck": "react-router typegen && tsc"
+  },
+  "dependencies": {
+    "@pontistudios/db": "workspace:*",
+    "@pontistudios/ui": "workspace:*",
+    "@react-router/node": "catalog:",
+    "@react-router/serve": "catalog:",
+    "@tanstack/react-query": "catalog:",
+    "isbot": "^5.1.40",
+    "maplibre-gl": "^5.24.0",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-map-gl": "^8.1.1",
+    "react-router": "catalog:"
+  },
+  "devDependencies": {
+    "@pontistudios/tsconfig": "workspace:*",
+    "@react-router/dev": "catalog:",
+    "@types/leaflet": "^1.9.8",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  },
+  "packageManager": "pnpm@10.30.3"
+}

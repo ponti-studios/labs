@@ -23,13 +23,3 @@ export const LabyrinthServerEnv = z
   }));
 
 export type LabyrinthServerEnv = z.infer<typeof LabyrinthServerEnv>;
-
-export const DailyPuzzleSchedulerEnv = z
-  .object({
-    REALITEA_TOKEN: z.string().min(1),
-  })
-  .transform((env) => ({
-    dailyPuzzleToken: env.REALITEA_TOKEN,
-  }));
-
-export type DailyPuzzleSchedulerEnv = z.infer<typeof DailyPuzzleSchedulerEnv>;

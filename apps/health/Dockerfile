@@ -11,17 +11,17 @@ RUN corepack enable
 FROM base AS builder
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
-COPY apps/vitalis/package.json apps/vitalis/package.json
+COPY apps/health/package.json apps/health/package.json
 COPY packages/ui/package.json packages/ui/package.json
 COPY packages/tsconfig/package.json packages/tsconfig/package.json
 COPY tsconfig.base.json ./
 COPY packages/tsconfig/ packages/tsconfig/
 COPY packages/ui/ packages/ui/
-COPY apps/vitalis/ apps/vitalis/
+COPY apps/health/ apps/health/
 
-RUN pnpm install --frozen-lockfile --filter @pontistudios/vitalis...
-RUN pnpm --filter @pontistudios/vitalis build
-RUN pnpm deploy --legacy --filter @pontistudios/vitalis --prod /prod/vitalis
+RUN pnpm install --frozen-lockfile --filter @pontistudios/health...
+RUN pnpm --filter @pontistudios/health build
+RUN pnpm deploy --legacy --filter @pontistudios/health --prod /prod/health
 
 FROM node:${NODE_VERSION} AS runner
 WORKDIR /app
@@ -34,9 +34,9 @@ RUN apt-get update && \
     groupadd --system --gid 1001 app && \
     useradd --system --uid 1001 --gid app --home-dir /app --shell /usr/sbin/nologin app
 
-COPY --from=builder --chown=app:app /prod/vitalis/node_modules ./node_modules
-COPY --from=builder --chown=app:app /prod/vitalis/package.json ./package.json
-COPY --from=builder --chown=app:app /app/apps/vitalis/build ./build
+COPY --from=builder --chown=app:app /prod/health/node_modules ./node_modules
+COPY --from=builder --chown=app:app /prod/health/package.json ./package.json
+COPY --from=builder --chown=app:app /app/apps/health/build ./build
 
 USER app
 EXPOSE 3000

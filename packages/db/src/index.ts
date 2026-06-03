@@ -18,6 +18,6 @@ export {
 } from "./schema";
 
 export * from "drizzle-orm";
-export { db } from "./drizzle";
+export { closeDb, db } from "./drizzle";
 export * from "./env";
 export { populateCovidData, populateTflCameras } from "./loaders";

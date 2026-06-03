@@ -8,6 +8,7 @@
     "dev": "react-router dev",
     "lint": "oxlint app --fix",
     "format": "oxfmt app --write",
+    "realitea:generate-daily": "tsx --tsconfig tsconfig.json scripts/generate-realitea-daily-puzzle.ts",
     "start": "react-router-serve ./build/server/index.js --port=${PORT:-3000}",
     "test": "vitest run --environment jsdom --coverage --reporter verbose --passWithNoTests",
     "typecheck": "react-router typegen && tsc"

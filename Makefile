@@ -1,7 +1,7 @@
-.PHONY: dev-cartograph dev-commune dev-labyrinth dev-tempo dev-ui dev-vitalis check clean reset
+.PHONY: dev-earth dev-commune dev-labyrinth dev-tempo dev-ui dev-health check clean reset
 
-dev-cartograph:
-	pnpm dev:cartograph
+dev-earth:
+	pnpm dev:earth
 
 dev-commune:
 	pnpm dev:commune
@@ -15,8 +15,8 @@ dev-tempo:
 dev-ui:
 	pnpm dev:ui
 
-dev-vitalis:
-	pnpm dev:vitalis
+dev-health:
+	pnpm dev:health
 
 check:
 	pnpm lint

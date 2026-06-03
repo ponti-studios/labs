@@ -1,0 +1,248 @@
+@import "@pontistudios/ui/styles.css";
+
+@source "../../../packages/ui/src";
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.earth-shell {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--background);
+}
+
+.earth-viewport {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  touch-action: none;
+}
+
+.earth-viewport-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+.map-loading-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--background) 84%, transparent);
+  color: var(--muted-foreground);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+/* MapLibre GL overrides */
+.maplibregl-map {
+  font-family: var(--font-sans);
+}
+
+.maplibregl-ctrl-attrib {
+  background: color-mix(in srgb, var(--background) 80%, transparent) !important;
+  color: var(--muted-foreground) !important;
+  font-size: 10px;
+}
+
+.maplibregl-ctrl-attrib a {
+  color: var(--muted-foreground) !important;
+}
+
+.maplibregl-ctrl-group {
+  background: color-mix(in srgb, var(--background) 92%, transparent) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
+}
+
+.maplibregl-ctrl-group button {
+  color: var(--foreground) !important;
+  background: transparent !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+.maplibregl-ctrl-group button:hover {
+  background: color-mix(in srgb, var(--accent) 10%, transparent) !important;
+  color: var(--accent-foreground) !important;
+}
+
+.maplibregl-popup-content {
+  color: var(--foreground);
+  background: var(--popover);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-family: var(--font-sans);
+  box-shadow: 0 24px 60px rgb(17 24 39 / 0.18);
+}
+
+.maplibregl-popup-tip {
+  border-top-color: var(--popover) !important;
+}
+
+.maplibregl-popup-close-button {
+  color: var(--muted-foreground) !important;
+  font-size: 16px;
+  padding: 2px 6px;
+}
+
+/* Earth dock layout for sidebar */
+.earth-dock {
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 420px;
+  display: flex;
+  flex-direction: column;
+  background: color-mix(in srgb, var(--background) 96%, transparent);
+  border-left: 1px solid var(--border);
+  z-index: 100;
+  backdrop-filter: blur(4px);
+  overflow: hidden;
+}
+
+.earth-dock-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+
+.earth-dock-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.earth-dock-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.earth-dock-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.earth-dock-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.earth-nav {
+  border-bottom: 1px solid var(--border);
+  padding: 1.5rem;
+}
+
+.earth-nav-header {
+  margin-bottom: 1.5rem;
+}
+
+.earth-kicker {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  margin-bottom: 0.5rem;
+}
+
+.earth-nav-caption {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted-foreground);
+}
+
+.earth-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.earth-nav-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.75rem;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--muted-foreground);
+}
+
+.earth-nav-item:hover {
+  border-color: var(--border);
+  color: var(--foreground);
+}
+
+.earth-nav-item--active {
+  border-color: var(--ring);
+  background: color-mix(in srgb, var(--accent) 35%, var(--background));
+  color: var(--foreground);
+}
+
+.earth-nav-icon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+}
+
+.earth-nav-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.earth-nav-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.earth-nav-description {
+  display: block;
+  font-size: 11px;
+  color: var(--muted-foreground);
+  line-height: 1.3;
+}
+
+.earth-nav-arrow {
+  flex-shrink: 0;
+  font-size: 14px;
+  color: var(--muted-foreground);
+}

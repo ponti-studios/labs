@@ -79,13 +79,13 @@ The game relies on a small API surface rather than a large backend.
 
 - `POST /api/words/validate` checks whether a guess is playable.
 - `GET /api/games/realitea/daily?date=YYYY-MM-DD` returns the approved puzzle for a UTC date or the static fallback.
-- `POST /api/games/realitea/generate` runs the daily publishing job for a specific UTC date.
+- `pnpm --filter @pontistudios/labyrinth realitea:generate-daily -- --date-utc=YYYY-MM-DD` runs the daily publishing job for a specific UTC date.
 
 The small API surface is deliberate. Each endpoint has one job and a clear owner.
 
 ## Scheduled publishing
 
-The daily generation endpoint is triggered by GitHub Actions shortly after midnight UTC. The job uses bearer-token protection so puzzle publishing is not an open public write surface.
+The daily generation script is triggered by GitHub Actions shortly after midnight UTC. The job runs as a direct build step, so puzzle publishing is no longer exposed as an HTTP write surface.
 
 This is the operational half of the system. A daily game does not just need content rules. It needs a publishing path that runs on time and fails safely.
 
