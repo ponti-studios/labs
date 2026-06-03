@@ -31,7 +31,7 @@
     "oxfmt": "0.53.0",
     "oxlint": "^1.68.0",
     "pm2": "^7.0.1",
-    "rolldown": "1.0.0-rc.17",
+    "rolldown": "1.1.0",
     "turbo": "^2.9.16",
     "typescript": "catalog:"
   },
