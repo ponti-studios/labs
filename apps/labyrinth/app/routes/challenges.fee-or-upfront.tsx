@@ -15,7 +15,6 @@ type Choice = 'upfront' | 'per-transaction';
 
 interface TransactionRow {
   payment: number;
-  rateAmount: number;
   charged: number;
   rule: 'rate' | 'base';
 }
@@ -32,7 +31,7 @@ function calculate(basePayment: number, rate: number, upfront: number, payments:
   const rows: TransactionRow[] = payments.map((payment) => {
     const rateAmount = payment * (rate / 100);
     const charged = rateAmount >= basePayment ? rateAmount : basePayment;
-    return { payment, rateAmount, charged, rule: rateAmount >= basePayment ? 'rate' : 'base' };
+    return { payment, charged, rule: rateAmount >= basePayment ? 'rate' : 'base' };
   });
   const totalFees = rows.reduce((sum, r) => sum + r.charged, 0);
   const choice = upfront < totalFees ? 'upfront' : 'per-transaction';
@@ -155,8 +154,6 @@ export default function FeeOrUpfront(): JSX.Element {
           <TableRow>
             <TableHead>#</TableHead>
             <TableHead>Amount</TableHead>
-            <TableHead>{rate}% of amount</TableHead>
-            <TableHead>Base fee</TableHead>
             <TableHead>Charged</TableHead>
             <TableHead>Rule</TableHead>
           </TableRow>
@@ -166,8 +163,6 @@ export default function FeeOrUpfront(): JSX.Element {
             <TableRow key={i}>
               <TableCell className="text-muted-foreground">{i + 1}</TableCell>
               <TableCell className="font-mono">${row.payment}</TableCell>
-              <TableCell className="font-mono text-muted-foreground">${row.rateAmount.toFixed(2)}</TableCell>
-              <TableCell className="font-mono text-muted-foreground">${basePayment}</TableCell>
               <TableCell className="font-mono font-medium">${row.charged.toFixed(2)}</TableCell>
               <TableCell>
                 <Badge variant="outline" className={row.rule === 'rate' ? 'border-violet-300 text-violet-700' : 'border-orange-300 text-orange-700'}>
@@ -177,7 +172,7 @@ export default function FeeOrUpfront(): JSX.Element {
             </TableRow>
           ))}
           <TableRow className="bg-muted/40 font-semibold">
-            <TableCell colSpan={4} className="text-right text-muted-foreground">Total per-transaction</TableCell>
+            <TableCell colSpan={2} className="text-right text-muted-foreground">Total</TableCell>
             <TableCell className="font-mono">${result.totalFees.toFixed(2)}</TableCell>
             <TableCell />
           </TableRow>
