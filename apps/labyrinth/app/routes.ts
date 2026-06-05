@@ -56,6 +56,7 @@ const challengeRoutes = [
   route("/challenges/cloudmargin", "routes/challenges.cloudmargin.tsx"),
   route("/challenges/daily-mail", "routes/challenges.daily-mail.tsx"),
   route("/challenges/fee-or-upfront", "routes/challenges.fee-or-upfront.tsx"),
+  route("/challenges/cloud-pricing", "routes/challenges.cloud-pricing.tsx"),
   route("/challenges/prime-countdown", "routes/challenges.prime-countdown.tsx"),
   route("/challenges/growth-street", "routes/challenges.growth-street.tsx"),
   route("/challenges/interview-cake", "routes/challenges.interview-cake.tsx"),
