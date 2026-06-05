@@ -8,8 +8,8 @@ type RouteEntry = {
 
 const routeEntries: RouteEntry[] = [
   { path: "/", href: "/", kind: "page" },
-  { path: "/director", href: "/director", kind: "page" },
-  { path: "/api/director/generate", kind: "api" },
+  { path: "/gen/image", href: "/gen/image", kind: "page" },
+  { path: "/api/gen/image", kind: "api" },
   { path: "/api/words/validate", kind: "api" },
   { path: "/tarot", href: "/tarot", kind: "page" },
   { path: "/api/tarot", kind: "api" },
