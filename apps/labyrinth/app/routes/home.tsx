@@ -42,6 +42,7 @@ const routeEntries: RouteEntry[] = [
   { path: "/challenges/cloudmargin", href: "/challenges/cloudmargin", kind: "page" },
   { path: "/challenges/daily-mail", href: "/challenges/daily-mail", kind: "page" },
   { path: "/challenges/fee-or-upfront", href: "/challenges/fee-or-upfront", kind: "page" },
+  { path: "/challenges/cloud-pricing", href: "/challenges/cloud-pricing", kind: "page" },
   { path: "/challenges/prime-countdown", href: "/challenges/prime-countdown", kind: "page" },
   { path: "/challenges/growth-street", href: "/challenges/growth-street", kind: "page" },
   { path: "/challenges/interview-cake", href: "/challenges/interview-cake", kind: "page" },
