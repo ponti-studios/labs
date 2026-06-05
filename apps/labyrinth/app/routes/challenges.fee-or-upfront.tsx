@@ -1,4 +1,4 @@
-import { useState, type JSX, type ChangeEvent } from "react";
+import { useState, type JSX, type ChangeEvent } from 'react';
 import {
   Badge,
   Button,
@@ -14,176 +14,331 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@pontistudios/ui";
+} from '@pontistudios/ui';
 
-type FeeChoice = "upfront" | "fee";
+// ─── Types ────────────────────────────────────────────────────────────────────
 
-interface PaymentBreakdown {
-  payment: number;
-  percentageAmount: number;
-  chargedAmount: number;
+interface MonthRow {
+  month: number;
+  hours: number;
+  onDemandMonthly: number;
+  reservedMonthly: number;
+  onDemandCumulative: number;
+  reservedCumulative: number;
+  isBreakEven: boolean;
 }
 
-interface FeeResult {
-  feeTotal: number;
-  upfront: number;
-  choice: FeeChoice;
-  breakdown: PaymentBreakdown[];
+interface Result {
+  rows: MonthRow[];
+  totalOnDemand: number;
+  totalReserved: number;
+  breakEvenMonth: number | null;
+  savings: number;
+  recommendation: 'reserved' | 'on-demand';
 }
 
-function calcFeeOrUpfront(
-  basePayment: number,
-  percentage: number,
-  upfront: number,
-  payments: number[],
-): FeeResult {
-  const breakdown: PaymentBreakdown[] = payments.map((payment) => {
-    const percentageAmount = payment * (percentage / 100);
-    const chargedAmount = percentageAmount >= basePayment ? percentageAmount : basePayment;
-    return { payment, percentageAmount, chargedAmount };
+// ─── Presets ──────────────────────────────────────────────────────────────────
+
+interface Preset {
+  label: string;
+  description: string;
+  onDemandRate: string;
+  reservedUpfront: string;
+  reservedRate: string;
+}
+
+const PRESETS: Preset[] = [
+  {
+    label: 't3.medium',
+    description: '2 vCPU · 4 GB',
+    onDemandRate: '0.0416',
+    reservedUpfront: '215',
+    reservedRate: '0.0160',
+  },
+  {
+    label: 'm5.large',
+    description: '2 vCPU · 8 GB',
+    onDemandRate: '0.0960',
+    reservedUpfront: '500',
+    reservedRate: '0.0400',
+  },
+  {
+    label: 'c5.xlarge',
+    description: '4 vCPU · 8 GB',
+    onDemandRate: '0.1700',
+    reservedUpfront: '876',
+    reservedRate: '0.0680',
+  },
+  {
+    label: 'r5.2xlarge',
+    description: '8 vCPU · 64 GB',
+    onDemandRate: '0.5040',
+    reservedUpfront: '2620',
+    reservedRate: '0.2010',
+  },
+];
+
+const DEFAULT_MONTHLY_HOURS = '720, 720, 720, 720, 720, 720, 720, 720, 720, 720, 720, 720';
+
+// ─── Algorithm ────────────────────────────────────────────────────────────────
+
+function parseHours(raw: string): number[] {
+  return raw
+    .split(',')
+    .map((s) => Number(s.trim()))
+    .filter((n) => !Number.isNaN(n) && n >= 0);
+}
+
+function calculate(
+  onDemandRate: number,
+  reservedUpfront: number,
+  reservedRate: number,
+  monthlyHours: number[],
+): Result {
+  let onDemandCumulative = 0;
+  let reservedCumulative = reservedUpfront;
+  let breakEvenMonth: number | null = null;
+  let prevOnDemand = 0;
+  let prevReserved = reservedUpfront;
+
+  const rows: MonthRow[] = monthlyHours.map((hours, i) => {
+    const onDemandMonthly = hours * onDemandRate;
+    const reservedMonthly = hours * reservedRate;
+
+    onDemandCumulative += onDemandMonthly;
+    reservedCumulative += reservedMonthly;
+
+    const crossedThisMonth =
+      breakEvenMonth === null &&
+      prevReserved > prevOnDemand &&
+      reservedCumulative <= onDemandCumulative;
+
+    if (crossedThisMonth) {
+      breakEvenMonth = i + 1;
+    }
+
+    prevOnDemand = onDemandCumulative;
+    prevReserved = reservedCumulative;
+
+    return {
+      month: i + 1,
+      hours,
+      onDemandMonthly,
+      reservedMonthly,
+      onDemandCumulative,
+      reservedCumulative,
+      isBreakEven: crossedThisMonth,
+    };
   });
 
-  const feeTotal = breakdown.reduce((sum, row) => sum + row.chargedAmount, 0);
-  return {
-    feeTotal,
-    upfront,
-    choice: upfront < feeTotal ? "upfront" : "fee",
-    breakdown,
+  const totalOnDemand = onDemandCumulative;
+  const totalReserved = reservedCumulative;
+  const savings = Math.abs(totalOnDemand - totalReserved);
+  const recommendation = totalReserved < totalOnDemand ? 'reserved' : 'on-demand';
+
+  return { rows, totalOnDemand, totalReserved, breakEvenMonth, savings, recommendation };
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
+const RUN_DELAY_MS = 300;
+
+export default function CloudPricingComparison(): JSX.Element {
+  const [onDemandRate, setOnDemandRate] = useState('0.0960');
+  const [reservedUpfront, setReservedUpfront] = useState('500');
+  const [reservedRate, setReservedRate] = useState('0.0400');
+  const [hoursRaw, setHoursRaw] = useState(DEFAULT_MONTHLY_HOURS);
+  const [result, setResult] = useState<Result | null>(null);
+  const [running, setRunning] = useState(false);
+
+  const applyPreset = (preset: Preset) => {
+    setOnDemandRate(preset.onDemandRate);
+    setReservedUpfront(preset.reservedUpfront);
+    setReservedRate(preset.reservedRate);
+    setResult(null);
   };
-}
-
-function parsePayments(raw: string): number[] {
-  return raw
-    .split(",")
-    .map((s) => Number(s.trim()))
-    .filter((n) => !Number.isNaN(n) && n > 0);
-}
-
-const RUN_DELAY_MS = 400;
-
-export default function FeeOrUpfront(): JSX.Element {
-  const [basePayment, setBasePayment] = useState("2");
-  const [percentage, setPercentage] = useState("10");
-  const [upfront, setUpfront] = useState("100");
-  const [paymentsRaw, setPaymentsRaw] = useState("100, 200, 300, 400");
-  const [feeResult, setFeeResult] = useState<FeeResult | null>(null);
-  const [feeRunning, setFeeRunning] = useState(false);
 
   const run = () => {
-    setFeeRunning(true);
-    setFeeResult(null);
+    setRunning(true);
+    setResult(null);
     setTimeout(() => {
-      const payments = parsePayments(paymentsRaw);
-      setFeeResult(calcFeeOrUpfront(Number(basePayment), Number(percentage), Number(upfront), payments));
-      setFeeRunning(false);
+      setResult(
+        calculate(
+          Number(onDemandRate),
+          Number(reservedUpfront),
+          Number(reservedRate),
+          parseHours(hoursRaw),
+        ),
+      );
+      setRunning(false);
     }, RUN_DELAY_MS);
   };
 
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <h2 className="text-xl font-semibold">Fee or Upfront</h2>
+        <h2 className="text-xl font-semibold">On-Demand vs. Reserved Instances</h2>
         <p className="text-muted-foreground">
-          Given a series of payments, determine whether paying an upfront fee is cheaper than
-          paying a percentage-based fee on each transaction. For each payment, the fee charged
-          is{" "}
-          <code className="text-xs bg-muted px-1 py-0.5 rounded">
-            max(basePayment, payment × x%)
-          </code>
-          . Compare the sum of those fees against the flat upfront cost.
+          Cloud providers charge more per hour when you make no commitment (on-demand) and less
+          when you pay upfront for a reserved term. Given your expected monthly usage, find out
+          which pricing model costs less over the period — and when reserved starts paying off.
         </p>
-        <i className="text-xs text-muted-foreground">Courtesy of Goldman Sachs</i>
+        <i className="text-xs text-muted-foreground">Based on a Goldman Sachs take-home challenge</i>
       </header>
 
       <Card>
         <CardHeader>
-          <CardTitle>Inputs</CardTitle>
+          <CardTitle>Instance presets</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Quick-fill with approximate AWS rates (1-year partial upfront reserved).
+          </p>
         </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <CardContent>
+          <div className="flex flex-wrap gap-2">
+            {PRESETS.map((preset) => (
+              <button
+                key={preset.label}
+                type="button"
+                onClick={() => applyPreset(preset)}
+                className="flex flex-col items-start rounded-lg border border-border px-3 py-2 text-left text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+              >
+                <span className="font-mono font-medium">{preset.label}</span>
+                <span className="text-xs text-muted-foreground">{preset.description}</span>
+              </button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Configure</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-5">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="basePayment">Base fee (k)</Label>
+              <Label htmlFor="onDemandRate">On-demand rate ($/hr)</Label>
               <Input
-                id="basePayment"
+                id="onDemandRate"
                 type="number"
                 min={0}
-                value={basePayment}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => setBasePayment(e.target.value)}
+                step={0.001}
+                value={onDemandRate}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setOnDemandRate(e.target.value)}
               />
-              <p className="text-xs text-muted-foreground">Minimum fee per payment</p>
+              <p className="text-xs text-muted-foreground">
+                Pay-as-you-go price per compute-hour. No commitment required.
+              </p>
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="percentage">Rate (x%)</Label>
+              <Label htmlFor="reservedUpfront">Reserved upfront ($)</Label>
               <Input
-                id="percentage"
+                id="reservedUpfront"
                 type="number"
                 min={0}
-                max={100}
-                value={percentage}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => setPercentage(e.target.value)}
+                value={reservedUpfront}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setReservedUpfront(e.target.value)}
               />
-              <p className="text-xs text-muted-foreground">Percentage of each payment</p>
+              <p className="text-xs text-muted-foreground">
+                One-time commitment paid at the start of the reserved term.
+              </p>
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="upfront">Upfront fee (d)</Label>
+              <Label htmlFor="reservedRate">Reserved hourly rate ($/hr)</Label>
               <Input
-                id="upfront"
+                id="reservedRate"
                 type="number"
                 min={0}
-                value={upfront}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => setUpfront(e.target.value)}
+                step={0.001}
+                value={reservedRate}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setReservedRate(e.target.value)}
               />
-              <p className="text-xs text-muted-foreground">One-time flat cost</p>
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="payments">Payments (p)</Label>
-              <Input
-                id="payments"
-                value={paymentsRaw}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => setPaymentsRaw(e.target.value)}
-                placeholder="e.g. 100, 200, 300"
-              />
-              <p className="text-xs text-muted-foreground">Comma-separated amounts</p>
+              <p className="text-xs text-muted-foreground">
+                Discounted per-hour rate after paying the upfront commitment.
+              </p>
             </div>
           </div>
 
-          <Button onClick={run} disabled={feeRunning} className="self-start min-w-24">
-            {feeRunning ? (
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="hours">Monthly usage hours</Label>
+            <Input
+              id="hours"
+              value={hoursRaw}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => setHoursRaw(e.target.value)}
+              placeholder="e.g. 720, 500, 680, 744"
+            />
+            <p className="text-xs text-muted-foreground">
+              Comma-separated hours per month. One entry = one month. 720 hrs ≈ always-on for a month.
+            </p>
+          </div>
+
+          <Button onClick={run} disabled={running} className="self-start min-w-28">
+            {running ? (
               <span className="flex items-center gap-2">
                 <span className="inline-block w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                Running…
+                Calculating…
               </span>
             ) : (
-              "Calculate"
+              'Compare'
             )}
           </Button>
         </CardContent>
       </Card>
 
-      {feeResult && (
+      {result && (
         <div className="flex flex-col gap-4">
-          <div className="grid grid-cols-3 gap-4">
+          {/* Summary cards */}
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
             <Card>
               <CardContent className="pt-4">
                 <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
-                  Total fee cost
+                  Total on-demand
                 </p>
-                <p className="text-2xl font-semibold font-mono">${feeResult.feeTotal.toFixed(2)}</p>
+                <p className="text-2xl font-semibold font-mono">
+                  ${result.totalOnDemand.toFixed(2)}
+                </p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="pt-4">
                 <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
-                  Upfront cost
+                  Total reserved
                 </p>
-                <p className="text-2xl font-semibold font-mono">${feeResult.upfront.toFixed(2)}</p>
+                <p className="text-2xl font-semibold font-mono">
+                  ${result.totalReserved.toFixed(2)}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  incl. ${reservedUpfront} upfront
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-4">
+                <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
+                  Break-even
+                </p>
+                {result.breakEvenMonth !== null ? (
+                  <>
+                    <p className="text-2xl font-semibold font-mono">
+                      Month {result.breakEvenMonth}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      reserved cheaper from here
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-2xl font-semibold font-mono text-muted-foreground">—</p>
+                    <p className="text-xs text-muted-foreground mt-1">never crosses over</p>
+                  </>
+                )}
               </CardContent>
             </Card>
             <Card
               className={
-                feeResult.choice === "upfront"
-                  ? "border-green-400 bg-green-50"
-                  : "border-blue-400 bg-blue-50"
+                result.recommendation === 'reserved'
+                  ? 'border-green-400 bg-green-50'
+                  : 'border-blue-400 bg-blue-50'
               }
             >
               <CardContent className="pt-4">
@@ -193,88 +348,86 @@ export default function FeeOrUpfront(): JSX.Element {
                 <Badge
                   variant="outline"
                   className={
-                    feeResult.choice === "upfront"
-                      ? "border-green-500 text-green-700 text-sm px-3 py-1"
-                      : "border-blue-500 text-blue-700 text-sm px-3 py-1"
+                    result.recommendation === 'reserved'
+                      ? 'border-green-500 text-green-700 text-sm px-3 py-1'
+                      : 'border-blue-500 text-blue-700 text-sm px-3 py-1'
                   }
                 >
-                  {feeResult.choice === "upfront" ? "Pay upfront" : "Pay per-fee"}
+                  {result.recommendation === 'reserved' ? 'Go reserved' : 'Stay on-demand'}
                 </Badge>
                 <p className="text-xs text-muted-foreground mt-2">
-                  {feeResult.choice === "upfront"
-                    ? `Saves $${(feeResult.feeTotal - feeResult.upfront).toFixed(2)} vs fee`
-                    : `Saves $${(feeResult.upfront - feeResult.feeTotal).toFixed(2)} vs upfront`}
+                  saves ${result.savings.toFixed(2)} over this period
                 </p>
               </CardContent>
             </Card>
           </div>
 
+          {/* Month-by-month table */}
           <Card>
             <CardHeader>
-              <CardTitle>Payment breakdown</CardTitle>
+              <CardTitle>Month-by-month breakdown</CardTitle>
               <p className="text-sm text-muted-foreground">
-                For each payment:{" "}
-                <code className="text-xs bg-muted px-1 py-0.5 rounded">
-                  charge = max(k, payment × x%)
-                </code>
+                Cumulative costs include the reserved upfront from month 1. The break-even row is
+                where reserved becomes cheaper overall.
               </p>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>#</TableHead>
-                    <TableHead>Payment</TableHead>
-                    <TableHead>{percentage}% of payment</TableHead>
-                    <TableHead>Base fee (k)</TableHead>
-                    <TableHead>Charged</TableHead>
-                    <TableHead>Rule applied</TableHead>
+                    <TableHead>Month</TableHead>
+                    <TableHead>Hours</TableHead>
+                    <TableHead>On-demand (monthly)</TableHead>
+                    <TableHead>Reserved (monthly)</TableHead>
+                    <TableHead>On-demand (cumulative)</TableHead>
+                    <TableHead>Reserved (cumulative)</TableHead>
+                    <TableHead></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {feeResult.breakdown.map((row, i) => {
-                    const usedPercentage = row.percentageAmount >= Number(basePayment);
-                    return (
-                      <TableRow
-                        key={i}
-                        style={{
-                          animation: "fade-slide-in 300ms ease-out both",
-                          animationDelay: `${i * 80}ms`,
-                        }}
+                  {result.rows.map((row, i) => (
+                    <TableRow
+                      key={row.month}
+                      className={row.isBreakEven ? 'bg-green-50' : undefined}
+                      style={{
+                        animation: 'fade-slide-in 300ms ease-out both',
+                        animationDelay: `${i * 60}ms`,
+                      }}
+                    >
+                      <TableCell className="font-mono text-muted-foreground">{row.month}</TableCell>
+                      <TableCell className="font-mono">{row.hours}h</TableCell>
+                      <TableCell className="font-mono">${row.onDemandMonthly.toFixed(2)}</TableCell>
+                      <TableCell className="font-mono">${row.reservedMonthly.toFixed(2)}</TableCell>
+                      <TableCell
+                        className={`font-mono font-medium ${
+                          row.onDemandCumulative > row.reservedCumulative
+                            ? 'text-red-600'
+                            : 'text-muted-foreground'
+                        }`}
                       >
-                        <TableCell className="text-muted-foreground">{i + 1}</TableCell>
-                        <TableCell className="font-mono">${row.payment}</TableCell>
-                        <TableCell className="font-mono text-muted-foreground">
-                          ${row.percentageAmount.toFixed(2)}
-                        </TableCell>
-                        <TableCell className="font-mono text-muted-foreground">
-                          ${basePayment}
-                        </TableCell>
-                        <TableCell className="font-mono font-medium">
-                          ${row.chargedAmount.toFixed(2)}
-                        </TableCell>
-                        <TableCell>
+                        ${row.onDemandCumulative.toFixed(2)}
+                      </TableCell>
+                      <TableCell
+                        className={`font-mono font-medium ${
+                          row.reservedCumulative <= row.onDemandCumulative
+                            ? 'text-green-600'
+                            : 'text-muted-foreground'
+                        }`}
+                      >
+                        ${row.reservedCumulative.toFixed(2)}
+                      </TableCell>
+                      <TableCell>
+                        {row.isBreakEven && (
                           <Badge
                             variant="outline"
-                            className={
-                              usedPercentage
-                                ? "border-violet-300 text-violet-700"
-                                : "border-orange-300 text-orange-700"
-                            }
+                            className="border-green-400 text-green-700 whitespace-nowrap"
                           >
-                            {usedPercentage ? `${percentage}% rate` : "base fee"}
+                            break-even
                           </Badge>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                  <TableRow className="font-semibold bg-muted/40">
-                    <TableCell colSpan={4} className="text-right text-muted-foreground">
-                      Total fees
-                    </TableCell>
-                    <TableCell className="font-mono">${feeResult.feeTotal.toFixed(2)}</TableCell>
-                    <TableCell />
-                  </TableRow>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             </CardContent>
