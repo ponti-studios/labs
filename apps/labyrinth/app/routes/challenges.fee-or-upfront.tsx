@@ -15,6 +15,7 @@ import {
   TableRow,
 } from '@pontistudios/ui';
 
+
 /**
  * Break-even analysis: fixed cost vs. accumulated variable cost.
  *
@@ -151,51 +152,6 @@ export default function FeeOrUpfront(): JSX.Element {
       </Card>
 
       <div className="flex flex-col gap-4">
-          <div className="grid grid-cols-3 gap-4">
-            <Card>
-              <CardContent className="pt-4">
-                <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
-                  Total per-transaction fees
-                </p>
-                <p className="text-2xl font-semibold font-mono">${result.totalFees.toFixed(2)}</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-4">
-                <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
-                  Upfront cost
-                </p>
-                <p className="text-2xl font-semibold font-mono">${result.upfront.toFixed(2)}</p>
-              </CardContent>
-            </Card>
-            <Card
-              className={
-                result.choice === 'upfront'
-                  ? 'border-green-400 bg-green-50'
-                  : 'border-blue-400 bg-blue-50'
-              }
-            >
-              <CardContent className="pt-4">
-                <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
-                  Recommendation
-                </p>
-                <Badge
-                  variant="outline"
-                  className={
-                    result.choice === 'upfront'
-                      ? 'border-green-500 text-green-700 text-sm px-3 py-1'
-                      : 'border-blue-500 text-blue-700 text-sm px-3 py-1'
-                  }
-                >
-                  {result.choice === 'upfront' ? 'Pay upfront' : 'Pay per-transaction'}
-                </Badge>
-                <p className="text-xs text-muted-foreground mt-2">
-                  saves ${result.savings.toFixed(2)} vs the alternative
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-
           <Card>
             <CardHeader>
               <CardTitle>Transaction breakdown</CardTitle>
@@ -241,9 +197,28 @@ export default function FeeOrUpfront(): JSX.Element {
                     </TableRow>
                   ))}
                   <TableRow className="font-semibold bg-muted/40">
-                    <TableCell colSpan={4} className="text-right text-muted-foreground">Total</TableCell>
+                    <TableCell colSpan={4} className="text-right text-muted-foreground">Total per-transaction</TableCell>
                     <TableCell className="font-mono">${result.totalFees.toFixed(2)}</TableCell>
                     <TableCell />
+                  </TableRow>
+                  <TableRow className={result.choice === 'upfront' ? 'bg-green-50' : 'bg-blue-50'}>
+                    <TableCell colSpan={4} className="text-right font-medium">
+                      Upfront cost — {result.choice === 'upfront' ? 'cheaper by' : 'more expensive by'}{' '}
+                      <span className="font-mono">${result.savings.toFixed(2)}</span>
+                    </TableCell>
+                    <TableCell className="font-mono font-semibold">${result.upfront.toFixed(2)}</TableCell>
+                    <TableCell>
+                      <Badge
+                        variant="outline"
+                        className={
+                          result.choice === 'upfront'
+                            ? 'border-green-500 text-green-700'
+                            : 'border-blue-500 text-blue-700'
+                        }
+                      >
+                        {result.choice === 'upfront' ? 'Pay upfront' : 'Pay per-transaction'}
+                      </Badge>
+                    </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
