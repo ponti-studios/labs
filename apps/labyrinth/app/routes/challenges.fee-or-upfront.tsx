@@ -1,4 +1,4 @@
-import { useState, type JSX, type ChangeEvent } from 'react';
+import { useState, type JSX } from 'react';
 import {
   Badge,
   Button,
@@ -6,434 +6,333 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  Input,
-  Label,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+  Slider,
 } from '@pontistudios/ui';
-
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-interface MonthRow {
-  month: number;
-  hours: number;
-  onDemandMonthly: number;
-  reservedMonthly: number;
-  onDemandCumulative: number;
-  reservedCumulative: number;
-  isBreakEven: boolean;
-}
-
-interface Result {
-  rows: MonthRow[];
-  totalOnDemand: number;
-  totalReserved: number;
-  breakEvenMonth: number | null;
-  savings: number;
-  recommendation: 'reserved' | 'on-demand';
-}
 
 // ─── Presets ──────────────────────────────────────────────────────────────────
 
 interface Preset {
   label: string;
   description: string;
-  onDemandRate: string;
-  reservedUpfront: string;
-  reservedRate: string;
+  onDemandRate: number;
+  reservedUpfront: number;
+  reservedRate: number;
 }
 
 const PRESETS: Preset[] = [
   {
     label: 't3.medium',
     description: '2 vCPU · 4 GB',
-    onDemandRate: '0.0416',
-    reservedUpfront: '215',
-    reservedRate: '0.0160',
+    onDemandRate: 0.0416,
+    reservedUpfront: 215,
+    reservedRate: 0.016,
   },
   {
     label: 'm5.large',
     description: '2 vCPU · 8 GB',
-    onDemandRate: '0.0960',
-    reservedUpfront: '500',
-    reservedRate: '0.0400',
+    onDemandRate: 0.096,
+    reservedUpfront: 500,
+    reservedRate: 0.04,
   },
   {
     label: 'c5.xlarge',
     description: '4 vCPU · 8 GB',
-    onDemandRate: '0.1700',
-    reservedUpfront: '876',
-    reservedRate: '0.0680',
+    onDemandRate: 0.17,
+    reservedUpfront: 876,
+    reservedRate: 0.068,
   },
   {
     label: 'r5.2xlarge',
     description: '8 vCPU · 64 GB',
-    onDemandRate: '0.5040',
-    reservedUpfront: '2620',
-    reservedRate: '0.2010',
+    onDemandRate: 0.504,
+    reservedUpfront: 2620,
+    reservedRate: 0.201,
   },
 ];
 
-const DEFAULT_MONTHLY_HOURS = '720, 720, 720, 720, 720, 720, 720, 720, 720, 720, 720, 720';
+const HOURS_PER_MONTH = 730;
+const MONTHS = 12;
+const TOTAL_HOURS = HOURS_PER_MONTH * MONTHS;
 
 // ─── Algorithm ────────────────────────────────────────────────────────────────
 
-function parseHours(raw: string): number[] {
-  return raw
-    .split(',')
-    .map((s) => Number(s.trim()))
-    .filter((n) => !Number.isNaN(n) && n >= 0);
+interface Result {
+  reservedTotal: number;
+  onDemandTotal: number;
+  effectiveUtilisation: number;
+  recommendation: 'reserved' | 'on-demand';
+  savings: number;
+  breakEvenUtilisation: number;
 }
 
-function calculate(
-  onDemandRate: number,
-  reservedUpfront: number,
-  reservedRate: number,
-  monthlyHours: number[],
-): Result {
-  let onDemandCumulative = 0;
-  let reservedCumulative = reservedUpfront;
-  let breakEvenMonth: number | null = null;
-  let prevOnDemand = 0;
-  let prevReserved = reservedUpfront;
+function calculate(preset: Preset, avgUtilisation: number, spikiness: number): Result {
+  // Spikiness widens the gap between average and the peak you must reserve for.
+  // At spikiness=0, effective utilisation = avgUtilisation.
+  // At spikiness=100, peaks are 2× average, so you're sizing for 2× but only
+  // using avgUtilisation on average — effective utilisation halves toward avg/2.
+  const spikeFactor = 1 + spikiness / 100;
+  const effectiveUtilisation = avgUtilisation / spikeFactor;
 
-  const rows: MonthRow[] = monthlyHours.map((hours, i) => {
-    const onDemandMonthly = hours * onDemandRate;
-    const reservedMonthly = hours * reservedRate;
+  // Reserved: pay upfront + hourly rate at full capacity (you commit to the peak)
+  const reservedTotal = preset.reservedUpfront + preset.reservedRate * TOTAL_HOURS;
 
-    onDemandCumulative += onDemandMonthly;
-    reservedCumulative += reservedMonthly;
+  // On-demand: pay only for what you actually use (effective utilisation)
+  const onDemandTotal = preset.onDemandRate * TOTAL_HOURS * (effectiveUtilisation / 100);
 
-    const crossedThisMonth =
-      breakEvenMonth === null &&
-      prevReserved > prevOnDemand &&
-      reservedCumulative <= onDemandCumulative;
+  // Break-even: the utilisation at which both options cost the same
+  // onDemandRate × TOTAL_HOURS × u = reservedUpfront + reservedRate × TOTAL_HOURS
+  const breakEvenUtilisation =
+    ((preset.reservedUpfront + preset.reservedRate * TOTAL_HOURS) /
+      (preset.onDemandRate * TOTAL_HOURS)) *
+    100;
 
-    if (crossedThisMonth) {
-      breakEvenMonth = i + 1;
-    }
+  const recommendation = reservedTotal < onDemandTotal ? 'reserved' : 'on-demand';
+  const savings = Math.abs(reservedTotal - onDemandTotal);
 
-    prevOnDemand = onDemandCumulative;
-    prevReserved = reservedCumulative;
-
-    return {
-      month: i + 1,
-      hours,
-      onDemandMonthly,
-      reservedMonthly,
-      onDemandCumulative,
-      reservedCumulative,
-      isBreakEven: crossedThisMonth,
-    };
-  });
-
-  const totalOnDemand = onDemandCumulative;
-  const totalReserved = reservedCumulative;
-  const savings = Math.abs(totalOnDemand - totalReserved);
-  const recommendation = totalReserved < totalOnDemand ? 'reserved' : 'on-demand';
-
-  return { rows, totalOnDemand, totalReserved, breakEvenMonth, savings, recommendation };
+  return {
+    reservedTotal,
+    onDemandTotal,
+    effectiveUtilisation,
+    recommendation,
+    savings,
+    breakEvenUtilisation,
+  };
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-const RUN_DELAY_MS = 300;
-
 export default function CloudPricingComparison(): JSX.Element {
-  const [onDemandRate, setOnDemandRate] = useState('0.0960');
-  const [reservedUpfront, setReservedUpfront] = useState('500');
-  const [reservedRate, setReservedRate] = useState('0.0400');
-  const [hoursRaw, setHoursRaw] = useState(DEFAULT_MONTHLY_HOURS);
-  const [result, setResult] = useState<Result | null>(null);
-  const [running, setRunning] = useState(false);
+  const [preset, setPreset] = useState<Preset>(PRESETS[1]);
+  const [utilisation, setUtilisation] = useState(70);
+  const [spikiness, setSpikiness] = useState(20);
 
-  const applyPreset = (preset: Preset) => {
-    setOnDemandRate(preset.onDemandRate);
-    setReservedUpfront(preset.reservedUpfront);
-    setReservedRate(preset.reservedRate);
-    setResult(null);
-  };
-
-  const run = () => {
-    setRunning(true);
-    setResult(null);
-    setTimeout(() => {
-      setResult(
-        calculate(
-          Number(onDemandRate),
-          Number(reservedUpfront),
-          Number(reservedRate),
-          parseHours(hoursRaw),
-        ),
-      );
-      setRunning(false);
-    }, RUN_DELAY_MS);
-  };
+  const result = calculate(preset, utilisation, spikiness);
 
   return (
     <div className="flex flex-col gap-6">
       <header>
         <h2 className="text-xl font-semibold">On-Demand vs. Reserved Instances</h2>
         <p className="text-muted-foreground">
-          Cloud providers charge more per hour when you make no commitment (on-demand) and less
-          when you pay upfront for a reserved term. Given your expected monthly usage, find out
-          which pricing model costs less over the period — and when reserved starts paying off.
+          Reserved instances cost less per hour but require an upfront commitment. On-demand
+          charges more per hour but only for what you use. The right choice depends on how
+          consistently you use the instance — and how spiky your traffic is.
         </p>
         <i className="text-xs text-muted-foreground">Based on a Goldman Sachs take-home challenge</i>
       </header>
 
+      {/* Instance type */}
       <Card>
         <CardHeader>
-          <CardTitle>Instance presets</CardTitle>
+          <CardTitle>Instance type</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Quick-fill with approximate AWS rates (1-year partial upfront reserved).
+            Approximate AWS rates · 1-year partial upfront reserved term.
           </p>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2">
-            {PRESETS.map((preset) => (
+            {PRESETS.map((p) => (
               <button
-                key={preset.label}
+                key={p.label}
                 type="button"
-                onClick={() => applyPreset(preset)}
-                className="flex flex-col items-start rounded-lg border border-border px-3 py-2 text-left text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+                onClick={() => setPreset(p)}
+                className={`flex flex-col items-start rounded-lg border px-3 py-2 text-left text-sm transition-colors hover:bg-accent hover:text-accent-foreground ${
+                  preset.label === p.label
+                    ? 'border-foreground bg-accent'
+                    : 'border-border'
+                }`}
               >
-                <span className="font-mono font-medium">{preset.label}</span>
-                <span className="text-xs text-muted-foreground">{preset.description}</span>
+                <span className="font-mono font-medium">{p.label}</span>
+                <span className="text-xs text-muted-foreground">{p.description}</span>
+                <span className="mt-1 text-xs text-muted-foreground font-mono">
+                  ${p.onDemandRate}/hr on-demand
+                </span>
               </button>
             ))}
           </div>
+
+          <div className="mt-4 grid grid-cols-3 gap-4 text-sm">
+            <div>
+              <p className="text-muted-foreground">On-demand rate</p>
+              <p className="font-mono font-medium">${preset.onDemandRate}/hr</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground">Reserved upfront</p>
+              <p className="font-mono font-medium">${preset.reservedUpfront}</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground">Reserved hourly rate</p>
+              <p className="font-mono font-medium">${preset.reservedRate}/hr</p>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
+      {/* Sliders */}
       <Card>
         <CardHeader>
-          <CardTitle>Configure</CardTitle>
+          <CardTitle>Usage pattern</CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col gap-5">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="onDemandRate">On-demand rate ($/hr)</Label>
-              <Input
-                id="onDemandRate"
-                type="number"
-                min={0}
-                step={0.001}
-                value={onDemandRate}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => setOnDemandRate(e.target.value)}
-              />
-              <p className="text-xs text-muted-foreground">
-                Pay-as-you-go price per compute-hour. No commitment required.
-              </p>
+        <CardContent className="flex flex-col gap-6">
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium">Average utilisation</label>
+              <span className="font-mono text-sm font-semibold">{utilisation}%</span>
             </div>
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="reservedUpfront">Reserved upfront ($)</Label>
-              <Input
-                id="reservedUpfront"
-                type="number"
-                min={0}
-                value={reservedUpfront}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => setReservedUpfront(e.target.value)}
-              />
-              <p className="text-xs text-muted-foreground">
-                One-time commitment paid at the start of the reserved term.
-              </p>
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="reservedRate">Reserved hourly rate ($/hr)</Label>
-              <Input
-                id="reservedRate"
-                type="number"
-                min={0}
-                step={0.001}
-                value={reservedRate}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => setReservedRate(e.target.value)}
-              />
-              <p className="text-xs text-muted-foreground">
-                Discounted per-hour rate after paying the upfront commitment.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="hours">Monthly usage hours</Label>
-            <Input
-              id="hours"
-              value={hoursRaw}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => setHoursRaw(e.target.value)}
-              placeholder="e.g. 720, 500, 680, 744"
+            <Slider
+              min={1}
+              max={100}
+              step={1}
+              value={[utilisation]}
+              onValueChange={([v]) => setUtilisation(v)}
             />
             <p className="text-xs text-muted-foreground">
-              Comma-separated hours per month. One entry = one month. 720 hrs ≈ always-on for a month.
+              What fraction of the instance's capacity your traffic uses on average.
+              100% = always fully loaded. 30% ≈ typical web workload.
             </p>
           </div>
 
-          <Button onClick={run} disabled={running} className="self-start min-w-28">
-            {running ? (
-              <span className="flex items-center gap-2">
-                <span className="inline-block w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                Calculating…
-              </span>
-            ) : (
-              'Compare'
-            )}
-          </Button>
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium">Spikiness</label>
+              <span className="font-mono text-sm font-semibold">{spikiness}%</span>
+            </div>
+            <Slider
+              min={0}
+              max={100}
+              step={1}
+              value={[spikiness]}
+              onValueChange={([v]) => setSpikiness(v)}
+            />
+            <p className="text-xs text-muted-foreground">
+              How much traffic varies around the average. Low = steady stream.
+              High = quiet most of the time with sudden bursts — you must reserve
+              for peaks but only use that capacity occasionally.
+            </p>
+          </div>
         </CardContent>
       </Card>
 
-      {result && (
-        <div className="flex flex-col gap-4">
-          {/* Summary cards */}
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-            <Card>
-              <CardContent className="pt-4">
-                <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
-                  Total on-demand
-                </p>
-                <p className="text-2xl font-semibold font-mono">
-                  ${result.totalOnDemand.toFixed(2)}
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-4">
-                <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
-                  Total reserved
-                </p>
-                <p className="text-2xl font-semibold font-mono">
-                  ${result.totalReserved.toFixed(2)}
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  incl. ${reservedUpfront} upfront
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-4">
-                <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
-                  Break-even
-                </p>
-                {result.breakEvenMonth !== null ? (
-                  <>
-                    <p className="text-2xl font-semibold font-mono">
-                      Month {result.breakEvenMonth}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      reserved cheaper from here
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <p className="text-2xl font-semibold font-mono text-muted-foreground">—</p>
-                    <p className="text-xs text-muted-foreground mt-1">never crosses over</p>
-                  </>
-                )}
-              </CardContent>
-            </Card>
-            <Card
-              className={
-                result.recommendation === 'reserved'
-                  ? 'border-green-400 bg-green-50'
-                  : 'border-blue-400 bg-blue-50'
-              }
-            >
-              <CardContent className="pt-4">
-                <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
-                  Recommendation
-                </p>
-                <Badge
-                  variant="outline"
-                  className={
-                    result.recommendation === 'reserved'
-                      ? 'border-green-500 text-green-700 text-sm px-3 py-1'
-                      : 'border-blue-500 text-blue-700 text-sm px-3 py-1'
-                  }
-                >
-                  {result.recommendation === 'reserved' ? 'Go reserved' : 'Stay on-demand'}
-                </Badge>
-                <p className="text-xs text-muted-foreground mt-2">
-                  saves ${result.savings.toFixed(2)} over this period
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Month-by-month table */}
+      {/* Results */}
+      <div className="flex flex-col gap-4">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           <Card>
-            <CardHeader>
-              <CardTitle>Month-by-month breakdown</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                Cumulative costs include the reserved upfront from month 1. The break-even row is
-                where reserved becomes cheaper overall.
+            <CardContent className="pt-4">
+              <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
+                On-demand / yr
               </p>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Month</TableHead>
-                    <TableHead>Hours</TableHead>
-                    <TableHead>On-demand (monthly)</TableHead>
-                    <TableHead>Reserved (monthly)</TableHead>
-                    <TableHead>On-demand (cumulative)</TableHead>
-                    <TableHead>Reserved (cumulative)</TableHead>
-                    <TableHead></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {result.rows.map((row, i) => (
-                    <TableRow
-                      key={row.month}
-                      className={row.isBreakEven ? 'bg-green-50' : undefined}
-                      style={{
-                        animation: 'fade-slide-in 300ms ease-out both',
-                        animationDelay: `${i * 60}ms`,
-                      }}
-                    >
-                      <TableCell className="font-mono text-muted-foreground">{row.month}</TableCell>
-                      <TableCell className="font-mono">{row.hours}h</TableCell>
-                      <TableCell className="font-mono">${row.onDemandMonthly.toFixed(2)}</TableCell>
-                      <TableCell className="font-mono">${row.reservedMonthly.toFixed(2)}</TableCell>
-                      <TableCell
-                        className={`font-mono font-medium ${
-                          row.onDemandCumulative > row.reservedCumulative
-                            ? 'text-red-600'
-                            : 'text-muted-foreground'
-                        }`}
-                      >
-                        ${row.onDemandCumulative.toFixed(2)}
-                      </TableCell>
-                      <TableCell
-                        className={`font-mono font-medium ${
-                          row.reservedCumulative <= row.onDemandCumulative
-                            ? 'text-green-600'
-                            : 'text-muted-foreground'
-                        }`}
-                      >
-                        ${row.reservedCumulative.toFixed(2)}
-                      </TableCell>
-                      <TableCell>
-                        {row.isBreakEven && (
-                          <Badge
-                            variant="outline"
-                            className="border-green-400 text-green-700 whitespace-nowrap"
-                          >
-                            break-even
-                          </Badge>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <p className="text-2xl font-semibold font-mono">
+                ${result.onDemandTotal.toFixed(0)}
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                at {result.effectiveUtilisation.toFixed(0)}% effective use
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="pt-4">
+              <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
+                Reserved / yr
+              </p>
+              <p className="text-2xl font-semibold font-mono">
+                ${result.reservedTotal.toFixed(0)}
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                incl. ${preset.reservedUpfront} upfront
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="pt-4">
+              <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
+                Break-even utilisation
+              </p>
+              <p className="text-2xl font-semibold font-mono">
+                {result.breakEvenUtilisation.toFixed(0)}%
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                reserved wins above this
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card
+            className={
+              result.recommendation === 'reserved'
+                ? 'border-green-400 bg-green-50'
+                : 'border-blue-400 bg-blue-50'
+            }
+          >
+            <CardContent className="pt-4">
+              <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
+                Recommendation
+              </p>
+              <Badge
+                variant="outline"
+                className={
+                  result.recommendation === 'reserved'
+                    ? 'border-green-500 text-green-700 text-sm px-3 py-1'
+                    : 'border-blue-500 text-blue-700 text-sm px-3 py-1'
+                }
+              >
+                {result.recommendation === 'reserved' ? 'Go reserved' : 'Stay on-demand'}
+              </Badge>
+              <p className="text-xs text-muted-foreground mt-2">
+                saves ${result.savings.toFixed(0)} vs the alternative
+              </p>
             </CardContent>
           </Card>
         </div>
-      )}
+
+        {/* Utilisation bar */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Utilisation vs. break-even</CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Your effective utilisation after accounting for spikiness, compared to the
+              break-even threshold.
+            </p>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3">
+            <div className="relative h-8 w-full rounded-full bg-muted overflow-hidden">
+              {/* Break-even marker */}
+              <div
+                className="absolute top-0 bottom-0 w-0.5 bg-foreground z-10"
+                style={{ left: `${Math.min(result.breakEvenUtilisation, 100)}%` }}
+              />
+              {/* Effective utilisation bar */}
+              <div
+                className={`h-full rounded-full transition-all duration-300 ${
+                  result.recommendation === 'reserved' ? 'bg-green-400' : 'bg-blue-400'
+                }`}
+                style={{ width: `${Math.min(result.effectiveUtilisation, 100)}%` }}
+              />
+            </div>
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>0%</span>
+              <span
+                className="absolute font-medium text-foreground"
+                style={{ left: `calc(${Math.min(result.breakEvenUtilisation, 100)}% - 1rem)` }}
+              >
+                {result.breakEvenUtilisation.toFixed(0)}% ← break-even
+              </span>
+              <span>100%</span>
+            </div>
+            <p className="text-sm mt-1">
+              Effective utilisation:{' '}
+              <span className="font-semibold font-mono">
+                {result.effectiveUtilisation.toFixed(0)}%
+              </span>{' '}
+              {result.effectiveUtilisation >= result.breakEvenUtilisation ? (
+                <span className="text-green-600">— above break-even, reserved wins</span>
+              ) : (
+                <span className="text-blue-600">— below break-even, on-demand wins</span>
+              )}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
