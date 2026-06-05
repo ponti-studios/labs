@@ -19,14 +19,14 @@ const apiRoutes = [
     "/api/covid/analytics/vaccination-effectiveness",
     "routes/api.covid.analytics.vaccination-effectiveness.ts",
   ),
-  route("/api/director/generate", "routes/api.director.generate.ts"),
+  route("/api/gen/image", "routes/api.gen.image.ts"),
   route("/api/games/realitea/daily", "routes/api.games.realitea.daily.ts"),
   route("/api/tarot", "routes/api.tarot.ts"),
   route("/api/words/validate", "routes/api.words.validate.ts"),
 ] satisfies RouteConfig;
 
 const featureRoutes = [
-  route("/director", "routes/director.tsx"),
+  route("/gen/image", "routes/gen.image.tsx"),
   route("/tarot", "routes/tarot.tsx"),
   route("/covid", "routes/covid.tsx"),
   route("/covid/:countryCode", "routes/covid.$countryCode.layout.tsx", [
