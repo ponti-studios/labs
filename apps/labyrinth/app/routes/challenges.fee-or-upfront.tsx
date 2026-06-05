@@ -1,7 +1,6 @@
-import { useState, type JSX, type ChangeEvent } from 'react';
+import { useMemo, useState, type JSX, type ChangeEvent } from 'react';
 import {
   Badge,
-  Button,
   Card,
   CardContent,
   CardHeader,
@@ -71,17 +70,11 @@ export default function FeeOrUpfront(): JSX.Element {
   const [rate, setRate] = useState('10');
   const [upfront, setUpfront] = useState('100');
   const [paymentsRaw, setPaymentsRaw] = useState('100, 200, 300, 400');
-  const [result, setResult] = useState<Result | null>(null);
-  const [running, setRunning] = useState(false);
 
-  const run = () => {
-    setRunning(true);
-    setResult(null);
-    setTimeout(() => {
-      setResult(calculate(Number(basePayment), Number(rate), Number(upfront), parsePayments(paymentsRaw)));
-      setRunning(false);
-    }, 300);
-  };
+  const result = useMemo(
+    () => calculate(Number(basePayment), Number(rate), Number(upfront), parsePayments(paymentsRaw)),
+    [basePayment, rate, upfront, paymentsRaw],
+  );
 
   return (
     <div className="flex flex-col gap-6">
@@ -154,21 +147,10 @@ export default function FeeOrUpfront(): JSX.Element {
             </div>
           </div>
 
-          <Button onClick={run} disabled={running} className="self-start min-w-24">
-            {running ? (
-              <span className="flex items-center gap-2">
-                <span className="inline-block w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                Running…
-              </span>
-            ) : (
-              'Calculate'
-            )}
-          </Button>
         </CardContent>
       </Card>
 
-      {result && (
-        <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4">
           <div className="grid grid-cols-3 gap-4">
             <Card>
               <CardContent className="pt-4">
@@ -267,8 +249,7 @@ export default function FeeOrUpfront(): JSX.Element {
               </Table>
             </CardContent>
           </Card>
-        </div>
-      )}
+      </div>
     </div>
   );
 }
