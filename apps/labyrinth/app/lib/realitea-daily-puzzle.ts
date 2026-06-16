@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
   normalizeAnswer,
+  REALITEA_ANSWER_LENGTH,
   type Puzzle,
   type PuzzleAnswerType,
   type PuzzleNewsMode,
@@ -79,8 +80,7 @@ export const RHOBH_ALLOWED_SOURCE_DOMAINS = [
 ] as const;
 export const RHOBH_PRIMARY_SOURCE_DOMAIN = "bravotv.com";
 export const RHOBH_REPEAT_WINDOW_DAYS = 90;
-export const RHOBH_MIN_ANSWER_LENGTH = 4;
-export const RHOBH_MAX_ANSWER_LENGTH = 10;
+export const RHOBH_ANSWER_LENGTH = REALITEA_ANSWER_LENGTH;
 
 /**
  * Stored and generated puzzle records are intentionally separated from the
@@ -300,7 +300,7 @@ export function getAllowedSourceDomain(url: string): string | null {
  * Validation checklist:
  *
  *   1. Normalize the answer.
- *   2. Ensure the answer length is within bounds.
+ *   2. Ensure the answer length is exactly five letters after normalization.
  *   3. Ensure the normalized answer is letters only.
  *   4. Ensure the answer is not leaked in clue or detail.
  *   5. Ensure the answer does not repeat inside the cooldown window.
@@ -319,10 +319,9 @@ export function validateCandidate(
   const sources = context.sources ?? [];
 
   if (
-    normalizedAnswer.length < RHOBH_MIN_ANSWER_LENGTH ||
-    normalizedAnswer.length > RHOBH_MAX_ANSWER_LENGTH
+    normalizedAnswer.length !== RHOBH_ANSWER_LENGTH
   ) {
-    reasons.push("answer length is unsupported");
+    reasons.push("answer must normalize to exactly five letters");
   }
 
   if (!normalizedAnswer || /[^A-Z]/.test(normalizedAnswer)) {

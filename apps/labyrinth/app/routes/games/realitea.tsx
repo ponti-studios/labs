@@ -22,7 +22,9 @@ const TILE_STATE_CLASSES: Record<LetterState, string> = {
   correct: "border-emerald-300 bg-emerald-100 text-emerald-950",
 };
 
-const TILE_BASE = cva("h-12 w-12 rounded border text-lg font-bold uppercase transition-colors", {
+const TILE_BASE = cva(
+  "flex h-[3.6rem] w-[3.6rem] items-center justify-center rounded-2xl border text-[1.35rem] font-bold uppercase transition-colors sm:h-12 sm:w-12 sm:rounded-xl sm:text-lg md:h-14 md:w-14",
+  {
   variants: {
     state: {
       absent: TILE_STATE_CLASSES.absent,
@@ -90,11 +92,12 @@ function getTileRevealStyle(state: LetterState): React.CSSProperties {
 
 type EmptyGuessRowProps = {
   answerLength: number;
+  className?: string;
 };
 
-const EmptyGuessRow = memo(function EmptyGuessRow({ answerLength }: EmptyGuessRowProps) {
+const EmptyGuessRow = memo(function EmptyGuessRow({ answerLength, className }: EmptyGuessRowProps) {
   return (
-    <div className="flex gap-1">
+    <div className={cn("flex gap-1.5 sm:gap-1", className)}>
       {Array.from({ length: answerLength }).map((_, cellIndex) => (
         <div
           key={`empty-cell-${cellIndex}`}
@@ -108,6 +111,7 @@ const EmptyGuessRow = memo(function EmptyGuessRow({ answerLength }: EmptyGuessRo
 type RevealedGuessRowProps = {
   answer: string;
   answerLength: number;
+  className?: string;
   guess: string;
   isRevealingThisRow: boolean;
   revealedTileCount: number;
@@ -116,6 +120,7 @@ type RevealedGuessRowProps = {
 const RevealedGuessRow = memo(function RevealedGuessRow({
   answer,
   answerLength,
+  className,
   guess,
   isRevealingThisRow,
   revealedTileCount,
@@ -123,7 +128,7 @@ const RevealedGuessRow = memo(function RevealedGuessRow({
   const states = evaluateGuess(answer, guess);
 
   return (
-    <div className="flex gap-1">
+    <div className={cn("flex gap-1.5 sm:gap-1", className)}>
       {Array.from({ length: answerLength }).map((_, cellIndex) => {
         const isTileRevealed = !isRevealingThisRow || cellIndex < revealedTileCount;
         const isAnimatingTile =
@@ -151,6 +156,7 @@ const RevealedGuessRow = memo(function RevealedGuessRow({
 type CurrentGuessRowProps = {
   answerLength: number;
   currentGuess: string;
+  className?: string;
   isShaking: boolean;
   isValidationPending: boolean;
   onCellChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -162,6 +168,7 @@ type CurrentGuessRowProps = {
 const CurrentGuessRow = memo(function CurrentGuessRow({
   answerLength,
   currentGuess,
+  className,
   isShaking,
   isValidationPending,
   onCellChange,
@@ -172,7 +179,8 @@ const CurrentGuessRow = memo(function CurrentGuessRow({
   return (
     <div
       className={cn(
-        "flex gap-1 transition-opacity",
+        "flex gap-1.5 transition-opacity sm:gap-1",
+        className,
         isShaking && "row-shake",
         isValidationPending && "opacity-60",
       )}
@@ -186,12 +194,14 @@ const CurrentGuessRow = memo(function CurrentGuessRow({
           aria-label={`Letter ${cellIndex + 1}`}
           autoCapitalize="characters"
           autoComplete="off"
+          autoCorrect="off"
           className={cn(
             TILE_BASE({ state: "empty" }),
-            "text-center outline-none caret-transparent",
+            "bg-background text-center outline-none caret-transparent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
           )}
-          inputMode="text"
+          inputMode="none"
           maxLength={1}
+          readOnly
           type="text"
           value={currentGuess[cellIndex] ?? ""}
           onChange={onCellChange}
@@ -499,13 +509,21 @@ export default function RealiTeaRoute() {
         transform-style: preserve-3d;
       }
     `}</style>
-      <div className="py-8">
-        <div className="space-y-5 px-4">
-          <header className="flex items-center justify-between border-b border-border pb-4">
-            <h1 className="text-2xl">RealiTea</h1>
-            <div className="flex items-center gap-2">
+      <div className="-mx-4 min-h-[100dvh] bg-background md:mx-0 md:min-h-0">
+        <div className="mx-auto flex min-h-[100dvh] w-full max-w-md flex-col px-4 pb-[calc(env(safe-area-inset-bottom)+12px)] pt-3 md:block md:min-h-0 md:max-w-2xl md:px-6 md:pb-8 md:pt-8">
+          <header className="sticky top-0 z-10 -mx-4 border-b border-border bg-background/95 px-4 pb-3 pt-1 backdrop-blur md:static md:mx-0 md:border-b-0 md:bg-transparent md:px-0 md:pb-4 md:pt-0">
+            <div className="flex items-start justify-between gap-3">
+              <div className="space-y-1">
+                <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                  Daily puzzle
+                </p>
+                <h1 className="text-3xl font-semibold tracking-tight">RealiTea</h1>
+                <p className="text-sm text-muted-foreground">
+                  Guess {guesses.length + 1} of {MAX_GUESSES}. Five letters only.
+                </p>
+              </div>
               <Button
-                className="px-3 py-1.5"
+                className="min-h-11 shrink-0 px-4"
                 onClick={() => setShowInstructions((v) => !v)}
                 size="sm"
                 type="button"
@@ -517,98 +535,125 @@ export default function RealiTeaRoute() {
           </header>
 
           {showInstructions && (
-            <div className="space-y-2 border border-border bg-background/40 p-4 text-sm leading-6 text-muted-foreground">
-              <p>Guess today's reality TV answer in 6 tries.</p>
-              <p>
-                <span className="font-medium text-emerald-700">Green</span> = right letter, right
-                place. <span className="font-medium text-amber-700">Gold</span> = right letter,
-                wrong place.
+            <div className="mt-3 rounded-2xl border border-border bg-muted/30 p-4 text-sm leading-6 text-muted-foreground">
+              <p>Guess today&apos;s reality TV answer in 6 tries.</p>
+              <p className="mt-2">
+                <span className="font-medium text-emerald-700">Green</span> means the right letter
+                is in the right place.{" "}
+                <span className="font-medium text-amber-700">Gold</span> means the letter belongs
+                in the answer but is in the wrong place.
               </p>
             </div>
           )}
 
-          {errorMessage && (
-            <div className="flex justify-center">
-              <p className="rounded bg-foreground px-3 py-1.5 text-sm font-medium text-background">
-                {errorMessage}
-              </p>
+          <div className="flex flex-1 flex-col md:block md:flex-none">
+            <div className="flex-1 pt-4 md:flex-none">
+              <div className="rounded-[28px] border border-border bg-background px-3 py-4 md:px-6 md:py-6">
+                <div aria-live="polite" className="min-h-10">
+                  {errorMessage && (
+                    <p className="rounded-xl border border-border bg-foreground px-3 py-2 text-center text-sm font-medium text-background">
+                      {errorMessage}
+                    </p>
+                  )}
+                  {shouldShowClue && (
+                    <div className="rounded-2xl border border-amber-300 bg-amber-50 p-4 text-sm leading-6 text-amber-950">
+                      <p className="text-xs font-medium uppercase tracking-[0.2em] text-amber-800">
+                        Final guess clue
+                      </p>
+                      <p className="mt-2">{puzzle.clue}</p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="mt-3 flex justify-center">
+                  <div className="w-fit space-y-2 sm:space-y-1.5">
+                    {Array.from({ length: MAX_GUESSES }).map((_, rowIndex) => {
+                      const isCurrentRow =
+                        rowIndex === guesses.length && !isGameOver && !isRevealingRow;
+                      const guess = guesses[rowIndex] ?? "";
+                      const isRevealingThisRow = rowIndex === revealingGuessIndex;
+                      const mobileRowClass = rowIndex < guesses.length ? "" : "opacity-70";
+
+                      if (rowIndex < guesses.length) {
+                        return (
+                          <RevealedGuessRow
+                            key={`row-${rowIndex}`}
+                            answer={puzzle.answer}
+                            answerLength={answerLength}
+                            className=""
+                            guess={guess}
+                            isRevealingThisRow={isRevealingThisRow}
+                            revealedTileCount={revealedTileCount}
+                          />
+                        );
+                      }
+
+                      if (isCurrentRow) {
+                        return (
+                          <CurrentGuessRow
+                            key={`row-${rowIndex}`}
+                            answerLength={answerLength}
+                            cellRefs={cellRefs}
+                            className=""
+                            currentGuess={currentGuess}
+                            isShaking={isShaking}
+                            isValidationPending={isValidationPending}
+                            onCellChange={handleCellChange}
+                            onCellFocus={redirectToActiveCell}
+                            onCellKeyDown={handleCellKeyDown}
+                          />
+                        );
+                      }
+
+                      return (
+                        <EmptyGuessRow
+                          key={`row-${rowIndex}`}
+                          answerLength={answerLength}
+                          className={mobileRowClass}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {isGameOver && (
+                <div className="mt-4 rounded-3xl border border-border bg-muted/25 p-4 md:p-5">
+                  <div>
+                    <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+                      {isSolved ? "Today's answer" : "The answer was"}
+                    </p>
+                    <p className="mt-1 text-3xl font-bold tracking-tight text-foreground">
+                      {puzzle.answer}
+                    </p>
+                  </div>
+                  <p className="mt-3 text-sm leading-6 text-muted-foreground">{puzzle.detail}</p>
+                  <div className="pt-4">
+                    <Button
+                      className="min-h-11 w-full md:w-auto"
+                      onClick={handleShare}
+                      type="button"
+                      variant="secondary"
+                    >
+                      Share result
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
 
-          {shouldShowClue && (
-            <div className="rounded border border-amber-300 bg-amber-50 p-4 text-sm leading-6 text-amber-950">
-              <p className="text-xs font-medium uppercase tracking-[0.2em] text-amber-800">
-                Final guess clue
-              </p>
-              <p className="mt-2">{puzzle.clue}</p>
-            </div>
-          )}
-
-          <div className="mx-auto w-fit space-y-1">
-            {Array.from({ length: MAX_GUESSES }).map((_, rowIndex) => {
-              const isCurrentRow = rowIndex === guesses.length && !isGameOver && !isRevealingRow;
-              const guess = guesses[rowIndex] ?? "";
-              const isRevealingThisRow = rowIndex === revealingGuessIndex;
-
-              if (rowIndex < guesses.length) {
-                return (
-                  <RevealedGuessRow
-                    key={`row-${rowIndex}`}
-                    answer={puzzle.answer}
-                    answerLength={answerLength}
-                    guess={guess}
-                    isRevealingThisRow={isRevealingThisRow}
-                    revealedTileCount={revealedTileCount}
-                  />
-                );
-              }
-
-              if (isCurrentRow) {
-                return (
-                  <CurrentGuessRow
-                    key={`row-${rowIndex}`}
-                    answerLength={answerLength}
-                    cellRefs={cellRefs}
-                    currentGuess={currentGuess}
-                    isShaking={isShaking}
-                    isValidationPending={isValidationPending}
-                    onCellChange={handleCellChange}
-                    onCellFocus={redirectToActiveCell}
-                    onCellKeyDown={handleCellKeyDown}
-                  />
-                );
-              }
-
-              return <EmptyGuessRow key={`row-${rowIndex}`} answerLength={answerLength} />;
-            })}
+            {!isGameOver && (
+              <div className="sticky bottom-0 z-10 -mx-4 mt-4 border-t border-border bg-background/95 px-3 pb-[calc(env(safe-area-inset-bottom)+10px)] pt-3 backdrop-blur md:static md:mx-0 md:mt-6 md:border-t-0 md:bg-transparent md:px-0 md:pb-0 md:pt-0">
+                <OnscreenKeyboard
+                  disabled={isGameOver || isValidationPending || isRevealingRow}
+                  letterStates={keyboardState}
+                  onBackspace={removeLetter}
+                  onEnter={submitGuess}
+                  onLetter={addLetter}
+                />
+              </div>
+            )}
           </div>
-
-          <OnscreenKeyboard
-            disabled={isGameOver || isValidationPending || isRevealingRow}
-            letterStates={keyboardState}
-            onBackspace={removeLetter}
-            onEnter={submitGuess}
-            onLetter={addLetter}
-          />
-
-          {isGameOver && (
-            <div className="space-y-2 border-t border-border pt-4">
-              <div>
-                <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-                  {isSolved ? "Today's answer" : "The answer was"}
-                </p>
-                <p className="mt-1 text-2xl font-bold tracking-tight text-foreground">
-                  {puzzle.answer}
-                </p>
-              </div>
-              <p className="text-sm leading-6 text-muted-foreground">{puzzle.detail}</p>
-              <div className="pt-2">
-                <Button onClick={handleShare} type="button" variant="secondary">
-                  Share result
-                </Button>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </>

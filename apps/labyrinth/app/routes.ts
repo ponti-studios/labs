@@ -20,6 +20,7 @@ const apiRoutes = [
     "routes/api.covid.analytics.vaccination-effectiveness.ts",
   ),
   route("/api/gen/image", "routes/api.gen.image.ts"),
+  route("/api/gen/predict", "routes/api.gen.predict.ts"),
   route("/api/games/realitea/daily", "routes/api.games.realitea.daily.ts"),
   route("/api/tarot", "routes/api.tarot.ts"),
   route("/api/words/validate", "routes/api.words.validate.ts"),
@@ -48,6 +49,7 @@ const experimentRoutes = [
   route("/experiments/infinite-scroll", "routes/infinite-scroll/index.tsx"),
   route("/experiments/threegl-web-request", "routes/experiments.threegl-web-request.tsx"),
   route("/experiments/threegl-image-gallery", "routes/experiments.threegl-image-gallery.tsx"),
+  route("/experiments/llm-interface", "routes/experiments.llm-interface.tsx"),
 ] satisfies RouteConfig;
 
 const challengeRoutes = [

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   MAX_GUESSES,
+  REALITEA_ANSWER_LENGTH,
   evaluateGuess,
   getKeyboardState,
   getPuzzleKeyForDate,
@@ -44,5 +45,9 @@ describe("realitea helpers", () => {
 
   it("keeps the game at six guesses", () => {
     expect(MAX_GUESSES).toBe(6);
+  });
+
+  it("locks RealiTea answers to five letters", () => {
+    expect(REALITEA_ANSWER_LENGTH).toBe(5);
   });
 });

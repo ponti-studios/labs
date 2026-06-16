@@ -2,11 +2,12 @@ import { chat, createOpenRouterTextAdapter, webFetchTool, webSearchTool } from "
 import { and, db, desc, eq, gte, rhobhDailyPuzzles } from "@pontistudios/db";
 import { z } from "zod";
 
-import { normalizeAnswer } from "./realitea";
+import { normalizeAnswer, REALITEA_ANSWER_LENGTH } from "./realitea";
 import {
   getAllowedSourceDomain,
   getDateKey,
   mapRecordToStoredPuzzle,
+  RHOBH_ANSWER_LENGTH,
   RHOBH_FRANCHISE,
   RHOBH_PRIMARY_SOURCE_DOMAIN,
   RHOBH_REPEAT_WINDOW_DAYS,
@@ -39,7 +40,12 @@ const RHOBH_CURRENT_SOURCE_QUERIES = [
 const RHOBH_SOURCE_COLLECTION_MAX_ITEMS = 5;
 
 const rhobhGenerationCandidateSchema = z.object({
-  answer: z.string().min(1).meta({ description: "The RHOBH answer to guess." }),
+  answer: z
+    .string()
+    .min(1)
+    .meta({
+      description: `The RHOBH answer to guess. It must normalize to exactly ${REALITEA_ANSWER_LENGTH} letters.`,
+    }),
   answerType: z
     .enum(["moment", "object", "person", "phrase", "place", "storyline"])
     .meta({ description: "The answer taxonomy." }),
@@ -226,8 +232,8 @@ async function generateCandidatesFromSources(
         "Return 3 to 5 candidates inside the schema field exactly.",
         "For current candidates, every answer must be supported by at least two distinct allowed-source domains, and one of them must be bravotv.com.",
         "For current candidates, do not use a cast member's name as the answer. Prefer the underlying storyline, object, place, phrase, or moment instead.",
-        "Choose answers that normalize to only letters and stay between 4 and 10 letters after removing spaces and punctuation.",
-        "Prefer concise single-word or two-word answers like a place, object, event, or short franchise term.",
+        `Choose answers that normalize to exactly ${RHOBH_ANSWER_LENGTH} letters after removing spaces and punctuation.`,
+        "Prefer concise single-word answers or short two-word answers that collapse cleanly to five letters.",
         "Never leak the exact answer text in the clue or detail. Before returning, self-check that neither field contains the answer or a trivial restatement of it.",
         "If a candidate cannot satisfy all of those rules, do not include it.",
       ],

@@ -5,6 +5,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from "react-router";
 
 import type { Route } from "./+types/root";
@@ -45,9 +46,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const location = useLocation();
+  const isRealiTeaRoute = location.pathname.startsWith("/games/realitea");
+
   return (
     <QueryProvider>
-      <div className="border bg-background/50 backdrop-blur max-w-7xl mx-auto rounded-2xl mt-4 px-4">
+      <div
+        className={[
+          "border bg-background/50 backdrop-blur max-w-7xl mx-auto rounded-2xl mt-4 px-4",
+          isRealiTeaRoute ? "hidden md:block" : "",
+        ].join(" ")}
+      >
         <div className="mx-auto max-w-7xl p-4 sm:px-0">
           <div className="flex items-center justify-between gap-4">
             <a href="/" className="text-lg font-semibold text-foreground">
@@ -56,7 +65,7 @@ export default function App() {
           </div>
         </div>
       </div>
-      <main className="flex-1 p-4 sm:px-0">
+      <main className={isRealiTeaRoute ? "flex-1 md:p-4 md:sm:px-0" : "flex-1 p-4 sm:px-0"}>
         <div className="mx-auto w-full max-w-7xl">
           <Outlet />
         </div>

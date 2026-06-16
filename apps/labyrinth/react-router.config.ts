@@ -5,4 +5,11 @@ export default {
 	// Server-side render by default, to enable SPA mode set this to `false`
 	// For Fly.io deployment, we can use SSR
 	ssr: true,
+	future: {
+		v8_viteEnvironmentApi: true,
+		v8_passThroughRequests: true,
+		v8_trailingSlashAwareDataRequests: true,
+		v8_middleware: true,
+		v8_splitRouteModules: true,
+	},
 } satisfies Config;

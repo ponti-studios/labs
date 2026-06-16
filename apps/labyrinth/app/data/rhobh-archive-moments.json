@@ -1,18 +1,18 @@
 [
   {
-    "answer": "PUPPYGATE",
+    "answer": "TEARS",
     "answerType": "storyline",
-    "clue": "A rescue-dog scandal that fractured the cast and dominated confessionals.",
-    "detail": "Puppygate became one of RHOBH's defining modern scandals, dragging friendships and loyalties into a season-long spiral.",
-    "role": "Iconic cast fracture",
+    "clue": "A flood of emotion can take over a major RHOBH confrontation.",
+    "detail": "A dramatic RHOBH breakdown can turn tears into the episode's defining image and emotional pivot.",
+    "role": "Emotional fallout",
     "newsMode": "archive"
   },
   {
-    "answer": "VILLAROSA",
-    "answerType": "place",
-    "clue": "This pink-toned estate is practically a cast member in its own right.",
-    "detail": "Villa Rosa is Lisa Vanderpump's famously lavish home and a signature setting in RHOBH history.",
-    "role": "Signature mansion",
+    "answer": "SWANS",
+    "answerType": "object",
+    "clue": "These elegant birds are inseparable from one iconic Beverly Hills estate.",
+    "detail": "The estate's swans became one of the most recognizable bits of RHOBH visual lore.",
+    "role": "Estate mascots",
     "newsMode": "archive"
   },
   {
@@ -24,27 +24,27 @@
     "newsMode": "archive"
   },
   {
-    "answer": "MUNCHAUSEN",
+    "answer": "DRAMA",
     "answerType": "storyline",
-    "clue": "A deeply controversial accusation turned health conversations into a cast war.",
-    "detail": "The Munchausen storyline marked one of RHOBH's most intense and divisive seasons.",
-    "role": "Controversial allegation",
+    "clue": "This is the fuel that keeps an RHOBH group event from staying calm for long.",
+    "detail": "Drama is the franchise's baseline currency, powering fights, alliances, and every tense dinner table.",
+    "role": "Escalating conflict",
     "newsMode": "archive"
   },
   {
-    "answer": "CAMILLE",
+    "answer": "ERIKA",
     "answerType": "person",
-    "clue": "Season 1 chaos and razor-sharp confessionals made this Housewife unforgettable.",
-    "detail": "Camille Grammer helped define the original RHOBH energy with conflict, glamour, and memorable reads.",
-    "role": "Original scene-stealer",
+    "clue": "The Pretty Mess performer never misses a sharp confessional.",
+    "detail": "Erika Jayne keeps the glam, the one-liners, and the pop-star energy turned all the way up.",
+    "role": "Pop diva energy",
     "newsMode": "archive"
   },
   {
-    "answer": "DENISE",
+    "answer": "KYLE",
     "answerType": "person",
-    "clue": "A casual backyard vibe and escalating cast suspicion became her RHOBH legacy.",
-    "detail": "Denise Richards' seasons delivered some of the franchise's most debated loyalty and truth-telling fights.",
-    "role": "Polarizing cast era",
+    "clue": "An OG diamond holder often anchors the group when everything starts to tilt.",
+    "detail": "Kyle Richards remains one of the franchise's central figures, balancing family tension and cast politics.",
+    "role": "Original cast anchor",
     "newsMode": "archive"
   },
   {
@@ -56,26 +56,26 @@
     "newsMode": "archive"
   },
   {
-    "answer": "LIMO",
+    "answer": "LIMOS",
     "answerType": "moment",
-    "clue": "One late-night ride gave RHOBH an original-season family blowup for the ages.",
-    "detail": "The limo fight remains one of the most iconic early RHOBH scenes and set the tone for the franchise's emotional intensity.",
-    "role": "Foundational fight",
+    "clue": "These chauffeured rides are where RHOBH arguments often get even more dangerous.",
+    "detail": "Limos are part of the franchise's visual language, often trapping castmates together at the worst possible moment.",
+    "role": "Transit pressure-cooker",
     "newsMode": "archive"
   },
   {
-    "answer": "DIAMONDS",
+    "answer": "JEWEL",
     "answerType": "phrase",
-    "clue": "The franchise's signature symbol shows up in taglines, casting, and status politics.",
-    "detail": "In RHOBH, holding a diamond is shorthand for full-time power, relevance, and a place in the opening credits.",
-    "role": "Franchise currency",
+    "clue": "A sparkling status symbol that fits the whole Beverly Hills fantasy.",
+    "detail": "A jewel captures the polished, wealth-soaked image that RHOBH sells from credits to confessionals.",
+    "role": "Luxury shorthand",
     "newsMode": "archive"
   },
   {
-    "answer": "GLAM",
+    "answer": "GLITZ",
     "answerType": "phrase",
-    "clue": "This four-letter RHOBH obsession can be both a flex and a flashpoint.",
-    "detail": "Professional glam has become part of the Beverly Hills image, and cast debates over it often double as status commentary.",
+    "clue": "This five-letter RHOBH obsession can be both a flex and a flashpoint.",
+    "detail": "Glitz is baked into the Beverly Hills image, and cast debates over presentation often double as status commentary.",
     "role": "Lifestyle flashpoint",
     "newsMode": "archive"
   }
