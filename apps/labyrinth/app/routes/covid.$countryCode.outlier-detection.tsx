@@ -74,13 +74,13 @@ const metrics = [
 ];
 
 function outlierBadgeVariant(severity: string) {
-  if (severity === "high") return "error" as const;
-  if (severity === "medium") return "warning" as const;
-  return "muted" as const;
+  if (severity === "high") return "destructive" as const;
+  if (severity === "medium") return "secondary" as const;
+  return "outline" as const;
 }
 
 function issueBadgeVariant(severity: string) {
-  return severity === "error" ? ("error" as const) : ("warning" as const);
+  return severity === "error" ? ("destructive" as const) : ("secondary" as const);
 }
 
 function qualityScoreColor(score: number) {

@@ -2,7 +2,7 @@ import type { LoaderFunctionArgs } from "react-router";
 
 import { loadPuzzleForDate } from "~/lib/realitea-daily-puzzle.server";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader(_args: LoaderFunctionArgs) {
   const puzzle = await loadPuzzleForDate(new Date());
 
   if (!puzzle) {

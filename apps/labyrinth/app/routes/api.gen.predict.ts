@@ -40,7 +40,7 @@ export async function action({ request }: ActionFunctionArgs) {
           { role: "user", content: body.context },
         ],
         temperature: 0.7,
-        max_tokens: 200,
+        maxTokens: 200,
       },
     });
 

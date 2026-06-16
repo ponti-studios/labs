@@ -235,10 +235,6 @@ export default function Kensho() {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
-  const removeFilter = (key: keyof Contact) => {
-    setFilters((prev) => ({ ...prev, [key]: "" }));
-  };
-
   const handleSort = (key: keyof Contact) => {
     if (sortColumn === key) {
       setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
@@ -270,8 +266,6 @@ export default function Kensho() {
       return String(aVal).localeCompare(String(bVal)) * modifier;
     });
   }, [filteredContacts, sortColumn, sortDirection]);
-
-  const activeFilters = Object.entries(filters).filter(([_, value]) => value !== "");
 
   return (
     <div>

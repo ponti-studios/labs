@@ -274,7 +274,7 @@ export default function MarketingCalculator() {
           <div className="border-t border-border px-6">
             <Accordion type="single" collapsible>
               <AccordionItem value="assumptions">
-                <AccordionTrigger index={0}>Planning assumptions</AccordionTrigger>
+                <AccordionTrigger>Planning assumptions</AccordionTrigger>
                 <AccordionContent className="pb-0 pl-0">
                   <div className="grid gap-3 md:grid-cols-3">
                     {assumptions.map((assumption) => (
@@ -290,7 +290,7 @@ export default function MarketingCalculator() {
               </AccordionItem>
 
               <AccordionItem value="method">
-                <AccordionTrigger index={1}>Calculation method</AccordionTrigger>
+                <AccordionTrigger>Calculation method</AccordionTrigger>
                 <AccordionContent className="pb-0 pl-0">
                   <div className="grid gap-3">
                     {formulaSteps.map((step) => (
@@ -306,7 +306,7 @@ export default function MarketingCalculator() {
               </AccordionItem>
 
               <AccordionItem value="interpretation">
-                <AccordionTrigger index={2}>How to read the output</AccordionTrigger>
+                <AccordionTrigger>How to read the output</AccordionTrigger>
                 <AccordionContent className="pb-0 pl-0">
                   <div className="grid gap-4 md:grid-cols-3">
                     <div className="flex items-start gap-3 border-l-2 border-border pl-4">

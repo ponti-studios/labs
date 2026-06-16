@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, type JSX } from "react";
 import {
-  Input,
   Table,
   TableBody,
   TableCell,
@@ -312,15 +311,3 @@ export default function Qubit(): JSX.Element {
     </div>
   );
 }
-
-const th = {
-  padding: "0.5rem 0.75rem",
-  textAlign: "left",
-  borderBottom: "1px solid #ccc",
-} as const;
-
-const td = {
-  padding: "0.5rem 0.75rem",
-  borderBottom: "1px solid #ddd",
-  verticalAlign: "top",
-} as const;

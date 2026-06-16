@@ -178,14 +178,6 @@ export interface PuzzleEnvelope {
   puzzle: StoredPuzzle;
 }
 
-const PREFERRED_ANSWER_TYPES = new Set<PuzzleAnswerType>([
-  "moment",
-  "object",
-  "phrase",
-  "place",
-  "storyline",
-]);
-
 /**
  * Generated responses are constrained to a small, explicit schema so the
  * backend can reject malformed model output before it reaches storage.
