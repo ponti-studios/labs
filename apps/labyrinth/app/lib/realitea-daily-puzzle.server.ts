@@ -1,4 +1,4 @@
-import { chat, createOpenRouterTextAdapter, webFetchTool, webSearchTool } from "@pontistudios/ai";
+import { chat, createOpenRouterTextAdapter } from "@pontistudios/ai";
 import { and, db, desc, eq, gte, rhobhDailyPuzzles } from "@pontistudios/db";
 import { z } from "zod";
 

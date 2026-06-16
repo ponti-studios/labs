@@ -4,11 +4,11 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerHeader,
-  DrawerTitle,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
 } from "@pontistudios/ui";
 import { useMutation } from "@tanstack/react-query";
 import { Plus, ThumbsDown, ThumbsUp, Trash2, User } from "lucide-react";
@@ -331,15 +331,15 @@ export function CreateCaseForm({
 
   if (isMobile) {
     return (
-      <Drawer open={isOpen} onOpenChange={(open) => !open && onClose()}>
-        <DrawerContent>
-          <DrawerHeader>
-            <DrawerTitle id={titleId}>{title}</DrawerTitle>
-            {description && <DrawerDescription>{description}</DrawerDescription>}
-          </DrawerHeader>
+      <Sheet open={isOpen} onOpenChange={(open: boolean) => !open && onClose()}>
+        <SheetContent side="bottom">
+          <SheetHeader>
+            <SheetTitle id={titleId}>{title}</SheetTitle>
+            {description && <SheetDescription>{description}</SheetDescription>}
+          </SheetHeader>
           <div className="px-4 pb-4 pokemon-card-dialog-content">{form}</div>
-        </DrawerContent>
-      </Drawer>
+        </SheetContent>
+      </Sheet>
     );
   }
 

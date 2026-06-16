@@ -37,7 +37,7 @@ function getAccrual(balance: number, rate: number): number {
  */
 export default function CloudMargin() {
   const [accruals, setAccruals] = useState(initialAccruals);
-  const [statements, setStatements] = useState(initialStatements);
+  const [statements] = useState(initialStatements);
   const [selectedTab, setSelectedTab] = useState("accruals");
   const [newAccrual, setNewAccrual] = useState({ DATE: "", RATE: "", BALANCE: "" });
 

@@ -18,9 +18,9 @@ describe("RealiTea daily puzzle loader", () => {
     return {
       context: {},
       params: {},
+      pattern: "",
       request,
-      unstable_pattern: "",
-      unstable_url: new URL(request.url),
+      url: new URL(request.url),
     } as LoaderFunctionArgs;
   }
 

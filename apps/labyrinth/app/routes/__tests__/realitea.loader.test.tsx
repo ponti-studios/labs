@@ -20,9 +20,9 @@ describe("RealiTea route loader", () => {
     return {
       context: {},
       params: {},
+      pattern: "",
       request,
-      unstable_pattern: "",
-      unstable_url: new URL(request.url),
+      url: new URL(request.url),
     } as LoaderFunctionArgs;
   }
 
