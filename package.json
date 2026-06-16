@@ -41,7 +41,10 @@
   "packageManager": "pnpm@10.30.3",
   "pnpm": {
     "overrides": {
-      "esbuild": "^0.27.3",
+      "esbuild": "^0.28.1",
+      "pm2>ws": "^8.21.0",
+      "@pm2/js-api>ws": "^7.5.11",
+      "vite-node>vite": "^6.4.3",
       "zod": "^4.2.0",
       "lodash": ">=4.17.23",
       "tmp": ">=0.2.4",
