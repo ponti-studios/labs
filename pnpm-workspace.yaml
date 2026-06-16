@@ -31,12 +31,12 @@ catalog:
   tailwindcss: ^4.2.4
   tsx: ^4.22.4
   typescript: 6.0.3
-  vite: ^8.0.12
+  vite: ^8.0.16
   vite-tsconfig-paths: ^6.1.1
   vitest: ^4.1.5
   zod: ^4.4.3
 catalogs:
   ui:
     "@vitejs/plugin-react": ^5.2.0
-    vite: ^6.4.2
+    vite: ^6.4.3
 strictPeerDependencies: false
