@@ -9,28 +9,28 @@ import {
 
 const currentPool: GeneratedCandidate[] = [
   {
-    answer: "PUPPYGATE",
+    answer: "TEARS",
     answerType: "storyline",
-    clue: "A rescue-dog scandal that fractured the cast and dominated confessionals.",
+    clue: "A flood of emotion that takes over a major RHOBH confrontation.",
     detail:
-      "Puppygate became one of RHOBH's defining modern scandals, dragging friendships and loyalties into a season-long spiral.",
+      "A dramatic RHOBH breakdown can turn tears into the episode's defining image and emotional pivot.",
     newsMode: "current",
     rationale: "Archive fixture",
-    role: "Iconic cast fracture",
+    role: "Emotional fallout",
     sourcePublishedAt: [],
     sourceSummary: [],
     sourceTitles: [],
     sourceUrls: [],
   },
   {
-    answer: "VILLAROSA",
+    answer: "SWANS",
     answerType: "place",
-    clue: "This pink-toned estate is practically a cast member in its own right.",
+    clue: "These elegant birds are inseparable from one iconic Beverly Hills estate.",
     detail:
-      "Villa Rosa is Lisa Vanderpump's famously lavish home and a signature setting in RHOBH history.",
+      "The estate's swans became one of the most recognizable bits of RHOBH visual lore.",
     newsMode: "current",
     rationale: "Archive fixture",
-    role: "Signature mansion",
+    role: "Estate mascots",
     sourcePublishedAt: [],
     sourceSummary: [],
     sourceTitles: [],
@@ -55,13 +55,13 @@ const currentPool: GeneratedCandidate[] = [
 describe("rhobh daily puzzle helpers", () => {
   it("accepts collapsed multi-word answers that normalize cleanly", () => {
     const candidate: GeneratedCandidate = {
-      answer: "Villa Rosa",
+      answer: "Tea Set",
       answerType: "place",
-      clue: "A legendary pink mansion with plenty of swans and RHOBH lore.",
-      detail: "Lisa Vanderpump's home became one of the most iconic locations in the franchise.",
+      clue: "A prim little object that fits the game's whole vibe.",
+      detail: "A tiny tea set channels the campy elegance that makes the franchise memorable.",
       newsMode: "current",
-      rationale: "Iconic RHOBH place",
-      role: "Iconic home base",
+      rationale: "Compact RHOBH object",
+      role: "Tabletop prop",
       sourcePublishedAt: [],
       sourceSummary: [],
       sourceTitles: [],
@@ -70,11 +70,32 @@ describe("rhobh daily puzzle helpers", () => {
 
     const result = validateCandidate(candidate, {});
 
-    expect(result.normalizedAnswer).toBe("VILLAROSA");
+    expect(result.normalizedAnswer).toBe("TEASET");
+    expect(result.valid).toBe(false);
+    expect(result.reasons).toContain("answer must normalize to exactly five letters");
+  });
+
+  it("accepts answers that normalize to exactly five letters", () => {
+    const candidate: GeneratedCandidate = {
+      answer: "Aspen",
+      answerType: "place",
+      clue: "A snowy destination tied to one of the franchise's messiest trips.",
+      detail: "This RHOBH trip setting became shorthand for off-camera accusations and fallout.",
+      newsMode: "current",
+      rationale: "Compact RHOBH place",
+      role: "Trip destination",
+      sourcePublishedAt: [],
+      sourceSummary: [],
+      sourceTitles: [],
+      sourceUrls: [],
+    };
+
+    const result = validateCandidate(candidate, {});
+
     expect(result.valid).toBe(true);
   });
 
-  it("rejects answers with unsupported normalized length", () => {
+  it("rejects answers whose normalized length is not exactly five", () => {
     const candidate: GeneratedCandidate = {
       answer: "RH",
       answerType: "phrase",
@@ -92,7 +113,7 @@ describe("rhobh daily puzzle helpers", () => {
     const result = validateCandidate(candidate, {});
 
     expect(result.valid).toBe(false);
-    expect(result.reasons).toContain("answer length is unsupported");
+    expect(result.reasons).toContain("answer must normalize to exactly five letters");
   });
 
   it("rejects candidates that leak the answer in the clue or detail", () => {
@@ -139,9 +160,32 @@ describe("rhobh daily puzzle helpers", () => {
     expect(result.reasons).toContain("answer repeats inside cooldown window");
   });
 
-  it("requires Bravo plus one corroborator for current-news candidates", () => {
+  it("still rejects overlength current-news candidates before source checks", () => {
     const candidate: GeneratedCandidate = {
       answer: "Separation",
+      answerType: "storyline",
+      clue: "A relationship update is suddenly the center of the latest RHOBH coverage.",
+      detail: "This story is dominating the RHOBH news cycle.",
+      newsMode: "current",
+      rationale: "Current news test",
+      role: "Trending headline",
+      sourcePublishedAt: ["2026-05-27T00:00:00.000Z"],
+      sourceSummary: ["Coverage summary"],
+      sourceTitles: ["Coverage title"],
+      sourceUrls: ["https://people.com/latest-rhobh-story"],
+    };
+
+    const result = validateCandidate(candidate);
+
+    expect(result.valid).toBe(false);
+    expect(result.reasons).toContain("answer must normalize to exactly five letters");
+    expect(result.reasons).toContain("current candidate is missing Bravo primary coverage");
+    expect(result.reasons).toContain("current candidate is missing a corroborating source");
+  });
+
+  it("requires Bravo plus one corroborator for current-news candidates", () => {
+    const candidate: GeneratedCandidate = {
+      answer: "Rumor",
       answerType: "storyline",
       clue: "A relationship update is suddenly the center of the latest RHOBH coverage.",
       detail: "This story is dominating the RHOBH news cycle.",
@@ -161,9 +205,33 @@ describe("rhobh daily puzzle helpers", () => {
     expect(result.reasons).toContain("current candidate is missing a corroborating source");
   });
 
-  it("accepts current-news candidates with Bravo and a corroborating source", () => {
+  it("still rejects overlength current-news candidates even with strong source support", () => {
     const candidate: GeneratedCandidate = {
       answer: "Reunion",
+      answerType: "moment",
+      clue: "The latest RHOBH fallout is barreling toward this must-watch taping.",
+      detail: "The current RHOBH conversation is building toward the next big sit-down.",
+      newsMode: "current",
+      rationale: "Current news test",
+      role: "High-stakes event",
+      sourcePublishedAt: ["2026-05-27T00:00:00.000Z", "2026-05-27T00:00:00.000Z"],
+      sourceSummary: ["Bravo summary", "People summary"],
+      sourceTitles: ["Bravo title", "People title"],
+      sourceUrls: [
+        `https://www.${RHOBH_PRIMARY_SOURCE_DOMAIN}/the-daily-dish/rhobh-reunion-story`,
+        "https://people.com/rhobh-reunion-story",
+      ],
+    };
+
+    const result = validateCandidate(candidate);
+
+    expect(result.valid).toBe(false);
+    expect(result.reasons).toContain("answer must normalize to exactly five letters");
+  });
+
+  it("accepts current-news candidates with exactly five letters plus Bravo and a corroborating source", () => {
+    const candidate: GeneratedCandidate = {
+      answer: "Drama",
       answerType: "moment",
       clue: "The latest RHOBH fallout is barreling toward this must-watch taping.",
       detail: "The current RHOBH conversation is building toward the next big sit-down.",
@@ -213,7 +281,7 @@ describe("rhobh daily puzzle helpers", () => {
 
   it("rejects non-current candidates", () => {
     const candidate: GeneratedCandidate = {
-      answer: "Random Moment",
+      answer: "Party",
       answerType: "moment",
       clue: "A made-up callback with no curated provenance.",
       detail: "This should be rejected because it is not generated from current sources.",

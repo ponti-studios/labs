@@ -256,12 +256,12 @@ describe("RealiTeaRoute", () => {
   it("uses a stored daily puzzle from the loader when one exists", async () => {
     setRoutePuzzle(
       {
-        answer: "VILLAROSA",
-        answerType: "place",
-        clue: "A pink mansion with a legendary RHOBH footprint.",
-        detail: "Lisa Vanderpump's home became one of the franchise's most recognizable settings.",
+        answer: "SWANS",
+        answerType: "object",
+        clue: "These elegant birds are inseparable from one iconic Beverly Hills estate.",
+        detail: "The estate's swans became one of the most recognizable bits of RHOBH visual lore.",
         newsMode: "current",
-        role: "Iconic location",
+        role: "Estate mascots",
       },
       new Date("2026-05-20T12:00:00.000Z"),
       "database",
@@ -269,7 +269,7 @@ describe("RealiTeaRoute", () => {
 
     await renderRoute();
 
-    expect(getTextboxes()).toHaveLength("VILLAROSA".length);
+    expect(getTextboxes()).toHaveLength("SWANS".length);
   });
 
   it("discards stale saved progress for a different puzzle key", async () => {
@@ -296,12 +296,12 @@ describe("RealiTeaRoute", () => {
     const secondDate = new Date("2026-05-21T12:00:00.000Z");
     const firstPuzzle = getCurrentPuzzle();
     const secondPuzzle: Puzzle = {
-      answer: "PUPPYGATE",
-      answerType: "storyline",
-      clue: "A rescue-dog scandal that turned into one of RHOBH's defining feuds.",
-      detail: "The fallout consumed the season and permanently shifted friendships.",
+      answer: "DRAMA",
+      answerType: "moment",
+      clue: "A clash that keeps the whole cast spinning.",
+      detail: "A single RHOBH conflict can dominate the full episode and aftermath.",
       newsMode: "current",
-      role: "Infamous scandal",
+      role: "Escalating conflict",
     };
     setDailyPuzzle(secondPuzzle, secondDate, "database");
 
@@ -331,12 +331,12 @@ describe("RealiTeaRoute", () => {
     const firstDate = new Date("2026-05-20T12:00:00.000Z");
     const secondDate = new Date("2026-05-21T12:00:00.000Z");
     const firstPuzzle: Puzzle = {
-      answer: "PUPPYGATE",
-      answerType: "storyline",
-      clue: "A rescue-dog scandal that turned into one of RHOBH's defining feuds.",
-      detail: "The fallout consumed the season and permanently shifted friendships.",
+      answer: "DRAMA",
+      answerType: "moment",
+      clue: "A clash that keeps the whole cast spinning.",
+      detail: "A single RHOBH conflict can dominate the full episode and aftermath.",
       newsMode: "current",
-      role: "Infamous scandal",
+      role: "Escalating conflict",
     };
     const queryClient = new QueryClient({
       defaultOptions: {

@@ -26,6 +26,7 @@ const routeEntries: RouteEntry[] = [
   { path: "/business-tools/marketing", href: "/business-tools/marketing", kind: "page" },
   { path: "/experiments/glass", href: "/experiments/glass", kind: "page" },
   { path: "/experiments/infinite-scroll", href: "/experiments/infinite-scroll", kind: "page" },
+  { path: "/experiments/llm-interface", href: "/experiments/llm-interface", kind: "page" },
   {
     path: "/experiments/threegl-web-request",
     href: "/experiments/threegl-web-request",

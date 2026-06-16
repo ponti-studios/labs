@@ -27,13 +27,13 @@ describe("RealiTea daily puzzle loader", () => {
   it("returns the stored puzzle when one is available", async () => {
     loadPuzzleForDate.mockResolvedValue({
       puzzle: {
-        answer: "PUPPYGATE",
-        answerType: "storyline",
-        clue: "A rescue-dog scandal with long-lasting fallout.",
-        detail: "The fallout became one of RHOBH's defining storylines.",
+        answer: "DRAMA",
+        answerType: "moment",
+        clue: "A clash that keeps the whole cast spinning.",
+        detail: "A single RHOBH conflict can dominate the full episode and aftermath.",
         newsMode: "current",
         puzzleKey: "rhobh-20599",
-        role: "Infamous feud",
+        role: "Escalating conflict",
         source: "database",
       },
     });
@@ -45,7 +45,7 @@ describe("RealiTea daily puzzle loader", () => {
     const payload = await response.json();
 
     expect(response.status).toBe(200);
-    expect(payload.puzzle.answer).toBe("PUPPYGATE");
+    expect(payload.puzzle.answer).toBe("DRAMA");
     expect(payload.puzzle.source).toBe("database");
   });
 

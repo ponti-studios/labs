@@ -30,8 +30,8 @@ const keyboardKeyVariants = cva(
   {
     variants: {
       kind: {
-        letter: "h-10 w-10 shrink-0 text-sm",
-        action: "h-10 px-2 text-xs",
+        letter: "min-h-11 min-w-0 flex-1 px-0 text-base sm:text-sm",
+        action: "min-h-11 shrink-0 px-3 text-sm sm:px-4 sm:text-xs",
       },
       state: {
         inactive: "border-border bg-background text-foreground hover:bg-muted",
@@ -57,9 +57,9 @@ export function OnscreenKeyboard({
   className,
 }: OnscreenKeyboardProps) {
   return (
-    <div className={cn("space-y-1.5", className)}>
+    <div className={cn("w-full space-y-1.5", className)}>
       {ROWS.map((row, i) => (
-        <div key={row} className="flex justify-center gap-1">
+        <div key={row} className="flex w-full items-center justify-center gap-0.5 sm:gap-1">
           {i === 2 && (
             <button
               className={cn(keyboardKeyVariants({ kind: "action", state: "action" }))}

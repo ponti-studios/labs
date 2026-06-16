@@ -12,6 +12,7 @@ export interface Puzzle {
 }
 
 export const MAX_GUESSES = 6;
+export const REALITEA_ANSWER_LENGTH = 5;
 
 export function normalizeGuess(value: string): string {
   return value.replaceAll(/[^a-z]/gi, "").toUpperCase();

@@ -4,49 +4,26 @@
  * Word files are bundled into the server at build time via Vite ?raw imports.
  * They are never included in the client bundle and never served to the browser.
  */
-import words4 from "../data/words/4.txt?raw";
 import words5 from "../data/words/5.txt?raw";
-import words6 from "../data/words/6.txt?raw";
-import words7 from "../data/words/7.txt?raw";
-import words8 from "../data/words/8.txt?raw";
-import words9 from "../data/words/9.txt?raw";
-import words10 from "../data/words/10.txt?raw";
 
 import { getStoredAnswersForValidation } from "./realitea-daily-puzzle.server";
+import { REALITEA_ANSWER_LENGTH } from "./realitea";
 
-const RAW_BY_LENGTH: Record<number, string> = {
-  4: words4,
-  5: words5,
-  6: words6,
-  7: words7,
-  8: words8,
-  9: words9,
-  10: words10,
-};
-
-const cache = new Map<number, Set<string>>();
-
-function getWordSet(length: number): Set<string> {
-  if (cache.has(length)) return cache.get(length)!;
-
-  const raw = RAW_BY_LENGTH[length];
-  const set: Set<string> = raw
-    ? new Set(
-        raw
-          .split("\n")
-          .map((w) => w.trim())
-          .filter(Boolean),
-      )
-    : new Set();
-
-  cache.set(length, set);
-  return set;
-}
+const wordSet = new Set(
+  words5
+    .split("\n")
+    .map((w) => w.trim())
+    .filter(Boolean),
+);
 
 export async function isValidWord(word: string): Promise<boolean> {
   const upper = word.toUpperCase().trim();
 
-  if (getWordSet(upper.length).has(upper)) {
+  if (upper.length !== REALITEA_ANSWER_LENGTH) {
+    return false;
+  }
+
+  if (wordSet.has(upper)) {
     return true;
   }
 
