@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  getDateKey,
+  getPuzzleWindow,
   parseGenerationResponse,
   RHOBH_PRIMARY_SOURCE_DOMAIN,
   validateCandidate,
@@ -320,5 +322,15 @@ describe("rhobh daily puzzle helpers", () => {
         ]),
       ),
     ).toThrow();
+  });
+
+  it("uses the canonical global day boundary for late-evening Pacific access", () => {
+    const latePacificEvening = new Date("2026-06-17T04:00:00.000Z");
+    const window = getPuzzleWindow(latePacificEvening);
+
+    expect(getDateKey(latePacificEvening)).toBe("2026-06-16");
+    expect(window.dateKey).toBe("2026-06-16");
+    expect(window.publishAt.toISOString()).toBe("2026-06-16T07:00:00.000Z");
+    expect(window.expireAt.toISOString()).toBe("2026-06-17T07:00:00.000Z");
   });
 });

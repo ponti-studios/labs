@@ -1,15 +1,15 @@
 import type { LoaderFunctionArgs } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const loadPuzzleForDate = vi.fn();
+const loadActivePuzzle = vi.fn();
 
 vi.mock("../../lib/realitea-daily-puzzle.server", () => ({
-  loadPuzzleForDate,
+  loadActivePuzzle,
 }));
 
 describe("RealiTea daily puzzle loader", () => {
   beforeEach(() => {
-    loadPuzzleForDate.mockReset();
+    loadActivePuzzle.mockReset();
   });
 
   function createLoaderArgs(url: string): LoaderFunctionArgs {
@@ -25,7 +25,7 @@ describe("RealiTea daily puzzle loader", () => {
   }
 
   it("returns the stored puzzle when one is available", async () => {
-    loadPuzzleForDate.mockResolvedValue({
+    loadActivePuzzle.mockResolvedValue({
       puzzle: {
         answer: "DRAMA",
         answerType: "moment",
@@ -50,7 +50,7 @@ describe("RealiTea daily puzzle loader", () => {
   });
 
   it("returns 404 when no puzzle exists for the requested day", async () => {
-    loadPuzzleForDate.mockResolvedValue(null);
+    loadActivePuzzle.mockResolvedValue(null);
 
     const { loader } = await import("../api.games.realitea.daily");
     const response = await loader(

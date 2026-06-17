@@ -2,6 +2,7 @@ import { z } from "zod";
 import {
   normalizeAnswer,
   REALITEA_ANSWER_LENGTH,
+  REALITEA_TIME_ZONE,
   type Puzzle,
   type PuzzleAnswerType,
   type PuzzleNewsMode,
@@ -81,6 +82,8 @@ export const RHOBH_ALLOWED_SOURCE_DOMAINS = [
 export const RHOBH_PRIMARY_SOURCE_DOMAIN = "bravotv.com";
 export const RHOBH_REPEAT_WINDOW_DAYS = 90;
 export const RHOBH_ANSWER_LENGTH = REALITEA_ANSWER_LENGTH;
+export const REALITEA_READY_INVENTORY_DAYS = 7;
+export const REALITEA_RESERVE_TARGET = 3;
 
 /**
  * Stored and generated puzzle records are intentionally separated from the
@@ -89,6 +92,15 @@ export const RHOBH_ANSWER_LENGTH = REALITEA_ANSWER_LENGTH;
  */
 export type PuzzleSource = "database";
 export type GenerationStatus = "failed" | "published";
+export type InventoryStatus =
+  | "draft"
+  | "ready"
+  | "scheduled"
+  | "published"
+  | "reserve"
+  | "consumed"
+  | "failed";
+export type PuzzleSourceKind = "current" | "evergreen";
 export type ValidationStatus = "approved" | "rejected";
 
 export interface SourceItem {
@@ -147,23 +159,30 @@ export interface PuzzleRecord {
   answerType: PuzzleAnswerType;
   clue: string;
   createdAt?: Date | null;
-  dateUtc: string;
+  dateUtc: string | null;
   detail: string;
+  expireAt?: Date | null;
   franchise: string;
+  generationBatchId?: string | null;
   generationStatus: GenerationStatus | string;
   id?: number;
   newsMode: PuzzleNewsMode;
   normalizedAnswer: string;
+  publishAt?: Date | null;
   role: string;
+  scheduledForDateKey?: string | null;
+  sourceKind?: PuzzleSourceKind | string | null;
   sourcePublishedAt: string[];
   sourceSummary: string[];
   sourceTitles: string[];
   sourceUrls: string[];
+  status?: InventoryStatus | string | null;
   updatedAt?: Date | null;
   validationStatus: ValidationStatus | string;
 }
 
 export interface ValidationContext {
+  allowEvergreen?: boolean;
   previousAnswers?: Set<string>;
   sources?: SourceItem[];
 }
@@ -176,6 +195,12 @@ export interface ValidationResult {
 
 export interface PuzzleEnvelope {
   puzzle: StoredPuzzle;
+}
+
+export interface PuzzleWindow {
+  dateKey: string;
+  expireAt: Date;
+  publishAt: Date;
 }
 
 /**
@@ -198,10 +223,6 @@ const rhobhGeneratedCandidateSchema = z.object({
 
 const rhobhGeneratedCandidateListSchema = z.array(rhobhGeneratedCandidateSchema).min(3).max(5);
 
-function getLocalDayIndex(date: Date): number {
-  return Math.floor(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / 86_400_000);
-}
-
 function getLocalDateParts(value: string): [number, number, number] | null {
   if (!RHOBH_DATE_FORMAT.test(value)) {
     return null;
@@ -215,26 +236,121 @@ function getLocalDateParts(value: string): [number, number, number] | null {
   return [year, month, day];
 }
 
+function getPuzzleDateParts(date: Date): [number, number, number] {
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    timeZone: REALITEA_TIME_ZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  const parts = formatter.formatToParts(date);
+  const year = Number.parseInt(parts.find((part) => part.type === "year")?.value ?? "", 10);
+  const month = Number.parseInt(parts.find((part) => part.type === "month")?.value ?? "", 10);
+  const day = Number.parseInt(parts.find((part) => part.type === "day")?.value ?? "", 10);
+
+  return [year, month, day];
+}
+
+function getLocalDayIndex(date: Date): number {
+  const [year, month, day] = getPuzzleDateParts(date);
+  return Math.floor(Date.UTC(year, month - 1, day) / 86_400_000);
+}
+
 /**
  * Convert a Date into the canonical YYYY-MM-DD key used by the daily puzzle
- * pipeline, based on the local calendar day.
+ * pipeline, based on the puzzle's fixed Pacific day boundary.
  */
 export function getDateKey(date: Date): string {
-  const year = date.getFullYear();
-  const month = `${date.getMonth() + 1}`.padStart(2, "0");
-  const day = `${date.getDate()}`.padStart(2, "0");
-  return `${year}-${month}-${day}`;
+  const [year, month, day] = getPuzzleDateParts(date);
+  const monthText = `${month}`.padStart(2, "0");
+  const dayText = `${day}`.padStart(2, "0");
+  return `${year}-${monthText}-${dayText}`;
+}
+
+function getDateTimePartsInTimeZone(
+  date: Date,
+  timeZone: string,
+): [number, number, number, number, number, number] {
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23",
+  });
+  const parts = formatter.formatToParts(date);
+
+  const year = Number.parseInt(parts.find((part) => part.type === "year")?.value ?? "", 10);
+  const month = Number.parseInt(parts.find((part) => part.type === "month")?.value ?? "", 10);
+  const day = Number.parseInt(parts.find((part) => part.type === "day")?.value ?? "", 10);
+  const hour = Number.parseInt(parts.find((part) => part.type === "hour")?.value ?? "", 10);
+  const minute = Number.parseInt(parts.find((part) => part.type === "minute")?.value ?? "", 10);
+  const second = Number.parseInt(parts.find((part) => part.type === "second")?.value ?? "", 10);
+
+  return [year, month, day, hour, minute, second];
+}
+
+function getDateTimeForTimeZone(
+  year: number,
+  month: number,
+  day: number,
+  hour: number,
+  minute: number,
+  second: number,
+  timeZone: string,
+): Date {
+  let candidate = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+
+  for (let step = 0; step < 4; step += 1) {
+    const [actualYear, actualMonth, actualDay, actualHour, actualMinute, actualSecond] =
+      getDateTimePartsInTimeZone(candidate, timeZone);
+    const targetUtc = Date.UTC(year, month - 1, day, hour, minute, second);
+    const actualUtc = Date.UTC(
+      actualYear,
+      actualMonth - 1,
+      actualDay,
+      actualHour,
+      actualMinute,
+      actualSecond,
+    );
+    const deltaMs = actualUtc - targetUtc;
+
+    if (deltaMs === 0) {
+      break;
+    }
+
+    candidate = new Date(candidate.getTime() - deltaMs);
+  }
+
+  return candidate;
+}
+
+function createCanonicalPuzzleDate(year: number, month: number, day: number): Date {
+  // UTC noon keeps the Pacific calendar day stable across DST and regardless
+  // of the runtime's local timezone.
+  return new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
+}
+
+function getLocalDayIndexFromParts(year: number, month: number, day: number): number {
+  return Math.floor(Date.UTC(year, month - 1, day) / 86_400_000);
+}
+
+export function getPuzzleKeyFromDateKey(value: string): string | null {
+  const parts = getLocalDateParts(value);
+  if (!parts) {
+    return null;
+  }
+
+  const [year, month, day] = parts;
+  return `rhobh-${getLocalDayIndexFromParts(year, month, day)}`;
 }
 
 /**
- * Check whether a string matches the canonical daily puzzle date key format.
- */
-export function isDateKey(value: string): boolean {
-  return RHOBH_DATE_FORMAT.test(value);
-}
-
-/**
- * Parse a canonical date key back into a local-midnight Date.
+ * Parse a canonical date key into a stable Date that round-trips through
+ * getDateKey() in any runtime timezone.
  */
 export function parseDate(value: string | null | undefined): Date | null {
   if (!value || !isDateKey(value)) {
@@ -245,8 +361,59 @@ export function parseDate(value: string | null | undefined): Date | null {
     return null;
   }
   const [year, month, day] = parts;
-  const parsed = new Date(year, month - 1, day);
+  const parsed = createCanonicalPuzzleDate(year, month, day);
   return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+export function addDaysToDateKey(value: string, days: number): string | null {
+  const parsed = parseDate(value);
+  if (!parsed) {
+    return null;
+  }
+
+  parsed.setUTCDate(parsed.getUTCDate() + days);
+  return getDateKey(parsed);
+}
+
+export function getPuzzleWindow(date: Date): PuzzleWindow {
+  const dateKey = getDateKey(date);
+  const parts = getLocalDateParts(dateKey);
+  if (!parts) {
+    throw new Error(`Invalid puzzle date key: ${dateKey}`);
+  }
+
+  const [year, month, day] = parts;
+  const publishAt = getDateTimeForTimeZone(year, month, day, 0, 0, 0, REALITEA_TIME_ZONE);
+  const nextDateKey = addDaysToDateKey(dateKey, 1);
+
+  if (!nextDateKey) {
+    throw new Error(`Unable to derive next puzzle date key from ${dateKey}`);
+  }
+
+  const nextParts = getLocalDateParts(nextDateKey);
+  if (!nextParts) {
+    throw new Error(`Invalid next puzzle date key: ${nextDateKey}`);
+  }
+
+  const [nextYear, nextMonth, nextDay] = nextParts;
+  const expireAt = getDateTimeForTimeZone(
+    nextYear,
+    nextMonth,
+    nextDay,
+    0,
+    0,
+    0,
+    REALITEA_TIME_ZONE,
+  );
+
+  return { dateKey, expireAt, publishAt };
+}
+
+/**
+ * Check whether a string matches the canonical daily puzzle date key format.
+ */
+export function isDateKey(value: string): boolean {
+  return RHOBH_DATE_FORMAT.test(value);
 }
 
 export function parseStringArray(raw: string): string[] {
@@ -324,7 +491,7 @@ export function validateCandidate(
     reasons.push("answer type is missing");
   }
 
-  if (candidate.newsMode !== "current") {
+  if (!context.allowEvergreen && candidate.newsMode !== "current") {
     reasons.push("candidate must be generated from current sources");
   }
 
@@ -422,17 +589,22 @@ export function buildStoredPuzzle(date: Date, candidate: GeneratedCandidate): St
  * It keeps the puzzle key stable by deriving it from the record's local date key.
  */
 export function mapRecordToStoredPuzzle(record: PuzzleRecord): StoredPuzzle {
-  const parts = getLocalDateParts(record.dateUtc);
+  const puzzleKey = record.scheduledForDateKey
+    ? getPuzzleKeyFromDateKey(record.scheduledForDateKey)
+    : record.dateUtc
+      ? getPuzzleKeyFromDateKey(record.dateUtc)
+      : null;
+  const parts = getLocalDateParts(record.scheduledForDateKey ?? record.dateUtc ?? "");
   const date = parts
-    ? new Date(parts[0], parts[1] - 1, parts[2])
-    : new Date(`${record.dateUtc}T12:00:00`);
+    ? createCanonicalPuzzleDate(parts[0], parts[1], parts[2])
+    : new Date();
   return {
     answer: record.answer,
     answerType: record.answerType,
     clue: record.clue,
     detail: record.detail,
     newsMode: record.newsMode,
-    puzzleKey: `rhobh-${getLocalDayIndex(date)}`,
+    puzzleKey: puzzleKey ?? `rhobh-${getLocalDayIndex(date)}`,
     role: record.role,
     source: "database",
   };

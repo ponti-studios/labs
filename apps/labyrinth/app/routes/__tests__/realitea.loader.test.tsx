@@ -1,15 +1,15 @@
 import type { LoaderFunctionArgs } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const loadPuzzleForDate = vi.fn();
+const loadActivePuzzle = vi.fn();
 
 vi.mock("../../lib/realitea-daily-puzzle.server", () => ({
-  loadPuzzleForDate,
+  loadActivePuzzle,
 }));
 
 describe("RealiTea route loader", () => {
   beforeEach(() => {
-    loadPuzzleForDate.mockReset();
+    loadActivePuzzle.mockReset();
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-05-20T12:00:00.000Z"));
   });
@@ -27,7 +27,7 @@ describe("RealiTea route loader", () => {
   }
 
   it("returns the stored puzzle when one is available", async () => {
-    loadPuzzleForDate.mockResolvedValue({
+    loadActivePuzzle.mockResolvedValue({
       puzzle: {
         answer: "DRAMA",
         answerType: "moment",
@@ -46,5 +46,29 @@ describe("RealiTea route loader", () => {
 
     expect(response.status).toBe(200);
     expect(payload.puzzle.answer).toBe("DRAMA");
+  });
+
+  it("throws a RealiTea-specific 404 error when no puzzle exists for today", async () => {
+    loadActivePuzzle.mockResolvedValue(null);
+
+    const { loader } = await import("../games/realitea");
+
+    await expect(loader(createLoaderArgs("http://localhost/games/realitea"))).rejects.toMatchObject({
+      status: 404,
+      statusText: "No RealiTea puzzle found for today",
+    });
+
+    await expect(
+      loader(createLoaderArgs("http://localhost/games/realitea")).catch(async (response) => ({
+        payload: await response.json(),
+        status: response.status,
+      })),
+    ).resolves.toEqual({
+      payload: {
+        code: "REALITEA_PUZZLE_NOT_FOUND",
+        error: "No RealiTea puzzle found for today",
+      },
+      status: 404,
+    });
   });
 });
