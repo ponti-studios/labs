@@ -41,7 +41,6 @@ export default function ExperimentsGlass() {
     [position.x, position.y],
   );
 
-  // Attach move/up to window so fast drags don't lose tracking when the cursor outruns the element
   useEffect(() => {
     if (!isDragging) return;
 
@@ -53,6 +52,10 @@ export default function ExperimentsGlass() {
     };
     const onUp = () => setIsDragging(false);
 
+    /**
+     * Attach move/up to window so fast drags don't lose tracking
+     * when the cursor outruns the element
+     */
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseup", onUp);
     return () => {
@@ -62,43 +65,42 @@ export default function ExperimentsGlass() {
   }, [isDragging]);
 
   return (
-    <div className="relative w-full h-screen overflow-hidden pt-16 rounded-3xl">
+    <div className="relative w-full h-[calc(100vh-150px)] overflow-hidden rounded-3xl">
       {/* Controls panel */}
-      <div className="absolute top-4 right-4 z-50 bg-card/95 backdrop-blur-sm border border-border rounded-lg p-4 w-72">
-        <p className="ui-eyebrow mb-1">Draggable Glass Effect</p>
-        <p className="text-sm text-muted-foreground mb-3">
-          Drag the glass overlay to move it. The effect creates chromatic aberration via SVG
-          displacement maps.
+      <div className="absolute top-4 right-4 z-50 bg-card rounded-lg p-3 max-w-72">
+        <p className="ui-eyebrow mb-1">Glass Effect</p>
+        <p className="text-sm mb-3">
+          Drag the glass overlay to view a chromatic aberration using SVG displacement maps.
         </p>
 
-        <Accordion type="multiple" className="w-full">
-          <AccordionItem value="background">
-            <AccordionTrigger>Background</AccordionTrigger>
-            <AccordionContent className="space-y-2 pl-0">
-              <Input
-                id="background-url"
-                type="url"
-                placeholder="https://example.com/image.jpg"
-                value={backgroundImage}
-                onChange={(e) => setBackgroundImage(e.target.value)}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  const url = e.dataTransfer.getData("text/plain");
-                  if (url.startsWith("http")) setBackgroundImage(url);
-                }}
-                onDragOver={(e) => e.preventDefault()}
-              />
-              <div className="flex justify-end gap-2">
-                <Button size="sm" onClick={() => setBackgroundImage("")}>
-                  Clear
-                </Button>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
+        <div className="space-y-2 py-2">
+          <label htmlFor="background-url" className="text-xs text-muted-foreground">
+            Background
+          </label>
+          <div className="flex gap-2">
+            <Input
+              id="background-url"
+              type="url"
+              placeholder="https://example.com/image.jpg"
+              value={backgroundImage}
+              onChange={(e) => setBackgroundImage(e.target.value)}
+              onDrop={(e) => {
+                e.preventDefault();
+                const url = e.dataTransfer.getData("text/plain");
+                if (url.startsWith("http")) setBackgroundImage(url);
+              }}
+              onDragOver={(e) => e.preventDefault()}
+            />
+            <Button size="sm" onClick={() => setBackgroundImage("")}>
+              Clear
+            </Button>
+          </div>
+        </div>
 
+        <Accordion type="multiple" className="w-full">
           <AccordionItem value="displacement">
             <AccordionTrigger>Displacement</AccordionTrigger>
-            <AccordionContent className="space-y-4 pl-0">
+            <AccordionContent className="space-y-4">
               {(
                 [
                   { channel: "red", color: "bg-red-500", label: "Red" },
@@ -130,7 +132,7 @@ export default function ExperimentsGlass() {
                   />
                 </div>
               ))}
-              <div className="flex gap-2 pt-1">
+              <div className="flex justify-end gap-2 pt-1">
                 <Button
                   type="button"
                   variant="outline"
@@ -153,18 +155,15 @@ export default function ExperimentsGlass() {
         </Accordion>
       </div>
 
-      {/* Large Background Image - Using a colorful pattern or custom image */}
-      <div className="absolute inset-0 w-full h-full">
-        <div
-          className="w-full h-full bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url(${backgroundImage})`,
-          }}
-        />
-      </div>
+      <div
+        data-testid="background-image"
+        className="absolute inset-0 w-full bg-center bg-cover"
+        style={{ backgroundImage: `url(${backgroundImage})` }}
+      />
 
-      {/* Draggable Glass SVG — filter defined inline in defs, applied to the SVG element itself */}
+      {/* Draggable Glass SVG */}
       <svg
+        data-testid="glass-svg"
         role="button"
         tabIndex={0}
         width="200"
