@@ -34,7 +34,7 @@ const RUN_DELAY_MS = 400;
 
 export default function PrimeCountdown(): JSX.Element {
   const [primeStart, setPrimeStart] = useState("20");
-  const [primeEntries, setPrimeEntries] = useState<PrimeEntry[] | null>(null);
+  const [primeEntries, setPrimeEntries] = useState<PrimeEntry[] | null>(() => getPrimeCountdown(20));
   const [running, setRunning] = useState(false);
 
   const run = () => {

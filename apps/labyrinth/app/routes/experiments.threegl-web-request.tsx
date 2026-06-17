@@ -12,21 +12,15 @@ type AnimationRuntime = {
   cacheWriteProgress: number;
 };
 
-const SPEED_OPTIONS = [
-  { label: "Slow", value: 0.2 },
-  { label: "Normal", value: 0.5 },
-  { label: "Fast", value: 1.0 },
-] as const;
+const ANIMATION_SPEED = 1.0;
 
 export default function ThreeglWebRequest() {
   const containerRef = useRef<HTMLDivElement>(null);
   const startAnimationRef = useRef<() => void>(() => {});
   const resetAnimationRef = useRef<() => void>(() => {});
-  const [animationSpeed, setAnimationSpeed] = useState(0.5);
   const [simulateCacheHit, setSimulateCacheHit] = useState(true);
   const [isRunning, setIsRunning] = useState(false);
 
-  const animationSpeedRef = useRef(animationSpeed);
   const simulateCacheHitRef = useRef(simulateCacheHit);
   const isRunningRef = useRef(isRunning);
   const runtimeRef = useRef<AnimationRuntime>({
@@ -66,10 +60,6 @@ export default function ThreeglWebRequest() {
     controls: null,
     frameId: null,
   });
-
-  useEffect(() => {
-    animationSpeedRef.current = animationSpeed;
-  }, [animationSpeed]);
 
   useEffect(() => {
     simulateCacheHitRef.current = simulateCacheHit;
@@ -308,7 +298,7 @@ export default function ThreeglWebRequest() {
           }
 
           if (segmentLength > 0) {
-            state.segmentProgress += (animationSpeedRef.current * delta * 10) / segmentLength;
+            state.segmentProgress += (ANIMATION_SPEED * delta * 10) / segmentLength;
 
             if (state.segmentProgress >= 1.0) {
               requestMesh.position.copy(endPoint);
@@ -330,7 +320,7 @@ export default function ThreeglWebRequest() {
           const segmentLength = startPoint.distanceTo(endPoint);
 
           if (segmentLength > 0) {
-            state.cacheWriteProgress += (animationSpeedRef.current * delta * 10) / segmentLength;
+            state.cacheWriteProgress += (ANIMATION_SPEED * delta * 10) / segmentLength;
 
             if (state.cacheWriteProgress >= 1.0) {
               cacheWriteMesh.position.copy(endPoint);
@@ -399,32 +389,14 @@ export default function ThreeglWebRequest() {
   };
 
   return (
-    <div className="relative h-screen overflow-hidden bg-[#111] text-white">
-      <div className="pointer-events-none absolute top-3 left-1/2 z-20 -translate-x-1/2 text-center text-white">
-        Web Request Flow Visualization
-      </div>
+    <div className="relative h-[calc(100vh-5rem)] overflow-hidden bg-[#111] text-white">
+      <div className="absolute top-4 right-4 z-50 bg-card rounded-lg p-3 max-w-72">
+        <p className="ui-eyebrow mb-1">Web Request Flow</p>
+        <p className="text-sm mb-3">
+          Visualise a request travelling through a load balancer, web server, cache, and database.
+        </p>
 
-      <div className="absolute top-4 left-4 z-20 min-w-[220px] rounded-lg border border-white/20 bg-[rgba(40,40,60,0.85)] p-4 text-sm text-zinc-100 shadow-xl">
-        <h3 className="mb-3 border-b border-white/10 pb-2">Controls & Info</h3>
-        <div>
-          <p className="mb-2">Animation Speed:</p>
-          <div className="space-y-2">
-            {SPEED_OPTIONS.map((option) => (
-              <label key={option.label} className="flex cursor-pointer items-center gap-2">
-                <input
-                  type="radio"
-                  name="speed"
-                  value={option.value}
-                  checked={animationSpeed === option.value}
-                  onChange={() => setAnimationSpeed(option.value)}
-                />
-                {option.label}
-              </label>
-            ))}
-          </div>
-        </div>
-
-        <label className="mt-4 flex cursor-pointer items-center gap-2">
+        <label className="flex cursor-pointer items-center gap-2 text-sm">
           <input
             type="checkbox"
             checked={simulateCacheHit}
@@ -433,22 +405,20 @@ export default function ThreeglWebRequest() {
           Simulate Cache Hit
         </label>
 
-        <div className="mt-4 border-t border-white/10 pt-3 text-xs text-zinc-300">
-          <h4 className="mb-1">Typical Relative Latency:</h4>
-          <p>Client &lt;-&gt; Server: Medium (WAN)</p>
-          <p>Server &lt;-&gt; Cache: Very Fast (LAN/Local)</p>
-          <p>Server &lt;-&gt; Database: Fast (LAN)</p>
-          <p>(Animation speed adjusted for visualization)</p>
+        <div className="mt-3 border-t pt-3 text-xs text-muted-foreground space-y-0.5">
+          <p>Client ↔ Server: Medium (WAN)</p>
+          <p>Server ↔ Cache: Very Fast (LAN)</p>
+          <p>Server ↔ Database: Fast (LAN)</p>
         </div>
-      </div>
 
-      <button
-        type="button"
-        onClick={handleToggleAnimation}
-        className="absolute bottom-5 left-1/2 z-20 -translate-x-1/2 rounded-md bg-green-600 px-5 py-2.5 text-base font-medium text-white shadow-lg transition hover:bg-green-500"
-      >
-        {isRunning ? "Reset Request" : "Start Request"}
-      </button>
+        <button
+          type="button"
+          onClick={handleToggleAnimation}
+          className="mt-3 w-full rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-green-500"
+        >
+          {isRunning ? "Reset" : "Start Request"}
+        </button>
+      </div>
 
       <div ref={containerRef} className="h-full w-full" />
     </div>

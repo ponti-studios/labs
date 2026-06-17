@@ -33,21 +33,22 @@ export default function PetersonAcademy(): JSX.Element {
     <div>
       <h2>Peterson Academy</h2>
       <p>Image carousel with staggered layout.</p>
-      <main className="flex gap-8">
+      <main className="flex gap-4 items-start overflow-x-auto pb-4">
         {items.map((item, index) => (
           <div
             key={item.name}
-            className={`col-span-1 w-[300px] h-[400px] border border-black flex items-center justify-center mt-[${index * 70 + 20}px]`}
+            style={{ marginTop: `${index * 50 + 10}px` }}
+            className="shrink-0 w-40 h-56 border border-border rounded-lg flex items-center justify-center text-sm text-muted-foreground bg-muted/40 transition-all duration-300"
           >
             {item.name}
           </div>
         ))}
       </main>
-      <div className="flex justify-center gap-8 mt-4">
-        <Button type="button" className="btn" onClick={handleLeftClick}>
+      <div className="flex justify-center gap-8 mt-8">
+        <Button type="button" onClick={handleLeftClick}>
           Left
         </Button>
-        <Button type="button" className="btn" onClick={handleRightClick}>
+        <Button type="button" onClick={handleRightClick}>
           Right
         </Button>
       </div>

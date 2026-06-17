@@ -46,29 +46,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  const location = useLocation();
-  const isRealiTeaRoute = location.pathname.startsWith("/games/realitea");
-
   return (
     <QueryProvider>
-      <div
-        className={[
-          "border bg-background/50 backdrop-blur max-w-7xl mx-auto rounded-2xl mt-4 px-4",
-          isRealiTeaRoute ? "hidden md:block" : "",
-        ].join(" ")}
-      >
-        <div className="mx-auto max-w-7xl p-4 sm:px-0">
-          <div className="flex items-center justify-between gap-4">
-            <a href="/" className="text-lg font-semibold text-foreground">
-              Labyrinth
-            </a>
-          </div>
-        </div>
+      <div className="bg-background/50 backdrop-blur max-w-7xl mx-auto my-4 px-4">
+        <a href="/" className="text-lg font-semibold text-foreground">
+          Labyrinth
+        </a>
       </div>
-      <main className={isRealiTeaRoute ? "flex-1 md:p-4 md:sm:px-0" : "flex-1 p-4 sm:px-0"}>
-        <div className="mx-auto w-full max-w-7xl">
-          <Outlet />
-        </div>
+      <main className="flex-1 px-4 mt-6 w-full max-w-7xl mx-auto">
+        <Outlet />
       </main>
     </QueryProvider>
   );
@@ -90,7 +76,9 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
         : null;
     details =
       routeErrorMessage ??
-      (error.status === 404 ? "The requested page could not be found." : error.statusText || details);
+      (error.status === 404
+        ? "The requested page could not be found."
+        : error.statusText || details);
   } else if (import.meta.env.DEV && error && error instanceof Error) {
     details = error.message;
     stack = error.stack;
