@@ -183,15 +183,6 @@ export default function ExperimentsGlass() {
         <defs>
           <GlassFilter displacements={displacements} />
         </defs>
-        <text
-          x="10"
-          y="20"
-          fontSize="10"
-          fill="currentColor"
-          style={{ pointerEvents: "none", userSelect: "none" }}
-        >
-          Drag me
-        </text>
       </svg>
     </div>
   );
