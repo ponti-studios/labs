@@ -2,19 +2,14 @@ name: cron-realitea-rhobh-daily-puzzle
 
 on:
   schedule:
-    - cron: "10 0 * * *"
+    - cron: "10 * * * *"
   workflow_dispatch:
     inputs:
-      date_utc:
-        description: Optional UTC date to generate in YYYY-MM-DD format
-        required: false
-        type: string
-
 permissions:
   contents: read
 
 jobs:
-  generate:
+  reconcile:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -32,19 +27,8 @@ jobs:
       - name: install-dependencies
         run: pnpm install --frozen-lockfile --filter @pontistudios/labyrinth...
 
-      - name: resolve-date
-        id: resolve-date
-        shell: bash
-        run: |
-          if [ -n "${{ github.event.inputs.date_utc }}" ]; then
-            echo "date_utc=${{ github.event.inputs.date_utc }}" >> "$GITHUB_OUTPUT"
-          else
-            echo "date_utc=$(date -u +%F)" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: trigger-generation
+      - name: reconcile-inventory
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          DATE_UTC: ${{ steps.resolve-date.outputs.date_utc }}
-        run: pnpm --filter @pontistudios/labyrinth realitea:generate-daily -- --date-utc="$DATE_UTC"
+        run: pnpm --filter @pontistudios/labyrinth realitea:reconcile-inventory

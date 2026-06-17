@@ -1,11 +1,11 @@
-import { date, jsonb, serial, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
+import { date, index, jsonb, serial, text, timestamp } from "drizzle-orm/pg-core";
 import { labs } from "./base";
 
 export const rhobhDailyPuzzles = labs.table(
   "rhobh_daily_puzzles",
   {
     id: serial("id").primaryKey(),
-    dateUtc: date("date_utc").notNull(),
+    dateUtc: date("date_utc"),
     franchise: text("franchise").notNull(),
     answer: text("answer").notNull(),
     answerType: text("answer_type").notNull(),
@@ -14,6 +14,12 @@ export const rhobhDailyPuzzles = labs.table(
     detail: text("detail").notNull(),
     role: text("role").notNull(),
     newsMode: text("news_mode").notNull(),
+    status: text("status").notNull(),
+    scheduledForDateKey: text("scheduled_for_date_key"),
+    sourceKind: text("source_kind").notNull(),
+    generationBatchId: text("generation_batch_id"),
+    publishAt: timestamp("publish_at"),
+    expireAt: timestamp("expire_at"),
     sourceUrls: jsonb("source_urls").$type<string[]>().notNull(),
     sourceTitles: jsonb("source_titles").$type<string[]>().notNull(),
     sourcePublishedAt: jsonb("source_published_at").$type<string[]>().notNull(),
@@ -24,7 +30,11 @@ export const rhobhDailyPuzzles = labs.table(
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
   (table) => [
-    uniqueIndex("rhobh_daily_puzzles_franchise_date_idx").on(table.franchise, table.dateUtc),
+    index("rhobh_daily_puzzles_franchise_status_idx").on(table.franchise, table.status),
+    index("rhobh_daily_puzzles_franchise_scheduled_date_idx").on(
+      table.franchise,
+      table.scheduledForDateKey,
+    ),
   ],
 );
 

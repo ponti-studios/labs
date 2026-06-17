@@ -8,6 +8,13 @@
       "when": 1780337063474,
       "tag": "0000_public_black_bolt",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1781671296046,
+      "tag": "0001_gigantic_leopardon",
+      "breakpoints": true
     }
   ]
 }

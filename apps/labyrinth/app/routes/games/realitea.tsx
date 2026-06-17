@@ -11,7 +11,7 @@ import {
   normalizeGuess,
 } from "~/lib/realitea";
 import { getDateKey, type PuzzleEnvelope, type StoredPuzzle } from "~/lib/realitea-daily-puzzle";
-import { loadPuzzleForDate } from "~/lib/realitea-daily-puzzle.server";
+import { loadActivePuzzle } from "~/lib/realitea-daily-puzzle.server";
 import { shareRealiTeaResult } from "~/lib/realitea-share";
 import { cn } from "~/lib/utils";
 import { useGameState } from "./game-state";
@@ -61,10 +61,19 @@ const TILE_REVEAL_STYLES: Record<
 
 export async function loader(_args: LoaderFunctionArgs) {
   const date = new Date();
-  const puzzle = await loadPuzzleForDate(date);
+  const puzzle = await loadActivePuzzle(date);
 
   if (!puzzle) {
-    throw new Response("Today's RealiTea puzzle is not available yet.", { status: 404 });
+    throw Response.json(
+      {
+        code: "REALITEA_PUZZLE_NOT_FOUND",
+        error: "No RealiTea puzzle found for today",
+      },
+      {
+        status: 404,
+        statusText: "No RealiTea puzzle found for today",
+      },
+    );
   }
 
   return Response.json(puzzle);
