@@ -124,7 +124,7 @@ export default function Anagrams(): JSX.Element {
   const [input, setInput] = useState("eat, tea, tan, ate, nat, bat");
   const [isRunning, setIsRunning] = useState(false);
   const [result, setResult] = useState<AlgorithmResult | null>(() =>
-    groupBySortKey(tokenizeInput("eat, tea, tan, ate, nat, bat"))
+    groupBySortKey(tokenizeInput("eat, tea, tan, ate, nat, bat")),
   );
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>): void => {

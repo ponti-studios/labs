@@ -477,9 +477,7 @@ export function validateCandidate(
   const previousAnswers = context.previousAnswers ?? new Set<string>();
   const sources = context.sources ?? [];
 
-  if (
-    normalizedAnswer.length !== RHOBH_ANSWER_LENGTH
-  ) {
+  if (normalizedAnswer.length !== RHOBH_ANSWER_LENGTH) {
     reasons.push("answer must normalize to exactly five letters");
   }
 
@@ -595,9 +593,7 @@ export function mapRecordToStoredPuzzle(record: PuzzleRecord): StoredPuzzle {
       ? getPuzzleKeyFromDateKey(record.dateUtc)
       : null;
   const parts = getLocalDateParts(record.scheduledForDateKey ?? record.dateUtc ?? "");
-  const date = parts
-    ? createCanonicalPuzzleDate(parts[0], parts[1], parts[2])
-    : new Date();
+  const date = parts ? createCanonicalPuzzleDate(parts[0], parts[1], parts[2]) : new Date();
   return {
     answer: record.answer,
     answerType: record.answerType,

@@ -1,3 +1,4 @@
+import { Button } from "@pontistudios/ui";
 import { useEffect, useRef, useState } from "react";
 import type * as THREE from "three";
 import type { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -140,7 +141,7 @@ export default function ThreeglWebRequest() {
 
       const createBox = (name: string, color: number, position: THREE.Vector3) => {
         const geometry = new THREE.BoxGeometry(4, 4, 4);
-        const material = new THREE.MeshStandardMaterial({ color, metalness: 0.3, roughness: 0.6 });
+        const material = new THREE.MeshStandardMaterial({ color });
         const mesh = new THREE.Mesh(geometry, material);
         mesh.position.copy(position);
         scene.add(mesh);
@@ -150,7 +151,7 @@ export default function ThreeglWebRequest() {
 
       const createCylinder = (name: string, color: number, position: THREE.Vector3) => {
         const geometry = new THREE.CylinderGeometry(2, 2, 5, 32);
-        const material = new THREE.MeshStandardMaterial({ color, metalness: 0.3, roughness: 0.6 });
+        const material = new THREE.MeshStandardMaterial({ color });
         const mesh = new THREE.Mesh(geometry, material);
         mesh.position.copy(position);
         scene.add(mesh);
@@ -389,7 +390,7 @@ export default function ThreeglWebRequest() {
   };
 
   return (
-    <div className="relative h-[calc(100vh-5rem)] overflow-hidden bg-[#111] text-white">
+    <div className="relative h-[calc(100vh-5rem)] overflow-hidden bg-[#111] ">
       <div className="absolute top-4 right-4 z-50 bg-card rounded-lg p-3 max-w-72">
         <p className="ui-eyebrow mb-1">Web Request Flow</p>
         <p className="text-sm mb-3">
@@ -405,19 +406,28 @@ export default function ThreeglWebRequest() {
           Simulate Cache Hit
         </label>
 
-        <div className="mt-3 border-t pt-3 text-xs text-muted-foreground space-y-0.5">
-          <p>Client ↔ Server: Medium (WAN)</p>
-          <p>Server ↔ Cache: Very Fast (LAN)</p>
-          <p>Server ↔ Database: Fast (LAN)</p>
+        <div className="my-4 border-y py-3 text-xs text-muted-foreground">
+          <table className="w-full border-collapse">
+            <tbody>
+              <tr className="border-b border-white/10">
+                <td className="py-1 pr-3 font-medium">Client ↔ Server</td>
+                <td className="py-1 text-right">Medium (WAN)</td>
+              </tr>
+              <tr className="border-b border-white/10">
+                <td className="py-1 pr-3 font-medium">Server ↔ Cache</td>
+                <td className="py-1 text-right">Very Fast (LAN)</td>
+              </tr>
+              <tr>
+                <td className="py-1 pr-3 font-medium">Server ↔ Database</td>
+                <td className="py-1 text-right">Fast (LAN)</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
-        <button
-          type="button"
-          onClick={handleToggleAnimation}
-          className="mt-3 w-full rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-green-500"
-        >
+        <Button type="button" onClick={handleToggleAnimation}>
           {isRunning ? "Reset" : "Start Request"}
-        </button>
+        </Button>
       </div>
 
       <div ref={containerRef} className="h-full w-full" />

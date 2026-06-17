@@ -25,18 +25,19 @@ const TILE_STATE_CLASSES: Record<LetterState, string> = {
 const TILE_BASE = cva(
   "flex h-[3.6rem] w-[3.6rem] items-center justify-center rounded-2xl border text-[1.35rem] font-bold uppercase transition-colors sm:h-12 sm:w-12 sm:rounded-xl sm:text-lg md:h-14 md:w-14",
   {
-  variants: {
-    state: {
-      absent: TILE_STATE_CLASSES.absent,
-      correct: TILE_STATE_CLASSES.correct,
-      empty: "border-border bg-background text-foreground",
-      present: TILE_STATE_CLASSES.present,
+    variants: {
+      state: {
+        absent: TILE_STATE_CLASSES.absent,
+        correct: TILE_STATE_CLASSES.correct,
+        empty: "border-border bg-background text-foreground",
+        present: TILE_STATE_CLASSES.present,
+      },
+    },
+    defaultVariants: {
+      state: "empty",
     },
   },
-  defaultVariants: {
-    state: "empty",
-  },
-});
+);
 const TILE_REVEAL_STEP_MS = 250;
 const TILE_REVEAL_STYLES: Record<
   LetterState,
@@ -548,9 +549,8 @@ export default function RealiTeaRoute() {
               <p>Guess today&apos;s reality TV answer in 6 tries.</p>
               <p className="mt-2">
                 <span className="font-medium text-emerald-700">Green</span> means the right letter
-                is in the right place.{" "}
-                <span className="font-medium text-amber-700">Gold</span> means the letter belongs
-                in the answer but is in the wrong place.
+                is in the right place. <span className="font-medium text-amber-700">Gold</span>{" "}
+                means the letter belongs in the answer but is in the wrong place.
               </p>
             </div>
           )}

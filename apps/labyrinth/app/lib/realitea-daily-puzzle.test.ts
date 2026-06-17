@@ -28,8 +28,7 @@ const currentPool: GeneratedCandidate[] = [
     answer: "SWANS",
     answerType: "place",
     clue: "These elegant birds are inseparable from one iconic Beverly Hills estate.",
-    detail:
-      "The estate's swans became one of the most recognizable bits of RHOBH visual lore.",
+    detail: "The estate's swans became one of the most recognizable bits of RHOBH visual lore.",
     newsMode: "current",
     rationale: "Archive fixture",
     role: "Estate mascots",

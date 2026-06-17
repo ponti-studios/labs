@@ -1,6 +1,5 @@
 import archiveMoments from "../data/rhobh-archive-moments.json";
 
-import { chat, createOpenRouterTextAdapter } from "@pontistudios/ai";
 import {
   and,
   asc,
@@ -41,10 +40,12 @@ import {
   type SourceItem,
 } from "./realitea-daily-puzzle";
 import { LabyrinthServerEnv } from "./server/env";
+import { writeLlmAnalyticsRecord } from "./server/llm-analytics";
 
 interface GenerationDependencies {
   generationBatchId?: string;
   now?: Date;
+  sourceCollectionNow?: Date;
 }
 
 interface InventorySummary {
@@ -69,6 +70,8 @@ const RHOBH_CURRENT_SOURCE_QUERIES = [
   },
 ] as const;
 const RHOBH_SOURCE_COLLECTION_MAX_ITEMS = 5;
+const RHOBH_SOURCE_COLLECTION_MAX_TOKENS = 1200;
+const RHOBH_GENERATION_MAX_TOKENS = 1200;
 
 const rhobhGenerationCandidateSchema = z.object({
   answer: z
@@ -85,7 +88,9 @@ const rhobhGenerationCandidateSchema = z.object({
     .string()
     .min(1)
     .meta({ description: "A spoiler-safe explanation shown after the game ends." }),
-  newsMode: z.enum(["current"]).meta({ description: "Scheduled puzzles must come from fresh RHOBH news." }),
+  newsMode: z
+    .enum(["current"])
+    .meta({ description: "Scheduled puzzles must come from fresh RHOBH news." }),
   rationale: z.string().min(1).meta({ description: "Why this puzzle is a strong pick today." }),
   role: z.string().min(1).meta({ description: "Short descriptive label for the answer." }),
   sourceUrls: z.array(z.string()).meta({ description: "Source URLs supporting the candidate." }),
@@ -119,13 +124,6 @@ const sourceCollectionResponseSchema = {
     },
   },
 } as const;
-
-function getOpenRouterAdapter(env: LabyrinthServerEnv) {
-  return createOpenRouterTextAdapter({
-    model: env.openRouterModel as "openai/gpt-5.1",
-    apiKey: env.openRouterApiKey,
-  });
-}
 
 function buildGenerationBatchId(prefix: string, dateKey: string) {
   return `${prefix}:${dateKey}`;
@@ -195,19 +193,6 @@ function buildPuzzleInsertValues(
   };
 }
 
-function buildEvergreenCandidates(): GeneratedCandidate[] {
-  return archiveMoments.map((entry) => ({
-    ...entry,
-    answerType: entry.answerType as GeneratedCandidate["answerType"],
-    newsMode: entry.newsMode as GeneratedCandidate["newsMode"],
-    rationale: "Evergreen reserve inventory",
-    sourcePublishedAt: [],
-    sourceSummary: [],
-    sourceTitles: [],
-    sourceUrls: [],
-  }));
-}
-
 export async function collectCurrentSources(
   dependencies: GenerationDependencies = {},
 ): Promise<SourceItem[]> {
@@ -217,6 +202,61 @@ export async function collectCurrentSources(
     return [];
   }
 
+  const startedAt = new Date();
+  const requestBody = {
+    model: env.data.openRouterModel,
+    messages: [
+      {
+        role: "system",
+        content:
+          "You collect current RHOBH coverage for a daily puzzle generator. Use the provided web tools to search recent RHOBH coverage and fetch the most relevant articles. Return only articles from the allowed domains, deduplicated by URL, with real publication timestamps when available. Each summary must be spoiler-safe, fact-based, and concise.",
+      },
+      {
+        role: "user",
+        content: JSON.stringify(
+          {
+            allowedDomains: RHOBH_CURRENT_SOURCE_QUERIES.map((sourceQuery) => sourceQuery.domain),
+            maxItems: RHOBH_SOURCE_COLLECTION_MAX_ITEMS,
+            queries: RHOBH_CURRENT_SOURCE_QUERIES.map((sourceQuery) => sourceQuery.query),
+            todayUtc: (dependencies.sourceCollectionNow ?? new Date()).toISOString(),
+          },
+          null,
+          2,
+        ),
+      },
+    ],
+    max_tokens: RHOBH_SOURCE_COLLECTION_MAX_TOKENS,
+    response_format: {
+      type: "json_schema",
+      json_schema: {
+        name: "source_items",
+        schema: sourceCollectionResponseSchema,
+        strict: true,
+      },
+    },
+    tools: [
+      {
+        type: "openrouter:web_search",
+        parameters: {
+          allowed_domains: RHOBH_CURRENT_SOURCE_QUERIES.map((sourceQuery) => sourceQuery.domain),
+          engine: "auto",
+          max_results: 8,
+          max_total_results: 20,
+          search_context_size: "medium",
+        },
+      },
+      {
+        type: "openrouter:web_fetch",
+        parameters: {
+          allowed_domains: RHOBH_CURRENT_SOURCE_QUERIES.map((sourceQuery) => sourceQuery.domain),
+          engine: "openrouter",
+          max_content_tokens: 4000,
+          max_uses: 8,
+        },
+      },
+    ],
+  };
+
   try {
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
@@ -224,73 +264,44 @@ export async function collectCurrentSources(
         Authorization: `Bearer ${env.data.openRouterApiKey}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        model: env.data.openRouterModel,
-        messages: [
-          {
-            role: "system",
-            content:
-              "You collect current RHOBH coverage for a daily puzzle generator. Use the provided web tools to search recent RHOBH coverage and fetch the most relevant articles. Return only articles from the allowed domains, deduplicated by URL, with real publication timestamps when available. Each summary must be spoiler-safe, fact-based, and concise.",
-          },
-          {
-            role: "user",
-            content: JSON.stringify(
-              {
-                allowedDomains: RHOBH_CURRENT_SOURCE_QUERIES.map(
-                  (sourceQuery) => sourceQuery.domain,
-                ),
-                maxItems: RHOBH_SOURCE_COLLECTION_MAX_ITEMS,
-                queries: RHOBH_CURRENT_SOURCE_QUERIES.map((sourceQuery) => sourceQuery.query),
-                todayUtc: (dependencies.now ?? new Date()).toISOString(),
-              },
-              null,
-              2,
-            ),
-          },
-        ],
-        response_format: {
-          type: "json_schema",
-          json_schema: {
-            name: "source_items",
-            schema: sourceCollectionResponseSchema,
-            strict: true,
-          },
-        },
-        tools: [
-          {
-            type: "openrouter:web_search",
-            parameters: {
-              allowed_domains: RHOBH_CURRENT_SOURCE_QUERIES.map(
-                (sourceQuery) => sourceQuery.domain,
-              ),
-              engine: "auto",
-              max_results: 8,
-              max_total_results: 20,
-              search_context_size: "medium",
-            },
-          },
-          {
-            type: "openrouter:web_fetch",
-            parameters: {
-              allowed_domains: RHOBH_CURRENT_SOURCE_QUERIES.map(
-                (sourceQuery) => sourceQuery.domain,
-              ),
-              engine: "openrouter",
-              max_content_tokens: 4000,
-              max_uses: 8,
-            },
-          },
-        ],
-      }),
+      body: JSON.stringify(requestBody),
+    });
+
+    const payload = (await response.json()) as {
+      choices?: Array<{ message?: { content?: string | null } }>;
+      error?: unknown;
+      id?: string;
+      usage?: {
+        completion_tokens?: number;
+        prompt_tokens?: number;
+        total_tokens?: number;
+      };
+    };
+
+    await writeLlmAnalyticsRecord({
+      durationMs: Date.now() - startedAt.getTime(),
+      feature: "realitea",
+      httpStatus: response.status,
+      metadata: {
+        generationBatchId: dependencies.generationBatchId ?? null,
+        sourceCollectionNow: dependencies.sourceCollectionNow?.toISOString() ?? null,
+      },
+      model: env.data.openRouterModel,
+      operation: "source-collection",
+      provider: "openrouter",
+      request: requestBody,
+      response: payload,
+      status: response.ok ? "success" : "error",
+      usage: {
+        completionTokens: payload.usage?.completion_tokens ?? null,
+        promptTokens: payload.usage?.prompt_tokens ?? null,
+        totalTokens: payload.usage?.total_tokens ?? null,
+      },
     });
 
     if (!response.ok) {
       return [];
     }
-
-    const payload = (await response.json()) as {
-      choices?: Array<{ message?: { content?: string | null } }>;
-    };
     const rawContent = payload.choices?.[0]?.message?.content;
     if (typeof rawContent !== "string" || rawContent.length === 0) {
       return [];
@@ -317,7 +328,21 @@ export async function collectCurrentSources(
     }
 
     return sourceItems;
-  } catch {
+  } catch (error) {
+    await writeLlmAnalyticsRecord({
+      durationMs: Date.now() - startedAt.getTime(),
+      error,
+      feature: "realitea",
+      metadata: {
+        generationBatchId: dependencies.generationBatchId ?? null,
+        sourceCollectionNow: dependencies.sourceCollectionNow?.toISOString() ?? null,
+      },
+      model: env.data.openRouterModel,
+      operation: "source-collection",
+      provider: "openrouter",
+      request: requestBody,
+      status: "error",
+    });
     return [];
   }
 }
@@ -326,6 +351,7 @@ async function generateCandidatesFromSources(
   dateKey: string,
   sources: SourceItem[],
   excludedAnswers: string[] = [],
+  dependencies: GenerationDependencies = {},
 ): Promise<GeneratedCandidate[]> {
   const env = LabyrinthServerEnv.safeParse(process.env);
 
@@ -333,39 +359,119 @@ async function generateCandidatesFromSources(
     return [];
   }
 
+  const startedAt = new Date();
+  const request = {
+    model: env.data.openRouterModel,
+    messages: [
+      {
+        role: "system",
+        content: [
+          "You create daily RealiTea puzzles for RHOBH.",
+          "Generate candidates only from current RHOBH coverage.",
+          "Return 3 to 5 candidates inside the schema field exactly.",
+          "Every answer must be supported by at least two distinct allowed-source domains, and one of them must be bravotv.com.",
+          "Do not use a cast member's name as the answer. Prefer the underlying storyline, object, place, phrase, or moment instead.",
+          `Choose answers that normalize to exactly ${RHOBH_ANSWER_LENGTH} letters after removing spaces and punctuation.`,
+          "Prefer concise single-word answers or short two-word answers that collapse cleanly to five letters.",
+          "Never leak the exact answer text in the clue or detail. Before returning, self-check that neither field contains the answer or a trivial restatement of it.",
+          "If a candidate cannot satisfy all of those rules, do not include it.",
+        ].join("\n"),
+      },
+      {
+        role: "user",
+        content: JSON.stringify(
+          {
+            dateKey,
+            excludedAnswers,
+            sources,
+          },
+          null,
+          2,
+        ),
+      },
+    ],
+    max_tokens: RHOBH_GENERATION_MAX_TOKENS,
+    response_format: {
+      type: "json_schema",
+      json_schema: {
+        name: "rhobh_generation_candidates",
+        schema: z.toJSONSchema(rhobhGenerationResponseSchema),
+        strict: true,
+      },
+    },
+  };
+
   try {
-    const response = await chat({
-      adapter: getOpenRouterAdapter(env.data),
-      systemPrompts: [
-        "You create daily RealiTea puzzles for RHOBH.",
-        "Generate candidates only from current RHOBH coverage.",
-        "Return 3 to 5 candidates inside the schema field exactly.",
-        "Every answer must be supported by at least two distinct allowed-source domains, and one of them must be bravotv.com.",
-        "Do not use a cast member's name as the answer. Prefer the underlying storyline, object, place, phrase, or moment instead.",
-        `Choose answers that normalize to exactly ${RHOBH_ANSWER_LENGTH} letters after removing spaces and punctuation.`,
-        "Prefer concise single-word answers or short two-word answers that collapse cleanly to five letters.",
-        "Never leak the exact answer text in the clue or detail. Before returning, self-check that neither field contains the answer or a trivial restatement of it.",
-        "If a candidate cannot satisfy all of those rules, do not include it.",
-      ],
-      messages: [
-        {
-          role: "user",
-          content: JSON.stringify(
-            {
-              dateKey,
-              excludedAnswers,
-              sources,
-            },
-            null,
-            2,
-          ),
-        },
-      ],
-      outputSchema: rhobhGenerationResponseSchema,
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${env.data.openRouterApiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(request),
     });
 
-    return response.candidates;
-  } catch {
+    const payload = (await response.json()) as {
+      choices?: Array<{ message?: { content?: string | null } }>;
+      error?: unknown;
+      id?: string;
+      usage?: {
+        completion_tokens?: number;
+        prompt_tokens?: number;
+        total_tokens?: number;
+      };
+    };
+
+    await writeLlmAnalyticsRecord({
+      durationMs: Date.now() - startedAt.getTime(),
+      feature: "realitea",
+      httpStatus: response.status,
+      metadata: {
+        dateKey,
+        generationBatchId: dependencies.generationBatchId ?? null,
+        sourceCount: sources.length,
+      },
+      model: env.data.openRouterModel,
+      operation: "candidate-generation",
+      provider: "openrouter",
+      request,
+      response: payload,
+      status: response.ok ? "success" : "error",
+      usage: {
+        completionTokens: payload.usage?.completion_tokens ?? null,
+        promptTokens: payload.usage?.prompt_tokens ?? null,
+        totalTokens: payload.usage?.total_tokens ?? null,
+      },
+    });
+
+    if (!response.ok) {
+      return [];
+    }
+
+    const rawContent = payload.choices?.[0]?.message?.content;
+    if (typeof rawContent !== "string" || rawContent.length === 0) {
+      return [];
+    }
+
+    const parsed = rhobhGenerationResponseSchema.parse(JSON.parse(rawContent));
+
+    return parsed.candidates;
+  } catch (error) {
+    await writeLlmAnalyticsRecord({
+      durationMs: Date.now() - startedAt.getTime(),
+      error,
+      feature: "realitea",
+      metadata: {
+        dateKey,
+        generationBatchId: dependencies.generationBatchId ?? null,
+        sourceCount: sources.length,
+      },
+      model: env.data.openRouterModel,
+      operation: "candidate-generation",
+      provider: "openrouter",
+      request,
+      status: "error",
+    });
     return [];
   }
 }
@@ -483,7 +589,9 @@ async function generateCurrentCandidate(
   const rejectedCandidates = new Set<string>();
 
   for (let attempt = 0; attempt < 3; attempt += 1) {
-    const sources = await collectCurrentSources({ now: dependencies.now ?? date });
+    const sources = await collectCurrentSources({
+      sourceCollectionNow: dependencies.sourceCollectionNow,
+    });
 
     if (sources.length === 0) {
       console.warn("RHOBH scheduled puzzle source collection returned no results", {
@@ -493,10 +601,12 @@ async function generateCurrentCandidate(
       continue;
     }
 
-    const candidates = await generateCandidatesFromSources(dateKey, sources, [
-      ...previousAnswers,
-      ...rejectedCandidates,
-    ]);
+    const candidates = await generateCandidatesFromSources(
+      dateKey,
+      sources,
+      [...previousAnswers, ...rejectedCandidates],
+      dependencies,
+    );
 
     if (candidates.length === 0) {
       console.warn("RHOBH scheduled puzzle generation returned no candidates", {
@@ -551,7 +661,18 @@ function chooseEvergreenCandidates(
   count: number,
   excludedAnswers: Set<string>,
 ): GeneratedCandidate[] {
-  const pool = buildEvergreenCandidates();
+  const pool = archiveMoments.map(
+    (entry): GeneratedCandidate => ({
+      ...entry,
+      answerType: entry.answerType as GeneratedCandidate["answerType"],
+      newsMode: entry.newsMode as GeneratedCandidate["newsMode"],
+      rationale: "Evergreen reserve inventory",
+      sourcePublishedAt: [],
+      sourceSummary: [],
+      sourceTitles: [],
+      sourceUrls: [],
+    }),
+  );
   const selected: GeneratedCandidate[] = [];
 
   for (const candidate of pool) {
@@ -632,7 +753,8 @@ export async function generateReservePuzzles(
     created.push(
       await persistInventoryPuzzle(candidate, {
         generationBatchId:
-          dependencies.generationBatchId ?? buildGenerationBatchId("reserve", getDateKey(new Date())),
+          dependencies.generationBatchId ??
+          buildGenerationBatchId("reserve", getDateKey(new Date())),
         sourceKind: "evergreen",
         status: "reserve",
       }),
@@ -676,7 +798,10 @@ async function countReservePuzzles() {
     .select({ value: count() })
     .from(rhobhDailyPuzzles)
     .where(
-      and(eq(rhobhDailyPuzzles.franchise, RHOBH_FRANCHISE), eq(rhobhDailyPuzzles.status, "reserve")),
+      and(
+        eq(rhobhDailyPuzzles.franchise, RHOBH_FRANCHISE),
+        eq(rhobhDailyPuzzles.status, "reserve"),
+      ),
     );
 
   return rows[0]?.value ?? 0;
@@ -727,7 +852,10 @@ export async function promoteScheduledOrReservePuzzle(now: Date): Promise<Puzzle
       .select()
       .from(rhobhDailyPuzzles)
       .where(
-        and(eq(rhobhDailyPuzzles.franchise, RHOBH_FRANCHISE), eq(rhobhDailyPuzzles.status, "reserve")),
+        and(
+          eq(rhobhDailyPuzzles.franchise, RHOBH_FRANCHISE),
+          eq(rhobhDailyPuzzles.status, "reserve"),
+        ),
       )
       .orderBy(asc(rhobhDailyPuzzles.createdAt))
       .limit(1);
@@ -801,7 +929,9 @@ export async function reconcilePuzzleInventory(
       ),
     );
   const existingKeys = new Set(
-    scheduledRows.map((row) => row.scheduledForDateKey).filter((value): value is string => Boolean(value)),
+    scheduledRows
+      .map((row) => row.scheduledForDateKey)
+      .filter((value): value is string => Boolean(value)),
   );
 
   const createdScheduledDateKeys: string[] = [];
@@ -813,6 +943,7 @@ export async function reconcilePuzzleInventory(
     const created = await generateScheduledPuzzle(dateKey, {
       generationBatchId: buildGenerationBatchId("reconcile", activeWindow.dateKey),
       now: parseDate(dateKey) ?? now,
+      sourceCollectionNow: now,
     });
     if (created) {
       createdScheduledDateKeys.push(dateKey);
@@ -834,7 +965,12 @@ export async function reconcilePuzzleInventory(
     activeDateKey: activeWindow.dateKey,
     createdReserveCount: createdReserves.length,
     createdScheduledDateKeys,
-    promotedSourceKind: promoted?.sourceKind === "evergreen" ? "evergreen" : promoted?.sourceKind === "current" ? "current" : null,
+    promotedSourceKind:
+      promoted?.sourceKind === "evergreen"
+        ? "evergreen"
+        : promoted?.sourceKind === "current"
+          ? "current"
+          : null,
     publishedSourceKind:
       published?.sourceKind === "evergreen"
         ? "evergreen"
@@ -854,6 +990,7 @@ export async function generateDailyPuzzle(date: Date): Promise<PuzzleRecord | nu
   return generateScheduledPuzzle(getDateKey(date), {
     generationBatchId: buildGenerationBatchId("manual", getDateKey(date)),
     now: date,
+    sourceCollectionNow: new Date(),
   });
 }
 

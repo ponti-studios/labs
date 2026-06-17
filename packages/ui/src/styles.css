@@ -1,11 +1,11 @@
-@import 'tailwindcss';
-@import './animations.css';
+@import "tailwindcss";
+@import "./animations.css";
 
 @theme {
   --font-family-primary:
-    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', system-ui,
+    -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", system-ui,
     sans-serif;
-  --font-family-mono: 'SF Mono', 'Menlo', ui-monospace, monospace;
+  --font-family-mono: "SF Mono", "Menlo", ui-monospace, monospace;
 
   --font-size-large-title: 34px;
   --font-size-title-1: 28px;
@@ -40,36 +40,36 @@
   --letter-spacing-relaxed: 0.01em;
 
   /* Luxury matte palette — LV/Hermès inspired */
-  --color-bg-base: #faf4ea;          /* warm ivory */
-  --color-bg-surface: #f5ecd7;       /* ivory */
-  --color-bg-elevated: #ede0cc;      /* warm linen */
+  --color-bg-base: #faf4ea; /* warm ivory */
+  --color-bg-surface: #f5ecd7; /* ivory */
+  --color-bg-elevated: #ede0cc; /* warm linen */
   --color-bg-overlay: rgba(26, 18, 8, 0.06);
 
-  --color-text-primary: #1a1208;     /* near-black */
-  --color-text-secondary: #5c3d2e;   /* monogram brown */
-  --color-text-tertiary: #a0703a;    /* saddle tan */
-  --color-text-disabled: #c8a882;    /* canvas tan */
+  --color-text-primary: #1a1208; /* near-black */
+  --color-text-secondary: #5c3d2e; /* monogram brown */
+  --color-text-tertiary: #a0703a; /* saddle tan */
+  --color-text-disabled: #c8a882; /* canvas tan */
 
-  --color-border-default: #e8d5b5;   /* natural leather */
+  --color-border-default: #e8d5b5; /* natural leather */
   --color-border-subtle: rgba(232, 213, 181, 0.6);
   --color-border-focus: rgba(92, 61, 46, 0.5);
 
   --color-icon-primary: #1a1208;
-  --color-icon-muted: #a0703a;       /* saddle tan */
+  --color-icon-muted: #a0703a; /* saddle tan */
 
-  --color-success: #4a5c3c;          /* cypress green */
-  --color-warning: #a0703a;          /* saddle tan */
-  --color-destructive: #8c1c1c;      /* rouge casaque */
+  --color-success: #4a5c3c; /* cypress green */
+  --color-warning: #a0703a; /* saddle tan */
+  --color-destructive: #8c1c1c; /* rouge casaque */
   --color-destructive-foreground: #f5ecd7;
 
-  --color-accent: #c8a882;           /* canvas tan */
+  --color-accent: #c8a882; /* canvas tan */
   --color-accent-foreground: #1a1208;
 
-  --color-primary: #1a1208;          /* near-black */
+  --color-primary: #1a1208; /* near-black */
   --color-primary-foreground: #f5ecd7;
-  --color-secondary: #ede0cc;        /* warm linen */
+  --color-secondary: #ede0cc; /* warm linen */
   --color-secondary-foreground: #1a1208;
-  --color-muted: #f0e6d0;            /* light ivory */
+  --color-muted: #f0e6d0; /* light ivory */
   --color-muted-foreground: #a0703a; /* saddle tan */
   --color-foreground: #1a1208;
   --color-background: #faf4ea;
@@ -78,15 +78,15 @@
   --color-popover: #f5ecd7;
   --color-popover-foreground: #1a1208;
   --color-input: #e8d5b5;
-  --color-ring: #5c3d2e;             /* monogram brown */
+  --color-ring: #5c3d2e; /* monogram brown */
   --color-border: #e8d5b5;
 
   --color-emphasis-highest: #1a1208;
-  --color-emphasis-high: #3d2010;    /* chocolate */
-  --color-emphasis-medium: #5c3d2e;  /* monogram brown */
-  --color-emphasis-low: #a0703a;     /* saddle tan */
-  --color-emphasis-lower: #c8a882;   /* canvas tan */
-  --color-emphasis-subtle: #e8d5b5;  /* natural */
+  --color-emphasis-high: #3d2010; /* chocolate */
+  --color-emphasis-medium: #5c3d2e; /* monogram brown */
+  --color-emphasis-low: #a0703a; /* saddle tan */
+  --color-emphasis-lower: #c8a882; /* canvas tan */
+  --color-emphasis-subtle: #e8d5b5; /* natural */
   --color-emphasis-minimal: #f0e6d0;
   --color-emphasis-faint: #faf4ea;
 
@@ -195,7 +195,7 @@
     transition: none;
   }
 
-  *:is(button, a, input, select, textarea, [role='button'], [role='link']) {
+  *:is(button, a, input, select, textarea, [role="button"], [role="link"]) {
     transition-property: background-color, color, border-color, opacity;
     transition-duration: var(--duration-fast);
     transition-timing-function: var(--ease-default);
