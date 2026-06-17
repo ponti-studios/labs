@@ -1,58 +1,73 @@
 import { ParticleBackground } from "@pontistudios/ui";
 
-type RouteEntry = {
+type NavEntry = {
   path: string;
-  href?: string;
-  kind: "page" | "api" | "dynamic";
+  label: string;
+  source?: string;
 };
 
-const routeEntries: RouteEntry[] = [
-  { path: "/", href: "/", kind: "page" },
-  { path: "/gen/image", href: "/gen/image", kind: "page" },
-  { path: "/api/gen/image", kind: "api" },
-  { path: "/api/words/validate", kind: "api" },
-  { path: "/tarot", href: "/tarot", kind: "page" },
-  { path: "/api/tarot", kind: "api" },
-  { path: "/covid", href: "/covid", kind: "page" },
-  //   { path: "/covid/:countryCode", kind: "dynamic" },
-  //   { path: "/covid/:countryCode/pandemic-waves", kind: "dynamic" },
-  //   { path: "/covid/:countryCode/vaccination-effectiveness", kind: "dynamic" },
-  //   { path: "/covid/:countryCode/seasonal-patterns", kind: "dynamic" },
-  //   { path: "/covid/:countryCode/outlier-detection", kind: "dynamic" },
-  { path: "/games/cards", href: "/games/cards", kind: "page" },
-  { path: "/games/tetris", href: "/games/tetris", kind: "page" },
-  { path: "/games/realitea", href: "/games/realitea", kind: "page" },
-  { path: "/business-tools", href: "/business-tools", kind: "page" },
-  { path: "/business-tools/marketing", href: "/business-tools/marketing", kind: "page" },
-  { path: "/experiments/glass", href: "/experiments/glass", kind: "page" },
-  { path: "/experiments/infinite-scroll", href: "/experiments/infinite-scroll", kind: "page" },
-  { path: "/experiments/llm-interface", href: "/experiments/llm-interface", kind: "page" },
-  {
-    path: "/experiments/threegl-web-request",
-    href: "/experiments/threegl-web-request",
-    kind: "page",
-  },
-  {
-    path: "/experiments/threegl-image-gallery",
-    href: "/experiments/threegl-image-gallery",
-    kind: "page",
-  },
+type Category = {
+  name: string;
+  entries: NavEntry[];
+};
 
-  { path: "/challenges/anagrams", href: "/challenges/anagrams", kind: "page" },
-  { path: "/challenges/click-therapeutics", href: "/challenges/click-therapeutics", kind: "page" },
-  { path: "/challenges/cloudmargin", href: "/challenges/cloudmargin", kind: "page" },
-  { path: "/challenges/daily-mail", href: "/challenges/daily-mail", kind: "page" },
-  { path: "/challenges/fee-or-upfront", href: "/challenges/fee-or-upfront", kind: "page" },
-  { path: "/challenges/cloud-pricing", href: "/challenges/cloud-pricing", kind: "page" },
-  { path: "/challenges/prime-countdown", href: "/challenges/prime-countdown", kind: "page" },
-  { path: "/challenges/growth-street", href: "/challenges/growth-street", kind: "page" },
-  { path: "/challenges/interview-cake", href: "/challenges/interview-cake", kind: "page" },
-  { path: "/challenges/kensho", href: "/challenges/kensho", kind: "page" },
-  { path: "/challenges/peterson-academy", href: "/challenges/peterson-academy", kind: "page" },
-  { path: "/challenges/qubit", href: "/challenges/qubit", kind: "page" },
-  { path: "/challenges/quilt", href: "/challenges/quilt", kind: "page" },
-  { path: "/challenges/red-badger", href: "/challenges/red-badger", kind: "page" },
-  { path: "/challenges/vendigo", href: "/challenges/vendigo", kind: "page" },
+const categories: Category[] = [
+  {
+    name: "Games",
+    entries: [
+      { path: "/games/realitea", label: "RaliTea" },
+      { path: "/games/cards", label: "Cards" },
+      { path: "/games/tetris", label: "Tetris" },
+    ],
+  },
+  {
+    name: "Experiments",
+    entries: [
+      { path: "/experiments/llm-interface", label: "LLM Interface" },
+      { path: "/experiments/glass", label: "Glass" },
+      { path: "/experiments/threegl-web-request", label: "ThreeGL Web Request" },
+      { path: "/experiments/threegl-image-gallery", label: "ThreeGL Image Gallery" },
+      { path: "/experiments/infinite-scroll", label: "Infinite Scroll" },
+    ],
+  },
+  {
+    name: "Tools",
+    entries: [
+      { path: "/business-tools", label: "Business Tools" },
+      { path: "/business-tools/marketing", label: "Marketing" },
+      { path: "/gen/image", label: "Image Generation" },
+      { path: "/tarot", label: "Tarot" },
+      { path: "/covid", label: "COVID Analytics" },
+    ],
+  },
+  {
+    name: "Challenges",
+    entries: [
+      { path: "/challenges/anagrams", label: "Group Anagrams", source: "ChartHop" },
+      {
+        path: "/challenges/click-therapeutics",
+        label: "Election Vote Counter",
+        source: "Click Therapeutics",
+      },
+      {
+        path: "/challenges/cloudmargin",
+        label: "Financial Accruals Manager",
+        source: "CloudMargin",
+      },
+      { path: "/challenges/cloud-pricing", label: "Cloud Cost Calculator" },
+      { path: "/challenges/fee-or-upfront", label: "Payment Fee Calculator" },
+      { path: "/challenges/kensho", label: "Filterable Contacts Table", source: "Kensho" },
+      {
+        path: "/challenges/peterson-academy",
+        label: "Infinite Image Carousel",
+        source: "Peterson Academy",
+      },
+      { path: "/challenges/prime-countdown", label: "Prime Number Countdown" },
+      { path: "/challenges/qubit", label: "CSS Selector Engine", source: "Qubit" },
+      { path: "/challenges/red-badger", label: "Mars Robot Navigator", source: "Red Badger" },
+      { path: "/challenges/vendigo", label: "Book Shop Search", source: "Vendigo" },
+    ],
+  },
 ];
 
 export function meta(): Array<{
@@ -61,48 +76,36 @@ export function meta(): Array<{
   content?: string;
 }> {
   return [
-    { title: "Labyrinth Routes" },
-    {
-      name: "description",
-      content: "A plain-text index of every route currently configured in Labyrinth.",
-    },
+    { title: "Labyrinth" },
+    { name: "description", content: "A portfolio of experiments, games, tools, and challenges." },
   ];
 }
 
 export default function Home() {
   return (
-    <section className="relative mx-auto flex min-h-[calc(100vh-7rem)] w-full items-start justify-center">
+    <section className="relative mx-auto w-full">
       <ParticleBackground />
-      <div className="w-full rounded-2xl border border-border bg-background p-6 sm:p-8">
-        <header className="mb-8 space-y-2 font-mono">
-          <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground">Labyrinth</p>
-          <h1 className="text-2xl text-foreground sm:text-3xl">Available routes</h1>
-        </header>
-
-        <ul className="space-y-3 font-mono text-sm text-foreground">
-          {routeEntries.map((route) => (
-            <li
-              key={route.path}
-              className="flex min-h-11 items-start justify-between gap-4 border-b border-border/70 pb-3"
-            >
-              {route.href ? (
-                <a
-                  href={route.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="transition-colors duration-150 hover:text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-                >
-                  {route.path}
-                </a>
-              ) : (
-                <span>{route.path}</span>
-              )}
-              <span className="shrink-0 text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                {route.kind}
-              </span>
-            </li>
+      <div className="w-full bg-background">
+        <div className="grid gap-8 sm:grid-cols-2">
+          {categories.map((cat) => (
+            <div key={cat.name} className="space-y-4">
+              <h2 className="ui-eyebrow">{cat.name}</h2>
+              <ul className="flex flex-col gap-2">
+                {cat.entries.map((entry) => (
+                  <li key={entry.path}>
+                    <a
+                      href={entry.path}
+                      title={entry.source ? `Source: ${entry.source}` : undefined}
+                      className="rounded-md transition-colors duration-100 hover:bg-muted hover:text-foreground  focus-visible:text-foreground focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-ring"
+                    >
+                      {entry.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
     </section>
   );

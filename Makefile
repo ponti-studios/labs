@@ -1,22 +1,4 @@
-.PHONY: dev-earth dev-commune dev-labyrinth dev-tempo dev-ui dev-health check clean reset
-
-dev-earth:
-	pnpm dev:earth
-
-dev-commune:
-	pnpm dev:commune
-
-dev-labyrinth:
-	pnpm dev:labyrinth
-
-dev-tempo:
-	pnpm dev:tempo
-
-dev-ui:
-	pnpm dev:ui
-
-dev-health:
-	pnpm dev:health
+.PHONY: check clean reset
 
 check:
 	pnpm lint

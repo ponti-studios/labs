@@ -123,7 +123,9 @@ const ROW_STAGGER_MS = 100;
 export default function Anagrams(): JSX.Element {
   const [input, setInput] = useState("eat, tea, tan, ate, nat, bat");
   const [isRunning, setIsRunning] = useState(false);
-  const [result, setResult] = useState<AlgorithmResult | null>(null);
+  const [result, setResult] = useState<AlgorithmResult | null>(() =>
+    groupBySortKey(tokenizeInput("eat, tea, tan, ate, nat, bat"))
+  );
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
     setInput(event.target.value);
