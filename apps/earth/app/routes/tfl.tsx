@@ -1,81 +1,107 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router";
 import { useTflCameras } from "../lib/hooks/useOrbitData";
 
+const MAX_RESULTS = 20;
+
 export default function Tfl() {
   const { data: cameras, isLoading } = useTflCameras();
+  const [query, setQuery] = useState("");
 
   const online = useMemo(
     () => (cameras ?? []).filter((c) => c.available === "true").length,
     [cameras],
   );
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <div className="text-[var(--text-muted)] font-mono text-xs tracking-widest uppercase">
-          Loading cameras...
-        </div>
-      </div>
-    );
-  }
+  const results = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q || !cameras) return [];
+    return cameras.filter((c) => c.commonName.toLowerCase().includes(q)).slice(0, MAX_RESULTS);
+  }, [cameras, query]);
 
   return (
     <div className="space-y-5">
       <div>
-        <h2 className="text-sm font-mono font-semibold tracking-widest uppercase text-[var(--accent-bright)] mb-1">
-          TfL Traffic Network
-        </h2>
-        <p className="text-[var(--text-muted)] text-xs leading-relaxed">
-          London traffic camera feeds.
+        <p className="ui-eyebrow mb-1">TfL Traffic Network</p>
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          Click a camera on the map, or search by location.
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-2">
-        <div className="cesium-card p-3">
-          <div className="cesium-card-label">Cameras</div>
-          <div className="cesium-card-value">{cameras?.length ?? 0}</div>
-        </div>
-        <div className="cesium-card p-3">
-          <div className="cesium-card-label">Online</div>
-          <div className="cesium-card-value cesium-card-value--accent">{online}</div>
-        </div>
-      </div>
+      <input
+        type="search"
+        placeholder="Search cameras…"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        className="w-full bg-card border border-border rounded-md px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-ring transition-colors"
+      />
 
-      <div>
-        <div className="font-mono text-[9px] tracking-[0.15em] uppercase text-[var(--text-muted)] mb-2 pb-1 border-b border-[var(--border-default)]">
-          Camera Feeds
+      {query.trim() ? (
+        <div>
+          {results.length === 0 ? (
+            <p className="text-xs text-muted-foreground py-2">No cameras match "{query}"</p>
+          ) : (
+            <ul className="space-y-1">
+              {results.map((camera) => (
+                <li key={camera.id}>
+                  <Link
+                    to={`/tfl/${camera.id}`}
+                    className="bg-card border border-border rounded-md flex items-center gap-3 p-3 hover:border-ring transition-colors"
+                  >
+                    <span
+                      className={`size-2 rounded-full flex-shrink-0 ${camera.available === "true" ? "bg-green-500" : "bg-muted-foreground"}`}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-foreground text-sm truncate">
+                        {camera.commonName}
+                      </div>
+                      <div className="font-mono text-[10px] text-muted-foreground">
+                        {camera.lat.toFixed(4)}, {camera.lng.toFixed(4)}
+                      </div>
+                    </div>
+                    <span className="font-mono text-[9px] tracking-wider uppercase flex-shrink-0">
+                      {camera.available === "true" ? (
+                        <span className="text-green-500">LIVE</span>
+                      ) : (
+                        <span className="text-muted-foreground">OFF</span>
+                      )}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+              {cameras &&
+                cameras.filter((c) =>
+                  c.commonName.toLowerCase().includes(query.trim().toLowerCase()),
+                ).length > MAX_RESULTS && (
+                  <p className="text-[10px] text-muted-foreground text-center pt-1">
+                    Showing {MAX_RESULTS} of{" "}
+                    {
+                      cameras.filter((c) =>
+                        c.commonName.toLowerCase().includes(query.trim().toLowerCase()),
+                      ).length
+                    }{" "}
+                    — refine your search
+                  </p>
+                )}
+            </ul>
+          )}
         </div>
-        <ul className="space-y-1">
-          {cameras?.map((camera) => (
-            <li key={camera.id}>
-              <Link
-                to={`/tfl/${camera.id}`}
-                className="cesium-card flex items-center gap-3 p-3 hover:border-[var(--border-active)] transition-colors"
-              >
-                <span
-                  className={`cesium-status-dot cesium-status-dot--${camera.available === "true" ? "online" : "offline"}`}
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="font-medium text-[var(--text-primary)] text-sm truncate">
-                    {camera.commonName}
-                  </div>
-                  <div className="font-mono text-[10px] text-[var(--text-muted)]">
-                    {camera.lat.toFixed(4)}, {camera.lng.toFixed(4)}
-                  </div>
-                </div>
-                <div className="font-mono text-[9px] tracking-wider uppercase text-[var(--text-muted)] flex-shrink-0">
-                  {camera.available === "true" ? (
-                    <span className="text-[var(--status-online)]">LIVE</span>
-                  ) : (
-                    <span className="text-[var(--text-muted)]">OFF</span>
-                  )}
-                </div>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-2">
+          <div className="bg-card border border-border rounded-md p-3">
+            <p className="ui-data-label">Cameras</p>
+            <p className="text-sm font-semibold tabular-nums mt-1">
+              {isLoading ? "—" : (cameras?.length ?? 0)}
+            </p>
+          </div>
+          <div className="bg-card border border-border rounded-md p-3">
+            <p className="ui-data-label">Online</p>
+            <p className="text-sm font-semibold tabular-nums text-green-600 mt-1">
+              {isLoading ? "—" : online}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -5,7 +5,8 @@
       "name": "earth",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@pontistudios/earth", "dev"],
-      "port": 3006
+      "port": 3006,
+      "autoPort": true
     }
   ,{
       "name": "labyrinth",
