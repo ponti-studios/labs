@@ -15,8 +15,8 @@ describe("realitea helpers", () => {
   });
 
   it("returns a stable puzzle key for the same local day", () => {
-    const morning = getPuzzleKeyForDate(new Date(2026, 4, 20, 1, 0, 0));
-    const evening = getPuzzleKeyForDate(new Date(2026, 4, 20, 23, 59, 59));
+    const morning = getPuzzleKeyForDate(new Date("2026-05-20T08:00:00.000Z"));
+    const evening = getPuzzleKeyForDate(new Date("2026-05-21T06:59:59.000Z"));
 
     expect(morning).toBe(evening);
     expect(morning).toMatch(/^rhobh-\d+$/);
