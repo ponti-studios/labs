@@ -1,12 +1,5 @@
 import { useEffect, useRef, useState, type JSX } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@pontistudios/ui";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@pontistudios/ui";
 
 interface SelectorWindow extends Window {
   $?: (selector: string) => Element[];

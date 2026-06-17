@@ -3,19 +3,33 @@ import { useEffect, useReducer, useRef } from "react";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const GRID = 5;        // coordinates 0..GRID-1
+const GRID = 5; // coordinates 0..GRID-1
 const CELL_REM = 3.5;
-const STEP_MS = 200;   // ms between animation frames
+const STEP_MS = 200; // ms between animation frames
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type Dir       = "N" | "E" | "S" | "W";
-type GameMode  = "free" | "puzzle";
+type Dir = "N" | "E" | "S" | "W";
+type GameMode = "free" | "puzzle";
 type GamePhase = "setup" | "running" | "done";
 
-interface Robot      { id: number; x: number; y: number; dir: Dir; lost: boolean; }
-interface PendingPos { x: number; y: number; dir: Dir; }
-interface TrailCell  { x: number; y: number; order: number; }
+interface Robot {
+  id: number;
+  x: number;
+  y: number;
+  dir: Dir;
+  lost: boolean;
+}
+interface PendingPos {
+  x: number;
+  y: number;
+  dir: Dir;
+}
+interface TrailCell {
+  x: number;
+  y: number;
+  order: number;
+}
 
 interface LogEntry {
   id: number;
@@ -26,19 +40,19 @@ interface LogEntry {
 }
 
 interface GameState {
-  mode:          GameMode;
-  phase:         GamePhase;
-  pendingPos:    PendingPos | null;
-  cmdInput:      string;
-  activeRobot:   Robot | null;
+  mode: GameMode;
+  phase: GamePhase;
+  pendingPos: PendingPos | null;
+  cmdInput: string;
+  activeRobot: Robot | null;
   remainingCmds: string;
-  cmdIndex:      number;
-  trail:         TrailCell[];
-  robots:        Robot[];
-  scents:        Set<string>;
-  log:           LogEntry[];
-  target:        { x: number; y: number } | null;
-  victory:       boolean;
+  cmdIndex: number;
+  trail: TrailCell[];
+  robots: Robot[];
+  scents: Set<string>;
+  log: LogEntry[];
+  target: { x: number; y: number } | null;
+  victory: boolean;
 }
 
 type GameAction =
@@ -57,8 +71,12 @@ type GameAction =
 
 const DIRS: Dir[] = ["N", "E", "S", "W"];
 
-function turnLeft(d: Dir): Dir  { return DIRS[(DIRS.indexOf(d) + 3) % 4]; }
-function turnRight(d: Dir): Dir { return DIRS[(DIRS.indexOf(d) + 1) % 4]; }
+function turnLeft(d: Dir): Dir {
+  return DIRS[(DIRS.indexOf(d) + 3) % 4];
+}
+function turnRight(d: Dir): Dir {
+  return DIRS[(DIRS.indexOf(d) + 1) % 4];
+}
 
 function stepForward(x: number, y: number, dir: Dir): [number, number] {
   if (dir === "N") return [x, y + 1];
@@ -71,7 +89,9 @@ function isOffGrid(x: number, y: number): boolean {
   return x < 0 || x >= GRID || y < 0 || y >= GRID;
 }
 
-function key(x: number, y: number): string { return `${x},${y}`; }
+function key(x: number, y: number): string {
+  return `${x},${y}`;
+}
 
 function stepOne(
   robot: Robot,
@@ -81,8 +101,10 @@ function stepOne(
   let { x, y, dir } = robot;
   const newScents = new Set(scents);
 
-  if (cmd === "L") return { robot: { ...robot, dir: turnLeft(dir) }, scents: newScents, finished: false };
-  if (cmd === "R") return { robot: { ...robot, dir: turnRight(dir) }, scents: newScents, finished: false };
+  if (cmd === "L")
+    return { robot: { ...robot, dir: turnLeft(dir) }, scents: newScents, finished: false };
+  if (cmd === "R")
+    return { robot: { ...robot, dir: turnRight(dir) }, scents: newScents, finished: false };
   if (cmd === "F") {
     const [nx, ny] = stepForward(x, y, dir);
     if (isOffGrid(nx, ny)) {
@@ -146,11 +168,13 @@ function commitRobot(state: GameState): Partial<GameState> {
 
   const entry = buildLogEntry(pendingPos, cmdInput, activeRobot);
   const newRobots = [...robots, activeRobot];
-  const newLog    = [entry, ...log];
-  const victory   = state.mode === "puzzle" && target !== null
-    && !activeRobot.lost
-    && activeRobot.x === target.x
-    && activeRobot.y === target.y;
+  const newLog = [entry, ...log];
+  const victory =
+    state.mode === "puzzle" &&
+    target !== null &&
+    !activeRobot.lost &&
+    activeRobot.x === target.x &&
+    activeRobot.y === target.y;
 
   return {
     robots: newRobots,
@@ -165,20 +189,25 @@ function commitRobot(state: GameState): Partial<GameState> {
 
 function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
-
     case "PLACE_ROBOT": {
       if (state.phase !== "setup") return state;
       const { x, y } = action;
       if (state.pendingPos && state.pendingPos.x === x && state.pendingPos.y === y) {
         // Same cell — cycle direction
-        return { ...state, pendingPos: { ...state.pendingPos, dir: turnRight(state.pendingPos.dir) } };
+        return {
+          ...state,
+          pendingPos: { ...state.pendingPos, dir: turnRight(state.pendingPos.dir) },
+        };
       }
       return { ...state, pendingPos: { x, y, dir: "N" } };
     }
 
     case "CYCLE_DIR": {
       if (!state.pendingPos) return state;
-      return { ...state, pendingPos: { ...state.pendingPos, dir: turnRight(state.pendingPos.dir) } };
+      return {
+        ...state,
+        pendingPos: { ...state.pendingPos, dir: turnRight(state.pendingPos.dir) },
+      };
     }
 
     case "APPEND_CMD": {
@@ -218,9 +247,10 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       const { robot: nextRobot, scents: nextScents, finished } = stepOne(activeRobot, cmd, scents);
 
       const moved = nextRobot.x !== activeRobot.x || nextRobot.y !== activeRobot.y;
-      const nextTrail = moved || finished
-        ? [...trail, { x: nextRobot.x, y: nextRobot.y, order: cmdIndex + 1 }]
-        : trail;
+      const nextTrail =
+        moved || finished
+          ? [...trail, { x: nextRobot.x, y: nextRobot.y, order: cmdIndex + 1 }]
+          : trail;
 
       const nextRemaining = remainingCmds.slice(1);
       const isDone = finished || nextRemaining.length === 0;
@@ -278,16 +308,24 @@ function Arrow({ dir, color, size = 22 }: { dir: Dir; color: string; size?: numb
 // ─── GridDisplay ─────────────────────────────────────────────────────────────
 
 interface GridDisplayProps {
-  robots:      Robot[];
-  scents:      Set<string>;
-  trail:       TrailCell[];
+  robots: Robot[];
+  scents: Set<string>;
+  trail: TrailCell[];
   activeRobot: Robot | null;
-  pendingPos:  PendingPos | null;
-  target:      { x: number; y: number } | null;
+  pendingPos: PendingPos | null;
+  target: { x: number; y: number } | null;
   onCellClick: (x: number, y: number) => void;
 }
 
-function GridDisplay({ robots, scents, trail, activeRobot, pendingPos, target, onCellClick }: GridDisplayProps) {
+function GridDisplay({
+  robots,
+  scents,
+  trail,
+  activeRobot,
+  pendingPos,
+  target,
+  onCellClick,
+}: GridDisplayProps) {
   const activeAt = new Map<string, Robot>();
   for (const r of robots) {
     if (!r.lost) activeAt.set(key(r.x, r.y), r);
@@ -299,7 +337,7 @@ function GridDisplay({ robots, scents, trail, activeRobot, pendingPos, target, o
   const cells: React.ReactNode[] = [];
 
   for (let displayRow = 0; displayRow < GRID; displayRow++) {
-    const y      = GRID - 1 - displayRow;
+    const y = GRID - 1 - displayRow;
     const cssRow = displayRow + 1;
 
     // Y label
@@ -310,16 +348,16 @@ function GridDisplay({ robots, scents, trail, activeRobot, pendingPos, target, o
         className="flex items-center justify-end pr-2 text-xs font-mono text-muted-foreground select-none"
       >
         {y}
-      </div>
+      </div>,
     );
 
     for (let x = 0; x < GRID; x++) {
-      const k         = key(x, y);
-      const active    = activeRobot && activeRobot.x === x && activeRobot.y === y ? activeRobot : null;
-      const finished  = activeAt.get(k);
-      const scented   = scents.has(k);
+      const k = key(x, y);
+      const active = activeRobot && activeRobot.x === x && activeRobot.y === y ? activeRobot : null;
+      const finished = activeAt.get(k);
+      const scented = scents.has(k);
       const isPending = pendingPos && pendingPos.x === x && pendingPos.y === y;
-      const isTarget  = target && target.x === x && target.y === y;
+      const isTarget = target && target.x === x && target.y === y;
       const trailCell = trailMap.get(k);
 
       const bgColor = trailCell
@@ -345,27 +383,31 @@ function GridDisplay({ robots, scents, trail, activeRobot, pendingPos, target, o
         >
           {/* Target star */}
           {isTarget && !active && !finished && (
-            <svg width="18" height="18" viewBox="0 0 18 18" className="opacity-40 absolute pointer-events-none">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 18 18"
+              className="opacity-40 absolute pointer-events-none"
+            >
               <polygon points="9,1 11,7 17,7 12,11 14,17 9,13 4,17 6,11 1,7 7,7" fill="#f59e0b" />
             </svg>
           )}
           {/* Scent */}
           {scented && !active && !finished && (
-            <span className="text-sm opacity-40 select-none" title="Robot fell off here — scent left behind">💨</span>
+            <span
+              className="text-sm opacity-40 select-none"
+              title="Robot fell off here — scent left behind"
+            >
+              💨
+            </span>
           )}
           {/* Finished robot */}
-          {finished && !active && (
-            <Arrow dir={finished.dir} color="#2563eb" />
-          )}
+          {finished && !active && <Arrow dir={finished.dir} color="#2563eb" />}
           {/* Active (animating) robot */}
-          {active && (
-            <Arrow dir={active.dir} color="#16a34a" />
-          )}
+          {active && <Arrow dir={active.dir} color="#16a34a" />}
           {/* Pending placement ghost */}
-          {isPending && !active && !finished && (
-            <Arrow dir={pendingPos!.dir} color="#94a3b8" />
-          )}
-        </button>
+          {isPending && !active && !finished && <Arrow dir={pendingPos!.dir} color="#94a3b8" />}
+        </button>,
       );
     }
   }
@@ -379,7 +421,7 @@ function GridDisplay({ robots, scents, trail, activeRobot, pendingPos, target, o
         className="flex items-center justify-center pt-1 text-xs font-mono text-muted-foreground select-none"
       >
         {x}
-      </div>
+      </div>,
     );
   }
 
@@ -422,9 +464,10 @@ function CommandBuilder({
   const disabled = phase !== "setup";
   const btnCls = (extra = "") =>
     `h-12 w-14 rounded border font-mono text-base font-semibold transition-colors
-     ${disabled
-       ? "border-border/30 text-muted-foreground/30 cursor-not-allowed bg-muted/10"
-       : "border-border bg-background hover:bg-muted/40 active:bg-muted/70 cursor-pointer"
+     ${
+       disabled
+         ? "border-border/30 text-muted-foreground/30 cursor-not-allowed bg-muted/10"
+         : "border-border bg-background hover:bg-muted/40 active:bg-muted/70 cursor-pointer"
      } ${extra}`;
 
   return (
@@ -460,7 +503,11 @@ function CommandBuilder({
         </button>
       </div>
       <div className="font-mono text-sm min-h-[1.5rem] tracking-widest text-foreground/80">
-        {cmdInput || <span className="text-muted-foreground/40 text-xs tracking-normal">Click F / L / R to build a sequence</span>}
+        {cmdInput || (
+          <span className="text-muted-foreground/40 text-xs tracking-normal">
+            Click F / L / R to build a sequence
+          </span>
+        )}
       </div>
     </div>
   );
@@ -475,11 +522,11 @@ function ExecutionControls({
   dispatch,
   onRun,
 }: {
-  phase:      GamePhase;
+  phase: GamePhase;
   pendingPos: PendingPos | null;
-  cmdInput:   string;
-  dispatch:   React.Dispatch<GameAction>;
-  onRun:      () => void;
+  cmdInput: string;
+  dispatch: React.Dispatch<GameAction>;
+  onRun: () => void;
 }) {
   const canRun = phase === "setup" && !!pendingPos && !!cmdInput;
 
@@ -488,11 +535,7 @@ function ExecutionControls({
       <Button disabled={!canRun} onClick={onRun}>
         Run
       </Button>
-      <Button
-        variant="ghost"
-        className="ml-auto"
-        onClick={() => dispatch({ type: "RESET" })}
-      >
+      <Button variant="ghost" className="ml-auto" onClick={() => dispatch({ type: "RESET" })}>
         Reset
       </Button>
     </div>
@@ -506,8 +549,8 @@ function PuzzleBar({
   victory,
   dispatch,
 }: {
-  target:   { x: number; y: number } | null;
-  victory:  boolean;
+  target: { x: number; y: number } | null;
+  victory: boolean;
   dispatch: React.Dispatch<GameAction>;
 }) {
   return (
@@ -515,12 +558,13 @@ function PuzzleBar({
       <span className="text-amber-600 font-semibold">Puzzle</span>
       {target && (
         <span className="font-mono text-muted-foreground">
-          Target: <span className="text-foreground">({target.x}, {target.y})</span>
+          Target:{" "}
+          <span className="text-foreground">
+            ({target.x}, {target.y})
+          </span>
         </span>
       )}
-      {victory && (
-        <span className="text-green-600 font-semibold">Victory! 🎉</span>
-      )}
+      {victory && <span className="text-green-600 font-semibold">Victory! 🎉</span>}
       {!victory && (
         <span className="text-muted-foreground/60 text-xs">Land your robot on the ★</span>
       )}
@@ -581,7 +625,7 @@ export default function RedBadger() {
       if (e.key === "f" || e.key === "F") dispatch({ type: "APPEND_CMD", cmd: "F" });
       if (e.key === "l" || e.key === "L") dispatch({ type: "APPEND_CMD", cmd: "L" });
       if (e.key === "r" || e.key === "R") dispatch({ type: "APPEND_CMD", cmd: "R" });
-      if (e.key === "Backspace")          dispatch({ type: "POP_CMD" });
+      if (e.key === "Backspace") dispatch({ type: "POP_CMD" });
     }
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
@@ -605,20 +649,22 @@ export default function RedBadger() {
         <div>
           <h2>Red Badger — Martian Robots</h2>
           <p className="text-sm text-muted-foreground mt-1">
-            Click a cell to place your robot. Click it again to rotate direction.
-            Build a command sequence with <kbd className="font-mono bg-muted px-1 rounded text-xs">F</kbd> /{" "}
+            Click a cell to place your robot. Click it again to rotate direction. Build a command
+            sequence with <kbd className="font-mono bg-muted px-1 rounded text-xs">F</kbd> /{" "}
             <kbd className="font-mono bg-muted px-1 rounded text-xs">L</kbd> /{" "}
-            <kbd className="font-mono bg-muted px-1 rounded text-xs">R</kbd>, then step through or run.
-            A robot that falls off the edge leaves a scent — future robots skip that fatal move.
+            <kbd className="font-mono bg-muted px-1 rounded text-xs">R</kbd>, then step through or
+            run. A robot that falls off the edge leaves a scent — future robots skip that fatal
+            move.
           </p>
           <p className="text-xs text-muted-foreground/60 mt-0.5">Courtesy of Red Badger</p>
         </div>
         <button
           onClick={() => dispatch({ type: "TOGGLE_MODE" })}
           className={`shrink-0 text-xs font-mono px-3 py-1.5 rounded border transition-colors
-            ${state.mode === "puzzle"
-              ? "border-amber-300 bg-amber-50/50 text-amber-700"
-              : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/40"
+            ${
+              state.mode === "puzzle"
+                ? "border-amber-300 bg-amber-50/50 text-amber-700"
+                : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/40"
             }`}
         >
           {state.mode === "puzzle" ? "★ Puzzle" : "Puzzle mode"}
@@ -658,11 +704,7 @@ export default function RedBadger() {
             </div>
           )}
 
-          <CommandBuilder
-            cmdInput={state.cmdInput}
-            phase={state.phase}
-            dispatch={dispatch}
-          />
+          <CommandBuilder cmdInput={state.cmdInput} phase={state.phase} dispatch={dispatch} />
 
           <ExecutionControls
             phase={state.phase}

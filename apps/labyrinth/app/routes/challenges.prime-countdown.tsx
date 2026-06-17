@@ -1,13 +1,5 @@
 import { useState, type JSX, type ChangeEvent } from "react";
-import {
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Input,
-  Label,
-} from "@pontistudios/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label } from "@pontistudios/ui";
 
 interface PrimeEntry {
   value: number;
@@ -34,7 +26,9 @@ const RUN_DELAY_MS = 400;
 
 export default function PrimeCountdown(): JSX.Element {
   const [primeStart, setPrimeStart] = useState("20");
-  const [primeEntries, setPrimeEntries] = useState<PrimeEntry[] | null>(() => getPrimeCountdown(20));
+  const [primeEntries, setPrimeEntries] = useState<PrimeEntry[] | null>(() =>
+    getPrimeCountdown(20),
+  );
   const [running, setRunning] = useState(false);
 
   const run = () => {
@@ -53,8 +47,8 @@ export default function PrimeCountdown(): JSX.Element {
         <p className="text-muted-foreground">
           Using a JavaScript generator, yield prime numbers in descending order from{" "}
           <code className="text-xs bg-muted px-1 py-0.5 rounded">n−1</code> down to{" "}
-          <code className="text-xs bg-muted px-1 py-0.5 rounded">2</code>. A number is prime if
-          it has no divisors other than 1 and itself — checked by trial division up to{" "}
+          <code className="text-xs bg-muted px-1 py-0.5 rounded">2</code>. A number is prime if it
+          has no divisors other than 1 and itself — checked by trial division up to{" "}
           <code className="text-xs bg-muted px-1 py-0.5 rounded">√n</code>.
         </p>
         <i className="text-xs text-muted-foreground">Courtesy of Goldman Sachs</i>
@@ -160,7 +154,12 @@ export default function PrimeCountdown(): JSX.Element {
             </CardHeader>
             <CardContent>
               <code className="text-sm font-mono text-green-700 bg-green-50 block p-3 rounded-lg leading-7">
-                [{primeEntries.filter((e) => e.isPrime).map((e) => e.value).join(", ")}]
+                [
+                {primeEntries
+                  .filter((e) => e.isPrime)
+                  .map((e) => e.value)
+                  .join(", ")}
+                ]
               </code>
             </CardContent>
           </Card>

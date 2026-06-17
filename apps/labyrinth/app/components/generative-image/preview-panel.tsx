@@ -1,10 +1,5 @@
 import { Button } from "@pontistudios/ui";
-import {
-  AlertCircle,
-  Code,
-  Download,
-  Sparkles,
-} from "lucide-react";
+import { AlertCircle, Code, Download, Sparkles } from "lucide-react";
 
 type GenerativeImagePreviewPanelProps = {
   generatedImage: string | null;

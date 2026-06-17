@@ -53,10 +53,12 @@ describe("RealiTea route loader", () => {
 
     const { loader } = await import("../games/realitea");
 
-    await expect(loader(createLoaderArgs("http://localhost/games/realitea"))).rejects.toMatchObject({
-      status: 404,
-      statusText: "No RealiTea puzzle found for today",
-    });
+    await expect(loader(createLoaderArgs("http://localhost/games/realitea"))).rejects.toMatchObject(
+      {
+        status: 404,
+        statusText: "No RealiTea puzzle found for today",
+      },
+    );
 
     await expect(
       loader(createLoaderArgs("http://localhost/games/realitea")).catch(async (response) => ({

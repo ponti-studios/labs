@@ -1,12 +1,5 @@
-import { useState, type JSX, type ChangeEvent } from 'react';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Input,
-  Label,
-} from '@pontistudios/ui';
+import { useState, type JSX, type ChangeEvent } from "react";
+import { Card, CardContent, CardHeader, CardTitle, Input, Label } from "@pontistudios/ui";
 
 // ─── Presets ──────────────────────────────────────────────────────────────────
 
@@ -21,10 +14,38 @@ interface Preset {
 
 // AWS us-east-1 rates, 1-year partial upfront reserved (2024)
 const PRESETS: Preset[] = [
-  { label: 't3.medium',  description: '2 vCPU · 4 GB',  onDemandRate: 0.0416, reservedUpfront: 108,  reservedRate: 0.007,  vcpu: 2 },
-  { label: 'm5.large',   description: '2 vCPU · 8 GB',  onDemandRate: 0.0960, reservedUpfront: 417,  reservedRate: 0.024,  vcpu: 2 },
-  { label: 'c5.xlarge',  description: '4 vCPU · 8 GB',  onDemandRate: 0.1700, reservedUpfront: 730,  reservedRate: 0.044,  vcpu: 4 },
-  { label: 'r5.2xlarge', description: '8 vCPU · 64 GB', onDemandRate: 0.5040, reservedUpfront: 2200, reservedRate: 0.126,  vcpu: 8 },
+  {
+    label: "t3.medium",
+    description: "2 vCPU · 4 GB",
+    onDemandRate: 0.0416,
+    reservedUpfront: 108,
+    reservedRate: 0.007,
+    vcpu: 2,
+  },
+  {
+    label: "m5.large",
+    description: "2 vCPU · 8 GB",
+    onDemandRate: 0.096,
+    reservedUpfront: 417,
+    reservedRate: 0.024,
+    vcpu: 2,
+  },
+  {
+    label: "c5.xlarge",
+    description: "4 vCPU · 8 GB",
+    onDemandRate: 0.17,
+    reservedUpfront: 730,
+    reservedRate: 0.044,
+    vcpu: 4,
+  },
+  {
+    label: "r5.2xlarge",
+    description: "8 vCPU · 64 GB",
+    onDemandRate: 0.504,
+    reservedUpfront: 2200,
+    reservedRate: 0.126,
+    vcpu: 8,
+  },
 ];
 
 const REQUEST_VOLUMES = [1_000, 5_000, 10_000, 25_000, 50_000, 100_000, 250_000, 500_000];
@@ -35,26 +56,43 @@ const MS_PER_DAY = 86_400_000;
 // ─── Algorithm ────────────────────────────────────────────────────────────────
 
 interface Cell {
-  recommendation: 'reserved' | 'on-demand' | 'overloaded';
+  recommendation: "reserved" | "on-demand" | "overloaded";
   onDemandTotal: number;
   reservedTotal: number;
   avgUtilisation: number;
   isCrossover: boolean;
 }
 
-function computeCell(preset: Preset, reqPerDay: number, computeMs: number, peakMultiplier: number): Cell {
+function computeCell(
+  preset: Preset,
+  reqPerDay: number,
+  computeMs: number,
+  peakMultiplier: number,
+): Cell {
   const avgUtilisation = (reqPerDay * computeMs) / (preset.vcpu * MS_PER_DAY);
   const peakUtilisation = avgUtilisation * peakMultiplier;
 
   if (peakUtilisation > 1) {
-    return { recommendation: 'overloaded', onDemandTotal: 0, reservedTotal: 0, avgUtilisation: avgUtilisation * 100, isCrossover: false };
+    return {
+      recommendation: "overloaded",
+      onDemandTotal: 0,
+      reservedTotal: 0,
+      avgUtilisation: avgUtilisation * 100,
+      isCrossover: false,
+    };
   }
 
   const reservedTotal = preset.reservedUpfront + preset.reservedRate * HOURS_PER_YEAR;
   const onDemandTotal = preset.onDemandRate * HOURS_PER_YEAR * avgUtilisation;
-  const recommendation = reservedTotal < onDemandTotal ? 'reserved' : 'on-demand';
+  const recommendation = reservedTotal < onDemandTotal ? "reserved" : "on-demand";
 
-  return { recommendation, onDemandTotal, reservedTotal, avgUtilisation: avgUtilisation * 100, isCrossover: false };
+  return {
+    recommendation,
+    onDemandTotal,
+    reservedTotal,
+    avgUtilisation: avgUtilisation * 100,
+    isCrossover: false,
+  };
 }
 
 function buildMatrix(computeMs: number, peakMultiplier: number) {
@@ -63,10 +101,7 @@ function buildMatrix(computeMs: number, peakMultiplier: number) {
 
     // Mark the crossover — first volume where recommendation flips to reserved
     for (let i = 1; i < cells.length; i++) {
-      if (
-        cells[i - 1].recommendation === 'on-demand' &&
-        cells[i].recommendation === 'reserved'
-      ) {
+      if (cells[i - 1].recommendation === "on-demand" && cells[i].recommendation === "reserved") {
         cells[i].isCrossover = true;
         break;
       }
@@ -80,15 +115,15 @@ function fmt(n: number) {
   return n >= 1_000_000
     ? `${(n / 1_000_000).toFixed(1)}M`
     : n >= 1_000
-    ? `${(n / 1_000).toFixed(0)}k`
-    : String(n);
+      ? `${(n / 1_000).toFixed(0)}k`
+      : String(n);
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function CloudPricingComparison(): JSX.Element {
-  const [computeMs, setComputeMs] = useState('200');
-  const [peakMultiplier, setPeakMultiplier] = useState('3');
+  const [computeMs, setComputeMs] = useState("200");
+  const [peakMultiplier, setPeakMultiplier] = useState("3");
 
   const matrix = buildMatrix(Number(computeMs), Number(peakMultiplier));
 
@@ -97,9 +132,9 @@ export default function CloudPricingComparison(): JSX.Element {
       <header>
         <h2 className="text-xl font-semibold">On-Demand vs. Reserved Instances</h2>
         <p className="text-muted-foreground">
-          Reserved instances require an upfront commitment but cost less per hour. On-demand
-          scales with actual usage at a higher rate. The table below shows which is cheaper
-          across a range of traffic volumes — find your expected load and read across.
+          Reserved instances require an upfront commitment but cost less per hour. On-demand scales
+          with actual usage at a higher rate. The table below shows which is cheaper across a range
+          of traffic volumes — find your expected load and read across.
         </p>
       </header>
 
@@ -135,8 +170,8 @@ export default function CloudPricingComparison(): JSX.Element {
               onChange={(e: ChangeEvent<HTMLInputElement>) => setPeakMultiplier(e.target.value)}
             />
             <p className="text-xs text-muted-foreground">
-              How many times busier your peak is vs. your average. Used to check if the
-              instance can handle spikes without being overloaded.
+              How many times busier your peak is vs. your average. Used to check if the instance can
+              handle spikes without being overloaded.
             </p>
           </div>
         </CardContent>
@@ -146,7 +181,8 @@ export default function CloudPricingComparison(): JSX.Element {
         <CardHeader>
           <CardTitle>Cost comparison by traffic volume</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Annual cost across request volumes (req/day). Grey = instance can't handle peak load at this volume.
+            Annual cost across request volumes (req/day). Grey = instance can't handle peak load at
+            this volume.
           </p>
         </CardHeader>
         <CardContent className="overflow-x-auto">
@@ -157,7 +193,10 @@ export default function CloudPricingComparison(): JSX.Element {
                   Instance
                 </th>
                 {REQUEST_VOLUMES.map((vol) => (
-                  <th key={vol} className="px-3 py-2 text-center font-medium text-muted-foreground whitespace-nowrap">
+                  <th
+                    key={vol}
+                    className="px-3 py-2 text-center font-medium text-muted-foreground whitespace-nowrap"
+                  >
                     {fmt(vol)}/day
                   </th>
                 ))}
@@ -172,23 +211,23 @@ export default function CloudPricingComparison(): JSX.Element {
                   </td>
                   {cells.map((cell, i) => (
                     <td key={i} className="px-3 py-3 text-center">
-                      {cell.recommendation === 'overloaded' ? (
+                      {cell.recommendation === "overloaded" ? (
                         <span className="inline-flex flex-col items-center gap-0.5">
                           <span className="text-xs text-muted-foreground">—</span>
                           <span className="text-[10px] text-muted-foreground">too small</span>
                         </span>
                       ) : (
-                        <span className={`inline-flex flex-col items-center gap-0.5 rounded-md px-2 py-1 ${
-                          cell.isCrossover
-                            ? 'ring-2 ring-foreground'
-                            : ''
-                        } ${
-                          cell.recommendation === 'reserved'
-                            ? 'bg-green-50 text-green-700'
-                            : 'bg-blue-50 text-blue-700'
-                        }`}>
+                        <span
+                          className={`inline-flex flex-col items-center gap-0.5 rounded-md px-2 py-1 ${
+                            cell.isCrossover ? "ring-2 ring-foreground" : ""
+                          } ${
+                            cell.recommendation === "reserved"
+                              ? "bg-green-50 text-green-700"
+                              : "bg-blue-50 text-blue-700"
+                          }`}
+                        >
                           <span className="text-xs font-medium">
-                            {cell.recommendation === 'reserved' ? 'reserved' : 'on-demand'}
+                            {cell.recommendation === "reserved" ? "reserved" : "on-demand"}
                           </span>
                           <span className="text-[10px] opacity-70">
                             ${Math.min(cell.onDemandTotal, cell.reservedTotal).toFixed(0)}/yr

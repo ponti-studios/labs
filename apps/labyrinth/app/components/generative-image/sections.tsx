@@ -1,23 +1,8 @@
-import {
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@pontistudios/ui";
-import {
-  Camera,
-  MapPin,
-  Palette,
-  Shirt,
-  User,
-  Zap,
-} from "lucide-react";
+import { AccordionContent, AccordionItem, AccordionTrigger } from "@pontistudios/ui";
+import { Camera, MapPin, Palette, Shirt, User, Zap } from "lucide-react";
 import { memo } from "react";
 
-import type {
-  GenerativeImageDispatch,
-  GenerativeImageFormState,
-  SectionPanelProps,
-} from "./types";
+import type { GenerativeImageDispatch, GenerativeImageFormState, SectionPanelProps } from "./types";
 
 type InputGroupProps = {
   label: string;
@@ -92,9 +77,7 @@ export const ImageSpecificationsSection = memo(function ImageSpecificationsSecti
       <InputGroup
         label="Aesthetic (comma-separated)"
         value={config.aestheticDraft}
-        onChange={(value) =>
-          dispatch({ type: "image_specifications/updateAestheticDraft", value })
-        }
+        onChange={(value) => dispatch({ type: "image_specifications/updateAestheticDraft", value })}
         type="textarea"
       />
     </SectionPanel>
@@ -169,9 +152,7 @@ export const EnvironmentSection = memo(function EnvironmentSection({
       <InputGroup
         label="Primary Prop"
         value={config.primary_prop}
-        onChange={(value) =>
-          dispatch({ type: "environment/update", key: "primary_prop", value })
-        }
+        onChange={(value) => dispatch({ type: "environment/update", key: "primary_prop", value })}
       />
       <div className="border-t border-border pt-3">
         <p className="ui-eyebrow mb-3">Background</p>
@@ -233,9 +214,7 @@ export const VisualStyleSection = memo(function VisualStyleSection({
       <InputGroup
         label="Color Palette"
         value={config.color_palette}
-        onChange={(value) =>
-          dispatch({ type: "visual_style/update", key: "color_palette", value })
-        }
+        onChange={(value) => dispatch({ type: "visual_style/update", key: "color_palette", value })}
       />
       <InputGroup
         label="Texture"

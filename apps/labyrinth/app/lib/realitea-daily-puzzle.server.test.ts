@@ -87,6 +87,7 @@ describe("realitea daily puzzle server helpers", () => {
     dbMock.select.mockReset();
     dbMock.transaction.mockReset();
     dbMock.update.mockReset();
+    vi.unstubAllGlobals();
   });
 
   it("loads the active published puzzle when one exists", async () => {
@@ -226,7 +227,8 @@ describe("realitea daily puzzle server helpers", () => {
           clue: "These elegant birds are inseparable from one iconic Beverly Hills estate.",
           createdAt: new Date("2026-05-20T12:00:00.000Z"),
           dateUtc: null,
-          detail: "The estate's swans became one of the most recognizable bits of RHOBH visual lore.",
+          detail:
+            "The estate's swans became one of the most recognizable bits of RHOBH visual lore.",
           expireAt: null,
           franchise: "rhobh",
           generationBatchId: "reserve:seed",
@@ -256,7 +258,8 @@ describe("realitea daily puzzle server helpers", () => {
           clue: "These elegant birds are inseparable from one iconic Beverly Hills estate.",
           createdAt: new Date("2026-05-20T12:00:00.000Z"),
           dateUtc: "2026-05-20",
-          detail: "The estate's swans became one of the most recognizable bits of RHOBH visual lore.",
+          detail:
+            "The estate's swans became one of the most recognizable bits of RHOBH visual lore.",
           expireAt: new Date("2026-05-21T07:00:00.000Z"),
           franchise: "rhobh",
           generationBatchId: "reserve:seed",
@@ -291,5 +294,50 @@ describe("realitea daily puzzle server helpers", () => {
 
     expect(envelope?.puzzle.answer).toBe("SWANS");
     expect(envelope?.puzzle.newsMode).toBe("archive");
+  });
+
+  it("caps source collection tokens and uses the source collection clock", async () => {
+    safeParseMock.mockReturnValue({
+      success: true,
+      data: {
+        openRouterApiKey: "test-key",
+        openRouterModel: "openai/gpt-5.1",
+      },
+    });
+
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        choices: [
+          {
+            message: {
+              content: JSON.stringify([
+                {
+                  domain: "bravotv.com",
+                  publishedAt: "2026-06-17T12:00:00.000Z",
+                  summary: "Spoiler-safe summary",
+                  title: "RHOBH story",
+                  url: "https://www.bravotv.com/the-daily-dish/rhobh-story",
+                },
+              ]),
+            },
+          },
+        ],
+      }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { collectCurrentSources } = await import("./realitea-daily-puzzle.server");
+    await collectCurrentSources({
+      now: new Date("2026-06-18T12:00:00.000Z"),
+      sourceCollectionNow: new Date("2026-06-17T12:00:00.000Z"),
+    });
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [, request] = fetchMock.mock.calls[0] as [string, { body: string }];
+    const payload = JSON.parse(request.body);
+
+    expect(payload.max_tokens).toBe(1200);
+    expect(JSON.parse(payload.messages[1].content).todayUtc).toBe("2026-06-17T12:00:00.000Z");
   });
 });
