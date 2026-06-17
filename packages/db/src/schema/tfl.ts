@@ -3,7 +3,7 @@ import { labs } from "./base";
 
 export const tflCameras = labs.table("tfl_cameras", {
   id: serial("id").primaryKey(),
-  tflId: text("tfl_id").notNull(),
+  tflId: text("tfl_id").notNull().unique(),
   commonName: text("common_name").notNull(),
   available: boolean("available"),
   imageUrl: text("image_url"),

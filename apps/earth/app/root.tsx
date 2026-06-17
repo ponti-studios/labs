@@ -8,10 +8,13 @@ import {
   Scripts,
   ScrollRestoration,
   useLocation,
+  useNavigation,
 } from "react-router";
 import "./app.css";
+import BottomSheet from "./components/BottomSheet";
 import Controls from "./components/Controls";
 import MapLibreViewer from "./components/MapLibreViewer";
+import SheetSkeleton from "./components/SheetSkeleton";
 import { queryClient } from "./lib/query-client";
 
 function ClientOnly({ children }: { children: React.ReactNode }) {
@@ -57,15 +60,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   const location = useLocation();
 
+  const navigation = useNavigation();
+  const isNavigating = navigation.state === "loading";
+
   const currentTab = useMemo(() => {
     const pathSegments = location.pathname.split("/").filter(Boolean);
     if (pathSegments.length > 0) {
       const firstSegment = pathSegments[0];
-      if (["covid", "satellites", "tfl", "geospatial"].includes(firstSegment)) {
+      if (["tfl"].includes(firstSegment)) {
         return firstSegment;
       }
     }
-    return "covid"; // Default tab
+    return "tfl"; // Default tab
   }, [location.pathname]);
 
   return (
@@ -74,12 +80,10 @@ export default function App() {
         <ClientOnly>
           <MapLibreViewer />
         </ClientOnly>
-        <div className="earth-dock">
-          <Controls currentTab={currentTab} />
-          <div className="earth-dock-content">
-            <Outlet />
-          </div>
-        </div>
+        <Controls currentTab={currentTab} />
+        <BottomSheet>
+          {isNavigating ? <SheetSkeleton /> : <Outlet />}
+        </BottomSheet>
       </div>
     </QueryClientProvider>
   );

@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import type { Satellite, TflCamera } from "../signals/earth";
-import { fetchMockSatellites } from "../data/earth";
+import type { TflCamera } from "../signals/earth";
 
 async function fetchTflCameras(): Promise<TflCamera[]> {
   try {
@@ -17,13 +16,6 @@ async function fetchTflCameras(): Promise<TflCamera[]> {
   }
 }
 
-export function useSatellites() {
-  return useQuery({
-    queryKey: ["satellites"],
-    queryFn: fetchMockSatellites,
-  });
-}
-
 export function useTflCameras() {
   return useQuery({
     queryKey: ["tfl", "cameras"],
@@ -33,4 +25,4 @@ export function useTflCameras() {
   });
 }
 
-export type { Satellite, TflCamera };
+export type { TflCamera };

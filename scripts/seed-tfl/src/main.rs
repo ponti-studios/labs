@@ -123,12 +123,12 @@ async fn main() -> anyhow::Result<()> {
         )
         .bind(&cam.tfl_id)
         .bind(&cam.common_name)
-        .bind(cam.available as i32)
+        .bind(cam.available)
         .bind(&cam.image_url)
         .bind(&cam.video_url)
         .bind(&cam.view)
-        .bind(cam.lat.to_string())
-        .bind(cam.lng.to_string())
+        .bind(cam.lat as f32)
+        .bind(cam.lng as f32)
         .execute(&pool)
         .await?;
     }

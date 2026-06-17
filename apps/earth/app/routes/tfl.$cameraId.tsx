@@ -1,125 +1,118 @@
-import { Link, useParams } from "react-router";
-import { useTflCameras } from "../lib/hooks/useOrbitData";
+import { Link } from "react-router";
+import { db, tflCameras } from "@pontistudios/db";
+import { eq } from "@pontistudios/db";
+import type { Route } from "./+types/tfl.$cameraId";
 
-export default function TflCamera() {
-  const params = useParams();
-  const { data: cameras, isLoading } = useTflCameras();
-  const camera = cameras?.find((c) => c.id === params.cameraId);
+export async function loader({ params }: Route.LoaderArgs) {
+  try {
+    const camera = await db
+      .select()
+      .from(tflCameras)
+      .where(eq(tflCameras.tflId, params.cameraId))
+      .limit(1);
 
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <h2 className="text-sm font-mono text-[var(--text-muted)]">LOADING CAMERA</h2>
-      </div>
-    );
+    if (camera.length === 0) return { camera: null };
+
+    const dbCamera = camera[0];
+    const imageUrl = dbCamera.imageUrl || "";
+
+    let lastPhotoAt: string | null = null;
+    if (imageUrl) {
+      try {
+        const head = await fetch(imageUrl, { method: "HEAD" });
+        const lastModified = head.headers.get("last-modified");
+        if (lastModified) lastPhotoAt = lastModified;
+      } catch {
+        // non-critical — ignore
+      }
+    }
+
+    return {
+      camera: {
+        id: dbCamera.tflId,
+        commonName: dbCamera.commonName,
+        available: dbCamera.available ? "true" : "false",
+        imageUrl,
+        videoUrl: dbCamera.videoUrl || "",
+        view: dbCamera.view || "",
+        lat: parseFloat(dbCamera.lat as any),
+        lng: parseFloat(dbCamera.lng as any),
+        lastPhotoAt,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching camera by ID:", error);
+    return { camera: null };
   }
+}
+
+export default function TflCamera({ loaderData }: Route.ComponentProps) {
+  const { camera } = loaderData;
 
   if (!camera) {
     return (
-      <div className="space-y-4">
-        <h2 className="text-sm font-mono text-[var(--text-muted)]">CAMERA NOT FOUND</h2>
-        <Link
-          to="/tfl"
-          className="text-xs font-mono text-[var(--accent-bright)] hover:underline tracking-wide"
-        >
+      <div className="space-y-3">
+        <p className="ui-eyebrow">Camera not found</p>
+        <Link to="/tfl" className="text-xs text-muted-foreground hover:text-foreground">
           ← Back to Cameras
         </Link>
       </div>
     );
   }
 
+  const isLive = camera.available === "true";
+
   return (
-    <div className="space-y-5">
-      <Link
-        to="/tfl"
-        className="inline-flex items-center gap-2 text-xs font-mono text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors tracking-wide"
-      >
-        ← Cameras
-      </Link>
-
-      <div className="flex items-start justify-between">
-        <div>
-          <h2 className="font-semibold text-[var(--text-primary)] mb-1">{camera.commonName}</h2>
-          <span className="font-mono text-[9px] tracking-widest uppercase text-[var(--text-muted)]">
-            Camera {camera.id}
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span
-            className={`cesium-status-dot cesium-status-dot--${camera.available === "true" ? "online" : "offline"}`}
-          />
-          <span
-            className="font-mono text-[9px] tracking-wider"
-            style={{
-              color: camera.available === "true" ? "var(--status-online)" : "var(--text-muted)",
-            }}
-          >
-            {camera.available === "true" ? "LIVE" : "OFFLINE"}
+    <div className="space-y-3">
+      {/* Header row */}
+      <div className="flex items-center justify-between gap-3">
+        <Link
+          to="/tfl"
+          className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+        >
+          ← Cameras
+        </Link>
+        <div className="flex items-center gap-1.5">
+          <span className={`size-1.5 rounded-full ${isLive ? "bg-green-500" : "bg-muted-foreground"}`} />
+          <span className={`font-mono text-[10px] tracking-wider uppercase ${isLive ? "text-green-500" : "text-muted-foreground"}`}>
+            {isLive ? "Live" : "Offline"}
           </span>
         </div>
       </div>
 
-      <div
-        className="cesium-card w-full aspect-video flex items-center justify-center relative overflow-hidden"
-        style={{ background: "var(--bg-panel-2)" }}
-      >
+      {/* Camera name + metadata */}
+      <div>
+        <h2 className="font-semibold text-foreground leading-tight">{camera.commonName}</h2>
+        <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mt-0.5">
+          {camera.id}
+        </p>
+        <div className="mt-2 space-y-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+          <div className="flex justify-between">
+            <span>View</span>
+            <span>{camera.view && camera.view.length > 0 ? camera.view : "—"}</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Coordinates</span>
+            <span>{camera.lat.toFixed(4)}°, {camera.lng.toFixed(4)}°</span>
+          </div>
+          {camera.lastPhotoAt && (
+            <div className="flex justify-between">
+              <span>Last photo</span>
+              <span>{new Date(camera.lastPhotoAt).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/London", timeZoneName: "short" })}</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Feed */}
+      <div className="bg-muted border border-border rounded-md w-full aspect-video flex items-center justify-center overflow-hidden">
         {camera.imageUrl ? (
-          <img
-            src={camera.imageUrl}
-            alt={camera.commonName}
-            className="w-full h-full object-cover"
-          />
+          <img src={camera.imageUrl} alt={camera.commonName} className="w-full h-full object-cover" />
         ) : (
-          <div className="flex flex-col items-center gap-3">
-            <svg
-              className="w-8 h-8 text-[var(--text-muted)]"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1}
-                d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.89L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-              />
-            </svg>
-            <span className="font-mono text-[9px] tracking-widest uppercase text-[var(--text-muted)]">
-              No Feed Available
-            </span>
-          </div>
+          <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+            No feed available
+          </span>
         )}
-      </div>
-
-      <div className="space-y-2">
-        <div className="font-mono text-[9px] tracking-[0.15em] uppercase text-[var(--text-muted)] pb-1 border-b border-[var(--border-default)]">
-          Camera Metadata
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          <div className="cesium-card p-3">
-            <div className="cesium-card-label">View Direction</div>
-            <div className="cesium-card-value">
-              {camera.view && camera.view.length > 0 ? camera.view.toUpperCase() : "—"}
-            </div>
-          </div>
-          <div className="cesium-card p-3">
-            <div className="cesium-card-label">Status</div>
-            <div
-              className="cesium-card-value"
-              style={{
-                color: camera.available === "true" ? "var(--status-online)" : "var(--text-muted)",
-              }}
-            >
-              {camera.available === "true" ? "Online" : "Offline"}
-            </div>
-          </div>
-          <div className="cesium-card p-3 col-span-2">
-            <div className="cesium-card-label">Coordinates</div>
-            <div className="font-mono text-xs text-[var(--text-secondary)]">
-              {camera.lat.toFixed(6)}°, {camera.lng.toFixed(6)}°
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

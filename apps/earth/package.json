@@ -27,6 +27,7 @@
   "devDependencies": {
     "@pontistudios/tsconfig": "workspace:*",
     "@react-router/dev": "catalog:",
+    "@tailwindcss/vite": "catalog:",
     "@types/leaflet": "^1.9.8",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
