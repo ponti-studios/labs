@@ -14,5 +14,11 @@
       "runtimeArgs": ["--filter", "@pontistudios/labyrinth", "dev"],
       "port": 3001
     }
+  ,{
+      "name": "commune",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@pontistudios/commune", "dev"],
+      "port": 3005
+    }
   ]
 }
