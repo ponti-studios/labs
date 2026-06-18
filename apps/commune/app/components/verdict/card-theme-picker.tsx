@@ -5,40 +5,15 @@ export interface CardTheme {
   value: string;
   label: string;
   border: string;
-  bg: string;
+  color: string;
 }
 
 export const COLOR_THEMES: CardTheme[] = [
-  {
-    value: "classic",
-    label: "Classic",
-    border: "border-yellow-500",
-    bg: "",
-  },
-  {
-    value: "galaxy",
-    label: "Galaxy",
-    border: "border-purple-500",
-    bg: "",
-  },
-  {
-    value: "fire",
-    label: "Fire",
-    border: "border-orange-500",
-    bg: "",
-  },
-  {
-    value: "water",
-    label: "Water",
-    border: "border-blue-500",
-    bg: "",
-  },
-  {
-    value: "forest",
-    label: "Forest",
-    border: "border-green-500",
-    bg: "",
-  },
+  { value: "classic", label: "Classic", border: "border-yellow-500", color: "#EAB308" },
+  { value: "galaxy",  label: "Galaxy",  border: "border-purple-500", color: "#A855F7" },
+  { value: "fire",    label: "Fire",    border: "border-orange-500", color: "#F97316" },
+  { value: "water",   label: "Water",   border: "border-blue-500",   color: "#3B82F6" },
+  { value: "forest",  label: "Forest",  border: "border-green-500",  color: "#22C55E" },
 ];
 
 interface CardThemePickerProps {

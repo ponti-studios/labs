@@ -1,11 +1,14 @@
 import {
   isRouteErrorResponse,
+  Link,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from "react-router";
+import { MarketingNav } from "@pontistudios/ui";
 
 import type { Route } from "./+types/root";
 import "./app.css";
@@ -43,9 +46,23 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const location = useLocation();
   return (
     <QueryProvider>
-      <Outlet />
+      <MarketingNav
+        brand="Health"
+        brandHref="/"
+        links={[{ href: "/", label: "Symptoms" }]}
+        activeHref={location.pathname}
+        renderLink={({ href, className, children }) => (
+          <Link key={href} to={href} className={className}>
+            {children}
+          </Link>
+        )}
+      />
+      <main className="pt-24">
+        <Outlet />
+      </main>
     </QueryProvider>
   );
 }

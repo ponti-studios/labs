@@ -1,7 +1,6 @@
 import { AlertTriangle, Heart, ThumbsDown, ThumbsUp, User } from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
-import { useAuth } from "~/components/AuthProvider";
 import type { RelationshipCaseParsed, RelationshipVerdict } from "@pontistudios/db";
 import { generateFingerprint } from "~/lib/voter.utils";
 import VoteChart from "./VoteChart";
@@ -21,13 +20,11 @@ const VoteScreen: React.FC<VoteScreenProps> = ({
   onVoteCasted,
   fetcher,
 }) => {
-  const { user } = useAuth();
   const [currentVotes, setCurrentVotes] = useState<RelationshipVerdict[]>(votes);
   const [hasVoted, setHasVoted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Update votes when fetcher data returns
   useEffect(() => {
     if (fetcher.data?.success && fetcher.data?.vote) {
       const finalVotesArray = currentVotes.map((v) =>
@@ -43,16 +40,11 @@ const VoteScreen: React.FC<VoteScreenProps> = ({
 
   useEffect(() => {
     const fingerprint = generateFingerprint();
-    let userHasVotedThisSession = false;
-    if (user) {
-      userHasVotedThisSession = currentVotes.some((vote) => vote.userId === user.id);
-    } else {
-      userHasVotedThisSession = currentVotes.some(
-        (vote) => vote.fingerprint === fingerprint && !vote.userId,
-      );
-    }
+    const userHasVotedThisSession = currentVotes.some(
+      (vote) => vote.fingerprint === fingerprint && !vote.userId,
+    );
     setHasVoted(userHasVotedThisSession);
-  }, [currentVotes, user]);
+  }, [currentVotes]);
 
   const handleVote = async (value: "stay" | "dump") => {
     if (hasVoted || isSubmitting) return;
@@ -60,18 +52,13 @@ const VoteScreen: React.FC<VoteScreenProps> = ({
     setIsSubmitting(true);
     setError(null);
     const fingerprint = generateFingerprint();
-    const userId = user?.id;
-
-    const newVotePayload: Omit<RelationshipVerdict, "id" | "createdAt" | "updatedAt"> = {
-      value,
-      fingerprint,
-      userId: userId ?? null,
-      caseId: caseRecord.id,
-      comment: null,
-    };
 
     const optimisticVote: RelationshipVerdict = {
-      ...newVotePayload,
+      value,
+      fingerprint,
+      userId: null,
+      caseId: caseRecord.id,
+      comment: null,
       id: `temp-${Date.now()}`,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -84,18 +71,12 @@ const VoteScreen: React.FC<VoteScreenProps> = ({
       const formData = new FormData();
       formData.append("value", value);
       formData.append("fingerprint", fingerprint);
-      if (userId) formData.append("userId", userId);
-
       fetcher.submit(formData, { method: "post" });
     } catch (e: any) {
       console.error("Error submitting vote:", e);
       setError(`Failed to save vote: ${e.message}. Please try again.`);
       setCurrentVotes(currentVotes);
-      setHasVoted(
-        currentVotes.some((vote) =>
-          user ? vote.userId === user.id : vote.fingerprint === fingerprint && !vote.userId,
-        ),
-      );
+      setHasVoted(false);
     } finally {
       setIsSubmitting(false);
     }
@@ -106,7 +87,7 @@ const VoteScreen: React.FC<VoteScreenProps> = ({
       <button
         type="button"
         onClick={onBack}
-        className="flex items-center gap-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition-colors"
+        className="flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium transition-colors"
       >
         <Heart size={20} className="mr-2 fill-current" />
         Back to Cases
@@ -117,30 +98,27 @@ const VoteScreen: React.FC<VoteScreenProps> = ({
           <img
             src={caseRecord.photoUrl}
             alt={caseRecord.name}
-            className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover mx-auto shadow-lg border-4 border-white dark:border-gray-700"
+            className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover mx-auto shadow-lg border-4 border-white"
           />
         ) : (
-          <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center mx-auto shadow-lg text-gray-500 dark:text-gray-400">
+          <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gray-200 flex items-center justify-center mx-auto shadow-lg text-gray-500">
             <User size={64} />
           </div>
         )}
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
-          {caseRecord.name}
-        </h2>
-        <p className="text-gray-600 dark:text-gray-300 px-4 text-lg">{caseRecord.description}</p>
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-900">{caseRecord.name}</h2>
+        <p className="text-gray-600 px-4 text-lg">{caseRecord.description}</p>
       </div>
 
       {currentVotes.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-4 md:p-6">
+        <div className="bg-white shadow-xl rounded-lg p-4 md:p-6">
           <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-center text-gray-800 dark:text-gray-100">
-              Based on {currentVotes.length} vote
-              {currentVotes.length === 1 ? "" : "s"}
+            <h3 className="text-xl font-semibold text-center text-gray-800">
+              Based on {currentVotes.length} vote{currentVotes.length === 1 ? "" : "s"}
             </h3>
             <VoteChart votes={currentVotes} />
             {currentVotes.length < 3 && (
-              <div className="flex items-center justify-center gap-2 text-sm text-yellow-700 dark:text-yellow-300 p-3 rounded-md bg-yellow-50 dark:bg-yellow-900/50 border border-yellow-300 dark:border-yellow-700">
-                <AlertTriangle size={20} className="text-yellow-500 dark:text-yellow-400" />
+              <div className="flex items-center justify-center gap-2 text-sm text-yellow-700 p-3 rounded-md bg-yellow-50 border border-yellow-300">
+                <AlertTriangle size={20} className="text-yellow-500" />
                 <span>Get more votes for better insights!</span>
               </div>
             )}
@@ -149,20 +127,20 @@ const VoteScreen: React.FC<VoteScreenProps> = ({
       )}
 
       {currentVotes.length === 0 && (
-        <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+        <div className="text-center py-8 text-gray-500">
           <p className="text-lg">No verdicts yet for {caseRecord.name}.</p>
           <p>Be the first to share your opinion!</p>
         </div>
       )}
 
-      {error && <p className="text-center text-sm text-red-500 dark:text-red-400 py-2">{error}</p>}
+      {error && <p className="text-center text-sm text-red-500 py-2">{error}</p>}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
         <button
           type="button"
           onClick={() => handleVote("stay")}
           disabled={hasVoted || isSubmitting}
-          className="w-full flex items-center justify-center gap-2 px-6 py-3 text-lg font-semibold text-white bg-green-500 hover:bg-green-600 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+          className="w-full flex items-center justify-center gap-2 px-6 py-3 text-lg font-semibold text-white bg-green-500 hover:bg-green-600 rounded-md shadow-md disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
         >
           <ThumbsUp size={20} className="mr-2" />
           Stay Together
@@ -171,7 +149,7 @@ const VoteScreen: React.FC<VoteScreenProps> = ({
           type="button"
           onClick={() => handleVote("dump")}
           disabled={hasVoted || isSubmitting}
-          className="w-full flex items-center justify-center gap-2 px-6 py-3 text-lg font-semibold text-white bg-red-500 hover:bg-red-600 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+          className="w-full flex items-center justify-center gap-2 px-6 py-3 text-lg font-semibold text-white bg-red-500 hover:bg-red-600 rounded-md shadow-md disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
         >
           <ThumbsDown size={20} className="mr-2" />
           Time to Go
@@ -179,14 +157,12 @@ const VoteScreen: React.FC<VoteScreenProps> = ({
       </div>
 
       {hasVoted && !isSubmitting && !error && (
-        <p className="text-center text-sm text-gray-500 dark:text-gray-400 italic py-4">
+        <p className="text-center text-sm text-gray-500 italic py-4">
           Thanks for weighing in on {caseRecord.name}'s case!
         </p>
       )}
       {isSubmitting && (
-        <p className="text-center text-sm text-blue-500 dark:text-blue-400 py-4">
-          Submitting your vote...
-        </p>
+        <p className="text-center text-sm text-blue-500 py-4">Submitting your vote...</p>
       )}
     </div>
   );

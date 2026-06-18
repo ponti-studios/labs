@@ -1,252 +1,328 @@
 import type { RelationshipVerdict } from "@pontistudios/db";
-import { Button, Progress } from "@pontistudios/ui";
-import { MessageSquare, Share2, Users } from "lucide-react";
-import { useState } from "react";
-import { useLoaderData } from "react-router";
-import { AddRatingDialog } from "~/components/verdict/add-rating-dialog";
-import { ShareDialog } from "~/components/verdict/share-dialog";
+import { Sparkles } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useFetcher, useLoaderData } from "react-router";
+import { COLOR_THEMES } from "~/components/verdict/card-theme-picker";
+import { PERSONALITY_TYPES } from "~/components/verdict/personality-type-picker";
 import { CACHE_TTL, withCache } from "~/lib/server/cache";
+import { createVerdict } from "~/lib/server/mutations";
 import { getCaseWithStats, getVerdictsByCase } from "~/lib/server/queries";
 import { generateFingerprint } from "~/lib/voter.utils";
 import { cn } from "~/lib/utils";
 import type { Route } from "./+types/page";
 
-interface LoaderData {
-  caseRecord: {
-    id: string;
-    name: string;
-    photoUrl: string | null;
-    voteStats: { total: number; stay: number; dump: number; stayPercentage: number };
-  } | null;
-  verdicts: RelationshipVerdict[];
-}
-
 export async function loader({ params }: Route.LoaderArgs) {
   const caseId = params.id;
-
   const [caseRecord, verdicts] = await Promise.all([
     withCache(`case:${caseId}`, () => getCaseWithStats(caseId), CACHE_TTL.CASE_DETAIL),
     getVerdictsByCase(caseId),
   ]);
-
-  if (!caseRecord) return { caseRecord: null, verdicts: [] };
-
-  return {
-    caseRecord: {
-      id: caseRecord.id,
-      name: caseRecord.name,
-      photoUrl: caseRecord.photoUrl,
-      voteStats: caseRecord.voteStats,
-    },
-    verdicts,
-  };
+  if (!caseRecord) throw new Response("Not found", { status: 404 });
+  return { caseRecord, verdicts };
 }
 
-export function CaseDetailPage() {
-  const { caseRecord, verdicts } = useLoaderData<LoaderData>();
-
-  if (!caseRecord) {
-    return <div className="text-center py-10">Case not found</div>;
+export async function action({ request, params }: Route.ActionArgs) {
+  const caseId = params.id;
+  if (!caseId) throw new Response("Missing caseId", { status: 400 });
+  const formData = await request.formData();
+  const value = formData.get("value") as "stay" | "dump";
+  const fingerprint = formData.get("fingerprint") as string;
+  const comment = (formData.get("comment") as string) || null;
+  if (!value || !fingerprint) return { error: "Missing fields" };
+  try {
+    const verdict = await createVerdict({ value, fingerprint, userId: null, caseId, comment });
+    return { success: true, verdict };
+  } catch {
+    return { error: "Failed to submit" };
   }
+}
 
-  const cardName = caseRecord.name || "Partner";
-  const { voteStats } = caseRecord;
-  const shareUrl =
-    typeof window !== "undefined"
-      ? `${window.location.origin}/case/${caseRecord.id}`
-      : `/case/${caseRecord.id}`;
+function timeAgo(date: Date | string): string {
+  const s = Math.floor((Date.now() - new Date(date).getTime()) / 1000);
+  if (s < 60) return "just now";
+  if (s < 3600) return `${Math.floor(s / 60)}m ago`;
+  if (s < 86400) return `${Math.floor(s / 3600)}h ago`;
+  return `${Math.floor(s / 86400)}d ago`;
+}
 
-  const [localVerdicts, setLocalVerdicts] = useState<RelationshipVerdict[]>(verdicts);
-  const [newRating, setNewRating] = useState({ verdict: "" as "stay" | "dump" | "", comment: "" });
-  const [ratingDialogOpen, setRatingDialogOpen] = useState(false);
-  const [shareDialogOpen, setShareDialogOpen] = useState(false);
+export default function CaseDetailPage() {
+  const { caseRecord, verdicts: initialVerdicts } = useLoaderData<typeof loader>();
+  const fetcher = useFetcher<typeof action>();
 
-  const localStayCount = localVerdicts.filter((v) => v.value === "stay").length;
-  const localDumpCount = localVerdicts.filter((v) => v.value === "dump").length;
-  const localTotal = localVerdicts.length;
-  const localStayPercentage = localTotal > 0 ? Math.round((localStayCount / localTotal) * 100) : 0;
+  const [localVerdicts, setLocalVerdicts] = useState<RelationshipVerdict[]>(initialVerdicts);
+  const [selectedVote, setSelectedVote] = useState<"stay" | "dump" | null>(null);
+  const [comment, setComment] = useState("");
+  const [hasVoted, setHasVoted] = useState(false);
+  const [isOwner, setIsOwner] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const commentRef = useRef<HTMLTextAreaElement>(null);
 
-  const displayStayCount = localVerdicts.length > verdicts.length ? localStayCount : voteStats.stay;
-  const displayDumpCount = localVerdicts.length > verdicts.length ? localDumpCount : voteStats.dump;
-  const displayTotal = localVerdicts.length > verdicts.length ? localTotal : voteStats.total;
-  const displayStayPercentage =
-    localVerdicts.length > verdicts.length ? localStayPercentage : voteStats.stayPercentage;
+  useEffect(() => {
+    const owned: string[] = JSON.parse(localStorage.getItem("commune:owned") ?? "[]");
+    setIsOwner(owned.includes(caseRecord.id));
+    const fp = generateFingerprint();
+    setHasVoted(localVerdicts.some((v) => v.fingerprint === fp));
+  }, [caseRecord.id, localVerdicts]);
 
-  const handleNewRatingChange = (field: string, value: string) => {
-    setNewRating((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const submitRating = async () => {
-    if (!newRating.verdict) return;
-
-    const fingerprint = generateFingerprint();
-
-    const optimisticVerdict: RelationshipVerdict = {
-      id: `temp-${Date.now()}`,
-      caseId: caseRecord.id,
-      userId: null,
-      fingerprint,
-      value: newRating.verdict,
-      comment: newRating.comment || null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    setLocalVerdicts([optimisticVerdict, ...localVerdicts]);
-    setNewRating({ verdict: "", comment: "" });
-    setRatingDialogOpen(false);
-
-    try {
-      const formData = new FormData();
-      formData.append("value", newRating.verdict);
-      formData.append("fingerprint", fingerprint);
-      formData.append("comment", newRating.comment);
-
-      const response = await fetch(`/case/${caseRecord.id}/verdict`, {
-        method: "POST",
-        body: formData,
-      });
-
-      if (response.ok) window.location.reload();
-    } catch (error) {
-      console.error("Failed to submit verdict:", error);
+  useEffect(() => {
+    if (fetcher.data && "success" in fetcher.data && fetcher.data.success && fetcher.data.verdict) {
+      setLocalVerdicts((prev) => [fetcher.data!.verdict as RelationshipVerdict, ...prev]);
     }
+  }, [fetcher.data]);
+
+  useEffect(() => {
+    if (selectedVote) commentRef.current?.focus();
+  }, [selectedVote]);
+
+  const handleVoteSelect = (vote: "stay" | "dump") => {
+    if (hasVoted) return;
+    setSelectedVote((prev) => (prev === vote ? null : vote));
   };
 
-  const copyShareLink = () => {
-    navigator.clipboard.writeText(shareUrl);
+  const handleSubmit = () => {
+    if (!selectedVote || hasVoted) return;
+    const fp = generateFingerprint();
+    const fd = new FormData();
+    fd.append("value", selectedVote);
+    fd.append("fingerprint", fp);
+    if (comment.trim()) fd.append("comment", comment.trim());
+    fetcher.submit(fd, { method: "post" });
+    setHasVoted(true);
+    setSelectedVote(null);
+    setComment("");
   };
 
-  const getVerdictColor = (verdict: string) => {
-    switch (verdict) {
-      case "stay":
-        return "bg-green-100 text-green-800 border-green-200";
-      case "dump":
-        return "bg-red-100 text-red-800 border-red-200";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
-    }
+  const handleShare = () => {
+    const url = `${window.location.origin}/case/${caseRecord.id}`;
+    navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
+
+  const selectedTheme = COLOR_THEMES.find((t) => t.value === caseRecord.colorTheme) ?? COLOR_THEMES[0];
+  const selectedType = PERSONALITY_TYPES.find((t) => t.value === caseRecord.cardType?.toLowerCase()) ?? PERSONALITY_TYPES[0];
+
+  const vibes = localVerdicts.filter((v) => v.value === "stay").length;
+  const icks = localVerdicts.filter((v) => v.value === "dump").length;
+  const total = localVerdicts.length;
+  const vibePercent = total > 0 ? Math.round((vibes / total) * 100) : 0;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg">
-                <span className="text-white font-bold text-lg">{cardName.charAt(0)}</span>
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">{cardName}</h1>
-                <p className="text-sm text-gray-500">Verdict Results</p>
-              </div>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShareDialogOpen(true)}
-              className="gap-2"
-            >
-              <Share2 className="w-4 h-4" />
-              Share
-            </Button>
-          </div>
-        </div>
-      </div>
+    <div className="max-w-sm mx-auto py-8 px-4">
+      <div className={cn("border-[8px] rounded-2xl overflow-hidden shadow-xl", selectedTheme.border)}>
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-              <Users className="w-5 h-5 text-gray-500" />
-              Community Verdict
-            </h2>
-            <span className="text-2xl font-bold text-gray-900">{displayTotal} verdicts</span>
-          </div>
-          <div className="space-y-4">
-            <div>
-              <div className="flex justify-between text-sm mb-2">
-                <span className="text-green-700 font-medium">Stay</span>
-                <span className="text-green-700 font-medium">{displayStayPercentage}%</span>
-              </div>
-              <Progress value={displayStayPercentage} className="h-3 bg-gray-200" />
-            </div>
-            <div className="flex justify-between text-sm">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                <span className="text-gray-600">{displayStayCount} say stay</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                <span className="text-gray-600">{displayDumpCount} say dump</span>
-              </div>
-            </div>
-          </div>
+        {/* Card header */}
+        <div className="flex justify-between items-center px-4 pt-3 pb-1">
+          <h1 className="font-bold text-xl">{caseRecord.name}</h1>
+          <span className="text-red-600 font-bold text-sm">HP {caseRecord.hp ?? "—"}</span>
         </div>
 
-        <div className="flex justify-center mb-8">
-          <Button size="lg" onClick={() => setRatingDialogOpen(true)} className="gap-2">
-            <MessageSquare className="w-5 h-5" />
-            Add Your Verdict
-          </Button>
+        {/* Type badge */}
+        <div className="flex justify-end px-4 pb-2">
+          <span className={cn("text-white text-[9px] font-semibold px-2 py-0.5 rounded", selectedType.color)}>
+            {selectedType.label}
+          </span>
         </div>
 
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900">Verdicts</h3>
-          {localVerdicts.map((v) => (
+        {/* Photo */}
+        <div className="mx-3 rounded-lg overflow-hidden border-2 border-gray-300" style={{ height: 220 }}>
+          {caseRecord.photoUrl ? (
             <div
-              key={v.id}
-              className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md transition-shadow"
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <p className="text-sm text-gray-500">
-                    {new Date(v.createdAt).toLocaleDateString()}
-                  </p>
-                  {v.comment && (
-                    <p className="text-gray-700 mt-2 leading-relaxed">&ldquo;{v.comment}&rdquo;</p>
-                  )}
-                </div>
-                <span
-                  className={cn(
-                    "px-3 py-1 rounded-full text-sm font-medium border ml-4",
-                    getVerdictColor(v.value),
-                  )}
-                >
-                  {v.value === "stay" ? "Stay" : "Dump"}
-                </span>
-              </div>
+              style={{
+                width: "100%", height: "100%",
+                backgroundImage: `url(${caseRecord.photoUrl})`,
+                backgroundSize: "cover", backgroundPosition: "center",
+                transform: `scale(${caseRecord.imageScale ?? 1}) translate(${(caseRecord.imagePosition?.x ?? 0) / (caseRecord.imageScale ?? 1)}px, ${(caseRecord.imagePosition?.y ?? 0) / (caseRecord.imageScale ?? 1)}px)`,
+                transformOrigin: "center center",
+              }}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-muted">
+              <Sparkles className="w-16 h-16 text-muted-foreground" />
             </div>
-          ))}
+          )}
         </div>
 
-        {localVerdicts.length === 0 && (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <MessageSquare className="w-8 h-8 text-gray-400" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No verdicts yet</h3>
-            <p className="text-gray-500 mb-4">Be the first to share your verdict!</p>
-            <Button onClick={() => setRatingDialogOpen(true)}>Add Verdict</Button>
+        {/* Description */}
+        {caseRecord.description && (
+          <p className="px-4 pt-2 pb-1 text-xs italic text-muted-foreground">{caseRecord.description}</p>
+        )}
+
+        {/* Attacks */}
+        {caseRecord.attacks?.length > 0 && (
+          <div className="px-4 py-2 flex flex-col gap-1">
+            {caseRecord.attacks.map((attack, i) => (
+              <div
+                key={`attack-${i}`}
+                className={cn("flex justify-between text-xs", i < caseRecord.attacks.length - 1 && "border-b border-gray-300/60 pb-1")}
+              >
+                <span className="font-semibold">{attack.name}</span>
+                <span className="font-bold text-red-600">{attack.damage}</span>
+              </div>
+            ))}
           </div>
         )}
-      </div>
 
-      <AddRatingDialog
-        open={ratingDialogOpen}
-        onOpenChange={setRatingDialogOpen}
-        newRating={newRating}
-        handleNewRatingChange={handleNewRatingChange}
-        submitRating={submitRating}
-      />
-      <ShareDialog
-        open={shareDialogOpen}
-        onOpenChange={setShareDialogOpen}
-        cardName={cardName}
-        shareUrl={shareUrl}
-        copyShareLink={copyShareLink}
-      />
+        {/* Flaws / Strengths / Commitment */}
+        <div className="px-4 py-2 border-t border-gray-200 text-[10px] text-muted-foreground space-y-1">
+          {caseRecord.flaws?.length > 0 && (
+            <p><span className="font-semibold text-foreground">Flaws:</span> {caseRecord.flaws.join(", ")}</p>
+          )}
+          {caseRecord.strengths?.length > 0 && (
+            <p><span className="font-semibold text-foreground">Strengths:</span> {caseRecord.strengths.join(", ")}</p>
+          )}
+          <div className="flex justify-between items-center">
+            <p>
+              <span className="font-semibold text-foreground">Commitment:</span>{" "}
+              {"★".repeat(Number(caseRecord.commitmentLevel ?? 0))}
+            </p>
+            <span>001/100</span>
+          </div>
+        </div>
+
+        {/* Extension panel */}
+        <div className="bg-muted border-t-2 border-border">
+
+          {/* Jury results */}
+          {total > 0 && (
+            <div className="px-4 pt-4 pb-3 border-b border-border">
+              <p className="text-[9px] font-semibold uppercase tracking-widest mb-2 text-muted-foreground">
+                The jury's out
+              </p>
+              <div className="flex rounded-full overflow-hidden h-2 mb-2">
+                <div className="bg-green-500" style={{ flex: vibePercent }} />
+                <div className="bg-red-500" style={{ flex: 100 - vibePercent }} />
+              </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-green-600 font-semibold">{vibePercent}% vibe · {vibes}</span>
+                <span className="text-red-500 font-semibold">{icks} ick{icks !== 1 ? "s" : ""}</span>
+              </div>
+            </div>
+          )}
+
+          {/* Owner: share CTA */}
+          {isOwner && (
+            <div className="px-4 pt-4 pb-3 border-b border-border">
+              <button
+                type="button"
+                onClick={handleShare}
+                className="w-full bg-foreground text-background rounded-full py-2.5 text-xs font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13" />
+                </svg>
+                {copied ? "Link copied!" : "Share with friends"}
+              </button>
+            </div>
+          )}
+
+          {/* Takes list */}
+          <div className="px-4 pt-3 pb-4 flex flex-col gap-3">
+            {total > 0 && (
+              <p className="text-[9px] font-semibold uppercase tracking-widest text-muted-foreground">
+                Takes ({total})
+              </p>
+            )}
+
+            {total === 0 && !isOwner && (
+              <p className="text-[10px] text-muted-foreground">Be the first to weigh in.</p>
+            )}
+
+            {total === 0 && isOwner && (
+              <p className="text-[10px] text-muted-foreground">No takes yet — share the link to get your friends' opinions.</p>
+            )}
+
+            {localVerdicts.map((v) => (
+              <div key={v.id} className="flex gap-2 items-start">
+                <span className={cn(
+                  "text-[10px] font-bold rounded-full px-2 py-0.5 whitespace-nowrap flex-shrink-0",
+                  v.value === "stay"
+                    ? "bg-green-50 text-green-700"
+                    : "bg-red-50 text-red-600",
+                )}>
+                  {v.value === "stay" ? "Vibe" : "Ick"}
+                </span>
+                <div>
+                  {v.comment ? (
+                    <p className="text-xs text-foreground mb-0.5">"{v.comment}"</p>
+                  ) : (
+                    <p className="text-xs text-muted-foreground italic mb-0.5">No comment</p>
+                  )}
+                  <p className="text-[9px] text-muted-foreground">{timeAgo(v.createdAt)}</p>
+                </div>
+              </div>
+            ))}
+
+            {/* Friend: vote form */}
+            {!isOwner && (
+              !hasVoted ? (
+                <div className="pt-2 flex flex-col gap-2 border-t border-border">
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleVoteSelect("stay")}
+                      className={cn(
+                        "flex-1 py-2 rounded-full text-xs font-bold transition-all",
+                        selectedVote === "stay"
+                          ? "border-2 border-green-500 bg-green-50 text-green-700"
+                          : selectedVote === "dump"
+                            ? "border border-green-200 text-green-400 opacity-50"
+                            : "border border-green-400 text-green-600",
+                      )}
+                    >
+                      ✓ Vibe
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleVoteSelect("dump")}
+                      className={cn(
+                        "flex-1 py-2 rounded-full text-xs font-bold transition-all",
+                        selectedVote === "dump"
+                          ? "border-2 border-red-500 bg-red-50 text-red-600"
+                          : selectedVote === "stay"
+                            ? "border border-red-200 text-red-400 opacity-50"
+                            : "border border-red-400 text-red-500",
+                      )}
+                    >
+                      ✕ Ick
+                    </button>
+                  </div>
+
+                  {selectedVote && (
+                    <>
+                      <textarea
+                        ref={commentRef}
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        placeholder="Say something... (optional)"
+                        rows={2}
+                        className="w-full text-xs border border-input rounded-lg px-3 py-2 bg-background resize-none focus:outline-none focus:ring-1 focus:ring-ring placeholder:text-muted-foreground"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleSubmit}
+                        disabled={fetcher.state === "submitting"}
+                        className={cn(
+                          "w-full py-2 rounded-full text-xs font-semibold text-white transition-opacity disabled:opacity-60",
+                          selectedVote === "stay" ? "bg-green-600" : "bg-red-600",
+                        )}
+                      >
+                        {fetcher.state === "submitting"
+                          ? "Submitting..."
+                          : `Submit ${selectedVote === "stay" ? "vibe" : "ick"}`}
+                      </button>
+                    </>
+                  )}
+                </div>
+              ) : (
+                <p className="text-[10px] text-muted-foreground italic pt-2 border-t border-border">
+                  You've already weighed in.
+                </p>
+              )
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

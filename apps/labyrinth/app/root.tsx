@@ -1,12 +1,14 @@
 import {
   isRouteErrorResponse,
   Links,
+  Link,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
   useLocation,
 } from "react-router";
+import { MarketingNav } from "@pontistudios/ui";
 
 import type { Route } from "./+types/root";
 import "./app.css";
@@ -46,14 +48,23 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const location = useLocation();
   return (
     <QueryProvider>
-      <div className="bg-background/50 backdrop-blur max-w-7xl mx-auto my-4 px-4">
-        <a href="/" className="text-lg font-semibold text-foreground">
-          Labyrinth
-        </a>
-      </div>
-      <main className="flex-1 px-4 mt-6 w-full max-w-7xl mx-auto">
+      <MarketingNav
+        brand="Labyrinth"
+        brandHref="/"
+        links={[
+          { href: "/experiments", label: "Experiments" },
+        ]}
+        activeHref={location.pathname}
+        renderLink={({ href, className, children }) => (
+          <Link key={href} to={href} className={className}>
+            {children}
+          </Link>
+        )}
+      />
+      <main className="pt-24 px-4 w-full max-w-7xl mx-auto">
         <Outlet />
       </main>
     </QueryProvider>

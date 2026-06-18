@@ -6,7 +6,7 @@ export const relationshipCases = labs.table("relationship_cases", {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   name: text("name").notNull(),
-  userId: text("user_id").notNull(),
+  userId: text("user_id"),
   hp: text("hp"),
   cardType: text("card_type"),
   description: text("description"),
@@ -62,5 +62,5 @@ export interface RelationshipCaseParsed {
   photoUrl: string | null;
   imageScale: number | null;
   imagePosition: { x: number; y: number } | null;
-  userId: string;
+  userId: string | null;
 }
