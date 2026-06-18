@@ -1,6 +1,3 @@
 @import "@pontistudios/ui/styles.css";
-@import "./components/verdict/pokemon-card.css";
-@import "./components/verdict/hp-bars.css";
-@import "./components/verdict/pokemon-themes.css";
 
 @source "../../../packages/ui/src";

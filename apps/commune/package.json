@@ -12,7 +12,9 @@
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.105.0",
     "@hono/node-server": "^2.0.0",
+    "@pontistudios/ai": "workspace:*",
     "@pontistudios/db": "workspace:*",
     "@pontistudios/ui": "workspace:*",
     "@react-router/node": "catalog:",

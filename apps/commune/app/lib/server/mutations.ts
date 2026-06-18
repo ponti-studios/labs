@@ -1,20 +1,35 @@
 import { eq } from "@pontistudios/db";
-import { db, relationshipCases, relationshipVerdicts } from "@pontistudios/db";
+import { caseUpdates, db, relationshipCases, relationshipVerdicts } from "@pontistudios/db";
 import type {
+  CaseUpdate,
   NewRelationshipCase,
   NewRelationshipVerdict,
   RelationshipCase,
   RelationshipVerdict,
 } from "@pontistudios/db";
-import { queryCache, invalidateCaseCache } from "./cache";
+import { invalidateCaseCache, queryCache } from "./cache";
 
-export type CaseCreateInput = Omit<NewRelationshipCase, "id" | "createdAt" | "updatedAt">;
-export type VerdictCreateInput = Omit<NewRelationshipVerdict, "id" | "createdAt" | "updatedAt">;
+export type CaseCreateInput = Pick<
+  NewRelationshipCase,
+  "userId" | "label" | "rawSituation" | "neutralSituation" | "question" | "quorumSize"
+>;
+
+export type VerdictCreateInput = Pick<
+  NewRelationshipVerdict,
+  "caseId" | "fingerprint" | "value" | "comment" | "updateId" | "updateRound" | "userId"
+>;
+
+export type CaseUpdateCreateInput = {
+  caseId: string;
+  rawContent: string;
+  neutralContent: string;
+  round: number;
+};
 
 export async function createCase(data: CaseCreateInput): Promise<RelationshipCase> {
   const row = await db
     .insert(relationshipCases)
-    .values({ id: crypto.randomUUID(), ...data, createdAt: new Date(), updatedAt: new Date() })
+    .values({ id: crypto.randomUUID(), ...data, createdAt: new Date() })
     .returning()
     .execute();
   const inserted = row[0];
@@ -23,29 +38,10 @@ export async function createCase(data: CaseCreateInput): Promise<RelationshipCas
   return inserted;
 }
 
-export async function updateCase(
-  id: string,
-  data: Partial<NewRelationshipCase>,
-): Promise<RelationshipCase | null> {
-  const updateValues: Record<string, unknown> = {};
-  if (data.name !== undefined) updateValues.name = data.name;
-  if (data.hp !== undefined) updateValues.hp = data.hp;
-  if (data.cardType !== undefined) updateValues.cardType = data.cardType;
-  if (data.description !== undefined) updateValues.description = data.description;
-  if (data.attacks !== undefined) updateValues.attacks = data.attacks;
-  if (data.strengths !== undefined) updateValues.strengths = data.strengths;
-  if (data.flaws !== undefined) updateValues.flaws = data.flaws;
-  if (data.commitmentLevel !== undefined) updateValues.commitmentLevel = data.commitmentLevel;
-  if (data.colorTheme !== undefined) updateValues.colorTheme = data.colorTheme;
-  if (data.photoUrl !== undefined) updateValues.photoUrl = data.photoUrl;
-  if (data.imageScale !== undefined) updateValues.imageScale = data.imageScale;
-  if (data.imagePosition !== undefined) updateValues.imagePosition = data.imagePosition;
-  if (data.userId !== undefined) updateValues.userId = data.userId;
-  updateValues.updatedAt = new Date();
-
+export async function closeCase(id: string): Promise<RelationshipCase | null> {
   const row = await db
     .update(relationshipCases)
-    .set(updateValues)
+    .set({ status: "closed" })
     .where(eq(relationshipCases.id, id))
     .returning()
     .execute();
@@ -63,7 +59,7 @@ export async function deleteCase(id: string): Promise<void> {
 export async function createVerdict(data: VerdictCreateInput): Promise<RelationshipVerdict> {
   const row = await db
     .insert(relationshipVerdicts)
-    .values({ id: crypto.randomUUID(), ...data, createdAt: new Date(), updatedAt: new Date() })
+    .values({ id: crypto.randomUUID(), ...data, createdAt: new Date() })
     .returning()
     .execute();
   const inserted = row[0];
@@ -73,13 +69,14 @@ export async function createVerdict(data: VerdictCreateInput): Promise<Relations
   return inserted;
 }
 
-export async function deleteVerdict(id: string, caseId: string): Promise<void> {
-  await db.delete(relationshipVerdicts).where(eq(relationshipVerdicts.id, id)).execute();
-  queryCache.invalidate(`case:${caseId}:stats`);
-  queryCache.invalidate(`case:${caseId}`);
-}
-
-export async function deleteVerdictsByCase(caseId: string): Promise<void> {
-  await db.delete(relationshipVerdicts).where(eq(relationshipVerdicts.caseId, caseId)).execute();
-  queryCache.invalidate(`case:${caseId}:stats`);
+export async function createCaseUpdate(data: CaseUpdateCreateInput): Promise<CaseUpdate> {
+  const row = await db
+    .insert(caseUpdates)
+    .values({ id: crypto.randomUUID(), ...data, createdAt: new Date() })
+    .returning()
+    .execute();
+  const inserted = row[0];
+  if (!inserted) throw new Error("Failed to insert case update");
+  invalidateCaseCache(data.caseId);
+  return inserted;
 }

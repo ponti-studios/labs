@@ -15,6 +15,13 @@
       "when": 1781671296046,
       "tag": "0001_gigantic_leopardon",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1750204800000,
+      "tag": "0002_commune_rebuild",
+      "breakpoints": true
     }
   ]
 }
