@@ -2,14 +2,16 @@ export type { CovidData, NewCovidData } from "./schema/covid";
 export type { NewRhobhDailyPuzzle, RhobhDailyPuzzle } from "./schema/puzzles";
 export type { NewTflCamera, TflCamera } from "./schema/tfl";
 export type {
+  CaseUpdate,
+  NewCaseUpdate,
   NewRelationshipCase,
   NewRelationshipVerdict,
   RelationshipCase,
-  RelationshipCaseParsed,
   RelationshipVerdict,
 } from "./schema/relationship-cases";
 
 export {
+  caseUpdates,
   covidData,
   relationshipCases,
   relationshipVerdicts,

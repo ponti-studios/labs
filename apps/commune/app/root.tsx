@@ -56,9 +56,9 @@ export default function App() {
         brand="Commune"
         brandHref="/"
         links={[
-          { href: "/", label: "The Roster" },
+          { href: "/", label: "Docket" },
         ]}
-        cta={{ href: "/case/create", label: "+ Add someone" }}
+        cta={{ href: "/case/create", label: "File a case" }}
         activeHref={location.pathname}
         renderLink={({ href, className, children }) => (
           <Link key={href} to={href} className={className}>
