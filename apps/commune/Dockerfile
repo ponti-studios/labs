@@ -27,7 +27,7 @@ RUN pnpm install --frozen-lockfile --filter @pontistudios/commune...
 RUN pnpm --filter @pontistudios/db build
 RUN pnpm --filter @pontistudios/commune build
 RUN cd apps/commune && \
-    node_modules/.bin/esbuild server.ts \
+    pnpm exec esbuild server.ts \
     --bundle \
     --platform=node \
     --format=esm \
