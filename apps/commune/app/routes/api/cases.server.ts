@@ -11,9 +11,6 @@ function validateCaseData(body: Record<string, unknown>): {
   if (!body.name || typeof body.name !== "string") {
     return { valid: false, error: httpErrors.badRequest("Name is required") };
   }
-  if (!body.userId || typeof body.userId !== "string") {
-    return { valid: false, error: httpErrors.badRequest("User ID is required") };
-  }
 
   const data: CaseCreateInput = {
     name: body.name,
@@ -33,7 +30,7 @@ function validateCaseData(body: Record<string, unknown>): {
       typeof body.imagePosition === "object" && body.imagePosition !== null
         ? (body.imagePosition as { x: number; y: number })
         : null,
-    userId: body.userId,
+    userId: null,
   };
 
   return { valid: true, data };

@@ -43,9 +43,9 @@ export function PersonCardDisplay({
         "shadow-xl relative",
       )}
       whileHover={{
-        scale: 1.05,
-        rotateY: [0, 5, 0, -5, 0],
-        transition: { duration: 1.5, repeat: Number.POSITIVE_INFINITY },
+        scale: 1.03,
+        rotateY: 4,
+        transition: { duration: 0.3 },
       }}
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
@@ -102,7 +102,7 @@ export function PersonCardDisplay({
         <div className="space-y-2 text-sm leading-snug mb-2">
           {cardData.attacks.map((attack, index: number) => (
             <div
-              key={attack.name}
+              key={`attack-${index}`}
               className={`flex justify-between items-center ${
                 index < cardData.attacks.length - 1 ? "border-b border-gray-400/50 pb-1" : ""
               }`}

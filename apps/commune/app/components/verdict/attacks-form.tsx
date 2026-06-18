@@ -14,7 +14,7 @@ export function AttacksForm({ attacks, onAttackChange }: AttacksFormProps) {
   return (
     <div data-testid="attacks" className="space-y-4">
       {attacks.map((attack: RelationshipCaseParsed["attacks"][number], index: number) => (
-        <Card key={attack.name} className="border-gray-300">
+        <Card key={`attack-${index}`} className="border-gray-300">
           <CardContent className="pt-6 space-y-4">
             <div className="space-y-2">
               <Label htmlFor={`attackName-${index}`} className="text-gray-700">

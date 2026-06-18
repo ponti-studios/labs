@@ -1,7 +1,8 @@
 import { QueryClientProvider } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   isRouteErrorResponse,
+  Link,
   Links,
   Meta,
   Outlet,
@@ -10,9 +11,9 @@ import {
   useLocation,
   useNavigation,
 } from "react-router";
+import { MarketingNav } from "@pontistudios/ui";
 import "./app.css";
 import BottomSheet from "./components/BottomSheet";
-import Controls from "./components/Controls";
 import MapLibreViewer from "./components/MapLibreViewer";
 import SheetSkeleton from "./components/SheetSkeleton";
 import { queryClient } from "./lib/query-client";
@@ -59,20 +60,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   const location = useLocation();
-
   const navigation = useNavigation();
   const isNavigating = navigation.state === "loading";
-
-  const currentTab = useMemo(() => {
-    const pathSegments = location.pathname.split("/").filter(Boolean);
-    if (pathSegments.length > 0) {
-      const firstSegment = pathSegments[0];
-      if (["tfl"].includes(firstSegment)) {
-        return firstSegment;
-      }
-    }
-    return "tfl"; // Default tab
-  }, [location.pathname]);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -80,7 +69,17 @@ export default function App() {
         <ClientOnly>
           <MapLibreViewer />
         </ClientOnly>
-        <Controls currentTab={currentTab} />
+        <MarketingNav
+          brand="Earth"
+          brandHref="/"
+          links={[{ href: "/tfl", label: "TFL" }]}
+          activeHref={location.pathname.startsWith("/tfl") ? "/tfl" : location.pathname}
+          renderLink={({ href, className, children }) => (
+            <Link key={href} to={href} className={className}>
+              {children}
+            </Link>
+          )}
+        />
         <BottomSheet>
           {isNavigating ? <SheetSkeleton /> : <Outlet />}
         </BottomSheet>

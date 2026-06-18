@@ -2,15 +2,15 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import * as React from "react";
 import {
   Links,
+  Link,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
   isRouteErrorResponse,
+  useLocation,
 } from "react-router";
-
-import { AuthProvider } from "~/components/AuthProvider";
-import { PokemonThemeProvider } from "~/lib/pokemon-theme-context";
+import { MarketingNav } from "@pontistudios/ui";
 import type { Route } from "./+types/root";
 import "./app.css";
 
@@ -39,9 +39,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <QueryClientProvider client={queryClient}>
-          <AuthProvider>
-            <PokemonThemeProvider>{children}</PokemonThemeProvider>
-          </AuthProvider>
+          {children}
         </QueryClientProvider>
         <ScrollRestoration />
         <Scripts />
@@ -51,7 +49,28 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  const location = useLocation();
+  return (
+    <>
+      <MarketingNav
+        brand="Commune"
+        brandHref="/"
+        links={[
+          { href: "/", label: "The Roster" },
+        ]}
+        cta={{ href: "/case/create", label: "+ Add someone" }}
+        activeHref={location.pathname}
+        renderLink={({ href, className, children }) => (
+          <Link key={href} to={href} className={className}>
+            {children}
+          </Link>
+        )}
+      />
+      <div className="pt-20">
+        <Outlet />
+      </div>
+    </>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
