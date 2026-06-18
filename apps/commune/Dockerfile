@@ -14,14 +14,17 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY apps/commune/package.json apps/commune/package.json
 COPY packages/db/package.json packages/db/package.json
 COPY packages/ui/package.json packages/ui/package.json
+COPY packages/ai/package.json packages/ai/package.json
 COPY packages/tsconfig/package.json packages/tsconfig/package.json
 COPY tsconfig.base.json ./
 COPY packages/tsconfig/ packages/tsconfig/
 COPY packages/db/ packages/db/
 COPY packages/ui/ packages/ui/
+COPY packages/ai/ packages/ai/
 COPY apps/commune/ apps/commune/
 
 RUN pnpm install --frozen-lockfile --filter @pontistudios/commune...
+RUN pnpm --filter @pontistudios/db build
 RUN pnpm --filter @pontistudios/commune build
 RUN cd apps/commune && \
     node_modules/.bin/esbuild server.ts \
