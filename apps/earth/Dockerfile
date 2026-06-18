@@ -22,6 +22,7 @@ COPY packages/ui/ packages/ui/
 COPY apps/earth/ apps/earth/
 
 RUN pnpm install --frozen-lockfile --filter @pontistudios/earth...
+RUN pnpm --filter @pontistudios/db build
 RUN pnpm --filter @pontistudios/earth build
 RUN pnpm deploy --legacy --filter @pontistudios/earth --prod /prod/earth
 
