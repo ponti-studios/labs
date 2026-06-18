@@ -24,6 +24,7 @@ COPY packages/ui/ packages/ui/
 COPY apps/labyrinth/ apps/labyrinth/
 
 RUN pnpm install --frozen-lockfile --filter @pontistudios/labyrinth...
+RUN pnpm --filter @pontistudios/db build
 RUN pnpm --filter @pontistudios/labyrinth build
 RUN pnpm deploy --legacy --filter @pontistudios/labyrinth --prod /prod/labyrinth
 
