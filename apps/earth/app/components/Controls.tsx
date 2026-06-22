@@ -1,8 +1,6 @@
 import { Link } from "react-router";
 
-const tabs = [
-  { id: "tfl", label: "TFL", path: "tfl" },
-] as const;
+const tabs = [{ id: "tfl", label: "TFL", path: "tfl" }] as const;
 
 interface ControlsProps {
   currentTab: string;

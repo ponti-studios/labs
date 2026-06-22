@@ -1,9 +1,8 @@
 import { data } from "react-router";
 import { z } from "zod";
-import fs from "node:fs";
-import path from "node:path";
 import { calculateMatchScore } from "../lib/similarity";
-import type { Symptom } from "../types/symptom";
+import { SymptomListSchema, type Symptom } from "../types/symptom";
+import SYMPTOM_DATABASE from "../lib/symptoms.json";
 
 const SymptomRequestSchema = z.object({
   symptom: z.string(),
@@ -12,10 +11,6 @@ const SymptomRequestSchema = z.object({
 });
 
 export async function action({ request }: { request: Request }) {
-  const SYMPTOM_DATABASE: Symptom[] = JSON.parse(
-    fs.readFileSync(path.join(process.cwd(), "src/lib/symptoms.json"), "utf-8"),
-  );
-
   try {
     const body = SymptomRequestSchema.safeParse(await request.json());
     if (!body.success) {
@@ -26,10 +21,18 @@ export async function action({ request }: { request: Request }) {
       return data({ error: "Symptom is required" }, { status: 400 });
     }
 
-    const scoredSymptoms = SYMPTOM_DATABASE.map((dbSymptom) => ({
-      ...dbSymptom,
-      score: calculateMatchScore(dbSymptom, { symptom, intensity, duration }),
-    }))
+    const symptomDatabaseResult = SymptomListSchema.safeParse(SYMPTOM_DATABASE);
+    if (!symptomDatabaseResult.success) {
+      console.error(symptomDatabaseResult.error);
+      return data({ error: "Unable to load symptom catalog" }, { status: 500 });
+    }
+
+    const symptomDatabase: Symptom[] = symptomDatabaseResult.data;
+    const scoredSymptoms = symptomDatabase
+      .map((dbSymptom) => ({
+        ...dbSymptom,
+        score: calculateMatchScore(dbSymptom, { symptom, intensity, duration }),
+      }))
       .filter((item) => item.score > 0)
       .sort((a, b) => b.score - a.score);
 

@@ -11,7 +11,9 @@ export const relationshipCases = labs.table("relationship_cases", {
   neutralSituation: text("neutral_situation").notNull(),
   question: text("question").notNull(),
   quorumSize: integer("quorum_size").notNull().default(3),
-  status: text("status", { enum: ["open", "closed"] }).notNull().default("open"),
+  status: text("status", { enum: ["open", "closed"] })
+    .notNull()
+    .default("open"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

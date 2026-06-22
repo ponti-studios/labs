@@ -80,9 +80,7 @@ export default function App() {
             </Link>
           )}
         />
-        <BottomSheet>
-          {isNavigating ? <SheetSkeleton /> : <Outlet />}
-        </BottomSheet>
+        <BottomSheet>{isNavigating ? <SheetSkeleton /> : <Outlet />}</BottomSheet>
       </div>
     </QueryClientProvider>
   );

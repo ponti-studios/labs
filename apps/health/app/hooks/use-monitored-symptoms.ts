@@ -2,21 +2,21 @@ import type { PatientSymptom, Symptom } from "../types/symptom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { toast } from "sonner";
+import { STORAGE_KEYS, storageGet, storageSet } from "../lib/storage";
 
-const QUERY_KEY = "monitoredSymptoms";
-
-let inMemorySymptoms: PatientSymptom[] = [];
+const KEY = STORAGE_KEYS.symptoms;
 
 export function useMonitoredSymptoms() {
   const queryClient = useQueryClient();
 
   const monitoredSymptomsQuery = useQuery({
-    queryKey: [QUERY_KEY],
-    queryFn: () => [...inMemorySymptoms],
+    queryKey: [KEY],
+    queryFn: () => storageGet<PatientSymptom[]>(KEY, []),
   });
 
   const addSymptomMutation = useMutation({
     mutationFn: async (symptom: Symptom) => {
+      const current = storageGet<PatientSymptom[]>(KEY, []);
       const timestamp = new Date().toISOString();
       const newSymptom: PatientSymptom = {
         ...symptom,
@@ -25,11 +25,11 @@ export function useMonitoredSymptoms() {
         createdAt: timestamp,
         resolvedAt: undefined,
       };
-      inMemorySymptoms = [...inMemorySymptoms, newSymptom];
+      storageSet(KEY, [...current, newSymptom]);
       return newSymptom;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
+      queryClient.invalidateQueries({ queryKey: [KEY] });
       toast("Symptom added to monitoring", {
         description: "You can track this symptom's progress over time.",
       });
@@ -44,15 +44,16 @@ export function useMonitoredSymptoms() {
 
   const updateSymptomMutation = useMutation({
     mutationFn: async (symptom: PatientSymptom) => {
-      const updated: PatientSymptom = {
-        ...symptom,
-        updatedAt: new Date().toISOString(),
-      };
-      inMemorySymptoms = inMemorySymptoms.map((s) => (s.id === symptom.id ? updated : s));
+      const current = storageGet<PatientSymptom[]>(KEY, []);
+      const updated: PatientSymptom = { ...symptom, updatedAt: new Date().toISOString() };
+      storageSet(
+        KEY,
+        current.map((s) => (s.id === symptom.id ? updated : s)),
+      );
       return updated;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
+      queryClient.invalidateQueries({ queryKey: [KEY] });
       toast("Symptom updated", {
         description: "Your symptom information has been updated.",
       });
@@ -67,25 +68,30 @@ export function useMonitoredSymptoms() {
 
   const removeSymptomMutation = useMutation({
     mutationFn: async (id: string) => {
-      inMemorySymptoms = inMemorySymptoms.filter((s) => s.id !== id);
+      const current = storageGet<PatientSymptom[]>(KEY, []);
+      storageSet(
+        KEY,
+        current.filter((s) => s.id !== id),
+      );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
+      queryClient.invalidateQueries({ queryKey: [KEY] });
       toast("Symptom removed from monitoring");
     },
   });
 
   const resolveSymptom = useMutation({
     mutationFn: async (symptom: PatientSymptom) => {
-      const updated: PatientSymptom = {
-        ...symptom,
-        resolvedAt: new Date().toISOString(),
-      };
-      inMemorySymptoms = inMemorySymptoms.map((s) => (s.id === symptom.id ? updated : s));
+      const current = storageGet<PatientSymptom[]>(KEY, []);
+      const updated: PatientSymptom = { ...symptom, resolvedAt: new Date().toISOString() };
+      storageSet(
+        KEY,
+        current.map((s) => (s.id === symptom.id ? updated : s)),
+      );
       return updated;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
+      queryClient.invalidateQueries({ queryKey: [KEY] });
       toast("Symptom resolved", {
         description: "You can now stop monitoring this symptom.",
       });
@@ -99,17 +105,17 @@ export function useMonitoredSymptoms() {
   });
 
   const activeSymptoms = useMemo(
-    () => monitoredSymptomsQuery.data?.filter((s) => !s.resolvedAt) || [],
+    () => monitoredSymptomsQuery.data?.filter((s) => !s.resolvedAt) ?? [],
     [monitoredSymptomsQuery.data],
   );
 
   const resolvedSymptoms = useMemo(
-    () => monitoredSymptomsQuery.data?.filter((s) => s.resolvedAt) || [],
+    () => monitoredSymptomsQuery.data?.filter((s) => s.resolvedAt) ?? [],
     [monitoredSymptomsQuery.data],
   );
 
   return {
-    monitoredSymptoms: monitoredSymptomsQuery.data || [],
+    monitoredSymptoms: monitoredSymptomsQuery.data ?? [],
     isLoading: monitoredSymptomsQuery.isLoading,
     addSymptom: addSymptomMutation.mutate,
     updateSymptom: updateSymptomMutation.mutate,

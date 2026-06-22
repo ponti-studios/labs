@@ -54,9 +54,7 @@ export default function App() {
       <MarketingNav
         brand="Labyrinth"
         brandHref="/"
-        links={[
-          { href: "/experiments", label: "Experiments" },
-        ]}
+        links={[{ href: "/experiments", label: "Experiments" }]}
         activeHref={location.pathname}
         renderLink={({ href, className, children }) => (
           <Link key={href} to={href} className={className}>

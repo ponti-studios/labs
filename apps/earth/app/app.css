@@ -139,7 +139,9 @@ body {
   border-radius: 16px;
   z-index: 100;
   overflow: hidden;
-  box-shadow: 0 8px 40px rgb(0 0 0 / 0.12), 0 2px 8px rgb(0 0 0 / 0.06);
+  box-shadow:
+    0 8px 40px rgb(0 0 0 / 0.12),
+    0 2px 8px rgb(0 0 0 / 0.06);
   touch-action: none;
 }
 
@@ -202,7 +204,9 @@ body {
   text-transform: uppercase;
   text-decoration: none;
   color: var(--muted-foreground);
-  transition: color 0.15s ease, background 0.15s ease;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
   white-space: nowrap;
 }
 

@@ -13,4 +13,3 @@ export interface TflCamera {
   lat: number;
   lng: number;
 }
-

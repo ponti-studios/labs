@@ -1,42 +1,27 @@
+import { Link } from "react-router";
 import { Button } from "@pontistudios/ui";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@pontistudios/ui";
 import { HOSPITALS } from "../lib/hospitals";
 import type { Hospital } from "../types/hospital";
 
-interface HospitalFinderProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-export default function HospitalFinder({ isOpen, onClose }: HospitalFinderProps) {
+export default function HospitalsPage() {
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-h-[80vh] max-w-2xl overflow-y-auto rounded-lg">
-        <DialogHeader>
-          <DialogTitle>Nearby Hospitals</DialogTitle>
-          <DialogDescription>
-            Here are the closest medical facilities that can provide immediate care.
-          </DialogDescription>
-        </DialogHeader>
-        <Hospitals />
-      </DialogContent>
-    </Dialog>
-  );
-}
+    <div className="container mx-auto flex max-w-md flex-col gap-6 px-4 py-8">
+      <Link to="/" className="inline-flex text-sm text-muted-foreground hover:text-foreground">
+        ← Dashboard
+      </Link>
 
-function Hospitals() {
-  return (
-    <div className="flex flex-col gap-4 pt-6">
+      <h1 className="text-2xl font-bold tracking-tight">Find Immediate Care</h1>
+
+      <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
+        For life-threatening emergencies, call <strong>911</strong> immediately.
+      </div>
+
       <div className="rounded-lg border border-border bg-muted/30 p-4 text-sm text-muted-foreground">
         If you need urgent in-person care, call ahead or open directions before leaving.
       </div>
 
-      <h3 className="text-lg font-medium">Nearest Hospitals</h3>
+      <h2 className="text-lg font-semibold">Nearest Hospitals</h2>
+
       <div className="flex flex-col gap-4">
         {HOSPITALS.map((hospital) => (
           <HospitalListItem key={hospital.id} hospital={hospital} />
@@ -50,7 +35,7 @@ function HospitalListItem({ hospital }: { hospital: Hospital }) {
   return (
     <div className="rounded-lg border p-4 transition-colors hover:bg-muted/50">
       <div className="flex items-start justify-between gap-2">
-        <h4 className="font-semibold">{hospital.name}</h4>
+        <h3 className="font-semibold">{hospital.name}</h3>
         <span className="rounded bg-blue-100 px-2 py-1 text-sm text-blue-800">
           {hospital.distance}
         </span>

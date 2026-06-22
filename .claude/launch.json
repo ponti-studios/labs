@@ -20,5 +20,12 @@
       "runtimeArgs": ["--filter", "@pontistudios/commune", "dev"],
       "port": 3005
     }
+  ,{
+      "name": "health",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@pontistudios/health", "dev"],
+      "port": 3003,
+      "autoPort": true
+    }
   ]
 }

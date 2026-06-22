@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const STUB_PX = 48;        // px visible when closed
+const STUB_PX = 48; // px visible when closed
 const FLICK_VELOCITY = 0.4; // px/ms
 const DRAG_THRESHOLD = 0.25; // fraction of height to commit close
 
@@ -39,38 +39,44 @@ export default function BottomSheet({ children }: Props) {
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
   }, []);
 
-  const onPointerMove = useCallback((e: React.PointerEvent) => {
-    if (!isDragging.current || !dragRef.current) return;
-    const delta = e.clientY - dragRef.current.startY;
-    if (Math.abs(delta) > 4) didDrag.current = true;
-    // Clamp so you can't drag above the open position
-    setDragOffset(Math.max(-translateY, delta));
-  }, [translateY]);
+  const onPointerMove = useCallback(
+    (e: React.PointerEvent) => {
+      if (!isDragging.current || !dragRef.current) return;
+      const delta = e.clientY - dragRef.current.startY;
+      if (Math.abs(delta) > 4) didDrag.current = true;
+      // Clamp so you can't drag above the open position
+      setDragOffset(Math.max(-translateY, delta));
+    },
+    [translateY],
+  );
 
-  const onPointerUp = useCallback((e: React.PointerEvent) => {
-    if (!isDragging.current || !dragRef.current) return;
-    isDragging.current = false;
+  const onPointerUp = useCallback(
+    (e: React.PointerEvent) => {
+      if (!isDragging.current || !dragRef.current) return;
+      isDragging.current = false;
 
-    const delta = e.clientY - dragRef.current.startY;
-    const elapsed = Date.now() - dragRef.current.startTime;
-    const velocity = delta / elapsed;
-    dragRef.current = null;
-    setDragOffset(0);
+      const delta = e.clientY - dragRef.current.startY;
+      const elapsed = Date.now() - dragRef.current.startTime;
+      const velocity = delta / elapsed;
+      dragRef.current = null;
+      setDragOffset(0);
 
-    if (!didDrag.current) return; // let onClick handle it
+      if (!didDrag.current) return; // let onClick handle it
 
-    const height = getHeight();
-    const newY = Math.max(0, translateY + delta);
-    const fraction = newY / height;
+      const height = getHeight();
+      const newY = Math.max(0, translateY + delta);
+      const fraction = newY / height;
 
-    if (velocity > FLICK_VELOCITY) {
-      close();
-    } else if (velocity < -FLICK_VELOCITY) {
-      open();
-    } else {
-      fraction > DRAG_THRESHOLD ? close() : open();
-    }
-  }, [translateY, open, close]);
+      if (velocity > FLICK_VELOCITY) {
+        close();
+      } else if (velocity < -FLICK_VELOCITY) {
+        open();
+      } else {
+        fraction > DRAG_THRESHOLD ? close() : open();
+      }
+    },
+    [translateY, open, close],
+  );
 
   const onHandleClick = useCallback(() => {
     if (didDrag.current) return;

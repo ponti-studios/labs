@@ -25,8 +25,8 @@ export default function DocketPage() {
         <div className="max-w-xs space-y-3">
           <p className="text-2xl font-semibold tracking-tight">The docket is empty.</p>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Describe a situation. Your friends deliberate anonymously.
-            You get honest signal — not a polished group-chat consensus.
+            Describe a situation. Your friends deliberate anonymously. You get honest signal — not a
+            polished group-chat consensus.
           </p>
         </div>
         <Link
@@ -44,7 +44,9 @@ export default function DocketPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-base font-semibold">Your docket</h1>
-          <p className="text-xs text-muted-foreground mt-0.5">{cases.length} case{cases.length !== 1 ? "s" : ""} filed</p>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            {cases.length} case{cases.length !== 1 ? "s" : ""} filed
+          </p>
         </div>
         <Link
           to="/case/create"
@@ -58,7 +60,8 @@ export default function DocketPage() {
         {cases.map((c, i) => {
           const { total, agreePercent, quorumMet, agree, disagree } = c.voteStats;
           const remaining = c.quorumSize - total;
-          const situationPreview = c.neutralSituation.slice(0, 120) + (c.neutralSituation.length > 120 ? "…" : "");
+          const situationPreview =
+            c.neutralSituation.slice(0, 120) + (c.neutralSituation.length > 120 ? "…" : "");
 
           return (
             <Link
@@ -73,7 +76,8 @@ export default function DocketPage() {
                       #{String(i + 1).padStart(3, "0")}
                     </span>
                     <span className="text-xs font-medium truncate">
-                      {c.label || (c.question.length > 50 ? c.question.slice(0, 48) + "…" : c.question)}
+                      {c.label ||
+                        (c.question.length > 50 ? c.question.slice(0, 48) + "…" : c.question)}
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
@@ -102,11 +106,19 @@ export default function DocketPage() {
               {quorumMet && (
                 <div className="flex flex-col gap-1.5">
                   <div className="flex rounded-full overflow-hidden h-1.5">
-                    <div className="bg-green-500 transition-all" style={{ width: `${agreePercent}%` }} />
-                    <div className="bg-red-400 transition-all" style={{ width: `${100 - agreePercent}%` }} />
+                    <div
+                      className="bg-green-500 transition-all"
+                      style={{ width: `${agreePercent}%` }}
+                    />
+                    <div
+                      className="bg-red-400 transition-all"
+                      style={{ width: `${100 - agreePercent}%` }}
+                    />
                   </div>
                   <div className="flex justify-between text-[10px]">
-                    <span className="text-green-600 font-medium">{agreePercent}% agree · {agree}</span>
+                    <span className="text-green-600 font-medium">
+                      {agreePercent}% agree · {agree}
+                    </span>
                     <span className="text-red-500 font-medium">{disagree} disagree</span>
                   </div>
                 </div>

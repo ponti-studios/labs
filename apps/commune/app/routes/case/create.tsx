@@ -135,7 +135,9 @@ export default function CreatePage() {
               rows={2}
               className="w-full text-sm border border-input rounded-xl px-4 py-3 bg-background resize-none focus:outline-none focus:ring-1 focus:ring-ring"
             />
-            <p className="text-[10px] text-muted-foreground">You can edit this if it's not quite right.</p>
+            <p className="text-[10px] text-muted-foreground">
+              You can edit this if it's not quite right.
+            </p>
           </div>
 
           <div className="flex flex-col gap-2">
@@ -149,11 +151,15 @@ export default function CreatePage() {
               placeholder="e.g. The 2am text situation"
               className="w-full text-sm border border-input rounded-xl px-4 py-3 bg-background focus:outline-none focus:ring-1 focus:ring-ring placeholder:text-muted-foreground"
             />
-            <p className="text-[10px] text-muted-foreground">A short name for your docket. Only you see this.</p>
+            <p className="text-[10px] text-muted-foreground">
+              A short name for your docket. Only you see this.
+            </p>
           </div>
 
           {error && (
-            <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-3">{error}</p>
+            <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-3">
+              {error}
+            </p>
           )}
 
           <button
@@ -200,14 +206,18 @@ export default function CreatePage() {
             </p>
             <ul className="flex flex-col gap-1">
               {clarifications.map((c) => (
-                <li key={c} className="text-xs text-amber-700">• {c}</li>
+                <li key={c} className="text-xs text-amber-700">
+                  • {c}
+                </li>
               ))}
             </ul>
           </div>
         )}
 
         {error && (
-          <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-3">{error}</p>
+          <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-3">
+            {error}
+          </p>
         )}
 
         <button

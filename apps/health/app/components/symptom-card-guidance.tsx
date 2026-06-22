@@ -20,10 +20,10 @@ export const SymptomCardGuidance = React.memo(function SymptomGuidance({
   const guidanceMessage = GUIDANCE_MESSAGES[guidance] || GUIDANCE_MESSAGES.default;
 
   return (
-    <div className="border-t pt-4">
-      <h4 className="font-semibold mb-2">Recommended Action:</h4>
+    <div className="flex flex-col gap-3 border-t pt-4">
+      <h4 className="font-semibold">Recommended Action:</h4>
       <p className="text-sm">{guidanceMessage}</p>
-      <div className="my-4 flex justify-end">
+      <div className="flex justify-end">
         <DiagnosisActionButton guidance={guidance} symptom={symptom} />
       </div>
     </div>

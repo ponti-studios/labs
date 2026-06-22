@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@pontistudios/ui";
 import { useMonitoredSymptoms } from "../hooks/use-monitored-symptoms";
 import { cn } from "@pontistudios/ui";
@@ -21,8 +19,8 @@ const MonitoredSymptomItem = memo(
     }, [symptom, onResolve]);
 
     return (
-      <div className="flex justify-between items-center p-4 border rounded-md mb-2 hover:bg-slate-50 transition-colors duration-200">
-        <div>
+      <div className="flex items-center justify-between gap-3 rounded-md border p-4 transition-colors duration-200 hover:bg-slate-50">
+        <div className="flex flex-col gap-2">
           <h3
             className={cn("font-medium", {
               "text-green-600": symptom.treatment_guidance === TREATMENT_GUIDANCE.NO_CARE,
@@ -36,7 +34,7 @@ const MonitoredSymptomItem = memo(
             Started {formatDistanceToNow(new Date(symptom.createdAt))} ago
           </p>
           {symptom.resolvedAt && (
-            <span className="text-xs bg-green-100 text-green-800 py-1 px-2 rounded-full">
+            <span className="inline-flex w-fit rounded-full bg-green-100 px-2 py-1 text-xs text-green-800">
               Resolved
             </span>
           )}
@@ -64,39 +62,39 @@ export default function MonitoredSymptomsList() {
   );
 
   if (isLoading) {
-    return <div className="text-center py-8">Loading monitored symptoms...</div>;
+    return <div className="py-8 text-center">Loading monitored symptoms...</div>;
   }
 
   if (activeSymptoms.length === 0 && resolvedSymptoms.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500">No symptoms currently being monitored</div>
+      <div className="py-8 text-center text-gray-500">No symptoms currently being monitored</div>
     );
   }
 
   return (
-    <div className="w-full max-w-2xl">
-      <h2 className="text-xl font-semibold mb-4">Monitored Symptoms</h2>
+    <div className="flex w-full max-w-2xl flex-col gap-6">
+      <h2 className="text-xl font-semibold">Monitored Symptoms</h2>
 
       {activeSymptoms.length > 0 && (
-        <>
-          <h3 className="text-md font-medium text-gray-600 mb-2">Active</h3>
-          <div className="mb-6">
+        <div className="flex flex-col gap-3">
+          <h3 className="text-md font-medium text-gray-600">Active</h3>
+          <div className="flex flex-col gap-3">
             {activeSymptoms.map((symptom) => (
               <MonitoredSymptomItem key={symptom.id} symptom={symptom} onResolve={handleResolve} />
             ))}
           </div>
-        </>
+        </div>
       )}
 
       {resolvedSymptoms.length > 0 && (
-        <>
-          <h3 className="text-md font-medium text-gray-600 mb-2">Resolved</h3>
-          <div>
+        <div className="flex flex-col gap-3">
+          <h3 className="text-md font-medium text-gray-600">Resolved</h3>
+          <div className="flex flex-col gap-3">
             {resolvedSymptoms.map((symptom) => (
               <MonitoredSymptomItem key={symptom.id} symptom={symptom} onResolve={handleResolve} />
             ))}
           </div>
-        </>
+        </div>
       )}
     </div>
   );
