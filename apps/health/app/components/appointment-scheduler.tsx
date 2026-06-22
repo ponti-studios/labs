@@ -1,19 +1,38 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@pontistudios/ui";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@pontistudios/ui";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@pontistudios/ui";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@pontistudios/ui";
 import { useMediaQuery } from "../hooks/use-media-query";
 import { useEffect, useState } from "react";
 import { Button } from "@pontistudios/ui";
 
-// Sample doctor data - in a real app, this would come from an API or context
+function getNextWeekdaySlots(count: number) {
+  const slots = [];
+  const times = ["10:00 AM", "2:30 PM", "9:15 AM", "11:00 AM", "3:45 PM"];
+  const date = new Date();
+  date.setDate(date.getDate() + 1); // start from tomorrow
+  while (slots.length < count) {
+    const day = date.getDay();
+    if (day !== 0 && day !== 6) {
+      slots.push({
+        date: date.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" }),
+        time: times[slots.length % times.length],
+      });
+    }
+    date.setDate(date.getDate() + 1);
+  }
+  return slots;
+}
+
 const doctorData = {
   name: "Dr. Emily Johnson",
   specialty: "Family Medicine",
   location: "Medical Center, Building A",
-  availabilities: [
-    { date: "Monday, Nov 20", time: "10:00 AM" },
-    { date: "Wednesday, Nov 22", time: "2:30 PM" },
-    { date: "Friday, Nov 24", time: "9:15 AM" },
-  ],
+  availabilities: getNextWeekdaySlots(3),
 };
 
 export function AppointmentScheduler({
@@ -41,23 +60,23 @@ export function AppointmentScheduler({
   }, [isOpen]);
 
   const content = (
-    <div className="space-y-4 py-4">
-      <div className="space-y-2">
-        <h3 className="font-medium text-lg">Your Doctor</h3>
-        <div className="bg-muted p-3 rounded-md">
+    <div className="flex flex-col gap-4 py-4">
+      <div className="flex flex-col gap-2">
+        <h3 className="text-lg font-medium">Your Doctor</h3>
+        <div className="rounded-md bg-muted p-3">
           <p className="font-semibold">{doctorData.name}</p>
           <p className="text-sm text-muted-foreground">{doctorData.specialty}</p>
           <p className="text-sm text-muted-foreground">{doctorData.location}</p>
         </div>
       </div>
 
-      <div className="space-y-2">
-        <h3 className="font-medium text-lg">Available Appointments</h3>
-        <div className="space-y-2">
+      <div className="flex flex-col gap-2">
+        <h3 className="text-lg font-medium">Available Appointments</h3>
+        <div className="flex flex-col gap-2">
           {doctorData.availabilities.map((slot) => (
             <div
               key={`${slot.date}-${slot.time}`}
-              className="flex items-center justify-between p-3 border rounded-md hover:bg-accent transition-colors cursor-pointer"
+              className="flex items-center justify-between rounded-md border p-3 transition-colors hover:bg-accent"
             >
               <div>
                 <p className="font-medium">{slot.date}</p>
@@ -87,8 +106,8 @@ export function AppointmentScheduler({
         </p>
       ) : null}
 
-      <div className="pt-4 flex justify-end">
-        <Button onClick={onClose} variant="outline" className="mr-2">
+      <div className="flex justify-end gap-2 pt-4">
+        <Button onClick={onClose} variant="outline">
           Cancel
         </Button>
         <Button
@@ -111,6 +130,9 @@ export function AppointmentScheduler({
         <SheetContent className="sm:max-w-md">
           <SheetHeader>
             <SheetTitle>Schedule Appointment</SheetTitle>
+            <SheetDescription>
+              Select an available time slot with your healthcare provider.
+            </SheetDescription>
           </SheetHeader>
           {content}
         </SheetContent>
@@ -123,6 +145,9 @@ export function AppointmentScheduler({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Schedule Appointment</DialogTitle>
+          <DialogDescription>
+            Select an available time slot with your healthcare provider.
+          </DialogDescription>
         </DialogHeader>
         {content}
       </DialogContent>

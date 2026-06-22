@@ -1,137 +1,125 @@
-import { useSymptomForm } from "../hooks/use-symptom-form";
-import { TREATMENT_GUIDANCE, type TreatmentGuidance } from "../types/symptom";
-import SymptomCard from "../components/symptom-card";
-import MonitoredSymptomsList from "../components/monitored-symptoms-list";
-import { Button, Input, Label } from "@pontistudios/ui";
+import { Link } from "react-router";
+import { Button } from "@pontistudios/ui";
 import { cn } from "@pontistudios/ui";
-import { useCallback } from "react";
+import { formatDistanceToNow } from "date-fns";
+import { useMonitoredSymptoms } from "../hooks/use-monitored-symptoms";
+import { useAppointments } from "../hooks/use-appointments";
+import { DashboardEmptyState } from "../components/dashboard-empty-state";
+import { TREATMENT_GUIDANCE } from "../types/symptom";
 
-export default function Home() {
-  const { symptom, setSymptom, handleSubmit, isDisabled, isPending, data, error } =
-    useSymptomForm();
-
-  const handleSymptomSelect = useCallback(
-    (selectedSymptom: string) => {
-      setSymptom(selectedSymptom);
-    },
-    [setSymptom],
-  );
+export default function Dashboard() {
+  const { activeSymptoms, resolvedSymptoms, resolveSymptom } = useMonitoredSymptoms();
+  const { upcoming } = useAppointments();
 
   return (
-    <div className="container mx-auto min-h-screen max-w-md flex flex-col justify-center">
-      <div className="flex flex-col items-center px-4">
-        <div className="flex flex-col items-center gap-2 my-8">
-          <h1 className="text-2xl md:text-4xl font-bold tracking-tight text-center fade-in-40 duration-500 ease-in-out">
-            symptom guidance
-          </h1>
-        </div>
-        <form onSubmit={handleSubmit} className="w-full max-w-md space-y-4">
-          <Label htmlFor="symptom-input" className="text-gray-500">
-            What are you experiencing?
-          </Label>
-          <div className="flex w-full items-center space-x-2">
-            <Input
-              id="symptom-input"
-              type="text"
-              placeholder="Enter symptom"
-              value={symptom}
-              onChange={(e) => setSymptom(e.target.value)}
-              disabled={isPending}
-              data-testid="symptom-input"
-            />
-            <Button type="submit" disabled={isDisabled} data-testid="symptom-submit-button">
-              {isPending ? "Checking..." : "Check"}
-            </Button>
+    <div className="container mx-auto mt-8 flex max-w-2xl flex-col gap-6 px-4">
+      {activeSymptoms.length === 0 && upcoming.length === 0 ? (
+        <DashboardEmptyState />
+      ) : (
+        <>
+          <div className="grid grid-cols-3 gap-4">
+            <StatCard label="Active" value={activeSymptoms.length} color="text-amber-600" />
+            <StatCard label="Resolved" value={resolvedSymptoms.length} color="text-green-600" />
+            <StatCard label="Appointments" value={upcoming.length} color="text-blue-600" />
           </div>
-          {!data || symptom.length === 0 ? (
-            <div className="flex flex-col items-center">
-              <ul className="list-disc gap-1 grid grid-cols-3">
-                <SampleSymptomButton
-                  symptom="Headache"
-                  severity={TREATMENT_GUIDANCE.NO_CARE}
-                  onSelect={handleSymptomSelect}
-                />
-                <SampleSymptomButton
-                  symptom="Night sweats"
-                  severity={TREATMENT_GUIDANCE.NONIMMEDIATE_CARE}
-                  onSelect={handleSymptomSelect}
-                />
-                <SampleSymptomButton
-                  symptom="Severe chest pain"
-                  severity={TREATMENT_GUIDANCE.IMMEDIATE_CARE}
-                  onSelect={handleSymptomSelect}
-                />
-              </ul>
-            </div>
-          ) : null}
-          {error && (
-            <div className="bg-destructive/15 text-destructive p-3 rounded-md text-sm">
-              {error.message}
-            </div>
-          )}
-        </form>
-
-        <div className="flex flex-col items-center mt-8 max-w-full">
-          {data && (
-            <div className={cn("transition-opacity duration-200 ease-in-out", "opacity-100")}>
-              <SymptomCard symptom={data} />
-            </div>
-          )}
-
-          {data?.alternatives?.length && data.alternatives.length > 0 ? (
-            <div
-              className={cn(
-                "mt-8 w-full max-w-4xl transition-opacity duration-200 ease-in-out",
-                "opacity-100",
-              )}
-            >
-              <h2 className="text-md font-semibold mb-4 text-gray-400">Alternative Matches</h2>
-              <div className="carousel flex gap-4 overflow-x-auto rounded-box">
-                {data.alternatives.map((alt, index) => (
-                  <SymptomCard
-                    className="carousel-item"
-                    key={`${alt.name}-${index}`}
-                    symptom={alt}
-                    isAlternative={true}
-                  />
-                ))}
+          <Section
+            title="Active Symptoms"
+            action={{ label: "Check new symptom", href: "/symptoms" }}
+            empty={activeSymptoms.length === 0}
+            emptyText="No symptoms being tracked"
+          >
+            {activeSymptoms.map((symptom) => (
+              <div
+                key={symptom.id}
+                className="flex items-center justify-between gap-4 rounded-md border p-4 transition-colors hover:bg-muted/30"
+              >
+                <Link to={`/symptoms/${symptom.id}`} className="flex-1 min-w-0">
+                  <p
+                    className={cn("truncate font-medium", {
+                      "text-green-600": symptom.treatment_guidance === TREATMENT_GUIDANCE.NO_CARE,
+                      "text-amber-600":
+                        symptom.treatment_guidance === TREATMENT_GUIDANCE.NONIMMEDIATE_CARE,
+                      "text-red-600":
+                        symptom.treatment_guidance === TREATMENT_GUIDANCE.IMMEDIATE_CARE,
+                    })}
+                  >
+                    {symptom.name}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Started {formatDistanceToNow(new Date(symptom.createdAt))} ago
+                  </p>
+                </Link>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="shrink-0"
+                  onClick={() => resolveSymptom.mutate(symptom)}
+                >
+                  Resolve
+                </Button>
               </div>
-            </div>
-          ) : null}
-        </div>
+            ))}
+          </Section>
 
-        <div className="mt-16 w-full">
-          <MonitoredSymptomsList />
-        </div>
-      </div>
-
-      <footer className="mt-auto py-4 text-center">
-        <p className="text-sm text-muted-foreground">manual.co demo</p>
-      </footer>
+          <Section
+            title="Upcoming Appointments"
+            action={{ label: "Schedule new", href: "/appointments/new" }}
+            empty={upcoming.length === 0}
+            emptyText="No upcoming appointments"
+          >
+            {upcoming.map((appt) => (
+              <div key={appt.id} className="flex flex-col gap-1 rounded-md border p-4">
+                <p className="font-medium">{appt.doctorName}</p>
+                <p className="text-sm text-muted-foreground">{appt.specialty}</p>
+                <p className="text-sm text-muted-foreground">
+                  {appt.date} at {appt.time}
+                </p>
+              </div>
+            ))}
+          </Section>
+        </>
+      )}
     </div>
   );
 }
 
-function SampleSymptomButton({
-  onSelect,
-  symptom,
-  severity,
+function StatCard({ label, value, color }: { label: string; value: number; color: string }) {
+  return (
+    <div className="flex flex-col gap-2 rounded-lg border p-4 text-center">
+      <p className={cn("text-2xl font-bold", color)}>{value}</p>
+      <p className="text-sm text-muted-foreground">{label}</p>
+    </div>
+  );
+}
+
+function Section({
+  title,
+  action,
+  empty,
+  emptyText,
+  children,
 }: {
-  onSelect: (symptom: string) => void;
-  severity: TreatmentGuidance;
-  symptom: string;
+  title: string;
+  action: { label: string; href: string };
+  empty: boolean;
+  emptyText: string;
+  children: React.ReactNode;
 }) {
   return (
-    <button
-      type="button"
-      className={cn("px-2 py-1 border-dotted border-2 rounded-md cursor-pointer text-sm", {
-        "border-green-200": severity === TREATMENT_GUIDANCE.NO_CARE,
-        "border-amber-200": severity === TREATMENT_GUIDANCE.NONIMMEDIATE_CARE,
-        "border-red-200": severity === TREATMENT_GUIDANCE.IMMEDIATE_CARE,
-      })}
-      onClick={() => onSelect(symptom)}
-    >
-      {symptom}
-    </button>
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="text-lg font-semibold">{title}</h2>
+        <Link to={action.href} className="text-sm text-muted-foreground hover:text-foreground">
+          {action.label} →
+        </Link>
+      </div>
+      {empty ? (
+        <p className="rounded-md border py-4 text-center text-sm text-muted-foreground">
+          {emptyText}
+        </p>
+      ) : (
+        <div className="flex flex-col gap-2">{children}</div>
+      )}
+    </div>
   );
 }

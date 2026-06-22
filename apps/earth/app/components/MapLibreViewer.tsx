@@ -14,7 +14,14 @@ const LONDON_CENTER = { longitude: -0.1278, latitude: 51.5074, zoom: 12 };
 const MAP_STYLE = "https://tiles.openfreemap.org/styles/liberty";
 
 function cameraToGeoJSON(
-  cameras: { id: string; commonName: string; view: string; available: string; lat: number; lng: number }[],
+  cameras: {
+    id: string;
+    commonName: string;
+    view: string;
+    available: string;
+    lat: number;
+    lng: number;
+  }[],
 ): GeoJSON.FeatureCollection<GeoJSON.Point> {
   return {
     type: "FeatureCollection",

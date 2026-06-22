@@ -73,8 +73,12 @@ export default function TflCamera({ loaderData }: Route.ComponentProps) {
           ← Cameras
         </Link>
         <div className="flex items-center gap-1.5">
-          <span className={`size-1.5 rounded-full ${isLive ? "bg-green-500" : "bg-muted-foreground"}`} />
-          <span className={`font-mono text-[10px] tracking-wider uppercase ${isLive ? "text-green-500" : "text-muted-foreground"}`}>
+          <span
+            className={`size-1.5 rounded-full ${isLive ? "bg-green-500" : "bg-muted-foreground"}`}
+          />
+          <span
+            className={`font-mono text-[10px] tracking-wider uppercase ${isLive ? "text-green-500" : "text-muted-foreground"}`}
+          >
             {isLive ? "Live" : "Offline"}
           </span>
         </div>
@@ -93,12 +97,21 @@ export default function TflCamera({ loaderData }: Route.ComponentProps) {
           </div>
           <div className="flex justify-between">
             <span>Coordinates</span>
-            <span>{camera.lat.toFixed(4)}°, {camera.lng.toFixed(4)}°</span>
+            <span>
+              {camera.lat.toFixed(4)}°, {camera.lng.toFixed(4)}°
+            </span>
           </div>
           {camera.lastPhotoAt && (
             <div className="flex justify-between">
               <span>Last photo</span>
-              <span>{new Date(camera.lastPhotoAt).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/London", timeZoneName: "short" })}</span>
+              <span>
+                {new Date(camera.lastPhotoAt).toLocaleTimeString("en-GB", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  timeZone: "Europe/London",
+                  timeZoneName: "short",
+                })}
+              </span>
             </div>
           )}
         </div>
@@ -107,7 +120,11 @@ export default function TflCamera({ loaderData }: Route.ComponentProps) {
       {/* Feed */}
       <div className="bg-muted border border-border rounded-md w-full aspect-video flex items-center justify-center overflow-hidden">
         {camera.imageUrl ? (
-          <img src={camera.imageUrl} alt={camera.commonName} className="w-full h-full object-cover" />
+          <img
+            src={camera.imageUrl}
+            alt={camera.commonName}
+            className="w-full h-full object-cover"
+          />
         ) : (
           <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
             No feed available

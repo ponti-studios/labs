@@ -13,6 +13,7 @@ import { MarketingNav } from "@pontistudios/ui";
 import type { Route } from "./+types/root";
 import "./app.css";
 import QueryProvider from "./components/QueryProvider";
+import { SymptomProvider } from "./context/symptom-context";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -49,20 +50,27 @@ export default function App() {
   const location = useLocation();
   return (
     <QueryProvider>
-      <MarketingNav
-        brand="Health"
-        brandHref="/"
-        links={[{ href: "/", label: "Symptoms" }]}
-        activeHref={location.pathname}
-        renderLink={({ href, className, children }) => (
-          <Link key={href} to={href} className={className}>
-            {children}
-          </Link>
-        )}
-      />
-      <main className="pt-24">
-        <Outlet />
-      </main>
+      <SymptomProvider>
+        <MarketingNav
+          brand="Health"
+          brandHref="/"
+          links={[
+            { href: "/", label: "Dashboard" },
+            { href: "/symptoms", label: "Symptoms" },
+            { href: "/appointments", label: "Appointments" },
+            { href: "/hospitals", label: "Hospitals" },
+          ]}
+          activeHref={location.pathname}
+          renderLink={({ href, className, children }) => (
+            <Link key={href} to={href} className={className}>
+              {children}
+            </Link>
+          )}
+        />
+        <main className="flex min-h-screen flex-col pt-24">
+          <Outlet />
+        </main>
+      </SymptomProvider>
     </QueryProvider>
   );
 }
@@ -84,34 +92,32 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <main className="pt-16 p-4 container mx-auto min-h-screen flex items-center justify-center">
-      <div className="max-w-md w-full text-center">
-        <div className="mb-6">
-          <div className="text-6xl font-bold text-red-500 mb-2">{status}</div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">{message}</h1>
+    <main className="container mx-auto flex min-h-screen items-center justify-center px-4 py-16">
+      <div className="flex w-full max-w-md flex-col items-center gap-6 text-center">
+        <div className="flex flex-col gap-2">
+          <div className="text-6xl font-bold text-red-500">{status}</div>
+          <h1 className="text-2xl font-bold text-gray-900">{message}</h1>
           <p className="text-gray-600">{details}</p>
         </div>
-
-        <div className="flex gap-4 justify-center">
+        <div className="flex justify-center gap-4">
           <button
             onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
           >
             Try Again
           </button>
           <a
             href="/"
-            className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+            className="rounded-lg bg-gray-200 px-4 py-2 text-gray-800 transition-colors hover:bg-gray-300"
           >
             Go Home
           </a>
         </div>
-
         {stack && import.meta.env.DEV && (
-          <div className="mt-8 text-left">
-            <details className="bg-gray-100 rounded-lg p-4">
-              <summary className="font-semibold cursor-pointer">Stack Trace</summary>
-              <pre className="mt-4 text-xs overflow-x-auto text-red-600">
+          <div className="w-full rounded-lg bg-gray-100 p-4 text-left">
+            <details className="flex flex-col gap-4">
+              <summary className="cursor-pointer font-semibold">Stack Trace</summary>
+              <pre className="overflow-x-auto text-xs text-red-600">
                 <code>{stack}</code>
               </pre>
             </details>

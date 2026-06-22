@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@pontistudios/ui";
 import {
   Dialog,
@@ -33,13 +31,13 @@ export default function HospitalFinder({ isOpen, onClose }: HospitalFinderProps)
 
 function Hospitals() {
   return (
-    <div className="space-y-4 mt-6">
+    <div className="flex flex-col gap-4 pt-6">
       <div className="rounded-lg border border-border bg-muted/30 p-4 text-sm text-muted-foreground">
         If you need urgent in-person care, call ahead or open directions before leaving.
       </div>
 
-      <h3 className="font-medium text-lg">Nearest Hospitals</h3>
-      <div className="space-y-4">
+      <h3 className="text-lg font-medium">Nearest Hospitals</h3>
+      <div className="flex flex-col gap-4">
         {HOSPITALS.map((hospital) => (
           <HospitalListItem key={hospital.id} hospital={hospital} />
         ))}
@@ -50,16 +48,18 @@ function Hospitals() {
 
 function HospitalListItem({ hospital }: { hospital: Hospital }) {
   return (
-    <div className="border rounded-lg p-4 hover:bg-muted/50 transition-colors">
-      <div className="flex justify-between items-start mb-2">
+    <div className="rounded-lg border p-4 transition-colors hover:bg-muted/50">
+      <div className="flex items-start justify-between gap-2">
         <h4 className="font-semibold">{hospital.name}</h4>
-        <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">
+        <span className="rounded bg-blue-100 px-2 py-1 text-sm text-blue-800">
           {hospital.distance}
         </span>
       </div>
-      <p className="text-sm text-muted-foreground">{hospital.address}</p>
-      <p className="text-sm font-medium mt-2">{hospital.phone}</p>
-      <div className="mt-3 flex gap-2">
+      <div className="flex flex-col gap-2">
+        <p className="text-sm text-muted-foreground">{hospital.address}</p>
+        <p className="text-sm font-medium">{hospital.phone}</p>
+      </div>
+      <div className="flex gap-2 pt-3">
         <Button size="sm" variant="outline" asChild>
           <a
             href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(

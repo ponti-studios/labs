@@ -38,9 +38,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <QueryClientProvider client={queryClient}>
-          {children}
-        </QueryClientProvider>
+        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -55,9 +53,7 @@ export default function App() {
       <MarketingNav
         brand="Commune"
         brandHref="/"
-        links={[
-          { href: "/", label: "Docket" },
-        ]}
+        links={[{ href: "/", label: "Docket" }]}
         cta={{ href: "/case/create", label: "File a case" }}
         activeHref={location.pathname}
         renderLink={({ href, className, children }) => (

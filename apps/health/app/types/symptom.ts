@@ -19,6 +19,30 @@ export interface Symptom {
   duration_range: [number, number];
 }
 
+export const SymptomSchema = z.object({
+  name: z.string(),
+  description: z.string(),
+  severity_score: z.number(),
+  treatment_guidance: z.enum([
+    TREATMENT_GUIDANCE.IMMEDIATE_CARE,
+    TREATMENT_GUIDANCE.NONIMMEDIATE_CARE,
+    TREATMENT_GUIDANCE.NO_CARE,
+  ]),
+  articles: z
+    .array(
+      z.object({
+        title: z.string(),
+        url: z.string(),
+      }),
+    )
+    .optional(),
+  image_url: z.string().optional(),
+  intensity_range: z.tuple([z.number(), z.number()]),
+  duration_range: z.tuple([z.number(), z.number()]),
+});
+
+export const SymptomListSchema = z.array(SymptomSchema);
+
 export type PatientSymptom = Symptom & {
   id: string;
   painLevel?: number;

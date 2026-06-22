@@ -1,29 +1,30 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useSymptom } from "./use-symptom";
+import { useSymptomContext } from "../context/symptom-context";
 
 export function useSymptomForm() {
-  const [symptom, setSymptom] = useState("");
-  const { mutate, data, error, isPending } = useSymptom();
+  const { input, setInput, result, setResult } = useSymptomContext();
+  const { mutate, isPending, error } = useSymptom();
 
-  const isValid = symptom.trim().length > 0;
+  const isValid = input.trim().length > 0;
   const isDisabled = isPending || !isValid;
 
   const handleSubmit = useCallback(
-    async (event: React.FormEvent) => {
+    (event: React.FormEvent) => {
       event.preventDefault();
       if (!isValid) return;
-      mutate({ symptom });
+      mutate({ symptom: input }, { onSuccess: (data) => setResult(data) });
     },
-    [mutate, symptom, isValid],
+    [mutate, input, isValid, setResult],
   );
 
   return {
-    symptom,
-    setSymptom,
+    symptom: input,
+    setSymptom: setInput,
     handleSubmit,
     isDisabled,
     isPending,
-    data,
+    data: result,
     error,
   };
 }

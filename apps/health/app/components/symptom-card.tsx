@@ -1,5 +1,3 @@
-"use client";
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@pontistudios/ui";
 import { cn } from "@pontistudios/ui";
 import type { MatchedSymptom } from "../types/symptom";
@@ -17,7 +15,7 @@ function SymptomCard({ className, symptom, isAlternative = false }: SymptomCardP
     <>
       <Card
         className={cn(
-          "min-w-sm flex flex-col",
+          "flex min-w-sm flex-col",
           {
             "md:max-w-sm": isAlternative,
             "md:max-w-md": !isAlternative,
@@ -28,19 +26,19 @@ function SymptomCard({ className, symptom, isAlternative = false }: SymptomCardP
         <CardHeader className="flex-1">
           <CardTitle
             data-testid="symptom-name"
-            className="capitalize flex items-center justify-between"
+            className="flex items-center justify-between gap-3 capitalize"
           >
             <p>{symptom.name}</p>
           </CardTitle>
           <CardDescription>{symptom.description}</CardDescription>
         </CardHeader>
 
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
+        <CardContent className="flex flex-col gap-4">
+          <div className="flex items-center justify-between gap-3">
             <span className="font-medium">Severity:</span>
             <span
               data-testid="symptom-severity"
-              className={cn("px-3 py-1 text-sm rounded-full text-white", {
+              className={cn("rounded-full px-3 py-1 text-sm text-white", {
                 "bg-destructive": symptom.severity_score >= 7,
                 "bg-amber-500": symptom.severity_score >= 4 && symptom.severity_score < 7,
                 "bg-green-500": symptom.severity_score < 4,
@@ -57,9 +55,9 @@ function SymptomCard({ className, symptom, isAlternative = false }: SymptomCardP
 
           {/* Only show articles for non-alternative symptoms */}
           {!isAlternative && symptom.articles && (
-            <div className="border-t pt-4">
-              <h4 className="font-semibold mb-2">Further Reading:</h4>
-              <ul className="list-inside text-sm space-y-3">
+            <div className="flex flex-col gap-3 border-t pt-4">
+              <h4 className="font-semibold">Further Reading:</h4>
+              <ul className="flex list-inside flex-col gap-3 text-sm">
                 {symptom.articles.map((article) => (
                   <li key={article.url}>
                     <a

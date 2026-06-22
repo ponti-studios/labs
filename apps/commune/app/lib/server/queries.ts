@@ -13,11 +13,7 @@ export type CaseWithStats = RelationshipCase & {
 };
 
 export async function getCases(): Promise<RelationshipCase[]> {
-  return db
-    .select()
-    .from(relationshipCases)
-    .orderBy(desc(relationshipCases.createdAt))
-    .execute();
+  return db.select().from(relationshipCases).orderBy(desc(relationshipCases.createdAt)).execute();
 }
 
 export async function getCase(id: string): Promise<RelationshipCase | null> {
@@ -90,7 +86,10 @@ export async function getCasesWithStats(): Promise<CaseWithStats[]> {
     .execute();
 
   const statsMap = new Map(
-    verdictStats.map((s) => [s.caseId, { total: Number(s.total) || 0, agree: Number(s.agree) || 0 }]),
+    verdictStats.map((s) => [
+      s.caseId,
+      { total: Number(s.total) || 0, agree: Number(s.agree) || 0 },
+    ]),
   );
 
   return allCases.map((c) => {
