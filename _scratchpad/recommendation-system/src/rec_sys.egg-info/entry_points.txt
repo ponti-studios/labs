@@ -1,2 +1,0 @@
-[console_scripts]
-rec-sys = rec_sys.cli:main
