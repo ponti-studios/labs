@@ -105,7 +105,7 @@ async function renderRoute(initial: { puzzle?: PublicDailyPuzzle } = {}) {
   await waitFor(() => {
     expect(
       screen.queryByLabelText("Letter 1") ??
-        screen.queryByText("Today's puzzle") ??
+        screen.queryByText("The Story") ??
         screen.queryByText("The puzzle ended"),
     ).toBeTruthy();
   });
@@ -198,14 +198,14 @@ describe("RealiTeaRoute", () => {
     await finishTileReveal(DEFAULT_ANSWER.length);
 
     await waitFor(() => {
-      expect(screen.getByText("Today's puzzle")).toBeInTheDocument();
+      expect(screen.getByText("The Story")).toBeInTheDocument();
     });
     expect(screen.getByText(routePuzzle.detail)).toBeInTheDocument();
 
     await renderRoute();
 
     await waitFor(() => {
-      expect(screen.getByText("Today's puzzle")).toBeInTheDocument();
+      expect(screen.getByText("The Story")).toBeInTheDocument();
       expect(screen.getByText(routePuzzle.detail)).toBeInTheDocument();
       const stored = readGameState(puzzleKey);
       expect(stored?.guesses.map((g) => g.word)).toEqual([DEFAULT_ANSWER]);

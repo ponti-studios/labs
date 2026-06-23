@@ -1,6 +1,6 @@
 import { Button, OnscreenKeyboard } from "@pontistudios/ui";
 import { cva } from "class-variance-authority";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 
 import {
@@ -19,7 +19,7 @@ import { useRealiTeaGame } from "./use-reali-tea-game";
 import { useRealiTeaShare } from "./use-reali-tea-share";
 
 import "~/styles/realitea.css";
-import { LucideShare, LucideShare2 } from "lucide-react";
+import { LucideShare } from "lucide-react";
 
 const TILE_STATE_CLASSES: Record<LetterState, string> = {
   absent: "border-border bg-muted text-muted-foreground",
@@ -163,7 +163,6 @@ type CurrentGuessRowProps = {
   isShaking: boolean;
   isValidationPending: boolean;
   onCellChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onCellFocus: () => void;
   onCellKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 
@@ -175,7 +174,6 @@ const CurrentGuessRow = memo(function CurrentGuessRow({
   isShaking,
   isValidationPending,
   onCellChange,
-  onCellFocus,
   onCellKeyDown,
 }: CurrentGuessRowProps) {
   return (
@@ -208,7 +206,6 @@ const CurrentGuessRow = memo(function CurrentGuessRow({
           type="text"
           value={currentGuess[cellIndex] ?? ""}
           onChange={onCellChange}
-          onFocus={onCellFocus}
           onKeyDown={onCellKeyDown}
         />
       ))}
@@ -274,14 +271,22 @@ export default function RealiTeaRoute() {
     onResult: game.clearError,
   });
 
-  // Auto-focus the active cell whenever the game transitions to an
-  // input-ready state (fresh mount, after a guess is submitted and the
-  // tile reveal finishes, after midnight rollover). This ensures
-  // physical/device keyboard input always has a target to receive events.
+  // After a guess is submitted and the tile reveal finishes, refocus the
+  // active cell so physical/device keyboard input has a target. We skip
+  // the first mount so that seed-restored games on mount don't get
+  // disrupted by an unnecessary focus call (which can confuse tests and
+  // steal focus from screen readers).
+  const isFirstMountRef = useRef(true);
   useEffect(() => {
+    if (isFirstMountRef.current) {
+      isFirstMountRef.current = false;
+      return;
+    }
     if (game.isGameOver || game.isRevealingRow || game.isValidationPending) return;
     game.redirectToActiveCell();
   }, [game.guesses.length, game.isGameOver, game.isRevealingRow, game.isValidationPending]);
+
+  const KEY_RE = /^[a-z]$/i;
 
   const handleCellKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -291,7 +296,7 @@ export default function RealiTeaRoute() {
       } else if (e.key === "Backspace") {
         e.preventDefault();
         game.removeLetter();
-      } else if (/^[a-z]$/i.test(e.key)) {
+      } else if (KEY_RE.test(e.key)) {
         e.preventDefault();
         game.addLetter(e.key.toUpperCase());
       }
@@ -301,11 +306,10 @@ export default function RealiTeaRoute() {
 
   const handleCellChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const char = e.target.value
-        .replace(/[^a-zA-Z]/g, "")
-        .toUpperCase()
-        .charAt(0);
-      if (char) game.addLetter(char);
+      // maxLength={1} ensures a single character, but we still sanitize
+      // for IME / paste edge-cases
+      const char = e.target.value.toUpperCase().charAt(0);
+      if (char && /^[A-Z]$/.test(char)) game.addLetter(char);
     },
     [game.addLetter],
   );
@@ -362,7 +366,7 @@ export default function RealiTeaRoute() {
                   if (guess) {
                     return (
                       <RevealedGuessRow
-                        key={`row-${rowIndex}`}
+                        key={`revealed-${rowIndex}`}
                         answerLength={currentPuzzle.answerLength}
                         guess={guess}
                         isRevealingThisRow={isRevealingThisRow}
@@ -374,7 +378,7 @@ export default function RealiTeaRoute() {
                   if (isCurrentRow) {
                     return (
                       <CurrentGuessRow
-                        key={`row-${rowIndex}`}
+                        key={`current-${rowIndex}`}
                         answerLength={currentPuzzle.answerLength}
                         cellRefs={game.cellRefs}
                         currentGuess={game.currentGuess}
@@ -382,7 +386,6 @@ export default function RealiTeaRoute() {
                         isShaking={game.isShaking}
                         isValidationPending={game.isValidationPending}
                         onCellChange={handleCellChange}
-                        onCellFocus={game.redirectToActiveCell}
                         onCellKeyDown={handleCellKeyDown}
                       />
                     );
@@ -390,7 +393,7 @@ export default function RealiTeaRoute() {
 
                   return (
                     <EmptyGuessRow
-                      key={`row-${rowIndex}`}
+                      key={`empty-${rowIndex}`}
                       answerLength={currentPuzzle.answerLength}
                     />
                   );
@@ -398,7 +401,9 @@ export default function RealiTeaRoute() {
               </div>
 
               {game.errorMessage && (
-                <p className="text-center text-xs font-medium text-red-600">{game.errorMessage}</p>
+                <p className="text-center text-xs font-medium text-red-600" aria-live="polite">
+                  {game.errorMessage}
+                </p>
               )}
             </div>
 
@@ -410,6 +415,7 @@ export default function RealiTeaRoute() {
                 <p className="mt-2 text-sm leading-5">{currentPuzzle.detail}</p>
                 <div className="flex justify-end gap-2 pt-3 md:pt-4">
                   <Button
+                    aria-label="Share result"
                     className="w-full md:w-auto"
                     onClick={share}
                     type="button"

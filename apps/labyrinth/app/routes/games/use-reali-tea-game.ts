@@ -30,6 +30,8 @@ export interface RealiTeaGameState {
   addLetter: (value: string) => void;
   removeLetter: () => void;
   submitGuess: () => void;
+  /** Focus the cell the user should type into next. Only safe to call when
+   *  the game is not over and not revealing a row — guards are internal. */
   redirectToActiveCell: () => void;
   clearError: () => void;
 }
@@ -65,22 +67,27 @@ export function useRealiTeaGame({
     prevDateKeyRef.current = puzzle.dateKey;
     setGuesses([]);
     typing.setCurrentGuess("");
-    anim.setRevealingGuessIndex(null);
-    anim.setRevealedTileCount(0);
-    anim.clearError();
+    anim.resetAnimation();
   }, [puzzle.dateKey]);
+
+  // Track the previous fetcher state so we can detect network failures
+  // (state transition "submitting" → "idle" without data).
+  const prevFetcherStateRef = useRef(wordValidator.state);
+  useEffect(() => {
+    prevFetcherStateRef.current = wordValidator.state;
+  }, [wordValidator.state]);
 
   const submitGuess = () => {
     if (!canMutateGuess) return;
     const guess = normalizeGuess(typing.currentGuess);
 
     if (guess.length !== puzzle.answerLength) {
-      anim.showToast("Not enough letters", true);
+      anim.animateError("Not enough letters", true);
       return;
     }
 
     if (guesses.some((existing) => existing.word === guess)) {
-      anim.showToast("Already guessed", true);
+      anim.animateError("Already guessed", true);
       return;
     }
 
@@ -99,13 +106,22 @@ export function useRealiTeaGame({
   };
 
   useEffect(() => {
-    if (wordValidator.state !== "idle" || !wordValidator.data) return;
+    if (wordValidator.state !== "idle") return;
+
+    // Network / server failure — fetcher went idle without producing data
+    if (!wordValidator.data) {
+      if (prevFetcherStateRef.current === "submitting") {
+        anim.animateError("Network error — try again", false);
+      }
+      return;
+    }
+
     const result = wordValidator.data;
 
     if (!result.valid) {
-      if (result.reason === "not-in-word-list") anim.showToast("Not in word list", true);
-      else if (result.reason === "wrong-length") anim.showToast("Not enough letters", true);
-      else if (result.reason === "already-guessed") anim.showToast("Already guessed", true);
+      if (result.reason === "not-in-word-list") anim.animateError("Not in word list", true);
+      else if (result.reason === "wrong-length") anim.animateError("Not enough letters", true);
+      else if (result.reason === "already-guessed") anim.animateError("Already guessed", true);
       return;
     }
 
@@ -115,11 +131,14 @@ export function useRealiTeaGame({
         return [...prev, { word: result.word!, states: result.states! }];
       });
       typing.setCurrentGuess("");
-      anim.setRevealingGuessIndex(guesses.length);
-      anim.setRevealedTileCount(0);
+      anim.startReveal(guesses.length);
     }
   }, [wordValidator.data, wordValidator.state, guesses.length]);
 
+  /** Focus the first empty cell. Internal guard prevents focusing when the
+   *  game is over or a row is revealing. Safe to call from an auto-focus
+   *  effect or after guess submission — NOT safe as an onFocus handler
+   *  (would steal focus from the user on every cell click). */
   const redirectToActiveCell = useCallback(() => {
     if (isGameOver || isRevealingRow) return;
     const idx = Math.min(typing.currentGuess.length, puzzle.answerLength - 1);
