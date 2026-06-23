@@ -16,5 +16,6 @@
       "@pontistudios/ui": ["./src/index.ts"]
     }
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/**/*.stories.tsx", "src/**/*.test.{ts,tsx}"]
 }

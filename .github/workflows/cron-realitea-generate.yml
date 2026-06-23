@@ -26,8 +26,8 @@ jobs:
       - name: install-dependencies
         run: pnpm install --frozen-lockfile --filter @pontistudios/labyrinth...
 
-      - name: reconcile-inventory
+      - name: reconcile
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-        run: pnpm --filter @pontistudios/labyrinth realitea:reconcile-inventory
+        run: pnpm --filter @pontistudios/labyrinth realitea:reconcile

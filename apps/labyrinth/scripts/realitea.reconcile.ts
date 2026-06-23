@@ -46,9 +46,7 @@ async function main() {
       ),
     );
   const existingKeys = new Set(
-    existingRows
-      .map((r) => r.scheduledForDateKey)
-      .filter((v): v is string => Boolean(v)),
+    existingRows.map((r) => r.scheduledForDateKey).filter((v): v is string => Boolean(v)),
   );
 
   const createdDateKeys: string[] = [];

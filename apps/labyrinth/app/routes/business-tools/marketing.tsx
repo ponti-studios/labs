@@ -1,335 +1,416 @@
 import { useState } from "react";
 import { Link } from "react-router";
-import { ArrowLeft, ArrowRight, BarChart3, Target, TrendingUp } from "lucide-react";
-import {
-  calculateMarketingSpend,
-  type MarketingProjectionOutput,
-} from "~/lib/business/marketing-calculator";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-  Badge,
-  Button,
-  Input,
-  Label,
-  Slider,
-} from "@pontistudios/ui";
+import { ArrowLeft } from "lucide-react";
+import { Button, Slider } from "@pontistudios/ui";
 
-const assumptions = [
-  "Best for quick paid acquisition planning.",
-  "Conversion rate should be entered as a realistic ticket purchase rate.",
-  "Use the output as a directional planning number, then refine by channel.",
-] as const;
+// ─── Types ────────────────────────────────────────────────────────────────────
 
-const formulaSteps = [
-  "Required clicks = desired attendees / conversion rate",
-  "Projected spend = required clicks × cost per click",
-] as const;
+type FilmSlateType = "BLOCKBUSTER_HEAVY" | "BALANCED_SLATE" | "INDIE_HOLDOVER";
 
-const interpretationNotes = [
-  "If the projected spend feels too high, improve conversion before increasing budget.",
-  "Conversion improvements usually compound faster than small CPC gains.",
-  "Use this number as a planning baseline, then refine by channel mix and creative quality.",
-] as const;
+const FILM_SLATE: Record<
+  FilmSlateType,
+  { label: string; emoji: string; studioCut: number; description: string }
+> = {
+  BLOCKBUSTER_HEAVY: {
+    label: "Blockbuster Heavy",
+    emoji: "🍿",
+    studioCut: 0.6,
+    description: "Disney/Marvel summer & holiday peak",
+  },
+  BALANCED_SLATE: {
+    label: "Balanced Slate",
+    emoji: "🎭",
+    studioCut: 0.53,
+    description: "Mixed mid-tier: horror, comedies, holdovers",
+  },
+  INDIE_HOLDOVER: {
+    label: "Indie / Holdover",
+    emoji: "🎨",
+    studioCut: 0.45,
+    description: "Late-stage runs and arthouse programming",
+  },
+};
 
-function formatCurrency(amount: number) {
+// ─── Industry Constants ───────────────────────────────────────────────────────
+
+const MONTHLY_RENT = 25_000;
+const MONTHLY_UTILITIES = 8_000;
+const MONTHLY_OTHER = 5_000;
+const FIXED_LABOR_BASE = 20_000; // core management, projectionists, security
+const VARIABLE_LABOR_PER_PATRON = 2.22; // ushers, concession cashiers (per monthly visitor)
+const CONCESSION_MARGIN = 0.7;
+const MULTIPLEX_WEEKLY_CAPACITY = 10_000; // conventional 8–10 screen multiplex warning threshold
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function formatCurrency(n: number) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
-    minimumFractionDigits: 2,
-  }).format(amount);
+    minimumFractionDigits: 0,
+  }).format(n);
 }
 
-export default function MarketingCalculator() {
-  const [desiredAttendees, setDesiredAttendees] = useState("500");
-  const [conversionRateBasisPoints, setConversionRateBasisPoints] = useState(20);
-  const [costPerClick, setCostPerClick] = useState("1.00");
-  const [result, setResult] = useState<MarketingProjectionOutput | null>(null);
-  const [error, setError] = useState<string | null>(null);
+function fmt(n: number) {
+  return n.toLocaleString();
+}
 
-  const conversionRate = conversionRateBasisPoints / 1000;
+function getHealthStatus(monthlyProfit: number, grossRevenue: number) {
+  if (grossRevenue === 0) return { label: "NO DATA", className: "text-[#a0703a]" };
+  const margin = monthlyProfit / grossRevenue;
+  if (margin > 0.15) return { label: "THRIVING", className: "text-[#4a5c3c]" };
+  if (margin > 0.05) return { label: "HEALTHY", className: "text-[#4a5c3c]" };
+  if (margin > -0.05) return { label: "BREAKING EVEN", className: "text-[#a0703a]" };
+  return { label: "LOSING MONEY", className: "text-[#8c1c1c]" };
+}
 
-  const handleCalculate = () => {
-    const attendeeCount = Number(desiredAttendees);
-    const clickCost = Number(costPerClick);
+// ─── CostRow ──────────────────────────────────────────────────────────────────
 
-    if (!Number.isFinite(attendeeCount) || attendeeCount <= 0) {
-      setError("Desired attendees must be greater than 0.");
-      setResult(null);
-      return;
-    }
+function CostRow({
+  label,
+  value,
+  note,
+  bold,
+  large,
+  color = "text-[#5c3d2e]",
+  valueColor = "text-[#5c3d2e]",
+  prefix = "",
+  suffix = "",
+}: {
+  label: string;
+  value: number;
+  note?: string;
+  bold?: boolean;
+  large?: boolean;
+  color?: string;
+  valueColor?: string;
+  prefix?: string;
+  suffix?: string;
+}) {
+  return (
+    <div className={large ? "text-sm" : ""}>
+      <div className={`flex items-baseline gap-4 ${bold ? "font-bold" : ""}`}>
+        <span className={`min-w-0 shrink ${color}`}>{label}</span>
+        <span className={`ml-auto shrink-0 tabular-nums ${valueColor}`}>
+          {prefix}
+          {formatCurrency(value)}
+          {suffix}
+        </span>
+      </div>
+      {note && <div className="text-[10px] text-[#a0703a] mt-0.5">{note}</div>}
+    </div>
+  );
+}
 
-    try {
-      const projection = calculateMarketingSpend({
-        desiredAttendees: attendeeCount,
-        conversionRate,
-        costPerClick: clickCost,
-      });
+// ─── Component ────────────────────────────────────────────────────────────────
 
-      setResult(projection);
-      setError(null);
-    } catch (calculationError) {
-      setResult(null);
-      setError(
-        calculationError instanceof Error ? calculationError.message : "Unable to calculate spend.",
-      );
-    }
-  };
+export default function TheaterEconomics() {
+  const [weeklyAttendance, setWeeklyAttendance] = useState(3_150);
+  const [ticketPrice, setTicketPrice] = useState(13);
+  const [concessionPerCap, setConcessionPerCap] = useState(7);
+  const [filmSlate, setFilmSlate] = useState<FilmSlateType>("BALANCED_SLATE");
 
-  const handleReset = () => {
-    setDesiredAttendees("500");
-    setConversionRateBasisPoints(20);
-    setCostPerClick("1.00");
-    setResult(null);
-    setError(null);
-  };
+  // Attendance
+  const monthlyVisitors = Math.round((weeklyAttendance * 30) / 7);
+  const weekendDailyAvg = Math.round((weeklyAttendance * 0.75) / 3); // Fri–Sun
+  const weekdayDailyAvg = Math.round((weeklyAttendance * 0.25) / 4); // Mon–Thu
+  const overCapacity = weeklyAttendance > MULTIPLEX_WEEKLY_CAPACITY;
+
+  // Box office
+  const slate = FILM_SLATE[filmSlate];
+  const grossTicketRevenue = monthlyVisitors * ticketPrice;
+  const studioCutAmount = grossTicketRevenue * slate.studioCut;
+  const theaterTicketRevenue = grossTicketRevenue - studioCutAmount;
+
+  // Concessions (per-cap model)
+  const concessionProfit = monthlyVisitors * concessionPerCap * CONCESSION_MARGIN;
+
+  // Revenue
+  const grossRevenue = theaterTicketRevenue + concessionProfit;
+
+  // Step-variable expenses
+  const dynamicLabor = Math.round(FIXED_LABOR_BASE + monthlyVisitors * VARIABLE_LABOR_PER_PATRON);
+  const totalExpenses = MONTHLY_RENT + dynamicLabor + MONTHLY_UTILITIES + MONTHLY_OTHER;
+  const monthlyProfit = Math.round(grossRevenue - totalExpenses);
+
+  // Revenue mix
+  const ticketPct = grossRevenue > 0 ? Math.round((theaterTicketRevenue / grossRevenue) * 100) : 0;
+  const snackPct = grossRevenue > 0 ? Math.round((concessionProfit / grossRevenue) * 100) : 0;
+
+  const health = getHealthStatus(monthlyProfit, grossRevenue);
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-8 md:px-6 md:py-12">
-        <section className="border-b border-border pb-8">
-          <div className="max-w-3xl">
-            <div className="flex flex-wrap items-center gap-3">
-              <Badge variant="secondary">Business tools</Badge>
-              <Badge variant="outline">Marketing planning</Badge>
-            </div>
-            <h1 className="mt-4">Model the spend required to hit your attendee goal.</h1>
-            <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
-              This calculator gives you a clean planning view of how conversion rate and CPC shape
-              the budget required to reach a target attendance number.
-            </p>
+    <div className="max-w-5xl mx-auto">
+      {/* Header */}
+      <div className="mb-5 flex items-center gap-3">
+        <Button asChild variant="ghost" size="sm">
+          <Link to="/business-tools">
+            <ArrowLeft className="size-4" />
+          </Link>
+        </Button>
+        <div>
+          <h1 className="text-base font-semibold text-[#1a1208] leading-tight">Theater P&L</h1>
+          <p className="text-xs text-[#a0703a]">
+            Exhibition economics for theatrical distribution analysis
+          </p>
+        </div>
+      </div>
 
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <Button asChild variant="outline">
-                <Link to="/business-tools">
-                  <ArrowLeft />
-                  Back to tools
-                </Link>
-              </Button>
-              <Button onClick={handleCalculate} size="lg">
-                Calculate spend
-                <ArrowRight />
-              </Button>
-            </div>
-          </div>
-        </section>
+      <div className="grid gap-4 lg:grid-cols-2 items-start">
+        {/* ── Controls ── */}
+        <div className="rounded-lg border border-[#e8d5b5] bg-[#f5ecd7] p-5 space-y-5">
+          <p className="ui-eyebrow">Scenario inputs</p>
 
-        <section className="overflow-hidden rounded-xl border border-border bg-card">
-          <div className="grid lg:grid-cols-[minmax(0,1fr)_420px]">
-            <div className="border-b border-border p-6 lg:border-b-0 lg:border-r">
-              <div className="ui-eyebrow">Inputs</div>
-              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
-                Set the three numbers that matter.
-              </h2>
-              <p className="mt-3 max-w-[60ch] text-sm leading-6 text-muted-foreground">
-                Start with your attendance target, then pressure-test the economics with realistic
-                conversion and click cost assumptions.
-              </p>
-
-              <div className="mt-8 space-y-8">
-                <div className="grid gap-6 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="desired-attendees">Desired attendees</Label>
-                    <Input
-                      id="desired-attendees"
-                      inputMode="numeric"
-                      type="number"
-                      min={1}
-                      value={desiredAttendees}
-                      onChange={(event) => setDesiredAttendees(event.target.value)}
-                    />
-                    <p className="text-sm leading-6 text-muted-foreground">
-                      The number of attendees you want this campaign to produce.
-                    </p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="cost-per-click">Cost per click</Label>
-                    <Input
-                      id="cost-per-click"
-                      inputMode="decimal"
-                      type="number"
-                      min={0.01}
-                      step={0.01}
-                      value={costPerClick}
-                      onChange={(event) => setCostPerClick(event.target.value)}
-                    />
-                    <p className="text-sm leading-6 text-muted-foreground">
-                      Your working average CPC across the paid channels you plan to use.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="border-t border-border pt-6">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                    <div>
-                      <Label htmlFor="conversion-rate">Conversion rate</Label>
-                      <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                        Move this based on your current landing page or funnel performance.
-                      </p>
-                    </div>
-                    <div className="rounded-md border border-border bg-background px-3 py-2 text-sm font-medium text-foreground">
-                      {(conversionRate * 100).toFixed(2)}%
-                    </div>
-                  </div>
-
-                  <div className="mt-5">
-                    <Slider
-                      id="conversion-rate"
-                      value={[conversionRateBasisPoints]}
-                      onValueChange={(values) => setConversionRateBasisPoints(values[0] ?? 20)}
-                      min={1}
-                      max={500}
-                      step={1}
-                    />
-                  </div>
-
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    <Badge variant="secondary">Low: 0.10%</Badge>
-                    <Badge variant="secondary">Typical: 1.00%–5.00%</Badge>
-                    <Badge variant="secondary">High intent: 5.00%+</Badge>
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-3 sm:flex-row">
-                  <Button onClick={handleCalculate} size="lg">
-                    Calculate spend
-                    <TrendingUp />
-                  </Button>
-                  <Button onClick={handleReset} variant="outline" size="lg">
-                    Reset inputs
-                  </Button>
-                </div>
+          {/* Sliders */}
+          <div className="grid grid-cols-1 gap-x-6 gap-y-4">
+            <div className="space-y-2">
+              <div className="flex items-baseline justify-between gap-2">
+                <label className="text-xs font-medium text-[#5c3d2e]">Weekly attendance</label>
+                <span className="shrink-0 text-sm font-semibold tabular-nums text-[#1a1208]">
+                  {fmt(weeklyAttendance)}
+                </span>
               </div>
+              <Slider
+                value={[weeklyAttendance]}
+                onValueChange={(v) => setWeeklyAttendance(v[0] ?? 3150)}
+                min={2000}
+                max={15000}
+                step={50}
+              />
             </div>
 
-            <div className="bg-muted/20 p-6">
-              <div className="ui-eyebrow">Output</div>
-              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
-                Campaign spend snapshot
-              </h2>
-              <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                A compact planning summary you can use in budgeting and pacing discussions.
-              </p>
-
-              <div className="mt-8 space-y-6">
-                {error ? (
-                  <div className="rounded-xl border border-destructive/20 bg-destructive/5 p-4 text-sm leading-6 text-destructive">
-                    {error}
-                  </div>
-                ) : result ? (
-                  <>
-                    <div className="border-b border-border pb-6">
-                      <div className="ui-eyebrow">Projected ad spend</div>
-                      <div className="mt-3 text-4xl font-semibold tracking-tight text-foreground">
-                        {formatCurrency(result.projectedAdSpend)}
-                      </div>
-                      <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                        Estimated paid media budget needed to reach your goal with the current
-                        assumptions.
-                      </p>
-                    </div>
-
-                    <dl className="grid gap-4 sm:grid-cols-2">
-                      <div className="border-l-2 border-border pl-4">
-                        <dt className="ui-eyebrow">Required clicks</dt>
-                        <dd className="mt-2 text-2xl font-semibold text-foreground">
-                          {result.requiredClicks.toLocaleString()}
-                        </dd>
-                        <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                          The traffic volume implied by your attendee target and conversion rate.
-                        </p>
-                      </div>
-                      <div className="border-l-2 border-border pl-4">
-                        <dt className="ui-eyebrow">Effective CPA</dt>
-                        <dd className="mt-2 text-2xl font-semibold text-foreground">
-                          {formatCurrency(result.projectedAdSpend / Number(desiredAttendees))}
-                        </dd>
-                        <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                          Average paid acquisition cost per attendee under this scenario.
-                        </p>
-                      </div>
-                    </dl>
-                  </>
-                ) : (
-                  <div className="border-l-2 border-dashed border-border pl-4">
-                    <div className="flex items-start gap-3">
-                      <BarChart3 className="mt-0.5 size-5 text-muted-foreground" />
-                      <div>
-                        <h3 className="text-lg font-medium text-foreground">No calculation yet</h3>
-                        <p className="mt-2 max-w-[48ch] text-sm leading-6 text-muted-foreground">
-                          Enter your planning assumptions and calculate to see the required clicks
-                          and projected spend.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
+            <div className="space-y-2">
+              <div className="flex items-baseline justify-between gap-2">
+                <label className="text-xs font-medium text-[#5c3d2e]">Avg ticket price</label>
+                <span className="shrink-0 text-sm font-semibold tabular-nums text-[#1a1208]">
+                  {formatCurrency(ticketPrice)}
+                </span>
               </div>
+              <Slider
+                value={[ticketPrice]}
+                onValueChange={(v) => setTicketPrice(v[0] ?? 13)}
+                min={10}
+                max={20}
+                step={0.5}
+              />
+            </div>
+
+            <div className="col-span-2 space-y-2">
+              <div className="flex items-baseline justify-between gap-2">
+                <label className="text-xs font-medium text-[#5c3d2e]">
+                  Concession per cap (SPP)
+                </label>
+                <span className="shrink-0 text-sm font-semibold tabular-nums text-[#1a1208]">
+                  {formatCurrency(concessionPerCap)}
+                </span>
+              </div>
+              <Slider
+                value={[concessionPerCap]}
+                onValueChange={(v) => setConcessionPerCap(v[0] ?? 7)}
+                min={4}
+                max={12}
+                step={0.5}
+              />
+              <p className="text-xs text-[#a0703a]">
+                Spend per patron · conventional multiplex avg $6–$9
+              </p>
             </div>
           </div>
 
-          <div className="border-t border-border px-6">
-            <Accordion type="single" collapsible>
-              <AccordionItem value="assumptions">
-                <AccordionTrigger>Planning assumptions</AccordionTrigger>
-                <AccordionContent className="pb-0 pl-0">
-                  <div className="grid gap-3 md:grid-cols-3">
-                    {assumptions.map((assumption) => (
-                      <div
-                        key={assumption}
-                        className="border-l-2 border-border pl-4 text-sm leading-6 text-muted-foreground"
-                      >
-                        {assumption}
-                      </div>
-                    ))}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="method">
-                <AccordionTrigger>Calculation method</AccordionTrigger>
-                <AccordionContent className="pb-0 pl-0">
-                  <div className="grid gap-3">
-                    {formulaSteps.map((step) => (
-                      <div
-                        key={step}
-                        className="border-l-2 border-border pl-4 text-sm leading-6 text-foreground"
-                      >
-                        {step}
-                      </div>
-                    ))}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="interpretation">
-                <AccordionTrigger>How to read the output</AccordionTrigger>
-                <AccordionContent className="pb-0 pl-0">
-                  <div className="grid gap-4 md:grid-cols-3">
-                    <div className="flex items-start gap-3 border-l-2 border-border pl-4">
-                      <Target className="mt-0.5 size-4 text-muted-foreground" />
-                      <p className="text-sm leading-6 text-muted-foreground">
-                        {interpretationNotes[0]}
-                      </p>
+          {/* Film Slate Selector */}
+          <div className="space-y-2">
+            <p className="text-xs font-medium text-[#5c3d2e]">Film slate</p>
+            <div className="grid grid-cols-3 gap-1.5">
+              {(Object.keys(FILM_SLATE) as FilmSlateType[]).map((key) => {
+                const s = FILM_SLATE[key];
+                const active = filmSlate === key;
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => setFilmSlate(key)}
+                    className={`rounded px-2 py-2 text-left transition-colors ${
+                      active
+                        ? "bg-[#1a1208] text-[#f5ecd7]"
+                        : "bg-[#ede0cc] text-[#5c3d2e] hover:bg-[#e8d5b5]"
+                    }`}
+                  >
+                    <div className="text-[11px] font-semibold leading-tight">
+                      {s.emoji} {s.label}
                     </div>
-                    <div className="flex items-start gap-3 border-l-2 border-border pl-4">
-                      <TrendingUp className="mt-0.5 size-4 text-muted-foreground" />
-                      <p className="text-sm leading-6 text-muted-foreground">
-                        {interpretationNotes[1]}
-                      </p>
+                    <div
+                      className={`text-[10px] mt-0.5 ${active ? "text-[#c8a882]" : "text-[#a0703a]"}`}
+                    >
+                      {Math.round(s.studioCut * 100)}% studio cut
                     </div>
-                    <div className="border-l-2 border-border pl-4 text-sm leading-6 text-muted-foreground">
-                      {interpretationNotes[2]}
-                    </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-xs text-[#a0703a]">{slate.description}</p>
           </div>
-        </section>
+
+          {/* Variable costs reference */}
+          <div className="pt-4 border-t border-[#e8d5b5] space-y-1.5">
+            <p className="ui-eyebrow mb-2">Operating costs</p>
+            <CostRow label="Rent" value={MONTHLY_RENT} suffix="/mo" />
+            <CostRow
+              label="Labor (step-variable)"
+              value={dynamicLabor}
+              suffix="/mo"
+              note={`$20k base + $2.22 × ${fmt(monthlyVisitors)} visitors`}
+            />
+            <CostRow label="Utilities" value={MONTHLY_UTILITIES} suffix="/mo" />
+            <CostRow label="Other" value={MONTHLY_OTHER} suffix="/mo" />
+            <div className="pt-1.5 border-t border-[#e8d5b5]">
+              <CostRow
+                label="Total"
+                value={totalExpenses}
+                bold
+                suffix="/mo"
+                color="text-[#1a1208]"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* ── Receipt ── */}
+        <div className="font-mono text-xs bg-white rounded-lg border border-[#e8d5b5] px-6 py-5 shadow-[0_4px_16px_rgba(26,18,8,0.07)]">
+          <div className="text-center mb-4">
+            <div className="text-sm font-bold tracking-widest text-[#1a1208]">🍿 THEATER P&L</div>
+            <div className="text-[10px] text-[#a0703a] tracking-[0.15em] uppercase">
+              Monthly Exhibition Report
+            </div>
+            <div className="mt-3 border-t border-[#e8d5b5]" />
+          </div>
+
+          {/* Attendance breakdown */}
+          <div className="mb-2.5 space-y-1 text-[10px]">
+            <div className="flex justify-between text-[#5c3d2e]">
+              <span>Weekly visitors</span>
+              <span className="tabular-nums">{fmt(weeklyAttendance)}</span>
+            </div>
+            <div className="flex justify-between text-[#a0703a]">
+              <span>Weekend avg (Fri–Sun)</span>
+              <span className="tabular-nums">{fmt(weekendDailyAvg)}/day</span>
+            </div>
+            <div className="flex justify-between text-[#a0703a]">
+              <span>Weekday avg (Mon–Thu)</span>
+              <span className="tabular-nums">{fmt(weekdayDailyAvg)}/day</span>
+            </div>
+            {overCapacity && (
+              <div className="mt-1.5 px-2 py-1.5 bg-[#8c1c1c]/8 border border-[#8c1c1c]/20 text-[#8c1c1c] rounded font-semibold">
+                ⚠ Weekend attendance may exceed conventional multiplex capacity
+              </div>
+            )}
+          </div>
+
+          <div className="border-t border-[#e8d5b5] pt-2.5 space-y-1.5">
+            <CostRow
+              label="Ticket Revenue (Gross)"
+              value={grossTicketRevenue}
+              note={`${fmt(monthlyVisitors)} visitors × ${formatCurrency(ticketPrice)}`}
+              color="text-[#5c3d2e]"
+              valueColor="text-[#1a1208]"
+            />
+            <CostRow
+              label={`Studio Cut (−${Math.round(slate.studioCut * 100)}% · ${slate.emoji} ${slate.label})`}
+              value={studioCutAmount}
+              color="text-[#8c1c1c]"
+              valueColor="text-[#8c1c1c]"
+              prefix="−"
+            />
+          </div>
+
+          <div className="my-2.5 border-t border-[#e8d5b5]" />
+
+          <div className="space-y-1.5">
+            <CostRow
+              label="Your Ticket Revenue"
+              value={theaterTicketRevenue}
+              bold
+              color="text-[#1a1208]"
+              valueColor="text-[#1a1208]"
+            />
+            <CostRow
+              label="Concession Profit (70% margin)"
+              value={concessionProfit}
+              note={`${formatCurrency(concessionPerCap)} SPP × ${fmt(monthlyVisitors)} visitors`}
+              color="text-[#5c3d2e]"
+              valueColor="text-[#1a1208]"
+            />
+          </div>
+
+          <div className="my-2.5 border-t border-[#e8d5b5]" />
+
+          <CostRow
+            label="GROSS REVENUE"
+            value={grossRevenue}
+            bold
+            color="text-[#1a1208]"
+            valueColor="text-[#1a1208]"
+          />
+
+          <div className="mt-2.5 space-y-1.5">
+            <CostRow
+              label="Rent"
+              value={MONTHLY_RENT}
+              color="text-[#8c1c1c]"
+              valueColor="text-[#8c1c1c]"
+              prefix="−"
+            />
+            <CostRow
+              label="Labor"
+              value={dynamicLabor}
+              note={`$20k fixed + $2.22 × ${fmt(monthlyVisitors)} visitors`}
+              color="text-[#8c1c1c]"
+              valueColor="text-[#8c1c1c]"
+              prefix="−"
+            />
+            <CostRow
+              label="Utilities"
+              value={MONTHLY_UTILITIES}
+              color="text-[#8c1c1c]"
+              valueColor="text-[#8c1c1c]"
+              prefix="−"
+            />
+            <CostRow
+              label="Other"
+              value={MONTHLY_OTHER}
+              color="text-[#8c1c1c]"
+              valueColor="text-[#8c1c1c]"
+              prefix="−"
+            />
+          </div>
+
+          <div className="my-2.5 border-t-2 border-[#1a1208]" />
+
+          <div className="flex items-baseline gap-4 text-sm font-bold">
+            <span className="min-w-0 shrink text-[#1a1208]">MONTHLY PROFIT</span>
+            <span
+              className={`ml-auto shrink-0 tabular-nums ${monthlyProfit >= 0 ? "text-[#4a5c3c]" : "text-[#8c1c1c]"}`}
+            >
+              {formatCurrency(monthlyProfit)}
+            </span>
+          </div>
+
+          {/* Status + Revenue Mix */}
+          <div className="mt-4 pt-3 border-t border-[#e8d5b5] grid grid-cols-3 text-center gap-2">
+            <div
+              className={`font-bold text-[11px] flex items-center justify-center ${health.className}`}
+            >
+              {health.label}
+            </div>
+            <div>
+              <div className="font-bold text-[#1a1208]">{ticketPct}%</div>
+              <div className="text-[10px] text-[#a0703a]">from tickets</div>
+            </div>
+            <div>
+              <div className="font-bold text-[#1a1208]">{snackPct}%</div>
+              <div className="text-[10px] text-[#a0703a]">from snacks</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

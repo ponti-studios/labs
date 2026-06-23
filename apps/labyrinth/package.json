@@ -11,7 +11,7 @@
     "realitea:gen": "tsx --tsconfig tsconfig.json scripts/generate-realitea-scheduled-puzzle.ts",
     "realitea:gen-today": "tsx --tsconfig tsconfig.json scripts/generate-realitea-scheduled-puzzle.ts --publish",
     "realitea:gen-range": "tsx --tsconfig tsconfig.json scripts/generate-realitea-scheduled-puzzle.ts",
-    "realitea:reconcile": "tsx --tsconfig tsconfig.json scripts/reconcile-realitea-inventory.ts",
+    "realitea:reconcile": "tsx --tsconfig tsconfig.json scripts/realitea.reconcile.ts",
     "start": "react-router-serve ./build/server/index.js --port=${PORT:-3000}",
     "test": "vitest run --environment jsdom --coverage --reporter verbose --passWithNoTests",
     "typecheck": "react-router typegen && tsc"
