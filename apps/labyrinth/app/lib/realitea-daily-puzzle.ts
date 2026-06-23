@@ -9,7 +9,7 @@ import {
 } from "./realitea";
 
 /**
- * RHOBH daily puzzle helpers.
+ * Bravo daily puzzle helpers.
  *
  * This module owns the full lifecycle for a daily puzzle:
  *
@@ -43,7 +43,7 @@ import {
  *   2026-05-29
  *        |
  *        v
- *   rhobh-<day-index>
+ *   bravo-<day-index>
  *        |
  *        v
  *   puzzleKey / storage lookup
@@ -70,18 +70,26 @@ import {
  *   valid or rejected with reasons
  */
 
-export const RHOBH_FRANCHISE = "rhobh";
-export const RHOBH_DATE_FORMAT = /^\d{4}-\d{2}-\d{2}$/;
-export const RHOBH_ALLOWED_SOURCE_DOMAINS = [
+export const BRAVO_FRANCHISE = "bravo";
+export const BRAVO_DATE_FORMAT = /^\d{4}-\d{2}-\d{2}$/;
+export const BRAVO_ALLOWED_SOURCE_DOMAINS = [
   "bravotv.com",
   "people.com",
   "ew.com",
   "eonline.com",
   "usmagazine.com",
 ] as const;
-export const RHOBH_PRIMARY_SOURCE_DOMAIN = "bravotv.com";
-export const RHOBH_REPEAT_WINDOW_DAYS = 90;
-export const RHOBH_ANSWER_LENGTH = REALITEA_ANSWER_LENGTH;
+export const BRAVO_PRIMARY_SOURCE_DOMAIN = "bravotv.com";
+export const BRAVO_REPEAT_WINDOW_DAYS = 90;
+export const BRAVO_ANSWER_LENGTH = REALITEA_ANSWER_LENGTH;
+
+// Legacy aliases for backwards compatibility
+export const RHOBH_FRANCHISE = BRAVO_FRANCHISE;
+export const RHOBH_DATE_FORMAT = BRAVO_DATE_FORMAT;
+export const RHOBH_ALLOWED_SOURCE_DOMAINS = BRAVO_ALLOWED_SOURCE_DOMAINS;
+export const RHOBH_PRIMARY_SOURCE_DOMAIN = BRAVO_PRIMARY_SOURCE_DOMAIN;
+export const RHOBH_REPEAT_WINDOW_DAYS = BRAVO_REPEAT_WINDOW_DAYS;
+export const RHOBH_ANSWER_LENGTH = BRAVO_ANSWER_LENGTH;
 export const REALITEA_READY_INVENTORY_DAYS = 7;
 export const REALITEA_RESERVE_TARGET = 3;
 

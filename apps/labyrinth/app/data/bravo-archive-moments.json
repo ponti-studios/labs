@@ -1,0 +1,282 @@
+[
+  {
+    "answer": "TEARS",
+    "answerType": "storyline",
+    "clue": "A flood of emotion can take over a major Bravo confrontation.",
+    "detail": "A dramatic breakdown can turn tears into the episode's defining image and emotional pivot.",
+    "role": "Emotional fallout",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "SWANS",
+    "answerType": "object",
+    "clue": "These elegant birds are inseparable from one iconic Beverly Hills estate.",
+    "detail": "The estate's swans became one of the most recognizable bits of Bravo visual lore.",
+    "role": "Estate mascots",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "BUNNY",
+    "answerType": "object",
+    "clue": "A small gift turned reunion seating into an all-time uncomfortable moment.",
+    "detail": "The returned bunny became one of the show's most memorable symbols of unresolved hurt and public fallout.",
+    "role": "Reunion prop",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "DRAMA",
+    "answerType": "storyline",
+    "clue": "This is the fuel that keeps a Bravo group event from staying calm for long.",
+    "detail": "Drama is the franchise's baseline currency, powering fights, alliances, and every tense dinner table.",
+    "role": "Escalating conflict",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "ERIKA",
+    "answerType": "person",
+    "clue": "The Pretty Mess performer never misses a sharp confessional.",
+    "detail": "Erika Jayne keeps the glam, the one-liners, and the pop-star energy turned all the way up.",
+    "role": "Pop diva energy",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "KYLE",
+    "answerType": "person",
+    "clue": "An OG diamond holder often anchors the group when everything starts to tilt.",
+    "detail": "Kyle Richards remains one of the franchise's central figures, balancing family tension and cast politics.",
+    "role": "Original cast anchor",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "ASPEN",
+    "answerType": "place",
+    "clue": "A cold-weather getaway that somehow made the cast dynamics even hotter.",
+    "detail": "Aspen trips have produced some of Bravo's most quoted feuds, meltdowns, and post-trip fallout.",
+    "role": "Trip disaster zone",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "LIMOS",
+    "answerType": "moment",
+    "clue": "These chauffeured rides are where Bravo arguments often get even more dangerous.",
+    "detail": "Limos are part of the franchise's visual language, often trapping castmates together at the worst possible moment.",
+    "role": "Transit pressure-cooker",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "JEWEL",
+    "answerType": "phrase",
+    "clue": "A sparkling status symbol that fits the whole Beverly Hills fantasy.",
+    "detail": "A jewel captures the polished, wealth-soaked image that Bravo sells from credits to confessionals.",
+    "role": "Luxury shorthand",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "GLITZ",
+    "answerType": "phrase",
+    "clue": "This five-letter Bravo obsession can be both a flex and a flashpoint.",
+    "detail": "Glitz is baked into the Bravo image, and cast debates over presentation often double as status commentary.",
+    "role": "Lifestyle flashpoint",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "PUMP",
+    "answerType": "place",
+    "clue": "This West Hollywood hotspot is the heart of one Bravo empire.",
+    "detail": "Pump restaurant became iconic through Vanderpump Rules, serving as the central hub for drama and deals.",
+    "role": "Restaurant epicenter",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "LALA",
+    "answerType": "person",
+    "clue": "The cash-me-out star of Vanderpump Rules keeps things unpredictable.",
+    "detail": "Lala Kent brought her own energy to the franchise with business ventures and unfiltered commentary.",
+    "role": "Brash entrepreneur",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "JAXE",
+    "answerType": "person",
+    "clue": "The Vanderpump Rules troublemaker often finds himself at the center of the chaos.",
+    "detail": "Jax Taylor's behavior and loyalty tests became defining moments in the early franchise history.",
+    "role": "Chaos catalyst",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "STASSI",
+    "answerType": "person",
+    "clue": "The valley-born force of nature ruled Vanderpump Rules with strong opinions.",
+    "detail": "Stassi Schroeder's commanding presence and takedowns shaped multiple seasons of the show.",
+    "role": "Valley powerhouse",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "JAMES",
+    "answerType": "person",
+    "clue": "The DJ's wild nights and backstage drama fueled Vanderpump Rules chaos.",
+    "detail": "James Kennedy brought music, scandal, and explosive arguments to the Bravo universe.",
+    "role": "Club provocateur",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "BREWS",
+    "answerType": "moment",
+    "clue": "Alcohol fuels nearly every conflict on Bravo reality shows.",
+    "detail": "Drinks flow freely at Bravo events, often lowering inhibitions and raising the temperature of arguments.",
+    "role": "Liquid chaos",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "CRAIG",
+    "answerType": "person",
+    "clue": "The Southern Charm Charleston star juggles relationships and restaurant dreams.",
+    "detail": "Craig Conover brings Southern charm and romance drama to the Bravo scene.",
+    "role": "Charleston heartbreaker",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "AUSTEN",
+    "answerType": "person",
+    "clue": "Another Southern Charm lead often caught between business, romance, and friend drama.",
+    "detail": "Austen Kroll navigates the demands of Bravo life with constant relationship complications.",
+    "role": "Love-struck businessman",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "SHADY",
+    "answerType": "phrase",
+    "clue": "A Bravo classic—throwing shade is practically the sport.",
+    "detail": "Shady commentary and suspicious glances fuel endless Bravo drama and post-scene analysis.",
+    "role": "Passive aggression",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "FEUD",
+    "answerType": "moment",
+    "clue": "A long-running conflict that defines multiple seasons of any Bravo show.",
+    "detail": "Feuds between cast members become season-long arcs, spawning alliances and betrayals.",
+    "role": "Seasonal anchor",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "SHADE",
+    "answerType": "phrase",
+    "clue": "Subtle disrespect is an art form on Bravo reality.",
+    "detail": "Shade-throwing keeps tension simmering and provides endless meme-worthy moments.",
+    "role": "Subtle disdain",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "GOWNS",
+    "answerType": "object",
+    "clue": "Bravo reunions are fashion showcases with high stakes and higher drama.",
+    "detail": "Designer gowns at reunions often cost more than some people's cars and precede confrontations.",
+    "role": "Reunion statement",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "TOAST",
+    "answerType": "moment",
+    "clue": "A seemingly innocent speech that often devolves into accusations.",
+    "detail": "Toasts at Bravo events are loaded guns—what starts polite often becomes pointed.",
+    "role": "Speech trap",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "LOYAL",
+    "answerType": "phrase",
+    "clue": "Bravo casts constantly test this concept with friendships.",
+    "detail": "Loyalty is currency on Bravo shows, tested in every crisis and ultimatum.",
+    "role": "Friendship test",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "STARE",
+    "answerType": "moment",
+    "clue": "A long look across the table says more than words ever could.",
+    "detail": "The Bravo stare is a powerful non-verbal communication tool, often more devastating than screaming.",
+    "role": "Silent judgment",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "PARTY",
+    "answerType": "moment",
+    "clue": "A Bravo event where romance, business, and conflict all converge.",
+    "detail": "Parties are the stage where Bravo cast members celebrate, plot, and detonate friendships.",
+    "role": "Event catalyst",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "TRUST",
+    "answerType": "phrase",
+    "clue": "The thing most Bravo relationships lack by season's end.",
+    "detail": "Trust becomes a scarce commodity as cast members navigate loyalty and betrayal.",
+    "role": "Crumbling foundation",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "GUILT",
+    "answerType": "phrase",
+    "clue": "Often weaponized in Bravo arguments to change the subject.",
+    "detail": "Guilt trips are common tactics when Bravo cast members want to deflect from their own behavior.",
+    "role": "Deflection tool",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "MESSY",
+    "answerType": "phrase",
+    "clue": "A Bravo favorite for describing both situations and people.",
+    "detail": "Being 'messy' is both a criticism and a badge of honor on Bravo's shows.",
+    "role": "Personality descriptor",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "SPILL",
+    "answerType": "moment",
+    "clue": "When a Bravo cast member reveals another's secret at the worst possible time.",
+    "detail": "Spilling tea during confrontations is a classic Bravo betrayal tactic.",
+    "role": "Secret weapon",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "TWEED",
+    "answerType": "object",
+    "clue": "Designer fashion flex common on Bravo red carpets.",
+    "detail": "Tweed and other high-end fabrics mark Bravo's luxury lifestyle aesthetic.",
+    "role": "Fashion statement",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "CHARM",
+    "answerType": "phrase",
+    "clue": "Southern hospitality meets Bravo drama in this franchise element.",
+    "detail": "Charm is both the title of the Southern Charm franchise and what cast members use strategically.",
+    "role": "Southern weapon",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "BELLE",
+    "answerType": "phrase",
+    "clue": "Southern womanhood as performed on Bravo stages.",
+    "detail": "Being a belle involves beauty, grace, and often hidden daggers on Southern Charm.",
+    "role": "Southern belle energy",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "EXILE",
+    "answerType": "moment",
+    "clue": "When a Bravo cast member is pushed out of the group.",
+    "detail": "Social exile and group rejection are potent weapons in the Bravo arsenal.",
+    "role": "Banishment drama",
+    "newsMode": "archive"
+  },
+  {
+    "answer": "SNIDE",
+    "answerType": "phrase",
+    "clue": "Subtle mockery is the Bravo way of dismissing someone.",
+    "detail": "Snide remarks pack more punch than direct insults on Bravo shows.",
+    "role": "Backhanded cut",
+    "newsMode": "archive"
+  }
+]

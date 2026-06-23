@@ -1,4 +1,4 @@
-import archiveMoments from "../data/rhobh-archive-moments.json";
+import archiveMoments from "../data/bravo-archive-moments.json";
 
 import { and, asc, db, desc, eq, gt, gte, inArray, lte, rhobhDailyPuzzles } from "@pontistudios/db";
 import { z } from "zod";
@@ -11,10 +11,10 @@ import {
   mapRecordToStoredPuzzle,
   parseDate,
   parseStringArray,
-  RHOBH_ANSWER_LENGTH,
-  RHOBH_FRANCHISE,
-  RHOBH_PRIMARY_SOURCE_DOMAIN,
-  RHOBH_REPEAT_WINDOW_DAYS,
+  BRAVO_ANSWER_LENGTH,
+  BRAVO_FRANCHISE,
+  BRAVO_PRIMARY_SOURCE_DOMAIN,
+  BRAVO_REPEAT_WINDOW_DAYS,
   sourceItemListSchema,
   validateCandidate,
   type GeneratedCandidate,
@@ -36,30 +36,33 @@ interface GenerationDependencies {
 }
 
 const SYSTEM_PROMPT = readFileSync(
-  pathJoin(import.meta.dirname, "./prompts/rhobh-generation-system.md"),
+  pathJoin(__dirname, "./prompts/bravo-generation-system.md"),
   "utf-8",
 );
 
-const RHOBH_CURRENT_SOURCE_QUERIES = [
+const BRAVO_CURRENT_SOURCE_QUERIES = [
   {
-    domain: RHOBH_PRIMARY_SOURCE_DOMAIN,
+    domain: BRAVO_PRIMARY_SOURCE_DOMAIN,
     query: "site:bravotv.com/the-daily-dish",
   },
-  { domain: "people.com", query: "site:people.com" },
-  { domain: "ew.com", query: "site:ew.com" },
-  { domain: "eonline.com", query: "site:eonline.com" },
-  { domain: "usmagazine.com", query: "site:usmagazine.com" },
+  {
+    domain: BRAVO_PRIMARY_SOURCE_DOMAIN,
+    query: "site:bravotv.com Bravo",
+  },
+  { domain: "people.com", query: "site:people.com Bravo reality" },
+  { domain: "ew.com", query: "site:ew.com Bravo" },
+  { domain: "eonline.com", query: "site:eonline.com Bravo" },
 ] as const;
-const RHOBH_SOURCE_COLLECTION_MAX_ITEMS = 5;
-const RHOBH_SOURCE_COLLECTION_MAX_TOKENS = 1200;
-const RHOBH_GENERATION_MAX_TOKENS = 1200;
+const BRAVO_SOURCE_COLLECTION_MAX_ITEMS = 5;
+const BRAVO_SOURCE_COLLECTION_MAX_TOKENS = 1200;
+const BRAVO_GENERATION_MAX_TOKENS = 1200;
 
 const realiteaCandidateSchema = z.object({
   answer: z
     .string()
     .min(1)
     .meta({
-      description: `The RHOBH answer to guess. It must normalize to exactly ${REALITEA_ANSWER_LENGTH} letters.`,
+      description: `The Bravo answer to guess. It must normalize to exactly ${REALITEA_ANSWER_LENGTH} letters.`,
     }),
   answerType: z
     .enum(["moment", "object", "person", "phrase", "place", "storyline"])
@@ -71,7 +74,7 @@ const realiteaCandidateSchema = z.object({
     .meta({ description: "A spoiler-safe explanation shown after the game ends." }),
   newsMode: z
     .enum(["current"])
-    .meta({ description: "Scheduled puzzles must come from fresh RHOBH news." }),
+    .meta({ description: "Scheduled puzzles must come from fresh Bravo reality TV news." }),
   rationale: z.string().min(1).meta({ description: "Why this puzzle is a strong pick today." }),
   role: z.string().min(1).meta({ description: "Short descriptive label for the answer." }),
   sourceUrls: z.array(z.string()).meta({ description: "Source URLs supporting the candidate." }),
@@ -84,9 +87,9 @@ const realiteaCandidateSchema = z.object({
     .meta({ description: "Short summaries matching the source URLs." }),
 });
 
-const rhobhGenerationCandidatesSchema = z.array(realiteaCandidateSchema).min(3).max(5);
-const rhobhGenerationResponseSchema = z.object({
-  candidates: rhobhGenerationCandidatesSchema,
+const bravoGenerationCandidatesSchema = z.array(realiteaCandidateSchema).min(3).max(5);
+const bravoGenerationResponseSchema = z.object({
+  candidates: bravoGenerationCandidatesSchema,
 });
 const sourceCollectionResponseSchema = {
   type: "array",
@@ -155,7 +158,7 @@ function buildPuzzleInsertValues(
     dateUtc: options.scheduledForDateKey ? getStoredDateValue(options.scheduledForDateKey) : null,
     detail: candidate.detail,
     expireAt: options.expireAt ?? null,
-    franchise: RHOBH_FRANCHISE,
+    franchise: BRAVO_FRANCHISE,
     generationBatchId: options.generationBatchId ?? null,
     generationStatus: "published",
     newsMode: candidate.newsMode,
@@ -196,9 +199,9 @@ export async function collectCurrentSources(
         role: "user",
         content: JSON.stringify(
           {
-            allowedDomains: [RHOBH_CURRENT_SOURCE_QUERIES[0].domain],
-            maxItems: RHOBH_SOURCE_COLLECTION_MAX_ITEMS,
-            queries: RHOBH_CURRENT_SOURCE_QUERIES.map((sourceQuery) => sourceQuery.query),
+            allowedDomains: BRAVO_CURRENT_SOURCE_QUERIES.map((sourceQuery) => sourceQuery.domain),
+            maxItems: BRAVO_SOURCE_COLLECTION_MAX_ITEMS,
+            queries: BRAVO_CURRENT_SOURCE_QUERIES.map((sourceQuery) => sourceQuery.query),
             todayUtc: (dependencies.sourceCollectionNow ?? new Date()).toISOString(),
           },
           null,
@@ -206,7 +209,7 @@ export async function collectCurrentSources(
         ),
       },
     ],
-    max_tokens: RHOBH_SOURCE_COLLECTION_MAX_TOKENS,
+    max_tokens: BRAVO_SOURCE_COLLECTION_MAX_TOKENS,
     response_format: {
       type: "json_schema",
       json_schema: {
@@ -219,7 +222,7 @@ export async function collectCurrentSources(
       {
         type: "openrouter:web_search",
         parameters: {
-          allowed_domains: RHOBH_CURRENT_SOURCE_QUERIES.map((sourceQuery) => sourceQuery.domain),
+          allowed_domains: BRAVO_CURRENT_SOURCE_QUERIES.map((sourceQuery) => sourceQuery.domain),
           engine: "auto",
           max_results: 8,
           max_total_results: 20,
@@ -229,7 +232,7 @@ export async function collectCurrentSources(
       {
         type: "openrouter:web_fetch",
         parameters: {
-          allowed_domains: RHOBH_CURRENT_SOURCE_QUERIES.map((sourceQuery) => sourceQuery.domain),
+          allowed_domains: BRAVO_CURRENT_SOURCE_QUERIES.map((sourceQuery) => sourceQuery.domain),
           engine: "openrouter",
           max_content_tokens: 4000,
           max_uses: 8,
@@ -303,7 +306,7 @@ export async function collectCurrentSources(
         domain,
       });
 
-      if (sourceItems.length >= RHOBH_SOURCE_COLLECTION_MAX_ITEMS) {
+      if (sourceItems.length >= BRAVO_SOURCE_COLLECTION_MAX_ITEMS) {
         break;
       }
     }
@@ -346,7 +349,7 @@ async function generateCandidatesFromSources(
     messages: [
       {
         role: "system",
-        content: SYSTEM_PROMPT.replaceAll("{{ANSWER_LENGTH}}", String(RHOBH_ANSWER_LENGTH)),
+        content: SYSTEM_PROMPT.replaceAll("{{ANSWER_LENGTH}}", String(BRAVO_ANSWER_LENGTH)),
       },
       {
         role: "user",
@@ -361,12 +364,12 @@ async function generateCandidatesFromSources(
         ),
       },
     ],
-    max_tokens: RHOBH_GENERATION_MAX_TOKENS,
+    max_tokens: BRAVO_GENERATION_MAX_TOKENS,
     response_format: {
       type: "json_schema",
       json_schema: {
         name: "rhobh_generation_candidates",
-        schema: z.toJSONSchema(rhobhGenerationResponseSchema),
+        schema: z.toJSONSchema(bravoGenerationResponseSchema),
         strict: true,
       },
     },
@@ -424,7 +427,7 @@ async function generateCandidatesFromSources(
       return [];
     }
 
-    const parsed = rhobhGenerationResponseSchema.parse(JSON.parse(rawContent));
+    const parsed = bravoGenerationResponseSchema.parse(JSON.parse(rawContent));
 
     return parsed.candidates;
   } catch (error) {
@@ -449,14 +452,14 @@ async function generateCandidatesFromSources(
 
 export async function getRecentAnswers(date: Date): Promise<Set<string>> {
   const cutoff = new Date(date);
-  cutoff.setUTCDate(cutoff.getUTCDate() - RHOBH_REPEAT_WINDOW_DAYS);
+  cutoff.setUTCDate(cutoff.getUTCDate() - BRAVO_REPEAT_WINDOW_DAYS);
 
   const rows = await db
     .select({ normalizedAnswer: rhobhDailyPuzzles.normalizedAnswer })
     .from(rhobhDailyPuzzles)
     .where(
       and(
-        eq(rhobhDailyPuzzles.franchise, RHOBH_FRANCHISE),
+        eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
         eq(rhobhDailyPuzzles.validationStatus, "approved"),
         gte(rhobhDailyPuzzles.dateUtc, getStoredDateValue(getDateKey(cutoff))!),
       ),
@@ -471,7 +474,7 @@ async function getInventoryAnswers(): Promise<Set<string>> {
     .from(rhobhDailyPuzzles)
     .where(
       and(
-        eq(rhobhDailyPuzzles.franchise, RHOBH_FRANCHISE),
+        eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
         inArray(rhobhDailyPuzzles.status, ["published", "reserve", "scheduled"]),
       ),
     );
@@ -488,7 +491,7 @@ async function markExpiredPublishedPuzzles(now: Date, tx: any = db) {
     })
     .where(
       and(
-        eq(rhobhDailyPuzzles.franchise, RHOBH_FRANCHISE),
+        eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
         eq(rhobhDailyPuzzles.status, "published"),
         lte(rhobhDailyPuzzles.expireAt, now),
       ),
@@ -501,7 +504,7 @@ export async function getPublishedPuzzle(now: Date, tx: any = db): Promise<Puzzl
     .from(rhobhDailyPuzzles)
     .where(
       and(
-        eq(rhobhDailyPuzzles.franchise, RHOBH_FRANCHISE),
+        eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
         eq(rhobhDailyPuzzles.status, "published"),
         lte(rhobhDailyPuzzles.publishAt, now),
         gt(rhobhDailyPuzzles.expireAt, now),
@@ -520,7 +523,7 @@ export async function loadScheduledPuzzle(dateKey: string): Promise<PuzzleRecord
     .from(rhobhDailyPuzzles)
     .where(
       and(
-        eq(rhobhDailyPuzzles.franchise, RHOBH_FRANCHISE),
+        eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
         eq(rhobhDailyPuzzles.scheduledForDateKey, dateKey),
         inArray(rhobhDailyPuzzles.status, ["published", "scheduled"]),
       ),
@@ -751,7 +754,7 @@ export async function promoteScheduledOrReservePuzzle(now: Date): Promise<Puzzle
       .from(rhobhDailyPuzzles)
       .where(
         and(
-          eq(rhobhDailyPuzzles.franchise, RHOBH_FRANCHISE),
+          eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
           eq(rhobhDailyPuzzles.status, "scheduled"),
           eq(rhobhDailyPuzzles.scheduledForDateKey, window.dateKey),
         ),
@@ -781,7 +784,7 @@ export async function promoteScheduledOrReservePuzzle(now: Date): Promise<Puzzle
       .from(rhobhDailyPuzzles)
       .where(
         and(
-          eq(rhobhDailyPuzzles.franchise, RHOBH_FRANCHISE),
+          eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
           eq(rhobhDailyPuzzles.status, "reserve"),
         ),
       )
@@ -842,7 +845,7 @@ export async function getStoredAnswersForValidation(): Promise<Set<string>> {
   const rows = await db
     .select({ normalizedAnswer: rhobhDailyPuzzles.normalizedAnswer })
     .from(rhobhDailyPuzzles)
-    .where(eq(rhobhDailyPuzzles.franchise, RHOBH_FRANCHISE));
+    .where(eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE));
 
   return new Set(rows.map((row) => row.normalizedAnswer));
 }

@@ -44,7 +44,7 @@ function getLocalDayIndex(date: Date): number {
 }
 
 export function getPuzzleKeyForDate(date: Date): string {
-  return `rhobh-${getLocalDayIndex(date)}`;
+  return `bravo-${getLocalDayIndex(date)}`;
 }
 
 export function evaluateGuess(answer: string, guess: string): LetterState[] {
