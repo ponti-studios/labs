@@ -209,9 +209,7 @@ async function callGenerationApi(
     const content = payload.choices?.[0]?.message?.content;
     if (!content) return null;
 
-    const cleanedContent = content
-      .replace(/^```(?:json)?\n?/, "")
-      .replace(/\n?```$/, "");
+    const cleanedContent = content.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
     const parsed = generationResponseSchema.parse(JSON.parse(cleanedContent));
     const previousAnswers = new Set(excludedAnswers);
 

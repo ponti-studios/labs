@@ -68,7 +68,7 @@ describe("realitea daily puzzle helpers", () => {
         answerType: "place",
         clue: "A snowy trip that detonated into one of the franchise's biggest fights.",
         detail: "The aftermath of this cast trip lingered all season.",
-  
+
         sourceUrls: [BRAVO_URL],
       },
       new Set(["ASPEN"]),

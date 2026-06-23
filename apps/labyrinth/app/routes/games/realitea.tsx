@@ -3,12 +3,7 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useFetcher, useLoaderData, type LoaderFunctionArgs } from "react-router";
 
 import { Button, OnscreenKeyboard, type LetterState } from "@pontistudios/ui";
-import {
-  evaluateGuess,
-  getKeyboardState,
-  MAX_GUESSES,
-  normalizeGuess,
-} from "~/lib/realitea";
+import { evaluateGuess, getKeyboardState, MAX_GUESSES, normalizeGuess } from "~/lib/realitea";
 import { getDateKey, type DailyPuzzle } from "~/lib/realitea-daily-puzzle";
 import { loadActivePuzzle } from "~/lib/realitea-daily-puzzle.server";
 import { shareRealiTeaResult } from "~/lib/realitea-share";
@@ -570,7 +565,8 @@ export default function RealiTeaRoute() {
 
               <div className="mt-2 flex flex-col items-center gap-2">
                 <div className="w-fit space-y-1 sm:space-y-0.5">
-                    {Array.from({ length: isGameOver ? guesses.length : MAX_GUESSES }).map((_, rowIndex) => {
+                  {Array.from({ length: isGameOver ? guesses.length : MAX_GUESSES }).map(
+                    (_, rowIndex) => {
                       const isCurrentRow =
                         rowIndex === guesses.length && !isGameOver && !isRevealingRow;
                       const guess = guesses[rowIndex] ?? "";
@@ -609,15 +605,14 @@ export default function RealiTeaRoute() {
                       }
 
                       return null;
-                    })}
-                  </div>
-
-                  {errorMessage && (
-                    <p className="text-xs font-medium text-red-600 text-center">
-                      {errorMessage}
-                    </p>
+                    },
                   )}
                 </div>
+
+                {errorMessage && (
+                  <p className="text-xs font-medium text-red-600 text-center">{errorMessage}</p>
+                )}
+              </div>
 
               {isGameOver && (
                 <div className="mt-3 rounded-2xl border border-border bg-muted/25 p-3 md:p-4">
