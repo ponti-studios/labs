@@ -1,5 +1,4 @@
 import archiveMoments from "../data/rhobh-archive-moments.json";
-import rhobhGenerationSystemRaw from "./prompts/rhobh-generation-system.md?raw";
 
 import {
   and,
@@ -18,7 +17,6 @@ import { z } from "zod";
 
 import { normalizeAnswer, REALITEA_ANSWER_LENGTH } from "./realitea";
 import {
-  addDaysToDateKey,
   getAllowedSourceDomain,
   getDateKey,
   getPuzzleWindow,
@@ -40,12 +38,15 @@ import {
 } from "./realitea-daily-puzzle";
 import { LabyrinthServerEnv } from "./server/env";
 import { writeLlmAnalyticsRecord } from "./server/llm-analytics";
+import { readFileSync } from "node:fs";
 
 interface GenerationDependencies {
   generationBatchId?: string;
   now?: Date;
   sourceCollectionNow?: Date;
 }
+
+const SYSTEM_PROMPT = readFileSync("./prompts/rhobh-generation-system.md", "utf-8");
 
 const RHOBH_CURRENT_SOURCE_QUERIES = [
   {
@@ -353,10 +354,7 @@ async function generateCandidatesFromSources(
     messages: [
       {
         role: "system",
-        content: rhobhGenerationSystemRaw.replaceAll(
-          "{{ANSWER_LENGTH}}",
-          String(RHOBH_ANSWER_LENGTH),
-        ),
+        content: SYSTEM_PROMPT.replaceAll("{{ANSWER_LENGTH}}", String(RHOBH_ANSWER_LENGTH)),
       },
       {
         role: "user",
