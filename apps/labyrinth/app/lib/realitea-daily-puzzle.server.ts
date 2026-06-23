@@ -36,7 +36,7 @@ interface GenerationDependencies {
 }
 
 const SYSTEM_PROMPT = readFileSync(
-  pathJoin(__dirname, "./prompts/bravo-generation-system.md"),
+  pathJoin(import.meta.dirname, "./prompts/bravo-generation-system.md"),
   "utf-8",
 );
 
@@ -568,7 +568,7 @@ async function generateCurrentCandidate(
     });
 
     if (sources.length === 0) {
-      console.warn("RHOBH scheduled puzzle source collection returned no results", {
+      console.warn("Bravo scheduled puzzle source collection returned no results", {
         attempt: attempt + 1,
         dateKey,
       });
@@ -583,7 +583,7 @@ async function generateCurrentCandidate(
     );
 
     if (candidates.length === 0) {
-      console.warn("RHOBH scheduled puzzle generation returned no candidates", {
+      console.warn("Bravo scheduled puzzle generation returned no candidates", {
         attempt: attempt + 1,
         dateKey,
         sourceCount: sources.length,
@@ -617,14 +617,14 @@ async function generateCurrentCandidate(
       }
 
       rejectedCandidates.add(entry.validation.normalizedAnswer);
-      console.warn("Rejected RHOBH scheduled candidate", {
+      console.warn("Rejected Bravo scheduled candidate", {
         answer: entry.candidate.answer,
         reasons: entry.validation.reasons,
       });
     }
   }
 
-  console.warn("RHOBH scheduled puzzle generation failed", {
+  console.warn("Bravo scheduled puzzle generation failed", {
     dateKey,
     rejectedCandidates: [...rejectedCandidates],
   });
