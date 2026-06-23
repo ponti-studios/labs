@@ -14,13 +14,18 @@ pip install -e .
 
 ### Download Data
 
-Download MovieLens 1M from https://grouplens.org/datasets/movielens/1m/ and extract it:
+The MovieLens 1M dataset (~25MB) must be downloaded separately (it's not included in the repo).
+
+1. Download from https://grouplens.org/datasets/movielens/1m/
+2. Extract to `data/ml-1m/`:
 
 ```bash
 mkdir -p data/ml-1m
-# Extract ml-1m.zip into data/ml-1m/
-# Should have: data/ml-1m/ratings.dat, data/ml-1m/movies.dat, data/ml-1m/users.dat
+unzip ml-1m.zip -d data/ml-1m/
+# Verify you have: data/ml-1m/ratings.dat, data/ml-1m/movies.dat, data/ml-1m/users.dat
 ```
+
+The `data/` directory is git-ignored so the large dataset files won't be committed.
 
 ### Load and Explore
 
