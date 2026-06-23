@@ -534,7 +534,7 @@ export default function RealiTeaRoute() {
         <div className="mx-auto flex min-h-[100dvh] w-full max-w-md flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+8px)] pt-2 md:block md:min-h-0 md:max-w-2xl md:px-4 md:pb-4 md:pt-4">
           <header className="sticky top-0 z-10 -mx-3 border-b border-border bg-background/95 px-3 pb-1 pt-1 backdrop-blur md:static md:mx-0 md:border-b-0 md:bg-transparent md:px-0 md:pb-2 md:pt-0">
             <div className="flex items-center justify-between gap-2">
-              <h1 className="text-2xl font-semibold tracking-tight">RealiTea</h1>
+              <img src="/logo.realitea.png" alt="RealiTea" className="h-8 object-contain" />
               <button
                 className="flex items-center justify-center h-8 w-8 rounded-md hover:bg-muted transition-colors"
                 onClick={() => setShowInstructions((v) => !v)}
