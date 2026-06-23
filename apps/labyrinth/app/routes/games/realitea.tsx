@@ -6,11 +6,10 @@ import { Button, OnscreenKeyboard, type LetterState } from "@pontistudios/ui";
 import {
   evaluateGuess,
   getKeyboardState,
-  getPuzzleKeyForDate,
   MAX_GUESSES,
   normalizeGuess,
 } from "~/lib/realitea";
-import { getDateKey, type PuzzleEnvelope, type StoredPuzzle } from "~/lib/realitea-daily-puzzle";
+import { getDateKey, type DailyPuzzle } from "~/lib/realitea-daily-puzzle";
 import { loadActivePuzzle } from "~/lib/realitea-daily-puzzle.server";
 import { shareRealiTeaResult } from "~/lib/realitea-share";
 import { cn } from "~/lib/utils";
@@ -224,11 +223,11 @@ const CurrentGuessRow = memo(function CurrentGuessRow({
 });
 
 export default function RealiTeaRoute() {
-  const initialData = useLoaderData<typeof loader>() as PuzzleEnvelope;
-  const [puzzleKey, setPuzzleKey] = useState(() => initialData.puzzle.puzzleKey);
-  const [puzzle, setPuzzle] = useState<StoredPuzzle>(() => initialData.puzzle);
+  const initialData = useLoaderData<typeof loader>() as { puzzle: DailyPuzzle };
+  const [puzzleKey, setPuzzleKey] = useState(() => initialData.puzzle.dateKey);
+  const [puzzle, setPuzzle] = useState<DailyPuzzle>(() => initialData.puzzle);
   const answerLength = puzzle.answer.length;
-  const dailyPuzzleFetcher = useFetcher<PuzzleEnvelope>();
+  const dailyPuzzleFetcher = useFetcher<{ puzzle: DailyPuzzle }>();
   const { gameState: GameState, saveGameState } = useGameState(puzzleKey);
 
   const guesses = GameState?.guesses ?? [];
@@ -259,13 +258,13 @@ export default function RealiTeaRoute() {
 
   useEffect(() => {
     setPuzzle(initialData.puzzle);
-    setPuzzleKey(initialData.puzzle.puzzleKey);
+    setPuzzleKey(initialData.puzzle.dateKey);
   }, [initialData]);
 
   useEffect(() => {
     if (!dailyPuzzleFetcher.data?.puzzle) return;
     setPuzzle(dailyPuzzleFetcher.data.puzzle);
-    setPuzzleKey(dailyPuzzleFetcher.data.puzzle.puzzleKey);
+    setPuzzleKey(dailyPuzzleFetcher.data.puzzle.dateKey);
   }, [dailyPuzzleFetcher.data]);
 
   useEffect(() => {
@@ -283,7 +282,7 @@ export default function RealiTeaRoute() {
   useEffect(() => {
     function sync() {
       const now = new Date();
-      const nextKey = getPuzzleKeyForDate(now);
+      const nextKey = getDateKey(now);
 
       if (puzzleKey === nextKey) {
         return;

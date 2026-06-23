@@ -29,19 +29,14 @@ const { dbMock, safeParseMock, rhobhDailyPuzzlesMock } = vi.hoisted(() => {
 
 vi.mock("@pontistudios/db", () => ({
   and: vi.fn(),
-  asc: vi.fn(),
-  count: vi.fn(),
   db: dbMock,
   desc: vi.fn(),
   eq: vi.fn(),
   gt: vi.fn(),
   gte: vi.fn(),
   inArray: vi.fn(),
-  isNull: vi.fn(),
   lte: vi.fn(),
-  or: vi.fn(),
   rhobhDailyPuzzles: rhobhDailyPuzzlesMock,
-  sql: vi.fn(),
 }));
 
 vi.mock("./server/env", () => ({
@@ -55,7 +50,6 @@ function createSelectResponder(queue: unknown[][]) {
     from: () => ({
       where: () => {
         const result = queue.shift() ?? [];
-
         return {
           orderBy: () => ({
             limit: async () => result,
@@ -78,6 +72,33 @@ function createUpdateResponder(queue: unknown[][] = []) {
   }));
 }
 
+const PUBLISHED_ROW = {
+  answer: "ERIKA",
+  answerType: "person",
+  clue: "The Pretty Mess performer never misses a sharp confessional.",
+  createdAt: new Date("2026-05-20T12:00:00.000Z"),
+  dateUtc: "2026-05-20",
+  detail: "Erika Jayne keeps the glam, the one-liners, and the pop-star energy turned all the way up.",
+  expireAt: new Date("2026-05-21T07:00:00.000Z"),
+  franchise: "bravo",
+  generationBatchId: null,
+  generationStatus: "published",
+  id: 1,
+  newsMode: "current",
+  normalizedAnswer: "ERIKA",
+  publishAt: new Date("2026-05-20T07:00:00.000Z"),
+  role: "Pop diva energy",
+  scheduledForDateKey: "2026-05-20",
+  sourceKind: "current",
+  sourcePublishedAt: [],
+  sourceSummary: [],
+  sourceTitles: [],
+  sourceUrls: [],
+  status: "published",
+  updatedAt: new Date("2026-05-20T12:00:00.000Z"),
+  validationStatus: "approved",
+};
+
 describe("realitea daily puzzle server helpers", () => {
   beforeEach(() => {
     safeParseMock.mockReset();
@@ -91,253 +112,75 @@ describe("realitea daily puzzle server helpers", () => {
   });
 
   it("loads the active published puzzle when one exists", async () => {
-    dbMock.select.mockImplementation(
-      createSelectResponder([
-        [
-          {
-            answer: "ERIKA",
-            answerType: "person",
-            clue: "The Pretty Mess performer never misses a sharp confessional.",
-            createdAt: new Date("2026-05-20T12:00:00.000Z"),
-            dateUtc: "2026-05-20",
-            detail:
-              "Erika Jayne keeps the glam, the one-liners, and the pop-star energy turned all the way up.",
-            expireAt: new Date("2026-05-21T07:00:00.000Z"),
-            franchise: "rhobh",
-            generationBatchId: "legacy",
-            generationStatus: "published",
-            id: 1,
-            newsMode: "current",
-            normalizedAnswer: "ERIKA",
-            publishAt: new Date("2026-05-20T07:00:00.000Z"),
-            role: "Pop diva energy",
-            scheduledForDateKey: "2026-05-20",
-            sourceKind: "current",
-            sourcePublishedAt: [],
-            sourceSummary: [],
-            sourceTitles: [],
-            sourceUrls: [],
-            status: "published",
-            updatedAt: new Date("2026-05-20T12:00:00.000Z"),
-            validationStatus: "approved",
-          },
-        ],
-      ]),
-    );
+    dbMock.select.mockImplementation(createSelectResponder([[PUBLISHED_ROW]]));
     dbMock.update.mockImplementation(createUpdateResponder());
 
     const { loadActivePuzzle } = await import("./realitea-daily-puzzle.server");
     const envelope = await loadActivePuzzle(new Date("2026-05-20T12:00:00.000Z"));
 
     expect(envelope?.puzzle.answer).toBe("ERIKA");
-    expect(envelope?.puzzle.source).toBe("database");
+    expect(envelope?.puzzle.dateKey).toBe("2026-05-20");
   });
 
   it("promotes the scheduled puzzle when no published puzzle exists", async () => {
     dbMock.select.mockImplementation(createSelectResponder([[]]));
     dbMock.update.mockImplementation(createUpdateResponder());
 
-    const txSelect = createSelectResponder([
-      [],
-      [
-        {
-          answer: "DRAMA",
-          answerType: "moment",
-          clue: "A clash that keeps the whole cast spinning.",
-          createdAt: new Date("2026-05-20T12:00:00.000Z"),
-          dateUtc: "2026-05-20",
-          detail: "A single RHOBH conflict can dominate the full episode and aftermath.",
-          expireAt: new Date("2026-05-21T07:00:00.000Z"),
-          franchise: "rhobh",
-          generationBatchId: "scheduled:2026-05-20",
-          generationStatus: "published",
-          id: 7,
-          newsMode: "current",
-          normalizedAnswer: "DRAMA",
-          publishAt: new Date("2026-05-20T07:00:00.000Z"),
-          role: "Escalating conflict",
-          scheduledForDateKey: "2026-05-20",
-          sourceKind: "current",
-          sourcePublishedAt: [],
-          sourceSummary: [],
-          sourceTitles: [],
-          sourceUrls: [],
-          status: "scheduled",
-          updatedAt: new Date("2026-05-20T12:00:00.000Z"),
-          validationStatus: "approved",
-        },
-      ],
-    ]);
-    const txUpdate = createUpdateResponder([
-      [
-        {
-          answer: "DRAMA",
-          answerType: "moment",
-          clue: "A clash that keeps the whole cast spinning.",
-          createdAt: new Date("2026-05-20T12:00:00.000Z"),
-          dateUtc: "2026-05-20",
-          detail: "A single RHOBH conflict can dominate the full episode and aftermath.",
-          expireAt: new Date("2026-05-21T07:00:00.000Z"),
-          franchise: "rhobh",
-          generationBatchId: "scheduled:2026-05-20",
-          generationStatus: "published",
-          id: 7,
-          newsMode: "current",
-          normalizedAnswer: "DRAMA",
-          publishAt: new Date("2026-05-20T07:00:00.000Z"),
-          role: "Escalating conflict",
-          scheduledForDateKey: "2026-05-20",
-          sourceKind: "current",
-          sourcePublishedAt: [],
-          sourceSummary: [],
-          sourceTitles: [],
-          sourceUrls: [],
-          status: "published",
-          updatedAt: new Date("2026-05-20T12:00:00.000Z"),
-          validationStatus: "approved",
-        },
-      ],
-    ]);
+    const scheduledRow = {
+      answer: "DRAMA",
+      answerType: "moment",
+      clue: "A clash that keeps the whole cast spinning.",
+      createdAt: new Date("2026-05-20T12:00:00.000Z"),
+      dateUtc: "2026-05-20",
+      detail: "A single conflict can dominate the full episode and aftermath.",
+      expireAt: new Date("2026-05-21T07:00:00.000Z"),
+      franchise: "bravo",
+      generationBatchId: null,
+      generationStatus: "published",
+      id: 7,
+      newsMode: "current",
+      normalizedAnswer: "DRAMA",
+      publishAt: new Date("2026-05-20T07:00:00.000Z"),
+      role: "Escalating conflict",
+      scheduledForDateKey: "2026-05-20",
+      sourceKind: "current",
+      sourcePublishedAt: [],
+      sourceSummary: [],
+      sourceTitles: [],
+      sourceUrls: [],
+      status: "scheduled",
+      updatedAt: new Date("2026-05-20T12:00:00.000Z"),
+      validationStatus: "approved",
+    };
+
+    const txSelect = createSelectResponder([[], [scheduledRow]]);
+    const txUpdate = createUpdateResponder([[{ ...scheduledRow, status: "published" }]]);
 
     dbMock.transaction.mockImplementation(async (callback: (tx: unknown) => unknown) =>
-      callback({
-        select: txSelect,
-        update: txUpdate,
-      }),
+      callback({ select: txSelect, update: txUpdate }),
     );
 
     const { loadActivePuzzle } = await import("./realitea-daily-puzzle.server");
     const envelope = await loadActivePuzzle(new Date("2026-05-20T12:00:00.000Z"));
 
     expect(envelope?.puzzle.answer).toBe("DRAMA");
-    expect(envelope?.puzzle.newsMode).toBe("current");
+    expect(envelope?.puzzle.dateKey).toBe("2026-05-20");
   });
 
-  it("promotes an evergreen reserve when no scheduled puzzle exists", async () => {
+  it("returns null when no published or scheduled puzzle exists", async () => {
     dbMock.select.mockImplementation(createSelectResponder([[]]));
     dbMock.update.mockImplementation(createUpdateResponder());
 
-    const txSelect = createSelectResponder([
-      [],
-      [],
-      [
-        {
-          answer: "SWANS",
-          answerType: "object",
-          clue: "These elegant birds are inseparable from one iconic Beverly Hills estate.",
-          createdAt: new Date("2026-05-20T12:00:00.000Z"),
-          dateUtc: null,
-          detail:
-            "The estate's swans became one of the most recognizable bits of RHOBH visual lore.",
-          expireAt: null,
-          franchise: "rhobh",
-          generationBatchId: "reserve:seed",
-          generationStatus: "published",
-          id: 9,
-          newsMode: "archive",
-          normalizedAnswer: "SWANS",
-          publishAt: null,
-          role: "Estate mascots",
-          scheduledForDateKey: null,
-          sourceKind: "evergreen",
-          sourcePublishedAt: [],
-          sourceSummary: [],
-          sourceTitles: [],
-          sourceUrls: [],
-          status: "reserve",
-          updatedAt: new Date("2026-05-20T12:00:00.000Z"),
-          validationStatus: "approved",
-        },
-      ],
-    ]);
-    const txUpdate = createUpdateResponder([
-      [
-        {
-          answer: "SWANS",
-          answerType: "object",
-          clue: "These elegant birds are inseparable from one iconic Beverly Hills estate.",
-          createdAt: new Date("2026-05-20T12:00:00.000Z"),
-          dateUtc: "2026-05-20",
-          detail:
-            "The estate's swans became one of the most recognizable bits of RHOBH visual lore.",
-          expireAt: new Date("2026-05-21T07:00:00.000Z"),
-          franchise: "rhobh",
-          generationBatchId: "reserve:seed",
-          generationStatus: "published",
-          id: 9,
-          newsMode: "archive",
-          normalizedAnswer: "SWANS",
-          publishAt: new Date("2026-05-20T07:00:00.000Z"),
-          role: "Estate mascots",
-          scheduledForDateKey: "2026-05-20",
-          sourceKind: "evergreen",
-          sourcePublishedAt: [],
-          sourceSummary: [],
-          sourceTitles: [],
-          sourceUrls: [],
-          status: "published",
-          updatedAt: new Date("2026-05-20T12:00:00.000Z"),
-          validationStatus: "approved",
-        },
-      ],
-    ]);
-
     dbMock.transaction.mockImplementation(async (callback: (tx: unknown) => unknown) =>
       callback({
-        select: txSelect,
-        update: txUpdate,
+        select: createSelectResponder([[], []]),
+        update: createUpdateResponder(),
       }),
     );
 
     const { loadActivePuzzle } = await import("./realitea-daily-puzzle.server");
     const envelope = await loadActivePuzzle(new Date("2026-05-20T12:00:00.000Z"));
 
-    expect(envelope?.puzzle.answer).toBe("SWANS");
-    expect(envelope?.puzzle.newsMode).toBe("archive");
-  });
-
-  it("caps source collection tokens and uses the source collection clock", async () => {
-    safeParseMock.mockReturnValue({
-      success: true,
-      data: {
-        openRouterApiKey: "test-key",
-        openRouterModel: "openai/gpt-5.1",
-      },
-    });
-
-    const fetchMock = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({
-        choices: [
-          {
-            message: {
-              content: JSON.stringify([
-                {
-                  domain: "bravotv.com",
-                  publishedAt: "2026-06-17T12:00:00.000Z",
-                  summary: "Spoiler-safe summary",
-                  title: "RHOBH story",
-                  url: "https://www.bravotv.com/the-daily-dish/rhobh-story",
-                },
-              ]),
-            },
-          },
-        ],
-      }),
-    });
-    vi.stubGlobal("fetch", fetchMock);
-
-    const { collectCurrentSources } = await import("./realitea-daily-puzzle.server");
-    await collectCurrentSources({
-      now: new Date("2026-06-18T12:00:00.000Z"),
-      sourceCollectionNow: new Date("2026-06-17T12:00:00.000Z"),
-    });
-
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-    const [, request] = fetchMock.mock.calls[0] as [string, { body: string }];
-    const payload = JSON.parse(request.body);
-
-    expect(payload.max_tokens).toBe(1200);
-    expect(JSON.parse(payload.messages[1].content).todayUtc).toBe("2026-06-17T12:00:00.000Z");
+    expect(envelope).toBeNull();
   });
 });
