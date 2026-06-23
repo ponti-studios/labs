@@ -15,8 +15,8 @@ import { cn } from "~/lib/utils";
 
 import { readGameState, saveGameState } from "./game-state";
 import { useDailyPuzzle } from "./use-daily-puzzle";
-import { useRealiTeaGame } from "./use-reali-tea-game";
-import { useRealiTeaShare } from "./use-reali-tea-share";
+import { useRealiTeaGame } from "./use-realitea-game";
+import { useRealiTeaShare } from "./use-realitea-share";
 
 import "~/styles/realitea.css";
 import { LucideShare } from "lucide-react";
