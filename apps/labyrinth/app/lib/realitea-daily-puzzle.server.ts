@@ -25,8 +25,6 @@ import {
   mapRecordToStoredPuzzle,
   parseDate,
   parseStringArray,
-  REALITEA_READY_INVENTORY_DAYS,
-  REALITEA_RESERVE_TARGET,
   RHOBH_ANSWER_LENGTH,
   RHOBH_FRANCHISE,
   RHOBH_PRIMARY_SOURCE_DOMAIN,
@@ -49,14 +47,6 @@ interface GenerationDependencies {
   sourceCollectionNow?: Date;
 }
 
-interface InventorySummary {
-  activeDateKey: string;
-  promotedSourceKind: PuzzleSourceKind | null;
-  publishedSourceKind: PuzzleSourceKind | null;
-  readyDepth: number;
-  reserveDepth: number;
-}
-
 const RHOBH_CURRENT_SOURCE_QUERIES = [
   {
     domain: RHOBH_PRIMARY_SOURCE_DOMAIN,
@@ -71,7 +61,7 @@ const RHOBH_SOURCE_COLLECTION_MAX_ITEMS = 5;
 const RHOBH_SOURCE_COLLECTION_MAX_TOKENS = 1200;
 const RHOBH_GENERATION_MAX_TOKENS = 1200;
 
-const rhobhGenerationCandidateSchema = z.object({
+const realiteaCandidateSchema = z.object({
   answer: z
     .string()
     .min(1)
@@ -101,7 +91,7 @@ const rhobhGenerationCandidateSchema = z.object({
     .meta({ description: "Short summaries matching the source URLs." }),
 });
 
-const rhobhGenerationCandidatesSchema = z.array(rhobhGenerationCandidateSchema).min(3).max(5);
+const rhobhGenerationCandidatesSchema = z.array(realiteaCandidateSchema).min(3).max(5);
 const rhobhGenerationResponseSchema = z.object({
   candidates: rhobhGenerationCandidatesSchema,
 });
@@ -123,7 +113,7 @@ const sourceCollectionResponseSchema = {
   },
 } as const;
 
-function buildGenerationBatchId(prefix: string, dateKey: string) {
+export function buildGenerationBatchId(prefix: string, dateKey: string) {
   return `${prefix}:${dateKey}`;
 }
 
@@ -515,7 +505,7 @@ async function markExpiredPublishedPuzzles(now: Date, tx: any = db) {
     );
 }
 
-async function getPublishedPuzzle(now: Date, tx: any = db): Promise<PuzzleRecord | null> {
+export async function getPublishedPuzzle(now: Date, tx: any = db): Promise<PuzzleRecord | null> {
   const rows = await tx
     .select()
     .from(rhobhDailyPuzzles)
@@ -755,49 +745,6 @@ export async function generateReservePuzzles(
   return created;
 }
 
-async function countReadyScheduledPuzzles(now: Date) {
-  const activeDateKey = getPuzzleWindow(now).dateKey;
-  const dateKeys: string[] = [];
-
-  for (let offset = 1; offset <= REALITEA_READY_INVENTORY_DAYS; offset += 1) {
-    const dateKey = addDaysToDateKey(activeDateKey, offset);
-    if (dateKey) {
-      dateKeys.push(dateKey);
-    }
-  }
-
-  if (dateKeys.length === 0) {
-    return 0;
-  }
-
-  const rows = await db
-    .select({ value: count() })
-    .from(rhobhDailyPuzzles)
-    .where(
-      and(
-        eq(rhobhDailyPuzzles.franchise, RHOBH_FRANCHISE),
-        eq(rhobhDailyPuzzles.status, "scheduled"),
-        inArray(rhobhDailyPuzzles.scheduledForDateKey, dateKeys),
-      ),
-    );
-
-  return rows[0]?.value ?? 0;
-}
-
-async function countReservePuzzles() {
-  const rows = await db
-    .select({ value: count() })
-    .from(rhobhDailyPuzzles)
-    .where(
-      and(
-        eq(rhobhDailyPuzzles.franchise, RHOBH_FRANCHISE),
-        eq(rhobhDailyPuzzles.status, "reserve"),
-      ),
-    );
-
-  return rows[0]?.value ?? 0;
-}
-
 export async function promoteScheduledOrReservePuzzle(now: Date): Promise<PuzzleRecord | null> {
   const window = getPuzzleWindow(now);
 
@@ -887,90 +834,6 @@ export async function loadActivePuzzle(now: Date): Promise<PuzzleEnvelope | null
   }
 
   return { puzzle: mapRecordToStoredPuzzle(promoted) };
-}
-
-export async function reconcilePuzzleInventory(
-  now: Date,
-  options: {
-    readyDays?: number;
-    reserveTarget?: number;
-  } = {},
-): Promise<InventorySummary & { createdReserveCount: number; createdScheduledDateKeys: string[] }> {
-  const readyDays = options.readyDays ?? REALITEA_READY_INVENTORY_DAYS;
-  const reserveTarget = options.reserveTarget ?? REALITEA_RESERVE_TARGET;
-  const activeWindow = getPuzzleWindow(now);
-  const promoted = await promoteScheduledOrReservePuzzle(now);
-
-  const targetDateKeys: string[] = [];
-  for (let offset = 1; offset <= readyDays; offset += 1) {
-    const dateKey = addDaysToDateKey(activeWindow.dateKey, offset);
-    if (dateKey) {
-      targetDateKeys.push(dateKey);
-    }
-  }
-
-  const scheduledRows = await db
-    .select({ scheduledForDateKey: rhobhDailyPuzzles.scheduledForDateKey })
-    .from(rhobhDailyPuzzles)
-    .where(
-      and(
-        eq(rhobhDailyPuzzles.franchise, RHOBH_FRANCHISE),
-        eq(rhobhDailyPuzzles.status, "scheduled"),
-        inArray(rhobhDailyPuzzles.scheduledForDateKey, targetDateKeys),
-      ),
-    );
-  const existingKeys = new Set(
-    scheduledRows
-      .map((row) => row.scheduledForDateKey)
-      .filter((value): value is string => Boolean(value)),
-  );
-
-  const createdScheduledDateKeys: string[] = [];
-  for (const dateKey of targetDateKeys) {
-    if (existingKeys.has(dateKey)) {
-      continue;
-    }
-
-    const created = await generateScheduledPuzzle(dateKey, {
-      generationBatchId: buildGenerationBatchId("reconcile", activeWindow.dateKey),
-      now: parseDate(dateKey) ?? now,
-      sourceCollectionNow: now,
-    });
-    if (created) {
-      createdScheduledDateKeys.push(dateKey);
-    }
-  }
-
-  const reserveDepthBefore = await countReservePuzzles();
-  const neededReserve = Math.max(0, reserveTarget - reserveDepthBefore);
-  const createdReserves = await generateReservePuzzles(neededReserve, {
-    generationBatchId: buildGenerationBatchId("reserve-reconcile", activeWindow.dateKey),
-    now,
-  });
-
-  const published = await getPublishedPuzzle(now);
-  const readyDepth = await countReadyScheduledPuzzles(now);
-  const reserveDepth = await countReservePuzzles();
-
-  return {
-    activeDateKey: activeWindow.dateKey,
-    createdReserveCount: createdReserves.length,
-    createdScheduledDateKeys,
-    promotedSourceKind:
-      promoted?.sourceKind === "evergreen"
-        ? "evergreen"
-        : promoted?.sourceKind === "current"
-          ? "current"
-          : null,
-    publishedSourceKind:
-      published?.sourceKind === "evergreen"
-        ? "evergreen"
-        : published?.sourceKind === "current"
-          ? "current"
-          : null,
-    readyDepth,
-    reserveDepth,
-  };
 }
 
 export async function loadPuzzleForDate(date: Date): Promise<PuzzleEnvelope | null> {

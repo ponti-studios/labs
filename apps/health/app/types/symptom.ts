@@ -60,7 +60,7 @@ export const SymptomRequestSchema = z.object({
     .array(
       z.object({
         title: z.string(),
-        url: z.string().url(),
+        url: z.url(),
       }),
     )
     .optional(),

@@ -1,10 +1,9 @@
-name: cron-realitea-rhobh-daily-puzzle
+name: cron-realitea-worlde-gen
 
 on:
   schedule:
     - cron: "10 * * * *"
   workflow_dispatch:
-    inputs:
 permissions:
   contents: read
 
