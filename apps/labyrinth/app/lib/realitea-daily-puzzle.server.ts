@@ -1,459 +1,63 @@
-import archiveMoments from "../data/bravo-archive-moments.json";
-
-import { and, asc, db, desc, eq, gt, gte, inArray, lte, rhobhDailyPuzzles } from "@pontistudios/db";
+import { and, db, desc, eq, gt, gte, inArray, lte, rhobhDailyPuzzles } from "@pontistudios/db";
+import { readFileSync } from "node:fs";
+import { join as pathJoin } from "node:path";
 import { z } from "zod";
 
 import { normalizeAnswer, REALITEA_ANSWER_LENGTH } from "./realitea";
 import {
-  getAllowedSourceDomain,
-  getDateKey,
-  getPuzzleWindow,
-  mapRecordToStoredPuzzle,
-  parseDate,
-  parseStringArray,
-  BRAVO_ANSWER_LENGTH,
+  addDaysToDateKey,
   BRAVO_FRANCHISE,
   BRAVO_PRIMARY_SOURCE_DOMAIN,
   BRAVO_REPEAT_WINDOW_DAYS,
-  sourceItemListSchema,
+  getDateKey,
+  getPuzzleWindow,
+  parseDate,
+  REALITEA_READY_INVENTORY_DAYS,
   validateCandidate,
-  type GeneratedCandidate,
-  type InventoryStatus,
-  type PuzzleEnvelope,
+  type DailyPuzzle,
   type PuzzleRecord,
-  type PuzzleSourceKind,
-  type SourceItem,
 } from "./realitea-daily-puzzle";
 import { LabyrinthServerEnv } from "./server/env";
-import { writeLlmAnalyticsRecord } from "./server/llm-analytics";
-import { readFileSync } from "node:fs";
-import { join as pathJoin } from "node:path";
-
-interface GenerationDependencies {
-  generationBatchId?: string;
-  now?: Date;
-  sourceCollectionNow?: Date;
-}
 
 const SYSTEM_PROMPT = readFileSync(
   pathJoin(import.meta.dirname, "./prompts/bravo-generation-system.md"),
   "utf-8",
 );
 
-const BRAVO_CURRENT_SOURCE_QUERIES = [
-  {
-    domain: BRAVO_PRIMARY_SOURCE_DOMAIN,
-    query: "site:bravotv.com/the-daily-dish",
-  },
-  {
-    domain: BRAVO_PRIMARY_SOURCE_DOMAIN,
-    query: "site:bravotv.com Bravo",
-  },
-  { domain: "people.com", query: "site:people.com Bravo reality" },
-  { domain: "ew.com", query: "site:ew.com Bravo" },
-  { domain: "eonline.com", query: "site:eonline.com Bravo" },
-] as const;
-const BRAVO_SOURCE_COLLECTION_MAX_ITEMS = 5;
-const BRAVO_SOURCE_COLLECTION_MAX_TOKENS = 1200;
-const BRAVO_GENERATION_MAX_TOKENS = 1200;
-
-const realiteaCandidateSchema = z.object({
-  answer: z
-    .string()
-    .min(1)
-    .meta({
-      description: `The Bravo answer to guess. It must normalize to exactly ${REALITEA_ANSWER_LENGTH} letters.`,
-    }),
-  answerType: z
-    .enum(["moment", "object", "person", "phrase", "place", "storyline"])
-    .meta({ description: "The answer taxonomy." }),
-  clue: z.string().min(1).meta({ description: "A non-spoiler clue for the final guess only." }),
-  detail: z
-    .string()
-    .min(1)
-    .meta({ description: "A spoiler-safe explanation shown after the game ends." }),
-  newsMode: z
-    .enum(["current"])
-    .meta({ description: "Scheduled puzzles must come from fresh Bravo reality TV news." }),
-  rationale: z.string().min(1).meta({ description: "Why this puzzle is a strong pick today." }),
-  role: z.string().min(1).meta({ description: "Short descriptive label for the answer." }),
-  sourceUrls: z.array(z.string()).meta({ description: "Source URLs supporting the candidate." }),
-  sourceTitles: z.array(z.string()).meta({ description: "Titles matching the source URLs." }),
-  sourcePublishedAt: z
-    .array(z.string())
-    .meta({ description: "Publication timestamps matching the source URLs." }),
-  sourceSummary: z
-    .array(z.string())
-    .meta({ description: "Short summaries matching the source URLs." }),
+const candidateSchema = z.object({
+  answer: z.string().min(1),
+  answerType: z.enum(["moment", "object", "person", "phrase", "place", "storyline"]),
+  clue: z.string().min(1),
+  detail: z.string().min(1),
+  sourceUrls: z.array(z.string()),
+  sourceSummary: z.array(z.string()).optional(),
+  sourceTitles: z.array(z.string()).optional(),
+  sourcePublishedAt: z.array(z.string()).optional(),
 });
 
-const bravoGenerationCandidatesSchema = z.array(realiteaCandidateSchema).min(3).max(5);
-const bravoGenerationResponseSchema = z.object({
-  candidates: bravoGenerationCandidatesSchema,
+const generationResponseSchema = z.object({
+  candidates: z.array(candidateSchema).min(1).max(5),
 });
-const sourceCollectionResponseSchema = {
-  type: "array",
-  maxItems: 10,
-  items: {
-    type: "object",
-    additionalProperties: false,
-    required: ["publishedAt", "summary", "title", "url"],
-    properties: {
-      domain: { type: "string", minLength: 1 },
-      publishedAt: { type: "string", minLength: 1 },
-      source: { type: "string", minLength: 1 },
-      summary: { type: "string", minLength: 1 },
-      title: { type: "string", minLength: 1 },
-      url: { type: "string", format: "uri" },
-    },
-  },
-} as const;
 
-export function buildGenerationBatchId(prefix: string, dateKey: string) {
-  return `${prefix}:${dateKey}`;
-}
+type Candidate = z.infer<typeof candidateSchema>;
 
-function normalizePuzzleRecord(record: Record<string, unknown>): PuzzleRecord {
+function normalizePuzzleRecord(row: Record<string, unknown>): PuzzleRecord {
+  const toArray = (v: unknown): string[] =>
+    Array.isArray(v) ? (v as string[]) : JSON.parse(typeof v === "string" ? v : "[]");
   return {
-    ...(record as unknown as PuzzleRecord),
-    dateUtc:
-      record.dateUtc instanceof Date
-        ? record.dateUtc.toISOString().slice(0, 10)
-        : (record.dateUtc as string | null),
-    sourcePublishedAt: Array.isArray(record.sourcePublishedAt)
-      ? (record.sourcePublishedAt as string[])
-      : parseStringArray(String(record.sourcePublishedAt ?? "[]")),
-    sourceSummary: Array.isArray(record.sourceSummary)
-      ? (record.sourceSummary as string[])
-      : parseStringArray(String(record.sourceSummary ?? "[]")),
-    sourceTitles: Array.isArray(record.sourceTitles)
-      ? (record.sourceTitles as string[])
-      : parseStringArray(String(record.sourceTitles ?? "[]")),
-    sourceUrls: Array.isArray(record.sourceUrls)
-      ? (record.sourceUrls as string[])
-      : parseStringArray(String(record.sourceUrls ?? "[]")),
+    ...(row as unknown as PuzzleRecord),
+    dateKey: (row.dateUtc as string | null) ?? null,
+    sourcePublishedAt: toArray(row.sourcePublishedAt),
+    sourceSummary: toArray(row.sourceSummary),
+    sourceTitles: toArray(row.sourceTitles),
+    sourceUrls: toArray(row.sourceUrls),
   };
-}
-
-function getStoredDateValue(dateKey: string): string | null {
-  return parseDate(dateKey)?.toISOString().slice(0, 10) ?? null;
-}
-
-function buildPuzzleInsertValues(
-  candidate: GeneratedCandidate,
-  options: {
-    expireAt?: Date | null;
-    generationBatchId?: string | null;
-    publishAt?: Date | null;
-    scheduledForDateKey?: string | null;
-    sourceKind: PuzzleSourceKind;
-    status: InventoryStatus;
-  },
-) {
-  return {
-    answer: candidate.answer,
-    answerType: candidate.answerType,
-    clue: candidate.clue,
-    createdAt: new Date(),
-    dateUtc: options.scheduledForDateKey ? getStoredDateValue(options.scheduledForDateKey) : null,
-    detail: candidate.detail,
-    expireAt: options.expireAt ?? null,
-    franchise: BRAVO_FRANCHISE,
-    generationBatchId: options.generationBatchId ?? null,
-    generationStatus: "published",
-    newsMode: candidate.newsMode,
-    normalizedAnswer: normalizeAnswer(candidate.answer),
-    publishAt: options.publishAt ?? null,
-    role: candidate.role,
-    scheduledForDateKey: options.scheduledForDateKey ?? null,
-    sourceKind: options.sourceKind,
-    sourcePublishedAt: candidate.sourcePublishedAt,
-    sourceSummary: candidate.sourceSummary,
-    sourceTitles: candidate.sourceTitles,
-    sourceUrls: candidate.sourceUrls,
-    status: options.status,
-    updatedAt: new Date(),
-    validationStatus: "approved",
-  };
-}
-
-export async function collectCurrentSources(
-  dependencies: GenerationDependencies = {},
-): Promise<SourceItem[]> {
-  const env = LabyrinthServerEnv.safeParse(process.env);
-
-  if (!env.success) {
-    return [];
-  }
-
-  const startedAt = new Date();
-  const requestBody = {
-    model: env.data.openRouterModel,
-    messages: [
-      {
-        role: "system",
-        content:
-          "You collect current celebrity news coverage for a daily puzzle generator. Use the provided web tools to search recent coverage and fetch the most relevant articles. Return only articles from the allowed domains, deduplicated by URL, with real publication timestamps when available. Each summary must be spoiler-safe, fact-based, and concise.",
-      },
-      {
-        role: "user",
-        content: JSON.stringify(
-          {
-            allowedDomains: BRAVO_CURRENT_SOURCE_QUERIES.map((sourceQuery) => sourceQuery.domain),
-            maxItems: BRAVO_SOURCE_COLLECTION_MAX_ITEMS,
-            queries: BRAVO_CURRENT_SOURCE_QUERIES.map((sourceQuery) => sourceQuery.query),
-            todayUtc: (dependencies.sourceCollectionNow ?? new Date()).toISOString(),
-          },
-          null,
-          2,
-        ),
-      },
-    ],
-    max_tokens: BRAVO_SOURCE_COLLECTION_MAX_TOKENS,
-    response_format: {
-      type: "json_schema",
-      json_schema: {
-        name: "source_items",
-        schema: sourceCollectionResponseSchema,
-        strict: true,
-      },
-    },
-    tools: [
-      {
-        type: "openrouter:web_search",
-        parameters: {
-          allowed_domains: BRAVO_CURRENT_SOURCE_QUERIES.map((sourceQuery) => sourceQuery.domain),
-          engine: "auto",
-          max_results: 8,
-          max_total_results: 20,
-          search_context_size: "medium",
-        },
-      },
-      {
-        type: "openrouter:web_fetch",
-        parameters: {
-          allowed_domains: BRAVO_CURRENT_SOURCE_QUERIES.map((sourceQuery) => sourceQuery.domain),
-          engine: "openrouter",
-          max_content_tokens: 4000,
-          max_uses: 8,
-        },
-      },
-    ],
-  };
-
-  try {
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${env.data.openRouterApiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(requestBody),
-    });
-
-    const payload = (await response.json()) as {
-      choices?: Array<{ message?: { content?: string | null } }>;
-      error?: unknown;
-      id?: string;
-      usage?: {
-        completion_tokens?: number;
-        prompt_tokens?: number;
-        total_tokens?: number;
-      };
-    };
-
-    await writeLlmAnalyticsRecord({
-      durationMs: Date.now() - startedAt.getTime(),
-      feature: "realitea",
-      httpStatus: response.status,
-      metadata: {
-        generationBatchId: dependencies.generationBatchId ?? null,
-        sourceCollectionNow: dependencies.sourceCollectionNow?.toISOString() ?? null,
-      },
-      model: env.data.openRouterModel,
-      operation: "source-collection",
-      provider: "openrouter",
-      request: requestBody,
-      response: payload,
-      status: response.ok ? "success" : "error",
-      usage: {
-        completionTokens: payload.usage?.completion_tokens ?? null,
-        promptTokens: payload.usage?.prompt_tokens ?? null,
-        totalTokens: payload.usage?.total_tokens ?? null,
-      },
-    });
-
-    if (!response.ok) {
-      return [];
-    }
-    const rawContent = payload.choices?.[0]?.message?.content;
-    if (typeof rawContent !== "string" || rawContent.length === 0) {
-      return [];
-    }
-
-    const collected = sourceItemListSchema.parse(JSON.parse(rawContent));
-
-    const sourceItems: SourceItem[] = [];
-
-    for (const item of collected) {
-      const domain = getAllowedSourceDomain(item.url);
-      if (!domain || sourceItems.some((source) => source.url === item.url)) {
-        continue;
-      }
-
-      sourceItems.push({
-        ...item,
-        domain,
-      });
-
-      if (sourceItems.length >= BRAVO_SOURCE_COLLECTION_MAX_ITEMS) {
-        break;
-      }
-    }
-
-    return sourceItems;
-  } catch (error) {
-    await writeLlmAnalyticsRecord({
-      durationMs: Date.now() - startedAt.getTime(),
-      error,
-      feature: "realitea",
-      metadata: {
-        generationBatchId: dependencies.generationBatchId ?? null,
-        sourceCollectionNow: dependencies.sourceCollectionNow?.toISOString() ?? null,
-      },
-      model: env.data.openRouterModel,
-      operation: "source-collection",
-      provider: "openrouter",
-      request: requestBody,
-      status: "error",
-    });
-    return [];
-  }
-}
-
-async function generateCandidatesFromSources(
-  dateKey: string,
-  sources: SourceItem[],
-  excludedAnswers: string[] = [],
-  dependencies: GenerationDependencies = {},
-): Promise<GeneratedCandidate[]> {
-  const env = LabyrinthServerEnv.safeParse(process.env);
-
-  if (!env.success) {
-    return [];
-  }
-
-  const startedAt = new Date();
-  const request = {
-    model: env.data.openRouterModel,
-    messages: [
-      {
-        role: "system",
-        content: SYSTEM_PROMPT.replaceAll("{{ANSWER_LENGTH}}", String(BRAVO_ANSWER_LENGTH)),
-      },
-      {
-        role: "user",
-        content: JSON.stringify(
-          {
-            dateKey,
-            excludedAnswers,
-            sources,
-          },
-          null,
-          2,
-        ),
-      },
-    ],
-    max_tokens: BRAVO_GENERATION_MAX_TOKENS,
-    response_format: {
-      type: "json_schema",
-      json_schema: {
-        name: "rhobh_generation_candidates",
-        schema: z.toJSONSchema(bravoGenerationResponseSchema),
-        strict: true,
-      },
-    },
-  };
-
-  try {
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${env.data.openRouterApiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(request),
-    });
-
-    const payload = (await response.json()) as {
-      choices?: Array<{ message?: { content?: string | null } }>;
-      error?: unknown;
-      id?: string;
-      usage?: {
-        completion_tokens?: number;
-        prompt_tokens?: number;
-        total_tokens?: number;
-      };
-    };
-
-    await writeLlmAnalyticsRecord({
-      durationMs: Date.now() - startedAt.getTime(),
-      feature: "realitea",
-      httpStatus: response.status,
-      metadata: {
-        dateKey,
-        generationBatchId: dependencies.generationBatchId ?? null,
-        sourceCount: sources.length,
-      },
-      model: env.data.openRouterModel,
-      operation: "candidate-generation",
-      provider: "openrouter",
-      request,
-      response: payload,
-      status: response.ok ? "success" : "error",
-      usage: {
-        completionTokens: payload.usage?.completion_tokens ?? null,
-        promptTokens: payload.usage?.prompt_tokens ?? null,
-        totalTokens: payload.usage?.total_tokens ?? null,
-      },
-    });
-
-    if (!response.ok) {
-      return [];
-    }
-
-    const rawContent = payload.choices?.[0]?.message?.content;
-    if (typeof rawContent !== "string" || rawContent.length === 0) {
-      return [];
-    }
-
-    const parsed = bravoGenerationResponseSchema.parse(JSON.parse(rawContent));
-
-    return parsed.candidates;
-  } catch (error) {
-    await writeLlmAnalyticsRecord({
-      durationMs: Date.now() - startedAt.getTime(),
-      error,
-      feature: "realitea",
-      metadata: {
-        dateKey,
-        generationBatchId: dependencies.generationBatchId ?? null,
-        sourceCount: sources.length,
-      },
-      model: env.data.openRouterModel,
-      operation: "candidate-generation",
-      provider: "openrouter",
-      request,
-      status: "error",
-    });
-    return [];
-  }
 }
 
 export async function getRecentAnswers(date: Date): Promise<Set<string>> {
   const cutoff = new Date(date);
   cutoff.setUTCDate(cutoff.getUTCDate() - BRAVO_REPEAT_WINDOW_DAYS);
-
+  const cutoffDateValue = parseDate(getDateKey(cutoff))?.toISOString().slice(0, 10) ?? "";
   const rows = await db
     .select({ normalizedAnswer: rhobhDailyPuzzles.normalizedAnswer })
     .from(rhobhDailyPuzzles)
@@ -461,11 +65,10 @@ export async function getRecentAnswers(date: Date): Promise<Set<string>> {
       and(
         eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
         eq(rhobhDailyPuzzles.validationStatus, "approved"),
-        gte(rhobhDailyPuzzles.dateUtc, getStoredDateValue(getDateKey(cutoff))!),
+        gte(rhobhDailyPuzzles.dateUtc, cutoffDateValue),
       ),
     );
-
-  return new Set(rows.map((row) => row.normalizedAnswer));
+  return new Set(rows.map((r) => r.normalizedAnswer));
 }
 
 async function getInventoryAnswers(): Promise<Set<string>> {
@@ -475,20 +78,16 @@ async function getInventoryAnswers(): Promise<Set<string>> {
     .where(
       and(
         eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
-        inArray(rhobhDailyPuzzles.status, ["published", "reserve", "scheduled"]),
+        inArray(rhobhDailyPuzzles.status, ["published", "scheduled"]),
       ),
     );
-
-  return new Set(rows.map((row) => row.normalizedAnswer));
+  return new Set(rows.map((r) => r.normalizedAnswer));
 }
 
-async function markExpiredPublishedPuzzles(now: Date, tx: any = db) {
+async function markExpiredPuzzles(now: Date, tx: any = db): Promise<void> {
   await tx
     .update(rhobhDailyPuzzles)
-    .set({
-      status: "consumed",
-      updatedAt: now,
-    })
+    .set({ status: "consumed", updatedAt: now })
     .where(
       and(
         eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
@@ -512,7 +111,6 @@ export async function getPublishedPuzzle(now: Date, tx: any = db): Promise<Puzzl
     )
     .orderBy(desc(rhobhDailyPuzzles.publishAt))
     .limit(1);
-
   const row = rows[0] as Record<string, unknown> | undefined;
   return row ? normalizePuzzleRecord(row) : null;
 }
@@ -530,226 +128,183 @@ export async function loadScheduledPuzzle(dateKey: string): Promise<PuzzleRecord
     )
     .orderBy(desc(rhobhDailyPuzzles.createdAt))
     .limit(1);
-
   const row = rows[0] as Record<string, unknown> | undefined;
   return row ? normalizePuzzleRecord(row) : null;
 }
 
-async function persistInventoryPuzzle(
-  candidate: GeneratedCandidate,
-  options: {
-    expireAt?: Date | null;
-    generationBatchId?: string | null;
-    publishAt?: Date | null;
-    scheduledForDateKey?: string | null;
-    sourceKind: PuzzleSourceKind;
-    status: InventoryStatus;
-  },
-) {
-  const inserted = await db
-    .insert(rhobhDailyPuzzles)
-    .values(buildPuzzleInsertValues(candidate, options))
-    .returning();
-
-  return normalizePuzzleRecord(inserted[0] as Record<string, unknown>);
-}
-
-async function generateCurrentCandidate(
-  date: Date,
-  dependencies: GenerationDependencies = {},
-): Promise<GeneratedCandidate | null> {
-  const dateKey = getDateKey(date);
-  const previousAnswers = await getRecentAnswers(date);
-  const rejectedCandidates = new Set<string>();
-
-  for (let attempt = 0; attempt < 3; attempt += 1) {
-    const sources = await collectCurrentSources({
-      sourceCollectionNow: dependencies.sourceCollectionNow,
-    });
-
-    if (sources.length === 0) {
-      console.warn("Bravo scheduled puzzle source collection returned no results", {
-        attempt: attempt + 1,
-        dateKey,
-      });
-      continue;
-    }
-
-    const candidates = await generateCandidatesFromSources(
-      dateKey,
-      sources,
-      [...previousAnswers, ...rejectedCandidates],
-      dependencies,
-    );
-
-    if (candidates.length === 0) {
-      console.warn("Bravo scheduled puzzle generation returned no candidates", {
-        attempt: attempt + 1,
-        dateKey,
-        sourceCount: sources.length,
-      });
-      continue;
-    }
-
-    const rankedCandidates = candidates
-      .map((candidate) => ({
-        candidate,
-        validation: validateCandidate(candidate, { previousAnswers, sources }),
-      }))
-      .sort((left, right) => {
-        if (left.validation.valid !== right.validation.valid) {
-          return left.validation.valid ? -1 : 1;
-        }
-        if (left.candidate.answerType !== right.candidate.answerType) {
-          if (left.candidate.answerType === "person") {
-            return 1;
-          }
-          if (right.candidate.answerType === "person") {
-            return -1;
-          }
-        }
-        return right.candidate.sourceUrls.length - left.candidate.sourceUrls.length;
-      });
-
-    for (const entry of rankedCandidates) {
-      if (entry.validation.valid && entry.candidate.newsMode === "current") {
-        return entry.candidate;
-      }
-
-      rejectedCandidates.add(entry.validation.normalizedAnswer);
-      console.warn("Rejected Bravo scheduled candidate", {
-        answer: entry.candidate.answer,
-        reasons: entry.validation.reasons,
-      });
-    }
-  }
-
-  console.warn("Bravo scheduled puzzle generation failed", {
-    dateKey,
-    rejectedCandidates: [...rejectedCandidates],
-  });
-  return null;
-}
-
-function chooseEvergreenCandidates(
-  count: number,
-  excludedAnswers: Set<string>,
-): GeneratedCandidate[] {
-  const pool = archiveMoments.map(
-    (entry): GeneratedCandidate => ({
-      ...entry,
-      answerType: entry.answerType as GeneratedCandidate["answerType"],
-      newsMode: entry.newsMode as GeneratedCandidate["newsMode"],
-      rationale: "Evergreen reserve inventory",
-      sourcePublishedAt: [],
-      sourceSummary: [],
-      sourceTitles: [],
-      sourceUrls: [],
-    }),
-  );
-  const selected: GeneratedCandidate[] = [];
-
-  for (const candidate of pool) {
-    const normalizedAnswer = normalizeAnswer(candidate.answer);
-    if (excludedAnswers.has(normalizedAnswer)) {
-      continue;
-    }
-
-    const validation = validateCandidate(candidate, {
-      allowEvergreen: true,
-      previousAnswers: excludedAnswers,
-    });
-
-    if (!validation.valid) {
-      continue;
-    }
-
-    excludedAnswers.add(normalizedAnswer);
-    selected.push(candidate);
-
-    if (selected.length >= count) {
-      break;
-    }
-  }
-
-  return selected;
-}
-
-export async function generateScheduledPuzzle(
+async function callGenerationApi(
   dateKey: string,
-  dependencies: GenerationDependencies = {},
-): Promise<PuzzleRecord | null> {
-  const existing = await loadScheduledPuzzle(dateKey);
-  if (existing) {
-    return existing;
+  excludedAnswers: string[],
+): Promise<Candidate | null> {
+  const env = LabyrinthServerEnv.safeParse(process.env);
+  if (!env.success) return null;
+
+  const request = {
+    model: env.data.openRouterModel,
+    messages: [
+      {
+        role: "system",
+        content: SYSTEM_PROMPT.replaceAll("{{ANSWER_LENGTH}}", String(REALITEA_ANSWER_LENGTH)),
+      },
+      {
+        role: "user",
+        content: JSON.stringify({
+          dateKey,
+          excludedAnswers,
+          instructions:
+            "Search bravotv.com/the-daily-dish for today's Bravo reality TV news, fetch article details, then generate puzzle candidates.",
+        }),
+      },
+    ],
+    max_tokens: 2000,
+    response_format: {
+      type: "json_schema",
+      json_schema: {
+        name: "generation_response",
+        schema: z.toJSONSchema(generationResponseSchema),
+        strict: true,
+      },
+    },
+    tools: [
+      {
+        type: "openrouter:web_search",
+        parameters: {
+          allowed_domains: [BRAVO_PRIMARY_SOURCE_DOMAIN],
+          engine: "auto",
+          max_results: 10,
+          max_total_results: 20,
+          search_context_size: "medium",
+        },
+      },
+      {
+        type: "openrouter:web_fetch",
+        parameters: {
+          allowed_domains: [BRAVO_PRIMARY_SOURCE_DOMAIN],
+          engine: "openrouter",
+          max_content_tokens: 4000,
+          max_uses: 8,
+        },
+      },
+    ],
+  };
+
+  try {
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${env.data.openRouterApiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(request),
+    });
+
+    if (!response.ok) {
+      console.warn("Generation API error", { dateKey, status: response.status });
+      return null;
+    }
+
+    const payload = (await response.json()) as {
+      choices?: Array<{ message?: { content?: string | null } }>;
+    };
+    const content = payload.choices?.[0]?.message?.content;
+    if (!content) return null;
+
+    const cleanedContent = content
+      .replace(/^```(?:json)?\n?/, "")
+      .replace(/\n?```$/, "");
+    const parsed = generationResponseSchema.parse(JSON.parse(cleanedContent));
+    const previousAnswers = new Set(excludedAnswers);
+
+    for (const candidate of parsed.candidates) {
+      const result = validateCandidate(candidate, previousAnswers);
+      if (result.valid) return candidate;
+      console.warn("Rejected candidate", { answer: candidate.answer, reasons: result.reasons });
+    }
+
+    return null;
+  } catch (err) {
+    console.error("Generation failed", { dateKey, err });
+    return null;
   }
+}
+
+export async function generateScheduledPuzzle(dateKey: string): Promise<PuzzleRecord | null> {
+  const existing = await loadScheduledPuzzle(dateKey);
+  if (existing) return existing;
 
   const date = parseDate(dateKey);
-  if (!date) {
-    throw new Error(`Invalid scheduled puzzle date key: ${dateKey}`);
+  if (!date) throw new Error(`Invalid date key: ${dateKey}`);
+
+  const [recentAnswers, inventoryAnswers] = await Promise.all([
+    getRecentAnswers(date),
+    getInventoryAnswers(),
+  ]);
+  const excludedAnswers = [...new Set([...recentAnswers, ...inventoryAnswers])];
+
+  let candidate: Candidate | null = null;
+  for (let attempt = 0; attempt < 3 && !candidate; attempt++) {
+    candidate = await callGenerationApi(dateKey, excludedAnswers);
+    if (!candidate) {
+      console.warn("Generation attempt failed", { attempt: attempt + 1, dateKey });
+    }
   }
 
-  const candidate = await generateCurrentCandidate(date, dependencies);
   if (!candidate) {
+    console.warn("Puzzle generation failed after all attempts", { dateKey });
     return null;
   }
 
   const window = getPuzzleWindow(date);
-  return persistInventoryPuzzle(candidate, {
-    expireAt: window.expireAt,
-    generationBatchId:
-      dependencies.generationBatchId ?? buildGenerationBatchId("scheduled", window.dateKey),
-    publishAt: window.publishAt,
-    scheduledForDateKey: window.dateKey,
-    sourceKind: "current",
-    status: "scheduled",
-  });
+  const now = new Date();
+  const detailFromSummary =
+    candidate.sourceSummary && candidate.sourceSummary.length > 0
+      ? candidate.sourceSummary.join(" ")
+      : candidate.detail;
+  const dateValue = parseDate(window.dateKey)?.toISOString().slice(0, 10) ?? window.dateKey;
+  console.log("generateScheduledPuzzle INSERT START", { dateKey, answer: candidate.answer });
+  const inserted = await db
+    .insert(rhobhDailyPuzzles)
+    .values({
+      answer: candidate.answer,
+      answerType: candidate.answerType,
+      clue: candidate.clue,
+      createdAt: now,
+      dateUtc: dateValue,
+      detail: detailFromSummary,
+      expireAt: window.expireAt,
+      franchise: BRAVO_FRANCHISE,
+      generationBatchId: null,
+      generationStatus: "published",
+      newsMode: "current",
+      normalizedAnswer: normalizeAnswer(candidate.answer),
+      publishAt: window.publishAt,
+      role: "",
+      scheduledForDateKey: window.dateKey,
+      sourceKind: "current",
+      sourcePublishedAt: candidate.sourcePublishedAt ?? [],
+      sourceSummary: candidate.sourceSummary ?? [],
+      sourceTitles: candidate.sourceTitles ?? [],
+      sourceUrls: candidate.sourceUrls,
+      status: "scheduled",
+      updatedAt: now,
+      validationStatus: "approved",
+    })
+    .returning();
+
+  console.log("generateScheduledPuzzle INSERT DONE", { dateKey, id: inserted[0]?.id });
+  return normalizePuzzleRecord(inserted[0] as Record<string, unknown>);
 }
 
-export async function generateReservePuzzles(
-  countToCreate: number,
-  dependencies: GenerationDependencies = {},
-): Promise<PuzzleRecord[]> {
-  if (countToCreate <= 0) {
-    return [];
-  }
-
-  const excludedAnswers = await getRecentAnswers(dependencies.now ?? new Date());
-  const activeAnswers = await getInventoryAnswers();
-  for (const answer of activeAnswers) {
-    excludedAnswers.add(answer);
-  }
-
-  const candidates = chooseEvergreenCandidates(countToCreate, excludedAnswers);
-  const created: PuzzleRecord[] = [];
-
-  for (const candidate of candidates) {
-    created.push(
-      await persistInventoryPuzzle(candidate, {
-        generationBatchId:
-          dependencies.generationBatchId ??
-          buildGenerationBatchId("reserve", getDateKey(new Date())),
-        sourceKind: "evergreen",
-        status: "reserve",
-      }),
-    );
-  }
-
-  return created;
-}
-
-export async function promoteScheduledOrReservePuzzle(now: Date): Promise<PuzzleRecord | null> {
+export async function promoteScheduledPuzzle(now: Date): Promise<PuzzleRecord | null> {
   const window = getPuzzleWindow(now);
 
   return db.transaction(async (tx) => {
-    await markExpiredPublishedPuzzles(now, tx);
+    await markExpiredPuzzles(now, tx);
 
     const active = await getPublishedPuzzle(now, tx);
-    if (active) {
-      return active;
-    }
+    if (active) return active;
 
-    const scheduledRows = await tx
+    const rows = await tx
       .select()
       .from(rhobhDailyPuzzles)
       .where(
@@ -762,83 +317,42 @@ export async function promoteScheduledOrReservePuzzle(now: Date): Promise<Puzzle
       .orderBy(desc(rhobhDailyPuzzles.createdAt))
       .limit(1);
 
-    const scheduled = scheduledRows[0] as Record<string, unknown> | undefined;
-    if (scheduled?.id) {
-      const updated = await tx
-        .update(rhobhDailyPuzzles)
-        .set({
-          dateUtc: getStoredDateValue(window.dateKey),
-          expireAt: window.expireAt,
-          publishAt: window.publishAt,
-          status: "published",
-          updatedAt: now,
-        })
-        .where(eq(rhobhDailyPuzzles.id, Number(scheduled.id)))
-        .returning();
+    const scheduled = rows[0] as Record<string, unknown> | undefined;
+    if (!scheduled?.id) return null;
 
-      return normalizePuzzleRecord(updated[0] as Record<string, unknown>);
-    }
-
-    const reserveRows = await tx
-      .select()
-      .from(rhobhDailyPuzzles)
-      .where(
-        and(
-          eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
-          eq(rhobhDailyPuzzles.status, "reserve"),
-        ),
-      )
-      .orderBy(asc(rhobhDailyPuzzles.createdAt))
-      .limit(1);
-
-    const reserve = reserveRows[0] as Record<string, unknown> | undefined;
-    if (!reserve?.id) {
-      return null;
-    }
-
-    const promoted = await tx
+    const dateValue = parseDate(window.dateKey)?.toISOString().slice(0, 10) ?? null;
+    const updated = await tx
       .update(rhobhDailyPuzzles)
       .set({
-        dateUtc: getStoredDateValue(window.dateKey),
+        dateUtc: dateValue,
         expireAt: window.expireAt,
         publishAt: window.publishAt,
-        scheduledForDateKey: window.dateKey,
         status: "published",
         updatedAt: now,
       })
-      .where(eq(rhobhDailyPuzzles.id, Number(reserve.id)))
+      .where(eq(rhobhDailyPuzzles.id, Number(scheduled.id)))
       .returning();
 
-    return normalizePuzzleRecord(promoted[0] as Record<string, unknown>);
+    return normalizePuzzleRecord(updated[0] as Record<string, unknown>);
   });
 }
 
-export async function loadActivePuzzle(now: Date): Promise<PuzzleEnvelope | null> {
-  await markExpiredPublishedPuzzles(now);
-
-  const published = await getPublishedPuzzle(now);
-  if (published) {
-    return { puzzle: mapRecordToStoredPuzzle(published) };
-  }
-
-  const promoted = await promoteScheduledOrReservePuzzle(now);
-  if (!promoted) {
-    return null;
-  }
-
-  return { puzzle: mapRecordToStoredPuzzle(promoted) };
+function toDailyPuzzle(record: PuzzleRecord): DailyPuzzle {
+  return {
+    answer: record.answer,
+    answerType: record.answerType,
+    clue: record.clue,
+    dateKey: record.scheduledForDateKey ?? record.dateKey ?? "",
+    detail: record.detail,
+    role: record.role,
+  };
 }
 
-export async function loadPuzzleForDate(date: Date): Promise<PuzzleEnvelope | null> {
-  return loadActivePuzzle(date);
-}
-
-export async function generateDailyPuzzle(date: Date): Promise<PuzzleRecord | null> {
-  return generateScheduledPuzzle(getDateKey(date), {
-    generationBatchId: buildGenerationBatchId("manual", getDateKey(date)),
-    now: date,
-    sourceCollectionNow: new Date(),
-  });
+export async function loadActivePuzzle(now: Date): Promise<{ puzzle: DailyPuzzle } | null> {
+  await markExpiredPuzzles(now);
+  const published = (await getPublishedPuzzle(now)) ?? (await promoteScheduledPuzzle(now));
+  if (!published) return null;
+  return { puzzle: toDailyPuzzle(published) };
 }
 
 export async function getStoredAnswersForValidation(): Promise<Set<string>> {
@@ -846,6 +360,5 @@ export async function getStoredAnswersForValidation(): Promise<Set<string>> {
     .select({ normalizedAnswer: rhobhDailyPuzzles.normalizedAnswer })
     .from(rhobhDailyPuzzles)
     .where(eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE));
-
-  return new Set(rows.map((row) => row.normalizedAnswer));
+  return new Set(rows.map((r) => r.normalizedAnswer));
 }

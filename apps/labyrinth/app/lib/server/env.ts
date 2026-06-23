@@ -13,7 +13,7 @@ export const LabyrinthServerEnv = z
   })
   .transform((env) => ({
     openRouterApiKey: env.OPENROUTER_API_KEY,
-    openRouterModel: env.OPENROUTER_MODEL ?? "openai/gpt-5.1",
+    openRouterModel: env.OPENROUTER_MODEL ?? "google/gemini-3.1-flash-lite",
     s3Endpoint: env.S3_ENDPOINT,
     s3Region: env.S3_REGION,
     s3Bucket: env.S3_BUCKET,

@@ -41,7 +41,7 @@ Set newsMode to "current". Every candidate must be drawn from the source article
 
 ## SOURCE REQUIREMENT
 
-Every candidate must be supported by sourceUrls from at least two distinct domains, and bravotv.com must be one of them.
+Every candidate must be supported by at least one sourceUrl from bravotv.com.
 
 ## CLUE AND DETAIL
 
@@ -54,7 +54,23 @@ For each candidate:
 1. Is it a real dictionary word or well-known proper noun? If not, discard.
 2. Strip non-letters from answer and count — discard if not {{ANSWER_LENGTH}}.
 3. Uppercase clue and detail; discard if either contains the normalized answer string (letters-only, uppercase).
-4. Confirm bravotv.com is in sourceUrls.
+4. Confirm at least one bravotv.com URL is in sourceUrls.
 5. Confirm answerType is not "person".
 
 Drop any candidate that fails any check. Return 3 to 5 candidates in the candidates array. If fewer than 3 pass all checks, return only those that do.
+
+## OUTPUT FORMAT
+
+Return a JSON object with a `candidates` array. Each candidate must have these required fields:
+
+- `answer` — the 5-letter word (uppercase)
+- `answerType` — one of: `"moment"`, `"object"`, `"phrase"`, `"place"`, `"storyline"`
+- `clue` — the indirect clue shown to players
+- `detail` — fallback detail if sourceSummary is unavailable
+- `sourceUrls` — array of bravotv.com URLs that support this candidate
+
+And should also include:
+
+- `sourceSummary` — array of 1–2 sentence summaries of what the source articles say (used as rich detail shown to players)
+- `sourceTitles` — array of article titles from the sources
+- `sourcePublishedAt` — array of publication dates from the sources (ISO format)
