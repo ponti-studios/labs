@@ -1,18 +1,6 @@
 import archiveMoments from "../data/rhobh-archive-moments.json";
 
-import {
-  and,
-  asc,
-  count,
-  db,
-  desc,
-  eq,
-  gt,
-  gte,
-  inArray,
-  lte,
-  rhobhDailyPuzzles,
-} from "@pontistudios/db";
+import { and, asc, db, desc, eq, gt, gte, inArray, lte, rhobhDailyPuzzles } from "@pontistudios/db";
 import { z } from "zod";
 
 import { normalizeAnswer, REALITEA_ANSWER_LENGTH } from "./realitea";
@@ -39,6 +27,7 @@ import {
 import { LabyrinthServerEnv } from "./server/env";
 import { writeLlmAnalyticsRecord } from "./server/llm-analytics";
 import { readFileSync } from "node:fs";
+import { join as pathJoin } from "node:path";
 
 interface GenerationDependencies {
   generationBatchId?: string;
@@ -46,7 +35,10 @@ interface GenerationDependencies {
   sourceCollectionNow?: Date;
 }
 
-const SYSTEM_PROMPT = readFileSync("./prompts/rhobh-generation-system.md", "utf-8");
+const SYSTEM_PROMPT = readFileSync(
+  pathJoin(__dirname, "./prompts/rhobh-generation-system.md"),
+  "utf-8",
+);
 
 const RHOBH_CURRENT_SOURCE_QUERIES = [
   {
@@ -198,13 +190,13 @@ export async function collectCurrentSources(
       {
         role: "system",
         content:
-          "You collect current RHOBH coverage for a daily puzzle generator. Use the provided web tools to search recent RHOBH coverage and fetch the most relevant articles. Return only articles from the allowed domains, deduplicated by URL, with real publication timestamps when available. Each summary must be spoiler-safe, fact-based, and concise.",
+          "You collect current celebrity news coverage for a daily puzzle generator. Use the provided web tools to search recent coverage and fetch the most relevant articles. Return only articles from the allowed domains, deduplicated by URL, with real publication timestamps when available. Each summary must be spoiler-safe, fact-based, and concise.",
       },
       {
         role: "user",
         content: JSON.stringify(
           {
-            allowedDomains: RHOBH_CURRENT_SOURCE_QUERIES.map((sourceQuery) => sourceQuery.domain),
+            allowedDomains: [RHOBH_CURRENT_SOURCE_QUERIES[0].domain],
             maxItems: RHOBH_SOURCE_COLLECTION_MAX_ITEMS,
             queries: RHOBH_CURRENT_SOURCE_QUERIES.map((sourceQuery) => sourceQuery.query),
             todayUtc: (dependencies.sourceCollectionNow ?? new Date()).toISOString(),
