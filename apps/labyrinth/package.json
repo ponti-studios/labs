@@ -8,9 +8,10 @@
     "dev": "react-router dev",
     "lint": "oxlint app --fix",
     "format": "oxfmt app --write",
-    "realitea:generate-scheduled": "tsx --tsconfig tsconfig.json scripts/generate-realitea-scheduled-puzzle.ts",
-    "realitea:generate-reserve": "tsx --tsconfig tsconfig.json scripts/generate-realitea-reserve-puzzles.ts",
-"realitea:reconcile-inventory": "tsx --tsconfig tsconfig.json scripts/reconcile-realitea-inventory.ts",
+    "realitea:gen": "tsx --tsconfig tsconfig.json scripts/generate-realitea-scheduled-puzzle.ts",
+    "realitea:gen-today": "tsx --tsconfig tsconfig.json scripts/generate-realitea-scheduled-puzzle.ts --publish",
+    "realitea:gen-range": "tsx --tsconfig tsconfig.json scripts/generate-realitea-scheduled-puzzle.ts",
+    "realitea:reconcile": "tsx --tsconfig tsconfig.json scripts/reconcile-realitea-inventory.ts",
     "start": "react-router-serve ./build/server/index.js --port=${PORT:-3000}",
     "test": "vitest run --environment jsdom --coverage --reporter verbose --passWithNoTests",
     "typecheck": "react-router typegen && tsc"
