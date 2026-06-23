@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { and, closeDb, count, db, eq, inArray, rhobhDailyPuzzles } from "@pontistudios/db";
 
 import {
@@ -7,7 +8,7 @@ import {
   parseDate,
   REALITEA_READY_INVENTORY_DAYS,
   REALITEA_RESERVE_TARGET,
-  RHOBH_FRANCHISE,
+  BRAVO_FRANCHISE,
 } from "../app/lib/realitea-daily-puzzle";
 import {
   buildGenerationBatchId,
@@ -47,7 +48,7 @@ async function main() {
     .from(rhobhDailyPuzzles)
     .where(
       and(
-        eq(rhobhDailyPuzzles.franchise, RHOBH_FRANCHISE),
+        eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
         eq(rhobhDailyPuzzles.status, "scheduled"),
         inArray(rhobhDailyPuzzles.scheduledForDateKey, targetDateKeys),
       ),
@@ -136,7 +137,7 @@ async function countReservePuzzles() {
     .from(rhobhDailyPuzzles)
     .where(
       and(
-        eq(rhobhDailyPuzzles.franchise, RHOBH_FRANCHISE),
+        eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
         eq(rhobhDailyPuzzles.status, "reserve"),
       ),
     );
@@ -164,7 +165,7 @@ async function countReadyScheduledPuzzles(now: Date) {
     .from(rhobhDailyPuzzles)
     .where(
       and(
-        eq(rhobhDailyPuzzles.franchise, RHOBH_FRANCHISE),
+        eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
         eq(rhobhDailyPuzzles.status, "scheduled"),
         inArray(rhobhDailyPuzzles.scheduledForDateKey, dateKeys),
       ),
