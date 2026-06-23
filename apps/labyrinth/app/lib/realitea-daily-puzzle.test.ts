@@ -1,30 +1,19 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  getDateKey,
-  getPuzzleWindow,
-  RHOBH_PRIMARY_SOURCE_DOMAIN,
-  validateCandidate,
-  type GeneratedCandidate,
-} from "./realitea-daily-puzzle";
+import { getDateKey, getPuzzleWindow, validateCandidate } from "./realitea-daily-puzzle";
 
-describe("rhobh daily puzzle helpers", () => {
-  it("accepts collapsed multi-word answers that normalize cleanly", () => {
-    const candidate: GeneratedCandidate = {
+const BRAVO_URL = "https://www.bravotv.com/the-daily-dish/test-story";
+
+describe("realitea daily puzzle helpers", () => {
+  it("rejects multi-word answers that normalize to more than five letters", () => {
+    const result = validateCandidate({
       answer: "Tea Set",
       answerType: "place",
       clue: "A prim little object that fits the game's whole vibe.",
       detail: "A tiny tea set channels the campy elegance that makes the franchise memorable.",
-      newsMode: "current",
-      rationale: "Compact RHOBH object",
-      role: "Tabletop prop",
-      sourcePublishedAt: [],
-      sourceSummary: [],
-      sourceTitles: [],
-      sourceUrls: [],
-    };
 
-    const result = validateCandidate(candidate, {});
+      sourceUrls: [BRAVO_URL],
+    });
 
     expect(result.normalizedAnswer).toBe("TEASET");
     expect(result.valid).toBe(false);
@@ -32,231 +21,121 @@ describe("rhobh daily puzzle helpers", () => {
   });
 
   it("accepts answers that normalize to exactly five letters", () => {
-    const candidate: GeneratedCandidate = {
+    const result = validateCandidate({
       answer: "Aspen",
       answerType: "place",
       clue: "A snowy destination tied to one of the franchise's messiest trips.",
-      detail: "This RHOBH trip setting became shorthand for off-camera accusations and fallout.",
-      newsMode: "current",
-      rationale: "Compact RHOBH place",
-      role: "Trip destination",
-      sourcePublishedAt: [],
-      sourceSummary: [],
-      sourceTitles: [],
-      sourceUrls: [],
-    };
+      detail: "This trip setting became shorthand for off-camera accusations and fallout.",
 
-    const result = validateCandidate(candidate, {});
+      sourceUrls: [BRAVO_URL],
+    });
 
     expect(result.valid).toBe(true);
   });
 
   it("rejects answers whose normalized length is not exactly five", () => {
-    const candidate: GeneratedCandidate = {
+    const result = validateCandidate({
       answer: "RH",
       answerType: "phrase",
       clue: "Too short to qualify.",
       detail: "This should never pass validation.",
-      newsMode: "current",
-      rationale: "Invalid",
-      role: "Invalid",
-      sourcePublishedAt: [],
-      sourceSummary: [],
-      sourceTitles: [],
-      sourceUrls: [],
-    };
 
-    const result = validateCandidate(candidate, {});
+      sourceUrls: [BRAVO_URL],
+    });
 
     expect(result.valid).toBe(false);
     expect(result.reasons).toContain("answer must normalize to exactly five letters");
   });
 
   it("rejects candidates that leak the answer in the clue or detail", () => {
-    const candidate: GeneratedCandidate = {
-      answer: "Puppygate",
+    const result = validateCandidate({
+      answer: "Smile",
       answerType: "storyline",
-      clue: "Puppygate became one of the biggest RHOBH scandals ever.",
-      detail: "The Puppygate fallout split the cast.",
-      newsMode: "current",
-      rationale: "Spoiler",
-      role: "Infamous scandal",
-      sourcePublishedAt: [],
-      sourceSummary: [],
-      sourceTitles: [],
-      sourceUrls: [],
-    };
+      clue: "That smile became one of the biggest scandals ever.",
+      detail: "The fallout split the cast.",
 
-    const result = validateCandidate(candidate, {});
+      sourceUrls: [BRAVO_URL],
+    });
 
     expect(result.valid).toBe(false);
     expect(result.reasons).toContain("answer is leaked in clue or detail");
   });
 
   it("rejects answers that repeat inside the cooldown window", () => {
-    const candidate: GeneratedCandidate = {
-      answer: "Aspen",
-      answerType: "place",
-      clue: "A snowy trip that detonated into one of the franchise's biggest fights.",
-      detail: "The aftermath of this cast trip lingered all season.",
-      newsMode: "current",
-      rationale: "Repeat test",
-      role: "Trip destination",
-      sourcePublishedAt: [],
-      sourceSummary: [],
-      sourceTitles: [],
-      sourceUrls: [],
-    };
-
-    const result = validateCandidate(candidate, {
-      previousAnswers: new Set(["ASPEN"]),
-    });
+    const result = validateCandidate(
+      {
+        answer: "Aspen",
+        answerType: "place",
+        clue: "A snowy trip that detonated into one of the franchise's biggest fights.",
+        detail: "The aftermath of this cast trip lingered all season.",
+  
+        sourceUrls: [BRAVO_URL],
+      },
+      new Set(["ASPEN"]),
+    );
 
     expect(result.valid).toBe(false);
     expect(result.reasons).toContain("answer repeats inside cooldown window");
   });
 
-  it("still rejects overlength current-news candidates before source checks", () => {
-    const candidate: GeneratedCandidate = {
-      answer: "Separation",
-      answerType: "storyline",
-      clue: "A relationship update is suddenly the center of the latest RHOBH coverage.",
-      detail: "This story is dominating the RHOBH news cycle.",
-      newsMode: "current",
-      rationale: "Current news test",
-      role: "Trending headline",
-      sourcePublishedAt: ["2026-05-27T00:00:00.000Z"],
-      sourceSummary: ["Coverage summary"],
-      sourceTitles: ["Coverage title"],
-      sourceUrls: ["https://people.com/latest-rhobh-story"],
-    };
-
-    const result = validateCandidate(candidate);
-
-    expect(result.valid).toBe(false);
-    expect(result.reasons).toContain("answer must normalize to exactly five letters");
-    expect(result.reasons).toContain("current candidate is missing Bravo primary coverage");
-    expect(result.reasons).toContain("current candidate is missing a corroborating source");
-  });
-
-  it("requires Bravo plus one corroborator for current-news candidates", () => {
-    const candidate: GeneratedCandidate = {
+  it("rejects candidates missing a bravotv.com source URL", () => {
+    const result = validateCandidate({
       answer: "Rumor",
       answerType: "storyline",
-      clue: "A relationship update is suddenly the center of the latest RHOBH coverage.",
-      detail: "This story is dominating the RHOBH news cycle.",
-      newsMode: "current",
-      rationale: "Current news test",
-      role: "Trending headline",
-      sourcePublishedAt: ["2026-05-27T00:00:00.000Z"],
-      sourceSummary: ["Coverage summary"],
-      sourceTitles: ["Coverage title"],
-      sourceUrls: ["https://people.com/latest-rhobh-story"],
-    };
+      clue: "A relationship update is suddenly the center of coverage.",
+      detail: "This story is dominating the news cycle.",
 
-    const result = validateCandidate(candidate);
+      sourceUrls: ["https://people.com/latest-bravo-story"],
+    });
 
     expect(result.valid).toBe(false);
-    expect(result.reasons).toContain("current candidate is missing Bravo primary coverage");
-    expect(result.reasons).toContain("current candidate is missing a corroborating source");
+    expect(result.reasons).toContain("candidate is missing a bravotv.com source URL");
   });
 
-  it("still rejects overlength current-news candidates even with strong source support", () => {
-    const candidate: GeneratedCandidate = {
-      answer: "Reunion",
-      answerType: "moment",
-      clue: "The latest RHOBH fallout is barreling toward this must-watch taping.",
-      detail: "The current RHOBH conversation is building toward the next big sit-down.",
-      newsMode: "current",
-      rationale: "Current news test",
-      role: "High-stakes event",
-      sourcePublishedAt: ["2026-05-27T00:00:00.000Z", "2026-05-27T00:00:00.000Z"],
-      sourceSummary: ["Bravo summary", "People summary"],
-      sourceTitles: ["Bravo title", "People title"],
-      sourceUrls: [
-        `https://www.${RHOBH_PRIMARY_SOURCE_DOMAIN}/the-daily-dish/rhobh-reunion-story`,
-        "https://people.com/rhobh-reunion-story",
-      ],
-    };
-
-    const result = validateCandidate(candidate);
-
-    expect(result.valid).toBe(false);
-    expect(result.reasons).toContain("answer must normalize to exactly five letters");
-  });
-
-  it("accepts current-news candidates with exactly five letters plus Bravo and a corroborating source", () => {
-    const candidate: GeneratedCandidate = {
+  it("rejects candidates with no source URLs", () => {
+    const result = validateCandidate({
       answer: "Drama",
       answerType: "moment",
-      clue: "The latest RHOBH fallout is barreling toward this must-watch taping.",
-      detail: "The current RHOBH conversation is building toward the next big sit-down.",
-      newsMode: "current",
-      rationale: "Current news test",
-      role: "High-stakes event",
-      sourcePublishedAt: ["2026-05-27T00:00:00.000Z", "2026-05-27T00:00:00.000Z"],
-      sourceSummary: ["Bravo summary", "People summary"],
-      sourceTitles: ["Bravo title", "People title"],
-      sourceUrls: [
-        `https://www.${RHOBH_PRIMARY_SOURCE_DOMAIN}/the-daily-dish/rhobh-reunion-story`,
-        "https://people.com/rhobh-reunion-story",
-      ],
-    };
+      clue: "A clash that keeps the whole cast spinning.",
+      detail: "A single conflict can dominate the full episode.",
 
-    const result = validateCandidate(candidate);
+      sourceUrls: [],
+    });
+
+    expect(result.valid).toBe(false);
+    expect(result.reasons).toContain("candidate is missing a bravotv.com source URL");
+  });
+
+  it("accepts valid candidates with a bravotv.com source URL", () => {
+    const result = validateCandidate({
+      answer: "Drama",
+      answerType: "moment",
+      clue: "A clash that keeps the whole cast spinning.",
+      detail: "A single conflict can dominate the full episode.",
+
+      sourceUrls: [BRAVO_URL],
+    });
 
     expect(result.valid).toBe(true);
   });
 
-  it("rejects current-news person answers as too obvious", () => {
-    const candidate: GeneratedCandidate = {
+  it("rejects person answer types", () => {
+    const result = validateCandidate({
       answer: "Dorit",
       answerType: "person",
-      clue: "A Beverly Hills diamond is dealing with friendship fallout and divorce headlines.",
-      detail:
-        "She remains central to the post-reunion conversation and a messy financial storyline.",
-      newsMode: "current",
-      rationale: "Current news test",
-      role: "Cast member",
-      sourcePublishedAt: ["2026-05-27T00:00:00.000Z", "2026-05-27T00:00:00.000Z"],
-      sourceSummary: ["Bravo summary", "People summary"],
-      sourceTitles: ["Bravo title", "People title"],
-      sourceUrls: [
-        `https://www.${RHOBH_PRIMARY_SOURCE_DOMAIN}/the-daily-dish/rhobh-dorit-story`,
-        "https://people.com/rhobh-dorit-story",
-      ],
-    };
+      clue: "A Beverly Hills diamond is dealing with friendship fallout.",
+      detail: "She remains central to the post-reunion conversation.",
 
-    const result = validateCandidate(candidate);
+      sourceUrls: [BRAVO_URL],
+    });
 
     expect(result.valid).toBe(false);
     expect(result.reasons).toContain(
-      "current candidate is too obvious; prefer a more distinctive RHOBH-specific concept",
+      "answer type must not be a person; prefer a storyline, moment, place, or phrase",
     );
   });
 
-  it("rejects non-current candidates", () => {
-    const candidate: GeneratedCandidate = {
-      answer: "Party",
-      answerType: "moment",
-      clue: "A made-up callback with no curated provenance.",
-      detail: "This should be rejected because it is not generated from current sources.",
-      newsMode: "archive",
-      rationale: "Current-only test",
-      role: "Invalid archive entry",
-      sourcePublishedAt: [],
-      sourceSummary: [],
-      sourceTitles: [],
-      sourceUrls: [],
-    };
-
-    const result = validateCandidate(candidate);
-
-    expect(result.valid).toBe(false);
-    expect(result.reasons).toContain("candidate must be generated from current sources");
-  });
-
-  it("uses the canonical global day boundary for late-evening Pacific access", () => {
+  it("uses the canonical Pacific day boundary", () => {
     const latePacificEvening = new Date("2026-06-17T04:00:00.000Z");
     const window = getPuzzleWindow(latePacificEvening);
 

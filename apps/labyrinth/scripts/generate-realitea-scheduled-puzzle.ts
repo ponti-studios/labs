@@ -1,6 +1,6 @@
 import { closeDb } from "@pontistudios/db";
 
-import { getDateKey, parseDate } from "../app/lib/realitea-daily-puzzle";
+import { getDateKey, isDateKey } from "../app/lib/realitea-daily-puzzle";
 import { generateScheduledPuzzle } from "../app/lib/realitea-daily-puzzle.server";
 
 function getDateArg(): string | null {
@@ -24,15 +24,11 @@ async function main() {
   requireEnvironment();
 
   const dateKey = getDateArg() ?? getDateKey(new Date());
-  const date = parseDate(dateKey);
-  if (!date) {
+  if (!isDateKey(dateKey)) {
     throw new Error(`Invalid date key: ${dateKey}`);
   }
 
-  const puzzle = await generateScheduledPuzzle(dateKey, {
-    generationBatchId: `manual-scheduled:${dateKey}`,
-    now: date,
-  });
+  const puzzle = await generateScheduledPuzzle(dateKey);
 
   if (!puzzle) {
     console.log(JSON.stringify({ dateKey, status: "failed" }, null, 2));
@@ -40,18 +36,7 @@ async function main() {
     return;
   }
 
-  console.log(
-    JSON.stringify(
-      {
-        dateKey,
-        id: puzzle.id,
-        sourceKind: puzzle.sourceKind,
-        status: puzzle.status,
-      },
-      null,
-      2,
-    ),
-  );
+  console.log(JSON.stringify({ dateKey, id: puzzle.id, status: puzzle.status }, null, 2));
 }
 
 try {

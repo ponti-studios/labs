@@ -5,8 +5,8 @@ import { createRoutesStub } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { createMemoryStorage } from "@pontistudios/ui";
-import { getPuzzleKeyForDate, MAX_GUESSES, normalizeGuess, type Puzzle } from "../../lib/realitea";
-import type { PuzzleEnvelope, StoredPuzzle } from "../../lib/realitea-daily-puzzle";
+import { MAX_GUESSES, normalizeGuess, type Puzzle } from "../../lib/realitea";
+import { getDateKey, type DailyPuzzle } from "../../lib/realitea-daily-puzzle";
 import { readGameState } from "../games/game-state";
 import RealiTeaRoute from "../games/realitea";
 import { createControlledRouteAction } from "./controlled-route-action";
@@ -43,13 +43,15 @@ const ALTERNATE_VALID_GUESSES = ["DORIT", "SUTTON", "KATHY"];
 function buildPuzzleEnvelope(
   puzzle = DEFAULT_ROUTE_PUZZLE,
   date = new Date("2026-05-20T12:00:00.000Z"),
-  source: StoredPuzzle["source"] = "database",
-): PuzzleEnvelope {
+): { puzzle: DailyPuzzle } {
   return {
     puzzle: {
-      ...puzzle,
-      puzzleKey: getPuzzleKeyForDate(date),
-      source,
+      answer: puzzle.answer,
+      answerType: puzzle.answerType ?? "moment",
+      clue: puzzle.clue,
+      dateKey: getDateKey(date),
+      detail: puzzle.detail,
+      role: puzzle.role ?? "",
     },
   };
 }
@@ -149,17 +151,15 @@ function getCurrentPuzzle() {
 function setRoutePuzzle(
   puzzle = getCurrentPuzzle(),
   date = new Date("2026-05-20T12:00:00.000Z"),
-  source: StoredPuzzle["source"] = "database",
 ) {
-  routePuzzle = buildPuzzleEnvelope(puzzle, date, source);
+  routePuzzle = buildPuzzleEnvelope(puzzle, date);
 }
 
 function setDailyPuzzle(
   puzzle = getCurrentPuzzle(),
   date = new Date("2026-05-20T12:00:00.000Z"),
-  source: StoredPuzzle["source"] = "database",
 ) {
-  dailyPuzzle = buildPuzzleEnvelope(puzzle, date, source);
+  dailyPuzzle = buildPuzzleEnvelope(puzzle, date);
 }
 
 function getAlternateValidGuess(answer: string) {
@@ -175,7 +175,7 @@ function getAlternateValidGuess(answer: string) {
 }
 
 function seedSolvedGame(puzzle = getCurrentPuzzle()) {
-  const puzzleKey = getPuzzleKeyForDate(new Date("2026-05-20T12:00:00.000Z"));
+  const puzzleKey = getDateKey(new Date("2026-05-20T12:00:00.000Z"));
   window.localStorage.setItem(
     `labyrinth:realitea:${puzzleKey}`,
     JSON.stringify({
@@ -222,7 +222,7 @@ describe("RealiTeaRoute", () => {
   it("restores saved progress for the same puzzle key after reload", async () => {
     const date = new Date("2026-05-20T12:00:00.000Z");
     const puzzle = getCurrentPuzzle();
-    const puzzleKey = getPuzzleKeyForDate(date);
+    const puzzleKey = getDateKey(date);
     const { unmount, user } = await renderRoute();
 
     await enterGuess(user, puzzle.answer);
@@ -264,7 +264,6 @@ describe("RealiTeaRoute", () => {
         role: "Estate mascots",
       },
       new Date("2026-05-20T12:00:00.000Z"),
-      "database",
     );
 
     await renderRoute();
@@ -275,7 +274,7 @@ describe("RealiTeaRoute", () => {
   it("discards stale saved progress for a different puzzle key", async () => {
     const staleDate = new Date("2026-05-19T12:00:00.000Z");
     const stalePuzzle = STALE_ROUTE_PUZZLE;
-    const stalePuzzleKey = getPuzzleKeyForDate(staleDate);
+    const stalePuzzleKey = getDateKey(staleDate);
 
     window.localStorage.setItem(
       `labyrinth:realitea:${stalePuzzleKey}`,
@@ -303,7 +302,7 @@ describe("RealiTeaRoute", () => {
       newsMode: "current",
       role: "Escalating conflict",
     };
-    setDailyPuzzle(secondPuzzle, secondDate, "database");
+    setDailyPuzzle(secondPuzzle, secondDate);
 
     const { user } = await renderRoute();
 
@@ -358,7 +357,7 @@ describe("RealiTeaRoute", () => {
             </QueryClientProvider>
           );
         },
-        loader: () => buildPuzzleEnvelope(firstPuzzle, firstDate, "database"),
+        loader: () => buildPuzzleEnvelope(firstPuzzle, firstDate),
       },
       {
         id: "routes/api.games.realitea.daily",
@@ -469,7 +468,7 @@ describe("RealiTeaRoute", () => {
 
   it("reveals the clue only when one guess remains", async () => {
     const puzzle = getCurrentPuzzle();
-    const puzzleKey = getPuzzleKeyForDate(new Date("2026-05-20T12:00:00.000Z"));
+    const puzzleKey = getDateKey(new Date("2026-05-20T12:00:00.000Z"));
     const seededGuesses = Array.from({ length: MAX_GUESSES - 1 }, (_, index) =>
       String.fromCharCode(66 + index).repeat(puzzle.answer.length),
     );

@@ -19,7 +19,7 @@ describe("realitea helpers", () => {
     const evening = getPuzzleKeyForDate(new Date("2026-05-21T06:59:59.000Z"));
 
     expect(morning).toBe(evening);
-    expect(morning).toMatch(/^rhobh-\d+$/);
+    expect(morning).toMatch(/^bravo-\d+$/);
   });
 
   it("evaluates guesses with duplicate-letter handling", () => {
