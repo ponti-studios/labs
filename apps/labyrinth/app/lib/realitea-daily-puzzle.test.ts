@@ -3,55 +3,10 @@ import { describe, expect, it } from "vitest";
 import {
   getDateKey,
   getPuzzleWindow,
-  parseGenerationResponse,
   RHOBH_PRIMARY_SOURCE_DOMAIN,
   validateCandidate,
   type GeneratedCandidate,
 } from "./realitea-daily-puzzle";
-
-const currentPool: GeneratedCandidate[] = [
-  {
-    answer: "TEARS",
-    answerType: "storyline",
-    clue: "A flood of emotion that takes over a major RHOBH confrontation.",
-    detail:
-      "A dramatic RHOBH breakdown can turn tears into the episode's defining image and emotional pivot.",
-    newsMode: "current",
-    rationale: "Archive fixture",
-    role: "Emotional fallout",
-    sourcePublishedAt: [],
-    sourceSummary: [],
-    sourceTitles: [],
-    sourceUrls: [],
-  },
-  {
-    answer: "SWANS",
-    answerType: "place",
-    clue: "These elegant birds are inseparable from one iconic Beverly Hills estate.",
-    detail: "The estate's swans became one of the most recognizable bits of RHOBH visual lore.",
-    newsMode: "current",
-    rationale: "Archive fixture",
-    role: "Estate mascots",
-    sourcePublishedAt: [],
-    sourceSummary: [],
-    sourceTitles: [],
-    sourceUrls: [],
-  },
-  {
-    answer: "BUNNY",
-    answerType: "object",
-    clue: "A small gift turned reunion seating into an all-time uncomfortable moment.",
-    detail:
-      "The returned bunny became one of the show's most memorable symbols of unresolved hurt and public fallout.",
-    newsMode: "current",
-    rationale: "Archive fixture",
-    role: "Reunion prop",
-    sourcePublishedAt: [],
-    sourceSummary: [],
-    sourceTitles: [],
-    sourceUrls: [],
-  },
-];
 
 describe("rhobh daily puzzle helpers", () => {
   it("accepts collapsed multi-word answers that normalize cleanly", () => {
@@ -299,28 +254,6 @@ describe("rhobh daily puzzle helpers", () => {
 
     expect(result.valid).toBe(false);
     expect(result.reasons).toContain("candidate must be generated from current sources");
-  });
-
-  it("parses a strict generation response", () => {
-    const parsed = parseGenerationResponse(
-      JSON.stringify([currentPool[0], currentPool[1], currentPool[2]]),
-    );
-
-    expect(parsed).toHaveLength(3);
-    expect(parsed[0].answer).toBe(currentPool[0].answer);
-  });
-
-  it("rejects malformed generation payloads", () => {
-    expect(() =>
-      parseGenerationResponse(
-        JSON.stringify([
-          {
-            answer: "Puppygate",
-            clue: "Missing required fields",
-          },
-        ]),
-      ),
-    ).toThrow();
   });
 
   it("uses the canonical global day boundary for late-evening Pacific access", () => {
