@@ -119,7 +119,7 @@ export const sourceItemSchema = z
     source: z.string().min(1).optional(),
     summary: z.string().min(1),
     title: z.string().min(1),
-    url: z.string().url(),
+    url: z.url(),
   })
   .transform(({ domain, published, publishedAt, source, ...item }) => ({
     ...item,
@@ -202,26 +202,6 @@ export interface PuzzleWindow {
   expireAt: Date;
   publishAt: Date;
 }
-
-/**
- * Generated responses are constrained to a small, explicit schema so the
- * backend can reject malformed model output before it reaches storage.
- */
-const rhobhGeneratedCandidateSchema = z.object({
-  answer: z.string().min(1),
-  answerType: z.enum(["moment", "object", "person", "phrase", "place", "storyline"]),
-  clue: z.string().min(1),
-  detail: z.string().min(1),
-  newsMode: z.enum(["current"]),
-  rationale: z.string().min(1),
-  role: z.string().min(1),
-  sourcePublishedAt: z.array(z.string()),
-  sourceSummary: z.array(z.string()),
-  sourceTitles: z.array(z.string()),
-  sourceUrls: z.array(z.string()),
-});
-
-const rhobhGeneratedCandidateListSchema = z.array(rhobhGeneratedCandidateSchema).min(3).max(5);
 
 function getLocalDateParts(value: string): [number, number, number] | null {
   if (!RHOBH_DATE_FORMAT.test(value)) {
@@ -534,24 +514,6 @@ export function validateCandidate(
     reasons,
     valid: reasons.length === 0,
   };
-}
-
-/**
- * Parse a generated response payload and enforce the response contract.
- *
- * The JSON shape is expected to be a candidate list:
- *
- *   [
- *     { candidate 1 },
- *     { candidate 2 },
- *     { candidate 3 }
- *   ]
- *
- * The min/max bounds are deliberate: enough candidates to choose from, but
- * not so many that downstream selection becomes ambiguous.
- */
-export function parseGenerationResponse(text: string): GeneratedCandidate[] {
-  return rhobhGeneratedCandidateListSchema.parse(JSON.parse(text));
 }
 
 /**
