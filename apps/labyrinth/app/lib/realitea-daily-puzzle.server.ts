@@ -1,32 +1,40 @@
-import { and, db, desc, eq, gt, gte, inArray, lte, rhobhDailyPuzzles } from "@pontistudios/db";
-import { readFileSync } from "node:fs";
-import { join as pathJoin } from "node:path";
-import { z } from "zod";
+import { readFileSync } from 'node:fs';
+import { join as pathJoin } from 'node:path';
 
-import { normalizeAnswer, REALITEA_ANSWER_LENGTH } from "./realitea";
+import { and, db, desc, eq, gt, gte, inArray, lte, rhobhDailyPuzzles } from '@pontistudios/db';
+import { z } from 'zod';
+
+import { normalizeAnswer, REALITEA_ANSWER_LENGTH } from './realitea';
 import {
-  addDaysToDateKey,
+  evaluateGuess,
+  isGuessSolved,
+  MAX_GUESSES,
+  normalizeGuess,
+  type PublicDailyPuzzle,
+  type RealiteaGuessResult,
+} from './realitea';
+import {
   BRAVO_FRANCHISE,
   BRAVO_PRIMARY_SOURCE_DOMAIN,
   BRAVO_REPEAT_WINDOW_DAYS,
   getDateKey,
   getPuzzleWindow,
   parseDate,
-  REALITEA_READY_INVENTORY_DAYS,
   validateCandidate,
   type DailyPuzzle,
   type PuzzleRecord,
-} from "./realitea-daily-puzzle";
-import { LabyrinthServerEnv } from "./server/env";
+} from './realitea-daily-puzzle';
+import { LabyrinthServerEnv } from './server/env';
+import { isValidWord } from './word-list.server';
 
 const SYSTEM_PROMPT = readFileSync(
-  pathJoin(import.meta.dirname, "./prompts/bravo-generation-system.md"),
-  "utf-8",
+  pathJoin(import.meta.dirname, './prompts/bravo-generation-system.md'),
+  'utf-8',
 );
 
 const candidateSchema = z.object({
   answer: z.string().min(1),
-  answerType: z.enum(["moment", "object", "person", "phrase", "place", "storyline"]),
+  answerType: z.enum(['moment', 'object', 'person', 'phrase', 'place', 'storyline']),
   clue: z.string().min(1),
   detail: z.string().min(1),
   sourceUrls: z.array(z.string()),
@@ -43,7 +51,7 @@ type Candidate = z.infer<typeof candidateSchema>;
 
 function normalizePuzzleRecord(row: Record<string, unknown>): PuzzleRecord {
   const toArray = (v: unknown): string[] =>
-    Array.isArray(v) ? (v as string[]) : JSON.parse(typeof v === "string" ? v : "[]");
+    Array.isArray(v) ? (v as string[]) : JSON.parse(typeof v === 'string' ? v : '[]');
   return {
     ...(row as unknown as PuzzleRecord),
     dateKey: (row.dateUtc as string | null) ?? null,
@@ -57,14 +65,14 @@ function normalizePuzzleRecord(row: Record<string, unknown>): PuzzleRecord {
 export async function getRecentAnswers(date: Date): Promise<Set<string>> {
   const cutoff = new Date(date);
   cutoff.setUTCDate(cutoff.getUTCDate() - BRAVO_REPEAT_WINDOW_DAYS);
-  const cutoffDateValue = parseDate(getDateKey(cutoff))?.toISOString().slice(0, 10) ?? "";
+  const cutoffDateValue = parseDate(getDateKey(cutoff))?.toISOString().slice(0, 10) ?? '';
   const rows = await db
     .select({ normalizedAnswer: rhobhDailyPuzzles.normalizedAnswer })
     .from(rhobhDailyPuzzles)
     .where(
       and(
         eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
-        eq(rhobhDailyPuzzles.validationStatus, "approved"),
+        eq(rhobhDailyPuzzles.validationStatus, 'approved'),
         gte(rhobhDailyPuzzles.dateUtc, cutoffDateValue),
       ),
     );
@@ -78,7 +86,7 @@ async function getInventoryAnswers(): Promise<Set<string>> {
     .where(
       and(
         eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
-        inArray(rhobhDailyPuzzles.status, ["published", "scheduled"]),
+        inArray(rhobhDailyPuzzles.status, ['published', 'scheduled']),
       ),
     );
   return new Set(rows.map((r) => r.normalizedAnswer));
@@ -87,11 +95,11 @@ async function getInventoryAnswers(): Promise<Set<string>> {
 async function markExpiredPuzzles(now: Date, tx: any = db): Promise<void> {
   await tx
     .update(rhobhDailyPuzzles)
-    .set({ status: "consumed", updatedAt: now })
+    .set({ status: 'consumed', updatedAt: now })
     .where(
       and(
         eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
-        eq(rhobhDailyPuzzles.status, "published"),
+        eq(rhobhDailyPuzzles.status, 'published'),
         lte(rhobhDailyPuzzles.expireAt, now),
       ),
     );
@@ -104,7 +112,7 @@ export async function getPublishedPuzzle(now: Date, tx: any = db): Promise<Puzzl
     .where(
       and(
         eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
-        eq(rhobhDailyPuzzles.status, "published"),
+        eq(rhobhDailyPuzzles.status, 'published'),
         lte(rhobhDailyPuzzles.publishAt, now),
         gt(rhobhDailyPuzzles.expireAt, now),
       ),
@@ -123,7 +131,7 @@ export async function loadScheduledPuzzle(dateKey: string): Promise<PuzzleRecord
       and(
         eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
         eq(rhobhDailyPuzzles.scheduledForDateKey, dateKey),
-        inArray(rhobhDailyPuzzles.status, ["published", "scheduled"]),
+        inArray(rhobhDailyPuzzles.status, ['published', 'scheduled']),
       ),
     )
     .orderBy(desc(rhobhDailyPuzzles.createdAt))
@@ -143,11 +151,11 @@ async function callGenerationApi(
     model: env.data.openRouterModel,
     messages: [
       {
-        role: "system",
-        content: SYSTEM_PROMPT.replaceAll("{{ANSWER_LENGTH}}", String(REALITEA_ANSWER_LENGTH)),
+        role: 'system',
+        content: SYSTEM_PROMPT.replaceAll('{{ANSWER_LENGTH}}', String(REALITEA_ANSWER_LENGTH)),
       },
       {
-        role: "user",
+        role: 'user',
         content: JSON.stringify({
           dateKey,
           excludedAnswers,
@@ -158,29 +166,29 @@ async function callGenerationApi(
     ],
     max_tokens: 2000,
     response_format: {
-      type: "json_schema",
+      type: 'json_schema',
       json_schema: {
-        name: "generation_response",
+        name: 'generation_response',
         schema: z.toJSONSchema(generationResponseSchema),
         strict: true,
       },
     },
     tools: [
       {
-        type: "openrouter:web_search",
+        type: 'openrouter:web_search',
         parameters: {
           allowed_domains: [BRAVO_PRIMARY_SOURCE_DOMAIN],
-          engine: "auto",
+          engine: 'auto',
           max_results: 10,
           max_total_results: 20,
-          search_context_size: "medium",
+          search_context_size: 'medium',
         },
       },
       {
-        type: "openrouter:web_fetch",
+        type: 'openrouter:web_fetch',
         parameters: {
           allowed_domains: [BRAVO_PRIMARY_SOURCE_DOMAIN],
-          engine: "openrouter",
+          engine: 'openrouter',
           max_content_tokens: 4000,
           max_uses: 8,
         },
@@ -189,17 +197,17 @@ async function callGenerationApi(
   };
 
   try {
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
       headers: {
         Authorization: `Bearer ${env.data.openRouterApiKey}`,
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(request),
     });
 
     if (!response.ok) {
-      console.warn("Generation API error", { dateKey, status: response.status });
+      console.warn('Generation API error', { dateKey, status: response.status });
       return null;
     }
 
@@ -209,19 +217,19 @@ async function callGenerationApi(
     const content = payload.choices?.[0]?.message?.content;
     if (!content) return null;
 
-    const cleanedContent = content.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
+    const cleanedContent = content.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
     const parsed = generationResponseSchema.parse(JSON.parse(cleanedContent));
     const previousAnswers = new Set(excludedAnswers);
 
     for (const candidate of parsed.candidates) {
       const result = validateCandidate(candidate, previousAnswers);
       if (result.valid) return candidate;
-      console.warn("Rejected candidate", { answer: candidate.answer, reasons: result.reasons });
+      console.warn('Rejected candidate', { answer: candidate.answer, reasons: result.reasons });
     }
 
     return null;
   } catch (err) {
-    console.error("Generation failed", { dateKey, err });
+    console.error('Generation failed', { dateKey, err });
     return null;
   }
 }
@@ -243,12 +251,12 @@ export async function generateScheduledPuzzle(dateKey: string): Promise<PuzzleRe
   for (let attempt = 0; attempt < 3 && !candidate; attempt++) {
     candidate = await callGenerationApi(dateKey, excludedAnswers);
     if (!candidate) {
-      console.warn("Generation attempt failed", { attempt: attempt + 1, dateKey });
+      console.warn('Generation attempt failed', { attempt: attempt + 1, dateKey });
     }
   }
 
   if (!candidate) {
-    console.warn("Puzzle generation failed after all attempts", { dateKey });
+    console.warn('Puzzle generation failed after all attempts', { dateKey });
     return null;
   }
 
@@ -256,10 +264,10 @@ export async function generateScheduledPuzzle(dateKey: string): Promise<PuzzleRe
   const now = new Date();
   const detailFromSummary =
     candidate.sourceSummary && candidate.sourceSummary.length > 0
-      ? candidate.sourceSummary.join(" ")
+      ? candidate.sourceSummary.join(' ')
       : candidate.detail;
   const dateValue = parseDate(window.dateKey)?.toISOString().slice(0, 10) ?? window.dateKey;
-  console.log("generateScheduledPuzzle INSERT START", { dateKey, answer: candidate.answer });
+  console.log('generateScheduledPuzzle INSERT START', { dateKey, answer: candidate.answer });
   const inserted = await db
     .insert(rhobhDailyPuzzles)
     .values({
@@ -272,24 +280,24 @@ export async function generateScheduledPuzzle(dateKey: string): Promise<PuzzleRe
       expireAt: window.expireAt,
       franchise: BRAVO_FRANCHISE,
       generationBatchId: null,
-      generationStatus: "published",
-      newsMode: "current",
+      generationStatus: 'published',
+      newsMode: 'current',
       normalizedAnswer: normalizeAnswer(candidate.answer),
       publishAt: window.publishAt,
-      role: "",
+      role: '',
       scheduledForDateKey: window.dateKey,
-      sourceKind: "current",
+      sourceKind: 'current',
       sourcePublishedAt: candidate.sourcePublishedAt ?? [],
       sourceSummary: candidate.sourceSummary ?? [],
       sourceTitles: candidate.sourceTitles ?? [],
       sourceUrls: candidate.sourceUrls,
-      status: "scheduled",
+      status: 'scheduled',
       updatedAt: now,
-      validationStatus: "approved",
+      validationStatus: 'approved',
     })
     .returning();
 
-  console.log("generateScheduledPuzzle INSERT DONE", { dateKey, id: inserted[0]?.id });
+  console.log('generateScheduledPuzzle INSERT DONE', { dateKey, id: inserted[0]?.id });
   return normalizePuzzleRecord(inserted[0] as Record<string, unknown>);
 }
 
@@ -308,7 +316,7 @@ export async function promoteScheduledPuzzle(now: Date): Promise<PuzzleRecord | 
       .where(
         and(
           eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
-          eq(rhobhDailyPuzzles.status, "scheduled"),
+          eq(rhobhDailyPuzzles.status, 'scheduled'),
           eq(rhobhDailyPuzzles.scheduledForDateKey, window.dateKey),
         ),
       )
@@ -325,7 +333,7 @@ export async function promoteScheduledPuzzle(now: Date): Promise<PuzzleRecord | 
         dateUtc: dateValue,
         expireAt: window.expireAt,
         publishAt: window.publishAt,
-        status: "published",
+        status: 'published',
         updatedAt: now,
       })
       .where(eq(rhobhDailyPuzzles.id, Number(scheduled.id)))
@@ -340,7 +348,7 @@ function toDailyPuzzle(record: PuzzleRecord): DailyPuzzle {
     answer: record.answer,
     answerType: record.answerType,
     clue: record.clue,
-    dateKey: record.scheduledForDateKey ?? record.dateKey ?? "",
+    dateKey: record.scheduledForDateKey ?? record.dateKey ?? '',
     detail: record.detail,
     role: record.role,
     sourceUrls: record.sourceUrls,
@@ -360,4 +368,85 @@ export async function getStoredAnswersForValidation(): Promise<Set<string>> {
     .from(rhobhDailyPuzzles)
     .where(eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE));
   return new Set(rows.map((r) => r.normalizedAnswer));
+}
+
+function toPublicDailyPuzzle(record: PuzzleRecord): PublicDailyPuzzle {
+  return {
+    answerLength: normalizeAnswer(record.answer).length,
+    answerType: record.answerType,
+    clue: record.clue,
+    dateKey: record.scheduledForDateKey ?? record.dateKey ?? '',
+    detail: record.detail,
+    role: record.role,
+    sourceUrls: record.sourceUrls,
+  };
+}
+
+export async function loadActivePublicPuzzle(
+  now: Date,
+): Promise<{ puzzle: PublicDailyPuzzle } | null> {
+  await markExpiredPuzzles(now);
+  const published = (await getPublishedPuzzle(now)) ?? (await promoteScheduledPuzzle(now));
+  if (!published) return null;
+  return { puzzle: toPublicDailyPuzzle(published) };
+}
+
+export async function loadPuzzleRecordByDateKey(dateKey: string): Promise<PuzzleRecord | null> {
+  const window = getPuzzleWindow(parseDate(dateKey) ?? new Date());
+  const rows = await db
+    .select()
+    .from(rhobhDailyPuzzles)
+    .where(
+      and(
+        eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
+        eq(rhobhDailyPuzzles.scheduledForDateKey, window.dateKey),
+        inArray(rhobhDailyPuzzles.status, ['published', 'scheduled']),
+      ),
+    )
+    .orderBy(desc(rhobhDailyPuzzles.createdAt))
+    .limit(1);
+  const row = rows[0] as Record<string, unknown> | undefined;
+  return row ? normalizePuzzleRecord(row) : null;
+}
+
+/**
+ * Server-evaluates a guess. The answer never leaves the server: callers receive
+ * per-letter states and the post-guess status only.
+ */
+export async function evaluateGuessServer(
+  dateKey: string,
+  rawWord: string,
+  previousGuesses: readonly { word: string }[],
+): Promise<RealiteaGuessResult> {
+  const word = normalizeGuess(rawWord);
+
+  if (word.length !== REALITEA_ANSWER_LENGTH) {
+    return { valid: false, word, reason: 'wrong-length' };
+  }
+
+  if (previousGuesses.some((guess) => guess.word === word)) {
+    return { valid: false, word, reason: 'already-guessed' };
+  }
+
+  const puzzle = await loadPuzzleRecordByDateKey(dateKey);
+  if (!puzzle) {
+    return { valid: false, word, reason: 'not-in-word-list' };
+  }
+
+  const inWordList = await isValidWord(word);
+  if (!inWordList) {
+    return { valid: false, word, reason: 'not-in-word-list' };
+  }
+
+  const states = evaluateGuess(puzzle.answer, word);
+  const isSolved = isGuessSolved({ word, states });
+  const guessCount = previousGuesses.length + 1;
+  const isGameOver = isSolved || guessCount >= MAX_GUESSES;
+  const status: RealiteaGuessResult['status'] = isSolved
+    ? 'solved'
+    : guessCount >= MAX_GUESSES
+      ? 'failed'
+      : 'playing';
+
+  return { valid: true, word, states, isSolved, isGameOver, status };
 }

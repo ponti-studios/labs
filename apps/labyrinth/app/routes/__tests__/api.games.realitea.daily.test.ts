@@ -1,15 +1,15 @@
-import type { LoaderFunctionArgs } from "react-router";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { LoaderFunctionArgs } from 'react-router';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const loadActivePuzzle = vi.fn();
+const loadActivePublicPuzzle = vi.fn();
 
-vi.mock("../../lib/realitea-daily-puzzle.server", () => ({
-  loadActivePuzzle,
+vi.mock('../../lib/realitea-daily-puzzle.server', () => ({
+  loadActivePublicPuzzle,
 }));
 
-describe("RealiTea daily puzzle loader", () => {
+describe('RealiTea daily puzzle loader', () => {
   beforeEach(() => {
-    loadActivePuzzle.mockReset();
+    loadActivePublicPuzzle.mockReset();
   });
 
   function createLoaderArgs(url: string): LoaderFunctionArgs {
@@ -18,47 +18,47 @@ describe("RealiTea daily puzzle loader", () => {
     return {
       context: {},
       params: {},
-      pattern: "",
+      pattern: '',
       request,
       url: new URL(request.url),
     } as LoaderFunctionArgs;
   }
 
-  it("returns the stored puzzle when one is available", async () => {
-    loadActivePuzzle.mockResolvedValue({
+  it('returns the public puzzle (no answer) when one is available', async () => {
+    loadActivePublicPuzzle.mockResolvedValue({
       puzzle: {
-        answer: "DRAMA",
-        answerType: "moment",
-        clue: "A clash that keeps the whole cast spinning.",
-        detail: "A single RHOBH conflict can dominate the full episode and aftermath.",
-        newsMode: "current",
-        puzzleKey: "rhobh-20599",
-        role: "Escalating conflict",
-        source: "database",
+        answerLength: 5,
+        answerType: 'moment',
+        clue: 'A clash that keeps the whole cast spinning.',
+        dateKey: '2026-05-27',
+        detail: 'A single RHOBH conflict can dominate the full episode and aftermath.',
+        role: 'Escalating conflict',
+        sourceUrls: ['https://www.bravotv.com/example'],
       },
     });
 
-    const { loader } = await import("../api.games.realitea.daily");
+    const { loader } = await import('../api.games.realitea.daily');
     const response = await loader(
-      createLoaderArgs("http://localhost/api/games/realitea/daily?date=2026-05-27"),
+      createLoaderArgs('http://localhost/api/games/realitea/daily?date=2026-05-27'),
     );
     const payload = await response.json();
 
     expect(response.status).toBe(200);
-    expect(payload.puzzle.answer).toBe("DRAMA");
-    expect(payload.puzzle.source).toBe("database");
+    expect(payload.puzzle.answer).toBeUndefined();
+    expect(payload.puzzle.dateKey).toBe('2026-05-27');
+    expect(payload.puzzle.answerLength).toBe(5);
   });
 
-  it("returns 404 when no puzzle exists for the requested day", async () => {
-    loadActivePuzzle.mockResolvedValue(null);
+  it('returns 404 when no puzzle exists for the requested day', async () => {
+    loadActivePublicPuzzle.mockResolvedValue(null);
 
-    const { loader } = await import("../api.games.realitea.daily");
+    const { loader } = await import('../api.games.realitea.daily');
     const response = await loader(
-      createLoaderArgs("http://localhost/api/games/realitea/daily?date=2026-05-27"),
+      createLoaderArgs('http://localhost/api/games/realitea/daily?date=2026-05-27'),
     );
     const payload = await response.json();
 
     expect(response.status).toBe(404);
-    expect(payload.error).toBe("No RealiTea puzzle found for today");
+    expect(payload.error).toBe('No RealiTea puzzle found for today');
   });
 });

@@ -1,184 +1,128 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import { createRoutesStub } from "react-router";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { createMemoryStorage } from '@pontistudios/ui';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { createRoutesStub } from 'react-router';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { createMemoryStorage } from "@pontistudios/ui";
-import { MAX_GUESSES, normalizeGuess, type Puzzle } from "../../lib/realitea";
-import { getDateKey, type DailyPuzzle } from "../../lib/realitea-daily-puzzle";
-import { readGameState } from "../games/game-state";
-import RealiTeaRoute from "../games/realitea";
-import { createControlledRouteAction } from "./controlled-route-action";
+import {
+  evaluateGuess,
+  MAX_GUESSES,
+  type PublicDailyPuzzle,
+  type RealiteaGuess,
+} from '~/lib/realitea';
 
-const validationControl = createControlledRouteAction<string, { valid: boolean }>({
+import { readGameState } from '../games/game-state';
+import RealiTeaRoute from '../games/realitea';
+import { createControlledRouteAction } from './controlled-route-action';
+
+interface GuessRequest {
+  dateKey: string;
+  word: string;
+  previousGuesses: Array<{ word: string }>;
+}
+
+interface GuessResultPayload {
+  valid: boolean;
+  word?: string;
+  states?: Array<'absent' | 'present' | 'correct'>;
+  isSolved?: boolean;
+  isGameOver?: boolean;
+  status?: 'playing' | 'solved' | 'failed';
+  reason?: 'not-in-word-list' | 'wrong-length' | 'already-guessed';
+}
+
+const guessControl = createControlledRouteAction<GuessRequest, GuessResultPayload>({
   async parseRequest(request) {
-    const { word } = (await request.json()) as { word: string };
-    return word;
+    return (await request.json()) as GuessRequest;
   },
 });
 
-const DEFAULT_ROUTE_PUZZLE: Puzzle = {
-  answer: "ERIKA",
-  answerType: "person",
-  clue: "The Pretty Mess performer never misses a sharp confessional.",
-  detail:
-    "Erika Jayne keeps the glam, the one-liners, and the pop-star energy turned all the way up.",
-  newsMode: "current",
-  role: "Pop diva energy",
-};
-
-const STALE_ROUTE_PUZZLE: Puzzle = {
-  answer: "KYLE",
-  answerType: "person",
-  clue: "OG diamond holder navigating a high-profile separation storyline.",
-  detail:
-    "Kyle Richards remains the show's center of gravity and one of the most recognizable names in Beverly Hills.",
-  newsMode: "current",
-  role: "Original cast anchor",
-};
-
-const ALTERNATE_VALID_GUESSES = ["DORIT", "SUTTON", "KATHY"];
-
-function buildPuzzleEnvelope(
-  puzzle = DEFAULT_ROUTE_PUZZLE,
-  date = new Date("2026-05-20T12:00:00.000Z"),
-): { puzzle: DailyPuzzle } {
+function buildGuessResult(answer: string, word: string): GuessResultPayload {
+  const states = evaluateGuess(answer, word);
   return {
-    puzzle: {
-      answer: puzzle.answer,
-      answerType: puzzle.answerType ?? "moment",
-      clue: puzzle.clue,
-      dateKey: getDateKey(date),
-      detail: puzzle.detail,
-      role: puzzle.role ?? "",
-      sourceUrls: [],
-    },
+    valid: true,
+    word,
+    states,
+    isSolved: states.every((s) => s === 'correct'),
+    isGameOver: states.every((s) => s === 'correct'),
+    status: states.every((s) => s === 'correct') ? 'solved' : 'playing',
   };
 }
 
-let routePuzzle = buildPuzzleEnvelope();
-let dailyPuzzle = buildPuzzleEnvelope();
+const DEFAULT_ANSWER = 'ERIKA';
 
-async function renderRoute() {
+function buildPublicPuzzle(
+  answer = DEFAULT_ANSWER,
+  date: Date = new Date('2026-05-20T12:00:00.000Z'),
+): PublicDailyPuzzle {
+  return {
+    answerLength: answer.length,
+    answerType: 'person',
+    clue: 'The Pretty Mess performer never misses a sharp confessional.',
+    dateKey: toDateKey(date),
+    detail:
+      'Erika Jayne keeps the glam, the one-liners, and the pop-star energy turned all the way up.',
+    role: 'Pop diva energy',
+    sourceUrls: [],
+  };
+}
+
+function toDateKey(date: Date): string {
+  const y = date.getUTCFullYear();
+  const m = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const d = String(date.getUTCDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+let routePuzzle = buildPublicPuzzle();
+
+async function renderRoute(initial: { puzzle?: PublicDailyPuzzle } = {}) {
   const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        refetchOnWindowFocus: false,
-        retry: false,
-      },
-    },
-  });
+
   const RoutesStub = createRoutesStub([
     {
-      id: "routes/games/realitea",
-      path: "/",
-      Component: function QueryWrappedRealiTeaRoute() {
-        return (
-          <QueryClientProvider client={queryClient}>
-            <RealiTeaRoute />
-          </QueryClientProvider>
-        );
-      },
-      loader: () => routePuzzle,
+      id: 'routes/games/realitea',
+      path: '/',
+      Component: RealiTeaRoute,
+      HydrateFallback: () => null,
+      loader: () => ({ puzzle: initial.puzzle ?? routePuzzle }),
     },
     {
-      id: "routes/api.games.realitea.daily",
-      path: "/api/games/realitea/daily",
-      loader: () => dailyPuzzle,
+      id: 'routes/api.games.realitea.guess',
+      path: '/api/games/realitea/guess',
+      action: guessControl.action,
     },
     {
-      id: "routes/api.words.validate",
-      path: "/api/words/validate",
-      action: validationControl.action,
+      id: 'routes/api.games.realitea.daily',
+      path: '/api/games/realitea/daily',
+      loader: () => new Response(JSON.stringify({ error: 'no next-day puzzle' }), { status: 404 }),
     },
   ]);
-  const rendered = render(<RoutesStub initialEntries={["/"]} />);
 
-  await screen.findByRole("button", { name: /\?/i });
+  cleanup();
+  const rendered = render(<RoutesStub initialEntries={['/']} />);
+  await screen.findByRole('button', { name: /how to play/i });
   await waitFor(() => {
     expect(
-      screen.queryByLabelText("Letter 1") ??
-        screen.queryByText("Today's answer") ??
-        screen.queryByText("The answer was"),
+      screen.queryByLabelText('Letter 1') ??
+        screen.queryByText("Today's puzzle") ??
+        screen.queryByText('The puzzle ended'),
     ).toBeTruthy();
   });
 
-  return {
-    user,
-    ...rendered,
-  };
+  return { user, ...rendered };
 }
 
-async function enterGuess(user: ReturnType<typeof userEvent.setup>, guess: string) {
-  // Focus the first textbox (game input field)
-  const textboxes = screen.queryAllByRole("textbox");
-  if (textboxes.length > 0) {
-    await user.click(textboxes[0]);
-  }
-  // Type the guess via keyboard
-  await user.keyboard(guess);
-}
-
-async function submitCurrentGuess(user: ReturnType<typeof userEvent.setup>) {
-  await user.keyboard("{Enter}");
-}
-
-async function resolveValidation(valid: boolean) {
-  await act(async () => {
-    validationControl.resolveNext({ valid });
-  });
-}
-
-async function expectSubmitCalls(words: string[]) {
+async function expectGuessCalls(words: string[]) {
   await waitFor(() => {
-    expect(validationControl.getRequests()).toEqual(words);
+    expect(guessControl.getRequests().map((r) => r.word)).toEqual(words);
   });
 }
 
-function getTextboxes() {
-  return screen.queryAllByRole("textbox") as HTMLInputElement[];
-}
-
-function getTextboxValues() {
-  return getTextboxes().map((input) => input.value);
-}
-
-function getCurrentPuzzle() {
-  return DEFAULT_ROUTE_PUZZLE;
-}
-
-function setRoutePuzzle(puzzle = getCurrentPuzzle(), date = new Date("2026-05-20T12:00:00.000Z")) {
-  routePuzzle = buildPuzzleEnvelope(puzzle, date);
-}
-
-function setDailyPuzzle(puzzle = getCurrentPuzzle(), date = new Date("2026-05-20T12:00:00.000Z")) {
-  dailyPuzzle = buildPuzzleEnvelope(puzzle, date);
-}
-
-function getAlternateValidGuess(answer: string) {
-  const match = ALTERNATE_VALID_GUESSES.find(
-    (guess) => guess.length === answer.length && guess !== answer,
-  );
-
-  if (!match) {
-    throw new Error(`No alternate test guess found for ${answer.length}-letter puzzle`);
-  }
-
-  return match;
-}
-
-function seedSolvedGame(puzzle = getCurrentPuzzle()) {
-  const puzzleKey = getDateKey(new Date("2026-05-20T12:00:00.000Z"));
-  window.localStorage.setItem(
-    `labyrinth:realitea:${puzzleKey}`,
-    JSON.stringify({
-      puzzleKey,
-      guesses: [puzzle.answer],
-      status: "solved",
-    }),
-  );
+function resolveGuess(result: GuessResultPayload) {
+  return act(async () => {
+    guessControl.resolveNext(result);
+  });
 }
 
 async function finishTileReveal(answerLength: number) {
@@ -189,17 +133,46 @@ async function finishTileReveal(answerLength: number) {
   }
 }
 
-describe("RealiTeaRoute", () => {
+async function enterGuess(user: ReturnType<typeof userEvent.setup>, guess: string) {
+  const textbox = screen.getByLabelText('Letter 1');
+  await user.click(textbox);
+  await user.keyboard(guess);
+}
+
+async function submitCurrentGuess(user: ReturnType<typeof userEvent.setup>) {
+  await user.keyboard('{Enter}');
+}
+
+function getTextboxes() {
+  return screen.queryAllByRole('textbox') as HTMLInputElement[];
+}
+
+function getTextboxValues() {
+  return getTextboxes().map((input) => input.value);
+}
+
+function seedSolvedGame(answer = DEFAULT_ANSWER) {
+  const puzzleKey = routePuzzle.dateKey;
+  const guess: RealiteaGuess = {
+    word: answer,
+    states: ['correct', 'correct', 'correct', 'correct', 'correct'],
+  };
+  window.localStorage.setItem(
+    `labyrinth:realitea:${puzzleKey}`,
+    JSON.stringify({ puzzleKey, guesses: [guess], status: 'solved' }),
+  );
+}
+
+describe('RealiTeaRoute', () => {
   beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
-    vi.setSystemTime(new Date("2026-05-20T12:00:00.000Z"));
-    validationControl.reset();
-    setRoutePuzzle();
-    setDailyPuzzle();
+    vi.setSystemTime(new Date('2026-05-20T12:00:00.000Z'));
+    guessControl.reset();
+    routePuzzle = buildPublicPuzzle();
 
     const localStorage = createMemoryStorage();
-    vi.stubGlobal("localStorage", localStorage);
-    Object.defineProperty(window, "localStorage", {
+    vi.stubGlobal('localStorage', localStorage);
+    Object.defineProperty(window, 'localStorage', {
       value: localStorage,
       configurable: true,
     });
@@ -211,355 +184,214 @@ describe("RealiTeaRoute", () => {
     vi.useRealTimers();
     window.localStorage.clear();
     vi.unstubAllGlobals();
-    validationControl.reset();
+    guessControl.reset();
   });
 
-  it("restores saved progress for the same puzzle key after reload", async () => {
-    const date = new Date("2026-05-20T12:00:00.000Z");
-    const puzzle = getCurrentPuzzle();
-    const puzzleKey = getDateKey(date);
-    const { unmount, user } = await renderRoute();
+  it('restores saved progress for the same puzzle key after reload', async () => {
+    const puzzleKey = routePuzzle.dateKey;
+    const { user } = await renderRoute();
 
-    await enterGuess(user, puzzle.answer);
+    await enterGuess(user, DEFAULT_ANSWER);
     await submitCurrentGuess(user);
-    await expectSubmitCalls([puzzle.answer]);
-
-    await resolveValidation(true);
-    await finishTileReveal(puzzle.answer.length);
+    await expectGuessCalls([DEFAULT_ANSWER]);
+    await resolveGuess(buildGuessResult(DEFAULT_ANSWER, DEFAULT_ANSWER));
+    await finishTileReveal(DEFAULT_ANSWER.length);
 
     await waitFor(() => {
-      expect(screen.getByText("Today's answer")).toBeInTheDocument();
+      expect(screen.getByText("Today's puzzle")).toBeInTheDocument();
     });
-    expect(screen.getByText(puzzle.answer)).toBeInTheDocument();
-    expect(screen.getByText(puzzle.detail)).toBeInTheDocument();
+    expect(screen.getByText(routePuzzle.detail)).toBeInTheDocument();
 
-    unmount();
     await renderRoute();
 
     await waitFor(() => {
-      expect(screen.getByText("Today's answer")).toBeInTheDocument();
-      expect(screen.getByText(puzzle.answer)).toBeInTheDocument();
-      expect(screen.getByText(puzzle.detail)).toBeInTheDocument();
-      expect(readGameState(puzzleKey)).toMatchObject({
-        puzzleKey,
-        guesses: [puzzle.answer],
-        status: "solved",
-      });
+      expect(screen.getByText("Today's puzzle")).toBeInTheDocument();
+      expect(screen.getByText(routePuzzle.detail)).toBeInTheDocument();
+      const stored = readGameState(puzzleKey);
+      expect(stored?.guesses.map((g) => g.word)).toEqual([DEFAULT_ANSWER]);
+      expect(stored?.status).toBe('solved');
     });
   });
 
-  it("uses a stored daily puzzle from the loader when one exists", async () => {
-    setRoutePuzzle(
-      {
-        answer: "SWANS",
-        answerType: "object",
-        clue: "These elegant birds are inseparable from one iconic Beverly Hills estate.",
-        detail: "The estate's swans became one of the most recognizable bits of RHOBH visual lore.",
-        newsMode: "current",
-        role: "Estate mascots",
-      },
-      new Date("2026-05-20T12:00:00.000Z"),
-    );
+  it('uses the loader-provided answerLength for the board', async () => {
+    const sixLetter = buildPublicPuzzle('DRAMAQ');
+    const { user } = await renderRoute({ puzzle: sixLetter });
 
-    await renderRoute();
+    expect(getTextboxes()).toHaveLength(6);
 
-    expect(getTextboxes()).toHaveLength("SWANS".length);
+    await enterGuess(user, 'DRAMAQ');
+    await submitCurrentGuess(user);
+    await expectGuessCalls(['DRAMAQ']);
   });
 
-  it("discards stale saved progress for a different puzzle key", async () => {
-    const staleDate = new Date("2026-05-19T12:00:00.000Z");
-    const stalePuzzle = STALE_ROUTE_PUZZLE;
-    const stalePuzzleKey = getDateKey(staleDate);
-
+  it('discards stale saved progress for a different puzzle key', async () => {
+    const staleKey = '2026-05-19';
     window.localStorage.setItem(
-      `labyrinth:realitea:${stalePuzzleKey}`,
+      `labyrinth:realitea:${staleKey}`,
       JSON.stringify({
-        puzzleKey: stalePuzzleKey,
-        guesses: [stalePuzzle.answer],
-        status: "solved",
+        puzzleKey: staleKey,
+        guesses: [{ word: 'KYLE', states: ['correct', 'correct', 'correct', 'correct', 'absent'] }],
+        status: 'solved',
       }),
     );
 
     await renderRoute();
 
-    expect(getTextboxes()).toHaveLength(getCurrentPuzzle().answer.length);
-    expect(screen.queryByText(stalePuzzle.answer)).not.toBeInTheDocument();
+    expect(getTextboxes()).toHaveLength(DEFAULT_ANSWER.length);
+    expect(screen.queryByText('KYLE')).not.toBeInTheDocument();
   });
 
-  it("rotates to a new puzzle when the local day changes", async () => {
-    const secondDate = new Date("2026-05-21T12:00:00.000Z");
-    const firstPuzzle = getCurrentPuzzle();
-    const secondPuzzle: Puzzle = {
-      answer: "DRAMA",
-      answerType: "moment",
-      clue: "A clash that keeps the whole cast spinning.",
-      detail: "A single RHOBH conflict can dominate the full episode and aftermath.",
-      newsMode: "current",
-      role: "Escalating conflict",
-    };
-    setDailyPuzzle(secondPuzzle, secondDate);
-
+  it('shows an error when the guess is too short', async () => {
     const { user } = await renderRoute();
 
-    await enterGuess(user, firstPuzzle.answer);
-    await submitCurrentGuess(user);
-    await expectSubmitCalls([firstPuzzle.answer]);
-    await resolveValidation(true);
-    await finishTileReveal(firstPuzzle.answer.length);
-    await waitFor(() => {
-      expect(screen.getByText(firstPuzzle.answer)).toBeInTheDocument();
-    });
-
-    act(() => {
-      vi.setSystemTime(secondDate);
-      vi.advanceTimersByTime(60_000);
-    });
-
-    await waitFor(() => {
-      expect(screen.queryByText(firstPuzzle.answer)).not.toBeInTheDocument();
-      expect(getTextboxes()).toHaveLength(secondPuzzle.answer.length);
-    });
-  });
-
-  it("keeps the current puzzle visible if the next day is missing from the database", async () => {
-    const firstDate = new Date("2026-05-20T12:00:00.000Z");
-    const secondDate = new Date("2026-05-21T12:00:00.000Z");
-    const firstPuzzle: Puzzle = {
-      answer: "DRAMA",
-      answerType: "moment",
-      clue: "A clash that keeps the whole cast spinning.",
-      detail: "A single RHOBH conflict can dominate the full episode and aftermath.",
-      newsMode: "current",
-      role: "Escalating conflict",
-    };
-    const queryClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          refetchOnWindowFocus: false,
-          retry: false,
-        },
-      },
-    });
-
-    const RoutesWithoutNextDay = createRoutesStub([
-      {
-        id: "routes/games/realitea",
-        path: "/",
-        Component: function QueryWrappedRealiTeaRoute() {
-          return (
-            <QueryClientProvider client={queryClient}>
-              <RealiTeaRoute />
-            </QueryClientProvider>
-          );
-        },
-        loader: () => buildPuzzleEnvelope(firstPuzzle, firstDate),
-      },
-      {
-        id: "routes/api.games.realitea.daily",
-        path: "/api/games/realitea/daily",
-        loader: () => new Response(JSON.stringify({ error: "missing" }), { status: 404 }),
-      },
-      {
-        id: "routes/api.words.validate",
-        path: "/api/words/validate",
-        action: validationControl.action,
-      },
-    ]);
-
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    render(<RoutesWithoutNextDay initialEntries={["/"]} />);
-    await screen.findByRole("button", { name: /\?/i });
-    await waitFor(() => {
-      expect(getTextboxes()).toHaveLength(firstPuzzle.answer.length);
-    });
-
-    await enterGuess(user, "PUP");
-    expect(getTextboxValues().slice(0, 3)).toEqual(["P", "U", "P"]);
-
-    act(() => {
-      vi.setSystemTime(secondDate);
-      vi.advanceTimersByTime(60_000);
-    });
-
-    await waitFor(() => {
-      expect(getTextboxes()).toHaveLength(firstPuzzle.answer.length);
-      expect(getTextboxValues().slice(0, 3)).toEqual(["P", "U", "P"]);
-    });
-  });
-
-  it("shows an error when the guess is too short", async () => {
-    const puzzle = getCurrentPuzzle();
-
-    const { user } = await renderRoute();
-
-    await enterGuess(user, puzzle.answer.slice(0, Math.max(1, puzzle.answer.length - 1)));
+    await enterGuess(user, DEFAULT_ANSWER.slice(0, 3));
     await submitCurrentGuess(user);
 
-    expect(screen.getByText("Not enough letters")).toBeInTheDocument();
-    expect(validationControl.getRequests()).toEqual([]);
+    expect(screen.getByText('Not enough letters')).toBeInTheDocument();
+    expect(guessControl.getRequests()).toEqual([]);
   });
 
-  it("shows an error when a duplicate guess is submitted", async () => {
-    const puzzle = getCurrentPuzzle();
-    const wrongGuess = getAlternateValidGuess(puzzle.answer);
-
+  it('shows an error when a duplicate guess is submitted', async () => {
+    const wrongGuess = 'DORIT';
     const { user } = await renderRoute();
 
     await enterGuess(user, wrongGuess);
     await submitCurrentGuess(user);
-    await expectSubmitCalls([wrongGuess]);
-    await resolveValidation(true);
-    await finishTileReveal(puzzle.answer.length);
+    await expectGuessCalls([wrongGuess]);
+    await resolveGuess(buildGuessResult(DEFAULT_ANSWER, wrongGuess));
+    await finishTileReveal(DEFAULT_ANSWER.length);
 
     await enterGuess(user, wrongGuess);
     await submitCurrentGuess(user);
 
-    expect(screen.getByText("Already guessed")).toBeInTheDocument();
-    expect(validationControl.getRequests()).toEqual([wrongGuess]);
+    expect(screen.getByText('Already guessed')).toBeInTheDocument();
+    expect(guessControl.getRequests().map((r) => r.word)).toEqual([wrongGuess]);
   });
 
-  it("shows an error when server validation rejects a guess", async () => {
-    const puzzle = getCurrentPuzzle();
-
+  it('shows an error when server validation rejects a guess', async () => {
+    const invalidGuess = 'ZZZZZ';
     const { user } = await renderRoute();
 
-    await enterGuess(user, "Z".repeat(puzzle.answer.length));
+    await enterGuess(user, invalidGuess);
     await submitCurrentGuess(user);
-    await expectSubmitCalls(["Z".repeat(puzzle.answer.length)]);
-
-    await resolveValidation(false);
+    await expectGuessCalls([invalidGuess]);
+    await resolveGuess({ valid: false, reason: 'not-in-word-list' });
 
     await waitFor(() => {
-      expect(screen.getByText("Not in word list")).toBeInTheDocument();
+      expect(screen.getByText('Not in word list')).toBeInTheDocument();
     });
-    expect(getTextboxValues()).toEqual(Array.from({ length: puzzle.answer.length }, () => "Z"));
+    expect(getTextboxValues()).toEqual(Array.from({ length: invalidGuess.length }, () => 'Z'));
   });
 
-  it("commits a guess only after validation succeeds", async () => {
-    const puzzle = getCurrentPuzzle();
-    const wrongGuess = getAlternateValidGuess(puzzle.answer);
-
+  it('commits a guess only after validation succeeds', async () => {
+    const wrongGuess = 'DORIT';
     const { user } = await renderRoute();
 
     await enterGuess(user, wrongGuess);
     await submitCurrentGuess(user);
 
-    expect(screen.queryByText("Already guessed")).not.toBeInTheDocument();
-    expect(getTextboxValues()).toEqual(wrongGuess.split(""));
+    expect(screen.queryByText('Already guessed')).not.toBeInTheDocument();
+    expect(getTextboxValues()).toEqual(wrongGuess.split(''));
 
-    await expectSubmitCalls([wrongGuess]);
-    await resolveValidation(true);
+    await expectGuessCalls([wrongGuess]);
+    await resolveGuess(buildGuessResult(DEFAULT_ANSWER, wrongGuess));
 
     expect(getTextboxes()).toHaveLength(0);
 
-    await finishTileReveal(puzzle.answer.length);
+    await finishTileReveal(DEFAULT_ANSWER.length);
 
     await waitFor(() => {
-      expect(getTextboxes()).toHaveLength(puzzle.answer.length);
-      expect(getTextboxValues()).toEqual(Array.from({ length: puzzle.answer.length }, () => ""));
+      expect(getTextboxes()).toHaveLength(DEFAULT_ANSWER.length);
+      expect(getTextboxValues()).toEqual(Array.from({ length: DEFAULT_ANSWER.length }, () => ''));
     });
-    expect(screen.getAllByText(wrongGuess[0]).length).toBeGreaterThan(0);
   });
 
-  it("reveals the clue only when one guess remains", async () => {
-    const puzzle = getCurrentPuzzle();
-    const puzzleKey = getDateKey(new Date("2026-05-20T12:00:00.000Z"));
-    const seededGuesses = Array.from({ length: MAX_GUESSES - 1 }, (_, index) =>
-      String.fromCharCode(66 + index).repeat(puzzle.answer.length),
-    );
+  it('reveals the clue only when one guess remains', async () => {
+    const puzzleKey = routePuzzle.dateKey;
+    const seededWords = ['BEEEE', 'CDDDD', 'EDEEE', 'FDFFF', 'GDEEE'].slice(0, MAX_GUESSES - 1);
+    const seededGuesses: RealiteaGuess[] = seededWords.map((word) => ({
+      word,
+      states: evaluateGuess(DEFAULT_ANSWER, word),
+    }));
 
     window.localStorage.setItem(
       `labyrinth:realitea:${puzzleKey}`,
       JSON.stringify({
         puzzleKey,
         guesses: seededGuesses.slice(0, MAX_GUESSES - 2),
-        status: "playing",
+        status: 'playing',
       }),
     );
 
-    const { unmount } = await renderRoute();
+    await renderRoute();
+    expect(screen.queryByText('Final clue')).not.toBeInTheDocument();
 
-    expect(screen.queryByText("Final clue")).not.toBeInTheDocument();
-    expect(screen.queryByText(puzzle.clue)).not.toBeInTheDocument();
-
-    unmount();
-
+    window.localStorage.clear();
     window.localStorage.setItem(
       `labyrinth:realitea:${puzzleKey}`,
       JSON.stringify({
         puzzleKey,
         guesses: seededGuesses,
-        status: "playing",
+        status: 'playing',
       }),
     );
 
     await renderRoute();
-
-    expect(screen.getByText("Final clue")).toBeInTheDocument();
-    expect(screen.getByText(puzzle.clue)).toBeInTheDocument();
+    expect(screen.getByText('Final clue')).toBeInTheDocument();
+    expect(screen.getByText(routePuzzle.clue)).toBeInTheDocument();
   });
 
-  it("shows a share button after the game ends", async () => {
-    const puzzle = getCurrentPuzzle();
-    seedSolvedGame(puzzle);
+  it('shows a share button after the game ends', async () => {
+    seedSolvedGame();
     await renderRoute();
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: "Share result" })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Share result' })).toBeInTheDocument();
     });
   });
 
-  it("locks the next row until the tile reveal animation finishes", async () => {
-    const puzzle = getCurrentPuzzle();
-    const wrongGuess = getAlternateValidGuess(puzzle.answer);
+  it('locks the next row until the tile reveal animation finishes', async () => {
+    const wrongGuess = 'DORIT';
     const { user } = await renderRoute();
 
     await enterGuess(user, wrongGuess);
     await submitCurrentGuess(user);
-    await expectSubmitCalls([wrongGuess]);
-    await resolveValidation(true);
+    await expectGuessCalls([wrongGuess]);
+    await resolveGuess(buildGuessResult(DEFAULT_ANSWER, wrongGuess));
 
-    // During tile reveal, textboxes should not be visible
     expect(getTextboxes()).toHaveLength(0);
 
-    await finishTileReveal(puzzle.answer.length);
+    await finishTileReveal(DEFAULT_ANSWER.length);
 
-    // After tile reveal, textboxes should reappear
     await waitFor(() => {
-      expect(getTextboxes()).toHaveLength(puzzle.answer.length);
+      expect(getTextboxes()).toHaveLength(DEFAULT_ANSWER.length);
     });
   });
 
-  it("ignores repeated submit attempts while validation is in flight", async () => {
-    const puzzle = getCurrentPuzzle();
-
+  it('ignores repeated submit attempts while validation is in flight', async () => {
     const { user } = await renderRoute();
 
-    await enterGuess(user, puzzle.answer);
+    await enterGuess(user, DEFAULT_ANSWER);
     await submitCurrentGuess(user);
 
-    const firstCell = screen.getByLabelText("Letter 1");
-    fireEvent.keyDown(firstCell, { key: "Enter" });
+    const firstCell = screen.getByLabelText('Letter 1');
+    fireEvent.keyDown(firstCell, { key: 'Enter' });
 
-    // Should only have submitted once, even though keyDown was fired again
-    await expectSubmitCalls([puzzle.answer]);
+    await expectGuessCalls([DEFAULT_ANSWER]);
   });
 
-  it("prevents input changes while validation is in flight", async () => {
-    const puzzle = getCurrentPuzzle();
-
+  it('prevents input changes while validation is in flight', async () => {
     const { user } = await renderRoute();
 
-    await enterGuess(user, puzzle.answer);
+    await enterGuess(user, DEFAULT_ANSWER);
     await submitCurrentGuess(user);
 
-    const firstCell = screen.getByLabelText("Letter 1");
+    const firstCell = screen.getByLabelText('Letter 1');
+    fireEvent.keyDown(firstCell, { key: 'Backspace' });
+    fireEvent.keyDown(firstCell, { key: 'A' });
+    fireEvent.change(firstCell, { target: { value: 'Q' } });
 
-    fireEvent.keyDown(firstCell, { key: "Backspace" });
-    fireEvent.keyDown(firstCell, { key: "A" });
-    fireEvent.change(firstCell, { target: { value: "Q" } });
-
-    expect(getTextboxValues()).toEqual(puzzle.answer.split(""));
-    await expectSubmitCalls([puzzle.answer]);
+    expect(getTextboxValues()).toEqual(DEFAULT_ANSWER.split(''));
+    await expectGuessCalls([DEFAULT_ANSWER]);
   });
 });

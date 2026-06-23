@@ -1,14 +1,23 @@
+import { Button } from "@pontistudios/ui";
 import { cva } from "class-variance-authority";
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useFetcher, useLoaderData, type LoaderFunctionArgs } from "react-router";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 
-import { Button, OnscreenKeyboard, type LetterState } from "@pontistudios/ui";
-import { evaluateGuess, getKeyboardState, MAX_GUESSES, normalizeGuess } from "~/lib/realitea";
-import { getDateKey, type DailyPuzzle } from "~/lib/realitea-daily-puzzle";
-import { loadActivePuzzle } from "~/lib/realitea-daily-puzzle.server";
-import { shareRealiTeaResult } from "~/lib/realitea-share";
+import {
+  getKeyboardState,
+  MAX_GUESSES,
+  type LetterState,
+  type RealiteaGuess,
+} from "~/lib/realitea";
+import { loadActivePublicPuzzle } from "~/lib/realitea-daily-puzzle.server";
 import { cn } from "~/lib/utils";
-import { useGameState } from "./game-state";
+
+import { readGameState, saveGameState } from "./game-state";
+import { useDailyPuzzle } from "./use-daily-puzzle";
+import { useRealiTeaGame } from "./use-reali-tea-game";
+import { useRealiTeaShare } from "./use-reali-tea-share";
+
+import "~/styles/realitea.css";
 
 const TILE_STATE_CLASSES: Record<LetterState, string> = {
   absent: "border-border bg-muted text-muted-foreground",
@@ -27,12 +36,10 @@ const TILE_BASE = cva(
         present: TILE_STATE_CLASSES.present,
       },
     },
-    defaultVariants: {
-      state: "empty",
-    },
+    defaultVariants: { state: "empty" },
   },
 );
-const TILE_REVEAL_STEP_MS = 250;
+
 const TILE_REVEAL_STYLES: Record<
   LetterState,
   { backgroundColor: string; borderColor: string; color: string }
@@ -54,24 +61,30 @@ const TILE_REVEAL_STYLES: Record<
   },
 };
 
-export async function loader(_args: LoaderFunctionArgs) {
-  const date = new Date();
-  const puzzle = await loadActivePuzzle(date);
+function getTileRevealStyle(state: LetterState): React.CSSProperties {
+  const finalStyle = TILE_REVEAL_STYLES[state];
 
-  if (!puzzle) {
+  return {
+    "--tile-final-background": finalStyle.backgroundColor,
+    "--tile-final-border": finalStyle.borderColor,
+    "--tile-final-color": finalStyle.color,
+  } as React.CSSProperties;
+}
+
+export async function loader(_args: LoaderFunctionArgs) {
+  const envelope = await loadActivePublicPuzzle(new Date());
+
+  if (!envelope) {
     throw Response.json(
       {
         code: "REALITEA_PUZZLE_NOT_FOUND",
         error: "No RealiTea puzzle found for today",
       },
-      {
-        status: 404,
-        statusText: "No RealiTea puzzle found for today",
-      },
+      { status: 404, statusText: "No RealiTea puzzle found for today" },
     );
   }
 
-  return Response.json(puzzle);
+  return Response.json(envelope);
 }
 
 export function meta() {
@@ -82,16 +95,6 @@ export function meta() {
       content: "Guess today's reality TV answer from a rotating daily word game.",
     },
   ];
-}
-
-function getTileRevealStyle(state: LetterState): React.CSSProperties {
-  const finalStyle = TILE_REVEAL_STYLES[state];
-
-  return {
-    "--tile-final-background": finalStyle.backgroundColor,
-    "--tile-final-border": finalStyle.borderColor,
-    "--tile-final-color": finalStyle.color,
-  } as React.CSSProperties;
 }
 
 type EmptyGuessRowProps = {
@@ -113,31 +116,27 @@ const EmptyGuessRow = memo(function EmptyGuessRow({ answerLength, className }: E
 });
 
 type RevealedGuessRowProps = {
-  answer: string;
   answerLength: number;
   className?: string;
-  guess: string;
+  guess: RealiteaGuess;
   isRevealingThisRow: boolean;
   revealedTileCount: number;
 };
 
 const RevealedGuessRow = memo(function RevealedGuessRow({
-  answer,
   answerLength,
   className,
   guess,
   isRevealingThisRow,
   revealedTileCount,
 }: RevealedGuessRowProps) {
-  const states = evaluateGuess(answer, guess);
-
   return (
     <div className={cn("flex gap-1.5 sm:gap-1", className)}>
       {Array.from({ length: answerLength }).map((_, cellIndex) => {
         const isTileRevealed = !isRevealingThisRow || cellIndex < revealedTileCount;
         const isAnimatingTile =
           isRevealingThisRow && revealedTileCount > 0 && cellIndex === revealedTileCount - 1;
-        const tileState = isTileRevealed ? states[cellIndex] : undefined;
+        const tileState = isTileRevealed ? guess.states[cellIndex] : undefined;
 
         return (
           <div
@@ -145,11 +144,11 @@ const RevealedGuessRow = memo(function RevealedGuessRow({
             className={cn(
               TILE_BASE({ state: tileState ?? "empty" }),
               "flex items-center justify-center",
-              isAnimatingTile && "tile-reveal",
+              isAnimatingTile && "realitea-tile-reveal",
             )}
-            style={isAnimatingTile ? getTileRevealStyle(states[cellIndex]) : undefined}
+            style={isAnimatingTile ? getTileRevealStyle(guess.states[cellIndex]) : undefined}
           >
-            {guess[cellIndex]?.trim() ?? ""}
+            {guess.word[cellIndex] ?? ""}
           </div>
         );
       })}
@@ -159,36 +158,33 @@ const RevealedGuessRow = memo(function RevealedGuessRow({
 
 type CurrentGuessRowProps = {
   answerLength: number;
+  cellRefs: React.MutableRefObject<Array<HTMLInputElement | null>>;
   currentGuess: string;
-  className?: string;
   hasError: boolean;
   isShaking: boolean;
   isValidationPending: boolean;
   onCellChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onCellFocus: () => void;
   onCellKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-  cellRefs: React.MutableRefObject<Array<HTMLInputElement | null>>;
 };
 
 const CurrentGuessRow = memo(function CurrentGuessRow({
   answerLength,
+  cellRefs,
   currentGuess,
-  className,
   hasError,
   isShaking,
   isValidationPending,
   onCellChange,
   onCellFocus,
   onCellKeyDown,
-  cellRefs,
 }: CurrentGuessRowProps) {
   return (
     <div
       className={cn(
-        "flex gap-1.5 transition-opacity sm:gap-1",
-        className,
-        hasError && "row-error",
-        isShaking && "row-shake",
+        "flex gap-1.5 sm:gap-1 transition-opacity",
+        hasError && "realitea-tile-error",
+        isShaking && "realitea-row-shake",
         isValidationPending && "opacity-60",
       )}
     >
@@ -204,8 +200,8 @@ const CurrentGuessRow = memo(function CurrentGuessRow({
           autoCorrect="off"
           className={cn(
             TILE_BASE({ state: "empty" }),
-            "bg-background text-center outline-none caret-transparent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
-            hasError && "tile-error",
+            "bg-background text-center outline-none caret-transparent focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-ring",
+            hasError && "realitea-tile-error",
           )}
           inputMode="none"
           maxLength={1}
@@ -221,222 +217,76 @@ const CurrentGuessRow = memo(function CurrentGuessRow({
   );
 });
 
+/**
+ * Skeleton that React Router renders during SSR / before hydration. The route
+ * reads `localStorage` for restored progress on the client, which would
+ * otherwise mismatch the server-rendered output.
+ */
+export function HydrateFallback() {
+  return (
+    <div className="-mx-4 min-h-[100dvh] bg-background md:mx-0 md:min-h-0">
+      <div className="mx-auto flex min-h-[100dvh] w-full max-w-md flex-col px-3 pb-2 pt-2 md:block md:min-h-0 md:max-w-2xl md:px-4 md:pt-4" />
+    </div>
+  );
+}
+
 export default function RealiTeaRoute() {
-  const initialData = useLoaderData<typeof loader>() as { puzzle: DailyPuzzle };
-  const [puzzleKey, setPuzzleKey] = useState(() => initialData.puzzle.dateKey);
-  const [puzzle, setPuzzle] = useState<DailyPuzzle>(() => initialData.puzzle);
-  const answerLength = puzzle.answer.length;
-  const dailyPuzzleFetcher = useFetcher<{ puzzle: DailyPuzzle }>();
-  const { gameState: GameState, saveGameState } = useGameState(puzzleKey);
-
-  const guesses = GameState?.guesses ?? [];
-  const [currentGuess, setCurrentGuess] = useState("");
+  const initial = useLoaderData() as { puzzle: import("~/lib/realitea").PublicDailyPuzzle };
   const [showInstructions, setShowInstructions] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [hasError, setHasError] = useState(false);
-  const [isShaking, setIsShaking] = useState(false);
-  const [revealingGuessIndex, setRevealingGuessIndex] = useState<number | null>(null);
-  const [revealedTileCount, setRevealedTileCount] = useState(0);
-  const shakeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const revealTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const wordValidator = useFetcher<{ valid: boolean }>();
-  const pendingGuessRef = useRef<string | null>(null);
-  const isValidationPending = wordValidator.state !== "idle";
-  const isRevealingRow = revealingGuessIndex !== null;
+  const { currentPuzzle } = useDailyPuzzle(initial.puzzle);
 
-  const cellRefs = useRef<Array<HTMLInputElement | null>>([]);
-
-  const keyboardState = useMemo(
-    () => getKeyboardState(puzzle.answer, guesses),
-    [guesses, puzzle.answer],
-  );
-  const hasSolvedGuess = guesses.at(-1) === puzzle.answer;
-  const isSolved = !isRevealingRow && hasSolvedGuess;
-  const isGameOver = !isRevealingRow && (hasSolvedGuess || guesses.length >= MAX_GUESSES);
-  const shouldShowClue = !isGameOver && guesses.length === MAX_GUESSES - 1;
-
-  useEffect(() => {
-    setPuzzle(initialData.puzzle);
-    setPuzzleKey(initialData.puzzle.dateKey);
-  }, [initialData]);
-
-  useEffect(() => {
-    if (!dailyPuzzleFetcher.data?.puzzle) return;
-    setPuzzle(dailyPuzzleFetcher.data.puzzle);
-    setPuzzleKey(dailyPuzzleFetcher.data.puzzle.dateKey);
-  }, [dailyPuzzleFetcher.data]);
-
-  useEffect(() => {
-    setCurrentGuess("");
-    setRevealingGuessIndex(null);
-    setRevealedTileCount(0);
-  }, [puzzleKey]);
-
-  useEffect(() => {
-    if (isGameOver || isRevealingRow) return;
-    const idx = Math.min(currentGuess.length, answerLength - 1);
-    cellRefs.current[idx]?.focus();
-  }, [currentGuess.length, answerLength, isGameOver, isRevealingRow]);
-
-  useEffect(() => {
-    function sync() {
-      const now = new Date();
-      const nextKey = getDateKey(now);
-
-      if (puzzleKey === nextKey) {
-        return;
-      }
-
-      dailyPuzzleFetcher.load(`/api/games/realitea/daily?date=${getDateKey(now)}`);
+  // Read once at mount. We deliberately do not subscribe to localStorage.
+  const [seed] = useState(() => {
+    if (typeof window === "undefined") {
+      return { guesses: [], status: "playing" as const };
     }
-
-    const id = window.setInterval(sync, 60_000);
-    document.addEventListener("visibilitychange", sync);
-    return () => {
-      window.clearInterval(id);
-      document.removeEventListener("visibilitychange", sync);
+    const stored = readGameState(currentPuzzle.dateKey);
+    return {
+      guesses: stored?.guesses ?? [],
+      status: stored?.status ?? ("playing" as const),
     };
-  }, [dailyPuzzleFetcher, puzzleKey]);
+  });
 
-  const addLetter = useCallback(
-    (value: string) => {
-      if (isGameOver || isValidationPending || isRevealingRow) return;
-      setCurrentGuess((prev) => (prev.length >= answerLength ? prev : prev + value));
-    },
-    [answerLength, isGameOver, isRevealingRow, isValidationPending],
-  );
+  const game = useRealiTeaGame({
+    puzzle: currentPuzzle,
+    initialGuesses: seed.guesses,
+    initialStatus: seed.status,
+  });
 
-  const removeLetter = useCallback(() => {
-    if (isGameOver || isValidationPending || isRevealingRow) return;
-    setCurrentGuess((prev) => prev.slice(0, -1));
-  }, [isGameOver, isRevealingRow, isValidationPending]);
-
-  const showToast = useCallback((message: string, shake = false) => {
-    if (shakeTimerRef.current) clearTimeout(shakeTimerRef.current);
-    setErrorMessage(message);
-    setIsShaking(shake);
-    setHasError(shake);
-    shakeTimerRef.current = setTimeout(() => {
-      setIsShaking(false);
-      setHasError(false);
-      setErrorMessage(null);
-    }, 400);
-  }, []);
-
-  const showError = useCallback(
-    (message: string) => {
-      showToast(message, true);
-    },
-    [showToast],
-  );
-
+  // Persist after every status/guess change. One-way write — no read.
   useEffect(() => {
-    return () => {
-      if (shakeTimerRef.current) clearTimeout(shakeTimerRef.current);
-      if (revealTimerRef.current) clearTimeout(revealTimerRef.current);
-    };
-  }, []);
+    saveGameState({
+      puzzleKey: currentPuzzle.dateKey,
+      guesses: [...game.guesses],
+      status: game.status,
+    });
+  }, [currentPuzzle.dateKey, game.guesses, game.status]);
 
-  const submitGuess = useCallback(() => {
-    if (isGameOver || isValidationPending || isRevealingRow) return;
+  const keyboardState = useMemo(() => getKeyboardState(game.guesses), [game.guesses]);
+  const shouldShowClue = !game.isGameOver && game.guesses.length === MAX_GUESSES - 1;
 
-    const guess = normalizeGuess(currentGuess);
-
-    if (guess.length !== answerLength) {
-      showError("Not enough letters");
-      return;
-    }
-
-    if (guesses.includes(guess)) {
-      showError("Already guessed");
-      return;
-    }
-
-    pendingGuessRef.current = guess;
-    wordValidator.submit(
-      { word: guess },
-      { method: "POST", action: "/api/words/validate", encType: "application/json" },
-    );
-  }, [
-    answerLength,
-    currentGuess,
-    guesses,
-    isGameOver,
-    isRevealingRow,
-    isValidationPending,
-    showError,
-    wordValidator,
-  ]);
-
-  useEffect(() => {
-    if (wordValidator.state !== "idle" || !wordValidator.data || !pendingGuessRef.current) return;
-    const guess = pendingGuessRef.current;
-    pendingGuessRef.current = null;
-    if (wordValidator.data.valid) {
-      const nextGuesses = [...guesses, guess];
-      setRevealingGuessIndex(guesses.length);
-      setRevealedTileCount(0);
-      saveGameState({
-        puzzleKey,
-        guesses: nextGuesses,
-        status:
-          guess === puzzle.answer
-            ? "solved"
-            : nextGuesses.length >= MAX_GUESSES
-              ? "failed"
-              : "playing",
-      });
-      setCurrentGuess("");
-    } else {
-      showError("Not in word list");
-    }
-  }, [
-    guesses,
-    puzzle.answer,
-    puzzleKey,
-    saveGameState,
-    showError,
-    wordValidator.data,
-    wordValidator.state,
-  ]);
-
-  useEffect(() => {
-    if (revealingGuessIndex === null) return;
-
-    if (revealedTileCount >= answerLength) {
-      revealTimerRef.current = setTimeout(() => {
-        setRevealingGuessIndex(null);
-        setRevealedTileCount(0);
-      }, TILE_REVEAL_STEP_MS);
-      return () => {
-        if (revealTimerRef.current) clearTimeout(revealTimerRef.current);
-      };
-    }
-
-    revealTimerRef.current = setTimeout(() => {
-      setRevealedTileCount((count) => count + 1);
-    }, TILE_REVEAL_STEP_MS);
-
-    return () => {
-      if (revealTimerRef.current) clearTimeout(revealTimerRef.current);
-    };
-  }, [answerLength, revealedTileCount, revealingGuessIndex]);
+  const { share } = useRealiTeaShare({
+    puzzle: currentPuzzle,
+    guesses: game.guesses,
+    isSolved: game.isSolved,
+    onResult: game.clearError,
+  });
 
   const handleCellKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
         e.preventDefault();
-        submitGuess();
+        game.submitGuess();
       } else if (e.key === "Backspace") {
         e.preventDefault();
-        removeLetter();
+        game.removeLetter();
       } else if (/^[a-z]$/i.test(e.key)) {
         e.preventDefault();
-        addLetter(e.key.toUpperCase());
+        game.addLetter(e.key.toUpperCase());
       }
     },
-    [addLetter, removeLetter, submitGuess],
+    [game.addLetter, game.removeLetter, game.submitGuess],
   );
 
   const handleCellChange = useCallback(
@@ -445,237 +295,162 @@ export default function RealiTeaRoute() {
         .replace(/[^a-zA-Z]/g, "")
         .toUpperCase()
         .charAt(0);
-      if (char) addLetter(char);
+      if (char) game.addLetter(char);
     },
-    [addLetter],
+    [game.addLetter],
   );
 
-  const redirectToActiveCell = useCallback(() => {
-    if (isGameOver || isRevealingRow) return;
-    const idx = Math.min(currentGuess.length, answerLength - 1);
-    cellRefs.current[idx]?.focus();
-  }, [currentGuess.length, answerLength, isGameOver, isRevealingRow]);
-
-  const handleShare = useCallback(async () => {
-    const result = await shareRealiTeaResult({
-      answer: puzzle.answer,
-      guesses,
-      isSolved,
-      copyToClipboard: async (text) => {
-        if (!navigator.clipboard?.writeText) {
-          throw new Error("Clipboard unavailable");
-        }
-
-        await navigator.clipboard.writeText(text);
-      },
-      promptCopy: (message, text) => {
-        window.prompt(message, text);
-      },
-    });
-
-    if (result.method === "clipboard") {
-      showToast("Copied!");
-    } else {
-      showToast("Share text ready");
-    }
-  }, [guesses, isSolved, puzzle.answer, showToast]);
-
   return (
-    <>
-      <style>{`
-      @keyframes realitea-shake {
-        0%, 100% { transform: translateX(0); }
-        20%, 60% { transform: translateX(-6px); }
-        40%, 80% { transform: translateX(6px); }
-      }
-      .row-shake { animation: realitea-shake 0.4s ease; }
-      @keyframes realitea-tile-error {
-        0%, 100% { background-color: var(--background); border-color: var(--border); }
-        50% { background-color: #fee2e2; border-color: #ef4444; }
-      }
-      .tile-error { animation: realitea-tile-error 0.4s ease; }
-      @keyframes realitea-tile-reveal {
-        0% {
-          transform: rotateX(0deg);
-          background-color: var(--background);
-          border-color: var(--border);
-          color: var(--foreground);
-        }
-        49% {
-          transform: rotateX(90deg);
-          background-color: var(--background);
-          border-color: var(--border);
-          color: var(--foreground);
-        }
-        50% {
-          transform: rotateX(90deg);
-          background-color: var(--tile-final-background);
-          border-color: var(--tile-final-border);
-          color: var(--tile-final-color);
-        }
-        100% {
-          transform: rotateX(0deg);
-          background-color: var(--tile-final-background);
-          border-color: var(--tile-final-border);
-          color: var(--tile-final-color);
-        }
-      }
-      .tile-reveal {
-        animation: realitea-tile-reveal ${TILE_REVEAL_STEP_MS}ms ease forwards;
-        transform-style: preserve-3d;
-      }
-    `}</style>
-      <div className="-mx-4 min-h-[100dvh] bg-background md:mx-0 md:min-h-0">
-        <div className="mx-auto flex min-h-[100dvh] w-full max-w-md flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+8px)] pt-2 md:block md:min-h-0 md:max-w-2xl md:px-4 md:pb-4 md:pt-4">
-          <header className="sticky top-0 z-10 -mx-3 border-b border-border bg-background/95 px-3 pb-1 pt-1 backdrop-blur md:static md:mx-0 md:border-b-0 md:bg-transparent md:px-0 md:pb-2 md:pt-0">
-            <div className="flex items-center justify-between gap-2">
-              <img src="/logo.realitea.png" alt="RealiTea" className="h-8 object-contain" />
-              <button
-                className="flex items-center justify-center h-8 w-8 rounded-md hover:bg-muted transition-colors"
-                onClick={() => setShowInstructions((v) => !v)}
-                type="button"
-                title="How to play"
-              >
-                <span className="text-sm font-medium">?</span>
-              </button>
-            </div>
-          </header>
+    <div className="-mx-4 min-h-[100dvh] bg-background md:mx-0 md:min-h-0">
+      <div className="mx-auto flex min-h-[100dvh] w-full max-w-md flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+8px)] pt-2 md:block md:min-h-0 md:max-w-2xl md:px-4 md:pb-4 md:pt-4">
+        <header className="sticky top-0 z-10 -mx-3 border-b border-border bg-background/95 px-3 pb-1 pt-1 backdrop-blur md:static md:mx-0 md:border-b-0 md:bg-transparent md:px-0 md:pb-2 md:pt-0">
+          <div className="flex items-center justify-between gap-2">
+            <img src="/logo.realitea.png" alt="RealiTea" className="h-8 object-contain" />
+            <button
+              aria-label="How to play"
+              className="flex h-8 w-8 items-center justify-center rounded-md transition-colors hover:bg-muted"
+              onClick={() => setShowInstructions((v) => !v)}
+              type="button"
+            >
+              <span className="text-sm font-medium">?</span>
+            </button>
+          </div>
+        </header>
 
-          {showInstructions && (
-            <div className="mt-2 rounded-xl border border-border bg-muted/30 p-3 text-sm leading-5 text-muted-foreground">
-              <p>Guess today&apos;s reality TV answer in 6 tries.</p>
-              <p className="mt-2">
-                <span className="font-medium text-emerald-700">Green</span> means the right letter
-                is in the right place. <span className="font-medium text-amber-700">Gold</span>{" "}
-                means the letter belongs in the answer but is in the wrong place.
-              </p>
-            </div>
-          )}
+        {showInstructions && (
+          <div className="mt-2 rounded-xl border border-border bg-muted/30 p-3 text-sm leading-5 text-muted-foreground">
+            <p>Guess today&apos;s reality TV answer in 6 tries.</p>
+            <p className="mt-2">
+              <span className="font-medium text-emerald-700">Green</span> means the right letter is
+              in the right place. <span className="font-medium text-amber-700">Gold</span> means the
+              letter belongs in the answer but is in the wrong place.
+            </p>
+          </div>
+        )}
 
-          <div className="flex flex-1 flex-col md:block md:flex-none">
-            <div className="flex-1 pt-3 md:flex-none">
-              {shouldShowClue && (
-                <div className="mb-3 rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm leading-5 text-amber-950 md:mb-2">
-                  <p className="text-xs font-medium uppercase tracking-[0.15em] text-amber-800">
-                    Final clue
-                  </p>
-                  <p className="mt-1">{puzzle.clue}</p>
-                </div>
-              )}
+        <div className="flex flex-1 flex-col md:block md:flex-none">
+          <div className="flex-1 pt-3 md:flex-none">
+            {shouldShowClue && (
+              <div className="mb-3 rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm leading-5 text-amber-950 md:mb-2">
+                <p className="text-xs font-medium uppercase tracking-[0.15em] text-amber-800">
+                  Final clue
+                </p>
+                <p className="mt-1">{currentPuzzle.clue}</p>
+              </div>
+            )}
 
-              <div className="mt-2 flex flex-col items-center gap-2">
-                <div className="w-fit space-y-1 sm:space-y-0.5">
-                  {Array.from({ length: isGameOver ? guesses.length : MAX_GUESSES }).map(
-                    (_, rowIndex) => {
-                      const isCurrentRow =
-                        rowIndex === guesses.length && !isGameOver && !isRevealingRow;
-                      const guess = guesses[rowIndex] ?? "";
-                      const isRevealingThisRow = rowIndex === revealingGuessIndex;
+            <div className="mt-2 flex flex-col items-center gap-2">
+              <div className="w-fit space-y-1 sm:space-y-0.5">
+                {Array.from({
+                  length: game.isGameOver ? game.guesses.length : MAX_GUESSES,
+                }).map((_, rowIndex) => {
+                  const isCurrentRow =
+                    rowIndex === game.guesses.length && !game.isGameOver && !game.isRevealingRow;
+                  const guess = game.guesses[rowIndex];
+                  const isRevealingThisRow = rowIndex === game.revealingGuessIndex;
 
-                      if (rowIndex < guesses.length) {
-                        return (
-                          <RevealedGuessRow
-                            key={`row-${rowIndex}`}
-                            answer={puzzle.answer}
-                            answerLength={answerLength}
-                            className=""
-                            guess={guess}
-                            isRevealingThisRow={isRevealingThisRow}
-                            revealedTileCount={revealedTileCount}
-                          />
-                        );
-                      }
+                  if (guess) {
+                    return (
+                      <RevealedGuessRow
+                        key={`row-${rowIndex}`}
+                        answerLength={currentPuzzle.answerLength}
+                        className=""
+                        guess={guess}
+                        isRevealingThisRow={isRevealingThisRow}
+                        revealedTileCount={game.revealedTileCount}
+                      />
+                    );
+                  }
 
-                      if (isCurrentRow) {
-                        return (
-                          <CurrentGuessRow
-                            key={`row-${rowIndex}`}
-                            answerLength={answerLength}
-                            cellRefs={cellRefs}
-                            className=""
-                            currentGuess={currentGuess}
-                            hasError={hasError}
-                            isShaking={isShaking}
-                            isValidationPending={isValidationPending}
-                            onCellChange={handleCellChange}
-                            onCellFocus={redirectToActiveCell}
-                            onCellKeyDown={handleCellKeyDown}
-                          />
-                        );
-                      }
+                  if (isCurrentRow) {
+                    return (
+                      <CurrentGuessRow
+                        key={`row-${rowIndex}`}
+                        answerLength={currentPuzzle.answerLength}
+                        cellRefs={game.cellRefs}
+                        currentGuess={game.currentGuess}
+                        hasError={game.hasError}
+                        isShaking={game.isShaking}
+                        isValidationPending={game.isValidationPending}
+                        onCellChange={handleCellChange}
+                        onCellFocus={game.redirectToActiveCell}
+                        onCellKeyDown={handleCellKeyDown}
+                      />
+                    );
+                  }
 
-                      return null;
-                    },
-                  )}
-                </div>
-
-                {errorMessage && (
-                  <p className="text-xs font-medium text-red-600 text-center">{errorMessage}</p>
-                )}
+                  return (
+                    <EmptyGuessRow
+                      key={`row-${rowIndex}`}
+                      answerLength={currentPuzzle.answerLength}
+                    />
+                  );
+                })}
               </div>
 
-              {isGameOver && (
-                <div className="mt-3 rounded-2xl border border-border bg-muted/25 p-3 md:p-4">
-                  <div>
-                    <p className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
-                      {isSolved ? "Today's answer" : "The answer was"}
-                    </p>
-                    <p className="mt-1 text-2xl font-bold tracking-tight text-foreground">
-                      {puzzle.answer}
-                    </p>
-                  </div>
-                  <p className="mt-2 text-sm leading-5 text-muted-foreground">{puzzle.detail}</p>
-                  {puzzle.sourceUrls && puzzle.sourceUrls.length > 0 && (
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {puzzle.sourceUrls.map((url: string, idx: number) => (
-                        <a
-                          key={idx}
-                          href={url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs text-blue-600 hover:underline"
-                        >
-                          Read more →
-                        </a>
-                      ))}
-                    </div>
-                  )}
-                  <div className="pt-3">
-                    <Button
-                      className="min-h-11 w-full md:w-auto"
-                      onClick={handleShare}
-                      type="button"
-                      variant="secondary"
-                    >
-                      Share result
-                    </Button>
-                  </div>
-                </div>
+              {game.errorMessage && (
+                <p className="text-center text-xs font-medium text-red-600">{game.errorMessage}</p>
               )}
             </div>
 
-            {!isGameOver && (
-              <div className="sticky bottom-0 z-10 -mx-3 mt-3 border-t border-border bg-background/95 px-2 pb-[calc(env(safe-area-inset-bottom)+6px)] pt-2 backdrop-blur md:static md:mx-0 md:mt-4 md:border-t-0 md:bg-transparent md:px-0 md:pb-0 md:pt-0">
-                <div className="flex flex-wrap justify-center gap-1">
-                  {Object.entries(keyboardState).map(([letter, state]) => (
-                    <div
-                      key={letter}
-                      className={cn(
-                        "text-xs font-medium px-1.5 py-0.5 rounded transition-opacity",
-                        state === "absent" && "opacity-20",
-                        state === "present" && "text-amber-700",
-                        state === "correct" && "text-emerald-700 font-bold",
-                      )}
-                    >
-                      {letter}
-                    </div>
-                  ))}
+            {game.isGameOver && (
+              <div className="mt-3 rounded-2xl border border-border bg-muted/25 p-3 md:p-4">
+                <p className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
+                  {game.isSolved ? "Today's puzzle" : "The puzzle ended"}
+                </p>
+                <p className="mt-2 text-sm leading-5 text-muted-foreground">
+                  {currentPuzzle.detail}
+                </p>
+                {currentPuzzle.sourceUrls.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {currentPuzzle.sourceUrls.map((url, idx) => (
+                      <a
+                        key={idx}
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-blue-600 hover:underline"
+                      >
+                        Read more →
+                      </a>
+                    ))}
+                  </div>
+                )}
+                <div className="pt-3">
+                  <Button
+                    className="min-h-11 w-full md:w-auto"
+                    onClick={share}
+                    type="button"
+                    variant="secondary"
+                  >
+                    Share result
+                  </Button>
                 </div>
               </div>
             )}
           </div>
+
+          {!game.isGameOver && (
+            <div className="sticky bottom-0 z-10 -mx-3 mt-3 border-t border-border bg-background/95 px-2 pb-[calc(env(safe-area-inset-bottom)+6px)] pt-2 backdrop-blur md:static md:mx-0 md:mt-4 md:border-t-0 md:bg-transparent md:px-0 md:pb-0 md:pt-0">
+              <div className="flex flex-wrap justify-center gap-1">
+                {Object.entries(keyboardState).map(([letter, state]) => (
+                  <div
+                    key={letter}
+                    className={cn(
+                      "rounded px-1.5 py-0.5 text-xs font-medium transition-opacity",
+                      state === "absent" && "opacity-20",
+                      state === "present" && "text-amber-700",
+                      state === "correct" && "font-bold text-emerald-700",
+                    )}
+                  >
+                    {letter}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
-    </>
+    </div>
   );
 }

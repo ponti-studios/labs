@@ -1,14 +1,13 @@
-import { MAX_GUESSES, evaluateGuess, type LetterState } from "./realitea";
+import type { LetterState, RealiteaGuess } from './realitea';
 
 const SHARE_TILES: Record<LetterState, string> = {
-  absent: "⬜",
-  present: "🟨",
-  correct: "🟩",
+  absent: '⬜',
+  present: '🟨',
+  correct: '🟩',
 };
 
 export interface ShareRealiTeaResultOptions {
-  answer: string;
-  guesses: string[];
+  guesses: readonly RealiteaGuess[];
   isSolved: boolean;
   date?: Date;
   copyToClipboard: (text: string) => Promise<void>;
@@ -16,45 +15,39 @@ export interface ShareRealiTeaResultOptions {
 }
 
 function formatShareDate(date: Date) {
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    timeZone: "UTC",
+  return new Intl.DateTimeFormat('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC',
   }).format(date);
 }
 
 export function buildRealiTeaShareText(
-  answer: string,
-  guesses: string[],
+  guesses: readonly RealiteaGuess[],
   isSolved: boolean,
   date = new Date(),
-) {
-  const score = isSolved ? `${guesses.length}/${MAX_GUESSES}` : `X/${MAX_GUESSES}`;
-  const rows = guesses.map((guess) =>
-    evaluateGuess(answer, guess)
-      .map((state) => SHARE_TILES[state])
-      .join(""),
-  );
+): string {
+  const score = isSolved ? `${guesses.length}/6` : 'X/6';
+  const rows = guesses.map((guess) => guess.states.map((state) => SHARE_TILES[state]).join(''));
 
-  return [`RealiTea - ${formatShareDate(date)}`, score, "", ...rows].join("\n");
+  return [`RealiTea - ${formatShareDate(date)}`, score, '', ...rows].join('\n');
 }
 
 export async function shareRealiTeaResult({
-  answer,
   guesses,
   isSolved,
   date = new Date(),
   copyToClipboard,
   promptCopy,
 }: ShareRealiTeaResultOptions) {
-  const shareText = buildRealiTeaShareText(answer, guesses, isSolved, date);
+  const shareText = buildRealiTeaShareText(guesses, isSolved, date);
 
   try {
     await copyToClipboard(shareText);
-    return { method: "clipboard" as const, shareText };
+    return { method: 'clipboard' as const, shareText };
   } catch {
-    promptCopy("Copy your RealiTea result:", shareText);
-    return { method: "prompt" as const, shareText };
+    promptCopy('Copy your RealiTea result:', shareText);
+    return { method: 'prompt' as const, shareText };
   }
 }
