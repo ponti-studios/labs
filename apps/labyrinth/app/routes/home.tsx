@@ -15,7 +15,7 @@ const categories: Category[] = [
   {
     name: "Games",
     entries: [
-      { path: "/games/realitea", label: "RaliTea" },
+      { path: "/games/realitea", label: "RealiTea" },
       { path: "/games/cards", label: "Cards" },
       { path: "/games/tetris", label: "Tetris" },
     ],
