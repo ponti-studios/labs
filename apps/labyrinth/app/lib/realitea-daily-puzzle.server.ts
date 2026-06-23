@@ -1,4 +1,5 @@
 import archiveMoments from "../data/rhobh-archive-moments.json";
+import rhobhGenerationSystemRaw from "./prompts/rhobh-generation-system.md?raw";
 
 import {
   and,
@@ -59,15 +60,12 @@ interface InventorySummary {
 const RHOBH_CURRENT_SOURCE_QUERIES = [
   {
     domain: RHOBH_PRIMARY_SOURCE_DOMAIN,
-    query: 'site:bravotv.com/the-daily-dish RHOBH OR "Real Housewives of Beverly Hills"',
+    query: "site:bravotv.com/the-daily-dish",
   },
-  { domain: "people.com", query: 'site:people.com RHOBH OR "Real Housewives of Beverly Hills"' },
-  { domain: "ew.com", query: 'site:ew.com RHOBH OR "Real Housewives of Beverly Hills"' },
-  { domain: "eonline.com", query: 'site:eonline.com RHOBH OR "Real Housewives of Beverly Hills"' },
-  {
-    domain: "usmagazine.com",
-    query: 'site:usmagazine.com RHOBH OR "Real Housewives of Beverly Hills"',
-  },
+  { domain: "people.com", query: "site:people.com" },
+  { domain: "ew.com", query: "site:ew.com" },
+  { domain: "eonline.com", query: "site:eonline.com" },
+  { domain: "usmagazine.com", query: "site:usmagazine.com" },
 ] as const;
 const RHOBH_SOURCE_COLLECTION_MAX_ITEMS = 5;
 const RHOBH_SOURCE_COLLECTION_MAX_TOKENS = 1200;
@@ -365,17 +363,10 @@ async function generateCandidatesFromSources(
     messages: [
       {
         role: "system",
-        content: [
-          "You create daily RealiTea puzzles for RHOBH.",
-          "Generate candidates only from current RHOBH coverage.",
-          "Return 3 to 5 candidates inside the schema field exactly.",
-          "Every answer must be supported by at least two distinct allowed-source domains, and one of them must be bravotv.com.",
-          "Do not use a cast member's name as the answer. Prefer the underlying storyline, object, place, phrase, or moment instead.",
-          `Choose answers that normalize to exactly ${RHOBH_ANSWER_LENGTH} letters after removing spaces and punctuation.`,
-          "Prefer concise single-word answers or short two-word answers that collapse cleanly to five letters.",
-          "Never leak the exact answer text in the clue or detail. Before returning, self-check that neither field contains the answer or a trivial restatement of it.",
-          "If a candidate cannot satisfy all of those rules, do not include it.",
-        ].join("\n"),
+        content: rhobhGenerationSystemRaw.replaceAll(
+          "{{ANSWER_LENGTH}}",
+          String(RHOBH_ANSWER_LENGTH),
+        ),
       },
       {
         role: "user",
