@@ -519,8 +519,8 @@ export default function RealiTeaRoute() {
       }
     `}</style>
       <div className="-mx-4 min-h-[100dvh] bg-background md:mx-0 md:min-h-0">
-        <div className="mx-auto flex min-h-[100dvh] w-full max-w-md flex-col px-4 pb-[calc(env(safe-area-inset-bottom)+12px)] pt-3 md:block md:min-h-0 md:max-w-2xl md:px-6 md:pb-8 md:pt-8">
-          <header className="sticky top-0 z-10 -mx-4 border-b border-border bg-background/95 px-4 pb-3 pt-1 backdrop-blur md:static md:mx-0 md:border-b-0 md:bg-transparent md:px-0 md:pb-4 md:pt-0">
+        <div className="mx-auto flex min-h-[100dvh] w-full max-w-md flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+8px)] pt-2 md:block md:min-h-0 md:max-w-2xl md:px-4 md:pb-4 md:pt-4">
+          <header className="sticky top-0 z-10 -mx-3 border-b border-border bg-background/95 px-3 pb-2 pt-1 backdrop-blur md:static md:mx-0 md:border-b-0 md:bg-transparent md:px-0 md:pb-3 md:pt-0">
             <div className="flex items-start justify-between gap-3">
               <div className="space-y-1">
                 <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
@@ -544,7 +544,7 @@ export default function RealiTeaRoute() {
           </header>
 
           {showInstructions && (
-            <div className="mt-3 rounded-2xl border border-border bg-muted/30 p-4 text-sm leading-6 text-muted-foreground">
+            <div className="mt-2 rounded-xl border border-border bg-muted/30 p-3 text-sm leading-5 text-muted-foreground">
               <p>Guess today&apos;s reality TV answer in 6 tries.</p>
               <p className="mt-2">
                 <span className="font-medium text-emerald-700">Green</span> means the right letter
@@ -555,8 +555,8 @@ export default function RealiTeaRoute() {
           )}
 
           <div className="flex flex-1 flex-col md:block md:flex-none">
-            <div className="flex-1 pt-4 md:flex-none">
-              <div className="rounded-[28px] border border-border bg-background px-3 py-4 md:px-6 md:py-6">
+            <div className="flex-1 pt-3 md:flex-none">
+              <div className="rounded-2xl border border-border bg-background px-2 py-3 md:px-4 md:py-4">
                 <div aria-live="polite" className="min-h-10">
                   {errorMessage && (
                     <p className="rounded-xl border border-border bg-foreground px-3 py-2 text-center text-sm font-medium text-background">
@@ -573,8 +573,8 @@ export default function RealiTeaRoute() {
                   )}
                 </div>
 
-                <div className="mt-3 flex justify-center">
-                  <div className="w-fit space-y-2 sm:space-y-1.5">
+                <div className="mt-2 flex justify-center">
+                  <div className="w-fit space-y-1.5 sm:space-y-1">
                     {Array.from({ length: MAX_GUESSES }).map((_, rowIndex) => {
                       const isCurrentRow =
                         rowIndex === guesses.length && !isGameOver && !isRevealingRow;
@@ -626,17 +626,17 @@ export default function RealiTeaRoute() {
               </div>
 
               {isGameOver && (
-                <div className="mt-4 rounded-3xl border border-border bg-muted/25 p-4 md:p-5">
+                <div className="mt-3 rounded-2xl border border-border bg-muted/25 p-3 md:p-4">
                   <div>
-                    <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+                    <p className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
                       {isSolved ? "Today's answer" : "The answer was"}
                     </p>
-                    <p className="mt-1 text-3xl font-bold tracking-tight text-foreground">
+                    <p className="mt-1 text-2xl font-bold tracking-tight text-foreground">
                       {puzzle.answer}
                     </p>
                   </div>
-                  <p className="mt-3 text-sm leading-6 text-muted-foreground">{puzzle.detail}</p>
-                  <div className="pt-4">
+                  <p className="mt-2 text-sm leading-5 text-muted-foreground">{puzzle.detail}</p>
+                  <div className="pt-3">
                     <Button
                       className="min-h-11 w-full md:w-auto"
                       onClick={handleShare}
@@ -651,7 +651,7 @@ export default function RealiTeaRoute() {
             </div>
 
             {!isGameOver && (
-              <div className="sticky bottom-0 z-10 -mx-4 mt-4 border-t border-border bg-background/95 px-3 pb-[calc(env(safe-area-inset-bottom)+10px)] pt-3 backdrop-blur md:static md:mx-0 md:mt-6 md:border-t-0 md:bg-transparent md:px-0 md:pb-0 md:pt-0">
+              <div className="sticky bottom-0 z-10 -mx-3 mt-2 border-t border-border bg-background/95 px-2 pb-[calc(env(safe-area-inset-bottom)+6px)] pt-2 backdrop-blur md:static md:mx-0 md:mt-4 md:border-t-0 md:bg-transparent md:px-0 md:pb-0 md:pt-0">
                 <OnscreenKeyboard
                   disabled={isGameOver || isValidationPending || isRevealingRow}
                   letterStates={keyboardState}
