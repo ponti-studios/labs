@@ -42,6 +42,7 @@ RUN apt-get update && \
 COPY --from=builder --chown=app:app /prod/labyrinth/node_modules ./node_modules
 COPY --from=builder --chown=app:app /prod/labyrinth/package.json ./package.json
 COPY --from=builder --chown=app:app /app/apps/labyrinth/build ./build
+COPY --from=builder --chown=app:app /app/apps/labyrinth/app/lib/prompts ./build/server/prompts
 
 USER app
 EXPOSE 3000
