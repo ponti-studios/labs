@@ -149,17 +149,11 @@ function getCurrentPuzzle() {
   return DEFAULT_ROUTE_PUZZLE;
 }
 
-function setRoutePuzzle(
-  puzzle = getCurrentPuzzle(),
-  date = new Date("2026-05-20T12:00:00.000Z"),
-) {
+function setRoutePuzzle(puzzle = getCurrentPuzzle(), date = new Date("2026-05-20T12:00:00.000Z")) {
   routePuzzle = buildPuzzleEnvelope(puzzle, date);
 }
 
-function setDailyPuzzle(
-  puzzle = getCurrentPuzzle(),
-  date = new Date("2026-05-20T12:00:00.000Z"),
-) {
+function setDailyPuzzle(puzzle = getCurrentPuzzle(), date = new Date("2026-05-20T12:00:00.000Z")) {
   dailyPuzzle = buildPuzzleEnvelope(puzzle, date);
 }
 

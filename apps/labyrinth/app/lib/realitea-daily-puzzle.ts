@@ -1,4 +1,9 @@
-import { normalizeAnswer, REALITEA_ANSWER_LENGTH, REALITEA_TIME_ZONE, type PuzzleAnswerType } from "./realitea";
+import {
+  normalizeAnswer,
+  REALITEA_ANSWER_LENGTH,
+  REALITEA_TIME_ZONE,
+  type PuzzleAnswerType,
+} from "./realitea";
 
 export const BRAVO_FRANCHISE = "bravo";
 export const BRAVO_PRIMARY_SOURCE_DOMAIN = "bravotv.com";

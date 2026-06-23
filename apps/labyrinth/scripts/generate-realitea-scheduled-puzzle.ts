@@ -1,6 +1,6 @@
 import { closeDb, db, eq, rhobhDailyPuzzles } from "@pontistudios/db";
 
-import { addDaysToDateKey, getDateKey, isDateKey, parseDate } from "../app/lib/realitea-daily-puzzle";
+import { addDaysToDateKey, getDateKey, isDateKey } from "../app/lib/realitea-daily-puzzle";
 import { generateScheduledPuzzle } from "../app/lib/realitea-daily-puzzle.server";
 
 interface GenerationOptions {
@@ -98,7 +98,9 @@ async function main() {
   const opts = parseArgs();
   const dateKeys = getDateRange(opts);
 
-  console.log(`\n📅 Generating puzzles for ${dateKeys.length} day(s)${opts.dryRun ? " (dry-run)" : ""}${opts.publish ? " (will publish)" : ""}\n`);
+  console.log(
+    `\n📅 Generating puzzles for ${dateKeys.length} day(s)${opts.dryRun ? " (dry-run)" : ""}${opts.publish ? " (will publish)" : ""}\n`,
+  );
 
   const results: Array<{ dateKey: string; status: string; id?: number; answer?: string }> = [];
 
@@ -132,7 +134,9 @@ async function main() {
     }
   }
 
-  console.log(`\n📊 Summary: ${results.filter((r) => r.status !== "failed" && r.status !== "error").length}/${dateKeys.length} succeeded\n`);
+  console.log(
+    `\n📊 Summary: ${results.filter((r) => r.status !== "failed" && r.status !== "error").length}/${dateKeys.length} succeeded\n`,
+  );
   console.log(JSON.stringify({ dates: dateKeys.length, results }, null, 2));
 }
 

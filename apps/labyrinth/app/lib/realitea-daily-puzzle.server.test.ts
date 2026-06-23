@@ -78,7 +78,8 @@ const PUBLISHED_ROW = {
   clue: "The Pretty Mess performer never misses a sharp confessional.",
   createdAt: new Date("2026-05-20T12:00:00.000Z"),
   dateUtc: "2026-05-20",
-  detail: "Erika Jayne keeps the glam, the one-liners, and the pop-star energy turned all the way up.",
+  detail:
+    "Erika Jayne keeps the glam, the one-liners, and the pop-star energy turned all the way up.",
   expireAt: new Date("2026-05-21T07:00:00.000Z"),
   franchise: "bravo",
   generationBatchId: null,
