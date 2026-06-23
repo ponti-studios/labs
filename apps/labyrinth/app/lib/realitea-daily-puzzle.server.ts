@@ -36,7 +36,7 @@ interface GenerationDependencies {
 }
 
 const SYSTEM_PROMPT = readFileSync(
-  pathJoin(__dirname, "./prompts/rhobh-generation-system.md"),
+  pathJoin(import.meta.dirname, "./prompts/rhobh-generation-system.md"),
   "utf-8",
 );
 
