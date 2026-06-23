@@ -166,6 +166,7 @@ type CurrentGuessRowProps = {
   answerLength: number;
   currentGuess: string;
   className?: string;
+  hasError: boolean;
   isShaking: boolean;
   isValidationPending: boolean;
   onCellChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -178,6 +179,7 @@ const CurrentGuessRow = memo(function CurrentGuessRow({
   answerLength,
   currentGuess,
   className,
+  hasError,
   isShaking,
   isValidationPending,
   onCellChange,
@@ -190,6 +192,7 @@ const CurrentGuessRow = memo(function CurrentGuessRow({
       className={cn(
         "flex gap-1.5 transition-opacity sm:gap-1",
         className,
+        hasError && "row-error",
         isShaking && "row-shake",
         isValidationPending && "opacity-60",
       )}
@@ -207,6 +210,7 @@ const CurrentGuessRow = memo(function CurrentGuessRow({
           className={cn(
             TILE_BASE({ state: "empty" }),
             "bg-background text-center outline-none caret-transparent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+            hasError && "tile-error",
           )}
           inputMode="none"
           maxLength={1}
@@ -234,6 +238,7 @@ export default function RealiTeaRoute() {
   const [currentGuess, setCurrentGuess] = useState("");
   const [showInstructions, setShowInstructions] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [hasError, setHasError] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
   const [revealingGuessIndex, setRevealingGuessIndex] = useState<number | null>(null);
   const [revealedTileCount, setRevealedTileCount] = useState(0);
@@ -316,10 +321,12 @@ export default function RealiTeaRoute() {
     if (shakeTimerRef.current) clearTimeout(shakeTimerRef.current);
     setErrorMessage(message);
     setIsShaking(shake);
+    setHasError(shake);
     shakeTimerRef.current = setTimeout(() => {
       setIsShaking(false);
+      setHasError(false);
       setErrorMessage(null);
-    }, 700);
+    }, 400);
   }, []);
 
   const showError = useCallback(
@@ -487,6 +494,11 @@ export default function RealiTeaRoute() {
         40%, 80% { transform: translateX(6px); }
       }
       .row-shake { animation: realitea-shake 0.4s ease; }
+      @keyframes realitea-tile-error {
+        0%, 100% { background-color: var(--background); border-color: var(--border); }
+        50% { background-color: #fee2e2; border-color: #ef4444; }
+      }
+      .tile-error { animation: realitea-tile-error 0.4s ease; }
       @keyframes realitea-tile-reveal {
         0% {
           transform: rotateX(0deg);
@@ -520,26 +532,17 @@ export default function RealiTeaRoute() {
     `}</style>
       <div className="-mx-4 min-h-[100dvh] bg-background md:mx-0 md:min-h-0">
         <div className="mx-auto flex min-h-[100dvh] w-full max-w-md flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+8px)] pt-2 md:block md:min-h-0 md:max-w-2xl md:px-4 md:pb-4 md:pt-4">
-          <header className="sticky top-0 z-10 -mx-3 border-b border-border bg-background/95 px-3 pb-2 pt-1 backdrop-blur md:static md:mx-0 md:border-b-0 md:bg-transparent md:px-0 md:pb-3 md:pt-0">
-            <div className="flex items-start justify-between gap-3">
-              <div className="space-y-1">
-                <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                  Daily puzzle
-                </p>
-                <h1 className="text-3xl font-semibold tracking-tight">RealiTea</h1>
-                <p className="text-sm text-muted-foreground">
-                  Guess {guesses.length + 1} of {MAX_GUESSES}. Five letters only.
-                </p>
-              </div>
-              <Button
-                className="min-h-11 shrink-0 px-4"
+          <header className="sticky top-0 z-10 -mx-3 border-b border-border bg-background/95 px-3 pb-1 pt-1 backdrop-blur md:static md:mx-0 md:border-b-0 md:bg-transparent md:px-0 md:pb-2 md:pt-0">
+            <div className="flex items-center justify-between gap-2">
+              <h1 className="text-2xl font-semibold tracking-tight">RealiTea</h1>
+              <button
+                className="flex items-center justify-center h-8 w-8 rounded-md hover:bg-muted transition-colors"
                 onClick={() => setShowInstructions((v) => !v)}
-                size="sm"
                 type="button"
-                variant="secondary"
+                title="How to play"
               >
-                {showInstructions ? "Hide rules" : "How to play"}
-              </Button>
+                <span className="text-sm font-medium">?</span>
+              </button>
             </div>
           </header>
 
@@ -556,31 +559,22 @@ export default function RealiTeaRoute() {
 
           <div className="flex flex-1 flex-col md:block md:flex-none">
             <div className="flex-1 pt-3 md:flex-none">
-              <div className="rounded-2xl border border-border bg-background px-2 py-3 md:px-4 md:py-4">
-                <div aria-live="polite" className="min-h-10">
-                  {errorMessage && (
-                    <p className="rounded-xl border border-border bg-foreground px-3 py-2 text-center text-sm font-medium text-background">
-                      {errorMessage}
-                    </p>
-                  )}
-                  {shouldShowClue && (
-                    <div className="rounded-2xl border border-amber-300 bg-amber-50 p-4 text-sm leading-6 text-amber-950">
-                      <p className="text-xs font-medium uppercase tracking-[0.2em] text-amber-800">
-                        Final guess clue
-                      </p>
-                      <p className="mt-2">{puzzle.clue}</p>
-                    </div>
-                  )}
+              {shouldShowClue && (
+                <div className="mb-3 rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm leading-5 text-amber-950 md:mb-2">
+                  <p className="text-xs font-medium uppercase tracking-[0.15em] text-amber-800">
+                    Final clue
+                  </p>
+                  <p className="mt-1">{puzzle.clue}</p>
                 </div>
+              )}
 
-                <div className="mt-2 flex justify-center">
-                  <div className="w-fit space-y-1.5 sm:space-y-1">
-                    {Array.from({ length: MAX_GUESSES }).map((_, rowIndex) => {
+              <div className="mt-2 flex flex-col items-center gap-2">
+                <div className="w-fit space-y-1 sm:space-y-0.5">
+                    {Array.from({ length: isGameOver ? guesses.length : MAX_GUESSES }).map((_, rowIndex) => {
                       const isCurrentRow =
                         rowIndex === guesses.length && !isGameOver && !isRevealingRow;
                       const guess = guesses[rowIndex] ?? "";
                       const isRevealingThisRow = rowIndex === revealingGuessIndex;
-                      const mobileRowClass = rowIndex < guesses.length ? "" : "opacity-70";
 
                       if (rowIndex < guesses.length) {
                         return (
@@ -604,6 +598,7 @@ export default function RealiTeaRoute() {
                             cellRefs={cellRefs}
                             className=""
                             currentGuess={currentGuess}
+                            hasError={hasError}
                             isShaking={isShaking}
                             isValidationPending={isValidationPending}
                             onCellChange={handleCellChange}
@@ -613,17 +608,16 @@ export default function RealiTeaRoute() {
                         );
                       }
 
-                      return (
-                        <EmptyGuessRow
-                          key={`row-${rowIndex}`}
-                          answerLength={answerLength}
-                          className={mobileRowClass}
-                        />
-                      );
+                      return null;
                     })}
                   </div>
+
+                  {errorMessage && (
+                    <p className="text-xs font-medium text-red-600 text-center">
+                      {errorMessage}
+                    </p>
+                  )}
                 </div>
-              </div>
 
               {isGameOver && (
                 <div className="mt-3 rounded-2xl border border-border bg-muted/25 p-3 md:p-4">
@@ -636,6 +630,21 @@ export default function RealiTeaRoute() {
                     </p>
                   </div>
                   <p className="mt-2 text-sm leading-5 text-muted-foreground">{puzzle.detail}</p>
+                  {puzzle.sourceUrls && puzzle.sourceUrls.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {puzzle.sourceUrls.map((url: string, idx: number) => (
+                        <a
+                          key={idx}
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-blue-600 hover:underline"
+                        >
+                          Read more →
+                        </a>
+                      ))}
+                    </div>
+                  )}
                   <div className="pt-3">
                     <Button
                       className="min-h-11 w-full md:w-auto"
@@ -651,14 +660,22 @@ export default function RealiTeaRoute() {
             </div>
 
             {!isGameOver && (
-              <div className="sticky bottom-0 z-10 -mx-3 mt-2 border-t border-border bg-background/95 px-2 pb-[calc(env(safe-area-inset-bottom)+6px)] pt-2 backdrop-blur md:static md:mx-0 md:mt-4 md:border-t-0 md:bg-transparent md:px-0 md:pb-0 md:pt-0">
-                <OnscreenKeyboard
-                  disabled={isGameOver || isValidationPending || isRevealingRow}
-                  letterStates={keyboardState}
-                  onBackspace={removeLetter}
-                  onEnter={submitGuess}
-                  onLetter={addLetter}
-                />
+              <div className="sticky bottom-0 z-10 -mx-3 mt-3 border-t border-border bg-background/95 px-2 pb-[calc(env(safe-area-inset-bottom)+6px)] pt-2 backdrop-blur md:static md:mx-0 md:mt-4 md:border-t-0 md:bg-transparent md:px-0 md:pb-0 md:pt-0">
+                <div className="flex flex-wrap justify-center gap-1">
+                  {Object.entries(keyboardState).map(([letter, state]) => (
+                    <div
+                      key={letter}
+                      className={cn(
+                        "text-xs font-medium px-1.5 py-0.5 rounded transition-opacity",
+                        state === "absent" && "opacity-20",
+                        state === "present" && "text-amber-700",
+                        state === "correct" && "text-emerald-700 font-bold",
+                      )}
+                    >
+                      {letter}
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>

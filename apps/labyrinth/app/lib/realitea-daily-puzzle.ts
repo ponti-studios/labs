@@ -14,6 +14,7 @@ export interface DailyPuzzle {
   dateKey: string;
   detail: string;
   role: string;
+  sourceUrls: string[];
 }
 
 export interface PuzzleRecord {
