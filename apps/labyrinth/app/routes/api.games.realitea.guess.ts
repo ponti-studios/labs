@@ -1,7 +1,7 @@
-import type { ActionFunctionArgs } from 'react-router';
-import { z } from 'zod';
+import type { ActionFunctionArgs } from "react-router";
+import { z } from "zod";
 
-import { evaluateGuessServer } from '~/lib/realitea-daily-puzzle.server';
+import { evaluateGuessServer } from "~/lib/realitea-daily-puzzle.server";
 
 const payloadSchema = z.object({
   dateKey: z.string().min(1),
@@ -13,8 +13,8 @@ const payloadSchema = z.object({
 });
 
 export async function action({ request }: ActionFunctionArgs) {
-  if (request.method !== 'POST') {
-    return Response.json({ error: 'Method not allowed' }, { status: 405 });
+  if (request.method !== "POST") {
+    return Response.json({ error: "Method not allowed" }, { status: 405 });
   }
 
   let parsed: z.infer<typeof payloadSchema>;
@@ -22,7 +22,7 @@ export async function action({ request }: ActionFunctionArgs) {
     const body = (await request.json()) as unknown;
     parsed = payloadSchema.parse(body);
   } catch {
-    return Response.json({ error: 'Invalid guess payload' }, { status: 400 });
+    return Response.json({ error: "Invalid guess payload" }, { status: 400 });
   }
 
   const result = await evaluateGuessServer(parsed.dateKey, parsed.word, parsed.previousGuesses);

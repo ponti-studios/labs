@@ -112,9 +112,7 @@ export default function CloudMargin() {
                   onChange={(e) => setNewAccrual((prev) => ({ ...prev, BALANCE: e.target.value }))}
                 />
               </div>
-              <Button onClick={addAccrual} className="btn btn-primary">
-                Add
-              </Button>
+              <Button onClick={addAccrual}>Add</Button>
             </div>
           </div>
 

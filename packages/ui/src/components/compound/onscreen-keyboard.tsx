@@ -10,11 +10,11 @@ export interface OnscreenKeyboardProps {
   /** Maps each uppercase letter to its current state. */
   letterStates?: Record<string, LetterState>;
   /** Called when a letter key is pressed. Receives the uppercase letter. */
-  onLetter: (letter: string) => void;
+  onLetter?: (letter: string) => void;
   /** Called when the Enter key is pressed. */
-  onEnter: () => void;
+  onEnter?: () => void;
   /** Called when the Backspace key is pressed. */
-  onBackspace: () => void;
+  onBackspace?: () => void;
   /** Disables all keys. */
   disabled?: boolean;
   className?: string;
@@ -64,7 +64,7 @@ export function OnscreenKeyboard({
             <button
               className={cn(keyboardKeyVariants({ kind: "action", state: "action" }))}
               disabled={disabled}
-              onClick={onEnter}
+              onClick={onEnter ? () => onEnter() : undefined}
               type="button"
             >
               Enter
@@ -77,7 +77,7 @@ export function OnscreenKeyboard({
                 keyboardKeyVariants({ kind: "letter", state: letterStates[letter] ?? "inactive" }),
               )}
               disabled={disabled}
-              onClick={() => onLetter(letter)}
+              onClick={onLetter ? () => onLetter(letter) : undefined}
               type="button"
             >
               {letter}
@@ -87,7 +87,7 @@ export function OnscreenKeyboard({
             <button
               className={cn(keyboardKeyVariants({ kind: "action", state: "action" }))}
               disabled={disabled}
-              onClick={onBackspace}
+              onClick={onBackspace ? () => onBackspace() : undefined}
               type="button"
             >
               ⌫

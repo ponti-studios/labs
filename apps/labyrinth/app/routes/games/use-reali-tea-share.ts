@@ -1,9 +1,9 @@
-import { useCallback } from 'react';
+import { useCallback } from "react";
 
-import type { PublicDailyPuzzle, RealiteaGuess } from '~/lib/realitea';
-import { shareRealiTeaResult } from '~/lib/realitea-share';
+import type { PublicDailyPuzzle, RealiteaGuess } from "~/lib/realitea";
+import { shareRealiTeaResult } from "~/lib/realitea-share";
 
-export type ShareOutcome = 'copied' | 'prompt' | 'error';
+export type ShareOutcome = "copied" | "prompt" | "error";
 
 export interface UseRealiTeaShare {
   share: () => Promise<ShareOutcome>;
@@ -31,7 +31,7 @@ export function useRealiTeaShare({
         isSolved,
         copyToClipboard: async (text) => {
           if (!navigator.clipboard?.writeText) {
-            throw new Error('Clipboard unavailable');
+            throw new Error("Clipboard unavailable");
           }
           await navigator.clipboard.writeText(text);
         },
@@ -40,12 +40,12 @@ export function useRealiTeaShare({
         },
       });
 
-      const outcome: ShareOutcome = result.method === 'clipboard' ? 'copied' : 'prompt';
+      const outcome: ShareOutcome = result.method === "clipboard" ? "copied" : "prompt";
       onResult(outcome);
       return outcome;
     } catch {
-      onResult('error');
-      return 'error';
+      onResult("error");
+      return "error";
     }
   }, [guesses, isSolved, onResult]);
 

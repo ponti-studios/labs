@@ -103,9 +103,7 @@ export default function ClickTherapeutics(): JSX.Element {
             onChange={(event) => setNumCandidates(Number(event.target.value))}
           />
         </Label>
-        <Button className="btn btn-primary" onClick={run}>
-          Run
-        </Button>
+        <Button onClick={run}>Run</Button>
       </div>
 
       <div className="mb-4">

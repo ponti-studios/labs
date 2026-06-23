@@ -1,4 +1,4 @@
-import { Button } from "@pontistudios/ui";
+import { Button, OnscreenKeyboard } from "@pontistudios/ui";
 import { cva } from "class-variance-authority";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useLoaderData, type LoaderFunctionArgs } from "react-router";
@@ -6,6 +6,7 @@ import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 import {
   getKeyboardState,
   MAX_GUESSES,
+  type GameStatus,
   type LetterState,
   type RealiteaGuess,
 } from "~/lib/realitea";
@@ -18,6 +19,7 @@ import { useRealiTeaGame } from "./use-reali-tea-game";
 import { useRealiTeaShare } from "./use-reali-tea-share";
 
 import "~/styles/realitea.css";
+import { LucideShare, LucideShare2 } from "lucide-react";
 
 const TILE_STATE_CLASSES: Record<LetterState, string> = {
   absent: "border-border bg-muted text-muted-foreground",
@@ -99,12 +101,11 @@ export function meta() {
 
 type EmptyGuessRowProps = {
   answerLength: number;
-  className?: string;
 };
 
-const EmptyGuessRow = memo(function EmptyGuessRow({ answerLength, className }: EmptyGuessRowProps) {
+const EmptyGuessRow = memo(function EmptyGuessRow({ answerLength }: EmptyGuessRowProps) {
   return (
-    <div className={cn("flex gap-1.5 sm:gap-1", className)}>
+    <div className="flex gap-1.5 sm:gap-1">
       {Array.from({ length: answerLength }).map((_, cellIndex) => (
         <div
           key={`empty-cell-${cellIndex}`}
@@ -117,7 +118,6 @@ const EmptyGuessRow = memo(function EmptyGuessRow({ answerLength, className }: E
 
 type RevealedGuessRowProps = {
   answerLength: number;
-  className?: string;
   guess: RealiteaGuess;
   isRevealingThisRow: boolean;
   revealedTileCount: number;
@@ -125,13 +125,12 @@ type RevealedGuessRowProps = {
 
 const RevealedGuessRow = memo(function RevealedGuessRow({
   answerLength,
-  className,
   guess,
   isRevealingThisRow,
   revealedTileCount,
 }: RevealedGuessRowProps) {
   return (
-    <div className={cn("flex gap-1.5 sm:gap-1", className)}>
+    <div className="flex gap-1.5 sm:gap-1">
       {Array.from({ length: answerLength }).map((_, cellIndex) => {
         const isTileRevealed = !isRevealingThisRow || cellIndex < revealedTileCount;
         const isAnimatingTile =
@@ -237,21 +236,23 @@ export default function RealiTeaRoute() {
   const { currentPuzzle } = useDailyPuzzle(initial.puzzle);
 
   // Read once at mount. We deliberately do not subscribe to localStorage.
+  // useState lazy initializer runs exactly once per mount — one-shot seed,
+  // not reactive state. If the puzzle rolls over at midnight, the reset
+  // effect in useRealiTeaGame handles the transition.
   const [seed] = useState(() => {
     if (typeof window === "undefined") {
-      return { guesses: [], status: "playing" as const };
+      return { guesses: [] as RealiteaGuess[], status: "playing" as GameStatus };
     }
     const stored = readGameState(currentPuzzle.dateKey);
     return {
       guesses: stored?.guesses ?? [],
-      status: stored?.status ?? ("playing" as const),
+      status: stored?.status ?? ("playing" as GameStatus),
     };
   });
 
   const game = useRealiTeaGame({
     puzzle: currentPuzzle,
     initialGuesses: seed.guesses,
-    initialStatus: seed.status,
   });
 
   // Persist after every status/guess change. One-way write — no read.
@@ -272,6 +273,15 @@ export default function RealiTeaRoute() {
     isSolved: game.isSolved,
     onResult: game.clearError,
   });
+
+  // Auto-focus the active cell whenever the game transitions to an
+  // input-ready state (fresh mount, after a guess is submitted and the
+  // tile reveal finishes, after midnight rollover). This ensures
+  // physical/device keyboard input always has a target to receive events.
+  useEffect(() => {
+    if (game.isGameOver || game.isRevealingRow || game.isValidationPending) return;
+    game.redirectToActiveCell();
+  }, [game.guesses.length, game.isGameOver, game.isRevealingRow, game.isValidationPending]);
 
   const handleCellKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -354,7 +364,6 @@ export default function RealiTeaRoute() {
                       <RevealedGuessRow
                         key={`row-${rowIndex}`}
                         answerLength={currentPuzzle.answerLength}
-                        className=""
                         guess={guess}
                         isRevealingThisRow={isRevealingThisRow}
                         revealedTileCount={game.revealedTileCount}
@@ -394,37 +403,30 @@ export default function RealiTeaRoute() {
             </div>
 
             {game.isGameOver && (
-              <div className="mt-3 rounded-2xl border border-border bg-muted/25 p-3 md:p-4">
+              <div className="mt-6 rounded max-w-md mx-auto border border-border bg-muted/25 p-3 md:p-4">
                 <p className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
-                  {game.isSolved ? "Today's puzzle" : "The puzzle ended"}
+                  {game.isSolved ? "The Story" : "The puzzle ended"}
                 </p>
-                <p className="mt-2 text-sm leading-5 text-muted-foreground">
-                  {currentPuzzle.detail}
-                </p>
-                {currentPuzzle.sourceUrls.length > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {currentPuzzle.sourceUrls.map((url, idx) => (
-                      <a
-                        key={idx}
-                        href={url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs text-blue-600 hover:underline"
-                      >
-                        Read more →
-                      </a>
-                    ))}
-                  </div>
-                )}
-                <div className="pt-3">
+                <p className="mt-2 text-sm leading-5">{currentPuzzle.detail}</p>
+                <div className="flex justify-end gap-2 pt-3 md:pt-4">
                   <Button
-                    className="min-h-11 w-full md:w-auto"
+                    className="w-full md:w-auto"
                     onClick={share}
                     type="button"
                     variant="secondary"
                   >
-                    Share result
+                    <LucideShare />
                   </Button>
+                  {currentPuzzle.sourceUrls.length > 0 && (
+                    <a
+                      href={currentPuzzle.sourceUrls.at(0)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-4 py-2 text-sm font-medium bg-primary text-secondary rounded transition-colors hover:text-emerald-200"
+                    >
+                      Read more →
+                    </a>
+                  )}
                 </div>
               </div>
             )}
@@ -432,21 +434,7 @@ export default function RealiTeaRoute() {
 
           {!game.isGameOver && (
             <div className="sticky bottom-0 z-10 -mx-3 mt-3 border-t border-border bg-background/95 px-2 pb-[calc(env(safe-area-inset-bottom)+6px)] pt-2 backdrop-blur md:static md:mx-0 md:mt-4 md:border-t-0 md:bg-transparent md:px-0 md:pb-0 md:pt-0">
-              <div className="flex flex-wrap justify-center gap-1">
-                {Object.entries(keyboardState).map(([letter, state]) => (
-                  <div
-                    key={letter}
-                    className={cn(
-                      "rounded px-1.5 py-0.5 text-xs font-medium transition-opacity",
-                      state === "absent" && "opacity-20",
-                      state === "present" && "text-amber-700",
-                      state === "correct" && "font-bold text-emerald-700",
-                    )}
-                  >
-                    {letter}
-                  </div>
-                ))}
-              </div>
+              <OnscreenKeyboard letterStates={keyboardState} />
             </div>
           )}
         </div>

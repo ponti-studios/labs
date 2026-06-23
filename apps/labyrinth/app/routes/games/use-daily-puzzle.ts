@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
-import { useFetcher, type Fetcher } from 'react-router';
+import { useEffect } from "react";
+import { useFetcher, type Fetcher } from "react-router";
 
-import { type PublicDailyPuzzle } from '~/lib/realitea';
-import { getDateKey } from '~/lib/realitea-daily-puzzle';
+import { type PublicDailyPuzzle } from "~/lib/realitea";
+import { getDateKey } from "~/lib/realitea-daily-puzzle";
 
 interface DailyPuzzleResponse {
   puzzle: PublicDailyPuzzle;
@@ -36,10 +36,10 @@ export function useDailyPuzzle(initial: PublicDailyPuzzle): UseDailyPuzzle {
     };
 
     const interval = window.setInterval(sync, 60_000);
-    document.addEventListener('visibilitychange', sync);
+    document.addEventListener("visibilitychange", sync);
     return () => {
       window.clearInterval(interval);
-      document.removeEventListener('visibilitychange', sync);
+      document.removeEventListener("visibilitychange", sync);
     };
   }, [dailyPuzzleFetcher, initial.dateKey]);
 

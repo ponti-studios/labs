@@ -3,9 +3,9 @@ import {
   type GameStatus,
   type LetterState,
   type RealiteaGuess,
-} from '~/lib/realitea';
+} from "~/lib/realitea";
 
-const STORAGE_PREFIX = 'labyrinth:realitea:';
+const STORAGE_PREFIX = "labyrinth:realitea:";
 
 export interface GameState {
   puzzleKey: string;
@@ -17,16 +17,16 @@ function getStorageKey(puzzleKey: string) {
   return `${STORAGE_PREFIX}${puzzleKey}`;
 }
 
-const LETTER_STATES: readonly LetterState[] = ['absent', 'present', 'correct'];
+const LETTER_STATES: readonly LetterState[] = ["absent", "present", "correct"];
 
 function isLetterState(value: unknown): value is LetterState {
-  return typeof value === 'string' && LETTER_STATES.includes(value as LetterState);
+  return typeof value === "string" && LETTER_STATES.includes(value as LetterState);
 }
 
 function isStoredGuess(value: unknown): value is RealiteaGuess {
-  if (!value || typeof value !== 'object') return false;
+  if (!value || typeof value !== "object") return false;
   const guess = value as Partial<RealiteaGuess>;
-  if (typeof guess.word !== 'string') return false;
+  if (typeof guess.word !== "string") return false;
   if (!Array.isArray(guess.states)) return false;
   return guess.states.every(isLetterState);
 }
@@ -39,7 +39,7 @@ function isStoredGuess(value: unknown): value is RealiteaGuess {
  * read reactively.
  */
 export function readGameState(puzzleKey: string): GameState | null {
-  if (typeof window === 'undefined') return null;
+  if (typeof window === "undefined") return null;
 
   const saved = window.localStorage.getItem(getStorageKey(puzzleKey));
   if (!saved) return null;
@@ -49,7 +49,7 @@ export function readGameState(puzzleKey: string): GameState | null {
     if (
       parsed.puzzleKey !== puzzleKey ||
       !Array.isArray(parsed.guesses) ||
-      (parsed.status !== 'playing' && parsed.status !== 'solved' && parsed.status !== 'failed')
+      (parsed.status !== "playing" && parsed.status !== "solved" && parsed.status !== "failed")
     ) {
       return null;
     }
@@ -69,6 +69,6 @@ export function readGameState(puzzleKey: string): GameState | null {
 }
 
 export function saveGameState(state: GameState) {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return;
   window.localStorage.setItem(getStorageKey(state.puzzleKey), JSON.stringify(state));
 }

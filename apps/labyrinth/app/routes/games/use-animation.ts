@@ -38,18 +38,13 @@ export function useAnimation(answerLength: number) {
   useEffect(() => {
     if (revealingGuessIndex === null) return;
 
-    if (revealedTileCount >= answerLength) {
-      revealTimerRef.current = setTimeout(() => {
+    revealTimerRef.current = setTimeout(() => {
+      if (revealedTileCount >= answerLength) {
         setRevealingGuessIndex(null);
         setRevealedTileCount(0);
-      }, 250);
-      return () => {
-        if (revealTimerRef.current) clearTimeout(revealTimerRef.current);
-      };
-    }
-
-    revealTimerRef.current = setTimeout(() => {
-      setRevealedTileCount((count) => count + 1);
+      } else {
+        setRevealedTileCount((count) => count + 1);
+      }
     }, 250);
 
     return () => {

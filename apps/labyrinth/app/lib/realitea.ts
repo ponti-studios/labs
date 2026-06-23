@@ -1,8 +1,8 @@
-export type LetterState = 'absent' | 'correct' | 'present';
-export type PuzzleAnswerType = 'moment' | 'object' | 'person' | 'phrase' | 'place' | 'storyline';
-export type PuzzleNewsMode = 'archive' | 'current';
+export type LetterState = "absent" | "correct" | "present";
+export type PuzzleAnswerType = "moment" | "object" | "person" | "phrase" | "place" | "storyline";
+export type PuzzleNewsMode = "archive" | "current";
 
-export type GameStatus = 'playing' | 'solved' | 'failed';
+export type GameStatus = "playing" | "solved" | "failed";
 
 /**
  * Public-facing puzzle payload. The answer is intentionally omitted so it
@@ -31,7 +31,7 @@ export interface RealiteaGuessResult {
   isSolved?: boolean;
   isGameOver?: boolean;
   status?: GameStatus;
-  reason?: 'not-in-word-list' | 'wrong-length' | 'already-guessed';
+  reason?: "not-in-word-list" | "wrong-length" | "already-guessed";
 }
 
 export interface Puzzle {
@@ -45,10 +45,10 @@ export interface Puzzle {
 
 export const MAX_GUESSES = 6;
 export const REALITEA_ANSWER_LENGTH = 5;
-export const REALITEA_TIME_ZONE = 'America/Los_Angeles';
+export const REALITEA_TIME_ZONE = "America/Los_Angeles";
 
 export function normalizeGuess(value: string): string {
-  return value.replaceAll(/[^a-z]/gi, '').toUpperCase();
+  return value.replaceAll(/[^a-z]/gi, "").toUpperCase();
 }
 
 export function normalizeAnswer(value: string): string {
@@ -56,16 +56,16 @@ export function normalizeAnswer(value: string): string {
 }
 
 function getPuzzleDateParts(date: Date): [number, number, number] {
-  const formatter = new Intl.DateTimeFormat('en-US', {
+  const formatter = new Intl.DateTimeFormat("en-US", {
     timeZone: REALITEA_TIME_ZONE,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
   });
   const parts = formatter.formatToParts(date);
-  const year = Number.parseInt(parts.find((part) => part.type === 'year')?.value ?? '', 10);
-  const month = Number.parseInt(parts.find((part) => part.type === 'month')?.value ?? '', 10);
-  const day = Number.parseInt(parts.find((part) => part.type === 'day')?.value ?? '', 10);
+  const year = Number.parseInt(parts.find((part) => part.type === "year")?.value ?? "", 10);
+  const month = Number.parseInt(parts.find((part) => part.type === "month")?.value ?? "", 10);
+  const day = Number.parseInt(parts.find((part) => part.type === "day")?.value ?? "", 10);
 
   return [year, month, day];
 }
@@ -82,25 +82,25 @@ export function getPuzzleKeyForDate(date: Date): string {
 export function evaluateGuess(answer: string, guess: string): LetterState[] {
   const normalizedAnswer = normalizeGuess(answer);
   const normalizedGuess = normalizeGuess(guess);
-  const states: LetterState[] = Array.from({ length: normalizedAnswer.length }, () => 'absent');
-  const remaining = normalizedAnswer.split('');
+  const states: LetterState[] = Array.from({ length: normalizedAnswer.length }, () => "absent");
+  const remaining = normalizedAnswer.split("");
 
-  for (const [index, letter] of normalizedGuess.split('').entries()) {
+  for (const [index, letter] of normalizedGuess.split("").entries()) {
     if (letter === normalizedAnswer[index]) {
-      states[index] = 'correct';
-      remaining[index] = '';
+      states[index] = "correct";
+      remaining[index] = "";
     }
   }
 
-  for (const [index, letter] of normalizedGuess.split('').entries()) {
-    if (states[index] !== 'absent') {
+  for (const [index, letter] of normalizedGuess.split("").entries()) {
+    if (states[index] !== "absent") {
       continue;
     }
 
     const remainingIndex = remaining.indexOf(letter);
     if (remainingIndex >= 0) {
-      states[index] = 'present';
-      remaining[remainingIndex] = '';
+      states[index] = "present";
+      remaining[remainingIndex] = "";
     }
   }
 
@@ -117,8 +117,8 @@ export function getKeyboardState(guesses: readonly RealiteaGuess[]): Record<stri
   const keyboardState: Record<string, LetterState> = {};
 
   for (const guess of guesses) {
-    for (const [index, letter] of guess.word.split('').entries()) {
-      const nextState = guess.states[index] ?? 'absent';
+    for (const [index, letter] of guess.word.split("").entries()) {
+      const nextState = guess.states[index] ?? "absent";
       const currentState = keyboardState[letter];
 
       if (!currentState || STATE_PRIORITY[nextState] > STATE_PRIORITY[currentState]) {
@@ -131,11 +131,11 @@ export function getKeyboardState(guesses: readonly RealiteaGuess[]): Record<stri
 }
 
 export function isGuessSolved(guess: RealiteaGuess): boolean {
-  return guess.states.every((state) => state === 'correct');
+  return guess.states.every((state) => state === "correct");
 }
 
 export function deriveGameStatus(guesses: readonly RealiteaGuess[]): GameStatus {
-  if (guesses.some(isGuessSolved)) return 'solved';
-  if (guesses.length >= MAX_GUESSES) return 'failed';
-  return 'playing';
+  if (guesses.some(isGuessSolved)) return "solved";
+  if (guesses.length >= MAX_GUESSES) return "failed";
+  return "playing";
 }

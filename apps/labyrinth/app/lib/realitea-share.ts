@@ -1,9 +1,9 @@
-import type { LetterState, RealiteaGuess } from './realitea';
+import type { LetterState, RealiteaGuess } from "./realitea";
 
 const SHARE_TILES: Record<LetterState, string> = {
-  absent: '⬜',
-  present: '🟨',
-  correct: '🟩',
+  absent: "⬜",
+  present: "🟨",
+  correct: "🟩",
 };
 
 export interface ShareRealiTeaResultOptions {
@@ -15,11 +15,11 @@ export interface ShareRealiTeaResultOptions {
 }
 
 function formatShareDate(date: Date) {
-  return new Intl.DateTimeFormat('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    timeZone: 'UTC',
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
   }).format(date);
 }
 
@@ -28,10 +28,10 @@ export function buildRealiTeaShareText(
   isSolved: boolean,
   date = new Date(),
 ): string {
-  const score = isSolved ? `${guesses.length}/6` : 'X/6';
-  const rows = guesses.map((guess) => guess.states.map((state) => SHARE_TILES[state]).join(''));
+  const score = isSolved ? `${guesses.length}/6` : "X/6";
+  const rows = guesses.map((guess) => guess.states.map((state) => SHARE_TILES[state]).join(""));
 
-  return [`RealiTea - ${formatShareDate(date)}`, score, '', ...rows].join('\n');
+  return [`RealiTea - ${formatShareDate(date)}`, score, "", ...rows].join("\n");
 }
 
 export async function shareRealiTeaResult({
@@ -45,9 +45,9 @@ export async function shareRealiTeaResult({
 
   try {
     await copyToClipboard(shareText);
-    return { method: 'clipboard' as const, shareText };
+    return { method: "clipboard" as const, shareText };
   } catch {
-    promptCopy('Copy your RealiTea result:', shareText);
-    return { method: 'prompt' as const, shareText };
+    promptCopy("Copy your RealiTea result:", shareText);
+    return { method: "prompt" as const, shareText };
   }
 }

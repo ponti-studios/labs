@@ -1,10 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useFetcher } from "react-router";
 
 import {
   deriveGameStatus,
-  isGuessSolved,
-  MAX_GUESSES,
   normalizeGuess,
   type GameStatus,
   type PublicDailyPuzzle,
@@ -39,13 +37,11 @@ export interface RealiTeaGameState {
 interface UseRealiTeaGameOptions {
   puzzle: PublicDailyPuzzle;
   initialGuesses: readonly RealiteaGuess[];
-  initialStatus: GameStatus;
 }
 
 export function useRealiTeaGame({
   puzzle,
   initialGuesses,
-  initialStatus,
 }: UseRealiTeaGameOptions): RealiTeaGameState {
   const [guesses, setGuesses] = useState<RealiteaGuess[]>(() => [...initialGuesses]);
   const cellRefs = useRef<Array<HTMLInputElement | null>>([]);
@@ -54,25 +50,25 @@ export function useRealiTeaGame({
   const anim = useAnimation(puzzle.answerLength);
   const isRevealingRow = anim.revealingGuessIndex !== null;
   const isValidationPending = wordValidator.state !== "idle";
-  const isGameOver = initialStatus === "solved" || initialStatus === "failed";
+  const status = useMemo(() => deriveGameStatus(guesses), [guesses]);
+  const isGameOver = status !== "playing";
   const canMutateGuess = !isGameOver && !isValidationPending && !isRevealingRow;
 
   const typing = useTyping(puzzle.answerLength, !canMutateGuess);
 
-  // Reset everything when the active puzzle changes
+  // Reset everything when the active puzzle changes (midnight rollover).
+  // The ref guard prevents the effect from firing on the initial mount,
+  // which would otherwise overwrite the localStorage-restored guesses.
+  const prevDateKeyRef = useRef(puzzle.dateKey);
   useEffect(() => {
-    setGuesses([...initialGuesses]);
+    if (puzzle.dateKey === prevDateKeyRef.current) return;
+    prevDateKeyRef.current = puzzle.dateKey;
+    setGuesses([]);
     typing.setCurrentGuess("");
     anim.setRevealingGuessIndex(null);
     anim.setRevealedTileCount(0);
     anim.clearError();
-  }, [puzzle.dateKey, initialGuesses]);
-
-  const status: GameStatus = useMemo(() => {
-    if (guesses.some(isGuessSolved)) return "solved";
-    if (guesses.length >= MAX_GUESSES) return "failed";
-    return "playing";
-  }, [guesses]);
+  }, [puzzle.dateKey]);
 
   const submitGuess = () => {
     if (!canMutateGuess) return;
@@ -151,5 +147,3 @@ export function useRealiTeaGame({
     clearError: anim.clearError,
   };
 }
-
-export { deriveGameStatus };
