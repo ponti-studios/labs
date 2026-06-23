@@ -345,6 +345,7 @@ function toDailyPuzzle(record: PuzzleRecord): DailyPuzzle {
     dateKey: record.scheduledForDateKey ?? record.dateKey ?? "",
     detail: record.detail,
     role: record.role,
+    sourceUrls: record.sourceUrls,
   };
 }
 

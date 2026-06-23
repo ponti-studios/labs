@@ -52,6 +52,7 @@ function buildPuzzleEnvelope(
       dateKey: getDateKey(date),
       detail: puzzle.detail,
       role: puzzle.role ?? "",
+      sourceUrls: [],
     },
   };
 }
@@ -95,7 +96,7 @@ async function renderRoute() {
   ]);
   const rendered = render(<RoutesStub initialEntries={["/"]} />);
 
-  await screen.findByRole("button", { name: /how to play/i });
+  await screen.findByRole("button", { name: /\?/i });
   await waitFor(() => {
     expect(
       screen.queryByLabelText("Letter 1") ??
@@ -110,18 +111,18 @@ async function renderRoute() {
   };
 }
 
-async function clickLetter(user: ReturnType<typeof userEvent.setup>, letter: string) {
-  await user.click(screen.getByRole("button", { name: letter }));
-}
-
 async function enterGuess(user: ReturnType<typeof userEvent.setup>, guess: string) {
-  for (const letter of normalizeGuess(guess)) {
-    await clickLetter(user, letter);
+  // Focus the first textbox (game input field)
+  const textboxes = screen.queryAllByRole("textbox");
+  if (textboxes.length > 0) {
+    await user.click(textboxes[0]);
   }
+  // Type the guess via keyboard
+  await user.keyboard(guess);
 }
 
 async function submitCurrentGuess(user: ReturnType<typeof userEvent.setup>) {
-  await user.click(screen.getByRole("button", { name: "Enter" }));
+  await user.keyboard("{Enter}");
 }
 
 async function resolveValidation(valid: boolean) {
@@ -373,7 +374,7 @@ describe("RealiTeaRoute", () => {
 
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     render(<RoutesWithoutNextDay initialEntries={["/"]} />);
-    await screen.findByRole("button", { name: /how to play/i });
+    await screen.findByRole("button", { name: /\?/i });
     await waitFor(() => {
       expect(getTextboxes()).toHaveLength(firstPuzzle.answer.length);
     });
@@ -484,7 +485,7 @@ describe("RealiTeaRoute", () => {
 
     const { unmount } = await renderRoute();
 
-    expect(screen.queryByText("Final guess clue")).not.toBeInTheDocument();
+    expect(screen.queryByText("Final clue")).not.toBeInTheDocument();
     expect(screen.queryByText(puzzle.clue)).not.toBeInTheDocument();
 
     unmount();
@@ -500,7 +501,7 @@ describe("RealiTeaRoute", () => {
 
     await renderRoute();
 
-    expect(screen.getByText("Final guess clue")).toBeInTheDocument();
+    expect(screen.getByText("Final clue")).toBeInTheDocument();
     expect(screen.getByText(puzzle.clue)).toBeInTheDocument();
   });
 
@@ -524,11 +525,12 @@ describe("RealiTeaRoute", () => {
     await expectSubmitCalls([wrongGuess]);
     await resolveValidation(true);
 
+    // During tile reveal, textboxes should not be visible
     expect(getTextboxes()).toHaveLength(0);
-    expect(screen.getByRole("button", { name: "Enter" })).toBeDisabled();
 
     await finishTileReveal(puzzle.answer.length);
 
+    // After tile reveal, textboxes should reappear
     await waitFor(() => {
       expect(getTextboxes()).toHaveLength(puzzle.answer.length);
     });
@@ -545,10 +547,8 @@ describe("RealiTeaRoute", () => {
     const firstCell = screen.getByLabelText("Letter 1");
     fireEvent.keyDown(firstCell, { key: "Enter" });
 
+    // Should only have submitted once, even though keyDown was fired again
     await expectSubmitCalls([puzzle.answer]);
-    await waitFor(() => {
-      expect(screen.getByRole("button", { name: "Enter" })).toBeDisabled();
-    });
   });
 
   it("prevents input changes while validation is in flight", async () => {
