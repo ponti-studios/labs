@@ -7,7 +7,6 @@ import {
   Scripts,
   ScrollRestoration,
   useLocation,
-  useMatches,
 } from "react-router";
 import { AppNavigation } from "@pontistudios/ui";
 
@@ -52,12 +51,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   const location = useLocation();
-  const matches = useMatches();
-  const fullBleed = matches.some((m) => (m.handle as Record<string, unknown> | null)?.fullBleed);
+
   return (
     <QueryProvider>
       <AppNavigation
-        brand="Labyrinth"
+        brand={<img src="/logo.labyrinth.png" alt="Realitea Logo" className="size-5 w-auto" />}
         brandHref="/"
         links={[{ href: "/experiments", label: "Experiments" }]}
         activeHref={location.pathname}
@@ -67,10 +65,11 @@ export default function App() {
           </Link>
         )}
       />
-      <main className={cn(
-        "mx-auto flex w-full max-w-7xl flex-col pt-24 min-h-[calc(100dvh-6rem)] md:min-h-0",
-        !fullBleed && "px-4",
-      )}>
+      <main
+        className={cn(
+          "mx-auto flex min-h-[calc(100dvh-6rem)] w-full max-w-7xl flex-col pt-24 md:min-h-0",
+        )}
+      >
         <Outlet />
       </main>
     </QueryProvider>
