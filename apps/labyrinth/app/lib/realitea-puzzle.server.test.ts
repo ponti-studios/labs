@@ -67,6 +67,7 @@ function createSelectResponder(queue: unknown[][]) {
           orderBy: () => ({
             limit: async () => result,
           }),
+          // oxlint-disable-next-line unicorn/no-thenable
           then: (resolve: (value: unknown[]) => unknown, reject?: (reason: unknown) => unknown) =>
             Promise.resolve(result).then(resolve, reject),
         };

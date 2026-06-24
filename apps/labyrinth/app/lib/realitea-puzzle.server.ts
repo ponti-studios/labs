@@ -41,7 +41,9 @@ import { LabyrinthServerEnv } from "./server/env";
 import { isValidWord } from "./word-list.server";
 
 const logger = pino(
-  process.env.NODE_ENV === "development" ? { transport: { target: "pino-pretty" } } : {},
+  process.env.NODE_ENV === "development"
+    ? { transport: { target: "pino-pretty" } }
+    : { level: process.env.NODE_ENV === "test" ? "silent" : "info" },
 );
 
 /**

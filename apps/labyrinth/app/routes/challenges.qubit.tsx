@@ -238,7 +238,7 @@ export default function Qubit(): JSX.Element {
   return (
     <div className="p-8 font-mono">
       <h1 className="mb-2">Qubit - jQuery-like Selector</h1>
-      <p className="text-[#666] mb-6">
+      <p className="mb-6 text-[#666]">
         Implement a <code>$(selector)</code> function that supports tag, class, id, and combined CSS
         selectors without using <code>querySelector</code>.
       </p>
@@ -246,7 +246,7 @@ export default function Qubit(): JSX.Element {
       <iframe ref={iframeRef} title="qubit-sandbox" className="hidden" />
 
       <h2 className="mb-3">Test DOM</h2>
-      <pre className="bg-[#f4f4f4] p-4 rounded-[4px] mb-[1.5rem] text-[0.85rem]">
+      <pre className="mb-[1.5rem] rounded-[4px] bg-[#f4f4f4] p-4 text-[0.85rem]">
         {`<div></div>
 <div id="some_id" class="some_class some_other_class"></div>
 <img id="some_other_id" class="some_class some_other_class" />
@@ -258,38 +258,30 @@ export default function Qubit(): JSX.Element {
           <h2 className="mb-3">
             Results - {passedCount}/{totalCount} passed
           </h2>
-          <Table className="w-full border-collapse text-[0.9rem]">
+          <Table>
             <TableHeader>
-              <TableRow className="bg-[#eee]">
-                <TableHead className="px-3 py-2 text-left border-b border-[#ccc]">
-                  Selector
-                </TableHead>
-                <TableHead className="px-3 py-2 text-left border-b border-[#ccc]">
-                  Expected
-                </TableHead>
-                <TableHead className="px-3 py-2 text-left border-b border-[#ccc]">Found</TableHead>
-                <TableHead className="px-3 py-2 text-left border-b border-[#ccc]">Pass</TableHead>
+              <TableRow>
+                <TableHead>Selector</TableHead>
+                <TableHead>Expected</TableHead>
+                <TableHead>Found</TableHead>
+                <TableHead>Pass</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {results.map(({ selector, expected, found, passed, error }) => (
-                <TableRow key={selector} className={passed ? "bg-[#e6ffe6]" : "bg-[#ffe6e6]"}>
-                  <TableCell className="px-3 py-2 border-b border-[#ddd] align-top">
+                <TableRow key={selector} className={passed ? "bg-green-100" : "bg-red-100"}>
+                  <TableCell>
                     <code>{selector}</code>
                   </TableCell>
-                  <TableCell className="px-3 py-2 border-b border-[#ddd] align-top">
-                    {JSON.stringify(expected)}
-                  </TableCell>
-                  <TableCell className="px-3 py-2 border-b border-[#ddd] align-top">
+                  <TableCell>{JSON.stringify(expected)}</TableCell>
+                  <TableCell>
                     {error !== null ? (
                       <span className="text-red-500">{error}</span>
                     ) : (
                       JSON.stringify(found)
                     )}
                   </TableCell>
-                  <TableCell className="px-3 py-2 border-b border-[#ddd] align-top text-center">
-                    {passed ? "✓" : "✗"}
-                  </TableCell>
+                  <TableCell className="text-center">{passed ? "✓" : "✗"}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -298,7 +290,7 @@ export default function Qubit(): JSX.Element {
       )}
 
       <h2 className="my-8 mb-3">Implementation</h2>
-      <pre className="bg-[#1e1e1e] text-[#d4d4d4] p-5 rounded-md overflow-x-auto text-[0.8rem] leading-relaxed">
+      <pre className="overflow-x-auto rounded-md bg-[#1e1e1e] p-5 text-[0.8rem] leading-relaxed text-[#d4d4d4]">
         {ANSWER_JS.trim()}
       </pre>
     </div>

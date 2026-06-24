@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@pontistudios/ui";
+import { LucideSearch, LucideX } from "lucide-react";
 import { useMemo, useState } from "react";
 
 const firstNames = [
@@ -189,7 +190,6 @@ interface Contact {
   city: string;
   age: number;
 }
-type FilterState = Record<keyof Contact, string>;
 
 function generateContact(): Contact {
   const age = random(18, 100);
@@ -221,19 +221,9 @@ const contacts = generateContacts(300);
  * and searching through large datasets of first names, last names, and cities.
  */
 export default function Kensho() {
-  const [filters, setFilters] = useState<FilterState>({
-    name: "",
-    phone: "",
-    city: "",
-    age: "",
-  });
   const [sortColumn, setSortColumn] = useState<keyof Contact | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-  const [filterPopover, setFilterPopover] = useState<keyof Contact | null>(null);
-
-  const handleFilterChange = (key: keyof Contact, value: string) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
-  };
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleSort = (key: keyof Contact) => {
     if (sortColumn === key) {
@@ -245,87 +235,110 @@ export default function Kensho() {
   };
 
   const filteredContacts = useMemo(() => {
-    return contacts.filter((contact) => {
-      return Object.keys(filters).every((key) => {
-        const filterValue = filters[key as keyof FilterState];
-        if (filterValue === "") return true;
-        return String(contact[key as keyof Contact])
-          .toUpperCase()
-          .includes(filterValue.toUpperCase());
-      });
-    });
-  }, [filters]);
+    if (!searchQuery) return contacts;
+    const query = searchQuery.toUpperCase();
+    return contacts.filter((contact) =>
+      Object.values(contact).some((value) => String(value).toUpperCase().includes(query)),
+    );
+  }, [searchQuery]);
 
   const sortedContacts = useMemo(() => {
     if (!sortColumn) return filteredContacts;
     return [...filteredContacts].sort((a, b) => {
-      const aVal = a[sortColumn as keyof Contact] as any;
-      const bVal = b[sortColumn as keyof Contact] as any;
+      const aVal = a[sortColumn];
+      const bVal = b[sortColumn];
       const modifier = sortDirection === "asc" ? 1 : -1;
-      if (typeof aVal === "number") return (aVal - bVal) * modifier;
+      if (typeof aVal === "number" && typeof bVal === "number") return (aVal - bVal) * modifier;
       return String(aVal).localeCompare(String(bVal)) * modifier;
     });
   }, [filteredContacts, sortColumn, sortDirection]);
 
+  const hasActiveFilters = searchQuery.length > 0;
+
   return (
     <div>
-      <h2>Kensho - Contacts Table</h2>
-      <p>A contacts table with sorting, filtering, and 300 mock contacts.</p>
+      <div className="mb-6">
+        <h2>Contacts</h2>
+        <p className="text-muted-foreground">
+          {contacts.length} contacts — sort by clicking a column header or search across all fields
+          below.
+        </p>
+      </div>
 
-      <div className="card">
-        <Table className="w-full border-collapse">
+      <div className="mb-3 flex items-center gap-2">
+        <div className="relative flex-1">
+          <LucideSearch className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+          <Input
+            className="w-full pr-9 pl-9"
+            placeholder="Search name, phone, city, age…"
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          {hasActiveFilters && (
+            <button
+              aria-label="Clear search"
+              className="text-muted-foreground hover:bg-muted absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer rounded p-1 transition-colors"
+              onClick={() => setSearchQuery("")}
+              type="button"
+            >
+              <LucideX className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="border-border rounded-lg border">
+        <Table>
           <TableHeader>
-            <TableRow className="bg-[#f5f5f5]">
+            <TableRow>
               {columns.map((col) => (
-                <TableHead key={col.key} className="p-3 text-left border-b-2 border-[#ddd]">
-                  <div className="flex items-center gap-2">
-                    <Button
-                      onClick={() => handleSort(col.key as keyof Contact)}
-                      className="bg-transparent border-none cursor-pointer font-bold p-0"
-                    >
-                      {col.name}
-                      {sortColumn === col.key && (sortDirection === "asc" ? " ↑" : " ↓")}
-                    </Button>
-                    <Button
-                      onClick={() =>
-                        setFilterPopover(
-                          filterPopover === col.key ? null : (col.key as keyof Contact),
-                        )
-                      }
-                      className={`border-none rounded-md px-2 py-1 cursor-pointer text-xs ${filters[col.key as keyof Contact] ? "bg-[#0066cc]" : "bg-[#e0e0e0]"}`}
-                    >
-                      �-filter
-                    </Button>
-                  </div>
-                  {filterPopover === col.key && (
-                    <div className="absolute bg-white border border-[#ccc] rounded-md p-2 mt-2 shadow-[0_2px_8px_rgba(0,0,0,0.15)] z-10">
-                      <Input
-                        type="text"
-                        value={filters[col.key as keyof Contact]}
-                        onChange={(e) =>
-                          handleFilterChange(col.key as keyof Contact, e.target.value)
-                        }
-                        placeholder={`Filter ${col.name}...`}
-                        autoFocus
-                      />
-                    </div>
-                  )}
+                <TableHead key={col.key}>
+                  <button
+                    className="text-foreground hover:text-foreground/70 flex w-full cursor-pointer items-center gap-1 border-none bg-transparent p-0 font-medium transition-colors"
+                    onClick={() => handleSort(col.key as keyof Contact)}
+                    type="button"
+                  >
+                    {col.name}
+                    {sortColumn === col.key ? (
+                      <span className="text-xs">{sortDirection === "asc" ? "↑" : "↓"}</span>
+                    ) : (
+                      <span className="text-muted-foreground/30 text-xs">↑↓</span>
+                    )}
+                  </button>
                 </TableHead>
               ))}
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedContacts.slice(0, 50).map((contact, idx) => (
-              <TableRow key={contact.phone + idx} className="border-b border-[#eee]">
-                <TableCell className="p-3">{contact.name}</TableCell>
-                <TableCell className="p-3">{contact.phone}</TableCell>
-                <TableCell className="p-3">{contact.city}</TableCell>
-                <TableCell className="p-3 text-center">{contact.age}</TableCell>
+            {sortedContacts.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="text-muted-foreground py-12 text-center"
+                >
+                  No contacts match &ldquo;{searchQuery}&rdquo;
+                </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              sortedContacts.slice(0, 50).map((contact, idx) => (
+                <TableRow key={contact.phone + idx}>
+                  <TableCell>{contact.name}</TableCell>
+                  <TableCell>{contact.phone}</TableCell>
+                  <TableCell>{contact.city}</TableCell>
+                  <TableCell className="text-center">{contact.age}</TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
-        <p className="mt-4 text-[#666]">Showing 50 of {sortedContacts.length} contacts</p>
+        <div className="border-border text-muted-foreground flex items-center justify-end border-t px-4 py-2 text-sm">
+          {hasActiveFilters && (
+            <Button type="button" onClick={() => setSearchQuery("")}>
+              Clear filters
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );
