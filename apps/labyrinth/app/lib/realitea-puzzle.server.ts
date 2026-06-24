@@ -106,11 +106,6 @@ async function markExpiredPuzzles(now: Date, tx: any = db): Promise<void> {
 }
 
 export async function getPublishedPuzzle(now: Date, tx: any = db): Promise<PuzzleRecord | null> {
-  console.log("getPublishedPuzzle query:", {
-    now,
-    franchise: BRAVO_FRANCHISE,
-    status: "published",
-  });
   const rows = await tx
     .select()
     .from(rhobhDailyPuzzles)
@@ -124,7 +119,6 @@ export async function getPublishedPuzzle(now: Date, tx: any = db): Promise<Puzzl
     )
     .orderBy(desc(rhobhDailyPuzzles.publishAt))
     .limit(1);
-  console.log("getPublishedPuzzle result:", rows.length > 0 ? rows[0] : "no rows");
   const row = rows[0] as Record<string, unknown> | undefined;
   return row ? normalizePuzzleRecord(row) : null;
 }
@@ -309,7 +303,6 @@ export async function generateScheduledPuzzle(dateKey: string): Promise<PuzzleRe
 
 export async function promoteScheduledPuzzle(now: Date): Promise<PuzzleRecord | null> {
   const window = getPuzzleWindow(now);
-  console.log("promoteScheduledPuzzle:", { now, window });
 
   return db.transaction(async (tx) => {
     await markExpiredPuzzles(now, tx);
@@ -317,20 +310,7 @@ export async function promoteScheduledPuzzle(now: Date): Promise<PuzzleRecord | 
     const active = await getPublishedPuzzle(now, tx);
     if (active) return active;
 
-    const allRows = await tx
-      .select()
-      .from(rhobhDailyPuzzles)
-      .where(eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE));
-    console.log("All bravo puzzles in DB:", allRows.length, allRows.map((r: any) => ({
-      id: r.id,
-      status: r.status,
-      scheduledForDateKey: r.scheduledForDateKey,
-      dateUtc: r.dateUtc,
-      publishAt: r.publishAt,
-      expireAt: r.expireAt,
-    })));
-
-    const rows = await tx
+    let rows = await tx
       .select()
       .from(rhobhDailyPuzzles)
       .where(
@@ -343,8 +323,24 @@ export async function promoteScheduledPuzzle(now: Date): Promise<PuzzleRecord | 
       .orderBy(desc(rhobhDailyPuzzles.createdAt))
       .limit(1);
 
-    console.log("Scheduled puzzle for today:", rows.length > 0 ? rows[0] : "not found");
-    const scheduled = rows[0] as Record<string, unknown> | undefined;
+    let scheduled = rows[0] as Record<string, unknown> | undefined;
+
+    // Fallback: if no scheduled puzzle for today, find the most recent one
+    if (!scheduled) {
+      rows = await tx
+        .select()
+        .from(rhobhDailyPuzzles)
+        .where(
+          and(
+            eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
+            eq(rhobhDailyPuzzles.status, "scheduled"),
+          ),
+        )
+        .orderBy(desc(rhobhDailyPuzzles.createdAt))
+        .limit(1);
+      scheduled = rows[0] as Record<string, unknown> | undefined;
+    }
+
     if (!scheduled?.id) return null;
 
     const dateValue = parseDate(window.dateKey)?.toISOString().slice(0, 10) ?? null;
@@ -407,7 +403,25 @@ export async function loadActivePublicPuzzle(
   now: Date,
 ): Promise<{ puzzle: PublicDailyPuzzle } | null> {
   await markExpiredPuzzles(now);
-  const published = (await getPublishedPuzzle(now)) ?? (await promoteScheduledPuzzle(now));
+  let published = (await getPublishedPuzzle(now)) ?? (await promoteScheduledPuzzle(now));
+
+  // Fallback: if still no puzzle, find the most recent published one regardless of time
+  if (!published) {
+    const rows = await db
+      .select()
+      .from(rhobhDailyPuzzles)
+      .where(
+        and(
+          eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
+          eq(rhobhDailyPuzzles.status, "published"),
+        ),
+      )
+      .orderBy(desc(rhobhDailyPuzzles.publishAt))
+      .limit(1);
+    const row = rows[0] as Record<string, unknown> | undefined;
+    if (row) published = normalizePuzzleRecord(row);
+  }
+
   if (!published) return null;
   return { puzzle: toPublicDailyPuzzle(published) };
 }
