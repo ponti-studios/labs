@@ -1,6 +1,6 @@
 import {
   getPuzzleDateParts,
-  normalizeAnswer,
+  normalizeGuess,
   REALITEA_ANSWER_LENGTH,
   REALITEA_TIME_ZONE,
 } from "./realitea";
@@ -99,7 +99,7 @@ export function validateCandidate(
   previousAnswers: Set<string> = new Set(),
 ): ValidationResult {
   const reasons: string[] = [];
-  const normalizedAnswer = normalizeAnswer(candidate.answer);
+  const normalizedAnswer = normalizeGuess(candidate.answer);
 
   if (normalizedAnswer.length !== REALITEA_ANSWER_LENGTH) {
     reasons.push("answer must normalize to exactly five letters");
