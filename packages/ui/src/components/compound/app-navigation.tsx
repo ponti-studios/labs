@@ -19,7 +19,7 @@ export interface AppNavigationRenderLinkArgs {
 }
 
 export interface AppNavigationProps {
-  brand?: string;
+  brand?: React.ReactNode;
   brandHref?: string;
   links: AppNavigationLink[];
   cta?: AppNavigationCta;
@@ -40,8 +40,8 @@ export function AppNavigation({
   const isActive = (href: string) => href === activeHref;
 
   return (
-    <div className="fixed top-5 right-0 left-0 z-50 flex justify-center px-4">
-      <nav className="bg-card border-border flex w-full max-w-7xl items-center justify-between rounded-full border px-4 py-2 shadow-sm">
+    <div className="bg-background/80 fixed inset-0 z-50 flex max-h-fit justify-center px-2 pt-2 backdrop-blur-sm backdrop-saturate-150 md:px-0">
+      <nav className="bg-card border-border flex w-full max-w-7xl items-center justify-between rounded border px-2 py-2 shadow-sm">
         {brand &&
           renderLink({
             href: brandHref,

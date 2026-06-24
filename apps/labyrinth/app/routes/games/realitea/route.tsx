@@ -20,7 +20,7 @@ import { useRealiTeaGame } from "./use-game";
 import { useRealiTeaShare } from "./use-share";
 
 import "./realitea.css";
-import { LucideShare } from "lucide-react";
+import { LucideHelpCircle, LucideNewspaper, LucideShare } from "lucide-react";
 
 const TILE_BASE = cva(
   "flex h-[3.6rem] w-[3.6rem] items-center justify-center rounded-2xl border text-[1.35rem] font-bold uppercase transition-colors sm:h-12 sm:w-12 sm:rounded-xl sm:text-lg md:h-14 md:w-14",
@@ -87,8 +87,6 @@ export async function loader(_args: LoaderFunctionArgs) {
 export type LoaderData = {
   puzzle: PublicDailyPuzzle;
 };
-
-export const handle = { fullBleed: true };
 
 export function meta() {
   return [
@@ -192,26 +190,26 @@ const CurrentGuessRow = memo(function CurrentGuessRow({
  * otherwise mismatch the server-rendered output.
  */
 export function HydrateFallback() {
-  return <div className="mx-auto flex w-full max-w-2xl flex-col flex-1 px-4 py-3" />;
+  return <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-4 py-3" />;
 }
 
 type ErrorBoundaryProps = { error: Error };
 
 export function ErrorBoundary({ error }: ErrorBoundaryProps) {
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col flex-1 items-center justify-center gap-3 px-4 text-center">
-        <p className="text-muted-foreground text-sm font-medium tracking-[0.15em] uppercase">
-          Something went wrong
-        </p>
-        <p className="text-muted-foreground text-sm">
-          {error.message || "The RealiTea puzzle couldn't load. Try refreshing the page."}
-        </p>
-        <a
-          href="/games/realitea"
-          className="bg-primary text-primary-foreground hover:bg-primary/90 mt-2 inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors"
-        >
-          Reload
-        </a>
+    <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center gap-3 px-4 text-center">
+      <p className="text-muted-foreground text-sm font-medium tracking-[0.15em] uppercase">
+        Something went wrong
+      </p>
+      <p className="text-muted-foreground text-sm">
+        {error.message || "The RealiTea puzzle couldn't load. Try refreshing the page."}
+      </p>
+      <a
+        href="/games/realitea"
+        className="bg-primary text-primary-foreground hover:bg-primary/90 mt-2 inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors"
+      >
+        Reload
+      </a>
     </div>
   );
 }
@@ -262,125 +260,120 @@ export default function RealiTeaRoute() {
   });
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col flex-1 gap-3 px-4 pt-2 pb-[calc(env(safe-area-inset-bottom)+8px)]">
+    <div className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-6 px-4 pb-[calc(env(safe-area-inset-bottom)+8px)]">
+      <header className="bg-background/95 sticky top-0 z-10 backdrop-blur md:static">
+        <div className="flex items-center justify-between gap-2 rounded border p-2 px-1">
+          <img src="/logo.realitea.png" alt="RealiTea" className="h-6 object-contain" />
+          <Button
+            aria-label="How to play"
+            variant="ghost"
+            className="px-1"
+            onClick={() => setShowInstructions((v) => !v)}
+            type="button"
+          >
+            <LucideHelpCircle />
+          </Button>
+        </div>
+      </header>
 
-        <header className="bg-background/95 sticky top-0 z-10 backdrop-blur md:static">
-          <div className="flex items-center justify-between gap-2 rounded-full border px-4 py-2">
-            <img src="/logo.realitea.png" alt="RealiTea" className="h-6 object-contain" />
-            <button
-              aria-label="How to play"
-              className="hover:bg-muted flex size-6 items-center justify-center rounded-full border transition-colors"
-              onClick={() => setShowInstructions((v) => !v)}
-              type="button"
-            >
-              <span className="text-sm font-medium">?</span>
-            </button>
-          </div>
-        </header>
+      {showInstructions && (
+        <div className="border-border bg-muted/30 text-muted-foreground rounded-xl border p-3 text-sm leading-5">
+          <p>Guess today&apos;s reality TV answer in 6 tries.</p>
+          <p className="mt-2">
+            <span className="font-medium text-emerald-700">Green</span> means the right letter is in
+            the right place. <span className="font-medium text-amber-700">Gold</span> means the
+            letter belongs in the answer but is in the wrong place.
+          </p>
+        </div>
+      )}
 
-        {showInstructions && (
-          <div className="border-border bg-muted/30 text-muted-foreground rounded-xl border p-3 text-sm leading-5">
-            <p>Guess today&apos;s reality TV answer in 6 tries.</p>
-            <p className="mt-2">
-              <span className="font-medium text-emerald-700">Green</span> means the right letter is
-              in the right place. <span className="font-medium text-amber-700">Gold</span> means the
-              letter belongs in the answer but is in the wrong place.
-            </p>
-          </div>
-        )}
+      {shouldShowClue && (
+        <div className="rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm leading-5 text-amber-950">
+          <p className="text-xs font-medium tracking-[0.15em] text-amber-800 uppercase">
+            Final clue
+          </p>
+          <p className="mt-1">{currentPuzzle.clue}</p>
+        </div>
+      )}
 
-        {shouldShowClue && (
-          <div className="rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm leading-5 text-amber-950">
-            <p className="text-xs font-medium tracking-[0.15em] text-amber-800 uppercase">
-              Final clue
-            </p>
-            <p className="mt-1">{currentPuzzle.clue}</p>
-          </div>
-        )}
+      <div className="flex flex-1 flex-col items-center justify-center gap-2">
+        <div className="w-fit space-y-1 sm:space-y-0.5">
+          {Array.from({
+            length: game.isGameOver ? game.guesses.length : MAX_GUESSES,
+          }).map((_, rowIndex) => {
+            const isCurrentRow =
+              rowIndex === game.guesses.length && !game.isGameOver && !game.isRevealingRow;
+            const guess = game.guesses[rowIndex];
+            const isRevealingThisRow = rowIndex === game.revealingGuessIndex;
 
-        <div className="flex flex-1 flex-col items-center gap-2">
-          <div className="w-fit space-y-1 sm:space-y-0.5">
-            {Array.from({
-              length: game.isGameOver ? game.guesses.length : MAX_GUESSES,
-            }).map((_, rowIndex) => {
-              const isCurrentRow =
-                rowIndex === game.guesses.length && !game.isGameOver && !game.isRevealingRow;
-              const guess = game.guesses[rowIndex];
-              const isRevealingThisRow = rowIndex === game.revealingGuessIndex;
+            if (guess) {
+              return (
+                <RevealedGuessRow
+                  key={`revealed-${rowIndex}`}
+                  guess={guess}
+                  isRevealingThisRow={isRevealingThisRow}
+                  revealedTileCount={game.revealedTileCount}
+                />
+              );
+            }
 
-              if (guess) {
-                return (
-                  <RevealedGuessRow
-                    key={`revealed-${rowIndex}`}
-                    guess={guess}
-                    isRevealingThisRow={isRevealingThisRow}
-                    revealedTileCount={game.revealedTileCount}
-                  />
-                );
-              }
+            if (isCurrentRow) {
+              return (
+                <CurrentGuessRow
+                  key={`current-${rowIndex}`}
+                  currentGuess={game.currentGuess}
+                  hasError={game.hasError}
+                  isShaking={game.isShaking}
+                  isValidationPending={game.isValidationPending}
+                />
+              );
+            }
 
-              if (isCurrentRow) {
-                return (
-                  <CurrentGuessRow
-                    key={`current-${rowIndex}`}
-                    currentGuess={game.currentGuess}
-                    hasError={game.hasError}
-                    isShaking={game.isShaking}
-                    isValidationPending={game.isValidationPending}
-                  />
-                );
-              }
+            return <EmptyGuessRow key={`empty-${rowIndex}`} />;
+          })}
+        </div>
 
-              return <EmptyGuessRow key={`empty-${rowIndex}`} />;
-            })}
-          </div>
-
+        {game.errorMessage ? (
           <p
             className="min-h-[1em] text-center text-xs font-medium text-red-600"
             aria-live="polite"
             aria-atomic="true"
-          >
-            {game.errorMessage ?? ""}
-          </p>
-        </div>
+          ></p>
+        ) : null}
+      </div>
 
-        {game.isGameOver ? (
-          <div className="rounded border p-3 md:p-4">
-            <p className="text-muted-foreground text-xs font-medium tracking-[0.15em] uppercase">
+      {game.isGameOver ? (
+        <div className="space-y-4 rounded border p-3 md:p-4">
+          <div>
+            <p className="text-muted-foreground ui-eyebrow">
               {game.isSolved ? "The Story" : "The puzzle ended"}
             </p>
-            <p className="mt-2 text-sm leading-5">{currentPuzzle.detail}</p>
-            <div className="flex justify-end gap-2 pt-3 md:pt-4">
-              <Button
-                aria-label="Share result"
-                className="w-full md:w-auto"
-                onClick={share}
-                type="button"
-                variant="secondary"
-              >
-                <LucideShare />
-              </Button>
-              {currentPuzzle.sourceUrls.length > 0 && (
-                <a
-                  href={currentPuzzle.sourceUrls.at(0)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-primary text-secondary rounded px-4 py-2 text-sm font-medium transition-colors hover:text-emerald-200"
-                >
-                  Read more →
-                </a>
-              )}
-            </div>
+            <p className="text-sm leading-5">{currentPuzzle.detail.toLocaleLowerCase()}</p>
           </div>
-        ) : (
-          <OnscreenKeyboard
-            letterStates={keyboardState}
-            onLetter={game.addLetter}
-            onEnter={game.submitGuess}
-            onBackspace={game.removeLetter}
-          />
-        )}
-
+          <div className="flex justify-end gap-2">
+            <Button aria-label="Share result" onClick={share} type="button" variant="secondary">
+              <LucideShare size={18} />
+            </Button>
+            {currentPuzzle.sourceUrls.length > 0 && (
+              <a
+                href={currentPuzzle.sourceUrls.at(0)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-primary text-secondary rounded px-4 py-2 text-sm font-medium transition-colors hover:text-emerald-200"
+              >
+                <LucideNewspaper size={18} />
+              </a>
+            )}
+          </div>
+        </div>
+      ) : (
+        <OnscreenKeyboard
+          letterStates={keyboardState}
+          onLetter={game.addLetter}
+          onEnter={game.submitGuess}
+          onBackspace={game.removeLetter}
+        />
+      )}
     </div>
   );
 }
