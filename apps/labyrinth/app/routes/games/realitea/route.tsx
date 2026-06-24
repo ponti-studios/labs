@@ -167,7 +167,7 @@ const CurrentGuessRow = memo(function CurrentGuessRow({
   return (
     <div
       className={cn(
-        "flex gap-1.5 sm:gap-1 transition-opacity",
+        "flex gap-1.5 transition-opacity sm:gap-1",
         hasError && "realitea-tile-error",
         isShaking && "realitea-row-shake",
         isValidationPending && "opacity-60",
@@ -185,7 +185,7 @@ const CurrentGuessRow = memo(function CurrentGuessRow({
           autoCorrect="off"
           className={cn(
             TILE_BASE({ state: "empty" }),
-            "bg-background text-center outline-none caret-transparent focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-ring",
+            "bg-background focus-visible:outline-ring text-center caret-transparent outline-none focus-visible:outline focus-visible:outline-offset-2",
             hasError && "realitea-tile-error",
           )}
           inputMode="none"
@@ -208,8 +208,8 @@ const CurrentGuessRow = memo(function CurrentGuessRow({
  */
 export function HydrateFallback() {
   return (
-    <div className="-mx-4 min-h-[100dvh] bg-background md:mx-0 md:min-h-0">
-      <div className="mx-auto flex min-h-[100dvh] w-full max-w-md flex-col px-3 pb-2 pt-2 md:block md:min-h-0 md:max-w-2xl md:px-4 md:pt-4" />
+    <div className="bg-background -mx-4 min-h-[100dvh] md:mx-0 md:min-h-0">
+      <div className="mx-auto flex min-h-[100dvh] w-full max-w-md flex-col px-3 pt-2 pb-2 md:block md:min-h-0 md:max-w-2xl md:px-4 md:pt-4" />
     </div>
   );
 }
@@ -218,17 +218,17 @@ type ErrorBoundaryProps = { error: Error };
 
 export function ErrorBoundary({ error }: ErrorBoundaryProps) {
   return (
-    <div className="-mx-4 min-h-[100dvh] bg-background md:mx-0 md:min-h-0">
+    <div className="bg-background -mx-4 min-h-[100dvh] md:mx-0 md:min-h-0">
       <div className="mx-auto flex min-h-[100dvh] w-full max-w-md flex-col items-center justify-center gap-3 px-3 text-center md:block md:min-h-0 md:max-w-2xl md:px-4">
-        <p className="text-sm font-medium uppercase tracking-[0.15em] text-muted-foreground">
+        <p className="text-muted-foreground text-sm font-medium tracking-[0.15em] uppercase">
           Something went wrong
         </p>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           {error.message || "The RealiTea puzzle couldn't load. Try refreshing the page."}
         </p>
         <a
           href="/games/realitea"
-          className="mt-2 inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 mt-2 inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors"
         >
           Reload
         </a>
@@ -319,14 +319,14 @@ export default function RealiTeaRoute() {
   );
 
   return (
-    <div className="-mx-4 min-h-[100dvh] bg-background md:mx-0 md:min-h-0">
-      <div className="mx-auto flex min-h-[100dvh] w-full max-w-md flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+8px)] pt-2 md:block md:min-h-0 md:max-w-2xl md:px-4 md:pb-4 md:pt-4">
-        <header className="sticky top-0 z-10 -mx-3 border-b border-border bg-background/95 px-3 pb-1 pt-1 backdrop-blur md:static md:mx-0 md:border-b-0 md:bg-transparent md:px-0 md:pb-2 md:pt-0">
-          <div className="flex items-center justify-between gap-2">
-            <img src="/logo.realitea.png" alt="RealiTea" className="h-8 object-contain" />
+    <div className="-mx-4 min-h-[100dvh] md:mx-0 md:min-h-0">
+      <div className="mx-auto flex min-h-[100dvh] w-full max-w-2xl flex-col pt-2 pb-[calc(env(safe-area-inset-bottom)+8px)] md:min-h-0">
+        <header className="border-border bg-background/95 sticky top-0 z-10 -mx-3 border-b px-3 pt-1 pb-1 backdrop-blur md:static md:mx-0 md:border-b-0 md:bg-transparent md:px-0 md:pt-0 md:pb-2">
+          <div className="flex items-center justify-between gap-2 rounded-full border px-4 py-2">
+            <img src="/logo.realitea.png" alt="RealiTea" className="h-6 object-contain" />
             <button
               aria-label="How to play"
-              className="flex h-8 w-8 items-center justify-center rounded-md transition-colors hover:bg-muted"
+              className="hover:bg-muted flex size-6 items-center justify-center rounded-full border transition-colors"
               onClick={() => setShowInstructions((v) => !v)}
               type="button"
             >
@@ -336,7 +336,7 @@ export default function RealiTeaRoute() {
         </header>
 
         {showInstructions && (
-          <div className="mt-2 rounded-xl border border-border bg-muted/30 p-3 text-sm leading-5 text-muted-foreground">
+          <div className="border-border bg-muted/30 text-muted-foreground mt-2 rounded-xl border p-3 text-sm leading-5">
             <p>Guess today&apos;s reality TV answer in 6 tries.</p>
             <p className="mt-2">
               <span className="font-medium text-emerald-700">Green</span> means the right letter is
@@ -350,7 +350,7 @@ export default function RealiTeaRoute() {
           <div className="flex-1 pt-3 md:flex-none">
             {shouldShowClue && (
               <div className="mb-3 rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm leading-5 text-amber-950 md:mb-2">
-                <p className="text-xs font-medium uppercase tracking-[0.15em] text-amber-800">
+                <p className="text-xs font-medium tracking-[0.15em] text-amber-800 uppercase">
                   Final clue
                 </p>
                 <p className="mt-1">{currentPuzzle.clue}</p>
@@ -398,7 +398,7 @@ export default function RealiTeaRoute() {
               </div>
 
               <p
-                className="text-center text-xs font-medium text-red-600 min-h-[1em]"
+                className="min-h-[1em] text-center text-xs font-medium text-red-600"
                 aria-live="polite"
                 aria-atomic="true"
               >
@@ -407,8 +407,8 @@ export default function RealiTeaRoute() {
             </div>
 
             {game.isGameOver && (
-              <div className="mt-6 rounded max-w-md mx-auto border border-border bg-muted/25 p-3 md:p-4">
-                <p className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
+              <div className="mt-6 rounded border p-3 md:p-4">
+                <p className="text-muted-foreground text-xs font-medium tracking-[0.15em] uppercase">
                   {game.isSolved ? "The Story" : "The puzzle ended"}
                 </p>
                 <p className="mt-2 text-sm leading-5">{currentPuzzle.detail}</p>
@@ -427,7 +427,7 @@ export default function RealiTeaRoute() {
                       href={currentPuzzle.sourceUrls.at(0)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-4 py-2 text-sm font-medium bg-primary text-secondary rounded transition-colors hover:text-emerald-200"
+                      className="bg-primary text-secondary rounded px-4 py-2 text-sm font-medium transition-colors hover:text-emerald-200"
                     >
                       Read more →
                     </a>
@@ -438,7 +438,7 @@ export default function RealiTeaRoute() {
           </div>
 
           {!game.isGameOver && (
-            <div className="sticky bottom-0 z-10 -mx-3 mt-3 border-t border-border bg-background/95 px-2 pb-[calc(env(safe-area-inset-bottom)+6px)] pt-2 backdrop-blur md:static md:mx-0 md:mt-4 md:border-t-0 md:bg-transparent md:px-0 md:pb-0 md:pt-0">
+            <div className="border-border bg-background/95 sticky bottom-0 z-10 -mx-3 mt-3 border-t px-2 pt-2 pb-[calc(env(safe-area-inset-bottom)+6px)] backdrop-blur md:static md:mx-0 md:mt-4 md:border-t-0 md:bg-transparent md:px-0 md:pt-0 md:pb-0">
               <OnscreenKeyboard letterStates={keyboardState} readOnly />
             </div>
           )}
