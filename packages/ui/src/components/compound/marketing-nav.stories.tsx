@@ -18,12 +18,12 @@ type Story = StoryObj<typeof meta>;
 // Shared helpers
 // ---------------------------------------------------------------------------
 
-const defaultLinks = [
+const defaultLinks: Array<{ href: string; label: string }> = [
   { href: "/features", label: "Features" },
   { href: "/pricing", label: "Pricing" },
   { href: "/blog", label: "Blog" },
   { href: "/about", label: "About" },
-] as const;
+];
 
 /** Simple anchor renderer — mirrors a real router's <Link> component. */
 function renderLink({ href, className, onClick, children }: MarketingNavRenderLinkArgs) {
