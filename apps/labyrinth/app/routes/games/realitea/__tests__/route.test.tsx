@@ -129,8 +129,6 @@ async function finishTileReveal() {
 }
 
 async function enterGuess(user: ReturnType<typeof userEvent.setup>, guess: string) {
-  const textbox = screen.getByLabelText("Letter 1");
-  await user.click(textbox);
   await user.keyboard(guess);
 }
 
@@ -139,11 +137,13 @@ async function submitCurrentGuess(user: ReturnType<typeof userEvent.setup>) {
 }
 
 function getTextboxes() {
-  return screen.queryAllByRole("textbox") as HTMLInputElement[];
+  return Array.from({ length: REALITEA_ANSWER_LENGTH }, (_, i) =>
+    screen.queryByLabelText(`Letter ${i + 1}`),
+  ).filter((el): el is HTMLElement => el !== null);
 }
 
 function getTextboxValues() {
-  return getTextboxes().map((input) => input.value);
+  return getTextboxes().map((el) => el.textContent ?? "");
 }
 
 function seedSolvedGame(answer = DEFAULT_ANSWER) {
@@ -373,7 +373,6 @@ describe("RealiTeaRoute", () => {
     const firstCell = screen.getByLabelText("Letter 1");
     fireEvent.keyDown(firstCell, { key: "Backspace" });
     fireEvent.keyDown(firstCell, { key: "A" });
-    fireEvent.change(firstCell, { target: { value: "Q" } });
 
     expect(getTextboxValues()).toEqual(DEFAULT_ANSWER.split(""));
     await expectGuessCalls([DEFAULT_ANSWER]);
