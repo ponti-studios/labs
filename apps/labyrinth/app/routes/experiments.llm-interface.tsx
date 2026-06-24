@@ -337,7 +337,6 @@ function BlockColumn({
 export default function ExperimentsLlmInterface(): JSX.Element {
   const [blocksA, setBlocksA] = useState<ContextBlock[]>(DEFAULT_BLOCKS_A);
   const [blocksB, setBlocksB] = useState<ContextBlock[]>(DEFAULT_BLOCKS_B);
-  const [showHelp, setShowHelp] = useState(false);
   const [showComparison, setShowComparison] = useState(false);
 
   const handleCopyToB = useCallback(() => {
@@ -350,11 +349,9 @@ export default function ExperimentsLlmInterface(): JSX.Element {
         <div className="flex items-start justify-between">
           <h1 className="text-2xl font-bold">Context Chemistry</h1>
           <div className="flex items-center gap-2">
-            <Dialog open={showHelp} onOpenChange={setShowHelp}>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <HelpCircle />
-                </Button>
+            <Dialog>
+              <DialogTrigger className="border-border text-foreground hover:bg-accent hover:text-accent-foreground focus-visible:border-foreground inline-flex min-h-6 min-w-6 cursor-pointer items-center justify-center gap-2 rounded-md border px-3 text-xs font-medium whitespace-nowrap transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0">
+                <HelpCircle />
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
