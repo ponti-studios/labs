@@ -68,7 +68,7 @@ export default function App() {
         )}
       />
       <main className={cn(
-        "mx-auto flex w-full max-w-7xl flex-col pt-24 min-h-[calc(100dvh-6rem)] md:block md:min-h-0",
+        "mx-auto flex w-full max-w-7xl flex-col pt-24 min-h-[calc(100dvh-6rem)] md:min-h-0",
         !fullBleed && "px-4",
       )}>
         <Outlet />

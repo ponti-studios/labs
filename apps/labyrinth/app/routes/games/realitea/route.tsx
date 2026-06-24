@@ -192,19 +192,14 @@ const CurrentGuessRow = memo(function CurrentGuessRow({
  * otherwise mismatch the server-rendered output.
  */
 export function HydrateFallback() {
-  return (
-    <div className="bg-background flex flex-1 flex-col md:block">
-      <div className="mx-auto flex w-full max-w-md flex-1 flex-col px-3 pt-2 pb-2 md:block md:max-w-2xl md:flex-none md:px-4 md:pt-4" />
-    </div>
-  );
+  return <div className="mx-auto flex w-full max-w-2xl flex-col flex-1 px-4 py-3" />;
 }
 
 type ErrorBoundaryProps = { error: Error };
 
 export function ErrorBoundary({ error }: ErrorBoundaryProps) {
   return (
-    <div className="bg-background flex flex-1 flex-col md:block">
-      <div className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center gap-3 text-center md:block md:max-w-2xl md:flex-none">
+    <div className="mx-auto flex w-full max-w-2xl flex-col flex-1 items-center justify-center gap-3 px-4 text-center">
         <p className="text-muted-foreground text-sm font-medium tracking-[0.15em] uppercase">
           Something went wrong
         </p>
@@ -217,7 +212,6 @@ export function ErrorBoundary({ error }: ErrorBoundaryProps) {
         >
           Reload
         </a>
-      </div>
     </div>
   );
 }
@@ -268,8 +262,7 @@ export default function RealiTeaRoute() {
   });
 
   return (
-    <div className="flex flex-col flex-1 md:block">
-      <div className="mx-auto flex w-full max-w-2xl flex-col flex-1 gap-3 px-4 pt-2 pb-[calc(env(safe-area-inset-bottom)+8px)] md:flex-none md:pt-4">
+    <div className="mx-auto flex w-full max-w-2xl flex-col flex-1 gap-3 px-4 pt-2 pb-[calc(env(safe-area-inset-bottom)+8px)]">
 
         <header className="bg-background/95 sticky top-0 z-10 backdrop-blur md:static">
           <div className="flex items-center justify-between gap-2 rounded-full border px-4 py-2">
@@ -305,7 +298,7 @@ export default function RealiTeaRoute() {
           </div>
         )}
 
-        <div className="flex flex-1 flex-col items-center gap-2 md:flex-none">
+        <div className="flex flex-1 flex-col items-center gap-2">
           <div className="w-fit space-y-1 sm:space-y-0.5">
             {Array.from({
               length: game.isGameOver ? game.guesses.length : MAX_GUESSES,
@@ -388,7 +381,6 @@ export default function RealiTeaRoute() {
           />
         )}
 
-      </div>
     </div>
   );
 }
