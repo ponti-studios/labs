@@ -1,18 +1,22 @@
 import "dotenv/config";
 import { and, closeDb, count, db, eq, inArray, rhobhDailyPuzzles } from "@pontistudios/db";
+import pino from "pino";
 
 import {
   addDaysToDateKey,
-  BRAVO_FRANCHISE,
   getDateKey,
   getPuzzleWindow,
   REALITEA_READY_INVENTORY_DAYS,
-} from "../app/lib/realitea-daily-puzzle";
+} from "../app/lib/realitea-puzzle";
 import {
   generateScheduledPuzzle,
   getPublishedPuzzle,
   promoteScheduledPuzzle,
-} from "../app/lib/realitea-daily-puzzle.server";
+} from "../app/lib/realitea-puzzle.server";
+
+const logger = pino(
+  process.env.NODE_ENV === "development" ? { transport: { target: "pino-pretty" } } : {},
+);
 
 function requireEnvironment() {
   const missing = ["DATABASE_URL", "OPENROUTER_API_KEY"].filter((key) => !process.env[key]);
@@ -26,6 +30,13 @@ async function main() {
 
   const now = new Date();
   const { dateKey: activeDateKey } = getPuzzleWindow(now);
+  const reconcileLogger = logger.child({
+    operation: "reconcile",
+    runDateKey: getDateKey(now),
+    activeDateKey,
+  });
+
+  reconcileLogger.info({ event: "[RECONCILE_START]" }, "starting reconcile run");
 
   const promoted = await promoteScheduledPuzzle(now);
 
@@ -40,7 +51,6 @@ async function main() {
     .from(rhobhDailyPuzzles)
     .where(
       and(
-        eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
         eq(rhobhDailyPuzzles.status, "scheduled"),
         inArray(rhobhDailyPuzzles.scheduledForDateKey, targetDateKeys),
       ),
@@ -51,7 +61,13 @@ async function main() {
 
   const createdDateKeys: string[] = [];
   for (const dateKey of targetDateKeys) {
-    if (existingKeys.has(dateKey)) continue;
+    if (existingKeys.has(dateKey)) {
+      reconcileLogger.debug(
+        { event: "[SKIP_GENERATION_EXISTS]", dateKey },
+        "puzzle already scheduled for date",
+      );
+      continue;
+    }
     const created = await generateScheduledPuzzle(dateKey);
     if (created) createdDateKeys.push(dateKey);
   }
@@ -63,32 +79,32 @@ async function main() {
     .from(rhobhDailyPuzzles)
     .where(
       and(
-        eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
         eq(rhobhDailyPuzzles.status, "scheduled"),
         inArray(rhobhDailyPuzzles.scheduledForDateKey, targetDateKeys),
       ),
     );
   const readyDepth = countRows[0]?.value ?? 0;
 
-  console.log(
-    JSON.stringify(
-      {
-        activeDateKey,
-        createdDateKeys,
-        promoted: promoted?.scheduledForDateKey ?? null,
-        publishedId: published?.id ?? null,
-        readyDepth,
-        runDateKey: getDateKey(now),
-        status: "reconciled",
-      },
-      null,
-      2,
-    ),
+  reconcileLogger.info(
+    {
+      event: "[RECONCILE_COMPLETE]",
+      createdDateKeys,
+      promoted: promoted?.scheduledForDateKey ?? null,
+      publishedId: published?.id ?? null,
+      readyDepth,
+    },
+    "reconcile run complete",
   );
 }
 
 try {
   await main();
+} catch (err) {
+  logger.error(
+    { event: "[ERROR_RECONCILE_FAILED]", error: err instanceof Error ? err.message : String(err) },
+    "reconcile run failed",
+  );
+  process.exit(1);
 } finally {
   closeDb();
 }

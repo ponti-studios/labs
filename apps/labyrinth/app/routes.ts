@@ -21,7 +21,8 @@ const apiRoutes = [
   ),
   route("/api/gen/image", "routes/api.gen.image.ts"),
   route("/api/gen/predict", "routes/api.gen.predict.ts"),
-  route("/api/games/realitea/daily", "routes/api.games.realitea.daily.ts"),
+  route("/api/games/realitea/guess", "routes/api.games.realitea.guess.ts"),
+  route("/api/games/realitea/health", "routes/api.games.realitea.health.ts"),
   route("/api/tarot", "routes/api.tarot.ts"),
   route("/api/words/validate", "routes/api.words.validate.ts"),
 ] satisfies RouteConfig;
@@ -39,7 +40,8 @@ const featureRoutes = [
   ]),
   route("/games/cards", "routes/games/cards.tsx"),
   route("/games/tetris", "routes/games/tetris.tsx"),
-  route("/games/realitea", "routes/games/realitea.tsx"),
+  route("/games/realitea", "routes/games/realitea/route.tsx"),
+  route("/games/realitea/admin", "routes/games/realitea/admin.tsx"),
   route("/business-tools", "routes/business-tools/index.tsx"),
   route("/business-tools/marketing", "routes/business-tools/marketing.tsx"),
 ] satisfies RouteConfig;

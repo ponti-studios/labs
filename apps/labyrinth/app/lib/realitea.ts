@@ -1,15 +1,14 @@
-export type LetterState = "absent" | "correct" | "present";
-export type PuzzleAnswerType = "moment" | "object" | "person" | "phrase" | "place" | "storyline";
-export type PuzzleNewsMode = "archive" | "current";
+import type { GameStatus, LetterState, RealiteaGuess } from "./realitea.types";
 
-export interface Puzzle {
-  answer: string;
-  clue: string;
-  detail: string;
-  role: string;
-  answerType?: PuzzleAnswerType;
-  newsMode?: PuzzleNewsMode;
-}
+export type {
+  GameStatus,
+  GuessRejectReason,
+  LetterState,
+  PublicDailyPuzzle,
+  PuzzleAnswerType,
+  RealiteaGuess,
+  RealiteaGuessResult,
+} from "./realitea.types";
 
 export const MAX_GUESSES = 6;
 export const REALITEA_ANSWER_LENGTH = 5;
@@ -23,7 +22,7 @@ export function normalizeAnswer(value: string): string {
   return normalizeGuess(value);
 }
 
-function getPuzzleDateParts(date: Date): [number, number, number] {
+export function getPuzzleDateParts(date: Date): [number, number, number] {
   const formatter = new Intl.DateTimeFormat("en-US", {
     timeZone: REALITEA_TIME_ZONE,
     year: "numeric",
@@ -36,15 +35,6 @@ function getPuzzleDateParts(date: Date): [number, number, number] {
   const day = Number.parseInt(parts.find((part) => part.type === "day")?.value ?? "", 10);
 
   return [year, month, day];
-}
-
-function getLocalDayIndex(date: Date): number {
-  const [year, month, day] = getPuzzleDateParts(date);
-  return Math.floor(Date.UTC(year, month - 1, day) / 86_400_000);
-}
-
-export function getPuzzleKeyForDate(date: Date): string {
-  return `bravo-${getLocalDayIndex(date)}`;
 }
 
 export function evaluateGuess(answer: string, guess: string): LetterState[] {
@@ -75,21 +65,35 @@ export function evaluateGuess(answer: string, guess: string): LetterState[] {
   return states;
 }
 
-export function getKeyboardState(answer: string, guesses: string[]): Record<string, LetterState> {
-  const priority: Record<LetterState, number> = { absent: 0, present: 1, correct: 2 };
+const STATE_PRIORITY: Record<LetterState, number> = { absent: 0, present: 1, correct: 2 };
+
+/**
+ * Aggregate letter states across a list of guesses for the on-screen keyboard.
+ * Accepts server-evaluated `states` so the client never needs to know the answer.
+ */
+export function getKeyboardState(guesses: readonly RealiteaGuess[]): Record<string, LetterState> {
   const keyboardState: Record<string, LetterState> = {};
 
   for (const guess of guesses) {
-    const states = evaluateGuess(answer, guess);
-    for (const [index, letter] of guess.split("").entries()) {
-      const nextState = states[index];
+    for (const [index, letter] of guess.word.split("").entries()) {
+      const nextState = guess.states[index] ?? "absent";
       const currentState = keyboardState[letter];
 
-      if (!currentState || priority[nextState] > priority[currentState]) {
+      if (!currentState || STATE_PRIORITY[nextState] > STATE_PRIORITY[currentState]) {
         keyboardState[letter] = nextState;
       }
     }
   }
 
   return keyboardState;
+}
+
+export function isGuessSolved(guess: RealiteaGuess): boolean {
+  return guess.states.every((state) => state === "correct");
+}
+
+export function deriveGameStatus(guesses: readonly RealiteaGuess[]): GameStatus {
+  if (guesses.some(isGuessSolved)) return "solved";
+  if (guesses.length >= MAX_GUESSES) return "failed";
+  return "playing";
 }

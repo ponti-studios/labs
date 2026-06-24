@@ -35,8 +35,8 @@ export async function loader({ params }: Route.LoaderArgs) {
         imageUrl,
         videoUrl: dbCamera.videoUrl || "",
         view: dbCamera.view || "",
-        lat: parseFloat(dbCamera.lat as any),
-        lng: parseFloat(dbCamera.lng as any),
+        lat: dbCamera.lat,
+        lng: dbCamera.lng,
         lastPhotoAt,
       },
     };

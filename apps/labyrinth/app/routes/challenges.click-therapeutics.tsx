@@ -86,7 +86,7 @@ export default function ClickTherapeutics(): JSX.Element {
       <h2>Click Therapeutics - Voting</h2>
       <p>Find winning candidates based on votes before a timestamp.</p>
 
-      <div className="flex gap-4 items-center mb-4 flex-wrap">
+      <div className="mb-4 flex flex-wrap items-center gap-4">
         <Label>
           Timestamp:
           <Input
@@ -103,28 +103,26 @@ export default function ClickTherapeutics(): JSX.Element {
             onChange={(event) => setNumCandidates(Number(event.target.value))}
           />
         </Label>
-        <Button className="btn btn-primary" onClick={run}>
-          Run
-        </Button>
+        <Button onClick={run}>Run</Button>
       </div>
 
       <div className="mb-4">
         <h4>Votes:</h4>
-        <Table className="border-collapse text-[0.9rem]">
+        <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="border border-[#ccc] py-1 px-2">Name</TableHead>
-              <TableHead className="border border-[#ccc] py-1 px-2">Timestamp</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Timestamp</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {sampleVotes.map((vote, index) => (
               <TableRow
                 key={`${vote.name}-${vote.timestamp}-${index}`}
-                className={vote.timestamp < timestamp ? "bg-[#d4edda]" : "bg-transparent"}
+                className={vote.timestamp < timestamp ? "bg-green-100" : undefined}
               >
-                <TableCell className="border border-[#ccc] py-1 px-2">{vote.name}</TableCell>
-                <TableCell className="border border-[#ccc] py-1 px-2">{vote.timestamp}</TableCell>
+                <TableCell>{vote.name}</TableCell>
+                <TableCell>{vote.timestamp}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -132,7 +130,7 @@ export default function ClickTherapeutics(): JSX.Element {
       </div>
 
       {result !== null && (
-        <div className="p-4 bg-[#f0f0f0] rounded">
+        <div className="rounded bg-[#f0f0f0] p-4">
           {Array.isArray(result) ? (
             <>
               <h4>Leaderboard (Top {numCandidates}):</h4>

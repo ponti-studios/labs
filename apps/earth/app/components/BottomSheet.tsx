@@ -71,8 +71,10 @@ export default function BottomSheet({ children }: Props) {
         close();
       } else if (velocity < -FLICK_VELOCITY) {
         open();
+      } else if (fraction > DRAG_THRESHOLD) {
+        close();
       } else {
-        fraction > DRAG_THRESHOLD ? close() : open();
+        open();
       }
     },
     [translateY, open, close],
@@ -80,7 +82,11 @@ export default function BottomSheet({ children }: Props) {
 
   const onHandleClick = useCallback(() => {
     if (didDrag.current) return;
-    isOpen() ? close() : open();
+    if (isOpen()) {
+      close();
+    } else {
+      open();
+    }
   }, [translateY, open, close]);
 
   // Re-open when route changes while closed
