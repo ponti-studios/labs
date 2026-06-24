@@ -1,16 +1,22 @@
 /**
  * Server-only word list module.
  *
- * Word files are bundled into the server at build time via Vite ?raw imports.
- * They are never included in the client bundle and never served to the browser.
+ * Reads the official 5-letter word list from disk.  In Vite dev & production SSR
+ * this resolves against the source tree (dev) or build output (prod, after the
+ * Dockerfile copies the words directory into the bundle).  When executed directly
+ * via `tsx` (e.g. the reconcile script) it also resolves correctly from source.
  */
-import words5 from "../data/words/5.txt?raw";
+import { readFileSync } from "node:fs";
+import { resolve, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { getStoredAnswersForValidation } from "./realitea-db";
 import { REALITEA_ANSWER_LENGTH } from "./realitea";
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
 const wordSet = new Set(
-  words5
+  readFileSync(resolve(__dirname, "../data/words/5.txt"), "utf-8")
     .split("\n")
     .map((w) => w.trim())
     .filter(Boolean),
