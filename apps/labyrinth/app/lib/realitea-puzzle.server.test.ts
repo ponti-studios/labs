@@ -170,16 +170,22 @@ describe("realitea daily puzzle server helpers", () => {
       validationStatus: "approved",
     };
 
-    findFirstMock.mockResolvedValue(null);
+    // Call sequence: (1) getPublishedPuzzle outside tx, (2) getPublishedPuzzle inside tx,
+    // (3) find scheduled for today's dateKey inside tx
+    findFirstMock
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce(scheduledRow)
+      .mockResolvedValue(null);
+
     dbMock.update.mockImplementation(createUpdateResponder());
 
-    const txSelect = createSelectResponder([[], [scheduledRow]]);
     const txUpdate = createUpdateResponder([[{ ...scheduledRow, status: "published" }]]);
 
     dbMock.transaction.mockImplementation(async (callback: (tx: unknown) => unknown) =>
       callback({
         query: dbMock.query,
-        select: txSelect,
+        select: vi.fn(),
         update: txUpdate,
       }),
     );

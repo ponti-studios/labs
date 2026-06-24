@@ -140,7 +140,7 @@ export function useRealiTeaGame({
       setGuesses((prev) => {
         // Idempotency guard for the async state update
         if (prev.at(-1)?.word === result.word) return prev;
-        return [...prev, { word: result.word, states: result.states }];
+        return [...prev, { word: result.word!, states: result.states! }];
       });
       typing.setCurrentGuess("");
       anim.startReveal(guesses.length);

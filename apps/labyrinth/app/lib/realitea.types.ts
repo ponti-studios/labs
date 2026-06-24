@@ -51,16 +51,11 @@ export interface RealiteaGuessResult {
  *   exhaustiveness checks at call sites
  *
  * DB-only fields are intentionally omitted:
- * `dateUtc` (replaced by `dateKey`), `newsMode`, `sourceKind`,
- * `generationBatchId`, `generationStatus`, `validationStatus`.
+ * `dateUtc` (replaced by `dateKey`), `validationStatus`.
  */
 export type PuzzleRecord = Omit<
   NewRhobhDailyPuzzle,
   | "dateUtc"
-  | "newsMode"
-  | "sourceKind"
-  | "generationBatchId"
-  | "generationStatus"
   | "validationStatus"
   | "answerType"
 > & {
