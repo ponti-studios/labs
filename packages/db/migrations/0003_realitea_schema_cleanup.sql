@@ -12,6 +12,9 @@ DROP INDEX IF EXISTS "labs"."rhobh_daily_puzzles_franchise_scheduled_date_idx";-
 CREATE INDEX IF NOT EXISTS "rhobh_daily_puzzles_status_idx" ON "labs"."rhobh_daily_puzzles" USING btree ("status");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "rhobh_daily_puzzles_scheduled_date_idx" ON "labs"."rhobh_daily_puzzles" USING btree ("scheduled_for_date_key");--> statement-breakpoint
 
+-- Remove legacy rows that pre-date the 5-letter answer constraint
+DELETE FROM "labs"."rhobh_daily_puzzles" WHERE length(normalized_answer) != 5;--> statement-breakpoint
+
 -- Add data-integrity constraints
 ALTER TABLE "labs"."rhobh_daily_puzzles" ADD CONSTRAINT "status_must_be_valid" CHECK (status IN ('scheduled', 'published', 'consumed'));--> statement-breakpoint
 ALTER TABLE "labs"."rhobh_daily_puzzles" ADD CONSTRAINT "normalized_answer_length" CHECK (length(normalized_answer) = 5);--> statement-breakpoint
