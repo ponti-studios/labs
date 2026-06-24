@@ -20,8 +20,7 @@ export interface DailyPuzzle {
   sourceUrls: string[];
 }
 
-// Do not send the `answer` to the client. The answer length is always
-// `REALITEA_ANSWER_LENGTH` — the board renders exactly 5 tiles.
+// Do not send the `answer` to the client.
 export interface PublicDailyPuzzle extends Omit<DailyPuzzle, "answer"> {}
 
 export interface RealiteaGuess {

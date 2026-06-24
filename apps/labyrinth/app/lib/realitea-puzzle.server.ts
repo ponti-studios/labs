@@ -14,6 +14,7 @@ import {
   rhobhDailyPuzzles,
   type RhobhDailyPuzzle,
 } from "@pontistudios/db";
+import pino from "pino";
 import { z } from "zod";
 
 import { normalizeAnswer, REALITEA_ANSWER_LENGTH } from "./realitea";
@@ -29,30 +30,30 @@ import {
   BRAVO_FRANCHISE,
   BRAVO_PRIMARY_SOURCE_DOMAIN,
   BRAVO_REPEAT_WINDOW_DAYS,
+  addDaysToDateKey,
   getDateKey,
   getPuzzleWindow,
   parseDate,
   validateCandidate,
-  type DailyPuzzle,
   type PuzzleRecord,
 } from "./realitea-puzzle";
 import { LabyrinthServerEnv } from "./server/env";
 import { isValidWord } from "./word-list.server";
 
+const logger = pino(
+  process.env.NODE_ENV === "development" ? { transport: { target: "pino-pretty" } } : {},
+);
+
 /**
  * Transaction-or-database handle. The `db.transaction` callback receives a
  * `PostgresJsTransaction` instance that exposes the same query API as `db`,
  * so functions that may run inside or outside a transaction accept either.
- *
- * The structural type below captures the only methods the puzzle functions
- * actually call (`select` / `update` / `insert`). This is intentionally
- * narrower than the full Drizzle type so a default `db` and a `tx` argument
- * are interchangeable at the call sites we care about.
  */
 type PuzzleDatabase = {
   select: typeof db.select;
   update: typeof db.update;
   insert: typeof db.insert;
+  query: typeof db.query;
 };
 
 const SYSTEM_PROMPT = readFileSync(
@@ -77,12 +78,6 @@ const generationResponseSchema = z.object({
 
 type Candidate = z.infer<typeof candidateSchema>;
 
-/**
- * Drizzle's `select().from(table)` returns the row typed as
- * `RhobhDailyPuzzle` (from `$inferSelect`), but the `jsonb` columns come back
- * loosely typed. This function widens to `Record<string, unknown>` and applies
- * the post-DB normalizations we need (jsonb → string[]; `dateUtc` → `dateKey`).
- */
 function normalizePuzzleRecord(row: RhobhDailyPuzzle): PuzzleRecord {
   const loose = row as unknown as Record<string, unknown>;
   const toArray = (v: unknown): string[] =>
@@ -118,12 +113,7 @@ async function getInventoryAnswers(): Promise<Set<string>> {
   const rows = await db
     .select({ normalizedAnswer: rhobhDailyPuzzles.normalizedAnswer })
     .from(rhobhDailyPuzzles)
-    .where(
-      and(
-        eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
-        inArray(rhobhDailyPuzzles.status, ["published", "scheduled"]),
-      ),
-    );
+    .where(inArray(rhobhDailyPuzzles.status, ["published", "scheduled"]));
   return new Set(rows.map((r) => r.normalizedAnswer));
 }
 
@@ -131,50 +121,44 @@ async function markExpiredPuzzles(now: Date, tx: PuzzleDatabase = db): Promise<v
   await tx
     .update(rhobhDailyPuzzles)
     .set({ status: "consumed", updatedAt: now })
-    .where(
-      and(
-        eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
-        eq(rhobhDailyPuzzles.status, "published"),
-        lte(rhobhDailyPuzzles.expireAt, now),
-      ),
-    );
+    .where(and(eq(rhobhDailyPuzzles.status, "published"), lte(rhobhDailyPuzzles.expireAt, now)));
 }
 
 export async function getPublishedPuzzle(
   now: Date,
   tx: PuzzleDatabase = db,
 ): Promise<PuzzleRecord | null> {
-  const rows = await tx
-    .select()
-    .from(rhobhDailyPuzzles)
-    .where(
-      and(
-        eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
-        eq(rhobhDailyPuzzles.status, "published"),
-        lte(rhobhDailyPuzzles.publishAt, now),
-        gt(rhobhDailyPuzzles.expireAt, now),
-      ),
-    )
-    .orderBy(desc(rhobhDailyPuzzles.publishAt))
-    .limit(1);
-  const row = rows[0];
+  const childLogger = logger.child({
+    operation: "getPublishedPuzzle",
+    timestamp: now.toISOString(),
+  });
+
+  const row = await tx.query.rhobhDailyPuzzles.findFirst({
+    where: and(
+      eq(rhobhDailyPuzzles.status, "published"),
+      lte(rhobhDailyPuzzles.publishAt, now),
+      gt(rhobhDailyPuzzles.expireAt, now),
+    ),
+    orderBy: desc(rhobhDailyPuzzles.publishAt),
+  });
+
+  if (row) {
+    childLogger.info({ event: "[PUZZLE_AVAILABLE]", puzzle_id: row.id }, "published puzzle found");
+  } else {
+    childLogger.debug({ event: "[NO_PUBLISHED_PUZZLE]" }, "no published puzzle in current window");
+  }
+
   return row ? normalizePuzzleRecord(row) : null;
 }
 
 export async function loadScheduledPuzzle(dateKey: string): Promise<PuzzleRecord | null> {
-  const rows = await db
-    .select()
-    .from(rhobhDailyPuzzles)
-    .where(
-      and(
-        eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
-        eq(rhobhDailyPuzzles.scheduledForDateKey, dateKey),
-        inArray(rhobhDailyPuzzles.status, ["published", "scheduled"]),
-      ),
-    )
-    .orderBy(desc(rhobhDailyPuzzles.createdAt))
-    .limit(1);
-  const row = rows[0];
+  const row = await db.query.rhobhDailyPuzzles.findFirst({
+    where: and(
+      eq(rhobhDailyPuzzles.scheduledForDateKey, dateKey),
+      inArray(rhobhDailyPuzzles.status, ["published", "scheduled"]),
+    ),
+    orderBy: desc(rhobhDailyPuzzles.createdAt),
+  });
   return row ? normalizePuzzleRecord(row) : null;
 }
 
@@ -182,6 +166,7 @@ async function callGenerationApi(
   dateKey: string,
   excludedAnswers: string[],
 ): Promise<Candidate | null> {
+  const childLogger = logger.child({ operation: "callGenerationApi", dateKey });
   const env = LabyrinthServerEnv.safeParse(process.env);
   if (!env.success) return null;
 
@@ -249,22 +234,43 @@ async function callGenerationApi(
     for (const candidate of parsed.candidates) {
       const result = validateCandidate(candidate, previousAnswers);
       if (result.valid) return candidate;
-      console.warn("Rejected candidate", { answer: candidate.answer, reasons: result.reasons });
+      childLogger.warn(
+        {
+          event: "[GENERATION_CANDIDATE_REJECTED]",
+          answer: candidate.answer,
+          reasons: result.reasons,
+        },
+        "candidate rejected",
+      );
     }
 
     return null;
   } catch (err) {
-    console.error("Generation failed", { dateKey, err });
+    childLogger.error(
+      { event: "[GENERATION_API_ERROR]", error: err instanceof Error ? err.message : String(err) },
+      "generation API call failed",
+    );
     return null;
   }
 }
 
 export async function generateScheduledPuzzle(dateKey: string): Promise<PuzzleRecord | null> {
+  const childLogger = logger.child({ operation: "generateScheduledPuzzle", dateKey });
+
   const existing = await loadScheduledPuzzle(dateKey);
-  if (existing) return existing;
+  if (existing) {
+    childLogger.debug(
+      { event: "[SKIP_GENERATION_EXISTS]", puzzle_id: existing.id },
+      "puzzle already exists for date",
+    );
+    return existing;
+  }
 
   const date = parseDate(dateKey);
-  if (!date) throw new Error(`Invalid date key: ${dateKey}`);
+  if (!date) {
+    childLogger.error({ event: "[ERROR_INVALID_DATEKEY]", input: dateKey }, "invalid date key");
+    throw new Error(`Invalid date key: ${dateKey}`);
+  }
 
   const [recentAnswers, inventoryAnswers] = await Promise.all([
     getRecentAnswers(date),
@@ -276,12 +282,22 @@ export async function generateScheduledPuzzle(dateKey: string): Promise<PuzzleRe
   for (let attempt = 0; attempt < 3 && !candidate; attempt++) {
     candidate = await callGenerationApi(dateKey, excludedAnswers);
     if (!candidate) {
-      console.warn("Generation attempt failed", { attempt: attempt + 1, dateKey });
+      childLogger.warn(
+        { event: "[GENERATION_RETRY]", attempt: attempt + 1 },
+        "generation attempt yielded no valid candidate",
+      );
+      if (attempt < 2) {
+        const delayMs = Math.pow(2, attempt) * 1000;
+        await new Promise((r) => setTimeout(r, delayMs));
+      }
     }
   }
 
   if (!candidate) {
-    console.warn("Puzzle generation failed after all attempts", { dateKey });
+    childLogger.error(
+      { event: "[GENERATION_EXHAUSTED]" },
+      "puzzle generation failed after all attempts",
+    );
     return null;
   }
 
@@ -292,7 +308,7 @@ export async function generateScheduledPuzzle(dateKey: string): Promise<PuzzleRe
       ? candidate.sourceSummary.join(" ")
       : candidate.detail;
   const dateValue = parseDate(window.dateKey)?.toISOString().slice(0, 10) ?? window.dateKey;
-  console.log("generateScheduledPuzzle INSERT START", { dateKey, answer: candidate.answer });
+
   const inserted = await db
     .insert(rhobhDailyPuzzles)
     .values({
@@ -322,51 +338,69 @@ export async function generateScheduledPuzzle(dateKey: string): Promise<PuzzleRe
     })
     .returning();
 
-  console.log("generateScheduledPuzzle INSERT DONE", { dateKey, id: inserted[0]?.id });
+  childLogger.info(
+    { event: "[PUZZLE_GENERATED]", puzzle_id: inserted[0]?.id, answer: candidate.answer },
+    "puzzle generated and scheduled",
+  );
   return normalizePuzzleRecord(inserted[0] as RhobhDailyPuzzle);
 }
 
 export async function promoteScheduledPuzzle(now: Date): Promise<PuzzleRecord | null> {
   const window = getPuzzleWindow(now);
+  const childLogger = logger.child({
+    operation: "promoteScheduledPuzzle",
+    dateKey: window.dateKey,
+    timestamp: now.toISOString(),
+  });
 
   return db.transaction(async (tx) => {
-    await markExpiredPuzzles(now, tx);
+    await markExpiredPuzzles(now, tx as unknown as PuzzleDatabase);
 
-    const active = await getPublishedPuzzle(now, tx);
-    if (active) return active;
-
-    let rows = await tx
-      .select()
-      .from(rhobhDailyPuzzles)
-      .where(
-        and(
-          eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
-          eq(rhobhDailyPuzzles.status, "scheduled"),
-          eq(rhobhDailyPuzzles.scheduledForDateKey, window.dateKey),
-        ),
-      )
-      .orderBy(desc(rhobhDailyPuzzles.createdAt))
-      .limit(1);
-
-    let scheduled = rows[0];
-
-    // Fallback: if no scheduled puzzle for today, find the most recent one
-    if (!scheduled) {
-      rows = await tx
-        .select()
-        .from(rhobhDailyPuzzles)
-        .where(
-          and(
-            eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
-            eq(rhobhDailyPuzzles.status, "scheduled"),
-          ),
-        )
-        .orderBy(desc(rhobhDailyPuzzles.createdAt))
-        .limit(1);
-      scheduled = rows[0];
+    const active = await getPublishedPuzzle(now, tx as unknown as PuzzleDatabase);
+    if (active) {
+      childLogger.debug(
+        { event: "[SKIP_PROMOTION_PUBLISHED]", puzzle_id: active.id },
+        "puzzle already published",
+      );
+      return active;
     }
 
-    if (!scheduled?.id) return null;
+    // Attempt 1: find scheduled for today's dateKey
+    let scheduled = await (tx as unknown as PuzzleDatabase).query.rhobhDailyPuzzles.findFirst({
+      where: and(
+        eq(rhobhDailyPuzzles.status, "scheduled"),
+        eq(rhobhDailyPuzzles.scheduledForDateKey, window.dateKey),
+      ),
+      orderBy: desc(rhobhDailyPuzzles.createdAt),
+    });
+
+    // Fallback: any recent scheduled puzzle
+    if (!scheduled) {
+      childLogger.debug(
+        { event: "[SKIP_PROMOTION_NO_SCHEDULED]" },
+        "no scheduled puzzle for today",
+      );
+      scheduled = await (tx as unknown as PuzzleDatabase).query.rhobhDailyPuzzles.findFirst({
+        where: eq(rhobhDailyPuzzles.status, "scheduled"),
+        orderBy: desc(rhobhDailyPuzzles.createdAt),
+      });
+      if (scheduled) {
+        childLogger.warn(
+          {
+            event: "[FALLBACK_ACTIVATED_SCHEDULED_ANY]",
+            puzzle_id: scheduled.id,
+            intended_dateKey: window.dateKey,
+            fallback_dateKey: scheduled.scheduledForDateKey,
+          },
+          "promoting most-recent scheduled puzzle as fallback",
+        );
+      }
+    }
+
+    if (!scheduled?.id) {
+      childLogger.error({ event: "[ERROR_NO_SCHEDULED_PUZZLE]" }, "no scheduled puzzle found");
+      return null;
+    }
 
     const dateValue = parseDate(window.dateKey)?.toISOString().slice(0, 10) ?? null;
     const updated = await tx
@@ -381,27 +415,16 @@ export async function promoteScheduledPuzzle(now: Date): Promise<PuzzleRecord | 
       .where(eq(rhobhDailyPuzzles.id, Number(scheduled.id)))
       .returning();
 
+    childLogger.info(
+      {
+        event: "[PUZZLE_PROMOTED]",
+        puzzle_id: scheduled.id,
+        source_dateKey: scheduled.scheduledForDateKey,
+      },
+      "scheduled puzzle promoted to published",
+    );
     return normalizePuzzleRecord(updated[0] as RhobhDailyPuzzle);
   });
-}
-
-function toDailyPuzzle(record: PuzzleRecord): DailyPuzzle {
-  return {
-    answer: record.answer,
-    answerType: record.answerType,
-    clue: record.clue,
-    dateKey: record.scheduledForDateKey ?? record.dateKey ?? "",
-    detail: record.detail,
-    role: record.role,
-    sourceUrls: record.sourceUrls,
-  };
-}
-
-export async function loadActivePuzzle(now: Date): Promise<{ puzzle: DailyPuzzle } | null> {
-  await markExpiredPuzzles(now);
-  const published = (await getPublishedPuzzle(now)) ?? (await promoteScheduledPuzzle(now));
-  if (!published) return null;
-  return { puzzle: toDailyPuzzle(published) };
 }
 
 export async function getStoredAnswersForValidation(): Promise<Set<string>> {
@@ -426,45 +449,64 @@ function toPublicDailyPuzzle(record: PuzzleRecord): PublicDailyPuzzle {
 export async function loadActivePublicPuzzle(
   now: Date,
 ): Promise<{ puzzle: PublicDailyPuzzle } | null> {
+  const window = getPuzzleWindow(now);
+  const childLogger = logger.child({
+    operation: "loadActivePublicPuzzle",
+    dateKey: window.dateKey,
+    timestamp: now.toISOString(),
+  });
+
   await markExpiredPuzzles(now);
   let published = (await getPublishedPuzzle(now)) ?? (await promoteScheduledPuzzle(now));
 
-  // Fallback: if still no puzzle, find the most recent published one regardless of time
+  // Last-resort fallback: serve the most-recently published puzzle regardless of window
   if (!published) {
-    const rows = await db
-      .select()
-      .from(rhobhDailyPuzzles)
-      .where(
-        and(
-          eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
-          eq(rhobhDailyPuzzles.status, "published"),
-        ),
-      )
-      .orderBy(desc(rhobhDailyPuzzles.publishAt))
-      .limit(1);
-    const row = rows[0];
-    if (row) published = normalizePuzzleRecord(row);
+    const row = await db.query.rhobhDailyPuzzles.findFirst({
+      where: eq(rhobhDailyPuzzles.status, "published"),
+      orderBy: desc(rhobhDailyPuzzles.publishAt),
+    });
+    if (row) {
+      published = normalizePuzzleRecord(row);
+      childLogger.warn(
+        {
+          event: "[FALLBACK_ACTIVATED_PUBLISHED_ANY]",
+          puzzle_id: published.id,
+          intended_dateKey: window.dateKey,
+          served_dateKey: published.scheduledForDateKey,
+        },
+        "no current puzzle; serving archived puzzle as fallback",
+      );
+    }
   }
 
-  if (!published) return null;
+  if (!published) {
+    childLogger.error(
+      { event: "[ERROR_NO_PUZZLE_AVAILABLE]" },
+      "all fallbacks exhausted — no puzzle available",
+    );
+    return null;
+  }
+
+  childLogger.info(
+    {
+      event: "[PUZZLE_AVAILABLE]",
+      puzzle_id: published.id,
+      dateKey: published.scheduledForDateKey,
+    },
+    "active puzzle loaded",
+  );
   return { puzzle: toPublicDailyPuzzle(published) };
 }
 
 export async function loadPuzzleRecordByDateKey(dateKey: string): Promise<PuzzleRecord | null> {
   const window = getPuzzleWindow(parseDate(dateKey) ?? new Date());
-  const rows = await db
-    .select()
-    .from(rhobhDailyPuzzles)
-    .where(
-      and(
-        eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
-        eq(rhobhDailyPuzzles.scheduledForDateKey, window.dateKey),
-        inArray(rhobhDailyPuzzles.status, ["published", "scheduled"]),
-      ),
-    )
-    .orderBy(desc(rhobhDailyPuzzles.createdAt))
-    .limit(1);
-  const row = rows[0];
+  const row = await db.query.rhobhDailyPuzzles.findFirst({
+    where: and(
+      eq(rhobhDailyPuzzles.scheduledForDateKey, window.dateKey),
+      inArray(rhobhDailyPuzzles.status, ["published", "scheduled"]),
+    ),
+    orderBy: desc(rhobhDailyPuzzles.createdAt),
+  });
   return row ? normalizePuzzleRecord(row) : null;
 }
 
@@ -477,6 +519,7 @@ export async function evaluateGuessServer(
   rawWord: string,
   previousGuesses: readonly { word: string }[],
 ): Promise<RealiteaGuessResult> {
+  const childLogger = logger.child({ operation: "evaluateGuessServer", requestedDateKey: dateKey });
   const word = normalizeGuess(rawWord);
 
   if (word.length !== REALITEA_ANSWER_LENGTH) {
@@ -487,8 +530,23 @@ export async function evaluateGuessServer(
     return { valid: false, word, reason: "already-guessed" };
   }
 
-  const puzzle = await loadPuzzleRecordByDateKey(dateKey);
+  // Try exact dateKey, then previous day as grace period for midnight-rollover games
+  let puzzle = await loadPuzzleRecordByDateKey(dateKey);
   if (!puzzle) {
+    const prevDateKey = addDaysToDateKey(dateKey, -1);
+    if (prevDateKey) {
+      puzzle = await loadPuzzleRecordByDateKey(prevDateKey);
+      if (puzzle) {
+        childLogger.info(
+          { event: "[GUESS_GRACE_PERIOD_ACCEPTED]", acceptedDateKey: prevDateKey, word },
+          "guess accepted via previous-day grace period",
+        );
+      }
+    }
+  }
+
+  if (!puzzle) {
+    childLogger.warn({ event: "[GUESS_PUZZLE_NOT_FOUND]", word }, "no puzzle found for dateKey");
     return { valid: false, word, reason: "not-in-word-list" };
   }
 

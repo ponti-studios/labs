@@ -27,7 +27,7 @@ export interface RealiTeaGameState {
   hasError: boolean;
   revealedTileCount: number;
   revealingGuessIndex: number | null;
-  cellRefs: React.MutableRefObject<Array<HTMLInputElement | null>>;
+  cellRefs: React.RefObject<Array<HTMLInputElement | null>>;
   addLetter: (value: string) => void;
   removeLetter: () => void;
   submitGuess: () => void;

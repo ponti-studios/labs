@@ -92,11 +92,6 @@ async function renderRoute(initial: { puzzle?: PublicDailyPuzzle } = {}) {
       path: "/api/games/realitea/guess",
       action: guessControl.action,
     },
-    {
-      id: "routes/api.games.realitea.daily",
-      path: "/api/games/realitea/daily",
-      loader: () => new Response(JSON.stringify({ error: "no next-day puzzle" }), { status: 404 }),
-    },
   ]);
 
   cleanup();

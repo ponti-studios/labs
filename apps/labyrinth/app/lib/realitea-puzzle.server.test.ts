@@ -1,9 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { dbMock, safeParseMock, rhobhDailyPuzzlesMock } = vi.hoisted(() => {
+const { dbMock, findFirstMock, safeParseMock, rhobhDailyPuzzlesMock } = vi.hoisted(() => {
+  const findFirstMock = vi.fn();
+
   const dbMock = {
     delete: vi.fn(),
     insert: vi.fn(),
+    query: {
+      rhobhDailyPuzzles: {
+        findFirst: findFirstMock,
+      },
+    },
     select: vi.fn(),
     transaction: vi.fn(),
     update: vi.fn(),
@@ -24,7 +31,7 @@ const { dbMock, safeParseMock, rhobhDailyPuzzlesMock } = vi.hoisted(() => {
 
   const safeParseMock = vi.fn();
 
-  return { dbMock, rhobhDailyPuzzlesMock, safeParseMock };
+  return { dbMock, findFirstMock, rhobhDailyPuzzlesMock, safeParseMock };
 });
 
 const isValidWordMock = vi.fn();
@@ -118,15 +125,18 @@ describe("realitea daily puzzle server helpers", () => {
     vi.unstubAllGlobals();
   });
 
-  it("loads the active published puzzle when one exists", async () => {
-    dbMock.select.mockImplementation(createSelectResponder([[PUBLISHED_ROW]]));
+  it("loads the active published puzzle through the public API when one exists", async () => {
+    findFirstMock.mockResolvedValue(PUBLISHED_ROW);
     dbMock.update.mockImplementation(createUpdateResponder());
 
-    const { loadActivePuzzle } = await import("./realitea-puzzle.server");
-    const envelope = await loadActivePuzzle(new Date("2026-05-20T12:00:00.000Z"));
+    const { loadActivePublicPuzzle } = await import("./realitea-puzzle.server");
+    const envelope = await loadActivePublicPuzzle(new Date("2026-05-20T12:00:00.000Z"));
 
-    expect(envelope?.puzzle.answer).toBe("ERIKA");
     expect(envelope?.puzzle.dateKey).toBe("2026-05-20");
+    expect(envelope?.puzzle.answerType).toBe("person");
+    expect(envelope?.puzzle.clue).toBe(
+      "The Pretty Mess performer never misses a sharp confessional.",
+    );
   });
 
   it("promotes the scheduled puzzle when no published puzzle exists", async () => {
@@ -160,18 +170,25 @@ describe("realitea daily puzzle server helpers", () => {
       validationStatus: "approved",
     };
 
+    findFirstMock.mockResolvedValue(null);
+    dbMock.update.mockImplementation(createUpdateResponder());
+
     const txSelect = createSelectResponder([[], [scheduledRow]]);
     const txUpdate = createUpdateResponder([[{ ...scheduledRow, status: "published" }]]);
 
     dbMock.transaction.mockImplementation(async (callback: (tx: unknown) => unknown) =>
-      callback({ select: txSelect, update: txUpdate }),
+      callback({
+        query: dbMock.query,
+        select: txSelect,
+        update: txUpdate,
+      }),
     );
 
-    const { loadActivePuzzle } = await import("./realitea-puzzle.server");
-    const envelope = await loadActivePuzzle(new Date("2026-05-20T12:00:00.000Z"));
+    const { loadActivePublicPuzzle } = await import("./realitea-puzzle.server");
+    const envelope = await loadActivePublicPuzzle(new Date("2026-05-20T12:00:00.000Z"));
 
-    expect(envelope?.puzzle.answer).toBe("DRAMA");
     expect(envelope?.puzzle.dateKey).toBe("2026-05-20");
+    expect(envelope?.puzzle.answerType).toBe("moment");
   });
 
   it("returns null when no published or scheduled puzzle exists", async () => {
@@ -180,13 +197,14 @@ describe("realitea daily puzzle server helpers", () => {
 
     dbMock.transaction.mockImplementation(async (callback: (tx: unknown) => unknown) =>
       callback({
+        query: dbMock.query,
         select: createSelectResponder([[], []]),
         update: createUpdateResponder(),
       }),
     );
 
-    const { loadActivePuzzle } = await import("./realitea-puzzle.server");
-    const envelope = await loadActivePuzzle(new Date("2026-05-20T12:00:00.000Z"));
+    const { loadActivePublicPuzzle } = await import("./realitea-puzzle.server");
+    const envelope = await loadActivePublicPuzzle(new Date("2026-05-20T12:00:00.000Z"));
 
     expect(envelope).toBeNull();
   });
@@ -195,6 +213,7 @@ describe("realitea daily puzzle server helpers", () => {
 describe("evaluateGuessServer", () => {
   beforeEach(() => {
     isValidWordMock.mockReset();
+    findFirstMock.mockReset();
     dbMock.select.mockReset();
   });
 
@@ -218,7 +237,7 @@ describe("evaluateGuessServer", () => {
 
   it("returns not-in-word-list when the word is missing", async () => {
     isValidWordMock.mockResolvedValue(false);
-    dbMock.select.mockImplementation(createSelectResponder([[PUBLISHED_ROW]]));
+    findFirstMock.mockResolvedValue(PUBLISHED_ROW);
     const { evaluateGuessServer } = await import("./realitea-puzzle.server");
     const result = await evaluateGuessServer("2026-05-20", "ZZZZZ", []);
     expect(result.valid).toBe(false);
@@ -227,7 +246,7 @@ describe("evaluateGuessServer", () => {
 
   it("returns not-in-word-list when no puzzle exists for the date", async () => {
     isValidWordMock.mockResolvedValue(true);
-    dbMock.select.mockImplementation(createSelectResponder([[]]));
+    findFirstMock.mockResolvedValue(null);
     const { evaluateGuessServer } = await import("./realitea-puzzle.server");
     const result = await evaluateGuessServer("2026-05-20", "ERIKA", []);
     expect(result.valid).toBe(false);
@@ -237,7 +256,7 @@ describe("evaluateGuessServer", () => {
 
   it("evaluates a valid guess and returns per-letter states without the answer", async () => {
     isValidWordMock.mockResolvedValue(true);
-    dbMock.select.mockImplementation(createSelectResponder([[PUBLISHED_ROW]]));
+    findFirstMock.mockResolvedValue(PUBLISHED_ROW);
     const { evaluateGuessServer } = await import("./realitea-puzzle.server");
     const result = await evaluateGuessServer("2026-05-20", "ERIKA", []);
     expect(result.valid).toBe(true);
@@ -251,7 +270,7 @@ describe("evaluateGuessServer", () => {
 
   it("marks the game failed on the sixth valid guess that is not the answer", async () => {
     isValidWordMock.mockResolvedValue(true);
-    dbMock.select.mockImplementation(createSelectResponder([[PUBLISHED_ROW]]));
+    findFirstMock.mockResolvedValue(PUBLISHED_ROW);
     const { evaluateGuessServer } = await import("./realitea-puzzle.server");
     const previous = ["DORIT", "SUTTON", "KATHY", "ERIKA", "TILLY"].map((word) => ({
       word,
@@ -265,7 +284,7 @@ describe("evaluateGuessServer", () => {
 
   it("keeps the game playing while guesses remain", async () => {
     isValidWordMock.mockResolvedValue(true);
-    dbMock.select.mockImplementation(createSelectResponder([[PUBLISHED_ROW]]));
+    findFirstMock.mockResolvedValue(PUBLISHED_ROW);
     const { evaluateGuessServer } = await import("./realitea-puzzle.server");
     const result = await evaluateGuessServer("2026-05-20", "DORIT", []);
     expect(result.valid).toBe(true);

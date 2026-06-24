@@ -16,7 +16,6 @@ import { loadActivePublicPuzzle } from "~/lib/realitea-puzzle.server";
 import { cn } from "~/lib/utils";
 
 import { readGameState, saveGameState } from "./game-state";
-import { useDailyPuzzle } from "./use-daily-puzzle";
 import { useRealiTeaGame } from "./use-game";
 import { useRealiTeaShare } from "./use-share";
 
@@ -156,7 +155,7 @@ const RevealedGuessRow = memo(function RevealedGuessRow({
 });
 
 type CurrentGuessRowProps = {
-  cellRefs: React.MutableRefObject<Array<HTMLInputElement | null>>;
+  cellRefs: React.RefObject<Array<HTMLInputElement | null>>;
   currentGuess: string;
   hasError: boolean;
   isShaking: boolean;
@@ -251,7 +250,7 @@ export default function RealiTeaRoute() {
   const initial = useLoaderData<LoaderData>();
   const [showInstructions, setShowInstructions] = useState(false);
 
-  const { currentPuzzle } = useDailyPuzzle(initial.puzzle);
+  const currentPuzzle = initial.puzzle;
 
   // Read once at mount. We deliberately do not subscribe to localStorage.
   // useState lazy initializer runs exactly once per mount — one-shot seed,
