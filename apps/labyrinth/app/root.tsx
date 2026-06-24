@@ -7,11 +7,13 @@ import {
   Scripts,
   ScrollRestoration,
   useLocation,
+  useMatches,
 } from "react-router";
 import { AppNavigation } from "@pontistudios/ui";
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import { cn } from "./lib/utils";
 import { PrefetchProvider } from "./components/prefetch-provider";
 import QueryProvider from "./components/QueryProvider";
 
@@ -50,6 +52,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   const location = useLocation();
+  const matches = useMatches();
+  const fullBleed = matches.some((m) => (m.handle as Record<string, unknown> | null)?.fullBleed);
   return (
     <QueryProvider>
       <AppNavigation
@@ -63,7 +67,10 @@ export default function App() {
           </Link>
         )}
       />
-      <main className="mx-auto w-full max-w-7xl px-4 pt-24">
+      <main className={cn(
+        "mx-auto flex w-full max-w-7xl flex-col pt-24 min-h-[calc(100dvh-6rem)] md:block md:min-h-0",
+        !fullBleed && "px-4",
+      )}>
         <Outlet />
       </main>
     </QueryProvider>

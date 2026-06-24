@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useFetcher } from "react-router";
 
 import {
@@ -27,13 +27,9 @@ export interface RealiTeaGameState {
   hasError: boolean;
   revealedTileCount: number;
   revealingGuessIndex: number | null;
-  cellRefs: React.RefObject<Array<HTMLInputElement | null>>;
   addLetter: (value: string) => void;
   removeLetter: () => void;
   submitGuess: () => void;
-  /** Focus the cell the user should type into next. Only safe to call when
-   *  the game is not over and not revealing a row — guards are internal. */
-  redirectToActiveCell: () => void;
   clearError: () => void;
 }
 
@@ -47,7 +43,6 @@ export function useRealiTeaGame({
   initialGuesses,
 }: UseRealiTeaGameOptions): RealiTeaGameState {
   const [guesses, setGuesses] = useState<RealiteaGuess[]>(() => [...initialGuesses]);
-  const cellRefs = useRef<Array<HTMLInputElement | null>>([]);
   const wordValidator = useFetcher<RealiteaGuessResult>();
 
   const anim = useAnimation();
@@ -83,6 +78,26 @@ export function useRealiTeaGame({
   // after `setGuesses` commits the new guess).
   const lastProcessedWordRef = useRef<string | null>(null);
 
+  // Stable refs so the keydown listener never needs to be re-registered
+  // when these callbacks change identity between renders.
+  const addLetterRef = useRef(typing.addLetter);
+  const removeLetterRef = useRef(typing.removeLetter);
+  const submitGuessRef = useRef(() => {});
+  addLetterRef.current = typing.addLetter;
+  removeLetterRef.current = typing.removeLetter;
+
+  useEffect(() => {
+    if (isGameOver) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      if (e.key === "Enter") { e.preventDefault(); submitGuessRef.current(); }
+      else if (e.key === "Backspace") { e.preventDefault(); removeLetterRef.current(); }
+      else if (/^[a-zA-Z]$/.test(e.key)) { e.preventDefault(); addLetterRef.current(e.key); }
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [isGameOver]);
+
   const submitGuess = () => {
     if (!canMutateGuess) return;
     const guess = normalizeGuess(typing.currentGuess);
@@ -110,6 +125,7 @@ export function useRealiTeaGame({
       },
     );
   };
+  submitGuessRef.current = submitGuess;
 
   useEffect(() => {
     if (wordValidator.state !== "idle") return;
@@ -147,16 +163,6 @@ export function useRealiTeaGame({
     }
   }, [wordValidator.data, wordValidator.state, guesses.length]);
 
-  /** Focus the first empty cell. Internal guard prevents focusing when the
-   *  game is over or a row is revealing. Safe to call from an auto-focus
-   *  effect or after guess submission — NOT safe as an onFocus handler
-   *  (would steal focus from the user on every cell click). */
-  const redirectToActiveCell = useCallback(() => {
-    if (isGameOver || isRevealingRow) return;
-    const idx = Math.min(typing.currentGuess.length, REALITEA_ANSWER_LENGTH - 1);
-    cellRefs.current[idx]?.focus();
-  }, [typing.currentGuess.length, isGameOver, isRevealingRow]);
-
   return {
     guesses,
     status,
@@ -170,11 +176,9 @@ export function useRealiTeaGame({
     hasError: anim.hasError,
     revealedTileCount: anim.revealedTileCount,
     revealingGuessIndex: anim.revealingGuessIndex,
-    cellRefs,
     addLetter: typing.addLetter,
     removeLetter: typing.removeLetter,
     submitGuess,
-    redirectToActiveCell,
     clearError: anim.clearError,
   };
 }
