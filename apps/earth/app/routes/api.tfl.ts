@@ -13,8 +13,8 @@ export async function loader() {
       imageUrl: camera.imageUrl || "",
       videoUrl: camera.videoUrl || "",
       view: camera.view || "",
-      lat: parseFloat(camera.lat as any),
-      lng: parseFloat(camera.lng as any),
+      lat: camera.lat,
+      lng: camera.lng,
     }));
 
     return Response.json({ cameras: transformedCameras });
