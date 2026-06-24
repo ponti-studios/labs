@@ -2,17 +2,10 @@ import "dotenv/config";
 import { and, closeDb, count, db, eq, inArray, rhobhDailyPuzzles } from "@pontistudios/db";
 import pino from "pino";
 
-import {
-  addDaysToDateKey,
-  getDateKey,
-  getPuzzleWindow,
-  REALITEA_READY_INVENTORY_DAYS,
-} from "../app/lib/realitea-puzzle";
-import {
-  generateScheduledPuzzle,
-  getPublishedPuzzle,
-  promoteScheduledPuzzle,
-} from "../app/lib/realitea-puzzle.server";
+import { addDaysToDateKey, getDateKey, getPuzzleWindow } from "../app/lib/realitea-date";
+import { REALITEA_READY_INVENTORY_DAYS } from "../app/lib/realitea-validation";
+import { getPublishedPuzzle, promoteScheduledPuzzle } from "../app/lib/realitea-db";
+import { generateScheduledPuzzle } from "../app/lib/realitea-generation";
 
 const logger = pino(
   process.env.NODE_ENV === "development" ? { transport: { target: "pino-pretty" } } : {},
@@ -47,16 +40,16 @@ async function main() {
   }
 
   const existingRows = await db
-    .select({ scheduledForDateKey: rhobhDailyPuzzles.scheduledForDateKey })
+    .select({ dateUtc: rhobhDailyPuzzles.dateUtc })
     .from(rhobhDailyPuzzles)
     .where(
       and(
         eq(rhobhDailyPuzzles.status, "scheduled"),
-        inArray(rhobhDailyPuzzles.scheduledForDateKey, targetDateKeys),
+        inArray(rhobhDailyPuzzles.dateUtc, targetDateKeys),
       ),
     );
   const existingKeys = new Set(
-    existingRows.map((r) => r.scheduledForDateKey).filter((v): v is string => Boolean(v)),
+    existingRows.map((r) => r.dateUtc).filter((v): v is string => Boolean(v)),
   );
 
   const createdDateKeys: string[] = [];
@@ -80,7 +73,7 @@ async function main() {
     .where(
       and(
         eq(rhobhDailyPuzzles.status, "scheduled"),
-        inArray(rhobhDailyPuzzles.scheduledForDateKey, targetDateKeys),
+        inArray(rhobhDailyPuzzles.dateUtc, targetDateKeys),
       ),
     );
   const readyDepth = countRows[0]?.value ?? 0;
@@ -89,7 +82,7 @@ async function main() {
     {
       event: "[RECONCILE_COMPLETE]",
       createdDateKeys,
-      promoted: promoted?.scheduledForDateKey ?? null,
+      promoted: promoted?.dateUtc ?? null,
       publishedId: published?.id ?? null,
       readyDepth,
     },

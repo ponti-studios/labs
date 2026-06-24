@@ -12,25 +12,9 @@ export type {
 
 export const MAX_GUESSES = 6;
 export const REALITEA_ANSWER_LENGTH = 5;
-export const REALITEA_TIME_ZONE = "America/Los_Angeles";
 
 export function normalizeGuess(value: string): string {
   return value.replaceAll(/[^a-z]/gi, "").toUpperCase();
-}
-
-export function getPuzzleDateParts(date: Date): [number, number, number] {
-  const formatter = new Intl.DateTimeFormat("en-US", {
-    timeZone: REALITEA_TIME_ZONE,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
-  const parts = formatter.formatToParts(date);
-  const year = Number.parseInt(parts.find((part) => part.type === "year")?.value ?? "", 10);
-  const month = Number.parseInt(parts.find((part) => part.type === "month")?.value ?? "", 10);
-  const day = Number.parseInt(parts.find((part) => part.type === "day")?.value ?? "", 10);
-
-  return [year, month, day];
 }
 
 export function evaluateGuess(answer: string, guess: string): LetterState[] {

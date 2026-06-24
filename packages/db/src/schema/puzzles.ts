@@ -9,7 +9,7 @@ export const rhobhDailyPuzzles = labs.table(
     dateUtc: date("date_utc"),
     franchise: text("franchise").notNull(),
     answer: text("answer").notNull(),
-    answerType: text("answer_type").notNull(),
+    answerType: text("answer_type").$type<PuzzleAnswerType>().notNull(),
     normalizedAnswer: text("normalized_answer").notNull(),
     clue: text("clue").notNull(),
     detail: text("detail").notNull(),
@@ -35,5 +35,6 @@ export const rhobhDailyPuzzles = labs.table(
   ],
 );
 
+export type PuzzleAnswerType = "moment" | "object" | "person" | "phrase" | "place" | "storyline";
 export type RhobhDailyPuzzle = typeof rhobhDailyPuzzles.$inferSelect;
 export type NewRhobhDailyPuzzle = typeof rhobhDailyPuzzles.$inferInsert;

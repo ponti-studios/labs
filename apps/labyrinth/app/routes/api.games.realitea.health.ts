@@ -4,8 +4,8 @@ import { and, count, db, desc, eq, inArray, rhobhDailyPuzzles } from "@pontistud
 import pino from "pino";
 
 import { requireAdminAuth } from "~/lib/server/admin-auth";
-import { addDaysToDateKey, getPuzzleWindow } from "~/lib/realitea-puzzle";
-import { getPublishedPuzzle } from "~/lib/realitea-puzzle.server";
+import { addDaysToDateKey, getPuzzleWindow } from "~/lib/realitea-date";
+import { getPublishedPuzzle } from "~/lib/realitea-db";
 
 const logger = pino(
   process.env.NODE_ENV === "development" ? { transport: { target: "pino-pretty" } } : {},
@@ -22,10 +22,7 @@ async function getInventoryDepth(fromDateKey: string, days: number): Promise<num
     .select({ value: count() })
     .from(rhobhDailyPuzzles)
     .where(
-      and(
-        eq(rhobhDailyPuzzles.status, "scheduled"),
-        inArray(rhobhDailyPuzzles.scheduledForDateKey, dateKeys),
-      ),
+      and(eq(rhobhDailyPuzzles.status, "scheduled"), inArray(rhobhDailyPuzzles.dateUtc, dateKeys)),
     );
   return rows[0]?.value ?? 0;
 }
@@ -71,7 +68,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     puzzle: published
       ? {
           id: published.id,
-          dateKey: published.scheduledForDateKey,
+          dateKey: published.dateUtc,
           answerType: published.answerType,
           clue: published.clue,
         }
@@ -85,7 +82,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     },
     recent: recentPuzzles.map((p) => ({
       id: p.id,
-      dateKey: p.scheduledForDateKey,
+      dateKey: p.dateUtc,
       status: p.status,
       answerType: p.answerType,
       createdAt: p.createdAt,

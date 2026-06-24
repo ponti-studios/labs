@@ -1,9 +1,9 @@
-import { type NewRhobhDailyPuzzle } from "@pontistudios/db";
+import { type NewRhobhDailyPuzzle, type PuzzleAnswerType } from "@pontistudios/db";
+export type { PuzzleAnswerType };
 
 // ── Game engine types ─────────────────────────────────────────────────────
 
 export type LetterState = "absent" | "correct" | "present";
-export type PuzzleAnswerType = "moment" | "object" | "person" | "phrase" | "place" | "storyline";
 export type GameStatus = "playing" | "solved" | "failed";
 
 /**
@@ -45,23 +45,12 @@ export interface RealiteaGuessResult {
  * is correctly typed as `number | undefined` (the serial PK makes it optional
  * in the insert type) without needing a manual override.
  *
- * - `dateKey` is added — derived from `dateUtc` / `scheduledForDateKey` via
- *   `normalizePuzzleRecord` in `realitea-puzzle.server.ts`
  * - `answerType` is narrowed to the `PuzzleAnswerType` union for
  *   exhaustiveness checks at call sites
  *
- * DB-only fields are intentionally omitted:
- * `dateUtc` (replaced by `dateKey`), `validationStatus`.
+ * DB-only `validationStatus` is intentionally omitted.
  */
-export type PuzzleRecord = Omit<
-  NewRhobhDailyPuzzle,
-  | "dateUtc"
-  | "validationStatus"
-  | "answerType"
-> & {
-  dateKey: string | null;
-  answerType: PuzzleAnswerType;
-};
+export type PuzzleRecord = Omit<NewRhobhDailyPuzzle, "validationStatus" | "scheduledForDateKey">;
 
 export interface PuzzleWindow {
   dateKey: string;

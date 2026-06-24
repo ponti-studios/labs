@@ -4,8 +4,8 @@ import { useLoaderData } from "react-router";
 import { and, count, db, desc, eq, inArray, rhobhDailyPuzzles } from "@pontistudios/db";
 
 import { requireAdminAuth } from "~/lib/server/admin-auth";
-import { addDaysToDateKey, getPuzzleWindow } from "~/lib/realitea-puzzle";
-import { getPublishedPuzzle } from "~/lib/realitea-puzzle.server";
+import { addDaysToDateKey, getPuzzleWindow } from "~/lib/realitea-date";
+import { getPublishedPuzzle } from "~/lib/realitea-db";
 
 async function getInventoryDepth(fromDateKey: string, days: number): Promise<number> {
   const dateKeys: string[] = [];
@@ -18,10 +18,7 @@ async function getInventoryDepth(fromDateKey: string, days: number): Promise<num
     .select({ value: count() })
     .from(rhobhDailyPuzzles)
     .where(
-      and(
-        eq(rhobhDailyPuzzles.status, "scheduled"),
-        inArray(rhobhDailyPuzzles.scheduledForDateKey, dateKeys),
-      ),
+      and(eq(rhobhDailyPuzzles.status, "scheduled"), inArray(rhobhDailyPuzzles.dateUtc, dateKeys)),
     );
   return rows[0]?.value ?? 0;
 }
@@ -61,7 +58,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     puzzle: published
       ? {
           id: published.id,
-          dateKey: published.scheduledForDateKey,
+          dateKey: published.dateUtc,
           answerType: published.answerType,
           clue: published.clue,
         }
@@ -75,7 +72,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     },
     recent: recentPuzzles.map((p) => ({
       id: p.id,
-      dateKey: p.scheduledForDateKey,
+      dateKey: p.dateUtc,
       status: p.status,
       answerType: p.answerType,
       createdAt: p.createdAt instanceof Date ? p.createdAt.toISOString() : String(p.createdAt),
@@ -93,7 +90,9 @@ const STATUS_COLORS: Record<string, string> = {
 
 function StatusBadge({ status }: { status: string }) {
   return (
-    <span className={`inline-block rounded px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[status] ?? "bg-yellow-100 text-yellow-800"}`}>
+    <span
+      className={`inline-block rounded px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[status] ?? "bg-yellow-100 text-yellow-800"}`}
+    >
       {status}
     </span>
   );
@@ -102,7 +101,9 @@ function StatusBadge({ status }: { status: string }) {
 function HealthBadge({ health }: { health: string }) {
   const ok = health === "OK";
   return (
-    <span className={`inline-block rounded-full px-3 py-1 text-sm font-semibold ${ok ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+    <span
+      className={`inline-block rounded-full px-3 py-1 text-sm font-semibold ${ok ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
+    >
       {health}
     </span>
   );
@@ -143,7 +144,9 @@ export default function RealiTeaAdmin() {
         <h2 className="mb-2 text-lg font-semibold">Active Puzzle</h2>
         {puzzle ? (
           <div className="rounded-lg border p-4 text-sm">
-            <p className="text-gray-500">ID #{puzzle.id} · {puzzle.dateKey} · <em>{puzzle.answerType}</em></p>
+            <p className="text-gray-500">
+              ID #{puzzle.id} · {puzzle.dateKey} · <em>{puzzle.answerType}</em>
+            </p>
             <p className="mt-1 font-medium">{puzzle.clue}</p>
           </div>
         ) : (
@@ -170,7 +173,9 @@ export default function RealiTeaAdmin() {
           ))}
         </div>
         {inventory.depth < 3 && (
-          <p className={`mt-2 text-sm font-medium ${inventory.depth === 0 ? "text-red-600" : "text-yellow-600"}`}>
+          <p
+            className={`mt-2 text-sm font-medium ${inventory.depth === 0 ? "text-red-600" : "text-yellow-600"}`}
+          >
             {inventory.depth === 0
               ? "No puzzles scheduled for the next 7 days — run the reconcile script."
               : `Only ${inventory.depth} puzzle(s) scheduled for the next 7 days — inventory is low.`}
@@ -183,7 +188,7 @@ export default function RealiTeaAdmin() {
         <h2 className="mb-2 text-lg font-semibold">Recent Puzzles</h2>
         <div className="overflow-hidden rounded-lg border">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 text-left text-xs uppercase text-gray-500">
+            <thead className="bg-gray-50 text-left text-xs text-gray-500 uppercase">
               <tr>
                 <th className="px-4 py-2">ID</th>
                 <th className="px-4 py-2">Date Key</th>
