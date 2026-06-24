@@ -29,7 +29,6 @@ describe("RealiTea route loader", () => {
   it("returns the public puzzle (no answer) when one is available", async () => {
     loadActivePublicPuzzle.mockResolvedValue({
       puzzle: {
-        answerLength: 5,
         answerType: "moment",
         clue: "A clash that keeps the whole cast spinning.",
         dateKey: "2026-05-20",
@@ -46,7 +45,6 @@ describe("RealiTea route loader", () => {
     expect(response.status).toBe(200);
     expect(payload.puzzle.answer).toBeUndefined();
     expect(payload.puzzle.dateKey).toBe("2026-05-20");
-    expect(payload.puzzle.answerLength).toBe(5);
   });
 
   it("throws a RealiTea-specific 404 error when no puzzle exists for today", async () => {

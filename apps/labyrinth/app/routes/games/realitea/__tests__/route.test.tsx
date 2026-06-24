@@ -7,6 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   evaluateGuess,
   MAX_GUESSES,
+  REALITEA_ANSWER_LENGTH,
   type PublicDailyPuzzle,
   type RealiteaGuess,
 } from "~/lib/realitea";
@@ -56,7 +57,6 @@ function buildPublicPuzzle(
   date: Date = new Date("2026-05-20T12:00:00.000Z"),
 ): PublicDailyPuzzle {
   return {
-    answerLength: answer.length,
     answerType: "person",
     clue: "The Pretty Mess performer never misses a sharp confessional.",
     dateKey: toDateKey(date),
@@ -125,8 +125,8 @@ function resolveGuess(result: GuessResultPayload) {
   });
 }
 
-async function finishTileReveal(answerLength: number) {
-  for (let step = 0; step < answerLength + 3; step += 1) {
+async function finishTileReveal() {
+  for (let step = 0; step < REALITEA_ANSWER_LENGTH + 3; step += 1) {
     await act(async () => {
       vi.advanceTimersByTime(250);
     });
@@ -195,7 +195,7 @@ describe("RealiTeaRoute", () => {
     await submitCurrentGuess(user);
     await expectGuessCalls([DEFAULT_ANSWER]);
     await resolveGuess(buildGuessResult(DEFAULT_ANSWER, DEFAULT_ANSWER));
-    await finishTileReveal(DEFAULT_ANSWER.length);
+    await finishTileReveal();
 
     await waitFor(() => {
       expect(screen.getByText("The Story")).toBeInTheDocument();
@@ -211,17 +211,6 @@ describe("RealiTeaRoute", () => {
       expect(stored?.guesses.map((g) => g.word)).toEqual([DEFAULT_ANSWER]);
       expect(stored?.status).toBe("solved");
     });
-  });
-
-  it("uses the loader-provided answerLength for the board", async () => {
-    const sixLetter = buildPublicPuzzle("DRAMAQ");
-    const { user } = await renderRoute({ puzzle: sixLetter });
-
-    expect(getTextboxes()).toHaveLength(6);
-
-    await enterGuess(user, "DRAMAQ");
-    await submitCurrentGuess(user);
-    await expectGuessCalls(["DRAMAQ"]);
   });
 
   it("discards stale saved progress for a different puzzle key", async () => {
@@ -259,7 +248,7 @@ describe("RealiTeaRoute", () => {
     await submitCurrentGuess(user);
     await expectGuessCalls([wrongGuess]);
     await resolveGuess(buildGuessResult(DEFAULT_ANSWER, wrongGuess));
-    await finishTileReveal(DEFAULT_ANSWER.length);
+    await finishTileReveal();
 
     await enterGuess(user, wrongGuess);
     await submitCurrentGuess(user);
@@ -298,7 +287,7 @@ describe("RealiTeaRoute", () => {
 
     expect(getTextboxes()).toHaveLength(0);
 
-    await finishTileReveal(DEFAULT_ANSWER.length);
+    await finishTileReveal();
 
     await waitFor(() => {
       expect(getTextboxes()).toHaveLength(DEFAULT_ANSWER.length);
@@ -361,7 +350,7 @@ describe("RealiTeaRoute", () => {
 
     expect(getTextboxes()).toHaveLength(0);
 
-    await finishTileReveal(DEFAULT_ANSWER.length);
+    await finishTileReveal();
 
     await waitFor(() => {
       expect(getTextboxes()).toHaveLength(DEFAULT_ANSWER.length);

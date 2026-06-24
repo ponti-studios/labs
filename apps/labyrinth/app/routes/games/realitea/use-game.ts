@@ -4,6 +4,7 @@ import { useFetcher } from "react-router";
 import {
   deriveGameStatus,
   normalizeGuess,
+  REALITEA_ANSWER_LENGTH,
   type GameStatus,
   type PublicDailyPuzzle,
   type RealiteaGuess,
@@ -49,14 +50,14 @@ export function useRealiTeaGame({
   const cellRefs = useRef<Array<HTMLInputElement | null>>([]);
   const wordValidator = useFetcher<RealiteaGuessResult>();
 
-  const anim = useAnimation(puzzle.answerLength);
+  const anim = useAnimation();
   const isRevealingRow = anim.revealingGuessIndex !== null;
   const isValidationPending = wordValidator.state !== "idle";
   const status = useMemo(() => deriveGameStatus(guesses), [guesses]);
   const isGameOver = status !== "playing";
   const canMutateGuess = !isGameOver && !isValidationPending && !isRevealingRow;
 
-  const typing = useTyping(puzzle.answerLength, !canMutateGuess);
+  const typing = useTyping(!canMutateGuess);
 
   // Reset everything when the active puzzle changes (midnight rollover).
   // The ref guard prevents the effect from firing on the initial mount,
@@ -81,7 +82,7 @@ export function useRealiTeaGame({
     if (!canMutateGuess) return;
     const guess = normalizeGuess(typing.currentGuess);
 
-    if (guess.length !== puzzle.answerLength) {
+    if (guess.length !== REALITEA_ANSWER_LENGTH) {
       anim.animateError("Not enough letters", true);
       return;
     }
@@ -141,9 +142,9 @@ export function useRealiTeaGame({
    *  (would steal focus from the user on every cell click). */
   const redirectToActiveCell = useCallback(() => {
     if (isGameOver || isRevealingRow) return;
-    const idx = Math.min(typing.currentGuess.length, puzzle.answerLength - 1);
+    const idx = Math.min(typing.currentGuess.length, REALITEA_ANSWER_LENGTH - 1);
     cellRefs.current[idx]?.focus();
-  }, [typing.currentGuess.length, isGameOver, isRevealingRow, puzzle.answerLength]);
+  }, [typing.currentGuess.length, isGameOver, isRevealingRow]);
 
   return {
     guesses,

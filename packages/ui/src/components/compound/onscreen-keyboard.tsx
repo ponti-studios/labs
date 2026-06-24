@@ -56,7 +56,7 @@ export function OnscreenKeyboard({
   readOnly = false,
   className,
 }: OnscreenKeyboardProps) {
-  const keyClass = (kind: "letter" | "action", state: string) =>
+  const keyClass = (kind: "letter" | "action", state: LetterState | "action") =>
     cn(
       keyboardKeyVariants({ kind, state }),
       readOnly && "cursor-default pointer-events-none",

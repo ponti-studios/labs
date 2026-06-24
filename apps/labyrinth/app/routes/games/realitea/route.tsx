@@ -6,6 +6,7 @@ import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 import {
   getKeyboardState,
   MAX_GUESSES,
+  REALITEA_ANSWER_LENGTH,
   type GameStatus,
   type LetterState,
   type PublicDailyPuzzle,
@@ -104,14 +105,10 @@ export function meta() {
   ];
 }
 
-type EmptyGuessRowProps = {
-  answerLength: number;
-};
-
-const EmptyGuessRow = memo(function EmptyGuessRow({ answerLength }: EmptyGuessRowProps) {
+const EmptyGuessRow = memo(function EmptyGuessRow() {
   return (
     <div className="flex gap-1.5 sm:gap-1">
-      {Array.from({ length: answerLength }).map((_, cellIndex) => (
+      {Array.from({ length: REALITEA_ANSWER_LENGTH }).map((_, cellIndex) => (
         <div
           key={`empty-cell-${cellIndex}`}
           className={cn(TILE_BASE({ state: "empty" }), "flex items-center justify-center")}
@@ -122,21 +119,19 @@ const EmptyGuessRow = memo(function EmptyGuessRow({ answerLength }: EmptyGuessRo
 });
 
 type RevealedGuessRowProps = {
-  answerLength: number;
   guess: RealiteaGuess;
   isRevealingThisRow: boolean;
   revealedTileCount: number;
 };
 
 const RevealedGuessRow = memo(function RevealedGuessRow({
-  answerLength,
   guess,
   isRevealingThisRow,
   revealedTileCount,
 }: RevealedGuessRowProps) {
   return (
     <div className="flex gap-1.5 sm:gap-1">
-      {Array.from({ length: answerLength }).map((_, cellIndex) => {
+      {Array.from({ length: REALITEA_ANSWER_LENGTH }).map((_, cellIndex) => {
         const isTileRevealed = !isRevealingThisRow || cellIndex < revealedTileCount;
         const isAnimatingTile =
           isRevealingThisRow && revealedTileCount > 0 && cellIndex === revealedTileCount - 1;
@@ -161,7 +156,6 @@ const RevealedGuessRow = memo(function RevealedGuessRow({
 });
 
 type CurrentGuessRowProps = {
-  answerLength: number;
   cellRefs: React.MutableRefObject<Array<HTMLInputElement | null>>;
   currentGuess: string;
   hasError: boolean;
@@ -172,7 +166,6 @@ type CurrentGuessRowProps = {
 };
 
 const CurrentGuessRow = memo(function CurrentGuessRow({
-  answerLength,
   cellRefs,
   currentGuess,
   hasError,
@@ -190,7 +183,7 @@ const CurrentGuessRow = memo(function CurrentGuessRow({
         isValidationPending && "opacity-60",
       )}
     >
-      {Array.from({ length: answerLength }).map((_, cellIndex) => (
+      {Array.from({ length: REALITEA_ANSWER_LENGTH }).map((_, cellIndex) => (
         <input
           key={`current-cell-${cellIndex}`}
           ref={(el) => {
@@ -395,7 +388,6 @@ export default function RealiTeaRoute() {
                     return (
                       <RevealedGuessRow
                         key={`revealed-${rowIndex}`}
-                        answerLength={currentPuzzle.answerLength}
                         guess={guess}
                         isRevealingThisRow={isRevealingThisRow}
                         revealedTileCount={game.revealedTileCount}
@@ -407,7 +399,6 @@ export default function RealiTeaRoute() {
                     return (
                       <CurrentGuessRow
                         key={`current-${rowIndex}`}
-                        answerLength={currentPuzzle.answerLength}
                         cellRefs={game.cellRefs}
                         currentGuess={game.currentGuess}
                         hasError={game.hasError}
@@ -419,12 +410,7 @@ export default function RealiTeaRoute() {
                     );
                   }
 
-                  return (
-                    <EmptyGuessRow
-                      key={`empty-${rowIndex}`}
-                      answerLength={currentPuzzle.answerLength}
-                    />
-                  );
+                  return <EmptyGuessRow key={`empty-${rowIndex}`} />;
                 })}
               </div>
 

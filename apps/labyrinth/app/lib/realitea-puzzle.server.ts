@@ -1,7 +1,19 @@
 import { readFileSync } from "node:fs";
 import { join as pathJoin } from "node:path";
 
-import { and, db, desc, eq, gt, gte, inArray, lte, rhobhDailyPuzzles } from "@pontistudios/db";
+import { createOpenRouterClient } from "@pontistudios/ai";
+import {
+  and,
+  db,
+  desc,
+  eq,
+  gt,
+  gte,
+  inArray,
+  lte,
+  rhobhDailyPuzzles,
+  type RhobhDailyPuzzle,
+} from "@pontistudios/db";
 import { z } from "zod";
 
 import { normalizeAnswer, REALITEA_ANSWER_LENGTH } from "./realitea";
@@ -27,6 +39,22 @@ import {
 import { LabyrinthServerEnv } from "./server/env";
 import { isValidWord } from "./word-list.server";
 
+/**
+ * Transaction-or-database handle. The `db.transaction` callback receives a
+ * `PostgresJsTransaction` instance that exposes the same query API as `db`,
+ * so functions that may run inside or outside a transaction accept either.
+ *
+ * The structural type below captures the only methods the puzzle functions
+ * actually call (`select` / `update` / `insert`). This is intentionally
+ * narrower than the full Drizzle type so a default `db` and a `tx` argument
+ * are interchangeable at the call sites we care about.
+ */
+type PuzzleDatabase = {
+  select: typeof db.select;
+  update: typeof db.update;
+  insert: typeof db.insert;
+};
+
 const SYSTEM_PROMPT = readFileSync(
   pathJoin(import.meta.dirname, "./prompts/bravo-generation-system.md"),
   "utf-8",
@@ -49,16 +77,23 @@ const generationResponseSchema = z.object({
 
 type Candidate = z.infer<typeof candidateSchema>;
 
-function normalizePuzzleRecord(row: Record<string, unknown>): PuzzleRecord {
+/**
+ * Drizzle's `select().from(table)` returns the row typed as
+ * `RhobhDailyPuzzle` (from `$inferSelect`), but the `jsonb` columns come back
+ * loosely typed. This function widens to `Record<string, unknown>` and applies
+ * the post-DB normalizations we need (jsonb → string[]; `dateUtc` → `dateKey`).
+ */
+function normalizePuzzleRecord(row: RhobhDailyPuzzle): PuzzleRecord {
+  const loose = row as unknown as Record<string, unknown>;
   const toArray = (v: unknown): string[] =>
     Array.isArray(v) ? (v as string[]) : JSON.parse(typeof v === "string" ? v : "[]");
   return {
     ...(row as unknown as PuzzleRecord),
-    dateKey: (row.dateUtc as string | null) ?? null,
-    sourcePublishedAt: toArray(row.sourcePublishedAt),
-    sourceSummary: toArray(row.sourceSummary),
-    sourceTitles: toArray(row.sourceTitles),
-    sourceUrls: toArray(row.sourceUrls),
+    dateKey: (loose.dateUtc as string | null) ?? null,
+    sourcePublishedAt: toArray(loose.sourcePublishedAt),
+    sourceSummary: toArray(loose.sourceSummary),
+    sourceTitles: toArray(loose.sourceTitles),
+    sourceUrls: toArray(loose.sourceUrls),
   };
 }
 
@@ -92,7 +127,7 @@ async function getInventoryAnswers(): Promise<Set<string>> {
   return new Set(rows.map((r) => r.normalizedAnswer));
 }
 
-async function markExpiredPuzzles(now: Date, tx: any = db): Promise<void> {
+async function markExpiredPuzzles(now: Date, tx: PuzzleDatabase = db): Promise<void> {
   await tx
     .update(rhobhDailyPuzzles)
     .set({ status: "consumed", updatedAt: now })
@@ -105,7 +140,10 @@ async function markExpiredPuzzles(now: Date, tx: any = db): Promise<void> {
     );
 }
 
-export async function getPublishedPuzzle(now: Date, tx: any = db): Promise<PuzzleRecord | null> {
+export async function getPublishedPuzzle(
+  now: Date,
+  tx: PuzzleDatabase = db,
+): Promise<PuzzleRecord | null> {
   const rows = await tx
     .select()
     .from(rhobhDailyPuzzles)
@@ -119,7 +157,7 @@ export async function getPublishedPuzzle(now: Date, tx: any = db): Promise<Puzzl
     )
     .orderBy(desc(rhobhDailyPuzzles.publishAt))
     .limit(1);
-  const row = rows[0] as Record<string, unknown> | undefined;
+  const row = rows[0];
   return row ? normalizePuzzleRecord(row) : null;
 }
 
@@ -136,7 +174,7 @@ export async function loadScheduledPuzzle(dateKey: string): Promise<PuzzleRecord
     )
     .orderBy(desc(rhobhDailyPuzzles.createdAt))
     .limit(1);
-  const row = rows[0] as Record<string, unknown> | undefined;
+  const row = rows[0];
   return row ? normalizePuzzleRecord(row) : null;
 }
 
@@ -147,75 +185,62 @@ async function callGenerationApi(
   const env = LabyrinthServerEnv.safeParse(process.env);
   if (!env.success) return null;
 
-  const request = {
-    model: env.data.openRouterModel,
-    messages: [
-      {
-        role: "system",
-        content: SYSTEM_PROMPT.replaceAll("{{ANSWER_LENGTH}}", String(REALITEA_ANSWER_LENGTH)),
-      },
-      {
-        role: "user",
-        content: JSON.stringify({
-          dateKey,
-          excludedAnswers,
-          instructions:
-            "Search bravotv.com/the-daily-dish for today's Bravo reality TV news, fetch article details, then generate puzzle candidates.",
-        }),
-      },
-    ],
-    max_tokens: 2000,
-    response_format: {
-      type: "json_schema",
-      json_schema: {
-        name: "generation_response",
-        schema: z.toJSONSchema(generationResponseSchema),
-        strict: true,
-      },
-    },
-    tools: [
-      {
-        type: "openrouter:web_search",
-        parameters: {
-          allowed_domains: [BRAVO_PRIMARY_SOURCE_DOMAIN],
-          engine: "auto",
-          max_results: 10,
-          max_total_results: 20,
-          search_context_size: "medium",
-        },
-      },
-      {
-        type: "openrouter:web_fetch",
-        parameters: {
-          allowed_domains: [BRAVO_PRIMARY_SOURCE_DOMAIN],
-          engine: "openrouter",
-          max_content_tokens: 4000,
-          max_uses: 8,
-        },
-      },
-    ],
-  };
-
   try {
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${env.data.openRouterApiKey}`,
-        "Content-Type": "application/json",
+    const client = createOpenRouterClient();
+
+    const response = await client.chat.send({
+      chatRequest: {
+        model: env.data.openRouterModel,
+        messages: [
+          {
+            role: "system",
+            content: SYSTEM_PROMPT.replaceAll("{{ANSWER_LENGTH}}", String(REALITEA_ANSWER_LENGTH)),
+          },
+          {
+            role: "user",
+            content: JSON.stringify({
+              dateKey,
+              excludedAnswers,
+              instructions:
+                "Search bravotv.com/the-daily-dish for today's Bravo reality TV news, fetch article details, then generate puzzle candidates.",
+            }),
+          },
+        ],
+        maxTokens: 2000,
+        responseFormat: {
+          type: "json_schema",
+          jsonSchema: {
+            name: "generation_response",
+            schema: z.toJSONSchema(generationResponseSchema),
+            strict: true,
+          },
+        },
+        tools: [
+          {
+            type: "openrouter:web_search",
+            parameters: {
+              allowedDomains: [BRAVO_PRIMARY_SOURCE_DOMAIN],
+              engine: "auto",
+              maxResults: 10,
+              maxTotalResults: 20,
+              searchContextSize: "medium",
+            },
+          },
+          {
+            type: "openrouter:web_fetch",
+            parameters: {
+              allowedDomains: [BRAVO_PRIMARY_SOURCE_DOMAIN],
+              engine: "openrouter",
+              maxContentTokens: 4000,
+              maxUses: 8,
+            },
+          },
+        ],
       },
-      body: JSON.stringify(request),
     });
 
-    if (!response.ok) {
-      console.warn("Generation API error", { dateKey, status: response.status });
-      return null;
-    }
-
-    const payload = (await response.json()) as {
-      choices?: Array<{ message?: { content?: string | null } }>;
-    };
-    const content = payload.choices?.[0]?.message?.content;
-    if (!content) return null;
+    const content = response.choices?.[0]?.message?.content;
+    if (!content || typeof content !== "string") return null;
 
     const cleanedContent = content.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
     const parsed = generationResponseSchema.parse(JSON.parse(cleanedContent));
@@ -298,7 +323,7 @@ export async function generateScheduledPuzzle(dateKey: string): Promise<PuzzleRe
     .returning();
 
   console.log("generateScheduledPuzzle INSERT DONE", { dateKey, id: inserted[0]?.id });
-  return normalizePuzzleRecord(inserted[0] as Record<string, unknown>);
+  return normalizePuzzleRecord(inserted[0] as RhobhDailyPuzzle);
 }
 
 export async function promoteScheduledPuzzle(now: Date): Promise<PuzzleRecord | null> {
@@ -323,7 +348,7 @@ export async function promoteScheduledPuzzle(now: Date): Promise<PuzzleRecord | 
       .orderBy(desc(rhobhDailyPuzzles.createdAt))
       .limit(1);
 
-    let scheduled = rows[0] as Record<string, unknown> | undefined;
+    let scheduled = rows[0];
 
     // Fallback: if no scheduled puzzle for today, find the most recent one
     if (!scheduled) {
@@ -338,7 +363,7 @@ export async function promoteScheduledPuzzle(now: Date): Promise<PuzzleRecord | 
         )
         .orderBy(desc(rhobhDailyPuzzles.createdAt))
         .limit(1);
-      scheduled = rows[0] as Record<string, unknown> | undefined;
+      scheduled = rows[0];
     }
 
     if (!scheduled?.id) return null;
@@ -356,7 +381,7 @@ export async function promoteScheduledPuzzle(now: Date): Promise<PuzzleRecord | 
       .where(eq(rhobhDailyPuzzles.id, Number(scheduled.id)))
       .returning();
 
-    return normalizePuzzleRecord(updated[0] as Record<string, unknown>);
+    return normalizePuzzleRecord(updated[0] as RhobhDailyPuzzle);
   });
 }
 
@@ -389,7 +414,6 @@ export async function getStoredAnswersForValidation(): Promise<Set<string>> {
 
 function toPublicDailyPuzzle(record: PuzzleRecord): PublicDailyPuzzle {
   return {
-    answerLength: normalizeAnswer(record.answer).length,
     answerType: record.answerType,
     clue: record.clue,
     dateKey: record.scheduledForDateKey ?? record.dateKey ?? "",
@@ -418,7 +442,7 @@ export async function loadActivePublicPuzzle(
       )
       .orderBy(desc(rhobhDailyPuzzles.publishAt))
       .limit(1);
-    const row = rows[0] as Record<string, unknown> | undefined;
+    const row = rows[0];
     if (row) published = normalizePuzzleRecord(row);
   }
 
@@ -440,7 +464,7 @@ export async function loadPuzzleRecordByDateKey(dateKey: string): Promise<Puzzle
     )
     .orderBy(desc(rhobhDailyPuzzles.createdAt))
     .limit(1);
-  const row = rows[0] as Record<string, unknown> | undefined;
+  const row = rows[0];
   return row ? normalizePuzzleRecord(row) : null;
 }
 

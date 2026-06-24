@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-export function useAnimation(answerLength: number) {
+import { REALITEA_ANSWER_LENGTH } from "~/lib/realitea";
+
+export function useAnimation() {
   const [revealingGuessIndex, setRevealingGuessIndex] = useState<number | null>(null);
   const [revealedTileCount, setRevealedTileCount] = useState(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -54,7 +56,7 @@ export function useAnimation(answerLength: number) {
     if (revealingGuessIndex === null) return;
 
     revealTimerRef.current = setTimeout(() => {
-      if (revealedTileCount >= answerLength) {
+      if (revealedTileCount >= REALITEA_ANSWER_LENGTH) {
         setRevealingGuessIndex(null);
         setRevealedTileCount(0);
       } else {
@@ -65,7 +67,7 @@ export function useAnimation(answerLength: number) {
     return () => {
       if (revealTimerRef.current) clearTimeout(revealTimerRef.current);
     };
-  }, [answerLength, revealedTileCount, revealingGuessIndex]);
+  }, [revealedTileCount, revealingGuessIndex]);
 
   return {
     revealingGuessIndex,

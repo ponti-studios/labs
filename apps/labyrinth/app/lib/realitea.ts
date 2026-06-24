@@ -1,47 +1,14 @@
-export type LetterState = "absent" | "correct" | "present";
-export type PuzzleAnswerType = "moment" | "object" | "person" | "phrase" | "place" | "storyline";
-export type PuzzleNewsMode = "archive" | "current";
+import type { GameStatus, LetterState, RealiteaGuess } from "./realitea.types";
 
-export type GameStatus = "playing" | "solved" | "failed";
-
-/**
- * Public-facing puzzle payload. The answer is intentionally omitted so it
- * never reaches the client bundle, the loader response, or the polling
- * `/api/games/realitea/daily` endpoint. Evaluation happens server-side.
- */
-export interface PublicDailyPuzzle {
-  answerLength: number;
-  answerType: PuzzleAnswerType;
-  clue: string;
-  dateKey: string;
-  detail: string;
-  role: string;
-  sourceUrls: string[];
-}
-
-export interface RealiteaGuess {
-  word: string;
-  states: LetterState[];
-}
-
-export interface RealiteaGuessResult {
-  valid: boolean;
-  word?: string;
-  states?: LetterState[];
-  isSolved?: boolean;
-  isGameOver?: boolean;
-  status?: GameStatus;
-  reason?: "not-in-word-list" | "wrong-length" | "already-guessed";
-}
-
-export interface Puzzle {
-  answer: string;
-  clue: string;
-  detail: string;
-  role: string;
-  answerType?: PuzzleAnswerType;
-  newsMode?: PuzzleNewsMode;
-}
+export type {
+  GameStatus,
+  GuessRejectReason,
+  LetterState,
+  PublicDailyPuzzle,
+  PuzzleAnswerType,
+  RealiteaGuess,
+  RealiteaGuessResult,
+} from "./realitea.types";
 
 export const MAX_GUESSES = 6;
 export const REALITEA_ANSWER_LENGTH = 5;

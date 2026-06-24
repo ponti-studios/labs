@@ -3,59 +3,16 @@ import {
   normalizeAnswer,
   REALITEA_ANSWER_LENGTH,
   REALITEA_TIME_ZONE,
-  type PuzzleAnswerType,
 } from "./realitea";
+
+import type { PuzzleWindow, ValidationResult } from "./realitea.types";
+
+export type { DailyPuzzle, PuzzleRecord, PuzzleWindow, ValidationResult } from "./realitea.types";
 
 export const BRAVO_FRANCHISE = "bravo";
 export const BRAVO_PRIMARY_SOURCE_DOMAIN = "bravotv.com";
 export const BRAVO_REPEAT_WINDOW_DAYS = 90;
 export const REALITEA_READY_INVENTORY_DAYS = 7;
-
-// --- Types ---
-
-export interface DailyPuzzle {
-  answer: string;
-  answerType: PuzzleAnswerType;
-  clue: string;
-  dateKey: string;
-  detail: string;
-  role: string;
-  sourceUrls: string[];
-}
-
-export interface PuzzleRecord {
-  id?: number;
-  answer: string;
-  answerType: PuzzleAnswerType;
-  clue: string;
-  createdAt?: Date | null;
-  dateKey: string | null;
-  detail: string;
-  expireAt?: Date | null;
-  franchise: string;
-  normalizedAnswer: string;
-  publishAt?: Date | null;
-  role: string;
-  scheduledForDateKey: string | null;
-  sourcePublishedAt: string[];
-  sourceSummary: string[];
-  sourceTitles: string[];
-  sourceUrls: string[];
-  status: string;
-  updatedAt?: Date | null;
-}
-
-export interface PuzzleWindow {
-  dateKey: string;
-  expireAt: Date;
-  publishAt: Date;
-}
-
-export interface ValidationResult {
-  normalizedAnswer: string;
-  reasons: string[];
-  valid: boolean;
-}
 
 // --- Date helpers ---
 

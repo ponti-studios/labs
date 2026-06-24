@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
-import { normalizeGuess } from "~/lib/realitea";
+import { normalizeGuess, REALITEA_ANSWER_LENGTH } from "~/lib/realitea";
 
-export function useTyping(answerLength: number, disabled: boolean) {
+export function useTyping(disabled: boolean) {
   const [currentGuess, setCurrentGuess] = useState("");
 
   const addLetter = useCallback(
@@ -9,9 +9,9 @@ export function useTyping(answerLength: number, disabled: boolean) {
       if (disabled) return;
       const letter = normalizeGuess(value).charAt(0);
       if (!letter) return;
-      setCurrentGuess((prev) => (prev.length >= answerLength ? prev : prev + letter));
+      setCurrentGuess((prev) => (prev.length >= REALITEA_ANSWER_LENGTH ? prev : prev + letter));
     },
-    [answerLength, disabled],
+    [disabled],
   );
 
   const removeLetter = useCallback(() => {
