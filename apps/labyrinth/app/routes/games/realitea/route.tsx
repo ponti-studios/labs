@@ -1,6 +1,6 @@
 import { Button, OnscreenKeyboard } from "@pontistudios/ui";
 import { cva } from "class-variance-authority";
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 
 import {
@@ -22,21 +22,15 @@ import { useRealiTeaShare } from "./use-share";
 import "./realitea.css";
 import { LucideShare } from "lucide-react";
 
-const TILE_STATE_CLASSES: Record<LetterState, string> = {
-  absent: "border-border bg-muted text-muted-foreground",
-  present: "border-amber-300 bg-amber-100 text-amber-950",
-  correct: "border-emerald-300 bg-emerald-100 text-emerald-950",
-};
-
 const TILE_BASE = cva(
   "flex h-[3.6rem] w-[3.6rem] items-center justify-center rounded-2xl border text-[1.35rem] font-bold uppercase transition-colors sm:h-12 sm:w-12 sm:rounded-xl sm:text-lg md:h-14 md:w-14",
   {
     variants: {
       state: {
-        absent: TILE_STATE_CLASSES.absent,
-        correct: TILE_STATE_CLASSES.correct,
+        absent: "border-border bg-muted text-muted-foreground",
+        correct: "border-emerald-300 bg-emerald-100 text-emerald-950",
         empty: "border-border bg-background text-foreground",
-        present: TILE_STATE_CLASSES.present,
+        present: "border-amber-300 bg-amber-100 text-amber-950",
       },
     },
     defaultVariants: { state: "empty" },
@@ -108,10 +102,7 @@ const EmptyGuessRow = memo(function EmptyGuessRow() {
   return (
     <div className="flex gap-1.5 sm:gap-1">
       {Array.from({ length: REALITEA_ANSWER_LENGTH }).map((_, cellIndex) => (
-        <div
-          key={`empty-cell-${cellIndex}`}
-          className={cn(TILE_BASE({ state: "empty" }), "flex items-center justify-center")}
-        />
+        <div key={`empty-cell-${cellIndex}`} className={TILE_BASE({ state: "empty" })} />
       ))}
     </div>
   );
@@ -292,16 +283,9 @@ export default function RealiTeaRoute() {
   });
 
   // After a guess is submitted and the tile reveal finishes, refocus the
-  // active cell so physical/device keyboard input has a target. We skip
-  // the first mount so that seed-restored games on mount don't get
-  // disrupted by an unnecessary focus call (which can confuse tests and
-  // steal focus from screen readers).
-  const isFirstMountRef = useRef(true);
+  // active cell so physical/device keyboard input has a target. Also
+  // auto-focuses the first cell on initial mount when starting fresh.
   useEffect(() => {
-    if (isFirstMountRef.current) {
-      isFirstMountRef.current = false;
-      return;
-    }
     if (game.isGameOver || game.isRevealingRow || game.isValidationPending) return;
     game.redirectToActiveCell();
   }, [game.guesses.length, game.isGameOver, game.isRevealingRow, game.isValidationPending]);
@@ -413,11 +397,13 @@ export default function RealiTeaRoute() {
                 })}
               </div>
 
-              {game.errorMessage && (
-                <p className="text-center text-xs font-medium text-red-600" aria-live="polite">
-                  {game.errorMessage}
-                </p>
-              )}
+              <p
+                className="text-center text-xs font-medium text-red-600 min-h-[1em]"
+                aria-live="polite"
+                aria-atomic="true"
+              >
+                {game.errorMessage ?? ""}
+              </p>
             </div>
 
             {game.isGameOver && (

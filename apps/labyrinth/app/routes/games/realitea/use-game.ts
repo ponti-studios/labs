@@ -78,6 +78,11 @@ export function useRealiTeaGame({
     prevFetcherStateRef.current = wordValidator.state;
   }, [wordValidator.state]);
 
+  // Guards the fetcher-result effect against double-processing the same
+  // guess (e.g. when the effect re-fires because `guesses.length` changed
+  // after `setGuesses` commits the new guess).
+  const lastProcessedWordRef = useRef<string | null>(null);
+
   const submitGuess = () => {
     if (!canMutateGuess) return;
     const guess = normalizeGuess(typing.currentGuess);
@@ -126,10 +131,16 @@ export function useRealiTeaGame({
       return;
     }
 
+    // Guard against re-processing the same word when the effect re-fires
+    // after `setGuesses` triggers a re-render.
+    if (lastProcessedWordRef.current === result.word) return;
+
     if (result.word && result.states) {
+      lastProcessedWordRef.current = result.word;
       setGuesses((prev) => {
+        // Idempotency guard for the async state update
         if (prev.at(-1)?.word === result.word) return prev;
-        return [...prev, { word: result.word!, states: result.states! }];
+        return [...prev, { word: result.word, states: result.states }];
       });
       typing.setCurrentGuess("");
       anim.startReveal(guesses.length);

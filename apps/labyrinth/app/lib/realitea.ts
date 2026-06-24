@@ -37,15 +37,6 @@ export function getPuzzleDateParts(date: Date): [number, number, number] {
   return [year, month, day];
 }
 
-function getLocalDayIndex(date: Date): number {
-  const [year, month, day] = getPuzzleDateParts(date);
-  return Math.floor(Date.UTC(year, month - 1, day) / 86_400_000);
-}
-
-export function getPuzzleKeyForDate(date: Date): string {
-  return `bravo-${getLocalDayIndex(date)}`;
-}
-
 export function evaluateGuess(answer: string, guess: string): LetterState[] {
   const normalizedAnswer = normalizeGuess(answer);
   const normalizedGuess = normalizeGuess(guess);
