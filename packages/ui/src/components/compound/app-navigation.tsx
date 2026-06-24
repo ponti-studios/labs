@@ -1,47 +1,47 @@
 import * as React from "react";
 
-export interface MarketingNavLink {
+export interface AppNavigationLink {
   href: string;
   label: string;
 }
 
-export interface MarketingNavCta {
+export interface AppNavigationCta {
   href: string;
   label: string;
   variant?: "default" | "outline";
 }
 
-export interface MarketingNavRenderLinkArgs {
+export interface AppNavigationRenderLinkArgs {
   href: string;
   className: string;
   children: React.ReactNode;
   onClick?: () => void;
 }
 
-export interface MarketingNavProps {
+export interface AppNavigationProps {
   brand?: string;
   brandHref?: string;
-  links: MarketingNavLink[];
-  cta?: MarketingNavCta;
+  links: AppNavigationLink[];
+  cta?: AppNavigationCta;
   /** Current pathname used to highlight the active link. */
   activeHref?: string;
   navHeight?: number;
-  renderLink: (args: MarketingNavRenderLinkArgs) => React.ReactNode;
+  renderLink: (args: AppNavigationRenderLinkArgs) => React.ReactNode;
 }
 
-export function MarketingNav({
+export function AppNavigation({
   brand,
   brandHref = "/",
   links,
   cta,
   activeHref,
   renderLink,
-}: MarketingNavProps) {
+}: AppNavigationProps) {
   const isActive = (href: string) => href === activeHref;
 
   return (
-    <div className="fixed top-5 left-0 right-0 z-50 flex justify-center px-4">
-      <nav className="w-full max-w-7xl flex items-center justify-between bg-card border border-border rounded-full px-4 py-2 shadow-sm">
+    <div className="fixed top-5 right-0 left-0 z-50 flex justify-center px-4">
+      <nav className="bg-card border-border flex w-full max-w-7xl items-center justify-between rounded-full border px-4 py-2 shadow-sm">
         {brand &&
           renderLink({
             href: brandHref,

@@ -1,77 +1,93 @@
 # @pontistudios/db
 
-Shared database schema and utilities for all Ponti Studios labs apps. Exports a Kysely client factory and the canonical Drizzle ORM schema.
+Shared database layer for all Ponti Studios labs apps. Built on **Drizzle ORM** with `postgres-js`. Owns the canonical schema, all migrations, and seed/load routines for the shared `labs` database.
 
 ## Schema
 
-19 tables across 5 domains:
+6 tables across 4 domains, all under the `labs` PostgreSQL schema:
 
-| Domain | Tables |
-|---|---|
-| disaster | `disaster_events` |
-| relationships | `relationship_people`, `relationship_stage_history`, `relationship_events`, `relationship_notes`, `relationship_checkins`, `relationship_flags`, `relationship_friend_invites`, `relationship_friend_votes`, `relationship_metrics_daily` |
-| playground | `covid_data`, `tfl_cameras`, `todos`, `tags`, `todo_tags`, `embeddings` |
-| social | `trackers`, `votes` |
-| kuma | `users`, `messages` |
+| Domain        | Tables                                                        |
+| ------------- | ------------------------------------------------------------- |
+| puzzles       | `rhobh_daily_puzzles`                                         |
+| relationships | `relationship_cases`, `case_updates`, `relationship_verdicts` |
+| transport     | `tfl_cameras`                                                 |
+| reference     | `covid_data`                                                  |
 
-## Migration tool
+## Exports
 
-**Drizzle Kit** manages schema migrations. SQL files live in `migrations/` and are generated from the schema — do not edit them manually.
+```ts
+import { db, closeDb } from "@pontistudios/db";
 
-### Available commands
+// Re-exported from drizzle-orm for convenience
+import { eq, and, sql, count, desc } from "@pontistudios/db";
+
+// Environment validation (zod)
+import { DbEnv } from "@pontistudios/db";
+
+// Table references for queries
+import { rhobhDailyPuzzles, relationshipCases, tflCameras } from "@pontistudios/db";
+
+// Types
+import type {
+  CovidData,
+  NewCovidData,
+  RhobhDailyPuzzle,
+  NewRhobhDailyPuzzle,
+  TflCamera,
+  NewTflCamera,
+  RelationshipCase,
+  NewRelationshipCase,
+  CaseUpdate,
+  NewCaseUpdate,
+  RelationshipVerdict,
+  NewRelationshipVerdict,
+} from "@pontistudios/db";
+
+// Data loaders (for seeding)
+import { populateCovidData, populateTflCameras } from "@pontistudios/db";
+```
+
+The `db` proxy lazily connects on first access using `DATABASE_URL` — no manual init required.
+
+## Migrations
+
+**Drizzle Kit** manages schema migrations. Generated SQL files live in `migrations/` — do not edit them by hand.
+
+### Commands
 
 ```bash
-pnpm --workspace packages/db db:generate   # generate migration from schema changes
-pnpm --workspace packages/db db:migrate   # apply pending migrations
-pnpm --workspace packages/db db:check      # verify schema matches DB state
+pnpm --filter @pontistudios/db db:generate    # create migration from schema changes
+pnpm --filter @pontistudios/db db:migrate     # apply pending migrations
+pnpm --filter @pontistudios/db db:check       # verify schema matches DB state
+pnpm --filter @pontistudios/db db:create-schema  # ensure the labs schema exists
 ```
 
 ### Making schema changes
 
 1. Edit schema files in `src/schema/`
-2. Run `pnpm --workspace packages/db db:generate` — Drizzle creates a new migration file in `migrations/`
-3. Run `pnpm --workspace packages/db db:migrate` to apply
+2. Run `pnpm --filter @pontistudios/db db:generate` — Drizzle creates a new migration file and snapshot in `migrations/`
+3. Run `pnpm --filter @pontistudios/db db:migrate` to apply
+4. Commit the generated migration SQL, snapshot, and updated `_journal.json`
 
-### Migration CI
+### In CI
 
-The `db-migrate` job runs in CI before lint/test/build. It:
-1. Clones foundation (provides postgres via docker compose)
-2. Creates the `labs` database
-3. Runs `db:migrate`
-
-## Consuming from apps
-
-Import from anywhere in the workspace:
-
-```ts
-import { createDb, getDb } from '@pontistudios/db';
-```
-
-Or import specific table definitions:
-
-```ts
-import { trackers, votes } from '@pontistudios/db';
-```
-
-## Building
-
-```bash
-npm --workspace packages/db run build
-```
-
-Build output goes to `dist/`. The workspace root `.gitignore` ignores `dist`.
+The `deploy-db-migrations.yml` workflow runs migrations on push to `main` when `packages/db/` changes. Each deploy workflow also runs the reusable migration before deploying, so the database is always up to date before an app release.
 
 ## Data loading
 
-The DB package now owns the seed/load routines for the shared playground data.
+Seed routines for shared reference data:
 
 ```bash
-pnpm --filter @pontistudios/db load:covid
-pnpm --filter @pontistudios/db load:tfl
+pnpm --filter @pontistudios/db load:covid   # populate covid_data from CSV
+pnpm --filter @pontistudios/db load:tfl     # populate tfl_cameras from data source
 ```
 
 ## Testing
 
+Tests live in `tests/`. Run with:
+
 ```bash
-npm --workspace packages/db run test
+pnpm --filter @pontistudios/db test
 ```
+
+Requires a running PostgreSQL instance pointed at by `DATABASE_URL`.

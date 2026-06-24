@@ -9,6 +9,7 @@ on:
       - "package.json"
       - "pnpm-lock.yaml"
       - ".github/workflows/deploy-playground-prod.yml"
+      - ".github/workflows/reusable-db-migrate.yml"
       - ".github/workflows/reusable-railway-deploy.yml"
   workflow_dispatch:
 
@@ -21,40 +22,9 @@ concurrency:
 
 jobs:
   migrate:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10.30.3
-
-      - uses: actions/setup-node@v6
-        with:
-          node-version: "24"
-          cache: "pnpm"
-
-      - name: install-dependencies
-        run: pnpm install --frozen-lockfile --filter @pontistudios/db...
-
-      - name: create-labs-schema
-        run: pnpm --filter @pontistudios/db db:create-schema
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-
-      - name: run-migrations
-        run: pnpm --filter @pontistudios/db db:migrate
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          NO_COLOR: "1"
-
-      - name: debug-migration-state
-        if: failure()
-        run: |
-          psql "$DATABASE_URL" -c "SELECT hash, created_at FROM drizzle.__drizzle_migrations ORDER BY created_at;"
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+    uses: ./.github/workflows/reusable-db-migrate.yml
+    secrets:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
   deploy:
     needs: migrate

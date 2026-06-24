@@ -11,7 +11,7 @@ import {
   useLocation,
   useNavigation,
 } from "react-router";
-import { MarketingNav } from "@pontistudios/ui";
+import { AppNavigation } from "@pontistudios/ui";
 import "./app.css";
 import BottomSheet from "./components/BottomSheet";
 import MapLibreViewer from "./components/MapLibreViewer";
@@ -69,7 +69,7 @@ export default function App() {
         <ClientOnly>
           <MapLibreViewer />
         </ClientOnly>
-        <MarketingNav
+        <AppNavigation
           brand="Earth"
           brandHref="/"
           links={[{ href: "/tfl", label: "TFL" }]}

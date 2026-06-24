@@ -8,7 +8,7 @@ import {
   ScrollRestoration,
   useLocation,
 } from "react-router";
-import { MarketingNav } from "@pontistudios/ui";
+import { AppNavigation } from "@pontistudios/ui";
 
 import type { Route } from "./+types/root";
 import "./app.css";
@@ -51,7 +51,7 @@ export default function App() {
   return (
     <QueryProvider>
       <SymptomProvider>
-        <MarketingNav
+        <AppNavigation
           brand="Health"
           brandHref="/"
           links={[

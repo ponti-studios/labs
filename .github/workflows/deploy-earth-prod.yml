@@ -11,12 +11,18 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  migrate:
+    uses: ./.github/workflows/reusable-db-migrate.yml
+    secrets:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
   deploy:
+    needs: migrate
     uses: ./.github/workflows/reusable-railway-deploy.yml
     with:
       config_path: apps/earth/railway.json
-      node-version: '24'
-      railway-cli-version: '4.58.0'
+      node-version: "24"
+      railway-cli-version: "4.58.0"
       timeout-minutes: 10
     secrets:
       railway_token: ${{ secrets.RAILWAY_TOKEN }}

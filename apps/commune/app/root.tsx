@@ -10,7 +10,7 @@ import {
   isRouteErrorResponse,
   useLocation,
 } from "react-router";
-import { MarketingNav } from "@pontistudios/ui";
+import { AppNavigation } from "@pontistudios/ui";
 import type { Route } from "./+types/root";
 import "./app.css";
 
@@ -50,7 +50,7 @@ export default function App() {
   const location = useLocation();
   return (
     <>
-      <MarketingNav
+      <AppNavigation
         brand="Commune"
         brandHref="/"
         links={[{ href: "/", label: "Docket" }]}
@@ -84,11 +84,11 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <main className="pt-16 p-4 container mx-auto">
+    <main className="container mx-auto p-4 pt-16">
       <h1>{message}</h1>
       <p>{details}</p>
       {stack && (
-        <pre className="w-full p-4 overflow-x-auto">
+        <pre className="w-full overflow-x-auto p-4">
           <code>{stack}</code>
         </pre>
       )}
