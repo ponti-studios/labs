@@ -8,7 +8,7 @@ import {
   ScrollRestoration,
   useLocation,
 } from "react-router";
-import { MarketingNav } from "@pontistudios/ui";
+import { AppNavigation } from "@pontistudios/ui";
 
 import type { Route } from "./+types/root";
 import "./app.css";
@@ -52,7 +52,7 @@ export default function App() {
   const location = useLocation();
   return (
     <QueryProvider>
-      <MarketingNav
+      <AppNavigation
         brand="Labyrinth"
         brandHref="/"
         links={[{ href: "/experiments", label: "Experiments" }]}
@@ -63,7 +63,7 @@ export default function App() {
           </Link>
         )}
       />
-      <main className="pt-24 px-4 w-full max-w-7xl mx-auto">
+      <main className="mx-auto w-full max-w-7xl px-4 pt-24">
         <Outlet />
       </main>
     </QueryProvider>
@@ -95,30 +95,30 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <main className="pt-16 p-4 container mx-auto min-h-screen flex items-center justify-center">
-      <div className="max-w-md w-full text-center">
+    <main className="container mx-auto flex min-h-screen items-center justify-center p-4 pt-16">
+      <div className="w-full max-w-md text-center">
         <div className="mb-6">
-          <div className="text-6xl font-bold text-red-500 mb-2">{status}</div>
+          <div className="mb-2 text-6xl font-bold text-red-500">{status}</div>
           <p className="text-gray-600">{details}</p>
         </div>
 
-        <div className="flex gap-4 justify-center">
+        <div className="flex justify-center gap-4">
           <button
             onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-primary text-white rounded-lg "
+            className="bg-primary rounded-lg px-4 py-2 text-white "
           >
             Try Again
           </button>
-          <a href="/" className="px-4 py-2 bg-secondary text-gray-800 rounded-lg">
+          <a href="/" className="bg-secondary rounded-lg px-4 py-2 text-gray-800">
             Go Home
           </a>
         </div>
 
         {stack && import.meta.env.DEV && (
           <div className="mt-8 text-left">
-            <details className="bg-gray-100 rounded-lg p-4">
-              <summary className="font-semibold cursor-pointer">Stack Trace</summary>
-              <pre className="mt-4 text-xs overflow-x-auto text-red-600">
+            <details className="rounded-lg bg-gray-100 p-4">
+              <summary className="cursor-pointer font-semibold">Stack Trace</summary>
+              <pre className="mt-4 overflow-x-auto text-xs text-red-600">
                 <code>{stack}</code>
               </pre>
             </details>

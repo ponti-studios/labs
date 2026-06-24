@@ -6,12 +6,11 @@
 
 | App / Service | Port | URL                   |
 | ------------- | ---- | --------------------- |
-| Home          | 3000 | http://localhost:3000 |
-|     | 3001 | http://localhost:3001 |
+| Labyrinth     | 3001 | http://localhost:3001 |
 | Health        | 3003 | http://localhost:3003 |
-| Social       | 3005 | http://localhost:3005 |
+| Commune       | 3005 | http://localhost:3005 |
 | Earth         | 3006 | http://localhost:3006 |
-| UI (package)  | 3007 | (build tool)          |
+| UI (package)  | 3007 | (Storybook)           |
 
 ### Other Developer Apps (~/Developer)
 
@@ -48,9 +47,7 @@ Foundation runs:
 
 Credentials: `postgres` / `postgres`
 
-Labs uses the `hominem` PostgreSQL database locally.
-
-The app tables live under the
+Labs uses the `hominem` PostgreSQL database locally. App tables live under the
 `labs` schema inside that database, so `DATABASE_URL` should point to
 `postgresql://postgres:postgres@localhost:5434/hominem`.
 
@@ -71,16 +68,27 @@ pnpm dev
 
 **Note:** Apps connect to `localhost:5434` (foundation postgres) by default. Do not run `docker compose` from labs — infra lives in foundation.
 
+To start a single app:
+
+```bash
+pnpm dev:labyrinth
+pnpm dev:commune
+pnpm dev:health
+pnpm dev:earth
+pnpm dev:ui    # Storybook
+```
+
 ## Apps
 
-- **home** - Main studio homepage (Next.js)
-- **playground** - React Router app for experiments
-- **health** - Medical-related React Router app
-- **earth** - Earth intelligence dashboard (Svelte + Cesium)
-- **social** - Social app (React Router)
-- **ui** - Shared UI component package
+- **Labyrinth** (`apps/labyrinth`) — React Router app at port 3001. Real-time puzzle generation, daily challenges, and data visualization.
+- **Commune** (`apps/commune`) — React Router app at port 3005. Social relationship voting and community decision-making.
+- **Health** (`apps/health`) — React Router app at port 3003. Medical data dashboard and health tracking.
+- **Earth** (`apps/earth`) — React Router app at port 3006. Geographic data browser with MapLibre, TfL camera feeds, and location intelligence.
 
 ## Packages
 
-- **@pontistudios/ui** - Shared React UI components
-- **@pontistudios/db** - Database utilities
+- **`@pontistudios/ui`** — Shared React UI component library (Tailwind, CVA, Storybook at port 3007).
+- **`@pontistudios/db`** — Database layer built on Drizzle ORM with PostgreSQL. Schema, migrations, and seed scripts for the shared `labs` database.
+- **`@pontistudios/ai`** — AI/LLM utilities wrapping OpenRouter and TanStack AI for multi-model inference.
+- **`@pontistudios/tsconfig`** — Shared TypeScript configuration presets.
+- **`@pontistudios/db-test`** — Test fixtures, factories, and database helpers for integration tests.

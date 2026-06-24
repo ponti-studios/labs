@@ -1,0 +1,25 @@
+name: deploy-db-migrations
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "packages/db/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/deploy-db-migrations.yml"
+      - ".github/workflows/reusable-db-migrate.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-db-migrations-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  migrate:
+    uses: ./.github/workflows/reusable-db-migrate.yml
+    secrets:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
