@@ -1,4 +1,5 @@
 import {
+  getPuzzleDateParts,
   normalizeAnswer,
   REALITEA_ANSWER_LENGTH,
   REALITEA_TIME_ZONE,
@@ -59,21 +60,6 @@ export interface ValidationResult {
 // --- Date helpers ---
 
 const DATE_KEY_FORMAT = /^\d{4}-\d{2}-\d{2}$/;
-
-function getPuzzleDateParts(date: Date): [number, number, number] {
-  const formatter = new Intl.DateTimeFormat("en-US", {
-    timeZone: REALITEA_TIME_ZONE,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
-  const parts = formatter.formatToParts(date);
-  return [
-    Number.parseInt(parts.find((p) => p.type === "year")?.value ?? "", 10),
-    Number.parseInt(parts.find((p) => p.type === "month")?.value ?? "", 10),
-    Number.parseInt(parts.find((p) => p.type === "day")?.value ?? "", 10),
-  ];
-}
 
 export function getDateKey(date: Date): string {
   const [year, month, day] = getPuzzleDateParts(date);

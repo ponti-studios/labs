@@ -8,17 +8,18 @@ import {
   MAX_GUESSES,
   type GameStatus,
   type LetterState,
+  type PublicDailyPuzzle,
   type RealiteaGuess,
 } from "~/lib/realitea";
-import { loadActivePublicPuzzle } from "~/lib/realitea-daily-puzzle.server";
+import { loadActivePublicPuzzle } from "~/lib/realitea-puzzle.server";
 import { cn } from "~/lib/utils";
 
 import { readGameState, saveGameState } from "./game-state";
 import { useDailyPuzzle } from "./use-daily-puzzle";
-import { useRealiTeaGame } from "./use-realitea-game";
-import { useRealiTeaShare } from "./use-realitea-share";
+import { useRealiTeaGame } from "./use-game";
+import { useRealiTeaShare } from "./use-share";
 
-import "~/styles/realitea.css";
+import "./realitea.css";
 import { LucideShare } from "lucide-react";
 
 const TILE_STATE_CLASSES: Record<LetterState, string> = {
@@ -88,6 +89,10 @@ export async function loader(_args: LoaderFunctionArgs) {
 
   return Response.json(envelope);
 }
+
+export type LoaderData = {
+  puzzle: PublicDailyPuzzle;
+};
 
 export function meta() {
   return [
@@ -226,8 +231,31 @@ export function HydrateFallback() {
   );
 }
 
+type ErrorBoundaryProps = { error: Error };
+
+export function ErrorBoundary({ error }: ErrorBoundaryProps) {
+  return (
+    <div className="-mx-4 min-h-[100dvh] bg-background md:mx-0 md:min-h-0">
+      <div className="mx-auto flex min-h-[100dvh] w-full max-w-md flex-col items-center justify-center gap-3 px-3 text-center md:block md:min-h-0 md:max-w-2xl md:px-4">
+        <p className="text-sm font-medium uppercase tracking-[0.15em] text-muted-foreground">
+          Something went wrong
+        </p>
+        <p className="text-sm text-muted-foreground">
+          {error.message || "The RealiTea puzzle couldn't load. Try refreshing the page."}
+        </p>
+        <a
+          href="/games/realitea"
+          className="mt-2 inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+        >
+          Reload
+        </a>
+      </div>
+    </div>
+  );
+}
+
 export default function RealiTeaRoute() {
-  const initial = useLoaderData() as { puzzle: import("~/lib/realitea").PublicDailyPuzzle };
+  const initial = useLoaderData<LoaderData>();
   const [showInstructions, setShowInstructions] = useState(false);
 
   const { currentPuzzle } = useDailyPuzzle(initial.puzzle);
@@ -440,7 +468,7 @@ export default function RealiTeaRoute() {
 
           {!game.isGameOver && (
             <div className="sticky bottom-0 z-10 -mx-3 mt-3 border-t border-border bg-background/95 px-2 pb-[calc(env(safe-area-inset-bottom)+6px)] pt-2 backdrop-blur md:static md:mx-0 md:mt-4 md:border-t-0 md:bg-transparent md:px-0 md:pb-0 md:pt-0">
-              <OnscreenKeyboard letterStates={keyboardState} />
+              <OnscreenKeyboard letterStates={keyboardState} readOnly />
             </div>
           )}
         </div>

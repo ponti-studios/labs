@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const loadActivePublicPuzzle = vi.fn();
 
-vi.mock("../../lib/realitea-daily-puzzle.server", () => ({
+vi.mock("../../../../lib/realitea-puzzle.server", () => ({
   loadActivePublicPuzzle,
 }));
 
@@ -39,7 +39,7 @@ describe("RealiTea route loader", () => {
       },
     });
 
-    const { loader } = await import("../games/realitea");
+    const { loader } = await import("../route");
     const response = await loader(createLoaderArgs("http://localhost/games/realitea"));
     const payload = await response.json();
 
@@ -52,7 +52,7 @@ describe("RealiTea route loader", () => {
   it("throws a RealiTea-specific 404 error when no puzzle exists for today", async () => {
     loadActivePublicPuzzle.mockResolvedValue(null);
 
-    const { loader } = await import("../games/realitea");
+    const { loader } = await import("../route");
 
     await expect(loader(createLoaderArgs("http://localhost/games/realitea"))).rejects.toMatchObject(
       {

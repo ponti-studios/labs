@@ -11,9 +11,9 @@ import {
   type RealiteaGuess,
 } from "~/lib/realitea";
 
-import { readGameState } from "../games/game-state";
-import RealiTeaRoute from "../games/realitea";
-import { createControlledRouteAction } from "./controlled-route-action";
+import { readGameState } from "../game-state";
+import RealiTeaRoute from "../route";
+import { createControlledRouteAction } from "../../../__tests__/controlled-route-action";
 
 interface GuessRequest {
   dateKey: string;

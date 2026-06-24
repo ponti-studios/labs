@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { getDateKey, getPuzzleWindow, validateCandidate } from "./realitea-daily-puzzle";
+import { getDateKey, getPuzzleWindow, validateCandidate } from "./realitea-puzzle";
 
 const BRAVO_URL = "https://www.bravotv.com/the-daily-dish/test-story";
 

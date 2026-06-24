@@ -40,7 +40,7 @@ const featureRoutes = [
   ]),
   route("/games/cards", "routes/games/cards.tsx"),
   route("/games/tetris", "routes/games/tetris.tsx"),
-  route("/games/realitea", "routes/games/realitea.tsx"),
+  route("/games/realitea", "routes/games/realitea/route.tsx"),
   route("/business-tools", "routes/business-tools/index.tsx"),
   route("/business-tools/marketing", "routes/business-tools/marketing.tsx"),
 ] satisfies RouteConfig;

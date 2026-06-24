@@ -1,7 +1,7 @@
 import type { ActionFunctionArgs } from "react-router";
 import { z } from "zod";
 
-import { evaluateGuessServer } from "~/lib/realitea-daily-puzzle.server";
+import { evaluateGuessServer } from "~/lib/realitea-puzzle.server";
 
 const payloadSchema = z.object({
   dateKey: z.string().min(1),

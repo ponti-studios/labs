@@ -7,12 +7,12 @@ import {
   getDateKey,
   getPuzzleWindow,
   REALITEA_READY_INVENTORY_DAYS,
-} from "../app/lib/realitea-daily-puzzle";
+} from "../app/lib/realitea-puzzle";
 import {
   generateScheduledPuzzle,
   getPublishedPuzzle,
   promoteScheduledPuzzle,
-} from "../app/lib/realitea-daily-puzzle.server";
+} from "../app/lib/realitea-puzzle.server";
 
 function requireEnvironment() {
   const missing = ["DATABASE_URL", "OPENROUTER_API_KEY"].filter((key) => !process.env[key]);

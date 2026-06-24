@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useFetcher, type Fetcher } from "react-router";
 
 import { type PublicDailyPuzzle } from "~/lib/realitea";
-import { getDateKey } from "~/lib/realitea-daily-puzzle";
+import { getDateKey } from "~/lib/realitea-puzzle";
 
 interface DailyPuzzleResponse {
   puzzle: PublicDailyPuzzle;

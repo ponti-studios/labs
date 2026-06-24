@@ -1,6 +1,6 @@
 import type { LoaderFunctionArgs } from "react-router";
 
-import { loadActivePublicPuzzle } from "~/lib/realitea-daily-puzzle.server";
+import { loadActivePublicPuzzle } from "~/lib/realitea-puzzle.server";
 
 export async function loader(_args: LoaderFunctionArgs) {
   const puzzle = await loadActivePublicPuzzle(new Date());

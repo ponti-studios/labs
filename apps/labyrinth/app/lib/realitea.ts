@@ -55,7 +55,7 @@ export function normalizeAnswer(value: string): string {
   return normalizeGuess(value);
 }
 
-function getPuzzleDateParts(date: Date): [number, number, number] {
+export function getPuzzleDateParts(date: Date): [number, number, number] {
   const formatter = new Intl.DateTimeFormat("en-US", {
     timeZone: REALITEA_TIME_ZONE,
     year: "numeric",
