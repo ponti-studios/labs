@@ -17,7 +17,7 @@ import {
 import pino from "pino";
 import { z } from "zod";
 
-import { normalizeAnswer, REALITEA_ANSWER_LENGTH } from "./realitea";
+import { REALITEA_ANSWER_LENGTH } from "./realitea";
 import {
   evaluateGuess,
   isGuessSolved,
@@ -322,7 +322,7 @@ export async function generateScheduledPuzzle(dateKey: string): Promise<PuzzleRe
       detail: detailFromSummary,
       expireAt: window.expireAt,
       franchise: BRAVO_FRANCHISE,
-      normalizedAnswer: normalizeAnswer(candidate.answer),
+      normalizedAnswer: normalizeGuess(candidate.answer),
       publishAt: window.publishAt,
       role: "",
       scheduledForDateKey: window.dateKey,

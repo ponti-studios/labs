@@ -18,10 +18,6 @@ export function normalizeGuess(value: string): string {
   return value.replaceAll(/[^a-z]/gi, "").toUpperCase();
 }
 
-export function normalizeAnswer(value: string): string {
-  return normalizeGuess(value);
-}
-
 export function getPuzzleDateParts(date: Date): [number, number, number] {
   const formatter = new Intl.DateTimeFormat("en-US", {
     timeZone: REALITEA_TIME_ZONE,
