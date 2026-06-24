@@ -3,7 +3,8 @@ import { chat } from "@tanstack/ai";
 import { createOpenRouterText, openRouterText } from "@tanstack/ai-openrouter";
 import { webFetchTool, webSearchTool } from "@tanstack/ai-openrouter/tools";
 
-const DEFAULT_TEXT_MODEL: Parameters<typeof createOpenRouterText>[0] = "openai/gpt-5.1";
+const DEFAULT_TEXT_MODEL: Parameters<typeof createOpenRouterText>[0] =
+  "google/gemini-3.1-flash-lite";
 const DEFAULT_IMAGE_MODEL = "x-ai/grok-imagine-image-quality";
 const DEFAULT_EMBEDDING_MODEL = "google/gemini-embedding-2";
 const DEFAULT_TRANSCRIPTION_MODEL = "mistralai/voxtral-mini-transcribe";
@@ -15,13 +16,17 @@ type OpenRouterClientOptions = {
   appCategories?: string;
 };
 
-type OpenRouterTextAdapterOptions = OpenRouterClientOptions & {
-  model?: Parameters<typeof createOpenRouterText>[0];
+type ChatRequest = NonNullable<Parameters<OpenRouter["chat"]["send"]>[0]["chatRequest"]>;
+
+type ChatCompletionOptions = OpenRouterClientOptions & {
+  messages: ChatRequest["messages"];
+  maxTokens?: number;
+  temperature?: number;
+  responseFormat?: ChatRequest["responseFormat"];
+  tools?: ChatRequest["tools"];
 };
 
 type ImageGenerationOptions = OpenRouterClientOptions & {
-  model?: string;
-  imageModel?: string;
   aspectRatio?: string;
   background?: string;
   moderation?: string;
@@ -33,12 +38,10 @@ type ImageGenerationOptions = OpenRouterClientOptions & {
 };
 
 type TranscriptionOptions = OpenRouterClientOptions & {
-  model?: string;
   language?: string;
 };
 
 type EmbeddingOptions = OpenRouterClientOptions & {
-  model?: string;
   inputType?: string;
   dimensions?: number;
 };
@@ -62,9 +65,9 @@ export function createOpenRouterClient(options: OpenRouterClientOptions = {}) {
   });
 }
 
-export function createOpenRouterTextAdapter(options: OpenRouterTextAdapterOptions = {}) {
+export function createOpenRouterTextAdapter(options: OpenRouterClientOptions = {}) {
   const apiKey = resolveOpenRouterApiKey(options.apiKey);
-  return createOpenRouterText(options.model ?? DEFAULT_TEXT_MODEL, apiKey, {
+  return createOpenRouterText(DEFAULT_TEXT_MODEL, apiKey, {
     httpReferer: options.httpReferer,
     appTitle: options.appTitle,
     appCategories: options.appCategories,
@@ -73,6 +76,36 @@ export function createOpenRouterTextAdapter(options: OpenRouterTextAdapterOption
 
 export { chat, openRouterText, webFetchTool, webSearchTool };
 
+/** Send a chat completion using the default text model. No programmatic model override is allowed. */
+export async function chatCompletion(options: ChatCompletionOptions = { messages: [] }) {
+  const {
+    apiKey,
+    httpReferer,
+    appTitle,
+    appCategories,
+    messages,
+    maxTokens,
+    temperature,
+    responseFormat,
+    tools,
+  } = options;
+  const client = createOpenRouterClient({ apiKey, httpReferer, appTitle, appCategories });
+  return client.chat.send({
+    httpReferer,
+    appTitle,
+    appCategories,
+    chatRequest: {
+      model: DEFAULT_TEXT_MODEL,
+      stream: false,
+      messages,
+      ...(maxTokens !== undefined ? { maxTokens } : {}),
+      ...(temperature !== undefined ? { temperature } : {}),
+      ...(responseFormat !== undefined ? { responseFormat } : {}),
+      ...(tools !== undefined ? { tools } : {}),
+    },
+  });
+}
+
 export async function generateEmbedding(content: string, options: EmbeddingOptions = {}) {
   const client = createOpenRouterClient(options);
   const response = await client.embeddings.generate({
@@ -80,7 +113,7 @@ export async function generateEmbedding(content: string, options: EmbeddingOptio
     appTitle: options.appTitle,
     appCategories: options.appCategories,
     requestBody: {
-      model: options.model ?? DEFAULT_EMBEDDING_MODEL,
+      model: DEFAULT_EMBEDDING_MODEL,
       input: content,
       inputType: options.inputType ?? "search_document",
       dimensions: options.dimensions,
@@ -133,7 +166,7 @@ export async function transcribeAudio(
     appTitle: options.appTitle,
     appCategories: options.appCategories,
     sttRequest: {
-      model: options.model ?? DEFAULT_TRANSCRIPTION_MODEL,
+      model: DEFAULT_TRANSCRIPTION_MODEL,
       inputAudio: {
         data: audioBase64,
         format: toAudioFormat(mimeType),
@@ -189,7 +222,7 @@ export async function generateImageFromPrompt(
     appTitle: options.appTitle,
     appCategories: options.appCategories,
     chatRequest: {
-      model: options.imageModel ?? options.model ?? DEFAULT_IMAGE_MODEL,
+      model: DEFAULT_IMAGE_MODEL,
       messages: [{ role: "user", content: prompt }],
       modalities: ["image"],
       stream: false,

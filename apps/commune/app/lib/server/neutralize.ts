@@ -1,4 +1,4 @@
-import { createOpenRouterClient } from "@pontistudios/ai";
+import { chatCompletion } from "@pontistudios/ai";
 
 const SYSTEM_PROMPT = `You are a neutral case summarizer for a structured deliberation platform. Your sole function is to convert a first-person account of a situation into a factual, neutral summary that can be evaluated by a jury of independent voters who have no prior relationship with either party.
 
@@ -33,17 +33,11 @@ export interface NeutralizationResult {
 }
 
 export async function neutralizeSituation(rawSituation: string): Promise<NeutralizationResult> {
-  const client = createOpenRouterClient();
-
-  const response = await client.chat.send({
-    chatRequest: {
-      model: "anthropic/claude-haiku-4-5",
-      stream: false,
-      messages: [
-        { role: "system", content: SYSTEM_PROMPT },
-        { role: "user", content: rawSituation },
-      ],
-    },
+  const response = await chatCompletion({
+    messages: [
+      { role: "system", content: SYSTEM_PROMPT },
+      { role: "user", content: rawSituation },
+    ],
   });
 
   const text =

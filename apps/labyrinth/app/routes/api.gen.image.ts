@@ -73,7 +73,6 @@ export async function action({ request }: ActionFunctionArgs) {
     const promptText = buildGenerativeImagePrompt(body.config);
     const imageData = await generateImageFromPrompt(promptText, {
       apiKey: env.openRouterApiKey,
-      imageModel: "x-ai/grok-imagine-image-quality",
       outputFormat: "png",
       quality: "high",
       size,

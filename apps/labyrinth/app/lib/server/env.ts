@@ -3,7 +3,6 @@ import { z } from "zod";
 export const LabyrinthServerEnv = z
   .object({
     OPENROUTER_API_KEY: z.string(),
-    OPENROUTER_MODEL: z.string().optional(),
     S3_ENDPOINT: z.string().default("http://localhost:9000"),
     S3_REGION: z.string().default("auto"),
     S3_BUCKET: z.string().default("labyrinth"),
@@ -13,7 +12,6 @@ export const LabyrinthServerEnv = z
   })
   .transform((env) => ({
     openRouterApiKey: env.OPENROUTER_API_KEY,
-    openRouterModel: env.OPENROUTER_MODEL ?? "google/gemini-3.1-flash-lite",
     s3Endpoint: env.S3_ENDPOINT,
     s3Region: env.S3_REGION,
     s3Bucket: env.S3_BUCKET,
