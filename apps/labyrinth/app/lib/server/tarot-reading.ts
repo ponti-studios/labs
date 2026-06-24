@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { chatCompletion } from "@pontistudios/ai";
 import { buildFallbackDailyReading } from "~/lib/tarot-daily";
 import type { DailyTarotCard, DailyTarotReading, DailyTarotResult } from "~/lib/tarot-types";
 
@@ -10,30 +11,19 @@ const responseSchema = z.object({
   careNote: z.string().min(1),
 });
 
-function getApiKey() {
-  return process.env.OPENAI_API_KEY || process.env.VITE_OPENAI_API_KEY || null;
-}
-
-function extractResponseText(payload: unknown): string | null {
+function extractResponseContent(payload: unknown): string | null {
   if (!payload || typeof payload !== "object") {
     return null;
   }
 
   const candidate = payload as {
-    output_text?: unknown;
-    output?: Array<{ content?: Array<{ text?: unknown }> }>;
+    choices?: Array<{ message?: { content?: unknown } }>;
   };
 
-  if (typeof candidate.output_text === "string" && candidate.output_text.length > 0) {
-    return candidate.output_text;
-  }
+  const content = candidate.choices?.[0]?.message?.content;
 
-  for (const item of candidate.output ?? []) {
-    for (const content of item.content ?? []) {
-      if (typeof content.text === "string" && content.text.length > 0) {
-        return content.text;
-      }
-    }
+  if (typeof content === "string" && content.length > 0) {
+    return content;
   }
 
   return null;
@@ -43,39 +33,35 @@ async function generateAiReading(
   card: DailyTarotCard,
   dateKey: string,
 ): Promise<DailyTarotReading | null> {
-  const apiKey = getApiKey();
-
-  if (!apiKey) {
-    return null;
-  }
-
-  const response = await fetch("https://api.openai.com/v1/responses", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model: "gpt-5-mini",
-      instructions:
-        "You write concise daily tarot reflections. Keep the tone grounded, calm, and reflective. Avoid predictions, certainty, medical claims, legal claims, or supernatural authority. Return valid JSON only.",
-      input: `Create a daily tarot reading for ${dateKey} using this card context:\n${JSON.stringify(
+  try {
+    const response = await chatCompletion({
+      messages: [
         {
-          name: card.name,
-          arcana: card.arcana,
-          suit: card.suit,
-          rank: card.rank,
-          keywords: card.keywords,
-          curatedReading: card.curatedReading,
-          reflectionQuestions: card.reflectionQuestions,
+          role: "system",
+          content:
+            "You write concise daily tarot reflections. Keep the tone grounded, calm, and reflective. Avoid predictions, certainty, medical claims, legal claims, or supernatural authority. Return valid JSON only.",
         },
-        null,
-        2,
-      )}`,
-      max_output_tokens: 350,
-      text: {
-        format: {
-          type: "json_schema",
+        {
+          role: "user",
+          content: `Create a daily tarot reading for ${dateKey} using this card context:\n${JSON.stringify(
+            {
+              name: card.name,
+              arcana: card.arcana,
+              suit: card.suit,
+              rank: card.rank,
+              keywords: card.keywords,
+              curatedReading: card.curatedReading,
+              reflectionQuestions: card.reflectionQuestions,
+            },
+            null,
+            2,
+          )}`,
+        },
+      ],
+      maxTokens: 350,
+      responseFormat: {
+        type: "json_schema",
+        jsonSchema: {
           name: "daily_tarot_reading",
           strict: true,
           schema: {
@@ -92,21 +78,14 @@ async function generateAiReading(
           },
         },
       },
-    }),
-  });
+    });
 
-  if (!response.ok) {
-    return null;
-  }
+    const text = extractResponseContent(response);
 
-  const payload = await response.json();
-  const text = extractResponseText(payload);
+    if (!text) {
+      return null;
+    }
 
-  if (!text) {
-    return null;
-  }
-
-  try {
     return responseSchema.parse(JSON.parse(text));
   } catch {
     return null;

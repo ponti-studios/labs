@@ -1,4 +1,4 @@
-import { createOpenRouterClient } from "@pontistudios/ai";
+import { chatCompletion } from "@pontistudios/ai";
 import type { ActionFunctionArgs } from "react-router";
 import { z } from "zod";
 
@@ -26,22 +26,17 @@ export async function action({ request }: ActionFunctionArgs) {
   try {
     const body = requestSchema.parse(await request.json());
 
-    const client = createOpenRouterClient();
-
-    const response = await client.chat.send({
-      chatRequest: {
-        model: "openai/gpt-4o-mini",
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are continuing a code generation session. Complete the output started in the context.",
-          },
-          { role: "user", content: body.context },
-        ],
-        temperature: 0.7,
-        maxTokens: 200,
-      },
+    const response = await chatCompletion({
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are continuing text that has already been started. Match the style, tone, and format of the existing text naturally. Return only the continuation.",
+        },
+        { role: "user", content: body.context },
+      ],
+      temperature: 0.7,
+      maxTokens: 200,
     });
 
     const output = response.choices?.[0]?.message?.content || "";

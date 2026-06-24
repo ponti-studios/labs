@@ -1,5 +1,5 @@
-import { createOpenRouterClient } from "@pontistudios/ai";
-import { db, rhobhDailyPuzzles, type RhobhDailyPuzzle } from "@pontistudios/db";
+import { chatCompletion } from "@pontistudios/ai";
+import { db, rhobhDailyPuzzles } from "@pontistudios/db";
 import pino from "pino";
 import { z } from "zod";
 
@@ -12,7 +12,6 @@ import {
 } from "./realitea-validation";
 import { getInventoryAnswers, getRecentAnswers, loadScheduledPuzzle } from "./realitea-db";
 import type { PuzzleAnswerType, PuzzleRecord } from "./realitea.types";
-import { LabyrinthServerEnv } from "./server/env";
 
 const logger = pino(
   process.env.NODE_ENV === "development"
@@ -54,61 +53,54 @@ async function callGenerationApi(
   excludedAnswers: string[],
 ): Promise<Candidate | null> {
   const childLogger = logger.child({ operation: "callGenerationApi", dateKey });
-  const env = LabyrinthServerEnv.safeParse(process.env);
-  if (!env.success) return null;
 
   try {
-    const client = createOpenRouterClient();
-
-    const response = await client.chat.send({
-      chatRequest: {
-        model: env.data.openRouterModel,
-        messages: [
-          {
-            role: "system",
-            content: SYSTEM_PROMPT.replaceAll("{{ANSWER_LENGTH}}", String(REALITEA_ANSWER_LENGTH)),
-          },
-          {
-            role: "user",
-            content: JSON.stringify({
-              dateKey,
-              excludedAnswers,
-              instructions:
-                "Search bravotv.com/the-daily-dish for today's Bravo reality TV news, fetch article details, then generate puzzle candidates.",
-            }),
-          },
-        ],
-        maxTokens: 2000,
-        responseFormat: {
-          type: "json_schema",
-          jsonSchema: {
-            name: "generation_response",
-            schema: z.toJSONSchema(generationResponseSchema),
-            strict: true,
+    const response = await chatCompletion({
+      messages: [
+        {
+          role: "system",
+          content: SYSTEM_PROMPT.replaceAll("{{ANSWER_LENGTH}}", String(REALITEA_ANSWER_LENGTH)),
+        },
+        {
+          role: "user",
+          content: JSON.stringify({
+            dateKey,
+            excludedAnswers,
+            instructions:
+              "Search bravotv.com/the-daily-dish for today's Bravo reality TV news, fetch article details, then generate puzzle candidates.",
+          }),
+        },
+      ],
+      maxTokens: 2000,
+      responseFormat: {
+        type: "json_schema",
+        jsonSchema: {
+          name: "generation_response",
+          schema: z.toJSONSchema(generationResponseSchema),
+          strict: true,
+        },
+      },
+      tools: [
+        {
+          type: "openrouter:web_search",
+          parameters: {
+            allowedDomains: [BRAVO_PRIMARY_SOURCE_DOMAIN],
+            engine: "auto",
+            maxResults: 10,
+            maxTotalResults: 20,
+            searchContextSize: "medium",
           },
         },
-        tools: [
-          {
-            type: "openrouter:web_search",
-            parameters: {
-              allowedDomains: [BRAVO_PRIMARY_SOURCE_DOMAIN],
-              engine: "auto",
-              maxResults: 10,
-              maxTotalResults: 20,
-              searchContextSize: "medium",
-            },
+        {
+          type: "openrouter:web_fetch",
+          parameters: {
+            allowedDomains: [BRAVO_PRIMARY_SOURCE_DOMAIN],
+            engine: "openrouter",
+            maxContentTokens: 4000,
+            maxUses: 8,
           },
-          {
-            type: "openrouter:web_fetch",
-            parameters: {
-              allowedDomains: [BRAVO_PRIMARY_SOURCE_DOMAIN],
-              engine: "openrouter",
-              maxContentTokens: 4000,
-              maxUses: 8,
-            },
-          },
-        ],
-      },
+        },
+      ],
     });
 
     const content = response.choices?.[0]?.message?.content;
