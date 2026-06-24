@@ -6,7 +6,7 @@
  */
 import words5 from "../data/words/5.txt?raw";
 
-import { getStoredAnswersForValidation } from "./realitea-daily-puzzle.server";
+import { getStoredAnswersForValidation } from "./realitea-puzzle.server";
 import { REALITEA_ANSWER_LENGTH } from "./realitea";
 
 const wordSet = new Set(

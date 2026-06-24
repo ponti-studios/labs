@@ -5,6 +5,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -64,7 +65,7 @@ export default function CloudMargin() {
         tests.
       </p>
 
-      <div className="flex gap-2 mb-4">
+      <div className="mb-4 flex gap-2">
         <Button
           onClick={() => setSelectedTab("accruals")}
           className={`btn ${selectedTab === "accruals" ? "btn-primary" : ""}`}
@@ -82,11 +83,11 @@ export default function CloudMargin() {
       {selectedTab === "accruals" ? (
         <div className="card">
           <h3>Accruals</h3>
-          <div className="mb-4 p-4 bg-[#f5f5f5] rounded-[4px]">
+          <div className="mb-4 rounded-[4px] bg-[#f5f5f5] p-4">
             <h4>Add New Accrual</h4>
-            <div className="grid grid-cols-4 gap-2 items-end">
+            <div className="grid grid-cols-4 items-end gap-2">
               <div>
-                <Label className="block mb-1 text-sm">Date</Label>
+                <Label className="mb-1 block text-sm">Date</Label>
                 <Input
                   type="date"
                   value={newAccrual.DATE}
@@ -94,7 +95,7 @@ export default function CloudMargin() {
                 />
               </div>
               <div>
-                <Label className="block mb-1 text-sm">Rate</Label>
+                <Label className="mb-1 block text-sm">Rate</Label>
                 <Input
                   type="number"
                   step="0.01"
@@ -104,7 +105,7 @@ export default function CloudMargin() {
                 />
               </div>
               <div>
-                <Label className="block mb-1 text-sm">Balance</Label>
+                <Label className="mb-1 block text-sm">Balance</Label>
                 <Input
                   type="number"
                   placeholder="10000"
@@ -112,68 +113,62 @@ export default function CloudMargin() {
                   onChange={(e) => setNewAccrual((prev) => ({ ...prev, BALANCE: e.target.value }))}
                 />
               </div>
-              <Button onClick={addAccrual} className="btn btn-primary">
-                Add
-              </Button>
+              <Button onClick={addAccrual}>Add</Button>
             </div>
           </div>
 
-          <Table className="w-full border-collapse">
+          <Table>
             <TableHeader>
-              <TableRow className="bg-[#f5f5f5]">
-                <TableHead className="p-3 text-left border-b-2 border-[#ddd]">Date</TableHead>
-                <TableHead className="p-3 text-right border-b-2 border-[#ddd]">Rate</TableHead>
-                <TableHead className="p-3 text-right border-b-2 border-[#ddd]">Balance</TableHead>
-                <TableHead className="p-3 text-right border-b-2 border-[#ddd]">Accrual</TableHead>
+              <TableRow>
+                <TableHead>Date</TableHead>
+                <TableHead className="text-right">Rate</TableHead>
+                <TableHead className="text-right">Balance</TableHead>
+                <TableHead className="text-right">Accrual</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {accruals.map((accrual, idx) => (
-                <TableRow key={idx} className="border-b border-[#eee]">
-                  <TableCell className="p-3">{accrual.DATE}</TableCell>
-                  <TableCell className="p-3 text-right">{accrual.RATE}</TableCell>
-                  <TableCell className="p-3 text-right">
-                    {accrual.BALANCE.toLocaleString()}
-                  </TableCell>
-                  <TableCell className="p-3 text-right font-bold">
+                <TableRow key={idx}>
+                  <TableCell>{accrual.DATE}</TableCell>
+                  <TableCell className="text-right">{accrual.RATE}</TableCell>
+                  <TableCell className="text-right">{accrual.BALANCE.toLocaleString()}</TableCell>
+                  <TableCell className="text-right font-bold">
                     {accrual.ACCRUAL.toLocaleString()}
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
-            <tfoot>
-              <TableRow className="font-bold bg-[#f5f5f5]">
-                <TableCell className="p-3" colSpan={3}>
-                  Total Accruals
-                </TableCell>
-                <TableCell className="p-3 text-right">{totalAccruals.toLocaleString()}</TableCell>
+            <TableFooter>
+              <TableRow className="font-bold">
+                <TableCell colSpan={3}>Total Accruals</TableCell>
+                <TableCell className="text-right">{totalAccruals.toLocaleString()}</TableCell>
               </TableRow>
-            </tfoot>
+            </TableFooter>
           </Table>
         </div>
       ) : (
         <div className="card">
           <h3>Statements</h3>
-          <Table className="w-full border-collapse">
+          <Table>
             <TableHeader>
-              <TableRow className="bg-[#f5f5f5]">
-                <TableHead className="p-3 text-left border-b-2 border-[#ddd]">Period</TableHead>
-                <TableHead className="p-3 text-right border-b-2 border-[#ddd]">Amendment</TableHead>
-                <TableHead className="p-3 text-right border-b-2 border-[#ddd]">Total</TableHead>
+              <TableRow>
+                <TableHead>Period</TableHead>
+                <TableHead className="text-right">Amendment</TableHead>
+                <TableHead className="text-right">Total</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {statements.map((stmt, idx) => (
-                <TableRow key={idx} className="border-b border-[#eee]">
-                  <TableCell className="p-3">
+                <TableRow key={idx}>
+                  <TableCell>
                     {stmt.START_DATE} to {stmt.END_DATE}
                   </TableCell>
                   <TableCell
-                    className={`p-3 text-right ${stmt.AMENDMENT < 0 ? "text-red-500" : "text-inherit"}`}
+                    className={`text-right ${stmt.AMENDMENT < 0 ? "text-red-500" : "text-inherit"}`}
                   >
                     {stmt.AMENDMENT.toLocaleString()}
                   </TableCell>
-                  <TableCell className="p-3 text-right">{stmt.TOTAL.toLocaleString()}</TableCell>
+                  <TableCell className="text-right">{stmt.TOTAL.toLocaleString()}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

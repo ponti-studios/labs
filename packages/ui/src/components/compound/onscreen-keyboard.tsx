@@ -10,23 +10,22 @@ export interface OnscreenKeyboardProps {
   /** Maps each uppercase letter to its current state. */
   letterStates?: Record<string, LetterState>;
   /** Called when a letter key is pressed. Receives the uppercase letter. */
-  onLetter: (letter: string) => void;
+  onLetter?: (letter: string) => void;
   /** Called when the Enter key is pressed. */
-  onEnter: () => void;
+  onEnter?: () => void;
   /** Called when the Backspace key is pressed. */
-  onBackspace: () => void;
-  /** Disables all keys. */
+  onBackspace?: () => void;
+  /** Disables all keys (dimmed, no interaction). */
   disabled?: boolean;
+  /** Display only — keys render at full opacity with no hover/click effects. */
+  readOnly?: boolean;
   className?: string;
 }
 
 const ROWS = ["QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"] as const;
 
 const keyboardKeyVariants = cva(
-  cn(
-    "flex items-center justify-center rounded border font-medium transition-colors",
-    "disabled:cursor-not-allowed disabled:opacity-50",
-  ),
+  "flex items-center justify-center rounded border font-medium transition-colors",
   {
     variants: {
       kind: {
@@ -54,17 +53,26 @@ export function OnscreenKeyboard({
   onEnter,
   onBackspace,
   disabled = false,
+  readOnly = false,
   className,
 }: OnscreenKeyboardProps) {
+  const keyClass = (kind: "letter" | "action", state: LetterState | "action") =>
+    cn(
+      keyboardKeyVariants({ kind, state }),
+      readOnly && "cursor-default pointer-events-none",
+      disabled && "cursor-not-allowed opacity-50",
+    );
+
   return (
     <div className={cn("w-full space-y-1.5", className)}>
       {ROWS.map((row, i) => (
         <div key={row} className="flex w-full items-center justify-center gap-0.5 sm:gap-1">
           {i === 2 && (
             <button
-              className={cn(keyboardKeyVariants({ kind: "action", state: "action" }))}
+              className={keyClass("action", "action")}
               disabled={disabled}
-              onClick={onEnter}
+              tabIndex={readOnly ? -1 : undefined}
+              onClick={onEnter ? () => onEnter() : undefined}
               type="button"
             >
               Enter
@@ -73,11 +81,10 @@ export function OnscreenKeyboard({
           {row.split("").map((letter) => (
             <button
               key={letter}
-              className={cn(
-                keyboardKeyVariants({ kind: "letter", state: letterStates[letter] ?? "inactive" }),
-              )}
+              className={keyClass("letter", letterStates[letter] ?? "inactive")}
               disabled={disabled}
-              onClick={() => onLetter(letter)}
+              tabIndex={readOnly ? -1 : undefined}
+              onClick={onLetter ? () => onLetter(letter) : undefined}
               type="button"
             >
               {letter}
@@ -85,9 +92,10 @@ export function OnscreenKeyboard({
           ))}
           {i === 2 && (
             <button
-              className={cn(keyboardKeyVariants({ kind: "action", state: "action" }))}
+              className={keyClass("action", "action")}
               disabled={disabled}
-              onClick={onBackspace}
+              tabIndex={readOnly ? -1 : undefined}
+              onClick={onBackspace ? () => onBackspace() : undefined}
               type="button"
             >
               ⌫

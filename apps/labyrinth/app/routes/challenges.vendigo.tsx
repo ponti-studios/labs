@@ -73,7 +73,7 @@ export default function Vendigo() {
               <div className="text-xs text-[#999] mb-3">{book.uid.replace("OLID:", "")}</div>
               <div className="flex gap-2 items-center">
                 <div className="text-center flex-1">${(Math.random() * 100).toFixed(2)}</div>
-                <Button className="btn">Add To Cart</Button>
+                <Button>Add To Cart</Button>
               </div>
             </div>
           ))}

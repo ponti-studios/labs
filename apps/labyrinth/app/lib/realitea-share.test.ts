@@ -1,23 +1,29 @@
 import { describe, expect, it, vi } from "vitest";
 
+import { evaluateGuess, type RealiteaGuess } from "./realitea";
 import { buildRealiTeaShareText, shareRealiTeaResult } from "./realitea-share";
+
+const SAMPLE_ANSWER = "ERIKA";
+const SAMPLE_GUESSES = ["ERIKA", "DORIT", "KYLEE", "TILLY", "DORIT", "KYLEE"];
+
+function makeGuesses(words: readonly string[], answer = SAMPLE_ANSWER): RealiteaGuess[] {
+  return words.map((word) => ({ word, states: evaluateGuess(answer, word) }));
+}
 
 describe("realitea share helpers", () => {
   it("builds a solved share grid without revealing the answer text", () => {
     expect(
-      buildRealiTeaShareText("ERIKA", ["ERIKA"], true, new Date("2026-05-20T12:00:00.000Z")),
+      buildRealiTeaShareText(makeGuesses(["ERIKA"]), true, new Date("2026-05-20T12:00:00.000Z")),
     ).toBe("RealiTea - 20 May 2026\n1/6\n\n🟩🟩🟩🟩🟩");
   });
 
   it("uses X score when the puzzle is lost", () => {
-    expect(
-      buildRealiTeaShareText(
-        "ERIKA",
-        ["DORIT", "KYLEE", "TILLY", "DORIT", "KYLEE", "TILLY"],
-        false,
-        new Date("2026-05-20T12:00:00.000Z"),
-      ),
-    ).toContain("\nX/6\n");
+    const text = buildRealiTeaShareText(
+      makeGuesses(SAMPLE_GUESSES),
+      false,
+      new Date("2026-05-20T12:00:00.000Z"),
+    );
+    expect(text).toContain("\nX/6\n");
   });
 
   it("copies to the clipboard when available", async () => {
@@ -25,8 +31,7 @@ describe("realitea share helpers", () => {
     const promptCopy = vi.fn();
 
     const result = await shareRealiTeaResult({
-      answer: "ERIKA",
-      guesses: ["ERIKA"],
+      guesses: makeGuesses(["ERIKA"]),
       isSolved: true,
       date: new Date("2026-05-20T12:00:00.000Z"),
       copyToClipboard,
@@ -43,8 +48,7 @@ describe("realitea share helpers", () => {
     const promptCopy = vi.fn();
 
     const result = await shareRealiTeaResult({
-      answer: "ERIKA",
-      guesses: ["ERIKA"],
+      guesses: makeGuesses(["ERIKA"]),
       isSolved: true,
       date: new Date("2026-05-20T12:00:00.000Z"),
       copyToClipboard,

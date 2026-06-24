@@ -1,0 +1,75 @@
+/*
+ * RealiTea-specific animation styles. Imported once at the top of the route
+ * file so the keyframes are emitted exactly once per page load instead of on
+ * every render. Color tokens are pulled from CSS custom properties so the
+ * per-tile `style` attribute written for the currently-revealing tile can
+ * drive the final color while the keyframes interpolate from the empty-state
+ * colors.
+ */
+
+.realitea-row-shake {
+  animation: realitea-shake 0.4s ease;
+}
+
+.realitea-tile-error {
+  animation: realitea-tile-error 0.4s ease;
+}
+
+.realitea-tile-reveal {
+  animation: realitea-tile-reveal 250ms ease forwards;
+  transform-style: preserve-3d;
+}
+
+@keyframes realitea-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20%,
+  60% {
+    transform: translateX(-6px);
+  }
+  40%,
+  80% {
+    transform: translateX(6px);
+  }
+}
+
+@keyframes realitea-tile-error {
+  0%,
+  100% {
+    background-color: var(--background);
+    border-color: var(--border);
+  }
+  50% {
+    background-color: #fee2e2;
+    border-color: #ef4444;
+  }
+}
+
+@keyframes realitea-tile-reveal {
+  0% {
+    background-color: var(--background);
+    border-color: var(--border);
+    color: var(--foreground);
+    transform: rotateX(0deg);
+  }
+  49% {
+    background-color: var(--background);
+    border-color: var(--border);
+    color: var(--foreground);
+    transform: rotateX(90deg);
+  }
+  50% {
+    background-color: var(--tile-final-background);
+    border-color: var(--tile-final-border);
+    color: var(--tile-final-color);
+    transform: rotateX(90deg);
+  }
+  100% {
+    background-color: var(--tile-final-background);
+    border-color: var(--tile-final-border);
+    color: var(--tile-final-color);
+    transform: rotateX(0deg);
+  }
+}

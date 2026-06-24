@@ -2,7 +2,8 @@ name: cron-realitea-worlde-gen
 
 on:
   schedule:
-    - cron: "10 * * * *"
+    # Daily at 5:00 PM UTC = 9:00 AM Pacific (DST-safe)
+    - cron: "0 17 * * *"
   workflow_dispatch:
 permissions:
   contents: read
@@ -31,3 +32,8 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: pnpm --filter @pontistudios/labyrinth realitea:reconcile
+
+      - name: health-check
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: pnpm --filter @pontistudios/labyrinth exec tsx scripts/realitea-health-check.ts

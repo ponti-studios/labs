@@ -1,4 +1,5 @@
-import { date, index, jsonb, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { check, date, index, jsonb, serial, text, timestamp } from "drizzle-orm/pg-core";
 import { labs } from "./base";
 
 export const rhobhDailyPuzzles = labs.table(
@@ -13,28 +14,24 @@ export const rhobhDailyPuzzles = labs.table(
     clue: text("clue").notNull(),
     detail: text("detail").notNull(),
     role: text("role").notNull(),
-    newsMode: text("news_mode").notNull(),
     status: text("status").notNull(),
     scheduledForDateKey: text("scheduled_for_date_key"),
-    sourceKind: text("source_kind").notNull(),
-    generationBatchId: text("generation_batch_id"),
     publishAt: timestamp("publish_at"),
     expireAt: timestamp("expire_at"),
     sourceUrls: jsonb("source_urls").$type<string[]>().notNull(),
     sourceTitles: jsonb("source_titles").$type<string[]>().notNull(),
     sourcePublishedAt: jsonb("source_published_at").$type<string[]>().notNull(),
     sourceSummary: jsonb("source_summary").$type<string[]>().notNull(),
-    generationStatus: text("generation_status").notNull(),
     validationStatus: text("validation_status").notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
   (table) => [
-    index("rhobh_daily_puzzles_franchise_status_idx").on(table.franchise, table.status),
-    index("rhobh_daily_puzzles_franchise_scheduled_date_idx").on(
-      table.franchise,
-      table.scheduledForDateKey,
-    ),
+    index("rhobh_daily_puzzles_status_idx").on(table.status),
+    index("rhobh_daily_puzzles_scheduled_date_idx").on(table.scheduledForDateKey),
+    check("status_must_be_valid", sql`${table.status} IN ('scheduled', 'published', 'consumed')`),
+    check("normalized_answer_length", sql`length(${table.normalizedAnswer}) = 5`),
+    check("window_order", sql`${table.publishAt} < ${table.expireAt}`),
   ],
 );
 
