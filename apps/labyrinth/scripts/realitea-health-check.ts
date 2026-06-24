@@ -2,8 +2,8 @@ import "dotenv/config";
 import { and, closeDb, count, db, eq, inArray, rhobhDailyPuzzles, sql } from "@pontistudios/db";
 import pino from "pino";
 
-import { addDaysToDateKey, getPuzzleWindow } from "../app/lib/realitea-puzzle";
-import { getPublishedPuzzle } from "../app/lib/realitea-puzzle.server";
+import { addDaysToDateKey, getPuzzleWindow } from "../app/lib/realitea-date";
+import { getPublishedPuzzle } from "../app/lib/realitea-db";
 
 const logger = pino(
   process.env.NODE_ENV === "development" ? { transport: { target: "pino-pretty" } } : {},
@@ -20,10 +20,7 @@ async function countScheduledInventory(fromDateKey: string, days: number): Promi
     .select({ value: count() })
     .from(rhobhDailyPuzzles)
     .where(
-      and(
-        eq(rhobhDailyPuzzles.status, "scheduled"),
-        inArray(rhobhDailyPuzzles.scheduledForDateKey, dateKeys),
-      ),
+      and(eq(rhobhDailyPuzzles.status, "scheduled"), inArray(rhobhDailyPuzzles.dateUtc, dateKeys)),
     );
   return rows[0]?.value ?? 0;
 }
@@ -109,7 +106,10 @@ async function main() {
     if (status !== "OK") process.exit(1);
   } catch (err) {
     logger.error(
-      { event: "[ERROR_HEALTH_CHECK_FAILED]", error: err instanceof Error ? err.message : String(err) },
+      {
+        event: "[ERROR_HEALTH_CHECK_FAILED]",
+        error: err instanceof Error ? err.message : String(err),
+      },
       "health check failed",
     );
     process.exit(1);

@@ -1,7 +1,7 @@
 import { closeDb, db, eq, rhobhDailyPuzzles } from "@pontistudios/db";
 
-import { addDaysToDateKey, getDateKey, isDateKey } from "../app/lib/realitea-puzzle";
-import { generateScheduledPuzzle } from "../app/lib/realitea-puzzle.server";
+import { addDaysToDateKey, getDateKey, isDateKey } from "../app/lib/realitea-date";
+import { generateScheduledPuzzle } from "../app/lib/realitea-generation";
 
 interface GenerationOptions {
   dateKey?: string;

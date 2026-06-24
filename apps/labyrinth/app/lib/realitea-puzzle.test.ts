@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { getDateKey, getPuzzleWindow, validateCandidate } from "./realitea-puzzle";
+import { getDateKey, getPuzzleWindow } from "./realitea-date";
+import { validateCandidate } from "./realitea-validation";
 
 const BRAVO_URL = "https://www.bravotv.com/the-daily-dish/test-story";
 
@@ -135,13 +136,16 @@ describe("realitea daily puzzle helpers", () => {
     );
   });
 
-  it("uses the canonical Pacific day boundary", () => {
-    const latePacificEvening = new Date("2026-06-17T04:00:00.000Z");
-    const window = getPuzzleWindow(latePacificEvening);
+  it("uses the canonical UTC day boundary", () => {
+    const justBeforeMidnight = new Date("2026-06-16T23:59:59.999Z");
+    const justAfterMidnight = new Date("2026-06-17T00:00:00.000Z");
 
-    expect(getDateKey(latePacificEvening)).toBe("2026-06-16");
+    expect(getDateKey(justBeforeMidnight)).toBe("2026-06-16");
+    expect(getDateKey(justAfterMidnight)).toBe("2026-06-17");
+
+    const window = getPuzzleWindow(justBeforeMidnight);
     expect(window.dateKey).toBe("2026-06-16");
-    expect(window.publishAt.toISOString()).toBe("2026-06-16T07:00:00.000Z");
-    expect(window.expireAt.toISOString()).toBe("2026-06-17T07:00:00.000Z");
+    expect(window.publishAt.toISOString()).toBe("2026-06-16T00:00:00.000Z");
+    expect(window.expireAt.toISOString()).toBe("2026-06-17T00:00:00.000Z");
   });
 });
