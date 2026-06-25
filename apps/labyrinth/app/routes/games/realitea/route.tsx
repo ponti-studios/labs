@@ -336,9 +336,12 @@ export default function RealiTeaRoute() {
         {game.errorMessage ? (
           <p
             className="min-h-[1em] text-center text-xs font-medium text-red-600"
+            role="status"
             aria-live="polite"
             aria-atomic="true"
-          ></p>
+          >
+            {game.errorMessage}
+          </p>
         ) : null}
       </div>
 

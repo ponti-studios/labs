@@ -24,6 +24,20 @@ export function useAnimation() {
     };
   }, []);
 
+  /**
+   * Trigger an error message animation and auto-clear after 400ms.
+   *
+   * Flow:
+   * 1. Set errorMessage state + shake animation
+   * 2. Apply CSS class "realitea-row-shake" for visual feedback
+   * 3. After 400ms: clear errorMessage + stop shaking
+   *
+   * @param message - Error text to display (must be rendered by parent component)
+   * @param shake - Whether to trigger shake animation on rows
+   *
+   * Important: Parent component must render {message} inside aria-live region.
+   * If element exists but has no text, tests using screen.getByText() will fail.
+   */
   const animateError = useCallback((message: string, shake: boolean) => {
     if (shakeTimerRef.current) clearTimeout(shakeTimerRef.current);
     setErrorMessage(message);
