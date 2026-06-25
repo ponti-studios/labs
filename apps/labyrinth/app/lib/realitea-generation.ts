@@ -1,17 +1,48 @@
 import { chatCompletion } from "@pontistudios/ai";
 import { db, rhobhDailyPuzzles } from "@pontistudios/db";
+import { XMLParser } from "fast-xml-parser";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import pino from "pino";
 import { z } from "zod";
 
 import { normalizeGuess, REALITEA_ANSWER_LENGTH } from "./realitea";
 import { getPuzzleWindow, parseDate } from "./realitea-date";
-import {
-  BRAVO_FRANCHISE,
-  BRAVO_PRIMARY_SOURCE_DOMAIN,
-  validateCandidate,
-} from "./realitea-validation";
 import { getInventoryAnswers, getRecentAnswers, loadScheduledPuzzle } from "./realitea-db";
-import type { PuzzleAnswerType, PuzzleRecord } from "./realitea.types";
+import type {
+  CandidatePreview,
+  FeedItem,
+  GenerationPreviewResult,
+  PreviewCandidatesOptions,
+  PuzzleAnswerType,
+  PuzzleRecord,
+} from "./realitea.types";
+import { validateCandidate } from "./realitea-validation";
+
+const REALITY_BLURB_FEED_URL = "https://realityblurb.com/feed";
+
+async function fetchFeedItems(feedUrl?: string): Promise<FeedItem[]> {
+  const url = feedUrl ?? REALITY_BLURB_FEED_URL;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Failed to fetch RSS feed: ${res.status}`);
+  const xml = await res.text();
+  const parser = new XMLParser({ ignoreAttributes: false });
+  const parsed = parser.parse(xml);
+  const items: unknown[] = parsed?.rss?.channel?.item ?? [];
+  return items.map((item: unknown) => {
+    const i = item as Record<string, unknown>;
+    const description = String(i["description"] ?? "")
+      .replace(/<[^>]+>/g, "")
+      .slice(0, 300);
+    return {
+      title: String(i["title"] ?? ""),
+      link: String(i["link"] ?? ""),
+      pubDate: String(i["pubDate"] ?? ""),
+      description,
+    };
+  });
+}
 
 const logger = pino(
   process.env.NODE_ENV === "development"
@@ -19,27 +50,18 @@ const logger = pino(
     : { level: process.env.NODE_ENV === "test" ? "silent" : "info" },
 );
 
-const SYSTEM_PROMPT = `You are a puzzle editor for "RealiTea" — a daily Wordle-style game about Bravo reality TV.
-
-Your job is to suggest puzzle candidates for a specific date. Each candidate must follow these rules:
-
-1. The answer must normalize to exactly {{ANSWER_LENGTH}} letters (A-Z only). Strip spaces, punctuation, and diacritics, then uppercase.
-2. Choose answer types from: storyline, moment, place, phrase, object. Never use "person".
-3. The answer may NOT appear verbatim in the clue or detail text.
-4. Each candidate must include at least one source URL from bravotv.com/the-daily-dish.
-5. The answer must NOT repeat any answer from the excluded answers list.
-6. The answer must be directly related to today's Bravo news and coverage.
-7. Source titles should be descriptive and match the article headline.`;
+const __dirname = fileURLToPath(new URL(".", import.meta.url));
+const SYSTEM_PROMPT = readFileSync(
+  join(__dirname, "prompts/bravo-generation-system.md"),
+  "utf-8",
+);
 
 const candidateSchema = z.object({
   answer: z.string().min(1),
   answerType: z.string().min(1),
   clue: z.string().min(1),
   detail: z.string().min(1),
-  sourceUrls: z.array(z.string()).min(1),
-  sourceSummary: z.array(z.string()).optional(),
-  sourceTitles: z.array(z.string()).optional(),
-  sourcePublishedAt: z.array(z.string()).optional(),
+  sources: z.array(z.object({ url: z.string(), title: z.string(), publishedAt: z.string() })).min(1),
 });
 
 const generationResponseSchema = z.object({
@@ -48,29 +70,40 @@ const generationResponseSchema = z.object({
 
 type Candidate = z.infer<typeof candidateSchema>;
 
+function buildMessages(
+  dateKey: string,
+  excludedAnswers: string[],
+  feedItems: FeedItem[],
+  systemPrompt: string,
+) {
+  return [
+    {
+      role: "system" as const,
+      content: systemPrompt.replaceAll("{{ANSWER_LENGTH}}", String(REALITEA_ANSWER_LENGTH)),
+    },
+    {
+      role: "user" as const,
+      content: JSON.stringify({
+        dateKey,
+        excludedAnswers,
+        articles: feedItems,
+        instructions:
+          "Use the provided articles from realityblurb.com to generate puzzle candidates. Every sourceUrl must be from realityblurb.com.",
+      }),
+    },
+  ];
+}
+
 async function callGenerationApi(
   dateKey: string,
   excludedAnswers: string[],
+  feedItems: FeedItem[],
 ): Promise<Candidate | null> {
   const childLogger = logger.child({ operation: "callGenerationApi", dateKey });
 
   try {
     const response = await chatCompletion({
-      messages: [
-        {
-          role: "system",
-          content: SYSTEM_PROMPT.replaceAll("{{ANSWER_LENGTH}}", String(REALITEA_ANSWER_LENGTH)),
-        },
-        {
-          role: "user",
-          content: JSON.stringify({
-            dateKey,
-            excludedAnswers,
-            instructions:
-              "Search bravotv.com/the-daily-dish for today's Bravo reality TV news, fetch article details, then generate puzzle candidates.",
-          }),
-        },
-      ],
+      messages: buildMessages(dateKey, excludedAnswers, feedItems, SYSTEM_PROMPT),
       maxTokens: 2000,
       responseFormat: {
         type: "json_schema",
@@ -80,27 +113,6 @@ async function callGenerationApi(
           strict: true,
         },
       },
-      tools: [
-        {
-          type: "openrouter:web_search",
-          parameters: {
-            allowedDomains: [BRAVO_PRIMARY_SOURCE_DOMAIN],
-            engine: "auto",
-            maxResults: 10,
-            maxTotalResults: 20,
-            searchContextSize: "medium",
-          },
-        },
-        {
-          type: "openrouter:web_fetch",
-          parameters: {
-            allowedDomains: [BRAVO_PRIMARY_SOURCE_DOMAIN],
-            engine: "openrouter",
-            maxContentTokens: 4000,
-            maxUses: 8,
-          },
-        },
-      ],
     });
 
     const content = response.choices?.[0]?.message?.content;
@@ -133,6 +145,83 @@ async function callGenerationApi(
   }
 }
 
+async function callGenerationApiForPreview(
+  dateKey: string,
+  excludedAnswers: string[],
+  feedItems: FeedItem[],
+  systemPrompt?: string,
+): Promise<{ candidates: CandidatePreview[]; llmError: string | null }> {
+  try {
+    const response = await chatCompletion({
+      messages: buildMessages(dateKey, excludedAnswers, feedItems, systemPrompt ?? SYSTEM_PROMPT),
+      maxTokens: 2000,
+      responseFormat: {
+        type: "json_schema",
+        jsonSchema: {
+          name: "generation_response",
+          schema: z.toJSONSchema(generationResponseSchema),
+          strict: true,
+        },
+      },
+    });
+
+    const content = response.choices?.[0]?.message?.content;
+    if (!content || typeof content !== "string") {
+      return { candidates: [], llmError: "LLM returned empty content" };
+    }
+
+    const cleanedContent = content.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
+    const parsed = generationResponseSchema.parse(JSON.parse(cleanedContent));
+    const previousAnswers = new Set(excludedAnswers);
+
+    const candidates: CandidatePreview[] = parsed.candidates.map((candidate) => ({
+      candidate,
+      validation: validateCandidate(candidate, previousAnswers),
+    }));
+
+    return { candidates, llmError: null };
+  } catch (err) {
+    return {
+      candidates: [],
+      llmError: err instanceof Error ? err.message : String(err),
+    };
+  }
+}
+
+export async function previewCandidates(
+  dateKey: string,
+  options: PreviewCandidatesOptions = {},
+): Promise<GenerationPreviewResult> {
+  const feedUrl = options.feedUrl ?? REALITY_BLURB_FEED_URL;
+  let feedItems: FeedItem[] = [];
+  let feedError: string | null = null;
+
+  try {
+    feedItems = await fetchFeedItems(feedUrl);
+  } catch (err) {
+    feedError = err instanceof Error ? err.message : String(err);
+  }
+
+  const { candidates, llmError } = await callGenerationApiForPreview(
+    dateKey,
+    options.excludedAnswers ?? [],
+    feedItems,
+    options.systemPrompt,
+  );
+
+  const selectedIndex = candidates.findIndex((c) => c.validation.valid);
+
+  return {
+    dateKey,
+    feedUrl,
+    feedItemCount: feedItems.length,
+    feedItems,
+    candidates,
+    selectedIndex: selectedIndex === -1 ? null : selectedIndex,
+    llmError: feedError ?? llmError,
+  };
+}
+
 export async function generateScheduledPuzzle(dateKey: string): Promise<PuzzleRecord | null> {
   const childLogger = logger.child({ operation: "generateScheduledPuzzle", dateKey });
 
@@ -151,15 +240,27 @@ export async function generateScheduledPuzzle(dateKey: string): Promise<PuzzleRe
     throw new Error(`Invalid date key: ${dateKey}`);
   }
 
-  const [recentAnswers, inventoryAnswers] = await Promise.all([
+  const [recentAnswers, inventoryAnswers, feedItems] = await Promise.all([
     getRecentAnswers(date),
     getInventoryAnswers(),
+    fetchFeedItems().catch((err) => {
+      childLogger.error(
+        { event: "[FEED_FETCH_ERROR]", error: err instanceof Error ? err.message : String(err) },
+        "failed to fetch realityblurb.com feed",
+      );
+      return [] as FeedItem[];
+    }),
   ]);
   const excludedAnswers = [...new Set([...recentAnswers, ...inventoryAnswers])];
 
+  if (feedItems.length === 0) {
+    childLogger.error({ event: "[FEED_EMPTY]" }, "no feed items retrieved, cannot generate puzzle");
+    return null;
+  }
+
   let candidate: Candidate | null = null;
   for (let attempt = 0; attempt < 3 && !candidate; attempt++) {
-    candidate = await callGenerationApi(dateKey, excludedAnswers);
+    candidate = await callGenerationApi(dateKey, excludedAnswers, feedItems);
     if (!candidate) {
       childLogger.warn(
         { event: "[GENERATION_RETRY]", attempt: attempt + 1 },
@@ -182,10 +283,6 @@ export async function generateScheduledPuzzle(dateKey: string): Promise<PuzzleRe
 
   const window = getPuzzleWindow(date);
   const now = new Date();
-  const detailFromSummary =
-    candidate.sourceSummary && candidate.sourceSummary.length > 0
-      ? candidate.sourceSummary.join(" ")
-      : candidate.detail;
 
   const inserted = await db
     .insert(rhobhDailyPuzzles)
@@ -195,19 +292,13 @@ export async function generateScheduledPuzzle(dateKey: string): Promise<PuzzleRe
       clue: candidate.clue,
       createdAt: now,
       dateUtc: window.dateKey,
-      detail: detailFromSummary,
+      detail: candidate.detail,
       expireAt: window.expireAt,
-      franchise: BRAVO_FRANCHISE,
       normalizedAnswer: normalizeGuess(candidate.answer),
       publishAt: window.publishAt,
-      role: "",
-      sourcePublishedAt: candidate.sourcePublishedAt ?? [],
-      sourceSummary: candidate.sourceSummary ?? [],
-      sourceTitles: candidate.sourceTitles ?? [],
-      sourceUrls: candidate.sourceUrls,
+      sources: candidate.sources,
       status: "scheduled",
       updatedAt: now,
-      validationStatus: "approved",
     })
     .returning();
 

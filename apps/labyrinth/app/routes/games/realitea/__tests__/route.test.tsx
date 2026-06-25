@@ -57,13 +57,12 @@ function buildPublicPuzzle(
   date: Date = new Date("2026-05-20T12:00:00.000Z"),
 ): PublicDailyPuzzle {
   return {
-    answerType: "person",
+    answerType: "storyline",
     clue: "The Pretty Mess performer never misses a sharp confessional.",
     dateKey: toDateKey(date),
     detail:
       "Erika Jayne keeps the glam, the one-liners, and the pop-star energy turned all the way up.",
-    role: "Pop diva energy",
-    sourceUrls: [],
+    sources: [],
   };
 }
 

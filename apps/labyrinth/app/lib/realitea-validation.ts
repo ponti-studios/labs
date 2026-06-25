@@ -2,7 +2,7 @@ import { normalizeGuess, REALITEA_ANSWER_LENGTH } from "./realitea";
 import type { ValidationResult } from "./realitea.types";
 
 export const BRAVO_FRANCHISE = "bravo";
-export const BRAVO_PRIMARY_SOURCE_DOMAIN = "bravotv.com";
+export const BRAVO_PRIMARY_SOURCE_DOMAIN = "realityblurb.com";
 export const BRAVO_REPEAT_WINDOW_DAYS = 90;
 export const REALITEA_READY_INVENTORY_DAYS = 7;
 
@@ -12,7 +12,7 @@ export function validateCandidate(
     answerType: string;
     clue: string;
     detail: string;
-    sourceUrls: string[];
+    sources: { url: string; title?: string; publishedAt?: string }[];
   },
   previousAnswers: Set<string> = new Set(),
 ): ValidationResult {
@@ -40,15 +40,15 @@ export function validateCandidate(
   if (previousAnswers.has(normalizedAnswer)) {
     reasons.push("answer repeats inside cooldown window");
   }
-  const hasBravoSource = candidate.sourceUrls.some((url) => {
+  const hasBravoSource = candidate.sources.some((s) => {
     try {
-      return new URL(url).hostname.replace(/^www\./, "") === BRAVO_PRIMARY_SOURCE_DOMAIN;
+      return new URL(s.url).hostname.replace(/^www\./, "") === BRAVO_PRIMARY_SOURCE_DOMAIN;
     } catch {
       return false;
     }
   });
   if (!hasBravoSource) {
-    reasons.push("candidate is missing a bravotv.com source URL");
+    reasons.push("candidate is missing a realityblurb.com source URL");
   }
 
   return { normalizedAnswer, reasons, valid: reasons.length === 0 };

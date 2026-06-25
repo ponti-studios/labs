@@ -34,8 +34,7 @@ function toPublicDailyPuzzle(record: PuzzleRecord): PublicDailyPuzzle {
     clue: record.clue,
     dateKey: record.dateUtc ?? "",
     detail: record.detail,
-    role: record.role,
-    sourceUrls: record.sourceUrls,
+    sources: record.sources ?? [],
   };
 }
 

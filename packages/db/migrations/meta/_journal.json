@@ -29,6 +29,13 @@
       "when": 1782272930000,
       "tag": "0003_realitea_schema_cleanup",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1751007600000,
+      "tag": "0004_realitea_restructure_sources",
+      "breakpoints": true
     }
   ]
 }

@@ -1,5 +1,5 @@
-import { type NewRhobhDailyPuzzle, type PuzzleAnswerType } from "@pontistudios/db";
-export type { PuzzleAnswerType };
+import { type NewRhobhDailyPuzzle, type PuzzleAnswerType, type PuzzleSource } from "@pontistudios/db";
+export type { PuzzleAnswerType, PuzzleSource };
 
 // ── Game engine types ─────────────────────────────────────────────────────
 
@@ -16,8 +16,7 @@ export interface DailyPuzzle {
   clue: string;
   dateKey: string;
   detail: string;
-  role: string;
-  sourceUrls: string[];
+  sources: PuzzleSource[];
 }
 
 // Do not send the `answer` to the client.
@@ -50,7 +49,7 @@ export interface RealiteaGuessResult {
  *
  * DB-only `validationStatus` is intentionally omitted.
  */
-export type PuzzleRecord = Omit<NewRhobhDailyPuzzle, "validationStatus" | "scheduledForDateKey">;
+export type PuzzleRecord = NewRhobhDailyPuzzle;
 
 export interface PuzzleWindow {
   dateKey: string;
@@ -62,4 +61,38 @@ export interface ValidationResult {
   normalizedAnswer: string;
   reasons: string[];
   valid: boolean;
+}
+
+export interface FeedItem {
+  title: string;
+  link: string;
+  pubDate: string;
+  description: string;
+}
+
+export interface CandidatePreview {
+  candidate: {
+    answer: string;
+    answerType: string;
+    clue: string;
+    detail: string;
+    sources: PuzzleSource[];
+  };
+  validation: { normalizedAnswer: string; valid: boolean; reasons: string[] };
+}
+
+export interface GenerationPreviewResult {
+  dateKey: string;
+  feedUrl: string;
+  feedItemCount: number;
+  feedItems: FeedItem[];
+  candidates: CandidatePreview[];
+  selectedIndex: number | null;
+  llmError: string | null;
+}
+
+export interface PreviewCandidatesOptions {
+  feedUrl?: string;
+  systemPrompt?: string;
+  excludedAnswers?: string[];
 }

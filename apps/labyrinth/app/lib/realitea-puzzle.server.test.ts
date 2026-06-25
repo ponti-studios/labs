@@ -20,13 +20,10 @@ const { dbMock, findFirstMock, safeParseMock, rhobhDailyPuzzlesMock } = vi.hoist
     createdAt: "createdAt",
     dateUtc: "dateUtc",
     expireAt: "expireAt",
-    franchise: "franchise",
     id: "id",
     normalizedAnswer: "normalizedAnswer",
     publishAt: "publishAt",
-    scheduledForDateKey: "scheduledForDateKey",
     status: "status",
-    validationStatus: "validationStatus",
   };
 
   const safeParseMock = vi.fn();
@@ -88,30 +85,19 @@ function createUpdateResponder(queue: unknown[][] = []) {
 
 const PUBLISHED_ROW = {
   answer: "ERIKA",
-  answerType: "person",
+  answerType: "storyline",
   clue: "The Pretty Mess performer never misses a sharp confessional.",
   createdAt: new Date("2026-05-20T12:00:00.000Z"),
   dateUtc: "2026-05-20",
   detail:
     "Erika Jayne keeps the glam, the one-liners, and the pop-star energy turned all the way up.",
   expireAt: new Date("2026-05-21T07:00:00.000Z"),
-  franchise: "bravo",
-  generationBatchId: null,
-  generationStatus: "published",
   id: 1,
-  newsMode: "current",
   normalizedAnswer: "ERIKA",
   publishAt: new Date("2026-05-20T07:00:00.000Z"),
-  role: "Pop diva energy",
-  scheduledForDateKey: "2026-05-20",
-  sourceKind: "current",
-  sourcePublishedAt: [],
-  sourceSummary: [],
-  sourceTitles: [],
-  sourceUrls: [],
+  sources: [],
   status: "published",
   updatedAt: new Date("2026-05-20T12:00:00.000Z"),
-  validationStatus: "approved",
 };
 
 describe("realitea daily puzzle server helpers", () => {
@@ -134,7 +120,7 @@ describe("realitea daily puzzle server helpers", () => {
     const envelope = await loadActivePublicPuzzle(new Date("2026-05-20T12:00:00.000Z"));
 
     expect(envelope?.puzzle.dateKey).toBe("2026-05-20");
-    expect(envelope?.puzzle.answerType).toBe("person");
+    expect(envelope?.puzzle.answerType).toBe("storyline");
     expect(envelope?.puzzle.clue).toBe(
       "The Pretty Mess performer never misses a sharp confessional.",
     );
@@ -152,23 +138,12 @@ describe("realitea daily puzzle server helpers", () => {
       dateUtc: "2026-05-20",
       detail: "A single conflict can dominate the full episode and aftermath.",
       expireAt: new Date("2026-05-21T07:00:00.000Z"),
-      franchise: "bravo",
-      generationBatchId: null,
-      generationStatus: "published",
       id: 7,
-      newsMode: "current",
       normalizedAnswer: "DRAMA",
       publishAt: new Date("2026-05-20T07:00:00.000Z"),
-      role: "Escalating conflict",
-      scheduledForDateKey: "2026-05-20",
-      sourceKind: "current",
-      sourcePublishedAt: [],
-      sourceSummary: [],
-      sourceTitles: [],
-      sourceUrls: [],
+      sources: [],
       status: "scheduled",
       updatedAt: new Date("2026-05-20T12:00:00.000Z"),
-      validationStatus: "approved",
     };
 
     // Call sequence: (1) getPublishedPuzzle outside tx, (2) getPublishedPuzzle inside tx,

@@ -33,8 +33,7 @@ describe("RealiTea route loader", () => {
         clue: "A clash that keeps the whole cast spinning.",
         dateKey: "2026-05-20",
         detail: "A single RHOBH conflict can dominate the full episode and aftermath.",
-        role: "Escalating conflict",
-        sourceUrls: [],
+        sources: [],
       },
     });
 
