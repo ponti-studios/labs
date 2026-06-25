@@ -1,5 +1,5 @@
 import { useState, useMemo, type JSX, type ChangeEvent } from "react";
-import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label } from "@pontistudios/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, Input } from "@pontistudios/ui";
 
 interface PrimeEntry {
   value: number;

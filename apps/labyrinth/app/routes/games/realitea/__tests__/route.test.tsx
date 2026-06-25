@@ -15,6 +15,10 @@ import {
 import { readGameState } from "../game-state";
 import RealiTeaRoute from "../route";
 import { createControlledRouteAction } from "../../../__tests__/controlled-route-action";
+import {
+  expectAccessibilityMessageContent,
+  expectMessageClearsAfterAnimation,
+} from "./accessibility.test-utils";
 
 interface GuessRequest {
   dateKey: string;
@@ -157,6 +161,40 @@ function seedSolvedGame(answer = DEFAULT_ANSWER) {
   );
 }
 
+/**
+ * RealiTea Route Integration Tests
+ *
+ * ────── Error Message Lifecycle ──────
+ * Tests verify that validation errors render and auto-clear correctly:
+ *
+ * 1. Validation Errors (trigger animateError in use-game.ts):
+ *    - "Not enough letters"  (client: word < 5 letters)
+ *    - "Already guessed"     (client: duplicate submission)
+ *    - "Not in word list"    (server: word not in dictionary)
+ *
+ * 2. Error Message Rendering:
+ *    - Rendered in <p role="status"> with aria-live="polite" aria-atomic="true"
+ *    - CSS class "text-red-600" applies
+ *    - CSS animation "realitea-row-shake" triggers on the rows
+ *
+ * 3. Error Lifecycle (use-animation.ts:27-35):
+ *    - animateError(message, shake: true) called
+ *    - State updates → component re-renders
+ *    - setTimeout(400ms) clears error state
+ *    - Component re-renders without error element
+ *
+ * ────── What We Test ──────
+ * ✓ Error text appears in status region immediately
+ * ✓ Error text is actual content (not empty element)
+ * ✓ Error message clears exactly 400ms later
+ * ✓ Structure/content snapshot matches expected DOM
+ * ✓ aria-live region accessibility attributes present
+ *
+ * ────── Why These Tests Exist ──────
+ * Previous bug: error <p> element existed but was empty {game.errorMessage missing}.
+ * Tests using screen.getByText() correctly failed - they found no text!
+ * This test structure prevents regressions.
+ */
 describe("RealiTeaRoute", () => {
   beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
@@ -194,13 +232,13 @@ describe("RealiTeaRoute", () => {
     await waitFor(() => {
       expect(screen.getByText("The Story")).toBeInTheDocument();
     });
-    expect(screen.getByText(routePuzzle.detail)).toBeInTheDocument();
+    expect(screen.getByText(routePuzzle.detail.toLocaleLowerCase())).toBeInTheDocument();
 
     await renderRoute();
 
     await waitFor(() => {
       expect(screen.getByText("The Story")).toBeInTheDocument();
-      expect(screen.getByText(routePuzzle.detail)).toBeInTheDocument();
+      expect(screen.getByText(routePuzzle.detail.toLocaleLowerCase())).toBeInTheDocument();
       const stored = readGameState(puzzleKey);
       expect(stored?.guesses.map((g) => g.word)).toEqual([DEFAULT_ANSWER]);
       expect(stored?.status).toBe("solved");
@@ -264,6 +302,43 @@ describe("RealiTeaRoute", () => {
       expect(screen.getByText("Not in word list")).toBeInTheDocument();
     });
     expect(getTextboxValues()).toEqual(Array.from({ length: invalidGuess.length }, () => "Z"));
+  });
+
+  it("renders error message text inside the aria-live region", async () => {
+    const { user } = await renderRoute();
+
+    await enterGuess(user, DEFAULT_ANSWER.slice(0, 3));
+    await submitCurrentGuess(user);
+
+    // Verify text content is actually in the DOM, not just the region
+    const status = screen.getByRole("status");
+    await waitFor(() => {
+      expect(status).toHaveTextContent("Not enough letters");
+    });
+
+    // Verify it's not just whitespace
+    expect(status.textContent?.trim()).toBeTruthy();
+  });
+
+  it("error message container structure is stable", async () => {
+    const { user } = await renderRoute();
+
+    await enterGuess(user, DEFAULT_ANSWER.slice(0, 3));
+    await submitCurrentGuess(user);
+
+    const status = screen.getByRole("status");
+    expect(status).toMatchSnapshot();
+  });
+
+  it("error message clears after animation timeout", async () => {
+    const { user } = await renderRoute();
+
+    await enterGuess(user, DEFAULT_ANSWER.slice(0, 3));
+    await submitCurrentGuess(user);
+
+    expectAccessibilityMessageContent("status", "Not enough letters");
+
+    await expectMessageClearsAfterAnimation("status", 400);
   });
 
   it("commits a guess only after validation succeeds", async () => {
