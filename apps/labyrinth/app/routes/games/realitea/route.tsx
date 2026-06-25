@@ -354,11 +354,12 @@ export default function RealiTeaRoute() {
             <Button aria-label="Share result" onClick={share} type="button" variant="secondary">
               <LucideShare size={18} />
             </Button>
-            {currentPuzzle.sourceUrls.length > 0 && (
+            {currentPuzzle.sources.length > 0 && (
               <a
-                href={currentPuzzle.sourceUrls.at(0)}
+                href={currentPuzzle.sources[0].url}
                 target="_blank"
                 rel="noopener noreferrer"
+                title={currentPuzzle.sources[0].title}
                 className="bg-primary text-secondary rounded px-4 py-2 text-sm font-medium transition-colors hover:text-emerald-200"
               >
                 <LucideNewspaper size={18} />

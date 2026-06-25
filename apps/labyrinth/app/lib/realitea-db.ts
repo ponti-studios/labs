@@ -2,7 +2,7 @@ import { and, db, desc, eq, gt, gte, inArray, lte, rhobhDailyPuzzles } from "@po
 import pino from "pino";
 
 import { getDateKey, getPuzzleWindow } from "./realitea-date";
-import { BRAVO_FRANCHISE, BRAVO_REPEAT_WINDOW_DAYS } from "./realitea-validation";
+import { BRAVO_REPEAT_WINDOW_DAYS } from "./realitea-validation";
 import type { PuzzleRecord } from "./realitea.types";
 
 const logger = pino(
@@ -32,13 +32,7 @@ export async function getRecentAnswers(date: Date): Promise<Set<string>> {
   const rows = await db
     .select({ normalizedAnswer: rhobhDailyPuzzles.normalizedAnswer })
     .from(rhobhDailyPuzzles)
-    .where(
-      and(
-        eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE),
-        eq(rhobhDailyPuzzles.validationStatus, "approved"),
-        gte(rhobhDailyPuzzles.dateUtc, cutoffDateValue),
-      ),
-    );
+    .where(gte(rhobhDailyPuzzles.dateUtc, cutoffDateValue));
   return new Set(rows.map((r) => r.normalizedAnswer));
 }
 
@@ -53,8 +47,7 @@ export async function getInventoryAnswers(): Promise<Set<string>> {
 export async function getStoredAnswersForValidation(): Promise<Set<string>> {
   const rows = await db
     .select({ normalizedAnswer: rhobhDailyPuzzles.normalizedAnswer })
-    .from(rhobhDailyPuzzles)
-    .where(eq(rhobhDailyPuzzles.franchise, BRAVO_FRANCHISE));
+    .from(rhobhDailyPuzzles);
   return new Set(rows.map((r) => r.normalizedAnswer));
 }
 
