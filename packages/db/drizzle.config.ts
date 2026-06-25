@@ -8,6 +8,6 @@ export default defineConfig({
     url: process.env.DATABASE_URL!,
   },
   migrations: {
-    schema: "drizzle",
+    schema: "labs",
   },
 });

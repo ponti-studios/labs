@@ -1,4 +1,4 @@
-CREATE SCHEMA IF NOT EXISTS "labs";
+CREATE SCHEMA "labs";
 --> statement-breakpoint
 CREATE TABLE "labs"."covid_data" (
 	"id" serial PRIMARY KEY NOT NULL,
@@ -73,53 +73,49 @@ CREATE TABLE "labs"."covid_data" (
 --> statement-breakpoint
 CREATE TABLE "labs"."rhobh_daily_puzzles" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"date_utc" date NOT NULL,
-	"franchise" text NOT NULL,
+	"date_utc" date,
 	"answer" text NOT NULL,
 	"answer_type" text NOT NULL,
 	"normalized_answer" text NOT NULL,
 	"clue" text NOT NULL,
 	"detail" text NOT NULL,
-	"role" text NOT NULL,
-	"news_mode" text NOT NULL,
-	"source_urls" jsonb NOT NULL,
-	"source_titles" jsonb NOT NULL,
-	"source_published_at" jsonb NOT NULL,
-	"source_summary" jsonb NOT NULL,
-	"generation_status" text NOT NULL,
-	"validation_status" text NOT NULL,
+	"sources" jsonb NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "normalized_answer_length" CHECK (length("labs"."rhobh_daily_puzzles"."normalized_answer") = 5)
+);
+--> statement-breakpoint
+CREATE TABLE "labs"."case_updates" (
+	"id" text PRIMARY KEY NOT NULL,
+	"case_id" text NOT NULL,
+	"raw_content" text NOT NULL,
+	"neutral_content" text NOT NULL,
+	"round" integer NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "labs"."relationship_cases" (
 	"id" text PRIMARY KEY NOT NULL,
-	"name" text NOT NULL,
-	"user_id" text NOT NULL,
-	"hp" text,
-	"card_type" text,
-	"description" text,
-	"attacks" jsonb,
-	"strengths" jsonb,
-	"flaws" jsonb,
-	"commitment_level" text,
-	"color_theme" text,
-	"photo_url" text,
-	"image_scale" integer,
-	"image_position" jsonb,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL
+	"user_id" text,
+	"label" text,
+	"raw_situation" text NOT NULL,
+	"neutral_situation" text NOT NULL,
+	"question" text NOT NULL,
+	"quorum_size" integer DEFAULT 3 NOT NULL,
+	"status" text DEFAULT 'open' NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "labs"."relationship_verdicts" (
 	"id" text PRIMARY KEY NOT NULL,
 	"case_id" text NOT NULL,
+	"update_id" text,
+	"update_round" integer DEFAULT 0 NOT NULL,
 	"user_id" text,
 	"fingerprint" text NOT NULL,
 	"value" text NOT NULL,
-	"comment" text,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL
+	"comment" text NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "labs"."tfl_cameras" (
@@ -133,9 +129,12 @@ CREATE TABLE "labs"."tfl_cameras" (
 	"lat" real NOT NULL,
 	"lng" real NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "tfl_cameras_tfl_id_unique" UNIQUE("tfl_id")
 );
 --> statement-breakpoint
+ALTER TABLE "labs"."case_updates" ADD CONSTRAINT "case_updates_case_id_relationship_cases_id_fk" FOREIGN KEY ("case_id") REFERENCES "labs"."relationship_cases"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "labs"."relationship_verdicts" ADD CONSTRAINT "relationship_verdicts_case_id_relationship_cases_id_fk" FOREIGN KEY ("case_id") REFERENCES "labs"."relationship_cases"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-CREATE UNIQUE INDEX "rhobh_daily_puzzles_franchise_date_idx" ON "labs"."rhobh_daily_puzzles" USING btree ("franchise","date_utc");--> statement-breakpoint
+ALTER TABLE "labs"."relationship_verdicts" ADD CONSTRAINT "relationship_verdicts_update_id_case_updates_id_fk" FOREIGN KEY ("update_id") REFERENCES "labs"."case_updates"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "case_updates_case_id_idx" ON "labs"."case_updates" USING btree ("case_id");--> statement-breakpoint
 CREATE INDEX "relationship_verdicts_case_id_idx" ON "labs"."relationship_verdicts" USING btree ("case_id");

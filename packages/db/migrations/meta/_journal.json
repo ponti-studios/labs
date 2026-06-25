@@ -5,43 +5,15 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1780337063474,
-      "tag": "0000_public_black_bolt",
+      "when": 1782429908393,
+      "tag": "0000_baseline",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1781671296046,
-      "tag": "0001_gigantic_leopardon",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1750204800000,
-      "tag": "0002_commune_rebuild",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1782272930000,
-      "tag": "0003_realitea_schema_cleanup",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1751007600000,
-      "tag": "0004_realitea_restructure_sources",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1782777600000,
-      "tag": "0005_add_sources_if_not_exists",
+      "when": 1782864000001,
+      "tag": "0001_sync_prod_schema",
       "breakpoints": true
     }
   ]
