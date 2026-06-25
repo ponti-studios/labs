@@ -1,7 +1,8 @@
 import { closeDb, db, eq, rhobhDailyPuzzles } from "@pontistudios/db";
 
-import { addDaysToDateKey, getDateKey, isDateKey } from "../app/lib/realitea-date";
+import { addDaysToDateKey, buildDateRange, getDateKey, isDateKey } from "../app/lib/realitea-date";
 import { generateScheduledPuzzle } from "../app/lib/realitea-generation";
+import { LabyrinthServerEnv } from "../app/lib/server/env";
 
 interface GenerationOptions {
   dateKey?: string;
@@ -37,45 +38,21 @@ function parseArgs(): GenerationOptions {
 
 function getDateRange(opts: GenerationOptions): string[] {
   const now = new Date();
-  let startKey = opts.dateKey ?? opts.from ?? getDateKey(now);
-  let endKey = opts.to ?? opts.dateKey;
+  const startKey = opts.dateKey ?? opts.from ?? getDateKey(now);
+  const endKey = opts.to ?? opts.dateKey;
 
   if (!isDateKey(startKey)) throw new Error(`Invalid start date: ${startKey}`);
   if (endKey && !isDateKey(endKey)) throw new Error(`Invalid end date: ${endKey}`);
 
   if (opts.daysAhead) {
-    const dates: string[] = [];
-    let current = startKey;
-    for (let i = 0; i < opts.daysAhead; i++) {
-      dates.push(current);
-      const next = addDaysToDateKey(current, 1);
-      if (!next) break;
-      current = next;
-    }
-    return dates;
+    return buildDateRange(startKey, { daysAhead: opts.daysAhead });
   }
 
   if (endKey && endKey !== startKey) {
-    const dates: string[] = [];
-    let current = startKey;
-    while (true) {
-      dates.push(current);
-      if (current === endKey) break;
-      const next = addDaysToDateKey(current, 1);
-      if (!next) break;
-      current = next;
-    }
-    return dates;
+    return buildDateRange(startKey, { endKey });
   }
 
   return [startKey];
-}
-
-function requireEnvironment() {
-  const missing = ["DATABASE_URL", "OPENROUTER_API_KEY"].filter((key) => !process.env[key]);
-  if (missing.length > 0) {
-    throw new Error(`Missing required environment variables: ${missing.join(", ")}`);
-  }
 }
 
 async function publishPuzzle(puzzleId: number): Promise<void> {
@@ -93,7 +70,7 @@ async function publishPuzzle(puzzleId: number): Promise<void> {
 }
 
 async function main() {
-  requireEnvironment();
+  requireEnvironment(["DATABASE_URL", "OPENROUTER_API_KEY"]);
 
   const opts = parseArgs();
   const dateKeys = getDateRange(opts);

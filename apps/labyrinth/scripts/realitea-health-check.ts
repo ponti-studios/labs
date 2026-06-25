@@ -1,29 +1,11 @@
 import "dotenv/config";
-import { and, closeDb, count, db, eq, inArray, rhobhDailyPuzzles, sql } from "@pontistudios/db";
-import pino from "pino";
+import { closeDb, db, rhobhDailyPuzzles, sql } from "@pontistudios/db";
 
-import { addDaysToDateKey, getPuzzleWindow } from "../app/lib/realitea-date";
-import { getPublishedPuzzle } from "../app/lib/realitea-db";
+import { getPuzzleWindow } from "../app/lib/realitea-date";
+import { countScheduledInventory, getPublishedPuzzle } from "../app/lib/realitea-db";
+import { createScriptLogger } from "../app/lib/realitea-scripts";
 
-const logger = pino(
-  process.env.NODE_ENV === "development" ? { transport: { target: "pino-pretty" } } : {},
-);
-
-async function countScheduledInventory(fromDateKey: string, days: number): Promise<number> {
-  const dateKeys: string[] = [];
-  for (let i = 1; i <= days; i++) {
-    const key = addDaysToDateKey(fromDateKey, i);
-    if (key) dateKeys.push(key);
-  }
-  if (dateKeys.length === 0) return 0;
-  const rows = await db
-    .select({ value: count() })
-    .from(rhobhDailyPuzzles)
-    .where(
-      and(eq(rhobhDailyPuzzles.status, "scheduled"), inArray(rhobhDailyPuzzles.dateUtc, dateKeys)),
-    );
-  return rows[0]?.value ?? 0;
-}
+const logger = createScriptLogger();
 
 async function healthCheckRealiTea() {
   const now = new Date();

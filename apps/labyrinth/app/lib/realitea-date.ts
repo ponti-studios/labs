@@ -33,3 +33,41 @@ export function getPuzzleWindow(date: Date): PuzzleWindow {
   const expireAt = new Date(Date.UTC(year, month - 1, day + 1, 0, 0, 0));
   return { dateKey, expireAt, publishAt };
 }
+
+/**
+ * Build a contiguous array of date keys from `startKey` forward.
+ *
+ * - If `daysAhead` is set, returns exactly that many keys.
+ * - If `endKey` is set, returns all keys from start through endKey (inclusive).
+ * - If neither is set, returns a single-element array with `startKey`.
+ */
+export function buildDateRange(
+  startKey: string,
+  options: { endKey?: string; daysAhead?: number } = {},
+): string[] {
+  const dates: string[] = [];
+  let current = startKey;
+
+  if (options.daysAhead !== undefined) {
+    for (let i = 0; i < options.daysAhead; i++) {
+      dates.push(current);
+      const next = addDaysToDateKey(current, 1);
+      if (!next) break;
+      current = next;
+    }
+    return dates;
+  }
+
+  if (options.endKey) {
+    while (true) {
+      dates.push(current);
+      if (current === options.endKey) break;
+      const next = addDaysToDateKey(current, 1);
+      if (!next) break;
+      current = next;
+    }
+    return dates;
+  }
+
+  return [startKey];
+}
