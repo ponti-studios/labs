@@ -54,25 +54,25 @@ export default function Vendigo() {
 
         <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4">
           {filteredBooks.map((book) => (
-            <div key={book.uid} className="border border-[#ddd] rounded-[8px] p-4 text-center">
-              <div className="w-full h-[120px] bg-[#f0f0f0] rounded-md mb-3 flex items-center justify-center">
+            <div key={book.uid} className="rounded-[8px] border border-[#ddd] p-4 text-center">
+              <div className="mb-3 flex h-[120px] w-full items-center justify-center rounded-md bg-[#f0f0f0]">
                 📚
               </div>
               <div
-                className="red-text bold text-[0.9rem] mb-1 overflow-hidden text-ellipsis whitespace-nowrap"
+                className="red-text bold mb-1 overflow-hidden text-[0.9rem] text-ellipsis whitespace-nowrap"
                 title={book.title}
               >
                 {book.title}
               </div>
-              <div className="text-[0.85rem] text-[#666] mb-2">
+              <div className="mb-2 text-[0.85rem] text-[#666]">
                 By{" "}
-                <span className="red-text bold text-[0.9rem] mb-1 overflow-hidden text-ellipsis whitespace-nowrap">
+                <span className="red-text bold mb-1 overflow-hidden text-[0.9rem] text-ellipsis whitespace-nowrap">
                   {book.authors[0].name}
                 </span>
               </div>
-              <div className="text-xs text-[#999] mb-3">{book.uid.replace("OLID:", "")}</div>
-              <div className="flex gap-2 items-center">
-                <div className="text-center flex-1">${(Math.random() * 100).toFixed(2)}</div>
+              <div className="mb-3 text-xs text-[#999]">{book.uid.replace("OLID:", "")}</div>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 text-center">${(Math.random() * 100).toFixed(2)}</div>
                 <Button>Add To Cart</Button>
               </div>
             </div>
@@ -80,7 +80,7 @@ export default function Vendigo() {
         </div>
 
         {filteredBooks.length === 0 && (
-          <p className="text-center text-[#666] p-8">No books found matching "{searchTerm}"</p>
+          <p className="p-8 text-center text-[#666]">No books found matching "{searchTerm}"</p>
         )}
       </div>
     </div>

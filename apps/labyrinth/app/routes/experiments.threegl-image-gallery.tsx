@@ -113,11 +113,11 @@ export default function ThreeglImageGallery() {
   }, []);
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden bg-gray-100">
-      <div ref={containerRef} className="w-full h-full" />
+    <div className="relative h-screen w-screen overflow-hidden bg-gray-100">
+      <div ref={containerRef} className="h-full w-full" />
       <div
         ref={loadingRef}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-gray-700 text-lg z-10"
+        className="absolute top-1/2 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 text-lg text-gray-700"
       >
         Loading Gallery...
       </div>

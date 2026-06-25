@@ -38,9 +38,9 @@ export const WithValue: Story = {
   render: () => {
     const [value, setValue] = React.useState("Controlled value");
     return (
-      <div className="flex flex-col gap-2 w-full max-w-sm">
+      <div className="flex w-full max-w-sm flex-col gap-2">
         <Input value={value} onChange={(e) => setValue(e.target.value)} />
-        <p className="text-xs text-muted-foreground">{value.length} characters</p>
+        <p className="text-muted-foreground text-xs">{value.length} characters</p>
       </div>
     );
   },

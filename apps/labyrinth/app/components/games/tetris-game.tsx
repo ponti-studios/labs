@@ -276,7 +276,7 @@ const Cell = memo<{ opacity: number | null; isGhost: boolean }>(({ opacity, isGh
   const color = opacity ? pieceColor(opacity) : null;
   return (
     <div
-      className="w-6 h-6 transition-all duration-75"
+      className="h-6 w-6 transition-all duration-75"
       style={{
         backgroundColor: color ? (isGhost ? `${color}33` : color) : "transparent",
         boxShadow: color && !isGhost ? `inset 0 1px 0 rgba(255,255,255,0.15)` : undefined,
@@ -289,16 +289,16 @@ const Cell = memo<{ opacity: number | null; isGhost: boolean }>(({ opacity, isGh
 
 // Preview panel for held/next piece
 const Preview = memo<{ piece: Piece | null; title: string }>(({ piece, title }) => (
-  <div className="rounded-xl border border-border bg-card p-4">
+  <div className="border-border bg-card rounded-xl border p-4">
     <p className="ui-eyebrow mb-3 text-center">{title}</p>
-    <div className="flex flex-col items-center justify-center min-h-[60px]">
+    <div className="flex min-h-[60px] flex-col items-center justify-center">
       {piece ? (
         piece.shape.map((row: number[], i: number) => (
           <div key={i} className="flex">
             {row.map((cell: number, j: number) => (
               <div
                 key={j}
-                className="w-5 h-5 transition-all duration-75"
+                className="h-5 w-5 transition-all duration-75"
                 style={{
                   backgroundColor: cell ? pieceColor(piece.opacity) : "transparent",
                   outline: "1px solid rgba(0,0,0,0.06)",
@@ -309,7 +309,7 @@ const Preview = memo<{ piece: Piece | null; title: string }>(({ piece, title }) 
           </div>
         ))
       ) : (
-        <span className="text-xs text-muted-foreground">—</span>
+        <span className="text-muted-foreground text-xs">—</span>
       )}
     </div>
   </div>
@@ -319,7 +319,7 @@ const Preview = memo<{ piece: Piece | null; title: string }>(({ piece, title }) 
 const StatRow = ({ label, value }: { label: string; value: number }) => (
   <div className="flex items-center justify-between gap-4">
     <span className="ui-eyebrow">{label}</span>
-    <span className="text-lg font-semibold tabular-nums text-foreground">{value}</span>
+    <span className="text-foreground text-lg font-semibold tabular-nums">{value}</span>
   </div>
 );
 
@@ -457,17 +457,17 @@ const TetrisGame: FC = () => {
   }, [handleKeyDown]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-6">
+    <div className="bg-background flex min-h-screen items-center justify-center p-6">
       <div className="flex items-start gap-5">
         {/* Left panel */}
         <div className="flex w-32 flex-col gap-3">
           <Preview piece={state.held} title="Hold" />
-          <div className="rounded-xl border border-border bg-card p-4">
+          <div className="border-border bg-card rounded-xl border p-4">
             <div className="space-y-3">
               <StatRow label="Score" value={state.score} />
-              <div className="border-t border-border" />
+              <div className="border-border border-t" />
               <StatRow label="Lines" value={state.lines} />
-              <div className="border-t border-border" />
+              <div className="border-border border-t" />
               <StatRow label="Level" value={state.level} />
             </div>
           </div>
@@ -475,11 +475,11 @@ const TetrisGame: FC = () => {
 
         {/* Board column */}
         <div className="flex flex-col items-center gap-3">
-          <h3 className="tracking-widest uppercase text-sm font-semibold text-foreground">
+          <h3 className="text-foreground text-sm font-semibold tracking-widest uppercase">
             Tetris
           </h3>
 
-          <div className="relative rounded-xl border border-border bg-zinc-950 overflow-hidden p-1">
+          <div className="border-border relative overflow-hidden rounded-xl border bg-zinc-950 p-1">
             <div className="grid" style={{ gridTemplateColumns: `repeat(${COLS}, 1.5rem)` }}>
               {displayGrid.map((row: GameCell[], i: number) =>
                 row.map((cell: GameCell, j: number) => {
@@ -498,7 +498,7 @@ const TetrisGame: FC = () => {
             {/* Start overlay */}
             {!state.started && (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-zinc-950/90">
-                <p className="text-xs font-medium uppercase tracking-[0.16em] text-zinc-400">
+                <p className="text-xs font-medium tracking-[0.16em] text-zinc-400 uppercase">
                   Ready to play
                 </p>
                 <Button variant="secondary" size="sm" onClick={() => dispatch({ type: "START" })}>
@@ -511,7 +511,7 @@ const TetrisGame: FC = () => {
             {/* Paused overlay */}
             {state.paused && (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-zinc-950/90">
-                <p className="text-sm font-semibold uppercase tracking-widest text-white">Paused</p>
+                <p className="text-sm font-semibold tracking-widest text-white uppercase">Paused</p>
                 <Button variant="secondary" size="sm" onClick={() => dispatch({ type: "PAUSE" })}>
                   Resume
                 </Button>
@@ -521,7 +521,7 @@ const TetrisGame: FC = () => {
             {/* Game over overlay */}
             {state.gameOver && (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-zinc-950/90">
-                <p className="text-sm font-semibold uppercase tracking-widest text-white">
+                <p className="text-sm font-semibold tracking-widest text-white uppercase">
                   Game Over
                 </p>
                 <p className="text-xs text-zinc-400 tabular-nums">Score: {state.score}</p>
@@ -537,15 +537,15 @@ const TetrisGame: FC = () => {
         <div className="flex w-32 flex-col gap-3">
           <Preview piece={state.next} title="Next" />
 
-          <div className="rounded-xl border border-border bg-card p-4">
+          <div className="border-border bg-card rounded-xl border p-4">
             <p className="ui-eyebrow mb-3">Controls</p>
             <ul className="space-y-1.5">
               {CONTROLS.map(({ key, action }) => (
                 <li key={key} className="flex items-center justify-between gap-2">
-                  <kbd className="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
+                  <kbd className="bg-muted text-muted-foreground rounded px-1.5 py-0.5 font-mono text-[10px]">
                     {key}
                   </kbd>
-                  <span className="text-[11px] text-muted-foreground text-right">{action}</span>
+                  <span className="text-muted-foreground text-right text-[11px]">{action}</span>
                 </li>
               ))}
             </ul>

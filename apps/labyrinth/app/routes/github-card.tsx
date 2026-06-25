@@ -71,9 +71,9 @@ export default function GitHubCardRoute() {
   };
 
   return (
-    <div className="min-h-screen text-white p-8">
-      <div className="max-w-2xl mx-auto space-y-8">
-        <div className="text-center space-y-2">
+    <div className="min-h-screen p-8 text-white">
+      <div className="mx-auto max-w-2xl space-y-8">
+        <div className="space-y-2 text-center">
           <h1>GitHub Pokémon Card</h1>
           <p className="text-slate-400">Enter a GitHub username to generate their card</p>
         </div>
@@ -84,7 +84,7 @@ export default function GitHubCardRoute() {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Enter GitHub username..."
-            className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all placeholder:text-slate-500"
+            className="flex-1 rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-3 transition-all placeholder:text-slate-500 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
           />
           <button
             type="submit"
@@ -96,22 +96,22 @@ export default function GitHubCardRoute() {
         </form>
 
         {error && (
-          <div className="p-4 bg-red-500/10 border border-red-500/50 rounded-xl text-red-400 text-center">
+          <div className="rounded-xl border border-red-500/50 bg-red-500/10 p-4 text-center text-red-400">
             {error}
           </div>
         )}
 
         {user && (
-          <div className="relative group">
-            <div className="relative bg-slate-800/90 backdrop-blur-sm rounded-3xl p-6 border border-slate-700 shadow-2xl">
+          <div className="group relative">
+            <div className="relative rounded-3xl border border-slate-700 bg-slate-800/90 p-6 shadow-2xl backdrop-blur-sm">
               <div className="flex items-start gap-6">
                 <div className="relative">
                   <img
                     src={user.avatar_url}
                     alt={user.login}
-                    className="w-32 h-32 rounded-full border-4 border-slate-700 shadow-lg"
+                    className="h-32 w-32 rounded-full border-4 border-slate-700 shadow-lg"
                   />
-                  <div className="absolute -bottom-2 -right-2 rounded-full px-3 py-1 text-xs font-bold text-slate-900 shadow-lg">
+                  <div className="absolute -right-2 -bottom-2 rounded-full px-3 py-1 text-xs font-bold text-slate-900 shadow-lg">
                     #{user.followers}
                   </div>
                 </div>
@@ -122,7 +122,7 @@ export default function GitHubCardRoute() {
                     <p className="text-orange-400">@{user.login}</p>
                   </div>
 
-                  {user.bio && <p className="text-slate-300 text-sm leading-relaxed">{user.bio}</p>}
+                  {user.bio && <p className="text-sm leading-relaxed text-slate-300">{user.bio}</p>}
 
                   <div className="flex flex-wrap gap-3">
                     <StatBadge
@@ -138,7 +138,7 @@ export default function GitHubCardRoute() {
                     <StatBadge label="Repos" value={user.public_repos} colors={typeColors.repos} />
                   </div>
 
-                  <div className="flex flex-wrap gap-4 text-sm text-slate-400 pt-2">
+                  <div className="flex flex-wrap gap-4 pt-2 text-sm text-slate-400">
                     {user.location && (
                       <span className="flex items-center gap-1">
                         <LocationIcon />
@@ -156,7 +156,7 @@ export default function GitHubCardRoute() {
                         href={user.blog.startsWith("http") ? user.blog : `https://${user.blog}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-1 text-orange-400 hover:text-orange-300 transition-colors"
+                        className="flex items-center gap-1 text-orange-400 transition-colors hover:text-orange-300"
                       >
                         <LinkIcon />
                         {user.blog}
@@ -172,14 +172,14 @@ export default function GitHubCardRoute() {
                 </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-slate-700 flex justify-between items-center">
-                <div className="text-xs text-slate-500 uppercase tracking-wider">
+              <div className="mt-6 flex items-center justify-between border-t border-slate-700 pt-4">
+                <div className="text-xs tracking-wider text-slate-500 uppercase">
                   Generated on {new Date().toLocaleDateString()}
                 </div>
                 <div className="flex gap-2">
-                  <span className="px-2 py-1 bg-slate-700 rounded text-xs">HP</span>
-                  <span className="px-2 py-1 bg-slate-700 rounded text-xs">ATK</span>
-                  <span className="px-2 py-1 bg-slate-700 rounded text-xs">DEF</span>
+                  <span className="rounded bg-slate-700 px-2 py-1 text-xs">HP</span>
+                  <span className="rounded bg-slate-700 px-2 py-1 text-xs">ATK</span>
+                  <span className="rounded bg-slate-700 px-2 py-1 text-xs">DEF</span>
                 </div>
               </div>
             </div>

@@ -173,9 +173,9 @@ export default function MedicareRoute() {
   const irmaa = calculateIRMAA(income);
 
   return (
-    <div className="min-h-screen bg-black text-white font-mono cursor-crosshair">
+    <div className="min-h-screen cursor-crosshair bg-black font-mono text-white">
       {/* ASCII texture */}
-      <div className="fixed inset-0 pointer-events-none opacity-10 whitespace-pre font-mono text-xs leading-none overflow-hidden text-white/10">
+      <div className="pointer-events-none fixed inset-0 overflow-hidden font-mono text-xs leading-none whitespace-pre text-white/10 opacity-10">
         {Array(50)
           .fill(0)
           .map((_, i) => (
@@ -191,32 +191,32 @@ export default function MedicareRoute() {
           ))}
       </div>
 
-      <div className="relative z-10 max-w-6xl mx-auto p-8">
+      <div className="relative z-10 mx-auto max-w-6xl p-8">
         {/* Header */}
         <div className="mb-12 border-b border-white/10 pb-8">
           <h1 className="mb-2">MEDICARE COMPARISON</h1>
-          <p className="text-white/70 text-sm">
+          <p className="text-sm text-white/70">
             ANALYZE COSTS AND BENEFITS FOR 2024. INCOME THRESHOLD ${income.toLocaleString()} / YEAR.
           </p>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-3 w-full mb-8 bg-white/5 border border-white/10">
+          <TabsList className="mb-8 grid w-full grid-cols-3 border border-white/10 bg-white/5">
             <TabsTrigger
               value="profile"
-              className="data-[state=active]:bg-white/10 data-[state=active]:text-white text-white/70"
+              className="text-white/70 data-[state=active]:bg-white/10 data-[state=active]:text-white"
             >
               PROFILE
             </TabsTrigger>
             <TabsTrigger
               value="plans"
-              className="data-[state=active]:bg-white/10 data-[state=active]:text-white text-white/70"
+              className="text-white/70 data-[state=active]:bg-white/10 data-[state=active]:text-white"
             >
               PLANS
             </TabsTrigger>
             <TabsTrigger
               value="results"
-              className="data-[state=active]:bg-white/10 data-[state=active]:text-white text-white/70"
+              className="text-white/70 data-[state=active]:bg-white/10 data-[state=active]:text-white"
               disabled={!showResults}
             >
               RESULTS
@@ -228,7 +228,7 @@ export default function MedicareRoute() {
             <div className="space-y-8">
               <div className="space-y-6">
                 <div>
-                  <label className="text-sm font-mono uppercase text-white/70 block mb-4">
+                  <label className="mb-4 block font-mono text-sm text-white/70 uppercase">
                     AGE: {age}
                   </label>
                   <Slider
@@ -239,14 +239,14 @@ export default function MedicareRoute() {
                     step={1}
                     className="w-full"
                   />
-                  <div className="flex justify-between text-xs text-white/50 mt-2">
+                  <div className="mt-2 flex justify-between text-xs text-white/50">
                     <span>65</span>
                     <span>90</span>
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-sm font-mono uppercase text-white/70 block mb-4">
+                  <label className="mb-4 block font-mono text-sm text-white/70 uppercase">
                     ANNUAL INCOME: {formatCurrency(income)}
                   </label>
                   <Slider
@@ -257,12 +257,12 @@ export default function MedicareRoute() {
                     step={5000}
                     className="w-full"
                   />
-                  <div className="flex justify-between text-xs text-white/50 mt-2">
+                  <div className="mt-2 flex justify-between text-xs text-white/50">
                     <span>$30,000</span>
                     <span>$500,000</span>
                   </div>
                   {irmaa > 0 && (
-                    <div className="mt-4 p-3 border border-white/10 bg-white/5">
+                    <div className="mt-4 border border-white/10 bg-white/5 p-3">
                       <p className="text-xs text-white/70">
                         IRMAA SURCHARGE: +{formatCurrency(irmaa)}/MONTH
                       </p>
@@ -271,7 +271,7 @@ export default function MedicareRoute() {
                 </div>
 
                 <div>
-                  <label className="text-sm font-mono uppercase text-white/70 block mb-4">
+                  <label className="mb-4 block font-mono text-sm text-white/70 uppercase">
                     EXPECTED ANNUAL MEDICAL EXPENSES: {formatCurrency(medicalExpenses)}
                   </label>
                   <Slider
@@ -282,7 +282,7 @@ export default function MedicareRoute() {
                     step={500}
                     className="w-full"
                   />
-                  <div className="flex justify-between text-xs text-white/50 mt-2">
+                  <div className="mt-2 flex justify-between text-xs text-white/50">
                     <span>$0</span>
                     <span>$10,000</span>
                   </div>
@@ -291,7 +291,7 @@ export default function MedicareRoute() {
 
               <Button
                 onClick={() => setActiveTab("plans")}
-                className="w-full bg-white/10 hover:bg-white/20 text-white border border-white/20 uppercase text-sm font-mono"
+                className="w-full border border-white/20 bg-white/10 font-mono text-sm text-white uppercase hover:bg-white/20"
               >
                 CONTINUE TO PLANS
               </Button>
@@ -304,16 +304,16 @@ export default function MedicareRoute() {
               {AVAILABLE_PLANS.map((plan) => (
                 <div
                   key={plan.id}
-                  className={`p-6 border ${
+                  className={`border p-6 ${
                     selectedPlans.includes(plan.id)
                       ? "border-white/30 bg-white/5"
                       : "border-white/10 bg-white/2"
                   } transition-colors`}
                 >
-                  <div className="flex justify-between items-start mb-4">
+                  <div className="mb-4 flex items-start justify-between">
                     <div>
                       <h3>{plan.name}</h3>
-                      <Badge variant="outline" className="mt-2 uppercase text-xs">
+                      <Badge variant="outline" className="mt-2 text-xs uppercase">
                         {plan.type}
                       </Badge>
                     </div>
@@ -322,43 +322,43 @@ export default function MedicareRoute() {
                       className={`${
                         selectedPlans.includes(plan.id)
                           ? "bg-white text-black hover:bg-white/90"
-                          : "bg-white/10 text-white hover:bg-white/20 border border-white/20"
-                      } uppercase text-sm font-mono`}
+                          : "border border-white/20 bg-white/10 text-white hover:bg-white/20"
+                      } font-mono text-sm uppercase`}
                     >
                       {selectedPlans.includes(plan.id) ? "SELECTED" : "COMPARE"}
                     </Button>
                   </div>
 
-                  <p className="text-sm text-white/70 mb-6">{plan.description}</p>
+                  <p className="mb-6 text-sm text-white/70">{plan.description}</p>
 
-                  <div className="grid grid-cols-2 gap-6 text-sm mb-6">
+                  <div className="mb-6 grid grid-cols-2 gap-6 text-sm">
                     <div>
-                      <p className="text-white/70 uppercase text-xs mb-2">MONTHLY PREMIUM</p>
-                      <p className="text-white font-mono">
+                      <p className="mb-2 text-xs text-white/70 uppercase">MONTHLY PREMIUM</p>
+                      <p className="font-mono text-white">
                         {formatCurrency(calculateTotalPremium(plan.premium, income))}
                       </p>
                       {irmaa > 0 && (
-                        <p className="text-white/50 text-xs mt-1">
+                        <p className="mt-1 text-xs text-white/50">
                           (BASE {formatCurrency(plan.premium)} + IRMAA {formatCurrency(irmaa)})
                         </p>
                       )}
                     </div>
 
                     <div>
-                      <p className="text-white/70 uppercase text-xs mb-2">ANNUAL DEDUCTIBLE</p>
-                      <p className="text-white font-mono">{formatCurrency(plan.deductible)}</p>
+                      <p className="mb-2 text-xs text-white/70 uppercase">ANNUAL DEDUCTIBLE</p>
+                      <p className="font-mono text-white">{formatCurrency(plan.deductible)}</p>
                     </div>
 
                     <div>
-                      <p className="text-white/70 uppercase text-xs mb-2">COINSURANCE</p>
-                      <p className="text-white font-mono">
+                      <p className="mb-2 text-xs text-white/70 uppercase">COINSURANCE</p>
+                      <p className="font-mono text-white">
                         {plan.coinsurance ? `${(plan.coinsurance * 100).toFixed(0)}%` : "VARIES"}
                       </p>
                     </div>
 
                     <div>
-                      <p className="text-white/70 uppercase text-xs mb-2">OUT-OF-POCKET MAX</p>
-                      <p className="text-white font-mono">
+                      <p className="mb-2 text-xs text-white/70 uppercase">OUT-OF-POCKET MAX</p>
+                      <p className="font-mono text-white">
                         {plan.coverageLimit ? formatCurrency(plan.coverageLimit) : "NONE"}
                       </p>
                     </div>
@@ -366,10 +366,10 @@ export default function MedicareRoute() {
 
                   {plan.extras && plan.extras.length > 0 && (
                     <div>
-                      <p className="text-white/70 uppercase text-xs mb-3">EXTRA BENEFITS</p>
+                      <p className="mb-3 text-xs text-white/70 uppercase">EXTRA BENEFITS</p>
                       <div className="flex flex-wrap gap-2">
                         {plan.extras.map((extra) => (
-                          <Badge key={extra} className="uppercase text-xs bg-white/10 text-white">
+                          <Badge key={extra} className="bg-white/10 text-xs text-white uppercase">
                             {extra}
                           </Badge>
                         ))}
@@ -378,9 +378,9 @@ export default function MedicareRoute() {
                   )}
 
                   {plan.copays && (
-                    <div className="mt-4 pt-4 border-t border-white/10">
-                      <p className="text-white/70 uppercase text-xs mb-2">COPAYS</p>
-                      <p className="text-white text-sm font-mono">{plan.copays}</p>
+                    <div className="mt-4 border-t border-white/10 pt-4">
+                      <p className="mb-2 text-xs text-white/70 uppercase">COPAYS</p>
+                      <p className="font-mono text-sm text-white">{plan.copays}</p>
                     </div>
                   )}
                 </div>
@@ -389,7 +389,7 @@ export default function MedicareRoute() {
               <Button
                 onClick={generateResults}
                 disabled={selectedPlans.length < 1}
-                className="w-full bg-white text-black hover:bg-white/90 disabled:opacity-50 disabled:cursor-not-allowed uppercase font-mono font-bold"
+                className="w-full bg-white font-mono font-bold text-black uppercase hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 COMPARE SELECTED PLANS
               </Button>
@@ -404,14 +404,14 @@ export default function MedicareRoute() {
                   <Table>
                     <TableHeader>
                       <TableRow className="border-b border-white/10 hover:bg-transparent">
-                        <TableHead className="text-white/70 uppercase text-xs">PLAN</TableHead>
-                        <TableHead className="text-white/70 uppercase text-xs text-right">
+                        <TableHead className="text-xs text-white/70 uppercase">PLAN</TableHead>
+                        <TableHead className="text-right text-xs text-white/70 uppercase">
                           ANNUAL PREMIUM
                         </TableHead>
-                        <TableHead className="text-white/70 uppercase text-xs text-right">
+                        <TableHead className="text-right text-xs text-white/70 uppercase">
                           OUT-OF-POCKET
                         </TableHead>
-                        <TableHead className="text-white/70 uppercase text-xs text-right">
+                        <TableHead className="text-right text-xs text-white/70 uppercase">
                           TOTAL ANNUAL
                         </TableHead>
                       </TableRow>
@@ -426,16 +426,16 @@ export default function MedicareRoute() {
                             key={planId}
                             className="border-b border-white/10 hover:bg-white/5"
                           >
-                            <TableCell className="text-white font-mono text-sm py-4">
+                            <TableCell className="py-4 font-mono text-sm text-white">
                               {plan.name}
                             </TableCell>
-                            <TableCell className="text-white text-right font-mono text-sm py-4">
+                            <TableCell className="py-4 text-right font-mono text-sm text-white">
                               {formatCurrency(costs.annualPremium)}
                             </TableCell>
-                            <TableCell className="text-white text-right font-mono text-sm py-4">
+                            <TableCell className="py-4 text-right font-mono text-sm text-white">
                               {formatCurrency(costs.outOfPocket)}
                             </TableCell>
-                            <TableCell className="text-white text-right font-mono text-sm py-4 font-bold">
+                            <TableCell className="py-4 text-right font-mono text-sm font-bold text-white">
                               {formatCurrency(costs.totalAnnual)}
                             </TableCell>
                           </TableRow>
@@ -445,8 +445,8 @@ export default function MedicareRoute() {
                   </Table>
                 </div>
 
-                <div className="p-6 border border-white/10 bg-white/5">
-                  <p className="text-sm font-mono uppercase text-white/70 mb-4">RECOMMENDATION</p>
+                <div className="border border-white/10 bg-white/5 p-6">
+                  <p className="mb-4 font-mono text-sm text-white/70 uppercase">RECOMMENDATION</p>
                   {(() => {
                     const planCosts = selectedPlans
                       .map((planId) => {
@@ -460,7 +460,7 @@ export default function MedicareRoute() {
                       .sort((a, b) => a.totalAnnual - b.totalAnnual);
 
                     return (
-                      <div className="text-white font-mono text-sm">
+                      <div className="font-mono text-sm text-white">
                         <p className="mb-2">
                           LOWEST COST: <span className="font-bold">{planCosts[0].name}</span>
                         </p>
@@ -480,8 +480,8 @@ export default function MedicareRoute() {
         </Tabs>
 
         {/* Footer */}
-        <div className="mt-16 p-6 border-t border-white/10 text-sm text-white/70 space-y-2">
-          <p className="uppercase font-mono text-xs">
+        <div className="mt-16 space-y-2 border-t border-white/10 p-6 text-sm text-white/70">
+          <p className="font-mono text-xs uppercase">
             MEDICARE PART B {new Date().getFullYear()} STANDARD COSTS
           </p>
           <p>

@@ -1,4 +1,8 @@
-import { type NewRhobhDailyPuzzle, type PuzzleAnswerType, type PuzzleSource } from "@pontistudios/db";
+import {
+  type NewRhobhDailyPuzzle,
+  type PuzzleAnswerType,
+  type PuzzleSource,
+} from "@pontistudios/db";
 export type { PuzzleAnswerType, PuzzleSource };
 
 // ── Game engine types ─────────────────────────────────────────────────────

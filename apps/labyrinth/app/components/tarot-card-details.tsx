@@ -9,13 +9,13 @@ interface TarotCardDetailsProps {
 export const TarotCardDetails = ({ card, onClose }: TarotCardDetailsProps) => {
   return (
     <Dialog open={!!card} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
         {card && (
           <>
             <DialogHeader>
               <div className="space-y-2">
                 <DialogTitle className="text-3xl">{card.name}</DialogTitle>
-                <p className="text-sm text-muted-foreground">{card.arcana}</p>
+                <p className="text-muted-foreground text-sm">{card.arcana}</p>
               </div>
             </DialogHeader>
 
@@ -25,7 +25,7 @@ export const TarotCardDetails = ({ card, onClose }: TarotCardDetailsProps) => {
                 <img
                   src={`/tarot-cards/${card.img}`}
                   alt={card.name}
-                  className="w-48 h-64 object-cover rounded-lg shadow-md"
+                  className="h-64 w-48 rounded-lg object-cover shadow-md"
                 />
               </div>
 
@@ -66,14 +66,14 @@ export const TarotCardDetails = ({ card, onClose }: TarotCardDetailsProps) => {
               </div>
 
               {/* Light & Shadow Meanings */}
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid gap-6 md:grid-cols-2">
                 <div>
                   <h3 className="mb-2">✨ Light Meanings</h3>
                   <ul className="space-y-1">
                     {card.meanings.light.map((meaning) => (
                       <li
                         key={meaning}
-                        className="text-sm text-gray-600 dark:text-gray-400 flex gap-2"
+                        className="flex gap-2 text-sm text-gray-600 dark:text-gray-400"
                       >
                         <span className="text-green-600">•</span>
                         {meaning}
@@ -88,7 +88,7 @@ export const TarotCardDetails = ({ card, onClose }: TarotCardDetailsProps) => {
                     {card.meanings.shadow.map((meaning) => (
                       <li
                         key={meaning}
-                        className="text-sm text-gray-600 dark:text-gray-400 flex gap-2"
+                        className="flex gap-2 text-sm text-gray-600 dark:text-gray-400"
                       >
                         <span className="text-red-600">•</span>
                         {meaning}
@@ -106,7 +106,7 @@ export const TarotCardDetails = ({ card, onClose }: TarotCardDetailsProps) => {
                     {card.fortune_telling.map((fortune) => (
                       <li
                         key={fortune}
-                        className="text-sm text-gray-600 dark:text-gray-400 flex gap-2"
+                        className="flex gap-2 text-sm text-gray-600 dark:text-gray-400"
                       >
                         <span>✦</span>
                         {fortune}
@@ -124,7 +124,7 @@ export const TarotCardDetails = ({ card, onClose }: TarotCardDetailsProps) => {
                     {card["Questions to Ask"].map((question) => (
                       <li
                         key={question}
-                        className="text-sm text-gray-600 dark:text-gray-400 italic"
+                        className="text-sm text-gray-600 italic dark:text-gray-400"
                       >
                         "{question}"
                       </li>
@@ -135,7 +135,7 @@ export const TarotCardDetails = ({ card, onClose }: TarotCardDetailsProps) => {
 
               {/* Mystical Info */}
               {card["Mythical/Spiritual"] && (
-                <div className="bg-purple-50 dark:bg-purple-900/30 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
+                <div className="rounded-lg border border-purple-200 bg-purple-50 p-4 dark:border-purple-800 dark:bg-purple-900/30">
                   <h3 className="mb-2">🌟 Mythical/Spiritual</h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     {card["Mythical/Spiritual"]}

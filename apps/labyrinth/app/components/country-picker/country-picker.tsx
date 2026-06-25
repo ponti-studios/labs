@@ -81,9 +81,9 @@ export function CountryPicker({ onChange, countryCode, className }: CountryPicke
 
   if (isLoading) {
     return (
-      <Button variant="outline" className={cn("w-full justify-between h-10", className)} disabled>
+      <Button variant="outline" className={cn("h-10 w-full justify-between", className)} disabled>
         <span className="flex items-center">
-          <div className="size-4 mr-2 animate-spin border-2 border-gray-300 border-t-gray-600 rounded-full" />
+          <div className="mr-2 size-4 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600" />
           <span className="text-gray-600">Loading countries...</span>
         </span>
         <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-30" />
@@ -96,18 +96,18 @@ export function CountryPicker({ onChange, countryCode, className }: CountryPicke
       <Button
         variant="outline"
         className={cn(
-          "w-full justify-between h-10 border-red-200 bg-red-50 hover:bg-red-50",
+          "h-10 w-full justify-between border-red-200 bg-red-50 hover:bg-red-50",
           className,
         )}
         disabled
       >
         <span className="flex items-center text-red-600">
-          <div className="w-4 h-4 mr-2 text-red-500">⚠</div>
+          <div className="mr-2 h-4 w-4 text-red-500">⚠</div>
           <span className="truncate">
             Error: {error instanceof Error ? error.message : "Failed to load"}
           </span>
         </span>
-        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-30 text-red-400" />
+        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 text-red-400 opacity-30" />
       </Button>
     );
   }
@@ -120,7 +120,7 @@ export function CountryPicker({ onChange, countryCode, className }: CountryPicke
           aria-expanded={open}
           className={cn("w-full justify-between", className)}
         >
-          <span className="flex gap-2 items-center text-black">
+          <span className="flex items-center gap-2 text-black">
             {selectedCountry ? (
               <>
                 {getCountryFlag(selectedCountry.code)}

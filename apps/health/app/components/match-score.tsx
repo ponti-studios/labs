@@ -7,7 +7,7 @@ export function MatchScore(score: number) {
 
   return (
     <span
-      className={cn("text-sm font-normal text-muted-foreground", {
+      className={cn("text-muted-foreground text-sm font-normal", {
         "bg-yellow-300 text-black": score > 20 && score < 50,
         "bg-green-300 text-black": score >= 50,
       })}

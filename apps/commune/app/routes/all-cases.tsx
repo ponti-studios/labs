@@ -21,17 +21,17 @@ export default function DocketPage() {
 
   if (cases.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[70vh] px-6 text-center gap-6">
+      <div className="flex min-h-[70vh] flex-col items-center justify-center gap-6 px-6 text-center">
         <div className="max-w-xs space-y-3">
           <p className="text-2xl font-semibold tracking-tight">The docket is empty.</p>
-          <p className="text-sm text-muted-foreground leading-relaxed">
+          <p className="text-muted-foreground text-sm leading-relaxed">
             Describe a situation. Your friends deliberate anonymously. You get honest signal — not a
             polished group-chat consensus.
           </p>
         </div>
         <Link
           to="/case/create"
-          className="bg-foreground text-background px-6 py-2.5 rounded-full text-sm font-medium hover:opacity-90 transition-opacity"
+          className="bg-foreground text-background rounded-full px-6 py-2.5 text-sm font-medium transition-opacity hover:opacity-90"
         >
           File a case
         </Link>
@@ -40,23 +40,23 @@ export default function DocketPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto py-10 px-4">
-      <div className="flex items-center justify-between mb-8">
+    <div className="mx-auto max-w-2xl px-4 py-10">
+      <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-base font-semibold">Your docket</h1>
-          <p className="text-xs text-muted-foreground mt-0.5">
+          <p className="text-muted-foreground mt-0.5 text-xs">
             {cases.length} case{cases.length !== 1 ? "s" : ""} filed
           </p>
         </div>
         <Link
           to="/case/create"
-          className="bg-foreground text-background px-4 py-2 rounded-full text-xs font-medium hover:opacity-90 transition-opacity"
+          className="bg-foreground text-background rounded-full px-4 py-2 text-xs font-medium transition-opacity hover:opacity-90"
         >
           + File a case
         </Link>
       </div>
 
-      <div className="flex flex-col divide-y divide-border border border-border rounded-xl overflow-hidden">
+      <div className="divide-border border-border flex flex-col divide-y overflow-hidden rounded-xl border">
         {cases.map((c, i) => {
           const { total, agreePercent, quorumMet, agree, disagree } = c.voteStats;
           const remaining = c.quorumSize - total;
@@ -67,45 +67,45 @@ export default function DocketPage() {
             <Link
               key={c.id}
               to={`/case/${c.id}`}
-              className="flex flex-col gap-3 px-5 py-4 hover:bg-muted/40 transition-colors"
+              className="hover:bg-muted/40 flex flex-col gap-3 px-5 py-4 transition-colors"
             >
               <div className="flex items-start justify-between gap-4">
-                <div className="flex flex-col gap-1 min-w-0">
+                <div className="flex min-w-0 flex-col gap-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-mono text-muted-foreground flex-shrink-0">
+                    <span className="text-muted-foreground flex-shrink-0 font-mono text-[10px]">
                       #{String(i + 1).padStart(3, "0")}
                     </span>
-                    <span className="text-xs font-medium truncate">
+                    <span className="truncate text-xs font-medium">
                       {c.label ||
                         (c.question.length > 50 ? c.question.slice(0, 48) + "…" : c.question)}
                     </span>
                   </div>
-                  <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
+                  <p className="text-muted-foreground line-clamp-2 text-xs leading-relaxed">
                     {situationPreview}
                   </p>
                 </div>
 
-                <div className="flex-shrink-0 flex flex-col items-end gap-1">
+                <div className="flex flex-shrink-0 flex-col items-end gap-1">
                   {quorumMet ? (
-                    <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-foreground text-background">
+                    <span className="bg-foreground text-background rounded-full px-2 py-0.5 text-[10px] font-medium">
                       Verdict in
                     </span>
                   ) : c.status === "closed" ? (
-                    <span className="text-[10px] font-medium px-2 py-0.5 rounded-full border border-border text-muted-foreground">
+                    <span className="border-border text-muted-foreground rounded-full border px-2 py-0.5 text-[10px] font-medium">
                       Closed
                     </span>
                   ) : (
-                    <span className="text-[10px] font-medium px-2 py-0.5 rounded-full border border-border text-muted-foreground">
+                    <span className="border-border text-muted-foreground rounded-full border px-2 py-0.5 text-[10px] font-medium">
                       {remaining} vote{remaining !== 1 ? "s" : ""} to go
                     </span>
                   )}
-                  <span className="text-[10px] text-muted-foreground">{timeAgo(c.createdAt)}</span>
+                  <span className="text-muted-foreground text-[10px]">{timeAgo(c.createdAt)}</span>
                 </div>
               </div>
 
               {quorumMet && (
                 <div className="flex flex-col gap-1.5">
-                  <div className="flex rounded-full overflow-hidden h-1.5">
+                  <div className="flex h-1.5 overflow-hidden rounded-full">
                     <div
                       className="bg-green-500 transition-all"
                       style={{ width: `${agreePercent}%` }}
@@ -116,10 +116,10 @@ export default function DocketPage() {
                     />
                   </div>
                   <div className="flex justify-between text-[10px]">
-                    <span className="text-green-600 font-medium">
+                    <span className="font-medium text-green-600">
                       {agreePercent}% agree · {agree}
                     </span>
-                    <span className="text-red-500 font-medium">{disagree} disagree</span>
+                    <span className="font-medium text-red-500">{disagree} disagree</span>
                   </div>
                 </div>
               )}

@@ -51,17 +51,16 @@ const logger = pino(
 );
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
-const SYSTEM_PROMPT = readFileSync(
-  join(__dirname, "prompts/bravo-generation-system.md"),
-  "utf-8",
-);
+const SYSTEM_PROMPT = readFileSync(join(__dirname, "prompts/bravo-generation-system.md"), "utf-8");
 
 const candidateSchema = z.object({
   answer: z.string().min(1),
   answerType: z.string().min(1),
   clue: z.string().min(1),
   detail: z.string().min(1),
-  sources: z.array(z.object({ url: z.string(), title: z.string(), publishedAt: z.string() })).min(1),
+  sources: z
+    .array(z.object({ url: z.string(), title: z.string(), publishedAt: z.string() }))
+    .min(1),
 });
 
 const generationResponseSchema = z.object({

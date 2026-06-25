@@ -65,16 +65,16 @@ export default function ExperimentsGlass() {
   }, [isDragging]);
 
   return (
-    <div className="relative w-full h-[calc(100vh-150px)] overflow-hidden rounded-3xl">
+    <div className="relative h-[calc(100vh-150px)] w-full overflow-hidden rounded-3xl">
       {/* Controls panel */}
-      <div className="absolute top-4 right-4 z-50 bg-card rounded-lg p-3 max-w-72">
+      <div className="bg-card absolute top-4 right-4 z-50 max-w-72 rounded-lg p-3">
         <p className="ui-eyebrow mb-1">Glass Effect</p>
-        <p className="text-sm mb-3">
+        <p className="mb-3 text-sm">
           Drag the glass overlay to view a chromatic aberration using SVG displacement maps.
         </p>
 
         <div className="space-y-2 py-2">
-          <label htmlFor="background-url" className="text-xs text-muted-foreground">
+          <label htmlFor="background-url" className="text-muted-foreground text-xs">
             Background
           </label>
           <div className="flex gap-2">
@@ -112,12 +112,12 @@ export default function ExperimentsGlass() {
                   <div className="flex items-center justify-between">
                     <Label
                       htmlFor={channel}
-                      className="flex items-center gap-2 text-muted-foreground"
+                      className="text-muted-foreground flex items-center gap-2"
                     >
-                      <span className={cn("size-2 rounded-full inline-block", color)} />
+                      <span className={cn("inline-block size-2 rounded-full", color)} />
                       {label}
                     </Label>
-                    <span className="text-sm text-muted-foreground tabular-nums">
+                    <span className="text-muted-foreground text-sm tabular-nums">
                       {displacements[channel]}
                     </span>
                   </div>
@@ -157,7 +157,7 @@ export default function ExperimentsGlass() {
 
       <div
         data-testid="background-image"
-        className="absolute inset-0 w-full bg-center bg-cover"
+        className="absolute inset-0 w-full bg-cover bg-center"
         style={{ backgroundImage: `url(${backgroundImage})` }}
       />
 

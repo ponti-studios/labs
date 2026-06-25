@@ -18,27 +18,27 @@ export function DashboardEmptyState() {
       <style>{animationStyles}</style>
 
       <div className="absolute inset-0 overflow-hidden">
-        <div className="dashboard-empty-orb absolute -right-6 top-6 h-24 w-24 rounded-full bg-amber-200/70 blur-2xl" />
+        <div className="dashboard-empty-orb absolute top-6 -right-6 h-24 w-24 rounded-full bg-amber-200/70 blur-2xl" />
         <div className="dashboard-empty-orb absolute bottom-2 left-4 h-20 w-20 rounded-full bg-sky-200/70 blur-2xl" />
       </div>
 
       <div className="relative flex flex-col gap-5">
         <div className="flex items-start gap-3 rounded-2xl backdrop-blur">
-          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary/10 text-xl text-primary">
+          <div className="bg-primary/10 text-primary flex h-11 w-11 items-center justify-center rounded-full text-xl">
             ✦
           </div>
           <div className="flex flex-col gap-1">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+            <p className="text-muted-foreground text-xs font-semibold tracking-[0.24em] uppercase">
               dashboard is fresh
             </p>
             <h3 className="text-lg font-semibold">Nothing on the radar yet</h3>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Start by checking a symptom or booking a visit so your care timeline feels alive.
             </p>
           </div>
         </div>
 
-        <div className="flex flex-wrap justify-end items-center gap-3">
+        <div className="flex flex-wrap items-center justify-end gap-3">
           <Button asChild>
             <Link to="/symptoms">Check a symptom</Link>
           </Button>

@@ -45,7 +45,7 @@ export const Default: Story = {
                 <input
                   id="name"
                   defaultValue="Pedro Duarte"
-                  className="col-span-3 flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm outline-none"
+                  className="border-input col-span-3 flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-sm outline-none"
                 />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
@@ -55,7 +55,7 @@ export const Default: Story = {
                 <input
                   id="username"
                   defaultValue="@peduarte"
-                  className="col-span-3 flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm outline-none"
+                  className="border-input col-span-3 flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-sm outline-none"
                 />
               </div>
             </div>

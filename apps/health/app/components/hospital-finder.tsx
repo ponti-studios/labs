@@ -32,7 +32,7 @@ export default function HospitalFinder({ isOpen, onClose }: HospitalFinderProps)
 function Hospitals() {
   return (
     <div className="flex flex-col gap-4 pt-6">
-      <div className="rounded-lg border border-border bg-muted/30 p-4 text-sm text-muted-foreground">
+      <div className="border-border bg-muted/30 text-muted-foreground rounded-lg border p-4 text-sm">
         If you need urgent in-person care, call ahead or open directions before leaving.
       </div>
 
@@ -48,7 +48,7 @@ function Hospitals() {
 
 function HospitalListItem({ hospital }: { hospital: Hospital }) {
   return (
-    <div className="rounded-lg border p-4 transition-colors hover:bg-muted/50">
+    <div className="hover:bg-muted/50 rounded-lg border p-4 transition-colors">
       <div className="flex items-start justify-between gap-2">
         <h4 className="font-semibold">{hospital.name}</h4>
         <span className="rounded bg-blue-100 px-2 py-1 text-sm text-blue-800">
@@ -56,7 +56,7 @@ function HospitalListItem({ hospital }: { hospital: Hospital }) {
         </span>
       </div>
       <div className="flex flex-col gap-2">
-        <p className="text-sm text-muted-foreground">{hospital.address}</p>
+        <p className="text-muted-foreground text-sm">{hospital.address}</p>
         <p className="text-sm font-medium">{hospital.phone}</p>
       </div>
       <div className="flex gap-2 pt-3">

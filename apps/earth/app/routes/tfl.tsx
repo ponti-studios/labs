@@ -23,7 +23,7 @@ export default function Tfl() {
     <div className="space-y-5">
       <div>
         <p className="ui-eyebrow mb-1">TfL Traffic Network</p>
-        <p className="text-sm text-muted-foreground leading-relaxed">
+        <p className="text-muted-foreground text-sm leading-relaxed">
           Click a camera on the map, or search by location.
         </p>
       </div>
@@ -33,33 +33,33 @@ export default function Tfl() {
         placeholder="Search cameras…"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="w-full bg-card border border-border rounded-md px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-ring transition-colors"
+        className="bg-card border-border text-foreground placeholder:text-muted-foreground focus:border-ring w-full rounded-md border px-3 py-2 text-sm transition-colors focus:outline-none"
       />
 
       {query.trim() ? (
         <div>
           {results.length === 0 ? (
-            <p className="text-xs text-muted-foreground py-2">No cameras match "{query}"</p>
+            <p className="text-muted-foreground py-2 text-xs">No cameras match "{query}"</p>
           ) : (
             <ul className="space-y-1">
               {results.map((camera) => (
                 <li key={camera.id}>
                   <Link
                     to={`/tfl/${camera.id}`}
-                    className="bg-card border border-border rounded-md flex items-center gap-3 p-3 hover:border-ring transition-colors"
+                    className="bg-card border-border hover:border-ring flex items-center gap-3 rounded-md border p-3 transition-colors"
                   >
                     <span
-                      className={`size-2 rounded-full flex-shrink-0 ${camera.available === "true" ? "bg-green-500" : "bg-muted-foreground"}`}
+                      className={`size-2 flex-shrink-0 rounded-full ${camera.available === "true" ? "bg-green-500" : "bg-muted-foreground"}`}
                     />
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium text-foreground text-sm truncate">
+                    <div className="min-w-0 flex-1">
+                      <div className="text-foreground truncate text-sm font-medium">
                         {camera.commonName}
                       </div>
-                      <div className="font-mono text-[10px] text-muted-foreground">
+                      <div className="text-muted-foreground font-mono text-[10px]">
                         {camera.lat.toFixed(4)}, {camera.lng.toFixed(4)}
                       </div>
                     </div>
-                    <span className="font-mono text-[9px] tracking-wider uppercase flex-shrink-0">
+                    <span className="flex-shrink-0 font-mono text-[9px] uppercase tracking-wider">
                       {camera.available === "true" ? (
                         <span className="text-green-500">LIVE</span>
                       ) : (
@@ -73,7 +73,7 @@ export default function Tfl() {
                 cameras.filter((c) =>
                   c.commonName.toLowerCase().includes(query.trim().toLowerCase()),
                 ).length > MAX_RESULTS && (
-                  <p className="text-[10px] text-muted-foreground text-center pt-1">
+                  <p className="text-muted-foreground pt-1 text-center text-[10px]">
                     Showing {MAX_RESULTS} of{" "}
                     {
                       cameras.filter((c) =>
@@ -88,15 +88,15 @@ export default function Tfl() {
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-2">
-          <div className="bg-card border border-border rounded-md p-3">
+          <div className="bg-card border-border rounded-md border p-3">
             <p className="ui-data-label">Cameras</p>
-            <p className="text-sm font-semibold tabular-nums mt-1">
+            <p className="mt-1 text-sm font-semibold tabular-nums">
               {isLoading ? "—" : (cameras?.length ?? 0)}
             </p>
           </div>
-          <div className="bg-card border border-border rounded-md p-3">
+          <div className="bg-card border-border rounded-md border p-3">
             <p className="ui-data-label">Online</p>
-            <p className="text-sm font-semibold tabular-nums text-green-600 mt-1">
+            <p className="mt-1 text-sm font-semibold tabular-nums text-green-600">
               {isLoading ? "—" : online}
             </p>
           </div>

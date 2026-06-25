@@ -22,7 +22,7 @@ export default function Appointments() {
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold">Upcoming</h2>
         {upcoming.length === 0 ? (
-          <p className="rounded-md border py-4 text-center text-sm text-muted-foreground">
+          <p className="text-muted-foreground rounded-md border py-4 text-center text-sm">
             No upcoming appointments.{" "}
             <Link to="/appointments/new" className="underline">
               Schedule one.
@@ -35,16 +35,16 @@ export default function Appointments() {
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex flex-col gap-2">
                     <p className="font-medium">{appt.doctorName}</p>
-                    <p className="text-sm text-muted-foreground">{appt.specialty}</p>
+                    <p className="text-muted-foreground text-sm">{appt.specialty}</p>
                     <p className="text-sm">
                       {appt.date} at {appt.time}
                     </p>
-                    <p className="text-sm text-muted-foreground">{appt.location}</p>
+                    <p className="text-muted-foreground text-sm">{appt.location}</p>
                   </div>
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="shrink-0 text-muted-foreground"
+                    className="text-muted-foreground shrink-0"
                     onClick={() => cancelAppointment.mutate(appt.id)}
                   >
                     Cancel
@@ -64,11 +64,11 @@ export default function Appointments() {
               <div key={appt.id} className="rounded-lg border p-4 opacity-60">
                 <div className="flex flex-col gap-2">
                   <p className="font-medium">{appt.doctorName}</p>
-                  <p className="text-sm text-muted-foreground">{appt.specialty}</p>
+                  <p className="text-muted-foreground text-sm">{appt.specialty}</p>
                   <p className="text-sm">
                     {appt.date} at {appt.time}
                   </p>
-                  <span className="inline-flex w-fit rounded-full bg-muted px-2 py-1 text-xs capitalize">
+                  <span className="bg-muted inline-flex w-fit rounded-full px-2 py-1 text-xs capitalize">
                     {appt.status}
                   </span>
                 </div>

@@ -29,19 +29,19 @@ export function InteractiveCard({
   };
 
   return (
-    <article className="p-6 bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+    <article className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
       <h3 className="mb-2">{title}</h3>
 
       <div
-        className={`text-gray-600 mb-4 overflow-hidden transition-all duration-300 ${isExpanded ? "max-h-full" : "max-h-20"}`}
+        className={`mb-4 overflow-hidden text-gray-600 transition-all duration-300 ${isExpanded ? "max-h-full" : "max-h-20"}`}
       >
         {description}
       </div>
 
-      <div className="flex items-center justify-between pt-4 border-t">
+      <div className="flex items-center justify-between border-t pt-4">
         <button
           onClick={handleLike}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
+          className="flex items-center gap-2 rounded-full bg-red-50 px-3 py-1.5 text-red-600 transition-colors hover:bg-red-100"
           aria-label={`Like (${likes} likes)`}
         >
           <svg
@@ -61,7 +61,7 @@ export function InteractiveCard({
 
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+          className="text-sm font-medium text-blue-600 hover:text-blue-800"
         >
           {isExpanded ? "Show Less" : "Read More"}
         </button>

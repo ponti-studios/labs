@@ -98,18 +98,18 @@ export default function CaseDetailPage() {
   const showResults = quorumMet || isOwner;
 
   return (
-    <div className="max-w-2xl mx-auto py-10 px-4">
+    <div className="mx-auto max-w-2xl px-4 py-10">
       {/* Case header */}
       <div className="mb-8 flex flex-col gap-1">
         {caseRecord.label && (
-          <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">
+          <p className="text-muted-foreground font-mono text-[10px] tracking-widest uppercase">
             {caseRecord.label}
           </p>
         )}
         <div className="flex items-center justify-between gap-4">
-          <p className="text-[10px] text-muted-foreground">{timeAgo(caseRecord.createdAt)}</p>
+          <p className="text-muted-foreground text-[10px]">{timeAgo(caseRecord.createdAt)}</p>
           <span
-            className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${
+            className={`rounded-full border px-2 py-0.5 text-[10px] font-medium ${
               caseRecord.status === "closed"
                 ? "border-border text-muted-foreground"
                 : quorumMet
@@ -128,15 +128,15 @@ export default function CaseDetailPage() {
 
       {/* The situation (neutralized) */}
       <div className="mb-8 flex flex-col gap-3">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+        <p className="text-muted-foreground text-[10px] font-semibold tracking-widest uppercase">
           The situation
         </p>
         <p className="text-sm leading-relaxed">{caseRecord.neutralSituation}</p>
       </div>
 
       {/* The question */}
-      <div className="mb-8 rounded-xl border border-border bg-muted/30 px-5 py-4">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-2">
+      <div className="border-border bg-muted/30 mb-8 rounded-xl border px-5 py-4">
+        <p className="text-muted-foreground mb-2 text-[10px] font-semibold tracking-widest uppercase">
           The question
         </p>
         <p className="text-sm font-medium">{caseRecord.question}</p>
@@ -145,10 +145,10 @@ export default function CaseDetailPage() {
       {/* Results — only visible after quorum, or to owner */}
       {showResults && total > 0 && (
         <div className="mb-8 flex flex-col gap-3">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+          <p className="text-muted-foreground text-[10px] font-semibold tracking-widest uppercase">
             The jury's verdict
           </p>
-          <div className="flex rounded-full overflow-hidden h-2">
+          <div className="flex h-2 overflow-hidden rounded-full">
             <div className="bg-green-500 transition-all" style={{ width: `${agreePercent}%` }} />
             <div
               className="bg-red-400 transition-all"
@@ -156,10 +156,10 @@ export default function CaseDetailPage() {
             />
           </div>
           <div className="flex justify-between text-xs">
-            <span className="text-green-600 font-medium">
+            <span className="font-medium text-green-600">
               {agreePercent}% agree · {agree}
             </span>
-            <span className="text-red-500 font-medium">{disagree} disagree</span>
+            <span className="font-medium text-red-500">{disagree} disagree</span>
           </div>
         </div>
       )}
@@ -167,22 +167,22 @@ export default function CaseDetailPage() {
       {/* Takes */}
       {showResults && localVerdicts.length > 0 && (
         <div className="mb-8 flex flex-col gap-4">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+          <p className="text-muted-foreground text-[10px] font-semibold tracking-widest uppercase">
             Takes ({total})
           </p>
-          <div className="flex flex-col divide-y divide-border border border-border rounded-xl overflow-hidden">
+          <div className="divide-border border-border flex flex-col divide-y overflow-hidden rounded-xl border">
             {localVerdicts.map((v) => (
-              <div key={v.id} className="flex gap-3 items-start px-4 py-3">
+              <div key={v.id} className="flex items-start gap-3 px-4 py-3">
                 <span
-                  className={`text-[10px] font-bold rounded-full px-2 py-0.5 whitespace-nowrap flex-shrink-0 mt-0.5 ${
+                  className={`mt-0.5 flex-shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold whitespace-nowrap ${
                     v.value === "agree" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-600"
                   }`}
                 >
                   {v.value === "agree" ? "Agree" : "Disagree"}
                 </span>
-                <div className="flex flex-col gap-0.5 min-w-0">
+                <div className="flex min-w-0 flex-col gap-0.5">
                   <p className="text-xs leading-relaxed">"{v.comment}"</p>
-                  <p className="text-[10px] text-muted-foreground">{timeAgo(v.createdAt)}</p>
+                  <p className="text-muted-foreground text-[10px]">{timeAgo(v.createdAt)}</p>
                 </div>
               </div>
             ))}
@@ -192,8 +192,8 @@ export default function CaseDetailPage() {
 
       {/* Deliberating state — jury hasn't reached quorum, show how many left */}
       {!showResults && !isOwner && !hasVoted && (
-        <div className="mb-8 rounded-xl border border-border bg-muted/20 px-5 py-4">
-          <p className="text-xs text-muted-foreground text-center">
+        <div className="border-border bg-muted/20 mb-8 rounded-xl border px-5 py-4">
+          <p className="text-muted-foreground text-center text-xs">
             Results reveal after {remaining} more vote{remaining !== 1 ? "s" : ""}. Yours is
             independent — no one else's take influences your read.
           </p>
@@ -202,11 +202,11 @@ export default function CaseDetailPage() {
 
       {/* Owner actions */}
       {isOwner && (
-        <div className="flex flex-col gap-3 mb-8">
+        <div className="mb-8 flex flex-col gap-3">
           <button
             type="button"
             onClick={handleShare}
-            className="w-full bg-foreground text-background rounded-full py-3 text-sm font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+            className="bg-foreground text-background flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-medium transition-opacity hover:opacity-90"
           >
             <svg
               width="13"
@@ -221,7 +221,7 @@ export default function CaseDetailPage() {
             {copied ? "Link copied!" : "Share with your jury"}
           </button>
           {!quorumMet && (
-            <p className="text-[10px] text-center text-muted-foreground">
+            <p className="text-muted-foreground text-center text-[10px]">
               Send this link to {remaining} friend{remaining !== 1 ? "s" : ""}. They vote blindly —
               results reveal after quorum.
             </p>
@@ -231,8 +231,8 @@ export default function CaseDetailPage() {
 
       {/* Jury: vote form */}
       {!isOwner && !hasVoted && caseRecord.status === "open" && (
-        <div className="flex flex-col gap-4 border-t border-border pt-8">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+        <div className="border-border flex flex-col gap-4 border-t pt-8">
+          <p className="text-muted-foreground text-[10px] font-semibold tracking-widest uppercase">
             Your take
           </p>
 
@@ -244,9 +244,9 @@ export default function CaseDetailPage() {
               onChange={(e) => setComment(e.target.value)}
               placeholder="Write your honest take first — before voting."
               rows={3}
-              className="w-full text-sm border border-input rounded-xl px-4 py-3 bg-background resize-none focus:outline-none focus:ring-1 focus:ring-ring placeholder:text-muted-foreground leading-relaxed"
+              className="border-input bg-background focus:ring-ring placeholder:text-muted-foreground w-full resize-none rounded-xl border px-4 py-3 text-sm leading-relaxed focus:ring-1 focus:outline-none"
             />
-            <p className="text-[10px] text-muted-foreground">
+            <p className="text-muted-foreground text-[10px]">
               You'll see the current vote breakdown after you weigh in.
             </p>
           </div>
@@ -257,7 +257,7 @@ export default function CaseDetailPage() {
               <button
                 type="button"
                 onClick={() => setSelectedVote("agree")}
-                className={`flex-1 py-2.5 rounded-full text-xs font-bold transition-all border ${
+                className={`flex-1 rounded-full border py-2.5 text-xs font-bold transition-all ${
                   selectedVote === "agree"
                     ? "border-2 border-green-500 bg-green-50 text-green-700"
                     : selectedVote === "disagree"
@@ -270,7 +270,7 @@ export default function CaseDetailPage() {
               <button
                 type="button"
                 onClick={() => setSelectedVote("disagree")}
-                className={`flex-1 py-2.5 rounded-full text-xs font-bold transition-all border ${
+                className={`flex-1 rounded-full border py-2.5 text-xs font-bold transition-all ${
                   selectedVote === "disagree"
                     ? "border-2 border-red-500 bg-red-50 text-red-600"
                     : selectedVote === "agree"
@@ -288,7 +288,7 @@ export default function CaseDetailPage() {
               type="button"
               onClick={handleSubmit}
               disabled={fetcher.state === "submitting" || !comment.trim()}
-              className={`w-full py-3 rounded-full text-xs font-semibold text-white transition-opacity disabled:opacity-60 ${
+              className={`w-full rounded-full py-3 text-xs font-semibold text-white transition-opacity disabled:opacity-60 ${
                 selectedVote === "agree" ? "bg-green-600" : "bg-red-600"
               }`}
             >
@@ -299,14 +299,14 @@ export default function CaseDetailPage() {
       )}
 
       {!isOwner && hasVoted && (
-        <div className="border-t border-border pt-6">
+        <div className="border-border border-t pt-6">
           {!quorumMet ? (
-            <p className="text-xs text-muted-foreground text-center">
+            <p className="text-muted-foreground text-center text-xs">
               Your take is in. Results reveal after {remaining} more vote
               {remaining !== 1 ? "s" : ""}.
             </p>
           ) : (
-            <p className="text-xs text-muted-foreground text-center">You've already weighed in.</p>
+            <p className="text-muted-foreground text-center text-xs">You've already weighed in.</p>
           )}
         </div>
       )}

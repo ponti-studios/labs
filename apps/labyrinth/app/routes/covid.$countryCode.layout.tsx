@@ -29,11 +29,11 @@ export default function CovidCountryLayout() {
   return (
     <>
       <header>
-        <div className="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between gap-6">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4">
           <div className="flex items-center gap-3">
             <span className="ui-data-label">COVID-19</span>
             <span className="text-border">|</span>
-            <span className="text-xs text-muted-foreground">Analytics</span>
+            <span className="text-muted-foreground text-xs">Analytics</span>
           </div>
 
           <CountryPicker
@@ -43,17 +43,17 @@ export default function CovidCountryLayout() {
           />
         </div>
 
-        <nav className="mx-auto max-w-6xl px-6 flex gap-1 overflow-x-auto">
+        <nav className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-6">
           {navigationItems.map((item) => {
             const isActive = location.pathname === item.href;
             return (
               <Link
                 key={item.href}
                 to={item.href}
-                className={`px-3 py-2.5 text-xs font-medium whitespace-nowrap border-b-2 transition-colors duration-150 ${
+                className={`border-b-2 px-3 py-2.5 text-xs font-medium whitespace-nowrap transition-colors duration-150 ${
                   isActive
                     ? "border-foreground text-foreground"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
+                    : "text-muted-foreground hover:text-foreground border-transparent"
                 }`}
               >
                 {item.title}

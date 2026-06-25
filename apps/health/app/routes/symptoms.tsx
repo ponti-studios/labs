@@ -15,7 +15,7 @@ export default function Symptoms() {
     <div className="container mx-auto flex min-h-screen max-w-md flex-col justify-center px-4 py-8">
       <div className="flex flex-col items-center gap-8 px-4">
         <div className="flex flex-col items-center gap-2">
-          <h1 className="text-2xl font-bold tracking-tight text-center md:text-4xl">
+          <h1 className="text-center text-2xl font-bold tracking-tight md:text-4xl">
             symptom guidance
           </h1>
         </div>
@@ -62,7 +62,7 @@ export default function Symptoms() {
           ) : null}
 
           {error && (
-            <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
+            <div className="bg-destructive/15 text-destructive rounded-md p-3 text-sm">
               {error.message}
             </div>
           )}
@@ -70,15 +70,15 @@ export default function Symptoms() {
 
         <div className="flex max-w-full flex-col items-center gap-8">
           {data && (
-            <div className="transition-opacity duration-200 ease-in-out opacity-100">
+            <div className="opacity-100 transition-opacity duration-200 ease-in-out">
               <SymptomCard symptom={data} />
             </div>
           )}
 
           {data?.alternatives && data.alternatives.length > 0 ? (
-            <div className="flex w-full max-w-4xl flex-col gap-4 transition-opacity duration-200 ease-in-out opacity-100">
+            <div className="flex w-full max-w-4xl flex-col gap-4 opacity-100 transition-opacity duration-200 ease-in-out">
               <h2 className="text-md font-semibold text-gray-400">Alternative Matches</h2>
-              <div className="carousel flex gap-4 overflow-x-auto rounded-box">
+              <div className="carousel rounded-box flex gap-4 overflow-x-auto">
                 {data.alternatives.map((alt, index) => (
                   <SymptomCard
                     className="carousel-item"

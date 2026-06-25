@@ -85,7 +85,7 @@ export default function Home() {
   return (
     <section className="relative mx-auto w-full">
       <ParticleBackground />
-      <div className="w-full bg-background">
+      <div className="bg-background w-full">
         <div className="grid gap-8 sm:grid-cols-2">
           {categories.map((cat) => (
             <div key={cat.name} className="space-y-4">
@@ -96,7 +96,7 @@ export default function Home() {
                     <a
                       href={entry.path}
                       title={entry.source ? `Source: ${entry.source}` : undefined}
-                      className="rounded-md transition-colors duration-100 hover:bg-muted hover:text-foreground  focus-visible:text-foreground focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-ring"
+                      className="hover:bg-muted hover:text-foreground focus-visible:text-foreground focus-visible:outline-ring rounded-md  transition-colors duration-100 focus-visible:outline-1 focus-visible:outline-offset-4"
                     >
                       {entry.label}
                     </a>

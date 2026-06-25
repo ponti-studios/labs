@@ -42,7 +42,7 @@ export default function SymptomDetail() {
 
   return (
     <div className="container mx-auto flex max-w-md flex-col gap-6 px-4 py-8">
-      <Link to="/" className="inline-flex text-sm text-muted-foreground hover:text-foreground">
+      <Link to="/" className="text-muted-foreground hover:text-foreground inline-flex text-sm">
         ← Dashboard
       </Link>
 
@@ -53,11 +53,11 @@ export default function SymptomDetail() {
 
       <div className="grid grid-cols-2 gap-4">
         <div className="rounded-lg border p-4">
-          <p className="text-sm text-muted-foreground">Severity</p>
+          <p className="text-muted-foreground text-sm">Severity</p>
           <p className="text-xl font-bold">{symptom.severity_score}/10</p>
         </div>
         <div className="rounded-lg border p-4">
-          <p className="text-sm text-muted-foreground">Started</p>
+          <p className="text-muted-foreground text-sm">Started</p>
           <p className="text-xl font-bold">
             {formatDistanceToNow(new Date(symptom.createdAt))} ago
           </p>
@@ -96,7 +96,7 @@ export default function SymptomDetail() {
         </div>
       )}
 
-      <div className="flex flex-col gap-1 text-sm text-muted-foreground">
+      <div className="text-muted-foreground flex flex-col gap-1 text-sm">
         <p>Last updated: {format(new Date(symptom.updatedAt), "PPp")}</p>
         {symptom.painLevel && <p>Last pain level: {symptom.painLevel}/10</p>}
       </div>

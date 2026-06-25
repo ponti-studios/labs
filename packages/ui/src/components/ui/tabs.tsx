@@ -12,7 +12,7 @@ function TabsList({ className, ...props }: React.ComponentProps<typeof TabsPrimi
     <TabsPrimitive.List
       data-slot="tabs-list"
       className={cn(
-        "inline-flex h-9 items-center justify-center rounded-lg border border-border bg-secondary/40 p-1 text-secondary-foreground",
+        "border-border bg-secondary/40 text-secondary-foreground inline-flex h-9 items-center justify-center rounded-lg border p-1",
         className,
       )}
       {...props}
@@ -25,7 +25,7 @@ function TabsTrigger({ className, ...props }: React.ComponentProps<typeof TabsPr
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
       className={cn(
-        "inline-flex min-h-6 items-center justify-center whitespace-nowrap rounded-md border border-transparent px-3 py-1 text-sm font-medium text-secondary-foreground transition-all focus-visible:outline-none focus-visible:border-foreground focus-visible:bg-accent/40 focus-visible:text-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=active]:border-border data-[state=active]:bg-background data-[state=active]:text-foreground",
+        "text-secondary-foreground focus-visible:border-foreground focus-visible:bg-accent/40 focus-visible:text-foreground data-[state=active]:border-border data-[state=active]:bg-background data-[state=active]:text-foreground inline-flex min-h-6 items-center justify-center rounded-md border border-transparent px-3 py-1 text-sm font-medium whitespace-nowrap transition-all focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
         className,
       )}
       {...props}
@@ -38,7 +38,7 @@ function TabsContent({ className, ...props }: React.ComponentProps<typeof TabsPr
     <TabsPrimitive.Content
       data-slot="tabs-content"
       className={cn(
-        "mt-2 rounded-md focus-visible:outline-none focus-visible:border focus-visible:border-border focus-visible:bg-accent/10",
+        "focus-visible:border-border focus-visible:bg-accent/10 mt-2 rounded-md focus-visible:border focus-visible:outline-none",
         className,
       )}
       {...props}

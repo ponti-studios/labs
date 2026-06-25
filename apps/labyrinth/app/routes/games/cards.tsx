@@ -78,7 +78,7 @@ function CardFace({
   return (
     <div
       className={cn(
-        "w-15 border border-border p-1 rounded-md bg-background flex flex-col items-center justify-center",
+        "border-border bg-background flex w-15 flex-col items-center justify-center rounded-md border p-1",
         {
           "border-green-500": isWinner,
           "text-red-500": card.suit === "♥" || card.suit === "♦",
@@ -95,10 +95,10 @@ function CardFace({
 function CardBack({ index }: { index: number }) {
   return (
     <div
-      className="w-15 border border-border p-1 rounded-md bg-slate-700 flex flex-col items-center justify-center select-none"
+      className="border-border flex w-15 flex-col items-center justify-center rounded-md border bg-slate-700 p-1 select-none"
       style={{ animation: "fade-slide-in 300ms ease-out both", animationDelay: `${index * 80}ms` }}
     >
-      <span className="text-slate-400 text-xl">?</span>
+      <span className="text-xl text-slate-400">?</span>
     </div>
   );
 }
@@ -137,7 +137,7 @@ export default function Cards() {
   const houseWins = outcome === "house";
 
   return (
-    <div className="flex flex-col gap-6 md:w-3xl mx-auto">
+    <div className="mx-auto flex flex-col gap-6 md:w-3xl">
       <header>
         <h2 className="text-xl font-semibold">Luck of the Draw</h2>
         <p className="text-muted-foreground">Beat the house. Challenge or fold.</p>
@@ -151,7 +151,7 @@ export default function Cards() {
 
       {phase !== "idle" && (
         <div className="flex flex-col gap-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Card
               className={cn({
                 "border-green-300 bg-green-50": playerWins,
@@ -159,12 +159,12 @@ export default function Cards() {
               })}
             >
               <CardHeader>
-                <CardTitle className="text-sm flex justify-between">
+                <CardTitle className="flex justify-between text-sm">
                   <span>Your Hand</span>
                   <span>Score: {playerScore}</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="flex gap-2 justify-center">
+              <CardContent className="flex justify-center gap-2">
                 {playerHand.map((card, i) => (
                   <CardFace key={card.id} card={card} isWinner={playerWins} index={i} />
                 ))}
@@ -178,12 +178,12 @@ export default function Cards() {
               })}
             >
               <CardHeader>
-                <CardTitle className="text-sm flex justify-between">
+                <CardTitle className="flex justify-between text-sm">
                   <span>House</span>
                   {phase === "revealed" && <span>Score: {houseScore}</span>}
                 </CardTitle>
               </CardHeader>
-              <CardContent className="flex gap-2 justify-center">
+              <CardContent className="flex justify-center gap-2">
                 {phase === "dealt"
                   ? Array.from({ length: 5 }, (_, i) => <CardBack key={i} index={i} />)
                   : houseHand.map((card, i) => (
@@ -194,7 +194,7 @@ export default function Cards() {
           </div>
 
           {phase === "dealt" && (
-            <div className="flex gap-4 justify-end">
+            <div className="flex justify-end gap-4">
               <Button onClick={challenge}>Challenge</Button>
               <Button variant="outline" onClick={fold}>
                 Fold
@@ -203,7 +203,7 @@ export default function Cards() {
           )}
 
           {phase === "revealed" && (
-            <div className="flex gap-4 justify-end items-center">
+            <div className="flex items-center justify-end gap-4">
               {outcome && (
                 <p
                   className={cn("text-lg font-semibold", {

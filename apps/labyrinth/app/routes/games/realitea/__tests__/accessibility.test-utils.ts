@@ -30,10 +30,7 @@ export function expectAccessibilityMessageContent(
  * Verify that conditional elements render with their content expressions.
  * Catches bugs like {condition ? <p></p> : null} without {variableName} inside.
  */
-export function expectConditionalElementHasContent(
-  role: string,
-  minLength = 1,
-) {
+export function expectConditionalElementHasContent(role: string, minLength = 1) {
   const element = screen.getByRole(role);
   const content = element.textContent?.trim() || "";
 
@@ -45,10 +42,7 @@ export function expectConditionalElementHasContent(
 /**
  * Verify that error/status messages clear after animation timeout.
  */
-export async function expectMessageClearsAfterAnimation(
-  role: "status" | "alert",
-  timeoutMs = 400,
-) {
+export async function expectMessageClearsAfterAnimation(role: "status" | "alert", timeoutMs = 400) {
   const element = screen.getByRole(role);
   const initialContent = element.textContent?.trim();
 

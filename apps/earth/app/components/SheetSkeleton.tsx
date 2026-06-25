@@ -1,5 +1,5 @@
 function Bone({ className }: { className: string }) {
-  return <div className={`bg-border rounded animate-pulse ${className}`} />;
+  return <div className={`bg-border animate-pulse rounded ${className}`} />;
 }
 
 export default function SheetSkeleton() {
@@ -28,7 +28,7 @@ export default function SheetSkeleton() {
       </div>
 
       {/* Image */}
-      <Bone className="w-full aspect-video rounded-md" />
+      <Bone className="aspect-video w-full rounded-md" />
     </div>
   );
 }

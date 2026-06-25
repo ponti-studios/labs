@@ -21,7 +21,7 @@ const getLineStyles = (type: TerminalLineType["type"]) => {
 
 export const TerminalLine = memo(({ line }: TerminalLineProps) => (
   <div className={`font-mono text-sm leading-relaxed ${getLineStyles(line.type)}`}>
-    <pre className="whitespace-pre-wrap font-inherit">{line.content}</pre>
+    <pre className="font-inherit whitespace-pre-wrap">{line.content}</pre>
   </div>
 ));
 

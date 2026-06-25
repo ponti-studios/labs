@@ -141,7 +141,7 @@ export default function CloudPricingComparison(): JSX.Element {
       <Card>
         <CardHeader>
           <CardTitle>Workload shape</CardTitle>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             These two values define how your traffic translates into CPU load.
           </p>
         </CardHeader>
@@ -155,7 +155,7 @@ export default function CloudPricingComparison(): JSX.Element {
               value={computeMs}
               onChange={(e: ChangeEvent<HTMLInputElement>) => setComputeMs(e.target.value)}
             />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               Average CPU time to handle one request. Typical API: 50–500ms.
             </p>
           </div>
@@ -169,7 +169,7 @@ export default function CloudPricingComparison(): JSX.Element {
               value={peakMultiplier}
               onChange={(e: ChangeEvent<HTMLInputElement>) => setPeakMultiplier(e.target.value)}
             />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               How many times busier your peak is vs. your average. Used to check if the instance can
               handle spikes without being overloaded.
             </p>
@@ -180,7 +180,7 @@ export default function CloudPricingComparison(): JSX.Element {
       <Card>
         <CardHeader>
           <CardTitle>Cost comparison by traffic volume</CardTitle>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Annual cost across request volumes (req/day). Grey = instance can't handle peak load at
             this volume.
           </p>
@@ -188,14 +188,14 @@ export default function CloudPricingComparison(): JSX.Element {
         <CardContent className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border">
-                <th className="py-2 pr-4 text-left font-medium text-muted-foreground whitespace-nowrap">
+              <tr className="border-border border-b">
+                <th className="text-muted-foreground py-2 pr-4 text-left font-medium whitespace-nowrap">
                   Instance
                 </th>
                 {REQUEST_VOLUMES.map((vol) => (
                   <th
                     key={vol}
-                    className="px-3 py-2 text-center font-medium text-muted-foreground whitespace-nowrap"
+                    className="text-muted-foreground px-3 py-2 text-center font-medium whitespace-nowrap"
                   >
                     {fmt(vol)}/day
                   </th>
@@ -204,22 +204,22 @@ export default function CloudPricingComparison(): JSX.Element {
             </thead>
             <tbody>
               {matrix.map(({ preset, cells }) => (
-                <tr key={preset.label} className="border-b border-border last:border-0">
+                <tr key={preset.label} className="border-border border-b last:border-0">
                   <td className="py-3 pr-4 whitespace-nowrap">
                     <p className="font-mono font-medium">{preset.label}</p>
-                    <p className="text-xs text-muted-foreground">{preset.description}</p>
+                    <p className="text-muted-foreground text-xs">{preset.description}</p>
                   </td>
                   {cells.map((cell, i) => (
                     <td key={i} className="px-3 py-3 text-center">
                       {cell.recommendation === "overloaded" ? (
                         <span className="inline-flex flex-col items-center gap-0.5">
-                          <span className="text-xs text-muted-foreground">—</span>
-                          <span className="text-[10px] text-muted-foreground">too small</span>
+                          <span className="text-muted-foreground text-xs">—</span>
+                          <span className="text-muted-foreground text-[10px]">too small</span>
                         </span>
                       ) : (
                         <span
                           className={`inline-flex flex-col items-center gap-0.5 rounded-md px-2 py-1 ${
-                            cell.isCrossover ? "ring-2 ring-foreground" : ""
+                            cell.isCrossover ? "ring-foreground ring-2" : ""
                           } ${
                             cell.recommendation === "reserved"
                               ? "bg-green-50 text-green-700"
@@ -241,17 +241,17 @@ export default function CloudPricingComparison(): JSX.Element {
             </tbody>
           </table>
 
-          <div className="mt-4 flex items-center gap-6 text-xs text-muted-foreground">
+          <div className="text-muted-foreground mt-4 flex items-center gap-6 text-xs">
             <span className="flex items-center gap-1.5">
-              <span className="inline-block w-3 h-3 rounded bg-green-100" />
+              <span className="inline-block h-3 w-3 rounded bg-green-100" />
               Reserved is cheaper
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="inline-block w-3 h-3 rounded bg-blue-100" />
+              <span className="inline-block h-3 w-3 rounded bg-blue-100" />
               On-demand is cheaper
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="inline-block w-3 h-3 rounded border-2 border-foreground" />
+              <span className="border-foreground inline-block h-3 w-3 rounded border-2" />
               Crossover point
             </span>
           </div>

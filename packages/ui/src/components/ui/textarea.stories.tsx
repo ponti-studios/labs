@@ -39,7 +39,7 @@ export const Controlled: Story = {
     const remaining = limit - value.length;
 
     return (
-      <div className="flex flex-col gap-2 w-full max-w-sm">
+      <div className="flex w-full max-w-sm flex-col gap-2">
         <Textarea
           value={value}
           onChange={(e) => setValue(e.target.value.slice(0, limit))}
