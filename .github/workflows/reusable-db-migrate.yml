@@ -29,13 +29,6 @@ jobs:
       - name: install-dependencies
         run: pnpm install --frozen-lockfile --filter @pontistudios/db...
 
-      - name: ensure-drizzle-tracking-schema
-        run: |
-          psql "$DATABASE_URL" -c "CREATE SCHEMA IF NOT EXISTS drizzle;"
-          psql "$DATABASE_URL" -c "DO \$\$ BEGIN IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = '__drizzle_migrations') THEN DROP TABLE IF EXISTS drizzle.__drizzle_migrations; ALTER TABLE public.__drizzle_migrations SET SCHEMA drizzle; END IF; END; \$\$;"
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-
       - name: run-migrations
         run: pnpm --filter @pontistudios/db db:migrate
         env:
@@ -45,10 +38,8 @@ jobs:
       - name: debug-migration-state
         if: failure()
         run: |
-          echo "=== drizzle.__drizzle_migrations ==="
-          psql "$DATABASE_URL" -c "SELECT hash, created_at FROM drizzle.__drizzle_migrations ORDER BY created_at;" 2>&1 || echo "(table does not exist in drizzle schema)"
-          echo "=== public.__drizzle_migrations ==="
-          psql "$DATABASE_URL" -c "SELECT hash, created_at FROM public.__drizzle_migrations ORDER BY created_at;" 2>&1 || echo "(table does not exist in public schema)"
+          echo "=== labs.__drizzle_migrations ==="
+          psql "$DATABASE_URL" -c "SELECT hash, created_at FROM labs.__drizzle_migrations ORDER BY created_at;" 2>&1 || echo "(table does not exist)"
           echo "=== All tables in labs schema ==="
           psql "$DATABASE_URL" -c "\dt labs.*" 2>&1
         env:
