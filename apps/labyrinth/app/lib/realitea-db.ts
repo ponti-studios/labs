@@ -181,6 +181,9 @@ export async function countScheduledInventory(fromDateKey: string, days: number)
 
 /**
  * Delete all scheduled puzzles whose `dateUtc` is >= `fromDateKey`.
+ * Uses a single `DELETE ... RETURNING` query to avoid a separate read-
+ * then-delete round trip.
+ *
  * Returns the number of deleted records.
  *
  * Used when regenerating puzzles so old scheduled entries don't shadow

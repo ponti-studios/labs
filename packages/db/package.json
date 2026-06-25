@@ -15,7 +15,6 @@
     "format": "oxfmt src --write",
     "load:covid": "tsx src/bin/load-covid.ts",
     "load:tfl": "tsx src/bin/load-tfl.ts",
-    "db:create-schema": "tsx src/bin/create-schema.ts",
     "db:migrate": "drizzle-kit migrate",
     "db:generate": "drizzle-kit generate",
     "db:check": "drizzle-kit check",
