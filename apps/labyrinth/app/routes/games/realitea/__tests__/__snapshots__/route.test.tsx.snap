@@ -1,0 +1,12 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`RealiTeaRoute > error message container structure is stable 1`] = `
+<p
+  aria-atomic="true"
+  aria-live="polite"
+  class="min-h-[1em] text-center text-xs font-medium text-red-600"
+  role="status"
+>
+  Not enough letters
+</p>
+`;
