@@ -57,7 +57,6 @@ export default function App() {
       <AppNavigation
         brand={<img src="/logo.labyrinth.png" alt="Realitea Logo" className="size-5 w-auto" />}
         brandHref="/"
-        links={[{ href: "/experiments", label: "Experiments" }]}
         activeHref={location.pathname}
         renderLink={({ href, className, children }) => (
           <Link key={href} to={href} className={className}>

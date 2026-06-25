@@ -21,7 +21,7 @@ export interface AppNavigationRenderLinkArgs {
 export interface AppNavigationProps {
   brand?: React.ReactNode;
   brandHref?: string;
-  links: AppNavigationLink[];
+  links?: AppNavigationLink[];
   cta?: AppNavigationCta;
   /** Current pathname used to highlight the active link. */
   activeHref?: string;
@@ -41,16 +41,16 @@ export function AppNavigation({
 
   return (
     <div className="bg-background/80 fixed inset-0 z-50 flex max-h-fit justify-center px-2 pt-2 backdrop-blur-sm backdrop-saturate-150 md:px-0">
-      <nav className="bg-card border-border flex w-full max-w-7xl items-center justify-between rounded border px-2 py-2 shadow-sm">
+      <nav className="flex w-full max-w-7xl items-center justify-between py-2">
         {brand &&
           renderLink({
             href: brandHref,
-            className: "font-semibold text-sm tracking-tight px-2 text-foreground",
+            className: "font-semibold text-sm tracking-tight text-foreground",
             children: brand,
           })}
 
         <div className="flex items-center gap-1">
-          {links.map((link) =>
+          {links?.map((link) =>
             renderLink({
               href: link.href,
               className: `px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide uppercase transition-colors ${
