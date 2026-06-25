@@ -1,11 +1,11 @@
 import type { LoaderFunctionArgs } from "react-router";
 
-import { and, count, db, desc, eq, inArray, rhobhDailyPuzzles } from "@pontistudios/db";
+import { count, db, desc, inArray, rhobhDailyPuzzles } from "@pontistudios/db";
 import pino from "pino";
 
 import { requireAdminAuth } from "~/lib/server/admin-auth";
-import { addDaysToDateKey, getPuzzleWindow } from "~/lib/realitea-date";
-import { getPublishedPuzzle } from "~/lib/realitea-db";
+import { addDaysToDateKey, getDateKey } from "~/lib/realitea-date";
+import { getPuzzleForDate } from "~/lib/realitea-db";
 
 const logger = pino(
   process.env.NODE_ENV === "development" ? { transport: { target: "pino-pretty" } } : {},
@@ -21,9 +21,7 @@ async function getInventoryDepth(fromDateKey: string, days: number): Promise<num
   const rows = await db
     .select({ value: count() })
     .from(rhobhDailyPuzzles)
-    .where(
-      and(eq(rhobhDailyPuzzles.status, "scheduled"), inArray(rhobhDailyPuzzles.dateUtc, dateKeys)),
-    );
+    .where(inArray(rhobhDailyPuzzles.dateUtc, dateKeys));
   return rows[0]?.value ?? 0;
 }
 
@@ -32,58 +30,47 @@ export async function loader({ request }: LoaderFunctionArgs) {
   if (denied) return denied;
 
   const now = new Date();
-  const window = getPuzzleWindow(now);
+  const dateKey = getDateKey(now);
   const requestLogger = logger.child({
     operation: "healthDashboard",
     timestamp: now.toISOString(),
-    dateKey: window.dateKey,
+    dateKey,
   });
 
-  const [published, statusCounts, recentPuzzles, inventoryDepth] = await Promise.all([
-    getPublishedPuzzle(now),
+  const [puzzle, totalPuzzles, recentPuzzles, inventoryDepth] = await Promise.all([
+    getPuzzleForDate(dateKey),
     db
-      .select({ status: rhobhDailyPuzzles.status, value: count() })
+      .select({ value: count() })
       .from(rhobhDailyPuzzles)
-      .groupBy(rhobhDailyPuzzles.status),
+      .then((rows) => rows[0]?.value ?? 0),
     db.query.rhobhDailyPuzzles.findMany({
       orderBy: desc(rhobhDailyPuzzles.createdAt),
       limit: 14,
     }),
-    getInventoryDepth(window.dateKey, 7),
+    getInventoryDepth(dateKey, 7),
   ]);
 
-  const byStatus = Object.fromEntries(statusCounts.map((r) => [r.status, r.value]));
-  const totalPuzzles = statusCounts.reduce((sum, r) => sum + r.value, 0);
-
-  const isHealthy = !!published && inventoryDepth >= 2 && totalPuzzles > 0;
+  const isHealthy = !!puzzle && inventoryDepth >= 2 && totalPuzzles > 0;
 
   const health = {
     health: isHealthy ? "OK" : "DEGRADED",
     checkedAt: now.toISOString(),
-    dateKey: window.dateKey,
-    publishWindow: {
-      publishAt: window.publishAt.toISOString(),
-      expireAt: window.expireAt.toISOString(),
-    },
-    puzzle: published
+    dateKey,
+    puzzle: puzzle
       ? {
-          id: published.id,
-          dateKey: published.dateUtc,
-          answerType: published.answerType,
-          clue: published.clue,
+          id: puzzle.id,
+          dateKey: puzzle.dateUtc,
+          answerType: puzzle.answerType,
+          clue: puzzle.clue,
         }
       : null,
     inventory: {
       depth: inventoryDepth,
-      scheduled: byStatus["scheduled"] ?? 0,
-      published: byStatus["published"] ?? 0,
-      consumed: byStatus["consumed"] ?? 0,
       total: totalPuzzles,
     },
     recent: recentPuzzles.map((p) => ({
       id: p.id,
       dateKey: p.dateUtc,
-      status: p.status,
       answerType: p.answerType,
       createdAt: p.createdAt,
     })),

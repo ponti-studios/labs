@@ -441,12 +441,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "franchise": {
-          "name": "franchise",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
         "answer": {
           "name": "answer",
           "type": "text",
@@ -477,41 +471,11 @@
           "primaryKey": false,
           "notNull": true
         },
-        "role": {
-          "name": "role",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "news_mode": {
-          "name": "news_mode",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
         "status": {
           "name": "status",
           "type": "text",
           "primaryKey": false,
           "notNull": true
-        },
-        "scheduled_for_date_key": {
-          "name": "scheduled_for_date_key",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "source_kind": {
-          "name": "source_kind",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "generation_batch_id": {
-          "name": "generation_batch_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
         },
         "publish_at": {
           "name": "publish_at",
@@ -525,39 +489,9 @@
           "primaryKey": false,
           "notNull": false
         },
-        "source_urls": {
-          "name": "source_urls",
+        "sources": {
+          "name": "sources",
           "type": "jsonb",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "source_titles": {
-          "name": "source_titles",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "source_published_at": {
-          "name": "source_published_at",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "source_summary": {
-          "name": "source_summary",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "generation_status": {
-          "name": "generation_status",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "validation_status": {
-          "name": "validation_status",
-          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -577,38 +511,11 @@
         }
       },
       "indexes": {
-        "rhobh_daily_puzzles_franchise_status_idx": {
-          "name": "rhobh_daily_puzzles_franchise_status_idx",
+        "rhobh_daily_puzzles_status_idx": {
+          "name": "rhobh_daily_puzzles_status_idx",
           "columns": [
-            {
-              "expression": "franchise",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
             {
               "expression": "status",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "rhobh_daily_puzzles_franchise_scheduled_date_idx": {
-          "name": "rhobh_daily_puzzles_franchise_scheduled_date_idx",
-          "columns": [
-            {
-              "expression": "franchise",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "scheduled_for_date_key",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -624,7 +531,23 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
-      "checkConstraints": {},
+      "checkConstraints": {
+        "status_must_be_valid": {
+          "name": "status_must_be_valid",
+          "columns": ["status"],
+          "definition": "status IN ('scheduled', 'published', 'consumed')"
+        },
+        "normalized_answer_length": {
+          "name": "normalized_answer_length",
+          "columns": ["normalized_answer"],
+          "definition": "length(normalized_answer) = 5"
+        },
+        "window_order": {
+          "name": "window_order",
+          "columns": ["publish_at", "expire_at"],
+          "definition": "publish_at < expire_at"
+        }
+      },
       "isRLSEnabled": false
     },
     "labs.relationship_cases": {
@@ -816,12 +739,8 @@
           "tableFrom": "relationship_verdicts",
           "tableTo": "relationship_cases",
           "schemaTo": "labs",
-          "columnsFrom": [
-            "case_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["case_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
