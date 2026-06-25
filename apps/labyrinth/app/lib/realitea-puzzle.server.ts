@@ -1,4 +1,4 @@
-import { db, desc, eq, rhobhDailyPuzzles } from "@pontistudios/db";
+import { db, desc, rhobhDailyPuzzles } from "@pontistudios/db";
 import pino from "pino";
 
 import {
@@ -10,14 +10,9 @@ import {
   type PublicDailyPuzzle,
   type RealiteaGuessResult,
 } from "./realitea";
-import { addDaysToDateKey, getPuzzleWindow } from "./realitea-date";
+import { addDaysToDateKey, getDateKey } from "./realitea-date";
 import type { PuzzleRecord } from "./realitea.types";
-import {
-  getPublishedPuzzle,
-  loadScheduledPuzzle,
-  markExpiredPuzzles,
-  promoteScheduledPuzzle,
-} from "./realitea-db";
+import { getPuzzleForDate, loadPuzzleForDate } from "./realitea-db";
 import { isValidWord } from "./word-list.server";
 
 const logger = pino(
@@ -43,40 +38,38 @@ function toPublicDailyPuzzle(record: PuzzleRecord): PublicDailyPuzzle {
 export async function loadActivePublicPuzzle(
   now: Date,
 ): Promise<{ puzzle: PublicDailyPuzzle } | null> {
-  const window = getPuzzleWindow(now);
+  const dateKey = getDateKey(now);
   const childLogger = logger.child({
     operation: "loadActivePublicPuzzle",
-    dateKey: window.dateKey,
+    dateKey,
     timestamp: now.toISOString(),
   });
 
-  await markExpiredPuzzles(now);
-  let published = (await getPublishedPuzzle(now)) ?? (await promoteScheduledPuzzle(now));
+  let puzzle = await getPuzzleForDate(dateKey);
 
-  // Last-resort fallback: serve the most-recently published puzzle regardless of window
-  if (!published) {
+  // Fallback: serve the most-recently created puzzle of any date
+  if (!puzzle) {
     const row = await db.query.rhobhDailyPuzzles.findFirst({
-      where: eq(rhobhDailyPuzzles.status, "published"),
-      orderBy: desc(rhobhDailyPuzzles.publishAt),
+      orderBy: desc(rhobhDailyPuzzles.createdAt),
     });
     if (row) {
-      published = row as unknown as PuzzleRecord;
+      puzzle = row as unknown as PuzzleRecord;
       childLogger.warn(
         {
-          event: "[FALLBACK_ACTIVATED_PUBLISHED_ANY]",
-          puzzle_id: published.id,
-          intended_dateKey: window.dateKey,
-          served_dateKey: published.dateUtc,
+          event: "[FALLBACK_ACTIVATED_ANY_PUZZLE]",
+          puzzle_id: puzzle.id,
+          intended_dateKey: dateKey,
+          served_dateKey: puzzle.dateUtc,
         },
-        "no current puzzle; serving archived puzzle as fallback",
+        "no puzzle for today; serving most recent puzzle as fallback",
       );
     }
   }
 
-  if (!published) {
+  if (!puzzle) {
     childLogger.error(
       { event: "[ERROR_NO_PUZZLE_AVAILABLE]" },
-      "all fallbacks exhausted — no puzzle available",
+      "no puzzle available",
     );
     return null;
   }
@@ -84,12 +77,12 @@ export async function loadActivePublicPuzzle(
   childLogger.info(
     {
       event: "[PUZZLE_AVAILABLE]",
-      puzzle_id: published.id,
-      dateKey: published.dateUtc,
+      puzzle_id: puzzle.id,
+      dateKey: puzzle.dateUtc,
     },
-    "active puzzle loaded",
+    "puzzle loaded",
   );
-  return { puzzle: toPublicDailyPuzzle(published) };
+  return { puzzle: toPublicDailyPuzzle(puzzle) };
 }
 
 /**
@@ -113,11 +106,11 @@ export async function evaluateGuessServer(
   }
 
   // Try exact dateKey, then previous day as grace period for midnight-rollover games
-  let puzzle = await loadScheduledPuzzle(dateKey);
+  let puzzle = await loadPuzzleForDate(dateKey);
   if (!puzzle) {
     const prevDateKey = addDaysToDateKey(dateKey, -1);
     if (prevDateKey) {
-      puzzle = await loadScheduledPuzzle(prevDateKey);
+      puzzle = await loadPuzzleForDate(prevDateKey);
       if (puzzle) {
         childLogger.info(
           { event: "[GUESS_GRACE_PERIOD_ACCEPTED]", acceptedDateKey: prevDateKey, word },

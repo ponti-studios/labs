@@ -5,14 +5,11 @@ import {
   addDaysToDateKey,
   buildDateRange,
   getDateKey,
-  getPuzzleWindow,
 } from "../app/lib/realitea-date";
 import { REALITEA_READY_INVENTORY_DAYS } from "../app/lib/realitea-validation";
 import {
-  countScheduledInventory,
-  deleteScheduledPuzzlesFromDate,
-  getPublishedPuzzle,
-  promoteScheduledPuzzle,
+  countInventoryForRange,
+  deletePuzzlesFromDate,
 } from "../app/lib/realitea-db";
 import { generateScheduledPuzzle } from "../app/lib/realitea-generation";
 import { LabyrinthServerEnv } from "../app/lib/server/env";
@@ -43,21 +40,17 @@ async function main() {
 
   const opts = parseArgs();
   const now = new Date();
-  const { dateKey: activeDateKey } = getPuzzleWindow(now);
+  const runDateKey = getDateKey(now);
   const reconcileLogger = logger.child({
     operation: "reconcile",
-    runDateKey: getDateKey(now),
-    activeDateKey,
+    runDateKey,
     force: opts.force ?? false,
   });
 
   reconcileLogger.info({ event: "[RECONCILE_START]" }, "starting reconcile run");
 
-  // Always promote today's scheduled puzzle to published.
-  const promoted = await promoteScheduledPuzzle(now);
-
   // Determine the future range to manage.
-  const nextDayKey = addDaysToDateKey(activeDateKey, 1);
+  const nextDayKey = addDaysToDateKey(runDateKey, 1);
   if (!nextDayKey) throw new Error("Failed to compute next date key");
 
   let targetDateKeys: string[];
@@ -66,55 +59,32 @@ async function main() {
 
   if (opts.force) {
     // ── Force mode: delete everything from tomorrow, regenerate from scratch ──
-    // Finds the furthest scheduled date so nothing is dropped.
-    const maxRow = await db
-      .select({ maxDate: max(rhobhDailyPuzzles.dateUtc) })
-      .from(rhobhDailyPuzzles)
-      .where(
-        and(eq(rhobhDailyPuzzles.status, "scheduled"), gte(rhobhDailyPuzzles.dateUtc, nextDayKey)),
-      );
+    const daysAhead = opts.daysAhead ?? REALITEA_READY_INVENTORY_DAYS;
+    targetDateKeys = buildDateRange(nextDayKey, { daysAhead });
+    reconcileLogger.info(
+      {
+        event: "[FORCE_RANGE]",
+        endDateKey: targetDateKeys[targetDateKeys.length - 1],
+        daysAhead,
+      },
+      `force-regenerating ${daysAhead}-day window`,
+    );
 
-    const maxFutureDate = maxRow[0]?.maxDate;
-    if (maxFutureDate) {
-      targetDateKeys = buildDateRange(nextDayKey, { endKey: maxFutureDate });
-      reconcileLogger.info(
-        { event: "[FORCE_RANGE]", endDateKey: maxFutureDate, source: "existing_scheduled" },
-        `force-regenerating through ${maxFutureDate}`,
-      );
-    } else {
-      const daysAhead = opts.daysAhead ?? REALITEA_READY_INVENTORY_DAYS;
-      targetDateKeys = buildDateRange(nextDayKey, { daysAhead });
-      reconcileLogger.info(
-        {
-          event: "[FORCE_RANGE]",
-          endDateKey: targetDateKeys[targetDateKeys.length - 1],
-          daysAhead,
-          source: "default",
-        },
-        `no existing scheduled puzzles, using default ${daysAhead}-day window`,
-      );
-    }
-
-    deletedCount = await deleteScheduledPuzzlesFromDate(nextDayKey);
+    deletedCount = await deletePuzzlesFromDate(nextDayKey);
     reconcileLogger.info(
       { event: "[FORCE_DELETED]", count: deletedCount },
-      `deleted ${deletedCount} old scheduled puzzles`,
+      `deleted ${deletedCount} old puzzles`,
     );
   } else {
     // ── Normal mode: gap-fill for the standard inventory window ──
     targetDateKeys = buildDateRange(nextDayKey, { daysAhead: REALITEA_READY_INVENTORY_DAYS });
   }
 
-  // Generate puzzles for any date that doesn't yet have a scheduled puzzle.
+  // Generate puzzles for any date that doesn't yet have one.
   const existingRows = await db
     .select({ dateUtc: rhobhDailyPuzzles.dateUtc })
     .from(rhobhDailyPuzzles)
-    .where(
-      and(
-        eq(rhobhDailyPuzzles.status, "scheduled"),
-        inArray(rhobhDailyPuzzles.dateUtc, targetDateKeys),
-      ),
-    );
+    .where(inArray(rhobhDailyPuzzles.dateUtc, targetDateKeys));
   const existingKeys = new Set(
     existingRows.map((r) => r.dateUtc).filter((v): v is string => Boolean(v)),
   );
@@ -124,7 +94,7 @@ async function main() {
     if (existingKeys.has(dateKey)) {
       reconcileLogger.debug(
         { event: "[SKIP_GENERATION_EXISTS]", dateKey },
-        "puzzle already scheduled for date",
+        "puzzle already exists for date",
       );
       continue;
     }
@@ -144,9 +114,8 @@ async function main() {
     }
   }
 
-  const published = await getPublishedPuzzle(now);
-  const inventoryDepth = await countScheduledInventory(
-    activeDateKey,
+  const inventoryDepth = await countInventoryForRange(
+    runDateKey,
     REALITEA_READY_INVENTORY_DAYS,
   );
 
@@ -155,11 +124,9 @@ async function main() {
       event: "[RECONCILE_COMPLETE]",
       force: opts.force ?? false,
       deleted: deletedCount,
-      createdDateKeys,
+      generated: createdDateKeys.length,
       failed: failedCount,
-      promoted: promoted?.dateUtc ?? null,
-      publishedId: published?.id ?? null,
-      readyDepth: inventoryDepth,
+      inventoryDepth,
     },
     `reconcile complete: ${createdDateKeys.length}/${targetDateKeys.length} generated`,
   );

@@ -8,8 +8,8 @@ import pino from "pino";
 import { z } from "zod";
 
 import { normalizeGuess, REALITEA_ANSWER_LENGTH } from "./realitea";
-import { getPuzzleWindow, parseDate } from "./realitea-date";
-import { getInventoryAnswers, getRecentAnswers, loadScheduledPuzzle } from "./realitea-db";
+import { getDateKey, parseDate } from "./realitea-date";
+import { getInventoryAnswers, getRecentAnswers, loadPuzzleForDate } from "./realitea-db";
 import type {
   CandidatePreview,
   FeedItem,
@@ -224,7 +224,7 @@ export async function previewCandidates(
 export async function generateScheduledPuzzle(dateKey: string): Promise<PuzzleRecord | null> {
   const childLogger = logger.child({ operation: "generateScheduledPuzzle", dateKey });
 
-  const existing = await loadScheduledPuzzle(dateKey);
+  const existing = await loadPuzzleForDate(dateKey);
   if (existing) {
     childLogger.debug(
       { event: "[SKIP_GENERATION_EXISTS]", puzzle_id: existing.id },
@@ -280,7 +280,6 @@ export async function generateScheduledPuzzle(dateKey: string): Promise<PuzzleRe
     return null;
   }
 
-  const window = getPuzzleWindow(date);
   const now = new Date();
 
   const inserted = await db
@@ -290,20 +289,17 @@ export async function generateScheduledPuzzle(dateKey: string): Promise<PuzzleRe
       answerType: candidate.answerType as PuzzleAnswerType,
       clue: candidate.clue,
       createdAt: now,
-      dateUtc: window.dateKey,
+      dateUtc: getDateKey(date),
       detail: candidate.detail,
-      expireAt: window.expireAt,
       normalizedAnswer: normalizeGuess(candidate.answer),
-      publishAt: window.publishAt,
       sources: candidate.sources,
-      status: "scheduled",
       updatedAt: now,
     })
     .returning();
 
   childLogger.info(
     { event: "[PUZZLE_GENERATED]", puzzle_id: inserted[0]?.id, answer: candidate.answer },
-    "puzzle generated and scheduled",
+    "puzzle generated",
   );
   return inserted[0] as PuzzleRecord;
 }

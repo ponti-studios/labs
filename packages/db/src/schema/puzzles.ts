@@ -12,18 +12,12 @@ export const rhobhDailyPuzzles = labs.table(
     normalizedAnswer: text("normalized_answer").notNull(),
     clue: text("clue").notNull(),
     detail: text("detail").notNull(),
-    status: text("status").notNull(),
-    publishAt: timestamp("publish_at"),
-    expireAt: timestamp("expire_at"),
     sources: jsonb("sources").$type<PuzzleSource[]>().notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
   (table) => [
-    index("rhobh_daily_puzzles_status_idx").on(table.status),
-    check("status_must_be_valid", sql`${table.status} IN ('scheduled', 'published', 'consumed')`),
     check("normalized_answer_length", sql`length(${table.normalizedAnswer}) = 5`),
-    check("window_order", sql`${table.publishAt} < ${table.expireAt}`),
   ],
 );
 

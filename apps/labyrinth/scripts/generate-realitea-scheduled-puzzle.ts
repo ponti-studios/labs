@@ -9,7 +9,6 @@ interface GenerationOptions {
   from?: string;
   to?: string;
   daysAhead?: number;
-  publish?: boolean;
   dryRun?: boolean;
 }
 
@@ -26,8 +25,6 @@ function parseArgs(): GenerationOptions {
       opts.to = arg.slice("--to=".length);
     } else if (arg.startsWith("--days-ahead=")) {
       opts.daysAhead = parseInt(arg.slice("--days-ahead=".length), 10);
-    } else if (arg === "--publish") {
-      opts.publish = true;
     } else if (arg === "--dry-run") {
       opts.dryRun = true;
     }
@@ -55,19 +52,6 @@ function getDateRange(opts: GenerationOptions): string[] {
   return [startKey];
 }
 
-async function publishPuzzle(puzzleId: number): Promise<void> {
-  const now = new Date();
-  await db
-    .update(rhobhDailyPuzzles)
-    .set({
-      dateUtc: getDateKey(now),
-      publishAt: now,
-      expireAt: new Date(now.getTime() + 24 * 60 * 60 * 1000),
-      status: "published",
-      updatedAt: now,
-    })
-    .where(eq(rhobhDailyPuzzles.id, puzzleId));
-}
 
 async function main() {
   LabyrinthServerEnv.parse(process.env);
@@ -76,7 +60,7 @@ async function main() {
   const dateKeys = getDateRange(opts);
 
   console.log(
-    `\n📅 Generating puzzles for ${dateKeys.length} day(s)${opts.dryRun ? " (dry-run)" : ""}${opts.publish ? " (will publish)" : ""}\n`,
+    `\n📅 Generating puzzles for ${dateKeys.length} day(s)${opts.dryRun ? " (dry-run)" : ""}\n`,
   );
 
   const results: Array<{ dateKey: string; status: string; id?: number; answer?: string }> = [];
@@ -97,14 +81,8 @@ async function main() {
         continue;
       }
 
-      if (opts.publish && puzzle.id) {
-        await publishPuzzle(puzzle.id);
-        console.log(`✓ ${dateKey}: generated and published (${puzzle.answer})`);
-        results.push({ dateKey, status: "published", id: puzzle.id, answer: puzzle.answer });
-      } else {
-        console.log(`✓ ${dateKey}: scheduled (${puzzle.answer})`);
-        results.push({ dateKey, status: "scheduled", id: puzzle.id, answer: puzzle.answer });
-      }
+      console.log(`✓ ${dateKey}: generated (${puzzle.answer})`);
+      results.push({ dateKey, status: "generated", id: puzzle.id, answer: puzzle.answer });
     } catch (err) {
       console.log(`❌ ${dateKey}: ${err instanceof Error ? err.message : String(err)}`);
       results.push({ dateKey, status: "error" });

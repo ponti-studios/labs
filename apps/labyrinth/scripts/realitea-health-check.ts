@@ -1,19 +1,19 @@
 import "dotenv/config";
-import { closeDb, db, rhobhDailyPuzzles, sql } from "@pontistudios/db";
+import { closeDb, db } from "@pontistudios/db";
 
-import { getPuzzleWindow } from "../app/lib/realitea-date";
-import { countScheduledInventory, getPublishedPuzzle } from "../app/lib/realitea-db";
+import { getDateKey } from "../app/lib/realitea-date";
+import { countInventoryForRange, getPuzzleForDate } from "../app/lib/realitea-db";
 import { createScriptLogger } from "../app/lib/realitea-scripts";
 
 const logger = createScriptLogger();
 
 async function healthCheckRealiTea() {
   const now = new Date();
-  const window = getPuzzleWindow(now);
+  const dateKey = getDateKey(now);
   const healthLogger = logger.child({
     operation: "healthCheckRealiTea",
     timestamp: now.toISOString(),
-    dateKey: window.dateKey,
+    dateKey,
   });
 
   // Check 1: Any puzzle exists at all
@@ -22,59 +22,37 @@ async function healthCheckRealiTea() {
     healthLogger.error({ event: "[HEALTH_CRITICAL_NO_PUZZLES]" }, "no puzzles in database");
   }
 
-  // Check 2: Scheduled inventory depth for next 7 days
-  const inventoryDepth = await countScheduledInventory(window.dateKey, 7);
+  // Check 2: Puzzle exists for today
+  const todaysPuzzle = await getPuzzleForDate(dateKey);
+  if (!todaysPuzzle) {
+    healthLogger.error(
+      { event: "[HEALTH_ERROR_NO_PUZZLE_TODAY]" },
+      "no puzzle exists for today",
+    );
+  }
+
+  // Check 3: Inventory depth for next 7 days
+  const inventoryDepth = await countInventoryForRange(dateKey, 7);
   if (inventoryDepth < 1) {
     healthLogger.error(
       { event: "[HEALTH_CRITICAL_NO_INVENTORY]", inventory: inventoryDepth },
-      "scheduled inventory depleted",
+      "no puzzles scheduled for next 7 days",
     );
   } else if (inventoryDepth < 3) {
     healthLogger.warn(
       { event: "[HEALTH_WARN_LOW_INVENTORY]", inventory: inventoryDepth },
-      "scheduled inventory is low",
+      "puzzle inventory is low",
     );
   }
 
-  // Check 3: Validate current puzzle window math (detect DST issues)
-  const published = await getPublishedPuzzle(now);
-  if (published?.expireAt && published?.publishAt) {
-    const diffMs = published.expireAt.getTime() - published.publishAt.getTime();
-    const expectedMs = 86_400_000; // 24 hours
-    if (Math.abs(diffMs - expectedMs) > 60_000) {
-      healthLogger.error(
-        {
-          event: "[HEALTH_ERROR_WINDOW_INVALID]",
-          puzzle_id: published.id,
-          diffMs,
-          expectedMs,
-        },
-        "puzzle window duration invalid — possible DST issue",
-      );
-    }
-  }
-
-  // Check 4: Data consistency — no records with invalid status values
-  const inconsistentRows = await db
-    .select({ id: rhobhDailyPuzzles.id })
-    .from(rhobhDailyPuzzles)
-    .where(sql`${rhobhDailyPuzzles.status} NOT IN ('scheduled', 'published', 'consumed')`);
-
-  if (inconsistentRows.length > 0) {
-    healthLogger.error(
-      { event: "[HEALTH_ERROR_INCONSISTENT_DATA]", count: inconsistentRows.length },
-      "found puzzle records with invalid status",
-    );
-  }
-
-  const status = anyPuzzle && inventoryDepth >= 2 ? "OK" : "DEGRADED";
+  const status = anyPuzzle && todaysPuzzle && inventoryDepth >= 2 ? "OK" : "DEGRADED";
   healthLogger.info(
     {
       event: "[HEALTH_CHECK_COMPLETE]",
       status,
-      puzzleAvailable: !!anyPuzzle,
+      puzzleExists: !!anyPuzzle,
+      hasTodaysPuzzle: !!todaysPuzzle,
       inventoryDepth,
-      inconsistencies: inconsistentRows.length,
     },
     "health check complete",
   );
