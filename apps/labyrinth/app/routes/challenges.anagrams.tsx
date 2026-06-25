@@ -146,7 +146,7 @@ export default function Anagrams(): JSX.Element {
       <header>
         <h2 className="text-xl font-semibold">Anagrams</h2>
         <p className="text-muted-foreground">Group anagrams together from a list of words.</p>
-        <i className="text-xs text-muted-foreground">Courtesy of ChartHop</i>
+        <i className="text-muted-foreground text-xs">Courtesy of ChartHop</i>
       </header>
 
       <div className="flex gap-2">
@@ -156,10 +156,10 @@ export default function Anagrams(): JSX.Element {
           placeholder="Enter words separated by commas"
           className="flex-1"
         />
-        <Button onClick={run} disabled={isRunning} className="min-w-24 flex items-center gap-2">
+        <Button onClick={run} disabled={isRunning} className="flex min-w-24 items-center gap-2">
           {isRunning ? (
             <>
-              <span className="inline-block w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
+              <span className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
               Running…
             </>
           ) : (
@@ -197,12 +197,12 @@ export default function Anagrams(): JSX.Element {
                         <TableCell className={`font-mono font-medium ${color.row}`}>
                           {step.word}
                         </TableCell>
-                        <TableCell className="font-mono text-muted-foreground">
+                        <TableCell className="text-muted-foreground font-mono">
                           {step.sortedKey}
                         </TableCell>
                         <TableCell>
                           <span
-                            className={`px-2 py-0.5 rounded border text-xs font-medium ${color.badge}`}
+                            className={`rounded border px-2 py-0.5 text-xs font-medium ${color.badge}`}
                           >
                             Group {step.groupIndex + 1}
                           </span>
@@ -214,13 +214,13 @@ export default function Anagrams(): JSX.Element {
               </Table>
             </CardContent>
             <CardFooter>
-              <div className="grid grid-cols-3 gap-3 flex-wrap w-full">
+              <div className="grid w-full grid-cols-3 flex-wrap gap-3">
                 {result.groups.map((group, groupIndex) => {
                   const color = colorFor(groupIndex);
                   return (
                     <Card key={groupIndex} className={`border ${color.card}`}>
-                      <p className="text-xs font-medium mb-2">Group {groupIndex + 1}</p>
-                      <div className="flex gap-2 flex-wrap">
+                      <p className="mb-2 text-xs font-medium">Group {groupIndex + 1}</p>
+                      <div className="flex flex-wrap gap-2">
                         {group.map((word, wordIndex) => (
                           <span key={wordIndex} className="font-mono text-sm">
                             {word}

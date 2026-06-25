@@ -54,17 +54,17 @@ export default function NewAppointment() {
     <div className="container mx-auto flex max-w-md flex-col gap-6 px-4 py-8">
       <Link
         to="/appointments"
-        className="inline-flex text-sm text-muted-foreground hover:text-foreground"
+        className="text-muted-foreground hover:text-foreground inline-flex text-sm"
       >
         ← Appointments
       </Link>
 
       <h1 className="text-2xl font-bold tracking-tight">Schedule Appointment</h1>
 
-      <div className="rounded-lg border bg-muted/30 p-4">
+      <div className="bg-muted/30 rounded-lg border p-4">
         <p className="font-semibold">{DOCTOR.name}</p>
-        <p className="text-sm text-muted-foreground">{DOCTOR.specialty}</p>
-        <p className="text-sm text-muted-foreground">{DOCTOR.location}</p>
+        <p className="text-muted-foreground text-sm">{DOCTOR.specialty}</p>
+        <p className="text-muted-foreground text-sm">{DOCTOR.location}</p>
       </div>
 
       <div className="flex flex-col gap-3">

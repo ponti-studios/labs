@@ -58,10 +58,10 @@ export default function AdventureBudgetRoute() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white font-mono cursor-crosshair">
+    <div className="min-h-screen cursor-crosshair bg-black font-mono text-white">
       {/* ASCII texture */}
       <div
-        className="fixed inset-0 pointer-events-none opacity-10 whitespace-pre font-mono text-xs leading-none overflow-hidden"
+        className="pointer-events-none fixed inset-0 overflow-hidden font-mono text-xs leading-none whitespace-pre opacity-10"
         style={{ color: "rgba(255,255,255,0.1)" }}
       >
         {Array(50)
@@ -79,22 +79,22 @@ export default function AdventureBudgetRoute() {
           ))}
       </div>
 
-      <div className="relative z-10 max-w-6xl mx-auto p-8">
+      <div className="relative z-10 mx-auto max-w-6xl p-8">
         {/* Header */}
         <div className="mb-12 border-b border-white/10 pb-8">
           <h1 className="mb-2">ADVENTURE BUDGET PLANNER</h1>
-          <p className="text-white/70 text-sm">TRACK ADVENTURES AND FORECAST FINANCIAL IMPACT</p>
+          <p className="text-sm text-white/70">TRACK ADVENTURES AND FORECAST FINANCIAL IMPACT</p>
         </div>
 
         {/* Financial Input */}
-        <Card className="mb-8 bg-white/5 border-white/10">
+        <Card className="mb-8 border-white/10 bg-white/5">
           <CardHeader>
-            <CardTitle className="uppercase text-sm tracking-tight">FINANCIAL SNAPSHOT</CardTitle>
+            <CardTitle className="text-sm tracking-tight uppercase">FINANCIAL SNAPSHOT</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               <div>
-                <label className="text-xs uppercase text-white/70 block mb-2">
+                <label className="mb-2 block text-xs text-white/70 uppercase">
                   CURRENT SAVINGS
                 </label>
                 <Input
@@ -102,21 +102,21 @@ export default function AdventureBudgetRoute() {
                   placeholder="5000"
                   value={currentSavings}
                   onChange={(e) => setCurrentSavings(e.target.value)}
-                  className="bg-white/5 border-white/20 text-white placeholder:text-white/30"
+                  className="border-white/20 bg-white/5 text-white placeholder:text-white/30"
                 />
               </div>
               <div>
-                <label className="text-xs uppercase text-white/70 block mb-2">MONTHLY INCOME</label>
+                <label className="mb-2 block text-xs text-white/70 uppercase">MONTHLY INCOME</label>
                 <Input
                   type="number"
                   placeholder="4000"
                   value={monthlyIncome}
                   onChange={(e) => setMonthlyIncome(e.target.value)}
-                  className="bg-white/5 border-white/20 text-white placeholder:text-white/30"
+                  className="border-white/20 bg-white/5 text-white placeholder:text-white/30"
                 />
               </div>
               <div>
-                <label className="text-xs uppercase text-white/70 block mb-2">
+                <label className="mb-2 block text-xs text-white/70 uppercase">
                   MONTHLY EXPENSES
                 </label>
                 <Input
@@ -124,7 +124,7 @@ export default function AdventureBudgetRoute() {
                   placeholder="3000"
                   value={monthlyExpenses}
                   onChange={(e) => setMonthlyExpenses(e.target.value)}
-                  className="bg-white/5 border-white/20 text-white placeholder:text-white/30"
+                  className="border-white/20 bg-white/5 text-white placeholder:text-white/30"
                 />
               </div>
             </div>
@@ -133,14 +133,14 @@ export default function AdventureBudgetRoute() {
 
         {/* Financial Analysis */}
         {currentSavings && monthlyIncome && monthlyExpenses && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
             <div
-              className={`p-6 border ${
+              className={`border p-6 ${
                 canAfford ? "border-white/20 bg-white/5" : "border-white/30 bg-white/10"
               }`}
             >
-              <p className="text-xs uppercase text-white/70 mb-2">AFTER ADVENTURES</p>
-              <p className="text-3xl font-mono font-bold text-white mb-2">
+              <p className="mb-2 text-xs text-white/70 uppercase">AFTER ADVENTURES</p>
+              <p className="mb-2 font-mono text-3xl font-bold text-white">
                 {formatCurrency(remainingAfterAdventures)}
               </p>
               <p className="text-xs text-white/70">
@@ -148,9 +148,9 @@ export default function AdventureBudgetRoute() {
               </p>
             </div>
 
-            <div className="p-6 border border-white/20 bg-white/5">
-              <p className="text-xs uppercase text-white/70 mb-2">MONTHLY SAVINGS</p>
-              <p className="text-3xl font-mono font-bold text-white mb-2">
+            <div className="border border-white/20 bg-white/5 p-6">
+              <p className="mb-2 text-xs text-white/70 uppercase">MONTHLY SAVINGS</p>
+              <p className="mb-2 font-mono text-3xl font-bold text-white">
                 {formatCurrency(monthlySavings)}
               </p>
               <p className="text-xs text-white/70">
@@ -158,9 +158,9 @@ export default function AdventureBudgetRoute() {
               </p>
             </div>
 
-            <div className="p-6 border border-white/20 bg-white/5">
-              <p className="text-xs uppercase text-white/70 mb-2">MONTHS TO SAVE</p>
-              <p className="text-3xl font-mono font-bold text-white mb-2">
+            <div className="border border-white/20 bg-white/5 p-6">
+              <p className="mb-2 text-xs text-white/70 uppercase">MONTHS TO SAVE</p>
+              <p className="mb-2 font-mono text-3xl font-bold text-white">
                 {monthlySavings > 0 ? (remainingAfterAdventures >= 0 ? "0" : monthsToSave) : "∞"}
               </p>
               <p className="text-xs text-white/70">
@@ -175,12 +175,12 @@ export default function AdventureBudgetRoute() {
         )}
 
         {/* Total Adventure Cost */}
-        <div className="p-8 border border-white/20 bg-white/5 mb-8">
-          <p className="text-xs uppercase text-white/70 mb-2">TOTAL ADVENTURE COST</p>
-          <p className="text-5xl font-mono font-bold text-white mb-4">
+        <div className="mb-8 border border-white/20 bg-white/5 p-8">
+          <p className="mb-2 text-xs text-white/70 uppercase">TOTAL ADVENTURE COST</p>
+          <p className="mb-4 font-mono text-5xl font-bold text-white">
             {formatCurrency(totalAdventureCost)}
           </p>
-          <div className="text-sm text-white/70 space-y-1">
+          <div className="space-y-1 text-sm text-white/70">
             <p>
               {adventures.length} ADVENTURE{adventures.length !== 1 ? "S" : ""} PLANNED
             </p>
@@ -194,19 +194,19 @@ export default function AdventureBudgetRoute() {
         </div>
 
         {/* Add New Adventure */}
-        <Card className="mb-8 bg-white/5 border-white/10">
+        <Card className="mb-8 border-white/10 bg-white/5">
           <CardHeader>
-            <CardTitle className="uppercase text-sm tracking-tight">ADD NEW ADVENTURE</CardTitle>
+            <CardTitle className="text-sm tracking-tight uppercase">ADD NEW ADVENTURE</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row">
               <Input
                 type="text"
                 placeholder="Adventure name"
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && addAdventure()}
-                className="flex-1 bg-white/5 border-white/20 text-white placeholder:text-white/30"
+                className="flex-1 border-white/20 bg-white/5 text-white placeholder:text-white/30"
               />
               <Input
                 type="number"
@@ -214,11 +214,11 @@ export default function AdventureBudgetRoute() {
                 value={newCost}
                 onChange={(e) => setNewCost(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && addAdventure()}
-                className="w-32 bg-white/5 border-white/20 text-white placeholder:text-white/30"
+                className="w-32 border-white/20 bg-white/5 text-white placeholder:text-white/30"
               />
               <Button
                 onClick={addAdventure}
-                className="bg-white text-black hover:bg-white/90 uppercase font-mono font-bold"
+                className="bg-white font-mono font-bold text-black uppercase hover:bg-white/90"
               >
                 ADD
               </Button>
@@ -227,38 +227,38 @@ export default function AdventureBudgetRoute() {
         </Card>
 
         {/* Adventure List */}
-        <Card className="bg-white/5 border-white/10">
+        <Card className="border-white/10 bg-white/5">
           <CardHeader>
-            <CardTitle className="uppercase text-sm tracking-tight">YOUR ADVENTURES</CardTitle>
+            <CardTitle className="text-sm tracking-tight uppercase">YOUR ADVENTURES</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               {adventures.map((adventure) => (
                 <div
                   key={adventure.id}
-                  className="flex justify-between items-start p-4 border border-white/10 bg-white/2 hover:bg-white/5 transition"
+                  className="flex items-start justify-between border border-white/10 bg-white/2 p-4 transition hover:bg-white/5"
                 >
                   <div>
                     <h3>{adventure.name}</h3>
-                    <p className="text-2xl font-mono font-bold text-white mt-1">
+                    <p className="mt-1 font-mono text-2xl font-bold text-white">
                       {formatCurrency(adventure.cost)}
                     </p>
                     {currentSavings && (
-                      <p className="text-xs text-white/50 mt-1">
+                      <p className="mt-1 text-xs text-white/50">
                         {((adventure.cost / savings) * 100).toFixed(1)}% OF SAVINGS
                       </p>
                     )}
                   </div>
                   <button
                     onClick={() => deleteAdventure(adventure.id)}
-                    className="p-2 text-white/70 hover:text-white hover:bg-white/10 transition rounded text-xs uppercase font-mono text-red-400 hover:text-red-300"
+                    className="rounded p-2 font-mono text-xs text-red-400 text-white/70 uppercase transition hover:bg-white/10 hover:text-red-300 hover:text-white"
                   >
                     DELETE
                   </button>
                 </div>
               ))}
               {adventures.length === 0 && (
-                <p className="text-white/40 text-center py-8 uppercase text-xs">
+                <p className="py-8 text-center text-xs text-white/40 uppercase">
                   NO ADVENTURES YET. ADD ONE ABOVE.
                 </p>
               )}

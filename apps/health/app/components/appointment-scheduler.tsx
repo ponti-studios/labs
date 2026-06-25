@@ -63,10 +63,10 @@ export function AppointmentScheduler({
     <div className="flex flex-col gap-4 py-4">
       <div className="flex flex-col gap-2">
         <h3 className="text-lg font-medium">Your Doctor</h3>
-        <div className="rounded-md bg-muted p-3">
+        <div className="bg-muted rounded-md p-3">
           <p className="font-semibold">{doctorData.name}</p>
-          <p className="text-sm text-muted-foreground">{doctorData.specialty}</p>
-          <p className="text-sm text-muted-foreground">{doctorData.location}</p>
+          <p className="text-muted-foreground text-sm">{doctorData.specialty}</p>
+          <p className="text-muted-foreground text-sm">{doctorData.location}</p>
         </div>
       </div>
 
@@ -76,11 +76,11 @@ export function AppointmentScheduler({
           {doctorData.availabilities.map((slot) => (
             <div
               key={`${slot.date}-${slot.time}`}
-              className="flex items-center justify-between rounded-md border p-3 transition-colors hover:bg-accent"
+              className="hover:bg-accent flex items-center justify-between rounded-md border p-3 transition-colors"
             >
               <div>
                 <p className="font-medium">{slot.date}</p>
-                <p className="text-sm text-muted-foreground">{slot.time}</p>
+                <p className="text-muted-foreground text-sm">{slot.time}</p>
               </div>
               <Button
                 size="sm"
@@ -101,7 +101,7 @@ export function AppointmentScheduler({
       </div>
 
       {selectedSlot ? (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Selected: {selectedSlot.date} at {selectedSlot.time}
         </p>
       ) : null}

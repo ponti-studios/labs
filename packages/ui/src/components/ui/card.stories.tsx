@@ -22,7 +22,7 @@ export const Default: Story = {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Your project will be created in the default region. Upgrade your plan to choose a custom
           region.
         </p>
@@ -41,7 +41,7 @@ export const Simple: Story = {
         <CardTitle>Notifications</CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           You have 3 unread notifications. Check your inbox to review the latest updates from your
           team.
         </p>
@@ -54,7 +54,7 @@ export const WithFooter: Story = {
   render: () => (
     <Card className="w-full max-w-sm">
       <CardContent className="pt-6">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Are you sure you want to delete this resource? This action cannot be undone and will
           permanently remove all associated data.
         </p>

@@ -115,7 +115,7 @@ export function Terminal() {
 
   return (
     <div
-      className="w-full h-full bg-stone-900/95 backdrop-blur-sm rounded-2xl overflow-hidden font-mono text-sm relative cursor-text flex flex-col"
+      className="relative flex h-full w-full cursor-text flex-col overflow-hidden rounded-2xl bg-stone-900/95 font-mono text-sm backdrop-blur-sm"
       onClick={handleTerminalClick}
       onKeyDown={handleTerminalClick}
       role="application"
@@ -125,7 +125,7 @@ export function Terminal() {
       <TerminalHeader />
 
       <div
-        className="flex-1 overflow-y-auto p-4 pt-0 space-y-1 text-olive-100 scrollbar-thin scrollbar-thumb-stone-600 scrollbar-track-transparent"
+        className="scrollbar-thin scrollbar-thumb-stone-600 scrollbar-track-transparent flex-1 space-y-1 overflow-y-auto p-4 pt-0 text-olive-100"
         ref={terminalRef}
       >
         {lines.map((line, index) => (

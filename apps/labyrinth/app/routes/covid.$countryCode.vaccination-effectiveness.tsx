@@ -88,16 +88,16 @@ export default function VaccinationEffectivenessPage() {
       {isLoading && <Spinner />}
 
       {isError && (
-        <p className="text-sm text-muted-foreground py-4">
+        <p className="text-muted-foreground py-4 text-sm">
           Failed to load vaccination data. Please try again.
         </p>
       )}
 
-      {data?.error && <p className="text-sm text-muted-foreground py-4">{data.error}</p>}
+      {data?.error && <p className="text-muted-foreground py-4 text-sm">{data.error}</p>}
 
       {data?.effectiveness && (
         <div className="space-y-6">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             {[
               { label: "Overall Effectiveness", value: data.effectiveness.overall },
               {
@@ -133,7 +133,7 @@ export default function VaccinationEffectivenessPage() {
                   },
                 ].map(({ label, value }) => (
                   <div key={label}>
-                    <p className="text-xs text-muted-foreground mb-1">{label}</p>
+                    <p className="text-muted-foreground mb-1 text-xs">{label}</p>
                     <p className="ui-data-value">{value}</p>
                   </div>
                 ))}
@@ -193,14 +193,14 @@ export default function VaccinationEffectivenessPage() {
           {data.milestones && data.milestones.length > 0 && (
             <div className="ui-flat-card">
               <p className="ui-data-label mb-3">Milestones</p>
-              <div className="divide-y divide-border">
+              <div className="divide-border divide-y">
                 {data.milestones.map((milestone) => (
                   <div
                     key={milestone.threshold}
                     className="flex items-center justify-between py-2.5"
                   >
-                    <p className="text-sm text-foreground">{milestone.label}</p>
-                    <p className="text-sm text-muted-foreground tabular-nums">
+                    <p className="text-foreground text-sm">{milestone.label}</p>
+                    <p className="text-muted-foreground text-sm tabular-nums">
                       {milestone.dateReached
                         ? new Date(milestone.dateReached).toLocaleDateString()
                         : "—"}

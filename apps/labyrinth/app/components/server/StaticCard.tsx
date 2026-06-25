@@ -12,11 +12,11 @@ interface StaticCardProps {
 
 export function StaticCard({ title, description, metadata }: StaticCardProps) {
   return (
-    <article className="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+    <article className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
       <h3 className="mb-2">{title}</h3>
-      <p className="text-gray-600 mb-4">{description}</p>
+      <p className="mb-4 text-gray-600">{description}</p>
       {metadata && (
-        <footer className="text-sm text-gray-500 border-t pt-4 mt-4">
+        <footer className="mt-4 border-t pt-4 text-sm text-gray-500">
           <span>By {metadata.author}</span>
           <span className="mx-2">•</span>
           <time>{metadata.date}</time>

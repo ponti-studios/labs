@@ -12,7 +12,7 @@ export function MetricCard({ label, value, change, className, ...props }: Metric
     <div className={cn("ui-flat-card", className)} {...props}>
       <p className="ui-data-label mb-2">{label}</p>
       <p className="ui-data-value">{value ?? "—"}</p>
-      {change != null && <p className="mt-1.5 text-xs text-muted-foreground">{change}</p>}
+      {change != null && <p className="text-muted-foreground mt-1.5 text-xs">{change}</p>}
     </div>
   );
 }

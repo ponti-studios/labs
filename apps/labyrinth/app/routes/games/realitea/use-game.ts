@@ -90,9 +90,16 @@ export function useRealiTeaGame({
     if (isGameOver) return;
     const handler = (e: KeyboardEvent) => {
       if (e.ctrlKey || e.metaKey || e.altKey) return;
-      if (e.key === "Enter") { e.preventDefault(); submitGuessRef.current(); }
-      else if (e.key === "Backspace") { e.preventDefault(); removeLetterRef.current(); }
-      else if (/^[a-zA-Z]$/.test(e.key)) { e.preventDefault(); addLetterRef.current(e.key); }
+      if (e.key === "Enter") {
+        e.preventDefault();
+        submitGuessRef.current();
+      } else if (e.key === "Backspace") {
+        e.preventDefault();
+        removeLetterRef.current();
+      } else if (/^[a-zA-Z]$/.test(e.key)) {
+        e.preventDefault();
+        addLetterRef.current(e.key);
+      }
     };
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);

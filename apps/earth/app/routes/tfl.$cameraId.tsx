@@ -53,7 +53,7 @@ export default function TflCamera({ loaderData }: Route.ComponentProps) {
     return (
       <div className="space-y-3">
         <p className="ui-eyebrow">Camera not found</p>
-        <Link to="/tfl" className="text-xs text-muted-foreground hover:text-foreground">
+        <Link to="/tfl" className="text-muted-foreground hover:text-foreground text-xs">
           ← Back to Cameras
         </Link>
       </div>
@@ -68,7 +68,7 @@ export default function TflCamera({ loaderData }: Route.ComponentProps) {
       <div className="flex items-center justify-between gap-3">
         <Link
           to="/tfl"
-          className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+          className="text-muted-foreground hover:text-foreground text-xs transition-colors"
         >
           ← Cameras
         </Link>
@@ -77,7 +77,7 @@ export default function TflCamera({ loaderData }: Route.ComponentProps) {
             className={`size-1.5 rounded-full ${isLive ? "bg-green-500" : "bg-muted-foreground"}`}
           />
           <span
-            className={`font-mono text-[10px] tracking-wider uppercase ${isLive ? "text-green-500" : "text-muted-foreground"}`}
+            className={`font-mono text-[10px] uppercase tracking-wider ${isLive ? "text-green-500" : "text-muted-foreground"}`}
           >
             {isLive ? "Live" : "Offline"}
           </span>
@@ -86,11 +86,11 @@ export default function TflCamera({ loaderData }: Route.ComponentProps) {
 
       {/* Camera name + metadata */}
       <div>
-        <h2 className="font-semibold text-foreground leading-tight">{camera.commonName}</h2>
-        <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mt-0.5">
+        <h2 className="text-foreground font-semibold leading-tight">{camera.commonName}</h2>
+        <p className="text-muted-foreground mt-0.5 font-mono text-[10px] uppercase tracking-widest">
           {camera.id}
         </p>
-        <div className="mt-2 space-y-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+        <div className="text-muted-foreground mt-2 space-y-1 font-mono text-[10px] uppercase tracking-widest">
           <div className="flex justify-between">
             <span>View</span>
             <span>{camera.view && camera.view.length > 0 ? camera.view : "—"}</span>
@@ -118,15 +118,15 @@ export default function TflCamera({ loaderData }: Route.ComponentProps) {
       </div>
 
       {/* Feed */}
-      <div className="bg-muted border border-border rounded-md w-full aspect-video flex items-center justify-center overflow-hidden">
+      <div className="bg-muted border-border flex aspect-video w-full items-center justify-center overflow-hidden rounded-md border">
         {camera.imageUrl ? (
           <img
             src={camera.imageUrl}
             alt={camera.commonName}
-            className="w-full h-full object-cover"
+            className="h-full w-full object-cover"
           />
         ) : (
-          <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+          <span className="text-muted-foreground font-mono text-[10px] uppercase tracking-widest">
             No feed available
           </span>
         )}

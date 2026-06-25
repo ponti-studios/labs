@@ -3,7 +3,11 @@ import { describe, expect, it } from "vitest";
 import { getDateKey, getPuzzleWindow } from "./realitea-date";
 import { validateCandidate } from "./realitea-validation";
 
-const BRAVO_SOURCE = { url: "https://realityblurb.com/2026/06/25/test-story", title: "Test Story", publishedAt: "2026-06-25T00:00:00Z" };
+const BRAVO_SOURCE = {
+  url: "https://realityblurb.com/2026/06/25/test-story",
+  title: "Test Story",
+  publishedAt: "2026-06-25T00:00:00Z",
+};
 
 describe("realitea daily puzzle helpers", () => {
   it("rejects multi-word answers that normalize to more than five letters", () => {
@@ -86,7 +90,13 @@ describe("realitea daily puzzle helpers", () => {
       clue: "A relationship update is suddenly the center of coverage.",
       detail: "This story is dominating the news cycle.",
 
-      sources: [{ url: "https://people.com/latest-bravo-story", title: "Latest Story", publishedAt: "2026-06-25T00:00:00Z" }],
+      sources: [
+        {
+          url: "https://people.com/latest-bravo-story",
+          title: "Latest Story",
+          publishedAt: "2026-06-25T00:00:00Z",
+        },
+      ],
     });
 
     expect(result.valid).toBe(false);

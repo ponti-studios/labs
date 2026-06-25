@@ -86,23 +86,23 @@ export default function TarotRoute() {
 
           <div className="pt-1 text-sm md:text-right">
             <div className="ui-eyebrow">Today</div>
-            <div className="mt-1 text-lg font-medium text-foreground">{formatDate(dateKey)}</div>
+            <div className="text-foreground mt-1 text-lg font-medium">{formatDate(dateKey)}</div>
           </div>
         </motion.div>
 
         {!isHydrated ? (
-          <Card className="border border-border bg-background p-8 shadow-sm">
-            <div className="py-16 text-center text-muted-foreground">
+          <Card className="border-border bg-background border p-8 shadow-sm">
+            <div className="text-muted-foreground py-16 text-center">
               Preparing today&apos;s ritual...
             </div>
           </Card>
         ) : result ? (
           <DailyTarotReadingView result={result} />
         ) : (
-          <div className="grid gap-6 border-b border-border pb-8 lg:grid-cols-[240px_minmax(0,1fr)] lg:items-center">
-            <div className="mx-auto flex h-72 w-52 items-center justify-center border border-border bg-muted">
+          <div className="border-border grid gap-6 border-b pb-8 lg:grid-cols-[240px_minmax(0,1fr)] lg:items-center">
+            <div className="border-border bg-muted mx-auto flex h-72 w-52 items-center justify-center border">
               <div className="text-center">
-                <div className="text-4xl text-muted-foreground">✦</div>
+                <div className="text-muted-foreground text-4xl">✦</div>
                 <div className="ui-eyebrow mt-3">Daily draw</div>
                 <h3 className="mt-2">Today&apos;s card</h3>
               </div>
@@ -111,7 +111,7 @@ export default function TarotRoute() {
             <div>
               <p className="ui-eyebrow">Daily practice</p>
               <h2 className="mt-3">Pull one card and let the day orbit around it.</h2>
-              <p className="mt-3 max-w-2xl text-base leading-7 text-muted-foreground">
+              <p className="text-muted-foreground mt-3 max-w-2xl text-base leading-7">
                 You&apos;ll get one card for your local day, a concise reading, and a reflection
                 prompt. Once drawn, it stays with you until tomorrow.
               </p>
@@ -125,13 +125,13 @@ export default function TarotRoute() {
                 >
                   {isDrawing ? "Drawing..." : "Draw today’s card"}
                 </Button>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   No redraws today. Come back tomorrow for a new card.
                 </p>
               </div>
 
               {error && (
-                <div className="mt-4 border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+                <div className="border-destructive/20 bg-destructive/5 text-destructive mt-4 border px-4 py-3 text-sm">
                   {error}
                 </div>
               )}
@@ -153,14 +153,14 @@ function DailyTarotReadingView({ result }: { result: DailyTarotResult }) {
           <img
             src={`/tarot-cards/${card.img}`}
             alt={card.name}
-            className="h-auto w-full border border-border"
+            className="border-border h-auto w-full border"
           />
         </div>
 
         <div className="text-center">
           <p className="ui-eyebrow">{card.arcana}</p>
           <h2 className="mt-2">{card.name}</h2>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="text-muted-foreground mt-2 text-sm">
             {card.rank}
             {card.suit !== "Trump" ? ` of ${card.suit}` : ""}
           </p>
@@ -174,7 +174,7 @@ function DailyTarotReadingView({ result }: { result: DailyTarotResult }) {
           ))}
         </div>
 
-        <div className="border-t border-border pt-4 text-sm text-muted-foreground">
+        <div className="border-border text-muted-foreground border-t pt-4 text-sm">
           <div className="ui-eyebrow">Reading source</div>
           <div className="mt-2">
             {source === "ai"
@@ -185,7 +185,7 @@ function DailyTarotReadingView({ result }: { result: DailyTarotResult }) {
       </aside>
 
       <div className="space-y-6">
-        <section className="space-y-4 border-b border-border pb-6">
+        <section className="border-border space-y-4 border-b pb-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <p className="ui-eyebrow">Today’s reading</p>
@@ -202,18 +202,18 @@ function DailyTarotReadingView({ result }: { result: DailyTarotResult }) {
           </div>
         </section>
 
-        <section className="space-y-4 border-b border-border pb-6">
+        <section className="border-border space-y-4 border-b pb-6">
           <p className="ui-eyebrow">Questions to sit with</p>
           <div className="grid gap-2.5">
             {card.reflectionQuestions.slice(0, 3).map((question) => (
-              <div key={question} className="border-l-2 border-border pl-4 text-foreground">
+              <div key={question} className="border-border text-foreground border-l-2 pl-4">
                 {question}
               </div>
             ))}
           </div>
         </section>
 
-        <Accordion type="single" collapsible className="border-b border-border">
+        <Accordion type="single" collapsible className="border-border border-b">
           <AccordionItem value="study" className="border-b-0">
             <AccordionTrigger className="py-0">
               <h4>Curated meanings and deeper notes</h4>
@@ -241,7 +241,7 @@ function DailyTarotReadingView({ result }: { result: DailyTarotResult }) {
                 />
 
                 {card.studyNotes && (
-                  <div className="border-t border-border pt-4">
+                  <div className="border-border border-t pt-4">
                     <h5>Study notes</h5>
                     <div className="mt-3 grid gap-3 md:grid-cols-2">
                       {card.studyNotes.archetype && (
@@ -284,20 +284,20 @@ function DailyTarotReadingView({ result }: { result: DailyTarotResult }) {
 
 function ReadingPanel({ title, body }: { title: string; body: string }) {
   return (
-    <div className="border-l-2 border-border pl-4">
+    <div className="border-border border-l-2 pl-4">
       <div className="ui-eyebrow">{title}</div>
-      <p className="mt-2 text-base leading-7 text-foreground">{body}</p>
+      <p className="text-foreground mt-2 text-base leading-7">{body}</p>
     </div>
   );
 }
 
 function MeaningList({ title, accent, items }: { title: string; accent: string; items: string[] }) {
   return (
-    <div className="border-l-2 border-border pl-4">
+    <div className="border-border border-l-2 pl-4">
       <h5 className={accent}>{title}</h5>
       <ul className="mt-3 space-y-2">
         {items.map((item) => (
-          <li key={item} className="flex gap-3 text-sm leading-6 text-foreground">
+          <li key={item} className="text-foreground flex gap-3 text-sm leading-6">
             <span className={`${accent}`}>✦</span>
             <span>{item}</span>
           </li>
@@ -311,7 +311,7 @@ function StudyNote({ label, value }: { label: string; value: string }) {
   return (
     <div>
       <div className="ui-eyebrow">{label}</div>
-      <p className="mt-1.5 text-sm leading-6 text-foreground">{value}</p>
+      <p className="text-foreground mt-1.5 text-sm leading-6">{value}</p>
     </div>
   );
 }

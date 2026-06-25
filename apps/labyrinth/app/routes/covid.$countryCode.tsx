@@ -68,7 +68,7 @@ export default function CovidPage() {
   if (!timeSeriesData || timeSeriesData.length === 0) {
     return (
       <div className="ui-flat-card text-center">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           No COVID data available for the selected country.
         </p>
       </div>
@@ -79,7 +79,7 @@ export default function CovidPage() {
     <div className="space-y-6">
       <StatsOverview data={statsData ? [statsData] : []} countryCode={countryCode} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <TimeSeriesChart
           data={timeSeriesData}
           metric="totalCases"
@@ -104,7 +104,7 @@ export default function CovidPage() {
       {countryCode !== "OWID_WRL" && globalComparisonData.length > 0 && (
         <>
           <p className="ui-data-label pt-2">Global Comparisons</p>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <TopCountriesChart
               data={globalComparisonData}
               metric="totalCasesPerMillion"
@@ -138,7 +138,7 @@ export default function CovidPage() {
       )}
 
       <p className="ui-data-label pt-2">Additional Metrics</p>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <TimeSeriesChart
           data={timeSeriesData}
           metric="newDeathsSmoothed"

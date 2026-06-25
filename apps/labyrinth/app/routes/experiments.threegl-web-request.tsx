@@ -391,9 +391,9 @@ export default function ThreeglWebRequest() {
 
   return (
     <div className="relative h-[calc(100vh-5rem)] overflow-hidden bg-[#111] ">
-      <div className="absolute top-4 right-4 z-50 bg-card rounded-lg p-3 max-w-72">
+      <div className="bg-card absolute top-4 right-4 z-50 max-w-72 rounded-lg p-3">
         <p className="ui-eyebrow mb-1">Web Request Flow</p>
-        <p className="text-sm mb-3">
+        <p className="mb-3 text-sm">
           Visualise a request travelling through a load balancer, web server, cache, and database.
         </p>
 
@@ -406,7 +406,7 @@ export default function ThreeglWebRequest() {
           Simulate Cache Hit
         </label>
 
-        <div className="my-4 border-y py-3 text-xs text-muted-foreground">
+        <div className="text-muted-foreground my-4 border-y py-3 text-xs">
           <table className="w-full border-collapse">
             <tbody>
               <tr className="border-b border-white/10">

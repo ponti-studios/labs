@@ -1,5 +1,10 @@
 export type { CovidData, NewCovidData } from "./schema/covid";
-export type { NewRhobhDailyPuzzle, PuzzleAnswerType, PuzzleSource, RhobhDailyPuzzle } from "./schema/puzzles";
+export type {
+  NewRhobhDailyPuzzle,
+  PuzzleAnswerType,
+  PuzzleSource,
+  RhobhDailyPuzzle,
+} from "./schema/puzzles";
 export type { NewTflCamera, TflCamera } from "./schema/tfl";
 export type {
   CaseUpdate,

@@ -59,7 +59,7 @@ export function OnscreenKeyboard({
   const keyClass = (kind: "letter" | "action", state: LetterState | "action") =>
     cn(
       keyboardKeyVariants({ kind, state }),
-      readOnly && "cursor-default pointer-events-none",
+      readOnly && "pointer-events-none cursor-default",
       disabled && "cursor-not-allowed opacity-50",
     );
 

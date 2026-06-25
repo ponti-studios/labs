@@ -46,7 +46,7 @@ export const TarotSpread = ({
               index={index}
               position={spread.positions[index]}
             />
-            <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 text-center w-32">
+            <p className="w-32 text-center text-sm font-semibold text-gray-700 dark:text-gray-300">
               {spread.positions[index]}
             </p>
           </div>

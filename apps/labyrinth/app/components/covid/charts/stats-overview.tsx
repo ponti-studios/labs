@@ -43,7 +43,7 @@ export function StatsOverview({ data, countryCode: _countryCode }: StatsOverview
 
   return (
     <div className="space-y-2">
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {stats.map(({ label, value, change }) => {
           const num = toNumber(value);
           const changeNum = toNumber(change);

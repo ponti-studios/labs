@@ -24,7 +24,7 @@ const islandContent = {
 
 export default function ArchitectureDemo() {
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-8">
+    <div className="mx-auto max-w-4xl space-y-8 p-6">
       <header>
         <h1 className="mb-2">Islands Architecture Demo</h1>
         <p className="text-gray-600">
@@ -32,7 +32,7 @@ export default function ArchitectureDemo() {
         </p>
       </header>
 
-      <section className="grid md:grid-cols-2 gap-6">
+      <section className="grid gap-6 md:grid-cols-2">
         {/* Server Component - Zero JavaScript */}
         <div>
           <h2 className="mb-3">Server Component (Static)</h2>
@@ -61,25 +61,25 @@ export default function ArchitectureDemo() {
         </div>
       </section>
 
-      <section className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+      <section className="rounded-lg border border-gray-200 bg-gray-50 p-6">
         <h2 className="mb-3">How It Works</h2>
         <ul className="space-y-2 text-gray-700">
           <li className="flex items-start gap-2">
-            <span className="text-green-500 font-bold">✓</span>
+            <span className="font-bold text-green-500">✓</span>
             <span>
               <strong>Server Components:</strong> Render on the server, ship zero JS. Perfect for
               static content, SEO, and initial page load.
             </span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="text-blue-500 font-bold">✓</span>
+            <span className="font-bold text-blue-500">✓</span>
             <span>
               <strong>Islands:</strong> Hydrate selectively on the client. Marked with 'use client'.
               Only load JS for interactive parts.
             </span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="text-purple-500 font-bold">✓</span>
+            <span className="font-bold text-purple-500">✓</span>
             <span>
               <strong>Benefits:</strong> Smaller bundles, better performance, progressive
               enhancement.
@@ -90,7 +90,7 @@ export default function ArchitectureDemo() {
 
       <section>
         <h2 className="mb-3">Code Example</h2>
-        <div className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm">
+        <div className="overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100">
           <pre>{`// Server Component (components/server/StaticCard.tsx)
 // No 'use client' - renders on server, zero JS
 export function StaticCard({ title, description }) {

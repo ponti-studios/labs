@@ -50,13 +50,13 @@ const workflow = [
 
 export default function BusinessToolsHub() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 py-8 md:px-6 md:py-12">
-        <section className="grid gap-6 border-b border-border pb-10 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
+        <section className="border-border grid gap-6 border-b pb-10 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
           <div className="max-w-3xl">
             <div className="ui-eyebrow">Business tools</div>
             <h1 className="mt-3">Operator-grade planning tools for fast decisions.</h1>
-            <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
+            <p className="text-muted-foreground mt-4 max-w-2xl text-base leading-7">
               The business tools workspace turns rough assumptions into structured answers you can
               use in planning conversations, budget reviews, and growth experiments.
             </p>
@@ -82,21 +82,21 @@ export default function BusinessToolsHub() {
               <CardTitle className="text-xl">
                 Built for crisp planning, not dashboard theater.
               </CardTitle>
-              <CardDescription className="text-sm leading-6 text-muted-foreground">
+              <CardDescription className="text-muted-foreground text-sm leading-6">
                 Each tool is designed to answer one practical question with enough context to act on
                 the result immediately.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 pt-0">
-              <div className="rounded-lg border border-border bg-muted/40 p-4">
+              <div className="border-border bg-muted/40 rounded-lg border p-4">
                 <div className="ui-eyebrow">Current focus</div>
-                <p className="mt-2 text-sm leading-6 text-foreground">
+                <p className="text-foreground mt-2 text-sm leading-6">
                   Early-stage marketing and finance planning for small teams making fast tradeoffs.
                 </p>
               </div>
-              <div className="flex items-start gap-3 rounded-lg border border-border p-4">
-                <Target className="mt-0.5 size-4 text-muted-foreground" />
-                <p className="text-sm leading-6 text-muted-foreground">
+              <div className="border-border flex items-start gap-3 rounded-lg border p-4">
+                <Target className="text-muted-foreground mt-0.5 size-4" />
+                <p className="text-muted-foreground text-sm leading-6">
                   Start with a goal, pressure-test assumptions, and leave with a number you can use.
                 </p>
               </div>
@@ -119,8 +119,8 @@ export default function BusinessToolsHub() {
                   <CardHeader className="space-y-4">
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex items-center gap-3">
-                        <div className="rounded-lg border border-border bg-muted/50 p-2">
-                          <Icon className="size-4 text-foreground" />
+                        <div className="border-border bg-muted/50 rounded-lg border p-2">
+                          <Icon className="text-foreground size-4" />
                         </div>
                         <div>
                           <div className="ui-eyebrow">{tool.status}</div>
@@ -129,7 +129,7 @@ export default function BusinessToolsHub() {
                       </div>
                       <Badge variant={tool.available ? "default" : "outline"}>{tool.status}</Badge>
                     </div>
-                    <CardDescription className="max-w-[60ch] text-base leading-7 text-muted-foreground">
+                    <CardDescription className="text-muted-foreground max-w-[60ch] text-base leading-7">
                       {tool.description}
                     </CardDescription>
                   </CardHeader>
@@ -139,10 +139,10 @@ export default function BusinessToolsHub() {
                       {tool.highlights.map((highlight) => (
                         <div
                           key={highlight}
-                          className="flex items-center gap-3 rounded-lg border border-border bg-muted/30 px-4 py-3"
+                          className="border-border bg-muted/30 flex items-center gap-3 rounded-lg border px-4 py-3"
                         >
-                          <div className="size-1.5 rounded-full bg-foreground/70" />
-                          <span className="text-sm text-foreground">{highlight}</span>
+                          <div className="bg-foreground/70 size-1.5 rounded-full" />
+                          <span className="text-foreground text-sm">{highlight}</span>
                         </div>
                       ))}
                     </div>
@@ -166,7 +166,7 @@ export default function BusinessToolsHub() {
           </div>
         </section>
 
-        <section className="space-y-5 border-t border-border pt-10">
+        <section className="border-border space-y-5 border-t pt-10">
           <div>
             <div className="ui-eyebrow">Working style</div>
             <h2 className="mt-2">How these tools are meant to be used.</h2>
@@ -180,7 +180,7 @@ export default function BusinessToolsHub() {
                   <CardTitle className="text-xl">{item.title}</CardTitle>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <p className="max-w-[56ch] text-sm leading-6 text-muted-foreground">
+                  <p className="text-muted-foreground max-w-[56ch] text-sm leading-6">
                     {item.body}
                   </p>
                 </CardContent>

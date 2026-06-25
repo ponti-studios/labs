@@ -94,11 +94,11 @@ export function VaccinationProgress({
           <Area type="monotone" dataKey="partial" stroke="#60a5fa" strokeWidth={1.5} fill="none" />
         </AreaChart>
       </ResponsiveContainer>
-      <div className="flex gap-4 mt-3">
+      <div className="mt-3 flex gap-4">
         {legendItems.map(({ key, label, color }) => (
           <div key={key} className="flex items-center gap-1.5">
-            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
-            <span className="text-xs text-muted-foreground">{label}</span>
+            <div className="h-2 w-2 rounded-full" style={{ backgroundColor: color }} />
+            <span className="text-muted-foreground text-xs">{label}</span>
           </div>
         ))}
       </div>

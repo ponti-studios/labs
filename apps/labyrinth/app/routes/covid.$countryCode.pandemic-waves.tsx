@@ -77,7 +77,7 @@ export default function PandemicWavesPage() {
       <div className="flex items-center gap-3">
         <label className="ui-data-label">Metric</label>
         <Select value={metric} onValueChange={setMetric}>
-          <SelectTrigger className="w-52 h-7 text-xs border-border bg-card text-foreground rounded">
+          <SelectTrigger className="border-border bg-card text-foreground h-7 w-52 rounded text-xs">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -92,7 +92,7 @@ export default function PandemicWavesPage() {
       {isLoading && <Spinner />}
 
       {isError && (
-        <p className="text-sm text-muted-foreground py-4">
+        <p className="text-muted-foreground py-4 text-sm">
           Failed to load wave data. Please try again.
         </p>
       )}
@@ -121,34 +121,34 @@ export default function PandemicWavesPage() {
             </ResponsiveContainer>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
             {data.waves.map((wave) => (
               <div key={wave.wave} className="ui-flat-card">
-                <div className="flex items-center justify-between mb-3">
+                <div className="mb-3 flex items-center justify-between">
                   <p className="ui-data-label">Wave {wave.wave}</p>
-                  <span className="text-xs text-muted-foreground">{wave.duration} days</span>
+                  <span className="text-muted-foreground text-xs">{wave.duration} days</span>
                 </div>
                 <p className="ui-data-value mb-3">{wave.peakValue.toLocaleString()}</p>
                 <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                   <div>
-                    <p className="text-xs text-muted-foreground">Peak Date</p>
-                    <p className="text-xs text-foreground">
+                    <p className="text-muted-foreground text-xs">Peak Date</p>
+                    <p className="text-foreground text-xs">
                       {new Date(wave.peakDate).toLocaleDateString()}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Total Cases</p>
-                    <p className="text-xs text-foreground tabular-nums">
+                    <p className="text-muted-foreground text-xs">Total Cases</p>
+                    <p className="text-foreground text-xs tabular-nums">
                       {wave.totalCases.toLocaleString()}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Avg Growth</p>
-                    <p className="text-xs text-foreground">{wave.avgDailyGrowth.toFixed(2)}%</p>
+                    <p className="text-muted-foreground text-xs">Avg Growth</p>
+                    <p className="text-foreground text-xs">{wave.avgDailyGrowth.toFixed(2)}%</p>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Period</p>
-                    <p className="text-xs text-foreground">
+                    <p className="text-muted-foreground text-xs">Period</p>
+                    <p className="text-foreground text-xs">
                       {new Date(wave.startDate).toLocaleDateString()} –{" "}
                       {new Date(wave.endDate).toLocaleDateString()}
                     </p>
@@ -162,17 +162,17 @@ export default function PandemicWavesPage() {
             <p className="ui-data-label mb-4">Summary</p>
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <p className="text-xs text-muted-foreground mb-1">Total Waves</p>
+                <p className="text-muted-foreground mb-1 text-xs">Total Waves</p>
                 <p className="ui-data-value">{data.waves.length}</p>
               </div>
               <div>
-                <p className="text-xs text-muted-foreground mb-1">Highest Peak</p>
+                <p className="text-muted-foreground mb-1 text-xs">Highest Peak</p>
                 <p className="ui-data-value">
                   {Math.max(...data.waves.map((w) => w.peakValue)).toLocaleString()}
                 </p>
               </div>
               <div>
-                <p className="text-xs text-muted-foreground mb-1">Data Points</p>
+                <p className="text-muted-foreground mb-1 text-xs">Data Points</p>
                 <p className="ui-data-value">{data.totalDataPoints.toLocaleString()}</p>
               </div>
             </div>

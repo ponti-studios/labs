@@ -20,7 +20,7 @@ export const Default: Story = {
 
 export const WithInput: Story = {
   render: () => (
-    <div className="flex flex-col gap-2 w-full max-w-sm">
+    <div className="flex w-full max-w-sm flex-col gap-2">
       <Label htmlFor="email">Email address</Label>
       <Input id="email" type="email" placeholder="you@example.com" />
     </div>
@@ -29,7 +29,7 @@ export const WithInput: Story = {
 
 export const Disabled: Story = {
   render: () => (
-    <div className="flex flex-col gap-2 w-full max-w-sm">
+    <div className="flex w-full max-w-sm flex-col gap-2">
       <Label htmlFor="disabled-field">Subscription plan</Label>
       <div className="flex items-center gap-3">
         <Input id="disabled-field" className="peer" disabled placeholder="Enterprise" />
@@ -37,7 +37,7 @@ export const Disabled: Story = {
           (locked)
         </Label>
       </div>
-      <p className="text-xs text-muted-foreground">
+      <p className="text-muted-foreground text-xs">
         The <code className="font-mono">peer-disabled</code> variant mutes the label when its paired
         input is disabled.
       </p>

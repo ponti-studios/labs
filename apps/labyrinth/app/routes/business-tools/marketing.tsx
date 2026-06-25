@@ -97,7 +97,7 @@ function CostRow({
           {suffix}
         </span>
       </div>
-      {note && <div className="text-[10px] text-[#a0703a] mt-0.5">{note}</div>}
+      {note && <div className="mt-0.5 text-[10px] text-[#a0703a]">{note}</div>}
     </div>
   );
 }
@@ -140,7 +140,7 @@ export default function TheaterEconomics() {
   const health = getHealthStatus(monthlyProfit, grossRevenue);
 
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="mx-auto max-w-5xl">
       {/* Header */}
       <div className="mb-5 flex items-center gap-3">
         <Button asChild variant="ghost" size="sm">
@@ -149,16 +149,16 @@ export default function TheaterEconomics() {
           </Link>
         </Button>
         <div>
-          <h1 className="text-base font-semibold text-[#1a1208] leading-tight">Theater P&L</h1>
+          <h1 className="text-base leading-tight font-semibold text-[#1a1208]">Theater P&L</h1>
           <p className="text-xs text-[#a0703a]">
             Exhibition economics for theatrical distribution analysis
           </p>
         </div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2 items-start">
+      <div className="grid items-start gap-4 lg:grid-cols-2">
         {/* ── Controls ── */}
-        <div className="rounded-lg border border-[#e8d5b5] bg-[#f5ecd7] p-5 space-y-5">
+        <div className="space-y-5 rounded-lg border border-[#e8d5b5] bg-[#f5ecd7] p-5">
           <p className="ui-eyebrow">Scenario inputs</p>
 
           {/* Sliders */}
@@ -166,7 +166,7 @@ export default function TheaterEconomics() {
             <div className="space-y-2">
               <div className="flex items-baseline justify-between gap-2">
                 <label className="text-xs font-medium text-[#5c3d2e]">Weekly attendance</label>
-                <span className="shrink-0 text-sm font-semibold tabular-nums text-[#1a1208]">
+                <span className="shrink-0 text-sm font-semibold text-[#1a1208] tabular-nums">
                   {fmt(weeklyAttendance)}
                 </span>
               </div>
@@ -182,7 +182,7 @@ export default function TheaterEconomics() {
             <div className="space-y-2">
               <div className="flex items-baseline justify-between gap-2">
                 <label className="text-xs font-medium text-[#5c3d2e]">Avg ticket price</label>
-                <span className="shrink-0 text-sm font-semibold tabular-nums text-[#1a1208]">
+                <span className="shrink-0 text-sm font-semibold text-[#1a1208] tabular-nums">
                   {formatCurrency(ticketPrice)}
                 </span>
               </div>
@@ -200,7 +200,7 @@ export default function TheaterEconomics() {
                 <label className="text-xs font-medium text-[#5c3d2e]">
                   Concession per cap (SPP)
                 </label>
-                <span className="shrink-0 text-sm font-semibold tabular-nums text-[#1a1208]">
+                <span className="shrink-0 text-sm font-semibold text-[#1a1208] tabular-nums">
                   {formatCurrency(concessionPerCap)}
                 </span>
               </div>
@@ -235,11 +235,11 @@ export default function TheaterEconomics() {
                         : "bg-[#ede0cc] text-[#5c3d2e] hover:bg-[#e8d5b5]"
                     }`}
                   >
-                    <div className="text-[11px] font-semibold leading-tight">
+                    <div className="text-[11px] leading-tight font-semibold">
                       {s.emoji} {s.label}
                     </div>
                     <div
-                      className={`text-[10px] mt-0.5 ${active ? "text-[#c8a882]" : "text-[#a0703a]"}`}
+                      className={`mt-0.5 text-[10px] ${active ? "text-[#c8a882]" : "text-[#a0703a]"}`}
                     >
                       {Math.round(s.studioCut * 100)}% studio cut
                     </div>
@@ -251,7 +251,7 @@ export default function TheaterEconomics() {
           </div>
 
           {/* Variable costs reference */}
-          <div className="pt-4 border-t border-[#e8d5b5] space-y-1.5">
+          <div className="space-y-1.5 border-t border-[#e8d5b5] pt-4">
             <p className="ui-eyebrow mb-2">Operating costs</p>
             <CostRow label="Rent" value={MONTHLY_RENT} suffix="/mo" />
             <CostRow
@@ -262,7 +262,7 @@ export default function TheaterEconomics() {
             />
             <CostRow label="Utilities" value={MONTHLY_UTILITIES} suffix="/mo" />
             <CostRow label="Other" value={MONTHLY_OTHER} suffix="/mo" />
-            <div className="pt-1.5 border-t border-[#e8d5b5]">
+            <div className="border-t border-[#e8d5b5] pt-1.5">
               <CostRow
                 label="Total"
                 value={totalExpenses}
@@ -275,10 +275,10 @@ export default function TheaterEconomics() {
         </div>
 
         {/* ── Receipt ── */}
-        <div className="font-mono text-xs bg-white rounded-lg border border-[#e8d5b5] px-6 py-5 shadow-[0_4px_16px_rgba(26,18,8,0.07)]">
-          <div className="text-center mb-4">
+        <div className="rounded-lg border border-[#e8d5b5] bg-white px-6 py-5 font-mono text-xs shadow-[0_4px_16px_rgba(26,18,8,0.07)]">
+          <div className="mb-4 text-center">
             <div className="text-sm font-bold tracking-widest text-[#1a1208]">🍿 THEATER P&L</div>
-            <div className="text-[10px] text-[#a0703a] tracking-[0.15em] uppercase">
+            <div className="text-[10px] tracking-[0.15em] text-[#a0703a] uppercase">
               Monthly Exhibition Report
             </div>
             <div className="mt-3 border-t border-[#e8d5b5]" />
@@ -299,13 +299,13 @@ export default function TheaterEconomics() {
               <span className="tabular-nums">{fmt(weekdayDailyAvg)}/day</span>
             </div>
             {overCapacity && (
-              <div className="mt-1.5 px-2 py-1.5 bg-[#8c1c1c]/8 border border-[#8c1c1c]/20 text-[#8c1c1c] rounded font-semibold">
+              <div className="mt-1.5 rounded border border-[#8c1c1c]/20 bg-[#8c1c1c]/8 px-2 py-1.5 font-semibold text-[#8c1c1c]">
                 ⚠ Weekend attendance may exceed conventional multiplex capacity
               </div>
             )}
           </div>
 
-          <div className="border-t border-[#e8d5b5] pt-2.5 space-y-1.5">
+          <div className="space-y-1.5 border-t border-[#e8d5b5] pt-2.5">
             <CostRow
               label="Ticket Revenue (Gross)"
               value={grossTicketRevenue}
@@ -395,9 +395,9 @@ export default function TheaterEconomics() {
           </div>
 
           {/* Status + Revenue Mix */}
-          <div className="mt-4 pt-3 border-t border-[#e8d5b5] grid grid-cols-3 text-center gap-2">
+          <div className="mt-4 grid grid-cols-3 gap-2 border-t border-[#e8d5b5] pt-3 text-center">
             <div
-              className={`font-bold text-[11px] flex items-center justify-center ${health.className}`}
+              className={`flex items-center justify-center text-[11px] font-bold ${health.className}`}
             >
               {health.label}
             </div>
