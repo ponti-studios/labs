@@ -174,7 +174,15 @@ try {
   await main();
 } catch (err) {
   logger.error(
-    { event: "[ERROR_RECONCILE_FAILED]", error: err instanceof Error ? err.message : String(err) },
+    {
+      event: "[ERROR_RECONCILE_FAILED]",
+      error: err instanceof Error ? err.message : String(err),
+      ...(err instanceof Object
+        ? Object.fromEntries(
+            Object.entries(err as Record<string, unknown>).filter(([k]) => k !== "message"),
+          )
+        : {}),
+    },
     "reconcile run failed",
   );
   process.exit(1);
