@@ -1,6 +1,6 @@
 import { closeDb, db, eq, rhobhDailyPuzzles } from "@pontistudios/db";
 
-import { addDaysToDateKey, buildDateRange, getDateKey, isDateKey } from "../app/lib/realitea-date";
+import { buildDateRange, getDateKey, isDateKey } from "../app/lib/realitea-date";
 import { generateScheduledPuzzle } from "../app/lib/realitea-generation";
 import { LabyrinthServerEnv } from "../app/lib/server/env";
 
@@ -70,7 +70,7 @@ async function publishPuzzle(puzzleId: number): Promise<void> {
 }
 
 async function main() {
-  requireEnvironment(["DATABASE_URL", "OPENROUTER_API_KEY"]);
+  LabyrinthServerEnv.parse(process.env);
 
   const opts = parseArgs();
   const dateKeys = getDateRange(opts);

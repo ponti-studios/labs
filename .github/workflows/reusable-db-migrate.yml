@@ -29,11 +29,6 @@ jobs:
       - name: install-dependencies
         run: pnpm install --frozen-lockfile --filter @pontistudios/db...
 
-      - name: create-labs-schema
-        run: pnpm --filter @pontistudios/db db:create-schema
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-
       - name: ensure-drizzle-tracking-schema
         run: |
           psql "$DATABASE_URL" -c "CREATE SCHEMA IF NOT EXISTS drizzle;"

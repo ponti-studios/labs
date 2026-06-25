@@ -59,7 +59,6 @@ The `db` proxy lazily connects on first access using `DATABASE_URL` — no manua
 pnpm --filter @pontistudios/db db:generate    # create migration from schema changes
 pnpm --filter @pontistudios/db db:migrate     # apply pending migrations
 pnpm --filter @pontistudios/db db:check       # verify schema matches DB state
-pnpm --filter @pontistudios/db db:create-schema  # ensure the labs schema exists
 ```
 
 ### Making schema changes

@@ -31,6 +31,14 @@ jobs:
       - name: install-dependencies
         run: pnpm install --frozen-lockfile --filter @pontistudios/labyrinth...
 
+      - name: install-db-dependencies
+        run: pnpm install --frozen-lockfile --filter @pontistudios/db...
+
+      - name: run-db-migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: pnpm --filter @pontistudios/db db:migrate
+
       - name: regenerate-future-puzzles
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
