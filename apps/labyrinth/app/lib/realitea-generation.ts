@@ -9,7 +9,7 @@ import { z } from "zod";
 
 import { normalizeGuess, REALITEA_ANSWER_LENGTH } from "./realitea";
 import { getDateKey, parseDate } from "./realitea-date";
-import { getInventoryAnswers, getRecentAnswers, loadPuzzleForDate } from "./realitea-db";
+import { getStoredAnswers, getRecentAnswers, loadPuzzleForDate } from "./realitea-db";
 import type {
   CandidatePreview,
   FeedItem,
@@ -217,7 +217,8 @@ export async function previewCandidates(
     feedItems,
     candidates,
     selectedIndex: selectedIndex === -1 ? null : selectedIndex,
-    llmError: feedError ?? llmError,
+    feedError,
+    llmError,
   };
 }
 
@@ -241,7 +242,7 @@ export async function generateScheduledPuzzle(dateKey: string): Promise<PuzzleRe
 
   const [recentAnswers, inventoryAnswers, feedItems] = await Promise.all([
     getRecentAnswers(date),
-    getInventoryAnswers(),
+    getStoredAnswers(),
     fetchFeedItems().catch((err) => {
       childLogger.error(
         { event: "[FEED_FETCH_ERROR]", error: err instanceof Error ? err.message : String(err) },

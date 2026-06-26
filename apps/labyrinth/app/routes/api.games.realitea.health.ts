@@ -5,7 +5,7 @@ import pino from "pino";
 
 import { requireAdminAuth } from "~/lib/server/admin-auth";
 import { addDaysToDateKey, getDateKey } from "~/lib/realitea-date";
-import { getPuzzleForDate } from "~/lib/realitea-db";
+import { loadPuzzleForDate } from "~/lib/realitea-db";
 
 const logger = pino(
   process.env.NODE_ENV === "development" ? { transport: { target: "pino-pretty" } } : {},
@@ -38,7 +38,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   });
 
   const [puzzle, totalPuzzles, recentPuzzles, inventoryDepth] = await Promise.all([
-    getPuzzleForDate(dateKey),
+    loadPuzzleForDate(dateKey),
     db
       .select({ value: count() })
       .from(rhobhDailyPuzzles)

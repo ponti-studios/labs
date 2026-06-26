@@ -1,7 +1,9 @@
-import { closeDb, db, eq, rhobhDailyPuzzles } from "@pontistudios/db";
+import "dotenv/config";
+import { closeDb } from "@pontistudios/db";
 
 import { buildDateRange, getDateKey, isDateKey } from "../app/lib/realitea-date";
 import { generateScheduledPuzzle } from "../app/lib/realitea-generation";
+import { withDbCleanup } from "../app/lib/realitea-scripts";
 import { LabyrinthServerEnv } from "../app/lib/server/env";
 
 interface GenerationOptions {
@@ -9,94 +11,71 @@ interface GenerationOptions {
   from?: string;
   to?: string;
   daysAhead?: number;
-  dryRun?: boolean;
 }
 
-function parseArgs(): GenerationOptions {
-  const args = process.argv.slice(2);
+export function parseGenerateArgs(argv: string[]): GenerationOptions {
   const opts: GenerationOptions = {};
-
-  for (const arg of args) {
-    if (arg.startsWith("--date-key=")) {
-      opts.dateKey = arg.slice("--date-key=".length);
-    } else if (arg.startsWith("--from=")) {
-      opts.from = arg.slice("--from=".length);
-    } else if (arg.startsWith("--to=")) {
-      opts.to = arg.slice("--to=".length);
-    } else if (arg.startsWith("--days-ahead=")) {
-      opts.daysAhead = parseInt(arg.slice("--days-ahead=".length), 10);
-    } else if (arg === "--dry-run") {
-      opts.dryRun = true;
-    }
+  for (const arg of argv) {
+    if (arg.startsWith("--date-key=")) opts.dateKey = arg.slice("--date-key=".length);
+    else if (arg.startsWith("--from=")) opts.from = arg.slice("--from=".length);
+    else if (arg.startsWith("--to=")) opts.to = arg.slice("--to=".length);
+    else if (arg.startsWith("--days-ahead=")) opts.daysAhead = parseInt(arg.slice("--days-ahead=".length), 10);
   }
-
   return opts;
 }
 
-function getDateRange(opts: GenerationOptions): string[] {
-  const now = new Date();
-  const startKey = opts.dateKey ?? opts.from ?? getDateKey(now);
-  const endKey = opts.to ?? opts.dateKey;
-
+export function buildGenerateRange(opts: GenerationOptions): string[] {
+  const startKey = opts.dateKey ?? opts.from ?? getDateKey(new Date());
   if (!isDateKey(startKey)) throw new Error(`Invalid start date: ${startKey}`);
-  if (endKey && !isDateKey(endKey)) throw new Error(`Invalid end date: ${endKey}`);
 
   if (opts.daysAhead) {
     return buildDateRange(startKey, { daysAhead: opts.daysAhead });
   }
 
+  const endKey = opts.to ?? opts.dateKey;
   if (endKey && endKey !== startKey) {
+    if (!isDateKey(endKey)) throw new Error(`Invalid end date: ${endKey}`);
     return buildDateRange(startKey, { endKey });
   }
 
   return [startKey];
 }
 
-
 async function main() {
   LabyrinthServerEnv.parse(process.env);
 
-  const opts = parseArgs();
-  const dateKeys = getDateRange(opts);
+  const opts = parseGenerateArgs(process.argv.slice(2));
+  const dateKeys = buildGenerateRange(opts);
 
-  console.log(
-    `\n📅 Generating puzzles for ${dateKeys.length} day(s)${opts.dryRun ? " (dry-run)" : ""}\n`,
-  );
-
-  const results: Array<{ dateKey: string; status: string; id?: number; answer?: string }> = [];
+  let generated = 0;
+  let failed = 0;
+  let skipped = 0;
 
   for (const dateKey of dateKeys) {
     try {
       const puzzle = await generateScheduledPuzzle(dateKey);
-
-      if (!puzzle) {
-        console.log(`❌ ${dateKey}: generation failed after all attempts`);
-        results.push({ dateKey, status: "failed" });
-        continue;
+      if (puzzle) {
+        generated++;
+      } else {
+        failed++;
+        console.error(`[FAILED] ${dateKey}: generation returned no result`);
       }
-
-      if (opts.dryRun) {
-        console.log(`✓ ${dateKey}: validated (${puzzle.answer}) - dry-run, not inserted`);
-        results.push({ dateKey, status: "validated", answer: puzzle.answer });
-        continue;
-      }
-
-      console.log(`✓ ${dateKey}: generated (${puzzle.answer})`);
-      results.push({ dateKey, status: "generated", id: puzzle.id, answer: puzzle.answer });
     } catch (err) {
-      console.log(`❌ ${dateKey}: ${err instanceof Error ? err.message : String(err)}`);
-      results.push({ dateKey, status: "error" });
+      failed++;
+      console.error(`[ERROR] ${dateKey}: ${err instanceof Error ? err.message : String(err)}`);
     }
   }
 
-  console.log(
-    `\n📊 Summary: ${results.filter((r) => r.status !== "failed" && r.status !== "error").length}/${dateKeys.length} succeeded\n`,
-  );
-  console.log(JSON.stringify({ dates: dateKeys.length, results }, null, 2));
+  skipped = dateKeys.length - generated - failed;
+  console.log(JSON.stringify({ generated, failed, skipped }));
+
+  if (failed > 0) process.exit(1);
 }
 
-try {
-  await main();
-} finally {
-  closeDb();
+if (!process.env.VITEST) {
+  await withDbCleanup(main).catch((err) => {
+    console.error(err instanceof Error ? err.message : String(err));
+    closeDb();
+    process.exit(1);
+  });
 }

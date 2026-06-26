@@ -10,7 +10,7 @@ import { readFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { getStoredAnswersForValidation } from "./realitea-db";
+import { getStoredAnswers } from "./realitea-db";
 import { REALITEA_ANSWER_LENGTH } from "./realitea";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -33,6 +33,6 @@ export async function isValidWord(word: string): Promise<boolean> {
     return true;
   }
 
-  const storedAnswers = await getStoredAnswersForValidation();
+  const storedAnswers = await getStoredAnswers();
   return storedAnswers.has(upper);
 }

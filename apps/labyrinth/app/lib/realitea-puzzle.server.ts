@@ -12,7 +12,7 @@ import {
 } from "./realitea";
 import { addDaysToDateKey, getDateKey } from "./realitea-date";
 import type { PuzzleRecord } from "./realitea.types";
-import { getPuzzleForDate, loadPuzzleForDate } from "./realitea-db";
+import { loadPuzzleForDate } from "./realitea-db";
 import { isValidWord } from "./word-list.server";
 
 const logger = pino(
@@ -45,7 +45,7 @@ export async function loadActivePublicPuzzle(
     timestamp: now.toISOString(),
   });
 
-  let puzzle = await getPuzzleForDate(dateKey);
+  let puzzle = await loadPuzzleForDate(dateKey);
 
   // Fallback: serve the most-recently created puzzle of any date
   if (!puzzle) {

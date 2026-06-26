@@ -2,6 +2,7 @@ import "dotenv/config";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
+import { getDateKey } from "../app/lib/realitea-date";
 import { previewCandidates } from "../app/lib/realitea-generation";
 import type { GenerationPreviewResult } from "../app/lib/realitea.types";
 
@@ -22,7 +23,7 @@ function parseArgs(): PreviewOptions {
   }
 
   if (!opts.dateKey) {
-    opts.dateKey = new Date().toISOString().slice(0, 10);
+    opts.dateKey = getDateKey(new Date());
   }
 
   return opts as PreviewOptions;
@@ -96,7 +97,10 @@ function printResultSection(result: GenerationPreviewResult) {
     console.log("  Selected: NONE — no candidate passed validation");
   }
 
-  console.log(`  Valid: ${validCount}/${total}   LLM error: ${result.llmError ?? "none"}`);
+  const feedErr = result.feedError ? `Feed error: ${result.feedError}` : null;
+  const llmErr = result.llmError ? `LLM error: ${result.llmError}` : null;
+  const errLine = [feedErr, llmErr].filter(Boolean).join("  |  ") || "none";
+  console.log(`  Valid: ${validCount}/${total}   Errors: ${errLine}`);
   console.log();
 }
 
