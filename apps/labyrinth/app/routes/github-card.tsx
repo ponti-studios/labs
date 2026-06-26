@@ -10,7 +10,7 @@
  * - Responsive design with a focus on aesthetics and usability.
  */
 import { cn } from "@pontistudios/ui";
-import { useState } from "react";
+import { useReducer } from "react";
 
 interface GitHubUser {
   login: string;
@@ -25,34 +25,55 @@ interface GitHubUser {
   blog: string | null;
 }
 
+type State = {
+  username: string;
+  user: GitHubUser | null;
+  error: string | null;
+  loading: boolean;
+};
+
+type Action =
+  | { type: "input"; value: string }
+  | { type: "submit" }
+  | { type: "success"; user: GitHubUser }
+  | { type: "error"; message: string };
+
+function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case "input":
+      return { ...state, username: action.value };
+    case "submit":
+      return { ...state, loading: true, error: null, user: null };
+    case "success":
+      return { ...state, loading: false, user: action.user };
+    case "error":
+      return { ...state, loading: false, error: action.message };
+  }
+}
+
+const initialState: State = { username: "", user: null, error: null, loading: false };
+
 export default function GitHubCardRoute() {
-  const [username, setUsername] = useState("");
-  const [user, setUser] = useState<GitHubUser | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [{ username, user, error, loading }, dispatch] = useReducer(reducer, initialState);
 
   const fetchUser = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!username.trim()) return;
 
-    setLoading(true);
-    setError(null);
-    setUser(null);
+    dispatch({ type: "submit" });
 
     try {
       const res = await fetch(`https://api.github.com/users/${username}`);
       if (!res.ok) {
-        if (res.status === 404) {
-          throw new Error("User not found");
-        }
-        throw new Error("Failed to fetch user");
+        throw new Error(res.status === 404 ? "User not found" : "Failed to fetch user");
       }
       const data: GitHubUser = await res.json();
-      setUser(data);
+      dispatch({ type: "success", user: data });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setLoading(false);
+      dispatch({
+        type: "error",
+        message: err instanceof Error ? err.message : "Something went wrong",
+      });
     }
   };
 
@@ -82,7 +103,7 @@ export default function GitHubCardRoute() {
           <input
             type="text"
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={(e) => dispatch({ type: "input", value: e.target.value })}
             placeholder="Enter GitHub username..."
             className="flex-1 rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-3 transition-all placeholder:text-slate-500 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
           />

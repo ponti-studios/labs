@@ -3,6 +3,7 @@ import { parseArgs } from "node:util";
 import { closeDb } from "@pontistudios/db";
 
 import { buildDateRange, getDateKey, isDateKey } from "../app/lib/realitea-date";
+import { getErrorMessage } from "../app/lib/errors";
 import { generateScheduledPuzzle } from "../app/lib/realitea-generation";
 import { withDbCleanup } from "../app/lib/realitea-scripts";
 import { LabyrinthServerEnv } from "../app/lib/server/env";
@@ -71,7 +72,7 @@ async function main() {
       }
     } catch (err) {
       failed++;
-      console.error(`[ERROR] ${dateKey}: ${err instanceof Error ? err.message : String(err)}`);
+      console.error(`[ERROR] ${dateKey}: ${getErrorMessage(err)}`);
     }
   }
 
@@ -83,7 +84,7 @@ async function main() {
 
 if (!process.env.VITEST) {
   await withDbCleanup(main).catch((err) => {
-    console.error(err instanceof Error ? err.message : String(err));
+    console.error(getErrorMessage(err));
     closeDb();
     process.exit(1);
   });

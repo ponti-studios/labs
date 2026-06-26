@@ -1,15 +1,13 @@
 import type { LoaderFunctionArgs } from "react-router";
 
 import { count, db, desc, inArray, rhobhDailyPuzzles } from "@pontistudios/db";
-import pino from "pino";
 
+import { createLogger } from "~/lib/logger.server";
 import { requireAdminAuth } from "~/lib/server/admin-auth";
 import { addDaysToDateKey, getDateKey } from "~/lib/realitea-date";
 import { loadPuzzleForDate } from "~/lib/realitea-db";
 
-const logger = pino(
-  process.env.NODE_ENV === "development" ? { transport: { target: "pino-pretty" } } : {},
-);
+const logger = createLogger();
 
 async function getInventoryDepth(fromDateKey: string, days: number): Promise<number> {
   const dateKeys: string[] = [];

@@ -13,5 +13,6 @@ export * from "./select";
 export * from "./sheet";
 export * from "./slider";
 export * from "./table";
+export * from "./stepper";
 export * from "./tabs";
 export * from "./textarea";

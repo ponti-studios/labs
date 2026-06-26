@@ -1,6 +1,7 @@
 import "dotenv/config";
 
 import { getDateKey } from "../app/lib/realitea-date";
+import { getErrorMessage } from "../app/lib/errors";
 import { countInventoryForRange, loadPuzzleForDate } from "../app/lib/realitea-db";
 import { createScriptLogger, withDbCleanup } from "../app/lib/realitea-scripts";
 import { REALITEA_READY_INVENTORY_DAYS } from "../app/lib/realitea-validation";
@@ -74,7 +75,7 @@ async function main() {
 if (!process.env.VITEST) {
   await withDbCleanup(main).catch((err) => {
     logger.error(
-      { event: "[HEALTH_CHECK_FAILED]", error: err instanceof Error ? err.message : String(err) },
+      { event: "[HEALTH_CHECK_FAILED]", error: getErrorMessage(err) },
       "health check failed",
     );
     process.exit(1);

@@ -130,19 +130,19 @@ export const DAILY_TAROT_CARDS: DailyTarotCard[] = TAROT_CARDS.map((card) => ({
   card,
 }));
 
-export const getCardByName = (name: string): TarotCard | undefined => {
+const getCardByName = (name: string): TarotCard | undefined => {
   return TAROT_CARDS.find((card) => card.name.toLowerCase() === name.toLowerCase());
 };
 
-export const getDailyTarotCardById = (id: string): DailyTarotCard | undefined => {
+const getDailyTarotCardById = (id: string): DailyTarotCard | undefined => {
   return DAILY_TAROT_CARDS.find((card) => card.id === id);
 };
 
-export const getRandomCard = (): TarotCard => {
+const getRandomCard = (): TarotCard => {
   return TAROT_CARDS[Math.floor(Math.random() * TAROT_CARDS.length)];
 };
 
-export const getRandomCards = (count: number): TarotCard[] => {
+const getRandomCards = (count: number): TarotCard[] => {
   const cards: TarotCard[] = [];
   const usedIndices = new Set<number>();
 

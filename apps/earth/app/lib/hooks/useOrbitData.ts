@@ -25,4 +25,3 @@ export function useTflCameras() {
   });
 }
 
-export type { TflCamera };

@@ -139,7 +139,7 @@ export interface DailyTarotResult {
 export const isMajorArcanaCard = (card: TarotCard): card is MajorArcanaCard =>
   card.kind === "major";
 
-export const isMinorArcanaCard = (
+const isMinorArcanaCard = (
   card: TarotCard,
 ): card is MinorArcanaPipCard | MinorArcanaCourtCard => card.kind !== "major";
 

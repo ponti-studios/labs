@@ -2,6 +2,7 @@ import "dotenv/config";
 import { parseArgs } from "node:util";
 
 import { addDaysToDateKey, buildDateRange, getDateKey } from "../app/lib/realitea-date";
+import { getErrorMessage } from "../app/lib/errors";
 import {
   countInventoryForRange,
   deletePuzzlesFromDate,
@@ -73,7 +74,7 @@ async function main() {
     } catch (err) {
       failedCount++;
       reconcileLogger.error(
-        { event: "[GENERATION_ERROR]", dateKey, error: err instanceof Error ? err.message : String(err) },
+        { event: "[GENERATION_ERROR]", dateKey, error: getErrorMessage(err) },
         `error generating puzzle for ${dateKey}`,
       );
     }
@@ -101,7 +102,7 @@ async function main() {
 if (!process.env.VITEST) {
   await withDbCleanup(main).catch((err) => {
     logger.error(
-      { event: "[RECONCILE_FAILED]", error: err instanceof Error ? err.message : String(err) },
+      { event: "[RECONCILE_FAILED]", error: getErrorMessage(err) },
       "reconcile run failed",
     );
     process.exit(1);

@@ -1,15 +1,15 @@
 import type { Symptom } from "@/types/symptom";
 
 // Determine if a score is within a given range
-export function isWithinRange(score: number, range: number[]) {
+function isWithinRange(score: number, range: number[]) {
   if (Number.isNaN(score)) return false;
   return score >= Math.min(...range) && score <= Math.max(...range);
 }
 
 // Get the value at the middle of the range.
-export const getRangeMidpoint = (range: number[]) => (Math.min(...range) + Math.max(...range)) / 2;
+const getRangeMidpoint =(range: number[]) => (Math.min(...range) + Math.max(...range)) / 2;
 
-export function getScoreFromRange(range: number[], query?: number | null, baseScore = 25) {
+function getScoreFromRange(range: number[], query?: number | null, baseScore = 25) {
   const maxIntensity = Math.max(...range);
   const minIntensity = Math.min(...range);
 

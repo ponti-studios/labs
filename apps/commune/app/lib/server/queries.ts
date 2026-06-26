@@ -2,7 +2,7 @@ import { sql, desc, eq, inArray } from "@pontistudios/db";
 import { db, relationshipCases, relationshipVerdicts, caseUpdates } from "@pontistudios/db";
 import type { CaseUpdate, RelationshipCase, RelationshipVerdict } from "@pontistudios/db";
 
-export type CaseWithStats = RelationshipCase & {
+type CaseWithStats = RelationshipCase & {
   voteStats: {
     total: number;
     agree: number;
@@ -12,11 +12,11 @@ export type CaseWithStats = RelationshipCase & {
   };
 };
 
-export async function getCases(): Promise<RelationshipCase[]> {
+async function getCases(): Promise<RelationshipCase[]> {
   return db.select().from(relationshipCases).orderBy(desc(relationshipCases.createdAt)).execute();
 }
 
-export async function getCase(id: string): Promise<RelationshipCase | null> {
+async function getCase(id: string): Promise<RelationshipCase | null> {
   const rows = await db
     .select()
     .from(relationshipCases)
@@ -25,7 +25,7 @@ export async function getCase(id: string): Promise<RelationshipCase | null> {
   return rows[0] ?? null;
 }
 
-export async function getCaseUpdates(caseId: string): Promise<CaseUpdate[]> {
+async function getCaseUpdates(caseId: string): Promise<CaseUpdate[]> {
   return db
     .select()
     .from(caseUpdates)
@@ -43,7 +43,7 @@ export async function getVerdictsByCase(caseId: string): Promise<RelationshipVer
     .execute();
 }
 
-export async function getVerdictStats(
+async function getVerdictStats(
   caseId: string,
   quorumSize: number,
 ): Promise<CaseWithStats["voteStats"]> {

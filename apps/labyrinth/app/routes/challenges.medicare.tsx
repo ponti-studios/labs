@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useReducer } from "react";
 import {
   Badge,
   Button,
@@ -149,26 +149,60 @@ function formatCurrency(amount: number) {
  * Task: Create an interface to calculate Medicare premiums and deductibles
  * adjusting for income brackets and standard baseline values.
  */
+type MedicareState = {
+  income: number;
+  age: number;
+  medicalExpenses: number;
+  selectedPlans: string[];
+  showResults: boolean;
+  activeTab: string;
+};
+
+type MedicareAction =
+  | { type: "set_income"; value: number }
+  | { type: "set_age"; value: number }
+  | { type: "set_medical_expenses"; value: number }
+  | { type: "toggle_plan"; planId: string }
+  | { type: "generate_results" }
+  | { type: "set_tab"; tab: string };
+
+function medicareReducer(state: MedicareState, action: MedicareAction): MedicareState {
+  switch (action.type) {
+    case "set_income":
+      return { ...state, income: action.value };
+    case "set_age":
+      return { ...state, age: action.value };
+    case "set_medical_expenses":
+      return { ...state, medicalExpenses: action.value };
+    case "toggle_plan":
+      return {
+        ...state,
+        selectedPlans: state.selectedPlans.includes(action.planId)
+          ? state.selectedPlans.filter((id) => id !== action.planId)
+          : [...state.selectedPlans, action.planId],
+      };
+    case "generate_results":
+      return { ...state, showResults: true, activeTab: "results" };
+    case "set_tab":
+      return { ...state, activeTab: action.tab };
+  }
+}
+
+const initialMedicareState: MedicareState = {
+  income: 90000,
+  age: 65,
+  medicalExpenses: 2000,
+  selectedPlans: [],
+  showResults: false,
+  activeTab: "profile",
+};
+
 export default function MedicareRoute() {
-  const [income, setIncome] = useState(90000);
-  const [age, setAge] = useState(65);
-  const [medicalExpenses, setMedicalExpenses] = useState(2000);
-  const [selectedPlans, setSelectedPlans] = useState<string[]>([]);
-  const [showResults, setShowResults] = useState(false);
-  const [activeTab, setActiveTab] = useState("profile");
+  const [{ income, age, medicalExpenses, selectedPlans, showResults, activeTab }, dispatch] =
+    useReducer(medicareReducer, initialMedicareState);
 
-  const togglePlanSelection = (planId: string) => {
-    if (selectedPlans.includes(planId)) {
-      setSelectedPlans(selectedPlans.filter((id) => id !== planId));
-    } else {
-      setSelectedPlans([...selectedPlans, planId]);
-    }
-  };
-
-  const generateResults = () => {
-    setShowResults(true);
-    setActiveTab("results");
-  };
+  const togglePlanSelection = (planId: string) => dispatch({ type: "toggle_plan", planId });
+  const generateResults = () => dispatch({ type: "generate_results" });
 
   const irmaa = calculateIRMAA(income);
 
@@ -200,7 +234,7 @@ export default function MedicareRoute() {
           </p>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <Tabs value={activeTab} onValueChange={(tab) => dispatch({ type: "set_tab", tab })} className="w-full">
           <TabsList className="mb-8 grid w-full grid-cols-3 border border-white/10 bg-white/5">
             <TabsTrigger
               value="profile"
@@ -233,7 +267,7 @@ export default function MedicareRoute() {
                   </label>
                   <Slider
                     value={[age]}
-                    onValueChange={(values) => setAge(values[0])}
+                    onValueChange={(values) => dispatch({ type: "set_age", value: values[0] })}
                     min={65}
                     max={90}
                     step={1}
@@ -251,7 +285,7 @@ export default function MedicareRoute() {
                   </label>
                   <Slider
                     value={[income]}
-                    onValueChange={(values) => setIncome(values[0])}
+                    onValueChange={(values) => dispatch({ type: "set_income", value: values[0] })}
                     min={30000}
                     max={500000}
                     step={5000}
@@ -276,7 +310,7 @@ export default function MedicareRoute() {
                   </label>
                   <Slider
                     value={[medicalExpenses]}
-                    onValueChange={(values) => setMedicalExpenses(values[0])}
+                    onValueChange={(values) => dispatch({ type: "set_medical_expenses", value: values[0] })}
                     min={0}
                     max={10000}
                     step={500}
@@ -290,7 +324,7 @@ export default function MedicareRoute() {
               </div>
 
               <Button
-                onClick={() => setActiveTab("plans")}
+                onClick={() => dispatch({ type: "set_tab", tab: "plans" })}
                 className="w-full border border-white/20 bg-white/10 font-mono text-sm text-white uppercase hover:bg-white/20"
               >
                 CONTINUE TO PLANS

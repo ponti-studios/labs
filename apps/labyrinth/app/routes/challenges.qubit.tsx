@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState, type JSX } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@pontistudios/ui";
 
+import { getErrorMessage } from "~/lib/errors";
+
 interface SelectorWindow extends Window {
   $?: (selector: string) => Element[];
 }
@@ -188,7 +190,7 @@ export default function Qubit(): JSX.Element {
         try {
           found = tagCount(select(selector));
         } catch (caughtError) {
-          error = caughtError instanceof Error ? caughtError.message : String(caughtError);
+          error = getErrorMessage(caughtError);
         }
 
         const normalizedExpected = normalizeExpected(expected);

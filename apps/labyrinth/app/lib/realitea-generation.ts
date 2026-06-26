@@ -4,8 +4,10 @@ import { XMLParser } from "fast-xml-parser";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import pino from "pino";
 import { z } from "zod";
+
+import { getErrorMessage } from "./errors";
+import { createLogger } from "./logger.server";
 
 import { normalizeGuess, REALITEA_ANSWER_LENGTH } from "./realitea";
 import { getDateKey, parseDate } from "./realitea-date";
@@ -44,11 +46,7 @@ async function fetchFeedItems(feedUrl?: string): Promise<FeedItem[]> {
   });
 }
 
-const logger = pino(
-  process.env.NODE_ENV === "development"
-    ? { transport: { target: "pino-pretty" } }
-    : { level: process.env.NODE_ENV === "test" ? "silent" : "info" },
-);
+const logger = createLogger();
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const SYSTEM_PROMPT = readFileSync(join(__dirname, "prompts/bravo-generation-system.md"), "utf-8");
@@ -137,7 +135,7 @@ async function callGenerationApi(
     return null;
   } catch (err) {
     childLogger.error(
-      { event: "[GENERATION_API_ERROR]", error: err instanceof Error ? err.message : String(err) },
+      { event: "[GENERATION_API_ERROR]", error: getErrorMessage(err) },
       "generation API call failed",
     );
     return null;
@@ -182,7 +180,7 @@ async function callGenerationApiForPreview(
   } catch (err) {
     return {
       candidates: [],
-      llmError: err instanceof Error ? err.message : String(err),
+      llmError: getErrorMessage(err),
     };
   }
 }
@@ -198,7 +196,7 @@ export async function previewCandidates(
   try {
     feedItems = await fetchFeedItems(feedUrl);
   } catch (err) {
-    feedError = err instanceof Error ? err.message : String(err);
+    feedError = getErrorMessage(err);
   }
 
   const { candidates, llmError } = await callGenerationApiForPreview(
@@ -245,7 +243,7 @@ export async function generateScheduledPuzzle(dateKey: string): Promise<PuzzleRe
     getStoredAnswers(),
     fetchFeedItems().catch((err) => {
       childLogger.error(
-        { event: "[FEED_FETCH_ERROR]", error: err instanceof Error ? err.message : String(err) },
+        { event: "[FEED_FETCH_ERROR]", error: getErrorMessage(err) },
         "failed to fetch realityblurb.com feed",
       );
       return [] as FeedItem[];

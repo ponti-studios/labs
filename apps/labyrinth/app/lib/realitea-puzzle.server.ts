@@ -1,5 +1,4 @@
 import { db, desc, rhobhDailyPuzzles } from "@pontistudios/db";
-import pino from "pino";
 
 import {
   evaluateGuess,
@@ -11,15 +10,12 @@ import {
   type RealiteaGuessResult,
 } from "./realitea";
 import { addDaysToDateKey, getDateKey } from "./realitea-date";
+import { createLogger } from "./logger.server";
 import type { PuzzleRecord } from "./realitea.types";
 import { loadPuzzleForDate } from "./realitea-db";
 import { isValidWord } from "./word-list.server";
 
-const logger = pino(
-  process.env.NODE_ENV === "development"
-    ? { transport: { target: "pino-pretty" } }
-    : { level: process.env.NODE_ENV === "test" ? "silent" : "info" },
-);
+const logger = createLogger();
 
 // ── DTO mapping ──────────────────────────────────────────────────────────────
 
@@ -53,7 +49,7 @@ export async function loadActivePublicPuzzle(
       orderBy: desc(rhobhDailyPuzzles.createdAt),
     });
     if (row) {
-      puzzle = row as unknown as PuzzleRecord;
+      puzzle = row;
       childLogger.warn(
         {
           event: "[FALLBACK_ACTIVATED_ANY_PUZZLE]",

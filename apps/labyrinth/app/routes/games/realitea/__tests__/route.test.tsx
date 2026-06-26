@@ -14,7 +14,7 @@ import {
 
 import { readGameState } from "../game-state";
 import RealiTeaRoute from "../route";
-import { createControlledRouteAction } from "../../../__tests__/controlled-route-action";
+import { createControlledRouteAction } from "../../../controlled-route-action";
 import {
   expectAccessibilityMessageContent,
   expectMessageClearsAfterAnimation,

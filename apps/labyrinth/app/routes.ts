@@ -42,15 +42,18 @@ const featureRoutes = [
   route("/games/tetris", "routes/games/tetris.tsx"),
   route("/games/realitea", "routes/games/realitea/route.tsx"),
   route("/games/realitea/admin", "routes/games/realitea/admin.tsx"),
-  route("/business-tools/marketing", "routes/business-tools/marketing.tsx"),
+  route("/experiments/theatre-management", "routes/experiments/theatre-management/route.tsx"),
 ] satisfies RouteConfig;
 
 const experimentRoutes = [
+  route("/experiments/calendar", "routes/experiments.calendar.tsx"),
   route("/experiments/glass", "routes/experiments.glass.tsx"),
   route("/experiments/infinite-scroll", "routes/infinite-scroll/index.tsx"),
   route("/experiments/threegl-web-request", "routes/experiments.threegl-web-request.tsx"),
   route("/experiments/threegl-image-gallery", "routes/experiments.threegl-image-gallery.tsx"),
   route("/experiments/llm-interface", "routes/experiments.llm-interface.tsx"),
+  route("/experiments/career-resume-animated", "routes/experiments.career-resume-animated.tsx"),
+  route("/experiments/pixel-descent", "routes/experiments.pixel-descent.tsx"),
 ] satisfies RouteConfig;
 
 const challengeRoutes = [

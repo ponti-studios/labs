@@ -1,5 +1,5 @@
 import { Accordion } from "@pontistudios/ui";
-import { useMemo, useReducer, useState } from "react";
+import { useMemo, useReducer } from "react";
 
 import { GenerativeImagePreviewPanel } from "~/components/generative-image/preview-panel";
 import {
@@ -27,19 +27,51 @@ export function meta() {
   ];
 }
 
+type GenState = {
+  loading: boolean;
+  error: string | null;
+  generatedImage: string | null;
+  showPrompt: boolean;
+};
+
+type GenAction =
+  | { type: "generate/start" }
+  | { type: "generate/success"; imageUrl: string }
+  | { type: "generate/error"; message: string }
+  | { type: "toggle_prompt" };
+
+function genReducer(state: GenState, action: GenAction): GenState {
+  switch (action.type) {
+    case "generate/start":
+      return { ...state, loading: true, error: null };
+    case "generate/success":
+      return { ...state, loading: false, generatedImage: action.imageUrl };
+    case "generate/error":
+      return { ...state, loading: false, error: action.message };
+    case "toggle_prompt":
+      return { ...state, showPrompt: !state.showPrompt };
+  }
+}
+
+const initialGenState: GenState = {
+  loading: false,
+  error: null,
+  generatedImage: null,
+  showPrompt: false,
+};
+
 export default function GenerativeImageRoute() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [generatedImage, setGeneratedImage] = useState<string | null>(null);
-  const [showPrompt, setShowPrompt] = useState(false);
+  const [{ loading, error, generatedImage, showPrompt }, genDispatch] = useReducer(
+    genReducer,
+    initialGenState,
+  );
   const [formState, dispatch] = useReducer(generativeImageReducer, initialGenerativeImageFormState);
 
   const config = useMemo(() => toGenerativeImageConfig(formState), [formState]);
   const promptText = useMemo(() => buildGenerativeImagePrompt(config), [config]);
 
   const handleGenerate = async () => {
-    setLoading(true);
-    setError(null);
+    genDispatch({ type: "generate/start" });
 
     try {
       const response = await fetch("/api/gen/image", {
@@ -56,18 +88,18 @@ export default function GenerativeImageRoute() {
       const data = (await response.json()) as { imageUrl?: string };
 
       if (data.imageUrl) {
-        setGeneratedImage(data.imageUrl);
+        genDispatch({ type: "generate/success", imageUrl: data.imageUrl });
       } else {
         throw new Error("No image URL received from the API.");
       }
     } catch (caughtError: unknown) {
-      setError(
-        caughtError instanceof Error
-          ? caughtError.message
-          : String(caughtError) || "An unexpected error occurred",
-      );
-    } finally {
-      setLoading(false);
+      genDispatch({
+        type: "generate/error",
+        message:
+          caughtError instanceof Error
+            ? caughtError.message
+            : String(caughtError) || "An unexpected error occurred",
+      });
     }
   };
 
@@ -95,7 +127,7 @@ export default function GenerativeImageRoute() {
             error={error}
             showPrompt={showPrompt}
             promptText={promptText}
-            onTogglePrompt={() => setShowPrompt((current) => !current)}
+            onTogglePrompt={() => genDispatch({ type: "toggle_prompt" })}
             onGenerate={handleGenerate}
           />
         </main>

@@ -23,6 +23,10 @@ const categories: Category[] = [
   {
     name: "Experiments",
     entries: [
+      { path: "/experiments/career-resume-animated", label: "Career Resume Animated" },
+      { path: "/experiments/calendar", label: "Calendar" },
+      { path: "/experiments/pixel-descent", label: "Pixel Descent" },
+      { path: "/experiments/theatre-management", label: "Theatre Management" },
       { path: "/experiments/llm-interface", label: "LLM Interface" },
       { path: "/experiments/glass", label: "Glass" },
       { path: "/experiments/threegl-web-request", label: "ThreeGL Web Request" },
@@ -33,7 +37,6 @@ const categories: Category[] = [
   {
     name: "Tools",
     entries: [
-      { path: "/business-tools/marketing", label: "Marketing" },
       { path: "/gen/image", label: "Image Generation" },
       { path: "/tarot", label: "Tarot" },
       { path: "/covid", label: "COVID Analytics" },

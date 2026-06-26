@@ -149,7 +149,7 @@ export async function getGlobalCovidData(): Promise<ApiResponse> {
 }
 
 // Get country comparison data
-export async function getCountryComparisonData(
+async function getCountryComparisonData(
   countryCodes: string[],
   limit = 365,
 ): Promise<ApiResponse> {

@@ -4,7 +4,7 @@ import path from "node:path";
 import { db } from "../drizzle";
 import { tflCameras, type NewTflCamera } from "../schema/tfl";
 
-export interface FormattedTflCamera {
+interface FormattedTflCamera {
   commonName: string;
   lat: number;
   lng: number;
@@ -15,7 +15,7 @@ export interface FormattedTflCamera {
   imageUrl: string;
 }
 
-export type PopulateTflOptions = {
+type PopulateTflOptions = {
   sourcePath?: string;
   clearExisting?: boolean;
 };

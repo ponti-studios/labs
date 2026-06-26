@@ -1,7 +1,7 @@
 // Shared Earth data types.
 // This file intentionally contains no runtime signals.
 
-export type DockTab = "tfl";
+type DockTab = "tfl";
 
 export interface TflCamera {
   id: string;
