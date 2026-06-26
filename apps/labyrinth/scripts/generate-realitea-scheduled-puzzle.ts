@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { parseArgs } from "node:util";
 import { closeDb } from "@pontistudios/db";
 
 import { buildDateRange, getDateKey, isDateKey } from "../app/lib/realitea-date";
@@ -14,14 +15,22 @@ interface GenerationOptions {
 }
 
 export function parseGenerateArgs(argv: string[]): GenerationOptions {
-  const opts: GenerationOptions = {};
-  for (const arg of argv) {
-    if (arg.startsWith("--date-key=")) opts.dateKey = arg.slice("--date-key=".length);
-    else if (arg.startsWith("--from=")) opts.from = arg.slice("--from=".length);
-    else if (arg.startsWith("--to=")) opts.to = arg.slice("--to=".length);
-    else if (arg.startsWith("--days-ahead=")) opts.daysAhead = parseInt(arg.slice("--days-ahead=".length), 10);
-  }
-  return opts;
+  const { values } = parseArgs({
+    args: argv,
+    options: {
+      "date-key": { type: "string" },
+      from:        { type: "string" },
+      to:          { type: "string" },
+      "days-ahead": { type: "string" },
+    },
+    strict: true,
+  });
+  return {
+    ...(values["date-key"] !== undefined && { dateKey: values["date-key"] }),
+    ...(values.from        !== undefined && { from: values.from }),
+    ...(values.to          !== undefined && { to: values.to }),
+    ...(values["days-ahead"] !== undefined && { daysAhead: parseInt(values["days-ahead"], 10) }),
+  };
 }
 
 export function buildGenerateRange(opts: GenerationOptions): string[] {

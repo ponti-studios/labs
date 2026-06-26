@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { parseArgs } from "node:util";
 
 import { addDaysToDateKey, buildDateRange, getDateKey } from "../app/lib/realitea-date";
 import {
@@ -18,21 +19,25 @@ export function computeGaps(dateRange: string[], existingKeys: string[]): string
   return dateRange.filter((d) => !existing.has(d));
 }
 
-function parseArgs(): { force: boolean; daysAhead: number } {
-  const args = process.argv.slice(2);
-  let force = false;
-  let daysAhead = REALITEA_READY_INVENTORY_DAYS;
-  for (const arg of args) {
-    if (arg === "--force") force = true;
-    else if (arg.startsWith("--days-ahead=")) daysAhead = parseInt(arg.slice("--days-ahead=".length), 10);
-  }
-  return { force, daysAhead };
+function parseReconcileArgs(): { force: boolean; daysAhead: number } {
+  const { values } = parseArgs({
+    args: process.argv.slice(2),
+    options: {
+      force:        { type: "boolean" },
+      "days-ahead": { type: "string" },
+    },
+    strict: true,
+  });
+  return {
+    force: values.force ?? false,
+    daysAhead: values["days-ahead"] ? parseInt(values["days-ahead"], 10) : REALITEA_READY_INVENTORY_DAYS,
+  };
 }
 
 async function main() {
   LabyrinthServerEnv.parse(process.env);
 
-  const { force, daysAhead } = parseArgs();
+  const { force, daysAhead } = parseReconcileArgs();
   const runDateKey = getDateKey(new Date());
   const reconcileLogger = logger.child({ operation: "reconcile", runDateKey, force });
 
