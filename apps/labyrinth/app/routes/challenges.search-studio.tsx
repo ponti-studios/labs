@@ -7,6 +7,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Tabs,
+  TabsList,
+  TabsTrigger,
   Spinner,
 } from "@pontistudios/ui";
 import {
@@ -30,8 +33,6 @@ const SORT_OPTIONS: Array<{ value: SearchSortMode; label: string }> = [
   { value: "newest", label: "Newest" },
   { value: "title", label: "Title" },
 ];
-const CHIP_BASE =
-  "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition-all duration-150";
 
 type KindFilter = "all" | SearchDocumentKind;
 
@@ -230,34 +231,6 @@ function ResultSkeletonRow({ index }: { index: number }) {
   );
 }
 
-function FacetButton({
-  label,
-  active,
-  count,
-  onClick,
-}: {
-  label: string;
-  active?: boolean;
-  count?: number;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={[
-        CHIP_BASE,
-        active
-          ? "border-border bg-foreground text-background shadow-sm"
-          : "border-border bg-background text-muted-foreground hover:bg-muted hover:text-foreground",
-      ].join(" ")}
-    >
-      <span>{label}</span>
-      {typeof count === "number" && <span className="text-xs text-muted-foreground">{count}</span>}
-    </button>
-  );
-}
-
 export default function SearchStudio() {
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
@@ -327,100 +300,103 @@ export default function SearchStudio() {
     <div className="min-h-screen w-full bg-background text-foreground">
       <div className="mx-auto flex h-[calc(100dvh-3.5rem)] min-h-0 w-full max-w-7xl flex-col gap-3 overflow-hidden px-4 py-2 md:px-6 md:py-3">
         <header className="sticky top-4 z-20 rounded-2xl border border-border bg-background/90 px-4 py-3 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-background/80 md:px-5">
-          <div className="flex items-center gap-3 overflow-x-auto pb-1">
-            <div className="relative min-w-[18rem] flex-1">
-              <LucideSearch className="pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                id="search-studio-query"
-                type="text"
-                value={query}
-                onChange={(event) => handleQueryChange(event.target.value)}
-                placeholder="Search shows, films, titles, stars, studios, or franchises..."
-                className="h-12 w-full border-border bg-background pr-12 pl-11 text-base text-foreground placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
-              />
-              {query.length > 0 && (
-                <button
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-3 overflow-x-auto pb-1">
+              <div className="relative min-w-[18rem] flex-1">
+                <LucideSearch className="pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  id="search-studio-query"
+                  type="text"
+                  value={query}
+                  onChange={(event) => handleQueryChange(event.target.value)}
+                  placeholder="Search shows, films, titles, stars, studios, or franchises..."
+                  className="h-12 w-full border-border bg-background pr-12 pl-11 text-base text-foreground placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
+                />
+                {query.length > 0 && (
+                  <button
+                    type="button"
+                    aria-label="Clear search"
+                    onClick={() => handleQueryChange("")}
+                    className="absolute top-1/2 right-2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  >
+                    <LucideX className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+
+              <div className="flex shrink-0 items-center gap-2">
+                <Select value={sort} onValueChange={(value) => handleSortChange(value as SearchSortMode)}>
+                  <SelectTrigger className="h-12 w-[10rem] border-border bg-background">
+                    <SelectValue placeholder="Sort results" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SORT_OPTIONS.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button
                   type="button"
-                  aria-label="Clear search"
-                  onClick={() => handleQueryChange("")}
-                  className="absolute top-1/2 right-2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setPage((current) => Math.max(1, current - 1))}
+                  disabled={!data?.hasPrev}
+                  aria-label="Previous page"
                 >
-                  <LucideX className="h-4 w-4" />
-                </button>
-              )}
+                  <LucideChevronLeft className="h-4 w-4" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setPage((current) => (data?.hasNext ? current + 1 : current))}
+                  disabled={!data?.hasNext}
+                  aria-label="Next page"
+                >
+                  <LucideChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
 
-            <div className="flex shrink-0 items-center gap-2">
-              <Select value={sort} onValueChange={(value) => handleSortChange(value as SearchSortMode)}>
-                <SelectTrigger className="h-12 w-[10rem] border-border bg-background">
-                  <SelectValue placeholder="Sort results" />
-                </SelectTrigger>
-                <SelectContent>
-                  {SORT_OPTIONS.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="flex flex-wrap items-center gap-2 border-t border-border/70 pt-2">
+              <Tabs
+                value={kindFilter}
+                onValueChange={(value) => {
+                  setKindFilter(value as KindFilter);
+                  setPage(1);
+                }}
+              >
+                <TabsList className="h-auto bg-background p-0.5">
+                  <TabsTrigger value="all" className="gap-2 px-3 py-1.5">
+                    <span>All</span>
+                    <span className="text-xs text-muted-foreground">{kindCounts.all}</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="movie" className="gap-2 px-3 py-1.5">
+                    <span>Movies</span>
+                    <span className="text-xs text-muted-foreground">{kindCounts.movie}</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="tv" className="gap-2 px-3 py-1.5">
+                    <span>TV</span>
+                    <span className="text-xs text-muted-foreground">{kindCounts.tv}</span>
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
               <Button
                 type="button"
-                variant="outline"
-                size="icon"
-                onClick={() => setPage((current) => Math.max(1, current - 1))}
-                disabled={!data?.hasPrev}
-                aria-label="Previous page"
+                variant={featuredOnly ? "secondary" : "outline"}
+                size="sm"
+                onClick={() => {
+                  setFeaturedOnly((current) => !current);
+                  setPage(1);
+                }}
               >
-                <LucideChevronLeft className="h-4 w-4" />
+                Featured only
               </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                onClick={() => setPage((current) => (data?.hasNext ? current + 1 : current))}
-                disabled={!data?.hasNext}
-                aria-label="Next page"
-              >
-                <LucideChevronRight className="h-4 w-4" />
+              <Button type="button" variant="ghost" size="sm" onClick={clearFilters}>
+                Clear
               </Button>
-              <div className="flex shrink-0 items-center gap-2">
-                <FacetButton
-                  label="All"
-                  count={kindCounts.all}
-                  active={kindFilter === "all"}
-                  onClick={() => {
-                    setKindFilter("all");
-                    setPage(1);
-                  }}
-                />
-                <FacetButton
-                  label="Movies"
-                  count={kindCounts.movie}
-                  active={kindFilter === "movie"}
-                  onClick={() => {
-                    setKindFilter("movie");
-                    setPage(1);
-                  }}
-                />
-                <FacetButton
-                  label="TV"
-                  count={kindCounts.tv}
-                  active={kindFilter === "tv"}
-                  onClick={() => {
-                    setKindFilter("tv");
-                    setPage(1);
-                  }}
-                />
-                <FacetButton
-                  label="Featured only"
-                  active={featuredOnly}
-                  onClick={() => {
-                    setFeaturedOnly((current) => !current);
-                    setPage(1);
-                  }}
-                />
-                <FacetButton label="Clear" active={false} onClick={clearFilters} />
-              </div>
             </div>
           </div>
         </header>
