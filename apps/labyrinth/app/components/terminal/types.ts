@@ -4,12 +4,3 @@ export interface TerminalLine {
   timestamp?: string;
   id?: string;
 }
-
-interface TerminalState {
-  lines: TerminalLine[];
-  currentCommand: string;
-  commandHistory: string[];
-  historyIndex: number;
-  isBooting: boolean;
-  bootIndex: number;
-}

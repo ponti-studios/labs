@@ -111,15 +111,6 @@ export const CAT_ANIMATION_STYLES = `
   }
 `;
 
-const CAT_ELEMENT_STYLES = `
-  position: fixed;
-  z-index: 1000;
-  font-size: 12px;
-  line-height: 1;
-  pointer-events: none;
-  left: -100px;
-`;
-
 export const CAT_HTML_TEMPLATE = `
   <div style="font-family: monospace; color: #00ff41; text-shadow: 0 0 10px #00ff41;">
     /\\_/\\<br>

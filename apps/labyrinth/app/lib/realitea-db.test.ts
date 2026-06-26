@@ -61,8 +61,7 @@ describe("getStoredAnswers", () => {
   it("returns a Set of all normalizedAnswer values", async () => {
     const rows = [{ normalizedAnswer: "BRAVO" }, { normalizedAnswer: "DISCO" }];
     dbMock.select.mockReturnValue({
-      from: () => ({ where: () => Promise.resolve(rows), then: (fn: (r: typeof rows) => unknown) => Promise.resolve(fn(rows)) }),
-      then: (fn: (r: typeof rows) => unknown) => Promise.resolve(fn(rows)),
+      from: () => Promise.resolve(rows),
     });
     const { getStoredAnswers } = await import("./realitea-db");
     const result = await getStoredAnswers();
