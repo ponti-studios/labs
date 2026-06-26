@@ -5,7 +5,7 @@ import { count, db, desc, inArray, rhobhDailyPuzzles } from "@pontistudios/db";
 
 import { requireAdminAuth } from "~/lib/server/admin-auth";
 import { addDaysToDateKey, getDateKey } from "~/lib/realitea-date";
-import { getPuzzleForDate } from "~/lib/realitea-db";
+import { loadPuzzleForDate } from "~/lib/realitea-db";
 
 async function getInventoryDepth(fromDateKey: string, days: number): Promise<number> {
   const dateKeys: string[] = [];
@@ -29,7 +29,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const dateKey = getDateKey(now);
 
   const [puzzle, totalPuzzles, recentPuzzles, inventoryDepth] = await Promise.all([
-    getPuzzleForDate(dateKey),
+    loadPuzzleForDate(dateKey),
     db
       .select({ value: count() })
       .from(rhobhDailyPuzzles)

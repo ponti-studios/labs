@@ -92,6 +92,7 @@ export interface GenerationPreviewResult {
   feedItems: FeedItem[];
   candidates: CandidatePreview[];
   selectedIndex: number | null;
+  feedError: string | null;
   llmError: string | null;
 }
 

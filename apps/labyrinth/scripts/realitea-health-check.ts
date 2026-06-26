@@ -1,81 +1,82 @@
 import "dotenv/config";
-import { closeDb, db } from "@pontistudios/db";
 
 import { getDateKey } from "../app/lib/realitea-date";
-import { countInventoryForRange, getPuzzleForDate } from "../app/lib/realitea-db";
-import { createScriptLogger } from "../app/lib/realitea-scripts";
+import { countInventoryForRange, loadPuzzleForDate } from "../app/lib/realitea-db";
+import { createScriptLogger, withDbCleanup } from "../app/lib/realitea-scripts";
+import { REALITEA_READY_INVENTORY_DAYS } from "../app/lib/realitea-validation";
 
 const logger = createScriptLogger();
 
-async function healthCheckRealiTea() {
-  const now = new Date();
-  const dateKey = getDateKey(now);
-  const healthLogger = logger.child({
-    operation: "healthCheckRealiTea",
-    timestamp: now.toISOString(),
-    dateKey,
-  });
+export type HealthStatus = "OK" | "DEGRADED";
 
-  // Check 1: Any puzzle exists at all
-  const anyPuzzle = await db.query.rhobhDailyPuzzles.findFirst({});
-  if (!anyPuzzle) {
-    healthLogger.error({ event: "[HEALTH_CRITICAL_NO_PUZZLES]" }, "no puzzles in database");
+export interface HealthResult {
+  status: HealthStatus;
+  issues: string[];
+}
+
+export function computeHealthStatus(
+  inventoryDepth: number,
+  hasTodayPuzzle: boolean,
+  hasAnyPuzzle: boolean,
+): HealthResult {
+  const issues: string[] = [];
+
+  if (!hasAnyPuzzle) {
+    issues.push("no puzzles in database");
   }
-
-  // Check 2: Puzzle exists for today
-  const todaysPuzzle = await getPuzzleForDate(dateKey);
-  if (!todaysPuzzle) {
-    healthLogger.error(
-      { event: "[HEALTH_ERROR_NO_PUZZLE_TODAY]" },
-      "no puzzle exists for today",
-    );
+  if (!hasTodayPuzzle) {
+    issues.push("no puzzle for today");
   }
-
-  // Check 3: Inventory depth for next 7 days
-  const inventoryDepth = await countInventoryForRange(dateKey, 7);
   if (inventoryDepth < 1) {
-    healthLogger.error(
-      { event: "[HEALTH_CRITICAL_NO_INVENTORY]", inventory: inventoryDepth },
-      "no puzzles scheduled for next 7 days",
-    );
-  } else if (inventoryDepth < 3) {
-    healthLogger.warn(
-      { event: "[HEALTH_WARN_LOW_INVENTORY]", inventory: inventoryDepth },
-      "puzzle inventory is low",
-    );
+    issues.push("no puzzles scheduled for upcoming days");
+  } else if (inventoryDepth < REALITEA_READY_INVENTORY_DAYS) {
+    issues.push(`low inventory: ${inventoryDepth}/${REALITEA_READY_INVENTORY_DAYS} days covered`);
   }
 
-  const status = anyPuzzle && todaysPuzzle && inventoryDepth >= 2 ? "OK" : "DEGRADED";
-  healthLogger.info(
-    {
-      event: "[HEALTH_CHECK_COMPLETE]",
-      status,
-      puzzleExists: !!anyPuzzle,
-      hasTodaysPuzzle: !!todaysPuzzle,
-      inventoryDepth,
-    },
-    "health check complete",
-  );
-
-  return status;
+  return { status: issues.length === 0 ? "OK" : "DEGRADED", issues };
 }
 
 async function main() {
-  try {
-    const status = await healthCheckRealiTea();
-    if (status !== "OK") process.exit(1);
-  } catch (err) {
+  const now = new Date();
+  const dateKey = getDateKey(now);
+  const healthLogger = logger.child({ operation: "healthCheck", dateKey, timestamp: now.toISOString() });
+
+  const [todaysPuzzle, inventoryDepth] = await Promise.all([
+    loadPuzzleForDate(dateKey),
+    countInventoryForRange(dateKey, REALITEA_READY_INVENTORY_DAYS),
+  ]);
+
+  // "any puzzle exists" is approximated by checking today + recent inventory;
+  // true existence check only needed if inventory is also zero
+  const hasAnyPuzzle = !!todaysPuzzle || inventoryDepth > 0;
+
+  const result = computeHealthStatus(inventoryDepth, !!todaysPuzzle, hasAnyPuzzle);
+
+  if (result.issues.length > 0) {
+    for (const issue of result.issues) {
+      healthLogger.warn({ event: "[HEALTH_ISSUE]" }, issue);
+    }
+  }
+
+  healthLogger.info(
+    {
+      event: "[HEALTH_CHECK_COMPLETE]",
+      status: result.status,
+      hasTodaysPuzzle: !!todaysPuzzle,
+      inventoryDepth,
+    },
+    `health check: ${result.status}`,
+  );
+
+  if (result.status !== "OK") process.exit(1);
+}
+
+if (!process.env.VITEST) {
+  await withDbCleanup(main).catch((err) => {
     logger.error(
-      {
-        event: "[ERROR_HEALTH_CHECK_FAILED]",
-        error: err instanceof Error ? err.message : String(err),
-      },
+      { event: "[HEALTH_CHECK_FAILED]", error: err instanceof Error ? err.message : String(err) },
       "health check failed",
     );
     process.exit(1);
-  } finally {
-    closeDb();
-  }
+  });
 }
-
-await main();
