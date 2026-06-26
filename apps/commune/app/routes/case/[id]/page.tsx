@@ -101,11 +101,9 @@ export default function CaseDetailPage() {
     <div className="mx-auto max-w-2xl px-4 py-10">
       {/* Case header */}
       <div className="mb-8 flex flex-col gap-1">
-        {caseRecord.label && (
-          <p className="text-muted-foreground font-mono text-[10px] tracking-widest uppercase">
-            {caseRecord.label}
-          </p>
-        )}
+        <p className="text-muted-foreground font-mono text-[10px] tracking-widest uppercase">
+          Case {caseRecord.id.slice(0, 8)}
+        </p>
         <div className="flex items-center justify-between gap-4">
           <p className="text-muted-foreground text-[10px]">{timeAgo(caseRecord.createdAt)}</p>
           <span

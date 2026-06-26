@@ -9,9 +9,11 @@ import type {
 } from "@pontistudios/db";
 import { invalidateCaseCache, queryCache } from "./cache";
 
+type CaseRow = Omit<RelationshipCase, "label">;
+
 type CaseCreateInput = Pick<
   NewRelationshipCase,
-  "userId" | "label" | "rawSituation" | "neutralSituation" | "question" | "quorumSize"
+  "userId" | "rawSituation" | "neutralSituation" | "question" | "quorumSize"
 >;
 
 type VerdictCreateInput = Pick<
@@ -26,25 +28,37 @@ type CaseUpdateCreateInput = {
   round: number;
 };
 
-export async function createCase(data: CaseCreateInput): Promise<RelationshipCase> {
-  const row = await db
+const caseSelect = {
+  id: relationshipCases.id,
+  userId: relationshipCases.userId,
+  rawSituation: relationshipCases.rawSituation,
+  neutralSituation: relationshipCases.neutralSituation,
+  question: relationshipCases.question,
+  quorumSize: relationshipCases.quorumSize,
+  status: relationshipCases.status,
+  createdAt: relationshipCases.createdAt,
+} satisfies Record<keyof CaseRow, unknown>;
+
+export async function createCase(data: CaseCreateInput): Promise<CaseRow> {
+  const id = crypto.randomUUID();
+  await db
     .insert(relationshipCases)
-    .values({ id: crypto.randomUUID(), ...data, createdAt: new Date() })
-    .returning()
+    .values({ id, ...data, createdAt: new Date() })
     .execute();
+  const row = await db.select(caseSelect).from(relationshipCases).where(eq(relationshipCases.id, id)).execute();
   const inserted = row[0];
   if (!inserted) throw new Error("Failed to insert case");
   queryCache.invalidatePattern(/^cases:/);
   return inserted;
 }
 
-async function closeCase(id: string): Promise<RelationshipCase | null> {
-  const row = await db
+async function closeCase(id: string): Promise<CaseRow | null> {
+  await db
     .update(relationshipCases)
     .set({ status: "closed" })
     .where(eq(relationshipCases.id, id))
-    .returning()
     .execute();
+  const row = await db.select(caseSelect).from(relationshipCases).where(eq(relationshipCases.id, id)).execute();
   const updated = row[0] ?? null;
   if (updated) invalidateCaseCache(id);
   return updated;

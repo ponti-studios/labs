@@ -76,8 +76,7 @@ export default function DocketPage() {
                       #{String(i + 1).padStart(3, "0")}
                     </span>
                     <span className="truncate text-xs font-medium">
-                      {c.label ||
-                        (c.question.length > 50 ? c.question.slice(0, 48) + "…" : c.question)}
+                      {c.question.length > 50 ? c.question.slice(0, 48) + "…" : c.question}
                     </span>
                   </div>
                   <p className="text-muted-foreground line-clamp-2 text-xs leading-relaxed">

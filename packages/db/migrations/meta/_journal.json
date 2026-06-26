@@ -8,6 +8,20 @@
       "when": 1782429908393,
       "tag": "0000_baseline",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1782454320584,
+      "tag": "0001_absent_fabian_cortez",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1782456158971,
+      "tag": "0002_safe_chat",
+      "breakpoints": true
     }
   ]
 }
