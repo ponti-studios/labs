@@ -98,7 +98,6 @@ function ResultRow({
         day: "numeric",
         year: "numeric",
       }).format(publishedDate);
-
   return (
     <article
       className="grid gap-4 border-b border-border py-5 last:border-0 md:grid-cols-[minmax(0,1fr)_auto]"
@@ -134,21 +133,13 @@ function ResultRow({
           <p className="max-w-4xl text-sm leading-6 text-foreground">
             {highlightText(result.snippet, query)}
           </p>
-
-          <Badge variant="secondary" className="mt-1 bg-muted text-foreground">
-            {result.category}
-          </Badge>
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground md:justify-end md:text-right">
-        <span className="text-[11px] font-medium uppercase tracking-[0.2em]">Rank</span>
-        <span className="text-lg font-semibold tabular-nums text-foreground">{index + 1}</span>
-        <span>{result.featured ? "Featured" : "Catalog"}</span>
-        <span>{result.finalScore.toFixed(1)} score</span>
-        <span className="tabular-nums">
-          L {result.lexicalScore.toFixed(1)} · S {result.semanticScore.toFixed(1)}
-        </span>
+      <div className="flex items-center gap-3 text-xs text-muted-foreground md:justify-end md:text-right">
+        <span className="uppercase tracking-[0.2em]">Rank {index + 1}</span>
+        <span>•</span>
+        <span className="tabular-nums">{result.finalScore.toFixed(1)} score</span>
       </div>
     </article>
   );
@@ -179,18 +170,12 @@ function ResultSkeletonRow({ index }: { index: number }) {
             <div className="h-4 w-full rounded-full bg-muted" />
             <div className="h-4 w-5/6 rounded-full bg-muted" />
           </div>
-          <div className="flex flex-wrap gap-2 pt-1">
-            <div className="h-6 w-20 rounded-full border border-border bg-muted" />
-            <div className="h-6 w-24 rounded-full border border-border bg-muted" />
-            <div className="h-6 w-28 rounded-full border border-border bg-muted" />
-          </div>
         </div>
       </div>
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-muted-foreground md:justify-end md:text-right">
-        <div className="h-3 w-10 rounded-full bg-muted" />
-        <div className="h-8 w-8 rounded-full bg-muted" />
-        <div className="h-3 w-12 rounded-full bg-muted" />
+      <div className="flex items-center gap-3 text-xs text-muted-foreground md:justify-end md:text-right">
         <div className="h-3 w-14 rounded-full bg-muted" />
+        <div className="h-3 w-3 rounded-full bg-muted" />
+        <div className="h-3 w-16 rounded-full bg-muted" />
       </div>
     </article>
   );
