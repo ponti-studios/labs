@@ -4,9 +4,11 @@ import path from "node:path";
 import { defineConfig } from "vite";
 
 export default defineConfig({
+  envDir: false,
   plugins: [tailwindcss(), reactRouter()],
   build: {
     cssMinify: "esbuild",
+    chunkSizeWarningLimit: 1500,
   },
   resolve: {
     tsconfigPaths: true,

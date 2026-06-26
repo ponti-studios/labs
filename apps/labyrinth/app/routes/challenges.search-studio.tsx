@@ -281,7 +281,6 @@ export default function SearchStudio() {
     setPage(1);
   };
 
-  const serverTotal = data?.total ?? 0;
   const localVisibleTotal = visibleResults.length;
 
   return (

@@ -70,16 +70,6 @@ function createSelectResponder(queue: unknown[][]) {
   }));
 }
 
-function createUpdateResponder(queue: unknown[][] = []) {
-  return vi.fn(() => ({
-    set: () => ({
-      where: () => ({
-        returning: async () => queue.shift() ?? [],
-      }),
-    }),
-  }));
-}
-
 const TODAY_PUZZLE_ROW = {
   answer: "ERIKA",
   answerType: "storyline",

@@ -15,9 +15,9 @@
     "format": "oxfmt src --write"
   },
   "dependencies": {
-    "@openrouter/sdk": "^0.12.35",
-    "@tanstack/ai": "^0.22.1",
-    "@tanstack/ai-openrouter": "^0.9.8"
+    "@openrouter/sdk": "^0.13.14",
+    "@tanstack/ai": "^0.37.0",
+    "@tanstack/ai-openrouter": "^0.15.3"
   },
   "devDependencies": {
     "@types/node": "catalog:",
