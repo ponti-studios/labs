@@ -38,9 +38,9 @@ describe("parseGenerateArgs", () => {
     expect(parseGenerateArgs(["--days-ahead=3"])).toEqual({ daysAhead: 3 });
   });
 
-  it("ignores unknown flags silently", async () => {
+  it("throws on unknown flags", async () => {
     const { parseGenerateArgs } = await import("./generate-realitea-scheduled-puzzle");
-    expect(parseGenerateArgs(["--publish", "--unknown=foo"])).toEqual({});
+    expect(() => parseGenerateArgs(["--unknown=foo"])).toThrow();
   });
 
   it("returns empty opts with no args", async () => {

@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { parseArgs } from "node:util";
 
 import { getDateKey } from "../app/lib/realitea-date";
 import { previewCandidates } from "../app/lib/realitea-generation";
@@ -12,21 +13,21 @@ interface PreviewOptions {
   promptFile?: string;
 }
 
-function parseArgs(): PreviewOptions {
-  const args = process.argv.slice(2);
-  const opts: Partial<PreviewOptions> = {};
-
-  for (const arg of args) {
-    if (arg.startsWith("--date-key=")) opts.dateKey = arg.slice("--date-key=".length);
-    else if (arg.startsWith("--feed-url=")) opts.feedUrl = arg.slice("--feed-url=".length);
-    else if (arg.startsWith("--prompt-file=")) opts.promptFile = arg.slice("--prompt-file=".length);
-  }
-
-  if (!opts.dateKey) {
-    opts.dateKey = getDateKey(new Date());
-  }
-
-  return opts as PreviewOptions;
+function parsePreviewArgs(): PreviewOptions {
+  const { values } = parseArgs({
+    args: process.argv.slice(2),
+    options: {
+      "date-key":    { type: "string" },
+      "feed-url":    { type: "string" },
+      "prompt-file": { type: "string" },
+    },
+    strict: true,
+  });
+  return {
+    dateKey:    values["date-key"] ?? getDateKey(new Date()),
+    feedUrl:    values["feed-url"],
+    promptFile: values["prompt-file"],
+  };
 }
 
 function requireEnvironment() {
@@ -106,7 +107,7 @@ function printResultSection(result: GenerationPreviewResult) {
 
 async function main() {
   requireEnvironment();
-  const opts = parseArgs();
+  const opts = parsePreviewArgs();
 
   let systemPrompt: string | undefined;
   if (opts.promptFile) {
