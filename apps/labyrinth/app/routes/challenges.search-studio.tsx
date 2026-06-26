@@ -232,102 +232,74 @@ export default function SearchStudio() {
 
   return (
     <div className="min-h-full w-full bg-background text-foreground">
-      <div className="mx-auto flex min-h-full w-full max-w-7xl flex-col gap-6 px-4 py-6 md:px-6 md:py-8">
-        <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-end">
-          <div className="space-y-3">
-            <p className="ui-eyebrow">Search studio</p>
-            <h1 className="heading-1">Find the signal fast.</h1>
-            <p className="max-w-2xl text-base leading-7 text-muted-foreground">
-              Search the corpus, narrow it instantly, and browse results in a clean flow without
-              losing your place.
-            </p>
-          </div>
-
-          <div className="ui-flat-card flex items-end justify-between gap-4">
-            <div>
-              <div className="ui-data-label">Visible</div>
-              <div className="ui-data-value">{localVisibleTotal}</div>
-            </div>
-            <div className="text-right">
-              <div className="ui-data-label">Page</div>
-              <div className="ui-data-value">
-                {page}
-                <span className="text-muted-foreground text-sm">/{data?.totalPages ?? 0}</span>
+      <div className="mx-auto flex min-h-full w-full max-w-7xl flex-col gap-3 px-4 py-2 md:px-6 md:py-3">
+        <header className="rounded-2xl border border-border bg-background/90 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/80 md:px-5">
+          <div className="flex flex-col gap-3">
+            <div className="relative w-full">
+              <LucideSearch className="pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                id="search-studio-query"
+                type="text"
+                value={query}
+                onChange={(event) => handleQueryChange(event.target.value)}
+                placeholder="Search shows, films, titles, stars, studios, or franchises..."
+                className="h-12 w-full border-border bg-background pr-12 pl-11 text-base text-foreground placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
+              />
+              {query.length > 0 && (
+                <button
+                  type="button"
+                  aria-label="Clear search"
+                  onClick={() => handleQueryChange("")}
+                  className="absolute top-1/2 right-2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                >
+                  <LucideX className="h-4 w-4" />
+                </button>
+                )}
               </div>
-            </div>
-          </div>
-        </section>
 
-        <section className="ui-flat-card space-y-4">
-          <div className="relative">
-            <label htmlFor="search-studio-query" className="sr-only">
-              Search shows, films, titles, stars, studios, or franchises
-            </label>
-            <LucideSearch className="pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              id="search-studio-query"
-              type="text"
-              value={query}
-              onChange={(event) => handleQueryChange(event.target.value)}
-              placeholder="Search shows, films, titles, stars, studios, or franchises..."
-              className="h-12 w-full border-border bg-background pr-12 pl-11 text-base text-foreground placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
-            />
-            {query.length > 0 && (
-              <button
-                type="button"
-                aria-label="Clear search"
-                onClick={() => handleQueryChange("")}
-                className="absolute top-1/2 right-2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-              >
-                <LucideX className="h-4 w-4" />
-              </button>
-            )}
-          </div>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <Tabs
+                  value={kindFilter}
+                  onValueChange={(value) => {
+                    setKindFilter(value as KindFilter);
+                    setPage(1);
+                  }}
+                >
+                  <TabsList className="h-auto bg-background p-0.5">
+                    <TabsTrigger value="all" className="gap-2 px-3 py-1.5">
+                      <span>All</span>
+                      <span className="text-xs text-muted-foreground">{kindCounts.all}</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="movie" className="gap-2 px-3 py-1.5">
+                      <span>Movies</span>
+                      <span className="text-xs text-muted-foreground">{kindCounts.movie}</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="tv" className="gap-2 px-3 py-1.5">
+                      <span>TV</span>
+                      <span className="text-xs text-muted-foreground">{kindCounts.tv}</span>
+                    </TabsTrigger>
+                  </TabsList>
+                </Tabs>
+                <Button type="button" variant="ghost" size="sm" onClick={clearFilters}>
+                  Clear
+                </Button>
+              </div>
 
-          <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-end">
-            <div className="flex flex-wrap items-center gap-2">
-              <Tabs
-                value={kindFilter}
-                onValueChange={(value) => {
-                  setKindFilter(value as KindFilter);
-                  setPage(1);
-                }}
-              >
-                <TabsList className="h-auto bg-background p-0.5">
-                  <TabsTrigger value="all" className="gap-2 px-3 py-1.5">
-                    <span>All</span>
-                    <span className="text-xs text-muted-foreground">{kindCounts.all}</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="movie" className="gap-2 px-3 py-1.5">
-                    <span>Movies</span>
-                    <span className="text-xs text-muted-foreground">{kindCounts.movie}</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="tv" className="gap-2 px-3 py-1.5">
-                    <span>TV</span>
-                    <span className="text-xs text-muted-foreground">{kindCounts.tv}</span>
-                  </TabsTrigger>
-                </TabsList>
-              </Tabs>
-              <Button type="button" variant="ghost" size="sm" onClick={clearFilters}>
-                Clear
-              </Button>
-            </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <Select value={sort} onValueChange={(value) => handleSortChange(value as SearchSortMode)}>
+                  <SelectTrigger className="h-11 w-[10rem] border-border bg-background">
+                    <SelectValue placeholder="Sort results" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SORT_OPTIONS.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
 
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
-              <Select value={sort} onValueChange={(value) => handleSortChange(value as SearchSortMode)}>
-                <SelectTrigger className="h-11 w-full border-border bg-background">
-                  <SelectValue placeholder="Sort results" />
-                </SelectTrigger>
-                <SelectContent>
-                  {SORT_OPTIONS.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <div className="flex items-center justify-end gap-2">
                 <div className="flex shrink-0 items-center gap-2">
                   <Button
                     type="button"
@@ -353,21 +325,9 @@ export default function SearchStudio() {
               </div>
             </div>
           </div>
-        </section>
+        </header>
 
-        <section className="flex items-center justify-between gap-3 px-1">
-          <div>
-            <div className="ui-eyebrow">Results</div>
-            <div className="mt-1 text-sm text-muted-foreground">
-              {data ? `${data.total} total across ${data.totalPages} pages` : "Loading corpus..."}
-            </div>
-          </div>
-          <div className="text-right text-sm text-muted-foreground">
-            {kindFilter === "all" ? "All formats" : `${kindFilter.toUpperCase()} only`}
-          </div>
-        </section>
-
-        <main className="flex-1 pr-1">
+        <main className="pr-1">
           {isLoading && !data ? (
             <div className="min-h-[32rem] border-t border-border px-0">
               <div className="flex items-center gap-3 py-6 text-muted-foreground">
