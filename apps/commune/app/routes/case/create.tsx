@@ -20,12 +20,10 @@ export async function action({ request }: Route.ActionArgs) {
     const rawSituation = formData.get("rawSituation") as string;
     const neutralSituation = formData.get("neutralSituation") as string;
     const question = formData.get("question") as string;
-    const label = (formData.get("label") as string) || null;
     const caseRecord = await createCase({
       rawSituation,
       neutralSituation,
       question,
-      label,
       quorumSize: 3,
       userId: null,
     });
@@ -42,7 +40,6 @@ export default function CreatePage() {
   const fetcher = useFetcher<typeof action>();
   const [stage, setStage] = useState<Stage>("write");
   const [rawSituation, setRawSituation] = useState("");
-  const [label, setLabel] = useState("");
   const [neutralSituation, setNeutralSituation] = useState("");
   const [question, setQuestion] = useState("");
 
@@ -79,7 +76,6 @@ export default function CreatePage() {
     fd.append("rawSituation", rawSituation);
     fd.append("neutralSituation", neutralSituation);
     fd.append("question", question);
-    if (label.trim()) fd.append("label", label.trim());
     fetcher.submit(fd, { method: "POST" });
   };
 
@@ -137,22 +133,6 @@ export default function CreatePage() {
             />
             <p className="text-muted-foreground text-[10px]">
               You can edit this if it's not quite right.
-            </p>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <label className="text-muted-foreground text-[10px] font-semibold tracking-widest uppercase">
-              Label — optional
-            </label>
-            <input
-              type="text"
-              value={label}
-              onChange={(e) => setLabel(e.target.value)}
-              placeholder="e.g. The 2am text situation"
-              className="border-input bg-background focus:ring-ring placeholder:text-muted-foreground w-full rounded-xl border px-4 py-3 text-sm focus:ring-1 focus:outline-none"
-            />
-            <p className="text-muted-foreground text-[10px]">
-              A short name for your docket. Only you see this.
             </p>
           </div>
 

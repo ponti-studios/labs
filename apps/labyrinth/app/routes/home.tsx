@@ -58,7 +58,11 @@ const categories: Category[] = [
       },
       { path: "/challenges/cloud-pricing", label: "Cloud Cost Calculator" },
       { path: "/challenges/fee-or-upfront", label: "Payment Fee Calculator" },
-      { path: "/challenges/kensho", label: "Filterable Contacts Table", source: "Kensho" },
+      {
+        path: "/challenges/search-studio",
+        label: "Search Studio",
+        source: "Vendigo + Kensho",
+      },
       {
         path: "/challenges/peterson-academy",
         label: "Infinite Image Carousel",
@@ -67,7 +71,6 @@ const categories: Category[] = [
       { path: "/challenges/prime-countdown", label: "Prime Number Countdown" },
       { path: "/challenges/qubit", label: "CSS Selector Engine", source: "Qubit" },
       { path: "/challenges/red-badger", label: "Mars Robot Navigator", source: "Red Badger" },
-      { path: "/challenges/vendigo", label: "Book Shop Search", source: "Vendigo" },
     ],
   },
 ];

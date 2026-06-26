@@ -2,7 +2,20 @@ import { sql, desc, eq, inArray } from "@pontistudios/db";
 import { db, relationshipCases, relationshipVerdicts, caseUpdates } from "@pontistudios/db";
 import type { CaseUpdate, RelationshipCase, RelationshipVerdict } from "@pontistudios/db";
 
-type CaseWithStats = RelationshipCase & {
+type CaseRow = Omit<RelationshipCase, "label">;
+
+const caseSelect = {
+  id: relationshipCases.id,
+  userId: relationshipCases.userId,
+  rawSituation: relationshipCases.rawSituation,
+  neutralSituation: relationshipCases.neutralSituation,
+  question: relationshipCases.question,
+  quorumSize: relationshipCases.quorumSize,
+  status: relationshipCases.status,
+  createdAt: relationshipCases.createdAt,
+} satisfies Record<keyof CaseRow, unknown>;
+
+type CaseWithStats = CaseRow & {
   voteStats: {
     total: number;
     agree: number;
@@ -12,13 +25,13 @@ type CaseWithStats = RelationshipCase & {
   };
 };
 
-async function getCases(): Promise<RelationshipCase[]> {
-  return db.select().from(relationshipCases).orderBy(desc(relationshipCases.createdAt)).execute();
+async function getCases(): Promise<CaseRow[]> {
+  return db.select(caseSelect).from(relationshipCases).orderBy(desc(relationshipCases.createdAt)).execute();
 }
 
-async function getCase(id: string): Promise<RelationshipCase | null> {
+async function getCase(id: string): Promise<CaseRow | null> {
   const rows = await db
-    .select()
+    .select(caseSelect)
     .from(relationshipCases)
     .where(eq(relationshipCases.id, id))
     .execute();

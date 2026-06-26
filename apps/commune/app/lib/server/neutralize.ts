@@ -26,7 +26,7 @@ SITUATION: [2-4 sentences of factual timeline. Party A / Party B language.]
 CONTEXT: [1-2 sentences of factual background. Omit entirely if none provided.]
 QUESTION: [The specific thing the jury is being asked. Derive neutrally from the situation if not stated explicitly.]`;
 
-interface NeutralizationResult {
+export interface NeutralizationResult {
   neutralSituation: string;
   question: string;
   needsClarification?: string[];

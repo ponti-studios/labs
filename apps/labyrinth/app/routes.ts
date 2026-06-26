@@ -23,6 +23,7 @@ const apiRoutes = [
   route("/api/gen/predict", "routes/api.gen.predict.ts"),
   route("/api/games/realitea/guess", "routes/api.games.realitea.guess.ts"),
   route("/api/games/realitea/health", "routes/api.games.realitea.health.ts"),
+  route("/api/search", "routes/api.search.ts"),
   route("/api/tarot", "routes/api.tarot.ts"),
   route("/api/words/validate", "routes/api.words.validate.ts"),
 ] satisfies RouteConfig;
@@ -63,12 +64,11 @@ const challengeRoutes = [
   route("/challenges/fee-or-upfront", "routes/challenges.fee-or-upfront.tsx"),
   route("/challenges/cloud-pricing", "routes/challenges.cloud-pricing.tsx"),
   route("/challenges/prime-countdown", "routes/challenges.prime-countdown.tsx"),
-  route("/challenges/kensho", "routes/challenges.kensho.tsx"),
+  route("/challenges/search-studio", "routes/challenges.search-studio.tsx"),
   route("/challenges/peterson-academy", "routes/challenges.peterson-academy.tsx"),
   route("/challenges/qubit", "routes/challenges.qubit.tsx"),
   route("/challenges/medicare", "routes/challenges.medicare.tsx"),
   route("/challenges/red-badger", "routes/challenges.red-badger.tsx"),
-  route("/challenges/vendigo", "routes/challenges.vendigo.tsx"),
 ] satisfies RouteConfig;
 
 export default [
