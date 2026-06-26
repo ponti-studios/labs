@@ -231,8 +231,8 @@ export default function SearchStudio() {
   const localVisibleTotal = visibleResults.length;
 
   return (
-    <div className="min-h-screen w-full bg-background text-foreground">
-      <div className="mx-auto flex h-[calc(100dvh-3.5rem)] min-h-0 w-full max-w-7xl flex-col gap-3 overflow-hidden px-4 py-2 md:px-6 md:py-3">
+    <div className="min-h-full w-full bg-background text-foreground">
+      <div className="mx-auto flex min-h-full w-full max-w-7xl flex-col gap-3 px-4 py-2 md:px-6 md:py-3">
         <header className="sticky top-4 z-20 rounded-2xl border border-border bg-background/90 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/80 md:px-5">
           <div className="flex flex-col gap-3">
             <div className="relative w-full">
@@ -327,7 +327,7 @@ export default function SearchStudio() {
           </div>
         </header>
 
-        <main className="min-h-0 flex-1 overflow-y-auto pr-1">
+        <main className="flex-1 pr-1">
           {isLoading && !data ? (
             <div className="min-h-[32rem] border-t border-border px-0">
               <div className="flex items-center gap-3 py-6 text-muted-foreground">

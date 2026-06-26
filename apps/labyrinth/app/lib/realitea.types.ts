@@ -67,6 +67,7 @@ export interface FeedItem {
   link: string;
   pubDate: string;
   description: string;
+  imageUrl?: string;
 }
 
 export interface CandidatePreview {
