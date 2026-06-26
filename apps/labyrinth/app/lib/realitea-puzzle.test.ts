@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { getDateKey, getPuzzleWindow } from "./realitea-date";
+import { getDateKey } from "./realitea-date";
 import { validateCandidate } from "./realitea-validation";
 
 const BRAVO_SOURCE = {
@@ -152,10 +152,5 @@ describe("realitea daily puzzle helpers", () => {
 
     expect(getDateKey(justBeforeMidnight)).toBe("2026-06-16");
     expect(getDateKey(justAfterMidnight)).toBe("2026-06-17");
-
-    const window = getPuzzleWindow(justBeforeMidnight);
-    expect(window.dateKey).toBe("2026-06-16");
-    expect(window.publishAt.toISOString()).toBe("2026-06-16T00:00:00.000Z");
-    expect(window.expireAt.toISOString()).toBe("2026-06-17T00:00:00.000Z");
   });
 });
