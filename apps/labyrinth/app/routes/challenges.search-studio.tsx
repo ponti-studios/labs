@@ -100,46 +100,49 @@ function ResultRow({
       }).format(publishedDate);
   return (
     <article
-      className="grid gap-4 border-b border-border py-5 last:border-0 md:grid-cols-[minmax(0,1fr)_auto]"
+      className="grid gap-3 border-b border-border py-4 last:border-0 md:grid-cols-[minmax(0,1fr)_11rem] md:gap-5"
       style={{ animation: "fade-slide-in 240ms ease-out both", animationDelay: `${index * 24}ms` }}
     >
-      <div className="flex gap-4">
-        <div className="min-w-0 flex-1 space-y-2">
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge
-              variant="outline"
-              className="border-border bg-muted text-foreground"
-            >
-              {kindLabel}
-            </Badge>
-            <a
-              href={result.sourceUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="min-w-0 text-lg font-semibold leading-snug tracking-tight text-foreground underline-offset-4 hover:underline"
-            >
-              {highlightText(result.title, query)}
-            </a>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
-            <span>{highlightText(result.subtitle, query)}</span>
-            <span className="hidden sm:inline text-muted-foreground">•</span>
-            <span>{publishedLabel}</span>
-            <span className="hidden sm:inline text-muted-foreground">•</span>
-            <span>{result.location}</span>
-          </div>
-
-          <p className="max-w-4xl text-sm leading-6 text-foreground">
-            {highlightText(result.snippet, query)}
-          </p>
+      <div className="min-w-0 space-y-2">
+        <div className="flex items-start gap-2">
+          <Badge
+            variant="outline"
+            className="shrink-0 border-border bg-muted px-2 py-0.5 text-foreground"
+          >
+            {kindLabel}
+          </Badge>
+          <a
+            href={result.sourceUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="min-w-0 flex-1 text-base font-semibold leading-snug tracking-tight text-foreground underline-offset-4 hover:underline sm:text-lg"
+          >
+            <span className="line-clamp-2">{highlightText(result.title, query)}</span>
+          </a>
         </div>
+
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] leading-5 text-muted-foreground">
+          <span>{highlightText(result.subtitle, query)}</span>
+          <span className="hidden sm:inline text-muted-foreground">•</span>
+          <span>{publishedLabel}</span>
+          <span className="hidden sm:inline text-muted-foreground">•</span>
+          <span>{result.location}</span>
+        </div>
+
+        <p className="line-clamp-2 max-w-4xl text-sm leading-6 text-foreground">
+          {highlightText(result.snippet, query)}
+        </p>
       </div>
 
-      <div className="flex items-center gap-3 text-xs text-muted-foreground md:justify-end md:text-right">
-        <span className="uppercase tracking-[0.2em]">Rank {index + 1}</span>
-        <span>•</span>
-        <span className="tabular-nums">{result.finalScore.toFixed(1)} score</span>
+      <div className="flex items-center gap-3 text-[11px] text-muted-foreground md:flex-col md:items-end md:justify-start md:text-right">
+        <div className="flex items-baseline gap-2">
+          <span className="uppercase tracking-[0.18em]">Rank</span>
+          <span className="text-base font-semibold tabular-nums text-foreground">{index + 1}</span>
+        </div>
+        <div className="h-px w-3 bg-border md:hidden" />
+        <span className="tabular-nums text-xs md:text-[13px]">
+          {result.finalScore.toFixed(1)} score
+        </span>
       </div>
     </article>
   );
@@ -149,32 +152,30 @@ function ResultSkeletonRow({ index }: { index: number }) {
   return (
     <article
       aria-hidden="true"
-      className="grid gap-4 border-b border-border py-5 last:border-0 md:grid-cols-[minmax(0,1fr)_auto]"
+      className="grid gap-3 border-b border-border py-4 last:border-0 md:grid-cols-[minmax(0,1fr)_11rem] md:gap-5"
       style={{ animationDelay: `${index * 24}ms` }}
     >
-      <div className="flex gap-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-border bg-muted">
-          <div className="h-4 w-4 rounded-sm bg-muted-foreground/25" />
+      <div className="min-w-0 space-y-2">
+        <div className="flex items-start gap-2">
+          <div className="h-6 w-14 rounded-full border border-border bg-muted" />
+          <div className="h-6 flex-1 rounded-full bg-muted" />
         </div>
-        <div className="min-w-0 flex-1 space-y-3">
-          <div className="flex items-center gap-2">
-            <div className="h-6 w-16 rounded-full border border-border bg-muted" />
-            <div className="h-5 w-3/5 rounded-full bg-muted" />
-          </div>
-          <div className="flex gap-2">
-            <div className="h-4 w-24 rounded-full bg-muted" />
-            <div className="h-4 w-20 rounded-full bg-muted" />
-            <div className="h-4 w-16 rounded-full bg-muted" />
-          </div>
-          <div className="space-y-2 pt-1">
-            <div className="h-4 w-full rounded-full bg-muted" />
-            <div className="h-4 w-5/6 rounded-full bg-muted" />
-          </div>
+        <div className="flex gap-2">
+          <div className="h-4 w-28 rounded-full bg-muted" />
+          <div className="h-4 w-20 rounded-full bg-muted" />
+          <div className="h-4 w-16 rounded-full bg-muted" />
+        </div>
+        <div className="space-y-2 pt-1">
+          <div className="h-4 w-full rounded-full bg-muted" />
+          <div className="h-4 w-5/6 rounded-full bg-muted" />
         </div>
       </div>
-      <div className="flex items-center gap-3 text-xs text-muted-foreground md:justify-end md:text-right">
-        <div className="h-3 w-14 rounded-full bg-muted" />
-        <div className="h-3 w-3 rounded-full bg-muted" />
+      <div className="flex items-center gap-3 text-xs text-muted-foreground md:flex-col md:items-end md:justify-start md:text-right">
+        <div className="flex items-baseline gap-2">
+          <div className="h-3 w-10 rounded-full bg-muted" />
+          <div className="h-4 w-6 rounded-full bg-muted" />
+        </div>
+        <div className="h-px w-3 bg-muted md:hidden" />
         <div className="h-3 w-16 rounded-full bg-muted" />
       </div>
     </article>
