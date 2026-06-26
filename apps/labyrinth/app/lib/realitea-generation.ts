@@ -24,6 +24,40 @@ import { validateCandidate } from "./realitea-validation";
 
 const REALITY_BLURB_FEED_URL = "https://realityblurb.com/feed";
 
+function extractUrlLikeNode(value: unknown): string | undefined {
+  if (!value) return undefined;
+  if (Array.isArray(value)) {
+    for (const entry of value) {
+      const url = extractUrlLikeNode(entry);
+      if (url) return url;
+    }
+    return undefined;
+  }
+
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    return trimmed || undefined;
+  }
+
+  if (typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    const candidates = [
+      record["@_url"],
+      record.url,
+      record["@_href"],
+      record.href,
+      record["#text"],
+    ];
+    for (const candidate of candidates) {
+      if (typeof candidate === "string" && candidate.trim()) {
+        return candidate.trim();
+      }
+    }
+  }
+
+  return undefined;
+}
+
 async function fetchFeedItems(feedUrl?: string): Promise<FeedItem[]> {
   const url = feedUrl ?? REALITY_BLURB_FEED_URL;
   const res = await fetch(url);
@@ -37,11 +71,16 @@ async function fetchFeedItems(feedUrl?: string): Promise<FeedItem[]> {
     const description = String(i["description"] ?? "")
       .replace(/<[^>]+>/g, "")
       .slice(0, 300);
+    const imageUrl =
+      extractUrlLikeNode(i["media:content"]) ??
+      extractUrlLikeNode(i["media:thumbnail"]) ??
+      extractUrlLikeNode(i["enclosure"]);
     return {
       title: String(i["title"] ?? ""),
       link: String(i["link"] ?? ""),
       pubDate: String(i["pubDate"] ?? ""),
       description,
+      ...(imageUrl ? { imageUrl } : {}),
     };
   });
 }
