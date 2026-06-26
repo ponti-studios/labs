@@ -1,13 +1,7 @@
-import pino from "pino";
+import { createLogger } from "./logger.server";
 
-/**
- * Creates a script-scoped pino logger.
- * Uses pino-pretty in development for readable console output.
- */
-export function createScriptLogger(): pino.Logger {
-  return pino(
-    process.env.NODE_ENV === "development" ? { transport: { target: "pino-pretty" } } : {},
-  );
+export function createScriptLogger() {
+  return createLogger();
 }
 
 /**

@@ -5,7 +5,7 @@ export interface TerminalLine {
   id?: string;
 }
 
-export interface TerminalState {
+interface TerminalState {
   lines: TerminalLine[];
   currentCommand: string;
   commandHistory: string[];

@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect, useCallback, useRef, memo } from "react";
+import { useReducer, useEffect, useCallback, useRef, memo } from "react";
 import type { FC } from "react";
 import { Button } from "@pontistudios/ui";
 

@@ -1,5 +1,5 @@
 import {
-  type NewRhobhDailyPuzzle,
+  type RhobhDailyPuzzle,
   type PuzzleAnswerType,
   type PuzzleSource,
 } from "@pontistudios/db";
@@ -14,7 +14,7 @@ export type GameStatus = "playing" | "solved" | "failed";
  * Server-side puzzle with the answer. Never leaves the server.
  * `PublicDailyPuzzle` is the client-safe counterpart.
  */
-export interface DailyPuzzle {
+interface DailyPuzzle {
   answer: string;
   answerType: PuzzleAnswerType;
   clue: string;
@@ -31,7 +31,7 @@ export interface RealiteaGuess {
   states: LetterState[];
 }
 
-export type GuessRejectReason = "not-in-word-list" | "wrong-length" | "already-guessed";
+type GuessRejectReason = "not-in-word-list" | "wrong-length" | "already-guessed";
 
 export interface RealiteaGuessResult {
   valid: boolean;
@@ -53,13 +53,8 @@ export interface RealiteaGuessResult {
  *
  * DB-only `validationStatus` is intentionally omitted.
  */
-export type PuzzleRecord = NewRhobhDailyPuzzle;
+export type PuzzleRecord = RhobhDailyPuzzle;
 
-export interface PuzzleWindow {
-  dateKey: string;
-  expireAt: Date;
-  publishAt: Date;
-}
 
 export interface ValidationResult {
   normalizedAnswer: string;

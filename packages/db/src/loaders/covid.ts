@@ -8,11 +8,11 @@ import { parse } from "csv-parse";
 import { db, sql } from "../drizzle";
 import { covidData, type NewCovidData } from "../schema/covid";
 
-export type PopulateCovidOptions = {
+type PopulateCovidOptions = {
   csvPath?: string;
 };
 
-export interface CovidCsvChunk {
+interface CovidCsvChunk {
   iso_code?: string;
   continent?: string;
   location?: string;

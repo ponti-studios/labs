@@ -8,7 +8,7 @@ import {
   Card,
 } from "@pontistudios/ui";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
 import { getLocalDateKey, isDailyTarotResult } from "~/lib/tarot-daily";
 import { readDailyTarotResult, saveDailyTarotResult } from "~/lib/tarot-state";
 import type { DailyTarotResult } from "~/lib/tarot-types";
@@ -21,34 +21,58 @@ function formatDate(dateKey: string) {
   });
 }
 
+type TarotState = {
+  dateKey: string;
+  result: DailyTarotResult | null;
+  isHydrated: boolean;
+  isDrawing: boolean;
+  error: string | null;
+};
+
+type TarotAction =
+  | { type: "date_synced"; dateKey: string }
+  | { type: "date_loaded"; result: DailyTarotResult | null }
+  | { type: "draw/start" }
+  | { type: "draw/success"; result: DailyTarotResult }
+  | { type: "draw/error"; message: string };
+
+function tarotReducer(state: TarotState, action: TarotAction): TarotState {
+  switch (action.type) {
+    case "date_synced":
+      return state.dateKey === action.dateKey ? state : { ...state, dateKey: action.dateKey };
+    case "date_loaded":
+      return { ...state, result: action.result, error: null, isHydrated: true };
+    case "draw/start":
+      return { ...state, isDrawing: true, error: null };
+    case "draw/success":
+      return { ...state, isDrawing: false, result: action.result };
+    case "draw/error":
+      return { ...state, isDrawing: false, error: action.message };
+  }
+}
+
 export default function TarotRoute() {
-  const [dateKey, setDateKey] = useState(() => getLocalDateKey());
-  const [result, setResult] = useState<DailyTarotResult | null>(null);
-  const [isHydrated, setIsHydrated] = useState(false);
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [{ dateKey, result, isHydrated, isDrawing, error }, dispatch] = useReducer(tarotReducer, {
+    dateKey: getLocalDateKey(),
+    result: null,
+    isHydrated: false,
+    isDrawing: false,
+    error: null,
+  });
 
   useEffect(() => {
-    const syncDateKey = () => {
-      const nextDateKey = getLocalDateKey();
-      setDateKey((current) => (current === nextDateKey ? current : nextDateKey));
-    };
-
+    const syncDateKey = () => dispatch({ type: "date_synced", dateKey: getLocalDateKey() });
     syncDateKey();
     const intervalId = window.setInterval(syncDateKey, 60_000);
-
     return () => window.clearInterval(intervalId);
   }, []);
 
   useEffect(() => {
-    setResult(readDailyTarotResult(dateKey));
-    setError(null);
-    setIsHydrated(true);
+    dispatch({ type: "date_loaded", result: readDailyTarotResult(dateKey) });
   }, [dateKey]);
 
   const handleDrawCard = async () => {
-    setIsDrawing(true);
-    setError(null);
+    dispatch({ type: "draw/start" });
 
     try {
       const response = await fetch(`/api/tarot?date=${dateKey}`);
@@ -64,11 +88,12 @@ export default function TarotRoute() {
       }
 
       saveDailyTarotResult(dateKey, payload);
-      setResult(payload);
+      dispatch({ type: "draw/success", result: payload });
     } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : "Failed to draw your card");
-    } finally {
-      setIsDrawing(false);
+      dispatch({
+        type: "draw/error",
+        message: requestError instanceof Error ? requestError.message : "Failed to draw your card",
+      });
     }
   };
 

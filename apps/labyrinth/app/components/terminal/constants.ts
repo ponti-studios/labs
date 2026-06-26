@@ -111,7 +111,7 @@ export const CAT_ANIMATION_STYLES = `
   }
 `;
 
-export const CAT_ELEMENT_STYLES = `
+const CAT_ELEMENT_STYLES = `
   position: fixed;
   z-index: 1000;
   font-size: 12px;

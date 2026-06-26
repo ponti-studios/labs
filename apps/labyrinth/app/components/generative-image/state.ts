@@ -4,7 +4,7 @@ import type {
   GenerativeImageFormState,
 } from "./types";
 
-export const parseCommaSeparatedValues = (value: string) =>
+const parseCommaSeparatedValues = (value: string) =>
   value
     .split(",")
     .map((item) => item.trim())

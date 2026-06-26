@@ -4,7 +4,7 @@ export type CovidDataRecord = CovidData & {
   vaccinationDataDate?: string | null;
 };
 
-export interface CovidApiResponse {
+interface CovidApiResponse {
   data: CovidDataRecord[];
   pagination: {
     page: number;
@@ -21,7 +21,7 @@ export interface CovidApiResponse {
   };
 }
 
-export interface CountryResponse {
+interface CountryResponse {
   data: Array<{
     name: string;
     code: string;

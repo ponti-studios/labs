@@ -2,10 +2,8 @@ import type { GameStatus, LetterState, RealiteaGuess } from "./realitea.types";
 
 export type {
   GameStatus,
-  GuessRejectReason,
   LetterState,
   PublicDailyPuzzle,
-  PuzzleAnswerType,
   RealiteaGuess,
   RealiteaGuessResult,
 } from "./realitea.types";

@@ -1,7 +1,7 @@
 import { normalizeGuess, REALITEA_ANSWER_LENGTH } from "./realitea";
 import type { ValidationResult } from "./realitea.types";
 
-export const BRAVO_PRIMARY_SOURCE_DOMAIN = "realityblurb.com";
+const BRAVO_PRIMARY_SOURCE_DOMAIN = "realityblurb.com";
 export const BRAVO_REPEAT_WINDOW_DAYS = 90;
 export const REALITEA_READY_INVENTORY_DAYS = 7;
 

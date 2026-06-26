@@ -178,4 +178,3 @@ export function CountryPicker({ onChange, countryCode, className }: CountryPicke
   );
 }
 
-export default CountryPicker;

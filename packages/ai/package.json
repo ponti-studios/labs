@@ -17,11 +17,9 @@
   "dependencies": {
     "@openrouter/sdk": "^0.12.35",
     "@tanstack/ai": "^0.22.1",
-    "@tanstack/ai-openrouter": "^0.9.8",
-    "zod": "catalog:"
+    "@tanstack/ai-openrouter": "^0.9.8"
   },
   "devDependencies": {
-    "@pontistudios/tsconfig": "workspace:*",
     "@types/node": "catalog:",
     "typescript": "catalog:"
   },

@@ -19,7 +19,7 @@ export interface Symptom {
   duration_range: [number, number];
 }
 
-export const SymptomSchema = z.object({
+const SymptomSchema = z.object({
   name: z.string(),
   description: z.string(),
   severity_score: z.number(),

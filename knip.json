@@ -1,0 +1,71 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "ignore": ["_scratchpad/**"],
+  "workspaces": {
+    ".": {
+      "entry": ["turbo.json"]
+    },
+    "apps/labyrinth": {
+      "entry": [
+        "app/routes/**/*.{ts,tsx}",
+        "scripts/**/*.ts"
+      ],
+      "project": ["app/**/*.{ts,tsx}", "scripts/**/*.ts"],
+      "ignore": ["build/**", "coverage/**", "app/.react-router/**"],
+      "ignoreDependencies": [
+        "pino-pretty",
+        "tailwindcss"
+      ]
+    },
+    "apps/commune": {
+      "entry": [
+        "app/routes/**/*.{ts,tsx}",
+        "server.ts"
+      ],
+      "project": ["app/**/*.{ts,tsx}", "server.ts"],
+      "ignore": ["build/**", "app/.react-router/**"],
+      "ignoreDependencies": ["tailwindcss"]
+    },
+    "apps/earth": {
+      "entry": [
+        "app/routes/**/*.{ts,tsx}"
+      ],
+      "project": ["app/**/*.{ts,tsx}"],
+      "ignore": ["build/**", "app/.react-router/**"],
+      "ignoreDependencies": ["tailwindcss"]
+    },
+    "apps/health": {
+      "entry": [
+        "app/routes/**/*.{ts,tsx}",
+        "e2e/**/*.ts"
+      ],
+      "project": ["app/**/*.{ts,tsx}", "e2e/**/*.ts"],
+      "ignore": ["build/**", "coverage/**", "app/.react-router/**"],
+      "ignoreDependencies": ["tailwindcss"]
+    },
+    "packages/ui": {
+      "entry": [
+        "src/index.ts",
+        "src/**/*.stories.{ts,tsx}",
+        "vite.config.ts"
+      ],
+      "project": ["src/**/*.{ts,tsx}"],
+      "ignore": ["dist/**"]
+    },
+    "packages/ai": {
+      "entry": ["src/index.ts"],
+      "project": ["src/**/*.ts"]
+    },
+    "packages/db": {
+      "entry": ["src/index.ts", "src/drizzle.ts", "src/env.ts"],
+      "project": ["src/**/*.ts"]
+    },
+    "packages/db-test": {
+      "entry": ["src/index.ts"],
+      "project": ["src/**/*.ts"]
+    },
+    "packages/tsconfig": {
+      "ignore": ["**"]
+    }
+  }
+}

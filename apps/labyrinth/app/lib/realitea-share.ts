@@ -6,7 +6,7 @@ const SHARE_TILES: Record<LetterState, string> = {
   correct: "🟩",
 };
 
-export interface ShareRealiTeaResultOptions {
+interface ShareRealiTeaResultOptions {
   guesses: readonly RealiteaGuess[];
   isSolved: boolean;
   date?: Date;
