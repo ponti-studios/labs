@@ -7,6 +7,7 @@ const DEFAULT_TEXT_MODEL: Parameters<typeof createOpenRouterText>[0] =
   "google/gemini-3.1-flash-lite";
 const DEFAULT_IMAGE_MODEL = "x-ai/grok-imagine-image-quality";
 const DEFAULT_EMBEDDING_MODEL = "google/gemini-embedding-2";
+const DEFAULT_EMBEDDING_DIMENSIONS = 3072;
 const DEFAULT_TRANSCRIPTION_MODEL = "mistralai/voxtral-mini-transcribe";
 
 type OpenRouterClientOptions = {
@@ -116,7 +117,7 @@ export async function generateEmbedding(content: string, options: EmbeddingOptio
       model: DEFAULT_EMBEDDING_MODEL,
       input: content,
       inputType: options.inputType ?? "search_document",
-      dimensions: options.dimensions,
+      dimensions: options.dimensions ?? DEFAULT_EMBEDDING_DIMENSIONS,
       encodingFormat: "float",
     },
   });

@@ -151,21 +151,9 @@ function ResultRow({
             {highlightText(result.snippet, query)}
           </p>
 
-          <div className="flex flex-wrap gap-1.5 pt-1">
-            <Badge variant="secondary" className="bg-muted text-foreground">
-              {result.category}
-            </Badge>
-            {result.tags.slice(0, 4).map((tag) => (
-              <Badge key={tag} variant="outline" className="border-border bg-background text-muted-foreground">
-                {tag}
-              </Badge>
-            ))}
-            {result.matchedFields.slice(0, 3).map((field) => (
-              <Badge key={field} variant="outline" className="border-dashed border-border bg-background text-muted-foreground">
-                {field}
-              </Badge>
-            ))}
-          </div>
+          <Badge variant="secondary" className="mt-1 bg-muted text-foreground">
+            {result.category}
+          </Badge>
         </div>
       </div>
 
@@ -178,7 +166,10 @@ function ResultRow({
         </div>
         <div className="text-xs text-muted-foreground">
           <div>{result.featured ? "Featured" : "Catalog"}</div>
-          <div>{result.score.toFixed(1)} score</div>
+          <div>{result.finalScore.toFixed(1)} score</div>
+          <div className="tabular-nums">
+            L {result.lexicalScore.toFixed(1)} · S {result.semanticScore.toFixed(1)}
+          </div>
         </div>
       </div>
     </article>
@@ -236,7 +227,6 @@ export default function SearchStudio() {
   const [page, setPage] = useState(1);
   const [sort, setSort] = useState<SearchSortMode>("relevance");
   const [kindFilter, setKindFilter] = useState<KindFilter>("all");
-  const [featuredOnly, setFeaturedOnly] = useState(false);
   const deferredQuery = useDeferredValue(query);
 
   const searchKey = deferredQuery.trim();
@@ -266,10 +256,9 @@ export default function SearchStudio() {
     const results = data?.results ?? [];
     return results.filter((result) => {
       if (!matchesKind(kindFilter, result.kind)) return false;
-      if (featuredOnly && !result.featured) return false;
       return true;
     });
-  }, [data, featuredOnly, kindFilter]);
+  }, [data, kindFilter]);
 
   const kindCounts = {
     all: data?.facets.kinds.reduce((sum, item) => sum + item.count, 0) ?? 0,
@@ -279,7 +268,6 @@ export default function SearchStudio() {
 
   const clearFilters = () => {
     setKindFilter("all");
-    setFeaturedOnly(false);
     setPage(1);
   };
 
@@ -299,34 +287,62 @@ export default function SearchStudio() {
   return (
     <div className="min-h-screen w-full bg-background text-foreground">
       <div className="mx-auto flex h-[calc(100dvh-3.5rem)] min-h-0 w-full max-w-7xl flex-col gap-3 overflow-hidden px-4 py-2 md:px-6 md:py-3">
-        <header className="sticky top-4 z-20 rounded-2xl border border-border bg-background/90 px-4 py-3 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-background/80 md:px-5">
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-3 overflow-x-auto pb-1">
-              <div className="relative min-w-[18rem] flex-1">
-                <LucideSearch className="pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  id="search-studio-query"
-                  type="text"
-                  value={query}
-                  onChange={(event) => handleQueryChange(event.target.value)}
-                  placeholder="Search shows, films, titles, stars, studios, or franchises..."
-                  className="h-12 w-full border-border bg-background pr-12 pl-11 text-base text-foreground placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
-                />
-                {query.length > 0 && (
-                  <button
-                    type="button"
-                    aria-label="Clear search"
-                    onClick={() => handleQueryChange("")}
-                    className="absolute top-1/2 right-2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                  >
-                    <LucideX className="h-4 w-4" />
-                  </button>
+        <header className="sticky top-4 z-20 rounded-2xl border border-border bg-background/90 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/80 md:px-5">
+          <div className="flex flex-col gap-3">
+            <div className="relative w-full">
+              <LucideSearch className="pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                id="search-studio-query"
+                type="text"
+                value={query}
+                onChange={(event) => handleQueryChange(event.target.value)}
+                placeholder="Search shows, films, titles, stars, studios, or franchises..."
+                className="h-12 w-full border-border bg-background pr-12 pl-11 text-base text-foreground placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
+              />
+              {query.length > 0 && (
+                <button
+                  type="button"
+                  aria-label="Clear search"
+                  onClick={() => handleQueryChange("")}
+                  className="absolute top-1/2 right-2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                >
+                  <LucideX className="h-4 w-4" />
+                </button>
                 )}
               </div>
 
-              <div className="flex shrink-0 items-center gap-2">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <Tabs
+                  value={kindFilter}
+                  onValueChange={(value) => {
+                    setKindFilter(value as KindFilter);
+                    setPage(1);
+                  }}
+                >
+                  <TabsList className="h-auto bg-background p-0.5">
+                    <TabsTrigger value="all" className="gap-2 px-3 py-1.5">
+                      <span>All</span>
+                      <span className="text-xs text-muted-foreground">{kindCounts.all}</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="movie" className="gap-2 px-3 py-1.5">
+                      <span>Movies</span>
+                      <span className="text-xs text-muted-foreground">{kindCounts.movie}</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="tv" className="gap-2 px-3 py-1.5">
+                      <span>TV</span>
+                      <span className="text-xs text-muted-foreground">{kindCounts.tv}</span>
+                    </TabsTrigger>
+                  </TabsList>
+                </Tabs>
+                <Button type="button" variant="ghost" size="sm" onClick={clearFilters}>
+                  Clear
+                </Button>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
                 <Select value={sort} onValueChange={(value) => handleSortChange(value as SearchSortMode)}>
-                  <SelectTrigger className="h-12 w-[10rem] border-border bg-background">
+                  <SelectTrigger className="h-11 w-[10rem] border-border bg-background">
                     <SelectValue placeholder="Sort results" />
                   </SelectTrigger>
                   <SelectContent>
@@ -337,66 +353,30 @@ export default function SearchStudio() {
                     ))}
                   </SelectContent>
                 </Select>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  onClick={() => setPage((current) => Math.max(1, current - 1))}
-                  disabled={!data?.hasPrev}
-                  aria-label="Previous page"
-                >
-                  <LucideChevronLeft className="h-4 w-4" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  onClick={() => setPage((current) => (data?.hasNext ? current + 1 : current))}
-                  disabled={!data?.hasNext}
-                  aria-label="Next page"
-                >
-                  <LucideChevronRight className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
 
-            <div className="flex flex-wrap items-center gap-2 border-t border-border/70 pt-2">
-              <Tabs
-                value={kindFilter}
-                onValueChange={(value) => {
-                  setKindFilter(value as KindFilter);
-                  setPage(1);
-                }}
-              >
-                <TabsList className="h-auto bg-background p-0.5">
-                  <TabsTrigger value="all" className="gap-2 px-3 py-1.5">
-                    <span>All</span>
-                    <span className="text-xs text-muted-foreground">{kindCounts.all}</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="movie" className="gap-2 px-3 py-1.5">
-                    <span>Movies</span>
-                    <span className="text-xs text-muted-foreground">{kindCounts.movie}</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="tv" className="gap-2 px-3 py-1.5">
-                    <span>TV</span>
-                    <span className="text-xs text-muted-foreground">{kindCounts.tv}</span>
-                  </TabsTrigger>
-                </TabsList>
-              </Tabs>
-              <Button
-                type="button"
-                variant={featuredOnly ? "secondary" : "outline"}
-                size="sm"
-                onClick={() => {
-                  setFeaturedOnly((current) => !current);
-                  setPage(1);
-                }}
-              >
-                Featured only
-              </Button>
-              <Button type="button" variant="ghost" size="sm" onClick={clearFilters}>
-                Clear
-              </Button>
+                <div className="flex shrink-0 items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setPage((current) => Math.max(1, current - 1))}
+                    disabled={!data?.hasPrev}
+                    aria-label="Previous page"
+                  >
+                    <LucideChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setPage((current) => (data?.hasNext ? current + 1 : current))}
+                    disabled={!data?.hasNext}
+                    aria-label="Next page"
+                  >
+                    <LucideChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </header>

@@ -7,6 +7,7 @@ export type SearchQuery = {
   page: number;
   pageSize: number;
   sort: SearchSortMode;
+  queryEmbedding?: number[] | null;
 };
 
 export type SearchFacetCount = {
@@ -16,6 +17,9 @@ export type SearchFacetCount = {
 
 export type SearchResult = SearchDocument & {
   score: number;
+  finalScore: number;
+  lexicalScore: number;
+  semanticScore: number;
   matchedFields: string[];
   matchReasons: string[];
   snippet: string;

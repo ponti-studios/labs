@@ -8,7 +8,11 @@ import type {
   SearchSortMode,
 } from "./search-types";
 
-type ScoredDocument = SearchResult;
+type HybridSearchDocument = SearchDocument & {
+  lexicalRank?: number;
+};
+
+type RankedDocument = SearchResult;
 
 function normalize(value: string): string {
   return value
@@ -20,7 +24,7 @@ function normalize(value: string): string {
     .trim();
 }
 
-function tokenizeQuery(query: string): string[] {
+function tokenize(query: string): string[] {
   return normalize(query)
     .split(" ")
     .map((token) => token.trim())
@@ -31,58 +35,80 @@ function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
 }
 
-function textMatches(fieldValue: string, query: string, tokens: string[]) {
-  const normalizedField = normalize(fieldValue);
-  const normalizedQuery = normalize(query);
-  if (!normalizedQuery) return { score: 0, reason: null as string | null, matched: false };
+function cosineSimilarity(left: number[], right: number[]): number {
+  if (left.length === 0 || right.length === 0) return 0;
 
-  if (normalizedField === normalizedQuery) {
-    return { score: 140, reason: "Exact phrase", matched: true };
+  const length = Math.min(left.length, right.length);
+  let dot = 0;
+  let leftMagnitude = 0;
+  let rightMagnitude = 0;
+
+  for (let index = 0; index < length; index += 1) {
+    const leftValue = left[index] ?? 0;
+    const rightValue = right[index] ?? 0;
+    dot += leftValue * rightValue;
+    leftMagnitude += leftValue * leftValue;
+    rightMagnitude += rightValue * rightValue;
   }
 
-  if (normalizedField.startsWith(normalizedQuery)) {
-    return { score: 110, reason: "Prefix match", matched: true };
-  }
-
-  if (normalizedField.includes(normalizedQuery)) {
-    return { score: 90, reason: "Phrase match", matched: true };
-  }
-
-  const tokenHits = tokens.filter((token) => {
-    if (token.length < 2) return false;
-    const parts = normalizedField.split(" ");
-    return parts.some(
-      (part) =>
-        part.startsWith(token) ||
-        token.startsWith(part) ||
-        (token.length >= 4 && part.includes(token.slice(0, 3))),
-    );
-  });
-
-  if (tokenHits.length > 0) {
-    return {
-      score: tokenHits.length * 18,
-      reason: `Token overlap: ${tokenHits.join(", ")}`,
-      matched: true,
-    };
-  }
-
-  return { score: 0, reason: null, matched: false };
+  if (leftMagnitude === 0 || rightMagnitude === 0) return 0;
+  return dot / Math.sqrt(leftMagnitude * rightMagnitude);
 }
 
-function numberMatches(value: number, query: string) {
+function normalizeLexicalRank(rank: number): number {
+  if (!Number.isFinite(rank) || rank <= 0) return 0;
+  return clamp(rank * 100, 0, 100);
+}
+
+function normalizeSemanticScore(similarity: number): number {
+  if (!Number.isFinite(similarity) || similarity <= 0) return 0;
+  return clamp(similarity * 100, 0, 100);
+}
+
+function collectMatchedFields(document: SearchDocument, query: string, tokens: string[]): string[] {
   const normalizedQuery = normalize(query);
-  if (!normalizedQuery) return { score: 0, reason: null as string | null, matched: false };
+  if (!normalizedQuery) return [];
 
-  if (String(value) === normalizedQuery) {
-    return { score: 115, reason: "Exact year", matched: true };
+  const fields: Array<[string, string]> = [
+    ["Title", document.title],
+    ["Subtitle", document.subtitle],
+    ["Summary", document.summary],
+    ["Body", document.body],
+    ["Category", document.category],
+    ["Location", document.location],
+    ["Tags", document.tags.join(" ")],
+    ["Search text", document.searchText],
+  ];
+
+  const matches: string[] = [];
+  for (const [name, value] of fields) {
+    const normalizedValue = normalize(value);
+    if (normalizedValue.includes(normalizedQuery)) {
+      matches.push(name);
+      continue;
+    }
+
+    const words = normalizedValue.split(" ");
+    if (
+      tokens.some((token) =>
+        words.some(
+          (word) =>
+            word === token ||
+            word.startsWith(token) ||
+            token.startsWith(word) ||
+            (token.length >= 4 && word.includes(token.slice(0, 3))),
+        ),
+      )
+    ) {
+      matches.push(name);
+    }
   }
 
-  if (String(value).includes(normalizedQuery)) {
-    return { score: 65, reason: "Year contains query", matched: true };
+  if (tokens.some((token) => String(document.year).includes(token))) {
+    matches.push("Year");
   }
 
-  return { score: 0, reason: null, matched: false };
+  return [...new Set(matches)];
 }
 
 function buildSnippet(document: SearchDocument, query: string, tokens: string[]): string {
@@ -117,7 +143,7 @@ function countBy<T extends string>(items: T[]) {
     .sort((a, b) => b.count - a.count || a.value.localeCompare(b.value));
 }
 
-function sortResults(results: ScoredDocument[], sort: SearchSortMode): ScoredDocument[] {
+function sortResults(results: RankedDocument[], sort: SearchSortMode): RankedDocument[] {
   const copy = [...results];
 
   if (sort === "newest") {
@@ -125,7 +151,7 @@ function sortResults(results: ScoredDocument[], sort: SearchSortMode): ScoredDoc
       (a, b) =>
         new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime() ||
         Number(b.featured) - Number(a.featured) ||
-        b.score - a.score ||
+        b.finalScore - a.finalScore ||
         b.popularity - a.popularity ||
         a.title.localeCompare(b.title),
     );
@@ -135,7 +161,7 @@ function sortResults(results: ScoredDocument[], sort: SearchSortMode): ScoredDoc
     return copy.sort(
       (a, b) =>
         a.title.localeCompare(b.title) ||
-        b.score - a.score ||
+        b.finalScore - a.finalScore ||
         Number(b.featured) - Number(a.featured) ||
         b.popularity - a.popularity,
     );
@@ -143,7 +169,7 @@ function sortResults(results: ScoredDocument[], sort: SearchSortMode): ScoredDoc
 
   return copy.sort(
     (a, b) =>
-      b.score - a.score ||
+      b.finalScore - a.finalScore ||
       Number(b.featured) - Number(a.featured) ||
       b.popularity - a.popularity ||
       b.year - a.year ||
@@ -151,85 +177,79 @@ function sortResults(results: ScoredDocument[], sort: SearchSortMode): ScoredDoc
   );
 }
 
-function scoreDocument(document: SearchDocument, query: string, tokens: string[]): ScoredDocument {
+function scoreDocument(
+  document: HybridSearchDocument,
+  query: string,
+  queryEmbedding: number[] | null | undefined,
+): RankedDocument {
   const normalizedQuery = normalize(query);
-
-  const titleMatch = textMatches(document.title, query, tokens);
-  const subtitleMatch = textMatches(document.subtitle, query, tokens);
-  const summaryMatch = textMatches(document.summary, query, tokens);
-  const bodyMatch = textMatches(document.body, query, tokens);
-  const categoryMatch = textMatches(document.category, query, tokens);
-  const locationMatch = textMatches(document.location, query, tokens);
-  const tagValues = document.tags.map((tag) => tag.toLowerCase());
-  const tagMatch = textMatches(tagValues.join(" "), query, tokens);
-  const yearMatch = numberMatches(document.year, query);
-
-  const tagTokenHits = tokens.filter((token) => tagValues.some((tag) => tag.includes(token)));
-
-  const matchScore =
-    titleMatch.score * 5 +
-    subtitleMatch.score * 4 +
-    summaryMatch.score * 3 +
-    bodyMatch.score +
-    categoryMatch.score * 2 +
-    locationMatch.score * 2 +
-    tagMatch.score * 3 +
-    yearMatch.score * 3 +
-    tagTokenHits.length * 12;
+  const tokens = tokenize(query);
+  const lexicalScore = normalizedQuery ? normalizeLexicalRank(document.lexicalRank ?? 0) : 0;
+  const semanticSimilarity =
+    normalizedQuery && queryEmbedding && queryEmbedding.length > 0 && document.embedding.length > 0
+      ? cosineSimilarity(queryEmbedding, document.embedding)
+      : 0;
+  const semanticScore = normalizedQuery ? normalizeSemanticScore(semanticSimilarity) : 0;
 
   const publishedAt = new Date(document.publishedAt);
-  const recencyDays = Number.isNaN(publishedAt.getTime())
+  const ageDays = Number.isNaN(publishedAt.getTime())
     ? 365
     : Math.max(0, (Date.now() - publishedAt.getTime()) / 86_400_000);
-  const recencyBoost = Math.max(0, 30 - Math.round(recencyDays / 4));
-  const boost = (document.featured ? 20 : 0) + Math.min(document.popularity, 100) / 10 + recencyBoost;
-  const score = matchScore > 0 || normalizedQuery === "" ? matchScore + boost : 0;
+  const recencyBoost = Math.max(0, 4 - ageDays / 180);
+  const popularityBoost = clamp(document.popularity / 30, 0, 4);
+  const featuredBoost = document.featured ? 3 : 0;
+  const boostScore = recencyBoost + popularityBoost + featuredBoost;
 
-  const matchedFields = [
-    titleMatch.matched ? "Title" : null,
-    subtitleMatch.matched ? "Subtitle" : null,
-    summaryMatch.matched ? "Summary" : null,
-    bodyMatch.matched ? "Body" : null,
-    categoryMatch.matched ? "Category" : null,
-    locationMatch.matched ? "Location" : null,
-    tagMatch.matched ? "Tags" : null,
-    yearMatch.matched ? "Year" : null,
-  ].filter((value): value is string => value !== null);
+  const finalScore = Math.round((lexicalScore * 0.62 + semanticScore * 0.34 + boostScore) * 10) / 10;
+  const matchedFields = collectMatchedFields(document, query, tokens);
 
   const matchReasons = [
-    titleMatch.reason ? `Title: ${titleMatch.reason}` : null,
-    subtitleMatch.reason ? `Subtitle: ${subtitleMatch.reason}` : null,
-    summaryMatch.reason ? `Summary: ${summaryMatch.reason}` : null,
-    bodyMatch.reason ? `Body: ${bodyMatch.reason}` : null,
-    categoryMatch.reason ? `Category: ${categoryMatch.reason}` : null,
-    locationMatch.reason ? `Location: ${locationMatch.reason}` : null,
-    tagMatch.reason ? `Tags: ${tagMatch.reason}` : null,
-    yearMatch.reason ? `Year: ${yearMatch.reason}` : null,
-    document.featured ? "Featured boost" : null,
-    normalizedQuery ? `Popularity boost: ${document.popularity}` : null,
+    normalizedQuery && lexicalScore > 0 ? `Lexical rank ${lexicalScore.toFixed(1)}` : null,
+    normalizedQuery && semanticScore > 0 ? `Semantic similarity ${semanticScore.toFixed(1)}` : null,
+    matchedFields.length > 0 ? `Matched fields: ${matchedFields.slice(0, 4).join(", ")}` : null,
+    featuredBoost > 0 ? "Featured boost" : null,
+    popularityBoost > 0 ? `Popularity boost ${document.popularity}` : null,
+    recencyBoost > 0 ? `Recency boost ${recencyBoost.toFixed(1)}` : null,
   ].filter((value): value is string => value !== null);
 
   return {
     ...document,
-    score,
+    lexicalScore: Math.round(lexicalScore * 10) / 10,
+    semanticScore: Math.round(semanticScore * 10) / 10,
+    score: finalScore,
+    finalScore,
     matchedFields,
     matchReasons,
     snippet: buildSnippet(document, query, tokens),
   };
 }
 
+function sortSignals(results: RankedDocument[]) {
+  const signalCounts = new Map<string, number>();
+  for (const item of results) {
+    for (const reason of item.matchReasons) {
+      const key = reason.split(" ")[0] ?? reason;
+      signalCounts.set(key, (signalCounts.get(key) ?? 0) + 1);
+    }
+  }
+
+  return [...signalCounts.entries()]
+    .map(([value, count]) => ({ value, count }))
+    .sort((a, b) => b.count - a.count || a.value.localeCompare(b.value))
+    .slice(0, 6);
+}
+
 export function searchDocuments(
-  documents: SearchDocument[],
+  documents: HybridSearchDocument[],
   query: SearchQuery,
 ): SearchResponse {
-  const tokens = tokenizeQuery(query.query);
   const normalizedQuery = normalize(query.query);
 
   const scored = documents
-    .map((document) => scoreDocument(document, query.query, tokens))
+    .map((document) => scoreDocument(document, query.query, query.queryEmbedding))
     .filter((document) => {
       if (!normalizedQuery) return true;
-      return document.score > 0;
+      return document.lexicalScore > 0 || document.semanticScore > 0;
     });
 
   const sorted = sortResults(scored, query.sort);
@@ -254,19 +274,6 @@ export function searchDocuments(
         }
       : null;
 
-  const signalCounts = new Map<string, number>();
-  for (const item of sorted) {
-    for (const reason of item.matchReasons) {
-      const key = reason.split(":")[0] ?? reason;
-      signalCounts.set(key, (signalCounts.get(key) ?? 0) + 1);
-    }
-  }
-
-  const signals = [...signalCounts.entries()]
-    .map(([value, count]) => ({ value, count }))
-    .sort((a, b) => b.count - a.count || a.value.localeCompare(b.value))
-    .slice(0, 6);
-
   return {
     query: query.query,
     page,
@@ -282,6 +289,6 @@ export function searchDocuments(
       tags,
       years,
     },
-    signals,
+    signals: sortSignals(sorted),
   };
 }

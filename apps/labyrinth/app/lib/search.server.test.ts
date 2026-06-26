@@ -4,7 +4,9 @@ import type { SearchDocument } from "@pontistudios/db";
 
 import { searchDocuments } from "./search.server";
 
-const DOCS: SearchDocument[] = [
+type TestDocument = SearchDocument & { lexicalRank: number };
+
+const DOCS: TestDocument[] = [
   {
     id: 1,
     kind: "movie",
@@ -21,6 +23,9 @@ const DOCS: SearchDocument[] = [
     featured: true,
     popularity: 90,
     searchText: "signal atlas avery stone design systems search",
+    searchVector: "" as string,
+    embedding: [1, 0, 0],
+    lexicalRank: 0.18,
     createdAt: new Date("2025-01-01T00:00:00.000Z"),
     updatedAt: new Date("2025-01-01T00:00:00.000Z"),
   },
@@ -40,6 +45,9 @@ const DOCS: SearchDocument[] = [
     featured: false,
     popularity: 65,
     searchText: "nina park design lead northstar labs new york search",
+    searchVector: "" as string,
+    embedding: [0.9, 0.05, 0.05],
+    lexicalRank: 0.06,
     createdAt: new Date("2025-01-02T00:00:00.000Z"),
     updatedAt: new Date("2025-01-02T00:00:00.000Z"),
   },
@@ -59,12 +67,15 @@ const DOCS: SearchDocument[] = [
     featured: false,
     popularity: 30,
     searchText: "quiet harbor leah bennett memoir archive",
+    searchVector: "" as string,
+    embedding: [0, 1, 0],
+    lexicalRank: 0,
     createdAt: new Date("2025-01-03T00:00:00.000Z"),
     updatedAt: new Date("2025-01-03T00:00:00.000Z"),
   },
 ];
 
-const PAGINATION_DOCS: SearchDocument[] = Array.from({ length: 7 }, (_, index) => ({
+const PAGINATION_DOCS: TestDocument[] = Array.from({ length: 7 }, (_, index) => ({
   ...DOCS[0],
   id: 100 + index,
   title: `Signal Atlas ${index + 1}`,
@@ -73,14 +84,17 @@ const PAGINATION_DOCS: SearchDocument[] = Array.from({ length: 7 }, (_, index) =
   sourceUrl: `https://variety.com/2026/film/news/signal-atlas-${index + 1}/`,
   publishedAt: new Date(`2025-02-${String(index + 1).padStart(2, "0")}T00:00:00.000Z`),
   searchText: `signal atlas ${index + 1}`,
+  searchVector: "" as string,
+  embedding: [1, 0, 0],
+  lexicalRank: 0.1 + index * 0.01,
   createdAt: new Date(`2025-02-${String(index + 1).padStart(2, "0")}T00:00:00.000Z`),
   updatedAt: new Date(`2025-02-${String(index + 1).padStart(2, "0")}T00:00:00.000Z`),
 }));
 
 describe("searchDocuments", () => {
-  it("ranks title matches ahead of weaker body matches", () => {
+  it("ranks stronger lexical hits ahead of weaker ones", () => {
     const result = searchDocuments(DOCS, {
-      query: "movie",
+      query: "search",
       page: 1,
       pageSize: 10,
       sort: "relevance",
@@ -88,9 +102,16 @@ describe("searchDocuments", () => {
 
     expect(result.total).toBe(2);
     expect(result.results[0]?.title).toBe("Signal Atlas");
-    expect(result.results[0]?.matchedFields).toContain("Tags");
-    expect(result.results[0]?.matchReasons.join(" ")).toContain("Phrase match");
-    expect(result.facets.kinds).toEqual([{ value: "movie", count: 2 }]);
+    expect(result.results[0]?.matchedFields).toEqual(
+      expect.arrayContaining(["Summary", "Body", "Search text"]),
+    );
+    expect(result.results[0]?.matchReasons.join(" ")).toContain("Lexical rank");
+    expect(result.facets.kinds).toEqual(
+      expect.arrayContaining([
+        { value: "movie", count: 1 },
+        { value: "tv", count: 1 },
+      ]),
+    );
     expect(result.signals.length).toBeGreaterThan(0);
   });
 
@@ -111,17 +132,31 @@ describe("searchDocuments", () => {
 
   it("builds an explanatory snippet for the top match", () => {
     const result = searchDocuments(DOCS, {
-      query: "workflow",
+      query: "search",
       page: 1,
       pageSize: 10,
       sort: "relevance",
     });
 
-    expect(result.results[0]?.snippet.toLowerCase()).toContain("workflow");
+    expect(result.results[0]?.snippet.toLowerCase()).toContain("search");
     expect(
       result.results[0]?.matchReasons.some(
-        (reason) => reason.startsWith("Summary") || reason.startsWith("Body"),
+        (reason) => reason.startsWith("Matched fields") || reason.startsWith("Lexical rank"),
       ),
     ).toBe(true);
+  });
+
+  it("uses semantic similarity when lexical rank is weak", () => {
+    const result = searchDocuments(DOCS, {
+      query: "coastal archive",
+      page: 1,
+      pageSize: 10,
+      sort: "relevance",
+      queryEmbedding: [0, 1, 0],
+    });
+
+    expect(result.results[0]?.title).toBe("Quiet Harbor");
+    expect(result.results[0]?.semanticScore).toBeGreaterThan(result.results[0]?.lexicalScore);
+    expect(result.results[0]?.matchReasons.join(" ")).toContain("Semantic similarity");
   });
 });

@@ -9,6 +9,7 @@
     "lint": "oxlint app --fix",
     "format": "oxfmt app --write",
     "search:seed": "tsx --tsconfig tsconfig.json scripts/load-search-corpus.ts",
+    "search:sync": "tsx --tsconfig tsconfig.json scripts/load-search-corpus.ts --mode sync",
     "realitea:gen": "tsx --tsconfig tsconfig.json scripts/generate-realitea-scheduled-puzzle.ts",
     "realitea:health-check": "tsx --tsconfig tsconfig.json scripts/realitea-health-check.ts",
     "realitea:preview": "tsx --tsconfig tsconfig.json scripts/realitea-preview.ts",
