@@ -81,37 +81,8 @@ function highlightText(value: string, query: string) {
   return <>{parts}</>;
 }
 
-function initials(name: string): string {
-  return name
-    .split(" ")
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join("")
-    .toUpperCase();
-}
-
 function matchesKind(kindFilter: KindFilter, kind: SearchDocumentKind): boolean {
   return kindFilter === "all" || kindFilter === kind;
-}
-
-function uniqueTags(results: SearchResponse["results"], limit = 6) {
-  const counts = new Map<string, number>();
-  for (const result of results) {
-    for (const tag of result.tags) {
-      const key = tag.toLowerCase();
-      counts.set(key, (counts.get(key) ?? 0) + 1);
-    }
-  }
-  return [...counts.entries()]
-    .map(([value, count]) => ({ value, count }))
-    .sort((a, b) => b.count - a.count || a.value.localeCompare(b.value))
-    .slice(0, limit);
-}
-
-function barWidth(count: number, max: number): string {
-  if (max <= 0) return "0%";
-  const base = Math.max(16, (count / max) * 100);
-  return `${Math.min(100, base)}%`;
 }
 
 function ResultRow({
@@ -161,7 +132,7 @@ function ResultRow({
               href={result.sourceUrl}
               target="_blank"
               rel="noreferrer"
-              className="min-w-0 truncate text-lg font-semibold tracking-tight text-foreground underline-offset-4 hover:underline"
+              className="min-w-0 text-lg font-semibold leading-snug tracking-tight text-foreground underline-offset-4 hover:underline"
             >
               {highlightText(result.title, query)}
             </a>
@@ -293,8 +264,6 @@ export default function SearchStudio() {
   const [sort, setSort] = useState<SearchSortMode>("relevance");
   const [kindFilter, setKindFilter] = useState<KindFilter>("all");
   const [featuredOnly, setFeaturedOnly] = useState(false);
-  const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
-  const [activeTags, setActiveTags] = useState<string[]>([]);
   const deferredQuery = useDeferredValue(query);
 
   const searchKey = deferredQuery.trim();
@@ -319,44 +288,25 @@ export default function SearchStudio() {
 
   const data = queryResult.data;
   const isLoading = queryResult.isPending && !data;
-  const isRefreshing = queryResult.isFetching && Boolean(data);
 
   const visibleResults = useMemo(() => {
     const results = data?.results ?? [];
     return results.filter((result) => {
       if (!matchesKind(kindFilter, result.kind)) return false;
       if (featuredOnly && !result.featured) return false;
-      if (categoryFilter && result.category !== categoryFilter) return false;
-      if (activeTags.length > 0) {
-        const tags = result.tags.map((tag) => tag.toLowerCase());
-        if (!activeTags.every((tag) => tags.includes(tag.toLowerCase()))) {
-          return false;
-        }
-      }
       return true;
     });
-  }, [activeTags, categoryFilter, data, featuredOnly, kindFilter]);
+  }, [data, featuredOnly, kindFilter]);
 
-  const facetTags = data ? uniqueTags(data.results, 8) : [];
-  const topCategories = data?.facets.categories ?? [];
   const kindCounts = {
     all: data?.facets.kinds.reduce((sum, item) => sum + item.count, 0) ?? 0,
     movie: data?.facets.kinds.find((item) => item.value === "movie")?.count ?? 0,
     tv: data?.facets.kinds.find((item) => item.value === "tv")?.count ?? 0,
   };
 
-  const toggleTag = (tag: string) => {
-    setPage(1);
-    setActiveTags((current) =>
-      current.includes(tag) ? current.filter((value) => value !== tag) : [...current, tag],
-    );
-  };
-
   const clearFilters = () => {
     setKindFilter("all");
     setFeaturedOnly(false);
-    setCategoryFilter(null);
-    setActiveTags([]);
     setPage(1);
   };
 
@@ -370,20 +320,15 @@ export default function SearchStudio() {
     setPage(1);
   };
 
-  const hasLocalFilters =
-    kindFilter !== "all" || featuredOnly || categoryFilter !== null || activeTags.length > 0;
   const serverTotal = data?.total ?? 0;
   const localVisibleTotal = visibleResults.length;
 
   return (
     <div className="min-h-screen w-full bg-background text-foreground">
-      <div className="mx-auto flex h-[calc(100dvh-6rem)] w-full max-w-7xl flex-col gap-6 px-4 py-4 md:px-6">
-        <header className="sticky top-20 z-20 rounded-2xl border border-border bg-card/95 px-4 py-3 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-card/90 md:px-5">
-          <div className="flex items-center gap-3 overflow-x-auto">
-            <div className="shrink-0 text-[11px] font-medium uppercase tracking-[0.24em] text-muted-foreground">
-              Search Studio
-            </div>
-            <div className="relative min-w-[20rem] flex-1">
+      <div className="mx-auto flex h-[calc(100dvh-3.5rem)] min-h-0 w-full max-w-7xl flex-col gap-3 overflow-hidden px-4 py-2 md:px-6 md:py-3">
+        <header className="sticky top-4 z-20 rounded-2xl border border-border bg-background/90 px-4 py-3 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-background/80 md:px-5">
+          <div className="flex items-center gap-3 overflow-x-auto pb-1">
+            <div className="relative min-w-[18rem] flex-1">
               <LucideSearch className="pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="search-studio-query"
@@ -403,25 +348,6 @@ export default function SearchStudio() {
                   <LucideX className="h-4 w-4" />
                 </button>
               )}
-            </div>
-
-            <div className="flex shrink-0 items-center gap-2">
-              <div className="rounded-full border border-border bg-background px-3 py-1.5">
-                <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Corpus</div>
-                <div className="text-sm font-semibold tabular-nums text-foreground">{data?.total ?? 0}</div>
-              </div>
-              <div className="rounded-full border border-border bg-background px-3 py-1.5">
-                <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Page</div>
-                <div className="text-sm font-semibold tabular-nums text-foreground">
-                  {data ? `${data.page}/${data.totalPages}` : "1/1"}
-                </div>
-              </div>
-              <div className="rounded-full border border-border bg-background px-3 py-1.5">
-                <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">View</div>
-                <div className="text-sm font-semibold tabular-nums text-foreground">
-                  {localVisibleTotal}/{serverTotal}
-                </div>
-              </div>
             </div>
 
             <div className="flex shrink-0 items-center gap-2">
@@ -457,116 +383,63 @@ export default function SearchStudio() {
               >
                 <LucideChevronRight className="h-4 w-4" />
               </Button>
-            </div>
-          </div>
-
-          <div className="mt-3 flex flex-wrap items-center gap-2">
-            <div className="text-[10px] font-medium uppercase tracking-[0.24em] text-muted-foreground">
-              Facets
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <FacetButton
-                label="All"
-                count={kindCounts.all}
-                active={kindFilter === "all"}
-                onClick={() => {
-                  setKindFilter("all");
-                  setPage(1);
-                }}
-              />
-              <FacetButton
-                label="Movies"
-                count={kindCounts.movie}
-                active={kindFilter === "movie"}
-                onClick={() => {
-                  setKindFilter("movie");
-                  setPage(1);
-                }}
-              />
-              <FacetButton
-                label="TV"
-                count={kindCounts.tv}
-                active={kindFilter === "tv"}
-                onClick={() => {
-                  setKindFilter("tv");
-                  setPage(1);
-                }}
-              />
-              <FacetButton
-                label="Featured only"
-                active={featuredOnly}
-                onClick={() => {
-                  setFeaturedOnly((current) => !current);
-                  setPage(1);
-                }}
-              />
-              <FacetButton
-                label="Clear"
-                active={false}
-                onClick={clearFilters}
-              />
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {topCategories.map((facet) => (
+              <div className="flex shrink-0 items-center gap-2">
                 <FacetButton
-                  key={facet.value}
-                  label={facet.value}
-                  count={facet.count}
-                  active={categoryFilter === facet.value}
+                  label="All"
+                  count={kindCounts.all}
+                  active={kindFilter === "all"}
                   onClick={() => {
-                    setCategoryFilter((current) => (current === facet.value ? null : facet.value));
+                    setKindFilter("all");
                     setPage(1);
                   }}
                 />
-              ))}
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {facetTags.map((facet) => (
                 <FacetButton
-                  key={facet.value}
-                  label={facet.value}
-                  count={facet.count}
-                  active={activeTags.includes(facet.value)}
+                  label="Movies"
+                  count={kindCounts.movie}
+                  active={kindFilter === "movie"}
                   onClick={() => {
-                    toggleTag(facet.value);
+                    setKindFilter("movie");
+                    setPage(1);
                   }}
                 />
-              ))}
+                <FacetButton
+                  label="TV"
+                  count={kindCounts.tv}
+                  active={kindFilter === "tv"}
+                  onClick={() => {
+                    setKindFilter("tv");
+                    setPage(1);
+                  }}
+                />
+                <FacetButton
+                  label="Featured only"
+                  active={featuredOnly}
+                  onClick={() => {
+                    setFeaturedOnly((current) => !current);
+                    setPage(1);
+                  }}
+                />
+                <FacetButton label="Clear" active={false} onClick={clearFilters} />
+              </div>
             </div>
           </div>
         </header>
 
         <main className="min-h-0 flex-1 overflow-y-auto pr-1">
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <p className="ui-eyebrow text-muted-foreground">Ranked results</p>
-              <p className="text-sm text-muted-foreground">
-                {data
-                  ? `${data.total} server-ranked matches, ${localVisibleTotal} visible after instant filters.`
-                  : "Loading results..."}
-              </p>
-            </div>
-            {searchKey.length > 0 && (
-              <div className="text-sm text-muted-foreground">
-                Query: <span className="font-medium text-foreground">{searchKey}</span>
-              </div>
-            )}
-          </div>
-
           {isLoading && !data ? (
-            <div className="min-h-[32rem] rounded-[32px] border border-border px-4">
+            <div className="min-h-[32rem] border-t border-border px-0">
               <div className="flex items-center gap-3 py-6 text-muted-foreground">
                 <Spinner />
                 Searching the corpus...
               </div>
-              <div className="divide-y divide-border">
+              <div className="divide-y divide-border border-b border-border">
                 {Array.from({ length: 5 }, (_, index) => (
                   <ResultSkeletonRow key={index} index={index} />
                 ))}
               </div>
             </div>
           ) : localVisibleTotal === 0 ? (
-            <div className="min-h-[32rem] rounded-3xl border border-dashed border-border p-10 text-center">
+            <div className="min-h-[32rem] border-t border-dashed border-border p-10 text-center">
               <h3 className="text-lg font-semibold text-foreground">No results on this page</h3>
               <p className="mt-2 text-sm text-muted-foreground">
                 The server found matches, but the instant filters removed this slice. Clear the local
@@ -582,14 +455,14 @@ export default function SearchStudio() {
               </div>
             </div>
           ) : (
-            <div className="min-h-[32rem] divide-y divide-border rounded-[32px] border border-border px-4">
+            <div className="min-h-[32rem] divide-y divide-border border-t border-border">
               {visibleResults.map((result, index) => (
                 <ResultRow key={result.id} result={result} query={query} index={index} />
               ))}
             </div>
           )}
         </main>
-    </div>
+      </div>
   </div>
   );
 }
