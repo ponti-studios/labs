@@ -22,6 +22,27 @@
       "when": 1782456158971,
       "tag": "0002_safe_chat",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1782464266482,
+      "tag": "0003_busy_korg",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1782465734522,
+      "tag": "0004_even_silver_sable",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1782467785742,
+      "tag": "0005_complete_stone_men",
+      "breakpoints": true
     }
   ]
 }

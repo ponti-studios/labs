@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
+import type { Variants } from "framer-motion";
 import {
   AlertCircle,
   ChevronDown,
@@ -46,7 +47,7 @@ export default function CareerResumeAnimated() {
     return () => window.clearTimeout(timer);
   }, [step, isAutoPlaying]);
 
-  const videoCaptionVars = {
+  const videoCaptionVars: Variants = {
     initial: { opacity: 0, y: 40, scale: 0.9 },
     animate: {
       opacity: 1,

@@ -1,8 +1,18 @@
 import "dotenv/config";
+import { parseArgs } from "node:util";
 
 import { XMLParser } from "fast-xml-parser";
 
-import { DbEnv, type NewSearchDocument, populateSearchCorpus } from "@pontistudios/db";
+import { generateEmbedding } from "@pontistudios/ai";
+import {
+  appendSearchCorpus,
+  DbEnv,
+  db,
+  inArray,
+  searchDocuments,
+  type NewSearchDocument,
+  populateSearchCorpus,
+} from "@pontistudios/db";
 
 import { getErrorMessage } from "../app/lib/errors";
 import { withDbCleanup } from "../app/lib/realitea-scripts";
@@ -28,8 +38,11 @@ type VarietyArticleMeta = {
 };
 
 const FEED_PAGE_LIMIT = 15;
+const DEFAULT_SYNC_PAGE_LIMIT = 3;
 const USER_AGENT =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36";
+
+type LoadMode = "refresh" | "sync";
 
 function decodeHtml(value: string): string {
   return value
@@ -124,6 +137,17 @@ async function fetchFeedPage(page: number): Promise<RssItem[]> {
   }
 
   return [];
+}
+
+async function getKnownSourceUrls(sourceUrls: string[]): Promise<Set<string>> {
+  if (sourceUrls.length === 0) return new Set();
+
+  const rows = await db
+    .select({ sourceUrl: searchDocuments.sourceUrl })
+    .from(searchDocuments)
+    .where(inArray(searchDocuments.sourceUrl, sourceUrls));
+
+  return new Set(rows.map((row) => row.sourceUrl));
 }
 
 function extractJsonObject(source: string, label: string): Record<string, unknown> | null {
@@ -317,6 +341,7 @@ function buildRecord(item: RssItem, meta: VarietyArticleMeta): NewSearchDocument
     ]
       .map((value) => String(value).toLowerCase())
       .join(" "),
+    embedding: [],
   };
 }
 
@@ -336,30 +361,93 @@ async function mapLimit<T, R>(items: T[], limit: number, mapper: (item: T) => Pr
   return results;
 }
 
-async function scrapeVarietyCorpus(): Promise<NewSearchDocument[]> {
-  const seen = new Set<string>();
-  const feedItems: RssItem[] = [];
+async function buildSearchRecord(item: RssItem, meta: VarietyArticleMeta): Promise<NewSearchDocument> {
+  const record = buildRecord(item, meta);
+  try {
+    const embedding = await generateEmbedding(record.searchText);
+    return { ...record, embedding };
+  } catch (error) {
+    console.warn(`Embedding generation failed for ${record.title}:`, error);
+    return { ...record, embedding: [] };
+  }
+}
 
-  for (let page = 1; page <= FEED_PAGE_LIMIT; page += 1) {
+function parseLoadArgs(): { mode: LoadMode; pages: number } {
+  const { values } = parseArgs({
+    args: process.argv.slice(2),
+    options: {
+      mode: { type: "string" },
+      pages: { type: "string" },
+    },
+    allowPositionals: true,
+    strict: true,
+  });
+
+  const mode = values.mode === "sync" ? "sync" : "refresh";
+  const defaultPages = mode === "sync" ? DEFAULT_SYNC_PAGE_LIMIT : FEED_PAGE_LIMIT;
+  const pages = values.pages ? Number.parseInt(values.pages, 10) : defaultPages;
+
+  if (!Number.isFinite(pages) || pages < 1) {
+    throw new Error(`Invalid page count: ${values.pages}`);
+  }
+
+  return { mode, pages };
+}
+
+async function scrapeVarietyCorpus(pageLimit: number): Promise<NewSearchDocument[]> {
+  const seenInRun = new Set<string>();
+  const records: NewSearchDocument[] = [];
+
+  for (let page = 1; page <= pageLimit; page += 1) {
     const items = await fetchFeedPage(page);
     if (items.length === 0) break;
 
-    for (const item of items) {
-      if (!item.link || seen.has(item.link)) continue;
-      seen.add(item.link);
-      feedItems.push(item);
+    const pageItems = items.filter((item) => {
+      if (!item.link || seenInRun.has(item.link)) return false;
+      seenInRun.add(item.link);
+      return true;
+    });
+
+    if (pageItems.length === 0) continue;
+
+    const knownSourceUrls = await getKnownSourceUrls(pageItems.map((item) => item.link));
+    const firstKnownIndex = pageItems.findIndex((item) => knownSourceUrls.has(item.link));
+    const itemsToProcess = firstKnownIndex === -1 ? pageItems : pageItems.slice(0, firstKnownIndex);
+
+    if (itemsToProcess.length === 0) {
+      console.log(`Reached already-seen RSS item on page ${page}; stopping crawl`);
+      break;
+    }
+
+    const metas = await mapLimit(itemsToProcess, 5, fetchArticleMeta);
+    const pairs = itemsToProcess.map((item, index) => ({
+      item,
+      meta: metas[index]!,
+    }));
+    const pageRecords = await mapLimit(pairs, 3, async ({ item, meta }) => buildSearchRecord(item, meta));
+    records.push(...pageRecords);
+
+    if (firstKnownIndex !== -1) {
+      console.log(`Reached already-seen RSS item on page ${page}; stopping crawl after ${pageRecords.length} new items`);
+      break;
     }
   }
 
-  const metas = await mapLimit(feedItems, 5, fetchArticleMeta);
-  return feedItems.map((item, index) => buildRecord(item, metas[index]!));
+  return records;
 }
 
 async function main() {
   LabyrinthServerEnv.parse(process.env);
   DbEnv.parse(process.env);
 
-  const records = await scrapeVarietyCorpus();
+  const { mode, pages } = parseLoadArgs();
+  const records = await scrapeVarietyCorpus(pages);
+
+  if (mode === "sync") {
+    await appendSearchCorpus(records);
+    return;
+  }
+
   await populateSearchCorpus(records);
 }
 

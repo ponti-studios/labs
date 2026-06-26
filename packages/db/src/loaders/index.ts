@@ -1,3 +1,3 @@
 export { populateCovidData } from "./covid";
-export { populateSearchCorpus } from "./search";
+export { appendSearchCorpus, populateSearchCorpus } from "./search";
 export { populateTflCameras } from "./tfl";

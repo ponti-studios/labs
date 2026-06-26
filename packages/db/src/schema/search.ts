@@ -1,5 +1,29 @@
-import { boolean, index, integer, jsonb, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import {
+  boolean,
+  customType,
+  index,
+  integer,
+  jsonb,
+  serial,
+  text,
+  timestamp,
+  vector,
+  uniqueIndex,
+} from "drizzle-orm/pg-core";
 import { labs } from "./base";
+
+const tsvector = customType<{ data: string; driverData: string }>({
+  dataType() {
+    return "tsvector";
+  },
+  toDriver(value) {
+    return value;
+  },
+  fromDriver(value) {
+    return value;
+  },
+});
 
 export const searchDocuments = labs.table(
   "search_documents",
@@ -19,6 +43,8 @@ export const searchDocuments = labs.table(
     featured: boolean("featured").notNull().default(false),
     popularity: integer("popularity").notNull().default(0),
     searchText: text("search_text").notNull(),
+    searchVector: tsvector("search_vector").notNull().default(sql`''::tsvector`),
+    embedding: vector("embedding", { dimensions: 3072 }).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
@@ -27,6 +53,8 @@ export const searchDocuments = labs.table(
     index("search_documents_category_idx").on(table.category),
     index("search_documents_year_idx").on(table.year),
     index("search_documents_featured_idx").on(table.featured),
+    uniqueIndex("search_documents_source_url_idx").on(table.sourceUrl),
+    index("search_documents_search_vector_idx").using("gin", table.searchVector),
   ],
 );
 

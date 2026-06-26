@@ -33,4 +33,4 @@ export {
 export * from "drizzle-orm";
 export { closeDb, db } from "./drizzle";
 export * from "./env";
-export { populateCovidData, populateSearchCorpus, populateTflCameras } from "./loaders";
+export { appendSearchCorpus, populateCovidData, populateSearchCorpus, populateTflCameras } from "./loaders";
