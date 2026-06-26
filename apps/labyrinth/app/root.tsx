@@ -40,7 +40,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
         <PrefetchProvider />
       </head>
-      <body className="bg-background text-foreground font-sans min-h-dvh overflow-x-hidden overflow-y-auto">
+      <body className="bg-background text-foreground font-sans min-h-dvh overflow-x-hidden overflow-y-auto pt-16 md:pt-20">
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -66,7 +66,7 @@ export default function App() {
       />
       <main
         className={cn(
-          "mx-auto flex min-h-[calc(100dvh-4rem)] w-full max-w-7xl flex-col pt-16 md:pt-20",
+          "mx-auto flex min-h-[calc(100dvh-4rem)] w-full max-w-7xl flex-col",
         )}
       >
         <Outlet />

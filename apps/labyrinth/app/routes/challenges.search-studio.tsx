@@ -232,8 +232,8 @@ export default function SearchStudio() {
 
   return (
     <div className="min-h-full w-full bg-background text-foreground">
-      <div className="mx-auto flex min-h-full w-full max-w-7xl flex-col gap-3 px-4 py-2 md:px-6 md:py-3">
-        <header className="sticky top-4 z-20 rounded-2xl border border-border bg-background/90 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/80 md:px-5">
+      <div className="mx-auto flex min-h-full w-full max-w-7xl flex-col gap-3 px-4 md:px-6">
+        <header className="sticky top-0 z-20 rounded-2xl border border-border bg-background/90 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/80 md:px-5">
           <div className="flex flex-col gap-3">
             <div className="relative w-full">
               <LucideSearch className="pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
