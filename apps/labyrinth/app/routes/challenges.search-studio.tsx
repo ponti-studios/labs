@@ -12,14 +12,7 @@ import {
   TabsTrigger,
   Spinner,
 } from "@pontistudios/ui";
-import {
-  Clapperboard,
-  LucideChevronLeft,
-  LucideChevronRight,
-  LucideSearch,
-  Tv,
-  LucideX,
-} from "lucide-react";
+import { LucideChevronLeft, LucideChevronRight, LucideSearch, LucideX } from "lucide-react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { type ReactNode, useDeferredValue, useMemo, useState } from "react";
 
@@ -97,10 +90,6 @@ function ResultRow({
 }) {
   const isMovie = result.kind === "movie";
   const kindLabel = isMovie ? "Movie" : "TV";
-  const kindIcon = isMovie ? <Clapperboard className="h-4 w-4" /> : <Tv className="h-4 w-4" />;
-  const kindTone = isMovie
-    ? "border-border bg-muted text-foreground"
-    : "border-border bg-muted text-foreground";
   const publishedDate = new Date(result.publishedAt);
   const publishedLabel = Number.isNaN(publishedDate.getTime())
     ? `Published ${result.year}`
@@ -116,16 +105,11 @@ function ResultRow({
       style={{ animation: "fade-slide-in 240ms ease-out both", animationDelay: `${index * 24}ms` }}
     >
       <div className="flex gap-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-border bg-muted text-foreground">
-          {kindIcon}
-        </div>
         <div className="min-w-0 flex-1 space-y-2">
           <div className="flex flex-wrap items-center gap-2">
             <Badge
               variant="outline"
-              className={[
-                kindTone,
-              ].join(" ")}
+              className="border-border bg-muted text-foreground"
             >
               {kindLabel}
             </Badge>
@@ -157,20 +141,14 @@ function ResultRow({
         </div>
       </div>
 
-      <div className="flex flex-row items-center justify-between gap-3 md:flex-col md:items-end md:text-right">
-        <div>
-          <div className="text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
-            Rank
-          </div>
-          <div className="text-2xl font-semibold tabular-nums text-foreground">{index + 1}</div>
-        </div>
-        <div className="text-xs text-muted-foreground">
-          <div>{result.featured ? "Featured" : "Catalog"}</div>
-          <div>{result.finalScore.toFixed(1)} score</div>
-          <div className="tabular-nums">
-            L {result.lexicalScore.toFixed(1)} · S {result.semanticScore.toFixed(1)}
-          </div>
-        </div>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground md:justify-end md:text-right">
+        <span className="text-[11px] font-medium uppercase tracking-[0.2em]">Rank</span>
+        <span className="text-lg font-semibold tabular-nums text-foreground">{index + 1}</span>
+        <span>{result.featured ? "Featured" : "Catalog"}</span>
+        <span>{result.finalScore.toFixed(1)} score</span>
+        <span className="tabular-nums">
+          L {result.lexicalScore.toFixed(1)} · S {result.semanticScore.toFixed(1)}
+        </span>
       </div>
     </article>
   );
@@ -208,15 +186,11 @@ function ResultSkeletonRow({ index }: { index: number }) {
           </div>
         </div>
       </div>
-      <div className="flex flex-row items-center justify-between gap-3 md:flex-col md:items-end md:text-right">
-        <div className="space-y-2">
-          <div className="h-3 w-10 rounded-full bg-muted" />
-          <div className="h-8 w-8 rounded-full bg-muted" />
-        </div>
-        <div className="space-y-2">
-          <div className="h-3 w-12 rounded-full bg-muted" />
-          <div className="h-3 w-14 rounded-full bg-muted" />
-        </div>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-muted-foreground md:justify-end md:text-right">
+        <div className="h-3 w-10 rounded-full bg-muted" />
+        <div className="h-8 w-8 rounded-full bg-muted" />
+        <div className="h-3 w-12 rounded-full bg-muted" />
+        <div className="h-3 w-14 rounded-full bg-muted" />
       </div>
     </article>
   );
