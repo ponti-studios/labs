@@ -33,7 +33,6 @@ const categories: Category[] = [
   {
     name: "Tools",
     entries: [
-      { path: "/business-tools", label: "Business Tools" },
       { path: "/business-tools/marketing", label: "Marketing" },
       { path: "/gen/image", label: "Image Generation" },
       { path: "/tarot", label: "Tarot" },
