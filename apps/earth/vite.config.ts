@@ -14,6 +14,7 @@ export default defineConfig({
   },
   server: {
     port: Number(process.env.PORT) || 3006,
+    strictPort: true,
     fs: {
       strict: false,
     },

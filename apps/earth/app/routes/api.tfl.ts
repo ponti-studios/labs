@@ -1,3 +1,4 @@
+import "~/lib/server/env";
 import { db, tflCameras } from "@pontistudios/db";
 import type { TflCamera } from "../lib/signals/earth";
 

@@ -234,7 +234,11 @@ export default function MedicareRoute() {
           </p>
         </div>
 
-        <Tabs value={activeTab} onValueChange={(tab) => dispatch({ type: "set_tab", tab })} className="w-full">
+        <Tabs
+          value={activeTab}
+          onValueChange={(tab) => dispatch({ type: "set_tab", tab })}
+          className="w-full"
+        >
           <TabsList className="mb-8 grid w-full grid-cols-3 border border-white/10 bg-white/5">
             <TabsTrigger
               value="profile"
@@ -310,7 +314,9 @@ export default function MedicareRoute() {
                   </label>
                   <Slider
                     value={[medicalExpenses]}
-                    onValueChange={(values) => dispatch({ type: "set_medical_expenses", value: values[0] })}
+                    onValueChange={(values) =>
+                      dispatch({ type: "set_medical_expenses", value: values[0] })
+                    }
                     min={0}
                     max={10000}
                     step={500}

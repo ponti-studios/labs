@@ -1,8 +1,4 @@
-import {
-  type RhobhDailyPuzzle,
-  type PuzzleAnswerType,
-  type PuzzleSource,
-} from "@pontistudios/db";
+import { type RhobhDailyPuzzle, type PuzzleAnswerType, type PuzzleSource } from "@pontistudios/db";
 export type { PuzzleAnswerType, PuzzleSource };
 
 // ── Game engine types ─────────────────────────────────────────────────────
@@ -54,7 +50,6 @@ export interface RealiteaGuessResult {
  * DB-only `validationStatus` is intentionally omitted.
  */
 export type PuzzleRecord = RhobhDailyPuzzle;
-
 
 export interface ValidationResult {
   normalizedAnswer: string;

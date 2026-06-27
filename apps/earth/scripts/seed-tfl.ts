@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { db, sql, tflCameras, closeDb } from "@pontistudios/db";
 
 const TFL_API_URL = "https://api.tfl.gov.uk/Place/Type/JamCam";

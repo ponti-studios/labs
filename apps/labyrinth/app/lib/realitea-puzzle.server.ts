@@ -63,10 +63,7 @@ export async function loadActivePublicPuzzle(
   }
 
   if (!puzzle) {
-    childLogger.error(
-      { event: "[ERROR_NO_PUZZLE_AVAILABLE]" },
-      "no puzzle available",
-    );
+    childLogger.error({ event: "[ERROR_NO_PUZZLE_AVAILABLE]" }, "no puzzle available");
     return null;
   }
 

@@ -1,3 +1,4 @@
+import "~/lib/server/env";
 import { sql, desc, eq, inArray } from "@pontistudios/db";
 import { db, relationshipCases, relationshipVerdicts, caseUpdates } from "@pontistudios/db";
 import type { CaseUpdate, RelationshipCase, RelationshipVerdict } from "@pontistudios/db";
@@ -26,7 +27,11 @@ type CaseWithStats = CaseRow & {
 };
 
 async function getCases(): Promise<CaseRow[]> {
-  return db.select(caseSelect).from(relationshipCases).orderBy(desc(relationshipCases.createdAt)).execute();
+  return db
+    .select(caseSelect)
+    .from(relationshipCases)
+    .orderBy(desc(relationshipCases.createdAt))
+    .execute();
 }
 
 async function getCase(id: string): Promise<CaseRow | null> {

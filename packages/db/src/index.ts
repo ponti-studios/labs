@@ -1,9 +1,5 @@
 export type { CovidData, NewCovidData } from "./schema/covid";
-export type {
-  NewSearchDocument,
-  SearchDocument,
-  SearchDocumentKind,
-} from "./schema/search";
+export type { NewSearchDocument, SearchDocument, SearchDocumentKind } from "./schema/search";
 export type {
   NewRhobhDailyPuzzle,
   PuzzleAnswerType,
@@ -33,4 +29,9 @@ export {
 export * from "drizzle-orm";
 export { closeDb, db } from "./drizzle";
 export * from "./env";
-export { appendSearchCorpus, populateCovidData, populateSearchCorpus, populateTflCameras } from "./loaders";
+export {
+  appendSearchCorpus,
+  populateCovidData,
+  populateSearchCorpus,
+  populateTflCameras,
+} from "./loaders";
