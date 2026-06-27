@@ -1,3 +1,4 @@
+import "~/lib/server/env";
 import { chatCompletion } from "@pontistudios/ai";
 
 const SYSTEM_PROMPT = `You are a neutral case summarizer for a structured deliberation platform. Your sole function is to convert a first-person account of a situation into a factual, neutral summary that can be evaluated by a jury of independent voters who have no prior relationship with either party.

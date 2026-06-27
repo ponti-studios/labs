@@ -200,7 +200,8 @@ function scoreDocument(
   const featuredBoost = document.featured ? 3 : 0;
   const boostScore = recencyBoost + popularityBoost + featuredBoost;
 
-  const finalScore = Math.round((lexicalScore * 0.62 + semanticScore * 0.34 + boostScore) * 10) / 10;
+  const finalScore =
+    Math.round((lexicalScore * 0.62 + semanticScore * 0.34 + boostScore) * 10) / 10;
   const matchedFields = collectMatchedFields(document, query, tokens);
 
   const matchReasons = [

@@ -8,7 +8,7 @@ export default function PixelDescentRoute() {
       <div className="flex items-end justify-between gap-4 px-1">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Pixel Descent</h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             A static p5 sketch running inside the labyrinth shell.
           </p>
         </div>
@@ -16,7 +16,7 @@ export default function PixelDescentRoute() {
           href="/experiments/pixel-descent.html"
           target="_blank"
           rel="noreferrer"
-          className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+          className="text-primary text-sm font-medium underline-offset-4 hover:underline"
         >
           Open raw HTML
         </a>
@@ -25,7 +25,7 @@ export default function PixelDescentRoute() {
       <iframe
         title="Pixel Descent static experiment"
         src="/experiments/pixel-descent.html"
-        className="h-[calc(100dvh-13rem)] w-full rounded-3xl border border-border bg-black shadow-2xl"
+        className="border-border h-[calc(100dvh-13rem)] w-full rounded-3xl border bg-black shadow-2xl"
       />
     </section>
   );

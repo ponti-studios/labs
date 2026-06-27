@@ -43,7 +43,9 @@ export const searchDocuments = labs.table(
     featured: boolean("featured").notNull().default(false),
     popularity: integer("popularity").notNull().default(0),
     searchText: text("search_text").notNull(),
-    searchVector: tsvector("search_vector").notNull().default(sql`''::tsvector`),
+    searchVector: tsvector("search_vector")
+      .notNull()
+      .default(sql`''::tsvector`),
     embedding: vector("embedding", { dimensions: 3072 }).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),

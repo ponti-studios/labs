@@ -1,6 +1,12 @@
+import "~/lib/server/env";
 import { eq } from "@pontistudios/db";
 import { db, relationshipCases, relationshipVerdicts } from "@pontistudios/db";
-import type { NewRelationshipCase, NewRelationshipVerdict, RelationshipCase, RelationshipVerdict } from "@pontistudios/db";
+import type {
+  NewRelationshipCase,
+  NewRelationshipVerdict,
+  RelationshipCase,
+  RelationshipVerdict,
+} from "@pontistudios/db";
 import { queryCache } from "./cache";
 
 type CaseRow = Omit<RelationshipCase, "label">;
@@ -31,7 +37,11 @@ export async function createCase(data: CaseCreateInput): Promise<CaseRow> {
     .insert(relationshipCases)
     .values({ id, ...data, createdAt: new Date() })
     .execute();
-  const row = await db.select(caseSelect).from(relationshipCases).where(eq(relationshipCases.id, id)).execute();
+  const row = await db
+    .select(caseSelect)
+    .from(relationshipCases)
+    .where(eq(relationshipCases.id, id))
+    .execute();
   const inserted = row[0];
   if (!inserted) throw new Error("Failed to insert case");
   queryCache.invalidatePattern(/^cases:/);

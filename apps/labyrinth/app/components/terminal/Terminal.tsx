@@ -123,7 +123,7 @@ export function Terminal() {
       <TerminalHeader />
 
       <div
-        className="scrollbar-thin scrollbar-thumb-stone-600 scrollbar-track-transparent flex-1 space-y-1 overflow-y-auto p-4 pt-0 text-olive-100"
+        className="flex-1 scrollbar-thin scrollbar-thumb-stone-600 scrollbar-track-transparent space-y-1 overflow-y-auto p-4 pt-0 text-olive-100"
         ref={terminalRef}
       >
         {lines.map((line, index) => (

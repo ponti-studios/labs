@@ -16,9 +16,7 @@ export const rhobhDailyPuzzles = labs.table(
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
-  (table) => [
-    check("normalized_answer_length", sql`length(${table.normalizedAnswer}) = 5`),
-  ],
+  (table) => [check("normalized_answer_length", sql`length(${table.normalizedAnswer}) = 5`)],
 );
 
 export interface PuzzleSource {

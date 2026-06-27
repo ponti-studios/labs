@@ -19,10 +19,8 @@ export async function populateSearchCorpus(records: NewSearchDocument[]) {
   }
 
   console.log("Building weighted tsvector column");
-  await db
-    .update(searchDocuments)
-    .set({
-      searchVector: sql`
+  await db.update(searchDocuments).set({
+    searchVector: sql`
         setweight(to_tsvector('english', coalesce(${searchDocuments.title}, '')), 'A') ||
         setweight(to_tsvector('english', coalesce(${searchDocuments.subtitle}, '')), 'B') ||
         setweight(to_tsvector('english', coalesce(${searchDocuments.category}, '')), 'B') ||
@@ -31,7 +29,7 @@ export async function populateSearchCorpus(records: NewSearchDocument[]) {
         setweight(to_tsvector('english', coalesce(${searchDocuments.body}, '')), 'D') ||
         setweight(to_tsvector('english', coalesce(${searchDocuments.searchText}, '')), 'D')
       `,
-    });
+  });
 
   console.log(`Search corpus population complete: ${records.length} records`);
 }
@@ -60,10 +58,7 @@ export async function appendSearchCorpus(records: NewSearchDocument[]) {
 
   for (let index = 0; index < records.length; index += DEFAULT_BATCH_SIZE) {
     const batch = records.slice(index, index + DEFAULT_BATCH_SIZE);
-    await db
-      .insert(searchDocuments)
-      .values(batch)
-      .onConflictDoNothing();
+    await db.insert(searchDocuments).values(batch).onConflictDoNothing();
 
     await refreshSearchVectorRows(batch.map((record) => record.sourceUrl));
     console.log(

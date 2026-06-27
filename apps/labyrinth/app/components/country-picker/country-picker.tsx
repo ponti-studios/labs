@@ -177,4 +177,3 @@ export function CountryPicker({ onChange, countryCode, className }: CountryPicke
     </Popover>
   );
 }
-

@@ -172,7 +172,7 @@ export default function CalendarExperiment() {
       case "split":
         return (
           <div className="relative flex gap-2">
-            <div className="absolute left-1/2 top-1/2 h-full w-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-400/30 blur-xl pointer-events-none" />
+            <div className="pointer-events-none absolute top-1/2 left-1/2 h-full w-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-400/30 blur-xl" />
 
             <div className="relative z-10 flex-1 rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
               <div className="mb-1 text-xs font-medium text-gray-500">
@@ -256,12 +256,12 @@ export default function CalendarExperiment() {
         </header>
 
         <div className="relative pt-4">
-          <div className="absolute top-[108px] left-0 z-40 flex w-full items-center pointer-events-none">
+          <div className="pointer-events-none absolute top-[108px] left-0 z-40 flex w-full items-center">
             <div className="w-16 pr-2 text-right">
               <span className="bg-white px-1 text-[10px] font-bold text-teal-600">10:15 AM</span>
             </div>
             <div className="relative h-[2px] flex-1 bg-teal-500 shadow-[0_0_8px_rgba(20,184,166,0.5)]">
-              <div className="absolute left-0 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-teal-500" />
+              <div className="absolute top-1/2 left-0 h-2 w-2 -translate-y-1/2 rounded-full bg-teal-500" />
             </div>
           </div>
 
@@ -273,22 +273,22 @@ export default function CalendarExperiment() {
               onDragEnter={(e) => handleDragEnter(e, index)}
               onDragEnd={handleDragEnd}
               onDragOver={handleDragOver}
-              className={`group relative grid cursor-grab grid-cols-[64px_1fr] gap-3 border-b border-gray-50 px-4 py-3 transition-colors active:cursor-grabbing hover:bg-gray-50 ${
+              className={`group relative grid cursor-grab grid-cols-[64px_1fr] gap-3 border-b border-gray-50 px-4 py-3 transition-colors hover:bg-gray-50 active:cursor-grabbing ${
                 event.type === "past" ? "opacity-60 grayscale-[0.5]" : ""
               }`}
             >
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-300 opacity-0 transition-opacity group-hover:opacity-100">
+              <div className="absolute top-1/2 left-0 -translate-y-1/2 text-gray-300 opacity-0 transition-opacity group-hover:opacity-100">
                 <GripVertical size={16} />
               </div>
 
-              <div className="relative flex flex-col items-end border-r border-gray-100 pr-2 pt-3">
+              <div className="relative flex flex-col items-end border-r border-gray-100 pt-3 pr-2">
                 <span className="text-right text-[10px] font-medium text-gray-400">
                   {event.time}
                 </span>
                 {"transit" in event && event.transit && (
                   <>
-                    <div className="absolute right-[-1px] top-[-20px] h-6 w-[2px] rounded-full bg-gray-300" />
-                    <span className="absolute top-[-15px] right-2 whitespace-nowrap text-[8px] uppercase tracking-widest text-gray-400">
+                    <div className="absolute top-[-20px] right-[-1px] h-6 w-[2px] rounded-full bg-gray-300" />
+                    <span className="absolute top-[-15px] right-2 text-[8px] tracking-widest whitespace-nowrap text-gray-400 uppercase">
                       {event.transitTime} Transit
                     </span>
                   </>

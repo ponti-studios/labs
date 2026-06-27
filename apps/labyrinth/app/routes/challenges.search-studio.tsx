@@ -1,17 +1,12 @@
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@pontistudios/ui";
 import {
-  Button,
-  Input,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  Spinner,
-} from "@pontistudios/ui";
-import { LucideChevronLeft, LucideChevronRight, LucideSearch, LucideX } from "lucide-react";
+  LucideChevronLeft,
+  LucideChevronRight,
+  LucideFilm,
+  LucideSearch,
+  LucideTv,
+  LucideX,
+} from "lucide-react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { type ReactNode, useDeferredValue, useMemo, useState } from "react";
 
@@ -32,7 +27,7 @@ function normalize(value: string): string {
   return value
     .normalize("NFKD")
     .toLowerCase()
-    .replace(/['’"]/g, "")
+    .replace(/[''"]/g, "")
     .replace(/[^a-z0-9\s-]+/g, " ")
     .replace(/\s+/g, " ")
     .trim();
@@ -55,12 +50,8 @@ function highlightText(value: string, query: string) {
     if (index > lastIndex) {
       parts.push(value.slice(lastIndex, index));
     }
-
     parts.push(
-      <mark
-        key={`${index}-${match[0]}`}
-        className="bg-accent/35 text-inherit px-0.5 rounded-sm"
-      >
+      <mark key={`${index}-${match[0]}`} className="bg-accent/25 text-foreground rounded-xs px-0.5">
         {match[0]}
       </mark>,
     );
@@ -78,6 +69,45 @@ function matchesKind(kindFilter: KindFilter, kind: SearchDocumentKind): boolean 
   return kindFilter === "all" || kindFilter === kind;
 }
 
+function KindBadge({ kind }: { kind: SearchDocumentKind }) {
+  const isMovie = kind === "movie";
+  return (
+    <span
+      className={[
+        "inline-flex items-center gap-1 px-2 py-0.5 rounded-[4px] text-[11px] font-medium tracking-[0.06em] uppercase",
+        isMovie ? "bg-primary/8 text-primary/60" : "bg-accent/15 text-accent-foreground/70",
+      ].join(" ")}
+    >
+      {isMovie ? <LucideFilm className="h-3 w-3" /> : <LucideTv className="h-3 w-3" />}
+      {isMovie ? "Film" : "TV"}
+    </span>
+  );
+}
+
+function ScoreBar({ score }: { score: number }) {
+  const pct = Math.min(100, Math.max(0, (score / 120) * 100));
+  return (
+    <div className="flex flex-col items-end gap-1.5">
+      <span className="text-foreground/50 text-[12px] leading-none font-medium tabular-nums">
+        {score.toFixed(1)}
+      </span>
+      <div
+        className="bg-border h-[3px] w-14 overflow-hidden rounded-full"
+        aria-label={`Relevance score ${score.toFixed(1)}`}
+        role="meter"
+        aria-valuenow={score}
+        aria-valuemin={0}
+        aria-valuemax={120}
+      >
+        <div
+          className="bg-accent h-full rounded-full transition-[width] duration-300"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
 function ResultRow({
   result,
   query,
@@ -87,85 +117,130 @@ function ResultRow({
   query: string;
   index: number;
 }) {
-  const isMovie = result.kind === "movie";
-  const kindLabel = isMovie ? "Movie" : "TV";
   const publishedDate = new Date(result.publishedAt);
   const publishedLabel = Number.isNaN(publishedDate.getTime())
-    ? `Published ${result.year}`
+    ? String(result.year)
     : new Intl.DateTimeFormat("en", {
         month: "short",
-        day: "numeric",
         year: "numeric",
       }).format(publishedDate);
+
   return (
     <article
-      className="grid gap-3 border-b border-border py-4 last:border-0 md:grid-cols-[minmax(0,1fr)_8.5rem] md:gap-5"
-      style={{ animation: "fade-slide-in 240ms ease-out both", animationDelay: `${index * 24}ms` }}
+      className="group border-border hover:bg-muted/40 relative -mx-4 grid items-start gap-4 rounded-lg border-b px-4 py-5 transition-colors duration-150 last:border-0 md:-mx-6 md:grid-cols-[2rem_minmax(0,1fr)_5rem] md:px-6"
+      style={{
+        animation: "fade-slide-in 200ms cubic-bezier(0,0,0.2,1) both",
+        animationDelay: `${index * 30}ms`,
+      }}
     >
+      {/* Rank */}
+      <div className="hidden justify-end pt-0.5 md:flex">
+        <span className="text-foreground/30 text-[11px] font-medium tracking-[0.04em] tabular-nums">
+          {String(index + 1).padStart(2, "0")}
+        </span>
+      </div>
+
+      {/* Content */}
       <div className="min-w-0 space-y-2">
         <a
           href={result.sourceUrl}
           target="_blank"
           rel="noreferrer"
-          className="block min-w-0 text-[16px] font-medium leading-6 tracking-tight text-foreground underline-offset-4 hover:underline sm:text-[17px]"
+          className="text-foreground decoration-border hover:decoration-foreground/40 block min-w-0 text-[16px] leading-[1.35] font-semibold tracking-[-0.01em] underline-offset-[3px] transition-colors duration-150 hover:underline"
         >
           <span className="line-clamp-2">{highlightText(result.title, query)}</span>
         </a>
 
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] leading-5 text-muted-foreground">
-          <span className="uppercase tracking-[0.16em]">{kindLabel}</span>
-          <span className="hidden sm:inline text-muted-foreground">•</span>
-          <span>{highlightText(result.subtitle, query)}</span>
-          <span className="hidden sm:inline text-muted-foreground">•</span>
-          <span>{publishedLabel}</span>
-          <span className="hidden sm:inline text-muted-foreground">•</span>
-          <span>{result.location}</span>
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
+          <KindBadge kind={result.kind} />
+          <span className="text-muted-foreground text-[13px]">
+            {highlightText(result.subtitle, query)}
+          </span>
+          <span className="text-muted-foreground/40 text-[11px]">·</span>
+          <span className="text-muted-foreground/70 text-[12px] tabular-nums">
+            {publishedLabel}
+          </span>
+          {result.location && (
+            <>
+              <span className="text-muted-foreground/40 text-[11px]">·</span>
+              <span className="text-muted-foreground/70 text-[12px]">{result.location}</span>
+            </>
+          )}
         </div>
 
-        <p className="line-clamp-2 max-w-4xl text-[14px] leading-6 text-muted-foreground">
+        <p className="text-muted-foreground line-clamp-2 max-w-[68ch] text-[14px] leading-[1.55]">
           {highlightText(result.snippet, query)}
         </p>
       </div>
 
-      <div className="flex items-center gap-2 text-[11px] text-muted-foreground md:flex-col md:items-end md:justify-center md:text-right">
-        <span className="font-medium tabular-nums uppercase tracking-[0.18em] text-foreground/70">
-          #{index + 1}
-        </span>
-        <span className="hidden md:block h-px w-3 bg-border" />
-        <span className="tabular-nums text-sm text-foreground">
-          {result.finalScore.toFixed(1)} score
-        </span>
+      {/* Score */}
+      <div className="hidden items-start justify-end pt-0.5 md:flex">
+        <ScoreBar score={result.finalScore} />
+      </div>
+
+      {/* Mobile rank + score row */}
+      <div className="text-muted-foreground/50 flex items-center justify-between text-[11px] md:hidden">
+        <span className="font-medium tabular-nums">#{index + 1}</span>
+        <ScoreBar score={result.finalScore} />
       </div>
     </article>
   );
+}
+
+function SkeletonLine({ width, height = "h-4" }: { width: string; height?: string }) {
+  return <div className={`${height} ${width} skeleton-shimmer rounded-[4px]`} />;
 }
 
 function ResultSkeletonRow({ index }: { index: number }) {
   return (
     <article
       aria-hidden="true"
-      className="grid gap-3 border-b border-border py-4 last:border-0 md:grid-cols-[minmax(0,1fr)_8.5rem] md:gap-5"
-      style={{ animationDelay: `${index * 24}ms` }}
+      className="border-border grid items-start gap-4 border-b py-5 last:border-0 md:grid-cols-[2rem_minmax(0,1fr)_5rem]"
+      style={{ opacity: Math.max(0.3, 1 - index * 0.15) }}
     >
-      <div className="min-w-0 space-y-2">
-        <div className="h-6 w-3/4 rounded-full bg-muted" />
-        <div className="flex gap-2">
-          <div className="h-4 w-12 rounded-full bg-muted" />
-          <div className="h-4 w-28 rounded-full bg-muted" />
-          <div className="h-4 w-20 rounded-full bg-muted" />
-          <div className="h-4 w-16 rounded-full bg-muted" />
+      <div className="hidden md:block" />
+      <div className="min-w-0 space-y-2.5">
+        <SkeletonLine width="w-3/4" height="h-[18px]" />
+        <div className="flex items-center gap-2">
+          <SkeletonLine width="w-10" height="h-5" />
+          <SkeletonLine width="w-32" />
+          <SkeletonLine width="w-16" />
         </div>
-        <div className="space-y-2 pt-1">
-          <div className="h-4 w-full rounded-full bg-muted" />
-          <div className="h-4 w-5/6 rounded-full bg-muted" />
+        <div className="space-y-1.5 pt-0.5">
+          <SkeletonLine width="w-full" />
+          <SkeletonLine width="w-4/5" />
         </div>
       </div>
-      <div className="flex items-center gap-2 text-xs text-muted-foreground md:flex-col md:items-end md:justify-center md:text-right">
-        <div className="h-3 w-8 rounded-full bg-muted" />
-        <div className="hidden md:block h-px w-3 bg-muted" />
-        <div className="h-3 w-16 rounded-full bg-muted" />
+      <div className="hidden flex-col items-end gap-2 pt-0.5 md:flex">
+        <SkeletonLine width="w-8" height="h-[12px]" />
+        <SkeletonLine width="w-14" height="h-[3px]" />
       </div>
     </article>
+  );
+}
+
+function FilterPill({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={[
+        "inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        active
+          ? "bg-primary text-primary-foreground"
+          : "text-muted-foreground hover:text-foreground hover:bg-muted",
+      ].join(" ")}
+    >
+      {children}
+    </button>
   );
 }
 
@@ -187,9 +262,7 @@ export default function SearchStudio() {
         sort,
       });
       const response = await fetch(`/api/search?${params.toString()}`);
-      if (!response.ok) {
-        throw new Error("Failed to load search results");
-      }
+      if (!response.ok) throw new Error("Failed to load search results");
       return (await response.json()) as SearchResponse;
     },
     placeholderData: keepPreviousData,
@@ -201,10 +274,7 @@ export default function SearchStudio() {
 
   const visibleResults = useMemo(() => {
     const results = data?.results ?? [];
-    return results.filter((result) => {
-      if (!matchesKind(kindFilter, result.kind)) return false;
-      return true;
-    });
+    return results.filter((result) => matchesKind(kindFilter, result.kind));
   }, [data, kindFilter]);
 
   const kindCounts = {
@@ -228,143 +298,260 @@ export default function SearchStudio() {
     setPage(1);
   };
 
-  const localVisibleTotal = visibleResults.length;
+  const totalResults = kindCounts.all;
+  const hasActiveFilter = kindFilter !== "all";
 
   return (
-    <div className="min-h-full w-full bg-background text-foreground">
-      <div className="mx-auto flex min-h-full w-full max-w-7xl flex-col gap-3 px-4 py-2 md:px-6 md:py-3">
-        <header className="rounded-2xl border border-border bg-background/90 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/80 md:px-5">
-          <div className="flex flex-col gap-3">
-            <div className="relative w-full">
-              <LucideSearch className="pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                id="search-studio-query"
-                type="text"
-                value={query}
-                onChange={(event) => handleQueryChange(event.target.value)}
-                placeholder="Search shows, films, titles, stars, studios, or franchises..."
-                className="h-12 w-full border-border bg-background pr-12 pl-11 text-base text-foreground placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
-              />
-              {query.length > 0 && (
+    <div className="bg-background text-foreground min-h-full w-full">
+      <div className="mx-auto flex min-h-full w-full max-w-4xl flex-col gap-8 px-4 py-6 md:px-8 md:py-10">
+        {/* ── Search header ── */}
+        <header className="space-y-4">
+          {/* Hero search bar */}
+          <div className="relative">
+            <LucideSearch
+              className="text-muted-foreground pointer-events-none absolute top-1/2 left-5 h-[18px] w-[18px] -translate-y-1/2"
+              aria-hidden="true"
+            />
+            <input
+              id="search-studio-query"
+              type="search"
+              value={query}
+              onChange={(e) => handleQueryChange(e.target.value)}
+              placeholder="Search titles, stars, studios, franchises…"
+              autoComplete="off"
+              spellCheck="false"
+              className="border-border bg-background text-foreground placeholder:text-muted-foreground/60 focus:border-ring/50 focus:ring-ring/30 h-14 w-full rounded-xl border pr-14 pl-[3.25rem] text-[16px] transition-[border-color,box-shadow] duration-150 focus:shadow-[0_0_0_4px_var(--color-ring,rgba(160,112,58,0.12))] focus:ring-2 focus:outline-none"
+            />
+            {query.length > 0 && (
+              <button
+                type="button"
+                aria-label="Clear search"
+                onClick={() => handleQueryChange("")}
+                className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring absolute top-1/2 right-3 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg transition-colors duration-150 focus-visible:ring-2 focus-visible:outline-none"
+              >
+                <LucideX className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+
+          {/* Controls row */}
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            {/* Kind filters */}
+            <div className="flex items-center gap-1.5">
+              <FilterPill
+                active={kindFilter === "all"}
+                onClick={() => {
+                  setKindFilter("all");
+                  setPage(1);
+                }}
+              >
+                All
+                {totalResults > 0 && (
+                  <span
+                    className={
+                      kindFilter === "all"
+                        ? "text-primary-foreground/60"
+                        : "text-muted-foreground/60"
+                    }
+                  >
+                    {totalResults.toLocaleString()}
+                  </span>
+                )}
+              </FilterPill>
+              <FilterPill
+                active={kindFilter === "movie"}
+                onClick={() => {
+                  setKindFilter("movie");
+                  setPage(1);
+                }}
+              >
+                <LucideFilm className="h-3.5 w-3.5" />
+                Films
+                {kindCounts.movie > 0 && (
+                  <span
+                    className={
+                      kindFilter === "movie"
+                        ? "text-primary-foreground/60"
+                        : "text-muted-foreground/60"
+                    }
+                  >
+                    {kindCounts.movie.toLocaleString()}
+                  </span>
+                )}
+              </FilterPill>
+              <FilterPill
+                active={kindFilter === "tv"}
+                onClick={() => {
+                  setKindFilter("tv");
+                  setPage(1);
+                }}
+              >
+                <LucideTv className="h-3.5 w-3.5" />
+                TV
+                {kindCounts.tv > 0 && (
+                  <span
+                    className={
+                      kindFilter === "tv"
+                        ? "text-primary-foreground/60"
+                        : "text-muted-foreground/60"
+                    }
+                  >
+                    {kindCounts.tv.toLocaleString()}
+                  </span>
+                )}
+              </FilterPill>
+              {hasActiveFilter && (
                 <button
                   type="button"
-                  aria-label="Clear search"
-                  onClick={() => handleQueryChange("")}
-                  className="absolute top-1/2 right-2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  onClick={clearFilters}
+                  className="text-muted-foreground hover:text-foreground focus-visible:ring-ring inline-flex items-center gap-1 rounded-full px-2.5 py-1.5 text-[12px] font-medium transition-colors duration-150 focus-visible:ring-2 focus-visible:outline-none"
                 >
-                  <LucideX className="h-4 w-4" />
-                </button>
-                )}
-              </div>
-
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex flex-wrap items-center gap-2">
-                <Tabs
-                  value={kindFilter}
-                  onValueChange={(value) => {
-                    setKindFilter(value as KindFilter);
-                    setPage(1);
-                  }}
-                >
-                  <TabsList className="h-auto bg-background p-0.5">
-                    <TabsTrigger value="all" className="gap-2 px-3 py-1.5">
-                      <span>All</span>
-                      <span className="text-xs text-muted-foreground">{kindCounts.all}</span>
-                    </TabsTrigger>
-                    <TabsTrigger value="movie" className="gap-2 px-3 py-1.5">
-                      <span>Movies</span>
-                      <span className="text-xs text-muted-foreground">{kindCounts.movie}</span>
-                    </TabsTrigger>
-                    <TabsTrigger value="tv" className="gap-2 px-3 py-1.5">
-                      <span>TV</span>
-                      <span className="text-xs text-muted-foreground">{kindCounts.tv}</span>
-                    </TabsTrigger>
-                  </TabsList>
-                </Tabs>
-                <Button type="button" variant="ghost" size="sm" onClick={clearFilters}>
+                  <LucideX className="h-3 w-3" />
                   Clear
-                </Button>
-              </div>
+                </button>
+              )}
+            </div>
 
-              <div className="flex flex-wrap items-center gap-2">
-                <Select value={sort} onValueChange={(value) => handleSortChange(value as SearchSortMode)}>
-                  <SelectTrigger className="h-11 w-[10rem] border-border bg-background">
-                    <SelectValue placeholder="Sort results" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {SORT_OPTIONS.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            {/* Sort + pagination */}
+            <div className="flex items-center gap-2">
+              <Select value={sort} onValueChange={(v) => handleSortChange(v as SearchSortMode)}>
+                <SelectTrigger className="border-border bg-background h-9 w-[9.5rem] text-[13px]">
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent>
+                  {SORT_OPTIONS.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value} className="text-[13px]">
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
-                <div className="flex shrink-0 items-center gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    onClick={() => setPage((current) => Math.max(1, current - 1))}
-                    disabled={!data?.hasPrev}
-                    aria-label="Previous page"
-                  >
-                    <LucideChevronLeft className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    onClick={() => setPage((current) => (data?.hasNext ? current + 1 : current))}
-                    disabled={!data?.hasNext}
-                    aria-label="Next page"
-                  >
-                    <LucideChevronRight className="h-4 w-4" />
-                  </Button>
-                </div>
+              <div className="border-border divide-border flex items-center divide-x overflow-hidden rounded-lg border">
+                <button
+                  type="button"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={!data?.hasPrev}
+                  aria-label="Previous page"
+                  className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring flex h-9 w-9 items-center justify-center transition-colors duration-150 focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset disabled:pointer-events-none disabled:opacity-30"
+                >
+                  <LucideChevronLeft className="h-4 w-4" />
+                </button>
+                <span className="text-muted-foreground flex h-9 items-center px-3 text-[12px] font-medium tabular-nums select-none">
+                  {page}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setPage((p) => (data?.hasNext ? p + 1 : p))}
+                  disabled={!data?.hasNext}
+                  aria-label="Next page"
+                  className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring flex h-9 w-9 items-center justify-center transition-colors duration-150 focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset disabled:pointer-events-none disabled:opacity-30"
+                >
+                  <LucideChevronRight className="h-4 w-4" />
+                </button>
               </div>
             </div>
           </div>
         </header>
 
-        <main className="pr-1">
-          {isLoading && !data ? (
-            <div className="min-h-[32rem] border-t border-border px-0">
-              <div className="flex items-center gap-3 py-6 text-muted-foreground">
-                <Spinner />
-                Searching the corpus...
+        {/* ── Results ── */}
+        <main>
+          {isLoading ? (
+            <div>
+              {/* Column header */}
+              <div className="border-border hidden gap-4 border-b pb-3 md:grid md:grid-cols-[2rem_minmax(0,1fr)_5rem]">
+                <div />
+                <span className="text-muted-foreground/50 text-[11px] font-medium tracking-[0.08em] uppercase">
+                  Result
+                </span>
+                <span className="text-muted-foreground/50 text-right text-[11px] font-medium tracking-[0.08em] uppercase">
+                  Score
+                </span>
               </div>
-              <div className="divide-y divide-border border-b border-border">
-                {Array.from({ length: 5 }, (_, index) => (
-                  <ResultSkeletonRow key={index} index={index} />
-                ))}
-              </div>
+              {Array.from({ length: 6 }, (_, i) => (
+                <ResultSkeletonRow key={i} index={i} />
+              ))}
             </div>
-          ) : localVisibleTotal === 0 ? (
-            <div className="min-h-[32rem] border-t border-dashed border-border p-10 text-center">
-              <h3 className="text-lg font-semibold text-foreground">No results on this page</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                The server found matches, but the instant filters removed this slice. Clear the local
-                filters or move to another page.
-              </p>
-              <div className="mt-4 flex flex-wrap justify-center gap-2">
-                <Button type="button" variant="outline" onClick={clearFilters}>
+          ) : visibleResults.length === 0 ? (
+            <div className="flex min-h-[28rem] flex-col items-center justify-center gap-4 text-center">
+              <div className="border-border bg-muted/30 flex h-16 w-16 items-center justify-center rounded-2xl border border-dashed">
+                <LucideSearch className="text-muted-foreground/40 h-7 w-7" />
+              </div>
+              <div className="max-w-[22rem] space-y-1.5">
+                <h3 className="text-foreground text-[16px] font-semibold tracking-[-0.01em]">
+                  No results on this page
+                </h3>
+                <p className="text-muted-foreground text-[14px] leading-[1.55]">
+                  The server found matches but the active filter removed this slice. Clear filters
+                  or move to another page.
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={clearFilters}
+                  className="border-border text-foreground hover:bg-muted focus-visible:ring-ring rounded-lg border px-4 py-2 text-[13px] font-medium transition-colors duration-150 focus-visible:ring-2 focus-visible:outline-none"
+                >
                   Clear filters
-                </Button>
-                <Button type="button" variant="secondary" onClick={() => setPage(1)}>
-                  Return to page 1
-                </Button>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPage(1)}
+                  className="bg-primary text-primary-foreground focus-visible:ring-ring rounded-lg px-4 py-2 text-[13px] font-medium transition-opacity duration-150 hover:opacity-90 focus-visible:ring-2 focus-visible:outline-none"
+                >
+                  Back to page 1
+                </button>
               </div>
             </div>
           ) : (
-            <div className="min-h-[32rem] divide-y divide-border border-t border-border">
+            <div>
+              {/* Column header */}
+              <div className="border-border hidden gap-4 border-b pb-3 md:grid md:grid-cols-[2rem_minmax(0,1fr)_5rem]">
+                <div />
+                <span className="text-muted-foreground/50 text-[11px] font-medium tracking-[0.08em] uppercase">
+                  {totalResults > 0
+                    ? `${totalResults.toLocaleString()} result${totalResults === 1 ? "" : "s"}`
+                    : "Result"}
+                </span>
+                <span className="text-muted-foreground/50 text-right text-[11px] font-medium tracking-[0.08em] uppercase">
+                  Score
+                </span>
+              </div>
+
               {visibleResults.map((result, index) => (
                 <ResultRow key={result.id} result={result} query={query} index={index} />
               ))}
+
+              {/* Footer pagination */}
+              {(data?.hasPrev || data?.hasNext) && (
+                <div className="border-border mt-2 flex items-center justify-between border-t pt-6">
+                  <button
+                    type="button"
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    disabled={!data?.hasPrev}
+                    className="text-muted-foreground hover:text-foreground focus-visible:ring-ring inline-flex items-center gap-2 rounded text-[13px] font-medium transition-colors duration-150 focus-visible:ring-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-30"
+                  >
+                    <LucideChevronLeft className="h-4 w-4" />
+                    Previous
+                  </button>
+                  <span className="text-muted-foreground/60 text-[12px] tabular-nums">
+                    Page {page}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setPage((p) => (data?.hasNext ? p + 1 : p))}
+                    disabled={!data?.hasNext}
+                    className="text-muted-foreground hover:text-foreground focus-visible:ring-ring inline-flex items-center gap-2 rounded text-[13px] font-medium transition-colors duration-150 focus-visible:ring-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-30"
+                  >
+                    Next
+                    <LucideChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </main>
       </div>
-  </div>
+    </div>
   );
 }
