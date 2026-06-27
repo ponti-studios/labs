@@ -1,4 +1,3 @@
-import { QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import {
   isRouteErrorResponse,
@@ -15,8 +14,8 @@ import { AppNavigation } from "@pontistudios/ui";
 import "./app.css";
 import BottomSheet from "./components/BottomSheet";
 import MapLibreViewer from "./components/MapLibreViewer";
+import QueryProvider from "./components/QueryProvider";
 import SheetSkeleton from "./components/SheetSkeleton";
-import { queryClient } from "./lib/query-client";
 
 function ClientOnly({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
@@ -64,7 +63,7 @@ export default function App() {
   const isNavigating = navigation.state === "loading";
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <QueryProvider>
       <div className="earth-shell">
         <ClientOnly>
           <MapLibreViewer />
@@ -82,7 +81,7 @@ export default function App() {
         />
         <BottomSheet>{isNavigating ? <SheetSkeleton /> : <Outlet />}</BottomSheet>
       </div>
-    </QueryClientProvider>
+    </QueryProvider>
   );
 }
 

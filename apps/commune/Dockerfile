@@ -47,6 +47,6 @@ USER app
 EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f -s -m 2 http://localhost:${PORT}/api/health || exit 1
+  CMD curl -f -s -m 2 http://localhost:${PORT}/ || exit 1
 
 CMD ["node_modules/.bin/react-router-serve", "./build/server/index.js"]
