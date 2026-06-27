@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "@playwright/test": "catalog:",
+    "@pontistudios/tsconfig": "workspace:*",
     "@react-router/dev": "catalog:",
     "@tailwindcss/vite": "catalog:",
     "@types/node": "catalog:",

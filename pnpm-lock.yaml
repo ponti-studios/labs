@@ -163,6 +163,9 @@ importers:
       '@tanstack/react-query':
         specifier: 'catalog:'
         version: 5.101.1(react@19.2.7)
+      '@tanstack/react-query-devtools':
+        specifier: 'catalog:'
+        version: 5.101.1(@tanstack/react-query@5.101.1(react@19.2.7))(react@19.2.7)
       dotenv:
         specifier: ^17.4.2
         version: 17.4.2
@@ -227,6 +230,9 @@ importers:
       '@tanstack/react-query':
         specifier: 'catalog:'
         version: 5.101.1(react@19.2.7)
+      '@tanstack/react-query-devtools':
+        specifier: 'catalog:'
+        version: 5.101.1(@tanstack/react-query@5.101.1(react@19.2.7))(react@19.2.7)
       dotenv:
         specifier: ^17.4.2
         version: 17.4.2
@@ -319,6 +325,9 @@ importers:
       '@playwright/test':
         specifier: 'catalog:'
         version: 1.61.1
+      '@pontistudios/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
       '@react-router/dev':
         specifier: 'catalog:'
         version: 8.0.1(@react-router/serve@8.0.1(react-router@8.0.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(typescript@6.0.3))(babel-plugin-macros@3.1.0)(react-router@8.0.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(typescript@6.0.3)(vite@8.1.0(@types/node@26.0.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.46.1)(tsx@4.22.4)(yaml@2.9.0))
@@ -379,6 +388,9 @@ importers:
       '@tanstack/react-query':
         specifier: 'catalog:'
         version: 5.101.1(react@19.2.7)
+      '@tanstack/react-query-devtools':
+        specifier: 'catalog:'
+        version: 5.101.1(@tanstack/react-query@5.101.1(react@19.2.7))(react@19.2.7)
       '@testing-library/jest-dom':
         specifier: 'catalog:'
         version: 6.9.1
