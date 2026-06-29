@@ -346,14 +346,11 @@ function RevenueMixCard({ d }: { d: ReturnType<typeof useCalculator> }) {
 
 function WeeklyTrafficCard({
   weeklyAttendance,
-  maxCapacity,
   d,
 }: {
   weeklyAttendance: number;
-  maxCapacity: number;
   d: ReturnType<typeof useCalculator>;
 }) {
-  const remaining = maxCapacity - weeklyAttendance;
   const cv = CAPACITY_STYLES[capacityVariant(d.capacityPct)];
 
   return (
@@ -379,10 +376,6 @@ function WeeklyTrafficCard({
             className={cn("transition-all duration-300", cv.bar)}
             style={{ width: `${d.capacityPct}%` }}
           />
-        </div>
-        <div className="flex items-center justify-between text-xs">
-          <span className={cn("font-medium", cv.text)}>{d.capacityPct}% full</span>
-          <span className="text-muted-foreground">{fmt(remaining)} seats available</span>
         </div>
       </div>
     </div>
@@ -632,11 +625,7 @@ export default function TheaterEconomics() {
           healthTextColor={hs.text}
         />
         <RevenueMixCard d={d} />
-        <WeeklyTrafficCard
-          weeklyAttendance={config.weeklyAttendance}
-          maxCapacity={maxCapacity}
-          d={d}
-        />
+        <WeeklyTrafficCard weeklyAttendance={config.weeklyAttendance} d={d} />
       </div>
 
       {/* ── Main Grid: Controls + P&L Statement ────────────────────────── */}
@@ -644,19 +633,16 @@ export default function TheaterEconomics() {
         {/* ── Left: Controls ────────────────────────────────────────────── */}
         <div className="space-y-6">
           <Card>
-            <CardHeader>
-              <div>
-                <CardTitle>Scenario Inputs</CardTitle>
-                <CardDescription>
-                  Adjust attendance, pricing, and film mix to model outcomes
-                </CardDescription>
-              </div>
-            </CardHeader>
             <CardContent>
               <div className="space-y-6">
                 <div className="space-y-3">
                   <div className="flex items-center justify-between gap-4">
-                    <label className="text-emphasis-medium text-sm font-medium">Screens</label>
+                    <div>
+                      <label className="text-emphasis-medium text-sm font-medium">Screens</label>
+                      <p className="text-muted-foreground text-xs">
+                        1 screen = ~{SCREEN_CAPACITY.toLocaleString()} visitors / week
+                      </p>
+                    </div>
                     <Stepper
                       value={config.screens}
                       min={4}
@@ -664,10 +650,6 @@ export default function TheaterEconomics() {
                       onChange={(v) => dispatch({ type: "SET_SCREENS", payload: v })}
                     />
                   </div>
-                  <p className="text-muted-foreground text-xs">
-                    Each screen handles ~{SCREEN_CAPACITY.toLocaleString()} visitors per week.
-                    {config.screens} screens = {maxCapacity.toLocaleString()}/week max
-                  </p>
                 </div>
 
                 <SliderControl
