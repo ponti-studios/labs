@@ -1,19 +1,21 @@
 import "dotenv/config";
 import { parseArgs } from "node:util";
 
-import { addDaysToDateKey, buildDateRange, getDateKey } from "../app/lib/realitea-date";
+import { closeDb } from "@pontistudios/db";
+
+import { addDaysToDateKey, buildDateRange, getDateKey } from "../app/lib/realitea/date";
 import { getErrorMessage } from "../app/lib/errors";
 import {
   countInventoryForRange,
   deletePuzzlesFromDate,
   getExistingDateKeys,
-} from "../app/lib/realitea-db";
-import { generateScheduledPuzzle } from "../app/lib/realitea-generation";
-import { createScriptLogger, withDbCleanup } from "../app/lib/realitea-scripts";
-import { REALITEA_READY_INVENTORY_DAYS } from "../app/lib/realitea-validation";
+} from "../app/lib/realitea/repository";
+import { generateScheduledPuzzle } from "../app/lib/realitea/generation";
+import { createLogger } from "../app/lib/logger.server";
+import { REALITEA_READY_INVENTORY_DAYS } from "../app/lib/realitea/validation";
 import { LabyrinthServerEnv } from "../app/lib/server/env";
 
-const logger = createScriptLogger();
+const logger = createLogger();
 
 export function computeGaps(dateRange: string[], existingKeys: string[]): string[] {
   const existing = new Set(existingKeys);
@@ -24,14 +26,16 @@ function parseReconcileArgs(): { force: boolean; daysAhead: number } {
   const { values } = parseArgs({
     args: process.argv.slice(2),
     options: {
-      force:        { type: "boolean" },
+      force: { type: "boolean" },
       "days-ahead": { type: "string" },
     },
     strict: true,
   });
   return {
     force: values.force ?? false,
-    daysAhead: values["days-ahead"] ? parseInt(values["days-ahead"], 10) : REALITEA_READY_INVENTORY_DAYS,
+    daysAhead: values["days-ahead"]
+      ? parseInt(values["days-ahead"], 10)
+      : REALITEA_READY_INVENTORY_DAYS,
   };
 }
 
@@ -53,7 +57,10 @@ async function main() {
 
   if (force) {
     deletedCount = await deletePuzzlesFromDate(nextDayKey);
-    reconcileLogger.info({ event: "[FORCE_DELETED]", count: deletedCount }, `deleted ${deletedCount} puzzles`);
+    reconcileLogger.info(
+      { event: "[FORCE_DELETED]", count: deletedCount },
+      `deleted ${deletedCount} puzzles`,
+    );
   }
 
   const existingKeys = force ? [] : await getExistingDateKeys(nextDayKey, lastDayKey);
@@ -69,7 +76,10 @@ async function main() {
         generatedCount++;
       } else {
         failedCount++;
-        reconcileLogger.error({ event: "[GENERATION_FAILED]", dateKey }, "generation returned null");
+        reconcileLogger.error(
+          { event: "[GENERATION_FAILED]", dateKey },
+          "generation returned null",
+        );
       }
     } catch (err) {
       failedCount++;
@@ -100,11 +110,15 @@ async function main() {
 }
 
 if (!process.env.VITEST) {
-  await withDbCleanup(main).catch((err) => {
+  try {
+    await main();
+  } catch (err) {
     logger.error(
       { event: "[RECONCILE_FAILED]", error: getErrorMessage(err) },
       "reconcile run failed",
     );
     process.exit(1);
-  });
+  } finally {
+    closeDb();
+  }
 }

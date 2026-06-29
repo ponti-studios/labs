@@ -6,12 +6,12 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { z } from "zod";
 
-import { getErrorMessage } from "./errors";
-import { createLogger } from "./logger.server";
+import { getErrorMessage } from "../errors";
+import { createLogger } from "../logger.server";
 
-import { normalizeGuess, REALITEA_ANSWER_LENGTH } from "./realitea";
-import { getDateKey, parseDate } from "./realitea-date";
-import { getStoredAnswers, getRecentAnswers, loadPuzzleForDate } from "./realitea-db";
+import { normalizeGuess, REALITEA_ANSWER_LENGTH } from "./index";
+import { getDateKey, parseDate } from "./date";
+import { getStoredAnswers, getRecentAnswers, loadPuzzleForDate } from "./repository";
 import type {
   CandidatePreview,
   FeedItem,
@@ -19,8 +19,8 @@ import type {
   PreviewCandidatesOptions,
   PuzzleAnswerType,
   PuzzleRecord,
-} from "./realitea.types";
-import { validateCandidate } from "./realitea-validation";
+} from "./types";
+import { validateCandidate } from "./validation";
 
 const REALITY_BLURB_FEED_URL = "https://realityblurb.com/feed";
 
@@ -86,7 +86,7 @@ async function fetchFeedItems(feedUrl?: string): Promise<FeedItem[]> {
 const logger = createLogger();
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
-const SYSTEM_PROMPT = readFileSync(join(__dirname, "prompts/realitea-generation.md"), "utf-8");
+const SYSTEM_PROMPT = readFileSync(join(__dirname, "../prompts/realitea-generation.md"), "utf-8");
 
 const candidateSchema = z.object({
   answer: z.string().min(1),

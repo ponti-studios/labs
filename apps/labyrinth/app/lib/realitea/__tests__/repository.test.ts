@@ -32,7 +32,7 @@ vi.mock("@pontistudios/db", () => ({
   rhobhDailyPuzzles: rhobhDailyPuzzlesMock,
 }));
 
-vi.mock("./realitea-validation", () => ({
+vi.mock("../validation", () => ({
   BRAVO_REPEAT_WINDOW_DAYS: 90,
 }));
 
@@ -44,14 +44,14 @@ describe("loadPuzzleForDate", () => {
   it("returns the row when one exists", async () => {
     const row = { id: 1, dateUtc: "2026-06-25", answer: "BRAVO" };
     findFirstMock.mockResolvedValue(row);
-    const { loadPuzzleForDate } = await import("./realitea-db");
+    const { loadPuzzleForDate } = await import("../repository");
     const result = await loadPuzzleForDate("2026-06-25");
     expect(result).toEqual(row);
   });
 
   it("returns null when no row exists", async () => {
     findFirstMock.mockResolvedValue(undefined);
-    const { loadPuzzleForDate } = await import("./realitea-db");
+    const { loadPuzzleForDate } = await import("../repository");
     const result = await loadPuzzleForDate("2026-06-25");
     expect(result).toBeNull();
   });
@@ -63,7 +63,7 @@ describe("getStoredAnswers", () => {
     dbMock.select.mockReturnValue({
       from: () => Promise.resolve(rows),
     });
-    const { getStoredAnswers } = await import("./realitea-db");
+    const { getStoredAnswers } = await import("../repository");
     const result = await getStoredAnswers();
     expect(result).toBeInstanceOf(Set);
     expect(result.has("BRAVO")).toBe(true);
@@ -79,7 +79,7 @@ describe("getExistingDateKeys", () => {
         where: () => Promise.resolve(rows),
       }),
     });
-    const { getExistingDateKeys } = await import("./realitea-db");
+    const { getExistingDateKeys } = await import("../repository");
     const result = await getExistingDateKeys("2026-06-26", "2026-06-27");
     expect(result).toEqual(["2026-06-26", "2026-06-27"]);
   });
@@ -91,7 +91,7 @@ describe("getExistingDateKeys", () => {
         where: () => Promise.resolve(rows),
       }),
     });
-    const { getExistingDateKeys } = await import("./realitea-db");
+    const { getExistingDateKeys } = await import("../repository");
     const result = await getExistingDateKeys("2026-06-26", "2026-06-27");
     expect(result).toEqual(["2026-06-26"]);
   });

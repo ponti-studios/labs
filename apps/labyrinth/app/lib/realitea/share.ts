@@ -1,4 +1,4 @@
-import type { LetterState, RealiteaGuess } from "./realitea";
+import type { LetterState, RealiteaGuess } from "./index";
 
 const SHARE_TILES: Record<LetterState, string> = {
   absent: "⬜",

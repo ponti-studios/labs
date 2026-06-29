@@ -1,4 +1,4 @@
-import type { GameStatus, LetterState, RealiteaGuess } from "./realitea.types";
+import type { GameStatus, LetterState, RealiteaGuess } from "./types";
 
 export type {
   GameStatus,
@@ -6,7 +6,7 @@ export type {
   PublicDailyPuzzle,
   RealiteaGuess,
   RealiteaGuessResult,
-} from "./realitea.types";
+} from "./types";
 
 export const MAX_GUESSES = 6;
 export const REALITEA_ANSWER_LENGTH = 5;

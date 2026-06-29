@@ -43,7 +43,6 @@ const featureRoutes = [
   route("/games/tetris", "routes/games/tetris.tsx"),
   route("/games/realitea", "routes/games/realitea/route.tsx"),
   route("/games/realitea/admin", "routes/games/realitea/admin.tsx"),
-  route("/experiments/theatre-management", "routes/experiments/theatre-management/route.tsx"),
 ] satisfies RouteConfig;
 
 const experimentRoutes = [
@@ -54,6 +53,7 @@ const experimentRoutes = [
   route("/experiments/threegl-image-gallery", "routes/experiments.threegl-image-gallery.tsx"),
   route("/experiments/llm-interface", "routes/experiments.llm-interface.tsx"),
   route("/experiments/career-resume-animated", "routes/experiments.career-resume-animated.tsx"),
+  route("/experiments/theatre-management", "routes/theatre-management/route.tsx"),
 ] satisfies RouteConfig;
 
 const challengeRoutes = [

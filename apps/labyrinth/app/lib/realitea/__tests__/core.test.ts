@@ -6,7 +6,7 @@ import {
   evaluateGuess,
   getKeyboardState,
   normalizeGuess,
-} from "./realitea";
+} from "../index";
 
 describe("realitea helpers", () => {
   it("normalizes guesses to uppercase letters", () => {
