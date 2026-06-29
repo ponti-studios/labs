@@ -3,9 +3,9 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { parseArgs } from "node:util";
 
-import { getDateKey } from "../app/lib/realitea-date";
-import { previewCandidates } from "../app/lib/realitea-generation";
-import type { GenerationPreviewResult } from "../app/lib/realitea.types";
+import { getDateKey } from "../app/lib/realitea/date";
+import { previewCandidates } from "../app/lib/realitea/generation";
+import type { GenerationPreviewResult } from "../app/lib/realitea/types";
 
 interface PreviewOptions {
   dateKey: string;
@@ -17,15 +17,15 @@ function parsePreviewArgs(): PreviewOptions {
   const { values } = parseArgs({
     args: process.argv.slice(2),
     options: {
-      "date-key":    { type: "string" },
-      "feed-url":    { type: "string" },
+      "date-key": { type: "string" },
+      "feed-url": { type: "string" },
       "prompt-file": { type: "string" },
     },
     strict: true,
   });
   return {
-    dateKey:    values["date-key"] ?? getDateKey(new Date()),
-    feedUrl:    values["feed-url"],
+    dateKey: values["date-key"] ?? getDateKey(new Date()),
+    feedUrl: values["feed-url"],
     promptFile: values["prompt-file"],
   };
 }
@@ -65,15 +65,14 @@ function printCandidatesSection(result: GenerationPreviewResult) {
 
   result.candidates.forEach(({ candidate, validation }, i) => {
     const isSelected = result.selectedIndex === i;
-    const status = validation.valid
-      ? `✓ PASS${isSelected ? "  ← SELECTED" : ""}`
-      : "✗ FAIL";
+    const status = validation.valid ? `✓ PASS${isSelected ? "  ← SELECTED" : ""}` : "✗ FAIL";
 
     console.log(`[${i + 1}]  ${candidate.answer}  (${candidate.answerType})  ${status}`);
     console.log(`  Clue:   "${candidate.clue}"`);
     if (validation.valid) {
       if (candidate.detail) {
-        const detail = candidate.detail.slice(0, 100) + (candidate.detail.length > 100 ? "..." : "");
+        const detail =
+          candidate.detail.slice(0, 100) + (candidate.detail.length > 100 ? "..." : "");
         console.log(`  Detail: "${detail}"`);
       }
       candidate.sources.forEach((s) => console.log(`  Source: ${s.url} — ${s.title}`));
@@ -93,7 +92,9 @@ function printResultSection(result: GenerationPreviewResult) {
 
   if (result.selectedIndex !== null) {
     const selected = result.candidates[result.selectedIndex];
-    console.log(`  Selected: ${selected.candidate.answer} (candidate #${result.selectedIndex + 1})`);
+    console.log(
+      `  Selected: ${selected.candidate.answer} (candidate #${result.selectedIndex + 1})`,
+    );
   } else {
     console.log("  Selected: NONE — no candidate passed validation");
   }

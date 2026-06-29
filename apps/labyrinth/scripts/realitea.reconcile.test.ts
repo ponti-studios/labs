@@ -1,19 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 
 // Mock heavy dependencies that fail in jsdom or run top-level side-effects
-vi.mock("../app/lib/realitea-generation", () => ({
+vi.mock("../app/lib/realitea/generation", () => ({
   generateScheduledPuzzle: vi.fn(),
 }));
-vi.mock("../app/lib/realitea-scripts", () => ({
-  withDbCleanup: vi.fn((fn: () => Promise<unknown>) => fn()),
-  createScriptLogger: vi.fn(() => ({
-    info: vi.fn(),
-    error: vi.fn(),
-    debug: vi.fn(),
-    child: vi.fn(() => ({ info: vi.fn(), error: vi.fn(), debug: vi.fn() })),
-  })),
-}));
-vi.mock("../app/lib/realitea-db", () => ({
+vi.mock("../app/lib/realitea/repository", () => ({
   countInventoryForRange: vi.fn(),
   deletePuzzlesFromDate: vi.fn(),
   getExistingDateKeys: vi.fn(),

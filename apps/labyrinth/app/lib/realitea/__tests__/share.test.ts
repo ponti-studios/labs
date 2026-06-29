@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { evaluateGuess, type RealiteaGuess } from "./realitea";
-import { buildRealiTeaShareText, shareRealiTeaResult } from "./realitea-share";
+import { evaluateGuess, type RealiteaGuess } from "../index";
+import { buildRealiTeaShareText, shareRealiTeaResult } from "../share";
 
 const SAMPLE_ANSWER = "ERIKA";
 const SAMPLE_GUESSES = ["ERIKA", "DORIT", "KYLEE", "TILLY", "DORIT", "KYLEE"];

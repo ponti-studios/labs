@@ -8,12 +8,12 @@ import {
   REALITEA_ANSWER_LENGTH,
   type PublicDailyPuzzle,
   type RealiteaGuessResult,
-} from "./realitea";
-import { addDaysToDateKey, getDateKey } from "./realitea-date";
-import { createLogger } from "./logger.server";
-import type { PuzzleRecord } from "./realitea.types";
-import { loadPuzzleForDate } from "./realitea-db";
-import { isValidWord } from "./word-list.server";
+} from "./index";
+import { addDaysToDateKey, getDateKey } from "./date";
+import { createLogger } from "../logger.server";
+import type { PuzzleRecord } from "./types";
+import { loadPuzzleForDate } from "./repository";
+import { isValidWord } from "../word-list.server";
 
 const logger = createLogger();
 

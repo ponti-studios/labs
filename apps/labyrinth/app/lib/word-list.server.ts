@@ -10,7 +10,7 @@ import { readFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { getStoredAnswers } from "./realitea-db";
+import { getStoredAnswers } from "./realitea/repository";
 import { REALITEA_ANSWER_LENGTH } from "./realitea";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));

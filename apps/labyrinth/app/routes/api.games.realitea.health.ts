@@ -4,8 +4,8 @@ import { count, db, desc, inArray, rhobhDailyPuzzles } from "@pontistudios/db";
 
 import { createLogger } from "~/lib/logger.server";
 import { requireAdminAuth } from "~/lib/server/admin-auth";
-import { addDaysToDateKey, getDateKey } from "~/lib/realitea-date";
-import { loadPuzzleForDate } from "~/lib/realitea-db";
+import { addDaysToDateKey, getDateKey } from "~/lib/realitea/date";
+import { loadPuzzleForDate } from "~/lib/realitea/repository";
 
 const logger = createLogger();
 

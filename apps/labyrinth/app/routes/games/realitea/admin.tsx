@@ -4,8 +4,8 @@ import { useLoaderData } from "react-router";
 import { count, db, desc, inArray, rhobhDailyPuzzles } from "@pontistudios/db";
 
 import { requireAdminAuth } from "~/lib/server/admin-auth";
-import { addDaysToDateKey, getDateKey } from "~/lib/realitea-date";
-import { loadPuzzleForDate } from "~/lib/realitea-db";
+import { addDaysToDateKey, getDateKey } from "~/lib/realitea/date";
+import { loadPuzzleForDate } from "~/lib/realitea/repository";
 
 async function getInventoryDepth(fromDateKey: string, days: number): Promise<number> {
   const dateKeys: string[] = [];

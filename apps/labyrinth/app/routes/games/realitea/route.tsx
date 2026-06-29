@@ -12,7 +12,7 @@ import {
   type PublicDailyPuzzle,
   type RealiteaGuess,
 } from "~/lib/realitea";
-import { loadActivePublicPuzzle } from "~/lib/realitea-puzzle.server";
+import { loadActivePublicPuzzle } from "~/lib/realitea/puzzle.server";
 import { cn } from "~/lib/utils";
 
 import { readGameState, saveGameState } from "./game-state";

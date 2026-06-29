@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { getDateKey } from "./realitea-date";
-import { validateCandidate } from "./realitea-validation";
+import { getDateKey } from "../date";
+import { validateCandidate } from "../validation";
 
 const BRAVO_SOURCE = {
   url: "https://realityblurb.com/2026/06/25/test-story",
