@@ -25,7 +25,7 @@ const categories: Category[] = [
     entries: [
       { path: "/experiments/career-resume-animated", label: "Career Resume Animated" },
       { path: "/experiments/calendar", label: "Calendar" },
-      { path: "/experiments/pixel-descent", label: "Pixel Descent" },
+      { path: "/experiments/pixel-descent.html", label: "Pixel Descent" },
       { path: "/experiments/theatre-management", label: "Theatre Management" },
       { path: "/experiments/llm-interface", label: "LLM Interface" },
       { path: "/experiments/glass", label: "Glass" },
