@@ -45,6 +45,7 @@
     "tsx": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
+    "vite-plugin-devtools-json": "catalog:",
     "vitest": "catalog:"
   },
   "packageManager": "pnpm@10.30.3"

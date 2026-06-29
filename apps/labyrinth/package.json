@@ -62,7 +62,8 @@
     "tailwindcss": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
-    "vite": "catalog:"
+    "vite": "catalog:",
+    "vite-plugin-devtools-json": "catalog:"
   },
   "packageManager": "pnpm@10.30.3"
 }

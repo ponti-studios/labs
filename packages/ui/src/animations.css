@@ -261,12 +261,12 @@
 }
 
 .animate-accordion-down,
-[data-state="open"].animate-accordion-down {
+[data-state='open'].animate-accordion-down {
   animation: accordion-down 400ms cubic-bezier(0.32, 0.72, 0.28, 1) both;
 }
 
 .animate-accordion-up,
-[data-state="closed"].animate-accordion-up {
+[data-state='closed'].animate-accordion-up {
   animation: accordion-up 300ms cubic-bezier(0.32, 0.72, 0.28, 1) both;
 }
 
@@ -337,4 +337,24 @@
 }
 .slide-out-to-right-52 {
   animation: void-exit-right 120ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+.note-picker-panel {
+  transition:
+    opacity 150ms cubic-bezier(0, 0, 0.2, 1),
+    transform 150ms cubic-bezier(0, 0, 0.2, 1),
+    overlay 150ms allow-discrete,
+    display 150ms allow-discrete;
+}
+
+.note-picker-panel[open] {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+@starting-style {
+  .note-picker-panel[open] {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
 }
