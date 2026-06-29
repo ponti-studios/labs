@@ -68,9 +68,7 @@ async function fetchFeedItems(feedUrl?: string): Promise<FeedItem[]> {
   const items: unknown[] = parsed?.rss?.channel?.item ?? [];
   return items.map((item: unknown) => {
     const i = item as Record<string, unknown>;
-    const description = String(i["description"] ?? "")
-      .replace(/<[^>]+>/g, "")
-      .slice(0, 300);
+    const description = String(i["description"] ?? "").replace(/<|>/g, "");
     const imageUrl =
       extractUrlLikeNode(i["media:content"]) ??
       extractUrlLikeNode(i["media:thumbnail"]) ??
@@ -88,7 +86,7 @@ async function fetchFeedItems(feedUrl?: string): Promise<FeedItem[]> {
 const logger = createLogger();
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
-const SYSTEM_PROMPT = readFileSync(join(__dirname, "prompts/bravo-generation-system.md"), "utf-8");
+const SYSTEM_PROMPT = readFileSync(join(__dirname, "prompts/realitea-generation.md"), "utf-8");
 
 const candidateSchema = z.object({
   answer: z.string().min(1),
