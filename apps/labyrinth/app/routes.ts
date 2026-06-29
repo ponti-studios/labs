@@ -54,7 +54,6 @@ const experimentRoutes = [
   route("/experiments/threegl-image-gallery", "routes/experiments.threegl-image-gallery.tsx"),
   route("/experiments/llm-interface", "routes/experiments.llm-interface.tsx"),
   route("/experiments/career-resume-animated", "routes/experiments.career-resume-animated.tsx"),
-  route("/experiments/pixel-descent", "routes/experiments.pixel-descent.tsx"),
 ] satisfies RouteConfig;
 
 const challengeRoutes = [

@@ -28,10 +28,7 @@ export interface ParticleBackgroundProps extends React.ComponentProps<"div"> {
   attractStrength?: number;
   velocity?: number;
   showGradient?: boolean;
-  palettes?: {
-    light: ParticleBackgroundPalette;
-    dark: ParticleBackgroundPalette;
-  };
+  palette: ParticleBackgroundPalette;
 }
 
 const DEFAULT_PARTICLE_COUNT = 320;
@@ -41,15 +38,9 @@ const DEFAULT_ATTRACT_STRENGTH = 0.012;
 const DEFAULT_ATTRACT_RADIUS = 180;
 const DEFAULT_VELOCITY = 0.18;
 
-const DEFAULT_PALETTES = {
-  dark: {
-    particle: "255,255,255",
-    link: "255,255,255",
-  },
-  light: {
-    particle: "15,23,42",
-    link: "15,23,42",
-  },
+const DEFAULT_PALETTE = {
+  particle: "15,23,42",
+  link: "15,23,42",
 };
 
 function useResolvedTheme() {
@@ -81,7 +72,7 @@ export function ParticleBackground({
   attractStrength = DEFAULT_ATTRACT_STRENGTH,
   velocity = DEFAULT_VELOCITY,
   showGradient: _showGradient = true,
-  palettes = DEFAULT_PALETTES,
+  palette = DEFAULT_PALETTE,
   ...props
 }: ParticleBackgroundProps) {
   const prefersReduced = useReducedMotion();
@@ -102,7 +93,6 @@ export function ParticleBackground({
 
     const canvas = canvasEl;
     const context = ctx;
-    const palette = palettes[resolvedTheme];
 
     function resize() {
       const rect = canvas.getBoundingClientRect();
@@ -222,7 +212,7 @@ export function ParticleBackground({
     enabled,
     interactive,
     maxLinkDistance,
-    palettes,
+    palette,
     particleCount,
     particleDensity,
     prefersReduced,
