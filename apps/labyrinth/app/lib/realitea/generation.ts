@@ -85,8 +85,16 @@ async function fetchFeedItems(feedUrl?: string): Promise<FeedItem[]> {
 
 const logger = createLogger();
 
-const __dirname = fileURLToPath(new URL(".", import.meta.url));
-const SYSTEM_PROMPT = readFileSync(join(__dirname, "../prompts/realitea-generation.md"), "utf-8");
+function readSystemPrompt(): string {
+  try {
+    const __dirname = fileURLToPath(new URL(".", import.meta.url));
+    return readFileSync(join(__dirname, "../prompts/realitea-generation.md"), "utf-8");
+  } catch {
+    return readFileSync(join(process.cwd(), "app/lib/prompts/realitea-generation.md"), "utf-8");
+  }
+}
+
+const SYSTEM_PROMPT = readSystemPrompt();
 
 const candidateSchema = z.object({
   answer: z.string().min(1),

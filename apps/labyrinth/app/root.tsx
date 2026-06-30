@@ -8,11 +8,7 @@ import {
   ScrollRestoration,
   useLocation,
 } from "react-router";
-import {
-  AppNavigation,
-  COLOR_MODE_ATTRIBUTE,
-  COLOR_SYSTEM_ATTRIBUTE,
-} from "@pontistudios/ui";
+import { AppNavigation, COLOR_MODE_ATTRIBUTE, COLOR_SYSTEM_ATTRIBUTE } from "@pontistudios/ui";
 
 import type { Route } from "./+types/root";
 import "./app.css";

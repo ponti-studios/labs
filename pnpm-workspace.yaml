@@ -2,10 +2,10 @@ packages:
   - "apps/*"
   - "packages/*"
 allowBuilds:
-  '@openrouter/sdk': set this to true or false
-  bufferutil: set this to true or false
-  esbuild: set this to true or false
-  msw: set this to true or false
+  '@openrouter/sdk': true
+  bufferutil: true
+  esbuild: true
+  msw: true
 catalog:
   "@playwright/test": ^1.61.1
   "@react-router/dev": ^8.0.1
