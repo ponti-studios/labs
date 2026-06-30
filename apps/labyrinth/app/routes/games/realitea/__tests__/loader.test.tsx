@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const loadActivePublicPuzzle = vi.fn();
 
-vi.mock("../../../../lib/realitea-puzzle.server", () => ({
+vi.mock("../../../../lib/realitea/puzzle.server", () => ({
   loadActivePublicPuzzle,
 }));
 

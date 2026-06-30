@@ -15,7 +15,7 @@ import {
   SliderControl,
   StatRow,
   WeeklyTrafficCard,
-} from "./components";
+} from "./components/index";
 
 // --- Mocks -------------------------------------------------------------------
 

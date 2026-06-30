@@ -13,8 +13,5 @@ export type {
 export type { CountUpToProps } from "./count-up-to";
 export type { MetricCardProps } from "./metric-card";
 export type { LetterState, OnscreenKeyboardProps } from "./onscreen-keyboard";
-export type {
-  ParticleBackgroundPalette,
-  ParticleBackgroundProps,
-} from "./particle-background";
+export type { ParticleBackgroundPalette, ParticleBackgroundProps } from "./particle-background";
 export type { SpinnerProps } from "./spinner";

@@ -23,7 +23,7 @@ jobs:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
       TURBO_TELEMETRY_DISABLED: "1"
-      POSTGRES_IMAGE: ghcr.io/ponti-studios/foundation/postgres@sha256:86cf2d9db9d56afb3238c55c4fdced6c011d3a1a8503e9e360f8ca82ded80124
+      POSTGRES_IMAGE: ghcr.io/ponti-studios/foundation/postgres:1.0.5
     steps:
       - uses: actions/checkout@v6
       - uses: pnpm/action-setup@v6

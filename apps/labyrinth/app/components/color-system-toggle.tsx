@@ -58,23 +58,29 @@ export function ColorSystemToggle() {
     applyTheme(nextSystem, nextMode);
   }, []);
 
-  const updateSystem = React.useCallback((nextSystem: ColorSystem) => {
-    setSystem(nextSystem);
-    window.localStorage.setItem(SYSTEM_STORAGE_KEY, nextSystem);
-    applyTheme(nextSystem, mode);
-  }, [mode]);
+  const updateSystem = React.useCallback(
+    (nextSystem: ColorSystem) => {
+      setSystem(nextSystem);
+      window.localStorage.setItem(SYSTEM_STORAGE_KEY, nextSystem);
+      applyTheme(nextSystem, mode);
+    },
+    [mode],
+  );
 
-  const updateMode = React.useCallback((nextMode: ColorMode) => {
-    setMode(nextMode);
-    window.localStorage.setItem(MODE_STORAGE_KEY, nextMode);
-    applyTheme(system, nextMode);
-  }, [system]);
+  const updateMode = React.useCallback(
+    (nextMode: ColorMode) => {
+      setMode(nextMode);
+      window.localStorage.setItem(MODE_STORAGE_KEY, nextMode);
+      applyTheme(system, nextMode);
+    },
+    [system],
+  );
 
   return (
-    <div className="fixed right-4 bottom-4 z-[60] rounded-2xl border border-border bg-background/90 p-3 shadow-lg backdrop-blur-md">
+    <div className="border-border bg-background/90 fixed right-4 bottom-4 z-[60] rounded-2xl border p-3 shadow-lg backdrop-blur-md">
       <div className="grid gap-2">
         <Select value={system} onValueChange={(value) => updateSystem(value as ColorSystem)}>
-          <SelectTrigger className="w-36 bg-background">
+          <SelectTrigger className="bg-background w-36">
             <SelectValue placeholder="System" />
           </SelectTrigger>
           <SelectContent>
@@ -84,7 +90,7 @@ export function ColorSystemToggle() {
         </Select>
 
         <Select value={mode} onValueChange={(value) => updateMode(value as ColorMode)}>
-          <SelectTrigger className="w-36 bg-background">
+          <SelectTrigger className="bg-background w-36">
             <SelectValue placeholder="Mode" />
           </SelectTrigger>
           <SelectContent>

@@ -2,7 +2,6 @@ import { useReducer } from "react";
 import { Link } from "react-router";
 import { ArrowLeft, DollarSign } from "lucide-react";
 import { Badge, Button, Card, CardContent, CardHeader } from "@pontistudios/ui";
-import { cn } from "~/lib/utils";
 
 import {
   ProfitRevenueCard,
@@ -11,7 +10,7 @@ import {
   ScreenAllocation,
   SliderControl,
   PLStatement,
-} from "./components";
+} from "./components/index";
 import {
   formatCurrency,
   fmt,
