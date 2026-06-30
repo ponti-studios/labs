@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: read
+  packages: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -22,13 +23,9 @@ jobs:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
       TURBO_TELEMETRY_DISABLED: "1"
+      POSTGRES_IMAGE: ghcr.io/ponti-studios/foundation/postgres@sha256:86cf2d9db9d56afb3238c55c4fdced6c011d3a1a8503e9e360f8ca82ded80124
     steps:
       - uses: actions/checkout@v6
-      - name: Checkout foundation
-        uses: actions/checkout@v6
-        with:
-          repository: ponti-studios/foundation
-          path: foundation
       - uses: pnpm/action-setup@v6
         with:
           run_install: false
@@ -37,10 +34,12 @@ jobs:
           node-version: "24.14.1"
           cache: "pnpm"
       - run: pnpm install --frozen-lockfile
-      - name: Build PostgreSQL image
-        run: docker build -t foundation-postgres:18-pgvector-postgis foundation/images/postgres
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+      - name: Pull PostgreSQL image
+        run: docker pull "$POSTGRES_IMAGE"
       - name: Start PostgreSQL
-        run: docker run -d --name postgres-test -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=hominem -p 5433:5432 foundation-postgres:18-pgvector-postgis
+        run: docker run -d --name postgres-test -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=hominem -p 5433:5432 "$POSTGRES_IMAGE"
       - name: Wait for postgres
         run: |
           for i in {1..30}; do
