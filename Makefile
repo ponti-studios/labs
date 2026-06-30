@@ -10,7 +10,7 @@ clean:
 	find . -type d \( -name "dist" -o -name "build" -o -name "coverage" -o -name ".turbo" -o -name ".react-router" \) -prune -exec rm -rf {} +
 
 reset: clean install
-	docker build -f docker/workspace-base.Dockerfile --target workspace-runtime-base -t pontistudios/labs-workspace-runtime:latest .
+	docker build -f docker/workspace-base.Dockerfile --target workspace-runtime-base -t pontistudios/labs-workspace-runtime:workspace-runtime-base .
 
 setup-minio:
 	docker exec foundation-minio mc alias set local http://localhost:9000 minioadmin minioadmin
