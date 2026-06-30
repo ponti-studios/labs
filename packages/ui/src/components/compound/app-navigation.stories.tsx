@@ -4,6 +4,7 @@ import * as React from "react";
 import { AppNavigation, type AppNavigationRenderLinkArgs } from "./app-navigation";
 
 const meta: Meta<typeof AppNavigation> = {
+  title: "Layouts/AppNavigation",
   component: AppNavigation,
   tags: ["autodocs"],
   parameters: {

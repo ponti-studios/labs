@@ -4,6 +4,7 @@ import * as React from "react";
 import { CountUpTo } from "./count-up-to";
 
 const meta: Meta<typeof CountUpTo> = {
+  title: "Patterns/DataDisplay/CountUpTo",
   component: CountUpTo,
   tags: ["autodocs"],
   decorators: [
