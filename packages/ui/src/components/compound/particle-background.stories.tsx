@@ -4,6 +4,7 @@ import * as React from "react";
 import { ParticleBackground } from "./particle-background";
 
 const meta: Meta<typeof ParticleBackground> = {
+  title: "Motion/ParticleBackground",
   component: ParticleBackground,
   tags: ["autodocs"],
   parameters: {

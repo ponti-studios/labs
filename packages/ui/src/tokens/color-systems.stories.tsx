@@ -1,7 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import * as React from "react";
 
-import { AppNavigation, type AppNavigationRenderLinkArgs } from "../components/compound/app-navigation";
+import {
+  AppNavigation,
+  type AppNavigationRenderLinkArgs,
+} from "../components/compound/app-navigation";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import {
@@ -63,7 +66,10 @@ function renderLink({ href, className, onClick, children }: AppNavigationRenderL
 function swatchStyle(token: string): React.CSSProperties {
   return {
     background: `var(--color-${token})`,
-    color: token.includes("foreground") || token.startsWith("text-") ? `var(--color-${token})` : undefined,
+    color:
+      token.includes("foreground") || token.startsWith("text-")
+        ? `var(--color-${token})`
+        : undefined,
   };
 }
 

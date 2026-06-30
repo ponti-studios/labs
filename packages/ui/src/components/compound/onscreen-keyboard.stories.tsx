@@ -11,6 +11,7 @@ import { OnscreenKeyboard } from "./onscreen-keyboard";
  * or toggle `disabled` to see the game-over state.
  */
 const meta = {
+  title: "Patterns/Input/OnscreenKeyboard",
   component: OnscreenKeyboard,
   tags: ["autodocs"],
   parameters: {

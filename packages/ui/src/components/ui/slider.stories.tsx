@@ -4,6 +4,7 @@ import * as React from "react";
 import { Slider } from "./slider";
 
 const meta: Meta<typeof Slider> = {
+  title: "Internal/UI/Slider",
   component: Slider,
   tags: ["autodocs"],
   decorators: [

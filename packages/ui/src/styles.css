@@ -1,5 +1,5 @@
-@import 'tailwindcss';
-@import './animations.css';
+@import "tailwindcss";
+@import "./animations.css";
 
 @theme {
   --font-family-primary: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
@@ -665,7 +665,7 @@
     transition: none;
   }
 
-  *:is(button, a, input, select, textarea, [role='button'], [role='link']) {
+  *:is(button, a, input, select, textarea, [role="button"], [role="link"]) {
     transition-property: background-color, color, border-color, opacity;
     transition-duration: var(--duration-fast);
     transition-timing-function: var(--ease-default);
@@ -977,7 +977,7 @@
   transition-timing-function: var(--ease-default);
 
   @media (hover: hover) {
-    &:not(:disabled):not([data-disabled]):not([aria-disabled='true']):hover {
+    &:not(:disabled):not([data-disabled]):not([aria-disabled="true"]):hover {
       background-color: var(--void-hover-bg, var(--color-interaction-hover-bg));
       color: var(--void-hover-color, var(--color-interaction-hover-text));
       border-color: var(--void-hover-border, var(--color-interaction-hover-border));
