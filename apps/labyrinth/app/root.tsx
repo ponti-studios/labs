@@ -8,13 +8,39 @@ import {
   ScrollRestoration,
   useLocation,
 } from "react-router";
-import { AppNavigation } from "@pontistudios/ui";
+import {
+  AppNavigation,
+  COLOR_MODE_ATTRIBUTE,
+  COLOR_SYSTEM_ATTRIBUTE,
+} from "@pontistudios/ui";
 
 import type { Route } from "./+types/root";
 import "./app.css";
 import { cn } from "./lib/utils";
 import { PrefetchProvider } from "./components/prefetch-provider";
 import QueryProvider from "./components/QueryProvider";
+import { ColorSystemToggle } from "./components/color-system-toggle";
+
+const themeBootScript = `
+(() => {
+  try {
+    const root = document.documentElement;
+    const system = localStorage.getItem("labs:ui-color-system") || root.getAttribute("${COLOR_SYSTEM_ATTRIBUTE}") || "primer";
+    const mode = localStorage.getItem("labs:ui-color-mode") || "system";
+
+    root.setAttribute("${COLOR_SYSTEM_ATTRIBUTE}", system === "apple" ? "apple" : "primer");
+
+    if (mode === "light" || mode === "dark") {
+      root.setAttribute("${COLOR_MODE_ATTRIBUTE}", mode);
+    } else {
+      root.removeAttribute("${COLOR_MODE_ATTRIBUTE}");
+    }
+  } catch (_error) {
+    document.documentElement.setAttribute("${COLOR_SYSTEM_ATTRIBUTE}", "primer");
+    document.documentElement.removeAttribute("${COLOR_MODE_ATTRIBUTE}");
+  }
+})();
+`;
 
 export const links: Route.LinksFunction = () => [
   { rel: "icon", href: "/logo.realitea.png", type: "image/png" },
@@ -32,10 +58,11 @@ export const links: Route.LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" data-color-system="primer" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
         <Meta />
         <Links />
         <PrefetchProvider />
@@ -64,6 +91,7 @@ export default function App() {
           </Link>
         )}
       />
+      <ColorSystemToggle />
       <main className={cn("mx-auto flex w-full max-w-7xl flex-1 flex-col")}>
         <Outlet />
       </main>
