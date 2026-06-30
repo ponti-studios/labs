@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Color System Comparison</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #09090b;
+      --frame: rgba(255, 255, 255, 0.08);
+      --line: rgba(255, 255, 255, 0.06);
+      --shadow: 0 30px 90px rgba(0, 0, 0, 0.45);
+      --radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(212, 165, 116, 0.14), transparent 24%),
+        radial-gradient(circle at 90% 0%, rgba(96, 165, 250, 0.08), transparent 20%),
+        linear-gradient(180deg, #09090b, #060607 75%);
+    }
+
+    body {
+      padding: 20px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      min-height: calc(100vh - 40px);
+    }
+
+    .panel {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius);
+      border: 1px solid var(--frame);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 28%), #101013;
+      box-shadow: var(--shadow);
+      padding: 18px;
+      display: grid;
+      grid-template-rows: 18px repeat(6, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 12px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel:nth-child(1) {
+      background:
+        radial-gradient(circle at top left, rgba(212, 165, 116, 0.12), transparent 35%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 28%),
+        #12110f;
+    }
+
+    .panel:nth-child(2) {
+      background:
+        radial-gradient(circle at top left, rgba(9, 105, 218, 0.10), transparent 35%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 28%),
+        #111317;
+    }
+
+    .panel:nth-child(3) {
+      background:
+        radial-gradient(circle at top left, rgba(120, 120, 128, 0.12), transparent 35%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 28%),
+        #101113;
+    }
+
+    .swatch {
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+      min-height: 0;
+    }
+
+    .swatch.large {
+      min-height: 72px;
+    }
+
+    .swatch.mid {
+      min-height: 56px;
+    }
+
+    .swatch.small {
+      min-height: 42px;
+    }
+
+    .current-bg { background: #141210; }
+    .current-surface { background: #1a1714; }
+    .current-elevated { background: #211d19; }
+    .current-text { background: #faf4ea; }
+    .current-accent { background: #c8a882; }
+    .current-status { background: linear-gradient(90deg, #4a5c3c 0 50%, #8c1c1c 50% 100%); }
+
+    .primer-bg { background: #ffffff; }
+    .primer-surface { background: #f6f8fa; }
+    .primer-elevated { background: #ffffff; background-image: linear-gradient(180deg, #ffffff, #f3f4f6); }
+    .primer-text { background: #25292e; }
+    .primer-accent { background: #0969da; }
+    .primer-status { background: linear-gradient(90deg, #1a7f37 0 50%, #cf222e 50% 100%); }
+
+    .apple-bg { background: #0f0f10; }
+    .apple-surface { background: #1c1c1e; }
+    .apple-elevated { background: #2c2c2e; }
+    .apple-text { background: #f5f5f7; }
+    .apple-accent { background: #0a84ff; }
+    .apple-status { background: linear-gradient(90deg, #30d158 0 50%, #ff453a 50% 100%); }
+
+    @media (max-width: 900px) {
+      body {
+        padding: 14px;
+      }
+
+      .board {
+        grid-template-columns: 1fr;
+      }
+
+      .panel {
+        grid-template-rows: 12px repeat(6, 58px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="board" aria-label="Theme color comparison">
+    <section class="panel" aria-hidden="true">
+      <div class="swatch large current-bg"></div>
+      <div class="swatch large current-surface"></div>
+      <div class="swatch mid current-elevated"></div>
+      <div class="swatch mid current-text"></div>
+      <div class="swatch small current-accent"></div>
+      <div class="swatch small current-status"></div>
+    </section>
+
+    <section class="panel" aria-hidden="true">
+      <div class="swatch large primer-bg"></div>
+      <div class="swatch large primer-surface"></div>
+      <div class="swatch mid primer-elevated"></div>
+      <div class="swatch mid primer-text"></div>
+      <div class="swatch small primer-accent"></div>
+      <div class="swatch small primer-status"></div>
+    </section>
+
+    <section class="panel" aria-hidden="true">
+      <div class="swatch large apple-bg"></div>
+      <div class="swatch large apple-surface"></div>
+      <div class="swatch mid apple-elevated"></div>
+      <div class="swatch mid apple-text"></div>
+      <div class="swatch small apple-accent"></div>
+      <div class="swatch small apple-status"></div>
+    </section>
+  </main>
+</body>
+</html>
