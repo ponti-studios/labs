@@ -81,13 +81,13 @@ export default function App() {
         brand={<img src="/logo.labyrinth.png" alt="Realitea Logo" className="size-5 w-auto" />}
         brandHref="/"
         activeHref={location.pathname}
+        endContent={<ColorSystemToggle />}
         renderLink={({ href, className, children }) => (
           <Link key={href} to={href} className={className}>
             {children}
           </Link>
         )}
       />
-      <ColorSystemToggle />
       <main className={cn("mx-auto flex w-full max-w-7xl flex-1 flex-col")}>
         <Outlet />
       </main>

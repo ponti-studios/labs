@@ -23,6 +23,7 @@ export interface AppNavigationProps {
   brandHref?: string;
   links?: AppNavigationLink[];
   cta?: AppNavigationCta;
+  endContent?: React.ReactNode;
   /** Current pathname used to highlight the active link. */
   activeHref?: string;
   navHeight?: number;
@@ -34,6 +35,7 @@ export function AppNavigation({
   brandHref = "/",
   links,
   cta,
+  endContent,
   activeHref,
   renderLink,
 }: AppNavigationProps) {
@@ -49,7 +51,7 @@ export function AppNavigation({
             children: brand,
           })}
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
           {links?.map((link) =>
             renderLink({
               href: link.href,
@@ -73,6 +75,7 @@ export function AppNavigation({
               }`,
               children: cta.label,
             })}
+          {endContent}
         </div>
       </nav>
     </div>

@@ -65,6 +65,7 @@ export { CountUpTo } from "./components/compound/count-up-to";
 export { MetricCard } from "./components/compound/metric-card";
 export { OnscreenKeyboard } from "./components/compound/onscreen-keyboard";
 export { ParticleBackground } from "./components/compound/particle-background";
+export { ThemeToggle } from "./components/compound/theme-toggle";
 export { Spinner } from "./components/compound/spinner";
 export type {
   AppNavigationCta,
@@ -79,6 +80,7 @@ export type {
   ParticleBackgroundPalette,
   ParticleBackgroundProps,
 } from "./components/compound/particle-background";
+export type { ThemeToggleMode, ThemeToggleProps } from "./components/compound/theme-toggle";
 export type { SpinnerProps } from "./components/compound/spinner";
 export { DatePicker } from "./components/date-picker";
 export type { DatePickerProps } from "./components/date-picker";
