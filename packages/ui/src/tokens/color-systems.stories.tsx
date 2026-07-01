@@ -5,8 +5,8 @@ import {
   AppNavigation,
   type AppNavigationRenderLinkArgs,
 } from "../components/compound/app-navigation";
-import { Badge } from "../components/ui/badge";
-import { Button } from "../components/ui/button";
+import { Badge } from "../components/badge";
+import { Button } from "../components/button";
 import {
   Card,
   CardContent,
@@ -14,9 +14,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "../components/ui/card";
-import { Input } from "../components/ui/input";
-import { Slider } from "../components/ui/slider";
+} from "../components/card";
+import { Input } from "../components/input";
+import { Slider } from "../components/slider";
 import {
   Table,
   TableBody,
@@ -24,8 +24,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
+} from "../components/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/tabs";
 import { colorTokenNames } from "./colors";
 
 const meta: Meta = {
@@ -109,8 +109,7 @@ function ThemePanel({ system, mode }: { system: AuditSystem; mode: AuditMode }) 
       data-color-mode={mode}
       style={{
         colorScheme: mode,
-        background:
-          "radial-gradient(circle at top left, var(--color-bg-overlay), transparent 32%), var(--color-bg-base)",
+        background: "var(--color-bg-base)",
         color: "var(--color-text-primary)",
         border: "1px solid var(--color-border-default)",
         borderRadius: 28,
