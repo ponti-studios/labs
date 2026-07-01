@@ -29,7 +29,8 @@ export function App() {
 
 ### Component Organization
 
-- **UI Components** (`src/components/ui/`): Primitives and base components (Button, Card, Dialog, etc.)
+- **Story-backed components** (`src/components/`): Shared primitives and feature-ready components documented in Storybook.
+- **UI foundations** (`src/components/`): Lower-level building blocks that do not need their own separate story entry.
 - **Compound Components** (`src/components/compound/`): Higher-level features (Form, Table, etc.)
 - **Utilities** (`src/lib/`): Helper functions like `cn()` for classname merging
 
@@ -110,8 +111,8 @@ Create `.stories.tsx` files alongside components showing:
 
 ## Adding New Components
 
-1. Create the component file in `src/components/ui/` or `src/components/compound/`
-2. Add exports to `src/components/ui/index.ts` or `src/components/compound/index.ts`
+1. Create the component file in `src/components/` or `src/components/compound/`
+2. Add exports to `src/components/index.ts` or `src/components/compound/index.ts`
 3. Create `ComponentName.stories.tsx` showing all variants and usage
 4. Test with `pnpm storybook`
 
@@ -121,7 +122,7 @@ When adding new components, update imports in apps from local paths to:
 
 ```tsx
 // Before
-import { Button } from "@/components/ui/button"
+import { Button } from "@pontistudios/ui"
 
 // After
 import { Button } from "@pontistudios/ui"
