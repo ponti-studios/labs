@@ -25,6 +25,7 @@ export {
   MetricCard,
   OnscreenKeyboard,
   ParticleBackground,
+  ThemeToggle,
   Spinner,
 } from "./compound";
 export { DatePicker } from "./date-picker";
@@ -159,6 +160,8 @@ export type {
   OnscreenKeyboardProps,
   ParticleBackgroundPalette,
   ParticleBackgroundProps,
+  ThemeToggleMode,
+  ThemeToggleProps,
   SpinnerProps,
 } from "./compound";
 export type { DatePickerProps } from "./date-picker";
