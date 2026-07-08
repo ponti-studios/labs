@@ -42,5 +42,13 @@ jobs:
           psql "$DATABASE_URL" -c "SELECT hash, created_at FROM labs.__drizzle_migrations ORDER BY created_at;" 2>&1 || echo "(table does not exist)"
           echo "=== All tables in labs schema ==="
           psql "$DATABASE_URL" -c "\dt labs.*" 2>&1
+          echo "=== Duplicate puzzle dates (blocks unique game_id+date_utc) ==="
+          psql "$DATABASE_URL" -c "
+            SELECT date_utc, count(*) AS n
+            FROM labs.rhobh_daily_puzzles
+            GROUP BY date_utc
+            HAVING count(*) > 1
+            ORDER BY n DESC, date_utc;
+          " 2>&1 || echo "(rhobh_daily_puzzles missing or already renamed)"
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
