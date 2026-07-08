@@ -1,11 +1,17 @@
 export type { CovidData, NewCovidData } from "./schema/covid";
 export type { NewSearchDocument, SearchDocument, SearchDocumentKind } from "./schema/search";
 export type {
-  NewRhobhDailyPuzzle,
+  Article,
+  ArticleStatus,
+  DailyPuzzle,
+  Feed,
+  Game,
+  NewArticle,
+  NewDailyPuzzle,
+  NewFeed,
+  NewGame,
   PuzzleAnswerType,
-  PuzzleSource,
-  RhobhDailyPuzzle,
-} from "./schema/puzzles";
+} from "./schema/realitea";
 export type { NewTflCamera, TflCamera } from "./schema/tfl";
 export type {
   CaseUpdate,
@@ -17,12 +23,16 @@ export type {
 } from "./schema/relationship-cases";
 
 export {
+  articles,
   caseUpdates,
   covidData,
+  dailyPuzzles,
+  feedGames,
+  feeds,
+  games,
   searchDocuments,
   relationshipCases,
   relationshipVerdicts,
-  rhobhDailyPuzzles,
   tflCameras,
 } from "./schema";
 

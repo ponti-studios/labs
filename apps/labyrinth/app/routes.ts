@@ -48,7 +48,7 @@ const featureRoutes = [
 const experimentRoutes = [
   route("/experiments/calendar", "routes/experiments.calendar.tsx"),
   route("/experiments/glass", "routes/experiments.glass.tsx"),
-  route("/experiments/infinite-scroll", "routes/infinite-scroll/index.tsx"),
+  route("/experiments/infinite-scroll", "routes/infinite-scroll/route.tsx"),
   route("/experiments/threegl-web-request", "routes/experiments.threegl-web-request.tsx"),
   route("/experiments/threegl-image-gallery", "routes/experiments.threegl-image-gallery.tsx"),
   route("/experiments/llm-interface", "routes/experiments.llm-interface.tsx"),
@@ -66,8 +66,9 @@ const challengeRoutes = [
   route("/challenges/search-studio", "routes/challenges.search-studio.tsx"),
   route("/challenges/peterson-academy", "routes/challenges.peterson-academy.tsx"),
   route("/challenges/qubit", "routes/challenges.qubit.tsx"),
-  route("/challenges/medicare", "routes/challenges.medicare.tsx"),
   route("/challenges/red-badger", "routes/challenges.red-badger.tsx"),
+  route("/health/medication", "routes/health/medication.tsx"),
+  route("/health/api/medication-schedule", "routes/health/api.medication-schedule.ts"),
 ] satisfies RouteConfig;
 
 export default [

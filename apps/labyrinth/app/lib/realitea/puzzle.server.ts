@@ -1,5 +1,3 @@
-import { db, desc, rhobhDailyPuzzles } from "@pontistudios/db";
-
 import {
   evaluateGuess,
   isGuessSolved,
@@ -12,10 +10,20 @@ import {
 import { addDaysToDateKey, getDateKey } from "./date";
 import { createLogger } from "../logger.server";
 import type { PuzzleRecord } from "./types";
-import { loadPuzzleForDate } from "./repository";
+import { getGameBySlug, loadMostRecentPuzzle, loadPuzzleForDate } from "./repository";
 import { isValidWord } from "../word-list.server";
 
 const logger = createLogger();
+
+// The public route only serves the RHOBH game today; this becomes a param
+// once the route layer supports selecting a game.
+const RHOBH_GAME_SLUG = "rhobh";
+
+async function requireRhobhGameId(): Promise<number> {
+  const game = await getGameBySlug(RHOBH_GAME_SLUG);
+  if (!game) throw new Error(`Game not found: ${RHOBH_GAME_SLUG}`);
+  return game.id;
+}
 
 // ── DTO mapping ──────────────────────────────────────────────────────────────
 
@@ -23,9 +31,15 @@ function toPublicDailyPuzzle(record: PuzzleRecord): PublicDailyPuzzle {
   return {
     answerType: record.answerType,
     clue: record.clue,
-    dateKey: record.dateUtc ?? "",
+    dateKey: record.dateUtc,
     detail: record.detail,
-    sources: record.sources ?? [],
+    sources: [
+      {
+        url: record.article.url,
+        title: record.article.title,
+        publishedAt: record.article.publishedAt?.toISOString() ?? "",
+      },
+    ],
   };
 }
 
@@ -41,15 +55,13 @@ export async function loadActivePublicPuzzle(
     timestamp: now.toISOString(),
   });
 
-  let puzzle = await loadPuzzleForDate(dateKey);
+  const gameId = await requireRhobhGameId();
+  let puzzle = await loadPuzzleForDate(gameId, dateKey);
 
   // Fallback: serve the most-recently created puzzle of any date
   if (!puzzle) {
-    const row = await db.query.rhobhDailyPuzzles.findFirst({
-      orderBy: desc(rhobhDailyPuzzles.createdAt),
-    });
-    if (row) {
-      puzzle = row;
+    puzzle = await loadMostRecentPuzzle(gameId);
+    if (puzzle) {
       childLogger.warn(
         {
           event: "[FALLBACK_ACTIVATED_ANY_PUZZLE]",
@@ -99,11 +111,12 @@ export async function evaluateGuessServer(
   }
 
   // Try exact dateKey, then previous day as grace period for midnight-rollover games
-  let puzzle = await loadPuzzleForDate(dateKey);
+  const gameId = await requireRhobhGameId();
+  let puzzle = await loadPuzzleForDate(gameId, dateKey);
   if (!puzzle) {
     const prevDateKey = addDaysToDateKey(dateKey, -1);
     if (prevDateKey) {
-      puzzle = await loadPuzzleForDate(prevDateKey);
+      puzzle = await loadPuzzleForDate(gameId, prevDateKey);
       if (puzzle) {
         childLogger.info(
           { event: "[GUESS_GRACE_PERIOD_ACCEPTED]", acceptedDateKey: prevDateKey, word },
@@ -118,7 +131,7 @@ export async function evaluateGuessServer(
     return { valid: false, word, reason: "not-in-word-list" };
   }
 
-  const inWordList = await isValidWord(word);
+  const inWordList = await isValidWord(word, gameId);
   if (!inWordList) {
     return { valid: false, word, reason: "not-in-word-list" };
   }

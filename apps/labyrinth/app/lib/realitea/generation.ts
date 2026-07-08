@@ -1,6 +1,6 @@
 import { chatCompletion } from "@pontistudios/ai";
-import { db, rhobhDailyPuzzles } from "@pontistudios/db";
-import { XMLParser } from "fast-xml-parser";
+import { dailyPuzzles, db } from "@pontistudios/db";
+import type { Article, Game } from "@pontistudios/db";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -11,7 +11,16 @@ import { createLogger } from "../logger.server";
 
 import { normalizeGuess, REALITEA_ANSWER_LENGTH } from "./index";
 import { getDateKey, parseDate } from "./date";
-import { getStoredAnswers, getRecentAnswers, loadPuzzleForDate } from "./repository";
+import { fetchFeedItems } from "./ingest";
+import {
+  expireStaleArticles,
+  getPendingArticlesForGame,
+  getRecentAnswers,
+  getStoredAnswers,
+  loadPuzzleForDate,
+  markArticleUsed,
+  recordArticleRejection,
+} from "./repository";
 import type {
   CandidatePreview,
   FeedItem,
@@ -23,78 +32,27 @@ import type {
 import { validateCandidate } from "./validation";
 
 const REALITY_BLURB_FEED_URL = "https://realityblurb.com/feed";
-
-function extractUrlLikeNode(value: unknown): string | undefined {
-  if (!value) return undefined;
-  if (Array.isArray(value)) {
-    for (const entry of value) {
-      const url = extractUrlLikeNode(entry);
-      if (url) return url;
-    }
-    return undefined;
-  }
-
-  if (typeof value === "string") {
-    const trimmed = value.trim();
-    return trimmed || undefined;
-  }
-
-  if (typeof value === "object") {
-    const record = value as Record<string, unknown>;
-    const candidates = [
-      record["@_url"],
-      record.url,
-      record["@_href"],
-      record.href,
-      record["#text"],
-    ];
-    for (const candidate of candidates) {
-      if (typeof candidate === "string" && candidate.trim()) {
-        return candidate.trim();
-      }
-    }
-  }
-
-  return undefined;
-}
-
-async function fetchFeedItems(feedUrl?: string): Promise<FeedItem[]> {
-  const url = feedUrl ?? REALITY_BLURB_FEED_URL;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Failed to fetch RSS feed: ${res.status}`);
-  const xml = await res.text();
-  const parser = new XMLParser({ ignoreAttributes: false });
-  const parsed = parser.parse(xml);
-  const items: unknown[] = parsed?.rss?.channel?.item ?? [];
-  return items.map((item: unknown) => {
-    const i = item as Record<string, unknown>;
-    const description = String(i["description"] ?? "").replace(/<|>/g, "");
-    const imageUrl =
-      extractUrlLikeNode(i["media:content"]) ??
-      extractUrlLikeNode(i["media:thumbnail"]) ??
-      extractUrlLikeNode(i["enclosure"]);
-    return {
-      title: String(i["title"] ?? ""),
-      link: String(i["link"] ?? ""),
-      pubDate: String(i["pubDate"] ?? ""),
-      description,
-      ...(imageUrl ? { imageUrl } : {}),
-    };
-  });
-}
+const GENERATION_BATCH_SIZE = 8;
+const MAX_ARTICLE_REJECTIONS = 3;
 
 const logger = createLogger();
 
-function readSystemPrompt(): string {
-  try {
-    const __dirname = fileURLToPath(new URL(".", import.meta.url));
-    return readFileSync(join(__dirname, "../prompts/realitea-generation.md"), "utf-8");
-  } catch {
-    return readFileSync(join(process.cwd(), "app/lib/prompts/realitea-generation.md"), "utf-8");
-  }
-}
+const promptCache = new Map<string, string>();
 
-const SYSTEM_PROMPT = readSystemPrompt();
+function readSystemPrompt(promptPath: string): string {
+  const cached = promptCache.get(promptPath);
+  if (cached) return cached;
+  const prompt = (() => {
+    try {
+      const __dirname = fileURLToPath(new URL(".", import.meta.url));
+      return readFileSync(join(__dirname, "..", "..", promptPath), "utf-8");
+    } catch {
+      return readFileSync(join(process.cwd(), promptPath), "utf-8");
+    }
+  })();
+  promptCache.set(promptPath, prompt);
+  return prompt;
+}
 
 const candidateSchema = z.object({
   answer: z.string().min(1),
@@ -112,16 +70,27 @@ const generationResponseSchema = z.object({
 
 type Candidate = z.infer<typeof candidateSchema>;
 
+function articleToFeedItem(article: Article): FeedItem {
+  return {
+    title: article.title,
+    link: article.url,
+    pubDate: article.publishedAt?.toISOString() ?? "",
+    description: article.description ?? "",
+    ...(article.imageUrl ? { imageUrl: article.imageUrl } : {}),
+  };
+}
+
 function buildMessages(
   dateKey: string,
   excludedAnswers: string[],
   feedItems: FeedItem[],
   systemPrompt: string,
+  answerLength: number,
 ) {
   return [
     {
       role: "system" as const,
-      content: systemPrompt.replaceAll("{{ANSWER_LENGTH}}", String(REALITEA_ANSWER_LENGTH)),
+      content: systemPrompt.replaceAll("{{ANSWER_LENGTH}}", String(answerLength)),
     },
     {
       role: "user" as const,
@@ -136,16 +105,30 @@ function buildMessages(
   ];
 }
 
+/** Find the pending article a candidate's sources point at, if any. */
+function matchArticle(candidate: Candidate, pendingArticles: Article[]): Article | null {
+  const candidateUrls = new Set(candidate.sources.map((s) => s.url));
+  return pendingArticles.find((article) => candidateUrls.has(article.url)) ?? null;
+}
+
 async function callGenerationApi(
+  game: Game,
   dateKey: string,
   excludedAnswers: string[],
-  feedItems: FeedItem[],
-): Promise<Candidate | null> {
-  const childLogger = logger.child({ operation: "callGenerationApi", dateKey });
+  pendingArticles: Article[],
+  systemPrompt: string,
+): Promise<{ candidate: Candidate; article: Article } | null> {
+  const childLogger = logger.child({ operation: "callGenerationApi", game: game.slug, dateKey });
 
   try {
     const response = await chatCompletion({
-      messages: buildMessages(dateKey, excludedAnswers, feedItems, SYSTEM_PROMPT),
+      messages: buildMessages(
+        dateKey,
+        excludedAnswers,
+        pendingArticles.map(articleToFeedItem),
+        systemPrompt,
+        game.answerLength,
+      ),
       maxTokens: 2000,
       responseFormat: {
         type: "json_schema",
@@ -165,16 +148,29 @@ async function callGenerationApi(
     const previousAnswers = new Set(excludedAnswers);
 
     for (const candidate of parsed.candidates) {
+      const article = matchArticle(candidate, pendingArticles);
       const result = validateCandidate(candidate, previousAnswers);
-      if (result.valid) return candidate;
+
+      if (!article) {
+        childLogger.warn(
+          { event: "[GENERATION_CANDIDATE_UNMATCHED]", answer: candidate.answer },
+          "candidate cited a source outside the offered article batch; skipping",
+        );
+        continue;
+      }
+
+      if (result.valid) return { candidate, article };
+
       childLogger.warn(
         {
           event: "[GENERATION_CANDIDATE_REJECTED]",
           answer: candidate.answer,
+          articleId: article.id,
           reasons: result.reasons,
         },
         "candidate rejected",
       );
+      await recordArticleRejection(article.id, result.reasons.join("; "), MAX_ARTICLE_REJECTIONS);
     }
 
     return null;
@@ -191,11 +187,12 @@ async function callGenerationApiForPreview(
   dateKey: string,
   excludedAnswers: string[],
   feedItems: FeedItem[],
-  systemPrompt?: string,
+  systemPrompt: string,
+  answerLength: number,
 ): Promise<{ candidates: CandidatePreview[]; llmError: string | null }> {
   try {
     const response = await chatCompletion({
-      messages: buildMessages(dateKey, excludedAnswers, feedItems, systemPrompt ?? SYSTEM_PROMPT),
+      messages: buildMessages(dateKey, excludedAnswers, feedItems, systemPrompt, answerLength),
       maxTokens: 2000,
       responseFormat: {
         type: "json_schema",
@@ -230,6 +227,7 @@ async function callGenerationApiForPreview(
   }
 }
 
+/** Preview generation against a live feed pull, bypassing the article inventory entirely. Used for prompt/tuning iteration only. */
 export async function previewCandidates(
   dateKey: string,
   options: PreviewCandidatesOptions = {},
@@ -248,7 +246,8 @@ export async function previewCandidates(
     dateKey,
     options.excludedAnswers ?? [],
     feedItems,
-    options.systemPrompt,
+    options.systemPrompt ?? readSystemPrompt("app/lib/prompts/realitea-generation.md"),
+    REALITEA_ANSWER_LENGTH,
   );
 
   const selectedIndex = candidates.findIndex((c) => c.validation.valid);
@@ -265,10 +264,17 @@ export async function previewCandidates(
   };
 }
 
-export async function generateScheduledPuzzle(dateKey: string): Promise<PuzzleRecord | null> {
-  const childLogger = logger.child({ operation: "generateScheduledPuzzle", dateKey });
+/**
+ * Generate (or return the existing) puzzle for `game` on `dateKey`, drawing
+ * from that game's pending article backlog instead of a live feed pull.
+ */
+export async function generatePuzzleForGame(
+  game: Game,
+  dateKey: string,
+): Promise<PuzzleRecord | null> {
+  const childLogger = logger.child({ operation: "generatePuzzleForGame", game: game.slug, dateKey });
 
-  const existing = await loadPuzzleForDate(dateKey);
+  const existing = await loadPuzzleForDate(game.id, dateKey);
   if (existing) {
     childLogger.debug(
       { event: "[SKIP_GENERATION_EXISTS]", puzzle_id: existing.id },
@@ -283,40 +289,35 @@ export async function generateScheduledPuzzle(dateKey: string): Promise<PuzzleRe
     throw new Error(`Invalid date key: ${dateKey}`);
   }
 
-  const [recentAnswers, inventoryAnswers, feedItems] = await Promise.all([
-    getRecentAnswers(date),
-    getStoredAnswers(),
-    fetchFeedItems().catch((err) => {
-      childLogger.error(
-        { event: "[FEED_FETCH_ERROR]", error: getErrorMessage(err) },
-        "failed to fetch realityblurb.com feed",
-      );
-      return [] as FeedItem[];
-    }),
+  await expireStaleArticles(game, date);
+
+  const [recentAnswers, inventoryAnswers, pendingArticles] = await Promise.all([
+    getRecentAnswers(game, date),
+    getStoredAnswers(game.id),
+    getPendingArticlesForGame(game, GENERATION_BATCH_SIZE),
   ]);
   const excludedAnswers = [...new Set([...recentAnswers, ...inventoryAnswers])];
 
-  if (feedItems.length === 0) {
-    childLogger.error({ event: "[FEED_EMPTY]" }, "no feed items retrieved, cannot generate puzzle");
+  if (pendingArticles.length === 0) {
+    childLogger.error(
+      { event: "[ARTICLE_BACKLOG_EMPTY]" },
+      "no pending articles available, cannot generate puzzle",
+    );
     return null;
   }
 
-  let candidate: Candidate | null = null;
-  for (let attempt = 0; attempt < 3 && !candidate; attempt++) {
-    candidate = await callGenerationApi(dateKey, excludedAnswers, feedItems);
-    if (!candidate) {
-      childLogger.warn(
-        { event: "[GENERATION_RETRY]", attempt: attempt + 1 },
-        "generation attempt yielded no valid candidate",
-      );
-      if (attempt < 2) {
-        const delayMs = Math.pow(2, attempt) * 1000;
-        await new Promise((r) => setTimeout(r, delayMs));
-      }
+  const systemPrompt = readSystemPrompt(game.systemPromptPath);
+
+  let result: { candidate: Candidate; article: Article } | null = null;
+  for (let attempt = 0; attempt < 3 && !result; attempt++) {
+    result = await callGenerationApi(game, dateKey, excludedAnswers, pendingArticles, systemPrompt);
+    if (!result && attempt < 2) {
+      const delayMs = Math.pow(2, attempt) * 1000;
+      await new Promise((r) => setTimeout(r, delayMs));
     }
   }
 
-  if (!candidate) {
+  if (!result) {
     childLogger.error(
       { event: "[GENERATION_EXHAUSTED]" },
       "puzzle generation failed after all attempts",
@@ -324,11 +325,14 @@ export async function generateScheduledPuzzle(dateKey: string): Promise<PuzzleRe
     return null;
   }
 
+  const { candidate, article } = result;
   const now = new Date();
 
   const inserted = await db
-    .insert(rhobhDailyPuzzles)
+    .insert(dailyPuzzles)
     .values({
+      gameId: game.id,
+      articleId: article.id,
       answer: candidate.answer,
       answerType: candidate.answerType as PuzzleAnswerType,
       clue: candidate.clue,
@@ -336,14 +340,15 @@ export async function generateScheduledPuzzle(dateKey: string): Promise<PuzzleRe
       dateUtc: getDateKey(date),
       detail: candidate.detail,
       normalizedAnswer: normalizeGuess(candidate.answer),
-      sources: candidate.sources,
       updatedAt: now,
     })
     .returning();
+
+  await markArticleUsed(article.id);
 
   childLogger.info(
     { event: "[PUZZLE_GENERATED]", puzzle_id: inserted[0]?.id, answer: candidate.answer },
     "puzzle generated",
   );
-  return inserted[0] as PuzzleRecord;
+  return { ...inserted[0], article } as PuzzleRecord;
 }

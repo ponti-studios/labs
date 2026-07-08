@@ -22,7 +22,7 @@ const wordSet = new Set(
     .filter(Boolean),
 );
 
-export async function isValidWord(word: string): Promise<boolean> {
+export async function isValidWord(word: string, gameId: number): Promise<boolean> {
   const upper = word.toUpperCase().trim();
 
   if (upper.length !== REALITEA_ANSWER_LENGTH) {
@@ -33,6 +33,6 @@ export async function isValidWord(word: string): Promise<boolean> {
     return true;
   }
 
-  const storedAnswers = await getStoredAnswers();
+  const storedAnswers = await getStoredAnswers(gameId);
   return storedAnswers.has(upper);
 }
