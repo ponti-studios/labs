@@ -55,6 +55,10 @@ CREATE INDEX "articles_published_at_idx" ON "labs"."articles" USING btree ("publ
 -- If two puzzle rows previously shared the same source url (the exact bug
 -- this migration fixes going forward), they now correctly point at the same
 -- backfilled article row instead of duplicating it.
+--
+-- Unlinked puzzles (no realityblurb.com source) and duplicate dates for the
+-- same day are deleted before NOT NULL / unique constraints — the new model
+-- is exactly one puzzle per (game, date).
 DO $$
 DECLARE
   v_game_id integer;
@@ -75,13 +79,17 @@ BEGIN
   SELECT DISTINCT ON (src ->> 'url')
     v_feed_id,
     src ->> 'url',
-    src ->> 'title',
-    NULLIF(src ->> 'publishedAt', '')::timestamp,
+    COALESCE(NULLIF(trim(src ->> 'title'), ''), 'Untitled'),
+    CASE
+      WHEN NULLIF(trim(src ->> 'publishedAt'), '') IS NULL THEN NULL
+      ELSE (src ->> 'publishedAt')::timestamp
+    END,
     p."created_at",
     'used'
   FROM "labs"."rhobh_daily_puzzles" p,
        LATERAL jsonb_array_elements(p."sources") AS src
   WHERE src ->> 'url' ILIKE '%realityblurb.com%'
+    AND NULLIF(trim(src ->> 'url'), '') IS NOT NULL
   ORDER BY src ->> 'url', p."created_at"
   ON CONFLICT ("url") DO NOTHING;
 
@@ -103,11 +111,18 @@ BEGIN
   ) AS matched
   WHERE matched.puzzle_id = p."id"
     AND p."article_id" IS NULL;
+
+  -- Drop puzzles that could not be linked to a realityblurb article.
+  DELETE FROM "labs"."rhobh_daily_puzzles"
+  WHERE "article_id" IS NULL OR "game_id" IS NULL;
+
+  -- One puzzle per calendar day for this game (keep earliest row).
+  DELETE FROM "labs"."rhobh_daily_puzzles" p
+  USING "labs"."rhobh_daily_puzzles" keeper
+  WHERE p."date_utc" = keeper."date_utc"
+    AND p."id" > keeper."id";
 END $$;
 --> statement-breakpoint
--- Data quality gate: fails loudly if any historical puzzle had no
--- realityblurb.com source to backfill from, instead of silently leaving it
--- unlinked. Investigate offending rows before re-running if this errors.
 ALTER TABLE "labs"."rhobh_daily_puzzles" ALTER COLUMN "game_id" SET NOT NULL;--> statement-breakpoint
 ALTER TABLE "labs"."rhobh_daily_puzzles" ALTER COLUMN "article_id" SET NOT NULL;--> statement-breakpoint
 ALTER TABLE "labs"."rhobh_daily_puzzles" ALTER COLUMN "date_utc" SET NOT NULL;--> statement-breakpoint
