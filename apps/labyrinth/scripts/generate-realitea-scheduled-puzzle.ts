@@ -4,8 +4,11 @@ import { closeDb } from "@pontistudios/db";
 
 import { buildDateRange, getDateKey, isDateKey } from "../app/lib/realitea/date";
 import { getErrorMessage } from "../app/lib/errors";
-import { generateScheduledPuzzle } from "../app/lib/realitea/generation";
+import { generatePuzzleForGame } from "../app/lib/realitea/generation";
+import { getGameBySlug } from "../app/lib/realitea/repository";
 import { LabyrinthServerEnv } from "../app/lib/server/env";
+
+const RHOBH_GAME_SLUG = "rhobh";
 
 interface GenerationOptions {
   dateKey?: string;
@@ -56,13 +59,16 @@ async function main() {
   const opts = parseGenerateArgs(process.argv.slice(2));
   const dateKeys = buildGenerateRange(opts);
 
+  const game = await getGameBySlug(RHOBH_GAME_SLUG);
+  if (!game) throw new Error(`Game not found: ${RHOBH_GAME_SLUG}`);
+
   let generated = 0;
   let failed = 0;
   let skipped = 0;
 
   for (const dateKey of dateKeys) {
     try {
-      const puzzle = await generateScheduledPuzzle(dateKey);
+      const puzzle = await generatePuzzleForGame(game, dateKey);
       if (puzzle) {
         generated++;
       } else {

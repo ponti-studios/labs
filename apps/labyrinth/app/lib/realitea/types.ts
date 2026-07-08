@@ -1,16 +1,27 @@
-import { type RhobhDailyPuzzle, type PuzzleAnswerType, type PuzzleSource } from "@pontistudios/db";
-export type { PuzzleAnswerType, PuzzleSource };
+import type {
+  Article,
+  DailyPuzzle as DailyPuzzleRow,
+  Game,
+  PuzzleAnswerType,
+} from "@pontistudios/db";
+export type { Article, Game, PuzzleAnswerType };
 
 // ── Game engine types ─────────────────────────────────────────────────────
 
 export type LetterState = "absent" | "correct" | "present";
 export type GameStatus = "playing" | "solved" | "failed";
 
+export interface PuzzleSource {
+  url: string;
+  title: string;
+  publishedAt: string;
+}
+
 /**
  * Server-side puzzle with the answer. Never leaves the server.
  * `PublicDailyPuzzle` is the client-safe counterpart.
  */
-interface DailyPuzzle {
+interface DailyPuzzleDto {
   answer: string;
   answerType: PuzzleAnswerType;
   clue: string;
@@ -20,7 +31,7 @@ interface DailyPuzzle {
 }
 
 // Do not send the `answer` to the client.
-export interface PublicDailyPuzzle extends Omit<DailyPuzzle, "answer"> {}
+export interface PublicDailyPuzzle extends Omit<DailyPuzzleDto, "answer"> {}
 
 export interface RealiteaGuess {
   word: string;
@@ -40,16 +51,13 @@ export interface RealiteaGuessResult {
 }
 
 /**
- * Domain DTO for a RealiTea puzzle. Derived from `NewRhobhDailyPuzzle` so `id`
- * is correctly typed as `number | undefined` (the serial PK makes it optional
- * in the insert type) without needing a manual override.
- *
- * - `answerType` is narrowed to the `PuzzleAnswerType` union for
- *   exhaustiveness checks at call sites
- *
- * DB-only `validationStatus` is intentionally omitted.
+ * Domain DTO for a generated puzzle, joined with the single article it was
+ * generated from (`sources` used to live as a jsonb blob on the puzzle row;
+ * it now lives on the linked `articles` row and is joined in at read time).
  */
-export type PuzzleRecord = RhobhDailyPuzzle;
+export interface PuzzleRecord extends DailyPuzzleRow {
+  article: Pick<Article, "url" | "title" | "publishedAt">;
+}
 
 export interface ValidationResult {
   normalizedAnswer: string;

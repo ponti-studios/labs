@@ -1,10 +1,9 @@
-import { Link } from "react-router";
-import { Button } from "@pontistudios/ui";
-import { cn } from "@pontistudios/ui";
+import { Button, cn } from "@pontistudios/ui";
 import { formatDistanceToNow } from "date-fns";
-import { useMonitoredSymptoms } from "../hooks/use-monitored-symptoms";
-import { useAppointments } from "../hooks/use-appointments";
+import { Link } from "react-router";
 import { DashboardEmptyState } from "../components/dashboard-empty-state";
+import { useAppointments } from "../hooks/use-appointments";
+import { useMonitoredSymptoms } from "../hooks/use-monitored-symptoms";
 import { TREATMENT_GUIDANCE } from "../types/symptom";
 
 export default function Dashboard() {
@@ -59,6 +58,22 @@ export default function Dashboard() {
                 </Button>
               </div>
             ))}
+          </Section>
+
+          <Section
+            title="Health Tools"
+            action={{ label: "Open tools", href: "/medication" }}
+            empty={false}
+            emptyText=""
+          >
+            <div className="flex flex-col gap-2">
+              <Link to="/medication" className="hover:bg-muted/30 rounded-md border p-3 text-sm">
+                Medication pen duration calculator
+              </Link>
+              <Link to="/medicare" className="hover:bg-muted/30 rounded-md border p-3 text-sm">
+                Medicare comparison planner
+              </Link>
+            </div>
           </Section>
 
           <Section

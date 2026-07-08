@@ -9,13 +9,15 @@ import {
   countInventoryForRange,
   deletePuzzlesFromDate,
   getExistingDateKeys,
+  getGameBySlug,
 } from "../app/lib/realitea/repository";
-import { generateScheduledPuzzle } from "../app/lib/realitea/generation";
+import { generatePuzzleForGame } from "../app/lib/realitea/generation";
 import { createLogger } from "../app/lib/logger.server";
 import { REALITEA_READY_INVENTORY_DAYS } from "../app/lib/realitea/validation";
 import { LabyrinthServerEnv } from "../app/lib/server/env";
 
 const logger = createLogger();
+const RHOBH_GAME_SLUG = "rhobh";
 
 export function computeGaps(dateRange: string[], existingKeys: string[]): string[] {
   const existing = new Set(existingKeys);
@@ -48,6 +50,9 @@ async function main() {
 
   reconcileLogger.info({ event: "[RECONCILE_START]" }, "starting reconcile run");
 
+  const game = await getGameBySlug(RHOBH_GAME_SLUG);
+  if (!game) throw new Error(`Game not found: ${RHOBH_GAME_SLUG}`);
+
   const nextDayKey = addDaysToDateKey(runDateKey, 1);
   if (!nextDayKey) throw new Error("Failed to compute next date key");
 
@@ -56,14 +61,14 @@ async function main() {
   const lastDayKey = targetDateKeys[targetDateKeys.length - 1];
 
   if (force) {
-    deletedCount = await deletePuzzlesFromDate(nextDayKey);
+    deletedCount = await deletePuzzlesFromDate(game.id, nextDayKey);
     reconcileLogger.info(
       { event: "[FORCE_DELETED]", count: deletedCount },
       `deleted ${deletedCount} puzzles`,
     );
   }
 
-  const existingKeys = force ? [] : await getExistingDateKeys(nextDayKey, lastDayKey);
+  const existingKeys = force ? [] : await getExistingDateKeys(game.id, nextDayKey, lastDayKey);
   const gapDateKeys = computeGaps(targetDateKeys, existingKeys);
 
   let generatedCount = 0;
@@ -71,7 +76,7 @@ async function main() {
 
   for (const dateKey of gapDateKeys) {
     try {
-      const created = await generateScheduledPuzzle(dateKey);
+      const created = await generatePuzzleForGame(game, dateKey);
       if (created) {
         generatedCount++;
       } else {
@@ -90,7 +95,11 @@ async function main() {
     }
   }
 
-  const inventoryDepth = await countInventoryForRange(runDateKey, REALITEA_READY_INVENTORY_DAYS);
+  const inventoryDepth = await countInventoryForRange(
+    game.id,
+    runDateKey,
+    REALITEA_READY_INVENTORY_DAYS,
+  );
 
   reconcileLogger.info(
     {
