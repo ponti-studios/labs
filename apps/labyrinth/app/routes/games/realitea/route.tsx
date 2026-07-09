@@ -12,6 +12,7 @@ import {
   type PublicDailyPuzzle,
   type RealiteaGuess,
 } from "~/lib/realitea";
+import { getDateKey } from "~/lib/realitea/date";
 import { loadActivePublicPuzzle } from "~/lib/realitea/puzzle.server";
 import { cn } from "~/lib/utils";
 
@@ -21,6 +22,8 @@ import { useRealiTeaShare } from "./use-share";
 
 import "./realitea.css";
 import { LucideHelpCircle, LucideNewspaper, LucideShare } from "lucide-react";
+
+const TZ_COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // one year in seconds
 
 const TILE_BASE = cva(
   "flex h-[3.6rem] w-[3.6rem] items-center justify-center rounded-2xl border text-[1.35rem] font-bold uppercase transition-colors sm:h-12 sm:w-12 sm:rounded-xl sm:text-lg md:h-14 md:w-14",
@@ -243,7 +246,14 @@ export default function RealiTeaRoute() {
   // On first mount, store the user's IANA timezone in a cookie so the server
   // can serve the puzzle for the user's local calendar date rather than UTC.
   // If the server used UTC and the local date differs, revalidate immediately.
+  //
+  // Both values are captured in refs so the effect dependency array is
+  // genuinely empty (runs exactly once on mount, no stale-closure risk).
   const didSyncTzRef = useRef(false);
+  const initialDateKeyRef = useRef(currentPuzzle.dateKey);
+  const revalidateRef = useRef(revalidator.revalidate);
+  revalidateRef.current = revalidator.revalidate;
+
   useEffect(() => {
     if (didSyncTzRef.current) return;
     didSyncTzRef.current = true;
@@ -251,13 +261,13 @@ export default function RealiTeaRoute() {
     const localTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
     if (!localTz) return;
 
-    document.cookie = `tz=${encodeURIComponent(localTz)}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`;
+    document.cookie = `tz=${encodeURIComponent(localTz)}; path=/; max-age=${TZ_COOKIE_MAX_AGE}; SameSite=Lax`;
 
-    const localDateKey = new Intl.DateTimeFormat("en-CA", { timeZone: localTz }).format(new Date());
-    if (currentPuzzle.dateKey !== localDateKey) {
-      revalidator.revalidate();
+    const localDateKey = getDateKey(new Date(), localTz);
+    if (initialDateKeyRef.current !== localDateKey) {
+      revalidateRef.current();
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- intentionally runs once on mount
+  }, []);
 
   // Read once at mount. We deliberately do not subscribe to localStorage.
   // useState lazy initializer runs exactly once per mount — one-shot seed,
