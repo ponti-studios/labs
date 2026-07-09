@@ -28,7 +28,7 @@ export interface ParticleBackgroundProps extends React.ComponentProps<"div"> {
   attractStrength?: number;
   velocity?: number;
   showGradient?: boolean;
-  palette?: ParticleBackgroundPalette;
+  palette: ParticleBackgroundPalette;
 }
 
 const DEFAULT_PARTICLE_COUNT = 320;

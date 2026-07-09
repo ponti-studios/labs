@@ -65,8 +65,8 @@ export { CountUpTo } from "./components/compound/count-up-to";
 export { MetricCard } from "./components/compound/metric-card";
 export { OnscreenKeyboard } from "./components/compound/onscreen-keyboard";
 export { ParticleBackground } from "./components/compound/particle-background";
-export { ThemeToggle } from "./components/compound/theme-toggle";
 export { Spinner } from "./components/compound/spinner";
+export { ThemeToggle } from "./components/compound/theme-toggle";
 export type {
   AppNavigationCta,
   AppNavigationLink,
@@ -80,8 +80,8 @@ export type {
   ParticleBackgroundPalette,
   ParticleBackgroundProps,
 } from "./components/compound/particle-background";
-export type { ThemeToggleMode, ThemeToggleProps } from "./components/compound/theme-toggle";
 export type { SpinnerProps } from "./components/compound/spinner";
+export type { ThemeToggleMode, ThemeToggleProps } from "./components/compound/theme-toggle";
 export { DatePicker } from "./components/date-picker";
 export type { DatePickerProps } from "./components/date-picker";
 export {
@@ -174,6 +174,8 @@ export { Slider } from "./components/slider";
 export { Stepper } from "./components/stepper";
 export type { StepperProps } from "./components/stepper";
 export { Switch } from "./components/switch";
+export { DropZone } from "./components/drop-zone";
+export type { DropZoneFileInfo, DropZoneProps, DropZoneStatus } from "./components/drop-zone";
 export { EmptyState } from "./components/surfaces/empty-state";
 export { SectionIntro } from "./components/surfaces/section-intro";
 export { StatePanel } from "./components/surfaces/state-panel";

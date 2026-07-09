@@ -23,7 +23,6 @@ export interface AppNavigationProps {
   brandHref?: string;
   links?: AppNavigationLink[];
   cta?: AppNavigationCta;
-  endContent?: React.ReactNode;
   /** Current pathname used to highlight the active link. */
   activeHref?: string;
   navHeight?: number;
@@ -35,14 +34,18 @@ export function AppNavigation({
   brandHref = "/",
   links,
   cta,
-  endContent,
   activeHref,
   renderLink,
 }: AppNavigationProps) {
-  const isActive = (href: string) => href === activeHref;
+  const isActive = (href: string) => {
+    if (!activeHref) return false;
+    if (href === activeHref) return true;
+    // Nested routes (e.g. /work/123) keep the parent link active.
+    return href !== "/" && activeHref.startsWith(`${href}/`);
+  };
 
   return (
-    <div className="bg-background/80 sticky top-0 z-50 flex w-full justify-center px-2 py-2 backdrop-blur-sm backdrop-saturate-150">
+    <div className="bg-background/80 sticky top-0 z-50 flex w-full justify-center px-2 py-2 backdrop-blur-sm backdrop-saturate-150 md:px-0">
       <nav className="flex w-full max-w-7xl items-center justify-between py-2">
         {brand &&
           renderLink({
@@ -51,7 +54,7 @@ export function AppNavigation({
             children: brand,
           })}
 
-        <div className="flex items-center gap-2 overflow-x-auto">
+        <div className="flex items-center gap-1">
           {links?.map((link) =>
             renderLink({
               href: link.href,
@@ -75,7 +78,6 @@ export function AppNavigation({
               }`,
               children: cta.label,
             })}
-          {endContent}
         </div>
       </nav>
     </div>
