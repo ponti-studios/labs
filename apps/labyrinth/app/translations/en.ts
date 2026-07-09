@@ -8,7 +8,6 @@ export const STUDIO_TRANSLATIONS_EN = {
 
   common: {
     bookCall: "Book a call",
-    startingAt: "Starting at",
     replyWithin: "We reply within 24 hours.",
     contactSteps: [
       {
@@ -29,222 +28,398 @@ export const STUDIO_TRANSLATIONS_EN = {
 
   services: {
     meta: {
-      title: "Services & Pricing | Ponti Studios",
+      title: "Services | Ponti Studios",
       description:
-        "Premium product and content development services and transparent pricing. Engineering, design, brand, and content strategy for teams who refuse to compromise.",
+        "Premium product and content development with published outcomes. Engineering, design, brand, and content strategy for teams who refuse to compromise.",
     },
-    eyebrow: "What we do",
-    title: "Services",
-    introPillarsPrefix: "We work across two pillars:",
-    introPillarsAnd: "and",
-    introPillarsSuffix:
-      "AI is applied as a capability layer throughout — not a separate service, but part of how we work.",
-    introRanges:
-      "Every service below lists a starting price. Every engagement is different — we provide detailed proposals once we understand your specific scope. Engagement types, what's included, and FAQs are further down this page.",
-    whatYouGet: "What you get",
-    bestFor: "Best for",
-    investment: "Investment",
+    hero: {
+      eyebrow: "What we do",
+      title: "Senior product and content partnership.",
+      introPillarsPrefix: "We work across two pillars:",
+      introPillarsAnd: "and",
+      introPillarsSuffix:
+        "AI is applied as a capability layer throughout — not a separate service, but part of how we work.",
+      introScope:
+        "Every engagement is scoped to your problem. We share a clear proposal after we understand the work — not a rate card that pretends every project is the same.",
+      proofLine:
+        "Outcomes for StreamYard, Lumina, Prolog, Thomson Reuters, Kensho, Humana, and others.",
+      seeServices: "See services",
+      seeEngagement: "How we work together",
+    },
+    trust: {
+      eyebrow: "Selected work",
+      names: [
+        "StreamYard",
+        "Thomson Reuters",
+        "Humana",
+        "Kensho",
+        "Mimecast",
+        "Lumina",
+        "Prolog",
+        "Whistle",
+        "Revrock",
+      ],
+    },
+    overview: {
+      eyebrow: "What we do",
+      title: "Services",
+      intro: "Open a service for what's included.",
+    },
+    engagementTypes: {
+      title: "How we engage",
+      intro: "We structure work around the shape of the problem — not a single contract template.",
+      items: [
+        {
+          name: "Project",
+          description:
+            "Fixed scope and timeline for a defined outcome — a product build, brand system, redesign, or modernization program.",
+        },
+        {
+          name: "Retainer",
+          description:
+            "Ongoing partnership for work that compounds week over week — product leadership, content, continuous delivery.",
+        },
+        {
+          name: "Advisory",
+          description:
+            "A bounded engagement with a written output — audits, architecture reviews, build-vs-buy, facilitated workshops.",
+        },
+        {
+          name: "Production",
+          description:
+            "Photography and video scoped by shoot and deliverables when you need original assets, not stock.",
+        },
+      ],
+    },
+    proof: {
+      eyebrow: "Proof",
+      title: "Selected outcomes",
+      intro: "Hard numbers from product and engineering engagements — not adjectives.",
+      problemLabel: "Problem",
+      whatWeDidLabel: "What we did",
+      outcomeLabel: "Outcome",
+      servicesLabel: "Services",
+      snapshots: [
+        {
+          slug: "streamyard",
+          client: "StreamYard",
+          industry: "Creator Economy",
+          problem:
+            "Solo-creator product hit a B2B ceiling — no workspaces, no real roles, no path for agencies and media teams.",
+          whatWeDid:
+            "Led product and engineering for Teams/Business tier and the creator marketplace, from architecture through launch.",
+          outcomes: [
+            "$15M+ enterprise ARR unlocked",
+            "13% consumer growth within 3 months of Business launch",
+            "300% YoY creator collaborations",
+          ],
+          services: ["Engineering", "Product"],
+        },
+        {
+          slug: "lumina",
+          client: "Lumina",
+          industry: "EdTech",
+          problem:
+            "Acquisition leaking at checkout; retention broken by discovery, course continuity, and grading trust.",
+          whatWeDid:
+            "Six independently shippable workstreams across search, retention, payments, frontend performance, and grading reliability.",
+          outcomes: [
+            "Feed engagement +43%",
+            "Course return 1–2 weeks → 2 days",
+            "Second-course enrollment ~40% higher",
+            "Time-to-interactive 32% faster",
+          ],
+          services: ["Engineering", "Modernization", "Product"],
+        },
+        {
+          slug: "prolog",
+          client: "Prolog",
+          industry: "Entertainment / AI",
+          problem:
+            "Showrunner teams drowning in email and spreadsheet submission triage during peak staffing.",
+          whatWeDid:
+            "Designed and built an AI extraction and review pipeline with confidence scoring and human override.",
+          outcomes: [
+            "~95% extraction accuracy",
+            "Review time ~70% down",
+            "3× reviewer throughput",
+          ],
+          services: ["Engineering", "Product Design"],
+        },
+        {
+          slug: "thomson-reuters",
+          client: "Thomson Reuters",
+          industry: "Enterprise",
+          problem:
+            "Global deploy and monitoring tooling siloed; primary API ~14s; a monolith optimized for no one.",
+          whatWeDid:
+            "Unified the Compass platform, migrated the API, decomposed the monolith, and ran technical debt as a product program.",
+          outcomes: [
+            "Primary API 97% faster (13.8s → 0.5s)",
+            "Data transfer −72%",
+            "Cloud cost −30%",
+            "Critical debt −65%",
+          ],
+          services: ["Engineering", "Modernization"],
+        },
+        {
+          slug: "kensho",
+          client: "Kensho",
+          industry: "Financial data",
+          problem:
+            "Multi-modal data pipeline collapsing under peak load; operational knowledge trapped in individual heads.",
+          whatWeDid:
+            "Led batch-to-streaming platform migration, hardware-aware routing, and durable on-call and onboarding systems.",
+          outcomes: [
+            "Throughput 24×",
+            "Market-data latency ~10 min → <50 ms",
+            "Time-to-first-PR 1 week → 3 hours",
+          ],
+          services: ["Engineering", "Modernization"],
+        },
+      ],
+    },
     entries: {
       engineering: {
         name: "Engineering",
-        problem: "You need software built that will hold up — not just at launch, but at scale.",
-        description:
-          "We build full-stack web and mobile applications from the ground up: architecture, backend, frontend, APIs, databases, and cloud infrastructure. Every codebase we deliver is clean, tested, documented, and maintainable by your future team.",
         deliverables: [
-          "Production-ready web or mobile application",
-          "Automated test suite",
-          "CI/CD pipeline and deployment configuration",
-          "Technical documentation and handoff",
+          {
+            label: "Production app",
+            description: "A full-stack web or mobile product ready to ship and scale",
+          },
+          {
+            label: "Test suite",
+            description: "Automated coverage so regressions get caught before users do",
+          },
+          {
+            label: "CI/CD",
+            description: "Deploy pipelines and environment config your team can run without us",
+          },
+          {
+            label: "Handoff",
+            description: "Documentation so the codebase stays maintainable after we leave",
+          },
         ],
-        bestFor:
-          "Founders with product vision but no technical co-founder. Companies modernizing legacy systems or racing to market without sacrificing quality.",
-        unit: "project",
       },
       productDesign: {
         name: "Product Design",
-        problem:
-          "Your product is hard to use, or it doesn't feel as premium as the problem it solves.",
-        description:
-          "We design interfaces from research through high-fidelity — user research, information architecture, interaction design, visual design, and design systems. We make complex things feel simple and mundane tasks feel effortless.",
         deliverables: [
-          "User research synthesis",
-          "Wireframes and interaction flows",
-          "High-fidelity visual designs (Figma)",
-          "Design system and component library",
-          "Prototype ready for development handoff",
+          {
+            label: "Research",
+            description: "What users need, where they get stuck, and what to build next",
+          },
+          {
+            label: "Flows",
+            description: "Wireframes and interaction paths for the journeys that matter",
+          },
+          {
+            label: "Visual design",
+            description: "High-fidelity screens in Figma ready for engineering",
+          },
+          {
+            label: "Design system",
+            description: "Components and patterns so the product stays coherent as it grows",
+          },
+          {
+            label: "Prototype",
+            description: "A clickable path stakeholders can try before you write code",
+          },
         ],
-        bestFor:
-          "Products that need a design refresh. Startups launching their first product. Companies with engineering capacity but no design team.",
-        unit: "project",
       },
       fractionalProductManagement: {
         name: "Fractional Product Management",
-        problem: "You're shipping features but not moving metrics. No one owns the roadmap.",
-        description:
-          "We embed as your product team — running strategy, prioritization, sprint planning, and stakeholder communication until you're ready to hire. Weekly involvement, not just advisory calls.",
         deliverables: [
-          "Product roadmap and prioritization framework",
-          "Sprint planning and backlog grooming",
-          "Feature specs and requirements",
-          "Stakeholder communication and alignment",
-          "Metrics tracking and reporting",
+          {
+            label: "Roadmap",
+            description: "A prioritized plan tied to outcomes, not a feature wishlist",
+          },
+          {
+            label: "Sprints",
+            description: "Planning and backlog grooming so the team always knows what ships next",
+          },
+          {
+            label: "Specs",
+            description: "Clear requirements so engineering builds the right thing the first time",
+          },
+          {
+            label: "Alignment",
+            description: "Stakeholder communication that keeps decisions moving",
+          },
+          {
+            label: "Metrics",
+            description: "Find out what is working and what isn't",
+          },
         ],
-        bestFor:
-          "Technical founders who need product expertise. Growth-stage startups between their first product and their first PM hire.",
-        unit: "per month · retainer",
       },
       technicalConsulting: {
         name: "Technical Consulting",
-        problem:
-          "You're about to make an expensive decision and you want a second opinion from someone who's made every mistake in the book.",
-        description:
-          "We review your architecture, codebase, security posture, and technical direction — then deliver written recommendations and a clear action plan. Async-first with sync sessions where they matter.",
         deliverables: [
-          "System design and architecture review",
-          "Codebase audit and technical debt assessment",
-          "Security and performance evaluation",
-          "Build-vs-buy analysis",
-          "Written recommendations and prioritized action plan",
+          {
+            label: "Architecture review",
+            description: "Whether the system design will hold under real load and change",
+          },
+          {
+            label: "Codebase audit",
+            description: "Where debt is slowing you down — and what to fix first",
+          },
+          {
+            label: "Security & performance",
+            description: "Risks and bottlenecks before they become incidents",
+          },
+          {
+            label: "Build vs buy",
+            description: "A clear recommendation when the choice is expensive either way",
+          },
+          {
+            label: "Action plan",
+            description: "Written next steps ranked by impact, not a vague slide deck",
+          },
         ],
-        bestFor:
-          "CTOs making big technical decisions. Non-technical founders evaluating work they've commissioned. Companies before a major refactor or platform commitment.",
-        unit: "per engagement",
       },
       modernization: {
         name: "Modernization",
-        problem:
-          "That system you built five years ago is holding your business back. We replace it without disrupting what's working.",
-        description:
-          "We assess, plan, and execute legacy system modernization — incremental rollouts, data migration, and internal tooling — on a timeline that keeps your business running.",
         deliverables: [
-          "Legacy system assessment and migration strategy",
-          "Incremental rollout plan",
-          "Data migration (safe and complete)",
-          "Rebuilt or replaced internal tools and dashboards",
-          "Team training and documentation",
+          {
+            label: "Assessment",
+            description: "What to keep, what to replace, and the safest order to do it",
+          },
+          {
+            label: "Rollout plan",
+            description: "Incremental delivery so the business keeps running during the change",
+          },
+          {
+            label: "Data migration",
+            description: "Move the records that matter without silent loss or downtime surprises",
+          },
+          {
+            label: "Internal tools",
+            description: "Dashboards and workflows rebuilt for how the team works now",
+          },
+          {
+            label: "Training",
+            description: "Your team understands the new system before we step away",
+          },
         ],
-        bestFor:
-          "Companies with legacy systems limiting growth. Teams stuck maintaining instead of innovating. Businesses losing customers to more modern competitors.",
-        unit: "project",
       },
       brandIdentity: {
         name: "Brand Identity",
-        problem: "Your brand is inconsistent, underdeveloped, or no longer reflects who you are.",
-        description:
-          "We define your positioning, develop your voice, and build the visual system that makes your brand recognizable and credible across every touchpoint — from your website to your pitch deck.",
         deliverables: [
-          "Brand positioning and competitive differentiation",
-          "Messaging framework (what you say to different audiences)",
-          "Voice and tone guidelines",
-          "Visual identity — logo, color system, typography, imagery direction",
-          "Brand guidelines document",
+          {
+            label: "Positioning",
+            description: "Who you are for, why you win, and how you stand apart",
+          },
+          {
+            label: "Messaging",
+            description: "What to say to each audience without reinventing it every time",
+          },
+          {
+            label: "Voice",
+            description: "Tone guidelines so every writer sounds like the same company",
+          },
+          {
+            label: "Visual identity",
+            description: "Logo, color, type, and imagery direction that hold together",
+          },
+          {
+            label: "Guidelines",
+            description: "A brand document your team and vendors can actually follow",
+          },
         ],
-        bestFor:
-          "Startups ready to look professional. Companies with inconsistent branding. Businesses entering new markets or repositioning after a pivot.",
-        unit: "project",
       },
       copyMessaging: {
         name: "Copy & Messaging",
-        problem: "Your words aren't converting the right people — or there aren't enough of them.",
-        description:
-          "We write the copy that carries your brand: landing pages, website, campaigns, and sales materials. Grounded in your positioning and written to move the reader toward a decision.",
         deliverables: [
-          "Website and landing page copy",
-          "Campaign and email copy",
-          "Messaging hierarchy for different audiences",
-          "Call-to-action strategy",
+          {
+            label: "Website copy",
+            description: "Pages and landings written to move the right reader to act",
+          },
+          {
+            label: "Campaign copy",
+            description: "Emails and ads with a clear offer and a clear next step",
+          },
+          {
+            label: "Message hierarchy",
+            description: "What to lead with for each audience — and what to leave out",
+          },
+          {
+            label: "CTAs",
+            description: "Calls to action that match the decision the reader is ready to make",
+          },
         ],
-        bestFor:
-          "Teams with a visual identity but weak written voice. Launches that need sharp copy fast. Companies whose website isn't converting.",
-        unit: "project · often bundled with Brand Identity",
       },
       contentStrategy: {
         name: "Content Strategy",
-        problem:
-          "You're not showing up where your audience is, or you're showing up with the wrong things.",
-        description:
-          "We build the content engine: SEO strategy, editorial planning, email, and social — mapped to your funnel and tied to measurable outcomes. We can plan, produce, or both.",
         deliverables: [
-          "SEO audit and keyword strategy",
-          "Editorial calendar and content plan",
-          "Email marketing strategy and sequences",
-          "Social media content strategy",
-          "Analytics setup and reporting framework",
+          {
+            label: "SEO strategy",
+            description: "Keywords and topics that match how your buyers actually search",
+          },
+          {
+            label: "Editorial plan",
+            description: "A calendar of what to publish, for whom, and why it compounds",
+          },
+          {
+            label: "Email",
+            description: "Sequences that nurture and convert without becoming noise",
+          },
+          {
+            label: "Social",
+            description: "A channel plan with formats and cadence your team can sustain",
+          },
+          {
+            label: "Analytics",
+            description: "Measurement so you know which content earns its keep",
+          },
         ],
-        bestFor:
-          "Products with an audience but low organic reach. Companies ready to invest in content as a growth channel. Teams with content output but no coherent strategy.",
-        unit: "per month ongoing · or project",
       },
       visualProduction: {
         name: "Visual Production",
-        problem: "Stock photos look like stock photos. Your brand deserves better.",
-        description:
-          "We create custom photography and video — product shots, brand photography, campaign imagery, and social content — built for web, marketing, and launch assets.",
         deliverables: [
-          "Art direction and shot list",
-          "Product and brand photography",
-          "Web-optimized and high-res image deliverables",
-          "Full commercial use rights",
-          "Video content (on request)",
+          {
+            label: "Art direction",
+            description: "Shot list and visual plan before anything is captured",
+          },
+          {
+            label: "Photography",
+            description: "Product and brand images that look like you, not a stock library",
+          },
+          {
+            label: "Deliverables",
+            description: "Web-ready and high-res files sized for the places you'll use them",
+          },
+          {
+            label: "Rights",
+            description: "Full commercial use so legal is not a later surprise",
+          },
+          {
+            label: "Video",
+            description: "Motion content on request when stills aren't enough",
+          },
         ],
-        bestFor:
-          "E-commerce brands needing product shots. Companies wanting to showcase their team and culture. Products launching that need strong visual assets.",
-        unit: "per shoot",
       },
       strategyWorkshop: {
         name: "Strategy Workshop",
-        problem:
-          "Your team needs alignment before you can build. Or you have a decision to make and you need structured thinking to make it well.",
-        description:
-          "A facilitated working session — in-person or remote — designed around your specific question. We come prepared, run the session, and deliver a written output you can act on immediately.",
         deliverables: [
-          "Pre-session preparation and materials",
-          "Facilitated working session (half-day or full-day)",
-          "Written summary of findings and decisions",
-          "Prioritized action plan",
+          {
+            label: "Prep",
+            description: "Materials and framing so the session starts at full speed",
+          },
+          {
+            label: "Facilitation",
+            description: "A half-day or full-day working session built around your decision",
+          },
+          {
+            label: "Summary",
+            description: "Written findings and decisions the room actually agreed to",
+          },
+          {
+            label: "Action plan",
+            description: "Prioritized next steps you can run the week after",
+          },
         ],
-        bestFor:
-          "Founders deciding what to build next. Leadership teams misaligned on priorities. Organizations with a clear question that needs a structured answer.",
-        unit: "per session",
       },
     },
-    pricing: {
-      eyebrow: "Investment",
-      title: "Pricing",
-      intro:
-        "We publish our pricing because we respect your time. These ranges reflect the real cost of senior-level work done well. If you're comparing us to cheaper alternatives, we're probably not the right fit — and that's fine.",
-      thinking: {
-        title: "How we think about pricing",
-        paragraph1:
-          "We do not price by the hour. We price by engagement type, scope, and the complexity of the problem you're bringing us. Hourly billing creates the wrong incentives — it rewards inefficiency and penalizes speed. We are a small, senior team. We move faster than larger agencies and produce less waste. Pricing by the hour would mean charging you more for being slower, which is backwards.",
-        paragraph2:
-          "What you are paying for is judgment, craft, and outcomes — not seat time. We also build quality assurance, documentation, and testing into every engagement. These are not line items you negotiate out. They are how we ensure the work holds up after we hand it over.",
-      },
-      engagementTypes: {
-        title: "Engagement types",
-        items: [
-          {
-            name: "Project",
-            description:
-              "Fixed scope, fixed timeline, fixed budget. You know what you need, we scope it, we build it. Best for defined deliverables — a product build, a brand identity, a redesign.",
-          },
-          {
-            name: "Monthly Retainer",
-            description:
-              "Ongoing partnership with a monthly commitment. Best for continuous work that compounds over time — product management, content strategy, growth. We become a consistent part of your operating rhythm.",
-          },
-          {
-            name: "Per Engagement",
-            description:
-              "Bounded advisory work with a clear output. Best for audits, architecture reviews, build-vs-buy analysis, and strategy workshops. One question, one deliverable, one fee.",
-          },
-          {
-            name: "Per Shoot",
-            description:
-              "Production work priced by the day and complexity of output. Best for photography and video campaigns.",
-          },
-        ],
-      },
+    scope: {
       alwaysIncluded: {
         title: "What's always included",
         items: [
@@ -262,126 +437,47 @@ export const STUDIO_TRANSLATIONS_EN = {
           "Ongoing maintenance after project close — we offer retainers for this; it is not assumed",
         ],
       },
-      quoteVariables: {
-        title: "What moves any quote",
-        intro:
-          "These variables apply across all engagement types. Understanding them helps you understand where your project is likely to land before we talk.",
-        columns: { variable: "Variable", lower: "Lower end", higher: "Higher end" },
-        rows: [
-          {
-            variable: "Scope clarity",
-            lower: "Defined and bounded",
-            higher: "Still being discovered",
-          },
-          {
-            variable: "Stakeholder count",
-            lower: "One decision-maker",
-            higher: "Many reviewers and approval loops",
-          },
-          {
-            variable: "Workflow complexity",
-            lower: "One core flow",
-            higher: "Multiple user journeys and edge cases",
-          },
-          {
-            variable: "Technical complexity",
-            lower: "Standard stack, few integrations",
-            higher: "Custom systems, migrations, compliance",
-          },
-          {
-            variable: "Research burden",
-            lower: "Assumptions already validated",
-            higher: "Discovery still needed",
-          },
-          { variable: "Timeline", lower: "Flexible", higher: "Compressed or launch-sensitive" },
-          {
-            variable: "Quality bar",
-            lower: "Functional and well-built",
-            higher: "Premium polish with heavier QA",
-          },
-          {
-            variable: "Operational risk",
-            lower: "Greenfield or low continuity risk",
-            higher: "Must preserve existing business operations",
-          },
-          {
-            variable: "Asset volume",
-            lower: "Few outputs",
-            higher: "Many screens, pages, or content deliverables",
-          },
-        ],
-      },
-      whyWeCostMore: {
-        title: "Why we cost more than alternatives",
-        intro: "This is a fair question. Here is an honest answer.",
-        items: [
-          {
-            name: "Senior practitioners, not junior contractors.",
-            description:
-              "Every person on your project has done this before. We do not staff engagements with people learning on your budget.",
-          },
-          {
-            name: "Lower total cost of ownership.",
-            description:
-              "Cheaper work usually costs more in the long run — rework, bugs, missed deadlines, and technical debt that takes years to unwind. We build for the long term from day one.",
-          },
-          {
-            name: "Fewer surprises.",
-            description:
-              "We scope carefully, communicate proactively, and tell you when something is going wrong before it is too late to fix it. That has real economic value.",
-          },
-          {
-            name: "We document and hand off.",
-            description:
-              "When we leave, you own the work and understand it. You are not dependent on us to keep the lights on.",
-          },
-          {
-            name: "We include QA.",
-            description:
-              "Testing is not optional for us. It is the difference between software that works and software that works until it matters.",
-          },
-        ],
-      },
-      faqs: {
-        title: "Frequently asked questions",
-        items: [
-          {
-            question: "Do you work with early-stage startups with limited budgets?",
-            answer:
-              "Yes, with the right engagement. Early-stage founders are a strong fit for fractional product management, advisory, or a focused MVP build. We are not a fit if the budget requires cutting quality.",
-          },
-          {
-            question: "Can we start with a smaller engagement before committing to a larger one?",
-            answer:
-              "Yes. A technical consulting engagement or strategy workshop is a natural first step. It gives you a clear deliverable and lets us both assess whether a larger partnership makes sense.",
-          },
-          {
-            question: "What is the payment structure?",
-            answer:
-              "Projects are typically billed in milestones — a portion at kick-off, at mid-point, and at delivery. Retainers are billed monthly. Advisory engagements are typically billed 50% at start, 50% at delivery.",
-          },
-          {
-            question: "What if the scope changes after we start?",
-            answer:
-              "Scope changes happen. We handle them with a simple change order — written description of what changed, the adjusted timeline, and the adjusted cost. No surprises.",
-          },
-          {
-            question: "Do you offer payment plans?",
-            answer:
-              "For large projects, yes. We can structure milestone payments across the timeline. We do not offer deferred payment.",
-          },
-          {
-            question: "How long does it take to get a proposal?",
-            answer:
-              "After a 30-minute discovery call, we typically deliver a written proposal within five business days.",
-          },
-        ],
-      },
-      gettingStarted: {
-        title: "How to get started",
-      },
+    },
+    faqs: {
+      title: "Frequently asked questions",
+      items: [
+        {
+          question: "How do you price engagements?",
+          answer:
+            "By scope, complexity, and engagement type — not by the hour. After a discovery call we send a written proposal with deliverables, timeline, and investment. Every engagement is different; we won't pretend a rate card can replace that conversation.",
+        },
+        {
+          question: "Do you work with early-stage startups with limited budgets?",
+          answer:
+            "Yes, with the right engagement. Early-stage founders are a strong fit for fractional product management, advisory, or a focused MVP build. We are not a fit if the budget requires cutting quality.",
+        },
+        {
+          question: "Can we start with a smaller engagement before committing to a larger one?",
+          answer:
+            "Yes. A technical consulting engagement or strategy workshop is a natural first step. It gives you a clear deliverable and lets us both assess whether a larger partnership makes sense.",
+        },
+        {
+          question: "What is the payment structure?",
+          answer:
+            "Projects are typically billed in milestones — a portion at kick-off, at mid-point, and at delivery. Retainers are billed monthly. Advisory engagements are typically billed 50% at start, 50% at delivery.",
+        },
+        {
+          question: "What if the scope changes after we start?",
+          answer:
+            "Scope changes happen. We handle them with a simple change order — written description of what changed, the adjusted timeline, and the adjusted investment. No surprises.",
+        },
+        {
+          question: "How long does it take to get a proposal?",
+          answer:
+            "After a 30-minute discovery call, we typically deliver a written proposal within five business days.",
+        },
+      ],
+    },
+    gettingStarted: {
+      title: "How to get started",
     },
   },
+
 
   process: {
     meta: {

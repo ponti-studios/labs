@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import { Button, ParticleBackground } from "@pontistudios/ui";
-import { BOOK_CALL_URL, CONTACT_EMAIL, servicePillars } from "~/data/studio";
+import { ContactCta } from "~/components/studio/contact-cta";
+import { BOOK_CALL_URL, servicePillars } from "~/data/studio";
 import { t } from "~/translations";
 
 export function meta(): Array<{
@@ -135,36 +136,7 @@ export default function Home() {
         </Link>
       </section>
 
-      {/* Contact */}
-      <section className="border-border/60 flex flex-col gap-4 border-b py-16">
-        <div className="flex flex-col gap-2">
-          <h2 className="heading-2 text-foreground">{t.home.contact.title}</h2>
-          <p className="body-1 text-muted-foreground max-w-xl">{t.home.contact.description}</p>
-        </div>
-        <ol className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {t.common.contactSteps.map((step, index) => (
-            <li key={step.title} className="flex flex-col gap-2">
-              <span className="ui-eyebrow">{String(index + 1).padStart(2, "0")}</span>
-              <h3 className="subheading-3 text-foreground">{step.title}</h3>
-              <p className="body-3 text-muted-foreground">{step.description}</p>
-            </li>
-          ))}
-        </ol>
-        <div className="flex flex-wrap items-center gap-4">
-          <Button asChild size="lg">
-            <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
-              {t.common.bookCall}
-            </a>
-          </Button>
-          <a
-            href={`mailto:${CONTACT_EMAIL}`}
-            className="body-2 text-muted-foreground hover:text-foreground underline-offset-4 hover:underline"
-          >
-            {CONTACT_EMAIL}
-          </a>
-        </div>
-        <p className="body-4 text-muted-foreground">{t.common.replyWithin}</p>
-      </section>
+      <ContactCta title={t.home.contact.title} description={t.home.contact.description} />
 
       {/* Lab */}
       <section className="flex flex-col gap-4 py-16">

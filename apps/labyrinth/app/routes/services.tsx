@@ -1,5 +1,14 @@
-import { Button } from "@pontistudios/ui";
-import { BOOK_CALL_URL, CONTACT_EMAIL, formatMinPrice, servicePillars } from "~/data/studio";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+  Button,
+} from "@pontistudios/ui";
+import { ContactCta } from "~/components/studio/contact-cta";
+import { BOOK_CALL_URL, caseSnapshots, servicePillars, trustNames } from "~/data/studio";
 import { t } from "~/translations";
 
 export function meta(): Array<{
@@ -13,84 +22,139 @@ export function meta(): Array<{
   ];
 }
 
-const p = t.services.pricing;
+const hero = t.services.hero;
+const overview = t.services.overview;
+const engagementTypes = t.services.engagementTypes;
+const proof = t.services.proof;
+const scope = t.services.scope;
+const faqs = t.services.faqs;
+
+const ALL_SERVICE_SLUGS = servicePillars.flatMap((pillar) =>
+  pillar.services.map((service) => service.slug),
+);
+
+function SectionHeading({ eyebrow, title }: { eyebrow: string; title: string }) {
+  return (
+    <div className="flex flex-col gap-2">
+      <span className="ui-eyebrow">{eyebrow}</span>
+      <h2 className="heading-2 text-foreground">{title}</h2>
+    </div>
+  );
+}
 
 export default function Services() {
+  const location = useLocation();
+  const [openServices, setOpenServices] = useState<string[]>([]);
+
+  useEffect(() => {
+    const slug = location.hash.replace(/^#/, "");
+    if (slug && ALL_SERVICE_SLUGS.includes(slug)) {
+      setOpenServices((prev) => (prev.includes(slug) ? prev : [...prev, slug]));
+    }
+  }, [location.hash]);
+
   return (
     <div className="flex w-full flex-col">
+      {/* 1. Hero */}
       <section className="border-border/60 flex flex-col gap-6 border-b py-16">
-        <span className="ui-eyebrow">{t.services.eyebrow}</span>
-        <h1 className="display-2 text-foreground max-w-3xl">{t.services.title}</h1>
+        <span className="ui-eyebrow">{hero.eyebrow}</span>
+        <h1 className="display-2 text-foreground max-w-3xl">{hero.title}</h1>
         <p className="body-1 text-muted-foreground max-w-2xl">
-          {t.services.introPillarsPrefix}{" "}
+          {hero.introPillarsPrefix}{" "}
           <strong className="text-foreground">{t.common.pillars.product}</strong>{" "}
-          {t.services.introPillarsAnd}{" "}
+          {hero.introPillarsAnd}{" "}
           <strong className="text-foreground">{t.common.pillars.content}</strong>.{" "}
-          {t.services.introPillarsSuffix}
+          {hero.introPillarsSuffix}
         </p>
-        <p className="body-2 text-muted-foreground max-w-2xl">{t.services.introRanges}</p>
+        <p className="body-2 text-muted-foreground max-w-2xl">{hero.introScope}</p>
+        <p className="body-2 text-foreground max-w-2xl">{hero.proofLine}</p>
+        <div className="flex flex-wrap items-center gap-3 pt-1">
+          <Button asChild size="lg">
+            <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
+              {t.common.bookCall}
+            </a>
+          </Button>
+          <Button asChild variant="outline" size="lg">
+            <a href="#services-overview">{hero.seeServices}</a>
+          </Button>
+          <a
+            href="#engagement"
+            className="body-2 text-muted-foreground hover:text-foreground underline-offset-4 hover:underline"
+          >
+            {hero.seeEngagement}
+          </a>
+        </div>
       </section>
 
-      {servicePillars.map((pillar) => (
-        <section key={pillar.name} className="border-border/60 border-b py-16">
-          <h2 className="heading-2 text-foreground mb-4">{pillar.name}</h2>
-          <div className="flex flex-col gap-6">
-            {pillar.services.map((service) => (
-              <div
-                key={service.slug}
-                id={service.slug}
-                className="grid gap-6 sm:grid-cols-[1fr_1fr]"
+      {/* 2. Trust strip */}
+      <section className="border-border/60 flex flex-col gap-4 border-b py-12">
+        <span className="ui-eyebrow">{t.services.trust.eyebrow}</span>
+        <ul className="flex flex-wrap items-baseline gap-x-6 gap-y-2">
+          {trustNames.map((name) => (
+            <li key={name} className="body-2 text-foreground">
+              {name}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* 3. Services — scan, expand only for includes */}
+      <section id="services-overview" className="border-border/60 flex flex-col gap-6 border-b py-16">
+        <div className="flex flex-col gap-2">
+          <SectionHeading eyebrow={overview.eyebrow} title={overview.title} />
+          <p className="body-2 text-muted-foreground max-w-2xl">{overview.intro}</p>
+        </div>
+        <div className="flex flex-col gap-10">
+          {servicePillars.map((pillar) => (
+            <div key={pillar.name} className="flex flex-col gap-3">
+              <h3 className="heading-4 text-foreground">{pillar.name}</h3>
+              <Accordion
+                type="multiple"
+                value={openServices.filter((slug) =>
+                  pillar.services.some((service) => service.slug === slug),
+                )}
+                onValueChange={(value) => {
+                  const pillarSlugs = pillar.services.map((service) => service.slug);
+                  setOpenServices((prev) => [
+                    ...prev.filter((slug) => !pillarSlugs.includes(slug)),
+                    ...value,
+                  ]);
+                }}
               >
-                <div className="flex flex-col gap-3">
-                  <h3 className="heading-3 text-foreground">{service.name}</h3>
-                  <p className="body-2 text-muted-foreground">{service.problem}</p>
-                  <p className="body-2 text-muted-foreground">{service.description}</p>
-                </div>
-                <div className="flex flex-col gap-4">
-                  <div className="flex flex-col gap-2">
-                    <span className="ui-eyebrow">{t.services.whatYouGet}</span>
-                    <ul className="flex flex-col gap-2">
-                      {service.deliverables.map((item) => (
-                        <li key={item} className="ui-dash-list-item">
-                          <span className="ui-dash-marker">—</span>
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <span className="ui-eyebrow">{t.services.bestFor}</span>
-                    <p className="body-3 text-muted-foreground">{service.bestFor}</p>
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <span className="ui-eyebrow">{t.services.investment}</span>
-                    <p className="body-2 text-foreground">
-                      {t.common.startingAt} {formatMinPrice(service.minPrice)} · {service.unit}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      ))}
-
-      <section className="border-border/60 flex flex-col gap-6 border-b py-16">
-        <span className="ui-eyebrow">{p.eyebrow}</span>
-        <h2 className="display-2 text-foreground max-w-3xl">{p.title}</h2>
-        <p className="body-1 text-muted-foreground max-w-2xl">{p.intro}</p>
+                {pillar.services.map((service) => (
+                  <AccordionItem key={service.slug} value={service.slug} id={service.slug}>
+                    <AccordionTrigger className="text-left">
+                      <span className="subheading-3 text-foreground">{service.name}</span>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <ul className="flex flex-col gap-2">
+                        {service.deliverables.map((item) => (
+                          <li key={item.label} className="ui-dash-list-item">
+                            <span className="ui-dash-marker">—</span>
+                            <span className="body-2 text-muted-foreground">
+                              <span className="text-foreground font-medium">{item.label}:</span>{" "}
+                              {item.description}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </div>
+          ))}
+        </div>
       </section>
 
-      <section className="border-border/60 flex flex-col gap-4 border-b py-16">
-        <h2 className="heading-2 text-foreground">{p.thinking.title}</h2>
-        <p className="body-2 text-muted-foreground max-w-2xl">{p.thinking.paragraph1}</p>
-        <p className="body-2 text-muted-foreground max-w-2xl">{p.thinking.paragraph2}</p>
-      </section>
-
-      <section className="border-border/60 flex flex-col gap-4 border-b py-16">
-        <h2 className="heading-2 text-foreground">{p.engagementTypes.title}</h2>
+      {/* 4. Engagement types — how the work is structured */}
+      <section id="engagement" className="border-border/60 flex flex-col gap-4 border-b py-16">
+        <div className="flex flex-col gap-2">
+          <h2 className="heading-2 text-foreground">{engagementTypes.title}</h2>
+          <p className="body-2 text-muted-foreground max-w-2xl">{engagementTypes.intro}</p>
+        </div>
         <div className="grid gap-8 sm:grid-cols-2">
-          {p.engagementTypes.items.map((type) => (
+          {engagementTypes.items.map((type) => (
             <div key={type.name} className="flex flex-col gap-2">
               <h3 className="subheading-3 text-foreground">{type.name}</h3>
               <p className="body-3 text-muted-foreground">{type.description}</p>
@@ -99,79 +163,82 @@ export default function Services() {
         </div>
       </section>
 
-      <section className="border-border/60 grid gap-6 border-b py-16 sm:grid-cols-2">
-        <div className="flex flex-col gap-3">
-          <h2 className="heading-3 text-foreground">{p.alwaysIncluded.title}</h2>
-          <ul className="flex flex-col gap-2">
-            {p.alwaysIncluded.items.map((item) => (
-              <li key={item} className="ui-dash-list-item">
-                <span className="ui-dash-marker">—</span>
-                {item}
-              </li>
-            ))}
-          </ul>
+      {/* 5. Proof */}
+      <section className="border-border/60 flex flex-col gap-6 border-b py-16">
+        <div className="flex flex-col gap-2">
+          <SectionHeading eyebrow={proof.eyebrow} title={proof.title} />
+          <p className="body-2 text-muted-foreground max-w-2xl">{proof.intro}</p>
         </div>
-        <div className="flex flex-col gap-3">
-          <h2 className="heading-3 text-foreground">{p.notIncluded.title}</h2>
-          <ul className="flex flex-col gap-2">
-            {p.notIncluded.items.map((item) => (
-              <li key={item} className="ui-dash-list-item">
-                <span className="ui-dash-marker">—</span>
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section className="border-border/60 flex flex-col gap-4 border-b py-16">
-        <h2 className="heading-2 text-foreground">{p.quoteVariables.title}</h2>
-        <p className="body-2 text-muted-foreground max-w-2xl">{p.quoteVariables.intro}</p>
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[560px] border-collapse text-left">
-            <thead>
-              <tr className="border-border/60 border-b">
-                <th className="ui-data-label py-2 pr-4 font-normal">
-                  {p.quoteVariables.columns.variable}
-                </th>
-                <th className="ui-data-label py-2 pr-4 font-normal">
-                  {p.quoteVariables.columns.lower}
-                </th>
-                <th className="ui-data-label py-2 font-normal">
-                  {p.quoteVariables.columns.higher}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {p.quoteVariables.rows.map((row) => (
-                <tr key={row.variable} className="border-border/40 border-b last:border-0">
-                  <td className="body-2 text-foreground py-3 pr-4">{row.variable}</td>
-                  <td className="body-3 text-muted-foreground py-3 pr-4">{row.lower}</td>
-                  <td className="body-3 text-muted-foreground py-3">{row.higher}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section className="border-border/60 flex flex-col gap-4 border-b py-16">
-        <h2 className="heading-2 text-foreground">{p.whyWeCostMore.title}</h2>
-        <p className="body-2 text-muted-foreground max-w-2xl">{p.whyWeCostMore.intro}</p>
-        <div className="grid gap-8 sm:grid-cols-2">
-          {p.whyWeCostMore.items.map((item) => (
-            <div key={item.name} className="flex flex-col gap-2">
-              <h3 className="subheading-3 text-foreground">{item.name}</h3>
-              <p className="body-3 text-muted-foreground">{item.description}</p>
-            </div>
+        <div className="flex flex-col gap-8">
+          {caseSnapshots.map((snapshot) => (
+            <article
+              key={snapshot.slug}
+              className="border-border/40 grid gap-4 border-b pb-8 last:border-0 last:pb-0 sm:grid-cols-[minmax(0,12rem)_1fr]"
+            >
+              <div className="flex flex-col gap-1">
+                <h3 className="heading-4 text-foreground">{snapshot.client}</h3>
+                <p className="body-4 text-muted-foreground">{snapshot.industry}</p>
+              </div>
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-1">
+                  <span className="ui-eyebrow">{proof.problemLabel}</span>
+                  <p className="body-2 text-muted-foreground">{snapshot.problem}</p>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <span className="ui-eyebrow">{proof.whatWeDidLabel}</span>
+                  <p className="body-2 text-muted-foreground">{snapshot.whatWeDid}</p>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <span className="ui-eyebrow">{proof.outcomeLabel}</span>
+                  <ul className="flex flex-col gap-1">
+                    {snapshot.outcomes.map((outcome) => (
+                      <li key={outcome} className="ui-dash-list-item">
+                        <span className="ui-dash-marker">—</span>
+                        <span className="body-2 text-foreground">{outcome}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <p className="body-4 text-muted-foreground">
+                  <span className="ui-eyebrow mr-2">{proof.servicesLabel}</span>
+                  {snapshot.services.join(" · ")}
+                </p>
+              </div>
+            </article>
           ))}
         </div>
       </section>
 
+      {/* Scope clarity — not a price list */}
+      <section className="border-border/60 grid gap-6 border-b py-16 sm:grid-cols-2">
+        <div className="flex flex-col gap-3">
+          <h2 className="heading-3 text-foreground">{scope.alwaysIncluded.title}</h2>
+          <ul className="flex flex-col gap-2">
+            {scope.alwaysIncluded.items.map((item) => (
+              <li key={item} className="ui-dash-list-item">
+                <span className="ui-dash-marker">—</span>
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="flex flex-col gap-3">
+          <h2 className="heading-3 text-foreground">{scope.notIncluded.title}</h2>
+          <ul className="flex flex-col gap-2">
+            {scope.notIncluded.items.map((item) => (
+              <li key={item} className="ui-dash-list-item">
+                <span className="ui-dash-marker">—</span>
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
       <section className="border-border/60 flex flex-col gap-4 border-b py-16">
-        <h2 className="heading-2 text-foreground">{p.faqs.title}</h2>
+        <h2 className="heading-2 text-foreground">{faqs.title}</h2>
         <div className="flex flex-col gap-8">
-          {p.faqs.items.map((faq) => (
+          {faqs.items.map((faq) => (
             <div key={faq.question} className="flex flex-col gap-2">
               <h3 className="subheading-3 text-foreground">{faq.question}</h3>
               <p className="body-3 text-muted-foreground">{faq.answer}</p>
@@ -180,35 +247,7 @@ export default function Services() {
         </div>
       </section>
 
-      <section className="border-border/60 flex flex-col gap-4 border-b py-16">
-        <h2 className="heading-2 text-foreground">{p.gettingStarted.title}</h2>
-        <ol className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {t.common.contactSteps.map((step, index) => (
-            <li key={step.title} className="flex flex-col gap-2">
-              <span className="ui-eyebrow">{String(index + 1).padStart(2, "0")}</span>
-              <h3 className="subheading-3 text-foreground">{step.title}</h3>
-              <p className="body-3 text-muted-foreground">{step.description}</p>
-            </li>
-          ))}
-        </ol>
-        <p className="body-4 text-muted-foreground">{t.common.replyWithin}</p>
-      </section>
-
-      <section className="flex flex-col gap-6 py-16">
-        <div className="flex flex-wrap items-center gap-4">
-          <Button asChild size="lg">
-            <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
-              {t.common.bookCall}
-            </a>
-          </Button>
-          <a
-            href={`mailto:${CONTACT_EMAIL}`}
-            className="body-2 text-muted-foreground hover:text-foreground underline-offset-4 hover:underline"
-          >
-            {CONTACT_EMAIL}
-          </a>
-        </div>
-      </section>
+      <ContactCta title={t.services.gettingStarted.title} bordered={false} />
     </div>
   );
 }
