@@ -4,8 +4,11 @@ const homeRoutes = [index("routes/home.tsx")] satisfies RouteConfig;
 
 const studioRoutes = [
   route("/services", "routes/services.tsx"),
+  route("/work", "routes/work.tsx"),
   route("/process", "routes/process.tsx"),
   route("/manifesto", "routes/manifesto.tsx"),
+  route("/faq", "routes/faq.tsx"),
+  route("/work/:slug", "routes/work.$slug.tsx"),
 ] satisfies RouteConfig;
 
 const apiRoutes = [

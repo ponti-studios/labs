@@ -1,6 +1,7 @@
-import { Link } from "react-router";
 import { Button, ParticleBackground } from "@pontistudios/ui";
-import { ContactCta } from "~/components/studio/contact-cta";
+import { Check, X } from "lucide-react";
+import { Link } from "react-router";
+import { Founder } from "~/components/studio/founder";
 import { BOOK_CALL_URL, servicePillars } from "~/data/studio";
 import { t } from "~/translations";
 
@@ -28,9 +29,9 @@ export default function Home() {
 
       {/* Hero */}
       <section className="border-border/60 flex flex-col gap-6 border-b py-16">
+        <span className="ui-eyebrow">{t.home.hero.eyebrow}</span>
         <h1 className="display-2 text-foreground max-w-3xl">{t.home.hero.title}</h1>
-        <p className="body-1 text-muted-foreground max-w-xl">{t.home.hero.description}</p>
-        <p className="body-2 text-muted-foreground italic">{t.home.hero.disclaimer}</p>
+        <p className="body-1 text-muted-foreground max-w-xl italic">{t.home.hero.disclaimer}</p>
         <div className="flex flex-wrap gap-3 pt-2">
           <Button asChild size="lg">
             <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
@@ -44,28 +45,34 @@ export default function Home() {
       </section>
 
       {/* Fit */}
-      <section className="border-border/60 grid gap-6 border-b py-16 sm:grid-cols-2">
-        <div className="flex flex-col gap-4">
-          <span className="ui-eyebrow">{t.home.fit.goodEyebrow}</span>
-          <ul className="flex flex-col gap-2">
-            {t.home.fit.good.map((item) => (
-              <li key={item} className="ui-dash-list-item">
-                <span className="ui-dash-marker">—</span>
-                {item}
-              </li>
-            ))}
-          </ul>
+      <section className="border-border/60 flex flex-col gap-6 border-b py-16">
+        <div className="flex flex-col gap-2">
+          <SectionHeading eyebrow={t.home.fit.eyebrow} title={t.home.fit.title} />
+          <p className="body-2 text-muted-foreground max-w-xl">{t.home.fit.intro}</p>
         </div>
-        <div className="flex flex-col gap-4">
-          <span className="ui-eyebrow">{t.home.fit.notEyebrow}</span>
-          <ul className="flex flex-col gap-2">
-            {t.home.fit.notRight.map((item) => (
-              <li key={item} className="ui-dash-list-item">
-                <span className="ui-dash-marker">—</span>
-                {item}
-              </li>
-            ))}
-          </ul>
+        <div className="grid gap-8 sm:grid-cols-2">
+          <div className="flex flex-col gap-3">
+            <span className="body-2 text-success font-medium">{t.home.fit.goodLabel}</span>
+            <ul className="flex flex-col gap-2">
+              {t.home.fit.good.map((item) => (
+                <li key={item} className="flex items-start gap-2">
+                  <Check className="text-success mt-0.5 size-4 shrink-0" aria-hidden="true" />
+                  <span className="body-2 text-foreground">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="flex flex-col gap-3">
+            <span className="body-2 text-destructive font-medium">{t.home.fit.notLabel}</span>
+            <ul className="flex flex-col gap-2">
+              {t.home.fit.notRight.map((item) => (
+                <li key={item} className="flex items-start gap-2">
+                  <X className="text-destructive mt-0.5 size-4 shrink-0" aria-hidden="true" />
+                  <span className="body-2 text-muted-foreground">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </section>
 
@@ -112,6 +119,8 @@ export default function Home() {
         </ul>
       </section>
 
+      <Founder />
+
       {/* Principles */}
       <section className="border-border/60 flex flex-col gap-4 border-b py-16">
         <SectionHeading eyebrow={t.home.principles.eyebrow} title={t.home.principles.title} />
@@ -135,8 +144,6 @@ export default function Home() {
           {t.home.process.cta}
         </Link>
       </section>
-
-      <ContactCta title={t.home.contact.title} description={t.home.contact.description} />
 
       {/* Lab */}
       <section className="flex flex-col gap-4 py-16">
