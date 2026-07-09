@@ -1,15 +1,24 @@
 import { t } from "~/translations";
 
+export type ServiceDeliverable = {
+  label: string;
+  description: string;
+};
+
 export type ServiceEntry = {
   slug: string;
   name: string;
+  deliverables: readonly ServiceDeliverable[];
+};
+
+export type CaseSnapshot = {
+  slug: string;
+  client: string;
+  industry: string;
   problem: string;
-  description: string;
-  deliverables: readonly string[];
-  bestFor: string;
-  /** Minimum price in dollars, used for sorting and display. */
-  minPrice: number;
-  unit: string;
+  whatWeDid: string;
+  outcomes: readonly string[];
+  services: readonly string[];
 };
 
 export type ServicePillar = {
@@ -17,48 +26,38 @@ export type ServicePillar = {
   services: ServiceEntry[];
 };
 
-/** Formats a minimum price as an open-ended "starting at" string, e.g. 80000 -> "$80K". */
-export function formatMinPrice(minPrice: number): string {
-  return minPrice % 1000 === 0 ? `$${minPrice / 1000}K` : `$${minPrice.toLocaleString()}`;
-}
-
-export function sortByMinPrice<T extends { minPrice: number }>(entries: T[]): T[] {
-  return [...entries].sort((a, b) => a.minPrice - b.minPrice);
-}
-
 const svc = t.services.entries;
 
+/** Intentional order: flagship product work first, then advisory/entry. */
 export const servicePillars: ServicePillar[] = [
   {
     name: t.common.pillars.product,
-    services: sortByMinPrice([
-      { slug: "engineering", ...svc.engineering, minPrice: 80_000 },
-      { slug: "product-design", ...svc.productDesign, minPrice: 25_000 },
-      {
-        slug: "fractional-product-management",
-        ...svc.fractionalProductManagement,
-        minPrice: 8_000,
-      },
-      { slug: "technical-consulting", ...svc.technicalConsulting, minPrice: 5_000 },
-      { slug: "modernization", ...svc.modernization, minPrice: 100_000 },
-    ]),
+    services: [
+      { slug: "engineering", ...svc.engineering },
+      { slug: "modernization", ...svc.modernization },
+      { slug: "product-design", ...svc.productDesign },
+      { slug: "fractional-product-management", ...svc.fractionalProductManagement },
+      { slug: "technical-consulting", ...svc.technicalConsulting },
+    ],
   },
   {
     name: t.common.pillars.content,
-    services: sortByMinPrice([
-      { slug: "brand-identity", ...svc.brandIdentity, minPrice: 35_000 },
-      { slug: "copy-messaging", ...svc.copyMessaging, minPrice: 15_000 },
-      { slug: "content-strategy", ...svc.contentStrategy, minPrice: 8_000 },
-      { slug: "visual-production", ...svc.visualProduction, minPrice: 5_000 },
-    ]),
+    services: [
+      { slug: "brand-identity", ...svc.brandIdentity },
+      { slug: "copy-messaging", ...svc.copyMessaging },
+      { slug: "content-strategy", ...svc.contentStrategy },
+      { slug: "visual-production", ...svc.visualProduction },
+    ],
   },
   {
     name: t.common.pillars.advisory,
-    services: sortByMinPrice([
-      { slug: "strategy-workshop", ...svc.strategyWorkshop, minPrice: 5_000 },
-    ]),
+    services: [{ slug: "strategy-workshop", ...svc.strategyWorkshop }],
   },
 ];
+
+export const caseSnapshots: readonly CaseSnapshot[] = t.services.proof.snapshots;
+
+export const trustNames: readonly string[] = t.services.trust.names;
 
 export const CONTACT_EMAIL = "hello@ponti.io";
 export const BOOK_CALL_URL = "https://cal.com/ponti-studios";

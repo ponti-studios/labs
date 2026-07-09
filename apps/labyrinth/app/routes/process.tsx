@@ -1,5 +1,4 @@
-import { Button } from "@pontistudios/ui";
-import { BOOK_CALL_URL, CONTACT_EMAIL } from "~/data/studio";
+import { ContactCta } from "~/components/studio/contact-cta";
 import { t } from "~/translations";
 
 export function meta(): Array<{
@@ -80,22 +79,7 @@ export default function Process() {
         </div>
       </section>
 
-      <section className="flex flex-col gap-4 py-16">
-        <h2 className="heading-2 text-foreground">{t.common.readyTitle}</h2>
-        <div className="flex flex-wrap items-center gap-4">
-          <Button asChild size="lg">
-            <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
-              {t.common.bookCall}
-            </a>
-          </Button>
-          <a
-            href={`mailto:${CONTACT_EMAIL}`}
-            className="body-2 text-muted-foreground hover:text-foreground underline-offset-4 hover:underline"
-          >
-            {CONTACT_EMAIL}
-          </a>
-        </div>
-      </section>
+      <ContactCta title={t.common.readyTitle} bordered={false} />
     </div>
   );
 }
