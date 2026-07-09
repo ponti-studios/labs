@@ -4,7 +4,6 @@ const homeRoutes = [index("routes/home.tsx")] satisfies RouteConfig;
 
 const studioRoutes = [
   route("/services", "routes/services.tsx"),
-  route("/pricing", "routes/pricing.tsx"),
   route("/process", "routes/process.tsx"),
   route("/manifesto", "routes/manifesto.tsx"),
 ] satisfies RouteConfig;
