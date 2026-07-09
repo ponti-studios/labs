@@ -16,6 +16,7 @@ import { cn } from "./lib/utils";
 import { PrefetchProvider } from "./components/prefetch-provider";
 import QueryProvider from "./components/QueryProvider";
 import { ColorSystemToggle } from "./components/color-system-toggle";
+import { t } from "./translations";
 
 const themeBootScript = `
 (() => {
@@ -78,8 +79,14 @@ export default function App() {
   return (
     <QueryProvider>
       <AppNavigation
-        brand={<img src="/logo.labyrinth.png" alt="Realitea Logo" className="size-5 w-auto" />}
+        brand={<img src="/logo.labyrinth.png" alt={t.nav.brandAlt} className="size-5 w-auto" />}
         brandHref="/"
+        links={[
+          { href: "/services", label: t.nav.services },
+          { href: "/pricing", label: t.nav.pricing },
+          { href: "/process", label: t.nav.process },
+          { href: "/manifesto", label: t.nav.manifesto },
+        ]}
         activeHref={location.pathname}
         endContent={<ColorSystemToggle />}
         renderLink={({ href, className, children }) => (

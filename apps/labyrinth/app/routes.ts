@@ -2,6 +2,13 @@ import { index, route, type RouteConfig } from "@react-router/dev/routes";
 
 const homeRoutes = [index("routes/home.tsx")] satisfies RouteConfig;
 
+const studioRoutes = [
+  route("/services", "routes/services.tsx"),
+  route("/pricing", "routes/pricing.tsx"),
+  route("/process", "routes/process.tsx"),
+  route("/manifesto", "routes/manifesto.tsx"),
+] satisfies RouteConfig;
+
 const apiRoutes = [
   route("/api/countries/list", "routes/api.countries.list.ts"),
   route("/api/covid", "routes/api.covid.ts"),
@@ -73,6 +80,7 @@ const challengeRoutes = [
 
 export default [
   ...homeRoutes,
+  ...studioRoutes,
   ...apiRoutes,
   ...featureRoutes,
   ...experimentRoutes,
