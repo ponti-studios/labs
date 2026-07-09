@@ -47,8 +47,9 @@ function toPublicDailyPuzzle(record: PuzzleRecord): PublicDailyPuzzle {
 
 export async function loadActivePublicPuzzle(
   now: Date,
+  timeZone = "UTC",
 ): Promise<{ puzzle: PublicDailyPuzzle } | null> {
-  const dateKey = getDateKey(now);
+  const dateKey = getDateKey(now, timeZone);
   const childLogger = logger.child({
     operation: "loadActivePublicPuzzle",
     dateKey,
