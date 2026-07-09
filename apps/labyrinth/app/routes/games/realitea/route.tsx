@@ -79,7 +79,7 @@ function parseTzCookie(cookieHeader: string): string | null {
     if (name !== "tz") continue;
     const value = decodeURIComponent(part.slice(eqIdx + 1).trim());
     try {
-      // Validate that the value is a recognised IANA timezone name
+      // Validate that the value is a recognized IANA timezone name
       Intl.DateTimeFormat(undefined, { timeZone: value });
       return value;
     } catch {
@@ -259,9 +259,11 @@ export default function RealiTeaRoute() {
     didSyncTzRef.current = true;
 
     const localTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    // Defensive: all modern browsers support Intl, but guard against edge cases
     if (!localTz) return;
 
-    document.cookie = `tz=${encodeURIComponent(localTz)}; path=/; max-age=${TZ_COOKIE_MAX_AGE}; SameSite=Lax`;
+    const secure = location.protocol === "https:" ? "; Secure" : "";
+    document.cookie = `tz=${encodeURIComponent(localTz)}; path=/; max-age=${TZ_COOKIE_MAX_AGE}; SameSite=Lax${secure}`;
 
     const localDateKey = getDateKey(new Date(), localTz);
     if (initialDateKeyRef.current !== localDateKey) {
