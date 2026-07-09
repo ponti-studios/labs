@@ -1,7 +1,7 @@
 import { Button, OnscreenKeyboard } from "@pontistudios/ui";
 import { cva } from "class-variance-authority";
-import { memo, useEffect, useMemo, useState } from "react";
-import { useLoaderData, type LoaderFunctionArgs } from "react-router";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
+import { useLoaderData, useRevalidator, type LoaderFunctionArgs } from "react-router";
 
 import {
   getKeyboardState,
@@ -12,6 +12,7 @@ import {
   type PublicDailyPuzzle,
   type RealiteaGuess,
 } from "~/lib/realitea";
+import { getDateKey } from "~/lib/realitea/date";
 import { loadActivePublicPuzzle } from "~/lib/realitea/puzzle.server";
 import { cn } from "~/lib/utils";
 
@@ -21,6 +22,8 @@ import { useRealiTeaShare } from "./use-share";
 
 import "./realitea.css";
 import { LucideHelpCircle, LucideNewspaper, LucideShare } from "lucide-react";
+
+const TZ_COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // one year in seconds
 
 const TILE_BASE = cva(
   "flex h-[3.6rem] w-[3.6rem] items-center justify-center rounded-2xl border text-[1.35rem] font-bold uppercase transition-colors sm:h-12 sm:w-12 sm:rounded-xl sm:text-lg md:h-14 md:w-14",
@@ -68,8 +71,27 @@ function getTileRevealStyle(state: LetterState): React.CSSProperties {
   } as React.CSSProperties;
 }
 
-export async function loader(_args: LoaderFunctionArgs) {
-  const envelope = await loadActivePublicPuzzle(new Date());
+function parseTzCookie(cookieHeader: string): string | null {
+  for (const part of cookieHeader.split(";")) {
+    const eqIdx = part.indexOf("=");
+    if (eqIdx === -1) continue;
+    const name = part.slice(0, eqIdx).trim();
+    if (name !== "tz") continue;
+    const value = decodeURIComponent(part.slice(eqIdx + 1).trim());
+    try {
+      // Validate that the value is a recognized IANA timezone name
+      Intl.DateTimeFormat(undefined, { timeZone: value });
+      return value;
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  const timeZone = parseTzCookie(request.headers.get("Cookie") ?? "") ?? "UTC";
+  const envelope = await loadActivePublicPuzzle(new Date(), timeZone);
 
   if (!envelope) {
     throw Response.json(
@@ -217,8 +239,37 @@ export function ErrorBoundary({ error }: ErrorBoundaryProps) {
 export default function RealiTeaRoute() {
   const initial = useLoaderData<LoaderData>();
   const [showInstructions, setShowInstructions] = useState(false);
+  const revalidator = useRevalidator();
 
   const currentPuzzle = initial.puzzle;
+
+  // On first mount, store the user's IANA timezone in a cookie so the server
+  // can serve the puzzle for the user's local calendar date rather than UTC.
+  // If the server used UTC and the local date differs, revalidate immediately.
+  //
+  // Both values are captured in refs so the effect dependency array is
+  // genuinely empty (runs exactly once on mount, no stale-closure risk).
+  const didSyncTzRef = useRef(false);
+  const initialDateKeyRef = useRef(currentPuzzle.dateKey);
+  const revalidateRef = useRef(revalidator.revalidate);
+  revalidateRef.current = revalidator.revalidate;
+
+  useEffect(() => {
+    if (didSyncTzRef.current) return;
+    didSyncTzRef.current = true;
+
+    const localTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    // Defensive: all modern browsers support Intl, but guard against edge cases
+    if (!localTz) return;
+
+    const secure = location.protocol === "https:" ? "; Secure" : "";
+    document.cookie = `tz=${encodeURIComponent(localTz)}; path=/; max-age=${TZ_COOKIE_MAX_AGE}; SameSite=Lax${secure}`;
+
+    const localDateKey = getDateKey(new Date(), localTz);
+    if (initialDateKeyRef.current !== localDateKey) {
+      revalidateRef.current();
+    }
+  }, []);
 
   // Read once at mount. We deliberately do not subscribe to localStorage.
   // useState lazy initializer runs exactly once per mount — one-shot seed,

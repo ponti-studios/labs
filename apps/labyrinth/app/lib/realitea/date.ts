@@ -1,9 +1,7 @@
 const DATE_KEY_FORMAT = /^\d{4}-\d{2}-\d{2}$/;
 
-const dateKeyFormat = new Intl.DateTimeFormat("en-CA", { timeZone: "UTC" });
-
-export function getDateKey(date: Date): string {
-  return dateKeyFormat.format(date);
+export function getDateKey(date: Date, timeZone = "UTC"): string {
+  return new Intl.DateTimeFormat("en-CA", { timeZone }).format(date);
 }
 
 export function isDateKey(value: string): boolean {
