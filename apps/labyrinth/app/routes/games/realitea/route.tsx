@@ -1,7 +1,7 @@
 import { Button, OnscreenKeyboard } from "@pontistudios/ui";
 import { cva } from "class-variance-authority";
-import { memo, useEffect, useMemo, useState } from "react";
-import { useLoaderData, type LoaderFunctionArgs } from "react-router";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
+import { useLoaderData, useRevalidator, type LoaderFunctionArgs } from "react-router";
 
 import {
   getKeyboardState,
@@ -68,8 +68,27 @@ function getTileRevealStyle(state: LetterState): React.CSSProperties {
   } as React.CSSProperties;
 }
 
-export async function loader(_args: LoaderFunctionArgs) {
-  const envelope = await loadActivePublicPuzzle(new Date());
+function parseTzCookie(cookieHeader: string): string | null {
+  for (const part of cookieHeader.split(";")) {
+    const eqIdx = part.indexOf("=");
+    if (eqIdx === -1) continue;
+    const name = part.slice(0, eqIdx).trim();
+    if (name !== "tz") continue;
+    const value = decodeURIComponent(part.slice(eqIdx + 1).trim());
+    try {
+      // Validate that the value is a recognised IANA timezone name
+      Intl.DateTimeFormat(undefined, { timeZone: value });
+      return value;
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  const timeZone = parseTzCookie(request.headers.get("Cookie") ?? "") ?? "UTC";
+  const envelope = await loadActivePublicPuzzle(new Date(), timeZone);
 
   if (!envelope) {
     throw Response.json(
@@ -217,8 +236,28 @@ export function ErrorBoundary({ error }: ErrorBoundaryProps) {
 export default function RealiTeaRoute() {
   const initial = useLoaderData<LoaderData>();
   const [showInstructions, setShowInstructions] = useState(false);
+  const revalidator = useRevalidator();
 
   const currentPuzzle = initial.puzzle;
+
+  // On first mount, store the user's IANA timezone in a cookie so the server
+  // can serve the puzzle for the user's local calendar date rather than UTC.
+  // If the server used UTC and the local date differs, revalidate immediately.
+  const didSyncTzRef = useRef(false);
+  useEffect(() => {
+    if (didSyncTzRef.current) return;
+    didSyncTzRef.current = true;
+
+    const localTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (!localTz) return;
+
+    document.cookie = `tz=${encodeURIComponent(localTz)}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`;
+
+    const localDateKey = new Intl.DateTimeFormat("en-CA", { timeZone: localTz }).format(new Date());
+    if (currentPuzzle.dateKey !== localDateKey) {
+      revalidator.revalidate();
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- intentionally runs once on mount
 
   // Read once at mount. We deliberately do not subscribe to localStorage.
   // useState lazy initializer runs exactly once per mount — one-shot seed,
