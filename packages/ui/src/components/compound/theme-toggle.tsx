@@ -7,7 +7,10 @@ import { cn } from "../../lib/utils";
 
 export type ThemeToggleMode = "light" | "dark";
 
-export interface ThemeToggleProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onClick"> {
+export interface ThemeToggleProps extends Omit<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  "onClick"
+> {
   mode: ThemeToggleMode;
   onModeChange: (mode: ThemeToggleMode) => void;
 }

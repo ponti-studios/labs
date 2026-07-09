@@ -209,7 +209,10 @@ export async function expireStaleArticles(game: Game, now: Date): Promise<number
         lt(articles.publishedAt, cutoff),
         inArray(
           articles.feedId,
-          db.select({ feedId: feedGames.feedId }).from(feedGames).where(eq(feedGames.gameId, game.id)),
+          db
+            .select({ feedId: feedGames.feedId })
+            .from(feedGames)
+            .where(eq(feedGames.gameId, game.id)),
         ),
       ),
     )

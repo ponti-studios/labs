@@ -272,7 +272,11 @@ export async function generatePuzzleForGame(
   game: Game,
   dateKey: string,
 ): Promise<PuzzleRecord | null> {
-  const childLogger = logger.child({ operation: "generatePuzzleForGame", game: game.slug, dateKey });
+  const childLogger = logger.child({
+    operation: "generatePuzzleForGame",
+    game: game.slug,
+    dateKey,
+  });
 
   const existing = await loadPuzzleForDate(game.id, dateKey);
   if (existing) {

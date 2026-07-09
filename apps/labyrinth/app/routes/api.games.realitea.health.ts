@@ -29,9 +29,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const game = await getGameBySlug(RHOBH_GAME_SLUG);
   if (!game) {
-    return Response.json({ health: "DEGRADED", error: `game not found: ${RHOBH_GAME_SLUG}` }, {
-      status: 500,
-    });
+    return Response.json(
+      { health: "DEGRADED", error: `game not found: ${RHOBH_GAME_SLUG}` },
+      {
+        status: 500,
+      },
+    );
   }
 
   const [puzzle, totalPuzzles, recentPuzzles, inventoryDepth, pendingArticleDepth] =

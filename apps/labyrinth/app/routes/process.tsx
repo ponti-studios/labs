@@ -16,16 +16,16 @@ export function meta(): Array<{
 export default function Process() {
   return (
     <div className="flex w-full flex-col">
-      <section className="border-border/60 flex flex-col gap-6 border-b py-16 sm:py-20">
+      <section className="border-border/60 flex flex-col gap-6 border-b py-16">
         <span className="ui-eyebrow">{t.process.eyebrow}</span>
         <h1 className="display-2 text-foreground max-w-3xl">{t.process.title}</h1>
       </section>
 
-      <section className="border-border/60 flex flex-col gap-8 border-b py-16">
+      <section className="border-border/60 flex flex-col gap-4 border-b py-16">
         <h2 className="heading-2 text-foreground">{t.process.engagementModels.title}</h2>
         <div className="grid gap-8 sm:grid-cols-2">
           {t.process.engagementModels.items.map((model) => (
-            <div key={model.name} className="flex flex-col gap-1.5">
+            <div key={model.name} className="flex flex-col gap-2">
               <h3 className="subheading-3 text-foreground">{model.name}</h3>
               <p className="body-3 text-muted-foreground">{model.description}</p>
             </div>
@@ -33,11 +33,14 @@ export default function Process() {
         </div>
       </section>
 
-      <section className="border-border/60 flex flex-col gap-10 border-b py-16">
+      <section className="border-border/60 flex flex-col gap-4 border-b py-16">
         <h2 className="heading-2 text-foreground">{t.process.steps.title}</h2>
         <ol className="flex flex-col gap-8">
           {t.process.steps.items.map((step) => (
-            <li key={step.step} className="grid gap-2 sm:grid-cols-[auto_1fr] sm:items-baseline sm:gap-6">
+            <li
+              key={step.step}
+              className="grid gap-2 sm:grid-cols-[auto_1fr] sm:items-baseline sm:gap-6"
+            >
               <span className="mono text-muted-foreground">
                 {step.step} · {step.duration}
               </span>
@@ -50,12 +53,12 @@ export default function Process() {
         </ol>
       </section>
 
-      <section className="border-border/60 grid gap-10 border-b py-16 sm:grid-cols-2">
-        <div className="flex flex-col gap-6">
+      <section className="border-border/60 grid gap-6 border-b py-16 sm:grid-cols-2">
+        <div className="flex flex-col gap-4">
           <h2 className="heading-3 text-foreground">{t.process.whatWeNeed.title}</h2>
           <ol className="flex flex-col gap-4">
             {t.process.whatWeNeed.items.map((item, index) => (
-              <li key={item.title} className="flex flex-col gap-0.5">
+              <li key={item.title} className="flex flex-col gap-1">
                 <span className="ui-eyebrow">{String(index + 1).padStart(2, "0")}</span>
                 <h3 className="subheading-3 text-foreground">{item.title}</h3>
                 <p className="body-3 text-muted-foreground">{item.description}</p>
@@ -63,11 +66,11 @@ export default function Process() {
             ))}
           </ol>
         </div>
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-4">
           <h2 className="heading-3 text-foreground">{t.process.whatYouGet.title}</h2>
           <ol className="flex flex-col gap-4">
             {t.process.whatYouGet.items.map((item, index) => (
-              <li key={item.title} className="flex flex-col gap-0.5">
+              <li key={item.title} className="flex flex-col gap-1">
                 <span className="ui-eyebrow">{String(index + 1).padStart(2, "0")}</span>
                 <h3 className="subheading-3 text-foreground">{item.title}</h3>
                 <p className="body-3 text-muted-foreground">{item.description}</p>
@@ -77,7 +80,7 @@ export default function Process() {
         </div>
       </section>
 
-      <section className="flex flex-col gap-6 py-16">
+      <section className="flex flex-col gap-4 py-16">
         <h2 className="heading-2 text-foreground">{t.common.readyTitle}</h2>
         <div className="flex flex-wrap items-center gap-4">
           <Button asChild size="lg">

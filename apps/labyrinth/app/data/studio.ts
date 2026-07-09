@@ -34,7 +34,11 @@ export const servicePillars: ServicePillar[] = [
     services: sortByMinPrice([
       { slug: "engineering", ...svc.engineering, minPrice: 80_000 },
       { slug: "product-design", ...svc.productDesign, minPrice: 25_000 },
-      { slug: "fractional-product-management", ...svc.fractionalProductManagement, minPrice: 8_000 },
+      {
+        slug: "fractional-product-management",
+        ...svc.fractionalProductManagement,
+        minPrice: 8_000,
+      },
       { slug: "technical-consulting", ...svc.technicalConsulting, minPrice: 5_000 },
       { slug: "modernization", ...svc.modernization, minPrice: 100_000 },
     ]),

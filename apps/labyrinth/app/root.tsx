@@ -83,7 +83,6 @@ export default function App() {
         brandHref="/"
         links={[
           { href: "/services", label: t.nav.services },
-          { href: "/pricing", label: t.nav.pricing },
           { href: "/process", label: t.nav.process },
           { href: "/manifesto", label: t.nav.manifesto },
         ]}

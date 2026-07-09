@@ -2,7 +2,6 @@ export const STUDIO_TRANSLATIONS_EN = {
   nav: {
     brandAlt: "Ponti Studios",
     services: "Services",
-    pricing: "Pricing",
     process: "Process",
     manifesto: "Manifesto",
   },
@@ -12,7 +11,10 @@ export const STUDIO_TRANSLATIONS_EN = {
     startingAt: "Starting at",
     replyWithin: "We reply within 24 hours.",
     contactSteps: [
-      { title: "Schedule a call", description: "No pressure conversation about your needs (30 mins)" },
+      {
+        title: "Schedule a call",
+        description: "No pressure conversation about your needs (30 mins)",
+      },
       { title: "Discovery session", description: "If we're aligned, we'll dig deeper (1–2 weeks)" },
       { title: "Proposal", description: "Detailed scope, timeline, and investment" },
       { title: "Partnership", description: "If you love it, we start building together" },
@@ -27,9 +29,9 @@ export const STUDIO_TRANSLATIONS_EN = {
 
   services: {
     meta: {
-      title: "Services | Ponti Studios",
+      title: "Services & Pricing | Ponti Studios",
       description:
-        "Premium product and content development services. Engineering, design, brand, and content strategy for teams who refuse to compromise.",
+        "Premium product and content development services and transparent pricing. Engineering, design, brand, and content strategy for teams who refuse to compromise.",
     },
     eyebrow: "What we do",
     title: "Services",
@@ -38,12 +40,10 @@ export const STUDIO_TRANSLATIONS_EN = {
     introPillarsSuffix:
       "AI is applied as a capability layer throughout — not a separate service, but part of how we work.",
     introRanges:
-      "Every engagement is different. The ranges below give you a calibrated starting point. We provide detailed proposals once we understand your specific scope. For a full explanation of how pricing works, see",
-    pricingLink: "Pricing",
+      "Every service below lists a starting price. Every engagement is different — we provide detailed proposals once we understand your specific scope. Engagement types, what's included, and FAQs are further down this page.",
     whatYouGet: "What you get",
     bestFor: "Best for",
     investment: "Investment",
-    readyTitle: "Ready to talk?",
     entries: {
       engineering: {
         name: "Engineering",
@@ -208,293 +208,178 @@ export const STUDIO_TRANSLATIONS_EN = {
         unit: "per session",
       },
     },
-  },
-
-  pricing: {
-    meta: {
-      title: "Pricing | Ponti Studios",
-      description:
-        "How Ponti Studios prices premium product and content development. Transparent ranges, clear engagement types, and an honest explanation of what moves a quote.",
-    },
-    eyebrow: "Investment",
-    title: "Pricing",
-    intro:
-      "We publish our pricing because we respect your time. These ranges reflect the real cost of senior-level work done well. If you're comparing us to cheaper alternatives, we're probably not the right fit — and that's fine.",
-    thinking: {
-      title: "How we think about pricing",
-      paragraph1:
-        "We do not price by the hour. We price by engagement type, scope, and the complexity of the problem you're bringing us. Hourly billing creates the wrong incentives — it rewards inefficiency and penalizes speed. We are a small, senior team. We move faster than larger agencies and produce less waste. Pricing by the hour would mean charging you more for being slower, which is backwards.",
-      paragraph2:
-        "What you are paying for is judgment, craft, and outcomes — not seat time. We also build quality assurance, documentation, and testing into every engagement. These are not line items you negotiate out. They are how we ensure the work holds up after we hand it over.",
-    },
-    engagementTypes: {
-      title: "Engagement types",
-      items: [
-        {
-          name: "Project",
-          description:
-            "Fixed scope, fixed timeline, fixed budget. You know what you need, we scope it, we build it. Best for defined deliverables — a product build, a brand identity, a redesign.",
-        },
-        {
-          name: "Monthly Retainer",
-          description:
-            "Ongoing partnership with a monthly commitment. Best for continuous work that compounds over time — product management, content strategy, growth. We become a consistent part of your operating rhythm.",
-        },
-        {
-          name: "Per Engagement",
-          description:
-            "Bounded advisory work with a clear output. Best for audits, architecture reviews, build-vs-buy analysis, and strategy workshops. One question, one deliverable, one fee.",
-        },
-        {
-          name: "Per Shoot",
-          description:
-            "Production work priced by the day and complexity of output. Best for photography and video campaigns.",
-        },
-      ],
-    },
-    byService: {
-      title: "Pricing by service",
-      service: "Service",
-      startingAt: "Starting at",
-      unit: "Unit",
-      pushesUp: "Pushes the quote up",
-      keepsDown: "Keeps the quote down",
-    },
-    groups: {
-      advisory: {
-        name: "Advisory",
-        description: "For bounded decisions that need expert judgment, not a full team.",
-        rows: {
-          technicalConsulting: { service: "Technical Consulting", unit: "per engagement" },
-          strategyWorkshop: { service: "Strategy Workshop", unit: "per session" },
-        },
-        pushesUp: [
-          "Large or complex codebase requiring extended review time",
-          "Multiple systems or stakeholders involved",
-          "Synthesis-heavy output — not just findings but implementation-ready recommendations",
-          "High-risk decision with significant downstream consequences",
-          "Workshop requiring custom facilitation design and pre-session research",
-        ],
-        keepsDown: [
-          "Narrow scope — one system, one question, one decision",
-          "Async-first — written review without extensive sync sessions",
-          "Existing documentation that accelerates the review",
-        ],
-      },
-      visualProduction: {
-        name: "Visual Production",
-        description: "For brands that need custom photography and video built for real use.",
-        rows: {
-          visualProduction: { service: "Visual Production", unit: "per shoot" },
-        },
-        pushesUp: [
-          "Multiple locations or shooting days",
-          "Talent coordination and casting",
-          "Video in addition to photography",
-          "Large shot list with high post-processing volume",
-          "Campaign-level production with broader commercial use",
-        ],
-        keepsDown: ["Single location, focused shot list", "Light post-processing", "Photography only"],
-      },
-      ongoingPartnership: {
-        name: "Ongoing Partnership",
-        description: "For teams that need sustained involvement over time, not a one-off deliverable.",
-        rows: {
-          fractionalProductManagement: {
-            service: "Fractional Product Management",
-            unit: "monthly retainer",
-          },
-          contentStrategy: { service: "Content Strategy", unit: "monthly retainer" },
-        },
-        pushesUp: [
-          "More weekly hours and active involvement",
-          "Multiple stakeholders or teams to coordinate across",
-          "Heavier experimentation, reporting, or content production volume",
-          "High-stakes roadmap decisions requiring strategic depth",
-          "Execution management in addition to advisory",
-        ],
-        keepsDown: [
-          "Lighter cadence — strategy and oversight without daily execution",
-          "Single focused workstream",
-          "Stable team that needs direction, not coordination",
-        ],
-      },
-      designAndBrand: {
-        name: "Design & Brand",
-        description: "For products and companies that need to look and sound like they mean it.",
-        rows: {
-          copyMessaging: { service: "Copy & Messaging", unit: "project" },
-          productDesign: { service: "Product Design", unit: "project" },
-          brandIdentity: { service: "Brand Identity", unit: "project" },
-        },
-        pushesUp: [
-          "Many screens, flows, or user types",
-          "Deep user research before design begins",
-          "Design system built from scratch (not adapted from an existing one)",
-          "Brand creation (not extension) — starting from no identity",
-          "Multiple audiences requiring distinct messaging",
-          "Website and marketing assets included alongside core identity work",
-        ],
-        keepsDown: [
-          "One focused product area or flow family",
-          "Light research — assumptions already validated",
-          "Brand extension — existing identity in good shape, needs refinement",
-          "Standalone copy engagement without accompanying visual work",
-        ],
-      },
-      productBuild: {
-        name: "Product Build",
-        description: "For software that needs to be built from scratch or substantially rebuilt.",
-        rows: {
-          engineering: { service: "Engineering", unit: "project" },
-          modernization: { service: "Modernization", unit: "project" },
-        },
-        pushesUp: [
-          "Multiple user roles with distinct permissions and workflows",
-          "Complex backend logic, data models, or algorithmic requirements",
-          "Third-party integrations that require custom connectors",
-          "Mobile in addition to web",
-          "Timeline compression — faster delivery requires more parallel capacity",
-          "Regulated industries with compliance or audit requirements",
-        ],
-        keepsDown: [
-          "Narrow scope with one core workflow",
-          "Standard infrastructure with few integrations",
-          "Clear, stable requirements before we start",
-          "Flexible timeline",
-        ],
-      },
-    },
-    alwaysIncluded: {
-      title: "What's always included",
-      items: [
-        "Quality assurance and testing — We do not ship untested work",
-        "Documentation — You should not be dependent on us to understand what we built",
-        "A defined handoff — Clear transition, not a disappearing act",
-        "Honest communication — If something changes the scope or timeline, we tell you before it's a problem",
-      ],
-    },
-    notIncluded: {
-      title: "What's not included",
-      items: [
-        "Third-party software licenses, hosting costs, or API fees — these are passed through at cost",
-        "Content you provide (copy, images, data) — we can produce this, but it is scoped separately",
-        "Ongoing maintenance after project close — we offer retainers for this; it is not assumed",
-      ],
-    },
-    quoteVariables: {
-      title: "What moves any quote",
+    pricing: {
+      eyebrow: "Investment",
+      title: "Pricing",
       intro:
-        "These variables apply across all engagement types. Understanding them helps you understand where your project is likely to land before we talk.",
-      columns: { variable: "Variable", lower: "Lower end", higher: "Higher end" },
-      rows: [
-        { variable: "Scope clarity", lower: "Defined and bounded", higher: "Still being discovered" },
-        {
-          variable: "Stakeholder count",
-          lower: "One decision-maker",
-          higher: "Many reviewers and approval loops",
-        },
-        {
-          variable: "Workflow complexity",
-          lower: "One core flow",
-          higher: "Multiple user journeys and edge cases",
-        },
-        {
-          variable: "Technical complexity",
-          lower: "Standard stack, few integrations",
-          higher: "Custom systems, migrations, compliance",
-        },
-        {
-          variable: "Research burden",
-          lower: "Assumptions already validated",
-          higher: "Discovery still needed",
-        },
-        { variable: "Timeline", lower: "Flexible", higher: "Compressed or launch-sensitive" },
-        {
-          variable: "Quality bar",
-          lower: "Functional and well-built",
-          higher: "Premium polish with heavier QA",
-        },
-        {
-          variable: "Operational risk",
-          lower: "Greenfield or low continuity risk",
-          higher: "Must preserve existing business operations",
-        },
-        {
-          variable: "Asset volume",
-          lower: "Few outputs",
-          higher: "Many screens, pages, or content deliverables",
-        },
-      ],
-    },
-    whyWeCostMore: {
-      title: "Why we cost more than alternatives",
-      intro: "This is a fair question. Here is an honest answer.",
-      items: [
-        {
-          name: "Senior practitioners, not junior contractors.",
-          description:
-            "Every person on your project has done this before. We do not staff engagements with people learning on your budget.",
-        },
-        {
-          name: "Lower total cost of ownership.",
-          description:
-            "Cheaper work usually costs more in the long run — rework, bugs, missed deadlines, and technical debt that takes years to unwind. We build for the long term from day one.",
-        },
-        {
-          name: "Fewer surprises.",
-          description:
-            "We scope carefully, communicate proactively, and tell you when something is going wrong before it is too late to fix it. That has real economic value.",
-        },
-        {
-          name: "We document and hand off.",
-          description:
-            "When we leave, you own the work and understand it. You are not dependent on us to keep the lights on.",
-        },
-        {
-          name: "We include QA.",
-          description:
-            "Testing is not optional for us. It is the difference between software that works and software that works until it matters.",
-        },
-      ],
-    },
-    faqs: {
-      title: "Frequently asked questions",
-      items: [
-        {
-          question: "Do you work with early-stage startups with limited budgets?",
-          answer:
-            "Yes, with the right engagement. Early-stage founders are a strong fit for fractional product management, advisory, or a focused MVP build. We are not a fit if the budget requires cutting quality.",
-        },
-        {
-          question: "Can we start with a smaller engagement before committing to a larger one?",
-          answer:
-            "Yes. A technical consulting engagement or strategy workshop is a natural first step. It gives you a clear deliverable and lets us both assess whether a larger partnership makes sense.",
-        },
-        {
-          question: "What is the payment structure?",
-          answer:
-            "Projects are typically billed in milestones — a portion at kick-off, at mid-point, and at delivery. Retainers are billed monthly. Advisory engagements are typically billed 50% at start, 50% at delivery.",
-        },
-        {
-          question: "What if the scope changes after we start?",
-          answer:
-            "Scope changes happen. We handle them with a simple change order — written description of what changed, the adjusted timeline, and the adjusted cost. No surprises.",
-        },
-        {
-          question: "Do you offer payment plans?",
-          answer:
-            "For large projects, yes. We can structure milestone payments across the timeline. We do not offer deferred payment.",
-        },
-        {
-          question: "How long does it take to get a proposal?",
-          answer:
-            "After a 30-minute discovery call, we typically deliver a written proposal within five business days.",
-        },
-      ],
-    },
-    gettingStarted: {
-      title: "How to get started",
+        "We publish our pricing because we respect your time. These ranges reflect the real cost of senior-level work done well. If you're comparing us to cheaper alternatives, we're probably not the right fit — and that's fine.",
+      thinking: {
+        title: "How we think about pricing",
+        paragraph1:
+          "We do not price by the hour. We price by engagement type, scope, and the complexity of the problem you're bringing us. Hourly billing creates the wrong incentives — it rewards inefficiency and penalizes speed. We are a small, senior team. We move faster than larger agencies and produce less waste. Pricing by the hour would mean charging you more for being slower, which is backwards.",
+        paragraph2:
+          "What you are paying for is judgment, craft, and outcomes — not seat time. We also build quality assurance, documentation, and testing into every engagement. These are not line items you negotiate out. They are how we ensure the work holds up after we hand it over.",
+      },
+      engagementTypes: {
+        title: "Engagement types",
+        items: [
+          {
+            name: "Project",
+            description:
+              "Fixed scope, fixed timeline, fixed budget. You know what you need, we scope it, we build it. Best for defined deliverables — a product build, a brand identity, a redesign.",
+          },
+          {
+            name: "Monthly Retainer",
+            description:
+              "Ongoing partnership with a monthly commitment. Best for continuous work that compounds over time — product management, content strategy, growth. We become a consistent part of your operating rhythm.",
+          },
+          {
+            name: "Per Engagement",
+            description:
+              "Bounded advisory work with a clear output. Best for audits, architecture reviews, build-vs-buy analysis, and strategy workshops. One question, one deliverable, one fee.",
+          },
+          {
+            name: "Per Shoot",
+            description:
+              "Production work priced by the day and complexity of output. Best for photography and video campaigns.",
+          },
+        ],
+      },
+      alwaysIncluded: {
+        title: "What's always included",
+        items: [
+          "Quality assurance and testing — We do not ship untested work",
+          "Documentation — You should not be dependent on us to understand what we built",
+          "A defined handoff — Clear transition, not a disappearing act",
+          "Honest communication — If something changes the scope or timeline, we tell you before it's a problem",
+        ],
+      },
+      notIncluded: {
+        title: "What's not included",
+        items: [
+          "Third-party software licenses, hosting costs, or API fees — these are passed through at cost",
+          "Content you provide (copy, images, data) — we can produce this, but it is scoped separately",
+          "Ongoing maintenance after project close — we offer retainers for this; it is not assumed",
+        ],
+      },
+      quoteVariables: {
+        title: "What moves any quote",
+        intro:
+          "These variables apply across all engagement types. Understanding them helps you understand where your project is likely to land before we talk.",
+        columns: { variable: "Variable", lower: "Lower end", higher: "Higher end" },
+        rows: [
+          {
+            variable: "Scope clarity",
+            lower: "Defined and bounded",
+            higher: "Still being discovered",
+          },
+          {
+            variable: "Stakeholder count",
+            lower: "One decision-maker",
+            higher: "Many reviewers and approval loops",
+          },
+          {
+            variable: "Workflow complexity",
+            lower: "One core flow",
+            higher: "Multiple user journeys and edge cases",
+          },
+          {
+            variable: "Technical complexity",
+            lower: "Standard stack, few integrations",
+            higher: "Custom systems, migrations, compliance",
+          },
+          {
+            variable: "Research burden",
+            lower: "Assumptions already validated",
+            higher: "Discovery still needed",
+          },
+          { variable: "Timeline", lower: "Flexible", higher: "Compressed or launch-sensitive" },
+          {
+            variable: "Quality bar",
+            lower: "Functional and well-built",
+            higher: "Premium polish with heavier QA",
+          },
+          {
+            variable: "Operational risk",
+            lower: "Greenfield or low continuity risk",
+            higher: "Must preserve existing business operations",
+          },
+          {
+            variable: "Asset volume",
+            lower: "Few outputs",
+            higher: "Many screens, pages, or content deliverables",
+          },
+        ],
+      },
+      whyWeCostMore: {
+        title: "Why we cost more than alternatives",
+        intro: "This is a fair question. Here is an honest answer.",
+        items: [
+          {
+            name: "Senior practitioners, not junior contractors.",
+            description:
+              "Every person on your project has done this before. We do not staff engagements with people learning on your budget.",
+          },
+          {
+            name: "Lower total cost of ownership.",
+            description:
+              "Cheaper work usually costs more in the long run — rework, bugs, missed deadlines, and technical debt that takes years to unwind. We build for the long term from day one.",
+          },
+          {
+            name: "Fewer surprises.",
+            description:
+              "We scope carefully, communicate proactively, and tell you when something is going wrong before it is too late to fix it. That has real economic value.",
+          },
+          {
+            name: "We document and hand off.",
+            description:
+              "When we leave, you own the work and understand it. You are not dependent on us to keep the lights on.",
+          },
+          {
+            name: "We include QA.",
+            description:
+              "Testing is not optional for us. It is the difference between software that works and software that works until it matters.",
+          },
+        ],
+      },
+      faqs: {
+        title: "Frequently asked questions",
+        items: [
+          {
+            question: "Do you work with early-stage startups with limited budgets?",
+            answer:
+              "Yes, with the right engagement. Early-stage founders are a strong fit for fractional product management, advisory, or a focused MVP build. We are not a fit if the budget requires cutting quality.",
+          },
+          {
+            question: "Can we start with a smaller engagement before committing to a larger one?",
+            answer:
+              "Yes. A technical consulting engagement or strategy workshop is a natural first step. It gives you a clear deliverable and lets us both assess whether a larger partnership makes sense.",
+          },
+          {
+            question: "What is the payment structure?",
+            answer:
+              "Projects are typically billed in milestones — a portion at kick-off, at mid-point, and at delivery. Retainers are billed monthly. Advisory engagements are typically billed 50% at start, 50% at delivery.",
+          },
+          {
+            question: "What if the scope changes after we start?",
+            answer:
+              "Scope changes happen. We handle them with a simple change order — written description of what changed, the adjusted timeline, and the adjusted cost. No surprises.",
+          },
+          {
+            question: "Do you offer payment plans?",
+            answer:
+              "For large projects, yes. We can structure milestone payments across the timeline. We do not offer deferred payment.",
+          },
+          {
+            question: "How long does it take to get a proposal?",
+            answer:
+              "After a 30-minute discovery call, we typically deliver a written proposal within five business days.",
+          },
+        ],
+      },
+      gettingStarted: {
+        title: "How to get started",
+      },
     },
   },
 
@@ -511,7 +396,8 @@ export const STUDIO_TRANSLATIONS_EN = {
       items: [
         {
           name: "Project-Based",
-          description: "Fixed scope, fixed timeline, fixed budget. Best when you know exactly what you need.",
+          description:
+            "Fixed scope, fixed timeline, fixed budget. Best when you know exactly what you need.",
         },
         {
           name: "Retainer",
@@ -520,7 +406,8 @@ export const STUDIO_TRANSLATIONS_EN = {
         },
         {
           name: "Time & Materials",
-          description: "Flexible scope, pay for what you use. Best for exploration and discovery phases.",
+          description:
+            "Flexible scope, pay for what you use. Best for exploration and discovery phases.",
         },
         {
           name: "Fractional Team",
@@ -698,7 +585,8 @@ export const STUDIO_TRANSLATIONS_EN = {
         },
         {
           name: "Start with the customer, work backward.",
-          description: "Every decision traces back to a human being trying to accomplish something.",
+          description:
+            "Every decision traces back to a human being trying to accomplish something.",
         },
       ],
     },
@@ -817,7 +705,8 @@ export const STUDIO_TRANSLATIONS_EN = {
       items: [
         {
           name: "Clarity over hype",
-          description: "Say the hard thing plainly. Surface the decision, reduce noise, make the next step obvious.",
+          description:
+            "Say the hard thing plainly. Surface the decision, reduce noise, make the next step obvious.",
         },
         {
           name: "Systems over features",
@@ -825,7 +714,8 @@ export const STUDIO_TRANSLATIONS_EN = {
         },
         {
           name: "Quality or nothing",
-          description: "Ship late and proud, never on-time and embarrassed. We'd rather tell you it's not ready.",
+          description:
+            "Ship late and proud, never on-time and embarrassed. We'd rather tell you it's not ready.",
         },
         {
           name: "Builders, not vendors",
@@ -838,7 +728,8 @@ export const STUDIO_TRANSLATIONS_EN = {
         },
         {
           name: "Honest to a fault",
-          description: "If it's a bad idea, we'll tell you. If there's a better way, we'll show you.",
+          description:
+            "If it's a bad idea, we'll tell you. If there's a better way, we'll show you.",
         },
       ],
     },
@@ -849,12 +740,14 @@ export const STUDIO_TRANSLATIONS_EN = {
     },
     contact: {
       title: "Ready to build something real?",
-      description: "Concept, mess, ambition, rebuild — bring it. We bring structure, standards, and execution.",
+      description:
+        "Concept, mess, ambition, rebuild — bring it. We bring structure, standards, and execution.",
     },
     lab: {
       eyebrow: "Side projects",
       title: "The Lab",
-      description: "Games, experiments, tools, and take-home challenges built for practice and play.",
+      description:
+        "Games, experiments, tools, and take-home challenges built for practice and play.",
       sourcePrefix: "Source:",
       categories: [
         {
