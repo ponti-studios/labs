@@ -1,21 +1,27 @@
 import {
+  AppNavigation,
+  Button,
+  COLOR_MODE_ATTRIBUTE,
+  COLOR_SYSTEM_ATTRIBUTE,
+} from "@pontistudios/ui";
+import {
   isRouteErrorResponse,
-  Links,
   Link,
+  Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
   useLocation,
 } from "react-router";
-import { AppNavigation, COLOR_MODE_ATTRIBUTE, COLOR_SYSTEM_ATTRIBUTE } from "@pontistudios/ui";
 
 import type { Route } from "./+types/root";
 import "./app.css";
-import { cn } from "./lib/utils";
+import { ColorSystemToggle } from "./components/color-system-toggle";
 import { PrefetchProvider } from "./components/prefetch-provider";
 import QueryProvider from "./components/QueryProvider";
-import { ColorSystemToggle } from "./components/color-system-toggle";
+import { BOOK_CALL_URL } from "./data/studio";
+import { cn } from "./lib/utils";
 import { t } from "./translations";
 
 const themeBootScript = `
@@ -79,15 +85,25 @@ export default function App() {
   return (
     <QueryProvider>
       <AppNavigation
-        brand={<img src="/logo.labyrinth.png" alt={t.nav.brandAlt} className="size-5 w-auto" />}
+        brand={<img src="/logo.ponti.png" alt={t.nav.brandAlt} className="size-6 w-auto" />}
         brandHref="/"
         links={[
           { href: "/services", label: t.nav.services },
+          { href: "/work", label: t.nav.work },
           { href: "/process", label: t.nav.process },
           { href: "/manifesto", label: t.nav.manifesto },
         ]}
         activeHref={location.pathname}
-        endContent={<ColorSystemToggle />}
+        endContent={
+          <div className="flex items-center gap-3">
+            <Button asChild size="sm">
+              <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
+                {t.nav.book}
+              </a>
+            </Button>
+            <ColorSystemToggle />
+          </div>
+        }
         renderLink={({ href, className, children }) => (
           <Link key={href} to={href} className={className}>
             {children}

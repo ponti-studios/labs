@@ -21,6 +21,7 @@ export interface AppNavigationRenderLinkArgs {
 export interface AppNavigationProps {
   brand?: React.ReactNode;
   brandHref?: string;
+  endContent: React.ReactNode;
   links?: AppNavigationLink[];
   cta?: AppNavigationCta;
   /** Current pathname used to highlight the active link. */
@@ -32,6 +33,7 @@ export interface AppNavigationProps {
 export function AppNavigation({
   brand,
   brandHref = "/",
+  endContent,
   links,
   cta,
   activeHref,
@@ -78,6 +80,7 @@ export function AppNavigation({
               }`,
               children: cta.label,
             })}
+          {endContent}
         </div>
       </nav>
     </div>

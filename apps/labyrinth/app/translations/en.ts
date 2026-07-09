@@ -2,23 +2,24 @@ export const STUDIO_TRANSLATIONS_EN = {
   nav: {
     brandAlt: "Ponti Studios",
     services: "Services",
+    work: "Work",
     process: "Process",
     manifesto: "Manifesto",
+    book: "Book",
   },
 
   common: {
     bookCall: "Book a call",
-    replyWithin: "We reply within 24 hours.",
+    replyWithin: "I reply within 24 hours.",
     contactSteps: [
       {
         title: "Schedule a call",
         description: "No pressure conversation about your needs (30 mins)",
       },
-      { title: "Discovery session", description: "If we're aligned, we'll dig deeper (1–2 weeks)" },
+      { title: "Discovery session", description: "If it's a fit, I'll dig deeper (1–2 weeks)" },
       { title: "Proposal", description: "Detailed scope, timeline, and investment" },
-      { title: "Partnership", description: "If you love it, we start building together" },
+      { title: "Partnership", description: "If you love it, I get to work" },
     ],
-    readyTitle: "Ready to build something real?",
     pillars: {
       product: "Product",
       content: "Content",
@@ -32,86 +33,40 @@ export const STUDIO_TRANSLATIONS_EN = {
       description:
         "Premium product and content development with published outcomes. Engineering, design, brand, and content strategy for teams who refuse to compromise.",
     },
-    hero: {
-      eyebrow: "What we do",
-      title: "Senior product and content partnership.",
-      introPillarsPrefix: "We work across two pillars:",
-      introPillarsAnd: "and",
-      introPillarsSuffix:
-        "AI is applied as a capability layer throughout — not a separate service, but part of how we work.",
-      introScope:
-        "Every engagement is scoped to your problem. We share a clear proposal after we understand the work — not a rate card that pretends every project is the same.",
-      proofLine:
-        "Outcomes for StreamYard, Lumina, Prolog, Thomson Reuters, Kensho, Humana, and others.",
-      seeServices: "See services",
-      seeEngagement: "How we work together",
-    },
-    trust: {
-      eyebrow: "Selected work",
-      names: [
-        "StreamYard",
-        "Thomson Reuters",
-        "Humana",
-        "Kensho",
-        "Mimecast",
-        "Lumina",
-        "Prolog",
-        "Whistle",
-        "Revrock",
-      ],
-    },
     overview: {
-      eyebrow: "What we do",
+      eyebrow: "What I do",
       title: "Services",
-      intro: "Open a service for what's included.",
-    },
-    engagementTypes: {
-      title: "How we engage",
-      intro: "We structure work around the shape of the problem — not a single contract template.",
-      items: [
-        {
-          name: "Project",
-          description:
-            "Fixed scope and timeline for a defined outcome — a product build, brand system, redesign, or modernization program.",
-        },
-        {
-          name: "Retainer",
-          description:
-            "Ongoing partnership for work that compounds week over week — product leadership, content, continuous delivery.",
-        },
-        {
-          name: "Advisory",
-          description:
-            "A bounded engagement with a written output — audits, architecture reviews, build-vs-buy, facilitated workshops.",
-        },
-        {
-          name: "Production",
-          description:
-            "Photography and video scoped by shoot and deliverables when you need original assets, not stock.",
-        },
-      ],
     },
     proof: {
       eyebrow: "Proof",
-      title: "Selected outcomes",
+      title: "Selected work",
       intro: "Hard numbers from product and engineering engagements — not adjectives.",
       problemLabel: "Problem",
-      whatWeDidLabel: "What we did",
+      whatWeDidLabel: "What I did",
       outcomeLabel: "Outcome",
       servicesLabel: "Services",
+      readCaseStudy: "Read the full case study →",
       snapshots: [
         {
           slug: "streamyard",
           client: "StreamYard",
           industry: "Creator Economy",
+          timeline: "2020–2024",
+          role: "Lead Product Engineer & Product Manager",
           problem:
             "Solo-creator product hit a B2B ceiling — no workspaces, no real roles, no path for agencies and media teams.",
           whatWeDid:
             "Led product and engineering for Teams/Business tier and the creator marketplace, from architecture through launch.",
+          approach: [
+            "Introduced a workspace abstraction so assets and permissions could be shared instead of tied to a single userId",
+            "Replaced the boolean isHost flag with numeric RBAC (role values as integers) so future roles slot in without schema changes",
+            "Migrated to the new model in four independently-deployable phases — zero downtime, no phase depended on the next having shipped",
+            "Built vector-based creator recommendations and AI conversation starters to fix a 34% collaboration-to-conversation drop-off",
+          ],
           outcomes: [
-            "$15M+ enterprise ARR unlocked",
-            "13% consumer growth within 3 months of Business launch",
-            "300% YoY creator collaborations",
+            { value: "$15M+", label: "Enterprise ARR unlocked" },
+            { value: "13%", label: "Consumer growth within 3 months of Business launch" },
+            { value: "300%", label: "YoY creator collaborations" },
           ],
           services: ["Engineering", "Product"],
         },
@@ -119,15 +74,23 @@ export const STUDIO_TRANSLATIONS_EN = {
           slug: "lumina",
           client: "Lumina",
           industry: "EdTech",
+          timeline: "2025",
+          role: "Senior Product & Platform Engineer",
           problem:
             "Acquisition leaking at checkout; retention broken by discovery, course continuity, and grading trust.",
           whatWeDid:
             "Six independently shippable workstreams across search, retention, payments, frontend performance, and grading reliability.",
+          approach: [
+            "Structured the rebuild as six independently shippable workstreams with clear interface boundaries, so no single risky rewrite blocked delivery",
+            "Built hybrid BM25 + pgvector search directly in Postgres instead of adding an external search service the scale didn't justify",
+            "Migrated Svelte 4 to 5 surface-by-surface behind feature flags — every component reversible without a deploy",
+            "Fixed grading disputes by moving from floating-point to integer arithmetic with write serialization",
+          ],
           outcomes: [
-            "Feed engagement +43%",
-            "Course return 1–2 weeks → 2 days",
-            "Second-course enrollment ~40% higher",
-            "Time-to-interactive 32% faster",
+            { value: "+43%", label: "Feed engagement" },
+            { value: "2 days", label: "Course return time, down from 1–2 weeks" },
+            { value: "~40%", label: "Higher second-course enrollment" },
+            { value: "32%", label: "Faster time-to-interactive" },
           ],
           services: ["Engineering", "Modernization", "Product"],
         },
@@ -135,14 +98,21 @@ export const STUDIO_TRANSLATIONS_EN = {
           slug: "prolog",
           client: "Prolog",
           industry: "Entertainment / AI",
+          timeline: "2024",
+          role: "Product Lead",
           problem:
             "Showrunner teams drowning in email and spreadsheet submission triage during peak staffing.",
           whatWeDid:
             "Designed and built an AI extraction and review pipeline with confidence scoring and human override.",
+          approach: [
+            "Replaced manual email and spreadsheet triage with a structured intake and extraction pipeline",
+            "Added confidence scoring so low-certainty extractions route to human review instead of failing silently",
+            "Designed the review UI around peak-staffing-season volume, not steady-state usage",
+          ],
           outcomes: [
-            "~95% extraction accuracy",
-            "Review time ~70% down",
-            "3× reviewer throughput",
+            { value: "~95%", label: "Extraction accuracy" },
+            { value: "~70%", label: "Reduction in review time" },
+            { value: "3×", label: "Reviewer throughput" },
           ],
           services: ["Engineering", "Product Design"],
         },
@@ -150,15 +120,23 @@ export const STUDIO_TRANSLATIONS_EN = {
           slug: "thomson-reuters",
           client: "Thomson Reuters",
           industry: "Enterprise",
+          timeline: "2015–2018",
+          role: "Senior Software Engineer",
           problem:
             "Global deploy and monitoring tooling siloed; primary API ~14s; a monolith optimized for no one.",
           whatWeDid:
             "Unified the Compass platform, migrated the API, decomposed the monolith, and ran technical debt as a product program.",
+          approach: [
+            "Migrated the Rails API to Node/GraphQL so clients fetched only the fields they needed, not full records",
+            "Decomposed one monolithic Angular app into three sub-applications after usage tracking showed three user groups with divergent workflows",
+            "Raised end-to-end test coverage to 90%+ as the prerequisite for the migration, not an afterthought",
+            "Tagged technical debt with user-impact scores and ran a standing monthly review to keep it visible to stakeholders",
+          ],
           outcomes: [
-            "Primary API 97% faster (13.8s → 0.5s)",
-            "Data transfer −72%",
-            "Cloud cost −30%",
-            "Critical debt −65%",
+            { value: "97%", label: "Faster primary API (13.8s → 0.5s)" },
+            { value: "−72%", label: "Data transfer volume" },
+            { value: "−30%", label: "Cloud infrastructure cost" },
+            { value: "−65%", label: "Critical technical debt" },
           ],
           services: ["Engineering", "Modernization"],
         },
@@ -166,14 +144,22 @@ export const STUDIO_TRANSLATIONS_EN = {
           slug: "kensho",
           client: "Kensho",
           industry: "Financial data",
+          timeline: "2019–2020",
+          role: "Head of Data Engineering",
           problem:
             "Multi-modal data pipeline collapsing under peak load; operational knowledge trapped in individual heads.",
           whatWeDid:
             "Led batch-to-streaming platform migration, hardware-aware routing, and durable on-call and onboarding systems.",
+          approach: [
+            "Migrated batch ETL to Kafka and Faust streaming, running both pipelines in parallel until output matched before any cutover",
+            "Split GPU-intensive transcription from market-data ticks onto separate hardware-routed worker pools",
+            "Replaced tribal knowledge with explicit on-call ownership, escalation protocols, and self-describing alerts",
+            "Led the 15-person engineering org through the S&P Global acquisition integration",
+          ],
           outcomes: [
-            "Throughput 24×",
-            "Market-data latency ~10 min → <50 ms",
-            "Time-to-first-PR 1 week → 3 hours",
+            { value: "24×", label: "Data throughput" },
+            { value: "<50ms", label: "Market-data latency, down from ~10 min" },
+            { value: "3 hrs", label: "Time-to-first-PR, down from 1 week" },
           ],
           services: ["Engineering", "Modernization"],
         },
@@ -193,11 +179,11 @@ export const STUDIO_TRANSLATIONS_EN = {
           },
           {
             label: "CI/CD",
-            description: "Deploy pipelines and environment config your team can run without us",
+            description: "Deploy pipelines and environment config your team can run without me",
           },
           {
             label: "Handoff",
-            description: "Documentation so the codebase stays maintainable after we leave",
+            description: "Documentation so the codebase stays maintainable after I leave",
           },
         ],
       },
@@ -297,7 +283,7 @@ export const STUDIO_TRANSLATIONS_EN = {
           },
           {
             label: "Training",
-            description: "Your team understands the new system before we step away",
+            description: "Your team understands the new system before I step away",
           },
         ],
       },
@@ -372,31 +358,6 @@ export const STUDIO_TRANSLATIONS_EN = {
           },
         ],
       },
-      visualProduction: {
-        name: "Visual Production",
-        deliverables: [
-          {
-            label: "Art direction",
-            description: "Shot list and visual plan before anything is captured",
-          },
-          {
-            label: "Photography",
-            description: "Product and brand images that look like you, not a stock library",
-          },
-          {
-            label: "Deliverables",
-            description: "Web-ready and high-res files sized for the places you'll use them",
-          },
-          {
-            label: "Rights",
-            description: "Full commercial use so legal is not a later surprise",
-          },
-          {
-            label: "Video",
-            description: "Motion content on request when stills aren't enough",
-          },
-        ],
-      },
       strategyWorkshop: {
         name: "Strategy Workshop",
         deliverables: [
@@ -419,101 +380,93 @@ export const STUDIO_TRANSLATIONS_EN = {
         ],
       },
     },
-    scope: {
-      alwaysIncluded: {
-        title: "What's always included",
-        items: [
-          "Quality assurance and testing — We do not ship untested work",
-          "Documentation — You should not be dependent on us to understand what we built",
-          "A defined handoff — Clear transition, not a disappearing act",
-          "Honest communication — If something changes the scope or timeline, we tell you before it's a problem",
-        ],
-      },
-      notIncluded: {
-        title: "What's not included",
-        items: [
-          "Third-party software licenses, hosting costs, or API fees — these are passed through at cost",
-          "Content you provide (copy, images, data) — we can produce this, but it is scoped separately",
-          "Ongoing maintenance after project close — we offer retainers for this; it is not assumed",
-        ],
-      },
-    },
-    faqs: {
-      title: "Frequently asked questions",
-      items: [
-        {
-          question: "How do you price engagements?",
-          answer:
-            "By scope, complexity, and engagement type — not by the hour. After a discovery call we send a written proposal with deliverables, timeline, and investment. Every engagement is different; we won't pretend a rate card can replace that conversation.",
-        },
-        {
-          question: "Do you work with early-stage startups with limited budgets?",
-          answer:
-            "Yes, with the right engagement. Early-stage founders are a strong fit for fractional product management, advisory, or a focused MVP build. We are not a fit if the budget requires cutting quality.",
-        },
-        {
-          question: "Can we start with a smaller engagement before committing to a larger one?",
-          answer:
-            "Yes. A technical consulting engagement or strategy workshop is a natural first step. It gives you a clear deliverable and lets us both assess whether a larger partnership makes sense.",
-        },
-        {
-          question: "What is the payment structure?",
-          answer:
-            "Projects are typically billed in milestones — a portion at kick-off, at mid-point, and at delivery. Retainers are billed monthly. Advisory engagements are typically billed 50% at start, 50% at delivery.",
-        },
-        {
-          question: "What if the scope changes after we start?",
-          answer:
-            "Scope changes happen. We handle them with a simple change order — written description of what changed, the adjusted timeline, and the adjusted investment. No surprises.",
-        },
-        {
-          question: "How long does it take to get a proposal?",
-          answer:
-            "After a 30-minute discovery call, we typically deliver a written proposal within five business days.",
-        },
-      ],
-    },
-    gettingStarted: {
-      title: "How to get started",
-    },
   },
 
+  faq: {
+    meta: {
+      title: "FAQ | Ponti Studios",
+      description:
+        "Answers to common questions about pricing, scope, fit, and how engagements work.",
+    },
+    eyebrow: "Questions",
+    title: "Frequently asked questions",
+    items: [
+      {
+        question: "How do you price engagements?",
+        answer:
+          "By scope, complexity, and engagement type — not by the hour. After a discovery call I send a written proposal with deliverables, timeline, and investment. Every engagement is different; I won't pretend a rate card can replace that conversation.",
+      },
+      {
+        question: "Is testing and documentation included?",
+        answer:
+          "Yes, always. I do not ship untested work, and you should never be dependent on me to understand what I built. Every engagement ends with a defined handoff, not a disappearing act.",
+      },
+      {
+        question: "What's not covered by the engagement?",
+        answer:
+          "Third-party software licenses, hosting, and API fees are passed through at cost. Content you provide (copy, images, data) I can produce, but it's scoped separately. Ongoing maintenance after project close isn't assumed — I offer retainers for that.",
+      },
+      {
+        question: "Do you work with early-stage startups with limited budgets?",
+        answer:
+          "Yes, with the right engagement. Early-stage founders are a strong fit for fractional product management, advisory, or a focused MVP build. I'm not a fit if the budget requires cutting quality.",
+      },
+      {
+        question: "Can I start with a smaller engagement before committing to a larger one?",
+        answer:
+          "Yes. A technical consulting engagement or strategy workshop is a natural first step. It gives you a clear deliverable and lets us both assess whether a larger partnership makes sense.",
+      },
+      {
+        question: "What is the payment structure?",
+        answer:
+          "Projects are typically billed in milestones — a portion at kick-off, at mid-point, and at delivery. Retainers are billed monthly. Advisory engagements are typically billed 50% at start, 50% at delivery.",
+      },
+      {
+        question: "What if the scope changes after we start?",
+        answer:
+          "Scope changes happen. I handle them with a simple change order — written description of what changed, the adjusted timeline, and the adjusted investment. No surprises.",
+      },
+      {
+        question: "How long does it take to get a proposal?",
+        answer:
+          "After a 30-minute discovery call, I typically deliver a written proposal within five business days.",
+      },
+    ],
+  },
 
   process: {
     meta: {
-      title: "How We Work | Ponti Studios",
+      title: "How I Work | Ponti Studios",
       description:
-        "How Ponti Studios engages, runs projects, and partners with clients from first call to launch and beyond.",
+        "How Charles Ponti engages, runs projects, and partners with clients from first call to launch and beyond.",
     },
-    eyebrow: "Partnership",
-    title: "How we work",
     engagementModels: {
-      title: "Engagement models",
+      title: "How I engage",
+      intro: "Four shapes. Pick the one that matches the work.",
       items: [
         {
-          name: "Project-Based",
+          name: "Project",
           description:
-            "Fixed scope, fixed timeline, fixed budget. Best when you know exactly what you need.",
+            "Fixed scope and timeline for a build, brand system, redesign, or modernization.",
         },
         {
           name: "Retainer",
           description:
-            "Ongoing partnership with monthly commitment. Best for continuous product development and support.",
+            "Week-over-week partnership for product leadership, content, or continuous delivery.",
         },
         {
-          name: "Time & Materials",
-          description:
-            "Flexible scope, pay for what you use. Best for exploration and discovery phases.",
+          name: "Advisory",
+          description: "Bounded engagement with a written output — audit, review, or workshop.",
         },
         {
           name: "Fractional Team",
           description:
-            "We become your product, design, and engineering team. Best for early-stage startups pre-Series A.",
+            "I become your product, design, and engineering team. Best for early-stage startups pre-Series A.",
         },
       ],
     },
     steps: {
-      title: "Our process",
+      title: "My process",
       items: [
         {
           step: "01",
@@ -553,20 +506,20 @@ export const STUDIO_TRANSLATIONS_EN = {
       ],
     },
     whatWeNeed: {
-      title: "What we need from you",
+      title: "What I need from you",
       items: [
         { title: "Clarity", description: "Be honest about goals, constraints, and concerns" },
         { title: "Availability", description: "Responsive feedback keeps projects moving" },
-        { title: "Trust", description: "We'll challenge your assumptions for good reason" },
-        { title: "Decisions", description: "When we present options, choose and move forward" },
+        { title: "Trust", description: "I'll challenge your assumptions for good reason" },
+        { title: "Decisions", description: "When I present options, choose and move forward" },
       ],
     },
     whatYouGet: {
-      title: "What you get from us",
+      title: "What you get from me",
       items: [
-        { title: "Excellence", description: "Work we're proud to put our name on" },
+        { title: "Excellence", description: "Work I'm proud to put my name on" },
         { title: "Transparency", description: "No surprises, ever" },
-        { title: "Partnership", description: "We're invested in your success" },
+        { title: "Partnership", description: "I'm invested in your success" },
         { title: "Results", description: "Tangible outcomes, not just activity" },
       ],
     },
@@ -575,173 +528,54 @@ export const STUDIO_TRANSLATIONS_EN = {
   manifesto: {
     meta: {
       title: "Manifesto | Ponti Studios",
-      description: "What we believe and how it shapes everything we build.",
+      description: "What I believe and how it shapes everything I build.",
     },
-    title: "Manifesto",
-    intro:
-      "We are not a vendor. We are not a feature factory. We are not here to execute tickets. We build things that last — because we believe the people using them deserve better than what they usually get.",
-    believe: {
-      title: "What we believe",
+    tenets: {
+      title: "Core tenets",
       items: [
         {
-          title: "Humans deserve their data.",
+          title: "Users first, always.",
           description:
-            "We store data on users' devices whenever possible. Access is not a feature we grant — it is a right we protect. An application that holds your data hostage is not a product; it is a trap.",
+            "Every decision starts with the customer and works backward. I store data on-device; access is a right, not a feature I grant. User needs come before profit, always — I never sell data or use it for ads. Teams are systems, not heroic individuals.",
         },
         {
-          title: "Humans deserve better software.",
+          title: "Judgment over theater.",
           description:
-            "Most software is built to ship, not to last. It is staffed by people learning on someone else's budget, scoped to minimize cost rather than maximize value, and handed off without documentation or tests. We refuse this model. Every codebase we deliver is clean, tested, and maintainable by the team that inherits it.",
+            "Knowing what to build, why, and when to stop is what I'm paid for — not generating code. I don't sell process decks; I ship, and the work is the argument. Evidence beats performance, and the best work bridges product and engineering into one discipline.",
         },
         {
-          title: "Humans deserve better businesses.",
+          title: "Simple, permanent, built to last.",
           description:
-            "We believe accessible mentorship, practical business education, and the right tools can help marginalized entrepreneurs build sustainable businesses. Decreasing income inequality is not a side project — it is a priority we build toward deliberately.",
+            "Most software ships fast and dies young, built by people learning on someone else's budget. I refuse that — every codebase I deliver is clean, tested, and maintainable. Simplicity beats complexity, and I fix problems at the root, not the surface.",
         },
         {
-          title: "Humans deserve better content.",
+          title: "Wider impact, on purpose.",
           description:
-            "Traditional content production has long been an exclusive club that frequently creates work that doesn't connect. We move away from the spray-and-pray approach and toward content that resonates — built on research, shaped by craft, and measured by outcomes.",
-        },
-      ],
-    },
-    build: {
-      title: "How we build",
-      subtitle:
-        "Kanso. Ma. Shibui. Wabi-sabi. These four principles are not aesthetic preferences. They are a discipline.",
-      footer: "Efficiency through subtraction. Authority through stillness. Value through clarity.",
-      principles: [
-        {
-          name: "Kanso",
-          jp: "簡素",
-          description:
-            "The death of decoration. Beauty is a byproduct of utility, not an addition to it. We do not decorate; we architect.",
+            "Mentorship and business education help marginalized entrepreneurs build sustainable businesses. Content earns attention through research, not spray-and-pray. Mission and profit reinforce each other — I invest that impact in education, healthcare, and finance.",
         },
         {
-          name: "Ma",
-          jp: "間",
+          title: "Function over decoration.",
           description:
-            "The power of the void. Space is not empty — it is structural. We use negative space to give ideas room to breathe.",
+            "If a feature, screen, or line of code doesn't serve your product's function, I cut it. You don't pay for decoration — every dollar buys something that actually works for your users.",
         },
         {
-          name: "Shibui",
-          jp: "渋い",
+          title: "Room to grow, not clutter.",
           description:
-            "The strength of stillness. Understated, deliberate, built for the long term. Our substance is enough.",
+            "I don't cram every possible feature in on day one. The product stays uncluttered and breathes, so you can add what's next later without a costly rebuild.",
         },
         {
-          name: "Wabi-sabi",
-          jp: "侘寂",
+          title: "Built for the long haul.",
           description:
-            "The precision of truth. Monospace clarity. Rigid grids. The raw precision of the machine.",
-        },
-      ],
-    },
-    values: {
-      title: "Core values",
-      items: [
-        {
-          name: "Consumer First",
-          description:
-            "We will always put the needs of our users first. We will never sacrifice the user experience for the sake of profit.",
+            "I skip flashy trends I'd have to rip out in a year. What I ship still works and still looks right five years from now — substance over demo-day spectacle.",
         },
         {
-          name: "Privacy First",
+          title: "Honest, not just polished.",
           description:
-            "We will never sell user data, and we will never use it for advertising. We will only use it to improve our products and services.",
+            "You get an honest picture of what's built, tested, and still rough — not complexity hidden behind a shiny surface. No surprises waiting at handoff.",
         },
-        {
-          name: "Social Separate From Media",
-          description: "Keep social interactions distinct from media consumption.",
-        },
-      ],
-    },
-    think: {
-      title: "How we think",
-      items: [
-        {
-          name: "Code is cheap. Judgment is not.",
-          description:
-            "Anyone can generate code. Knowing what to build, why, and when to stop — that is what we are paid for.",
-        },
-        {
-          name: "The work is the argument.",
-          description:
-            "We do not sell process decks or methodology slides. We ship. The quality of the output is the only credential that matters.",
-        },
-        {
-          name: "Invent and simplify.",
-          description:
-            "The right answer is almost never more complexity. Most problems are solved by removing something.",
-        },
-        {
-          name: "Fix it permanently.",
-          description:
-            "Temporary solutions are permanent the moment they ship. A workaround is a debt that someone will pay with interest.",
-        },
-        {
-          name: "Start with the customer, work backward.",
-          description:
-            "Every decision traces back to a human being trying to accomplish something.",
-        },
-      ],
-    },
-    refuse: {
-      title: "What we refuse",
-      items: [
-        "We do not staff engagements with people learning on your budget.",
-        "We do not ship untested work.",
-        "We do not disappear after delivery.",
-        "We do not mistake activity for results.",
-        "We do not value comfort over honesty. If something is going wrong, we tell you before it is too late to fix it.",
       ],
     },
     quote: "Eliminate the unnecessary so that the necessary may speak.",
-    founders: {
-      title: "The founder's principles",
-      subtitle:
-        "These are not studio policies. They are personal operating beliefs shaped by a decade of building across companies, teams, and domains.",
-      principles: [
-        {
-          title: "Evidence before performance.",
-          description:
-            "Stories before slogans. Reflection before polish. The goal is to know the real work well enough that any conversation about it becomes a conversation about judgment, not a recitation of memorized answers.",
-        },
-        {
-          title: "User value before vanity metrics.",
-          description:
-            "Technical quality in service of product clarity. Teams as systems, not collections of heroic individuals.",
-        },
-        {
-          title: "The product-engineering bridge is the job.",
-          description:
-            "The strongest work happens where product and engineering are not treated as separate worlds — turning ambiguous problems into clear systems: user research into product direction, technical constraints into architecture, and team confusion into operating rhythm.",
-        },
-        {
-          title: "Sustainable businesses create the oxygen for long-term product work.",
-          description:
-            "Mission and profitability are not opposed. The healthiest version is when user value, team health, and business strength reinforce each other.",
-        },
-      ],
-      industriesTitle: "Industries that matter",
-      industries: [
-        {
-          name: "Education",
-          description:
-            "because traditional schooling did not align with my learning style, and I believe in products that adapt to students instead of forcing every student through the same path.",
-        },
-        {
-          name: "Healthcare",
-          description:
-            "because access, awareness, and prevention change lives. Technology is most valuable when it removes barriers to care.",
-        },
-        {
-          name: "Finance",
-          description:
-            "because growing up in a low-income environment showed how much financial knowledge shapes opportunity.",
-        },
-      ],
-    },
   },
 
   home: {
@@ -751,31 +585,32 @@ export const STUDIO_TRANSLATIONS_EN = {
         "Premium product and content development for teams who refuse to compromise on quality.",
     },
     hero: {
+      eyebrow: "Product & content studio",
       title: "Premium product and content, built to last.",
-      description:
-        "Ponti Studios builds premium products and content for founders and teams who refuse to compromise on quality. Strategy, design, engineering, and brand — from concept to shipping work.",
-      disclaimer: "If you're looking for cheap and fast, we're not for you.",
+      disclaimer: "If you're looking for cheap and fast, I'm not for you.",
       seeServices: "See all services",
     },
     fit: {
-      goodEyebrow: "We're great for",
+      eyebrow: "Fit",
+      title: "Who this is for",
+      intro: "I turn down more work than I take. Here's the filter.",
+      goodLabel: "Good fit",
       good: [
-        "Early-stage startups (pre-seed through Series A)",
-        "Founders who care deeply about quality",
-        "Companies modernizing their technology",
-        "Organizations entering new markets",
-        "Teams who've been burned by cheap alternatives",
+        "Pre-seed to Series A founders who move fast",
+        "Teams modernizing a system that's outgrown itself",
+        "Founders who'd rather ship late than ship broken",
+        "Anyone burned by a cut-rate shop before",
       ],
-      notEyebrow: "We're probably not right for",
+      notLabel: "Not a fit",
       notRight: [
-        "Companies optimizing for lowest cost",
-        "Organizations needing body-shop staffing",
-        "Projects requiring compromise on quality",
-        "Teams not ready to invest in excellence",
+        "Lowest-bid procurement",
+        "Body-shop staffing requests",
+        "Scope that assumes corners get cut",
+        "Teams not ready to invest in the work",
       ],
     },
     services: {
-      eyebrow: "What we do",
+      eyebrow: "What I do",
       title: "Product and Content",
       cta: "See all services →",
     },
@@ -794,8 +629,14 @@ export const STUDIO_TRANSLATIONS_EN = {
         { name: "Whistle", category: "Education / Video" },
       ],
     },
+    founder: {
+      eyebrow: "Who's behind this",
+      name: "Charles Ponti",
+      initials: "CP",
+      bio: "Eleven years building product and engineering — from senior engineer at Thomson Reuters, to leading a 15-person data engineering team through S&P Global's acquisition of Kensho, to lead product engineer driving StreamYard's Business tier to $15M+ in enterprise ARR before it was acquired by Hopin. Founded Ponti Studios in 2024 to bring that same bar to entertainment and product teams directly.",
+    },
     principles: {
-      eyebrow: "How we think",
+      eyebrow: "How I think",
       title: "Principles",
       cta: "Read the manifesto →",
       items: [
@@ -811,12 +652,12 @@ export const STUDIO_TRANSLATIONS_EN = {
         {
           name: "Quality or nothing",
           description:
-            "Ship late and proud, never on-time and embarrassed. We'd rather tell you it's not ready.",
+            "Ship late and proud, never on-time and embarrassed. I'd rather tell you it's not ready.",
         },
         {
-          name: "Builders, not vendors",
+          name: "Builder, not vendor",
           description:
-            "We don't hand you a quote and disappear. We're shoulder-to-shoulder with you until the work is done right.",
+            "I don't hand you a quote and disappear. I'm shoulder-to-shoulder with you until the work is done right.",
         },
         {
           name: "Taste matters",
@@ -824,20 +665,14 @@ export const STUDIO_TRANSLATIONS_EN = {
         },
         {
           name: "Honest to a fault",
-          description:
-            "If it's a bad idea, we'll tell you. If there's a better way, we'll show you.",
+          description: "If it's a bad idea, I'll tell you. If there's a better way, I'll show you.",
         },
       ],
     },
     process: {
       eyebrow: "Partnership",
-      title: "How we work",
-      cta: "Engagement models and process →",
-    },
-    contact: {
-      title: "Ready to build something real?",
-      description:
-        "Concept, mess, ambition, rebuild — bring it. We bring structure, standards, and execution.",
+      title: "How I work",
+      cta: "process →",
     },
     lab: {
       eyebrow: "Side projects",

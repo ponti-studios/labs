@@ -11,13 +11,21 @@ export type ServiceEntry = {
   deliverables: readonly ServiceDeliverable[];
 };
 
+export type CaseStat = {
+  value: string;
+  label: string;
+};
+
 export type CaseSnapshot = {
   slug: string;
   client: string;
   industry: string;
+  timeline: string;
+  role: string;
   problem: string;
   whatWeDid: string;
-  outcomes: readonly string[];
+  approach: readonly string[];
+  outcomes: readonly CaseStat[];
   services: readonly string[];
 };
 
@@ -46,7 +54,6 @@ export const servicePillars: ServicePillar[] = [
       { slug: "brand-identity", ...svc.brandIdentity },
       { slug: "copy-messaging", ...svc.copyMessaging },
       { slug: "content-strategy", ...svc.contentStrategy },
-      { slug: "visual-production", ...svc.visualProduction },
     ],
   },
   {
@@ -56,8 +63,6 @@ export const servicePillars: ServicePillar[] = [
 ];
 
 export const caseSnapshots: readonly CaseSnapshot[] = t.services.proof.snapshots;
-
-export const trustNames: readonly string[] = t.services.trust.names;
 
 export const CONTACT_EMAIL = "hello@ponti.io";
 export const BOOK_CALL_URL = "https://cal.com/ponti-studios";
