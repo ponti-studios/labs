@@ -51,7 +51,7 @@ export function AppNavigation({
             children: brand,
           })}
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 overflow-x-auto">
           {links?.map((link) =>
             renderLink({
               href: link.href,
