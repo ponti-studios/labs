@@ -159,7 +159,31 @@
       "import": "./src/components/update-guard.tsx"
     },
     "./styles.css": "./src/styles.css",
-    "./animations.css": "./src/animations.css"
+    "./animations.css": "./src/animations.css",
+    "./label": {
+      "types": "./src/components/label.tsx",
+      "import": "./src/components/label.tsx"
+    },
+    "./radio-group": {
+      "types": "./src/components/radio-group.tsx",
+      "import": "./src/components/radio-group.tsx"
+    },
+    "./sheet": {
+      "types": "./src/components/sheet.tsx",
+      "import": "./src/components/sheet.tsx"
+    },
+    "./slider": {
+      "types": "./src/components/slider.tsx",
+      "import": "./src/components/slider.tsx"
+    },
+    "./stepper": {
+      "types": "./src/components/stepper.tsx",
+      "import": "./src/components/stepper.tsx"
+    },
+    "./drop-zone": {
+      "types": "./src/components/drop-zone.tsx",
+      "import": "./src/components/drop-zone.tsx"
+    }
   },
   "scripts": {
     "build": "vite build",

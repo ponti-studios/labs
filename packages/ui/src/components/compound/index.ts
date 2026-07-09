@@ -3,8 +3,8 @@ export { CountUpTo } from "./count-up-to";
 export { MetricCard } from "./metric-card";
 export { OnscreenKeyboard } from "./onscreen-keyboard";
 export { ParticleBackground } from "./particle-background";
-export { ThemeToggle } from "./theme-toggle";
 export { Spinner } from "./spinner";
+export { ThemeToggle } from "./theme-toggle";
 export type {
   AppNavigationCta,
   AppNavigationLink,
@@ -15,5 +15,5 @@ export type { CountUpToProps } from "./count-up-to";
 export type { MetricCardProps } from "./metric-card";
 export type { LetterState, OnscreenKeyboardProps } from "./onscreen-keyboard";
 export type { ParticleBackgroundPalette, ParticleBackgroundProps } from "./particle-background";
-export type { ThemeToggleMode, ThemeToggleProps } from "./theme-toggle";
 export type { SpinnerProps } from "./spinner";
+export type { ThemeToggleMode, ThemeToggleProps } from "./theme-toggle";
