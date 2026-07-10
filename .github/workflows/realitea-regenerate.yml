@@ -42,6 +42,7 @@ jobs:
       - name: ingest-feeds
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: pnpm --filter @pontistudios/labyrinth exec tsx scripts/realitea-ingest.ts
 
       - name: regenerate-future-puzzles
