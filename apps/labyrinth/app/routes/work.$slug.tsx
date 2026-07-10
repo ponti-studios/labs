@@ -1,7 +1,11 @@
+import { Button } from "@pontistudios/ui";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
-import { useLoaderData } from "react-router";
-import { caseSnapshots } from "~/data/studio";
+import { Link, useLoaderData } from "react-router";
+import { BOOK_CALL_URL, caseSnapshots } from "~/data/studio";
 import { t } from "~/translations";
+
+const copy = t.work;
+const proof = t.services.proof;
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const snapshot = caseSnapshots.find((entry) => entry.slug === params.slug);
@@ -20,47 +24,92 @@ export const meta: MetaFunction = ({ params }) => {
 
 export default function WorkSlug() {
   const { snapshot } = useLoaderData<typeof loader>();
-  const copy = t.services.proof;
 
   return (
     <div className="flex w-full flex-col">
-      <section className="border-border/60 flex flex-col gap-6 border-b py-16">
-        <h1 className="display-2 text-foreground max-w-3xl">{snapshot.client}</h1>
-        <p className="body-2 text-muted-foreground">
-          {snapshot.industry} · {snapshot.role} · {snapshot.timeline}
+      {/* Hero */}
+      <section className="border-border/60 flex flex-col gap-6 border-b px-6 py-20 sm:px-10 sm:py-28">
+        <Link
+          to="/work"
+          className="body-3 text-muted-foreground w-fit underline-offset-4 hover:text-foreground hover:underline"
+        >
+          ← {copy.backToWork}
+        </Link>
+        <h1 className="display-1 text-foreground max-w-4xl">{snapshot.client}</h1>
+        <p className="body-2 text-muted-foreground max-w-2xl">
+          {snapshot.industry}
+          <span className="text-muted-foreground/50 mx-2" aria-hidden="true">
+            ·
+          </span>
+          {snapshot.role}
+          <span className="text-muted-foreground/50 mx-2" aria-hidden="true">
+            ·
+          </span>
+          {snapshot.timeline}
         </p>
         <p className="body-1 text-foreground max-w-2xl">{snapshot.problem}</p>
       </section>
 
-      <section className="border-border/60 flex flex-col gap-4 border-b py-16">
-        <h2 className="heading-2 text-foreground">Approach</h2>
-        <ol className="flex flex-col gap-3">
+      {/* What I did */}
+      <section className="border-border/60 flex flex-col gap-4 border-b px-6 py-16 sm:px-10 sm:py-20">
+        <h2 className="heading-2 text-foreground">{proof.whatWeDidLabel}</h2>
+        <p className="body-1 text-muted-foreground max-w-2xl">{snapshot.whatWeDid}</p>
+      </section>
+
+      {/* Approach */}
+      <section className="border-border/60 flex flex-col gap-10 border-b px-6 py-16 sm:px-10 sm:py-20">
+        <h2 className="heading-2 text-foreground">{copy.approachTitle}</h2>
+        <ol className="flex flex-col gap-8">
           {snapshot.approach.map((step, index) => (
-            <li key={step} className="flex items-start gap-3">
-              <span className="text-muted-foreground shrink-0 text-xs font-medium tabular-nums">
+            <li
+              key={step}
+              className="grid gap-2 sm:grid-cols-[minmax(0,4rem)_1fr] sm:gap-8"
+            >
+              <span className="body-2 text-muted-foreground tabular-nums">
                 {String(index + 1).padStart(2, "0")}
               </span>
-              <span className="body-2 text-foreground">{step}</span>
+              <span className="body-1 text-foreground max-w-2xl">{step}</span>
             </li>
           ))}
         </ol>
       </section>
 
-      <section className="border-border/60 flex flex-col gap-6 border-b py-16">
-        <h2 className="heading-2 text-foreground">{copy.outcomeLabel}</h2>
-        <dl className="grid grid-cols-2 gap-8 sm:grid-cols-3">
+      {/* Outcomes — pull quotes, not metric tiles */}
+      <section className="border-border/60 flex flex-col gap-12 border-b px-6 py-16 sm:px-10 sm:py-20">
+        <h2 className="heading-2 text-foreground">{proof.outcomeLabel}</h2>
+        <div className="flex flex-col gap-12">
           {snapshot.outcomes.map((outcome) => (
-            <div key={outcome.label} className="flex flex-col gap-1">
-              <dt className="ui-data-value">{outcome.value}</dt>
-              <dd className="ui-data-label">{outcome.label}</dd>
+            <div key={outcome.label} className="flex max-w-3xl flex-col gap-1">
+              <p className="display-2 text-accent">{outcome.value}</p>
+              <p className="heading-4 text-foreground">{outcome.label}</p>
             </div>
           ))}
-        </dl>
+        </div>
       </section>
 
-      <section className="flex flex-col gap-2 py-16">
-        <span className="text-muted-foreground text-xs font-medium">{copy.servicesLabel}</span>
+      {/* Services used */}
+      <section className="border-border/60 flex flex-col gap-3 border-b px-6 py-12 sm:px-10">
+        <p className="body-3 text-muted-foreground">{proof.servicesLabel}</p>
         <p className="body-2 text-foreground">{snapshot.services.join(" · ")}</p>
+      </section>
+
+      {/* Close CTA */}
+      <section className="flex flex-col gap-6 px-6 py-20 sm:px-10 sm:py-24">
+        <h2 className="display-2 text-foreground max-w-3xl">{copy.nextCta.title}</h2>
+        <p className="body-1 text-muted-foreground max-w-xl">{copy.nextCta.body}</p>
+        <div className="flex flex-wrap items-center gap-6 pt-2">
+          <Button asChild size="lg">
+            <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
+              {t.common.bookCall}
+            </a>
+          </Button>
+          <Link
+            to="/engage"
+            className="body-2 text-foreground underline-offset-4 hover:underline"
+          >
+            {t.home.services.cta}
+          </Link>
+        </div>
       </section>
     </div>
   );

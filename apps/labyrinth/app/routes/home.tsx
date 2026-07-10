@@ -1,5 +1,4 @@
-import { Button, ParticleBackground } from "@pontistudios/ui";
-import { Check, X } from "lucide-react";
+import { Button } from "@pontistudios/ui";
 import { Link } from "react-router";
 import { BOOK_CALL_URL } from "~/data/studio";
 import { t } from "~/translations";
@@ -12,11 +11,7 @@ export function meta(): Array<{
   return [{ title: t.home.meta.title }, { name: "description", content: t.home.meta.description }];
 }
 
-function SectionHeading({ title }: { title: string }) {
-  return <h2 className="heading-2 text-foreground">{title}</h2>;
-}
-
-/** A single-line pointer to the page that actually owns this content — never a second copy of it. */
+/** Points at the page that owns this content — never a second copy of it. */
 function Teaser({
   title,
   intro,
@@ -29,9 +24,9 @@ function Teaser({
   to: string;
 }) {
   return (
-    <div className="flex flex-col gap-3">
-      <SectionHeading title={title} />
-      <p className="body-2 text-muted-foreground max-w-xl">{intro}</p>
+    <div className="flex flex-col gap-4">
+      <h2 className="heading-2 text-foreground">{title}</h2>
+      <p className="body-1 text-muted-foreground max-w-2xl">{intro}</p>
       <Link to={to} className="body-2 text-foreground w-fit underline-offset-4 hover:underline">
         {cta}
       </Link>
@@ -41,49 +36,51 @@ function Teaser({
 
 export default function Home() {
   return (
-    <div className="relative flex w-full flex-col">
-      <ParticleBackground />
-
+    <div className="flex w-full flex-col">
       {/* Hero */}
-      <section className="border-border/60 flex flex-col gap-6 border-b py-16">
-        <h1 className="display-2 text-foreground max-w-3xl">{t.home.hero.title}</h1>
-        <p className="body-1 text-muted-foreground max-w-xl italic">{t.home.hero.disclaimer}</p>
-        <div className="flex flex-wrap gap-3 pt-2">
+      <section className="border-border/60 flex flex-col gap-6 border-b px-6 py-20 sm:px-10 sm:py-28">
+        <h1 className="display-1 text-foreground max-w-4xl">{t.home.hero.title}</h1>
+        <p className="body-1 text-muted-foreground max-w-2xl">{t.home.hero.disclaimer}</p>
+        <div className="flex flex-wrap items-center gap-6 pt-2">
           <Button asChild size="lg">
             <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
               {t.common.bookCall}
             </a>
           </Button>
-          <Button asChild variant="outline" size="lg">
-            <Link to="/engage">{t.home.hero.seeServices}</Link>
-          </Button>
+          <Link
+            to="/engage"
+            className="body-2 text-foreground underline-offset-4 hover:underline"
+          >
+            {t.home.hero.seeServices}
+          </Link>
         </div>
+        <p className="body-2 text-muted-foreground max-w-2xl pt-2">{t.home.hero.credibility}</p>
       </section>
 
-      {/* Fit */}
-      <section className="border-border/60 flex flex-col gap-6 border-b py-16">
-        <div className="flex flex-col gap-2">
-          <SectionHeading title={t.home.fit.title} />
-          <p className="body-2 text-muted-foreground max-w-xl">{t.home.fit.intro}</p>
+      {/* Fit — the filter, editorial two-column */}
+      <section className="border-border/60 flex flex-col gap-10 border-b px-6 py-20 sm:px-10 sm:py-24">
+        <div className="flex flex-col gap-3">
+          <h2 className="heading-2 text-foreground">{t.home.fit.title}</h2>
+          <p className="body-2 text-muted-foreground max-w-2xl">{t.home.fit.intro}</p>
         </div>
-        <div className="grid gap-8 sm:grid-cols-2">
-          <div className="flex flex-col gap-3">
-            <span className="body-2 text-success font-medium">{t.home.fit.goodLabel}</span>
-            <ul className="flex flex-col gap-2">
+        <div className="grid gap-12 sm:grid-cols-2 sm:gap-16">
+          <div className="flex flex-col gap-4">
+            <h3 className="heading-4 text-accent">{t.home.fit.goodLabel}</h3>
+            <ul className="flex flex-col gap-3">
               {t.home.fit.good.map((item) => (
-                <li key={item} className="flex items-start gap-2">
-                  <Check className="text-success mt-0.5 size-4 shrink-0" aria-hidden="true" />
+                <li key={item} className="ui-dash-list-item">
+                  <span className="ui-dash-marker">—</span>
                   <span className="body-2 text-foreground">{item}</span>
                 </li>
               ))}
             </ul>
           </div>
-          <div className="flex flex-col gap-3">
-            <span className="body-2 text-destructive font-medium">{t.home.fit.notLabel}</span>
-            <ul className="flex flex-col gap-2">
+          <div className="flex flex-col gap-4">
+            <h3 className="heading-4 text-muted-foreground">{t.home.fit.notLabel}</h3>
+            <ul className="flex flex-col gap-3">
               {t.home.fit.notRight.map((item) => (
-                <li key={item} className="flex items-start gap-2">
-                  <X className="text-destructive mt-0.5 size-4 shrink-0" aria-hidden="true" />
+                <li key={item} className="ui-dash-list-item">
+                  <span className="ui-dash-marker">—</span>
                   <span className="body-2 text-muted-foreground">{item}</span>
                 </li>
               ))}
@@ -92,8 +89,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* What I do — full catalog lives on /engage, not here */}
-      <section className="border-border/60 border-b py-16">
+      {/* Teasers — full catalog / work / manifesto live on their own routes */}
+      <section className="border-border/60 border-b px-6 py-16 sm:px-10 sm:py-20">
         <Teaser
           title={t.home.services.title}
           intro={t.home.services.intro}
@@ -102,8 +99,7 @@ export default function Home() {
         />
       </section>
 
-      {/* Selected work — full case studies live on /work, not here */}
-      <section className="border-border/60 border-b py-16">
+      <section className="border-border/60 border-b px-6 py-16 sm:px-10 sm:py-20">
         <Teaser
           title={t.home.work.title}
           intro={t.home.work.intro}
@@ -112,8 +108,7 @@ export default function Home() {
         />
       </section>
 
-      {/* How I think — full tenets live on /manifesto, not here */}
-      <section className="border-border/60 border-b py-16">
+      <section className="border-border/60 border-b px-6 py-16 sm:px-10 sm:py-20">
         <Teaser
           title={t.home.principles.title}
           intro={t.home.principles.intro}
@@ -122,14 +117,16 @@ export default function Home() {
         />
       </section>
 
-      {/* Lab */}
-      <section className="flex flex-col gap-4 py-16">
-        <SectionHeading title={t.home.lab.title} />
-        <p className="body-2 text-muted-foreground max-w-xl">{t.home.lab.description}</p>
-        <div className="grid gap-8 sm:grid-cols-2">
+      {/* Lab — personal side projects, quieter closing band */}
+      <section className="flex flex-col gap-10 px-6 py-20 sm:px-10 sm:py-24">
+        <div className="flex flex-col gap-3">
+          <h2 className="heading-2 text-foreground">{t.home.lab.title}</h2>
+          <p className="body-2 text-muted-foreground max-w-2xl">{t.home.lab.description}</p>
+        </div>
+        <div className="grid gap-12 sm:grid-cols-2 sm:gap-16">
           {t.home.lab.categories.map((cat) => (
-            <div key={cat.name} className="space-y-4">
-              <h3 className="heading-4 text-foreground">{cat.name}</h3>
+            <div key={cat.name} className="flex flex-col gap-4">
+              <h3 className="heading-4 text-accent">{cat.name}</h3>
               <ul className="flex flex-col gap-2">
                 {cat.entries.map((entry) => (
                   <li key={entry.path}>
@@ -138,7 +135,7 @@ export default function Home() {
                       title={
                         "source" in entry ? `${t.home.lab.sourcePrefix} ${entry.source}` : undefined
                       }
-                      className="hover:bg-muted hover:text-foreground focus-visible:text-foreground focus-visible:outline-ring rounded-md transition-colors duration-100 focus-visible:outline-1 focus-visible:outline-offset-4"
+                      className="body-2 text-foreground hover:text-muted-foreground underline-offset-4 hover:underline focus-visible:outline-ring rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4"
                     >
                       {entry.label}
                     </a>
