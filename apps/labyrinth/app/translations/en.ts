@@ -32,15 +32,13 @@ export const STUDIO_TRANSLATIONS_EN = {
         "Product engineering, design, and advisory — scoped clearly, shipped with proof.",
     },
     hero: {
-      title: "Product and engineering.",
-      punch: "Nothing else.",
-      body: "Engineering, product design, and technical judgment — from the first hard decision to a handoff your team can run without me. I don't do content or brand.",
+      title: "You have problems.",
+      punch: "I solve them.",
       seeWork: "See the work",
     },
     services: {
       title: "What I do",
-      intro:
-        "Two pillars. Every engagement is scoped to a clear outcome — not a vague retainer and a pile of hours.",
+      intro: "No vague retainers. No hidden fees. Just clear outcomes.",
     },
     process: {
       title: "How we start",
@@ -678,35 +676,24 @@ export const STUDIO_TRANSLATIONS_EN = {
     services: {
       title: "What I do",
       intro: "Product and engineering, from a scoped build to embedded leadership.",
-      cta: "Services →",
+      cta: "Services ",
     },
     work: {
       title: "Work",
-      intro: "Real engagements, real numbers — not case study theater.",
-      cta: "See the work →",
     },
     principles: {
       title: "Manifesto",
-      intro: "Nine tenets, no filler — what actually shapes the work.",
-      cta: "Read →",
     },
     lab: {
       title: "The Lab",
-      description:
-        "Games, experiments, tools, and take-home challenges built for practice and play.",
-      sourcePrefix: "Source:",
+      description: "practice and play.",
       categories: [
         {
-          name: "Games",
+          name: "Experiments",
           entries: [
             { path: "/games/realitea", label: "RealiTea" },
             { path: "/games/cards", label: "Cards" },
             { path: "/games/tetris", label: "Tetris" },
-          ],
-        },
-        {
-          name: "Experiments",
-          entries: [
             { path: "/experiments/career-resume-animated", label: "Career Resume Animated" },
             { path: "/experiments/calendar", label: "Calendar" },
             { path: "/experiments/pixel-descent.html", label: "Pixel Descent" },
@@ -716,19 +703,9 @@ export const STUDIO_TRANSLATIONS_EN = {
             { path: "/experiments/threegl-web-request", label: "ThreeGL Web Request" },
             { path: "/experiments/threegl-image-gallery", label: "ThreeGL Image Gallery" },
             { path: "/experiments/infinite-scroll", label: "Infinite Scroll" },
-          ],
-        },
-        {
-          name: "Tools",
-          entries: [
             { path: "/gen/image", label: "Image Generation" },
             { path: "/tarot", label: "Tarot" },
             { path: "/covid", label: "COVID Analytics" },
-          ],
-        },
-        {
-          name: "Challenges",
-          entries: [
             { path: "/challenges/anagrams", label: "Group Anagrams", source: "ChartHop" },
             {
               path: "/challenges/click-therapeutics",

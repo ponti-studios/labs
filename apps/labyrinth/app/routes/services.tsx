@@ -11,7 +11,6 @@ export function meta(): Array<{ title?: string; name?: string; content?: string 
   return [{ title: copy.meta.title }, { name: "description", content: copy.meta.description }];
 }
 
-/** Lead sits still — "Nothing else." cuts in as the accent punch. One reveal, once, on load. */
 function ServicesHeroHeadline() {
   const reduceMotion = useReducedMotion();
   return (
@@ -32,10 +31,9 @@ function ServicesHeroHeadline() {
 export default function Services() {
   return (
     <div className="flex w-full flex-col">
-      {/* Hero — one frame, one idea */}
       <section className="border-border/60 flex flex-col gap-6 border-b px-6 py-20 sm:px-10 sm:py-28">
         <ServicesHeroHeadline />
-        <p className="body-1 text-muted-foreground max-w-2xl">{copy.hero.body}</p>
+
         <div className="flex flex-wrap items-center gap-6 pt-2">
           <Button asChild size="lg">
             <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
