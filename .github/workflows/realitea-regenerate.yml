@@ -1,4 +1,4 @@
-name: RealiTea Regenerate
+name: realitea - regenerate
 
 on:
   workflow_dispatch:

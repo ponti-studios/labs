@@ -47,7 +47,7 @@ export function AppNavigation({
   };
 
   return (
-    <div className="bg-background/80 sticky top-0 z-50 flex w-full justify-center px-2 py-2 backdrop-blur-sm backdrop-saturate-150 md:px-0">
+    <div className="bg-background/80 sticky top-0 z-50 flex w-full justify-center p-2 backdrop-blur-sm backdrop-saturate-150">
       <nav className="flex w-full max-w-7xl items-center justify-between py-2">
         {brand &&
           renderLink({
