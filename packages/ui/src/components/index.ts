@@ -1,3 +1,4 @@
+export { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./accordion";
 export {
   AlertDialog,
   AlertDialogAction,
@@ -17,8 +18,41 @@ export {
   PasskeyButton,
   PasskeyManagement,
 } from "./auth";
+export type {
+  AuthScaffoldProps,
+  EmailEntryFormProps,
+  OtpCodeInputProps,
+  OtpVerificationFormProps,
+  PasskeyButtonProps,
+  PasskeyManagementProps,
+  PasskeyRecord,
+} from "./auth";
 export { Avatar, AvatarFallback, AvatarGroup, AvatarGroupCount, AvatarImage } from "./avatar";
+export { Badge, badgeVariants } from "./badge";
+export { Button, buttonVariants } from "./button";
 export { Calendar } from "./calendar";
+export type { CalendarProps } from "./calendar";
+export {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./card";
+export {
+  Command,
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandListLoading,
+  CommandSeparator,
+  CommandShortcut,
+} from "./command";
 export {
   AppNavigation,
   CountUpTo,
@@ -27,7 +61,33 @@ export {
   ParticleBackground,
   Spinner,
 } from "./compound";
+export type {
+  AppNavigationCta,
+  AppNavigationLink,
+  AppNavigationProps,
+  AppNavigationRenderLinkArgs,
+  CountUpToProps,
+  LetterState,
+  MetricCardProps,
+  OnscreenKeyboardProps,
+  ParticleBackgroundPalette,
+  ParticleBackgroundProps,
+  SpinnerProps,
+} from "./compound";
 export { DatePicker } from "./date-picker";
+export type { DatePickerProps } from "./date-picker";
+export {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogOverlay,
+  DialogPortal,
+  DialogTitle,
+  DialogTrigger,
+} from "./dialog";
 export {
   Drawer,
   DrawerClose,
@@ -57,45 +117,16 @@ export {
   DropdownMenuTrigger,
 } from "./dropdown-menu";
 export { ActiveFiltersBar, FilterChip, FilterControls, FilterSelect } from "./filters";
+export type {
+  ActiveFilter,
+  ActiveFiltersBarProps,
+  FilterChipProps,
+  FilterControlsProps,
+  FilterSelectOption,
+  FilterSelectProps,
+} from "./filters";
 export { InboxStreamRow } from "./inbox";
-export { Switch } from "./switch";
-export { UpdateGuard } from "./update-guard";
-export { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./accordion";
-export { Badge, badgeVariants } from "./badge";
-export { Button, buttonVariants } from "./button";
-export {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "./card";
-export {
-  Command,
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandListLoading,
-  CommandSeparator,
-  CommandShortcut,
-} from "./command";
-export {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogOverlay,
-  DialogPortal,
-  DialogTitle,
-  DialogTrigger,
-} from "./dialog";
+export type { InboxStreamRowItem, InboxStreamRowLinkProps, InboxStreamRowProps } from "./inbox";
 export { Input } from "./input";
 export { Label } from "./label";
 export { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "./popover";
@@ -125,6 +156,7 @@ export {
 export { Slider } from "./slider";
 export { Stepper } from "./stepper";
 export type { StepperProps } from "./stepper";
+export { Switch } from "./switch";
 export {
   Table,
   TableBody,
@@ -137,37 +169,3 @@ export {
 } from "./table";
 export { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
 export { Textarea } from "./textarea";
-export type {
-  AuthScaffoldProps,
-  EmailEntryFormProps,
-  OtpCodeInputProps,
-  OtpVerificationFormProps,
-  PasskeyButtonProps,
-  PasskeyManagementProps,
-  PasskeyRecord,
-} from "./auth";
-export type { CalendarProps } from "./calendar";
-export type {
-  AppNavigationCta,
-  AppNavigationLink,
-  AppNavigationProps,
-  AppNavigationRenderLinkArgs,
-  CountUpToProps,
-  LetterState,
-  MetricCardProps,
-  OnscreenKeyboardProps,
-  ParticleBackgroundPalette,
-  ParticleBackgroundProps,
-  SpinnerProps,
-} from "./compound";
-export type { DatePickerProps } from "./date-picker";
-export type {
-  ActiveFilter,
-  ActiveFiltersBarProps,
-  FilterChipProps,
-  FilterControlsProps,
-  FilterSelectOption,
-  FilterSelectProps,
-} from "./filters";
-export type { InboxStreamRowItem, InboxStreamRowLinkProps, InboxStreamRowProps } from "./inbox";
-export type { UpdateGuardCopy, UpdateGuardProps } from "./update-guard";

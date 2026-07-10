@@ -17,16 +17,16 @@ export {
   AlertDialogTrigger,
 } from "./components/alert-dialog";
 export { AuthScaffold } from "./components/auth/auth-scaffold";
-export { EmailEntryForm } from "./components/auth/email-entry-form";
-export { OtpCodeInput } from "./components/auth/otp-code-input";
-export { OtpVerificationForm } from "./components/auth/otp-verification-form";
-export { PasskeyButton } from "./components/auth/passkey-button";
-export { PasskeyManagement } from "./components/auth/passkey-management";
 export type { AuthScaffoldProps } from "./components/auth/auth-scaffold";
+export { EmailEntryForm } from "./components/auth/email-entry-form";
 export type { EmailEntryFormProps } from "./components/auth/email-entry-form";
+export { OtpCodeInput } from "./components/auth/otp-code-input";
 export type { OtpCodeInputProps } from "./components/auth/otp-code-input";
+export { OtpVerificationForm } from "./components/auth/otp-verification-form";
 export type { OtpVerificationFormProps } from "./components/auth/otp-verification-form";
+export { PasskeyButton } from "./components/auth/passkey-button";
 export type { PasskeyButtonProps } from "./components/auth/passkey-button";
+export { PasskeyManagement } from "./components/auth/passkey-management";
 export type { PasskeyManagementProps, PasskeyRecord } from "./components/auth/passkey-management";
 export {
   Avatar,
@@ -61,26 +61,26 @@ export {
   CommandShortcut,
 } from "./components/command";
 export { AppNavigation } from "./components/compound/app-navigation";
-export { CountUpTo } from "./components/compound/count-up-to";
-export { MetricCard } from "./components/compound/metric-card";
-export { OnscreenKeyboard } from "./components/compound/onscreen-keyboard";
-export { ParticleBackground } from "./components/compound/particle-background";
-export { Spinner } from "./components/compound/spinner";
-export { ThemeToggle } from "./components/compound/theme-toggle";
 export type {
   AppNavigationCta,
   AppNavigationLink,
   AppNavigationProps,
   AppNavigationRenderLinkArgs,
 } from "./components/compound/app-navigation";
+export { CountUpTo } from "./components/compound/count-up-to";
 export type { CountUpToProps } from "./components/compound/count-up-to";
+export { MetricCard } from "./components/compound/metric-card";
 export type { MetricCardProps } from "./components/compound/metric-card";
+export { OnscreenKeyboard } from "./components/compound/onscreen-keyboard";
 export type { LetterState, OnscreenKeyboardProps } from "./components/compound/onscreen-keyboard";
+export { ParticleBackground } from "./components/compound/particle-background";
 export type {
   ParticleBackgroundPalette,
   ParticleBackgroundProps,
 } from "./components/compound/particle-background";
+export { Spinner } from "./components/compound/spinner";
 export type { SpinnerProps } from "./components/compound/spinner";
+export { ThemeToggle } from "./components/compound/theme-toggle";
 export type { ThemeToggleMode, ThemeToggleProps } from "./components/compound/theme-toggle";
 export { DatePicker } from "./components/date-picker";
 export type { DatePickerProps } from "./components/date-picker";
@@ -107,6 +107,8 @@ export {
   DrawerTitle,
   DrawerTrigger,
 } from "./components/drawer";
+export { DropZone } from "./components/drop-zone";
+export type { DropZoneFileInfo, DropZoneProps, DropZoneStatus } from "./components/drop-zone";
 export {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -129,12 +131,12 @@ export { useInlineEnhance } from "./components/enhance/use-inline-enhance";
 export { Field } from "./components/field";
 export type { FieldProps } from "./components/field";
 export { ActiveFiltersBar } from "./components/filters/active-filters-bar";
-export { FilterChip } from "./components/filters/filter-chip";
-export { FilterControls } from "./components/filters/filter-controls";
-export { FilterSelect } from "./components/filters/filter-select";
 export type { ActiveFilter, ActiveFiltersBarProps } from "./components/filters/active-filters-bar";
+export { FilterChip } from "./components/filters/filter-chip";
 export type { FilterChipProps } from "./components/filters/filter-chip";
+export { FilterControls } from "./components/filters/filter-controls";
 export type { FilterControlsProps } from "./components/filters/filter-controls";
+export { FilterSelect } from "./components/filters/filter-select";
 export type { FilterSelectOption, FilterSelectProps } from "./components/filters/filter-select";
 export { InboxStreamRow } from "./components/inbox/inbox-stream-row";
 export type {
@@ -143,12 +145,12 @@ export type {
   InboxStreamRowProps,
 } from "./components/inbox/inbox-stream-row";
 export { Input } from "./components/input";
+export { Label } from "./components/label";
 export { LoadingSpinner } from "./components/loading-spinner";
 export { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "./components/popover";
 export { PercentageProgressBar, Progress, VolumeProgressBar } from "./components/progress";
 export type { PercentageProgressBarProps, VolumeProgressBarProps } from "./components/progress";
 export { RadioGroup, RadioGroupItem } from "./components/radio-group";
-export { Label } from "./components/label";
 export {
   Select,
   SelectContent,
@@ -173,13 +175,8 @@ export {
 export { Slider } from "./components/slider";
 export { Stepper } from "./components/stepper";
 export type { StepperProps } from "./components/stepper";
+
 export { Switch } from "./components/switch";
-export { DropZone } from "./components/drop-zone";
-export type { DropZoneFileInfo, DropZoneProps, DropZoneStatus } from "./components/drop-zone";
-export { EmptyState } from "./components/surfaces/empty-state";
-export { SectionIntro } from "./components/surfaces/section-intro";
-export { StatePanel } from "./components/surfaces/state-panel";
-export { SurfacePanel } from "./components/surfaces/surface-panel";
 export {
   Table,
   TableBody,
@@ -194,30 +191,31 @@ export { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/tabs";
 export { TextField } from "./components/text-field";
 export type { TextFieldProps } from "./components/text-field";
 export { Textarea } from "./components/textarea";
-export { UpdateGuard } from "./components/update-guard";
-export type { UpdateGuardCopy, UpdateGuardProps } from "./components/update-guard";
 export { CHART_COLORS, CHART_CSS_VARS } from "./constants/chart-colors";
+export type { SortDirection, SortField, SortOption } from "./hooks/sort.types";
 export { useApiClient } from "./hooks/use-api-client";
 export { useDebouncedValue } from "./hooks/use-debounced-value";
 export { useFilterState } from "./hooks/use-filter-state";
 export { useMediaQuery } from "./hooks/use-media-query";
 export { useIsMobile } from "./hooks/use-mobile";
-export type { SortDirection, SortField, SortOption } from "./hooks/sort.types";
+export { normalizeOtp, OTP_LENGTH } from "./lib/auth";
 export { copyToClipboard } from "./lib/clipboard";
 export { createMemoryStorage } from "./lib/create-memory-storage";
-export { OTP_LENGTH, normalizeOtp } from "./lib/auth";
 export { cn } from "./lib/utils";
-export { colors } from "./tokens/colors";
 export {
   COLOR_MODE_ATTRIBUTE,
   COLOR_SYSTEM_ATTRIBUTE,
+  colors,
   colorSystems,
   colorTokenNames,
 } from "./tokens/colors";
+export type { ColorMode, ColorSystem, ColorToken } from "./tokens/colors";
 export { durations, easingWeb, translateDistances } from "./tokens/motion";
 export { radii } from "./tokens/radii";
+export type { RadiusToken } from "./tokens/radii";
 export { shadowsNative, shadowsWeb } from "./tokens/shadows";
 export { contentWidths, spacing } from "./tokens/spacing";
+export type { ContentWidthToken, SpacingToken } from "./tokens/spacing";
 export {
   fontFamilies,
   fontSizes,
@@ -225,9 +223,6 @@ export {
   letterSpacing,
   lineHeights,
 } from "./tokens/typography";
-export type { ColorMode, ColorSystem, ColorToken } from "./tokens/colors";
-export type { RadiusToken } from "./tokens/radii";
-export type { ContentWidthToken, SpacingToken } from "./tokens/spacing";
 export type { FontSizeToken, FontWeightToken } from "./tokens/typography";
 export { registerUiTranslations, translateUi, UI_TRANSLATIONS_EN } from "./translations";
 
