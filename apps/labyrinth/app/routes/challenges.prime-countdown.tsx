@@ -91,11 +91,11 @@ export default function PrimeCountdown(): JSX.Element {
             <>
               <div className="flex items-center gap-2">
                 <p className="font-mono font-semibold text-green-600">{primesCount}</p>
-                <p className="ui-eyebrow">Primes found</p>
+                <p className="text-muted-foreground text-xs font-medium">Primes found</p>
               </div>
               <div className="flex items-center gap-2">
                 <p className="font-mono font-semibold">{compositeCount}</p>
-                <p className="ui-eyebrow">Composite</p>
+                <p className="text-muted-foreground text-xs font-medium">Composite</p>
               </div>
             </>
           )}

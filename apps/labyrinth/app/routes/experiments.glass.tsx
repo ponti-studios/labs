@@ -68,7 +68,7 @@ export default function ExperimentsGlass() {
     <div className="relative h-[calc(100vh-150px)] w-full overflow-hidden rounded-3xl">
       {/* Controls panel */}
       <div className="bg-card absolute top-4 right-4 z-50 max-w-72 rounded-lg p-3">
-        <p className="ui-eyebrow mb-1">Glass Effect</p>
+        <p className="text-muted-foreground mb-1 text-xs font-medium">Glass Effect</p>
         <p className="mb-3 text-sm">
           Drag the glass overlay to view a chromatic aberration using SVG displacement maps.
         </p>

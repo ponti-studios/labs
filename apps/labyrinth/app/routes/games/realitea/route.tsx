@@ -399,7 +399,7 @@ export default function RealiTeaRoute() {
       {game.isGameOver ? (
         <div className="space-y-4 rounded border p-3 md:p-4">
           <div>
-            <p className="text-muted-foreground ui-eyebrow">
+            <p className="text-muted-foreground text-xs font-medium">
               {game.isSolved ? "The Story" : "The puzzle ended"}
             </p>
             <p className="text-sm leading-5">{currentPuzzle.detail.toLocaleLowerCase()}</p>

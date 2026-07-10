@@ -88,9 +88,8 @@ export default function App() {
         brand={<img src="/logo.ponti.png" alt={t.nav.brandAlt} className="size-6 w-auto" />}
         brandHref="/"
         links={[
-          { href: "/services", label: t.nav.services },
+          { href: "/engage", label: t.nav.engage },
           { href: "/work", label: t.nav.work },
-          { href: "/process", label: t.nav.process },
           { href: "/manifesto", label: t.nav.manifesto },
         ]}
         activeHref={location.pathname}

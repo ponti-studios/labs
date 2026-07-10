@@ -1,8 +1,7 @@
 import { Button, ParticleBackground } from "@pontistudios/ui";
 import { Check, X } from "lucide-react";
 import { Link } from "react-router";
-import { Founder } from "~/components/studio/founder";
-import { BOOK_CALL_URL, servicePillars } from "~/data/studio";
+import { BOOK_CALL_URL } from "~/data/studio";
 import { t } from "~/translations";
 
 export function meta(): Array<{
@@ -13,11 +12,29 @@ export function meta(): Array<{
   return [{ title: t.home.meta.title }, { name: "description", content: t.home.meta.description }];
 }
 
-function SectionHeading({ eyebrow, title }: { eyebrow: string; title: string }) {
+function SectionHeading({ title }: { title: string }) {
+  return <h2 className="heading-2 text-foreground">{title}</h2>;
+}
+
+/** A single-line pointer to the page that actually owns this content — never a second copy of it. */
+function Teaser({
+  title,
+  intro,
+  cta,
+  to,
+}: {
+  title: string;
+  intro: string;
+  cta: string;
+  to: string;
+}) {
   return (
-    <div className="flex flex-col gap-2">
-      <span className="ui-eyebrow">{eyebrow}</span>
-      <h2 className="heading-2 text-foreground">{title}</h2>
+    <div className="flex flex-col gap-3">
+      <SectionHeading title={title} />
+      <p className="body-2 text-muted-foreground max-w-xl">{intro}</p>
+      <Link to={to} className="body-2 text-foreground w-fit underline-offset-4 hover:underline">
+        {cta}
+      </Link>
     </div>
   );
 }
@@ -29,7 +46,6 @@ export default function Home() {
 
       {/* Hero */}
       <section className="border-border/60 flex flex-col gap-6 border-b py-16">
-        <span className="ui-eyebrow">{t.home.hero.eyebrow}</span>
         <h1 className="display-2 text-foreground max-w-3xl">{t.home.hero.title}</h1>
         <p className="body-1 text-muted-foreground max-w-xl italic">{t.home.hero.disclaimer}</p>
         <div className="flex flex-wrap gap-3 pt-2">
@@ -39,7 +55,7 @@ export default function Home() {
             </a>
           </Button>
           <Button asChild variant="outline" size="lg">
-            <Link to="/services">{t.home.hero.seeServices}</Link>
+            <Link to="/engage">{t.home.hero.seeServices}</Link>
           </Button>
         </div>
       </section>
@@ -47,7 +63,7 @@ export default function Home() {
       {/* Fit */}
       <section className="border-border/60 flex flex-col gap-6 border-b py-16">
         <div className="flex flex-col gap-2">
-          <SectionHeading eyebrow={t.home.fit.eyebrow} title={t.home.fit.title} />
+          <SectionHeading title={t.home.fit.title} />
           <p className="body-2 text-muted-foreground max-w-xl">{t.home.fit.intro}</p>
         </div>
         <div className="grid gap-8 sm:grid-cols-2">
@@ -76,83 +92,44 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Services */}
-      <section className="border-border/60 flex flex-col gap-4 border-b py-16">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <SectionHeading eyebrow={t.home.services.eyebrow} title={t.home.services.title} />
-          <Link
-            to="/services"
-            className="body-2 text-foreground underline-offset-4 hover:underline"
-          >
-            {t.home.services.cta}
-          </Link>
-        </div>
-        <div className="grid gap-8 sm:grid-cols-3">
-          {servicePillars.map((pillar) => (
-            <div key={pillar.name} className="flex flex-col gap-3">
-              <h3 className="heading-4 text-foreground">{pillar.name}</h3>
-              <ul className="flex flex-col gap-2">
-                {pillar.services.map((service) => (
-                  <li key={service.slug} className="body-3 text-muted-foreground">
-                    {service.name}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
+      {/* What I do — full catalog lives on /engage, not here */}
+      <section className="border-border/60 border-b py-16">
+        <Teaser
+          title={t.home.services.title}
+          intro={t.home.services.intro}
+          cta={t.home.services.cta}
+          to="/engage"
+        />
       </section>
 
-      {/* Selected work */}
-      <section className="border-border/60 flex flex-col gap-4 border-b py-16">
-        <SectionHeading eyebrow={t.home.work.eyebrow} title={t.home.work.title} />
-        <ul className="grid gap-x-8 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
-          {t.home.work.items.map((work) => (
-            <li
-              key={work.name}
-              className="border-border/40 flex items-baseline justify-between gap-4 border-b py-2"
-            >
-              <span className="body-2 text-foreground">{work.name}</span>
-              <span className="body-4 text-muted-foreground">{work.category}</span>
-            </li>
-          ))}
-        </ul>
+      {/* Selected work — full case studies live on /work, not here */}
+      <section className="border-border/60 border-b py-16">
+        <Teaser
+          title={t.home.work.title}
+          intro={t.home.work.intro}
+          cta={t.home.work.cta}
+          to="/work"
+        />
       </section>
 
-      <Founder />
-
-      {/* Principles */}
-      <section className="border-border/60 flex flex-col gap-4 border-b py-16">
-        <SectionHeading eyebrow={t.home.principles.eyebrow} title={t.home.principles.title} />
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {t.home.principles.items.map((principle) => (
-            <div key={principle.name} className="flex flex-col gap-2">
-              <h3 className="subheading-3 text-foreground">{principle.name}</h3>
-              <p className="body-3 text-muted-foreground">{principle.description}</p>
-            </div>
-          ))}
-        </div>
-        <Link to="/manifesto" className="body-2 text-foreground underline-offset-4 hover:underline">
-          {t.home.principles.cta}
-        </Link>
-      </section>
-
-      {/* Process teaser */}
-      <section className="border-border/60 flex flex-wrap items-end justify-between gap-4 border-b py-16">
-        <SectionHeading eyebrow={t.home.process.eyebrow} title={t.home.process.title} />
-        <Link to="/process" className="body-2 text-foreground underline-offset-4 hover:underline">
-          {t.home.process.cta}
-        </Link>
+      {/* How I think — full tenets live on /manifesto, not here */}
+      <section className="border-border/60 border-b py-16">
+        <Teaser
+          title={t.home.principles.title}
+          intro={t.home.principles.intro}
+          cta={t.home.principles.cta}
+          to="/manifesto"
+        />
       </section>
 
       {/* Lab */}
       <section className="flex flex-col gap-4 py-16">
-        <SectionHeading eyebrow={t.home.lab.eyebrow} title={t.home.lab.title} />
+        <SectionHeading title={t.home.lab.title} />
         <p className="body-2 text-muted-foreground max-w-xl">{t.home.lab.description}</p>
         <div className="grid gap-8 sm:grid-cols-2">
           {t.home.lab.categories.map((cat) => (
             <div key={cat.name} className="space-y-4">
-              <h3 className="ui-eyebrow">{cat.name}</h3>
+              <h3 className="heading-4 text-foreground">{cat.name}</h3>
               <ul className="flex flex-col gap-2">
                 {cat.entries.map((entry) => (
                   <li key={entry.path}>

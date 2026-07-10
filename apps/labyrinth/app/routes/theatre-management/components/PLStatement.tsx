@@ -31,7 +31,7 @@ export function PLStatement({
 
       <CardContent className="divide-border divide-y px-5 py-0">
         <div className="py-3">
-          <div className="ui-eyebrow mb-2">Revenue</div>
+          <div className="text-muted-foreground mb-2 text-xs font-medium">Revenue</div>
           <BreakdownRow
             label="Ticket Revenue (gross)"
             value={formatCurrency(d.grossTicketRevenue)}
@@ -54,7 +54,7 @@ export function PLStatement({
         </div>
 
         <div className="py-3">
-          <div className="ui-eyebrow mb-2">Expenses</div>
+          <div className="text-muted-foreground mb-2 text-xs font-medium">Expenses</div>
           <BreakdownRow label="Rent" value={formatCurrency(MONTHLY_RENT)} negative />
           <BreakdownRow label="Labor" value={formatCurrency(d.dynamicLabor)} negative />
           <BreakdownRow label="Utilities" value={formatCurrency(MONTHLY_UTILITIES)} negative />

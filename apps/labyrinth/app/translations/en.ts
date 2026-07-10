@@ -1,9 +1,8 @@
 export const STUDIO_TRANSLATIONS_EN = {
   nav: {
     brandAlt: "Ponti Studios",
-    services: "Services",
+    engage: "Engage",
     work: "Work",
-    process: "Process",
     manifesto: "Manifesto",
     book: "Book",
   },
@@ -28,14 +27,9 @@ export const STUDIO_TRANSLATIONS_EN = {
   },
 
   services: {
-    meta: {
-      title: "Services | Ponti Studios",
-      description:
-        "Premium product and content development with published outcomes. Engineering, design, brand, and content strategy for teams who refuse to compromise.",
-    },
     overview: {
       eyebrow: "What I do",
-      title: "Services",
+      title: "Full service catalog",
     },
     proof: {
       eyebrow: "Proof",
@@ -434,97 +428,6 @@ export const STUDIO_TRANSLATIONS_EN = {
     ],
   },
 
-  process: {
-    meta: {
-      title: "How I Work | Ponti Studios",
-      description:
-        "How Charles Ponti engages, runs projects, and partners with clients from first call to launch and beyond.",
-    },
-    engagementModels: {
-      title: "How I engage",
-      intro: "Four shapes. Pick the one that matches the work.",
-      items: [
-        {
-          name: "Project",
-          description:
-            "Fixed scope and timeline for a build, brand system, redesign, or modernization.",
-        },
-        {
-          name: "Retainer",
-          description:
-            "Week-over-week partnership for product leadership, content, or continuous delivery.",
-        },
-        {
-          name: "Advisory",
-          description: "Bounded engagement with a written output — audit, review, or workshop.",
-        },
-        {
-          name: "Fractional Team",
-          description:
-            "I become your product, design, and engineering team. Best for early-stage startups pre-Series A.",
-        },
-      ],
-    },
-    steps: {
-      title: "My process",
-      items: [
-        {
-          step: "01",
-          title: "Discovery",
-          duration: "1–2 weeks",
-          description:
-            "Understand your business, users, and goals. Assess technical and design requirements. Identify risks and opportunities. Align on success metrics.",
-        },
-        {
-          step: "02",
-          title: "Planning",
-          duration: "1 week",
-          description:
-            "Define scope and timeline. Create project roadmap. Establish communication cadence. Set up tools and workflows.",
-        },
-        {
-          step: "03",
-          title: "Execution",
-          duration: "Varies",
-          description:
-            "Weekly sprints with visible progress. Regular demos and check-ins. Continuous testing and quality assurance. Iterative refinement based on feedback.",
-        },
-        {
-          step: "04",
-          title: "Launch",
-          duration: "1–2 weeks",
-          description:
-            "Final testing and optimization. Deployment to production. Monitoring and support. Knowledge transfer and documentation.",
-        },
-        {
-          step: "05",
-          title: "Growth",
-          duration: "Ongoing",
-          description:
-            "Measure performance against goals. Iterate based on user feedback. Ongoing support and enhancement. Strategic partnership as you scale.",
-        },
-      ],
-    },
-    whatWeNeed: {
-      title: "What I need from you",
-      items: [
-        { title: "Clarity", description: "Be honest about goals, constraints, and concerns" },
-        { title: "Availability", description: "Responsive feedback keeps projects moving" },
-        { title: "Trust", description: "I'll challenge your assumptions for good reason" },
-        { title: "Decisions", description: "When I present options, choose and move forward" },
-      ],
-    },
-    whatYouGet: {
-      title: "What you get from me",
-      items: [
-        { title: "Excellence", description: "Work I'm proud to put my name on" },
-        { title: "Transparency", description: "No surprises, ever" },
-        { title: "Partnership", description: "I'm invested in your success" },
-        { title: "Results", description: "Tangible outcomes, not just activity" },
-      ],
-    },
-  },
-
   manifesto: {
     meta: {
       title: "Manifesto | Ponti Studios",
@@ -610,72 +513,22 @@ export const STUDIO_TRANSLATIONS_EN = {
       ],
     },
     services: {
-      eyebrow: "What I do",
-      title: "Product and Content",
-      cta: "See all services →",
+      title: "What I do",
+      intro:
+        "Product and content, from a scoped build to embedded leadership — organized by the problem you're solving, not a menu of services.",
+      cta: "See how I can help →",
     },
     work: {
-      eyebrow: "Proof",
       title: "Selected work",
-      items: [
-        { name: "Prolog", category: "Entertainment / AI" },
-        { name: "Lumina", category: "Education" },
-        { name: "StreamYard", category: "Creator Economy" },
-        { name: "Humana", category: "Healthcare / Innovation" },
-        { name: "Kensho", category: "Data / Finance" },
-        { name: "Thomson Reuters", category: "Enterprise" },
-        { name: "Mimecast", category: "Enterprise" },
-        { name: "Revrock", category: "Music / Independent Artists" },
-        { name: "Whistle", category: "Education / Video" },
-      ],
-    },
-    founder: {
-      eyebrow: "Who's behind this",
-      name: "Charles Ponti",
-      initials: "CP",
-      bio: "Eleven years building product and engineering — from senior engineer at Thomson Reuters, to leading a 15-person data engineering team through S&P Global's acquisition of Kensho, to lead product engineer driving StreamYard's Business tier to $15M+ in enterprise ARR before it was acquired by Hopin. Founded Ponti Studios in 2024 to bring that same bar to entertainment and product teams directly.",
+      intro: "Real engagements, real numbers — not case study theater.",
+      cta: "See the work →",
     },
     principles: {
-      eyebrow: "How I think",
-      title: "Principles",
+      title: "How I think",
+      intro: "Eight tenets, no filler — what actually shapes the work.",
       cta: "Read the manifesto →",
-      items: [
-        {
-          name: "Clarity over hype",
-          description:
-            "Say the hard thing plainly. Surface the decision, reduce noise, make the next step obvious.",
-        },
-        {
-          name: "Systems over features",
-          description: "Design the working whole. The product stays coherent as it grows.",
-        },
-        {
-          name: "Quality or nothing",
-          description:
-            "Ship late and proud, never on-time and embarrassed. I'd rather tell you it's not ready.",
-        },
-        {
-          name: "Builder, not vendor",
-          description:
-            "I don't hand you a quote and disappear. I'm shoulder-to-shoulder with you until the work is done right.",
-        },
-        {
-          name: "Taste matters",
-          description: "Restraint, proportion, sharp language. The interface should feel composed.",
-        },
-        {
-          name: "Honest to a fault",
-          description: "If it's a bad idea, I'll tell you. If there's a better way, I'll show you.",
-        },
-      ],
-    },
-    process: {
-      eyebrow: "Partnership",
-      title: "How I work",
-      cta: "process →",
     },
     lab: {
-      eyebrow: "Side projects",
       title: "The Lab",
       description:
         "Games, experiments, tools, and take-home challenges built for practice and play.",

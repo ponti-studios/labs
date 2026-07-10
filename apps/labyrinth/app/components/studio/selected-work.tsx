@@ -17,7 +17,6 @@ export function SelectedWork({ bordered = true }: SelectedWorkProps) {
         .join(" ")}
     >
       <div className="flex flex-col gap-2">
-        <span className="ui-eyebrow">{copy.eyebrow}</span>
         <h2 className="heading-2 text-foreground">{copy.title}</h2>
         <p className="body-2 text-muted-foreground max-w-2xl">{copy.intro}</p>
       </div>
@@ -33,15 +32,21 @@ export function SelectedWork({ bordered = true }: SelectedWorkProps) {
             </div>
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-1">
-                <span className="ui-eyebrow">{copy.problemLabel}</span>
+                <span className="text-muted-foreground text-xs font-medium">
+                  {copy.problemLabel}
+                </span>
                 <p className="body-2 text-muted-foreground">{snapshot.problem}</p>
               </div>
               <div className="flex flex-col gap-1">
-                <span className="ui-eyebrow">{copy.whatWeDidLabel}</span>
+                <span className="text-muted-foreground text-xs font-medium">
+                  {copy.whatWeDidLabel}
+                </span>
                 <p className="body-2 text-muted-foreground">{snapshot.whatWeDid}</p>
               </div>
               <div className="flex flex-col gap-2">
-                <span className="ui-eyebrow">{copy.outcomeLabel}</span>
+                <span className="text-muted-foreground text-xs font-medium">
+                  {copy.outcomeLabel}
+                </span>
                 <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3">
                   {snapshot.outcomes.map((outcome) => (
                     <div key={outcome.label} className="flex flex-col gap-0.5">
@@ -53,7 +58,9 @@ export function SelectedWork({ bordered = true }: SelectedWorkProps) {
               </div>
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <p className="body-4 text-muted-foreground">
-                  <span className="ui-eyebrow mr-2">{copy.servicesLabel}</span>
+                  <span className="text-muted-foreground mr-2 text-xs font-medium">
+                    {copy.servicesLabel}
+                  </span>
                   {snapshot.services.join(" · ")}
                 </p>
                 <Link

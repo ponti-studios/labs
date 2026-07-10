@@ -110,7 +110,7 @@ export default function TarotRoute() {
           </div>
 
           <div className="pt-1 text-sm md:text-right">
-            <div className="ui-eyebrow">Today</div>
+            <div className="text-muted-foreground text-xs font-medium">Today</div>
             <div className="text-foreground mt-1 text-lg font-medium">{formatDate(dateKey)}</div>
           </div>
         </motion.div>
@@ -128,13 +128,13 @@ export default function TarotRoute() {
             <div className="border-border bg-muted mx-auto flex h-72 w-52 items-center justify-center border">
               <div className="text-center">
                 <div className="text-muted-foreground text-4xl">✦</div>
-                <div className="ui-eyebrow mt-3">Daily draw</div>
+                <div className="text-muted-foreground mt-3 text-xs font-medium">Daily draw</div>
                 <h3 className="mt-2">Today&apos;s card</h3>
               </div>
             </div>
 
             <div>
-              <p className="ui-eyebrow">Daily practice</p>
+              <p className="text-muted-foreground text-xs font-medium">Daily practice</p>
               <h2 className="mt-3">Pull one card and let the day orbit around it.</h2>
               <p className="text-muted-foreground mt-3 max-w-2xl text-base leading-7">
                 You&apos;ll get one card for your local day, a concise reading, and a reflection
@@ -183,7 +183,7 @@ function DailyTarotReadingView({ result }: { result: DailyTarotResult }) {
         </div>
 
         <div className="text-center">
-          <p className="ui-eyebrow">{card.arcana}</p>
+          <p className="text-muted-foreground text-xs font-medium">{card.arcana}</p>
           <h2 className="mt-2">{card.name}</h2>
           <p className="text-muted-foreground mt-2 text-sm">
             {card.rank}
@@ -200,7 +200,7 @@ function DailyTarotReadingView({ result }: { result: DailyTarotResult }) {
         </div>
 
         <div className="border-border text-muted-foreground border-t pt-4 text-sm">
-          <div className="ui-eyebrow">Reading source</div>
+          <div className="text-muted-foreground text-xs font-medium">Reading source</div>
           <div className="mt-2">
             {source === "ai"
               ? "AI-generated reading grounded in the curated card data."
@@ -213,7 +213,7 @@ function DailyTarotReadingView({ result }: { result: DailyTarotResult }) {
         <section className="border-border space-y-4 border-b pb-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <p className="ui-eyebrow">Today’s reading</p>
+              <p className="text-muted-foreground text-xs font-medium">Today’s reading</p>
               <h3 className="mt-2">{reading.headline}</h3>
             </div>
             <Badge variant="secondary">{source === "ai" ? "AI reading" : "Curated reading"}</Badge>
@@ -228,7 +228,7 @@ function DailyTarotReadingView({ result }: { result: DailyTarotResult }) {
         </section>
 
         <section className="border-border space-y-4 border-b pb-6">
-          <p className="ui-eyebrow">Questions to sit with</p>
+          <p className="text-muted-foreground text-xs font-medium">Questions to sit with</p>
           <div className="grid gap-2.5">
             {card.reflectionQuestions.slice(0, 3).map((question) => (
               <div key={question} className="border-border text-foreground border-l-2 pl-4">
@@ -310,7 +310,7 @@ function DailyTarotReadingView({ result }: { result: DailyTarotResult }) {
 function ReadingPanel({ title, body }: { title: string; body: string }) {
   return (
     <div className="border-border border-l-2 pl-4">
-      <div className="ui-eyebrow">{title}</div>
+      <div className="text-muted-foreground text-xs font-medium">{title}</div>
       <p className="text-foreground mt-2 text-base leading-7">{body}</p>
     </div>
   );
@@ -335,7 +335,7 @@ function MeaningList({ title, accent, items }: { title: string; accent: string; 
 function StudyNote({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <div className="ui-eyebrow">{label}</div>
+      <div className="text-muted-foreground text-xs font-medium">{label}</div>
       <p className="text-foreground mt-1.5 text-sm leading-6">{value}</p>
     </div>
   );

@@ -13,11 +13,10 @@ export default function Faq() {
   return (
     <div className="flex w-full flex-col">
       <section className="border-border/60 flex flex-col gap-6 border-b py-16">
-        <span className="ui-eyebrow flex items-center gap-2">
-          <HelpCircle className="size-4" aria-hidden="true" />
-          {t.faq.eyebrow}
-        </span>
-        <h1 className="display-2 text-foreground max-w-3xl">{t.faq.title}</h1>
+        <h1 className="display-2 text-foreground flex max-w-3xl items-center gap-3">
+          <HelpCircle className="size-7" aria-hidden="true" />
+          {t.faq.title}
+        </h1>
       </section>
 
       <section className="flex flex-col gap-8 py-16">

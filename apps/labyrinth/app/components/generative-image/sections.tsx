@@ -15,7 +15,7 @@ type InputGroupProps = {
 function InputGroup({ label, value, onChange, type = "text", help }: InputGroupProps) {
   return (
     <div className="space-y-1.5">
-      <label className="ui-eyebrow">{label}</label>
+      <label className="text-muted-foreground text-xs font-medium">{label}</label>
       {type === "textarea" ? (
         <textarea
           value={value}
@@ -155,7 +155,7 @@ export const EnvironmentSection = memo(function EnvironmentSection({
         onChange={(value) => dispatch({ type: "environment/update", key: "primary_prop", value })}
       />
       <div className="border-border border-t pt-3">
-        <p className="ui-eyebrow mb-3">Background</p>
+        <p className="text-muted-foreground mb-3 text-xs font-medium">Background</p>
         <div className="space-y-4">
           <InputGroup
             label="Visibility"

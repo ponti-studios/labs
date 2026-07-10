@@ -290,7 +290,7 @@ const Cell = memo<{ opacity: number | null; isGhost: boolean }>(({ opacity, isGh
 // Preview panel for held/next piece
 const Preview = memo<{ piece: Piece | null; title: string }>(({ piece, title }) => (
   <div className="border-border bg-card rounded-xl border p-4">
-    <p className="ui-eyebrow mb-3 text-center">{title}</p>
+    <p className="text-muted-foreground mb-3 text-center text-xs font-medium">{title}</p>
     <div className="flex min-h-[60px] flex-col items-center justify-center">
       {piece ? (
         piece.shape.map((row: number[], i: number) => (
@@ -318,7 +318,7 @@ const Preview = memo<{ piece: Piece | null; title: string }>(({ piece, title }) 
 // Stat row inside the score panel
 const StatRow = ({ label, value }: { label: string; value: number }) => (
   <div className="flex items-center justify-between gap-4">
-    <span className="ui-eyebrow">{label}</span>
+    <span className="text-muted-foreground text-xs font-medium">{label}</span>
     <span className="text-foreground text-lg font-semibold tabular-nums">{value}</span>
   </div>
 );
@@ -538,7 +538,7 @@ const TetrisGame: FC = () => {
           <Preview piece={state.next} title="Next" />
 
           <div className="border-border bg-card rounded-xl border p-4">
-            <p className="ui-eyebrow mb-3">Controls</p>
+            <p className="text-muted-foreground mb-3 text-xs font-medium">Controls</p>
             <ul className="space-y-1.5">
               {CONTROLS.map(({ key, action }) => (
                 <li key={key} className="flex items-center justify-between gap-2">
