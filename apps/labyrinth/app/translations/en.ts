@@ -32,7 +32,8 @@ export const STUDIO_TRANSLATIONS_EN = {
         "Product engineering, design, and advisory — scoped clearly, shipped with proof.",
     },
     hero: {
-      title: "Product and engineering. Nothing else.",
+      title: "Product and engineering.",
+      punch: "Nothing else.",
       body: "Engineering, product design, and technical judgment — from the first hard decision to a handoff your team can run without me. I don't do content or brand.",
       seeWork: "See the work",
     },
@@ -40,11 +41,6 @@ export const STUDIO_TRANSLATIONS_EN = {
       title: "What I do",
       intro:
         "Two pillars. Every engagement is scoped to a clear outcome — not a vague retainer and a pile of hours.",
-    },
-    proof: {
-      title: "Proof, not adjectives",
-      intro: "Hard numbers from product and engineering work. Full case studies live on Work.",
-      seeAll: "All selected work →",
     },
     process: {
       title: "How we start",
@@ -60,12 +56,11 @@ export const STUDIO_TRANSLATIONS_EN = {
   work: {
     meta: {
       title: "Selected Work | Ponti Studios",
-      description:
-        "Twelve years of client work — product, platform, and engineering. Hard numbers, not adjectives.",
+      description: "deployed improvements",
     },
     hero: {
       title: "Selected work",
-      body: "Twelve years of client work — product, platform, and engineering. Pick one to read the full case.",
+      description: "deployed improvements",
     },
     approachTitle: "Approach",
     backToWork: "All work",
@@ -78,10 +73,8 @@ export const STUDIO_TRANSLATIONS_EN = {
   catalog: {
     proof: {
       title: "Selected work",
-      intro: "Hard numbers from product and engineering engagements — not adjectives.",
       whatWeDidLabel: "What I did",
       outcomeLabel: "Outcome",
-      servicesLabel: "Services",
       readCaseStudy: "Read the full case study →",
       // Reverse chronological. Source of truth: vault ponti-studios/projects/* — only vault-backed outcomes.
       // listHook is index-only (short); full outcomes stay on the case study page.
@@ -109,7 +102,6 @@ export const STUDIO_TRANSLATIONS_EN = {
             { value: "~40%", label: "Higher second-course enrollment" },
             { value: "32%", label: "Faster time-to-interactive" },
           ],
-          services: ["Engineering", "Modernization", "Product"],
         },
         {
           slug: "revrock",
@@ -132,7 +124,6 @@ export const STUDIO_TRANSLATIONS_EN = {
             { value: "Hours", label: "Tour planning time, down from weeks" },
             { value: "20–35%", label: "Higher estimated revenue vs. manual tours" },
           ],
-          services: ["Product", "Engineering"],
         },
         {
           slug: "prolog",
@@ -155,7 +146,6 @@ export const STUDIO_TRANSLATIONS_EN = {
             { value: "~70%", label: "Reduction in review time" },
             { value: "3×", label: "Reviewer throughput" },
           ],
-          services: ["Engineering", "Product Design"],
         },
         {
           slug: "streamyard",
@@ -179,7 +169,6 @@ export const STUDIO_TRANSLATIONS_EN = {
             { value: "13%", label: "Consumer growth within 3 months of Business launch" },
             { value: "300%", label: "YoY creator collaborations" },
           ],
-          services: ["Engineering", "Product"],
         },
         {
           slug: "whistle",
@@ -203,7 +192,6 @@ export const STUDIO_TRANSLATIONS_EN = {
             { value: "−35%", label: "Bandwidth vs. generic platforms" },
             { value: "<100ms", label: "Latency at 720p+ across variable networks" },
           ],
-          services: ["Engineering", "Product Design"],
         },
         {
           slug: "kensho",
@@ -227,7 +215,6 @@ export const STUDIO_TRANSLATIONS_EN = {
             { value: "<50ms", label: "Market-data latency, down from ~10 min" },
             { value: "3 hrs", label: "Time-to-first-PR, down from 1 week" },
           ],
-          services: ["Engineering", "Modernization"],
         },
         {
           slug: "humana",
@@ -251,7 +238,6 @@ export const STUDIO_TRANSLATIONS_EN = {
             { value: "3 modes", label: "Care platform live — voice, mobile, chat" },
             { value: "BIPA", label: "Biometric consent across IL, TX, WA, NY" },
           ],
-          services: ["Product", "Engineering", "Technical Consulting"],
         },
         {
           slug: "mimecast",
@@ -276,7 +262,6 @@ export const STUDIO_TRANSLATIONS_EN = {
             { value: "+40%", label: "Team productivity" },
             { value: "4 hrs", label: "Code review, down from 2 days" },
           ],
-          services: ["Engineering", "Modernization"],
         },
         {
           slug: "help-refugees",
@@ -300,7 +285,6 @@ export const STUDIO_TRANSLATIONS_EN = {
             { value: "1 system", label: "Replaced the shared Google Sheet" },
             { value: "Full", label: "Audit trail on every submission" },
           ],
-          services: ["Engineering", "Product Design"],
         },
         {
           slug: "thomson-reuters",
@@ -325,7 +309,6 @@ export const STUDIO_TRANSLATIONS_EN = {
             { value: "−30%", label: "Cloud infrastructure cost" },
             { value: "−65%", label: "Critical technical debt" },
           ],
-          services: ["Engineering", "Modernization"],
         },
         {
           slug: "glow",
@@ -348,7 +331,6 @@ export const STUDIO_TRANSLATIONS_EN = {
             { value: "0", label: "Rate-limiting incidents after launch" },
             { value: "2–5 hrs", label: "Returned per manager per week" },
           ],
-          services: ["Engineering"],
         },
       ],
     },
@@ -691,24 +673,22 @@ export const STUDIO_TRANSLATIONS_EN = {
       title: "Problems, solved.",
       wordBefore: "Problems",
       wordAfter: "Solved.",
-      subtitle:
-        "No team to manage, no process to sit through — just twelve years at StreamYard, Kensho, Thomson Reuters, Humana, and Mimecast, put to work for you.",
-      seeServices: "See all services",
+      subtitle: "Computational business intelligence, put to work for you.",
     },
     services: {
       title: "What I do",
       intro: "Product and engineering, from a scoped build to embedded leadership.",
-      cta: "See all services →",
+      cta: "Services →",
     },
     work: {
-      title: "Selected work",
+      title: "Work",
       intro: "Real engagements, real numbers — not case study theater.",
       cta: "See the work →",
     },
     principles: {
-      title: "How I think",
+      title: "Manifesto",
       intro: "Nine tenets, no filler — what actually shapes the work.",
-      cta: "Read the manifesto →",
+      cta: "Read →",
     },
     lab: {
       title: "The Lab",

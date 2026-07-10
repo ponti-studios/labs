@@ -84,12 +84,6 @@ export default function WorkSlug() {
         </div>
       </section>
 
-      {/* Services used */}
-      <section className="border-border/60 flex flex-col gap-3 border-b px-6 py-12 sm:px-10">
-        <p className="body-3 text-muted-foreground">{proof.servicesLabel}</p>
-        <p className="body-2 text-foreground">{snapshot.services.join(" · ")}</p>
-      </section>
-
       {/* Close CTA */}
       <section className="flex flex-col gap-6 px-6 py-20 sm:px-10 sm:py-24">
         <h2 className="display-2 text-foreground max-w-3xl">{copy.nextCta.title}</h2>
