@@ -34,8 +34,8 @@ export default function Faq() {
 
       {/* Close */}
       <section className="flex flex-col gap-6 px-6 py-20 sm:px-10 sm:py-24">
-        <h2 className="display-2 text-foreground max-w-3xl">{t.engage.cta.title}</h2>
-        <p className="body-1 text-muted-foreground max-w-xl">{t.engage.cta.body}</p>
+        <h2 className="display-2 text-foreground max-w-3xl">{t.services.cta.title}</h2>
+        <p className="body-1 text-muted-foreground max-w-xl">{t.services.cta.body}</p>
         <div className="flex flex-wrap items-center gap-6 pt-2">
           <Button asChild size="lg">
             <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
@@ -43,7 +43,7 @@ export default function Faq() {
             </a>
           </Button>
           <Link
-            to="/engage"
+            to="/services"
             className="body-2 text-foreground underline-offset-4 hover:underline"
           >
             {t.home.services.cta}

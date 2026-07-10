@@ -7,10 +7,7 @@ export function meta(): Array<{
   name?: string;
   content?: string;
 }> {
-  return [
-    { title: copy.meta.title },
-    { name: "description", content: copy.meta.description },
-  ];
+  return [{ title: copy.meta.title }, { name: "description", content: copy.meta.description }];
 }
 
 export default function Manifesto() {

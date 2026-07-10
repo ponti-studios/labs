@@ -27,6 +27,11 @@ export type CaseSnapshot = {
   approach: readonly string[];
   outcomes: readonly CaseStat[];
   services: readonly string[];
+  /**
+   * Index-only teaser. Short by design — full outcomes live on the case study.
+   * value = the number/result; label = 2–4 word gloss.
+   */
+  listHook: CaseStat;
 };
 
 export type ServicePillar = {
@@ -34,7 +39,7 @@ export type ServicePillar = {
   services: ServiceEntry[];
 };
 
-const svc = t.services.entries;
+const svc = t.catalog.entries;
 
 /** Intentional order: flagship product work first, then advisory/entry. */
 export const servicePillars: ServicePillar[] = [
@@ -45,24 +50,21 @@ export const servicePillars: ServicePillar[] = [
       { slug: "modernization", ...svc.modernization },
       { slug: "product-design", ...svc.productDesign },
       { slug: "fractional-product-management", ...svc.fractionalProductManagement },
-      { slug: "technical-consulting", ...svc.technicalConsulting },
-    ],
-  },
-  {
-    name: t.common.pillars.content,
-    services: [
-      { slug: "brand-identity", ...svc.brandIdentity },
-      { slug: "copy-messaging", ...svc.copyMessaging },
-      { slug: "content-strategy", ...svc.contentStrategy },
     ],
   },
   {
     name: t.common.pillars.advisory,
-    services: [{ slug: "strategy-workshop", ...svc.strategyWorkshop }],
+    services: [
+      { slug: "fractional-cto", ...svc.fractionalCto },
+      { slug: "technical-due-diligence", ...svc.technicalDueDiligence },
+      { slug: "technical-consulting", ...svc.technicalConsulting },
+      { slug: "product-strategy", ...svc.productStrategy },
+      { slug: "strategy-workshop", ...svc.strategyWorkshop },
+    ],
   },
 ];
 
-export const caseSnapshots: readonly CaseSnapshot[] = t.services.proof.snapshots;
+export const caseSnapshots: readonly CaseSnapshot[] = t.catalog.proof.snapshots;
 
 export const CONTACT_EMAIL = "hello@ponti.io";
 export const BOOK_CALL_URL = "https://cal.com/ponti-studios";

@@ -4,7 +4,7 @@ import { Link } from "react-router";
 import { BOOK_CALL_URL, caseSnapshots, servicePillars } from "~/data/studio";
 import { t } from "~/translations";
 
-const copy = t.engage;
+const copy = t.services;
 
 /** Three headline outcomes for the static proof strip — one each from flagship cases. */
 const PROOF_SLUGS = ["streamyard", "kensho", "thomson-reuters"] as const;
@@ -16,13 +16,10 @@ const proofHighlights = PROOF_SLUGS.flatMap((slug) => {
 });
 
 export function meta(): Array<{ title?: string; name?: string; content?: string }> {
-  return [
-    { title: copy.meta.title },
-    { name: "description", content: copy.meta.description },
-  ];
+  return [{ title: copy.meta.title }, { name: "description", content: copy.meta.description }];
 }
 
-export default function Engage() {
+export default function Services() {
   return (
     <div className="flex w-full flex-col">
       {/* Hero — one frame, one idea */}
@@ -35,10 +32,7 @@ export default function Engage() {
               {t.common.bookCall}
             </a>
           </Button>
-          <Link
-            to="/work"
-            className="body-2 text-foreground underline-offset-4 hover:underline"
-          >
+          <Link to="/work" className="body-2 text-foreground underline-offset-4 hover:underline">
             {copy.hero.seeWork}
           </Link>
         </div>
@@ -101,7 +95,7 @@ export default function Engage() {
                 to={`/work/${snapshot.slug}`}
                 className="body-2 text-foreground w-fit underline-offset-4 hover:underline"
               >
-                {t.services.proof.readCaseStudy}
+                {t.catalog.proof.readCaseStudy}
               </Link>
             </article>
           ))}
@@ -123,10 +117,7 @@ export default function Engage() {
         </div>
         <ol className="flex flex-col gap-8">
           {t.common.contactSteps.map((step, index) => (
-            <li
-              key={step.title}
-              className="grid gap-2 sm:grid-cols-[minmax(0,4rem)_1fr] sm:gap-8"
-            >
+            <li key={step.title} className="grid gap-2 sm:grid-cols-[minmax(0,4rem)_1fr] sm:gap-8">
               <span className="body-2 text-muted-foreground tabular-nums">
                 {String(index + 1).padStart(2, "0")}
               </span>
