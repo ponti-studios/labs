@@ -25,10 +25,9 @@ export default function WorkSlug() {
   return (
     <div className="flex w-full flex-col">
       <section className="border-border/60 flex flex-col gap-6 border-b py-16">
-        <span className="ui-eyebrow">{snapshot.industry}</span>
         <h1 className="display-2 text-foreground max-w-3xl">{snapshot.client}</h1>
         <p className="body-2 text-muted-foreground">
-          {snapshot.role} · {snapshot.timeline}
+          {snapshot.industry} · {snapshot.role} · {snapshot.timeline}
         </p>
         <p className="body-1 text-foreground max-w-2xl">{snapshot.problem}</p>
       </section>
@@ -38,7 +37,9 @@ export default function WorkSlug() {
         <ol className="flex flex-col gap-3">
           {snapshot.approach.map((step, index) => (
             <li key={step} className="flex items-start gap-3">
-              <span className="ui-eyebrow shrink-0">{String(index + 1).padStart(2, "0")}</span>
+              <span className="text-muted-foreground shrink-0 text-xs font-medium tabular-nums">
+                {String(index + 1).padStart(2, "0")}
+              </span>
               <span className="body-2 text-foreground">{step}</span>
             </li>
           ))}
@@ -58,7 +59,7 @@ export default function WorkSlug() {
       </section>
 
       <section className="flex flex-col gap-2 py-16">
-        <span className="ui-eyebrow">{copy.servicesLabel}</span>
+        <span className="text-muted-foreground text-xs font-medium">{copy.servicesLabel}</span>
         <p className="body-2 text-foreground">{snapshot.services.join(" · ")}</p>
       </section>
     </div>

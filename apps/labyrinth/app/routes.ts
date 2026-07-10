@@ -3,9 +3,8 @@ import { index, route, type RouteConfig } from "@react-router/dev/routes";
 const homeRoutes = [index("routes/home.tsx")] satisfies RouteConfig;
 
 const studioRoutes = [
-  route("/services", "routes/services.tsx"),
+  route("/engage", "routes/engage.tsx"),
   route("/work", "routes/work.tsx"),
-  route("/process", "routes/process.tsx"),
   route("/manifesto", "routes/manifesto.tsx"),
   route("/faq", "routes/faq.tsx"),
   route("/work/:slug", "routes/work.$slug.tsx"),
