@@ -1,7 +1,7 @@
 export const STUDIO_TRANSLATIONS_EN = {
   nav: {
     brandAlt: "Ponti Studios",
-    engage: "Engage",
+    services: "Services",
     work: "Work",
     manifesto: "Manifesto",
     book: "Book",
@@ -21,26 +21,25 @@ export const STUDIO_TRANSLATIONS_EN = {
     ],
     pillars: {
       product: "Product",
-      content: "Content",
       advisory: "Advisory",
     },
   },
 
-  engage: {
+  services: {
     meta: {
-      title: "Engage | Ponti Studios",
+      title: "Services | Ponti Studios",
       description:
-        "Product engineering, design, content, and advisory — scoped clearly, shipped with proof.",
+        "Product engineering, design, and advisory — scoped clearly, shipped with proof.",
     },
     hero: {
-      title: "Product and content, end to end.",
-      body: "Engineering, design, brand, and strategy — from the first hard decision to a handoff your team can run without me.",
+      title: "Product and engineering. Nothing else.",
+      body: "Engineering, product design, and technical judgment — from the first hard decision to a handoff your team can run without me. I don't do content or brand.",
       seeWork: "See the work",
     },
     services: {
       title: "What I do",
       intro:
-        "Three pillars. Every engagement is scoped to a clear outcome — not a vague retainer and a pile of hours.",
+        "Two pillars. Every engagement is scoped to a clear outcome — not a vague retainer and a pile of hours.",
     },
     proof: {
       title: "Proof, not adjectives",
@@ -76,19 +75,16 @@ export const STUDIO_TRANSLATIONS_EN = {
     },
   },
 
-  services: {
-    overview: {
-      title: "What I do",
-    },
+  catalog: {
     proof: {
       title: "Selected work",
       intro: "Hard numbers from product and engineering engagements — not adjectives.",
-      problemLabel: "Problem",
       whatWeDidLabel: "What I did",
       outcomeLabel: "Outcome",
       servicesLabel: "Services",
       readCaseStudy: "Read the full case study →",
       // Reverse chronological. Source of truth: vault ponti-studios/projects/* — only vault-backed outcomes.
+      // listHook is index-only (short); full outcomes stay on the case study page.
       snapshots: [
         {
           slug: "lumina",
@@ -96,6 +92,7 @@ export const STUDIO_TRANSLATIONS_EN = {
           industry: "EdTech",
           timeline: "2025",
           role: "Senior Product & Platform Engineer",
+          listHook: { value: "+43%", label: "feed engagement" },
           problem:
             "Acquisition leaking at checkout; retention broken by discovery, course continuity, and grading trust.",
           whatWeDid:
@@ -117,9 +114,10 @@ export const STUDIO_TRANSLATIONS_EN = {
         {
           slug: "revrock",
           client: "Revrock",
-          industry: "Music / Creator tools",
+          industry: "Music",
           timeline: "2024–2025",
           role: "Product Lead",
+          listHook: { value: "Weeks → hrs", label: "tour planning" },
           problem:
             "Independent musicians planned tours on intuition and spreadsheets — no audience density, routing efficiency, or financial viability until after the tour.",
           whatWeDid:
@@ -139,9 +137,10 @@ export const STUDIO_TRANSLATIONS_EN = {
         {
           slug: "prolog",
           client: "Prolog",
-          industry: "Entertainment / AI",
+          industry: "Entertainment",
           timeline: "2024",
           role: "Product Lead",
+          listHook: { value: "~95%", label: "extraction accuracy" },
           problem:
             "Showrunner teams drowning in email and spreadsheet submission triage during peak staffing.",
           whatWeDid:
@@ -161,9 +160,10 @@ export const STUDIO_TRANSLATIONS_EN = {
         {
           slug: "streamyard",
           client: "StreamYard",
-          industry: "Creator Economy",
+          industry: "Creator",
           timeline: "2020–2024",
           role: "Lead Product Engineer & Product Manager",
+          listHook: { value: "$15M+", label: "enterprise ARR" },
           problem:
             "Solo-creator product hit a B2B ceiling — no workspaces, no real roles, no path for agencies and media teams.",
           whatWeDid:
@@ -184,9 +184,10 @@ export const STUDIO_TRANSLATIONS_EN = {
         {
           slug: "whistle",
           client: "Whistle",
-          industry: "Education / Video",
+          industry: "Education",
           timeline: "2020–2021",
           role: "Platform Engineer",
+          listHook: { value: "100%", label: "class continuity" },
           problem:
             "Generic video tools broke movement pedagogy — wrong topology, noise cancellation killing music, layouts built for conversation, and no self-hosted path for schools with minors.",
           whatWeDid:
@@ -207,9 +208,10 @@ export const STUDIO_TRANSLATIONS_EN = {
         {
           slug: "kensho",
           client: "Kensho",
-          industry: "Financial data",
+          industry: "Finance",
           timeline: "2019–2020",
           role: "Head of Data Engineering",
+          listHook: { value: "24×", label: "data throughput" },
           problem:
             "Multi-modal data pipeline collapsing under peak load; operational knowledge trapped in individual heads.",
           whatWeDid:
@@ -233,6 +235,7 @@ export const STUDIO_TRANSLATIONS_EN = {
           industry: "Healthcare",
           timeline: "2018–2019",
           role: "Product Lead / Architecture Lead",
+          listHook: { value: "<30s", label: "claims lag" },
           problem:
             "Senior care UX was a clinical safety problem; PHI on non-BAA infrastructure; enrollment and claims data hours stale; Android users locked out of health tracking.",
           whatWeDid:
@@ -253,9 +256,10 @@ export const STUDIO_TRANSLATIONS_EN = {
         {
           slug: "mimecast",
           client: "Mimecast",
-          industry: "Enterprise / Security",
+          industry: "Security",
           timeline: "2018",
           role: "Senior Software Engineer / Engineering Lead",
+          listHook: { value: "2 weeks", label: "ahead of deadline" },
           problem:
             "Enterprise console blocked white-label and non-English markets; a government identity platform was 4+ weeks behind with 30% of eng time lost to merge conflicts.",
           whatWeDid:
@@ -267,7 +271,7 @@ export const STUDIO_TRANSLATIONS_EN = {
             "Cut code review from multi-day cycles by making ownership boundaries and interface contracts explicit",
           ],
           outcomes: [
-            { value: "2 wks", label: "Ahead of original deadline (was 4 behind)" },
+            { value: "2 weeks", label: "Ahead of original deadline (was 4 behind)" },
             { value: "−80%", label: "Merge conflicts" },
             { value: "+40%", label: "Team productivity" },
             { value: "4 hrs", label: "Code review, down from 2 days" },
@@ -277,9 +281,10 @@ export const STUDIO_TRANSLATIONS_EN = {
         {
           slug: "help-refugees",
           client: "Help Refugees",
-          industry: "Nonprofit / Humanitarian",
+          industry: "Nonprofit",
           timeline: "2016",
           role: "Product Engineer",
+          listHook: { value: "Sheet → app", label: "volunteer ops" },
           problem:
             "UK refugee volunteer coordination ran on a shared Google Sheet — no roles, no validation, no audit trail, operations stuck managing the sheet instead of the work.",
           whatWeDid:
@@ -303,6 +308,7 @@ export const STUDIO_TRANSLATIONS_EN = {
           industry: "Enterprise",
           timeline: "2015–2018",
           role: "Senior Software Engineer",
+          listHook: { value: "97%", label: "faster API" },
           problem:
             "Global deploy and monitoring tooling siloed; primary API ~14s; a monolith optimized for no one.",
           whatWeDid:
@@ -324,9 +330,10 @@ export const STUDIO_TRANSLATIONS_EN = {
         {
           slug: "glow",
           client: "Glow Digital",
-          industry: "AdTech / SaaS",
+          industry: "AdTech",
           timeline: "2013–2015",
           role: "Software Developer",
+          listHook: { value: "−90%", label: "API load" },
           problem:
             "Facebook Ads API rate ceilings during peak periods; campaign optimization and variation setup burned 2–5 hours a week per manager on mechanical work.",
           whatWeDid:
@@ -467,77 +474,6 @@ export const STUDIO_TRANSLATIONS_EN = {
           },
         ],
       },
-      brandIdentity: {
-        name: "Brand Identity",
-        deliverables: [
-          {
-            label: "Positioning",
-            description: "Who you are for, why you win, and how you stand apart",
-          },
-          {
-            label: "Messaging",
-            description: "What to say to each audience without reinventing it every time",
-          },
-          {
-            label: "Voice",
-            description: "Tone guidelines so every writer sounds like the same company",
-          },
-          {
-            label: "Visual identity",
-            description: "Logo, color, type, and imagery direction that hold together",
-          },
-          {
-            label: "Guidelines",
-            description: "A brand document your team and vendors can actually follow",
-          },
-        ],
-      },
-      copyMessaging: {
-        name: "Copy & Messaging",
-        deliverables: [
-          {
-            label: "Website copy",
-            description: "Pages and landings written to move the right reader to act",
-          },
-          {
-            label: "Campaign copy",
-            description: "Emails and ads with a clear offer and a clear next step",
-          },
-          {
-            label: "Message hierarchy",
-            description: "What to lead with for each audience — and what to leave out",
-          },
-          {
-            label: "CTAs",
-            description: "Calls to action that match the decision the reader is ready to make",
-          },
-        ],
-      },
-      contentStrategy: {
-        name: "Content Strategy",
-        deliverables: [
-          {
-            label: "SEO strategy",
-            description: "Keywords and topics that match how your buyers actually search",
-          },
-          {
-            label: "Editorial plan",
-            description: "A calendar of what to publish, for whom, and why it compounds",
-          },
-          {
-            label: "Email",
-            description: "Sequences that nurture and convert without becoming noise",
-          },
-          {
-            label: "Social",
-            description: "A channel plan with formats and cadence your team can sustain",
-          },
-          {
-            label: "Analytics",
-            description: "Measurement so you know which content earns its keep",
-          },
-        ],
-      },
       strategyWorkshop: {
         name: "Strategy Workshop",
         deliverables: [
@@ -559,6 +495,71 @@ export const STUDIO_TRANSLATIONS_EN = {
           },
         ],
       },
+      fractionalCto: {
+        name: "Fractional CTO",
+        deliverables: [
+          {
+            label: "Technical leadership",
+            description:
+              "Senior judgment on architecture, hiring, and roadmap without a full-time hire",
+          },
+          {
+            label: "Standing cadence",
+            description: "Weekly or biweekly touchpoints so decisions don't wait on availability",
+          },
+          {
+            label: "Team review",
+            description: "An honest read on your engineering org — who's strong, what's missing",
+          },
+          {
+            label: "Board-ready updates",
+            description: "Technical narrative your investors and board actually understand",
+          },
+        ],
+      },
+      technicalDueDiligence: {
+        name: "Technical Due Diligence",
+        deliverables: [
+          {
+            label: "Codebase and architecture audit",
+            description: "What you're actually buying, not what the deck says",
+          },
+          {
+            label: "Team assessment",
+            description: "Who's load-bearing, who's a flight risk, what breaks if they leave",
+          },
+          {
+            label: "Risk report",
+            description:
+              "Ranked technical risks with real cost-to-fix estimates, not vague red flags",
+          },
+          {
+            label: "Go/no-go recommendation",
+            description: "A clear call you can act on before the deal closes",
+          },
+        ],
+      },
+      productStrategy: {
+        name: "Product Strategy",
+        deliverables: [
+          {
+            label: "Market and product read",
+            description: "Where you actually have leverage, not where it's comfortable to play",
+          },
+          {
+            label: "Bet selection",
+            description: "Which one or two bets are worth the company's limited attention",
+          },
+          {
+            label: "Prioritization framework",
+            description: "A way to decide what's next that survives past this quarter",
+          },
+          {
+            label: "Written recommendation",
+            description: "A decision memo, not a slide deck you present once and shelve",
+          },
+        ],
+      },
     },
   },
 
@@ -577,6 +578,11 @@ export const STUDIO_TRANSLATIONS_EN = {
           "By scope, complexity, and engagement type — not by the hour. After a discovery call I send a written proposal with deliverables, timeline, and investment. Every engagement is different; I won't pretend a rate card can replace that conversation.",
       },
       {
+        question: "Who is this a good fit for?",
+        answer:
+          "Pre-seed to Series A founders who move fast, and teams modernizing a system that's outgrown itself — especially if you've been burned by a cut-rate shop before. Not a fit: lowest-bid procurement or scope that assumes corners get cut.",
+      },
+      {
         question: "Is testing and documentation included?",
         answer:
           "Yes, always. I do not ship untested work, and you should never be dependent on me to understand what I built. Every engagement ends with a defined handoff, not a disappearing act.",
@@ -584,7 +590,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       {
         question: "What's not covered by the engagement?",
         answer:
-          "Third-party software licenses, hosting, and API fees are passed through at cost. Content you provide (copy, images, data) I can produce, but it's scoped separately. Ongoing maintenance after project close isn't assumed — I offer retainers for that.",
+          "Third-party software licenses, hosting, and API fees are passed through at cost. Copy, brand, and content are your responsibility — I integrate them, I don't produce them. Ongoing maintenance after project close isn't assumed — I offer retainers for that.",
       },
       {
         question: "Do you work with early-stage startups with limited budgets?",
@@ -679,39 +685,19 @@ export const STUDIO_TRANSLATIONS_EN = {
   home: {
     meta: {
       title: "Ponti Studios",
-      description:
-        "Premium product and content development for teams who refuse to compromise on quality.",
+      description: "Premium product and engineering for teams who refuse to compromise on quality.",
     },
     hero: {
-      title: "You bring the problem. I bring it back solved.",
-      disclaimer:
-        "No team to manage, no process to sit through — just the work, done by the person who does it.",
-      credibility:
-        "Twelve years in rooms that mattered — StreamYard, Kensho, Thomson Reuters, Humana, Mimecast, and more. Now just for you.",
+      title: "Problems, solved.",
+      wordBefore: "Problems",
+      wordAfter: "Solved.",
+      subtitle:
+        "No team to manage, no process to sit through — just twelve years at StreamYard, Kensho, Thomson Reuters, Humana, and Mimecast, put to work for you.",
       seeServices: "See all services",
-    },
-    fit: {
-      eyebrow: "Fit",
-      title: "Who this is for",
-      intro: "I turn down more work than I take. Here's the filter.",
-      goodLabel: "Good fit",
-      good: [
-        "Pre-seed to Series A founders who move fast",
-        "Teams modernizing a system that's outgrown itself",
-        "Founders who'd rather ship late than ship broken",
-        "Anyone burned by a cut-rate shop before",
-      ],
-      notLabel: "Not a fit",
-      notRight: [
-        "Lowest-bid procurement",
-        "Body-shop staffing requests",
-        "Scope that assumes corners get cut",
-        "Teams not ready to invest in the work",
-      ],
     },
     services: {
       title: "What I do",
-      intro: "Product and content, from a scoped build to embedded leadership.",
+      intro: "Product and engineering, from a scoped build to embedded leadership.",
       cta: "See all services →",
     },
     work: {

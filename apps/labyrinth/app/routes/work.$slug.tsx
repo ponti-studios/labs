@@ -5,7 +5,7 @@ import { BOOK_CALL_URL, caseSnapshots } from "~/data/studio";
 import { t } from "~/translations";
 
 const copy = t.work;
-const proof = t.services.proof;
+const proof = t.catalog.proof;
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const snapshot = caseSnapshots.find((entry) => entry.slug === params.slug);
@@ -31,7 +31,7 @@ export default function WorkSlug() {
       <section className="border-border/60 flex flex-col gap-6 border-b px-6 py-20 sm:px-10 sm:py-28">
         <Link
           to="/work"
-          className="body-3 text-muted-foreground w-fit underline-offset-4 hover:text-foreground hover:underline"
+          className="body-3 text-muted-foreground hover:text-foreground w-fit underline-offset-4 hover:underline"
         >
           ← {copy.backToWork}
         </Link>
@@ -61,10 +61,7 @@ export default function WorkSlug() {
         <h2 className="heading-2 text-foreground">{copy.approachTitle}</h2>
         <ol className="flex flex-col gap-8">
           {snapshot.approach.map((step, index) => (
-            <li
-              key={step}
-              className="grid gap-2 sm:grid-cols-[minmax(0,4rem)_1fr] sm:gap-8"
-            >
+            <li key={step} className="grid gap-2 sm:grid-cols-[minmax(0,4rem)_1fr] sm:gap-8">
               <span className="body-2 text-muted-foreground tabular-nums">
                 {String(index + 1).padStart(2, "0")}
               </span>
@@ -104,7 +101,7 @@ export default function WorkSlug() {
             </a>
           </Button>
           <Link
-            to="/engage"
+            to="/services"
             className="body-2 text-foreground underline-offset-4 hover:underline"
           >
             {t.home.services.cta}
