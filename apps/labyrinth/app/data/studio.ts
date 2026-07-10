@@ -26,7 +26,6 @@ export type CaseSnapshot = {
   whatWeDid: string;
   approach: readonly string[];
   outcomes: readonly CaseStat[];
-  services: readonly string[];
   /**
    * Index-only teaser. Short by design — full outcomes live on the case study.
    * value = the number/result; label = 2–4 word gloss.

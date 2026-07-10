@@ -1,22 +1,32 @@
 import { Button } from "@pontistudios/ui";
+import { motion, useReducedMotion } from "framer-motion";
 import { HelpCircle } from "lucide-react";
 import { Link } from "react-router";
-import { BOOK_CALL_URL, caseSnapshots, servicePillars } from "~/data/studio";
+import { BOOK_CALL_URL, servicePillars } from "~/data/studio";
 import { t } from "~/translations";
 
 const copy = t.services;
 
-/** Three headline outcomes for the static proof strip — one each from flagship cases. */
-const PROOF_SLUGS = ["streamyard", "kensho", "thomson-reuters"] as const;
-
-const proofHighlights = PROOF_SLUGS.flatMap((slug) => {
-  const snapshot = caseSnapshots.find((s) => s.slug === slug);
-  if (!snapshot || snapshot.outcomes.length === 0) return [];
-  return [{ snapshot, outcome: snapshot.outcomes[0] }];
-});
-
 export function meta(): Array<{ title?: string; name?: string; content?: string }> {
   return [{ title: copy.meta.title }, { name: "description", content: copy.meta.description }];
+}
+
+/** Lead sits still — "Nothing else." cuts in as the accent punch. One reveal, once, on load. */
+function ServicesHeroHeadline() {
+  const reduceMotion = useReducedMotion();
+  return (
+    <h1 className="display-1 text-foreground flex max-w-4xl flex-wrap items-baseline gap-x-3 gap-y-1">
+      <span>{copy.hero.title}</span>
+      <motion.span
+        className="text-accent"
+        initial={reduceMotion ? false : { opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.2, delay: 0.35, ease: "easeOut" }}
+      >
+        {copy.hero.punch}
+      </motion.span>
+    </h1>
+  );
 }
 
 export default function Services() {
@@ -24,7 +34,7 @@ export default function Services() {
     <div className="flex w-full flex-col">
       {/* Hero — one frame, one idea */}
       <section className="border-border/60 flex flex-col gap-6 border-b px-6 py-20 sm:px-10 sm:py-28">
-        <h1 className="display-1 text-foreground max-w-4xl">{copy.hero.title}</h1>
+        <ServicesHeroHeadline />
         <p className="body-1 text-muted-foreground max-w-2xl">{copy.hero.body}</p>
         <div className="flex flex-wrap items-center gap-6 pt-2">
           <Button asChild size="lg">
@@ -74,39 +84,6 @@ export default function Services() {
             </div>
           ))}
         </div>
-      </section>
-
-      {/* Proof — pull-quote outcomes, not a second case-study index */}
-      <section className="border-border/60 flex flex-col gap-10 border-b px-6 py-20 sm:px-10 sm:py-24">
-        <div className="flex flex-col gap-3">
-          <h2 className="heading-2 text-foreground">{copy.proof.title}</h2>
-          <p className="body-2 text-muted-foreground max-w-2xl">{copy.proof.intro}</p>
-        </div>
-
-        <div className="flex flex-col gap-12">
-          {proofHighlights.map(({ snapshot, outcome }) => (
-            <article key={snapshot.slug} className="flex max-w-3xl flex-col gap-3">
-              <p className="display-2 text-accent">{outcome.value}</p>
-              <p className="heading-4 text-foreground">
-                {outcome.label} — {snapshot.client}
-              </p>
-              <p className="body-2 text-muted-foreground max-w-xl">{snapshot.whatWeDid}</p>
-              <Link
-                to={`/work/${snapshot.slug}`}
-                className="body-2 text-foreground w-fit underline-offset-4 hover:underline"
-              >
-                {t.catalog.proof.readCaseStudy}
-              </Link>
-            </article>
-          ))}
-        </div>
-
-        <Link
-          to="/work"
-          className="body-2 text-foreground w-fit underline-offset-4 hover:underline"
-        >
-          {copy.proof.seeAll}
-        </Link>
       </section>
 
       {/* Process — quiet, linear, same for everyone */}

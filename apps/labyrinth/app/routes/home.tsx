@@ -83,21 +83,12 @@ export default function Home() {
             to="/services"
             className="body-2 text-foreground underline-offset-4 hover:underline"
           >
-            {t.home.hero.seeServices}
+            {t.home.services.cta}
           </Link>
         </div>
       </section>
 
-      {/* Teasers — full catalog / work / manifesto live on their own routes */}
-      <section className="border-border/60 border-b px-6 py-16 sm:px-10 sm:py-20">
-        <Teaser
-          title={t.home.services.title}
-          intro={t.home.services.intro}
-          cta={t.home.services.cta}
-          to="/services"
-        />
-      </section>
-
+      {/* Teasers */}
       <section className="border-border/60 border-b px-6 py-16 sm:px-10 sm:py-20">
         <Teaser
           title={t.home.work.title}

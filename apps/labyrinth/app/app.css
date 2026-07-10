@@ -75,3 +75,45 @@
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
   background-color: rgba(87, 83, 78, 0.8);
 }
+
+/*
+ * Fades a scrolling container's edges with a fixed-size mask, regardless of
+ * total scroll length. Stops mix absolute (--carousel-fade-size) and
+ * percentage units in one gradient so the fade band stays constant while the
+ * opaque middle stretches to fit. Curve follows a standard easing-gradient
+ * shape (dense stops near transparent, sparse near opaque) so it dissolves
+ * progressively instead of ramping linearly. Pure CSS — no scroll listeners.
+ */
+:root {
+  --carousel-fade-stops: transparent 0,
+    rgba(0, 0, 0, 0.02) calc(var(--carousel-fade-size) * 0.13),
+    rgba(0, 0, 0, 0.05) calc(var(--carousel-fade-size) * 0.198),
+    rgba(0, 0, 0, 0.11) calc(var(--carousel-fade-size) * 0.27),
+    rgba(0, 0, 0, 0.2) calc(var(--carousel-fade-size) * 0.35),
+    rgba(0, 0, 0, 0.32) calc(var(--carousel-fade-size) * 0.435),
+    rgba(0, 0, 0, 0.47) calc(var(--carousel-fade-size) * 0.53),
+    rgba(0, 0, 0, 0.64) calc(var(--carousel-fade-size) * 0.66),
+    rgba(0, 0, 0, 0.83) calc(var(--carousel-fade-size) * 0.81),
+    black var(--carousel-fade-size),
+    black calc(100% - var(--carousel-fade-size)),
+    rgba(0, 0, 0, 0.83) calc(100% - (var(--carousel-fade-size) * 0.81)),
+    rgba(0, 0, 0, 0.64) calc(100% - (var(--carousel-fade-size) * 0.66)),
+    rgba(0, 0, 0, 0.47) calc(100% - (var(--carousel-fade-size) * 0.53)),
+    rgba(0, 0, 0, 0.32) calc(100% - (var(--carousel-fade-size) * 0.435)),
+    rgba(0, 0, 0, 0.2) calc(100% - (var(--carousel-fade-size) * 0.35)),
+    rgba(0, 0, 0, 0.11) calc(100% - (var(--carousel-fade-size) * 0.27)),
+    rgba(0, 0, 0, 0.05) calc(100% - (var(--carousel-fade-size) * 0.198)),
+    rgba(0, 0, 0, 0.02) calc(100% - (var(--carousel-fade-size) * 0.13)), transparent 100%;
+}
+
+.carousel-fade-mask-y {
+  --carousel-fade-size: 2.5rem;
+  mask-image: linear-gradient(to bottom, var(--carousel-fade-stops));
+  -webkit-mask-image: linear-gradient(to bottom, var(--carousel-fade-stops));
+}
+
+@media (min-width: 640px) {
+  .carousel-fade-mask-y {
+    --carousel-fade-size: 3.5rem;
+  }
+}
