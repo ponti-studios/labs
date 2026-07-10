@@ -1,31 +1,54 @@
-import { HelpCircle } from "lucide-react";
+import { Button } from "@pontistudios/ui";
+import { Link } from "react-router";
+import { BOOK_CALL_URL } from "~/data/studio";
 import { t } from "~/translations";
+
+const copy = t.faq;
 
 export function meta(): Array<{
   title?: string;
   name?: string;
   content?: string;
 }> {
-  return [{ title: t.faq.meta.title }, { name: "description", content: t.faq.meta.description }];
+  return [{ title: copy.meta.title }, { name: "description", content: copy.meta.description }];
 }
 
 export default function Faq() {
   return (
     <div className="flex w-full flex-col">
-      <section className="border-border/60 flex flex-col gap-6 border-b py-16">
-        <h1 className="display-2 text-foreground flex max-w-3xl items-center gap-3">
-          <HelpCircle className="size-7" aria-hidden="true" />
-          {t.faq.title}
-        </h1>
+      {/* Hero */}
+      <section className="border-border/60 flex flex-col gap-6 border-b px-6 py-20 sm:px-10 sm:py-28">
+        <h1 className="display-1 text-foreground max-w-4xl">{copy.title}</h1>
+        <p className="body-1 text-muted-foreground max-w-2xl">{copy.meta.description}</p>
       </section>
 
-      <section className="flex flex-col gap-8 py-16">
-        {t.faq.items.map((faq) => (
-          <div key={faq.question} className="flex flex-col gap-2">
-            <h2 className="subheading-3 text-foreground">{faq.question}</h2>
-            <p className="body-3 text-muted-foreground">{faq.answer}</p>
-          </div>
+      {/* Q&A — editorial stack */}
+      <section className="border-border/60 flex flex-col gap-12 border-b px-6 py-20 sm:px-10 sm:py-24">
+        {copy.items.map((faq) => (
+          <article key={faq.question} className="flex max-w-3xl flex-col gap-3">
+            <h2 className="heading-3 text-foreground">{faq.question}</h2>
+            <p className="body-1 text-muted-foreground">{faq.answer}</p>
+          </article>
         ))}
+      </section>
+
+      {/* Close */}
+      <section className="flex flex-col gap-6 px-6 py-20 sm:px-10 sm:py-24">
+        <h2 className="display-2 text-foreground max-w-3xl">{t.engage.cta.title}</h2>
+        <p className="body-1 text-muted-foreground max-w-xl">{t.engage.cta.body}</p>
+        <div className="flex flex-wrap items-center gap-6 pt-2">
+          <Button asChild size="lg">
+            <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
+              {t.common.bookCall}
+            </a>
+          </Button>
+          <Link
+            to="/engage"
+            className="body-2 text-foreground underline-offset-4 hover:underline"
+          >
+            {t.home.services.cta}
+          </Link>
+        </div>
       </section>
     </div>
   );

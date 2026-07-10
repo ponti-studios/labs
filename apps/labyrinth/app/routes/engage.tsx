@@ -1,188 +1,160 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-  Button,
-} from "@pontistudios/ui";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { Button } from "@pontistudios/ui";
 import { HelpCircle } from "lucide-react";
-import { Link, useSearchParams } from "react-router";
-import { engageProblems, findEngageProblem } from "~/data/engage";
+import { Link } from "react-router";
 import { BOOK_CALL_URL, caseSnapshots, servicePillars } from "~/data/studio";
 import { t } from "~/translations";
 
-/** A hard cut, not a dissolve — the scene changes because a new choice was made, not to soften the change. */
-const cut = { duration: 0.12, ease: "linear" as const };
+const copy = t.engage;
 
-function joinNaturally(items: readonly string[]): string {
-  const lower = items.map((item) => item.charAt(0).toLowerCase() + item.slice(1));
-  if (lower.length === 0) return "";
-  if (lower.length === 1) return lower[0];
-  return `${lower.slice(0, -1).join(", ")}, and ${lower[lower.length - 1]}`;
-}
+/** Three headline outcomes for the static proof strip — one each from flagship cases. */
+const PROOF_SLUGS = ["streamyard", "kensho", "thomson-reuters"] as const;
+
+const proofHighlights = PROOF_SLUGS.flatMap((slug) => {
+  const snapshot = caseSnapshots.find((s) => s.slug === slug);
+  if (!snapshot || snapshot.outcomes.length === 0) return [];
+  return [{ snapshot, outcome: snapshot.outcomes[0] }];
+});
 
 export function meta(): Array<{ title?: string; name?: string; content?: string }> {
   return [
-    { title: "Engage | Ponti Studios" },
-    {
-      name: "description",
-      content: "Tell me what you're solving. I'll show you the closest thing I've already built.",
-    },
+    { title: copy.meta.title },
+    { name: "description", content: copy.meta.description },
   ];
 }
 
 export default function Engage() {
-  const reduceMotion = useReducedMotion();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const activeProblem = findEngageProblem(searchParams.get("problem"));
-  const proof = caseSnapshots.find((snapshot) => snapshot.slug === activeProblem.proofSlug);
-  const heroOutcome = proof?.outcomes[activeProblem.proofOutcomeIndex ?? 0];
-  const sceneTransition = reduceMotion ? { duration: 0 } : cut;
-
-  const selectProblem = (id: string) => {
-    setSearchParams({ problem: id }, { preventScrollReset: true, replace: true });
-  };
-
   return (
     <div className="flex w-full flex-col">
-      {/* Scene one — the question. Locked frame, nothing moves. */}
-      <section className="border-border/60 flex min-h-[70vh] flex-col justify-center gap-10 border-b px-6 py-24 sm:px-10">
-        <h1 className="display-1 text-foreground max-w-4xl">What are you trying to solve?</h1>
-        <div className="flex flex-col gap-1" role="group" aria-label="Choose a business problem">
-          {engageProblems.map((problem) => {
-            const isActive = problem.id === activeProblem.id;
-            return (
-              <button
-                key={problem.id}
-                type="button"
-                aria-pressed={isActive}
-                onClick={() => selectProblem(problem.id)}
-                className={[
-                  "focus-visible:outline-ring cursor-pointer py-1.5 text-left text-3xl leading-tight font-medium outline-none transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 sm:text-4xl",
-                  isActive ? "text-accent" : "text-muted-foreground/50 hover:text-foreground",
-                ].join(" ")}
-              >
-                {problem.label}
-              </button>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* Scene two — the answer. Written for this exact problem, never reused. */}
-      <section className="border-border/60 flex min-h-[60vh] flex-col justify-center border-b px-6 py-24 sm:px-10">
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={activeProblem.id}
-            initial={reduceMotion ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={sceneTransition}
-            className="flex max-w-3xl flex-col gap-6"
+      {/* Hero — one frame, one idea */}
+      <section className="border-border/60 flex flex-col gap-6 border-b px-6 py-20 sm:px-10 sm:py-28">
+        <h1 className="display-1 text-foreground max-w-4xl">{copy.hero.title}</h1>
+        <p className="body-1 text-muted-foreground max-w-2xl">{copy.hero.body}</p>
+        <div className="flex flex-wrap items-center gap-6 pt-2">
+          <Button asChild size="lg">
+            <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
+              {t.common.bookCall}
+            </a>
+          </Button>
+          <Link
+            to="/work"
+            className="body-2 text-foreground underline-offset-4 hover:underline"
           >
-            <p className="heading-2 text-accent">{activeProblem.answerEyebrow}</p>
-            <p className="body-2 text-muted-foreground max-w-xl">{activeProblem.description}</p>
-            <p className="display-2 text-foreground">
-              {activeProblem.answerBody} That means {joinNaturally(activeProblem.deliverables)}.
-            </p>
-            <div className="flex flex-wrap items-center gap-6 pt-2">
-              <Button asChild size="lg">
-                <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
-                  {activeProblem.cta}
-                </a>
-              </Button>
-              <Link
-                to="/work"
-                className="body-2 text-foreground underline-offset-4 hover:underline"
-              >
-                See more work
-              </Link>
-            </div>
-            <p className="footnote text-muted-foreground pt-4">
-              Or, if you'd rather just{" "}
-              <a
-                href={BOOK_CALL_URL}
-                target="_blank"
-                rel="noreferrer"
-                className="text-foreground underline-offset-4 hover:underline"
-              >
-                borrow the whole studio
-              </a>{" "}
-              for a while — product, design, and engineering leadership embedded in your team until
-              the work is done.
-            </p>
-          </motion.div>
-        </AnimatePresence>
+            {copy.hero.seeWork}
+          </Link>
+        </div>
       </section>
 
-      {/* Scene three — the proof. A single fact, rendered like a pull quote, not a stat tile. */}
-      {proof && heroOutcome ? (
-        <section className="border-border/60 flex min-h-[60vh] flex-col justify-center border-b px-6 py-24 sm:px-10">
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={activeProblem.id}
-              initial={reduceMotion ? false : { opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={sceneTransition}
-              className="flex max-w-3xl flex-col gap-4"
-            >
-              <p className="body-2 text-muted-foreground">Closest thing I've already built</p>
-              <p className="display-1 text-accent">{heroOutcome.value}</p>
-              <p className="heading-3 text-foreground">
-                {heroOutcome.label} — {proof.client}, {proof.industry}
-              </p>
-              <p className="body-1 text-muted-foreground max-w-xl">{proof.whatWeDid}</p>
-              <Link
-                to={`/work/${proof.slug}`}
-                className="body-2 text-foreground w-fit underline-offset-4 hover:underline"
-              >
-                Read the full case study →
-              </Link>
-            </motion.div>
-          </AnimatePresence>
-        </section>
-      ) : null}
-
-      {/* Below the fold — quiet, secondary, for people who'd rather browse than be routed. */}
-      <section className="border-border/60 flex flex-col gap-6 border-b py-16">
-        <div className="flex flex-col gap-2 px-6 sm:px-10">
-          <h2 className="heading-2 text-foreground">{t.services.overview.title}</h2>
+      {/* Services — editorial catalog, same for every visitor */}
+      <section className="border-border/60 flex flex-col gap-12 border-b px-6 py-20 sm:px-10 sm:py-24">
+        <div className="flex flex-col gap-3">
+          <h2 className="heading-2 text-foreground">{copy.services.title}</h2>
+          <p className="body-2 text-muted-foreground max-w-2xl">{copy.services.intro}</p>
         </div>
-        <div className="flex flex-col gap-10 px-6 sm:px-10">
+
+        <div className="flex flex-col gap-16">
           {servicePillars.map((pillar) => (
-            <div key={pillar.name} className="flex flex-col gap-3">
-              <h3 className="heading-4 text-foreground">{pillar.name}</h3>
-              <Accordion type="multiple">
+            <div key={pillar.name} className="flex flex-col gap-8">
+              <h3 className="heading-3 text-accent">{pillar.name}</h3>
+              <div className="flex flex-col gap-10">
                 {pillar.services.map((service) => (
-                  <AccordionItem key={service.slug} value={service.slug} id={service.slug}>
-                    <AccordionTrigger className="text-left">
-                      <span className="subheading-3 text-foreground">{service.name}</span>
-                    </AccordionTrigger>
-                    <AccordionContent>
-                      <ul className="flex flex-col gap-2">
-                        {service.deliverables.map((item) => (
-                          <li key={item.label} className="ui-dash-list-item">
-                            <span className="ui-dash-marker">—</span>
-                            <span className="body-2 text-muted-foreground">
-                              <span className="text-foreground font-medium">{item.label}:</span>{" "}
-                              {item.description}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    </AccordionContent>
-                  </AccordionItem>
+                  <article
+                    key={service.slug}
+                    id={service.slug}
+                    className="grid gap-4 sm:grid-cols-[minmax(0,14rem)_1fr] sm:gap-10"
+                  >
+                    <h4 className="subheading-2 text-foreground">{service.name}</h4>
+                    <ul className="flex flex-col gap-2">
+                      {service.deliverables.map((item) => (
+                        <li key={item.label} className="ui-dash-list-item">
+                          <span className="ui-dash-marker">—</span>
+                          <span className="body-2 text-muted-foreground">
+                            <span className="text-foreground font-medium">{item.label}:</span>{" "}
+                            {item.description}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </article>
                 ))}
-              </Accordion>
+              </div>
             </div>
           ))}
         </div>
       </section>
 
+      {/* Proof — pull-quote outcomes, not a second case-study index */}
+      <section className="border-border/60 flex flex-col gap-10 border-b px-6 py-20 sm:px-10 sm:py-24">
+        <div className="flex flex-col gap-3">
+          <h2 className="heading-2 text-foreground">{copy.proof.title}</h2>
+          <p className="body-2 text-muted-foreground max-w-2xl">{copy.proof.intro}</p>
+        </div>
+
+        <div className="flex flex-col gap-12">
+          {proofHighlights.map(({ snapshot, outcome }) => (
+            <article key={snapshot.slug} className="flex max-w-3xl flex-col gap-3">
+              <p className="display-2 text-accent">{outcome.value}</p>
+              <p className="heading-4 text-foreground">
+                {outcome.label} — {snapshot.client}
+              </p>
+              <p className="body-2 text-muted-foreground max-w-xl">{snapshot.whatWeDid}</p>
+              <Link
+                to={`/work/${snapshot.slug}`}
+                className="body-2 text-foreground w-fit underline-offset-4 hover:underline"
+              >
+                {t.services.proof.readCaseStudy}
+              </Link>
+            </article>
+          ))}
+        </div>
+
+        <Link
+          to="/work"
+          className="body-2 text-foreground w-fit underline-offset-4 hover:underline"
+        >
+          {copy.proof.seeAll}
+        </Link>
+      </section>
+
+      {/* Process — quiet, linear, same for everyone */}
+      <section className="border-border/60 flex flex-col gap-10 border-b px-6 py-20 sm:px-10 sm:py-24">
+        <div className="flex flex-col gap-3">
+          <h2 className="heading-2 text-foreground">{copy.process.title}</h2>
+          <p className="body-2 text-muted-foreground max-w-2xl">{copy.process.intro}</p>
+        </div>
+        <ol className="flex flex-col gap-8">
+          {t.common.contactSteps.map((step, index) => (
+            <li
+              key={step.title}
+              className="grid gap-2 sm:grid-cols-[minmax(0,4rem)_1fr] sm:gap-8"
+            >
+              <span className="body-2 text-muted-foreground tabular-nums">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <div className="flex flex-col gap-1">
+                <span className="subheading-3 text-foreground">{step.title}</span>
+                <span className="body-2 text-muted-foreground">{step.description}</span>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* Closing CTA */}
+      <section className="border-border/60 flex flex-col gap-6 border-b px-6 py-20 sm:px-10 sm:py-24">
+        <h2 className="display-2 text-foreground max-w-3xl">{copy.cta.title}</h2>
+        <p className="body-1 text-muted-foreground max-w-xl">{copy.cta.body}</p>
+        <div className="flex flex-wrap items-center gap-6 pt-2">
+          <Button asChild size="lg">
+            <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
+              {t.common.bookCall}
+            </a>
+          </Button>
+          <p className="body-3 text-muted-foreground">{t.common.replyWithin}</p>
+        </div>
+      </section>
+
       <section className="flex items-center justify-between px-6 py-6 sm:px-10">
-        <p className="body-2 text-muted-foreground">{t.faq.title}</p>
+        <p className="body-2 text-muted-foreground">{copy.faqLink}</p>
         <Link
           to="/faq"
           className="body-2 text-foreground hover:text-muted-foreground flex items-center gap-2"

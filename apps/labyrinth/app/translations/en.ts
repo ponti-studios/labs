@@ -26,13 +26,61 @@ export const STUDIO_TRANSLATIONS_EN = {
     },
   },
 
-  services: {
-    overview: {
-      eyebrow: "What I do",
-      title: "Full service catalog",
+  engage: {
+    meta: {
+      title: "Engage | Ponti Studios",
+      description:
+        "Product engineering, design, content, and advisory — scoped clearly, shipped with proof.",
+    },
+    hero: {
+      title: "Product and content, end to end.",
+      body: "Engineering, design, brand, and strategy — from the first hard decision to a handoff your team can run without me.",
+      seeWork: "See the work",
+    },
+    services: {
+      title: "What I do",
+      intro:
+        "Three pillars. Every engagement is scoped to a clear outcome — not a vague retainer and a pile of hours.",
     },
     proof: {
-      eyebrow: "Proof",
+      title: "Proof, not adjectives",
+      intro: "Hard numbers from product and engineering work. Full case studies live on Work.",
+      seeAll: "All selected work →",
+    },
+    process: {
+      title: "How we start",
+      intro: "Simple path from first conversation to signed scope. No process theater.",
+    },
+    cta: {
+      title: "Ready when you are.",
+      body: "Thirty minutes. No pitch deck. If it's a fit, you'll leave with a clear next step.",
+    },
+    faqLink: "Questions about pricing, scope, and fit",
+  },
+
+  work: {
+    meta: {
+      title: "Selected Work | Ponti Studios",
+      description:
+        "Twelve years of client work — product, platform, and engineering. Hard numbers, not adjectives.",
+    },
+    hero: {
+      title: "Selected work",
+      body: "Twelve years of client work — product, platform, and engineering. Pick one to read the full case.",
+    },
+    approachTitle: "Approach",
+    backToWork: "All work",
+    nextCta: {
+      title: "Need something similar solved?",
+      body: "If the problem looks familiar, let's talk about yours.",
+    },
+  },
+
+  services: {
+    overview: {
+      title: "What I do",
+    },
+    proof: {
       title: "Selected work",
       intro: "Hard numbers from product and engineering engagements — not adjectives.",
       problemLabel: "Problem",
@@ -40,30 +88,8 @@ export const STUDIO_TRANSLATIONS_EN = {
       outcomeLabel: "Outcome",
       servicesLabel: "Services",
       readCaseStudy: "Read the full case study →",
+      // Reverse chronological. Source of truth: vault ponti-studios/projects/* — only vault-backed outcomes.
       snapshots: [
-        {
-          slug: "streamyard",
-          client: "StreamYard",
-          industry: "Creator Economy",
-          timeline: "2020–2024",
-          role: "Lead Product Engineer & Product Manager",
-          problem:
-            "Solo-creator product hit a B2B ceiling — no workspaces, no real roles, no path for agencies and media teams.",
-          whatWeDid:
-            "Led product and engineering for Teams/Business tier and the creator marketplace, from architecture through launch.",
-          approach: [
-            "Introduced a workspace abstraction so assets and permissions could be shared instead of tied to a single userId",
-            "Replaced the boolean isHost flag with numeric RBAC (role values as integers) so future roles slot in without schema changes",
-            "Migrated to the new model in four independently-deployable phases — zero downtime, no phase depended on the next having shipped",
-            "Built vector-based creator recommendations and AI conversation starters to fix a 34% collaboration-to-conversation drop-off",
-          ],
-          outcomes: [
-            { value: "$15M+", label: "Enterprise ARR unlocked" },
-            { value: "13%", label: "Consumer growth within 3 months of Business launch" },
-            { value: "300%", label: "YoY creator collaborations" },
-          ],
-          services: ["Engineering", "Product"],
-        },
         {
           slug: "lumina",
           client: "Lumina",
@@ -89,6 +115,28 @@ export const STUDIO_TRANSLATIONS_EN = {
           services: ["Engineering", "Modernization", "Product"],
         },
         {
+          slug: "revrock",
+          client: "Revrock",
+          industry: "Music / Creator tools",
+          timeline: "2024–2025",
+          role: "Product Lead",
+          problem:
+            "Independent musicians planned tours on intuition and spreadsheets — no audience density, routing efficiency, or financial viability until after the tour.",
+          whatWeDid:
+            "Product-led the MVP: user research through launch for tour routing, venue selection, and planning financials.",
+          approach: [
+            "Cut a 12–18 month founder vision to a three-week MVP by ranking features on user urgency, not enthusiasm",
+            "Modeled tour routing as an operations problem — geography, market sequencing, and cost held in one tool",
+            "Made venue selection audience-informed instead of guesswork-driven",
+            "Surfaced estimated revenue and viability during planning, not after the tour ended",
+          ],
+          outcomes: [
+            { value: "Hours", label: "Tour planning time, down from weeks" },
+            { value: "20–35%", label: "Higher estimated revenue vs. manual tours" },
+          ],
+          services: ["Product", "Engineering"],
+        },
+        {
           slug: "prolog",
           client: "Prolog",
           industry: "Entertainment / AI",
@@ -107,6 +155,145 @@ export const STUDIO_TRANSLATIONS_EN = {
             { value: "~95%", label: "Extraction accuracy" },
             { value: "~70%", label: "Reduction in review time" },
             { value: "3×", label: "Reviewer throughput" },
+          ],
+          services: ["Engineering", "Product Design"],
+        },
+        {
+          slug: "streamyard",
+          client: "StreamYard",
+          industry: "Creator Economy",
+          timeline: "2020–2024",
+          role: "Lead Product Engineer & Product Manager",
+          problem:
+            "Solo-creator product hit a B2B ceiling — no workspaces, no real roles, no path for agencies and media teams.",
+          whatWeDid:
+            "Led product and engineering for Teams/Business tier and the creator marketplace, from architecture through launch.",
+          approach: [
+            "Introduced a workspace abstraction so assets and permissions could be shared instead of tied to a single userId",
+            "Replaced the boolean isHost flag with numeric RBAC (role values as integers) so future roles slot in without schema changes",
+            "Migrated to the new model in four independently-deployable phases — zero downtime, no phase depended on the next having shipped",
+            "Built vector-based creator recommendations and AI conversation starters to fix a 34% collaboration-to-conversation drop-off",
+          ],
+          outcomes: [
+            { value: "$15M+", label: "Enterprise ARR unlocked" },
+            { value: "13%", label: "Consumer growth within 3 months of Business launch" },
+            { value: "300%", label: "YoY creator collaborations" },
+          ],
+          services: ["Engineering", "Product"],
+        },
+        {
+          slug: "whistle",
+          client: "Whistle",
+          industry: "Education / Video",
+          timeline: "2020–2021",
+          role: "Platform Engineer",
+          problem:
+            "Generic video tools broke movement pedagogy — wrong topology, noise cancellation killing music, layouts built for conversation, and no self-hosted path for schools with minors.",
+          whatWeDid:
+            "Built a purpose-built streaming stack for dance, yoga, and fitness instruction during COVID lockdowns.",
+          approach: [
+            "Selected WebRTC topology adaptively by class size instead of forcing one mode for every session",
+            "Rebuilt the audio pipeline so music was not treated as noise to cancel",
+            "Designed full-body video layouts for correction, not head-and-shoulder conference framing",
+            "Shipped a self-hosted deployment path so data never left the organization's infrastructure",
+          ],
+          outcomes: [
+            { value: "100%", label: "Curriculum continuity in NYC ballet pilot" },
+            { value: "−35%", label: "Bandwidth vs. generic platforms" },
+            { value: "<100ms", label: "Latency at 720p+ across variable networks" },
+          ],
+          services: ["Engineering", "Product Design"],
+        },
+        {
+          slug: "kensho",
+          client: "Kensho",
+          industry: "Financial data",
+          timeline: "2019–2020",
+          role: "Head of Data Engineering",
+          problem:
+            "Multi-modal data pipeline collapsing under peak load; operational knowledge trapped in individual heads.",
+          whatWeDid:
+            "Led batch-to-streaming platform migration, hardware-aware routing, and durable on-call and onboarding systems.",
+          approach: [
+            "Migrated batch ETL to Kafka and Faust streaming, running both pipelines in parallel until output matched before any cutover",
+            "Split GPU-intensive transcription from market-data ticks onto separate hardware-routed worker pools",
+            "Replaced tribal knowledge with explicit on-call ownership, escalation protocols, and self-describing alerts",
+            "Led the 15-person engineering org through the S&P Global acquisition integration",
+          ],
+          outcomes: [
+            { value: "24×", label: "Data throughput" },
+            { value: "<50ms", label: "Market-data latency, down from ~10 min" },
+            { value: "3 hrs", label: "Time-to-first-PR, down from 1 week" },
+          ],
+          services: ["Engineering", "Modernization"],
+        },
+        {
+          slug: "humana",
+          client: "Humana",
+          industry: "Healthcare",
+          timeline: "2018–2019",
+          role: "Product Lead / Architecture Lead",
+          problem:
+            "Senior care UX was a clinical safety problem; PHI on non-BAA infrastructure; enrollment and claims data hours stale; Android users locked out of health tracking.",
+          whatWeDid:
+            "Led whole-person care product framing across voice, mobile, and chat, then a ten-issue architecture audit and redesign of the Edge platform.",
+          approach: [
+            "Interviewed seniors and care managers to reframe the product from symptom reporting to contact that felt worth initiating",
+            "Partitioned PHI off Alexa standard infrastructure before a HIPAA exposure became an incident",
+            "Rebuilt claims visibility with CDC + Kafka so care advocates stopped acting on multi-hour-stale data",
+            "Added Android health integration via FHIR R4 and BIPA-compliant biometric consent across IL, TX, WA, and NY",
+          ],
+          outcomes: [
+            { value: "<30s", label: "Claims data lag, down from hours" },
+            { value: "3 modes", label: "Care platform live — voice, mobile, chat" },
+            { value: "BIPA", label: "Biometric consent across IL, TX, WA, NY" },
+          ],
+          services: ["Product", "Engineering", "Technical Consulting"],
+        },
+        {
+          slug: "mimecast",
+          client: "Mimecast",
+          industry: "Enterprise / Security",
+          timeline: "2018",
+          role: "Senior Software Engineer / Engineering Lead",
+          problem:
+            "Enterprise console blocked white-label and non-English markets; a government identity platform was 4+ weeks behind with 30% of eng time lost to merge conflicts.",
+          whatWeDid:
+            "Built theming and i18n as architecture, then recovered the identity platform with explicit ownership swimlanes.",
+          approach: [
+            "Implemented white-label theming via CSS custom properties so a new client theme is one config file, not component rewrites",
+            "Shipped an additive i18n library so new languages deploy as language packs without a code release",
+            "Redistributed task ownership with a swimlane model after workflow analysis showed coordination overhead, not capacity, was the bottleneck",
+            "Cut code review from multi-day cycles by making ownership boundaries and interface contracts explicit",
+          ],
+          outcomes: [
+            { value: "2 wks", label: "Ahead of original deadline (was 4 behind)" },
+            { value: "−80%", label: "Merge conflicts" },
+            { value: "+40%", label: "Team productivity" },
+            { value: "4 hrs", label: "Code review, down from 2 days" },
+          ],
+          services: ["Engineering", "Modernization"],
+        },
+        {
+          slug: "help-refugees",
+          client: "Help Refugees",
+          industry: "Nonprofit / Humanitarian",
+          timeline: "2016",
+          role: "Product Engineer",
+          problem:
+            "UK refugee volunteer coordination ran on a shared Google Sheet — no roles, no validation, no audit trail, operations stuck managing the sheet instead of the work.",
+          whatWeDid:
+            "Pro-bono React/Rails volunteer interface that replaced the sheet with role separation, validated submissions, and a full audit trail.",
+          approach: [
+            "Drew a hard boundary between volunteer submission and operations admin — enforced in the product, not by trust",
+            "Replaced free-form fields with validated structured forms so malformed data never reached the ops team",
+            "Logged every change with volunteer identity, timestamp, and content for real-time coordination and post-hoc tracing",
+            "Scoped ruthlessly: only what was essential to retire the Google Sheet",
+          ],
+          outcomes: [
+            { value: "UK-wide", label: "Volunteer network on the new platform" },
+            { value: "1 system", label: "Replaced the shared Google Sheet" },
+            { value: "Full", label: "Audit trail on every submission" },
           ],
           services: ["Engineering", "Product Design"],
         },
@@ -135,27 +322,26 @@ export const STUDIO_TRANSLATIONS_EN = {
           services: ["Engineering", "Modernization"],
         },
         {
-          slug: "kensho",
-          client: "Kensho",
-          industry: "Financial data",
-          timeline: "2019–2020",
-          role: "Head of Data Engineering",
+          slug: "glow",
+          client: "Glow Digital",
+          industry: "AdTech / SaaS",
+          timeline: "2013–2015",
+          role: "Software Developer",
           problem:
-            "Multi-modal data pipeline collapsing under peak load; operational knowledge trapped in individual heads.",
+            "Facebook Ads API rate ceilings during peak periods; campaign optimization and variation setup burned 2–5 hours a week per manager on mechanical work.",
           whatWeDid:
-            "Led batch-to-streaming platform migration, hardware-aware routing, and durable on-call and onboarding systems.",
+            "Built the platform intelligence layer — caching, request batching, and automation for bids, budgets, and campaign variations.",
           approach: [
-            "Migrated batch ETL to Kafka and Faust streaming, running both pipelines in parallel until output matched before any cutover",
-            "Split GPU-intensive transcription from market-data ticks onto separate hardware-routed worker pools",
-            "Replaced tribal knowledge with explicit on-call ownership, escalation protocols, and self-describing alerts",
-            "Led the 15-person engineering org through the S&P Global acquisition integration",
+            "Served reads from a Redis cache with batched, user-scoped Facebook API requests instead of redundant live calls",
+            "Automated bid, budget, and targeting adjustments against performance thresholds",
+            "Generated campaign variation sets (headlines × images × audiences) so A/B tests no longer required 60+ manual entries",
           ],
           outcomes: [
-            { value: "24×", label: "Data throughput" },
-            { value: "<50ms", label: "Market-data latency, down from ~10 min" },
-            { value: "3 hrs", label: "Time-to-first-PR, down from 1 week" },
+            { value: "−90%", label: "Facebook Ads API requests" },
+            { value: "0", label: "Rate-limiting incidents after launch" },
+            { value: "2–5 hrs", label: "Returned per manager per week" },
           ],
-          services: ["Engineering", "Modernization"],
+          services: ["Engineering"],
         },
       ],
     },
@@ -433,6 +619,10 @@ export const STUDIO_TRANSLATIONS_EN = {
       title: "Manifesto | Ponti Studios",
       description: "What I believe and how it shapes everything I build.",
     },
+    hero: {
+      title: "How I think",
+      body: "Nine tenets. No filler. The rules that shape every engagement before a line of code is written.",
+    },
     tenets: {
       title: "Core tenets",
       items: [
@@ -444,7 +634,12 @@ export const STUDIO_TRANSLATIONS_EN = {
         {
           title: "Judgment over theater.",
           description:
-            "Knowing what to build, why, and when to stop is what I'm paid for — not generating code. I don't sell process decks; I ship, and the work is the argument. Evidence beats performance, and the best work bridges product and engineering into one discipline.",
+            "You're not hiring me for meetings about meetings. You're hiring someone who's seen this exact fork before, made the call, and ships the proof instead of a deck. Evidence beats performance, always.",
+        },
+        {
+          title: "In, done, gone.",
+          description:
+            "I'm not here to become your team. I solve the specific thing you couldn't solve, hand it off clean, and get out of the way — no retainer you don't need, no relationship to manage.",
         },
         {
           title: "Simple, permanent, built to last.",
@@ -488,9 +683,11 @@ export const STUDIO_TRANSLATIONS_EN = {
         "Premium product and content development for teams who refuse to compromise on quality.",
     },
     hero: {
-      eyebrow: "Product & content studio",
-      title: "Premium product and content, built to last.",
-      disclaimer: "If you're looking for cheap and fast, I'm not for you.",
+      title: "You bring the problem. I bring it back solved.",
+      disclaimer:
+        "No team to manage, no process to sit through — just the work, done by the person who does it.",
+      credibility:
+        "Twelve years in rooms that mattered — StreamYard, Kensho, Thomson Reuters, Humana, Mimecast, and more. Now just for you.",
       seeServices: "See all services",
     },
     fit: {
@@ -514,9 +711,8 @@ export const STUDIO_TRANSLATIONS_EN = {
     },
     services: {
       title: "What I do",
-      intro:
-        "Product and content, from a scoped build to embedded leadership — organized by the problem you're solving, not a menu of services.",
-      cta: "See how I can help →",
+      intro: "Product and content, from a scoped build to embedded leadership.",
+      cta: "See all services →",
     },
     work: {
       title: "Selected work",
@@ -525,7 +721,7 @@ export const STUDIO_TRANSLATIONS_EN = {
     },
     principles: {
       title: "How I think",
-      intro: "Eight tenets, no filler — what actually shapes the work.",
+      intro: "Nine tenets, no filler — what actually shapes the work.",
       cta: "Read the manifesto →",
     },
     lab: {
