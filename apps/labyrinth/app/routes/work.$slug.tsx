@@ -28,7 +28,7 @@ export default function WorkSlug() {
   return (
     <div className="flex w-full flex-col">
       {/* Hero */}
-      <section className="border-border/60 flex flex-col gap-6 border-b px-6 py-20 sm:px-10 sm:py-28">
+      <section className="border-border/60 flex flex-col gap-6 border-b px-6 py-20">
         <Link
           to="/work"
           className="body-3 text-muted-foreground hover:text-foreground w-fit underline-offset-4 hover:underline"
@@ -51,13 +51,13 @@ export default function WorkSlug() {
       </section>
 
       {/* What I did */}
-      <section className="border-border/60 flex flex-col gap-4 border-b px-6 py-16 sm:px-10 sm:py-20">
+      <section className="border-border/60 flex flex-col gap-4 border-b px-6 py-16">
         <h2 className="heading-2 text-foreground">{proof.whatWeDidLabel}</h2>
         <p className="body-1 text-muted-foreground max-w-2xl">{snapshot.whatWeDid}</p>
       </section>
 
       {/* Approach */}
-      <section className="border-border/60 flex flex-col gap-10 border-b px-6 py-16 sm:px-10 sm:py-20">
+      <section className="border-border/60 flex flex-col gap-10 border-b px-6 py-16">
         <h2 className="heading-2 text-foreground">{copy.approachTitle}</h2>
         <ol className="flex flex-col gap-8">
           {snapshot.approach.map((step, index) => (
@@ -72,7 +72,7 @@ export default function WorkSlug() {
       </section>
 
       {/* Outcomes — pull quotes, not metric tiles */}
-      <section className="border-border/60 flex flex-col gap-12 border-b px-6 py-16 sm:px-10 sm:py-20">
+      <section className="border-border/60 flex flex-col gap-12 border-b px-6 py-16">
         <h2 className="heading-2 text-foreground">{proof.outcomeLabel}</h2>
         <div className="flex flex-col gap-12">
           {snapshot.outcomes.map((outcome) => (
@@ -85,7 +85,7 @@ export default function WorkSlug() {
       </section>
 
       {/* Close CTA */}
-      <section className="flex flex-col gap-6 px-6 py-20 sm:px-10 sm:py-24">
+      <section className="flex flex-col gap-6 px-6 py-20">
         <h2 className="display-2 text-foreground max-w-3xl">{copy.nextCta.title}</h2>
         <p className="body-1 text-muted-foreground max-w-xl">{copy.nextCta.body}</p>
         <div className="flex flex-wrap items-center gap-6 pt-2">

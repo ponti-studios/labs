@@ -55,8 +55,8 @@ export default function App() {
         links={[{ href: "/", label: "Docket" }]}
         cta={{ href: "/case/create", label: "File a case" }}
         activeHref={location.pathname}
-        renderLink={({ href, className, children }) => (
-          <Link key={href} to={href} className={className}>
+        renderLink={({ href, className, children, onClick }) => (
+          <Link key={href} to={href} className={className} onClick={onClick}>
             {children}
           </Link>
         )}

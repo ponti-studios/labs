@@ -3,6 +3,7 @@ import {
   Button,
   COLOR_MODE_ATTRIBUTE,
   COLOR_SYSTEM_ATTRIBUTE,
+  ParticleBackground,
 } from "@pontistudios/ui";
 import {
   isRouteErrorResponse,
@@ -84,8 +85,9 @@ export default function App() {
 
   return (
     <QueryProvider>
+      <ParticleBackground className="fixed" />
       <AppNavigation
-        brand={<img src="/logo.ponti.png" alt={t.nav.brandAlt} className="size-6 w-auto" />}
+        brand={<img src="/logo.ponti.png" alt={t.nav.brandAlt} className="size-6" />}
         brandHref="/"
         links={[
           { href: "/services", label: t.nav.services },
@@ -103,8 +105,8 @@ export default function App() {
             <ColorSystemToggle />
           </div>
         }
-        renderLink={({ href, className, children }) => (
-          <Link key={href} to={href} className={className}>
+        renderLink={({ href, className, children, onClick }) => (
+          <Link key={href} to={href} className={className} onClick={onClick}>
             {children}
           </Link>
         )}
