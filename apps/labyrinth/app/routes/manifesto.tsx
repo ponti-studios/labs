@@ -1,3 +1,4 @@
+import { motion, useReducedMotion } from "framer-motion";
 import { t } from "~/translations";
 
 const copy = t.manifesto;
@@ -10,17 +11,34 @@ export function meta(): Array<{
   return [{ title: copy.meta.title }, { name: "description", content: copy.meta.description }];
 }
 
+function ManifestoHeroHeadline() {
+  const reduceMotion = useReducedMotion();
+  return (
+    <h1 className="display-1 text-foreground flex max-w-4xl flex-wrap items-baseline gap-x-3 gap-y-1">
+      <span>{copy.hero.title}</span>
+      <motion.span
+        className="text-accent"
+        initial={reduceMotion ? false : { opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.2, delay: 0.35, ease: "easeOut" }}
+      >
+        {copy.hero.punch}
+      </motion.span>
+    </h1>
+  );
+}
+
 export default function Manifesto() {
   return (
     <div className="flex w-full flex-col">
       {/* Hero */}
-      <section className="border-border/60 flex flex-col gap-6 border-b px-6 py-20 sm:px-10 sm:py-28">
-        <h1 className="display-1 text-foreground max-w-4xl">{copy.hero.title}</h1>
+      <section className="border-border/60 flex flex-col gap-6 border-b px-6 py-20">
+        <ManifestoHeroHeadline />
         <p className="body-1 text-muted-foreground max-w-2xl">{copy.hero.body}</p>
       </section>
 
       {/* Tenets — single-column editorial list, one idea at a time */}
-      <section className="border-border/60 flex flex-col gap-12 border-b px-6 py-20 sm:px-10 sm:py-24">
+      <section className="border-border/60 flex flex-col gap-12 border-b px-6 py-20">
         <ol className="flex flex-col gap-12">
           {copy.tenets.items.map((tenet, index) => (
             <li
@@ -40,7 +58,7 @@ export default function Manifesto() {
       </section>
 
       {/* Closing pull-quote */}
-      <section className="flex flex-col px-6 py-20 sm:px-10 sm:py-28">
+      <section className="flex flex-col px-6 py-20">
         <blockquote className="display-2 text-accent max-w-3xl">
           &ldquo;{copy.quote}&rdquo;
         </blockquote>

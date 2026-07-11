@@ -61,8 +61,8 @@ export default function App() {
             { href: "/hospitals", label: "Hospitals" },
           ]}
           activeHref={location.pathname}
-          renderLink={({ href, className, children }) => (
-            <Link key={href} to={href} className={className}>
+          renderLink={({ href, className, children, onClick }) => (
+            <Link key={href} to={href} className={className} onClick={onClick}>
               {children}
             </Link>
           )}

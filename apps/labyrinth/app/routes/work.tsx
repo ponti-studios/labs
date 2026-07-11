@@ -19,7 +19,7 @@ export function meta(): Array<{
  */
 export default function Work() {
   return (
-    <div className="relative mx-auto flex w-full flex-col gap-8 px-6 py-20 sm:px-10 sm:py-28">
+    <div className="relative mx-auto flex w-full flex-col gap-8 px-6 py-20">
       <h1 className="display-1 text-foreground">{copy.hero.title}</h1>
 
       <section className="pt-2">

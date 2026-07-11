@@ -15,7 +15,7 @@ export function meta(): Array<{
 
 function Teaser({ title, to }: { title: string; to: string }) {
   return (
-    <section className="border-border/60 border-b px-6 py-16 underline-offset-4 hover:cursor-pointer hover:underline sm:px-10 sm:py-20">
+    <section className="border-border/60 border-b px-6 py-16 underline-offset-4 hover:cursor-pointer hover:underline">
       <Link to={to} className="body-2 flex justify-between">
         <h2 className="heading-2 text-foreground font-bold">{title}</h2>
         <LucideArrowBigRight className="text-accent" aria-hidden="true" />
@@ -59,7 +59,7 @@ export default function Home() {
   return (
     <div className="mx-auto flex w-full flex-col">
       {/* Hero */}
-      <section className="border-border/60 flex flex-col gap-6 border-b px-6 py-20 sm:px-10 sm:py-28 md:flex-row md:justify-between">
+      <section className="border-border/60 flex flex-col gap-6 border-b px-4 py-20 md:flex-row md:justify-between">
         <div>
           <HeroHeadline />
           <p className="body-1 text-muted-foreground max-w-2xl">{t.home.hero.subtitle}</p>
@@ -82,7 +82,7 @@ export default function Home() {
       <Teaser title={t.home.principles.title} to="/manifesto" />
 
       {/* Lab */}
-      <section className="flex flex-col gap-10 px-6 py-20 sm:px-10 sm:py-24">
+      <section className="flex flex-col gap-10 px-6 py-20">
         <h2 className="heading-2 text-foreground">{t.home.lab.title}</h2>
         <div className="grid gap-12 sm:grid-cols-2 sm:gap-16">
           {t.home.lab.categories.map((cat) => (

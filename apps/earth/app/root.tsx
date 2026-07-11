@@ -73,8 +73,8 @@ export default function App() {
           brandHref="/"
           links={[{ href: "/tfl", label: "TFL" }]}
           activeHref={location.pathname.startsWith("/tfl") ? "/tfl" : location.pathname}
-          renderLink={({ href, className, children }) => (
-            <Link key={href} to={href} className={className}>
+          renderLink={({ href, className, children, onClick }) => (
+            <Link key={href} to={href} className={className} onClick={onClick}>
               {children}
             </Link>
           )}

@@ -31,7 +31,7 @@ function ServicesHeroHeadline() {
 export default function Services() {
   return (
     <div className="flex w-full flex-col">
-      <section className="border-border/60 flex flex-col gap-6 border-b px-6 py-20 sm:px-10 sm:py-28">
+      <section className="border-border/60 flex flex-col gap-6 border-b px-6 py-20">
         <ServicesHeroHeadline />
 
         <div className="flex flex-wrap items-center gap-6 pt-2">
@@ -47,7 +47,7 @@ export default function Services() {
       </section>
 
       {/* Services — editorial catalog, same for every visitor */}
-      <section className="border-border/60 flex flex-col gap-12 border-b px-6 py-20 sm:px-10 sm:py-24">
+      <section className="border-border/60 flex flex-col gap-12 border-b px-6 py-20">
         <div className="flex flex-col gap-3">
           <h2 className="heading-2 text-foreground">{copy.services.title}</h2>
           <p className="body-2 text-muted-foreground max-w-2xl">{copy.services.intro}</p>
@@ -85,7 +85,7 @@ export default function Services() {
       </section>
 
       {/* Process — quiet, linear, same for everyone */}
-      <section className="border-border/60 flex flex-col gap-10 border-b px-6 py-20 sm:px-10 sm:py-24">
+      <section className="border-border/60 flex flex-col gap-10 border-b px-6 py-20">
         <div className="flex flex-col gap-3">
           <h2 className="heading-2 text-foreground">{copy.process.title}</h2>
           <p className="body-2 text-muted-foreground max-w-2xl">{copy.process.intro}</p>
@@ -106,7 +106,7 @@ export default function Services() {
       </section>
 
       {/* Closing CTA */}
-      <section className="border-border/60 flex flex-col gap-6 border-b px-6 py-20 sm:px-10 sm:py-24">
+      <section className="border-border/60 flex flex-col gap-6 border-b px-6 py-20">
         <h2 className="display-2 text-foreground max-w-3xl">{copy.cta.title}</h2>
         <p className="body-1 text-muted-foreground max-w-xl">{copy.cta.body}</p>
         <div className="flex flex-wrap items-center gap-6 pt-2">

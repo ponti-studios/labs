@@ -606,7 +606,8 @@ export const STUDIO_TRANSLATIONS_EN = {
       description: "What I believe and how it shapes everything I build.",
     },
     hero: {
-      title: "How I think",
+      title: "How I",
+      punch: "think.",
       body: "Nine tenets. No filler. The rules that shape every engagement before a line of code is written.",
     },
     tenets: {
