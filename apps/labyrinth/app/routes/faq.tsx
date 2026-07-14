@@ -44,6 +44,7 @@ export default function Faq() {
           </Button>
           <Link
             to="/services"
+            prefetch="intent"
             className="body-2 text-foreground underline-offset-4 hover:underline"
           >
             {t.home.services.cta}

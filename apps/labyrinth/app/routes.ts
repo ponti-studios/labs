@@ -75,7 +75,6 @@ const challengeRoutes = [
   route("/challenges/prime-countdown", "routes/challenges.prime-countdown.tsx"),
   route("/challenges/search-studio", "routes/challenges.search-studio.tsx"),
   route("/challenges/peterson-academy", "routes/challenges.peterson-academy.tsx"),
-  route("/challenges/qubit", "routes/challenges.qubit.tsx"),
   route("/challenges/red-badger", "routes/challenges.red-badger.tsx"),
   route("/health/medication", "routes/health/medication.tsx"),
   route("/health/api/medication-schedule", "routes/health/api.medication-schedule.ts"),

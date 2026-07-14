@@ -66,4 +66,8 @@ export const servicePillars: ServicePillar[] = [
 export const caseSnapshots: readonly CaseSnapshot[] = t.catalog.proof.snapshots;
 
 export const CONTACT_EMAIL = "hello@ponti.io";
-export const BOOK_CALL_URL = "https://cal.com/ponti-studios";
+export const BOOK_CALL_URL = `mailto:cj@ponti.io?subject=${encodeURIComponent(
+  "Project inquiry - Ponti Studios",
+)}&body=${encodeURIComponent(
+  "Hi Chase,\n\nI'd like to talk about a project.\n\nHere's what I'm working on:\n",
+)}`;

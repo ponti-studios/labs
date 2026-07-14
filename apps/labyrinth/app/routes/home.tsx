@@ -16,7 +16,7 @@ export function meta(): Array<{
 function Teaser({ title, to }: { title: string; to: string }) {
   return (
     <section className="border-border/60 border-b px-6 py-16 underline-offset-4 hover:cursor-pointer hover:underline">
-      <Link to={to} className="body-2 flex justify-between">
+      <Link to={to} prefetch="intent" className="body-2 flex justify-between">
         <h2 className="heading-2 text-foreground font-bold">{title}</h2>
         <LucideArrowBigRight className="text-accent" aria-hidden="true" />
       </Link>

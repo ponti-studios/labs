@@ -31,6 +31,7 @@ export default function WorkSlug() {
       <section className="border-border/60 flex flex-col gap-6 border-b px-6 py-20">
         <Link
           to="/work"
+          prefetch="intent"
           className="body-3 text-muted-foreground hover:text-foreground w-fit underline-offset-4 hover:underline"
         >
           ← {copy.backToWork}
@@ -96,6 +97,7 @@ export default function WorkSlug() {
           </Button>
           <Link
             to="/services"
+            prefetch="intent"
             className="body-2 text-foreground underline-offset-4 hover:underline"
           >
             {t.home.services.cta}
