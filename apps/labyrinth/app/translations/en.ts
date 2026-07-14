@@ -3,6 +3,7 @@ export const STUDIO_TRANSLATIONS_EN = {
     brandAlt: "Ponti Studios",
     services: "Services",
     work: "Work",
+    projects: "Projects",
     manifesto: "Manifesto",
     book: "Book",
   },
@@ -250,7 +251,6 @@ export const STUDIO_TRANSLATIONS_EN = {
             "Built theming and i18n as architecture, then recovered the identity platform with explicit ownership swimlanes.",
           approach: [
             "Implemented white-label theming via CSS custom properties so a new client theme is one config file, not component rewrites",
-            "Shipped an additive i18n library so new languages deploy as language packs without a code release",
             "Redistributed task ownership with a swimlane model after workflow analysis showed coordination overhead, not capacity, was the bottleneck",
             "Cut code review from multi-day cycles by making ownership boundaries and interface contracts explicit",
           ],
@@ -682,11 +682,14 @@ export const STUDIO_TRANSLATIONS_EN = {
     work: {
       title: "Work",
     },
+    projects: {
+      title: "The Lab",
+    },
     principles: {
       title: "Manifesto",
     },
     lab: {
-      title: "The Lab",
+      title: "Playground",
       description: "practice and play.",
       categories: [
         {

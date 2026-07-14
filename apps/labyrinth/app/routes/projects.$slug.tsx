@@ -28,13 +28,17 @@ export default function ProjectDetail() {
   const allSlugs = projectSnapshots.map((p) => p.slug);
   const currentIndex = allSlugs.indexOf(slug || "");
   const prevProject = currentIndex > 0 ? projectSnapshots[currentIndex - 1] : null;
-  const nextProject = currentIndex < allSlugs.length - 1 ? projectSnapshots[currentIndex + 1] : null;
+  const nextProject =
+    currentIndex < allSlugs.length - 1 ? projectSnapshots[currentIndex + 1] : null;
 
   return (
     <div className="relative mx-auto flex w-full flex-col gap-12 px-6 py-20">
       {/* Header */}
       <div className="flex flex-col gap-4">
-        <Link to="/projects" className="text-muted-foreground hover:text-foreground transition-colors w-fit">
+        <Link
+          to="/projects"
+          className="text-muted-foreground hover:text-foreground w-fit transition-colors"
+        >
           ← Lab
         </Link>
         <div className="flex flex-col gap-2">
@@ -43,36 +47,20 @@ export default function ProjectDetail() {
         </div>
       </div>
 
-      {/* Meta Info */}
-      <div className="grid gap-6 md:grid-cols-2">
-        {project.commits && (
-          <div>
-            <div className="body-4 text-muted-foreground mb-2">Commits</div>
-            <div className="heading-3 text-foreground">{project.commits.toLocaleString()}+</div>
-          </div>
-        )}
-        {project.releases && (
-          <div>
-            <div className="body-4 text-muted-foreground mb-2">Releases</div>
-            <div className="heading-3 text-foreground">{project.releases}+</div>
-          </div>
-        )}
-      </div>
-
       {/* Main Content */}
       <div className="grid gap-12 lg:grid-cols-3">
         {/* Left Column - Description */}
-        <div className="lg:col-span-2 flex flex-col gap-8">
-          {/* What It Does */}
+        <div className="flex flex-col gap-8 lg:col-span-2">
+          {/* The Problem */}
           <section className="flex flex-col gap-4">
-            <h2 className="heading-2 text-foreground">What It Does</h2>
-            <p className="body-1 text-muted-foreground">{project.whatItDoes}</p>
+            <h2 className="heading-2 text-foreground">The Problem</h2>
+            <p className="body-1 text-muted-foreground">{project.problem}</p>
           </section>
 
           {/* Key Features */}
           {project.keyFeatures.length > 0 && (
             <section className="flex flex-col gap-4">
-              <h2 className="heading-2 text-foreground">Key Features</h2>
+              <h2 className="heading-2 text-foreground">How It Works</h2>
               <ul className="flex flex-col gap-3">
                 {project.keyFeatures.map((feature, idx) => (
                   <li key={idx} className="flex gap-3">
@@ -84,12 +72,12 @@ export default function ProjectDetail() {
             </section>
           )}
 
-          {/* Why It Matters */}
-          {project.whyItsImpressive.length > 0 && (
+          {/* Engineering Challenges */}
+          {project.technicalChallenges.length > 0 && (
             <section className="flex flex-col gap-4">
-              <h2 className="heading-2 text-foreground">Why It Matters</h2>
+              <h2 className="heading-2 text-foreground">Engineering Challenges</h2>
               <ul className="flex flex-col gap-3">
-                {project.whyItsImpressive.map((point, idx) => (
+                {project.technicalChallenges.map((point, idx) => (
                   <li key={idx} className="flex gap-3">
                     <span className="text-accent mt-1">—</span>
                     <span className="body-1 text-muted-foreground">{point}</span>
@@ -103,7 +91,7 @@ export default function ProjectDetail() {
         {/* Right Column - Sidebar */}
         <div className="flex flex-col gap-8">
           {/* Combined Card: Tech Stack, Deployment, GitHub */}
-          <section className="rounded-lg border border-border/40 p-6 flex flex-col gap-6">
+          <section className="border-border/40 flex flex-col gap-6 rounded-lg border p-6">
             {/* Tech Stack */}
             <div className="flex flex-col gap-3">
               <h3 className="heading-4 text-foreground">Tech Stack</h3>
@@ -111,7 +99,7 @@ export default function ProjectDetail() {
                 {project.techStack.map((tech) => (
                   <span
                     key={tech}
-                    className="inline-flex items-center rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground"
+                    className="bg-muted text-muted-foreground inline-flex items-center rounded-full px-3 py-1 text-xs font-medium"
                   >
                     {tech}
                   </span>
@@ -120,7 +108,7 @@ export default function ProjectDetail() {
             </div>
 
             {/* Divider */}
-            <div className="border-t border-border/40" />
+            <div className="border-border/40 border-t" />
 
             {/* Deployment */}
             {project.deployment && (
@@ -132,7 +120,7 @@ export default function ProjectDetail() {
                     href={project.deployment.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-accent hover:text-accent/80 transition-colors underline break-all text-sm mt-1"
+                    className="text-accent hover:text-accent/80 mt-1 text-sm break-all underline transition-colors"
                   >
                     {project.deployment.url}
                   </a>
@@ -141,14 +129,14 @@ export default function ProjectDetail() {
             )}
 
             {/* Divider */}
-            <div className="border-t border-border/40" />
+            <div className="border-border/40 border-t" />
 
             {/* GitHub */}
             <a
               href={project.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex flex-col gap-2 text-left hover:text-accent transition-colors focus-visible:outline-ring outline-none focus-visible:outline-2 focus-visible:outline-offset-4 -mx-6 -my-6 px-6 py-6 rounded-lg hover:bg-muted/20"
+              className="hover:text-accent focus-visible:outline-ring hover:bg-muted/20 -mx-6 -my-6 flex flex-col gap-2 rounded-lg px-6 py-6 text-left transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-4"
             >
               <h3 className="heading-4 text-foreground">Repository</h3>
               <div className="body-4 text-muted-foreground hover:text-accent break-all">
@@ -160,11 +148,11 @@ export default function ProjectDetail() {
       </div>
 
       {/* Navigation */}
-      <div className="border-t border-border/40 pt-12 flex justify-between">
+      <div className="border-border/40 flex justify-between border-t pt-12">
         {prevProject ? (
           <Link
             to={`/projects/${prevProject.slug}`}
-            className="flex flex-col gap-1 hover:text-accent transition-colors group"
+            className="hover:text-accent group flex flex-col gap-1 transition-colors"
           >
             <div className="body-4 text-muted-foreground group-hover:text-accent">← Previous</div>
             <div className="heading-3 text-foreground">{prevProject.name}</div>
@@ -175,7 +163,7 @@ export default function ProjectDetail() {
         {nextProject ? (
           <Link
             to={`/projects/${nextProject.slug}`}
-            className="flex flex-col gap-1 hover:text-accent transition-colors group text-right"
+            className="hover:text-accent group flex flex-col gap-1 text-right transition-colors"
           >
             <div className="body-4 text-muted-foreground group-hover:text-accent">Next →</div>
             <div className="heading-3 text-foreground">{nextProject.name}</div>

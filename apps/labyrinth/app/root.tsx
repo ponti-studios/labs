@@ -92,6 +92,7 @@ export default function App() {
         links={[
           { href: "/services", label: t.nav.services },
           { href: "/work", label: t.nav.work },
+          { href: "/projects", label: t.nav.projects },
           { href: "/manifesto", label: t.nav.manifesto },
         ]}
         activeHref={location.pathname}

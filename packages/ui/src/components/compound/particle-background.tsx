@@ -37,13 +37,13 @@ export interface ParticleBackgroundProps extends React.ComponentProps<"div"> {
 const DEFAULT_PARTICLE_COUNT = 320;
 const DEFAULT_PARTICLE_DENSITY = 2800;
 const DEFAULT_LINK_DISTANCE = 90;
-const DEFAULT_ATTRACT_STRENGTH = 0.012;
-const DEFAULT_ATTRACT_RADIUS = 180;
-const DEFAULT_VELOCITY = 0.18;
-const PARALLAX_STRENGTH = 0.05;
-const TWINKLE_MIN_SPEED = 0.0006;
-const TWINKLE_MAX_SPEED = 0.0018;
-const PARTICLE_BASE_OPACITY = 0.75;
+const DEFAULT_ATTRACT_STRENGTH = 0.003;
+const DEFAULT_ATTRACT_RADIUS = 150;
+const DEFAULT_VELOCITY = 0.06;
+const PARALLAX_STRENGTH = 0.015;
+const TWINKLE_MIN_SPEED = 0.0002;
+const TWINKLE_MAX_SPEED = 0.0008;
+const PARTICLE_BASE_OPACITY = 0.2;
 
 const DEFAULT_PALETTE = {
   particle: "15,23,42",
@@ -258,8 +258,12 @@ export function ParticleBackground({
 
           if (dist < maxLinkDistance) {
             const depthFactor = (p.depth + q.depth) / 2;
+
+            // Links are more transparent in dark mode to reduce contrast and visual noise, and slightly more opaque in light mode to add some subtlety.
             const alpha =
-              (1 - dist / maxLinkDistance) * (resolvedTheme === "dark" ? 0.04 : 0.03) * depthFactor;
+              (1 - dist / maxLinkDistance) *
+              (resolvedTheme === "dark" ? 0.015 : 0.01) *
+              depthFactor;
             context.beginPath();
             context.moveTo(p.x, renderY);
             context.lineTo(qRender.x, qRender.y);

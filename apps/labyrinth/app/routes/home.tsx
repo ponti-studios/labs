@@ -77,32 +77,11 @@ export default function Home() {
 
       <Teaser title={t.home.work.title} to="/work" />
 
+      <Teaser title={t.home.projects.title} to="/projects" />
+
       <Teaser title={t.home.services.cta} to="/services" />
 
       <Teaser title={t.home.principles.title} to="/manifesto" />
-
-      {/* Lab */}
-      <section className="flex flex-col gap-10 px-6 py-20">
-        <h2 className="heading-2 text-foreground">{t.home.lab.title}</h2>
-        <div className="grid gap-12 sm:grid-cols-2 sm:gap-16">
-          {t.home.lab.categories.map((cat) => (
-            <div key={cat.name} className="flex flex-col gap-4">
-              <ul className="flex flex-col gap-4">
-                {cat.entries.map((entry) => (
-                  <li key={entry.path}>
-                    <a
-                      href={entry.path}
-                      className="body-2 text-foreground hover:text-muted-foreground focus-visible:outline-ring rounded-sm underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4"
-                    >
-                      {entry.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </section>
     </div>
   );
 }

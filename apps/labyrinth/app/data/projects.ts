@@ -14,12 +14,12 @@ export type ProjectSnapshot = {
 
 export type ProjectDetail = ProjectSnapshot & {
   description: string;
-  whatItDoes: string;
+  /** The problem this exists to solve — who's affected, why it's hard, what breaks without it. */
+  problem: string;
   keyFeatures: string[];
-  whyItsImpressive: string[];
+  /** Specific hard technical work required to make the solution real. */
+  technicalChallenges: string[];
   techStack: string[];
-  commits?: number;
-  releases?: number;
   lastUpdated?: string;
   deployment?: {
     status: string;
@@ -28,11 +28,11 @@ export type ProjectDetail = ProjectSnapshot & {
   github: string;
 };
 
-export const projectSnapshots: readonly ProjectSnapshot[] = [
+export const projectSnapshots: ProjectSnapshot[] = [
   {
     slug: "kernel",
     name: "Kernel",
-    shortDescription: "31 reusable agent skills for Claude Code",
+    shortDescription: "32 reusable agent skills for Claude Code",
     category: "library",
     tech: ["TypeScript", "Node.js"],
     status: "published",
@@ -107,30 +107,26 @@ export const projectDetails: Record<string, ProjectDetail> = {
   kernel: {
     slug: "kernel",
     name: "Kernel",
-    shortDescription: "31 reusable agent skills for Claude Code",
+    shortDescription: "32 reusable agent skills for Claude Code",
     category: "library",
     tech: ["TypeScript", "Node.js"],
     status: "published",
     description:
-      "Collection of 31 specialized agent skills for software development and content production, published as an NPM package and installed via skills.sh.",
-    whatItDoes:
-      "Kernel is a library of reusable skills for Claude Code that span full-stack development, content creation, and DevOps. Each skill encodes best practices and workflows that can be installed individually or in bulk.",
+      "32 specialized skills for software development and content production, published to NPM and installable through skills.sh.",
+    problem:
+      "Useful engineering judgment is often trapped in people's heads or buried in documentation. Kernel turns that judgment into skills an AI assistant can invoke for recurring work such as migrations, security reviews, and content production.",
     keyFeatures: [
-      "31 skills across 12 categories (Writing, Art, API, React, Database, UI, Production, Security)",
-      "Individual or bulk installation via npx skills add",
-      "Covers essays, videos, transcripts, songs, documentation, design, architecture",
-      "Available to Claude Code community (publicly published)",
-      "Regular updates and new skill additions",
+      "32 skills across 7 categories (Writing, Music, Image, Development, UI & Brand, Audit, Operations)",
+      "Individual or bulk installation with npx skills add",
+      "Covers engineering, architecture, documentation, and content production",
+      "Publicly published for the Claude Code community",
     ],
-    whyItsImpressive: [
-      "Adopted and installed by other engineers through a public package — not a demo, a tool people actually run",
-      "Two versioned releases and steady commits mean this gets maintained, not abandoned after launch",
-      "Skills span backend architecture, security review, and writing — one person fluent in both code and communication",
-      "Each skill is a documented, repeatable process — the instinct to turn tacit knowledge into something a team can reuse",
+    technicalChallenges: [
+      "Designing precise triggers so 32 skills coexist without collisions",
+      "Keeping the format machine-readable, versioned, and editable by hand",
+      "Validating every skill against real tasks before publishing",
     ],
     techStack: ["TypeScript", "Node.js", "skills.sh"],
-    commits: 313,
-    releases: 2,
     lastUpdated: "2026-07-11",
     deployment: {
       status: "Published (NPM)",
@@ -147,22 +143,19 @@ export const projectDetails: Record<string, ProjectDetail> = {
     tech: ["Docker", "PostgreSQL", "GitHub Actions"],
     status: "published",
     description:
-      "Shared infrastructure layer for ponti-studios organization. Single source of truth for PostgreSQL, Redis, Docker Compose stacks, and CI/CD automation.",
-    whatItDoes:
-      "Foundation provides production-grade infrastructure consumed by all ponti-studios products. It includes custom Docker images, Compose stacks, and automated CI/CD pipelines that publish versioned images to GHCR.",
+      "Shared infrastructure for PostgreSQL, Redis, Docker Compose environments, and CI/CD across the organization.",
+    problem:
+      "Teams needing vector search or geospatial queries were rebuilding PostgreSQL images per project. Foundation provides one tested image and repeatable environments so development and production do not quietly drift apart.",
     keyFeatures: [
       "Custom PostgreSQL 18 image with pgvector, PostGIS, and pgRouting",
-      "Docker Compose stacks for dev, test, and production environments",
-      "Automated GitHub Actions pipeline with semantic versioning",
-      "Digest pinning for reproducible deployments",
-      "Machine-readable service catalog",
-      "Justfile task runner for unified operations",
+      "Docker Compose stacks for development, test, and production",
+      "Automated GitHub Actions releases with semantic versioning",
+      "Digest-pinned images and a machine-readable service catalog",
     ],
-    whyItsImpressive: [
-      "Every commit to main ships a new versioned image automatically — zero-touch release discipline",
-      "Digest-pinned deployments mean environments are reproducible, not \"works on my machine\"",
-      "Extends PostgreSQL with vector search and geospatial routing — the same database stack modern recommendation and mapping systems run on",
-      "One image, consumed by every other product in the org — infrastructure built to be depended on, not duplicated",
+    technicalChallenges: [
+      "Compiling three PostgreSQL extensions into one reliable PostgreSQL 18 image",
+      "Making every deployment reproducible with immutable image digests",
+      "Automating releases so shared infrastructure can update without a manual ritual",
     ],
     techStack: ["Docker", "PostgreSQL", "Redis", "GitHub Actions", "Just"],
     lastUpdated: "2026-07-06",
@@ -176,35 +169,29 @@ export const projectDetails: Record<string, ProjectDetail> = {
   hominem: {
     slug: "hominem",
     name: "Hominem",
-    shortDescription: "Full-stack mobile & web platform with Expo + React",
+    shortDescription: "One platform for mobile, web, and shared personal data",
     category: "product",
     tech: ["TypeScript", "React Native", "Hono", "PostgreSQL"],
     status: "active",
     description:
-      "Product monorepo with active surfaces spanning mobile (Omiro iOS app), web applications (Finance, Career, Rocco), and centralized API. Demonstrates full-stack architectural patterns.",
-    whatItDoes:
-      "Hominem is a comprehensive product platform with multiple user-facing surfaces built from a shared codebase. It includes a native iOS app via Expo, multiple web applications for different domains, a centralized Hono backend, and shared packages for database, auth, UI, and more.",
+      "A product platform spanning the Omiro iOS app, Finance and Career web apps, and a centralized API.",
+    problem:
+      "Finance, career, and daily life are connected, but the tools that track them are usually isolated. Hominem puts those surfaces on one platform with shared data, auth, and infrastructure.",
     keyFeatures: [
-      "Omiro: Native iOS app with Expo and React Native",
-      "Finance: Financial tracking and portfolio management web app",
-      "Career: Job search and career timeline management",
-      "Rocco: Specialized feature application",
-      "Workers: Background job processing and scheduling",
-      "Centralized Hono API with proper auth layer",
-      "Shared packages: db, env, auth, rpc, ui, telemetry, hooks",
-      "Monorepo architecture with Turbo orchestration",
+      "Omiro iOS app built with Expo and React Native",
+      "Finance and Career web applications",
+      "Centralized Hono API with shared auth and data packages",
+      "Turbo monorepo with type-safe shared infrastructure",
     ],
-    whyItsImpressive: [
-      "A native iOS app, three web products, and a shared API — one architecture serving every surface",
-      "1,830+ commits and a tagged v1.0.1 release — this shipped, it didn't stall at 80%",
-      "Dependencies only flow one direction (apps → shared packages → API) — the discipline that keeps a codebase workable after year two",
-      "The mobile shell was pulled out into its own reusable starter — built for the next project, not just this one",
+    technicalChallenges: [
+      "Sharing typed business logic between native and web surfaces",
+      "Enforcing dependency direction across apps, packages, and API layers",
+      "Extracting reusable mobile infrastructure from a production app",
     ],
     techStack: ["TypeScript", "React", "React Native", "Expo", "Hono", "PostgreSQL", "Drizzle ORM"],
-    commits: 1830,
     lastUpdated: "2026-07-11",
     deployment: {
-      status: "v1.0.1 Released",
+      status: "In active use",
     },
     github: "https://github.com/ponti-studios/hominem",
   },
@@ -212,28 +199,24 @@ export const projectDetails: Record<string, ProjectDetail> = {
   hollywood: {
     slug: "hollywood",
     name: "Hollywood",
-    shortDescription: "Entertainment data research platform with LLM extraction",
+    shortDescription: "Entertainment research platform with structured LLM extraction",
     category: "product",
     tech: ["TypeScript", "Python", "Hono", "SQLite"],
     status: "development",
     description:
-      "Local-first platform for ingesting entertainment industry data into unified searchable database. Combines multi-source ingestion with Claude-powered LLM extraction.",
-    whatItDoes:
-      "Hollywood ingests entertainment data from RSS feeds, structured APIs, and directories into a unified SQLite database. Uses Claude API for intelligent extraction from raw text and PDFs, maintaining raw archives and normalized entity graphs.",
+      "A local-first platform that combines entertainment data ingestion with Claude-powered extraction from unstructured submissions.",
+    problem:
+      "Entertainment research is split across many sources, while the most valuable material arrives as unstructured submissions. Hollywood brings both into one searchable system and extracts useful fields automatically.",
     keyFeatures: [
-      "Multi-source ingestion: Variety, Deadline, Hollywood Reporter, The Wrap, TMDB, Wikidata, IMDb, WGA",
-      "LLM extraction: Claude-powered structured extraction from submission text",
-      "Entity graph: Unified schema for candidates, projects, submissions, people, companies",
-      "Raw payload archiving: Preserves original data for audit trail",
-      "JSONL export: Data export for analysis and research",
-      "REST API with OpenAPI docs for full CRUD operations",
-      "Health checks and diagnostics for configuration validation",
+      "Ingestion from trade publications, industry directories, and public databases",
+      "Claude-powered extraction from query letters, decks, and submissions",
+      "Unified entity graph for people, companies, projects, and submissions",
+      "Raw payload archiving, JSONL export, and documented REST API",
     ],
-    whyItsImpressive: [
-      "Pulls from eight-plus industry sources (Variety, Deadline, TMDB, WGA, IMDb) into one queryable database — the unglamorous data-plumbing work entertainment products depend on",
-      "Uses an LLM to turn messy submission documents into structured records — applied extraction solving a real problem, not a chatbot demo",
-      "Every raw payload is archived before processing — auditable, re-runnable pipelines instead of one-shot scripts",
-      "Ships with OpenAPI docs and health checks — built to be handed to another engineer, not just run locally",
+    technicalChallenges: [
+      "Normalizing eight-plus source types without losing provenance",
+      "Preserving raw inputs so extraction can be re-run as prompts improve",
+      "Modeling evolving relationships without an unmaintainable schema",
     ],
     techStack: ["TypeScript", "Python", "Hono", "SQLite", "Claude API", "OpenAPI"],
     lastUpdated: "2026-07-07",
@@ -246,33 +229,27 @@ export const projectDetails: Record<string, ProjectDetail> = {
   labs: {
     slug: "labs",
     name: "Labs (Labyrinth)",
-    shortDescription: "Personal brand platform with 5 interconnected apps",
+    shortDescription: "Five connected apps on one shared platform",
     category: "product",
     tech: ["TypeScript", "React", "PostgreSQL", "Tailwind"],
     status: "active",
     description:
-      "Monorepo containing Labyrinth and 4 other interconnected applications. A sophisticated personal brand platform showcasing multiple product surfaces.",
-    whatItDoes:
-      "Labs is an integrated ecosystem of applications including Labyrinth (portfolio), Health (medical dashboard), Commune (social voting), and Earth (geographic browser). All share infrastructure, design system, and real-time capabilities.",
+      "A monorepo containing Labyrinth and four connected applications, each with its own product surface and deployment workflow.",
+    problem:
+      "A static portfolio asks visitors to take capability on faith. Labs makes the work executable: live dashboards, maps, voting, and other product surfaces built on one design system and infrastructure layer.",
     keyFeatures: [
-      "Labyrinth: Personal portfolio and brand showcase (port 3001)",
-      "Health: Medical data dashboard with real-time updates (port 3003)",
-      "Commune: Social voting and community decision-making (port 3005)",
-      "Earth: Geographic data browser with MapLibre and live feeds (port 3006)",
-      "Storybook: Component library and design system (port 3007)",
+      "Labyrinth, Health, Commune, and Earth product surfaces",
+      "Storybook-backed shared component library",
       "Shared PostgreSQL database with app-specific schemas",
-      "WebSocket support for real-time updates",
-      "OpenRouter AI integration for enhanced features",
-      "Turbo monorepo with independent dev workflows",
+      "WebSocket support for live updates and voting",
+      "Independent development and deployment workflows in Turbo",
     ],
-    whyItsImpressive: [
-      "Five products — portfolio, health tracking, community voting, geographic data — sharing one infrastructure and design system",
-      "Real-time updates over WebSockets, not just page reloads — the same pattern behind live dashboards and collaborative tools",
-      "12 tagged releases in active development — a cadence, not a one-time launch",
-      "A working Storybook component library — the UI is built to be reused, not copy-pasted between pages",
+    technicalChallenges: [
+      "Isolating five app schemas on one PostgreSQL instance",
+      "Sharing reliable WebSocket connection and reconnection behavior",
+      "Keeping one design system useful across a portfolio, dashboard, map, and community app",
     ],
     techStack: ["TypeScript", "React", "PostgreSQL", "Tailwind CSS", "Turbo", "Storybook"],
-    releases: 12,
     lastUpdated: "2026-07-11",
     deployment: {
       status: "Active Development",
@@ -283,28 +260,24 @@ export const projectDetails: Record<string, ProjectDetail> = {
   geo: {
     slug: "geo",
     name: "Geo (geokit)",
-    shortDescription: "Swift geocoding CLI & macOS review application",
+    shortDescription: "Geocoding tools with a native review workflow",
     category: "tool",
     tech: ["Swift", "Apple Maps", "macOS"],
     status: "development",
     description:
-      "Native Swift geocoding CLI and macOS application for place data curation using Apple Maps.",
-    whatItDoes:
-      "Geo provides two tools: a geokit CLI for geocoding queries against Apple Maps and enriching SQLite databases, and a native macOS app for reviewing and correcting geocoded place records.",
+      "A Swift geocoding CLI and native macOS app for curating place data with Apple Maps.",
+    problem:
+      "Automated geocoding is fast but ambiguous, while manual review is accurate but slow. Geo combines batch geocoding with a native workflow for checking and correcting results before they enter a dataset.",
     keyFeatures: [
-      "geokit CLI: Geocode individual queries or batch process SQLite",
-      "geokit-review: Native SwiftUI macOS app for place review workflow",
-      "Apple Maps integration (not third-party geocoding)",
-      "SQLite database persistence and enrichment",
-      "Text search, filtering, and bulk operations",
-      "Manual review and correction workflow",
-      "Configurable request pacing (geocoding courtesy)",
+      "CLI for individual queries and SQLite batch processing",
+      "Native SwiftUI macOS review application",
+      "Apple Maps geocoding with SQLite enrichment",
+      "Search, filtering, bulk operations, and request pacing",
     ],
-    whyItsImpressive: [
-      "Built directly on Apple's MapKit, not a third-party geocoding API — comfort working close to the platform, not just consuming SDKs",
-      "Ships as both a CLI and a native SwiftUI macOS app — the same logic reused across a scriptable tool and a polished GUI",
-      "Includes request pacing to stay a good citizen of Apple's geocoding service — the kind of operational courtesy that keeps API access from getting revoked",
-      "Solves a real, unglamorous problem: reviewing and correcting messy location data by hand, made fast",
+    technicalChallenges: [
+      "Adapting MapKit and CoreLocation APIs for headless batch work",
+      "Respecting Apple's usage limits with configurable request pacing",
+      "Keeping CLI output and native corrections consistent through one package and schema",
     ],
     techStack: ["Swift", "Apple Maps", "SQLite", "SwiftUI"],
     lastUpdated: "2026-07-06",
@@ -317,29 +290,24 @@ export const projectDetails: Record<string, ProjectDetail> = {
   toolbox: {
     slug: "toolbox",
     name: "Toolbox",
-    shortDescription: "7 polyglot CLI tools (Rust, Go, Swift, Python)",
+    shortDescription: "Seven CLI tools for data, media, and content",
     category: "tool",
     tech: ["Rust", "Go", "Swift", "Python"],
     status: "development",
     description:
-      "Monorepo of specialized command-line tools and utilities built with polyglot approach, choosing the right language for each job.",
-    whatItDoes:
-      "Toolbox is a collection of CLI tools and small applications solving personal productivity problems. Each tool is implemented in the most appropriate language: Rust for performance, Go for networking, Swift for OS integration, Python for data processing.",
+      "A monorepo of focused CLI tools for content, media, data cleanup, and AI workflows.",
+    problem:
+      "Personal automation often starts as a throwaway script and becomes a liability. Toolbox turns recurring jobs involving content, media, and personal data into tested commands with explicit safeguards.",
     keyFeatures: [
-      "filekit (Rust): Frontmatter, calendar, file utilities, essay classification",
-      "careerkit (Go): Markdown-to-DOCX resume builder with verification",
-      "xkit (Go): X/Twitter post deletion tool",
-      "mediakit (Swift): Video/audio transcription via Apple Speech",
-      "datpiff (Python): Internet Archive mixtape crawler",
-      "photokit (Python): EXIF analysis, date repair, batch renaming",
-      "agentkit (TypeScript): AI agent analytics (Claude, OpenRouter, etc)",
-      "Unified Justfile orchestration across all tools",
+      "Content pipeline from raw notes to scheduled social drafts",
+      "File, photo, transcription, and Internet Archive utilities",
+      "Post deletion and AI agent analytics tools",
+      "Unified Justfile command surface across the monorepo",
     ],
-    whyItsImpressive: [
-      "Seven tools, four languages — Rust where speed matters, Go for networking, Swift for OS integration, Python for data wrangling",
-      "Each tool solves a real, specific problem (resume generation, media transcription, EXIF repair) rather than existing as a language exercise",
-      "One Justfile ties every tool together — comfort building and maintaining tooling across ecosystems, not just within one",
-      "The kind of range a small team needs when there's no one else to reach for the right tool",
+    technicalChallenges: [
+      "Matching each tool to the constraints of its runtime and data source",
+      "Adding dry-run and verification steps before destructive operations",
+      "Keeping one consistent command surface across four toolchains",
     ],
     techStack: ["Rust", "Go", "Swift", "Python", "TypeScript"],
     lastUpdated: "2026-07-06",
@@ -352,31 +320,26 @@ export const projectDetails: Record<string, ProjectDetail> = {
   "ponti-mobile-starter": {
     slug: "ponti-mobile-starter",
     name: "Ponti Mobile Starter",
-    shortDescription: "Reusable Expo framework for mobile experiments",
+    shortDescription: "Production-tested Expo starter for mobile apps",
     category: "library",
     tech: ["TypeScript", "React Native", "Expo"],
     status: "development",
     description:
-      "Reusable mobile framework extracted from production Omiro app, enabling rapid mobile experiments with pre-built patterns.",
-    whatItDoes:
-      "Ponti Mobile Starter is a template and framework for launching new mobile applications quickly. It encodes the patterns, architecture, and theming system from the production Omiro app, while remaining reusable across experiments.",
+      "A reusable mobile framework extracted from the production Omiro app, with the setup needed to start new Expo projects quickly.",
+    problem:
+      "New mobile projects lose time rebuilding auth, navigation, theming, and observability before product work starts. This starter extracts those patterns from a production app instead of offering an untested template.",
     keyFeatures: [
-      "Application shell with navigation structure",
-      "Theming and design tokens system",
-      "Authentication seams and initialization patterns",
-      "API client integration points",
-      "Observability and monitoring hooks",
-      "Expo and EAS release profiles for iOS",
-      "Extracted from production app (proven patterns)",
+      "Application shell, navigation, and design tokens",
+      "Authentication and API client integration points",
+      "Observability hooks and Expo/EAS release profiles",
+      "Patterns extracted from a production iOS app",
     ],
-    whyItsImpressive: [
-      "Extracted from a shipping app, not built from a tutorial — the patterns here already survived contact with real users",
-      "Auth, theming, and API integration are pre-wired — the boring 80% of every new app, solved once",
-      "Comes with Expo/EAS release profiles ready to go — a new iOS app can reach TestFlight in hours, not weeks",
-      "Evidence of thinking past the current project: building the thing that makes the next five projects faster",
+    technicalChallenges: [
+      "Extracting shared concerns from Omiro without destabilizing it",
+      "Keeping the starter generic while preserving production lessons",
+      "Encoding real operational decisions instead of empty scaffolding",
     ],
     techStack: ["TypeScript", "React Native", "Expo", "EAS"],
-    commits: 113,
     lastUpdated: "2026-07-06",
     deployment: {
       status: "Template (Development)",
@@ -387,30 +350,26 @@ export const projectDetails: Record<string, ProjectDetail> = {
   "ai-lab": {
     slug: "ai-lab",
     name: "AI Lab",
-    shortDescription: "Claude API research lab for extraction & agents",
+    shortDescription: "Evaluation and extraction workflows for Claude",
     category: "research",
     tech: ["Python", "Claude API"],
     status: "development",
     description:
-      "Internal research lab for experimenting with Claude API, building extraction workers, and orchestrating agent workflows.",
-    whatItDoes:
-      "AI Lab is a workspace for researching and developing Claude-powered features. It includes extraction worker experiments, retrieval system prototypes, agent pipeline orchestration, and evaluation frameworks.",
+      "An internal lab for evaluating Claude workflows, building extraction workers, and orchestrating agents.",
+    problem:
+      "LLM prompts change quickly, but without evaluation those changes ship untested and regressions surface silently. AI Lab makes prompt and extraction quality measurable before a workflow reaches a product.",
     keyFeatures: [
-      "Extraction worker development for structured data",
-      "Retrieval system experimentation",
+      "Structured extraction workers and retrieval experiments",
       "Agent pipeline orchestration",
-      "Evaluation frameworks with regression testing",
-      "Prompt contracts and model benchmarking",
-      "CLI entry points for smoke tests and validation",
+      "Prompt contracts, model benchmarks, and regression tests",
+      "CLI smoke tests and validation workflows",
     ],
-    whyItsImpressive: [
-      "Every extraction pipeline ships with regression tests — prompts are treated like code, with the same expectation of not silently breaking",
-      "Built to benchmark models and prompt variants against each other — decisions backed by evaluation, not vibes",
-      "Infrastructure-first approach: reusable extraction and retrieval components, not one-off scripts glued to a single use case",
-      "The kind of internal tooling that lets a small team ship AI features with production-level confidence",
+    technicalChallenges: [
+      "Testing prompt and extraction changes for silent regressions",
+      "Benchmarking models and prompt variants on the same task",
+      "Keeping evaluated pipelines reusable across products",
     ],
     techStack: ["Python", "Claude API"],
-    commits: 155,
     lastUpdated: "2026-07-06",
     deployment: {
       status: "Internal Research Lab",
