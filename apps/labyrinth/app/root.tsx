@@ -14,6 +14,7 @@ import {
   Scripts,
   ScrollRestoration,
   useLocation,
+  useNavigation,
 } from "react-router";
 
 import type { Route } from "./+types/root";
@@ -82,10 +83,22 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   const location = useLocation();
+  const navigation = useNavigation();
+  const isNavigating = navigation.state !== "idle";
 
   return (
     <QueryProvider>
       <ParticleBackground className="fixed" />
+      <div
+        aria-hidden="true"
+        className={cn(
+          "bg-accent fixed inset-x-0 top-0 z-60 h-0.5 origin-left transition-transform duration-200",
+          isNavigating ? "scale-x-100" : "scale-x-0",
+        )}
+      />
+      <div className="sr-only" aria-live="polite" aria-atomic="true">
+        {isNavigating ? "Loading page" : ""}
+      </div>
       <AppNavigation
         brand={<img src="/logo.ponti.png" alt={t.nav.brandAlt} className="size-6" />}
         brandHref="/"
@@ -107,7 +120,7 @@ export default function App() {
           </div>
         }
         renderLink={({ href, className, children, onClick }) => (
-          <Link key={href} to={href} className={className} onClick={onClick}>
+          <Link key={href} to={href} prefetch="intent" className={className} onClick={onClick}>
             {children}
           </Link>
         )}

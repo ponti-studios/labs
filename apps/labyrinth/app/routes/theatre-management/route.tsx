@@ -40,7 +40,7 @@ export default function TheaterEconomics() {
           size="sm"
           className="text-muted-foreground hover:text-foreground"
         >
-          <Link to="/">
+          <Link to="/" prefetch="intent">
             <ArrowLeft className="size-4" />
           </Link>
         </Button>

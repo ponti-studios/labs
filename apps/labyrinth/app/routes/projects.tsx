@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { projectSnapshots } from "~/data/projects";
+import { projects } from "~/data/projects";
 import { t } from "~/translations";
 
 export function meta(): Array<{
@@ -11,14 +11,14 @@ export function meta(): Array<{
     { title: "Lab — Ponti Studios" },
     {
       name: "description",
-      content: "10 active repositories spanning products, infrastructure, tools, and research",
+      content: t.projects.page.metaDescription,
     },
   ];
 }
 
 export default function Projects() {
   // Group projects by category
-  const byCategory = projectSnapshots.reduce(
+  const byCategory = projects.reduce(
     (acc, project) => {
       if (!acc[project.category]) {
         acc[project.category] = [];
@@ -26,15 +26,11 @@ export default function Projects() {
       acc[project.category].push(project);
       return acc;
     },
-    {} as Record<string, typeof projectSnapshots>,
+    {} as Record<string, typeof projects>,
   );
 
   const categoryLabels: Record<string, string> = {
-    product: "Products",
-    infrastructure: "Infrastructure",
-    library: "Libraries",
-    tool: "Tools",
-    research: "Research",
+    ...t.projects.categoryLabels,
   };
 
   const categoryOrder = ["product", "infrastructure", "library", "tool", "research"];
@@ -58,6 +54,7 @@ export default function Projects() {
                 <Link
                   key={project.slug}
                   to={`/projects/${project.slug}`}
+                  prefetch="intent"
                   className="group hover:bg-muted/20 focus-visible:outline-ring flex items-center justify-between gap-4 px-2 py-5 transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-2"
                 >
                   {/* Header */}
@@ -69,7 +66,7 @@ export default function Projects() {
                   </div>
 
                   <div className="body-4 text-muted-foreground tracking-wide uppercase">
-                    {project.status}
+                    {t.projects.statusLabels[project.status]}
                   </div>
                 </Link>
               ))}

@@ -250,7 +250,7 @@ export default function CalendarExperiment() {
   return (
     <div className="min-h-[calc(100dvh-6rem)] w-full bg-gray-50 pb-24 font-sans text-gray-900">
       <div className="relative mx-auto min-h-[calc(100dvh-6rem)] max-w-md overflow-hidden bg-white shadow-2xl">
-        <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/80 p-4 backdrop-blur-md">
+        <header className="sticky top-0 border-b border-gray-100 bg-white/80 p-4 backdrop-blur-md">
           <h1 className="text-xl font-bold tracking-tight">Today</h1>
           <p className="text-sm text-gray-500">Thursday, April 9</p>
         </header>

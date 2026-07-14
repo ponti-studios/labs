@@ -40,7 +40,11 @@ export default function Services() {
               {t.common.bookCall}
             </a>
           </Button>
-          <Link to="/work" className="body-2 text-foreground underline-offset-4 hover:underline">
+          <Link
+            to="/work"
+            prefetch="intent"
+            className="body-2 text-foreground underline-offset-4 hover:underline"
+          >
             {copy.hero.seeWork}
           </Link>
         </div>
@@ -123,6 +127,7 @@ export default function Services() {
         <p className="body-2 text-muted-foreground">{copy.faqLink}</p>
         <Link
           to="/faq"
+          prefetch="intent"
           className="body-2 text-foreground hover:text-muted-foreground flex items-center gap-2"
         >
           <HelpCircle className="size-4" aria-hidden="true" />

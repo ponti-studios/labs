@@ -50,6 +50,7 @@ export default function CovidCountryLayout() {
               <Link
                 key={item.href}
                 to={item.href}
+                prefetch="intent"
                 className={`border-b-2 px-3 py-2.5 text-xs font-medium whitespace-nowrap transition-colors duration-150 ${
                   isActive
                     ? "border-foreground text-foreground"

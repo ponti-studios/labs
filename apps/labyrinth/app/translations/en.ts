@@ -7,6 +7,245 @@ export const STUDIO_TRANSLATIONS_EN = {
     manifesto: "Manifesto",
     book: "Book",
   },
+  projects: {
+    categoryLabels: {
+      product: "Products",
+      infrastructure: "Infrastructure",
+      library: "Libraries",
+      tool: "Tools",
+      research: "Research",
+    },
+    statusLabels: {
+      published: "Published",
+      active: "Active",
+      development: "Development",
+      archived: "Archived",
+    },
+    page: {
+      title: "The Lab",
+      metaDescription: "11 projects spanning products, infrastructure, tools, and research",
+      detailMetaDescription: "Project details and information",
+      notFound: "Project not found",
+      back: "Back to Lab",
+      previous: "Previous",
+      next: "Next",
+      problem: "The Problem",
+      howItWorks: "How It Works",
+      engineeringChallenges: "Engineering Challenges",
+      repository: "Repository",
+    },
+    entries: {
+      kernel: {
+        name: "Kernel",
+        shortDescription: "32 reusable agent skills for Claude Code",
+        description:
+          "32 specialized skills for software development and content production, published to NPM and installable through skills.sh.",
+        problem:
+          "Useful engineering judgment is often trapped in people's heads or buried in documentation. Kernel turns that judgment into skills an AI assistant can invoke for recurring work such as migrations, security reviews, and content production.",
+        keyFeatures: [
+          "32 skills across 7 categories (Writing, Music, Image, Development, UI & Brand, Audit, Operations)",
+          "Individual or bulk installation with npx skills add",
+          "Covers engineering, architecture, documentation, and content production",
+          "Publicly published for the Claude Code community",
+        ],
+        technicalChallenges: [
+          "Designing precise triggers so 32 skills coexist without collisions",
+          "Keeping the format machine-readable, versioned, and editable by hand",
+          "Validating every skill against real tasks before publishing",
+        ],
+      },
+      foundation: {
+        name: "Foundation",
+        shortDescription: "Enterprise shared infrastructure with Docker & PostgreSQL",
+        description:
+          "Shared infrastructure for PostgreSQL, Redis, Docker Compose environments, and CI/CD across the organization.",
+        problem:
+          "Teams needing vector search or geospatial queries were rebuilding PostgreSQL images per project. Foundation provides one tested image and repeatable environments so development and production do not quietly drift apart.",
+        keyFeatures: [
+          "Custom PostgreSQL 18 image with pgvector, PostGIS, and pgRouting",
+          "Docker Compose stacks for development, test, and production",
+          "Automated GitHub Actions releases with semantic versioning",
+          "Digest-pinned images and a machine-readable service catalog",
+        ],
+        technicalChallenges: [
+          "Compiling three PostgreSQL extensions into one reliable PostgreSQL 18 image",
+          "Making every deployment reproducible with immutable image digests",
+          "Automating releases so shared infrastructure can update without a manual ritual",
+        ],
+      },
+      hominem: {
+        name: "Hominem",
+        shortDescription: "One platform for mobile, web, and shared personal data",
+        description:
+          "A product platform spanning the Omiro iOS app, Finance and Career web apps, and a centralized API.",
+        problem:
+          "Finance, career, and daily life are connected, but the tools that track them are usually isolated. Hominem puts those surfaces on one platform with shared data, auth, and infrastructure.",
+        keyFeatures: [
+          "Omiro iOS app built with Expo and React Native",
+          "Finance and Career web applications",
+          "Centralized Hono API with shared auth and data packages",
+          "Turbo monorepo with type-safe shared infrastructure",
+        ],
+        technicalChallenges: [
+          "Sharing typed business logic between native and web surfaces",
+          "Enforcing dependency direction across apps, packages, and API layers",
+          "Extracting reusable mobile infrastructure from a production app",
+        ],
+      },
+      hollywood: {
+        name: "Hollywood",
+        shortDescription: "Entertainment research platform with structured LLM extraction",
+        description:
+          "A local-first platform that combines entertainment data ingestion with Claude-powered extraction from unstructured submissions.",
+        problem:
+          "Entertainment research is split across many sources, while the most valuable material arrives as unstructured submissions. Hollywood brings both into one searchable system and extracts useful fields automatically.",
+        keyFeatures: [
+          "Ingestion from trade publications, industry directories, and public databases",
+          "Claude-powered extraction from query letters, decks, and submissions",
+          "Unified entity graph for people, companies, projects, and submissions",
+          "Raw payload archiving, JSONL export, and documented REST API",
+        ],
+        technicalChallenges: [
+          "Normalizing eight-plus source types without losing provenance",
+          "Preserving raw inputs so extraction can be re-run as prompts improve",
+          "Modeling evolving relationships without an unmaintainable schema",
+        ],
+      },
+      commune: {
+        name: "Commune",
+        shortDescription: "Anonymous peer deliberation for difficult decisions",
+        description:
+          "A social decision-making app that turns a personal situation into a neutral case for a small anonymous jury.",
+        problem:
+          "Advice from friends is often shaped by the way a story is told and by existing relationships. Commune separates the account from the decision: an AI creates a neutral version, then friends vote independently and explain their reasoning.",
+        keyFeatures: [
+          "AI-assisted neutralization of the original situation",
+          "Anonymous jury with independent agree or disagree votes",
+          "Comments and quorum-based verdict reveal",
+          "Shareable cases with a personal docket for tracking decisions",
+        ],
+        technicalChallenges: [
+          "Removing identifying and persuasive framing without losing the facts",
+          "Preventing early votes from influencing later independent judgments",
+          "Handling anonymous participation while preserving case ownership and vote integrity",
+        ],
+      },
+      earth: {
+        name: "Earth",
+        shortDescription: "Live map for exploring London traffic cameras",
+        description:
+          "A live geospatial viewer for browsing London's TfL traffic camera network on an interactive map.",
+        problem:
+          "Traffic camera data is useful only when it is easy to locate and inspect. Earth puts a large, changing camera network into a map interface with direct search, camera detail, and live availability state.",
+        keyFeatures: [
+          "Interactive MapLibre map with camera locations",
+          "Search by camera name or location",
+          "Live and offline camera availability indicators",
+          "Camera detail views with coordinates and feeds",
+        ],
+        technicalChallenges: [
+          "Rendering a large geospatial dataset without making the map difficult to use",
+          "Keeping external camera data current while handling unavailable feeds",
+          "Connecting map selection, search results, and detail routes into one workflow",
+        ],
+      },
+      health: {
+        name: "Health",
+        shortDescription: "Personal workspace for symptoms, care, and medication",
+        description:
+          "A personal health workspace for understanding symptoms, tracking progress, and organizing care.",
+        problem:
+          "Health decisions are spread across symptoms, appointments, medication, insurance, and local care options. Health brings those recurring tasks into one practical workspace instead of treating each decision as a separate lookup.",
+        keyFeatures: [
+          "Symptom guidance with monitoring and follow-up status",
+          "Appointment scheduling and upcoming-care dashboard",
+          "Medication pen duration calculator",
+          "Hospital lookup and Medicare comparison tools",
+        ],
+        technicalChallenges: [
+          "Presenting symptom guidance clearly without turning it into a diagnosis",
+          "Keeping monitored symptoms, resolutions, and appointments coherent over time",
+          "Building focused tools for medication planning, hospitals, and Medicare without fragmenting the experience",
+        ],
+      },
+      geo: {
+        name: "Geo (geokit)",
+        shortDescription: "Geocoding tools with a native review workflow",
+        description:
+          "A Swift geocoding CLI and native macOS app for curating place data with Apple Maps.",
+        problem:
+          "Automated geocoding is fast but ambiguous, while manual review is accurate but slow. Geo combines batch geocoding with a native workflow for checking and correcting results before they enter a dataset.",
+        keyFeatures: [
+          "CLI for individual queries and SQLite batch processing",
+          "Native SwiftUI macOS review application",
+          "Apple Maps geocoding with SQLite enrichment",
+          "Search, filtering, bulk operations, and request pacing",
+        ],
+        technicalChallenges: [
+          "Adapting MapKit and CoreLocation APIs for headless batch work",
+          "Respecting Apple's usage limits with configurable request pacing",
+          "Keeping CLI output and native corrections consistent through one package and schema",
+        ],
+      },
+      toolbox: {
+        name: "Toolbox",
+        shortDescription: "Seven CLI tools for data, media, and content",
+        description:
+          "A monorepo of focused CLI tools for content, media, data cleanup, and AI workflows.",
+        problem:
+          "Personal automation often starts as a throwaway script and becomes a liability. Toolbox turns recurring jobs involving content, media, and personal data into tested commands with explicit safeguards.",
+        keyFeatures: [
+          "Content pipeline from raw notes to scheduled social drafts",
+          "File, photo, transcription, and Internet Archive utilities",
+          "Post deletion and AI agent analytics tools",
+          "Unified Justfile command surface across the monorepo",
+        ],
+        technicalChallenges: [
+          "Matching each tool to the constraints of its runtime and data source",
+          "Adding dry-run and verification steps before destructive operations",
+          "Keeping one consistent command surface across four toolchains",
+        ],
+      },
+      "ponti-mobile-starter": {
+        name: "Ponti Mobile Starter",
+        shortDescription: "Production-tested Expo starter for mobile apps",
+        description:
+          "A reusable mobile framework extracted from the production Omiro app, with the setup needed to start new Expo projects quickly.",
+        problem:
+          "New mobile projects lose time rebuilding auth, navigation, theming, and observability before product work starts. This starter extracts those patterns from a production app instead of offering an untested template.",
+        keyFeatures: [
+          "Application shell, navigation, and design tokens",
+          "Authentication and API client integration points",
+          "Observability hooks and Expo/EAS release profiles",
+          "Patterns extracted from a production iOS app",
+        ],
+        technicalChallenges: [
+          "Extracting shared concerns from Omiro without destabilizing it",
+          "Keeping the starter generic while preserving production lessons",
+          "Encoding real operational decisions instead of empty scaffolding",
+        ],
+      },
+      "ai-lab": {
+        name: "AI Lab",
+        shortDescription: "Evaluation and extraction workflows for Claude",
+        description:
+          "An internal lab for evaluating Claude workflows, building extraction workers, and orchestrating agents.",
+        problem:
+          "LLM prompts change quickly, but without evaluation those changes ship untested and regressions surface silently. AI Lab makes prompt and extraction quality measurable before a workflow reaches a product.",
+        keyFeatures: [
+          "Structured extraction workers and retrieval experiments",
+          "Agent pipeline orchestration",
+          "Prompt contracts, model benchmarks, and regression tests",
+          "CLI smoke tests and validation workflows",
+        ],
+        technicalChallenges: [
+          "Testing prompt and extraction changes for silent regressions",
+          "Benchmarking models and prompt variants on the same task",
+          "Keeping evaluated pipelines reusable across products",
+        ],
+      },
+    },
+  },
 
   common: {
     bookCall: "Book a call",
@@ -734,7 +973,6 @@ export const STUDIO_TRANSLATIONS_EN = {
               source: "Peterson Academy",
             },
             { path: "/challenges/prime-countdown", label: "Prime Number Countdown" },
-            { path: "/challenges/qubit", label: "CSS Selector Engine", source: "Qubit" },
             { path: "/challenges/red-badger", label: "Mars Robot Navigator", source: "Red Badger" },
           ],
         },

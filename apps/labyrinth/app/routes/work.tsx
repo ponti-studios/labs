@@ -32,6 +32,7 @@ export default function Work() {
             return (
               <Link
                 to={`/work/${snapshot.slug}`}
+                prefetch="intent"
                 className="group border-border/60 focus-visible:outline-ring flex h-full justify-between gap-6 rounded-lg border p-6 px-4 transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-4"
               >
                 <div className="flex min-w-0 flex-col gap-1">
