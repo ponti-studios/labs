@@ -1,4 +1,5 @@
 import { normalizeGuess, REALITEA_ANSWER_LENGTH } from "./index";
+import { isDictionaryWord } from "../word-list.server";
 import type { ValidationResult } from "./types";
 
 const BRAVO_PRIMARY_SOURCE_DOMAIN = "realityblurb.com";
@@ -23,6 +24,9 @@ export function validateCandidate(
   }
   if (!normalizedAnswer || /[^A-Z]/.test(normalizedAnswer)) {
     reasons.push("answer does not normalize cleanly to letters");
+  }
+  if (normalizedAnswer.length === REALITEA_ANSWER_LENGTH && !isDictionaryWord(normalizedAnswer)) {
+    reasons.push("answer is not in the accepted five-letter word list");
   }
   if (!candidate.answerType) {
     reasons.push("answer type is missing");

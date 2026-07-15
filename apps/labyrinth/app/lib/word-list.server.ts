@@ -22,6 +22,10 @@ const wordSet = new Set(
     .filter(Boolean),
 );
 
+export function isDictionaryWord(word: string): boolean {
+  return wordSet.has(word.toUpperCase().trim());
+}
+
 export async function isValidWord(word: string, gameId: number): Promise<boolean> {
   const upper = word.toUpperCase().trim();
 
@@ -29,7 +33,7 @@ export async function isValidWord(word: string, gameId: number): Promise<boolean
     return false;
   }
 
-  if (wordSet.has(upper)) {
+  if (isDictionaryWord(upper)) {
     return true;
   }
 
