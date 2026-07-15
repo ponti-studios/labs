@@ -38,6 +38,19 @@ describe("realitea daily puzzle helpers", () => {
     expect(result.valid).toBe(true);
   });
 
+  it("rejects invented five-letter words", () => {
+    const result = validateCandidate({
+      answer: "Cuted",
+      answerType: "moment",
+      clue: "The professional relationship ended abruptly.",
+      detail: "Brittany Cartwright parted ways with her longtime publicist amid personal turmoil.",
+      sources: [BRAVO_SOURCE],
+    });
+
+    expect(result.valid).toBe(false);
+    expect(result.reasons).toContain("answer is not in the accepted five-letter word list");
+  });
+
   it("rejects answers whose normalized length is not exactly five", () => {
     const result = validateCandidate({
       answer: "RH",
