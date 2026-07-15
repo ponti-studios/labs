@@ -15,6 +15,8 @@ export type ProjectMetadata = {
   tech: string[];
   status: ProjectStatus;
   github: string;
+  url?: string;
+  screenshots?: string[];
 };
 
 export type Project = ProjectMetadata & (typeof t.projects.entries)[ProjectSlug];
@@ -35,10 +37,36 @@ export const projectMetadata: ProjectMetadata[] = [
     github: "https://github.com/ponti-studios/foundation",
   },
   {
-    slug: "hominem",
+    slug: "omiro",
     category: "product",
-    tech: ["TypeScript", "React Native", "Hono", "PostgreSQL"],
+    tech: ["TypeScript", "React Native", "Expo", "iOS"],
     status: "active",
+    github: "https://github.com/ponti-studios/hominem",
+  },
+  {
+    slug: "career",
+    category: "product",
+    tech: ["TypeScript", "React", "Hono", "PostgreSQL"],
+    status: "published",
+    github: "https://github.com/ponti-studios/hominem",
+    url: "https://career.ponti.io",
+    screenshots: [
+      "/screenshots/career-dashboard.png",
+      "/screenshots/career-pipeline.png",
+    ],
+  },
+  {
+    slug: "finance",
+    category: "product",
+    tech: ["TypeScript", "React", "Hono", "PostgreSQL"],
+    status: "development",
+    github: "https://github.com/ponti-studios/hominem",
+  },
+  {
+    slug: "hominem-api",
+    category: "infrastructure",
+    tech: ["TypeScript", "Hono", "MCP", "PostgreSQL", "Drizzle"],
+    status: "published",
     github: "https://github.com/ponti-studios/hominem",
   },
   {
@@ -52,21 +80,33 @@ export const projectMetadata: ProjectMetadata[] = [
     slug: "commune",
     category: "product",
     tech: ["TypeScript", "React", "PostgreSQL", "AI"],
-    status: "active",
+    status: "development",
     github: "https://github.com/ponti-studios/labs",
   },
   {
     slug: "earth",
     category: "product",
     tech: ["TypeScript", "React", "MapLibre", "PostgreSQL"],
-    status: "active",
+    status: "development",
     github: "https://github.com/ponti-studios/labs",
+  },
+  {
+    slug: "realitea",
+    category: "product",
+    tech: ["TypeScript", "React", "React Router", "PostgreSQL", "Drizzle"],
+    status: "published",
+    github: "https://github.com/ponti-studios/labs",
+    url: "/games/realitea",
+    screenshots: [
+      "/screenshots/realitea-gameplay.png",
+      "/screenshots/realitea-solved.png",
+    ],
   },
   {
     slug: "health",
     category: "product",
     tech: ["TypeScript", "React", "React Router", "SQLite"],
-    status: "active",
+    status: "development",
     github: "https://github.com/ponti-studios/labs",
   },
   {

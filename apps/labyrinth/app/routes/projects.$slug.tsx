@@ -1,3 +1,4 @@
+import { ExternalLink } from "lucide-react";
 import { Link, useParams } from "react-router";
 import { projects } from "~/data/projects";
 import { t } from "~/translations";
@@ -92,13 +93,29 @@ export default function ProjectDetail() {
         {/* Right Column - Sidebar */}
         <div className="flex flex-col gap-8">
           {/* Tech Stack and GitHub */}
-          <section className="border-border/40 flex flex-col gap-6 rounded-lg border p-6">
+          <section className="border-border/40 flex flex-col gap-4 rounded-lg border p-6">
+            {project.url && (
+              <a
+                href={project.url}
+                target={project.url.startsWith("http") ? "_blank" : undefined}
+                rel={project.url.startsWith("http") ? "noopener noreferrer" : undefined}
+                className="hover:text-accent focus-visible:outline-ring hover:bg-muted/20 -mx-6 -my-4 flex items-center gap-2 rounded-lg px-6 py-4 text-left transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-4"
+              >
+                <ExternalLink size={16} className="text-accent" />
+                <div className="flex flex-col gap-1">
+                  <h3 className="heading-4 text-foreground">Visit</h3>
+                  <div className="body-4 text-muted-foreground hover:text-accent break-all">
+                    {project.url.replace("https://", "")}
+                  </div>
+                </div>
+              </a>
+            )}
             {/* GitHub */}
             <a
               href={project.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-accent focus-visible:outline-ring hover:bg-muted/20 -mx-6 -my-6 flex flex-col gap-2 rounded-lg px-6 py-6 text-left transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-4"
+              className="hover:text-accent focus-visible:outline-ring hover:bg-muted/20 -mx-6 flex flex-col gap-2 rounded-lg px-6 py-4 text-left transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-4"
             >
               <h3 className="heading-4 text-foreground">{t.projects.page.repository}</h3>
               <div className="body-4 text-muted-foreground hover:text-accent break-all">
@@ -108,6 +125,31 @@ export default function ProjectDetail() {
           </section>
         </div>
       </div>
+
+      {/* Navigation */}
+      {project.screenshots && project.screenshots.length > 0 && (
+        <section className="flex flex-col gap-4">
+          <h2 className="heading-2 text-foreground">Screenshots</h2>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {project.screenshots.map((src, idx) => (
+              <a
+                key={idx}
+                href={src}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="border-border/40 hover:border-accent/40 overflow-hidden rounded-lg border transition-colors"
+              >
+                <img
+                  src={src}
+                  alt={`${project.name} screenshot ${idx + 1}`}
+                  className="w-full object-cover"
+                  loading="lazy"
+                />
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Navigation */}
       <div className="border-border/40 flex justify-between border-t pt-12">

@@ -23,7 +23,7 @@ export const STUDIO_TRANSLATIONS_EN = {
     },
     page: {
       title: "The Lab",
-      metaDescription: "11 projects spanning products, infrastructure, tools, and research",
+      metaDescription: "Projects spanning products, infrastructure, tools, and research",
       detailMetaDescription: "Project details and information",
       notFound: "Project not found",
       back: "Back to Lab",
@@ -73,23 +73,78 @@ export const STUDIO_TRANSLATIONS_EN = {
           "Automating releases so shared infrastructure can update without a manual ritual",
         ],
       },
-      hominem: {
-        name: "Hominem",
-        shortDescription: "One platform for mobile, web, and shared personal data",
+      omiro: {
+        name: "Omiro",
+        shortDescription: "Personal knowledge app for iOS",
         description:
-          "A product platform spanning the Omiro iOS app, Finance and Career web apps, and a centralized API.",
+          "An iOS app that captures everything you want to remember — tasks, notes, events, and ideas — into one searchable, connected personal knowledge graph.",
         problem:
-          "Finance, career, and daily life are connected, but the tools that track them are usually isolated. Hominem puts those surfaces on one platform with shared data, auth, and infrastructure.",
+          "Personal knowledge lives scattered across notes, reminders, calendars, and messages. Omiro brings it into one app where everything connects — a task links to a note, a note links to an event, and search finds it all.",
         keyFeatures: [
-          "Omiro iOS app built with Expo and React Native",
-          "Finance and Career web applications",
-          "Centralized Hono API with shared auth and data packages",
-          "Turbo monorepo with type-safe shared infrastructure",
+          "Unified capture for tasks, notes, events, and ideas",
+          "Connected personal knowledge graph with typed relationships",
+          "Full offline support with local-first architecture",
+          "Built with Expo and React Native for iOS",
         ],
         technicalChallenges: [
-          "Sharing typed business logic between native and web surfaces",
-          "Enforcing dependency direction across apps, packages, and API layers",
-          "Extracting reusable mobile infrastructure from a production app",
+          "Designing a local-first sync engine that handles offline writes without conflicts",
+          "Modeling an open-ended personal knowledge graph without an unbounded schema",
+          "Making typed business logic reusable between the iOS app and shared packages",
+        ],
+      },
+      career: {
+        name: "Career",
+        shortDescription: "Track applications, interviews, and your professional pipeline",
+        description:
+          "A web app for managing a job search pipeline — applications, interviews, follow-ups, and offers — in one place.",
+        problem:
+          "Job searches generate a flood of applications, recruiter conversations, and interview loops with no natural place to track them. Career turns that scattered process into a structured pipeline with status tracking and follow-up reminders.",
+        keyFeatures: [
+          "Application pipeline with status stages and notes",
+          "Interview scheduling and feedback tracking",
+          "Contact management for recruiters and referrals",
+          "Shared Hominem API for cross-product data access",
+        ],
+        technicalChallenges: [
+          "Keeping the application pipeline fast to update while supporting rich notes and history",
+          "Sharing auth and data patterns with Finance and Omiro through the Hominem API",
+        ],
+      },
+      finance: {
+        name: "Finance",
+        shortDescription: "Personal finance dashboard with accounts, budgets, and trends",
+        description:
+          "A web app for tracking personal finances — accounts, transactions, budgets, and net worth trends — with a clean dashboard.",
+        problem:
+          "Personal finance tools are either too simple (mint clones) or too complex (spreadsheet-level). Finance aims for the middle: enough structure to see trends and budgets, simple enough to use weekly.",
+        keyFeatures: [
+          "Account aggregation with transaction categorization",
+          "Budget tracking with category-based spending limits",
+          "Net worth trends and monthly summaries",
+          "Shared Hominem API for cross-product data access",
+        ],
+        technicalChallenges: [
+          "Designing a data model that handles account aggregation without third-party dependencies",
+          "Making budget calculations fast and correct across varying transaction volumes",
+        ],
+      },
+      "hominem-api": {
+        name: "Hominem API",
+        shortDescription: "HTTP & MCP server for unified personal data access",
+        description:
+          "A centralized Hono API that serves Omiro, Career, and Finance with shared auth, typed RPC contracts, and an MCP server for AI agent access to personal data.",
+        problem:
+          "Three products sharing the same personal data shouldn't each build their own API. The Hominem API provides one server with typed contracts, shared auth, and MCP protocol support so AI agents can access personal data with permission boundaries.",
+        keyFeatures: [
+          "Hono HTTP server with typed RPC contracts shared across all clients",
+          "MCP (Model Context Protocol) server for AI agent access",
+          "Shared auth via Better Auth with passkey and OTP support",
+          "PostgreSQL + Drizzle with generated types consumed by all products",
+        ],
+        technicalChallenges: [
+          "Designing typed RPC contracts that work for web, mobile, and MCP clients",
+          "Adding MCP support as a first-class protocol alongside the HTTP API",
+          "Enforcing permission boundaries when AI agents access personal data",
         ],
       },
       hollywood: {
@@ -223,6 +278,26 @@ export const STUDIO_TRANSLATIONS_EN = {
           "Extracting shared concerns from Omiro without destabilizing it",
           "Keeping the starter generic while preserving production lessons",
           "Encoding real operational decisions instead of empty scaffolding",
+        ],
+      },
+      realitea: {
+        name: "RealiTea",
+        shortDescription: "Daily word game built on real headlines",
+        description:
+          "A daily word puzzle where players guess real celebrity names by spelling them out from clues, with new puzzles generated from actual entertainment journalism every day.",
+        problem:
+          "Most word games repeat the same mechanics endlessly. RealiTea uses real-time entertainment news to generate fresh puzzles daily, creating a game that's connected to the cultural moment instead of a static dictionary.",
+        keyFeatures: [
+          "Daily puzzles auto-generated from live entertainment headlines",
+          "Letter-by-letter guessing with real-time feedback",
+          "Drizzle + PostgreSQL backend with scheduled puzzle reconciliation",
+          "Health check system to verify puzzle quality and freshness",
+          "Admin panel for puzzle management and preview",
+        ],
+        technicalChallenges: [
+          "Auto-generating playable puzzles from raw, unstructured news content",
+          "Designing a reconciliation pipeline that fills gaps without producing duplicates",
+          "Validating puzzle difficulty so games remain fun across varying source material",
         ],
       },
       "ai-lab": {
@@ -943,8 +1018,7 @@ export const STUDIO_TRANSLATIONS_EN = {
             { path: "/experiments/theatre-management", label: "Theatre Management" },
             { path: "/experiments/llm-interface", label: "LLM Interface" },
             { path: "/experiments/glass", label: "Glass" },
-            { path: "/experiments/threegl-web-request", label: "ThreeGL Web Request" },
-            { path: "/experiments/threegl-image-gallery", label: "ThreeGL Image Gallery" },
+            { path: "/experiments/threegl-ai-explainer", label: "ThreeGL AI Explainer" },
             { path: "/experiments/infinite-scroll", label: "Infinite Scroll" },
             { path: "/gen/image", label: "Image Generation" },
             { path: "/tarot", label: "Tarot" },

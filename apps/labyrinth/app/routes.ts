@@ -12,6 +12,11 @@ const studioRoutes = [
   route("/work/:slug", "routes/work.$slug.tsx"),
 ] satisfies RouteConfig;
 
+const productRoutes = [
+  route("/games/realitea", "routes/games/realitea/route.tsx"),
+  route("/games/realitea/admin", "routes/games/realitea/admin.tsx"),
+] satisfies RouteConfig;
+
 const apiRoutes = [
   route("/api/countries/list", "routes/api.countries.list.ts"),
   route("/api/covid", "routes/api.covid.ts"),
@@ -38,6 +43,13 @@ const apiRoutes = [
   route("/api/words/validate", "routes/api.words.validate.ts"),
 ] satisfies RouteConfig;
 
+// ────────────────────────────────────────────────────────────────────────────
+// Experiments, features, and challenges — disabled while being rewritten.
+// These are hidden from the public site. The route files still exist in the
+// source tree but are not served.
+// ────────────────────────────────────────────────────────────────────────────
+
+/*
 const featureRoutes = [
   route("/gen/image", "routes/gen.image.tsx"),
   route("/tarot", "routes/tarot.tsx"),
@@ -51,21 +63,22 @@ const featureRoutes = [
   ]),
   route("/games/cards", "routes/games/cards.tsx"),
   route("/games/tetris", "routes/games/tetris.tsx"),
-  route("/games/realitea", "routes/games/realitea/route.tsx"),
-  route("/games/realitea/admin", "routes/games/realitea/admin.tsx"),
 ] satisfies RouteConfig;
+*/
 
+/*
 const experimentRoutes = [
   route("/experiments/calendar", "routes/experiments.calendar.tsx"),
   route("/experiments/glass", "routes/experiments.glass.tsx"),
   route("/experiments/infinite-scroll", "routes/infinite-scroll/route.tsx"),
-  route("/experiments/threegl-web-request", "routes/experiments.threegl-web-request.tsx"),
-  route("/experiments/threegl-image-gallery", "routes/experiments.threegl-image-gallery.tsx"),
+  route("/experiments/threegl-ai-explainer", "routes/experiments.threegl-ai-explainer.tsx"),
   route("/experiments/llm-interface", "routes/experiments.llm-interface.tsx"),
   route("/experiments/career-resume-animated", "routes/experiments.career-resume-animated.tsx"),
   route("/experiments/theatre-management", "routes/theatre-management/route.tsx"),
 ] satisfies RouteConfig;
+*/
 
+/*
 const challengeRoutes = [
   route("/challenges/anagrams", "routes/challenges.anagrams.tsx"),
   route("/challenges/click-therapeutics", "routes/challenges.click-therapeutics.tsx"),
@@ -79,10 +92,16 @@ const challengeRoutes = [
   route("/health/medication", "routes/health/medication.tsx"),
   route("/health/api/medication-schedule", "routes/health/api.medication-schedule.ts"),
 ] satisfies RouteConfig;
+*/
+
+const featureRoutes: RouteConfig = [];
+const experimentRoutes: RouteConfig = [];
+const challengeRoutes: RouteConfig = [];
 
 export default [
   ...homeRoutes,
   ...studioRoutes,
+  ...productRoutes,
   ...apiRoutes,
   ...featureRoutes,
   ...experimentRoutes,
