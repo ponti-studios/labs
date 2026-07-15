@@ -1,4 +1,4 @@
-import { Button, OnscreenKeyboard } from "@pontistudios/ui";
+import { Button, Card, CardContent, OnscreenKeyboard } from "@pontistudios/ui";
 import { cva } from "class-variance-authority";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { useLoaderData, useRevalidator, type LoaderFunctionArgs } from "react-router";
@@ -26,14 +26,14 @@ import { LucideHelpCircle, LucideNewspaper, LucideShare } from "lucide-react";
 const TZ_COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // one year in seconds
 
 const TILE_BASE = cva(
-  "flex h-[3.6rem] w-[3.6rem] items-center justify-center rounded-2xl border text-[1.35rem] font-bold uppercase transition-colors sm:h-12 sm:w-12 sm:rounded-xl sm:text-lg md:h-14 md:w-14",
+  "flex h-[3.6rem] w-[3.6rem] items-center justify-center rounded-md border text-[1.35rem] font-bold uppercase transition-colors sm:h-12 sm:w-12 sm:text-lg md:h-14 md:w-14",
   {
     variants: {
       state: {
         absent: "border-border bg-muted text-muted-foreground",
-        correct: "border-emerald-300 bg-emerald-100 text-emerald-950",
+        correct: "border-[var(--realitea-correct-border)] bg-[var(--realitea-correct-bg)] text-[var(--realitea-correct-text)]",
         empty: "border-border bg-background text-foreground",
-        present: "border-amber-300 bg-amber-100 text-amber-950",
+        present: "border-[var(--realitea-present-border)] bg-[var(--realitea-present-bg)] text-[var(--realitea-present-text)]",
       },
     },
     defaultVariants: { state: "empty" },
@@ -50,14 +50,14 @@ const TILE_REVEAL_STYLES: Record<
     color: "var(--muted-foreground)",
   },
   present: {
-    backgroundColor: "#fef3c7",
-    borderColor: "#fcd34d",
-    color: "#451a03",
+    backgroundColor: "var(--realitea-present-bg)",
+    borderColor: "var(--realitea-present-border)",
+    color: "var(--realitea-present-text)",
   },
   correct: {
-    backgroundColor: "#d1fae5",
-    borderColor: "#6ee7b7",
-    color: "#022c22",
+    backgroundColor: "var(--realitea-correct-bg)",
+    borderColor: "var(--realitea-correct-border)",
+    color: "var(--realitea-correct-text)",
   },
 };
 
@@ -220,18 +220,15 @@ type ErrorBoundaryProps = { error: Error };
 export function ErrorBoundary({ error }: ErrorBoundaryProps) {
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center gap-3 px-4 text-center">
-      <p className="text-muted-foreground text-sm font-medium tracking-[0.15em] uppercase">
+      <p className="body-4 text-muted-foreground uppercase tracking-[0.15em]">
         Something went wrong
       </p>
-      <p className="text-muted-foreground text-sm">
+      <p className="body-4 text-muted-foreground">
         {error.message || "The RealiTea puzzle couldn't load. Try refreshing the page."}
       </p>
-      <a
-        href="/games/realitea"
-        className="bg-primary text-primary-foreground hover:bg-primary/90 mt-2 inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors"
-      >
-        Reload
-      </a>
+      <Button asChild variant="default" className="mt-2">
+        <a href="/games/realitea">Reload</a>
+      </Button>
     </div>
   );
 }
@@ -313,7 +310,7 @@ export default function RealiTeaRoute() {
   return (
     <div className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-6 px-4 pb-[calc(env(safe-area-inset-bottom)+8px)]">
       <header className="bg-background/95 sticky top-0 z-10 backdrop-blur md:static">
-        <div className="flex items-center justify-between gap-2 rounded border p-2 px-1">
+        <div className="border-border flex items-center justify-between gap-2 rounded-md border p-2">
           <img src="/logo.realitea.png" alt="RealiTea" className="h-6 object-contain" />
           <Button
             aria-label="How to play"
@@ -328,21 +325,22 @@ export default function RealiTeaRoute() {
       </header>
 
       {showInstructions && (
-        <div className="border-border bg-muted/30 text-muted-foreground rounded-xl border p-3 text-sm leading-5">
-          <p>Guess today&apos;s reality TV answer in 6 tries.</p>
-          <p className="mt-2">
-            <span className="font-medium text-emerald-700">Green</span> means the right letter is in
-            the right place. <span className="font-medium text-amber-700">Gold</span> means the
-            letter belongs in the answer but is in the wrong place.
-          </p>
-        </div>
+        <Card>
+          <CardContent>
+            <p>Guess today&apos;s reality TV answer in 6 tries.</p>
+            <p className="mt-2">
+              <span className="font-medium text-[var(--realitea-correct-text)]">Green</span> means
+              the right letter is in the right place.{" "}
+              <span className="font-medium text-[var(--realitea-present-text)]">Gold</span> means the
+              letter belongs in the answer but is in the wrong place.
+            </p>
+          </CardContent>
+        </Card>
       )}
 
       {shouldShowClue && (
-        <div className="rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm leading-5 text-amber-950">
-          <p className="text-xs font-medium tracking-[0.15em] text-amber-800 uppercase">
-            Final clue
-          </p>
+        <div className="rounded-md border border-[var(--realitea-present-border)] bg-[var(--realitea-present-bg)] p-3 text-sm leading-5 text-[var(--realitea-present-text)]">
+          <p className="ui-eyebrow">Final clue</p>
           <p className="mt-1">{currentPuzzle.clue}</p>
         </div>
       )}
@@ -386,7 +384,7 @@ export default function RealiTeaRoute() {
 
         {game.errorMessage ? (
           <p
-            className="min-h-[1em] text-center text-xs font-medium text-red-600"
+            className="min-h-[1em] text-center text-xs font-medium text-[var(--realitea-error-border)]"
             role="status"
             aria-live="polite"
             aria-atomic="true"
@@ -397,30 +395,33 @@ export default function RealiTeaRoute() {
       </div>
 
       {game.isGameOver ? (
-        <div className="space-y-4 rounded border p-3 md:p-4">
-          <div>
-            <p className="text-muted-foreground text-xs font-medium">
-              {game.isSolved ? "The Story" : "The puzzle ended"}
-            </p>
-            <p className="text-sm leading-5">{currentPuzzle.detail.toLocaleLowerCase()}</p>
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button aria-label="Share result" onClick={share} type="button" variant="secondary">
-              <LucideShare size={18} />
-            </Button>
-            {currentPuzzle.sources.length > 0 && (
-              <a
-                href={currentPuzzle.sources[0].url}
-                target="_blank"
-                rel="noopener noreferrer"
-                title={currentPuzzle.sources[0].title}
-                className="bg-primary text-secondary rounded px-4 py-2 text-sm font-medium transition-colors hover:text-emerald-200"
-              >
-                <LucideNewspaper size={18} />
-              </a>
-            )}
-          </div>
-        </div>
+        <Card>
+          <CardContent className="flex flex-col gap-4">
+            <div>
+              <p className="ui-eyebrow">
+                {game.isSolved ? "The Story" : "The puzzle ended"}
+              </p>
+              <p className="body-4 mt-1">{currentPuzzle.detail.toLocaleLowerCase()}</p>
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button aria-label="Share result" onClick={share} type="button" variant="secondary">
+                <LucideShare size={18} />
+              </Button>
+              {currentPuzzle.sources.length > 0 && (
+                <Button asChild variant="default">
+                  <a
+                    href={currentPuzzle.sources[0].url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={currentPuzzle.sources[0].title}
+                  >
+                    <LucideNewspaper size={18} />
+                  </a>
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
       ) : (
         <OnscreenKeyboard
           letterStates={keyboardState}

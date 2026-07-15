@@ -14,7 +14,6 @@ const studioRoutes = [
 
 const productRoutes = [
   route("/games/realitea", "routes/games/realitea/route.tsx"),
-  route("/games/realitea/admin", "routes/games/realitea/admin.tsx"),
 ] satisfies RouteConfig;
 
 const apiRoutes = [
