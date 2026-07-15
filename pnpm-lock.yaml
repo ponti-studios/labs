@@ -57,6 +57,9 @@ catalogs:
     lucide-react:
       specifier: ^1.21.0
       version: 1.21.0
+    playwright:
+      specifier: ^1.61.1
+      version: 1.61.1
     postgres:
       specifier: ^3.4.9
       version: 3.4.9
@@ -494,6 +497,9 @@ importers:
       jsdom:
         specifier: 'catalog:'
         version: 29.1.1(@noble/hashes@2.2.0)
+      playwright:
+        specifier: 'catalog:'
+        version: 1.61.1
       tailwindcss:
         specifier: 'catalog:'
         version: 4.3.1

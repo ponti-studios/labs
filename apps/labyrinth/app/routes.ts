@@ -95,7 +95,9 @@ const challengeRoutes = [
 */
 
 const featureRoutes: RouteConfig = [];
-const experimentRoutes: RouteConfig = [];
+const experimentRoutes = [
+  route("/experiments/calendar", "routes/experiments.calendar.tsx"),
+] satisfies RouteConfig;
 const challengeRoutes: RouteConfig = [];
 
 export default [

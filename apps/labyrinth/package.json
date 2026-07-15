@@ -14,6 +14,8 @@
     "realitea:health-check": "tsx --tsconfig tsconfig.json scripts/realitea-health-check.ts",
     "realitea:preview": "tsx --tsconfig tsconfig.json scripts/realitea-preview.ts",
     "realitea:reconcile": "tsx --tsconfig tsconfig.json scripts/realitea.reconcile.ts",
+    "gallery:realitea:screenshot": "tsx --tsconfig tsconfig.json scripts/gallery-realitea.ts --mode screenshot",
+    "gallery:realitea:solve": "tsx --tsconfig tsconfig.json scripts/gallery-realitea.ts --mode solve",
     "start": "react-router-serve ./build/server/index.js --port=${PORT:-3000}",
     "test": "vitest run --environment jsdom --coverage --reporter verbose --passWithNoTests",
     "typecheck": "react-router typegen && tsc"
@@ -59,6 +61,7 @@
     "@types/react-dom": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "jsdom": "catalog:",
+    "playwright": "catalog:",
     "tailwindcss": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",

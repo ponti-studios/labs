@@ -1,314 +1,477 @@
-import { AlertCircle, Check, GripVertical, Plus, Settings } from "lucide-react";
-import type { DragEvent, ReactNode } from "react";
-import { useRef, useState } from "react";
+import { ArrowDown, CalendarDays, Clock3, MapPin, Radio, Sparkles } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export function meta() {
   return [{ title: "Calendar | Labyrinth" }];
 }
 
-type CalendarEvent =
-  | {
-      id: string;
-      type: "past";
-      time: string;
-      endTime: string;
-      title: string;
-      location: string;
-    }
-  | {
-      id: string;
-      type: "split";
-      time: string;
-      endTime: string;
-      events: Array<{
-        title: string;
-        participants?: string[];
-        icon?: ReactNode;
-      }>;
-    }
-  | {
-      id: string;
-      type: "standard";
-      time: string;
-      endTime: string;
-      title: string;
-      transit?: string;
-      transitTime?: string;
-    }
-  | {
-      id: string;
-      type: "collision";
-      time: string;
-      endTime: string;
-      title: string;
-      isHardConflict: boolean;
-    }
-  | {
-      id: string;
-      type: "nested";
-      time: string;
-      endTime: string;
-      title: string;
-      subEvent: {
-        time: string;
-        title: string;
-        participants: string[];
-        completed: boolean;
-      };
-    };
+const MINUTE_HEIGHT = 2;
+const MINUTES_PER_DAY = 24 * 60;
+const DAY_OFFSETS = [-1, 0, 1] as const;
+type DayOffset = (typeof DAY_OFFSETS)[number];
 
-const initialEvents: CalendarEvent[] = [
-  {
-    id: "e1",
-    type: "past",
-    time: "8:00 AM",
-    endTime: "9:00 AM",
-    title: "Morning Run",
-    location: "River Trail",
-  },
-  {
-    id: "e2",
-    type: "split",
-    time: "9:30 AM",
-    endTime: "10:30 AM",
-    events: [
-      { title: "Design Sync", participants: ["SJ", "ML"] },
-      { title: "Server Maintenance", icon: <Settings size={14} className="text-gray-500" /> },
-    ],
-  },
-  {
-    id: "e3",
-    type: "standard",
-    time: "11:00 AM",
-    endTime: "11:30 AM",
-    title: "Client Presentation: Apex",
-    transit: "15m prep",
-    transitTime: "10:45 AM",
-  },
-  {
-    id: "e4",
-    type: "collision",
-    time: "12:00 PM",
-    endTime: "1:00 PM",
-    title: "Lunch with David vs. Dentist Appt",
-    isHardConflict: true,
-  },
-  {
-    id: "e5",
-    type: "nested",
-    time: "1:30 PM",
-    endTime: "5:00 PM",
-    title: "Deep Work: Project Sphinx",
-    subEvent: {
-      time: "3:00 PM",
-      title: "Submit Draft",
-      participants: ["JC", "LP", "TB"],
-      completed: false,
+type TemporalContext = {
+  id: string;
+  label: string;
+  detail: string;
+  icon: "radio" | "sparkles" | "clock";
+};
+
+type TemporalEvent = {
+  id: string;
+  dayOffset: DayOffset;
+  startMinute: number;
+  endMinute: number;
+  title: string;
+  detail: string;
+  location?: string;
+  lane?: "primary" | "parallel";
+  kind: "foreground" | "transition" | "milestone";
+  contexts?: TemporalContext[];
+};
+
+const iconForContext = {
+  radio: Radio,
+  sparkles: Sparkles,
+  clock: Clock3,
+} as const;
+
+function addDays(date: Date, amount: number) {
+  const result = new Date(date);
+  result.setDate(result.getDate() + amount);
+  return result;
+}
+
+function clampMinute(value: number) {
+  return Math.min(MINUTES_PER_DAY - 1, Math.max(0, value));
+}
+
+function formatTime(minute: number) {
+  const hours = Math.floor(minute / 60);
+  const minutes = minute % 60;
+  const date = new Date(2020, 0, 1, hours, minutes);
+
+  return new Intl.DateTimeFormat(undefined, {
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(date);
+}
+
+function formatDay(date: Date, offset: DayOffset) {
+  if (offset === 0) return "Today";
+  if (offset === -1) return "Yesterday";
+  if (offset === 1) return "Tomorrow";
+
+  return new Intl.DateTimeFormat(undefined, { weekday: "long" }).format(date);
+}
+
+function formatDate(date: Date) {
+  return new Intl.DateTimeFormat(undefined, {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
+}
+
+function createEvents(nowMinute: number): TemporalEvent[] {
+  const currentStart = clampMinute(nowMinute - 45);
+  const currentEnd = clampMinute(nowMinute + 45);
+  const tennisStart = clampMinute(nowMinute + 300);
+
+  return [
+    {
+      id: "yesterday-run",
+      dayOffset: -1,
+      startMinute: 7 * 60 + 30,
+      endMinute: 8 * 60 + 20,
+      title: "Morning run",
+      detail: "A quiet start before the day gathers speed.",
+      location: "River trail",
+      kind: "foreground",
+      contexts: [
+        {
+          id: "yesterday-run-podcast",
+          label: "Podcast",
+          detail: "The Daily Practice",
+          icon: "radio",
+        },
+      ],
     },
-  },
-];
+    {
+      id: "yesterday-sync",
+      dayOffset: -1,
+      startMinute: 9 * 60,
+      endMinute: 10 * 60,
+      title: "Design sync",
+      detail: "Three people, one shared direction.",
+      location: "Studio",
+      kind: "foreground",
+      contexts: [
+        {
+          id: "yesterday-sync-transit",
+          label: "Transit",
+          detail: "15 minutes from the river trail",
+          icon: "clock",
+        },
+      ],
+    },
+    {
+      id: "yesterday-lunch",
+      dayOffset: -1,
+      startMinute: 12 * 60,
+      endMinute: 13 * 60,
+      title: "Lunch with David",
+      detail: "A commitment that shared the same hour as something else.",
+      location: "East Village",
+      lane: "primary",
+      kind: "foreground",
+    },
+    {
+      id: "yesterday-dentist",
+      dayOffset: -1,
+      startMinute: 12 * 60 + 15,
+      endMinute: 13 * 60 + 15,
+      title: "Dentist appointment",
+      detail: "A collision is part of the day, not an error outside it.",
+      location: "West 14th",
+      lane: "parallel",
+      kind: "foreground",
+    },
+    {
+      id: "yesterday-deep-work",
+      dayOffset: -1,
+      startMinute: 13 * 60 + 30,
+      endMinute: 17 * 60,
+      title: "Deep work: Project Sphinx",
+      detail: "A long field of attention with a smaller obligation inside it.",
+      location: "Studio",
+      kind: "foreground",
+      contexts: [
+        {
+          id: "yesterday-draft",
+          label: "Contained moment",
+          detail: "Submit draft · 3:00 PM",
+          icon: "sparkles",
+        },
+      ],
+    },
+    {
+      id: "today-focus",
+      dayOffset: 0,
+      startMinute: currentStart,
+      endMinute: currentEnd,
+      title: "Talking with someone",
+      detail: "The foreground activity of this moment.",
+      lane: "primary",
+      kind: "foreground",
+      contexts: [
+        {
+          id: "today-stream",
+          label: "Twitch livestream",
+          detail: "A second context sharing the moment",
+          icon: "radio",
+        },
+        {
+          id: "today-generators",
+          label: "Image generators",
+          detail: "Running in the background",
+          icon: "sparkles",
+        },
+      ],
+    },
+    {
+      id: "today-reset",
+      dayOffset: 0,
+      startMinute: clampMinute(nowMinute + 60),
+      endMinute: clampMinute(nowMinute + 120),
+      title: "Open time",
+      detail: "Unstructured time is still part of a life.",
+      kind: "transition",
+    },
+    {
+      id: "today-tennis",
+      dayOffset: 0,
+      startMinute: tennisStart,
+      endMinute: clampMinute(tennisStart + 90),
+      title: "Tennis",
+      detail: "A future commitment already shaping the present.",
+      location: "North courts",
+      kind: "foreground",
+    },
+    {
+      id: "tomorrow-presentation",
+      dayOffset: 1,
+      startMinute: 10 * 60,
+      endMinute: 11 * 60,
+      title: "Client presentation",
+      detail: "The next day's shape is already beginning to form.",
+      location: "Apex HQ",
+      kind: "foreground",
+      contexts: [
+        {
+          id: "tomorrow-prep",
+          label: "Preparation",
+          detail: "15 minutes before the meeting",
+          icon: "clock",
+        },
+      ],
+    },
+    {
+      id: "tomorrow-walk",
+      dayOffset: 1,
+      startMinute: 18 * 60,
+      endMinute: 19 * 60,
+      title: "Walk home",
+      detail: "A transition that deserves to remain visible.",
+      kind: "transition",
+    },
+  ];
+}
 
-const AvatarGroup = ({ initials }: { initials: string[] }) => (
-  <div className="flex -space-x-2">
-    {initials.map((initial, idx) => (
-      <div
-        key={`${initial}-${idx}`}
-        className={`flex h-6 w-6 items-center justify-center rounded-full border-2 border-white text-[10px] font-bold text-white ${
-          idx % 3 === 0 ? "bg-blue-500" : idx % 3 === 1 ? "bg-emerald-500" : "bg-purple-500"
-        }`}
-      >
-        {initial}
-      </div>
-    ))}
-  </div>
-);
+function isEventPast(event: TemporalEvent, nowMinute: number) {
+  return event.dayOffset < 0 || (event.dayOffset === 0 && event.endMinute < nowMinute);
+}
 
-export default function CalendarExperiment() {
-  const [events, setEvents] = useState(initialEvents);
-  const dragItem = useRef<number | null>(null);
-  const dragOverItem = useRef<number | null>(null);
+function isEventCurrent(event: TemporalEvent, nowMinute: number) {
+  return event.dayOffset === 0 && event.startMinute <= nowMinute && event.endMinute >= nowMinute;
+}
 
-  const handleDragStart = (e: DragEvent<HTMLDivElement>, position: number) => {
-    dragItem.current = position;
-    e.currentTarget.style.opacity = "0.5";
-  };
-
-  const handleDragEnter = (_e: DragEvent<HTMLDivElement>, position: number) => {
-    dragOverItem.current = position;
-  };
-
-  const handleDragEnd = (e: DragEvent<HTMLDivElement>) => {
-    e.currentTarget.style.opacity = "1";
-
-    if (dragOverItem.current === null || dragOverItem.current === undefined) return;
-    if (dragItem.current === null || dragItem.current === undefined) return;
-
-    const copyListItems = [...events];
-    const dragItemContent = copyListItems[dragItem.current];
-
-    copyListItems.splice(dragItem.current, 1);
-    copyListItems.splice(dragOverItem.current, 0, dragItemContent);
-
-    dragItem.current = null;
-    dragOverItem.current = null;
-    setEvents(copyListItems);
-  };
-
-  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-  };
-
-  const renderEventContent = (event: CalendarEvent) => {
-    switch (event.type) {
-      case "past":
-        return (
-          <div className="rounded-xl border border-gray-200 bg-gray-100 p-3 text-gray-400">
-            <div className="mb-1 text-xs font-medium">
-              {event.time} - {event.endTime}
-            </div>
-            <div className="text-sm">{event.title}</div>
-          </div>
-        );
-      case "split":
-        return (
-          <div className="relative flex gap-2">
-            <div className="pointer-events-none absolute top-1/2 left-1/2 h-full w-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-400/30 blur-xl" />
-
-            <div className="relative z-10 flex-1 rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
-              <div className="mb-1 text-xs font-medium text-gray-500">
-                {event.time} - {event.endTime}
-              </div>
-              <div className="mb-2 text-sm font-medium text-gray-800">{event.events[0].title}</div>
-              {event.events[0].participants && (
-                <AvatarGroup initials={event.events[0].participants} />
-              )}
-            </div>
-
-            <div className="relative z-10 flex-1 rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
-              <div className="mb-1 text-xs font-medium text-gray-500">{event.time}</div>
-              <div className="flex items-center gap-2 text-sm font-medium text-gray-800">
-                {event.events[1].title}
-                {event.events[1].icon}
-              </div>
-            </div>
-          </div>
-        );
-      case "collision":
-        return (
-          <div className="flex items-start justify-between rounded-xl border border-red-200 bg-red-50 p-3 shadow-sm">
-            <div>
-              <div className="mb-1 text-xs font-medium text-red-600">
-                {event.time} - {event.endTime}
-              </div>
-              <div className="text-sm font-bold text-red-900">{event.title}</div>
-            </div>
-            <AlertCircle className="mt-1 h-5 w-5 text-red-500" />
-          </div>
-        );
-      case "nested":
-        return (
-          <div className="rounded-xl border border-gray-200 bg-white p-1 shadow-sm">
-            <div className="p-3">
-              <div className="mb-1 text-xs font-medium text-gray-500">
-                {event.time} - {event.endTime}
-              </div>
-              <div className="text-sm font-medium text-gray-800">{event.title}</div>
-            </div>
-
-            <div className="mx-2 mb-2 flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50 p-3">
-              <div className="flex items-center gap-3">
-                <button className="flex h-5 w-5 items-center justify-center rounded border border-gray-300 transition-colors hover:bg-gray-100">
-                  {event.subEvent.completed && <Check size={14} />}
-                </button>
-                <div>
-                  <div className="text-[10px] font-medium text-gray-500">{event.subEvent.time}</div>
-                  <div className="text-sm font-medium text-gray-700">{event.subEvent.title}</div>
-                </div>
-              </div>
-              <AvatarGroup initials={event.subEvent.participants} />
-            </div>
-          </div>
-        );
-      case "standard":
-      default:
-        return (
-          <div className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
-            <div className="mb-1 text-xs text-gray-500">
-              {event.time} - {event.endTime}
-            </div>
-            <div className="flex items-center justify-between text-sm font-medium text-gray-800">
-              <span>{event.title}</span>
-              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-900 text-xs font-bold text-white">
-                A
-              </div>
-            </div>
-          </div>
-        );
-    }
-  };
+function TimelineEvent({ event, nowMinute }: { event: TemporalEvent; nowMinute: number }) {
+  const isPast = isEventPast(event, nowMinute);
+  const isCurrent = isEventCurrent(event, nowMinute);
+  const width = event.lane === "parallel" ? "w-[calc(66%-8px)]" : "w-[calc(100%-16px)]";
+  const left = event.lane === "parallel" ? "left-[34%]" : "left-2";
+  const Icon = isCurrent ? Sparkles : event.kind === "transition" ? Clock3 : CalendarDays;
 
   return (
-    <div className="min-h-[calc(100dvh-6rem)] w-full bg-gray-50 pb-24 font-sans text-gray-900">
-      <div className="relative mx-auto min-h-[calc(100dvh-6rem)] max-w-md overflow-hidden bg-white shadow-2xl">
-        <header className="sticky top-0 border-b border-gray-100 bg-white/80 p-4 backdrop-blur-md">
-          <h1 className="text-xl font-bold tracking-tight">Today</h1>
-          <p className="text-sm text-gray-500">Thursday, April 9</p>
-        </header>
-
-        <div className="relative pt-4">
-          <div className="pointer-events-none absolute top-[108px] left-0 z-40 flex w-full items-center">
-            <div className="w-16 pr-2 text-right">
-              <span className="bg-white px-1 text-[10px] font-bold text-teal-600">10:15 AM</span>
-            </div>
-            <div className="relative h-[2px] flex-1 bg-teal-500 shadow-[0_0_8px_rgba(20,184,166,0.5)]">
-              <div className="absolute top-1/2 left-0 h-2 w-2 -translate-y-1/2 rounded-full bg-teal-500" />
-            </div>
+    <article
+      className={`absolute z-10 ${left} ${width} overflow-hidden rounded-lg border p-3 transition-colors duration-150 ${
+        isCurrent
+          ? "border-accent bg-accent/10"
+          : event.kind === "transition"
+            ? "border-border bg-muted/40 border-dashed"
+            : "border-border bg-card"
+      } ${isPast ? "text-muted-foreground" : "text-foreground"}`}
+      style={{
+        top: `${event.startMinute * MINUTE_HEIGHT}px`,
+        minHeight: `${Math.max((event.endMinute - event.startMinute) * MINUTE_HEIGHT, 72)}px`,
+      }}
+      data-event-state={isCurrent ? "current" : isPast ? "past" : "future"}
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <div className="body-4 text-muted-foreground flex items-center gap-2 uppercase">
+            <Icon aria-hidden="true" className="size-4 shrink-0" />
+            <span>
+              {formatTime(event.startMinute)} — {formatTime(event.endMinute)}
+            </span>
+            {isCurrent && <span className="text-accent">Now</span>}
           </div>
+          <h3 className="heading-4 mt-2 truncate">{event.title}</h3>
+          <p className="body-3 text-muted-foreground mt-1 max-w-2xl">{event.detail}</p>
+          {event.location && (
+            <p className="body-4 text-muted-foreground mt-2 flex items-center gap-1.5">
+              <MapPin aria-hidden="true" className="size-3.5" />
+              {event.location}
+            </p>
+          )}
+        </div>
+      </div>
 
-          {events.map((event, index) => (
-            <div
-              key={event.id}
-              draggable
-              onDragStart={(e) => handleDragStart(e, index)}
-              onDragEnter={(e) => handleDragEnter(e, index)}
-              onDragEnd={handleDragEnd}
-              onDragOver={handleDragOver}
-              className={`group relative grid cursor-grab grid-cols-[64px_1fr] gap-3 border-b border-gray-50 px-4 py-3 transition-colors hover:bg-gray-50 active:cursor-grabbing ${
-                event.type === "past" ? "opacity-60 grayscale-[0.5]" : ""
-              }`}
-            >
-              <div className="absolute top-1/2 left-0 -translate-y-1/2 text-gray-300 opacity-0 transition-opacity group-hover:opacity-100">
-                <GripVertical size={16} />
+      {event.contexts && event.contexts.length > 0 && (
+        <div className="border-border/60 mt-3 grid gap-2 border-t pt-2 sm:grid-cols-2">
+          {event.contexts.map((context) => {
+            const ContextIcon = iconForContext[context.icon];
+
+            return (
+              <div key={context.id} className="bg-muted/60 rounded-md p-2">
+                <div className="subheading-3 text-muted-foreground flex items-center gap-1.5 uppercase">
+                  <ContextIcon aria-hidden="true" className="size-3.5" />
+                  {context.label}
+                </div>
+                <p className="body-4 text-foreground mt-1">{context.detail}</p>
               </div>
+            );
+          })}
+        </div>
+      )}
+    </article>
+  );
+}
 
-              <div className="relative flex flex-col items-end border-r border-gray-100 pt-3 pr-2">
-                <span className="text-right text-[10px] font-medium text-gray-400">
-                  {event.time}
-                </span>
-                {"transit" in event && event.transit && (
-                  <>
-                    <div className="absolute top-[-20px] right-[-1px] h-6 w-[2px] rounded-full bg-gray-300" />
-                    <span className="absolute top-[-15px] right-2 text-[8px] tracking-widest whitespace-nowrap text-gray-400 uppercase">
-                      {event.transitTime} Transit
-                    </span>
-                  </>
-                )}
-                {"location" in event && (
-                  <span className="mt-1 text-right text-[10px] text-gray-300">
-                    {event.location}
-                  </span>
-                )}
-              </div>
+function DayStream({
+  date,
+  offset,
+  events,
+  nowMinute,
+}: {
+  date: Date;
+  offset: DayOffset;
+  events: TemporalEvent[];
+  nowMinute: number;
+}) {
+  const dayEvents = events.filter((event) => event.dayOffset === offset);
 
-              <div className="relative w-full">{renderEventContent(event)}</div>
-            </div>
+  return (
+    <section className="border-border/60 relative border-b" data-stream-day={offset}>
+      <header className="bg-background border-border/60 sticky top-0 z-10 flex items-baseline gap-3 border-b px-4 py-4 md:px-6">
+        <h2 className="heading-2 text-foreground">{formatDay(date, offset)}</h2>
+        <p className="body-3 text-muted-foreground">{formatDate(date)}</p>
+      </header>
+
+      <div className="relative" style={{ height: `${MINUTES_PER_DAY * MINUTE_HEIGHT}px` }}>
+        {Array.from({ length: 24 }, (_, hour) => (
+          <div
+            key={hour}
+            className="border-border/40 pointer-events-none absolute inset-x-0 border-t"
+            style={{ top: `${hour * 60 * MINUTE_HEIGHT}px` }}
+          >
+            <span className="body-4 text-muted-foreground absolute top-2 left-4 w-14 text-right md:left-6">
+              {formatTime(hour * 60)}
+            </span>
+          </div>
+        ))}
+
+        <div className="border-border/60 absolute inset-y-0 left-[88px] border-l md:left-[112px]" />
+
+        <div className="absolute inset-y-0 right-4 left-[104px] md:right-6 md:left-[128px]">
+          {dayEvents.map((event) => (
+            <TimelineEvent key={event.id} event={event} nowMinute={nowMinute} />
           ))}
         </div>
 
-        <button className="absolute right-6 bottom-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gray-900 text-white shadow-xl transition-all hover:scale-105 active:scale-95">
-          <Plus size={24} />
-        </button>
+        {offset === 0 && (
+          <div
+            className="pointer-events-none absolute inset-x-0 z-20 flex items-center"
+            data-now-marker="true"
+            style={{ top: `${nowMinute * MINUTE_HEIGHT}px` }}
+          >
+            <span className="body-4 text-accent bg-background ml-4 w-14 pr-2 text-right font-semibold uppercase md:ml-6">
+              Now
+            </span>
+            <div className="bg-accent h-px flex-1" />
+            <div className="bg-accent size-2 -translate-x-1 rounded-full" />
+          </div>
+        )}
       </div>
-    </div>
+    </section>
+  );
+}
+
+export default function CalendarExperiment() {
+  const [now, setNow] = useState<Date | null>(null);
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const hasScrolledToNow = useRef(false);
+
+  useEffect(() => {
+    const updateNow = () => setNow(new Date());
+    updateNow();
+    const intervalId = window.setInterval(updateNow, 60_000);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
+
+  const nowMinute = now ? now.getHours() * 60 + now.getMinutes() : 12 * 60;
+  const events = useMemo(() => createEvents(nowMinute), [nowMinute]);
+
+  const scrollToDay = useCallback((offset: DayOffset) => {
+    const container = timelineRef.current;
+    const day = container?.querySelector<HTMLElement>(`[data-stream-day="${offset}"]`);
+
+    if (!container || !day) return;
+
+    container.scrollTo({ top: day.offsetTop, behavior: "auto" });
+  }, []);
+
+  const scrollToNow = useCallback(() => {
+    const container = timelineRef.current;
+    const marker = container?.querySelector<HTMLElement>('[data-now-marker="true"]');
+
+    if (!container || !marker) return;
+
+    const markerTop = marker.getBoundingClientRect().top - container.getBoundingClientRect().top;
+
+    container.scrollTo({
+      top: Math.max(0, container.scrollTop + markerTop - container.clientHeight / 2),
+      behavior: "auto",
+    });
+  }, []);
+
+  useEffect(() => {
+    if (now && !hasScrolledToNow.current) {
+      hasScrolledToNow.current = true;
+      scrollToNow();
+    }
+  }, [now, scrollToNow]);
+
+  return (
+    <main className="bg-background text-foreground min-h-[calc(100dvh-6rem)] px-4 py-6 md:px-6 md:py-8">
+      <div className="mx-auto max-w-5xl">
+        <header className="border-border/60 mb-6 flex flex-col gap-5 border-b pb-6 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="ui-data-label mb-2">A continuous view of lived time</p>
+            <h1 className="display-2">The shape of a day</h1>
+            <p className="body-2 text-muted-foreground mt-2 max-w-2xl">
+              One foreground moment. The contexts around it. Everything that came before and is
+              waiting ahead.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-2" aria-label="Calendar navigation">
+            <button
+              type="button"
+              onClick={() => scrollToDay(-1)}
+              className="border-border bg-surface text-foreground hover:bg-elevated focus-visible:outline-ring inline-flex min-h-11 items-center gap-2 rounded-md border px-3 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+            >
+              Past
+            </button>
+            <button
+              type="button"
+              onClick={scrollToNow}
+              className="border-border bg-surface text-foreground hover:bg-elevated focus-visible:outline-ring inline-flex min-h-11 items-center gap-2 rounded-md border px-3 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+            >
+              <ArrowDown aria-hidden="true" className="size-4" />
+              Now
+            </button>
+            <button
+              type="button"
+              onClick={() => scrollToDay(1)}
+              className="border-border bg-surface text-foreground hover:bg-elevated focus-visible:outline-ring inline-flex min-h-11 items-center gap-2 rounded-md border px-3 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+            >
+              Future
+            </button>
+          </div>
+        </header>
+
+        <section aria-label="Continuous calendar stream">
+          <div
+            ref={timelineRef}
+            className="border-border bg-surface max-h-[calc(100dvh-15rem)] scrollbar-gutter-stable overflow-y-auto rounded-xl border"
+            tabIndex={0}
+          >
+            {now ? (
+              DAY_OFFSETS.map((offset) => (
+                <DayStream
+                  key={offset}
+                  date={addDays(now, offset)}
+                  offset={offset}
+                  events={events}
+                  nowMinute={nowMinute}
+                />
+              ))
+            ) : (
+              <div className="body-2 text-muted-foreground flex min-h-96 items-center justify-center p-6">
+                Finding your place in time…
+              </div>
+            )}
+          </div>
+        </section>
+
+        <p className="body-3 text-muted-foreground mt-4 max-w-2xl">
+          Scroll backward to see what time became. Scroll forward to see what is already shaping the
+          present.
+        </p>
+      </div>
+    </main>
   );
 }

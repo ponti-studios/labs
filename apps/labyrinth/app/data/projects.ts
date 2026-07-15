@@ -30,13 +30,6 @@ export const projectMetadata: ProjectMetadata[] = [
     github: "https://github.com/ponti-studios/kernel",
   },
   {
-    slug: "foundation",
-    category: "infrastructure",
-    tech: ["Docker", "PostgreSQL", "GitHub Actions"],
-    status: "published",
-    github: "https://github.com/ponti-studios/foundation",
-  },
-  {
     slug: "omiro",
     category: "product",
     tech: ["TypeScript", "React Native", "Expo", "iOS"],
@@ -50,10 +43,7 @@ export const projectMetadata: ProjectMetadata[] = [
     status: "published",
     github: "https://github.com/ponti-studios/hominem",
     url: "https://career.ponti.io",
-    screenshots: [
-      "/screenshots/career-dashboard.png",
-      "/screenshots/career-pipeline.png",
-    ],
+    screenshots: ["/screenshots/career-dashboard.png", "/screenshots/career-pipeline.png"],
   },
   {
     slug: "finance",
@@ -70,16 +60,16 @@ export const projectMetadata: ProjectMetadata[] = [
     github: "https://github.com/ponti-studios/hominem",
   },
   {
-    slug: "hollywood",
-    category: "product",
-    tech: ["TypeScript", "Python", "Hono", "SQLite"],
-    status: "development",
-    github: "https://github.com/ponti-studios/hollywood",
-  },
-  {
     slug: "commune",
     category: "product",
     tech: ["TypeScript", "React", "PostgreSQL", "AI"],
+    status: "development",
+    github: "https://github.com/ponti-studios/labs",
+  },
+  {
+    slug: "health",
+    category: "product",
+    tech: ["TypeScript", "React", "React Router", "SQLite"],
     status: "development",
     github: "https://github.com/ponti-studios/labs",
   },
@@ -91,23 +81,27 @@ export const projectMetadata: ProjectMetadata[] = [
     github: "https://github.com/ponti-studios/labs",
   },
   {
+    slug: "foundation",
+    category: "infrastructure",
+    tech: ["Docker", "PostgreSQL", "GitHub Actions"],
+    status: "published",
+    github: "https://github.com/ponti-studios/foundation",
+  },
+  {
+    slug: "hollywood",
+    category: "infrastructure",
+    tech: ["TypeScript", "Python", "Hono", "SQLite"],
+    status: "development",
+    github: "https://github.com/ponti-studios/hollywood",
+  },
+  {
     slug: "realitea",
     category: "product",
     tech: ["TypeScript", "React", "React Router", "PostgreSQL", "Drizzle"],
     status: "published",
     github: "https://github.com/ponti-studios/labs",
     url: "/games/realitea",
-    screenshots: [
-      "/screenshots/realitea-gameplay.png",
-      "/screenshots/realitea-solved.png",
-    ],
-  },
-  {
-    slug: "health",
-    category: "product",
-    tech: ["TypeScript", "React", "React Router", "SQLite"],
-    status: "development",
-    github: "https://github.com/ponti-studios/labs",
+    screenshots: ["/screenshots/realitea-gameplay.png", "/screenshots/realitea-solved.png"],
   },
   {
     slug: "geo",
