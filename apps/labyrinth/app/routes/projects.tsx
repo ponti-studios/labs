@@ -1,3 +1,4 @@
+import { ExternalLink } from "lucide-react";
 import { Link } from "react-router";
 import { projects } from "~/data/projects";
 import { t } from "~/translations";
@@ -16,8 +17,15 @@ export function meta(): Array<{
   ];
 }
 
+const STATUS_PRIORITY: Record<string, number> = {
+  published: 0,
+  active: 0,
+  development: 1,
+  archived: 2,
+};
+
 export default function Projects() {
-  // Group projects by category
+  // Group projects by category, sorting published/active first, development/archived last
   const byCategory = projects.reduce(
     (acc, project) => {
       if (!acc[project.category]) {
@@ -50,53 +58,43 @@ export default function Projects() {
               {categoryLabels[category]}
             </h2>
             <div className="border-border/40 divide-border/40 divide-y border-b">
-              {projects.map((project) => (
-                <Link
-                  key={project.slug}
-                  to={`/projects/${project.slug}`}
-                  prefetch="intent"
-                  className="group hover:bg-muted/20 focus-visible:outline-ring flex items-center justify-between gap-4 px-2 py-5 transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-2"
-                >
-                  {/* Header */}
-                  <div className="flex flex-col gap-1">
+              {[...projects].sort((a, b) => (STATUS_PRIORITY[a.status] ?? 0) - (STATUS_PRIORITY[b.status] ?? 0)).map((project) => (
+                <div key={project.slug} className="group flex items-center justify-between gap-4 px-2 py-5">
+                  <Link
+                    to={`/projects/${project.slug}`}
+                    prefetch="intent"
+                    className="hover:bg-muted/20 focus-visible:outline-ring flex flex-1 flex-col gap-1 transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-2"
+                  >
                     <h3 className="heading-3 text-foreground group-hover:text-accent transition-colors">
                       {project.name}
                     </h3>
                     <p className="body-3 text-muted-foreground">{project.shortDescription}</p>
+                  </Link>
+                  <div className="flex items-center gap-3">
+                    {project.url ? (
+                      <a
+                        href={project.url}
+                        target={project.url.startsWith("http") ? "_blank" : undefined}
+                        rel={project.url.startsWith("http") ? "noopener noreferrer" : undefined}
+                        className="text-muted-foreground hover:text-accent transition-colors"
+                        aria-label={`Visit ${project.name}`}
+                      >
+                        <ExternalLink size={16} />
+                      </a>
+                    ) : (
+                      <div className="body-4 text-muted-foreground tracking-wide uppercase">
+                        {t.projects.statusLabels[project.status]}
+                      </div>
+                    )}
                   </div>
-
-                  <div className="body-4 text-muted-foreground tracking-wide uppercase">
-                    {t.projects.statusLabels[project.status]}
-                  </div>
-                </Link>
+                </div>
               ))}
             </div>
           </section>
         );
       })}
 
-      {/* Playground */}
-      <section className="flex flex-col gap-10">
-        <h2 className="heading-2 text-foreground">{t.home.lab.title}</h2>
-        <div className="grid gap-12 sm:grid-cols-2 sm:gap-16">
-          {t.home.lab.categories.map((cat) => (
-            <div key={cat.name} className="flex flex-col gap-4">
-              <ul className="flex flex-col gap-4">
-                {cat.entries.map((entry) => (
-                  <li key={entry.path}>
-                    <a
-                      href={entry.path}
-                      className="body-2 text-foreground hover:text-muted-foreground focus-visible:outline-ring rounded-sm underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4"
-                    >
-                      {entry.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* Playground — disabled while experiments are being rewritten */}
     </div>
   );
 }
