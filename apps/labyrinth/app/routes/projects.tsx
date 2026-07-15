@@ -17,6 +17,18 @@ export function meta(): Array<{
   ];
 }
 
+const PROJECTS_WITH_LOGOS = new Set([
+  "kernel",
+  "realitea",
+  "foundation",
+  "commune",
+  "hollywood",
+  "finance",
+  "career",
+  "health",
+  "earth",
+]);
+
 const STATUS_PRIORITY: Record<string, number> = {
   published: 0,
   active: 0,
@@ -58,37 +70,53 @@ export default function Projects() {
               {categoryLabels[category]}
             </h2>
             <div className="border-border/40 divide-border/40 divide-y border-b">
-              {[...projects].sort((a, b) => (STATUS_PRIORITY[a.status] ?? 0) - (STATUS_PRIORITY[b.status] ?? 0)).map((project) => (
-                <div key={project.slug} className="group flex items-center justify-between gap-4 px-2 py-5">
-                  <Link
-                    to={`/projects/${project.slug}`}
-                    prefetch="intent"
-                    className="hover:bg-muted/20 focus-visible:outline-ring flex flex-1 flex-col gap-1 transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-2"
+              {[...projects]
+                .sort((a, b) => (STATUS_PRIORITY[a.status] ?? 0) - (STATUS_PRIORITY[b.status] ?? 0))
+                .map((project) => (
+                  <div
+                    key={project.slug}
+                    className="group flex items-center justify-between gap-4 px-2 py-5"
                   >
-                    <h3 className="heading-3 text-foreground group-hover:text-accent transition-colors">
-                      {project.name}
-                    </h3>
-                    <p className="body-3 text-muted-foreground">{project.shortDescription}</p>
-                  </Link>
-                  <div className="flex items-center gap-3">
-                    {project.url ? (
-                      <a
-                        href={project.url}
-                        target={project.url.startsWith("http") ? "_blank" : undefined}
-                        rel={project.url.startsWith("http") ? "noopener noreferrer" : undefined}
-                        className="text-muted-foreground hover:text-accent transition-colors"
-                        aria-label={`Visit ${project.name}`}
-                      >
-                        <ExternalLink size={16} />
-                      </a>
-                    ) : (
-                      <div className="body-4 text-muted-foreground tracking-wide uppercase">
-                        {t.projects.statusLabels[project.status]}
+                    <Link
+                      to={`/projects/${project.slug}`}
+                      prefetch="intent"
+                      className="hover:bg-muted/20 focus-visible:outline-ring flex flex-1 flex-row items-center gap-3 transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-2"
+                    >
+                      {PROJECTS_WITH_LOGOS.has(project.slug) && (
+                        <img
+                          src={`/experiments/logo.${project.slug}.500x500.webp`}
+                          alt={`${project.name} logo`}
+                          className="size-10 shrink-0 rounded-lg"
+                          width={40}
+                          height={40}
+                        />
+                      )}
+                      <div className="flex flex-col gap-1">
+                        <h3 className="heading-3 text-foreground group-hover:text-accent transition-colors">
+                          {project.name}
+                        </h3>
+                        <p className="body-3 text-muted-foreground">{project.shortDescription}</p>
                       </div>
-                    )}
+                    </Link>
+                    <div className="flex items-center gap-3">
+                      {project.url ? (
+                        <a
+                          href={project.url}
+                          target={project.url.startsWith("http") ? "_blank" : undefined}
+                          rel={project.url.startsWith("http") ? "noopener noreferrer" : undefined}
+                          className="text-muted-foreground hover:text-accent transition-colors"
+                          aria-label={`Visit ${project.name}`}
+                        >
+                          <ExternalLink size={16} />
+                        </a>
+                      ) : (
+                        <div className="body-4 text-muted-foreground tracking-wide uppercase">
+                          {t.projects.statusLabels[project.status]}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
           </section>
         );
