@@ -169,3 +169,5 @@ export {
 } from "./table";
 export { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
 export { Textarea } from "./textarea";
+export { ScrollArea } from "./scroll-area";
+export type { ScrollAreaProps } from "./scroll-area";

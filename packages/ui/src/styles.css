@@ -1138,6 +1138,14 @@
   color: var(--color-muted-foreground);
 }
 
+@utility scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @layer utilities {
   .container {
     width: 100%;

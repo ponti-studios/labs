@@ -1,3 +1,4 @@
+import { ScrollArea } from "@pontistudios/ui";
 import { ExternalLink } from "lucide-react";
 import { Link, useParams } from "react-router";
 import { projects } from "~/data/projects";
@@ -45,7 +46,30 @@ export default function ProjectDetail() {
         </Link>
         <div className="flex flex-col gap-2">
           <h1 className="display-1 text-foreground">{project.name}</h1>
-          <p className="body-1 text-muted-foreground">{project.description}</p>
+          <div className="flex flex-wrap gap-4">
+            {project.github && (
+              <a
+                href={project.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="body-4 text-muted-foreground hover:text-accent flex items-center gap-1.5 transition-colors"
+              >
+                <ExternalLink size={14} />
+                {project.github.replace("https://", "")}
+              </a>
+            )}
+            {project.url && (
+              <a
+                href={project.url}
+                target={project.url.startsWith("http") ? "_blank" : undefined}
+                rel={project.url.startsWith("http") ? "noopener noreferrer" : undefined}
+                className="body-4 text-muted-foreground hover:text-accent flex items-center gap-1.5 transition-colors"
+              >
+                <ExternalLink size={14} />
+                {project.url.replace("https://", "")}
+              </a>
+            )}
+          </div>
         </div>
       </div>
 
@@ -58,6 +82,14 @@ export default function ProjectDetail() {
             <h2 className="heading-2 text-foreground">{t.projects.page.problem}</h2>
             <p className="body-1 text-muted-foreground">{project.problem}</p>
           </section>
+
+          {/* The Solution */}
+          {project.solution && (
+            <section className="flex flex-col gap-4">
+              <h2 className="heading-2 text-foreground">{t.projects.page.solution}</h2>
+              <p className="body-1 text-muted-foreground">{project.solution}</p>
+            </section>
+          )}
 
           {/* Key Features */}
           {project.keyFeatures.length > 0 && (
@@ -91,63 +123,31 @@ export default function ProjectDetail() {
         </div>
 
         {/* Right Column - Sidebar */}
-        <div className="flex flex-col gap-8">
-          {/* Tech Stack and GitHub */}
-          <section className="border-border/40 flex flex-col gap-4 rounded-lg border p-6">
-            {project.url && (
-              <a
-                href={project.url}
-                target={project.url.startsWith("http") ? "_blank" : undefined}
-                rel={project.url.startsWith("http") ? "noopener noreferrer" : undefined}
-                className="hover:text-accent focus-visible:outline-ring hover:bg-muted/20 -mx-6 -my-4 flex items-center gap-2 rounded-lg px-6 py-4 text-left transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-4"
-              >
-                <ExternalLink size={16} className="text-accent" />
-                <div className="flex flex-col gap-1">
-                  <h3 className="heading-4 text-foreground">Visit</h3>
-                  <div className="body-4 text-muted-foreground hover:text-accent break-all">
-                    {project.url.replace("https://", "")}
-                  </div>
-                </div>
-              </a>
-            )}
-            {/* GitHub */}
-            <a
-              href={project.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-accent focus-visible:outline-ring hover:bg-muted/20 -mx-6 flex flex-col gap-2 rounded-lg px-6 py-4 text-left transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-4"
-            >
-              <h3 className="heading-4 text-foreground">{t.projects.page.repository}</h3>
-              <div className="body-4 text-muted-foreground hover:text-accent break-all">
-                {project.github.replace("https://", "")}
-              </div>
-            </a>
-          </section>
-        </div>
+        <div className="flex flex-col gap-8" />
       </div>
 
-      {/* Navigation */}
+      {/* Screenshots */}
       {project.screenshots && project.screenshots.length > 0 && (
         <section className="flex flex-col gap-4">
           <h2 className="heading-2 text-foreground">Screenshots</h2>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <ScrollArea className="gap-4" snap="start">
             {project.screenshots.map((src, idx) => (
               <a
                 key={idx}
                 href={src}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="border-border/40 hover:border-accent/40 overflow-hidden rounded-lg border transition-colors"
+                className="border-border/40 hover:border-accent/40 aspect-video w-80 shrink-0 overflow-hidden rounded-lg border transition-colors"
               >
                 <img
                   src={src}
                   alt={`${project.name} screenshot ${idx + 1}`}
-                  className="w-full object-cover"
+                  className="h-full w-full object-cover"
                   loading="lazy"
                 />
               </a>
             ))}
-          </div>
+          </ScrollArea>
         </section>
       )}
 

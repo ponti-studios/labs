@@ -151,6 +151,8 @@ export { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "./compon
 export { PercentageProgressBar, Progress, VolumeProgressBar } from "./components/progress";
 export type { PercentageProgressBarProps, VolumeProgressBarProps } from "./components/progress";
 export { RadioGroup, RadioGroupItem } from "./components/radio-group";
+export { ScrollArea } from "./components/scroll-area";
+export type { ScrollAreaProps } from "./components/scroll-area";
 export {
   Select,
   SelectContent,

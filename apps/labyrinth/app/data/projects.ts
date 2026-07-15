@@ -16,6 +16,7 @@ export type ProjectMetadata = {
   status: ProjectStatus;
   github: string;
   url?: string;
+  logo?: string;
   screenshots?: string[];
 };
 
@@ -28,6 +29,7 @@ export const projectMetadata: ProjectMetadata[] = [
     tech: ["TypeScript", "Node.js"],
     status: "published",
     github: "https://github.com/ponti-studios/kernel",
+    logo: `/experiments/logo.kernel.500x500.webp`,
   },
   {
     slug: "omiro",
@@ -35,6 +37,7 @@ export const projectMetadata: ProjectMetadata[] = [
     tech: ["TypeScript", "React Native", "Expo", "iOS"],
     status: "active",
     github: "https://github.com/ponti-studios/hominem",
+    logo: `/experiments/logo.omiro.500x500.webp`,
   },
   {
     slug: "career",
@@ -43,7 +46,8 @@ export const projectMetadata: ProjectMetadata[] = [
     status: "published",
     github: "https://github.com/ponti-studios/hominem",
     url: "https://career.ponti.io",
-    screenshots: ["/screenshots/career-dashboard.png", "/screenshots/career-pipeline.png"],
+    screenshots: ["/screenshots/career-craftd-demo-portfolio.png"],
+    logo: `/experiments/logo.career.500x500.webp`,
   },
   {
     slug: "finance",
@@ -51,6 +55,7 @@ export const projectMetadata: ProjectMetadata[] = [
     tech: ["TypeScript", "React", "Hono", "PostgreSQL"],
     status: "development",
     github: "https://github.com/ponti-studios/hominem",
+    logo: `/experiments/logo.finance.500x500.webp`,
   },
   {
     slug: "hominem-api",
@@ -58,6 +63,7 @@ export const projectMetadata: ProjectMetadata[] = [
     tech: ["TypeScript", "Hono", "MCP", "PostgreSQL", "Drizzle"],
     status: "published",
     github: "https://github.com/ponti-studios/hominem",
+    logo: `/experiments/logo.hominem-api.500x500.webp`,
   },
   {
     slug: "commune",
@@ -65,6 +71,7 @@ export const projectMetadata: ProjectMetadata[] = [
     tech: ["TypeScript", "React", "PostgreSQL", "AI"],
     status: "development",
     github: "https://github.com/ponti-studios/labs",
+    logo: `/experiments/logo.commune.500x500.webp`,
   },
   {
     slug: "health",
@@ -72,6 +79,7 @@ export const projectMetadata: ProjectMetadata[] = [
     tech: ["TypeScript", "React", "React Router", "SQLite"],
     status: "development",
     github: "https://github.com/ponti-studios/labs",
+    logo: `/experiments/logo.health.500x500.webp`,
   },
   {
     slug: "earth",
@@ -79,6 +87,7 @@ export const projectMetadata: ProjectMetadata[] = [
     tech: ["TypeScript", "React", "MapLibre", "PostgreSQL"],
     status: "development",
     github: "https://github.com/ponti-studios/labs",
+    logo: `/experiments/logo.earth.500x500.webp`,
   },
   {
     slug: "foundation",
@@ -86,6 +95,7 @@ export const projectMetadata: ProjectMetadata[] = [
     tech: ["Docker", "PostgreSQL", "GitHub Actions"],
     status: "published",
     github: "https://github.com/ponti-studios/foundation",
+    logo: `/experiments/logo.foundation.500x500.webp`,
   },
   {
     slug: "hollywood",
@@ -93,6 +103,7 @@ export const projectMetadata: ProjectMetadata[] = [
     tech: ["TypeScript", "Python", "Hono", "SQLite"],
     status: "development",
     github: "https://github.com/ponti-studios/hollywood",
+    logo: `/experiments/logo.hollywood.500x500.webp`,
   },
   {
     slug: "realitea",
@@ -102,6 +113,7 @@ export const projectMetadata: ProjectMetadata[] = [
     github: "https://github.com/ponti-studios/labs",
     url: "/games/realitea",
     screenshots: ["/screenshots/realitea-gameplay.png", "/screenshots/realitea-solved.png"],
+    logo: `/experiments/logo.realitea.500x500.webp`,
   },
   {
     slug: "geo",
@@ -113,23 +125,9 @@ export const projectMetadata: ProjectMetadata[] = [
   {
     slug: "toolbox",
     category: "tool",
-    tech: ["Rust", "Go", "Swift", "Python"],
+    tech: ["Rust", "Go", "Swift", "Python", "TypeScript", "Bash"],
     status: "development",
     github: "https://github.com/ponti-studios/toolbox",
-  },
-  {
-    slug: "ponti-mobile-starter",
-    category: "library",
-    tech: ["TypeScript", "React Native", "Expo"],
-    status: "development",
-    github: "https://github.com/ponti-studios/ponti-mobile-starter",
-  },
-  {
-    slug: "ai-lab",
-    category: "research",
-    tech: ["Python", "Claude API"],
-    status: "development",
-    github: "https://github.com/ponti-studios/ai-lab",
   },
 ];
 

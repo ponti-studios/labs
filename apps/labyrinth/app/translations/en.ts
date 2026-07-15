@@ -30,6 +30,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       previous: "Previous",
       next: "Next",
       problem: "The Problem",
+      solution: "The Solution",
       howItWorks: "How It Works",
       engineeringChallenges: "Engineering Challenges",
       repository: "Repository",
@@ -37,16 +38,15 @@ export const STUDIO_TRANSLATIONS_EN = {
     entries: {
       kernel: {
         name: "Kernel",
-        shortDescription: "32 reusable agent skills for Claude Code",
-        description:
+        shortDescription: "AI agent skills",
+        solution:
           "32 specialized skills for software development and content production, published to NPM and installable through skills.sh.",
         problem:
           "Useful engineering judgment is often trapped in people's heads or buried in documentation. Kernel turns that judgment into skills an AI assistant can invoke for recurring work such as migrations, security reviews, and content production.",
         keyFeatures: [
-          "32 skills across 7 categories (Writing, Music, Image, Development, UI & Brand, Audit, Operations)",
+          "Skills across mutliple domains (Writing, Music, Image, Development, UI & Brand, Audit, Operations)",
           "Individual or bulk installation with npx skills add",
           "Covers engineering, architecture, documentation, and content production",
-          "Publicly published for the Claude Code community",
         ],
         technicalChallenges: [
           "Designing precise triggers so 32 skills coexist without collisions",
@@ -57,7 +57,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       foundation: {
         name: "Foundation",
         shortDescription: "Enterprise shared infrastructure with Docker & PostgreSQL",
-        description:
+        solution:
           "Shared infrastructure for PostgreSQL, Redis, Docker Compose environments, and CI/CD across the organization.",
         problem:
           "Teams needing vector search or geospatial queries were rebuilding PostgreSQL images per project. Foundation provides one tested image and repeatable environments so development and production do not quietly drift apart.",
@@ -76,7 +76,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       omiro: {
         name: "Omiro",
         shortDescription: "Personal knowledge app for iOS",
-        description:
+        solution:
           "An iOS app that captures everything you want to remember — tasks, notes, events, and ideas — into one searchable, connected personal knowledge graph.",
         problem:
           "Personal knowledge lives scattered across notes, reminders, calendars, and messages. Omiro brings it into one app where everything connects — a task links to a note, a note links to an event, and search finds it all.",
@@ -95,7 +95,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       career: {
         name: "Career",
         shortDescription: "Track applications, interviews, and your professional pipeline",
-        description:
+        solution:
           "A web app for managing a job search pipeline — applications, interviews, follow-ups, and offers — in one place.",
         problem:
           "Job searches generate a flood of applications, recruiter conversations, and interview loops with no natural place to track them. Career turns that scattered process into a structured pipeline with status tracking and follow-up reminders.",
@@ -113,7 +113,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       finance: {
         name: "Finance",
         shortDescription: "Personal finance dashboard with accounts, budgets, and trends",
-        description:
+        solution:
           "A web app for tracking personal finances — accounts, transactions, budgets, and net worth trends — with a clean dashboard.",
         problem:
           "Personal finance tools are either too simple (mint clones) or too complex (spreadsheet-level). Finance aims for the middle: enough structure to see trends and budgets, simple enough to use weekly.",
@@ -131,7 +131,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       "hominem-api": {
         name: "Hominem API",
         shortDescription: "HTTP & MCP server for unified personal data access",
-        description:
+        solution:
           "A centralized Hono API that serves Omiro, Career, and Finance with shared auth, typed RPC contracts, and an MCP server for AI agent access to personal data.",
         problem:
           "Three products sharing the same personal data shouldn't each build their own API. The Hominem API provides one server with typed contracts, shared auth, and MCP protocol support so AI agents can access personal data with permission boundaries.",
@@ -150,7 +150,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       hollywood: {
         name: "Hollywood",
         shortDescription: "Entertainment research platform with structured LLM extraction",
-        description:
+        solution:
           "A local-first platform that combines entertainment data ingestion with Claude-powered extraction from unstructured submissions.",
         problem:
           "Entertainment research is split across many sources, while the most valuable material arrives as unstructured submissions. Hollywood brings both into one searchable system and extracts useful fields automatically.",
@@ -169,7 +169,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       commune: {
         name: "Commune",
         shortDescription: "Anonymous peer deliberation for difficult decisions",
-        description:
+        solution:
           "A social decision-making app that turns a personal situation into a neutral case for a small anonymous jury.",
         problem:
           "Advice from friends is often shaped by the way a story is told and by existing relationships. Commune separates the account from the decision: an AI creates a neutral version, then friends vote independently and explain their reasoning.",
@@ -188,7 +188,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       earth: {
         name: "Earth",
         shortDescription: "Live map for exploring London traffic cameras",
-        description:
+        solution:
           "A live geospatial viewer for browsing London's TfL traffic camera network on an interactive map.",
         problem:
           "Traffic camera data is useful only when it is easy to locate and inspect. Earth puts a large, changing camera network into a map interface with direct search, camera detail, and live availability state.",
@@ -207,7 +207,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       health: {
         name: "Health",
         shortDescription: "Personal workspace for symptoms, care, and medication",
-        description:
+        solution:
           "A personal health workspace for understanding symptoms, tracking progress, and organizing care.",
         problem:
           "Health decisions are spread across symptoms, appointments, medication, insurance, and local care options. Health brings those recurring tasks into one practical workspace instead of treating each decision as a separate lookup.",
@@ -226,7 +226,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       geo: {
         name: "Geo (geokit)",
         shortDescription: "Geocoding tools with a native review workflow",
-        description:
+        solution:
           "A Swift geocoding CLI and native macOS app for curating place data with Apple Maps.",
         problem:
           "Automated geocoding is fast but ambiguous, while manual review is accurate but slow. Geo combines batch geocoding with a native workflow for checking and correcting results before they enter a dataset.",
@@ -244,46 +244,29 @@ export const STUDIO_TRANSLATIONS_EN = {
       },
       toolbox: {
         name: "Toolbox",
-        shortDescription: "Seven CLI tools for data, media, and content",
-        description:
-          "A monorepo of focused CLI tools for content, media, data cleanup, and AI workflows.",
+        shortDescription: "Eight CLI tools for data, media, and content",
+        solution:
+          "A monorepo of eight focused CLI tools: file processing (filekit), image optimization (iconkit), video transcription (mediakit), photo metadata (photokit), content pipeline (monotone), AI agent analytics (agentkit), X post management (xkit), and Internet Archive crawling (datpiff).",
         problem:
           "Personal automation often starts as a throwaway script and becomes a liability. Toolbox turns recurring jobs involving content, media, and personal data into tested commands with explicit safeguards.",
         keyFeatures: [
-          "Content pipeline from raw notes to scheduled social drafts",
-          "File, photo, transcription, and Internet Archive utilities",
-          "Post deletion and AI agent analytics tools",
-          "Unified Justfile command surface across the monorepo",
+          "Content pipeline from raw notes to scheduled social posts via Typefully",
+          "Media utilities: video transcription, image optimization, photo metadata management",
+          "AI agent usage and cost analytics across Claude Code, Copilot, and OpenRouter",
+          "X/Twitter post deletion with OAuth 2.0 PKCE and rate-limit safety",
+          "Internet Archive collection crawling for downstream processing",
+          "Unified command surface across the monorepo with dry-run and verification",
         ],
         technicalChallenges: [
           "Matching each tool to the constraints of its runtime and data source",
           "Adding dry-run and verification steps before destructive operations",
-          "Keeping one consistent command surface across four toolchains",
-        ],
-      },
-      "ponti-mobile-starter": {
-        name: "Ponti Mobile Starter",
-        shortDescription: "Production-tested Expo starter for mobile apps",
-        description:
-          "A reusable mobile framework extracted from the production Omiro app, with the setup needed to start new Expo projects quickly.",
-        problem:
-          "New mobile projects lose time rebuilding auth, navigation, theming, and observability before product work starts. This starter extracts those patterns from a production app instead of offering an untested template.",
-        keyFeatures: [
-          "Application shell, navigation, and design tokens",
-          "Authentication and API client integration points",
-          "Observability hooks and Expo/EAS release profiles",
-          "Patterns extracted from a production iOS app",
-        ],
-        technicalChallenges: [
-          "Extracting shared concerns from Omiro without destabilizing it",
-          "Keeping the starter generic while preserving production lessons",
-          "Encoding real operational decisions instead of empty scaffolding",
+          "Keeping one consistent command surface across six toolchains",
         ],
       },
       realitea: {
         name: "RealiTea",
         shortDescription: "Daily word game built on real headlines",
-        description:
+        solution:
           "A daily word puzzle where players guess real celebrity names by spelling them out from clues, with new puzzles generated from actual entertainment journalism every day.",
         problem:
           "Most word games repeat the same mechanics endlessly. RealiTea uses real-time entertainment news to generate fresh puzzles daily, creating a game that's connected to the cultural moment instead of a static dictionary.",
@@ -298,25 +281,6 @@ export const STUDIO_TRANSLATIONS_EN = {
           "Auto-generating playable puzzles from raw, unstructured news content",
           "Designing a reconciliation pipeline that fills gaps without producing duplicates",
           "Validating puzzle difficulty so games remain fun across varying source material",
-        ],
-      },
-      "ai-lab": {
-        name: "AI Lab",
-        shortDescription: "Evaluation and extraction workflows for Claude",
-        description:
-          "An internal lab for evaluating Claude workflows, building extraction workers, and orchestrating agents.",
-        problem:
-          "LLM prompts change quickly, but without evaluation those changes ship untested and regressions surface silently. AI Lab makes prompt and extraction quality measurable before a workflow reaches a product.",
-        keyFeatures: [
-          "Structured extraction workers and retrieval experiments",
-          "Agent pipeline orchestration",
-          "Prompt contracts, model benchmarks, and regression tests",
-          "CLI smoke tests and validation workflows",
-        ],
-        technicalChallenges: [
-          "Testing prompt and extraction changes for silent regressions",
-          "Benchmarking models and prompt variants on the same task",
-          "Keeping evaluated pipelines reusable across products",
         ],
       },
     },
