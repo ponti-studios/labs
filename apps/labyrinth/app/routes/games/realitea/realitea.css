@@ -1,11 +1,19 @@
 /*
- * RealiTea-specific animation styles. Imported once at the top of the route
- * file so the keyframes are emitted exactly once per page load instead of on
- * every render. Color tokens are pulled from CSS custom properties so the
- * per-tile `style` attribute written for the currently-revealing tile can
- * drive the final color while the keyframes interpolate from the empty-state
- * colors.
+ * RealiTea-specific animation styles and game color tokens.
+ * Color values are exposed as CSS custom properties so both the CVA tile
+ * variants and the reveal keyframes read from the same source of truth.
  */
+
+:root {
+  --realitea-correct-bg: #d1fae5;
+  --realitea-correct-border: #6ee7b7;
+  --realitea-correct-text: #022c22;
+  --realitea-present-bg: #fef3c7;
+  --realitea-present-border: #fcd34d;
+  --realitea-present-text: #451a03;
+  --realitea-error-bg: #fee2e2;
+  --realitea-error-border: #ef4444;
+}
 
 .realitea-row-shake {
   animation: realitea-shake 0.4s ease;
@@ -42,8 +50,8 @@
     border-color: var(--border);
   }
   50% {
-    background-color: #fee2e2;
-    border-color: #ef4444;
+    background-color: var(--realitea-error-bg);
+    border-color: var(--realitea-error-border);
   }
 }
 
