@@ -21,7 +21,7 @@ Product intent lives in the `*-brief.md` files in this directory. These checklis
 
 | Experiment | Product brief | Audit checklist | Status |
 |---|---|---|---|
-| Calendar | [Brief](01-calendar-brief.md) | [Checklist](01-calendar.md) | Not started |
+| Calendar | [Product brief & checklist](01-calendar.md) | — | Not started |
 | Context Chemistry | [Brief](02-context-chemistry-brief.md) | [Checklist](02-llm-interface.md) | Not started |
 | Infinite Scroll | [Brief](03-infinite-scroll-brief.md) | [Checklist](03-infinite-scroll.md) | Not started |
 | Glass | [Brief](04-glass-brief.md) | [Checklist](04-glass.md) | Not started |

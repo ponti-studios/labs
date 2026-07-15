@@ -82,9 +82,9 @@ export default function Projects() {
                       prefetch="intent"
                       className="hover:bg-muted/20 focus-visible:outline-ring flex flex-1 flex-row items-center gap-3 transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-2"
                     >
-                      {PROJECTS_WITH_LOGOS.has(project.slug) && (
+                      {project.logo && (
                         <img
-                          src={`/experiments/logo.${project.slug}.500x500.webp`}
+                          src={project.logo}
                           alt={`${project.name} logo`}
                           className="size-10 shrink-0 rounded-lg"
                           width={40}

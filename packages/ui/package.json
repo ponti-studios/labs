@@ -114,6 +114,10 @@
       "types": "./src/components/progress.tsx",
       "import": "./src/components/progress.tsx"
     },
+    "./scroll-area": {
+      "types": "./src/components/scroll-area.tsx",
+      "import": "./src/components/scroll-area.tsx"
+    },
     "./select": {
       "types": "./src/components/select.tsx",
       "import": "./src/components/select.tsx"

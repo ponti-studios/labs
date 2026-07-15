@@ -38,6 +38,16 @@ Our subjects may be time, context, light, intelligence, economics, crowds, ident
 
 Interaction is not decoration. It is the proof of the idea. If the claim is that context changes intelligence, changing context must change the result. If the claim is that glass bends reality, moving the glass must bend the image.
 
+### Borrow behavior, not grammar
+
+Familiar behavior can make a novel idea legible, but familiar visual grammar can quietly erase the idea. We may borrow the continuous movement of a feed without inheriting repeated feed cards, or borrow the directness of a map without inheriting pins and panels.
+
+The interface must be organized around the thing the experiment claims is primary. If time is primary, event rows cannot remain the basic visual object. If context is primary, isolated results cannot remain the basic visual object. Changing the layout while preserving the old ontology is not a redesign.
+
+### The experience begins at first contact
+
+The first viewport is part of the experiment. Supporting copy, showcase framing, and controls must not postpone the moment of discovery. The visitor should encounter the argument before they encounter its explanation.
+
 ### One foreground, many contexts
 
 Life and thought are not always cleanly separated into isolated categories. A strong experiment can distinguish the primary thing happening from the surrounding contexts that influence it without flattening them into equal-weight features.
@@ -64,6 +74,7 @@ The studio does not need to disguise its point of view as neutral software. Atmo
 - Generic dashboards where a distinctive model is possible.
 - Technical demos that show a mechanism without giving it meaning.
 - Visual polish that hides a weak or absent idea.
+- Replacing one familiar interface grammar with another without changing the underlying model.
 - Product language that promises more than the experience delivers.
 - Explanations that do the work the interaction should be doing.
 - Treating users as optimization problems instead of people living inside time, context, memory, and uncertainty.
