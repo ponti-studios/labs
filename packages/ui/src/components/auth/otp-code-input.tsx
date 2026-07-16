@@ -66,7 +66,7 @@ export function OtpCodeInput({
       <div
         className={cn(
           "bg-surface flex min-h-12 items-center rounded-xl border px-3.5 py-3 transition-colors duration-120",
-          "focus-within:border-border-focus focus-within:shadow-[0_0_0_2px_var(--color-bg-elevated),0_0_0_4px_var(--color-accent)]",
+          "focus-within:border-focus focus-within:shadow-[0_0_0_2px_var(--color-bg-elevated),0_0_0_4px_var(--color-accent)]",
           error &&
             "border-destructive focus-within:shadow-[0_0_0_2px_var(--color-bg-elevated),0_0_0_4px_var(--color-destructive)]",
           disabled && "cursor-not-allowed opacity-50",

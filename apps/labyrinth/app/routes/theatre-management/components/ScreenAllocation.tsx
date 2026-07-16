@@ -21,24 +21,19 @@ import {
   type SeasonKey,
 } from "../theatre-model";
 import { projectedImpactLabel } from "../utils";
-import { NumericControl } from "./NumericControl";
 
 export function ScreenAllocation({
   screens,
   allocation,
-  marketBaseline,
   season,
   onScreensChange,
-  onMarketChange,
   onSeasonChange,
   onAllocationChange,
 }: {
   screens: number;
   allocation: ScreenAllocationMap;
-  marketBaseline: number;
   season: SeasonKey;
   onScreensChange: (screens: number) => void;
-  onMarketChange: (baseline: number) => void;
   onSeasonChange: (season: SeasonKey) => void;
   onAllocationChange: (category: FilmCategory, screens: number) => void;
 }) {
@@ -88,16 +83,6 @@ export function ScreenAllocation({
             </p>
           </div>
 
-          <NumericControl
-            id="market-baseline"
-            label="Market baseline"
-            value={marketBaseline}
-            onChange={onMarketChange}
-            min={1_000}
-            max={10_000}
-            hint="Market demand before lineup strength is applied."
-          />
-
           <div className="space-y-3">
             <div className="flex items-baseline justify-between gap-4">
               <label htmlFor="season" className="text-emphasis-medium text-sm font-medium">
@@ -133,7 +118,7 @@ export function ScreenAllocation({
                 key={category}
                 className={cn(
                   "grid gap-3 sm:grid-cols-[1fr_auto] sm:items-center",
-                  index > 0 && "border-border/60 border-t pt-3",
+                  index > 0 && "border-subtle border-t pt-3",
                 )}
               >
                 <div className="min-w-0">

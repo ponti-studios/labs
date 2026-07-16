@@ -32,13 +32,13 @@ function Stepper({
   const atMax = value >= max;
 
   return (
-    <div className={cn("border-border bg-muted flex items-center rounded-lg border", className)}>
+    <div className={cn("border bg-muted flex items-center rounded-lg border", className)}>
       <Button
         type="button"
         variant="ghost"
         onClick={() => onChange(Math.max(min, value - step))}
         disabled={disabled || atMin}
-        className="border-border text-muted-foreground rounded-none rounded-l-lg border-r"
+        className="border text-muted-foreground rounded-none rounded-l-lg border-r"
         aria-label={decreaseLabel}
       >
         <Minus className="size-3.5" />
@@ -53,7 +53,7 @@ function Stepper({
         variant="ghost"
         onClick={() => onChange(Math.min(max, value + step))}
         disabled={disabled || atMax}
-        className="border-border text-muted-foreground rounded-none rounded-r-lg border-l"
+        className="border text-muted-foreground rounded-none rounded-r-lg border-l"
         aria-label={increaseLabel}
       >
         <Plus className="size-3.5" />

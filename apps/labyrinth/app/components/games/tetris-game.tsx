@@ -289,7 +289,7 @@ const Cell = memo<{ opacity: number | null; isGhost: boolean }>(({ opacity, isGh
 
 // Preview panel for held/next piece
 const Preview = memo<{ piece: Piece | null; title: string }>(({ piece, title }) => (
-  <div className="border-border bg-card rounded-xl border p-4">
+  <div className="border bg-card rounded-xl border p-4">
     <p className="text-muted-foreground mb-3 text-center text-xs font-medium">{title}</p>
     <div className="flex min-h-[60px] flex-col items-center justify-center">
       {piece ? (
@@ -462,12 +462,12 @@ const TetrisGame: FC = () => {
         {/* Left panel */}
         <div className="flex w-32 flex-col gap-3">
           <Preview piece={state.held} title="Hold" />
-          <div className="border-border bg-card rounded-xl border p-4">
+          <div className="border bg-card rounded-xl border p-4">
             <div className="space-y-3">
               <StatRow label="Score" value={state.score} />
-              <div className="border-border border-t" />
+              <div className="border border-t" />
               <StatRow label="Lines" value={state.lines} />
-              <div className="border-border border-t" />
+              <div className="border border-t" />
               <StatRow label="Level" value={state.level} />
             </div>
           </div>
@@ -479,7 +479,7 @@ const TetrisGame: FC = () => {
             Tetris
           </h3>
 
-          <div className="border-border relative overflow-hidden rounded-xl border bg-zinc-950 p-1">
+          <div className="border relative overflow-hidden rounded-xl border bg-zinc-950 p-1">
             <div className="grid" style={{ gridTemplateColumns: `repeat(${COLS}, 1.5rem)` }}>
               {displayGrid.map((row: GameCell[], i: number) =>
                 row.map((cell: GameCell, j: number) => {
@@ -537,7 +537,7 @@ const TetrisGame: FC = () => {
         <div className="flex w-32 flex-col gap-3">
           <Preview piece={state.next} title="Next" />
 
-          <div className="border-border bg-card rounded-xl border p-4">
+          <div className="border bg-card rounded-xl border p-4">
             <p className="text-muted-foreground mb-3 text-xs font-medium">Controls</p>
             <ul className="space-y-1.5">
               {CONTROLS.map(({ key, action }) => (

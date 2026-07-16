@@ -96,6 +96,7 @@ const challengeRoutes = [
 const featureRoutes: RouteConfig = [];
 const experimentRoutes = [
   route("/experiments/calendar", "routes/experiments.calendar.tsx"),
+  route("/experiments/theatre-management", "routes/theatre-management/route.tsx"),
 ] satisfies RouteConfig;
 const challengeRoutes: RouteConfig = [];
 

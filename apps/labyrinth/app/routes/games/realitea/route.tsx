@@ -30,10 +30,10 @@ const TILE_BASE = cva(
   {
     variants: {
       state: {
-        absent: "border-border bg-muted text-muted-foreground",
+        absent: "border bg-muted text-muted-foreground",
         correct:
           "border-[var(--realitea-correct-border)] bg-[var(--realitea-correct-bg)] text-[var(--realitea-correct-text)]",
-        empty: "border-border bg-background text-foreground",
+        empty: "border bg-background text-foreground",
         present:
           "border-[var(--realitea-present-border)] bg-[var(--realitea-present-bg)] text-[var(--realitea-present-text)]",
       },
@@ -312,7 +312,7 @@ export default function RealiTeaRoute() {
   return (
     <div className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-6 px-4 pb-[calc(env(safe-area-inset-bottom)+8px)]">
       <header className="bg-background/95 sticky top-0 z-10 backdrop-blur md:static">
-        <div className="border-border flex items-center justify-between gap-2 rounded-md border p-2">
+        <div className="border flex items-center justify-between gap-2 rounded-md border p-2">
           <img src="/logo.realitea.png" alt="RealiTea" className="h-6 object-contain" />
           <Button
             aria-label="How to play"

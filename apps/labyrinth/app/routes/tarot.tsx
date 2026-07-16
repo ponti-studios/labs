@@ -116,7 +116,7 @@ export default function TarotRoute() {
         </motion.div>
 
         {!isHydrated ? (
-          <Card className="border-border bg-background border p-8 shadow-sm">
+          <Card className="border bg-background border p-8 shadow-sm">
             <div className="text-muted-foreground py-16 text-center">
               Preparing today&apos;s ritual...
             </div>
@@ -124,8 +124,8 @@ export default function TarotRoute() {
         ) : result ? (
           <DailyTarotReadingView result={result} />
         ) : (
-          <div className="border-border grid gap-6 border-b pb-8 lg:grid-cols-[240px_minmax(0,1fr)] lg:items-center">
-            <div className="border-border bg-muted mx-auto flex h-72 w-52 items-center justify-center border">
+          <div className="border grid gap-6 border-b pb-8 lg:grid-cols-[240px_minmax(0,1fr)] lg:items-center">
+            <div className="border bg-muted mx-auto flex h-72 w-52 items-center justify-center border">
               <div className="text-center">
                 <div className="text-muted-foreground text-4xl">✦</div>
                 <div className="text-muted-foreground mt-3 text-xs font-medium">Daily draw</div>
@@ -173,7 +173,7 @@ function DailyTarotReadingView({ result }: { result: DailyTarotResult }) {
           <img
             src={`/tarot-cards/${card.img}`}
             alt={card.name}
-            className="border-border h-auto w-full border"
+            className="border h-auto w-full border"
           />
         </div>
 
@@ -194,7 +194,7 @@ function DailyTarotReadingView({ result }: { result: DailyTarotResult }) {
           ))}
         </div>
 
-        <div className="border-border text-muted-foreground border-t pt-4 text-sm">
+        <div className="border text-muted-foreground border-t pt-4 text-sm">
           <div className="text-muted-foreground text-xs font-medium">Reading source</div>
           <div className="mt-2">
             {source === "ai"
@@ -205,7 +205,7 @@ function DailyTarotReadingView({ result }: { result: DailyTarotResult }) {
       </aside>
 
       <div className="space-y-6">
-        <section className="border-border space-y-4 border-b pb-6">
+        <section className="border space-y-4 border-b pb-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <p className="text-muted-foreground text-xs font-medium">Today’s reading</p>
@@ -222,18 +222,18 @@ function DailyTarotReadingView({ result }: { result: DailyTarotResult }) {
           </div>
         </section>
 
-        <section className="border-border space-y-4 border-b pb-6">
+        <section className="border space-y-4 border-b pb-6">
           <p className="text-muted-foreground text-xs font-medium">Questions to sit with</p>
           <div className="grid gap-2.5">
             {card.reflectionQuestions.slice(0, 3).map((question) => (
-              <div key={question} className="border-border text-foreground border-l-2 pl-4">
+              <div key={question} className="border text-foreground border-l-2 pl-4">
                 {question}
               </div>
             ))}
           </div>
         </section>
 
-        <Accordion type="single" collapsible className="border-border border-b">
+        <Accordion type="single" collapsible className="border border-b">
           <AccordionItem value="study" className="border-b-0">
             <AccordionTrigger className="py-0">
               <h4>Curated meanings and deeper notes</h4>
@@ -261,7 +261,7 @@ function DailyTarotReadingView({ result }: { result: DailyTarotResult }) {
                 />
 
                 {card.studyNotes && (
-                  <div className="border-border border-t pt-4">
+                  <div className="border border-t pt-4">
                     <h5>Study notes</h5>
                     <div className="mt-3 grid gap-3 md:grid-cols-2">
                       {card.studyNotes.archetype && (
@@ -304,7 +304,7 @@ function DailyTarotReadingView({ result }: { result: DailyTarotResult }) {
 
 function ReadingPanel({ title, body }: { title: string; body: string }) {
   return (
-    <div className="border-border border-l-2 pl-4">
+    <div className="border border-l-2 pl-4">
       <div className="text-muted-foreground text-xs font-medium">{title}</div>
       <p className="text-foreground mt-2 text-base leading-7">{body}</p>
     </div>
@@ -313,7 +313,7 @@ function ReadingPanel({ title, body }: { title: string; body: string }) {
 
 function MeaningList({ title, accent, items }: { title: string; accent: string; items: string[] }) {
   return (
-    <div className="border-border border-l-2 pl-4">
+    <div className="border border-l-2 pl-4">
       <h5 className={accent}>{title}</h5>
       <ul className="mt-3 space-y-2">
         {items.map((item) => (

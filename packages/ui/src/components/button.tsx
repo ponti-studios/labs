@@ -15,9 +15,9 @@ const buttonVariants = cva(
         destructive:
           "void-hover border-transparent bg-destructive text-destructive-foreground [--color-interaction-hover-bg:color-mix(in_srgb,var(--color-destructive)_88%,white_12%)] [--color-interaction-hover-text:var(--color-destructive-foreground)] [--color-interaction-hover-border:transparent]",
         outline:
-          "void-hover border-border bg-surface text-foreground [--color-interaction-hover-bg:var(--color-bg-elevated)] [--color-interaction-hover-text:var(--color-foreground)] [--color-interaction-hover-border:var(--color-border)]",
+          "void-hover border bg-surface text-foreground [--color-interaction-hover-bg:var(--color-bg-elevated)] [--color-interaction-hover-text:var(--color-foreground)] [--color-interaction-hover-border:var(--color-border)]",
         secondary:
-          "void-hover border-border bg-secondary text-secondary-foreground [--color-interaction-hover-bg:color-mix(in_srgb,var(--color-secondary)_88%,white_12%)] [--color-interaction-hover-text:var(--color-secondary-foreground)] [--color-interaction-hover-border:var(--color-border)]",
+          "void-hover border bg-secondary text-secondary-foreground [--color-interaction-hover-bg:color-mix(in_srgb,var(--color-secondary)_88%,white_12%)] [--color-interaction-hover-text:var(--color-secondary-foreground)] [--color-interaction-hover-border:var(--color-border)]",
         ghost:
           "void-hover border-transparent bg-transparent text-foreground [--color-interaction-hover-bg:var(--color-accent)] [--color-interaction-hover-text:var(--color-accent-foreground)] [--color-interaction-hover-border:transparent]",
         link: "void-hover border-transparent bg-transparent px-0 text-foreground underline-offset-4 hover:underline [--color-interaction-hover-bg:transparent] [--color-interaction-hover-text:var(--color-secondary-foreground)] [--color-interaction-hover-border:transparent]",

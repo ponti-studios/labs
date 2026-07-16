@@ -39,7 +39,7 @@ function ctaClassName(cta: AppNavigationCta, active: boolean, mobile: boolean) {
       "mt-2 flex min-h-11 w-full items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors",
       "void-focus",
       cta.variant === "outline"
-        ? "border-border text-foreground hover:bg-accent bg-transparent"
+        ? "border text-foreground hover:bg-accent bg-transparent"
         : "bg-foreground text-background hover:bg-foreground/90",
     );
   }
@@ -48,7 +48,7 @@ function ctaClassName(cta: AppNavigationCta, active: boolean, mobile: boolean) {
     "void-focus ml-2 inline-flex min-h-9 items-center rounded-md px-3 text-sm font-medium";
 
   if (cta.variant === "outline") {
-    return cn(base, "border-border text-foreground hover:bg-accent bg-transparent");
+    return cn(base, "border text-foreground hover:bg-accent bg-transparent");
   }
 
   return cn(
@@ -89,7 +89,7 @@ export function AppNavigation({
   };
 
   return (
-    <div className="bg-background/80 border-border/60 sticky top-0 z-50 flex w-full justify-center border-b px-4 backdrop-blur-sm backdrop-saturate-150">
+    <div className="bg-background/80 border-subtle sticky top-0 z-50 flex w-full justify-center border-b px-4 backdrop-blur-sm backdrop-saturate-150">
       <nav className="flex min-h-14 w-full max-w-7xl items-center justify-between gap-6">
         {brand &&
           renderLink({
@@ -123,7 +123,7 @@ export function AppNavigation({
               <button
                 type="button"
                 aria-label={mobileOpen ? "Close menu" : "Open menu"}
-                className="void-focus border-border bg-background text-foreground hover:bg-accent inline-flex size-11 shrink-0 items-center justify-center rounded-md border transition-colors"
+                className="void-focus border bg-background text-foreground hover:bg-accent inline-flex size-11 shrink-0 items-center justify-center rounded-md border transition-colors"
               >
                 <Menu className="size-4" aria-hidden="true" />
               </button>
@@ -143,7 +143,7 @@ export function AppNavigation({
               </div>
 
               {(cta || endContent) && (
-                <div className="border-border flex flex-col gap-4 border-t pt-4">
+                <div className="border flex flex-col gap-4 border-t pt-4">
                   {cta &&
                     renderLink({
                       href: cta.href,

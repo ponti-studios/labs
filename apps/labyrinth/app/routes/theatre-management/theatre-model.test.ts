@@ -10,7 +10,6 @@ import {
 
 const BASE_CONFIG = {
   screens: 10,
-  marketBaseline: 3_250,
   season: "SHOULDER" as const,
   ticketPrice: 13,
   concessionPerCap: 7,
@@ -34,19 +33,31 @@ describe("theatre model", () => {
     expect(next.INDIE_HOLDOVER).toBeLessThan(DEFAULT_SCREEN_ALLOCATION.INDIE_HOLDOVER);
   });
 
-  it("moves weekly attendance with market size and season", () => {
+  it("moves weekly attendance with season and lineup", () => {
     const base = calculateTheaterEconomics(BASE_CONFIG);
-    const biggerMarket = calculateTheaterEconomics({
-      ...BASE_CONFIG,
-      marketBaseline: 4_000,
-    });
     const summer = calculateTheaterEconomics({
       ...BASE_CONFIG,
       season: "SUMMER",
     });
+    const tentpoleHeavy = calculateTheaterEconomics({
+      ...BASE_CONFIG,
+      screenAllocation: rebalanceAllocationForCategory(
+        DEFAULT_SCREEN_ALLOCATION,
+        10,
+        "TENTPOLE",
+        6,
+      ),
+    });
 
-    expect(biggerMarket.weeklyAttendance).toBeGreaterThan(base.weeklyAttendance);
     expect(summer.weeklyAttendance).toBeGreaterThan(base.weeklyAttendance);
+    expect(tentpoleHeavy.weeklyAttendance).toBeGreaterThan(base.weeklyAttendance);
+  });
+
+  it("derives attendance from the same inputs deterministically (no freeform market input)", () => {
+    const first = calculateTheaterEconomics(BASE_CONFIG);
+    const second = calculateTheaterEconomics({ ...BASE_CONFIG });
+
+    expect(second.weeklyAttendance).toBe(first.weeklyAttendance);
   });
 
   it("moves studio cut, concession profit, and margin when the lineup changes", () => {

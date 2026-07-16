@@ -24,12 +24,12 @@ export const Default: Story = {
         <input
           type="text"
           placeholder="Email"
-          className="border-border-default w-full rounded-md border px-3 py-2 text-sm"
+          className="border-default w-full rounded-md border px-3 py-2 text-sm"
         />
         <input
           type="password"
           placeholder="Password"
-          className="border-border-default w-full rounded-md border px-3 py-2 text-sm"
+          className="border-default w-full rounded-md border px-3 py-2 text-sm"
         />
         <button className="bg-accent w-full rounded-md px-4 py-2 text-sm font-medium text-white">
           Sign In
@@ -52,7 +52,7 @@ export const WithoutHelperText: Story = {
         <input
           type="text"
           placeholder="Email"
-          className="border-border-default w-full rounded-md border px-3 py-2 text-sm"
+          className="border-default w-full rounded-md border px-3 py-2 text-sm"
         />
         <button className="bg-accent w-full rounded-md px-4 py-2 text-sm font-medium text-white">
           Sign Up
@@ -71,7 +71,7 @@ export const WithHelperText: Story = {
         <input
           type="email"
           placeholder="Email address"
-          className="border-border-default w-full rounded-md border px-3 py-2 text-sm"
+          className="border-default w-full rounded-md border px-3 py-2 text-sm"
         />
         <button className="bg-accent w-full rounded-md px-4 py-2 text-sm font-medium text-white">
           Continue
@@ -95,7 +95,7 @@ export const WithCustomContent: Story = {
                 key={i}
                 type="text"
                 maxLength={1}
-                className="border-border-default h-8 w-8 rounded-md border text-center text-sm"
+                className="border-default h-8 w-8 rounded-md border text-center text-sm"
               />
             ))}
           </div>

@@ -103,7 +103,7 @@ export default function FeeOrUpfront(): JSX.Element {
             />
           </div>
 
-          <div className="border-border border-t pt-3">
+          <div className="border border-t pt-3">
             <p className="text-muted-foreground mb-0.5 text-[10px] tracking-wide uppercase">
               Total
             </p>
@@ -178,7 +178,7 @@ export default function FeeOrUpfront(): JSX.Element {
             />
           </div>
 
-          <div className="border-border border-t pt-3">
+          <div className="border border-t pt-3">
             <p className="text-muted-foreground mb-0.5 text-[10px] tracking-wide uppercase">
               Total
             </p>

@@ -32,13 +32,13 @@ export default function Manifesto() {
   return (
     <div className="page-bleed">
       {/* Hero */}
-      <section className="content-section content-section-hero">
+      <section className="section section-hero">
         <ManifestoHeroHeadline />
         <p className="body-1 text-muted-foreground max-w-2xl">{copy.hero.body}</p>
       </section>
 
       {/* Tenets — single-column editorial list, one idea at a time */}
-      <section className="content-section gap-12">
+      <section className="section gap-12">
         <ol className="flex flex-col gap-12">
           {copy.tenets.items.map((tenet, index) => (
             <li
@@ -58,7 +58,7 @@ export default function Manifesto() {
       </section>
 
       {/* Closing pull-quote */}
-      <section className="content-section content-section-hero border-b-0">
+      <section className="section section-hero border-b-0">
         <blockquote className="display-2 text-accent max-w-3xl">
           &ldquo;{copy.quote}&rdquo;
         </blockquote>

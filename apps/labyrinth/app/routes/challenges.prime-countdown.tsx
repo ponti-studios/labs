@@ -120,7 +120,7 @@ export default function PrimeCountdown(): JSX.Element {
                     className={`inline-flex h-10 w-10 items-center justify-center rounded-lg border font-mono text-sm font-medium ${
                       entry.isPrime
                         ? "border-green-300 bg-green-50 text-green-700"
-                        : "bg-muted/40 border-border text-muted-foreground"
+                        : "bg-muted/40 border text-muted-foreground"
                     }`}
                   >
                     {entry.value}

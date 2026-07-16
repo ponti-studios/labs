@@ -15,44 +15,145 @@
   @apply flex w-full flex-col;
 }
 
-.content-stack {
+.layout-stack {
   @apply flex flex-col gap-4;
 }
 
-.content-list-row {
-  @apply flex gap-4 px-2 py-4 md:py-5;
+.list-row {
+  @apply flex gap-4 px-0 py-6 md:gap-6 md:py-8;
 }
 
-.content-list-media {
-  @apply border-border/60 bg-bg-surface relative isolate flex shrink-0 items-center justify-center overflow-hidden rounded-lg border p-2 shadow-sm;
+.list-media {
+  @apply border-subtle bg-bg-surface relative isolate flex shrink-0 items-center justify-center overflow-hidden rounded-md border p-2 shadow-none;
 }
 
-.content-list-media-wide {
+.list-media-wide {
   @apply h-14 w-32;
 }
 
-.content-list-media-square {
-  @apply size-12 sm:size-14;
+.list-media-square {
+  @apply size-10 sm:size-12;
 }
 
-.content-list-media-placeholder {
+.list-media-placeholder {
   @apply pointer-events-none absolute inset-0 flex items-center justify-center gap-1.5 transition-opacity duration-150;
 }
 
-.content-section {
-  @apply border-border/60 flex flex-col gap-4 border-b px-4 py-12 md:px-6 md:py-16;
+.section {
+  @apply border-subtle flex flex-col gap-4 border-b px-4 py-12 md:px-6 md:py-16;
 }
 
-.content-section-hero {
+.section-hero {
   @apply gap-6 py-16 md:py-20;
 }
 
-.content-section-compact {
+.detail-hero {
+  @apply gap-4 py-10 md:gap-6 md:py-16;
+}
+
+.section-compact {
   @apply gap-4 py-8 md:py-12;
 }
 
-.content-navigation {
-  @apply border-border/40 flex justify-between border-t pt-10 md:pt-12;
+.detail-navigation {
+  @apply flex flex-col gap-6 sm:flex-row sm:justify-between;
+}
+
+/* Overlay material: an intentional surface, not a raw token name in markup. */
+.overlay-backdrop {
+  background: var(--color-bg-overlay);
+  backdrop-filter: blur(8px) saturate(85%);
+}
+
+.sheet-edge-left::before,
+.sheet-edge-right::before {
+  top: 0;
+  bottom: 0;
+  width: 9rem;
+  background: radial-gradient(
+    ellipse at center,
+    color-mix(in srgb, var(--color-accent) 14%, transparent),
+    transparent 70%
+  );
+}
+
+.sheet-edge-left::before {
+  left: -5rem;
+}
+
+.sheet-edge-right::before {
+  right: -5rem;
+}
+
+.sheet-edge-top::before,
+.sheet-edge-bottom::before {
+  right: 0;
+  left: 0;
+  height: 9rem;
+  background: radial-gradient(
+    ellipse at center,
+    color-mix(in srgb, var(--color-accent) 14%, transparent),
+    transparent 70%
+  );
+}
+
+.sheet-edge-top::before {
+  top: -5rem;
+}
+
+.sheet-edge-bottom::before {
+  bottom: -5rem;
+}
+
+.sheet-edge-top::after,
+.sheet-edge-bottom::after {
+  right: 8%;
+  left: 8%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--color-foreground) 24%, transparent) 32%,
+    color-mix(in srgb, var(--color-accent) 40%, transparent) 50%,
+    color-mix(in srgb, var(--color-foreground) 24%, transparent) 68%,
+    transparent
+  );
+}
+
+.sheet-edge-top::after {
+  top: 0;
+}
+
+.sheet-edge-bottom::after {
+  bottom: 0;
+}
+
+.sheet-edge-left::after,
+.sheet-edge-right::after {
+  top: 8%;
+  bottom: 8%;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    color-mix(in srgb, var(--color-foreground) 24%, transparent) 32%,
+    color-mix(in srgb, var(--color-accent) 40%, transparent) 50%,
+    color-mix(in srgb, var(--color-foreground) 24%, transparent) 68%,
+    transparent
+  );
+}
+
+.sheet-edge-left::after {
+  left: 0;
+}
+
+.sheet-edge-right::after {
+  right: 0;
+}
+
+.sheet-glass-control {
+  background: color-mix(in srgb, var(--color-bg-elevated) 62%, transparent);
+  backdrop-filter: blur(12px);
 }
 
 @theme {

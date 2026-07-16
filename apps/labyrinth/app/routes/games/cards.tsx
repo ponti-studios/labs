@@ -78,7 +78,7 @@ function CardFace({
   return (
     <div
       className={cn(
-        "border-border bg-background flex w-15 flex-col items-center justify-center rounded-md border p-1",
+        "border bg-background flex w-15 flex-col items-center justify-center rounded-md border p-1",
         {
           "border-green-500": isWinner,
           "text-red-500": card.suit === "♥" || card.suit === "♦",
@@ -95,7 +95,7 @@ function CardFace({
 function CardBack({ index }: { index: number }) {
   return (
     <div
-      className="border-border flex w-15 flex-col items-center justify-center rounded-md border bg-slate-700 p-1 select-none"
+      className="border flex w-15 flex-col items-center justify-center rounded-md border bg-slate-700 p-1 select-none"
       style={{ animation: "fade-slide-in 300ms ease-out both", animationDelay: `${index * 80}ms` }}
     >
       <span className="text-xl text-slate-400">?</span>

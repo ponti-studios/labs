@@ -109,7 +109,7 @@ export default function OutlierDetectionPage() {
       <div className="flex items-center gap-3">
         <label className="ui-data-label">Metric</label>
         <Select value={selectedMetric} onValueChange={setSelectedMetric}>
-          <SelectTrigger className="border-border bg-card text-foreground h-7 w-52 rounded text-xs">
+          <SelectTrigger className="border bg-card text-foreground h-7 w-52 rounded text-xs">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -176,7 +176,7 @@ export default function OutlierDetectionPage() {
                 {data.outliers.map((outlier) => (
                   <div
                     key={`${outlier.date}-${outlier.metric}`}
-                    className="border-border flex items-start justify-between gap-4 border-b py-2.5 last:border-0"
+                    className="border flex items-start justify-between gap-4 border-b py-2.5 last:border-0"
                   >
                     <div className="min-w-0">
                       <div className="mb-0.5 flex items-center gap-2">
@@ -213,7 +213,7 @@ export default function OutlierDetectionPage() {
                 {data.dataQualityIssues.map((issue) => (
                   <div
                     key={`${issue.date}-${issue.issue}`}
-                    className="border-border flex items-start justify-between gap-4 border-b py-2.5 last:border-0"
+                    className="border flex items-start justify-between gap-4 border-b py-2.5 last:border-0"
                   >
                     <div className="min-w-0">
                       <div className="mb-0.5 flex items-center gap-2">

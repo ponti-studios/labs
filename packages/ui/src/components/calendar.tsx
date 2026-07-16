@@ -19,9 +19,9 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         caption_label: "text-sm font-medium",
         nav: "absolute inset-x-4 top-4 flex items-center justify-between",
         button_previous:
-          "void-hover void-focus inline-flex size-8 p-2 items-center justify-center rounded-full border border-border bg-background text-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [--color-interaction-hover-bg:var(--color-accent)] [--color-interaction-hover-text:var(--color-accent-foreground)] [--color-interaction-hover-border:var(--color-accent)]",
+          "void-hover void-focus inline-flex size-8 p-2 items-center justify-center rounded-full border border bg-background text-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [--color-interaction-hover-bg:var(--color-accent)] [--color-interaction-hover-text:var(--color-accent-foreground)] [--color-interaction-hover-border:var(--color-accent)]",
         button_next:
-          "void-hover void-focus inline-flex size-8 p-2 items-center justify-center rounded-full border border-border bg-background text-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [--color-interaction-hover-bg:var(--color-accent)] [--color-interaction-hover-text:var(--color-accent-foreground)] [--color-interaction-hover-border:var(--color-accent)]",
+          "void-hover void-focus inline-flex size-8 p-2 items-center justify-center rounded-full border border bg-background text-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [--color-interaction-hover-bg:var(--color-accent)] [--color-interaction-hover-text:var(--color-accent-foreground)] [--color-interaction-hover-border:var(--color-accent)]",
         month_grid: "w-full border-collapse",
         weekdays: "flex",
         weekday:

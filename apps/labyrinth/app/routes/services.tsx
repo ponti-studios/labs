@@ -31,7 +31,7 @@ function ServicesHeroHeadline() {
 export default function Services() {
   return (
     <div className="page-bleed">
-      <section className="content-section content-section-hero">
+      <section className="section section-hero">
         <ServicesHeroHeadline />
 
         <div className="flex flex-wrap items-center gap-6 pt-2">
@@ -51,7 +51,7 @@ export default function Services() {
       </section>
 
       {/* Services — editorial catalog, same for every visitor */}
-      <section className="content-section gap-12">
+      <section className="section gap-12">
         <div className="flex flex-col gap-3">
           <h2 className="heading-2 text-foreground">{copy.services.title}</h2>
           <p className="body-2 text-muted-foreground max-w-2xl">{copy.services.intro}</p>
@@ -89,7 +89,7 @@ export default function Services() {
       </section>
 
       {/* Process — quiet, linear, same for everyone */}
-      <section className="content-section gap-10">
+      <section className="section gap-10">
         <div className="flex flex-col gap-3">
           <h2 className="heading-2 text-foreground">{copy.process.title}</h2>
           <p className="body-2 text-muted-foreground max-w-2xl">{copy.process.intro}</p>
@@ -110,7 +110,7 @@ export default function Services() {
       </section>
 
       {/* Closing CTA */}
-      <section className="content-section content-section-hero">
+      <section className="section section-hero">
         <h2 className="display-2 text-foreground max-w-3xl">{copy.cta.title}</h2>
         <p className="body-1 text-muted-foreground max-w-xl">{copy.cta.body}</p>
         <div className="flex flex-wrap items-center gap-6 pt-2">

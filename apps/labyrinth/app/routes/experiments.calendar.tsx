@@ -167,7 +167,7 @@ export default function CalendarExperiment() {
   return (
     <main className="bg-background text-foreground min-h-screen px-4 pt-4 pb-24 md:px-6 md:pt-6">
       <div className="mx-auto max-w-3xl">
-        <header className="border-border/60 mb-4 flex items-start justify-between gap-4 border-b pb-4">
+        <header className="border-subtle mb-4 flex items-start justify-between gap-4 border-b pb-4">
           <div>
             <p className="ui-data-label mb-1">Time, as it is lived</p>
             <h1 className="heading-2">Your day in one stream.</h1>

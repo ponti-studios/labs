@@ -127,7 +127,7 @@ function ResultRow({
 
   return (
     <article
-      className="group border-border hover:bg-muted/40 relative -mx-4 grid items-start gap-4 rounded-lg border-b px-4 py-5 transition-colors duration-150 last:border-0 md:-mx-6 md:grid-cols-[2rem_minmax(0,1fr)_5rem] md:px-6"
+      className="group border hover:bg-muted/40 relative -mx-4 grid items-start gap-4 rounded-lg border-b px-4 py-5 transition-colors duration-150 last:border-0 md:-mx-6 md:grid-cols-[2rem_minmax(0,1fr)_5rem] md:px-6"
       style={{
         animation: "fade-slide-in 200ms cubic-bezier(0,0,0.2,1) both",
         animationDelay: `${index * 30}ms`,
@@ -195,7 +195,7 @@ function ResultSkeletonRow({ index }: { index: number }) {
   return (
     <article
       aria-hidden="true"
-      className="border-border grid items-start gap-4 border-b py-5 last:border-0 md:grid-cols-[2rem_minmax(0,1fr)_5rem]"
+      className="border grid items-start gap-4 border-b py-5 last:border-0 md:grid-cols-[2rem_minmax(0,1fr)_5rem]"
       style={{ opacity: Math.max(0.3, 1 - index * 0.15) }}
     >
       <div className="hidden md:block" />
@@ -320,7 +320,7 @@ export default function SearchStudio() {
               placeholder="Search titles, stars, studios, franchises…"
               autoComplete="off"
               spellCheck="false"
-              className="border-border bg-background text-foreground placeholder:text-muted-foreground/60 focus:border-ring/50 focus:ring-ring/30 h-14 w-full rounded-xl border pr-14 pl-[3.25rem] text-[16px] transition-[border-color,box-shadow] duration-150 focus:shadow-[0_0_0_4px_var(--color-ring,rgba(160,112,58,0.12))] focus:ring-2 focus:outline-none"
+              className="border bg-background text-foreground placeholder:text-muted-foreground/60 focus:border-ring/50 focus:ring-ring/30 h-14 w-full rounded-xl border pr-14 pl-[3.25rem] text-[16px] transition-[border-color,box-shadow] duration-150 focus:shadow-[0_0_0_4px_var(--color-ring,rgba(160,112,58,0.12))] focus:ring-2 focus:outline-none"
             />
             {query.length > 0 && (
               <button
@@ -415,7 +415,7 @@ export default function SearchStudio() {
             {/* Sort + pagination */}
             <div className="flex items-center gap-2">
               <Select value={sort} onValueChange={(v) => handleSortChange(v as SearchSortMode)}>
-                <SelectTrigger className="border-border bg-background h-9 w-[9.5rem] text-[13px]">
+                <SelectTrigger className="border bg-background h-9 w-[9.5rem] text-[13px]">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
                 <SelectContent>
@@ -427,7 +427,7 @@ export default function SearchStudio() {
                 </SelectContent>
               </Select>
 
-              <div className="border-border divide-border flex items-center divide-x overflow-hidden rounded-lg border">
+              <div className="border divide-border flex items-center divide-x overflow-hidden rounded-lg border">
                 <button
                   type="button"
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -459,7 +459,7 @@ export default function SearchStudio() {
           {isLoading ? (
             <div>
               {/* Column header */}
-              <div className="border-border hidden gap-4 border-b pb-3 md:grid md:grid-cols-[2rem_minmax(0,1fr)_5rem]">
+              <div className="border hidden gap-4 border-b pb-3 md:grid md:grid-cols-[2rem_minmax(0,1fr)_5rem]">
                 <div />
                 <span className="text-muted-foreground/50 text-[11px] font-medium tracking-[0.08em] uppercase">
                   Result
@@ -474,7 +474,7 @@ export default function SearchStudio() {
             </div>
           ) : visibleResults.length === 0 ? (
             <div className="flex min-h-[28rem] flex-col items-center justify-center gap-4 text-center">
-              <div className="border-border bg-muted/30 flex h-16 w-16 items-center justify-center rounded-2xl border border-dashed">
+              <div className="border bg-muted/30 flex h-16 w-16 items-center justify-center rounded-2xl border border-dashed">
                 <LucideSearch className="text-muted-foreground/40 h-7 w-7" />
               </div>
               <div className="max-w-[22rem] space-y-1.5">
@@ -490,7 +490,7 @@ export default function SearchStudio() {
                 <button
                   type="button"
                   onClick={clearFilters}
-                  className="border-border text-foreground hover:bg-muted focus-visible:ring-ring rounded-lg border px-4 py-2 text-[13px] font-medium transition-colors duration-150 focus-visible:ring-2 focus-visible:outline-none"
+                  className="border text-foreground hover:bg-muted focus-visible:ring-ring rounded-lg border px-4 py-2 text-[13px] font-medium transition-colors duration-150 focus-visible:ring-2 focus-visible:outline-none"
                 >
                   Clear filters
                 </button>
@@ -506,7 +506,7 @@ export default function SearchStudio() {
           ) : (
             <div>
               {/* Column header */}
-              <div className="border-border hidden gap-4 border-b pb-3 md:grid md:grid-cols-[2rem_minmax(0,1fr)_5rem]">
+              <div className="border hidden gap-4 border-b pb-3 md:grid md:grid-cols-[2rem_minmax(0,1fr)_5rem]">
                 <div />
                 <span className="text-muted-foreground/50 text-[11px] font-medium tracking-[0.08em] uppercase">
                   {totalResults > 0
@@ -524,7 +524,7 @@ export default function SearchStudio() {
 
               {/* Footer pagination */}
               {(data?.hasPrev || data?.hasNext) && (
-                <div className="border-border mt-2 flex items-center justify-between border-t pt-6">
+                <div className="border mt-2 flex items-center justify-between border-t pt-6">
                   <button
                     type="button"
                     onClick={() => setPage((p) => Math.max(1, p - 1))}

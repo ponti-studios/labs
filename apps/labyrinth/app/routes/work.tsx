@@ -17,21 +17,21 @@ export function meta(): Array<{
 export default function Work() {
   return (
     <div className="page-shell">
-      <section className="content-stack">
+      <section className="layout-stack">
         <h1 className="display-1 text-foreground max-w-4xl">{copy.hero.title}</h1>
       </section>
 
-      <section className="content-stack">
-        <div className="border-border/40 divide-border/40 divide-y border-b">
+      <section className="layout-stack">
+        <div className="border-subtle divide-border-subtle divide-y border-b">
           {caseSnapshots.map((snapshot) => (
             <div
               key={snapshot.slug}
-              className="content-list-row group flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
+              className="list-row group"
             >
               <Link
                 to={`/work/${snapshot.slug}`}
                 prefetch="intent"
-                className="hover:bg-muted/20 focus-visible:outline-ring flex min-w-0 flex-1 flex-row items-center gap-3 transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-2"
+                className="hover:bg-muted/20 focus-visible:outline-ring flex min-w-0 flex-1 flex-row items-start gap-4 transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-2 md:gap-6"
               >
                 {caseLogos[snapshot.slug] ? (
                   <ListRowMedia
@@ -40,12 +40,14 @@ export default function Work() {
                     variant="square"
                   />
                 ) : null}
-                <div className="flex min-w-0 flex-col gap-1">
-                  <span className="body-4 text-muted-foreground">{snapshot.industry}</span>
-                  <h3 className="heading-3 text-foreground group-hover:text-accent transition-colors">
+                <div className="flex min-w-0 flex-1 flex-col gap-1">
+                  <span className="body-4 text-muted-foreground uppercase tracking-wide">
+                    {snapshot.industry}
+                  </span>
+                  <h3 className="heading-2 text-foreground group-hover:text-accent transition-colors motion-reduce:transition-none">
                     {snapshot.client}
                   </h3>
-                  <p className="body-3 text-muted-foreground max-w-2xl">{snapshot.description}</p>
+                  <p className="body-2 text-muted-foreground max-w-2xl">{snapshot.description}</p>
                 </div>
               </Link>
             </div>

@@ -171,8 +171,8 @@ export function DropZone({
   const frameTone = cn(
     showDragging && "border-primary bg-primary/5",
     status === "failed" && !showDragging && "border-destructive/50 bg-destructive/5",
-    status === "busy" && "border-border bg-muted/30",
-    status !== "failed" && status !== "busy" && !showDragging && "border-border bg-card",
+    status === "busy" && "border bg-muted/30",
+    status !== "failed" && status !== "busy" && !showDragging && "border bg-card",
   );
 
   return (

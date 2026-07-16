@@ -193,7 +193,7 @@ export default function SeasonalPatternsPage() {
               <p className="ui-data-label mb-3">Insights</p>
               <div className="space-y-3">
                 {data.insights.map((insight) => (
-                  <div key={insight.pattern} className="border-border border-l-2 py-0.5 pl-4">
+                  <div key={insight.pattern} className="border border-l-2 py-0.5 pl-4">
                     <p className="text-foreground text-sm font-medium">{insight.pattern}</p>
                     <p className="text-muted-foreground mt-0.5 text-xs">{insight.description}</p>
                     <p className="text-muted-foreground mt-1 text-xs">
@@ -208,7 +208,7 @@ export default function SeasonalPatternsPage() {
           <div className="ui-flat-card overflow-hidden p-0">
             <table className="w-full text-xs">
               <thead>
-                <tr className="border-border bg-muted border-b">
+                <tr className="border bg-muted border-b">
                   <th className="ui-data-label px-4 py-2.5 text-left">Month</th>
                   <th className="ui-data-label px-4 py-2.5 text-right">Avg Cases</th>
                   <th className="ui-data-label px-4 py-2.5 text-right">Avg Deaths</th>
@@ -218,7 +218,7 @@ export default function SeasonalPatternsPage() {
               </thead>
               <tbody>
                 {data.analysis.patterns.map((pattern) => (
-                  <tr key={pattern.month} className="border-border border-b last:border-0">
+                  <tr key={pattern.month} className="border border-b last:border-0">
                     <td className="text-foreground px-4 py-2.5 font-medium">{pattern.monthName}</td>
                     <td className="text-muted-foreground px-4 py-2.5 text-right tabular-nums">
                       {pattern.averageCases.toLocaleString()}

@@ -16,7 +16,7 @@ const badgeVariants = cva(
         destructive:
           "bg-destructive text-destructive-foreground [a&]:void-hover [a&]:[--color-interaction-hover-bg:color-mix(in_srgb,var(--color-destructive)_90%,white_10%)] [a&]:[--color-interaction-hover-text:var(--color-destructive-foreground)] [a&]:[--color-interaction-hover-border:transparent] [--color-interaction-focus-shadow:0_0_0_3px_color-mix(in_srgb,var(--color-destructive)_20%,transparent)]",
         outline:
-          "border-border text-foreground [a&]:void-hover [a&]:[--color-interaction-hover-bg:var(--color-accent)] [a&]:[--color-interaction-hover-text:var(--color-accent-foreground)] [a&]:[--color-interaction-hover-border:var(--color-accent)]",
+          "border text-foreground [a&]:void-hover [a&]:[--color-interaction-hover-bg:var(--color-accent)] [a&]:[--color-interaction-hover-text:var(--color-accent-foreground)] [a&]:[--color-interaction-hover-border:var(--color-accent)]",
         ghost:
           "[a&]:void-hover [a&]:[--color-interaction-hover-bg:var(--color-accent)] [a&]:[--color-interaction-hover-text:var(--color-accent-foreground)] [a&]:[--color-interaction-hover-border:transparent]",
         link: "text-primary underline-offset-4 [a&]:void-hover [a&]:hover:underline [a&]:[--color-interaction-hover-bg:transparent] [a&]:[--color-interaction-hover-text:var(--color-secondary-foreground)] [a&]:[--color-interaction-hover-border:transparent]",

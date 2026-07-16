@@ -32,7 +32,7 @@ export function ThemeToggle({
       title={isDark ? "Switch to light mode" : "Switch to dark mode"}
       onClick={() => onModeChange(isDark ? "light" : "dark")}
       className={cn(
-        "border-border bg-background text-foreground inline-flex size-6 shrink-0 items-center justify-center rounded-full border shadow-sm transition-colors",
+        "border bg-background text-foreground inline-flex size-6 shrink-0 items-center justify-center rounded-full border shadow-sm transition-colors",
         isDark
           ? "hover:bg-accent/15 hover:text-warning focus-visible:bg-accent/15 focus-visible:text-warning"
           : "hover:bg-black hover:text-white focus-visible:bg-black focus-visible:text-white",

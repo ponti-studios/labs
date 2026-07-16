@@ -28,7 +28,6 @@
     "@react-router/node": "catalog:",
     "@react-router/serve": "catalog:",
     "@tanstack/react-query": "catalog:",
-    "@tanstack/react-query-devtools": "catalog:",
     "@testing-library/jest-dom": "catalog:",
     "@types/three": "^0.184.1",
     "class-variance-authority": "^0.7.1",
