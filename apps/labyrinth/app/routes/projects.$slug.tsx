@@ -1,6 +1,8 @@
 import { ScrollArea } from "@pontistudios/ui";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, FolderGit2 } from "lucide-react";
 import { Link, useParams } from "react-router";
+import { DetailHeader, DetailNavigation } from "~/components/DetailPage";
+import { ListRowMedia } from "~/components/ListRowMedia";
 import { projects } from "~/data/projects";
 import { t } from "~/translations";
 
@@ -17,175 +19,137 @@ export default function ProjectDetail() {
 
   if (!project) {
     return (
-      <div className="page-shell-detail">
-        <div className="content-stack">
+      <div className="page-bleed">
+        <section className="section section-hero">
           <h1 className="display-1 text-foreground">{t.projects.page.notFound}</h1>
           <Link
             to="/projects"
             prefetch="intent"
-            className="text-accent hover:text-accent/80 underline"
+            className="body-2 text-accent focus-visible:outline-ring min-h-11 w-fit content-center underline underline-offset-4 outline-none focus-visible:outline-2 focus-visible:outline-offset-2"
           >
             ← {t.projects.page.back}
           </Link>
-        </div>
+        </section>
       </div>
     );
   }
 
-  const allSlugs = projects.map((p) => p.slug);
-  const currentIndex = allSlugs.indexOf(project.slug);
-  const prevProject = currentIndex > 0 ? projects[currentIndex - 1] : null;
-  const nextProject = currentIndex < allSlugs.length - 1 ? projects[currentIndex + 1] : null;
+  const currentIndex = projects.findIndex((candidate) => candidate.slug === project.slug);
+  const previous = currentIndex > 0 ? projects[currentIndex - 1] : null;
+  const next = currentIndex < projects.length - 1 ? projects[currentIndex + 1] : null;
+  const hasDistinctUrl = Boolean(project.url && project.url !== project.github);
+  const howItWorks = [...project.keyFeatures, ...project.technicalChallenges];
 
   return (
-    <div className="page-shell-detail">
-      {/* Header */}
-      <div className="content-stack">
-        <Link
-          to="/projects"
-          prefetch="intent"
-          className="text-muted-foreground hover:text-foreground w-fit transition-colors"
-        >
-          ← {t.projects.page.title}
-        </Link>
-        <div className="flex flex-col gap-2">
-          <h1 className="display-1 text-foreground">{project.name}</h1>
-          <div className="flex flex-wrap gap-4">
-            {project.github && (
-              <a
-                href={project.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="body-4 text-muted-foreground hover:text-accent flex items-center gap-1.5 transition-colors"
-              >
-                <ExternalLink size={14} />
-                {project.github.replace("https://", "")}
-              </a>
-            )}
-            {project.url && (
+    <div className="page-bleed">
+      <DetailHeader
+        back={
+          <Link
+            to="/projects"
+            prefetch="intent"
+            className="body-3 text-muted-foreground hover:text-foreground focus-visible:outline-ring min-h-11 w-fit content-center outline-none focus-visible:outline-2 focus-visible:outline-offset-2"
+          >
+            ← {t.projects.page.title}
+          </Link>
+        }
+        media={
+          project.logo ? (
+            <ListRowMedia
+              fallback={project.name.slice(0, 2).toUpperCase()}
+              loading="eager"
+              src={project.logo}
+            />
+          ) : null
+        }
+        title={project.name}
+        metadata={
+          <span className="flex flex-wrap gap-x-4 gap-y-2">
+            <a
+              href={project.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-accent focus-visible:outline-ring inline-flex min-h-11 items-center gap-2 underline-offset-4 hover:underline outline-none focus-visible:outline-2 focus-visible:outline-offset-2"
+            >
+              {t.projects.page.repository}
+              <FolderGit2 size={16} aria-hidden="true" />
+            </a>
+            {hasDistinctUrl && project.url ? (
               <a
                 href={project.url}
                 target={project.url.startsWith("http") ? "_blank" : undefined}
                 rel={project.url.startsWith("http") ? "noopener noreferrer" : undefined}
-                className="body-4 text-muted-foreground hover:text-accent flex items-center gap-1.5 transition-colors"
+                className="hover:text-accent focus-visible:outline-ring inline-flex min-h-11 items-center gap-2 underline-offset-4 hover:underline outline-none focus-visible:outline-2 focus-visible:outline-offset-2"
               >
-                <ExternalLink size={14} />
-                {project.url.replace("https://", "")}
+                {t.projects.page.liveProject}
+                <ExternalLink size={16} aria-hidden="true" />
               </a>
-            )}
-          </div>
-        </div>
-      </div>
+            ) : null}
+          </span>
+        }
+        summary={project.shortDescription}
+      />
 
-      {/* Main Content */}
-      <div className="grid gap-12 lg:grid-cols-3">
-        {/* Left Column - Description */}
-        <div className="flex flex-col gap-8 lg:col-span-2">
-          {/* The Problem */}
-          <section className="content-stack">
-            <h2 className="heading-2 text-foreground">{t.projects.page.problem}</h2>
-            <p className="body-1 text-muted-foreground">{project.problem}</p>
-          </section>
+      <section className="section">
+        <h2 className="heading-2 text-foreground">{t.projects.page.problem}</h2>
+        <p className="body-1 text-muted-foreground max-w-2xl">{project.problem}</p>
+      </section>
 
-          {/* The Solution */}
-          {project.solution && (
-            <section className="content-stack">
-              <h2 className="heading-2 text-foreground">{t.projects.page.solution}</h2>
-              <p className="body-1 text-muted-foreground">{project.solution}</p>
-            </section>
-          )}
+      {project.solution ? (
+        <section className="section">
+          <h2 className="heading-2 text-foreground">{t.projects.page.solution}</h2>
+          <p className="body-1 text-muted-foreground max-w-2xl">{project.solution}</p>
+        </section>
+      ) : null}
 
-          {/* Key Features */}
-          {project.keyFeatures.length > 0 && (
-            <section className="content-stack">
-              <h2 className="heading-2 text-foreground">{t.projects.page.howItWorks}</h2>
-              <ul className="flex flex-col gap-3">
-                {project.keyFeatures.map((feature, idx) => (
-                  <li key={idx} className="flex gap-3">
-                    <span className="text-accent mt-1">•</span>
-                    <span className="body-1 text-muted-foreground">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-
-          {/* Engineering Challenges */}
-          {project.technicalChallenges.length > 0 && (
-            <section className="content-stack">
-              <h2 className="heading-2 text-foreground">{t.projects.page.engineeringChallenges}</h2>
-              <ul className="flex flex-col gap-3">
-                {project.technicalChallenges.map((point, idx) => (
-                  <li key={idx} className="flex gap-3">
-                    <span className="text-accent mt-1">—</span>
-                    <span className="body-1 text-muted-foreground">{point}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-        </div>
-
-        {/* Right Column - Sidebar */}
-        <div className="flex flex-col gap-8" />
-      </div>
-
-      {/* Screenshots */}
-      {project.screenshots && project.screenshots.length > 0 && (
-        <section className="content-stack">
-          <h2 className="heading-2 text-foreground">Screenshots</h2>
-          <ScrollArea className="gap-4" snap="start">
-            {project.screenshots.map((src, idx) => (
+      {project.screenshots && project.screenshots.length > 0 ? (
+        <section className="section">
+          <h2 className="heading-2 text-foreground">{t.projects.page.screenshots}</h2>
+          <ScrollArea className="-mx-4 gap-4 px-4 md:mx-0 md:px-0" snap="start">
+            {project.screenshots.map((src, index) => (
               <a
-                key={idx}
+                key={src}
                 href={src}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="border-border/40 hover:border-accent/40 aspect-video w-80 shrink-0 overflow-hidden rounded-lg border transition-colors"
+                className="border-subtle hover:border-accent/40 focus-visible:outline-ring aspect-video w-72 shrink-0 overflow-hidden rounded-lg border outline-none focus-visible:outline-2 focus-visible:outline-offset-2 sm:w-80"
               >
                 <img
                   src={src}
-                  alt={`${project.name} screenshot ${idx + 1}`}
-                  className="h-full w-full object-cover"
+                  alt={`${project.name} screenshot ${index + 1}`}
+                  width={1280}
+                  height={720}
                   loading="lazy"
+                  decoding="async"
+                  sizes="(min-width: 640px) 20rem, 18rem"
+                  className="h-full w-full object-cover"
                 />
               </a>
             ))}
           </ScrollArea>
         </section>
-      )}
+      ) : null}
 
-      {/* Navigation */}
-      <div className="content-navigation">
-        {prevProject ? (
-          <Link
-            to={`/projects/${prevProject.slug}`}
-            prefetch="intent"
-            className="hover:text-accent group flex flex-col gap-1 transition-colors"
-          >
-            <div className="body-4 text-muted-foreground group-hover:text-accent">
-              ← {t.projects.page.previous}
-            </div>
-            <div className="heading-3 text-foreground">{prevProject.name}</div>
-          </Link>
-        ) : (
-          <div />
-        )}
-        {nextProject ? (
-          <Link
-            to={`/projects/${nextProject.slug}`}
-            prefetch="intent"
-            className="hover:text-accent group flex flex-col gap-1 text-right transition-colors"
-          >
-            <div className="body-4 text-muted-foreground group-hover:text-accent">
-              {t.projects.page.next} →
-            </div>
-            <div className="heading-3 text-foreground">{nextProject.name}</div>
-          </Link>
-        ) : (
-          <div />
-        )}
-      </div>
+      {howItWorks.length > 0 ? (
+        <section className="section gap-8">
+          <h2 className="heading-2 text-foreground">{t.projects.page.howItWorks}</h2>
+          <ul className="flex max-w-2xl flex-col gap-3">
+            {howItWorks.map((point) => (
+              <li key={`${project.slug}-${point}`} className="flex gap-3">
+                <span className="text-accent mt-1" aria-hidden="true">
+                  •
+                </span>
+                <span className="body-1 text-muted-foreground">{point}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      <DetailNavigation
+        ariaLabel="Project navigation"
+        previous={previous ? { label: t.projects.page.previous, title: previous.name, to: `/projects/${previous.slug}` } : null}
+        next={next ? { label: t.projects.page.next, title: next.name, to: `/projects/${next.slug}` } : null}
+      />
     </div>
   );
 }

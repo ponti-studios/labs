@@ -97,7 +97,7 @@ function TemporalContext({ context }: { context: CalendarEventContext }) {
   const Icon = iconForContext[context.icon];
 
   return (
-    <div className="border-border/60 min-w-0 border-t pt-2">
+    <div className="border-subtle min-w-0 border-t pt-2">
       <div className="subheading-3 text-muted-foreground flex items-center gap-1.5 uppercase">
         <Icon aria-hidden="true" className="size-3.5 shrink-0" />
         <span>{context.label}</span>
@@ -119,8 +119,8 @@ function TemporalMoment({ event, nowMinute }: { event: CalendarEvent; nowMinute:
         isPresent
           ? "border-accent bg-accent/5 py-6"
           : isPast
-            ? "border-border/50 py-3"
-            : "border-border/70 border-dashed py-4"
+            ? "border-subtle py-3"
+            : "border-subtle border-dashed py-4"
       }`}
       data-event-condition={condition}
       data-event-state={isPresent ? "current" : condition}
@@ -190,7 +190,7 @@ function DayLandmark({
       <header className="flex items-center gap-3 py-8">
         <h2 className="ui-data-label text-foreground">{formatDay(date, offset)}</h2>
         <p className="body-3 text-muted-foreground">{formatDate(date)}</p>
-        <div className="border-border/60 ml-1 h-px flex-1 border-t" />
+        <div className="border-subtle ml-1 h-px flex-1 border-t" />
       </header>
 
       <div className="space-y-3">
@@ -241,7 +241,7 @@ export function Calendar({ getEvents }: CalendarProps) {
           type="button"
           onClick={() => scrollToNow()}
           aria-label="Return to now"
-          className="border-border bg-surface text-foreground hover:bg-elevated focus-visible:outline-ring inline-flex min-h-11 shrink-0 items-center gap-2 rounded-md border px-3 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+          className="border bg-surface text-foreground hover:bg-elevated focus-visible:outline-ring inline-flex min-h-11 shrink-0 items-center gap-2 rounded-md border px-3 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
         >
           <ArrowDown aria-hidden="true" className="size-4" />
           Now

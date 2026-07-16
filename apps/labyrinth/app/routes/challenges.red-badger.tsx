@@ -375,7 +375,7 @@ function GridDisplay({
             backgroundColor: bgColor,
           }}
           className={[
-            "flex items-center justify-center bg-background border-r border-b border-border/50 cursor-pointer transition-colors",
+            "flex items-center justify-center bg-background border-r border-b border-subtle cursor-pointer transition-colors",
             "hover:bg-muted/30 focus:outline-none focus-visible:ring-1 focus-visible:ring-ring",
             displayRow === 0 ? "border-t" : "",
             x === 0 ? "border-l" : "",
@@ -466,8 +466,8 @@ function CommandBuilder({
     `h-12 w-14 rounded border font-mono text-base font-semibold transition-colors
      ${
        disabled
-         ? "border-border/30 text-muted-foreground/30 cursor-not-allowed bg-muted/10"
-         : "border-border bg-background hover:bg-muted/40 active:bg-muted/70 cursor-pointer"
+         ? "border-subtle text-muted-foreground/30 cursor-not-allowed bg-muted/10"
+         : "border bg-background hover:bg-muted/40 active:bg-muted/70 cursor-pointer"
      } ${extra}`;
 
   return (
@@ -585,7 +585,7 @@ function RunLog({ log }: { log: LogEntry[] }) {
   return (
     <table className="w-full border-collapse font-mono text-sm">
       <thead>
-        <tr className="text-muted-foreground border-border border-b text-xs tracking-wide uppercase">
+        <tr className="text-muted-foreground border border-b text-xs tracking-wide uppercase">
           <th className="pb-1 text-left font-normal">Start</th>
           <th className="pb-1 text-left font-normal">Commands</th>
           <th className="pb-1 text-right font-normal">Result</th>
@@ -593,7 +593,7 @@ function RunLog({ log }: { log: LogEntry[] }) {
       </thead>
       <tbody>
         {log.map((e) => (
-          <tr key={e.id} className="border-border/40 border-b">
+          <tr key={e.id} className="border-subtle border-b">
             <td className="text-muted-foreground py-1.5">{e.start}</td>
             <td className="text-muted-foreground/60 py-1.5 text-xs">{e.cmds}</td>
             <td className={`py-1.5 text-right ${e.lost ? "text-red-500" : ""}`}>{e.result}</td>
@@ -664,7 +664,7 @@ export default function RedBadger() {
             ${
               state.mode === "puzzle"
                 ? "border-amber-300 bg-amber-50/50 text-amber-700"
-                : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/40"
+                : "border text-muted-foreground hover:text-foreground hover:border-foreground/40"
             }`}
         >
           {state.mode === "puzzle" ? "★ Puzzle" : "Puzzle mode"}

@@ -22,7 +22,7 @@ export function GenerativeImagePreviewPanel({
 }: GenerativeImagePreviewPanelProps) {
   return (
     <div className="flex h-[calc(100vh-220px)] flex-col lg:col-span-7">
-      <header className="border-border mb-6 flex items-center justify-between border-b pb-6">
+      <header className="border mb-6 flex items-center justify-between border-b pb-6">
         <h1 className="mt-1">Parametric Image Generation</h1>
         <button
           type="button"
@@ -34,7 +34,7 @@ export function GenerativeImagePreviewPanel({
         </button>
       </header>
 
-      <div className="group border-border bg-muted relative flex grow items-center justify-center overflow-hidden rounded border">
+      <div className="group border bg-muted relative flex grow items-center justify-center overflow-hidden rounded border">
         {generatedImage ? (
           <img
             src={generatedImage}
@@ -43,7 +43,7 @@ export function GenerativeImagePreviewPanel({
           />
         ) : (
           <div className="p-8 text-center">
-            <div className="border-border bg-background mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full border">
+            <div className="border bg-background mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full border">
               <Sparkles className="text-muted-foreground" size={32} />
             </div>
             <h3>Ready to Imagine</h3>
@@ -64,7 +64,7 @@ export function GenerativeImagePreviewPanel({
                 link.download = `generative-image-export-${Date.now()}.png`;
                 link.click();
               }}
-              className="border-border bg-background/80 text-foreground hover:bg-background rounded border p-2 backdrop-blur transition-colors"
+              className="border bg-background/80 text-foreground hover:bg-background rounded border p-2 backdrop-blur transition-colors"
               title="Download"
             >
               <Download size={18} />
@@ -81,7 +81,7 @@ export function GenerativeImagePreviewPanel({
       ) : null}
 
       {showPrompt ? (
-        <div className="border-border bg-muted mt-4 h-48 overflow-y-auto rounded border p-4">
+        <div className="border bg-muted mt-4 h-48 overflow-y-auto rounded border p-4">
           <pre className="text-foreground font-mono text-xs">{promptText}</pre>
         </div>
       ) : null}

@@ -3,11 +3,12 @@ import { useEffect, useRef, useState } from "react";
 type ListRowMediaProps = {
   alt?: string;
   fallback: string;
+  loading?: "eager" | "lazy";
   src: string;
   variant?: "square" | "wide";
 };
 
-export function ListRowMedia({ alt = "", fallback, src, variant = "square" }: ListRowMediaProps) {
+export function ListRowMedia({ alt = "", fallback, loading = "lazy", src, variant = "square" }: ListRowMediaProps) {
   const [status, setStatus] = useState<"loading" | "loaded" | "error">("loading");
   const imageRef = useRef<HTMLImageElement>(null);
 
@@ -21,17 +22,16 @@ export function ListRowMedia({ alt = "", fallback, src, variant = "square" }: Li
 
   return (
     <span
-      className={`content-list-media content-list-media-artboard content-list-media-${variant}`}
+      className={`list-media list-media-artboard list-media-${variant}`}
       aria-hidden={alt ? undefined : true}
     >
       <span
-        className={`content-list-media-placeholder text-muted-foreground ${
+        aria-hidden="true"
+        className={`list-media-placeholder ${
           status === "loading" ? "opacity-100" : "opacity-0"
         }`}
       >
-        <span className="bg-muted h-1.5 w-1.5 rounded-full" />
-        <span className="bg-muted h-1.5 w-8 rounded-full" />
-        <span className="bg-muted h-1.5 w-3 rounded-full" />
+        <span className="list-media-pulse" />
       </span>
 
       {status === "error" ? (
@@ -43,7 +43,7 @@ export function ListRowMedia({ alt = "", fallback, src, variant = "square" }: Li
           alt={alt}
           width={256}
           height={256}
-          loading="lazy"
+          loading={loading}
           decoding="async"
           onLoad={() => setStatus("loaded")}
           onError={() => setStatus("error")}

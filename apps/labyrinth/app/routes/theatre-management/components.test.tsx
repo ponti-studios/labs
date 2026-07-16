@@ -37,7 +37,6 @@ afterAll(() => {
 
 const BASE_INPUTS: TheaterInputs = {
   screens: 10,
-  marketBaseline: 3_250,
   season: "SHOULDER",
   ticketPrice: 13,
   concessionPerCap: 7,
@@ -308,10 +307,8 @@ describe("ScreenAllocation", () => {
   const defaultProps = {
     screens: 10,
     allocation: DEFAULT_SCREEN_ALLOCATION as ScreenAllocationMap,
-    marketBaseline: 3_250,
     season: "SHOULDER" as SeasonKey,
     onScreensChange: vi.fn(),
-    onMarketChange: vi.fn(),
     onSeasonChange: vi.fn(),
     onAllocationChange: vi.fn(),
   };

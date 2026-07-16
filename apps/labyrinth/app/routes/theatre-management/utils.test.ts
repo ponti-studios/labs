@@ -13,7 +13,6 @@ import { DEFAULT_SCREEN_ALLOCATION, type TheaterInputs } from "./theatre-model";
 
 const BASE_CONFIG: TheaterInputs = {
   screens: 10,
-  marketBaseline: 3_250,
   season: "SHOULDER",
   ticketPrice: 13,
   concessionPerCap: 7,
@@ -186,24 +185,6 @@ describe("theaterReducer", () => {
     expect(next.screens).toBe(20);
   });
 
-  it("handles SET_MARKET_BASELINE", () => {
-    const action: TheaterAction = { type: "SET_MARKET_BASELINE", payload: 5_000 };
-    const next = theaterReducer(BASE_CONFIG, action);
-    expect(next.marketBaseline).toBe(5_000);
-  });
-
-  it("clamps market baseline to min 1_000", () => {
-    const action: TheaterAction = { type: "SET_MARKET_BASELINE", payload: 500 };
-    const next = theaterReducer(BASE_CONFIG, action);
-    expect(next.marketBaseline).toBe(1_000);
-  });
-
-  it("clamps market baseline to max 10_000", () => {
-    const action: TheaterAction = { type: "SET_MARKET_BASELINE", payload: 15_000 };
-    const next = theaterReducer(BASE_CONFIG, action);
-    expect(next.marketBaseline).toBe(10_000);
-  });
-
   it("handles SET_SEASON", () => {
     const action: TheaterAction = { type: "SET_SEASON", payload: "SUMMER" };
     const next = theaterReducer(BASE_CONFIG, action);
@@ -265,7 +246,6 @@ describe("theaterReducer", () => {
     // Only season changed
     expect(next.season).toBe("HOLIDAY");
     expect(next.screens).toBe(BASE_CONFIG.screens);
-    expect(next.marketBaseline).toBe(BASE_CONFIG.marketBaseline);
     expect(next.ticketPrice).toBe(BASE_CONFIG.ticketPrice);
     expect(next.concessionPerCap).toBe(BASE_CONFIG.concessionPerCap);
   });

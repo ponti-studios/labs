@@ -17,13 +17,13 @@ export default function Faq() {
   return (
     <div className="page-bleed">
       {/* Hero */}
-      <section className="content-section content-section-hero">
+      <section className="section section-hero">
         <h1 className="display-1 text-foreground max-w-4xl">{copy.title}</h1>
         <p className="body-1 text-muted-foreground max-w-2xl">{copy.meta.description}</p>
       </section>
 
       {/* Q&A — editorial stack */}
-      <section className="content-section gap-12">
+      <section className="section gap-12">
         {copy.items.map((faq) => (
           <article key={faq.question} className="flex max-w-3xl flex-col gap-3">
             <h2 className="heading-3 text-foreground">{faq.question}</h2>
@@ -33,7 +33,7 @@ export default function Faq() {
       </section>
 
       {/* Close */}
-      <section className="content-section content-section-hero border-b-0">
+      <section className="section section-hero border-b-0">
         <h2 className="display-2 text-foreground max-w-3xl">{t.services.cta.title}</h2>
         <p className="body-1 text-muted-foreground max-w-xl">{t.services.cta.body}</p>
         <div className="flex flex-wrap items-center gap-6 pt-2">

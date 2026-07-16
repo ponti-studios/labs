@@ -16,7 +16,6 @@ import {
 
 export type TheaterAction =
   | { type: "SET_SCREENS"; payload: number }
-  | { type: "SET_MARKET_BASELINE"; payload: number }
   | { type: "SET_SEASON"; payload: SeasonKey }
   | { type: "SET_TICKET_PRICE"; payload: number }
   | { type: "SET_CONCESSION_PPC"; payload: number }
@@ -24,7 +23,6 @@ export type TheaterAction =
 
 export const INITIAL_CONFIG: TheaterInputs = {
   screens: 10,
-  marketBaseline: 3_250,
   season: "SHOULDER",
   ticketPrice: 13,
   concessionPerCap: 7,
@@ -41,8 +39,6 @@ export function theaterReducer(state: TheaterInputs, action: TheaterAction): The
         screenAllocation: rebalanceAllocationForScreens(state.screenAllocation, screens),
       };
     }
-    case "SET_MARKET_BASELINE":
-      return { ...state, marketBaseline: clamp(action.payload, 1_000, 10_000) };
     case "SET_SEASON":
       return { ...state, season: action.payload };
     case "SET_TICKET_PRICE":

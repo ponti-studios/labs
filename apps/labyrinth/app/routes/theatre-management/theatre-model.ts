@@ -6,7 +6,6 @@ export type SeasonKey = "OFF_PEAK" | "SHOULDER" | "SUMMER" | "HOLIDAY";
 
 export interface TheaterInputs {
   screens: number;
-  marketBaseline: number;
   season: SeasonKey;
   ticketPrice: number;
   concessionPerCap: number;
@@ -42,6 +41,15 @@ export interface TheaterEconomics {
 }
 
 export const SCREEN_CAPACITY = 1_000;
+
+// Weekly demand pool for a representative theater, before lineup and season
+// effects. Used to be a freeform user input (`marketBaseline`) — removed
+// because real theater operators don't know that number in advance, and
+// typing it in made the model feel more precise than it is. This constant
+// is the "lineup + season" model's baseline; a future per-title strength
+// signal (sourced from Hollywood, see screen-allocation-model.md) would
+// live here, not as a market-size guess.
+export const BASE_MARKET_DEMAND = 3_250;
 
 export const MONTHLY_RENT = 25_000;
 export const MONTHLY_UTILITIES = 8_000;
@@ -269,7 +277,7 @@ export function calculateTheaterEconomics(inputs: TheaterInputs): TheaterEconomi
   const lineupMetrics = getLineupMetrics(inputs.screenAllocation);
   const seasonMultiplier = SEASON_OPTIONS[inputs.season].multiplier;
   const maxCapacity = Math.max(inputs.screens * SCREEN_CAPACITY, 1);
-  const marketAdjustedAttendance = Math.round(inputs.marketBaseline * seasonMultiplier);
+  const marketAdjustedAttendance = Math.round(BASE_MARKET_DEMAND * seasonMultiplier);
   const weeklyAttendance = Math.min(
     Math.round(marketAdjustedAttendance * lineupMetrics.lineupDemandMultiplier),
     maxCapacity,

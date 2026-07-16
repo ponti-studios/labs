@@ -40,14 +40,14 @@ const SheetDemo = ({ side }: { side: Side }) => (
         <div className="flex flex-col gap-2">
           <span className="text-sm font-medium">Name</span>
           <input
-            className="border-border placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:outline-none"
+            className="border placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:outline-none"
             placeholder="Jane Doe"
           />
         </div>
         <div className="flex flex-col gap-2">
           <span className="text-sm font-medium">Email</span>
           <input
-            className="border-border placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:outline-none"
+            className="border placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:outline-none"
             placeholder="jane@example.com"
             type="email"
           />

@@ -114,7 +114,7 @@ function ContextBlockCard({
 
   return (
     <div
-      className={`border-border flex flex-col gap-2 rounded-lg border p-4 transition-opacity ${
+      className={`border flex flex-col gap-2 rounded-lg border p-4 transition-opacity ${
         block.enabled ? "opacity-100" : "opacity-40"
       }`}
     >
@@ -350,7 +350,7 @@ export default function ExperimentsLlmInterface(): JSX.Element {
           <h1 className="text-2xl font-bold">Context Chemistry</h1>
           <div className="flex items-center gap-2">
             <Dialog>
-              <DialogTrigger className="border-border text-foreground hover:bg-accent hover:text-accent-foreground focus-visible:border-foreground inline-flex min-h-6 min-w-6 cursor-pointer items-center justify-center gap-2 rounded-md border px-3 text-xs font-medium whitespace-nowrap transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0">
+              <DialogTrigger className="border text-foreground hover:bg-accent hover:text-accent-foreground focus-visible:border-foreground inline-flex min-h-6 min-w-6 cursor-pointer items-center justify-center gap-2 rounded-md border px-3 text-xs font-medium whitespace-nowrap transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0">
                 <HelpCircle />
               </DialogTrigger>
               <DialogContent>

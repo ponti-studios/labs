@@ -18,7 +18,6 @@ class ResizeObserverMock {
 
 const BASE_CONFIG = {
   screens: 10,
-  marketBaseline: 3_250,
   season: "SHOULDER" as const,
   ticketPrice: 13,
   concessionPerCap: 7,

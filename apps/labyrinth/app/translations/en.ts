@@ -32,8 +32,9 @@ export const STUDIO_TRANSLATIONS_EN = {
       problem: "The Problem",
       solution: "The Solution",
       howItWorks: "How It Works",
-      engineeringChallenges: "Engineering Challenges",
       repository: "Repository",
+      liveProject: "Live project",
+      screenshots: "Screenshots",
     },
     entries: {
       kernel: {
@@ -44,14 +45,14 @@ export const STUDIO_TRANSLATIONS_EN = {
         problem:
           "Useful engineering judgment is often trapped in people's heads or buried in documentation. Kernel turns that judgment into skills an AI assistant can invoke for recurring work such as migrations, security reviews, and content production.",
         keyFeatures: [
-          "Skills across mutliple domains (Writing, Music, Image, Development, UI & Brand, Audit, Operations)",
-          "Individual or bulk installation with npx skills add",
-          "Covers engineering, architecture, documentation, and content production",
+          "32 skills across writing, music, image, development, UI, audit, and operations",
+          "Install one skill or the full set with npx skills add",
+          "Turn recurring engineering and content work into callable actions",
         ],
         technicalChallenges: [
-          "Designing precise triggers so 32 skills coexist without collisions",
-          "Keeping the format machine-readable, versioned, and editable by hand",
-          "Validating every skill against real tasks before publishing",
+          "Writing precise triggers so 32 skills can coexist without collisions",
+          "Keeping every skill readable, versioned, and machine-usable",
+          "Testing each skill against real work before publishing it",
         ],
       },
       foundation: {
@@ -62,15 +63,15 @@ export const STUDIO_TRANSLATIONS_EN = {
         problem:
           "Teams needing vector search or geospatial queries were rebuilding PostgreSQL images per project. Foundation provides one tested image and repeatable environments so development and production do not quietly drift apart.",
         keyFeatures: [
-          "Custom PostgreSQL 18 image with pgvector, PostGIS, and pgRouting",
-          "Docker Compose stacks for development, test, and production",
-          "Automated GitHub Actions releases with semantic versioning",
-          "Digest-pinned images and a machine-readable service catalog",
+          "One PostgreSQL 18 image with pgvector, PostGIS, and pgRouting",
+          "Docker Compose environments for development, test, and production",
+          "Automated releases through GitHub Actions and semantic versioning",
+          "Digest-pinned images with a machine-readable service catalog",
         ],
         technicalChallenges: [
-          "Compiling three PostgreSQL extensions into one reliable PostgreSQL 18 image",
-          "Making every deployment reproducible with immutable image digests",
-          "Automating releases so shared infrastructure can update without a manual ritual",
+          "Compiling three extensions into one reliable PostgreSQL image",
+          "Making every deployment reproducible with immutable digests",
+          "Shipping infrastructure updates without a manual release ritual",
         ],
       },
       omiro: {
@@ -81,15 +82,15 @@ export const STUDIO_TRANSLATIONS_EN = {
         problem:
           "Personal knowledge lives scattered across notes, reminders, calendars, and messages. Omiro brings it into one app where everything connects — a task links to a note, a note links to an event, and search finds it all.",
         keyFeatures: [
-          "Unified capture for tasks, notes, events, and ideas",
-          "Connected personal knowledge graph with typed relationships",
-          "Full offline support with local-first architecture",
-          "Built with Expo and React Native for iOS",
+          "Capture tasks, notes, events, and ideas in one place",
+          "Connect everything through typed knowledge-graph relationships",
+          "Keep working offline with a local-first architecture",
+          "Share one product foundation across the iOS experience",
         ],
         technicalChallenges: [
-          "Designing a local-first sync engine that handles offline writes without conflicts",
-          "Modeling an open-ended personal knowledge graph without an unbounded schema",
-          "Making typed business logic reusable between the iOS app and shared packages",
+          "Reconciling offline writes without losing user changes",
+          "Modeling open-ended relationships without an unbounded schema",
+          "Keeping business logic reusable across the app and shared packages",
         ],
       },
       career: {
@@ -100,14 +101,14 @@ export const STUDIO_TRANSLATIONS_EN = {
         problem:
           "Job searches generate a flood of applications, recruiter conversations, and interview loops with no natural place to track them. Career turns that scattered process into a structured pipeline with status tracking and follow-up reminders.",
         keyFeatures: [
-          "Application pipeline with status stages and notes",
-          "Interview scheduling and feedback tracking",
-          "Contact management for recruiters and referrals",
-          "Shared Hominem API for cross-product data access",
+          "Track applications through stages, notes, and follow-ups",
+          "Schedule interviews and keep feedback beside each application",
+          "Keep recruiters and referrals connected to the search",
+          "Share data with the rest of the Hominem product family",
         ],
         technicalChallenges: [
-          "Keeping the application pipeline fast to update while supporting rich notes and history",
-          "Sharing auth and data patterns with Finance and Omiro through the Hominem API",
+          "Making a rich pipeline fast enough for daily updates",
+          "Sharing auth and data patterns across Career, Finance, and Omiro",
         ],
       },
       finance: {
@@ -118,14 +119,14 @@ export const STUDIO_TRANSLATIONS_EN = {
         problem:
           "Personal finance tools are either too simple (mint clones) or too complex (spreadsheet-level). Finance aims for the middle: enough structure to see trends and budgets, simple enough to use weekly.",
         keyFeatures: [
-          "Account aggregation with transaction categorization",
-          "Budget tracking with category-based spending limits",
-          "Net worth trends and monthly summaries",
-          "Shared Hominem API for cross-product data access",
+          "Bring accounts together and categorize transactions",
+          "Set budgets around real spending categories",
+          "See net-worth trends and monthly summaries",
+          "Share the same personal data foundation as sibling products",
         ],
         technicalChallenges: [
-          "Designing a data model that handles account aggregation without third-party dependencies",
-          "Making budget calculations fast and correct across varying transaction volumes",
+          "Modeling account aggregation without relying on third-party dependencies",
+          "Keeping budget calculations fast and correct as data grows",
         ],
       },
       "hominem-api": {
@@ -136,15 +137,15 @@ export const STUDIO_TRANSLATIONS_EN = {
         problem:
           "Three products sharing the same personal data shouldn't each build their own API. The Hominem API provides one server with typed contracts, shared auth, and MCP protocol support so AI agents can access personal data with permission boundaries.",
         keyFeatures: [
-          "Hono HTTP server with typed RPC contracts shared across all clients",
-          "MCP (Model Context Protocol) server for AI agent access",
-          "Shared auth via Better Auth with passkey and OTP support",
-          "PostgreSQL + Drizzle with generated types consumed by all products",
+          "Serve web, mobile, and agents from typed Hono contracts",
+          "Expose personal data through an MCP server with permission checks",
+          "Share Better Auth with passkeys and OTP support",
+          "Generate database types once for every consuming product",
         ],
         technicalChallenges: [
-          "Designing typed RPC contracts that work for web, mobile, and MCP clients",
-          "Adding MCP support as a first-class protocol alongside the HTTP API",
-          "Enforcing permission boundaries when AI agents access personal data",
+          "Keeping one contract coherent across web, mobile, and MCP clients",
+          "Adding MCP as a first-class protocol beside the HTTP API",
+          "Enforcing permission boundaries around agent access to personal data",
         ],
       },
       hollywood: {
@@ -155,15 +156,15 @@ export const STUDIO_TRANSLATIONS_EN = {
         problem:
           "Entertainment research is split across many sources, while the most valuable material arrives as unstructured submissions. Hollywood brings both into one searchable system and extracts useful fields automatically.",
         keyFeatures: [
-          "Ingestion from trade publications, industry directories, and public databases",
-          "Claude-powered extraction from query letters, decks, and submissions",
-          "Unified entity graph for people, companies, projects, and submissions",
-          "Raw payload archiving, JSONL export, and documented REST API",
+          "Ingest trade publications, directories, and public databases",
+          "Extract structure from query letters, decks, and submissions",
+          "Connect people, companies, projects, and submissions in one graph",
+          "Archive raw payloads and export clean JSONL through a documented API",
         ],
         technicalChallenges: [
-          "Normalizing eight-plus source types without losing provenance",
-          "Preserving raw inputs so extraction can be re-run as prompts improve",
-          "Modeling evolving relationships without an unmaintainable schema",
+          "Normalize eight-plus source types without losing provenance",
+          "Preserve raw inputs so extraction can improve over time",
+          "Model evolving relationships without creating an unmaintainable schema",
         ],
       },
       commune: {
@@ -174,15 +175,15 @@ export const STUDIO_TRANSLATIONS_EN = {
         problem:
           "Advice from friends is often shaped by the way a story is told and by existing relationships. Commune separates the account from the decision: an AI creates a neutral version, then friends vote independently and explain their reasoning.",
         keyFeatures: [
-          "AI-assisted neutralization of the original situation",
-          "Anonymous jury with independent agree or disagree votes",
-          "Comments and quorum-based verdict reveal",
-          "Shareable cases with a personal docket for tracking decisions",
+          "Turn a personal story into a neutral decision brief",
+          "Collect independent agree-or-disagree votes from an anonymous jury",
+          "Reveal comments and verdicts once the quorum is reached",
+          "Track and share cases from a personal decision docket",
         ],
         technicalChallenges: [
-          "Removing identifying and persuasive framing without losing the facts",
-          "Preventing early votes from influencing later independent judgments",
-          "Handling anonymous participation while preserving case ownership and vote integrity",
+          "Remove persuasive framing without losing the underlying facts",
+          "Keep early votes from influencing later independent judgments",
+          "Preserve case ownership and vote integrity while keeping participants anonymous",
         ],
       },
       earth: {
@@ -193,15 +194,15 @@ export const STUDIO_TRANSLATIONS_EN = {
         problem:
           "Traffic camera data is useful only when it is easy to locate and inspect. Earth puts a large, changing camera network into a map interface with direct search, camera detail, and live availability state.",
         keyFeatures: [
-          "Interactive MapLibre map with camera locations",
-          "Search by camera name or location",
-          "Live and offline camera availability indicators",
-          "Camera detail views with coordinates and feeds",
+          "Explore camera locations on an interactive MapLibre map",
+          "Find cameras by name or location",
+          "See live and offline availability at a glance",
+          "Open camera details with coordinates and feeds",
         ],
         technicalChallenges: [
-          "Rendering a large geospatial dataset without making the map difficult to use",
-          "Keeping external camera data current while handling unavailable feeds",
-          "Connecting map selection, search results, and detail routes into one workflow",
+          "Render a large geospatial dataset without overwhelming the map",
+          "Keep external camera data current when feeds disappear",
+          "Connect map selection, search, and detail routes into one workflow",
         ],
       },
       health: {
@@ -212,15 +213,15 @@ export const STUDIO_TRANSLATIONS_EN = {
         problem:
           "Health decisions are spread across symptoms, appointments, medication, insurance, and local care options. Health brings those recurring tasks into one practical workspace instead of treating each decision as a separate lookup.",
         keyFeatures: [
-          "Symptom guidance with monitoring and follow-up status",
-          "Appointment scheduling and upcoming-care dashboard",
-          "Medication pen duration calculator",
-          "Hospital lookup and Medicare comparison tools",
+          "Track symptoms with guidance, monitoring, and follow-up",
+          "Manage appointments from one upcoming-care view",
+          "Calculate medication-pen duration before the next dose",
+          "Compare hospitals and Medicare options in context",
         ],
         technicalChallenges: [
-          "Presenting symptom guidance clearly without turning it into a diagnosis",
-          "Keeping monitored symptoms, resolutions, and appointments coherent over time",
-          "Building focused tools for medication planning, hospitals, and Medicare without fragmenting the experience",
+          "Give useful symptom guidance without implying a diagnosis",
+          "Keep symptoms, resolutions, and appointments coherent over time",
+          "Combine medication, hospital, and Medicare tools without fragmenting care",
         ],
       },
       geo: {
@@ -231,15 +232,15 @@ export const STUDIO_TRANSLATIONS_EN = {
         problem:
           "Automated geocoding is fast but ambiguous, while manual review is accurate but slow. Geo combines batch geocoding with a native workflow for checking and correcting results before they enter a dataset.",
         keyFeatures: [
-          "CLI for individual queries and SQLite batch processing",
-          "Native SwiftUI macOS review application",
-          "Apple Maps geocoding with SQLite enrichment",
-          "Search, filtering, bulk operations, and request pacing",
+          "Run individual queries or SQLite-backed batch processing",
+          "Review and correct results in a native SwiftUI macOS app",
+          "Enrich geocoding results with Apple Maps and SQLite",
+          "Search, filter, edit in bulk, and pace requests safely",
         ],
         technicalChallenges: [
-          "Adapting MapKit and CoreLocation APIs for headless batch work",
-          "Respecting Apple's usage limits with configurable request pacing",
-          "Keeping CLI output and native corrections consistent through one package and schema",
+          "Adapt MapKit and CoreLocation for headless batch work",
+          "Respect Apple’s usage limits with configurable request pacing",
+          "Keep CLI output and native corrections aligned through one schema",
         ],
       },
       toolbox: {
@@ -250,17 +251,17 @@ export const STUDIO_TRANSLATIONS_EN = {
         problem:
           "Personal automation often starts as a throwaway script and becomes a liability. Toolbox turns recurring jobs involving content, media, and personal data into tested commands with explicit safeguards.",
         keyFeatures: [
-          "Content pipeline from raw notes to scheduled social posts via Typefully",
-          "Media utilities: video transcription, image optimization, photo metadata management",
-          "AI agent usage and cost analytics across Claude Code, Copilot, and OpenRouter",
-          "X/Twitter post deletion with OAuth 2.0 PKCE and rate-limit safety",
-          "Internet Archive collection crawling for downstream processing",
-          "Unified command surface across the monorepo with dry-run and verification",
+          "Turn raw notes into scheduled social posts through Typefully",
+          "Transcribe video, optimize images, and manage photo metadata",
+          "Track agent usage and cost across Claude Code, Copilot, and OpenRouter",
+          "Delete X posts safely with OAuth 2.0 PKCE and rate-limit checks",
+          "Crawl Internet Archive collections for downstream processing",
+          "Run every tool through one command surface with dry-run safeguards",
         ],
         technicalChallenges: [
-          "Matching each tool to the constraints of its runtime and data source",
-          "Adding dry-run and verification steps before destructive operations",
-          "Keeping one consistent command surface across six toolchains",
+          "Match each tool to the limits of its runtime and data source",
+          "Require dry-run and verification before destructive operations",
+          "Keep six toolchains coherent behind one command surface",
         ],
       },
       realitea: {
@@ -271,16 +272,16 @@ export const STUDIO_TRANSLATIONS_EN = {
         problem:
           "Most word games repeat the same mechanics endlessly. RealiTea uses real-time entertainment news to generate fresh puzzles daily, creating a game that's connected to the cultural moment instead of a static dictionary.",
         keyFeatures: [
-          "Daily puzzles auto-generated from live entertainment headlines",
-          "Letter-by-letter guessing with real-time feedback",
-          "Drizzle + PostgreSQL backend with scheduled puzzle reconciliation",
-          "Health check system to verify puzzle quality and freshness",
-          "Admin panel for puzzle management and preview",
+          "Generate a fresh puzzle each day from live entertainment headlines",
+          "Give letter-by-letter feedback as players solve",
+          "Reconcile scheduled puzzles through Drizzle and PostgreSQL",
+          "Check puzzle quality and freshness before publication",
+          "Preview and manage puzzles from an admin panel",
         ],
         technicalChallenges: [
-          "Auto-generating playable puzzles from raw, unstructured news content",
-          "Designing a reconciliation pipeline that fills gaps without producing duplicates",
-          "Validating puzzle difficulty so games remain fun across varying source material",
+          "Turn raw, unstructured news into playable puzzles",
+          "Fill schedule gaps without generating duplicates",
+          "Keep difficulty consistent across changing source material",
         ],
       },
     },

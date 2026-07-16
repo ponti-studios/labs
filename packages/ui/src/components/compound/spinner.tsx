@@ -14,7 +14,7 @@ export function Spinner({ label = "Loading", className, ...props }: SpinnerProps
       aria-label={label || "Loading"}
       {...props}
     >
-      <div className="border-border border-t-muted-foreground h-3 w-3 animate-spin rounded-full border-2" />
+      <div className="border border-t-muted-foreground h-3 w-3 animate-spin rounded-full border-2" />
       {label && <span className="text-muted-foreground text-xs">{label}</span>}
     </div>
   );

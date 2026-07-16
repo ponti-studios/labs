@@ -71,12 +71,8 @@ export default function TheaterEconomics() {
           <ScreenAllocation
             screens={config.screens}
             allocation={config.screenAllocation}
-            marketBaseline={config.marketBaseline}
             season={config.season}
             onScreensChange={(screens) => dispatch({ type: "SET_SCREENS", payload: screens })}
-            onMarketChange={(baseline) =>
-              dispatch({ type: "SET_MARKET_BASELINE", payload: baseline })
-            }
             onSeasonChange={(season) => dispatch({ type: "SET_SEASON", payload: season })}
             onAllocationChange={(category, screens) =>
               dispatch({ type: "SET_SCREEN_ALLOCATION", category, screens })
@@ -111,7 +107,7 @@ export default function TheaterEconomics() {
                 hint="Spend per patron — conventional multiplex avg $6–$9"
               />
 
-              <div className="border-border border-t pt-4">
+              <div className="border border-t pt-4">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-foreground font-semibold">Total Monthly Expenses</span>
                   <span className="text-foreground font-['Geist'] text-lg font-semibold tabular-nums">

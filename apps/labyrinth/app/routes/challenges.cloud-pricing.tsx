@@ -188,7 +188,7 @@ export default function CloudPricingComparison(): JSX.Element {
         <CardContent className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-border border-b">
+              <tr className="border border-b">
                 <th className="text-muted-foreground py-2 pr-4 text-left font-medium whitespace-nowrap">
                   Instance
                 </th>
@@ -204,7 +204,7 @@ export default function CloudPricingComparison(): JSX.Element {
             </thead>
             <tbody>
               {matrix.map(({ preset, cells }) => (
-                <tr key={preset.label} className="border-border border-b last:border-0">
+                <tr key={preset.label} className="border border-b last:border-0">
                   <td className="py-3 pr-4 whitespace-nowrap">
                     <p className="font-mono font-medium">{preset.label}</p>
                     <p className="text-muted-foreground text-xs">{preset.description}</p>
