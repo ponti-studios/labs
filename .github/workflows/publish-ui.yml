@@ -37,6 +37,13 @@ jobs:
           test "ui-v$VERSION" = "$GITHUB_REF_NAME"
 
       - name: Publish
-        run: pnpm --filter @pontistudios/ui publish --no-git-checks
+        run: pnpm --filter @ponti-studios/ui publish --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify published package
+        run: |
+          VERSION="$(node -p 'require("./packages/ui/package.json").version')"
+          test "$(npm view "@ponti-studios/ui@$VERSION" version --registry=https://npm.pkg.github.com)" = "$VERSION"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
