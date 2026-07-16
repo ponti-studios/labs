@@ -48,7 +48,7 @@ export function DetailNavigation({ ariaLabel, next, previous }: DetailNavigation
             to={previous.to}
             prefetch="intent"
             aria-label={`${previous.label}: ${previous.title}`}
-            className="group focus-visible:outline-ring flex min-h-11 flex-col justify-center gap-1 outline-none focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="detail-navigation-link group"
           >
             <span className="body-4 text-secondary group-hover:text-accent transition-colors motion-reduce:transition-none">
               ← {previous.label}
@@ -63,7 +63,7 @@ export function DetailNavigation({ ariaLabel, next, previous }: DetailNavigation
             to={next.to}
             prefetch="intent"
             aria-label={`${next.label}: ${next.title}`}
-            className="group focus-visible:outline-ring flex min-h-11 flex-col justify-center gap-1 outline-none focus-visible:outline-2 focus-visible:outline-offset-2 sm:ml-auto sm:text-right"
+            className="detail-navigation-link group sm:ml-auto sm:text-right"
           >
             <span className="body-4 text-secondary group-hover:text-accent transition-colors motion-reduce:transition-none">
               {next.label} →

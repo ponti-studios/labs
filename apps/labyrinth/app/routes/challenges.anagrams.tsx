@@ -144,7 +144,7 @@ export default function Anagrams(): JSX.Element {
           placeholder="Enter words separated by commas"
           className="flex-1"
         />
-        <Button onClick={run} disabled={isRunning} className="flex min-w-24 items-center gap-2">
+        <Button onClick={run} disabled={isRunning} className="flex items-center gap-2">
           {isRunning ? (
             <>
               <span className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />

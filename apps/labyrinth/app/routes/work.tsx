@@ -31,7 +31,7 @@ export default function Work() {
               <Link
                 to={`/work/${snapshot.slug}`}
                 prefetch="intent"
-                className="hover:bg-inset/20 focus-visible:outline-ring flex min-w-0 flex-1 flex-row items-start gap-4 transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-2 md:gap-6"
+                className="hover:bg-inset/20 flex min-w-0 flex-1 flex-row items-start gap-4 transition-colors outline-none md:gap-6"
               >
                 {caseLogos[snapshot.slug] ? (
                   <ListRowMedia

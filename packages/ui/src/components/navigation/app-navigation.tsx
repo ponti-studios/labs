@@ -1,8 +1,8 @@
 import { Menu } from "lucide-react";
 import * as React from "react";
 
-import { cn } from "../../lib/utils";
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../overlays/sheet";
+import { Button } from "../primitives/button";
+import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from "../overlays/sheet";
 
 export interface AppNavigationLink {
   href: string;
@@ -15,53 +15,21 @@ export interface AppNavigationCta {
   variant?: "default" | "outline";
 }
 
-export interface AppNavigationRenderLinkArgs {
-  href: string;
-  className: string;
-  children: React.ReactNode;
-  onClick?: () => void;
-}
-
 export interface AppNavigationProps {
   brand?: React.ReactNode;
   brandHref?: string;
   endContent?: React.ReactNode;
   links?: AppNavigationLink[];
   cta?: AppNavigationCta;
+  ariaLabel?: string;
   /** Current pathname used to highlight the active link. */
   activeHref?: string;
-  renderLink: (args: AppNavigationRenderLinkArgs) => React.ReactNode;
-}
-
-function ctaClassName(cta: AppNavigationCta, active: boolean, mobile: boolean) {
-  if (mobile) {
-    return cn(
-      "mt-2 flex min-h-11 w-full items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors",
-      "",
-      cta.variant === "outline"
-        ? "border-default text-primary hover:bg-accent bg-transparent"
-        : "bg-accent text-on-accent hover:bg-accent/90",
-    );
-  }
-
-  const base = "ml-2 inline-flex min-h-9 items-center rounded-md px-3 text-sm font-medium";
-
-  if (cta.variant === "outline") {
-    return cn(base, "border-default text-primary hover:bg-accent bg-transparent");
-  }
-
-  return cn(base, "bg-accent text-on-accent hover:bg-accent/90", active && "ring-focus ring-1");
-}
-
-function linkClassName(active: boolean, mobile: boolean) {
-  return cn(
-    mobile
-      ? "flex min-h-11 w-full items-center rounded-md px-3 text-base"
-      : "inline-flex min-h-9 items-center rounded-md px-3 text-sm",
-    "text-secondary font-medium transition-colors",
-    active && "bg-inset text-primary",
-    "hover:bg-accent hover:text-primary focus-visible:bg-accent focus-visible:text-primary",
-  );
+  /** A router link component. Native anchors are used when omitted. */
+  linkComponent?: React.ElementType;
+  /** The prop used by the link component for its destination. */
+  linkProp?: "href" | "to";
+  /** Props shared by every link, such as a router's prefetch hint. */
+  linkProps?: Record<string, unknown>;
 }
 
 export function AppNavigation({
@@ -70,11 +38,13 @@ export function AppNavigation({
   endContent,
   links,
   cta,
+  ariaLabel = "Primary navigation",
   activeHref,
-  renderLink,
+  linkComponent: LinkComponent = "a",
+  linkProp = "href",
+  linkProps,
 }: AppNavigationProps) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const closeMobile = React.useCallback(() => setMobileOpen(false), []);
 
   const isActive = (href: string) => {
     if (!activeHref) return false;
@@ -83,76 +53,103 @@ export function AppNavigation({
     return href !== "/" && activeHref.startsWith(`${href}/`);
   };
 
+  const createLink = ({
+    href,
+    children,
+    active = false,
+    variant,
+    brand = false,
+  }: {
+    href: string;
+    children: React.ReactNode;
+    active?: boolean;
+    variant?: AppNavigationCta["variant"];
+    brand?: boolean;
+  }) =>
+    React.createElement(
+      LinkComponent,
+      {
+        ...linkProps,
+        ...(linkProp === "to" ? { to: href } : { href }),
+        className: brand
+          ? "navigation-link navigation-brand shrink-0"
+          : variant
+            ? "navigation-cta"
+            : "navigation-link",
+        "aria-current": active ? "page" : undefined,
+        "data-variant": variant,
+      },
+      children,
+    );
+
   return (
-    <div className="bg-canvas/80 border-subtle sticky top-0 z-50 flex w-full justify-center border-b px-4 backdrop-blur-sm backdrop-saturate-150">
-      <nav className="flex min-h-14 w-full max-w-7xl items-center justify-between gap-6">
-        {brand &&
-          renderLink({
-            href: brandHref,
-            className: "shrink-0 text-sm font-semibold tracking-tight text-primary",
-            children: brand,
-          })}
+    <header className="navigation-shell">
+      <nav className="navigation" aria-label={ariaLabel}>
+        <div className="navigation-inner">
+          <div className="navigation-start">
+            {brand && createLink({ href: brandHref, children: brand, brand: true })}
+          </div>
 
-        {/* Desktop nav */}
-        <div className="hidden min-w-0 items-center gap-1 sm:flex">
-          {links?.map((link) =>
-            renderLink({
-              href: link.href,
-              className: linkClassName(isActive(link.href), false),
-              children: link.label,
-            }),
-          )}
-          {cta &&
-            renderLink({
-              href: cta.href,
-              className: ctaClassName(cta, isActive(cta.href), false),
-              children: cta.label,
-            })}
-          {endContent}
-        </div>
+          <div className="navigation-end">
+            {links?.map((link) => (
+              <React.Fragment key={link.href}>
+                {createLink({ href: link.href, children: link.label, active: isActive(link.href) })}
+              </React.Fragment>
+            ))}
+            {cta &&
+              createLink({
+                href: cta.href,
+                children: cta.label,
+                variant: cta.variant ?? "default",
+              })}
+            {endContent}
+          </div>
 
-        {/* Mobile nav: brand + hamburger only, everything else lives in the sheet */}
-        <div className="flex items-center gap-2 sm:hidden">
-          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-            <SheetTrigger asChild>
-              <button
-                type="button"
-                aria-label={mobileOpen ? "Close menu" : "Open menu"}
-                className="border-default bg-canvas text-primary hover:bg-accent inline-flex size-11 shrink-0 items-center justify-center rounded-md border transition-colors"
-              >
-                <Menu className="size-4" aria-hidden="true" />
-              </button>
-            </SheetTrigger>
-            <SheetContent>
-              <SheetTitle className="sr-only">Navigation menu</SheetTitle>
+          <div className="navigation-mobile">
+            <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  aria-label={mobileOpen ? "Close menu" : "Open menu"}
+                >
+                  <Menu className="size-4" aria-hidden="true" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent className="navigation-panel">
+                <SheetTitle className="sr-only">Navigation menu</SheetTitle>
 
-              <div className="mt-8 flex flex-1 flex-col gap-1">
-                {links?.map((link) =>
-                  renderLink({
-                    href: link.href,
-                    className: linkClassName(isActive(link.href), true),
-                    children: link.label,
-                    onClick: closeMobile,
-                  }),
-                )}
-              </div>
-
-              {(cta || endContent) && (
-                <div className="border-default flex flex-col gap-4 border-t pt-4">
-                  {cta &&
-                    renderLink({
-                      href: cta.href,
-                      className: ctaClassName(cta, isActive(cta.href), true),
-                      children: cta.label,
-                      onClick: closeMobile,
-                    })}
-                  {endContent && <div className="flex items-center gap-3">{endContent}</div>}
+                <div className="navigation-panel-links">
+                  {links?.map((link) => (
+                    <SheetClose asChild key={link.href}>
+                      {createLink({
+                        href: link.href,
+                        children: link.label,
+                        active: isActive(link.href),
+                      })}
+                    </SheetClose>
+                  ))}
                 </div>
-              )}
-            </SheetContent>
-          </Sheet>
+
+                {(cta || endContent) && (
+                  <div className="navigation-panel-end">
+                    {cta && (
+                      <SheetClose asChild>
+                        {createLink({
+                          href: cta.href,
+                          children: cta.label,
+                          variant: cta.variant ?? "default",
+                        })}
+                      </SheetClose>
+                    )}
+                    {endContent && <div className="navigation-panel-content">{endContent}</div>}
+                  </div>
+                )}
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </nav>
-    </div>
+    </header>
   );
 }

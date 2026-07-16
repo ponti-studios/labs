@@ -52,11 +52,8 @@ export default function App() {
             { href: "/hospitals", label: "Hospitals" },
           ]}
           activeHref={location.pathname}
-          renderLink={({ href, className, children, onClick }) => (
-            <Link key={href} to={href} className={className} onClick={onClick}>
-              {children}
-            </Link>
-          )}
+          linkComponent={Link}
+          linkProp="to"
         />
         <main className="flex min-h-screen flex-col pt-24">
           <Outlet />

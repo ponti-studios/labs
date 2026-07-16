@@ -25,7 +25,7 @@ export default function ProjectDetail() {
           <Link
             to="/projects"
             prefetch="intent"
-            className="body-2 text-accent focus-visible:outline-ring min-h-11 w-fit content-center underline underline-offset-4 outline-none focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="body-2 text-accent min-h-11 w-fit content-center underline underline-offset-4 outline-none"
           >
             ← {t.projects.page.back}
           </Link>
@@ -47,7 +47,7 @@ export default function ProjectDetail() {
           <Link
             to="/projects"
             prefetch="intent"
-            className="body-3 text-secondary hover:text-primary focus-visible:outline-ring min-h-11 w-fit content-center outline-none focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="body-3 text-secondary hover:text-primary min-h-11 w-fit content-center outline-none"
           >
             ← {t.projects.page.title}
           </Link>
@@ -68,7 +68,7 @@ export default function ProjectDetail() {
               href={project.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-accent focus-visible:outline-ring inline-flex min-h-11 items-center gap-2 underline-offset-4 hover:underline outline-none focus-visible:outline-2 focus-visible:outline-offset-2"
+              className="hover:text-accent inline-flex min-h-11 items-center gap-2 underline-offset-4 hover:underline outline-none"
             >
               {t.projects.page.repository}
               <FolderGit2 size={16} aria-hidden="true" />
@@ -78,7 +78,7 @@ export default function ProjectDetail() {
                 href={project.url}
                 target={project.url.startsWith("http") ? "_blank" : undefined}
                 rel={project.url.startsWith("http") ? "noopener noreferrer" : undefined}
-                className="hover:text-accent focus-visible:outline-ring inline-flex min-h-11 items-center gap-2 underline-offset-4 hover:underline outline-none focus-visible:outline-2 focus-visible:outline-offset-2"
+                className="hover:text-accent inline-flex min-h-11 items-center gap-2 underline-offset-4 hover:underline outline-none"
               >
                 {t.projects.page.liveProject}
                 <ExternalLink size={16} aria-hidden="true" />
@@ -111,7 +111,7 @@ export default function ProjectDetail() {
                 href={src}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="border-subtle hover:border-accent/40 focus-visible:outline-ring aspect-video w-72 shrink-0 overflow-hidden rounded-lg border outline-none focus-visible:outline-2 focus-visible:outline-offset-2 sm:w-80"
+                className="border-subtle hover:border-accent/40 aspect-video w-72 shrink-0 overflow-hidden rounded-lg border outline-none sm:w-80"
               >
                 <img
                   src={src}

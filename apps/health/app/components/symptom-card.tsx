@@ -15,7 +15,7 @@ function SymptomCard({ className, symptom, isAlternative = false }: SymptomCardP
     <>
       <Card
         className={cn(
-          "flex min-w-sm flex-col",
+          "flex w-full min-w-0 flex-col",
           {
             "md:max-w-sm": isAlternative,
             "md:max-w-md": !isAlternative,

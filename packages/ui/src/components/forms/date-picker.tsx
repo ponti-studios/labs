@@ -28,7 +28,7 @@ export function DatePicker({
   label,
   dateFormat = "MMM d, yyyy",
   showLabel = true,
-  containerClassName = "flex-1 min-w-[180px]",
+  containerClassName = "flex-1 min-w-0",
   popoverAlign = "start",
   variant = "outline",
 }: DatePickerProps) {

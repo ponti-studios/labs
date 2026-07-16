@@ -116,11 +116,9 @@ export default function App() {
             <ColorSystemToggle />
           </div>
         }
-        renderLink={({ href, className, children, onClick }) => (
-          <Link key={href} to={href} prefetch="intent" className={className} onClick={onClick}>
-            {children}
-          </Link>
-        )}
+        linkComponent={Link}
+        linkProp="to"
+        linkProps={{ prefetch: "intent" }}
       />
       <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col">
         <Outlet />

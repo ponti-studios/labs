@@ -18,7 +18,7 @@ export function ProfitRevenueCard({
   const marginBarWidth = clamp(Math.abs(d.margin) * 100, 0, 100);
 
   return (
-    <Card className="h-full min-h-[180px]">
+    <Card className="h-full">
       <CardHeader className="border-b-0 px-5 pt-5 pb-0">
         <div className="flex w-full items-center justify-between gap-2">
           <span className="ui-data-label">Profit &amp; Revenue</span>

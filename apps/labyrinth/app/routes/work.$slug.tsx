@@ -37,7 +37,7 @@ export default function WorkSlug() {
           <Link
             to="/work"
             prefetch="intent"
-            className="body-3 text-secondary hover:text-primary focus-visible:outline-ring min-h-11 w-fit content-center outline-none focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="body-3 text-secondary hover:text-primary min-h-11 w-fit content-center outline-none"
           >
             ← {copy.backToWork}
           </Link>
