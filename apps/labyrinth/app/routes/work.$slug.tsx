@@ -26,9 +26,9 @@ export default function WorkSlug() {
   const { snapshot } = useLoaderData<typeof loader>();
 
   return (
-    <div className="flex w-full flex-col">
+    <div className="page-bleed">
       {/* Hero */}
-      <section className="border-border/60 flex flex-col gap-6 border-b px-6 py-20">
+      <section className="content-section content-section-hero">
         <Link
           to="/work"
           prefetch="intent"
@@ -52,13 +52,13 @@ export default function WorkSlug() {
       </section>
 
       {/* What I did */}
-      <section className="border-border/60 flex flex-col gap-4 border-b px-6 py-16">
+      <section className="content-section">
         <h2 className="heading-2 text-foreground">{proof.whatWeDidLabel}</h2>
         <p className="body-1 text-muted-foreground max-w-2xl">{snapshot.whatWeDid}</p>
       </section>
 
       {/* Approach */}
-      <section className="border-border/60 flex flex-col gap-10 border-b px-6 py-16">
+      <section className="content-section gap-8">
         <h2 className="heading-2 text-foreground">{copy.approachTitle}</h2>
         <ol className="flex flex-col gap-8">
           {snapshot.approach.map((step, index) => (
@@ -73,7 +73,7 @@ export default function WorkSlug() {
       </section>
 
       {/* Outcomes — pull quotes, not metric tiles */}
-      <section className="border-border/60 flex flex-col gap-12 border-b px-6 py-16">
+      <section className="content-section gap-10 md:gap-12">
         <h2 className="heading-2 text-foreground">{proof.outcomeLabel}</h2>
         <div className="flex flex-col gap-12">
           {snapshot.outcomes.map((outcome) => (
@@ -86,7 +86,7 @@ export default function WorkSlug() {
       </section>
 
       {/* Close CTA */}
-      <section className="flex flex-col gap-6 px-6 py-20">
+      <section className="content-section gap-6 border-b-0 py-16 md:py-20">
         <h2 className="display-2 text-foreground max-w-3xl">{copy.nextCta.title}</h2>
         <p className="body-1 text-muted-foreground max-w-xl">{copy.nextCta.body}</p>
         <div className="flex flex-wrap items-center gap-6 pt-2">

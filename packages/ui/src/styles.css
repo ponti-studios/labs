@@ -1,6 +1,60 @@
 @import "tailwindcss";
 @import "./animations.css";
 
+/* Shared page and content rhythm primitives. These are CSS-only layout
+ * patterns so feature pages can compose them without adding component APIs. */
+.page-shell {
+  @apply relative mx-auto flex w-full flex-col gap-12 px-4 py-16 md:gap-16 md:px-6 md:py-20;
+}
+
+.page-shell-detail {
+  @apply relative mx-auto flex w-full flex-col gap-10 px-4 py-16 md:gap-12 md:px-6 md:py-20;
+}
+
+.page-bleed {
+  @apply flex w-full flex-col;
+}
+
+.content-stack {
+  @apply flex flex-col gap-4;
+}
+
+.content-list-row {
+  @apply flex gap-4 px-2 py-4 md:py-5;
+}
+
+.content-list-media {
+  @apply border-border/60 bg-bg-surface relative isolate flex shrink-0 items-center justify-center overflow-hidden rounded-lg border p-2 shadow-sm;
+}
+
+.content-list-media-wide {
+  @apply h-14 w-32;
+}
+
+.content-list-media-square {
+  @apply size-12 sm:size-14;
+}
+
+.content-list-media-placeholder {
+  @apply pointer-events-none absolute inset-0 flex items-center justify-center gap-1.5 transition-opacity duration-150;
+}
+
+.content-section {
+  @apply border-border/60 flex flex-col gap-4 border-b px-4 py-12 md:px-6 md:py-16;
+}
+
+.content-section-hero {
+  @apply gap-6 py-16 md:py-20;
+}
+
+.content-section-compact {
+  @apply gap-4 py-8 md:py-12;
+}
+
+.content-navigation {
+  @apply border-border/40 flex justify-between border-t pt-10 md:pt-12;
+}
+
 @theme {
   --font-family-primary: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   --font-family-mono: ui-monospace, monospace;

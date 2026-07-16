@@ -15,7 +15,7 @@ export function meta(): Array<{
 
 function Teaser({ title, to }: { title: string; to: string }) {
   return (
-    <section className="border-border/60 border-b px-6 py-16 underline-offset-4 hover:cursor-pointer hover:underline">
+    <section className="content-section content-section-compact underline-offset-4 hover:cursor-pointer hover:underline">
       <Link to={to} prefetch="intent" className="body-2 flex justify-between">
         <h2 className="heading-2 text-foreground font-bold">{title}</h2>
         <LucideArrowBigRight className="text-accent" aria-hidden="true" />
@@ -57,9 +57,9 @@ function HeroHeadline() {
 
 export default function Home() {
   return (
-    <div className="mx-auto flex w-full flex-col">
+    <div className="page-bleed">
       {/* Hero */}
-      <section className="border-border/60 flex flex-col gap-6 border-b px-4 py-20 md:flex-row md:justify-between">
+      <section className="content-section content-section-hero md:flex-row md:justify-between">
         <div>
           <HeroHeadline />
           <p className="body-1 text-muted-foreground max-w-2xl">{t.home.hero.subtitle}</p>

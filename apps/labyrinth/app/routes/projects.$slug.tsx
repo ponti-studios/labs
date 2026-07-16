@@ -17,8 +17,8 @@ export default function ProjectDetail() {
 
   if (!project) {
     return (
-      <div className="relative mx-auto flex w-full flex-col gap-8 px-6 py-20">
-        <div className="flex flex-col gap-4">
+      <div className="page-shell-detail">
+        <div className="content-stack">
           <h1 className="display-1 text-foreground">{t.projects.page.notFound}</h1>
           <Link
             to="/projects"
@@ -38,9 +38,9 @@ export default function ProjectDetail() {
   const nextProject = currentIndex < allSlugs.length - 1 ? projects[currentIndex + 1] : null;
 
   return (
-    <div className="relative mx-auto flex w-full flex-col gap-12 px-6 py-20">
+    <div className="page-shell-detail">
       {/* Header */}
-      <div className="flex flex-col gap-4">
+      <div className="content-stack">
         <Link
           to="/projects"
           prefetch="intent"
@@ -82,14 +82,14 @@ export default function ProjectDetail() {
         {/* Left Column - Description */}
         <div className="flex flex-col gap-8 lg:col-span-2">
           {/* The Problem */}
-          <section className="flex flex-col gap-4">
+          <section className="content-stack">
             <h2 className="heading-2 text-foreground">{t.projects.page.problem}</h2>
             <p className="body-1 text-muted-foreground">{project.problem}</p>
           </section>
 
           {/* The Solution */}
           {project.solution && (
-            <section className="flex flex-col gap-4">
+            <section className="content-stack">
               <h2 className="heading-2 text-foreground">{t.projects.page.solution}</h2>
               <p className="body-1 text-muted-foreground">{project.solution}</p>
             </section>
@@ -97,7 +97,7 @@ export default function ProjectDetail() {
 
           {/* Key Features */}
           {project.keyFeatures.length > 0 && (
-            <section className="flex flex-col gap-4">
+            <section className="content-stack">
               <h2 className="heading-2 text-foreground">{t.projects.page.howItWorks}</h2>
               <ul className="flex flex-col gap-3">
                 {project.keyFeatures.map((feature, idx) => (
@@ -112,7 +112,7 @@ export default function ProjectDetail() {
 
           {/* Engineering Challenges */}
           {project.technicalChallenges.length > 0 && (
-            <section className="flex flex-col gap-4">
+            <section className="content-stack">
               <h2 className="heading-2 text-foreground">{t.projects.page.engineeringChallenges}</h2>
               <ul className="flex flex-col gap-3">
                 {project.technicalChallenges.map((point, idx) => (
@@ -132,7 +132,7 @@ export default function ProjectDetail() {
 
       {/* Screenshots */}
       {project.screenshots && project.screenshots.length > 0 && (
-        <section className="flex flex-col gap-4">
+        <section className="content-stack">
           <h2 className="heading-2 text-foreground">Screenshots</h2>
           <ScrollArea className="gap-4" snap="start">
             {project.screenshots.map((src, idx) => (
@@ -156,7 +156,7 @@ export default function ProjectDetail() {
       )}
 
       {/* Navigation */}
-      <div className="border-border/40 flex justify-between border-t pt-12">
+      <div className="content-navigation">
         {prevProject ? (
           <Link
             to={`/projects/${prevProject.slug}`}
