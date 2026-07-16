@@ -1,4 +1,4 @@
-import { Button } from "@pontistudios/ui/primitives";
+import { Button } from "@ponti-studios/ui/primitives";
 import type { FC } from "react";
 import { memo, useCallback, useEffect, useReducer, useRef } from "react";
 

@@ -1,4 +1,4 @@
-import { Button } from "@pontistudios/ui/primitives";
+import { Button } from "@ponti-studios/ui/primitives";
 import { Link } from "react-router";
 import { BOOK_CALL_URL } from "~/data/studio";
 import { t } from "~/translations";

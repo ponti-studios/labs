@@ -8,7 +8,7 @@
     "dev:earth": "turbo run dev --filter=@pontistudios/earth",
     "dev:commune": "turbo run dev --filter=@pontistudios/commune",
     "dev:labyrinth": "turbo run dev --filter=@pontistudios/labyrinth",
-    "dev:ui": "turbo run storybook --filter=@pontistudios/ui",
+    "dev:ui": "turbo run storybook --filter=@ponti-studios/ui",
     "dev:health": "turbo run dev --filter=@pontistudios/health",
     "lint": "turbo run lint",
     "format": "turbo run format",
@@ -22,7 +22,7 @@
     "test:e2e:ci": "turbo run test:e2e:ci",
     "test:update": "turbo run test:update",
     "typecheck": "turbo run typecheck",
-    "ui:storybook": "pnpm --filter @pontistudios/ui storybook"
+    "ui:storybook": "pnpm --filter @ponti-studios/ui storybook"
   },
   "devDependencies": {
     "@types/node": "catalog:",

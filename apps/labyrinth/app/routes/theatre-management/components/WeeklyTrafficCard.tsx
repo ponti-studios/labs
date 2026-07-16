@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader } from "@pontistudios/ui/primitives";
+import { Card, CardContent, CardHeader } from "@ponti-studios/ui/primitives";
 import { cn } from "~/lib/utils";
 import { Tickets } from "lucide-react";
 import { CAPACITY_STYLES, fmt, useCalculator, utilizationVariant } from "../utils";

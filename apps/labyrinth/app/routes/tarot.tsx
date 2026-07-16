@@ -3,8 +3,8 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@pontistudios/ui/data-display";
-import { Badge, Button, Card } from "@pontistudios/ui/primitives";
+} from "@ponti-studios/ui/data-display";
+import { Badge, Button, Card } from "@ponti-studios/ui/primitives";
 import { motion } from "framer-motion";
 import { useEffect, useReducer } from "react";
 import { getLocalDateKey, isDailyTarotResult } from "~/lib/tarot-daily";

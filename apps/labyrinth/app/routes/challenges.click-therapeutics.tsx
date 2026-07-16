@@ -1,5 +1,5 @@
-import { Input } from "@pontistudios/ui/forms";
-import { Label } from "@pontistudios/ui/primitives";
+import { Input } from "@ponti-studios/ui/forms";
+import { Label } from "@ponti-studios/ui/primitives";
 import {
   Table,
   TableBody,
@@ -7,9 +7,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@pontistudios/ui/data-display";
+} from "@ponti-studios/ui/data-display";
 import { useState, type JSX } from "react";
-import { Button } from "@pontistudios/ui/primitives";
+import { Button } from "@ponti-studios/ui/primitives";
 
 interface Vote {
   name: string;

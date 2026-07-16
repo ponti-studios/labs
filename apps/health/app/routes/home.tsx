@@ -1,5 +1,5 @@
-import { Button } from "@pontistudios/ui/primitives";
-import { cn } from "@pontistudios/ui/utilities";
+import { Button } from "@ponti-studios/ui/primitives";
+import { cn } from "@ponti-studios/ui/utilities";
 import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router";
 import { DashboardEmptyState } from "../components/dashboard-empty-state";

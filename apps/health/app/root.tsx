@@ -8,7 +8,7 @@ import {
   ScrollRestoration,
   useLocation,
 } from "react-router";
-import { AppNavigation } from "@pontistudios/ui/navigation";
+import { AppNavigation } from "@ponti-studios/ui/navigation";
 
 import type { Route } from "./+types/root";
 import "./app.css";

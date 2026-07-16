@@ -1,4 +1,4 @@
-import { Slider } from "@pontistudios/ui/forms";
+import { Slider } from "@ponti-studios/ui/forms";
 
 export function SliderControl({
   label,

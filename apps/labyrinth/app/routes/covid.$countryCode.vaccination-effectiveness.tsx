@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Spinner } from "@pontistudios/ui/feedback";
+import { Spinner } from "@ponti-studios/ui/feedback";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
 import {

@@ -1,7 +1,7 @@
-import { Label } from "@pontistudios/ui/primitives";
+import { Label } from "@ponti-studios/ui/primitives";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router";
-import { Button } from "@pontistudios/ui/primitives";
+import { Button } from "@ponti-studios/ui/primitives";
 import { useAppointments } from "../hooks/use-appointments";
 
 function getNextWeekdaySlots(count: number) {

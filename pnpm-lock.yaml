@@ -138,15 +138,15 @@ importers:
 
   apps/commune:
     dependencies:
+      '@ponti-studios/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@pontistudios/ai':
         specifier: workspace:*
         version: link:../../packages/ai
       '@pontistudios/db':
         specifier: workspace:*
         version: link:../../packages/db
-      '@pontistudios/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       '@react-router/node':
         specifier: 'catalog:'
         version: 8.0.1(react-router@8.0.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(typescript@6.0.3)
@@ -208,12 +208,12 @@ importers:
 
   apps/earth:
     dependencies:
+      '@ponti-studios/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@pontistudios/db':
         specifier: workspace:*
         version: link:../../packages/db
-      '@pontistudios/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       '@react-router/node':
         specifier: 'catalog:'
         version: 8.0.1(react-router@8.0.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(typescript@6.0.3)
@@ -278,7 +278,7 @@ importers:
 
   apps/health:
     dependencies:
-      '@pontistudios/ui':
+      '@ponti-studios/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       '@react-router/node':
@@ -363,15 +363,15 @@ importers:
       '@aws-sdk/client-s3':
         specifier: ^3.1073.0
         version: 3.1075.0
+      '@ponti-studios/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@pontistudios/ai':
         specifier: workspace:*
         version: link:../../packages/ai
       '@pontistudios/db':
         specifier: workspace:*
         version: link:../../packages/db
-      '@pontistudios/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       '@react-router/node':
         specifier: 'catalog:'
         version: 8.0.1(react-router@8.0.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(typescript@6.0.3)

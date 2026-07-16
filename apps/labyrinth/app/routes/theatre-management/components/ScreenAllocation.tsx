@@ -1,4 +1,4 @@
-import { Badge, Card, CardContent, CardHeader } from "@pontistudios/ui/primitives";
+import { Badge, Card, CardContent, CardHeader } from "@ponti-studios/ui/primitives";
 import {
   Select,
   SelectContent,
@@ -6,7 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
   Stepper,
-} from "@pontistudios/ui/forms";
+} from "@ponti-studios/ui/forms";
 import { cn } from "~/lib/utils";
 import { Clapperboard } from "lucide-react";
 import {

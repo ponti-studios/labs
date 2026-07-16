@@ -19,8 +19,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@pontistudios/ui/primitives";
-import { Input } from "@pontistudios/ui/forms";
+} from "@ponti-studios/ui/primitives";
+import { Input } from "@ponti-studios/ui/forms";
 import {
   Table,
   TableBody,
@@ -28,7 +28,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@pontistudios/ui/data-display";
+} from "@ponti-studios/ui/data-display";
 import { useState, type ChangeEvent, type JSX } from "react";
 
 // A set of words that are all anagrams of each other

@@ -1,4 +1,4 @@
-import { Badge, Button, Card, CardContent, CardHeader } from "@pontistudios/ui/primitives";
+import { Badge, Button, Card, CardContent, CardHeader } from "@ponti-studios/ui/primitives";
 import { ArrowLeft, DollarSign } from "lucide-react";
 import { useReducer } from "react";
 import { Link } from "react-router";

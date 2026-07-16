@@ -15,7 +15,7 @@ export default defineConfig({
   build: {
     lib: {
       entry: path.resolve(__dirname, "src/index.ts"),
-      name: "@pontistudios/ui",
+      name: "@ponti-studios/ui",
       formats: ["es"],
       fileName: () => `index.js`,
     },

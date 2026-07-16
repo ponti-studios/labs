@@ -1,4 +1,4 @@
-import { AccordionContent, AccordionItem, AccordionTrigger } from "@pontistudios/ui/data-display";
+import { AccordionContent, AccordionItem, AccordionTrigger } from "@ponti-studios/ui/data-display";
 import { Camera, MapPin, Palette, Shirt, User, Zap } from "lucide-react";
 import { memo } from "react";
 

@@ -87,7 +87,7 @@ pnpm dev:ui    # Storybook
 
 ## Packages
 
-- **`@pontistudios/ui`** — Shared React UI component library (Tailwind, CVA, Storybook at port 3007).
+- **`@ponti-studios/ui`** — Shared React UI component library (Tailwind, CVA, Storybook at port 3007).
 - **`@pontistudios/db`** — Database layer built on Drizzle ORM with PostgreSQL. Schema, migrations, and seed scripts for the shared `labs` database.
 - **`@pontistudios/ai`** — AI/LLM utilities wrapping OpenRouter and TanStack AI for multi-model inference.
 - **`@pontistudios/tsconfig`** — Shared TypeScript configuration presets.

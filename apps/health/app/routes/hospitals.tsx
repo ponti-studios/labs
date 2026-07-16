@@ -1,4 +1,4 @@
-import { Button } from "@pontistudios/ui/primitives";
+import { Button } from "@ponti-studios/ui/primitives";
 import { Link } from "react-router";
 import { HOSPITALS } from "../lib/hospitals";
 import type { Hospital } from "../types/hospital";

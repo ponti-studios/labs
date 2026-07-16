@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader } from "@pontistudios/ui/primitives";
+import { Card, CardContent, CardHeader } from "@ponti-studios/ui/primitives";
 import { cn } from "~/lib/utils";
 import { MONTHLY_OTHER, MONTHLY_RENT, MONTHLY_UTILITIES } from "../theatre-model";
 import { formatCurrency, useCalculator } from "../utils";

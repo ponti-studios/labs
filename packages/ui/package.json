@@ -1,6 +1,6 @@
 {
-  "name": "@pontistudios/ui",
-  "version": "0.1.1",
+  "name": "@ponti-studios/ui",
+  "version": "0.1.2",
   "private": false,
   "description": "Shared UI component library for ponti-studios labs",
   "license": "UNLICENSED",

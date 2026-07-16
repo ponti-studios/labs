@@ -2,7 +2,7 @@ import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { createMemoryStorage } from "@pontistudios/ui/utilities";
+import { createMemoryStorage } from "@ponti-studios/ui/utilities";
 import { DAILY_TAROT_CARDS } from "../lib/tarot-cards";
 import {
   buildFallbackDailyReading,

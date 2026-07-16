@@ -9,8 +9,8 @@
  * Scoring: card.value = SUITS.indexOf(suit) + RANKS.indexOf(rank) + 2
  */
 
-import { Button, Card, CardContent, CardHeader, CardTitle } from "@pontistudios/ui/primitives";
-import { cn } from "@pontistudios/ui/utilities";
+import { Button, Card, CardContent, CardHeader, CardTitle } from "@ponti-studios/ui/primitives";
+import { cn } from "@ponti-studios/ui/utilities";
 import { useState } from "react";
 
 const RANKS = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"];

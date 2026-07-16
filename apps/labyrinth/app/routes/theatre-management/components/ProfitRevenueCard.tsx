@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader } from "@pontistudios/ui/primitives";
+import { Card, CardContent, CardHeader } from "@ponti-studios/ui/primitives";
 import { cn } from "~/lib/utils";
 import { DollarSign, TrendingUp } from "lucide-react";
 import { clamp } from "../theatre-model";
