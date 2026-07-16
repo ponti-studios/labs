@@ -29,7 +29,7 @@
     "@react-router/serve": "catalog:",
     "@tanstack/react-query": "catalog:",
     "@testing-library/jest-dom": "catalog:",
-    "@types/three": "^0.184.1",
+    "@types/three": "^0.185.0",
     "class-variance-authority": "^0.7.1",
     "dotenv": "^17.4.2",
     "fast-xml-parser": "^5.9.3",
