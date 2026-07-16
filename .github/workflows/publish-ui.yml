@@ -32,7 +32,9 @@ jobs:
 
       - name: Verify tag version
         if: startsWith(github.ref, 'refs/tags/')
-        run: test "ui-v$(node -p \"require('./packages/ui/package.json').version\")" = "$GITHUB_REF_NAME"
+        run: |
+          VERSION="$(node -p 'require("./packages/ui/package.json").version')"
+          test "ui-v$VERSION" = "$GITHUB_REF_NAME"
 
       - name: Publish
         run: pnpm --filter @pontistudios/ui publish --no-git-checks
