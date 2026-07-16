@@ -1,0 +1,40 @@
+name: publish-ui
+
+on:
+  push:
+    tags:
+      - "ui-v*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v6
+        with:
+          run_install: false
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24.14.1"
+          cache: "pnpm"
+          registry-url: "https://npm.pkg.github.com"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify tag version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: test "ui-v$(node -p \"require('./packages/ui/package.json').version\")" = "$GITHUB_REF_NAME"
+
+      - name: Publish
+        run: pnpm --filter @pontistudios/ui publish --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

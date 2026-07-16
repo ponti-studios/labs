@@ -1,133 +1,27 @@
 # @pontistudios/ui
 
-Shared UI component library for ponti-studios labs. Contains a collection of React components built with:
+The canonical Ponti Studios UI package. It is published from this repository to GitHub Packages.
 
-- **Radix UI** - Unstyled accessible primitives
-- **Tailwind CSS** - Utility-first CSS framework
-- **CVA** - Class variance authority for component variants
-- **Shadcn/ui** - High-quality component patterns
+## Release
 
-## Installation
+1. Set `packages/ui/package.json` to the intended immutable version.
+2. Merge the change to `main`.
+3. Create and push a matching `ui-v<version>` tag, for example `ui-v0.1.0`.
 
-This package is part of the monorepo and available via workspace references.
+The `publish-ui` workflow validates that the tag and package version match, then publishes with the repository `GITHUB_TOKEN`. Do not publish from a workstation.
+
+## Consumers
+
+Configure the GitHub Packages registry in the consumer repository:
+
+```ini
+@pontistudios:registry=https://npm.pkg.github.com
+```
+
+Private consumers need a token with `read:packages`, configured outside the committed project `.npmrc`:
 
 ```bash
-pnpm add @pontistudios/ui
+pnpm config set --location=user //npm.pkg.github.com/:_authToken "$NODE_AUTH_TOKEN"
 ```
 
-## Usage
-
-Import components directly from the package:
-
-```tsx
-import { Button } from "@pontistudios/ui"
-
-export function App() {
-  return <Button>Click me</Button>
-}
-```
-
-### Component Organization
-
-- **Story-backed components** (`src/components/`): Shared primitives and feature-ready components documented in Storybook.
-- **UI foundations** (`src/components/`): Lower-level building blocks that do not need their own separate story entry.
-- **Compound Components** (`src/components/compound/`): Higher-level features (Form, Table, etc.)
-- **Utilities** (`src/lib/`): Helper functions like `cn()` for classname merging
-
-## Development
-
-#### View Components in Storybook
-
-```bash
-pnpm storybook
-```
-
-This launches Storybook at `http://localhost:6006` showing interactive component documentation.
-
-#### Build Library
-
-```bash
-pnpm build
-```
-
-Generates ESM output in `dist/` directory.
-
-#### Type Checking
-
-```bash
-pnpm typecheck
-```
-
-## Style Guide
-
-Follow these conventions when adding or modifying components:
-
-### Naming
-
-- Use PascalCase for component names: `Button`, `CardHeader`
-- Use kebab-case for CSS classes: `btn-primary`, `card-content`
-
-### Variants
-
-Use CVA for all component variants:
-
-```tsx
-import { cva } from "class-variance-authority"
-
-const buttonVariants = cva(
-  "inline-flex items-center justify-center",
-  {
-    variants: {
-      intent: {
-        primary: "bg-primary text-primary-foreground",
-        secondary: "bg-secondary text-secondary-foreground",
-      },
-      size: {
-        small: "h-8 px-3 text-sm",
-        large: "h-10 px-4 text-lg",
-      },
-    },
-    defaultVariants: {
-      intent: "primary",
-      size: "large",
-    },
-  }
-)
-```
-
-### Accessibility
-
-- All interactive components must be keyboard accessible
-- Use proper ARIA attributes
-- Follow Radix UI accessibility patterns
-
-### Testing
-
-Create `.stories.tsx` files alongside components showing:
-- Default state
-- All variants
-- Interactive examples
-- Edge cases
-
-## Adding New Components
-
-1. Create the component file in `src/components/` or `src/components/compound/`
-2. Add exports to `src/components/index.ts` or `src/components/compound/index.ts`
-3. Create `ComponentName.stories.tsx` showing all variants and usage
-4. Test with `pnpm storybook`
-
-## Updating Apps
-
-When adding new components, update imports in apps from local paths to:
-
-```tsx
-// Before
-import { Button } from "@pontistudios/ui"
-
-// After
-import { Button } from "@pontistudios/ui"
-```
-
-## License
-
-Private - used by ponti-studios labs only
+GitHub Actions consumers should use their `GITHUB_TOKEN` after the package grants their repository Actions access. Non-GitHub build systems need the same read-only token in their user-level npm configuration or equivalent secret-backed registry integration.
