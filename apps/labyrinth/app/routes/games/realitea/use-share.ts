@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 
 import type { PublicDailyPuzzle, RealiteaGuess } from "~/lib/realitea";
-import { shareRealiTeaResult } from "~/lib/realitea-share";
+import { shareRealiTeaResult } from "~/lib/realitea/share";
 
 export type ShareOutcome = "copied" | "prompt" | "error";
 

@@ -66,3 +66,10 @@ This ensures every script validates the same set of required variables and produ
 - Do not create separate "regenerate" scripts — the `--force` flag handles that
 - The cron workflow is `.github/workflows/cron-realitea-generate.yml`
 - The manual regenerate workflow is `.github/workflows/realitea-regenerate.yml`
+
+## Storybook Development Only
+
+- Storybook is development-only in this repository.
+- Never run `storybook build`, `build-storybook`, or any equivalent production Storybook export.
+- Use the package's `storybook` script (`storybook dev -p 6006`) for local validation.
+- Do not add CI, package scripts, or deployment steps that build Storybook statically.

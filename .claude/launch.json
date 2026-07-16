@@ -27,5 +27,12 @@
       "port": 3003,
       "autoPort": true
     }
+  ,{
+      "name": "storybook",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@pontistudios/ui", "storybook"],
+      "port": 6006,
+      "autoPort": true
+    }
   ]
 }

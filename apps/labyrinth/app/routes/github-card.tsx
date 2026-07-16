@@ -9,7 +9,7 @@
  * - Dynamic styling based on the type of stats (followers, following, repos).
  * - Responsive design with a focus on aesthetics and usability.
  */
-import { cn } from "@pontistudios/ui";
+import { cn } from "@pontistudios/ui/utilities";
 import { useReducer } from "react";
 
 interface GitHubUser {

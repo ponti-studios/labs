@@ -1,7 +1,7 @@
 "use client";
 
+import { Button } from "@pontistudios/ui/primitives";
 import {
-  Button,
   Command,
   CommandEmpty,
   CommandGroup,
@@ -11,7 +11,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@pontistudios/ui";
+} from "@pontistudios/ui/overlays";
 import { useQuery } from "@tanstack/react-query";
 import iso3166 from "iso-3166-1";
 import { Check, ChevronsUpDown, Search } from "lucide-react";

@@ -1,18 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 
 // Mock heavy dependencies to prevent top-level side-effects when importing the script
-vi.mock("../app/lib/realitea-db", () => ({
+vi.mock("../app/lib/realitea/repository", () => ({
   countInventoryForRange: vi.fn(),
   loadPuzzleForDate: vi.fn(),
-}));
-vi.mock("../app/lib/realitea-scripts", () => ({
-  withDbCleanup: vi.fn((fn: () => Promise<unknown>) => fn()),
-  createScriptLogger: vi.fn(() => ({
-    info: vi.fn(),
-    warn: vi.fn(),
-    error: vi.fn(),
-    child: vi.fn(() => ({ info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
-  })),
 }));
 vi.mock("@pontistudios/db", () => ({
   closeDb: vi.fn(),

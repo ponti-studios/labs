@@ -1,5 +1,5 @@
+import { Button } from "@pontistudios/ui/primitives";
 import { Link } from "react-router";
-import { Button } from "@pontistudios/ui";
 import { useAppointments } from "../hooks/use-appointments";
 
 export default function Appointments() {
@@ -12,7 +12,7 @@ export default function Appointments() {
       <div className="flex items-center justify-between gap-4">
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl font-bold tracking-tight">Appointments</h1>
-          <p className="text-muted-foreground">Your scheduled healthcare visits</p>
+          <p className="text-secondary">Your scheduled healthcare visits</p>
         </div>
         <Button asChild>
           <Link to="/appointments/new">Schedule New</Link>
@@ -22,7 +22,7 @@ export default function Appointments() {
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold">Upcoming</h2>
         {upcoming.length === 0 ? (
-          <p className="text-muted-foreground rounded-md border py-4 text-center text-sm">
+          <p className="text-secondary rounded-md border py-4 text-center text-sm">
             No upcoming appointments.{" "}
             <Link to="/appointments/new" className="underline">
               Schedule one.
@@ -35,16 +35,15 @@ export default function Appointments() {
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex flex-col gap-2">
                     <p className="font-medium">{appt.doctorName}</p>
-                    <p className="text-muted-foreground text-sm">{appt.specialty}</p>
+                    <p className="text-secondary text-sm">{appt.specialty}</p>
                     <p className="text-sm">
                       {appt.date} at {appt.time}
                     </p>
-                    <p className="text-muted-foreground text-sm">{appt.location}</p>
+                    <p className="text-secondary text-sm">{appt.location}</p>
                   </div>
                   <Button
                     variant="ghost"
-                    size="sm"
-                    className="text-muted-foreground shrink-0"
+                    className="text-secondary shrink-0"
                     onClick={() => cancelAppointment.mutate(appt.id)}
                   >
                     Cancel
@@ -64,11 +63,11 @@ export default function Appointments() {
               <div key={appt.id} className="rounded-lg border p-4 opacity-60">
                 <div className="flex flex-col gap-2">
                   <p className="font-medium">{appt.doctorName}</p>
-                  <p className="text-muted-foreground text-sm">{appt.specialty}</p>
+                  <p className="text-secondary text-sm">{appt.specialty}</p>
                   <p className="text-sm">
                     {appt.date} at {appt.time}
                   </p>
-                  <span className="bg-muted inline-flex w-fit rounded-full px-2 py-1 text-xs capitalize">
+                  <span className="bg-inset inline-flex w-fit rounded-full px-2 py-1 text-xs capitalize">
                     {appt.status}
                   </span>
                 </div>

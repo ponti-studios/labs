@@ -1,0 +1,84 @@
+import { t } from "~/translations";
+
+export type ServiceDeliverable = {
+  label: string;
+  description: string;
+};
+
+export type ServiceEntry = {
+  slug: string;
+  name: string;
+  deliverables: readonly ServiceDeliverable[];
+};
+
+export type CaseStat = {
+  value: string;
+  label: string;
+};
+
+export type CaseSnapshot = {
+  slug: string;
+  client: string;
+  industry: string;
+  description: string;
+  timeline: string;
+  role: string;
+  problem: string;
+  whatWeDid: string;
+  approach: readonly string[];
+  outcomes: readonly CaseStat[];
+};
+
+export type ServicePillar = {
+  name: string;
+  services: ServiceEntry[];
+};
+
+const svc = t.catalog.entries;
+
+export const caseLogos: Record<string, string> = {
+  lumina: "/work/lumina.webp",
+  revrock: "/work/revrock.webp",
+  prolog: "/work/prolog.webp",
+  streamyard: "/work/streamyard.webp",
+  whistle: "/work/whistle.webp",
+  kensho: "/work/kensho.webp",
+  humana: "/work/humana.svg",
+  mimecast: "/work/mimecast.svg",
+  "help-refugees": "/work/help-refugees.webp",
+  "thomson-reuters": "/work/thomson-reuters.webp",
+  glow: "/work/glow.webp",
+};
+
+/** Intentional order: flagship product work first, then advisory/entry. */
+export const servicePillars: ServicePillar[] = [
+  {
+    name: t.common.pillars.product,
+    services: [
+      { slug: "engineering", ...svc.engineering },
+      { slug: "modernization", ...svc.modernization },
+      { slug: "product-design", ...svc.productDesign },
+      { slug: "fractional-product-management", ...svc.fractionalProductManagement },
+    ],
+  },
+  {
+    name: t.common.pillars.advisory,
+    services: [
+      { slug: "fractional-cto", ...svc.fractionalCto },
+      { slug: "technical-due-diligence", ...svc.technicalDueDiligence },
+      { slug: "technical-consulting", ...svc.technicalConsulting },
+      { slug: "product-strategy", ...svc.productStrategy },
+      { slug: "strategy-workshop", ...svc.strategyWorkshop },
+    ],
+  },
+];
+
+export const caseSnapshots: readonly CaseSnapshot[] = t.catalog.proof.snapshots;
+
+export const CONTACT_EMAIL = "hello@ponti.io";
+const SUBJECT = encodeURIComponent("PROJECT INQUIRY - PONTI STUDIOS");
+const BODY = encodeURIComponent(
+  ["Howdy 👋", "I'd like to talk about a project.", "Here's what I'm working on:"].join("\n\n"),
+);
+
+export const BOOK_CALL_URL = `mailto:cj@ponti.io?subject=${SUBJECT}&body=${BODY}`;

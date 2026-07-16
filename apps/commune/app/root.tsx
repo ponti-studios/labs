@@ -9,7 +9,7 @@ import {
   isRouteErrorResponse,
   useLocation,
 } from "react-router";
-import { AppNavigation } from "@pontistudios/ui";
+import { AppNavigation } from "@pontistudios/ui/navigation";
 import type { Route } from "./+types/root";
 import "./app.css";
 import QueryProvider from "./components/QueryProvider";
@@ -55,11 +55,8 @@ export default function App() {
         links={[{ href: "/", label: "Docket" }]}
         cta={{ href: "/case/create", label: "File a case" }}
         activeHref={location.pathname}
-        renderLink={({ href, className, children }) => (
-          <Link key={href} to={href} className={className}>
-            {children}
-          </Link>
-        )}
+        linkComponent={Link}
+        linkProp="to"
       />
       <div className="pt-20">
         <Outlet />

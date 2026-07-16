@@ -1,12 +1,19 @@
 import "dotenv/config";
 
-import { getDateKey } from "../app/lib/realitea-date";
-import { getErrorMessage } from "../app/lib/errors";
-import { countInventoryForRange, loadPuzzleForDate } from "../app/lib/realitea-db";
-import { createScriptLogger, withDbCleanup } from "../app/lib/realitea-scripts";
-import { REALITEA_READY_INVENTORY_DAYS } from "../app/lib/realitea-validation";
+import { closeDb } from "@pontistudios/db";
 
-const logger = createScriptLogger();
+import { getDateKey } from "../app/lib/realitea/date";
+import { getErrorMessage } from "../app/lib/errors";
+import {
+  countInventoryForRange,
+  getGameBySlug,
+  loadPuzzleForDate,
+} from "../app/lib/realitea/repository";
+import { createLogger } from "../app/lib/logger.server";
+import { REALITEA_READY_INVENTORY_DAYS } from "../app/lib/realitea/validation";
+
+const logger = createLogger();
+const RHOBH_GAME_SLUG = "rhobh";
 
 export type HealthStatus = "OK" | "DEGRADED";
 
@@ -40,11 +47,18 @@ export function computeHealthStatus(
 async function main() {
   const now = new Date();
   const dateKey = getDateKey(now);
-  const healthLogger = logger.child({ operation: "healthCheck", dateKey, timestamp: now.toISOString() });
+  const healthLogger = logger.child({
+    operation: "healthCheck",
+    dateKey,
+    timestamp: now.toISOString(),
+  });
+
+  const game = await getGameBySlug(RHOBH_GAME_SLUG);
+  if (!game) throw new Error(`Game not found: ${RHOBH_GAME_SLUG}`);
 
   const [todaysPuzzle, inventoryDepth] = await Promise.all([
-    loadPuzzleForDate(dateKey),
-    countInventoryForRange(dateKey, REALITEA_READY_INVENTORY_DAYS),
+    loadPuzzleForDate(game.id, dateKey),
+    countInventoryForRange(game.id, dateKey, REALITEA_READY_INVENTORY_DAYS),
   ]);
 
   // "any puzzle exists" is approximated by checking today + recent inventory;
@@ -73,11 +87,15 @@ async function main() {
 }
 
 if (!process.env.VITEST) {
-  await withDbCleanup(main).catch((err) => {
+  try {
+    await main();
+  } catch (err) {
     logger.error(
       { event: "[HEALTH_CHECK_FAILED]", error: getErrorMessage(err) },
       "health check failed",
     );
     process.exit(1);
-  });
+  } finally {
+    closeDb();
+  }
 }

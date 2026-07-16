@@ -1,16 +1,11 @@
+import { SelectContent, SelectItem, SelectTrigger, SelectValue } from "@pontistudios/ui/forms";
+import { Spinner } from "@pontistudios/ui/feedback";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Spinner,
-} from "@pontistudios/ui";
+import { Select } from "@pontistudios/ui/forms";
 
 interface WaveData {
   wave: number;
@@ -46,16 +41,16 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 const tooltipStyle = {
-  backgroundColor: "var(--color-card)",
-  border: "1px solid var(--color-border)",
+  backgroundColor: "var(--color-surface-panel)",
+  border: "1px solid var(--color-border-default)",
   borderRadius: "2px",
   fontSize: "12px",
-  color: "var(--color-emphasis-medium)",
+  color: "var(--color-text-secondary)",
   padding: "6px 10px",
   boxShadow: "none",
 };
 
-const tickStyle = { fill: "var(--color-emphasis-low)", fontSize: 11 };
+const tickStyle = { fill: "var(--color-text-tertiary)", fontSize: 11 };
 
 export default function PandemicWavesPage() {
   const { countryCode } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
@@ -77,7 +72,7 @@ export default function PandemicWavesPage() {
       <div className="flex items-center gap-3">
         <label className="ui-data-label">Metric</label>
         <Select value={metric} onValueChange={setMetric}>
-          <SelectTrigger className="border-border bg-card text-foreground h-7 w-52 rounded text-xs">
+          <SelectTrigger className="border-default bg-panel text-primary h-7 w-52 rounded text-xs">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -92,9 +87,7 @@ export default function PandemicWavesPage() {
       {isLoading && <Spinner />}
 
       {isError && (
-        <p className="text-muted-foreground py-4 text-sm">
-          Failed to load wave data. Please try again.
-        </p>
+        <p className="text-secondary py-4 text-sm">Failed to load wave data. Please try again.</p>
       )}
 
       {data?.waves && (
@@ -113,7 +106,7 @@ export default function PandemicWavesPage() {
                 <YAxis tick={tickStyle} axisLine={false} tickLine={false} />
                 <Tooltip
                   contentStyle={tooltipStyle}
-                  cursor={{ fill: "var(--color-muted)" }}
+                  cursor={{ fill: "var(--color-surface-inset)" }}
                   labelFormatter={(v) => `Wave ${v}`}
                 />
                 <Bar dataKey="peakValue" fill="#8b5cf6" radius={[2, 2, 0, 0]} name="Peak Value" />
@@ -126,29 +119,29 @@ export default function PandemicWavesPage() {
               <div key={wave.wave} className="ui-flat-card">
                 <div className="mb-3 flex items-center justify-between">
                   <p className="ui-data-label">Wave {wave.wave}</p>
-                  <span className="text-muted-foreground text-xs">{wave.duration} days</span>
+                  <span className="text-secondary text-xs">{wave.duration} days</span>
                 </div>
                 <p className="ui-data-value mb-3">{wave.peakValue.toLocaleString()}</p>
                 <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                   <div>
-                    <p className="text-muted-foreground text-xs">Peak Date</p>
-                    <p className="text-foreground text-xs">
+                    <p className="text-secondary text-xs">Peak Date</p>
+                    <p className="text-primary text-xs">
                       {new Date(wave.peakDate).toLocaleDateString()}
                     </p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground text-xs">Total Cases</p>
-                    <p className="text-foreground text-xs tabular-nums">
+                    <p className="text-secondary text-xs">Total Cases</p>
+                    <p className="text-primary text-xs tabular-nums">
                       {wave.totalCases.toLocaleString()}
                     </p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground text-xs">Avg Growth</p>
-                    <p className="text-foreground text-xs">{wave.avgDailyGrowth.toFixed(2)}%</p>
+                    <p className="text-secondary text-xs">Avg Growth</p>
+                    <p className="text-primary text-xs">{wave.avgDailyGrowth.toFixed(2)}%</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground text-xs">Period</p>
-                    <p className="text-foreground text-xs">
+                    <p className="text-secondary text-xs">Period</p>
+                    <p className="text-primary text-xs">
                       {new Date(wave.startDate).toLocaleDateString()} –{" "}
                       {new Date(wave.endDate).toLocaleDateString()}
                     </p>
@@ -162,17 +155,17 @@ export default function PandemicWavesPage() {
             <p className="ui-data-label mb-4">Summary</p>
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <p className="text-muted-foreground mb-1 text-xs">Total Waves</p>
+                <p className="text-secondary mb-1 text-xs">Total Waves</p>
                 <p className="ui-data-value">{data.waves.length}</p>
               </div>
               <div>
-                <p className="text-muted-foreground mb-1 text-xs">Highest Peak</p>
+                <p className="text-secondary mb-1 text-xs">Highest Peak</p>
                 <p className="ui-data-value">
                   {Math.max(...data.waves.map((w) => w.peakValue)).toLocaleString()}
                 </p>
               </div>
               <div>
-                <p className="text-muted-foreground mb-1 text-xs">Data Points</p>
+                <p className="text-secondary mb-1 text-xs">Data Points</p>
                 <p className="ui-data-value">{data.totalDataPoints.toLocaleString()}</p>
               </div>
             </div>

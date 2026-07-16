@@ -1,8 +1,10 @@
+import { Input } from "@pontistudios/ui/forms";
+import { Label } from "@pontistudios/ui/primitives";
 import { useSymptomForm } from "../hooks/use-symptom-form";
 import { TREATMENT_GUIDANCE, type TreatmentGuidance } from "../types/symptom";
 import SymptomCard from "../components/symptom-card";
-import { Button, Input, Label } from "@pontistudios/ui";
-import { cn } from "@pontistudios/ui";
+import { Button } from "@pontistudios/ui/primitives";
+import { cn } from "@pontistudios/ui/utilities";
 import { useCallback } from "react";
 
 export default function Symptoms() {

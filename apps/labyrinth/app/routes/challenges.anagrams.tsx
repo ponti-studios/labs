@@ -19,14 +19,16 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-  Input,
+} from "@pontistudios/ui/primitives";
+import { Input } from "@pontistudios/ui/forms";
+import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from "@pontistudios/ui";
+} from "@pontistudios/ui/data-display";
 import { useState, type ChangeEvent, type JSX } from "react";
 
 // A set of words that are all anagrams of each other
@@ -145,8 +147,8 @@ export default function Anagrams(): JSX.Element {
     <div className="flex flex-col gap-6">
       <header>
         <h2 className="text-xl font-semibold">Anagrams</h2>
-        <p className="text-muted-foreground">Group anagrams together from a list of words.</p>
-        <i className="text-muted-foreground text-xs">Courtesy of ChartHop</i>
+        <p className="text-secondary">Group anagrams together from a list of words.</p>
+        <i className="text-secondary text-xs">Courtesy of ChartHop</i>
       </header>
 
       <div className="flex gap-2">
@@ -156,7 +158,7 @@ export default function Anagrams(): JSX.Element {
           placeholder="Enter words separated by commas"
           className="flex-1"
         />
-        <Button onClick={run} disabled={isRunning} className="flex min-w-24 items-center gap-2">
+        <Button onClick={run} disabled={isRunning} className="flex items-center gap-2">
           {isRunning ? (
             <>
               <span className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
@@ -197,9 +199,7 @@ export default function Anagrams(): JSX.Element {
                         <TableCell className={`font-mono font-medium ${color.row}`}>
                           {step.word}
                         </TableCell>
-                        <TableCell className="text-muted-foreground font-mono">
-                          {step.sortedKey}
-                        </TableCell>
+                        <TableCell className="text-secondary font-mono">{step.sortedKey}</TableCell>
                         <TableCell>
                           <span
                             className={`rounded border px-2 py-0.5 text-xs font-medium ${color.badge}`}

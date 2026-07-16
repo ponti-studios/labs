@@ -1,20 +1,48 @@
+import { AppNavigation } from "@pontistudios/ui/navigation";
+import { Button } from "@pontistudios/ui/primitives";
+import { COLOR_MODE_ATTRIBUTE, COLOR_SYSTEM_ATTRIBUTE } from "@pontistudios/ui/tokens";
 import {
   isRouteErrorResponse,
-  Links,
   Link,
+  Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
   useLocation,
+  useNavigation,
 } from "react-router";
-import { AppNavigation } from "@pontistudios/ui";
 
 import type { Route } from "./+types/root";
 import "./app.css";
-import { cn } from "./lib/utils";
+import { ColorSystemToggle } from "./components/color-system-toggle";
+import { ParticleBackground } from "./components/particle-background";
 import { PrefetchProvider } from "./components/prefetch-provider";
 import QueryProvider from "./components/QueryProvider";
+import { BOOK_CALL_URL } from "./data/studio";
+import { cn } from "./lib/utils";
+import { t } from "./translations";
+
+const themeBootScript = `
+(() => {
+  try {
+    const root = document.documentElement;
+    const system = "ponti";
+    const mode = localStorage.getItem("labs:ui-color-mode") || "system";
+
+    root.setAttribute("${COLOR_SYSTEM_ATTRIBUTE}", system);
+
+    if (mode === "light" || mode === "dark") {
+      root.setAttribute("${COLOR_MODE_ATTRIBUTE}", mode);
+    } else {
+      root.removeAttribute("${COLOR_MODE_ATTRIBUTE}");
+    }
+  } catch (_error) {
+    document.documentElement.setAttribute("${COLOR_SYSTEM_ATTRIBUTE}", "ponti");
+    document.documentElement.removeAttribute("${COLOR_MODE_ATTRIBUTE}");
+  }
+})();
+`;
 
 export const links: Route.LinksFunction = () => [
   { rel: "icon", href: "/logo.realitea.png", type: "image/png" },
@@ -32,15 +60,16 @@ export const links: Route.LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" data-color-system="ponti" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
         <Meta />
         <Links />
         <PrefetchProvider />
       </head>
-      <body className="bg-background text-foreground flex min-h-dvh flex-col overflow-x-hidden overflow-y-auto font-sans">
+      <body className="bg-canvas text-primary flex min-h-dvh flex-col overflow-x-hidden overflow-y-auto font-sans">
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -51,20 +80,47 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   const location = useLocation();
+  const navigation = useNavigation();
+  const isNavigating = navigation.state !== "idle";
 
   return (
     <QueryProvider>
-      <AppNavigation
-        brand={<img src="/logo.labyrinth.png" alt="Realitea Logo" className="size-5 w-auto" />}
-        brandHref="/"
-        activeHref={location.pathname}
-        renderLink={({ href, className, children }) => (
-          <Link key={href} to={href} className={className}>
-            {children}
-          </Link>
+      <ParticleBackground className="fixed" />
+      <div
+        aria-hidden="true"
+        className={cn(
+          "bg-accent fixed inset-x-0 top-0 z-60 h-0.5 origin-left transition-transform duration-200",
+          isNavigating ? "scale-x-100" : "scale-x-0",
         )}
       />
-      <main className={cn("mx-auto flex w-full max-w-7xl flex-1 flex-col")}>
+      <div className="sr-only" aria-live="polite" aria-atomic="true">
+        {isNavigating ? "Loading page" : ""}
+      </div>
+      <AppNavigation
+        brand={<img src="/logo.ponti.png" alt={t.nav.brandAlt} className="size-6" />}
+        brandHref="/"
+        links={[
+          { href: "/services", label: t.nav.services },
+          { href: "/work", label: t.nav.work },
+          { href: "/projects", label: t.nav.projects },
+          { href: "/manifesto", label: t.nav.manifesto },
+        ]}
+        activeHref={location.pathname}
+        endContent={
+          <div className="flex items-center gap-3">
+            <Button asChild>
+              <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
+                {t.nav.book}
+              </a>
+            </Button>
+            <ColorSystemToggle />
+          </div>
+        }
+        linkComponent={Link}
+        linkProp="to"
+        linkProps={{ prefetch: "intent" }}
+      />
+      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col">
         <Outlet />
       </main>
     </QueryProvider>
@@ -106,11 +162,11 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
         <div className="flex justify-center gap-4">
           <button
             onClick={() => window.location.reload()}
-            className="bg-primary rounded-lg px-4 py-2 text-white "
+            className="bg-accent rounded-lg px-4 py-2 text-white "
           >
             Try Again
           </button>
-          <a href="/" className="bg-secondary rounded-lg px-4 py-2 text-gray-800">
+          <a href="/" className="bg-panel rounded-lg px-4 py-2 text-gray-800">
             Go Home
           </a>
         </div>

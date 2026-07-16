@@ -6,6 +6,7 @@ import { XMLParser } from "fast-xml-parser";
 import { generateEmbedding } from "@pontistudios/ai";
 import {
   appendSearchCorpus,
+  closeDb,
   DbEnv,
   db,
   inArray,
@@ -15,7 +16,6 @@ import {
 } from "@pontistudios/db";
 
 import { getErrorMessage } from "../app/lib/errors";
-import { withDbCleanup } from "../app/lib/realitea-scripts";
 import { LabyrinthServerEnv } from "../app/lib/server/env";
 
 type RssItem = {
@@ -61,7 +61,9 @@ function decodeHtml(value: string): string {
 }
 
 function stripHtml(value: string): string {
-  return decodeHtml(value.replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim();
+  return decodeHtml(value.replace(/<[^>]+>/g, " "))
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function normalize(value: string): string {
@@ -196,7 +198,10 @@ function extractJsonObject(source: string, label: string): Record<string, unknow
 }
 
 function parseMetaContent(html: string, name: string): string | null {
-  const pattern = new RegExp(`<meta[^>]+(?:name|property)=["']${name}["'][^>]+content=["']([^"']+)["']`, "i");
+  const pattern = new RegExp(
+    `<meta[^>]+(?:name|property)=["']${name}["'][^>]+content=["']([^"']+)["']`,
+    "i",
+  );
   const match = html.match(pattern);
   return match ? decodeHtml(match[1] ?? "").trim() : null;
 }
@@ -279,7 +284,9 @@ function buildRecord(item: RssItem, meta: VarietyArticleMeta): NewSearchDocument
         : "Film";
   const kind = deriveKind(meta.verticals, item.link);
   const publishedAt = new Date(meta.publishedAt);
-  const publishYear = Number.isNaN(publishedAt.getTime()) ? toYear(item.pubDate) : publishedAt.getFullYear();
+  const publishYear = Number.isNaN(publishedAt.getTime())
+    ? toYear(item.pubDate)
+    : publishedAt.getFullYear();
   const sourceUrl = item.link;
   const sourceUrlSummary = new URL(sourceUrl).pathname.replaceAll("/", " ").trim();
   const body = [
@@ -345,7 +352,11 @@ function buildRecord(item: RssItem, meta: VarietyArticleMeta): NewSearchDocument
   };
 }
 
-async function mapLimit<T, R>(items: T[], limit: number, mapper: (item: T) => Promise<R>): Promise<R[]> {
+async function mapLimit<T, R>(
+  items: T[],
+  limit: number,
+  mapper: (item: T) => Promise<R>,
+): Promise<R[]> {
   const results: R[] = [];
   let index = 0;
 
@@ -361,7 +372,10 @@ async function mapLimit<T, R>(items: T[], limit: number, mapper: (item: T) => Pr
   return results;
 }
 
-async function buildSearchRecord(item: RssItem, meta: VarietyArticleMeta): Promise<NewSearchDocument> {
+async function buildSearchRecord(
+  item: RssItem,
+  meta: VarietyArticleMeta,
+): Promise<NewSearchDocument> {
   const record = buildRecord(item, meta);
   try {
     const embedding = await generateEmbedding(record.searchText);
@@ -424,11 +438,15 @@ async function scrapeVarietyCorpus(pageLimit: number): Promise<NewSearchDocument
       item,
       meta: metas[index]!,
     }));
-    const pageRecords = await mapLimit(pairs, 3, async ({ item, meta }) => buildSearchRecord(item, meta));
+    const pageRecords = await mapLimit(pairs, 3, async ({ item, meta }) =>
+      buildSearchRecord(item, meta),
+    );
     records.push(...pageRecords);
 
     if (firstKnownIndex !== -1) {
-      console.log(`Reached already-seen RSS item on page ${page}; stopping crawl after ${pageRecords.length} new items`);
+      console.log(
+        `Reached already-seen RSS item on page ${page}; stopping crawl after ${pageRecords.length} new items`,
+      );
       break;
     }
   }
@@ -452,8 +470,12 @@ async function main() {
 }
 
 if (!process.env.VITEST) {
-  await withDbCleanup(main).catch((err) => {
+  try {
+    await main();
+  } catch (err) {
     console.error(getErrorMessage(err));
     process.exit(1);
-  });
+  } finally {
+    closeDb();
+  }
 }

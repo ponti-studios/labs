@@ -1,5 +1,11 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@pontistudios/ui";
-import { cn } from "@pontistudios/ui";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@pontistudios/ui/primitives";
+import { cn } from "@pontistudios/ui/utilities";
 import type { MatchedSymptom } from "../types/symptom";
 import React from "react";
 import { SymptomCardGuidance } from "./symptom-card-guidance";
@@ -15,7 +21,7 @@ function SymptomCard({ className, symptom, isAlternative = false }: SymptomCardP
     <>
       <Card
         className={cn(
-          "flex min-w-sm flex-col",
+          "flex w-full min-w-0 flex-col",
           {
             "md:max-w-sm": isAlternative,
             "md:max-w-md": !isAlternative,

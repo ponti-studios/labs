@@ -1,4 +1,4 @@
-import { createMemoryStorage } from "@pontistudios/ui";
+import { createMemoryStorage } from "@pontistudios/ui/utilities";
 import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createRoutesStub } from "react-router";

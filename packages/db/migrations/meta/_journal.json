@@ -43,6 +43,20 @@
       "when": 1782467785742,
       "tag": "0005_complete_stone_men",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1783600000000,
+      "tag": "0006_realitea_games_feeds_articles",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1783600000001,
+      "tag": "0007_fresh_gambit",
+      "breakpoints": true
     }
   ]
 }

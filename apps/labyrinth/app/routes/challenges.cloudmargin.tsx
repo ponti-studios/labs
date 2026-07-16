@@ -1,7 +1,6 @@
+import { Button, Label } from "@pontistudios/ui/primitives";
+import { Input } from "@pontistudios/ui/forms";
 import {
-  Button,
-  Input,
-  Label,
   Table,
   TableBody,
   TableCell,
@@ -9,7 +8,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@pontistudios/ui";
+} from "@pontistudios/ui/data-display";
 import { useState } from "react";
 
 const initialAccruals = [

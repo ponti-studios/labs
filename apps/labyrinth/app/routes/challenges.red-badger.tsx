@@ -1,4 +1,4 @@
-import { Button } from "@pontistudios/ui";
+import { Button } from "@pontistudios/ui/primitives";
 import { useEffect, useReducer, useRef } from "react";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -345,7 +345,7 @@ function GridDisplay({
       <div
         key={`y-${y}`}
         style={{ gridColumn: 1, gridRow: cssRow }}
-        className="text-muted-foreground flex items-center justify-end pr-2 font-mono text-xs select-none"
+        className="text-secondary flex items-center justify-end pr-2 font-mono text-xs select-none"
       >
         {y}
       </div>,
@@ -375,8 +375,8 @@ function GridDisplay({
             backgroundColor: bgColor,
           }}
           className={[
-            "flex items-center justify-center bg-background border-r border-b border-border/50 cursor-pointer transition-colors",
-            "hover:bg-muted/30 focus:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+            "flex items-center justify-center bg-canvas border-r border-b border-subtle cursor-pointer transition-colors",
+            "hover:bg-inset/30 focus:outline-none focus-visible:ring-1 focus-visible:ring-focus",
             displayRow === 0 ? "border-t" : "",
             x === 0 ? "border-l" : "",
           ].join(" ")}
@@ -418,7 +418,7 @@ function GridDisplay({
       <div
         key={`x-${x}`}
         style={{ gridColumn: x + 2, gridRow: GRID + 1 }}
-        className="text-muted-foreground flex items-center justify-center pt-1 font-mono text-xs select-none"
+        className="text-secondary flex items-center justify-center pt-1 font-mono text-xs select-none"
       >
         {x}
       </div>,
@@ -427,7 +427,7 @@ function GridDisplay({
 
   return (
     <div className="inline-flex flex-col gap-0">
-      <div className="text-muted-foreground/60 mb-1 ml-6 flex items-center gap-1 font-mono text-xs">
+      <div className="text-secondary/60 mb-1 ml-6 flex items-center gap-1 font-mono text-xs">
         <Arrow dir="N" color="currentColor" size={14} />
         <span>N</span>
       </div>
@@ -441,7 +441,7 @@ function GridDisplay({
         {cells}
       </div>
       <div
-        className="text-muted-foreground/60 mt-1 text-center font-mono text-xs"
+        className="text-secondary/60 mt-1 text-center font-mono text-xs"
         style={{ paddingLeft: "1.5rem" }}
       >
         x →
@@ -466,13 +466,13 @@ function CommandBuilder({
     `h-12 w-14 rounded border font-mono text-base font-semibold transition-colors
      ${
        disabled
-         ? "border-border/30 text-muted-foreground/30 cursor-not-allowed bg-muted/10"
-         : "border-border bg-background hover:bg-muted/40 active:bg-muted/70 cursor-pointer"
+         ? "border-subtle text-secondary/30 cursor-not-allowed bg-inset/10"
+         : "border-default bg-canvas hover:bg-inset/40 active:bg-inset/70 cursor-pointer"
      } ${extra}`;
 
   return (
     <div className="space-y-2">
-      <p className="text-muted-foreground font-mono text-xs tracking-wide uppercase">Commands</p>
+      <p className="text-secondary font-mono text-xs tracking-wide uppercase">Commands</p>
       <div className="flex gap-2">
         {(["F", "L", "R"] as const).map((cmd) => (
           <button
@@ -502,9 +502,9 @@ function CommandBuilder({
           ✕
         </button>
       </div>
-      <div className="text-foreground/80 min-h-[1.5rem] font-mono text-sm tracking-widest">
+      <div className="text-primary/80 min-h-[1.5rem] font-mono text-sm tracking-widest">
         {cmdInput || (
-          <span className="text-muted-foreground/40 text-xs tracking-normal">
+          <span className="text-secondary/40 text-xs tracking-normal">
             Click F / L / R to build a sequence
           </span>
         )}
@@ -557,20 +557,18 @@ function PuzzleBar({
     <div className="flex items-center gap-3 rounded-lg border border-amber-200/60 bg-amber-50/30 px-3 py-2 text-sm">
       <span className="font-semibold text-amber-600">Puzzle</span>
       {target && (
-        <span className="text-muted-foreground font-mono">
+        <span className="text-secondary font-mono">
           Target:{" "}
-          <span className="text-foreground">
+          <span className="text-primary">
             ({target.x}, {target.y})
           </span>
         </span>
       )}
       {victory && <span className="font-semibold text-green-600">Victory! 🎉</span>}
-      {!victory && (
-        <span className="text-muted-foreground/60 text-xs">Land your robot on the ★</span>
-      )}
+      {!victory && <span className="text-secondary/60 text-xs">Land your robot on the ★</span>}
       <button
         onClick={() => dispatch({ type: "NEW_PUZZLE" })}
-        className="text-muted-foreground hover:text-foreground ml-auto font-mono text-xs underline underline-offset-2"
+        className="text-secondary hover:text-primary ml-auto font-mono text-xs underline underline-offset-2"
       >
         New Puzzle
       </button>
@@ -585,7 +583,7 @@ function RunLog({ log }: { log: LogEntry[] }) {
   return (
     <table className="w-full border-collapse font-mono text-sm">
       <thead>
-        <tr className="text-muted-foreground border-border border-b text-xs tracking-wide uppercase">
+        <tr className="text-secondary border-default border-b text-xs tracking-wide uppercase">
           <th className="pb-1 text-left font-normal">Start</th>
           <th className="pb-1 text-left font-normal">Commands</th>
           <th className="pb-1 text-right font-normal">Result</th>
@@ -593,9 +591,9 @@ function RunLog({ log }: { log: LogEntry[] }) {
       </thead>
       <tbody>
         {log.map((e) => (
-          <tr key={e.id} className="border-border/40 border-b">
-            <td className="text-muted-foreground py-1.5">{e.start}</td>
-            <td className="text-muted-foreground/60 py-1.5 text-xs">{e.cmds}</td>
+          <tr key={e.id} className="border-subtle border-b">
+            <td className="text-secondary py-1.5">{e.start}</td>
+            <td className="text-secondary/60 py-1.5 text-xs">{e.cmds}</td>
             <td className={`py-1.5 text-right ${e.lost ? "text-red-500" : ""}`}>{e.result}</td>
           </tr>
         ))}
@@ -648,15 +646,15 @@ export default function RedBadger() {
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2>Red Badger — Martian Robots</h2>
-          <p className="text-muted-foreground mt-1 text-sm">
+          <p className="text-secondary mt-1 text-sm">
             Click a cell to place your robot. Click it again to rotate direction. Build a command
-            sequence with <kbd className="bg-muted rounded px-1 font-mono text-xs">F</kbd> /{" "}
-            <kbd className="bg-muted rounded px-1 font-mono text-xs">L</kbd> /{" "}
-            <kbd className="bg-muted rounded px-1 font-mono text-xs">R</kbd>, then step through or
+            sequence with <kbd className="bg-inset rounded px-1 font-mono text-xs">F</kbd> /{" "}
+            <kbd className="bg-inset rounded px-1 font-mono text-xs">L</kbd> /{" "}
+            <kbd className="bg-inset rounded px-1 font-mono text-xs">R</kbd>, then step through or
             run. A robot that falls off the edge leaves a scent — future robots skip that fatal
             move.
           </p>
-          <p className="text-muted-foreground/60 mt-0.5 text-xs">Courtesy of Red Badger</p>
+          <p className="text-secondary/60 mt-0.5 text-xs">Courtesy of Red Badger</p>
         </div>
         <button
           onClick={() => dispatch({ type: "TOGGLE_MODE" })}
@@ -664,7 +662,7 @@ export default function RedBadger() {
             ${
               state.mode === "puzzle"
                 ? "border-amber-300 bg-amber-50/50 text-amber-700"
-                : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/40"
+                : "border-default text-secondary hover:text-primary hover:border-foreground/40"
             }`}
         >
           {state.mode === "puzzle" ? "★ Puzzle" : "Puzzle mode"}
@@ -688,20 +686,18 @@ export default function RedBadger() {
           onCellClick={handleCellClick}
         />
 
-        <div className="min-w-[220px] space-y-4">
+        <div className="w-full max-w-[220px] space-y-4">
           {state.pendingPos && (
-            <div className="text-muted-foreground font-mono text-xs">
+            <div className="text-secondary font-mono text-xs">
               Start:{" "}
-              <span className="text-foreground">
+              <span className="text-primary">
                 ({state.pendingPos.x}, {state.pendingPos.y}) {state.pendingPos.dir}
               </span>
               <span className="ml-2 opacity-50">click to rotate</span>
             </div>
           )}
           {!state.pendingPos && (
-            <div className="text-muted-foreground/60 text-xs">
-              ← Click a cell to place your robot
-            </div>
+            <div className="text-secondary/60 text-xs">← Click a cell to place your robot</div>
           )}
 
           <CommandBuilder cmdInput={state.cmdInput} phase={state.phase} dispatch={dispatch} />

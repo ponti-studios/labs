@@ -1,19 +1,16 @@
-import { useReducer } from "react";
+import { Button } from "@pontistudios/ui/primitives";
+import { Slider } from "@pontistudios/ui/forms";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@pontistudios/ui/navigation";
 import {
-  Badge,
-  Button,
-  Slider,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from "@pontistudios/ui";
+} from "@pontistudios/ui/data-display";
+import { useReducer } from "react";
+import { Badge } from "@pontistudios/ui/primitives";
 
 const STANDARD_PREMIUM = 174.7;
 const STANDARD_DEDUCTIBLE = 240;

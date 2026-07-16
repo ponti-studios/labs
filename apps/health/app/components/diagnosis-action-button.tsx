@@ -1,4 +1,4 @@
-import { Button } from "@pontistudios/ui";
+import { Button } from "@pontistudios/ui/primitives";
 import { useMonitoredSymptoms } from "../hooks/use-monitored-symptoms";
 import { type Symptom, TREATMENT_GUIDANCE } from "../types/symptom";
 import React from "react";

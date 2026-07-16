@@ -8,7 +8,7 @@ import {
   ScrollRestoration,
   useLocation,
 } from "react-router";
-import { AppNavigation } from "@pontistudios/ui";
+import { AppNavigation } from "@pontistudios/ui/navigation";
 
 import type { Route } from "./+types/root";
 import "./app.css";
@@ -61,11 +61,8 @@ export default function App() {
             { href: "/hospitals", label: "Hospitals" },
           ]}
           activeHref={location.pathname}
-          renderLink={({ href, className, children }) => (
-            <Link key={href} to={href} className={className}>
-              {children}
-            </Link>
-          )}
+          linkComponent={Link}
+          linkProp="to"
         />
         <main className="flex min-h-screen flex-col pt-24">
           <Outlet />

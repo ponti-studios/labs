@@ -2,11 +2,13 @@ import "dotenv/config";
 import { parseArgs } from "node:util";
 import { closeDb } from "@pontistudios/db";
 
-import { buildDateRange, getDateKey, isDateKey } from "../app/lib/realitea-date";
+import { buildDateRange, getDateKey, isDateKey } from "../app/lib/realitea/date";
 import { getErrorMessage } from "../app/lib/errors";
-import { generateScheduledPuzzle } from "../app/lib/realitea-generation";
-import { withDbCleanup } from "../app/lib/realitea-scripts";
+import { generatePuzzleForGame } from "../app/lib/realitea/generation";
+import { getGameBySlug } from "../app/lib/realitea/repository";
 import { LabyrinthServerEnv } from "../app/lib/server/env";
+
+const RHOBH_GAME_SLUG = "rhobh";
 
 interface GenerationOptions {
   dateKey?: string;
@@ -20,16 +22,16 @@ export function parseGenerateArgs(argv: string[]): GenerationOptions {
     args: argv,
     options: {
       "date-key": { type: "string" },
-      from:        { type: "string" },
-      to:          { type: "string" },
+      from: { type: "string" },
+      to: { type: "string" },
       "days-ahead": { type: "string" },
     },
     strict: true,
   });
   return {
     ...(values["date-key"] !== undefined && { dateKey: values["date-key"] }),
-    ...(values.from        !== undefined && { from: values.from }),
-    ...(values.to          !== undefined && { to: values.to }),
+    ...(values.from !== undefined && { from: values.from }),
+    ...(values.to !== undefined && { to: values.to }),
     ...(values["days-ahead"] !== undefined && { daysAhead: parseInt(values["days-ahead"], 10) }),
   };
 }
@@ -57,13 +59,16 @@ async function main() {
   const opts = parseGenerateArgs(process.argv.slice(2));
   const dateKeys = buildGenerateRange(opts);
 
+  const game = await getGameBySlug(RHOBH_GAME_SLUG);
+  if (!game) throw new Error(`Game not found: ${RHOBH_GAME_SLUG}`);
+
   let generated = 0;
   let failed = 0;
   let skipped = 0;
 
   for (const dateKey of dateKeys) {
     try {
-      const puzzle = await generateScheduledPuzzle(dateKey);
+      const puzzle = await generatePuzzleForGame(game, dateKey);
       if (puzzle) {
         generated++;
       } else {
@@ -83,9 +88,12 @@ async function main() {
 }
 
 if (!process.env.VITEST) {
-  await withDbCleanup(main).catch((err) => {
+  try {
+    await main();
+  } catch (err) {
     console.error(getErrorMessage(err));
-    closeDb();
     process.exit(1);
-  });
+  } finally {
+    closeDb();
+  }
 }

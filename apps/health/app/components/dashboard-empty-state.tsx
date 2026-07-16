@@ -1,4 +1,4 @@
-import { Button } from "@pontistudios/ui";
+import { Button } from "@pontistudios/ui/primitives";
 import { Link } from "react-router";
 
 const animationStyles = `
@@ -24,15 +24,15 @@ export function DashboardEmptyState() {
 
       <div className="relative flex flex-col gap-5">
         <div className="flex items-start gap-3 rounded-2xl backdrop-blur">
-          <div className="bg-primary/10 text-primary flex h-11 w-11 items-center justify-center rounded-full text-xl">
+          <div className="bg-accent/10 text-primary flex h-11 w-11 items-center justify-center rounded-full text-xl">
             ✦
           </div>
           <div className="flex flex-col gap-1">
-            <p className="text-muted-foreground text-xs font-semibold tracking-[0.24em] uppercase">
+            <p className="text-secondary text-xs font-semibold tracking-[0.24em] uppercase">
               dashboard is fresh
             </p>
             <h3 className="text-lg font-semibold">Nothing on the radar yet</h3>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-secondary text-sm">
               Start by checking a symptom or booking a visit so your care timeline feels alive.
             </p>
           </div>

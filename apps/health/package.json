@@ -22,7 +22,6 @@
     "@react-router/node": "catalog:",
     "@react-router/serve": "catalog:",
     "@tanstack/react-query": "catalog:",
-    "@tanstack/react-query-devtools": "catalog:",
     "date-fns": "^4.4.0",
     "isbot": "^5.1.44",
     "react": "catalog:",
@@ -45,6 +44,7 @@
     "tsx": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
+    "vite-plugin-devtools-json": "catalog:",
     "vitest": "catalog:"
   },
   "packageManager": "pnpm@10.30.3"

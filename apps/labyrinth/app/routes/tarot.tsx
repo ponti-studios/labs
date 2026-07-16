@@ -3,10 +3,8 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-  Badge,
-  Button,
-  Card,
-} from "@pontistudios/ui";
+} from "@pontistudios/ui/data-display";
+import { Badge, Button, Card } from "@pontistudios/ui/primitives";
 import { motion } from "framer-motion";
 import { useEffect, useReducer } from "react";
 import { getLocalDateKey, isDailyTarotResult } from "~/lib/tarot-daily";
@@ -110,47 +108,40 @@ export default function TarotRoute() {
           </div>
 
           <div className="pt-1 text-sm md:text-right">
-            <div className="ui-eyebrow">Today</div>
-            <div className="text-foreground mt-1 text-lg font-medium">{formatDate(dateKey)}</div>
+            <div className="text-secondary text-xs font-medium">Today</div>
+            <div className="text-primary mt-1 text-lg font-medium">{formatDate(dateKey)}</div>
           </div>
         </motion.div>
 
         {!isHydrated ? (
-          <Card className="border-border bg-background border p-8 shadow-sm">
-            <div className="text-muted-foreground py-16 text-center">
-              Preparing today&apos;s ritual...
-            </div>
+          <Card className="border-default bg-canvas border p-8 shadow-sm">
+            <div className="text-secondary py-16 text-center">Preparing today&apos;s ritual...</div>
           </Card>
         ) : result ? (
           <DailyTarotReadingView result={result} />
         ) : (
-          <div className="border-border grid gap-6 border-b pb-8 lg:grid-cols-[240px_minmax(0,1fr)] lg:items-center">
-            <div className="border-border bg-muted mx-auto flex h-72 w-52 items-center justify-center border">
+          <div className="border-default grid gap-6 border-b pb-8 lg:grid-cols-[240px_minmax(0,1fr)] lg:items-center">
+            <div className="border-default bg-inset mx-auto flex h-72 w-52 items-center justify-center border">
               <div className="text-center">
-                <div className="text-muted-foreground text-4xl">✦</div>
-                <div className="ui-eyebrow mt-3">Daily draw</div>
+                <div className="text-secondary text-4xl">✦</div>
+                <div className="text-secondary mt-3 text-xs font-medium">Daily draw</div>
                 <h3 className="mt-2">Today&apos;s card</h3>
               </div>
             </div>
 
             <div>
-              <p className="ui-eyebrow">Daily practice</p>
+              <p className="text-secondary text-xs font-medium">Daily practice</p>
               <h2 className="mt-3">Pull one card and let the day orbit around it.</h2>
-              <p className="text-muted-foreground mt-3 max-w-2xl text-base leading-7">
+              <p className="text-secondary mt-3 max-w-2xl text-base leading-7">
                 You&apos;ll get one card for your local day, a concise reading, and a reflection
                 prompt. Once drawn, it stays with you until tomorrow.
               </p>
 
               <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <Button
-                  onClick={handleDrawCard}
-                  disabled={isDrawing}
-                  size="lg"
-                  className="min-w-48"
-                >
+                <Button onClick={handleDrawCard} disabled={isDrawing}>
                   {isDrawing ? "Drawing..." : "Draw today’s card"}
                 </Button>
-                <p className="text-muted-foreground text-sm">
+                <p className="text-secondary text-sm">
                   No redraws today. Come back tomorrow for a new card.
                 </p>
               </div>
@@ -178,14 +169,14 @@ function DailyTarotReadingView({ result }: { result: DailyTarotResult }) {
           <img
             src={`/tarot-cards/${card.img}`}
             alt={card.name}
-            className="border-border h-auto w-full border"
+            className="border-default h-auto w-full border"
           />
         </div>
 
         <div className="text-center">
-          <p className="ui-eyebrow">{card.arcana}</p>
+          <p className="text-secondary text-xs font-medium">{card.arcana}</p>
           <h2 className="mt-2">{card.name}</h2>
-          <p className="text-muted-foreground mt-2 text-sm">
+          <p className="text-secondary mt-2 text-sm">
             {card.rank}
             {card.suit !== "Trump" ? ` of ${card.suit}` : ""}
           </p>
@@ -199,8 +190,8 @@ function DailyTarotReadingView({ result }: { result: DailyTarotResult }) {
           ))}
         </div>
 
-        <div className="border-border text-muted-foreground border-t pt-4 text-sm">
-          <div className="ui-eyebrow">Reading source</div>
+        <div className="border-default text-secondary border-t pt-4 text-sm">
+          <div className="text-secondary text-xs font-medium">Reading source</div>
           <div className="mt-2">
             {source === "ai"
               ? "AI-generated reading grounded in the curated card data."
@@ -210,10 +201,10 @@ function DailyTarotReadingView({ result }: { result: DailyTarotResult }) {
       </aside>
 
       <div className="space-y-6">
-        <section className="border-border space-y-4 border-b pb-6">
+        <section className="border-default space-y-4 border-b pb-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <p className="ui-eyebrow">Today’s reading</p>
+              <p className="text-secondary text-xs font-medium">Today’s reading</p>
               <h3 className="mt-2">{reading.headline}</h3>
             </div>
             <Badge variant="secondary">{source === "ai" ? "AI reading" : "Curated reading"}</Badge>
@@ -227,18 +218,18 @@ function DailyTarotReadingView({ result }: { result: DailyTarotResult }) {
           </div>
         </section>
 
-        <section className="border-border space-y-4 border-b pb-6">
-          <p className="ui-eyebrow">Questions to sit with</p>
+        <section className="border-default space-y-4 border-b pb-6">
+          <p className="text-secondary text-xs font-medium">Questions to sit with</p>
           <div className="grid gap-2.5">
             {card.reflectionQuestions.slice(0, 3).map((question) => (
-              <div key={question} className="border-border text-foreground border-l-2 pl-4">
+              <div key={question} className="border-default text-primary border-l-2 pl-4">
                 {question}
               </div>
             ))}
           </div>
         </section>
 
-        <Accordion type="single" collapsible className="border-border border-b">
+        <Accordion type="single" collapsible className="border-default border-b">
           <AccordionItem value="study" className="border-b-0">
             <AccordionTrigger className="py-0">
               <h4>Curated meanings and deeper notes</h4>
@@ -266,7 +257,7 @@ function DailyTarotReadingView({ result }: { result: DailyTarotResult }) {
                 />
 
                 {card.studyNotes && (
-                  <div className="border-border border-t pt-4">
+                  <div className="border-default border-t pt-4">
                     <h5>Study notes</h5>
                     <div className="mt-3 grid gap-3 md:grid-cols-2">
                       {card.studyNotes.archetype && (
@@ -309,20 +300,20 @@ function DailyTarotReadingView({ result }: { result: DailyTarotResult }) {
 
 function ReadingPanel({ title, body }: { title: string; body: string }) {
   return (
-    <div className="border-border border-l-2 pl-4">
-      <div className="ui-eyebrow">{title}</div>
-      <p className="text-foreground mt-2 text-base leading-7">{body}</p>
+    <div className="border-default border-l-2 pl-4">
+      <div className="text-secondary text-xs font-medium">{title}</div>
+      <p className="text-primary mt-2 text-base leading-7">{body}</p>
     </div>
   );
 }
 
 function MeaningList({ title, accent, items }: { title: string; accent: string; items: string[] }) {
   return (
-    <div className="border-border border-l-2 pl-4">
+    <div className="border-default border-l-2 pl-4">
       <h5 className={accent}>{title}</h5>
       <ul className="mt-3 space-y-2">
         {items.map((item) => (
-          <li key={item} className="text-foreground flex gap-3 text-sm leading-6">
+          <li key={item} className="text-primary flex gap-3 text-sm leading-6">
             <span className={`${accent}`}>✦</span>
             <span>{item}</span>
           </li>
@@ -335,8 +326,8 @@ function MeaningList({ title, accent, items }: { title: string; accent: string; 
 function StudyNote({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <div className="ui-eyebrow">{label}</div>
-      <p className="text-foreground mt-1.5 text-sm leading-6">{value}</p>
+      <div className="text-secondary text-xs font-medium">{label}</div>
+      <p className="text-primary mt-1.5 text-sm leading-6">{value}</p>
     </div>
   );
 }

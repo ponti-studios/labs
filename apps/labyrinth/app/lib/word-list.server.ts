@@ -10,7 +10,7 @@ import { readFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { getStoredAnswers } from "./realitea-db";
+import { getStoredAnswers } from "./realitea/repository";
 import { REALITEA_ANSWER_LENGTH } from "./realitea";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -22,17 +22,21 @@ const wordSet = new Set(
     .filter(Boolean),
 );
 
-export async function isValidWord(word: string): Promise<boolean> {
+export function isDictionaryWord(word: string): boolean {
+  return wordSet.has(word.toUpperCase().trim());
+}
+
+export async function isValidWord(word: string, gameId: number): Promise<boolean> {
   const upper = word.toUpperCase().trim();
 
   if (upper.length !== REALITEA_ANSWER_LENGTH) {
     return false;
   }
 
-  if (wordSet.has(upper)) {
+  if (isDictionaryWord(upper)) {
     return true;
   }
 
-  const storedAnswers = await getStoredAnswers();
+  const storedAnswers = await getStoredAnswers(gameId);
   return storedAnswers.has(upper);
 }

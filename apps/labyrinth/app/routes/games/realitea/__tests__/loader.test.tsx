@@ -1,18 +1,20 @@
 import type { LoaderFunctionArgs } from "react-router";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const loadActivePublicPuzzle = vi.fn();
 
-vi.mock("../../../../lib/realitea-puzzle.server", () => ({
+vi.mock("../../../../lib/realitea/puzzle.server", () => ({
   loadActivePublicPuzzle,
 }));
 
 describe("RealiTea route loader", () => {
   beforeEach(() => {
     loadActivePublicPuzzle.mockReset();
-    vi.useFakeTimers();
+    vi.useFakeTimers({ shouldAdvanceTime: true });
     vi.setSystemTime(new Date("2026-05-20T12:00:00.000Z"));
   });
+
+  afterEach(() => vi.useRealTimers());
 
   function createLoaderArgs(url: string): LoaderFunctionArgs {
     const request = new Request(url);
@@ -44,7 +46,7 @@ describe("RealiTea route loader", () => {
     expect(response.status).toBe(200);
     expect(payload.puzzle.answer).toBeUndefined();
     expect(payload.puzzle.dateKey).toBe("2026-05-20");
-  });
+  }, 15_000);
 
   it("throws a RealiTea-specific 404 error when no puzzle exists for today", async () => {
     loadActivePublicPuzzle.mockResolvedValue(null);

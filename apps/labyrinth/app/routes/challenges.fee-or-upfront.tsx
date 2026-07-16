@@ -1,15 +1,15 @@
-import { useMemo, useState, type JSX, type ChangeEvent } from "react";
+import { Input } from "@pontistudios/ui/forms";
+import { Label } from "@pontistudios/ui/primitives";
 import {
-  Badge,
-  Input,
-  Label,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from "@pontistudios/ui";
+} from "@pontistudios/ui/data-display";
+import { useMemo, useState, type JSX, type ChangeEvent } from "react";
+import { Badge } from "@pontistudios/ui/primitives";
 
 type Choice = "upfront" | "per-transaction";
 
@@ -62,23 +62,23 @@ export default function FeeOrUpfront(): JSX.Element {
     <div className="flex flex-col gap-6">
       <header>
         <h2 className="text-xl font-semibold">Fee or Upfront</h2>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-secondary text-sm">
           Two pricing models: pay once upfront, or{" "}
-          <code className="bg-muted rounded px-1 py-0.5 text-xs">max(base, amount × rate%)</code>{" "}
+          <code className="bg-inset rounded px-1 py-0.5 text-xs">max(base, amount × rate%)</code>{" "}
           per transaction.
         </p>
-        <i className="text-muted-foreground text-xs">Courtesy of Goldman Sachs</i>
+        <i className="text-secondary text-xs">Courtesy of Goldman Sachs</i>
       </header>
 
       {/* Side-by-side comparison */}
       <div className="bg-border grid grid-cols-[1fr_auto_1fr] gap-px overflow-hidden rounded-xl shadow-sm">
         {/* Option A — Upfront */}
         <div
-          className={`bg-background flex flex-col gap-4 p-5 ${winnerIsUpfront ? "bg-green-50/60" : ""}`}
+          className={`bg-canvas flex flex-col gap-4 p-5 ${winnerIsUpfront ? "bg-green-50/60" : ""}`}
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-muted-foreground text-[10px] font-medium tracking-widest uppercase">
+              <p className="text-secondary text-[10px] font-medium tracking-widest uppercase">
                 Option A
               </p>
               <h3 className="text-base font-semibold">Upfront</h3>
@@ -103,10 +103,8 @@ export default function FeeOrUpfront(): JSX.Element {
             />
           </div>
 
-          <div className="border-border border-t pt-3">
-            <p className="text-muted-foreground mb-0.5 text-[10px] tracking-wide uppercase">
-              Total
-            </p>
+          <div className="border-default border-t pt-3">
+            <p className="text-secondary mb-0.5 text-[10px] tracking-wide uppercase">Total</p>
             <p
               className={`font-mono text-2xl font-bold tabular-nums ${winnerIsUpfront ? "text-green-700" : ""}`}
             >
@@ -116,17 +114,17 @@ export default function FeeOrUpfront(): JSX.Element {
         </div>
 
         {/* VS */}
-        <div className="bg-background flex items-center justify-center px-3">
-          <span className="text-muted-foreground text-xs font-semibold">vs</span>
+        <div className="bg-canvas flex items-center justify-center px-3">
+          <span className="text-secondary text-xs font-semibold">vs</span>
         </div>
 
         {/* Option B — Per-transaction */}
         <div
-          className={`bg-background flex flex-col gap-4 p-5 ${!winnerIsUpfront ? "bg-green-50/60" : ""}`}
+          className={`bg-canvas flex flex-col gap-4 p-5 ${!winnerIsUpfront ? "bg-green-50/60" : ""}`}
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-muted-foreground text-[10px] font-medium tracking-widest uppercase">
+              <p className="text-secondary text-[10px] font-medium tracking-widest uppercase">
                 Option B
               </p>
               <h3 className="text-base font-semibold">Per-transaction</h3>
@@ -178,10 +176,8 @@ export default function FeeOrUpfront(): JSX.Element {
             />
           </div>
 
-          <div className="border-border border-t pt-3">
-            <p className="text-muted-foreground mb-0.5 text-[10px] tracking-wide uppercase">
-              Total
-            </p>
+          <div className="border-default border-t pt-3">
+            <p className="text-secondary mb-0.5 text-[10px] tracking-wide uppercase">Total</p>
             <p
               className={`font-mono text-2xl font-bold tabular-nums ${!winnerIsUpfront ? "text-green-700" : ""}`}
             >
@@ -191,11 +187,9 @@ export default function FeeOrUpfront(): JSX.Element {
         </div>
       </div>
 
-      <p className="text-muted-foreground text-center text-xs">
+      <p className="text-secondary text-center text-xs">
         {winnerIsUpfront ? "Upfront" : "Per-transaction"} saves{" "}
-        <span className="text-foreground font-mono font-semibold">
-          ${result.savings.toFixed(2)}
-        </span>
+        <span className="text-primary font-mono font-semibold">${result.savings.toFixed(2)}</span>
       </p>
 
       {/* Breakdown table */}
@@ -211,7 +205,7 @@ export default function FeeOrUpfront(): JSX.Element {
         <TableBody>
           {result.rows.map((row, i) => (
             <TableRow key={i}>
-              <TableCell className="text-muted-foreground">{i + 1}</TableCell>
+              <TableCell className="text-secondary">{i + 1}</TableCell>
               <TableCell className="font-mono">${row.payment}</TableCell>
               <TableCell className="font-mono font-medium">${row.charged.toFixed(2)}</TableCell>
               <TableCell>
@@ -228,8 +222,8 @@ export default function FeeOrUpfront(): JSX.Element {
               </TableCell>
             </TableRow>
           ))}
-          <TableRow className="bg-muted/40 font-semibold">
-            <TableCell colSpan={2} className="text-muted-foreground text-right">
+          <TableRow className="bg-inset/40 font-semibold">
+            <TableCell colSpan={2} className="text-secondary text-right">
               Total
             </TableCell>
             <TableCell className="font-mono">${result.totalFees.toFixed(2)}</TableCell>
