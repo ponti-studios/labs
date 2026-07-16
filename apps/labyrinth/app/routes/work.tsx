@@ -24,10 +24,7 @@ export default function Work() {
       <section className="layout-stack">
         <div className="border-subtle divide-border-subtle divide-y border-b">
           {caseSnapshots.map((snapshot) => (
-            <div
-              key={snapshot.slug}
-              className="list-row group"
-            >
+            <div key={snapshot.slug} className="list-row group">
               <Link
                 to={`/work/${snapshot.slug}`}
                 prefetch="intent"
@@ -41,7 +38,7 @@ export default function Work() {
                   />
                 ) : null}
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
-                  <span className="body-4 text-secondary uppercase tracking-wide">
+                  <span className="body-4 text-secondary tracking-wide uppercase">
                     {snapshot.industry}
                   </span>
                   <h3 className="heading-2 text-primary group-hover:text-accent transition-colors motion-reduce:transition-none">

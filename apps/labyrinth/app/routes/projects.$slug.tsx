@@ -68,7 +68,7 @@ export default function ProjectDetail() {
               href={project.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-accent inline-flex min-h-11 items-center gap-2 underline-offset-4 hover:underline outline-none"
+              className="hover:text-accent inline-flex min-h-11 items-center gap-2 underline-offset-4 outline-none hover:underline"
             >
               {t.projects.page.repository}
               <FolderGit2 size={16} aria-hidden="true" />
@@ -78,7 +78,7 @@ export default function ProjectDetail() {
                 href={project.url}
                 target={project.url.startsWith("http") ? "_blank" : undefined}
                 rel={project.url.startsWith("http") ? "noopener noreferrer" : undefined}
-                className="hover:text-accent inline-flex min-h-11 items-center gap-2 underline-offset-4 hover:underline outline-none"
+                className="hover:text-accent inline-flex min-h-11 items-center gap-2 underline-offset-4 outline-none hover:underline"
               >
                 {t.projects.page.liveProject}
                 <ExternalLink size={16} aria-hidden="true" />
@@ -147,8 +147,20 @@ export default function ProjectDetail() {
 
       <DetailNavigation
         ariaLabel="Project navigation"
-        previous={previous ? { label: t.projects.page.previous, title: previous.name, to: `/projects/${previous.slug}` } : null}
-        next={next ? { label: t.projects.page.next, title: next.name, to: `/projects/${next.slug}` } : null}
+        previous={
+          previous
+            ? {
+                label: t.projects.page.previous,
+                title: previous.name,
+                to: `/projects/${previous.slug}`,
+              }
+            : null
+        }
+        next={
+          next
+            ? { label: t.projects.page.next, title: next.name, to: `/projects/${next.slug}` }
+            : null
+        }
       />
     </div>
   );

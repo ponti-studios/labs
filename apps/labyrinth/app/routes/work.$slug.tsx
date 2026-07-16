@@ -105,7 +105,9 @@ export default function WorkSlug() {
             ? { label: "Previous case study", title: previous.client, to: `/work/${previous.slug}` }
             : null
         }
-        next={next ? { label: "Next case study", title: next.client, to: `/work/${next.slug}` } : null}
+        next={
+          next ? { label: "Next case study", title: next.client, to: `/work/${next.slug}` } : null
+        }
       />
 
       {/* Close CTA */}

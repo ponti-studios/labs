@@ -1,5 +1,12 @@
 import { Badge, Card, CardContent, CardHeader } from "@pontistudios/ui/primitives";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Stepper } from "@pontistudios/ui/forms";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Stepper,
+} from "@pontistudios/ui/forms";
 import { cn } from "~/lib/utils";
 import { Clapperboard } from "lucide-react";
 import {
@@ -41,9 +48,7 @@ export function ScreenAllocation({
               <span className="ui-data-label">Screen Allocation</span>
               <Clapperboard className="text-secondary size-4" />
             </div>
-            <p className="text-secondary mt-1 text-xs">
-              Roster your screens like a weekly lineup.
-            </p>
+            <p className="text-secondary mt-1 text-xs">Roster your screens like a weekly lineup.</p>
           </div>
           <div className="text-right">
             <div className="text-primary font-mono text-sm font-semibold tabular-nums">

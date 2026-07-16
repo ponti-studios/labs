@@ -1,6 +1,13 @@
 import { Input } from "@pontistudios/ui/forms";
 import { Label } from "@pontistudios/ui/primitives";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@pontistudios/ui/data-display";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@pontistudios/ui/data-display";
 import { useState, type JSX } from "react";
 import { Button } from "@pontistudios/ui/primitives";
 

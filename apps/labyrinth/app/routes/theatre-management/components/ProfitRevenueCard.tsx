@@ -52,9 +52,7 @@ export function ProfitRevenueCard({
             </div>
             <div className="mt-1 flex items-center gap-1.5">
               <TrendingUp className="text-secondary size-3" />
-              <span className="text-secondary text-xs">
-                {fmt(d.monthlyVisitors)} visitors
-              </span>
+              <span className="text-secondary text-xs">{fmt(d.monthlyVisitors)} visitors</span>
             </div>
           </div>
         </div>

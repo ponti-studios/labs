@@ -1,7 +1,14 @@
 import { Button } from "@pontistudios/ui/primitives";
 import { Slider } from "@pontistudios/ui/forms";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@pontistudios/ui/navigation";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@pontistudios/ui/data-display";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@pontistudios/ui/data-display";
 import { useReducer } from "react";
 import { Badge } from "@pontistudios/ui/primitives";
 

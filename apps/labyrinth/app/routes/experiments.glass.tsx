@@ -1,4 +1,9 @@
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@pontistudios/ui/data-display";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@pontistudios/ui/data-display";
 import { Button, Label } from "@pontistudios/ui/primitives";
 import { cn } from "@pontistudios/ui/utilities";
 import { Input, Slider } from "@pontistudios/ui/forms";
@@ -101,10 +106,7 @@ export default function ExperimentsGlass() {
               ).map(({ channel, color, label }) => (
                 <div key={channel} className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label
-                      htmlFor={channel}
-                      className="text-secondary flex items-center gap-2"
-                    >
+                    <Label htmlFor={channel} className="text-secondary flex items-center gap-2">
                       <span className={cn("inline-block size-2 rounded-full", color)} />
                       {label}
                     </Label>

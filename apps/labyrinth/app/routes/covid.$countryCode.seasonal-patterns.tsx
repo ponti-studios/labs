@@ -145,7 +145,10 @@ export default function SeasonalPatternsPage() {
                     height={48}
                   />
                   <YAxis tick={tickStyle} axisLine={false} tickLine={false} />
-                  <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "var(--color-surface-inset)" }} />
+                  <Tooltip
+                    contentStyle={tooltipStyle}
+                    cursor={{ fill: "var(--color-surface-inset)" }}
+                  />
                   <Bar
                     dataKey="averageCases"
                     fill="#d97706"
@@ -196,9 +199,7 @@ export default function SeasonalPatternsPage() {
                   <div key={insight.pattern} className="border-default border-l-2 py-0.5 pl-4">
                     <p className="text-primary text-sm font-medium">{insight.pattern}</p>
                     <p className="text-secondary mt-0.5 text-xs">{insight.description}</p>
-                    <p className="text-secondary mt-1 text-xs">
-                      {insight.strength}% strength
-                    </p>
+                    <p className="text-secondary mt-1 text-xs">{insight.strength}% strength</p>
                   </div>
                 ))}
               </div>

@@ -106,9 +106,7 @@ export default function MedicationRoute(): JSX.Element {
             {partialDose !== null && (
               <li className="bg-inset/50 border-muted-foreground/20 flex items-center justify-between rounded-md border border-dashed px-4 py-2">
                 <span className="font-medium">Week {Math.floor(totalWeeks) + 1} (partial)</span>
-                <span className="text-secondary tabular-nums">
-                  {partialDose.toFixed(1)} mg
-                </span>
+                <span className="text-secondary tabular-nums">{partialDose.toFixed(1)} mg</span>
               </li>
             )}
           </ul>

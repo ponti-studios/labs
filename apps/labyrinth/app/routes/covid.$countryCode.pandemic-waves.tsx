@@ -87,9 +87,7 @@ export default function PandemicWavesPage() {
       {isLoading && <Spinner />}
 
       {isError && (
-        <p className="text-secondary py-4 text-sm">
-          Failed to load wave data. Please try again.
-        </p>
+        <p className="text-secondary py-4 text-sm">Failed to load wave data. Please try again.</p>
       )}
 
       {data?.waves && (
