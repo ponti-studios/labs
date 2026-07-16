@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Spinner } from "@pontistudios/ui";
+import { Spinner } from "@pontistudios/ui/feedback";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
 import {
@@ -57,16 +57,16 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 const tooltipStyle = {
-  backgroundColor: "var(--color-card)",
-  border: "1px solid var(--color-border)",
+  backgroundColor: "var(--color-surface-panel)",
+  border: "1px solid var(--color-border-default)",
   borderRadius: "2px",
   fontSize: "12px",
-  color: "var(--color-emphasis-medium)",
+  color: "var(--color-text-secondary)",
   padding: "6px 10px",
   boxShadow: "none",
 };
 
-const tickStyle = { fill: "var(--color-emphasis-low)", fontSize: 11 };
+const tickStyle = { fill: "var(--color-text-tertiary)", fontSize: 11 };
 
 export default function VaccinationEffectivenessPage() {
   const { countryCode } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
@@ -88,12 +88,12 @@ export default function VaccinationEffectivenessPage() {
       {isLoading && <Spinner />}
 
       {isError && (
-        <p className="text-muted-foreground py-4 text-sm">
+        <p className="text-secondary py-4 text-sm">
           Failed to load vaccination data. Please try again.
         </p>
       )}
 
-      {data?.error && <p className="text-muted-foreground py-4 text-sm">{data.error}</p>}
+      {data?.error && <p className="text-secondary py-4 text-sm">{data.error}</p>}
 
       {data?.effectiveness && (
         <div className="space-y-6">
@@ -133,7 +133,7 @@ export default function VaccinationEffectivenessPage() {
                   },
                 ].map(({ label, value }) => (
                   <div key={label}>
-                    <p className="text-muted-foreground mb-1 text-xs">{label}</p>
+                    <p className="text-secondary mb-1 text-xs">{label}</p>
                     <p className="ui-data-value">{value}</p>
                   </div>
                 ))}
@@ -148,7 +148,7 @@ export default function VaccinationEffectivenessPage() {
                 <LineChart data={data.timeline} margin={{ top: 0, right: 8, bottom: 0, left: 0 }}>
                   <CartesianGrid
                     strokeDasharray="4 4"
-                    stroke="var(--color-muted)"
+                    stroke="var(--color-surface-inset)"
                     vertical={false}
                   />
                   <XAxis
@@ -166,7 +166,7 @@ export default function VaccinationEffectivenessPage() {
                   <YAxis tick={tickStyle} axisLine={false} tickLine={false} />
                   <Tooltip
                     contentStyle={tooltipStyle}
-                    cursor={{ stroke: "var(--color-border)", strokeWidth: 1 }}
+                    cursor={{ stroke: "var(--color-border-default)", strokeWidth: 1 }}
                     labelFormatter={(v) => new Date(v).toLocaleDateString()}
                   />
                   <Line
@@ -199,8 +199,8 @@ export default function VaccinationEffectivenessPage() {
                     key={milestone.threshold}
                     className="flex items-center justify-between py-2.5"
                   >
-                    <p className="text-foreground text-sm">{milestone.label}</p>
-                    <p className="text-muted-foreground text-sm tabular-nums">
+                    <p className="text-primary text-sm">{milestone.label}</p>
+                    <p className="text-secondary text-sm tabular-nums">
                       {milestone.dateReached
                         ? new Date(milestone.dateReached).toLocaleDateString()
                         : "—"}

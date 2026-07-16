@@ -1,4 +1,4 @@
-import { Badge, Button, Card, CardContent, CardHeader } from "@pontistudios/ui";
+import { Badge, Button, Card, CardContent, CardHeader } from "@pontistudios/ui/primitives";
 import { ArrowLeft, DollarSign } from "lucide-react";
 import { useReducer } from "react";
 import { Link } from "react-router";
@@ -34,7 +34,7 @@ export default function TheaterEconomics() {
   return (
     <div className="mx-auto w-full max-w-6xl pb-16">
       <header className="mb-8 flex items-center gap-3">
-        <Button asChild variant="ghost" className="text-muted-foreground hover:text-foreground">
+        <Button asChild variant="ghost" className="text-secondary hover:text-primary">
           <Link to="/" prefetch="intent">
             <ArrowLeft className="size-4" />
           </Link>
@@ -42,14 +42,14 @@ export default function TheaterEconomics() {
         <div className="bg-border h-4 w-px" />
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-foreground text-lg font-semibold tracking-tight">
+            <h1 className="text-primary text-lg font-semibold tracking-tight">
               Theater P&amp;L
             </h1>
             <Badge variant="secondary" className="text-[10px]">
               Beta
             </Badge>
           </div>
-          <p className="text-muted-foreground text-xs">
+          <p className="text-secondary text-xs">
             Exhibition economics for theatrical distribution analysis
           </p>
         </div>
@@ -83,7 +83,7 @@ export default function TheaterEconomics() {
             <CardHeader className="px-5 py-4">
               <div className="flex w-full items-center justify-between gap-2">
                 <span className="ui-data-label">Pricing</span>
-                <DollarSign className="text-muted-foreground size-4" />
+                <DollarSign className="text-secondary size-4" />
               </div>
             </CardHeader>
             <CardContent className="space-y-6 px-5 py-5">
@@ -107,14 +107,14 @@ export default function TheaterEconomics() {
                 hint="Spend per patron — conventional multiplex avg $6–$9"
               />
 
-              <div className="border border-t pt-4">
+              <div className="border-default border-t pt-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-foreground font-semibold">Total Monthly Expenses</span>
-                  <span className="text-foreground font-['Geist'] text-lg font-semibold tabular-nums">
+                  <span className="text-primary font-semibold">Total Monthly Expenses</span>
+                  <span className="text-primary font-['Geist'] text-lg font-semibold tabular-nums">
                     {formatCurrency(d.totalExpenses)}
                   </span>
                 </div>
-                <p className="text-muted-foreground mt-1.5 text-xs">
+                <p className="text-secondary mt-1.5 text-xs">
                   Labor = $20k base + $2.22 × {fmt(d.monthlyVisitors)} visitors
                 </p>
               </div>

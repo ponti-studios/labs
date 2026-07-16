@@ -70,7 +70,7 @@ describe("BreakdownRow", () => {
   it("applies muted styling when muted prop is set", () => {
     const { container } = render(<BreakdownRow label="Detail" value="$100" muted />);
     const row = container.firstChild as HTMLElement;
-    expect(row.className).toContain("text-muted-foreground");
+    expect(row.className).toContain("text-secondary");
   });
 });
 

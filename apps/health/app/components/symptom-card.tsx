@@ -1,5 +1,5 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@pontistudios/ui";
-import { cn } from "@pontistudios/ui";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@pontistudios/ui/primitives";
+import { cn } from "@pontistudios/ui/utilities";
 import type { MatchedSymptom } from "../types/symptom";
 import React from "react";
 import { SymptomCardGuidance } from "./symptom-card-guidance";

@@ -45,7 +45,7 @@ export default function Projects() {
 
   return (
     <div className="page-shell">
-      <h1 className="display-1 text-foreground">The Lab</h1>
+      <h1 className="display-1 text-primary">The Lab</h1>
 
       {/* Projects by Category */}
       {categoryOrder.map((category) => {
@@ -54,7 +54,7 @@ export default function Projects() {
 
         return (
           <section key={category} className="layout-stack">
-            <h2 className="heading-2 text-foreground border-subtle border-b pb-3">
+            <h2 className="heading-2 text-primary border-subtle border-b pb-3">
               {categoryLabels[category]}
             </h2>
             <div className="border-subtle divide-border-subtle divide-y border-b">
@@ -65,7 +65,7 @@ export default function Projects() {
                     <Link
                       to={`/projects/${project.slug}`}
                       prefetch="intent"
-                      className="hover:bg-muted/20 focus-visible:outline-ring flex min-w-0 flex-1 flex-row items-start gap-4 transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-2 md:gap-6"
+                      className="hover:bg-inset/20 focus-visible:outline-ring flex min-w-0 flex-1 flex-row items-start gap-4 transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-2 md:gap-6"
                     >
                       {project.logo ? (
                         <ListRowMedia
@@ -75,13 +75,13 @@ export default function Projects() {
                         />
                       ) : null}
                       <div className="flex min-w-0 flex-1 flex-col gap-1">
-                        <span className="body-4 text-muted-foreground uppercase tracking-wide">
+                        <span className="body-4 text-secondary uppercase tracking-wide">
                           {project.status}
                         </span>
-                        <h3 className="heading-2 text-foreground group-hover:text-accent transition-colors motion-reduce:transition-none">
+                        <h3 className="heading-2 text-primary group-hover:text-accent transition-colors motion-reduce:transition-none">
                           {project.name}
                         </h3>
-                        <p className="body-2 text-muted-foreground max-w-2xl">
+                        <p className="body-2 text-secondary max-w-2xl">
                           {project.shortDescription}
                         </p>
                       </div>

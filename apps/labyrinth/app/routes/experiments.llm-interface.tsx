@@ -1,12 +1,5 @@
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@pontistudios/ui";
+import { Button } from "@pontistudios/ui/primitives";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@pontistudios/ui/overlays";
 import {
   Copy,
   Eye,
@@ -114,7 +107,7 @@ function ContextBlockCard({
 
   return (
     <div
-      className={`border flex flex-col gap-2 rounded-lg border p-4 transition-opacity ${
+      className={`border-default flex flex-col gap-2 rounded-lg border p-4 transition-opacity ${
         block.enabled ? "opacity-100" : "opacity-40"
       }`}
     >
@@ -123,7 +116,7 @@ function ContextBlockCard({
           <button
             onClick={() => onMove("up")}
             disabled={isFirst}
-            className="hover:bg-muted rounded p-1 transition-colors disabled:opacity-30"
+            className="hover:bg-inset rounded p-1 transition-colors disabled:opacity-30"
             title="Move up"
           >
             <GripVertical className="h-4 w-4" />
@@ -133,19 +126,19 @@ function ContextBlockCard({
           >
             {block.label}
           </span>
-          <span className="text-muted-foreground text-xs">{block.author}</span>
+          <span className="text-secondary text-xs">{block.author}</span>
         </div>
         <div className="flex items-center gap-1">
           <button
             onClick={onToggle}
-            className="hover:bg-muted rounded p-1 transition-colors"
+            className="hover:bg-inset rounded p-1 transition-colors"
             title={block.enabled ? "Disable block" : "Enable block"}
           >
             {block.enabled ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
           </button>
           <button
             onClick={onDelete}
-            className="hover:bg-muted rounded p-1 transition-colors"
+            className="hover:bg-inset rounded p-1 transition-colors"
             title="Delete block"
           >
             <Trash2 className="h-4 w-4" />
@@ -155,7 +148,7 @@ function ContextBlockCard({
       <textarea
         value={block.content}
         onChange={(e) => onUpdate(e.target.value)}
-        className="bg-muted focus:ring-primary resize-none rounded p-2 font-mono text-sm focus:ring-1 focus:outline-none"
+        className="bg-inset focus:ring-focus resize-none rounded p-2 font-mono text-sm focus:ring-1 focus:outline-none"
         rows={3}
         disabled={!block.enabled}
       />
@@ -280,11 +273,11 @@ function BlockColumn({
 
       {/* Token usage bar */}
       <div className="space-y-1">
-        <div className="text-muted-foreground flex justify-between text-xs">
+        <div className="text-secondary flex justify-between text-xs">
           <span>Context tokens: {tokenCount.toLocaleString()}</span>
           <span>{tokenPercent.toFixed(1)}% of limit</span>
         </div>
-        <div className="bg-muted h-2 overflow-hidden rounded-full">
+        <div className="bg-inset h-2 overflow-hidden rounded-full">
           <div
             className={`h-full transition-all ${
               tokenPercent > 90 ? "bg-red-500" : tokenPercent > 70 ? "bg-amber-500" : "bg-green-500"
@@ -350,7 +343,7 @@ export default function ExperimentsLlmInterface(): JSX.Element {
           <h1 className="text-2xl font-bold">Context Chemistry</h1>
           <div className="flex items-center gap-2">
             <Dialog>
-              <DialogTrigger className="border text-foreground hover:bg-accent hover:text-accent-foreground focus-visible:border-foreground inline-flex min-h-6 min-w-6 cursor-pointer items-center justify-center gap-2 rounded-md border px-3 text-xs font-medium whitespace-nowrap transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0">
+              <DialogTrigger className="border-default text-primary hover:bg-accent hover:text-on-accent focus-visible:border-foreground inline-flex min-h-6 min-w-6 cursor-pointer items-center justify-center gap-2 rounded-md border px-3 text-xs font-medium whitespace-nowrap transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0">
                 <HelpCircle />
               </DialogTrigger>
               <DialogContent>
@@ -365,7 +358,7 @@ export default function ExperimentsLlmInterface(): JSX.Element {
                 </DialogHeader>
                 <div>
                   <h4 className="mb-2 font-semibold">What to try:</h4>
-                  <ul className="text-muted-foreground list-disc space-y-2 pl-4 text-sm">
+                  <ul className="text-secondary list-disc space-y-2 pl-4 text-sm">
                     <li>
                       <strong>Toggle the System block</strong> — See how the assistant's personality
                       changes when you remove the system instruction.

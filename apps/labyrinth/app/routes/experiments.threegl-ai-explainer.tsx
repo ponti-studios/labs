@@ -1,4 +1,5 @@
-import { Button, Slider } from "@pontistudios/ui";
+import { Button } from "@pontistudios/ui/primitives";
+import { Slider } from "@pontistudios/ui/forms";
 import { useEffect, useRef, useState } from "react";
 import type {
   Clock,
@@ -526,8 +527,8 @@ export default function ThreeglAiExplainer() {
   return (
     <div className="relative h-[calc(100vh-5rem)] overflow-hidden bg-[#0a0a1a]">
       {/* Control panel */}
-      <div className="bg-card/90 absolute top-4 right-4 z-50 max-w-72 rounded-lg border border-white/10 p-4 backdrop-blur-md">
-        <p className="text-muted-foreground mb-1 text-xs font-medium">LLM Inference Engine</p>
+      <div className="bg-panel/90 absolute top-4 right-4 z-50 max-w-72 rounded-lg border border-white/10 p-4 backdrop-blur-md">
+        <p className="text-secondary mb-1 text-xs font-medium">LLM Inference Engine</p>
         <p className="mb-4 text-sm leading-relaxed text-white/60">
           Watch token vectors flow through transformer layers — from embedding to output projection.
         </p>

@@ -89,14 +89,14 @@ export default function CreatePage() {
         <button
           type="button"
           onClick={() => setStage("write")}
-          className="text-muted-foreground hover:text-foreground mb-6 flex items-center gap-1 text-xs transition-colors"
+          className="text-secondary hover:text-primary mb-6 flex items-center gap-1 text-xs transition-colors"
         >
           ← Back
         </button>
 
         <div className="mb-8">
           <h1 className="text-base font-semibold">Review before filing</h1>
-          <p className="text-muted-foreground mt-1 text-xs">
+          <p className="text-secondary mt-1 text-xs">
             This is what your jury will see — not your original words.
           </p>
         </div>
@@ -104,34 +104,34 @@ export default function CreatePage() {
         <div className="flex flex-col gap-6">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="flex flex-col gap-2">
-              <p className="text-muted-foreground text-[10px] font-semibold tracking-widest uppercase">
+              <p className="text-secondary text-[10px] font-semibold tracking-widest uppercase">
                 What you wrote
               </p>
-              <div className="border-border bg-muted/30 text-muted-foreground min-h-[140px] rounded-xl border p-4 text-xs leading-relaxed">
+              <div className="border-default bg-inset/30 text-secondary min-h-[140px] rounded-xl border p-4 text-xs leading-relaxed">
                 {rawSituation}
               </div>
             </div>
             <div className="flex flex-col gap-2">
-              <p className="text-foreground text-[10px] font-semibold tracking-widest uppercase">
+              <p className="text-primary text-[10px] font-semibold tracking-widest uppercase">
                 What your jury sees
               </p>
-              <div className="border-foreground/20 bg-background min-h-[140px] rounded-xl border p-4 text-xs leading-relaxed">
+              <div className="border-foreground/20 bg-canvas min-h-[140px] rounded-xl border p-4 text-xs leading-relaxed">
                 {neutralSituation}
               </div>
             </div>
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-muted-foreground text-[10px] font-semibold tracking-widest uppercase">
+            <label className="text-secondary text-[10px] font-semibold tracking-widest uppercase">
               The question your jury will answer
             </label>
             <textarea
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
               rows={2}
-              className="border-input bg-background focus:ring-ring w-full resize-none rounded-xl border px-4 py-3 text-sm focus:ring-1 focus:outline-none"
+              className="border-input bg-canvas focus:ring-focus w-full resize-none rounded-xl border px-4 py-3 text-sm focus:ring-1 focus:outline-none"
             />
-            <p className="text-muted-foreground text-[10px]">
+            <p className="text-secondary text-[10px]">
               You can edit this if it's not quite right.
             </p>
           </div>
@@ -146,7 +146,7 @@ export default function CreatePage() {
             type="button"
             onClick={handleFile}
             disabled={isLoading || !question.trim()}
-            className="bg-foreground text-background w-full rounded-full py-3 text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-40"
+            className="bg-accent text-on-accent w-full rounded-full py-3 text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-40"
           >
             {isLoading ? "Filing…" : "File this case"}
           </button>
@@ -159,14 +159,14 @@ export default function CreatePage() {
     <div className="mx-auto max-w-2xl px-4 py-10">
       <div className="mb-8">
         <h1 className="text-base font-semibold">File a case</h1>
-        <p className="text-muted-foreground mt-1 text-xs">
+        <p className="text-secondary mt-1 text-xs">
           Write what happened in your own words. Your jury will see a neutral version — not this.
         </p>
       </div>
 
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-2">
-          <label className="text-muted-foreground text-[10px] font-semibold tracking-widest uppercase">
+          <label className="text-secondary text-[10px] font-semibold tracking-widest uppercase">
             What happened?
           </label>
           <textarea
@@ -175,7 +175,7 @@ export default function CreatePage() {
             placeholder="Write it like you're texting a close friend. Don't filter yourself — your jury won't see this version."
             rows={8}
             autoFocus
-            className="border-input bg-background focus:ring-ring placeholder:text-muted-foreground w-full resize-none rounded-xl border px-4 py-3 text-sm leading-relaxed focus:ring-1 focus:outline-none"
+            className="border-input bg-canvas focus:ring-focus placeholder:text-secondary w-full resize-none rounded-xl border px-4 py-3 text-sm leading-relaxed focus:ring-1 focus:outline-none"
           />
         </div>
 
@@ -206,7 +206,7 @@ export default function CreatePage() {
           disabled={isLoading || !rawSituation.trim()}
           className={cn(
             "w-full rounded-full py-3 text-sm font-medium transition-opacity disabled:opacity-40",
-            "bg-foreground text-background hover:opacity-90",
+            "bg-accent text-on-accent hover:opacity-90",
           )}
         >
           {isLoading ? "Neutralizing…" : "See what your jury will read →"}

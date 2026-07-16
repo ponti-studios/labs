@@ -1,14 +1,7 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-  Button,
-  cn,
-  Input,
-  Label,
-  Slider,
-} from "@pontistudios/ui";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@pontistudios/ui/data-display";
+import { Button, Label } from "@pontistudios/ui/primitives";
+import { cn } from "@pontistudios/ui/utilities";
+import { Input, Slider } from "@pontistudios/ui/forms";
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -67,14 +60,14 @@ export default function ExperimentsGlass() {
   return (
     <div className="relative h-[calc(100vh-150px)] w-full overflow-hidden rounded-3xl">
       {/* Controls panel */}
-      <div className="bg-card absolute top-4 right-4 z-50 max-w-72 rounded-lg p-3">
-        <p className="text-muted-foreground mb-1 text-xs font-medium">Glass Effect</p>
+      <div className="bg-panel absolute top-4 right-4 z-50 max-w-72 rounded-lg p-3">
+        <p className="text-secondary mb-1 text-xs font-medium">Glass Effect</p>
         <p className="mb-3 text-sm">
           Drag the glass overlay to view a chromatic aberration using SVG displacement maps.
         </p>
 
         <div className="space-y-2 py-2">
-          <label htmlFor="background-url" className="text-muted-foreground text-xs">
+          <label htmlFor="background-url" className="text-secondary text-xs">
             Background
           </label>
           <div className="flex gap-2">
@@ -110,12 +103,12 @@ export default function ExperimentsGlass() {
                   <div className="flex items-center justify-between">
                     <Label
                       htmlFor={channel}
-                      className="text-muted-foreground flex items-center gap-2"
+                      className="text-secondary flex items-center gap-2"
                     >
                       <span className={cn("inline-block size-2 rounded-full", color)} />
                       {label}
                     </Label>
-                    <span className="text-muted-foreground text-sm tabular-nums">
+                    <span className="text-secondary text-sm tabular-nums">
                       {displacements[channel]}
                     </span>
                   </div>

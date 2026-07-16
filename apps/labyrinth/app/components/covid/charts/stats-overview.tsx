@@ -1,6 +1,7 @@
 "use client";
 
-import { CountUpTo, MetricCard } from "@pontistudios/ui";
+import { CountUpTo } from "./count-up-to";
+import { MetricCard } from "./metric-card";
 import type { CovidDataRecord } from "~/types/covid";
 
 interface StatsOverviewProps {

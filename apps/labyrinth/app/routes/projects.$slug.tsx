@@ -1,4 +1,4 @@
-import { ScrollArea } from "@pontistudios/ui";
+import { ScrollArea } from "@pontistudios/ui/layout";
 import { ExternalLink, FolderGit2 } from "lucide-react";
 import { Link, useParams } from "react-router";
 import { DetailHeader, DetailNavigation } from "~/components/DetailPage";
@@ -21,7 +21,7 @@ export default function ProjectDetail() {
     return (
       <div className="page-bleed">
         <section className="section section-hero">
-          <h1 className="display-1 text-foreground">{t.projects.page.notFound}</h1>
+          <h1 className="display-1 text-primary">{t.projects.page.notFound}</h1>
           <Link
             to="/projects"
             prefetch="intent"
@@ -47,7 +47,7 @@ export default function ProjectDetail() {
           <Link
             to="/projects"
             prefetch="intent"
-            className="body-3 text-muted-foreground hover:text-foreground focus-visible:outline-ring min-h-11 w-fit content-center outline-none focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="body-3 text-secondary hover:text-primary focus-visible:outline-ring min-h-11 w-fit content-center outline-none focus-visible:outline-2 focus-visible:outline-offset-2"
           >
             ← {t.projects.page.title}
           </Link>
@@ -90,20 +90,20 @@ export default function ProjectDetail() {
       />
 
       <section className="section">
-        <h2 className="heading-2 text-foreground">{t.projects.page.problem}</h2>
-        <p className="body-1 text-muted-foreground max-w-2xl">{project.problem}</p>
+        <h2 className="heading-2 text-primary">{t.projects.page.problem}</h2>
+        <p className="body-1 text-secondary max-w-2xl">{project.problem}</p>
       </section>
 
       {project.solution ? (
         <section className="section">
-          <h2 className="heading-2 text-foreground">{t.projects.page.solution}</h2>
-          <p className="body-1 text-muted-foreground max-w-2xl">{project.solution}</p>
+          <h2 className="heading-2 text-primary">{t.projects.page.solution}</h2>
+          <p className="body-1 text-secondary max-w-2xl">{project.solution}</p>
         </section>
       ) : null}
 
       {project.screenshots && project.screenshots.length > 0 ? (
         <section className="section">
-          <h2 className="heading-2 text-foreground">{t.projects.page.screenshots}</h2>
+          <h2 className="heading-2 text-primary">{t.projects.page.screenshots}</h2>
           <ScrollArea className="-mx-4 gap-4 px-4 md:mx-0 md:px-0" snap="start">
             {project.screenshots.map((src, index) => (
               <a
@@ -131,14 +131,14 @@ export default function ProjectDetail() {
 
       {howItWorks.length > 0 ? (
         <section className="section gap-8">
-          <h2 className="heading-2 text-foreground">{t.projects.page.howItWorks}</h2>
+          <h2 className="heading-2 text-primary">{t.projects.page.howItWorks}</h2>
           <ul className="flex max-w-2xl flex-col gap-3">
             {howItWorks.map((point) => (
               <li key={`${project.slug}-${point}`} className="flex gap-3">
                 <span className="text-accent mt-1" aria-hidden="true">
                   •
                 </span>
-                <span className="body-1 text-muted-foreground">{point}</span>
+                <span className="body-1 text-secondary">{point}</span>
               </li>
             ))}
           </ul>

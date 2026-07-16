@@ -1,316 +1,133 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import * as React from "react";
 
-import {
-  AppNavigation,
-  type AppNavigationRenderLinkArgs,
-} from "../components/compound/app-navigation";
-import { Badge } from "../components/badge";
-import { Button } from "../components/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "../components/card";
-import { Input } from "../components/input";
-import { Slider } from "../components/slider";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/tabs";
-import { colorTokenNames } from "./colors";
+import { Button } from "../components/primitives/button";
+import { colorSystems, colorTokenNames, type ColorMode } from "./colors";
 
 const meta: Meta = {
-  title: "Tokens/Color Systems Audit",
-  parameters: {
-    layout: "fullscreen",
-  },
+  title: "Foundations/Colors",
+  parameters: { layout: "fullscreen" },
 };
 
 export default meta;
-
 type Story = StoryObj<typeof meta>;
-type AuditMode = "light" | "dark";
-type AuditSystem = "primer" | "apple";
 
-const combos: Array<{ system: AuditSystem; mode: AuditMode }> = [
-  { system: "primer", mode: "light" },
-  { system: "primer", mode: "dark" },
-  { system: "apple", mode: "light" },
-  { system: "apple", mode: "dark" },
-];
+const groups = {
+  surfaces: colorTokenNames.filter((token) => token.startsWith("surface-")),
+  content: colorTokenNames.filter((token) => token.startsWith("text-")),
+  structure: colorTokenNames.filter((token) => token.startsWith("border-")),
+  intent: colorTokenNames.filter(
+    (token) =>
+      token.startsWith("accent") ||
+      token.startsWith("destructive") ||
+      token.startsWith("success") ||
+      token.startsWith("warning") ||
+      token === "overlay-scrim" ||
+      token === "ring-focus",
+  ),
+};
 
-const tokenGroups = colorTokenNames.reduce<Array<Array<string>>>((groups, token, index) => {
-  const groupIndex = Math.floor(index / 6);
-  groups[groupIndex] ??= [];
-  groups[groupIndex].push(token);
-  return groups;
-}, []);
+function Swatch({ mode, token }: { mode: ColorMode; token: string }) {
+  const value = colorSystems.ponti[mode][token as keyof (typeof colorSystems.ponti)[typeof mode]];
+  const foreground = token.startsWith("text-") ? value : colorSystems.ponti[mode]["text-primary"];
 
-function renderLink({ href, className, onClick, children }: AppNavigationRenderLinkArgs) {
   return (
-    <a href={href} className={className} onClick={onClick}>
-      {children}
-    </a>
-  );
-}
-
-function swatchStyle(token: string): React.CSSProperties {
-  return {
-    background: `var(--color-${token})`,
-    color:
-      token.includes("foreground") || token.startsWith("text-")
-        ? `var(--color-${token})`
-        : undefined,
-  };
-}
-
-function TokenSwatch({ token }: { token: string }) {
-  return (
-    <div style={{ display: "grid", gap: 6 }}>
+    <div className="grid min-w-0 gap-2">
       <div
+        className="flex min-h-16 items-end overflow-hidden rounded-md border p-2"
         style={{
-          height: 56,
-          borderRadius: 14,
-          border: "1px solid var(--color-border-default)",
-          boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
-          ...swatchStyle(token),
-        }}
-      />
-      <div
-        style={{
-          fontFamily: "var(--font-family-mono)",
-          fontSize: 11,
-          lineHeight: 1.35,
-          color: "var(--color-text-secondary)",
-          wordBreak: "break-word",
+          background: value,
+          color: foreground,
+          borderColor: colorSystems.ponti[mode]["border-default"],
         }}
       >
-        {token}
+        <span className="font-mono text-[11px] break-all">Aa</span>
       </div>
+      <span
+        className="font-mono text-[11px] break-all"
+        style={{ color: colorSystems.ponti[mode]["text-secondary"] }}
+      >
+        {token}
+      </span>
     </div>
   );
 }
 
-function ThemePanel({ system, mode }: { system: AuditSystem; mode: AuditMode }) {
-  const tokenSet = new Set<string>(colorTokenNames);
+function ThemePanel({ mode }: { mode: ColorMode }) {
+  const theme = colorSystems.ponti[mode];
 
   return (
     <section
-      data-color-system={system}
-      data-color-mode={mode}
+      className="grid min-w-0 gap-6 rounded-xl border p-5"
       style={{
-        colorScheme: mode,
-        background: "var(--color-bg-base)",
-        color: "var(--color-text-primary)",
-        border: "1px solid var(--color-border-default)",
-        borderRadius: 28,
-        padding: 18,
-        display: "grid",
-        gap: 18,
-        minWidth: 0,
+        background: theme["surface-canvas"],
+        color: theme["text-primary"],
+        borderColor: theme["border-default"],
       }}
+      aria-label={`Ponti ${mode} color system`}
     >
-      <div style={{ display: "grid", gap: 14 }}>
-        <AppNavigation
-          brand="Labs"
-          brandHref="/"
-          activeHref="/tokens"
-          links={[
-            { href: "/overview", label: "Overview" },
-            { href: "/tokens", label: "Tokens" },
-          ]}
-          cta={{ href: "/launch", label: "Launch", variant: "outline" }}
-          renderLink={renderLink}
-        />
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: 12,
-            paddingTop: 72,
-          }}
-        >
-          <div>
-            <div
-              style={{
-                fontFamily: "var(--font-family-mono)",
-                fontSize: 11,
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                color: "var(--color-text-secondary)",
-              }}
-            >
-              {system} / {mode}
-            </div>
-            <div style={{ fontSize: 20, fontWeight: 600, marginTop: 4 }}>Theme Audit</div>
-          </div>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            <Badge variant="default">Default</Badge>
-            <Badge variant="secondary">Secondary</Badge>
-            <Badge variant="outline">Outline</Badge>
-            <Badge variant="destructive">Destructive</Badge>
-          </div>
-        </div>
+      <header className="grid gap-2">
+        <p className="font-mono text-xs uppercase" style={{ color: theme["text-secondary"] }}>
+          Ponti / {mode}
+        </p>
+        <h2 className="text-xl font-semibold">Semantic roles</h2>
+        <p className="max-w-prose text-sm" style={{ color: theme["text-secondary"] }}>
+          Components consume meaning, while this palette supplies the light or dark value.
+        </p>
+      </header>
+      <div className="flex flex-wrap gap-2">
+        <Button>Primary action</Button>
+        <Button variant="secondary">Secondary action</Button>
+        <Button variant="outline">Outline action</Button>
+        <Button variant="ghost">Quiet action</Button>
+        <Button variant="destructive">Delete item</Button>
       </div>
-
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1.2fr 1fr",
-          gap: 16,
-        }}
-      >
-        <Card>
-          <CardHeader>
-            <div>
-              <CardTitle>Core components</CardTitle>
-              <CardDescription>Surface, text, inputs, tabs, tables, and actions.</CardDescription>
+      <div className="grid gap-6">
+        {Object.entries(groups).map(([title, tokens]) => (
+          <section key={title} className="grid gap-3">
+            <h3 className="text-sm font-semibold capitalize">{title}</h3>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+              {tokens.map((token) => (
+                <Swatch key={token} mode={mode} token={token} />
+              ))}
             </div>
-          </CardHeader>
-          <CardContent style={{ display: "grid", gap: 16 }}>
-            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-              <Button variant="default">Primary</Button>
-              <Button variant="secondary">Secondary</Button>
-              <Button variant="outline">Outline</Button>
-              <Button variant="destructive">Delete</Button>
-            </div>
-
-            <div style={{ display: "grid", gap: 10 }}>
-              <Input placeholder="Search tokens" />
-              <Slider defaultValue={[62]} max={100} step={1} />
-            </div>
-
-            <Tabs defaultValue="overview">
-              <TabsList>
-                <TabsTrigger value="overview">Overview</TabsTrigger>
-                <TabsTrigger value="detail">Detail</TabsTrigger>
-              </TabsList>
-              <TabsContent value="overview">
-                <div
-                  style={{
-                    border: "1px solid var(--color-border-subtle)",
-                    borderRadius: 12,
-                    padding: 12,
-                    color: "var(--color-text-secondary)",
-                  }}
-                >
-                  Active tabs, muted copy, and bordered content should remain legible.
-                </div>
-              </TabsContent>
-              <TabsContent value="detail">
-                <div
-                  style={{
-                    border: "1px solid var(--color-border-subtle)",
-                    borderRadius: 12,
-                    padding: 12,
-                    color: "var(--color-text-secondary)",
-                  }}
-                >
-                  Secondary surface treatment uses the same token set.
-                </div>
-              </TabsContent>
-            </Tabs>
-
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Token</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Value</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow>
-                  <TableCell>Primary action</TableCell>
-                  <TableCell>Ready</TableCell>
-                  <TableCell>Mapped</TableCell>
-                </TableRow>
-                <TableRow data-state="selected">
-                  <TableCell>Interactive ring</TableCell>
-                  <TableCell>Visible</TableCell>
-                  <TableCell>Scoped</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </CardContent>
-          <CardFooter style={{ justifyContent: "space-between" }}>
-            <span style={{ color: "var(--color-text-secondary)", fontSize: 12 }}>
-              {tokenSet.size} tokens in this system
-            </span>
-            <Button variant="ghost">Inspect</Button>
-          </CardFooter>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <div>
-              <CardTitle>Semantic swatches</CardTitle>
-              <CardDescription>Quick comparison of high-value product roles.</CardDescription>
-            </div>
-          </CardHeader>
-          <CardContent
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-              gap: 12,
-            }}
-          >
-            {["bg-base", "text-primary", "primary", "accent", "destructive", "chart-2"].map(
-              (token) => (
-                <TokenSwatch key={token} token={token} />
-              ),
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      <div style={{ display: "grid", gap: 14 }}>
-        {tokenGroups.map((group, index) => (
-          <div
-            key={index}
-            style={{
-              display: "grid",
-              gridTemplateColumns: `repeat(${group.length}, minmax(0, 1fr))`,
-              gap: 12,
-            }}
-          >
-            {group.map((token) => (
-              <TokenSwatch key={token} token={token} />
-            ))}
-          </div>
+          </section>
         ))}
       </div>
     </section>
   );
 }
 
-export const FourUpAudit: Story = {
+export const LightAndDark: Story = {
   render: () => (
-    <div
-      style={{
-        minHeight: "100vh",
-        padding: 20,
-        background: "#0b0b0d",
-      }}
-    >
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-          gap: 18,
-        }}
-      >
-        {combos.map((combo) => (
-          <ThemePanel
-            key={`${combo.system}-${combo.mode}`}
-            system={combo.system}
-            mode={combo.mode}
-          />
-        ))}
+    <main className="grid min-h-screen gap-4 bg-slate-100 p-4 md:p-6 dark:bg-slate-950">
+      <ThemePanel mode="light" />
+      <ThemePanel mode="dark" />
+    </main>
+  ),
+};
+
+export const ButtonStates: Story = {
+  render: () => (
+    <main className="bg-canvas text-primary grid min-h-screen gap-6 p-6">
+      <header className="grid gap-2">
+        <h1 className="text-2xl font-semibold">Button state matrix</h1>
+        <p className="text-secondary max-w-prose text-sm">
+          Inspect hover, focus, press, disabled, destructive, and loading behavior in the toolbar’s
+          light and dark modes.
+        </p>
+      </header>
+      <div className="grid max-w-3xl gap-3 sm:grid-cols-2">
+        <Button>Primary action</Button>
+        <Button variant="secondary">Secondary action</Button>
+        <Button variant="outline">Outline action</Button>
+        <Button variant="ghost">Quiet action</Button>
+        <Button variant="destructive">Delete item</Button>
+        <Button variant="link">Read more</Button>
+        <Button disabled>Disabled action</Button>
+        <Button isLoading loadingLabel="Saving">
+          Save changes
+        </Button>
       </div>
-    </div>
+    </main>
   ),
 };

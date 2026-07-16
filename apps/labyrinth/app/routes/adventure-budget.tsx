@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Button } from "@pontistudios/ui";
-import { Input } from "@pontistudios/ui";
-import { Card, CardContent, CardHeader, CardTitle } from "@pontistudios/ui";
+import { Button } from "@pontistudios/ui/primitives";
+import { Input } from "@pontistudios/ui/forms";
+import { Card, CardContent, CardHeader, CardTitle } from "@pontistudios/ui/primitives";
 
 interface Adventure {
   id: number;

@@ -1,4 +1,4 @@
-import { Accordion } from "@pontistudios/ui";
+import { Accordion } from "@pontistudios/ui/data-display";
 import { useMemo, useReducer } from "react";
 
 import { GenerativeImagePreviewPanel } from "~/components/generative-image/preview-panel";

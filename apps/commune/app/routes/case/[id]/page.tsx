@@ -101,18 +101,18 @@ export default function CaseDetailPage() {
     <div className="mx-auto max-w-2xl px-4 py-10">
       {/* Case header */}
       <div className="mb-8 flex flex-col gap-1">
-        <p className="text-muted-foreground font-mono text-[10px] tracking-widest uppercase">
+        <p className="text-secondary font-mono text-[10px] tracking-widest uppercase">
           Case {caseRecord.id.slice(0, 8)}
         </p>
         <div className="flex items-center justify-between gap-4">
-          <p className="text-muted-foreground text-[10px]">{timeAgo(caseRecord.createdAt)}</p>
+          <p className="text-secondary text-[10px]">{timeAgo(caseRecord.createdAt)}</p>
           <span
             className={`rounded-full border px-2 py-0.5 text-[10px] font-medium ${
               caseRecord.status === "closed"
-                ? "border-border text-muted-foreground"
+                ? "border-default text-secondary"
                 : quorumMet
-                  ? "bg-foreground text-background border-foreground"
-                  : "border-border text-muted-foreground"
+                  ? "bg-accent text-on-accent border-foreground"
+                  : "border-default text-secondary"
             }`}
           >
             {caseRecord.status === "closed"
@@ -126,15 +126,15 @@ export default function CaseDetailPage() {
 
       {/* The situation (neutralized) */}
       <div className="mb-8 flex flex-col gap-3">
-        <p className="text-muted-foreground text-[10px] font-semibold tracking-widest uppercase">
+        <p className="text-secondary text-[10px] font-semibold tracking-widest uppercase">
           The situation
         </p>
         <p className="text-sm leading-relaxed">{caseRecord.neutralSituation}</p>
       </div>
 
       {/* The question */}
-      <div className="border-border bg-muted/30 mb-8 rounded-xl border px-5 py-4">
-        <p className="text-muted-foreground mb-2 text-[10px] font-semibold tracking-widest uppercase">
+      <div className="border-default bg-inset/30 mb-8 rounded-xl border px-5 py-4">
+        <p className="text-secondary mb-2 text-[10px] font-semibold tracking-widest uppercase">
           The question
         </p>
         <p className="text-sm font-medium">{caseRecord.question}</p>
@@ -143,7 +143,7 @@ export default function CaseDetailPage() {
       {/* Results — only visible after quorum, or to owner */}
       {showResults && total > 0 && (
         <div className="mb-8 flex flex-col gap-3">
-          <p className="text-muted-foreground text-[10px] font-semibold tracking-widest uppercase">
+          <p className="text-secondary text-[10px] font-semibold tracking-widest uppercase">
             The jury's verdict
           </p>
           <div className="flex h-2 overflow-hidden rounded-full">
@@ -165,10 +165,10 @@ export default function CaseDetailPage() {
       {/* Takes */}
       {showResults && localVerdicts.length > 0 && (
         <div className="mb-8 flex flex-col gap-4">
-          <p className="text-muted-foreground text-[10px] font-semibold tracking-widest uppercase">
+          <p className="text-secondary text-[10px] font-semibold tracking-widest uppercase">
             Takes ({total})
           </p>
-          <div className="divide-border border-border flex flex-col divide-y overflow-hidden rounded-xl border">
+          <div className="divide-border border-default flex flex-col divide-y overflow-hidden rounded-xl border">
             {localVerdicts.map((v) => (
               <div key={v.id} className="flex items-start gap-3 px-4 py-3">
                 <span
@@ -180,7 +180,7 @@ export default function CaseDetailPage() {
                 </span>
                 <div className="flex min-w-0 flex-col gap-0.5">
                   <p className="text-xs leading-relaxed">"{v.comment}"</p>
-                  <p className="text-muted-foreground text-[10px]">{timeAgo(v.createdAt)}</p>
+                  <p className="text-secondary text-[10px]">{timeAgo(v.createdAt)}</p>
                 </div>
               </div>
             ))}
@@ -190,8 +190,8 @@ export default function CaseDetailPage() {
 
       {/* Deliberating state — jury hasn't reached quorum, show how many left */}
       {!showResults && !isOwner && !hasVoted && (
-        <div className="border-border bg-muted/20 mb-8 rounded-xl border px-5 py-4">
-          <p className="text-muted-foreground text-center text-xs">
+        <div className="border-default bg-inset/20 mb-8 rounded-xl border px-5 py-4">
+          <p className="text-secondary text-center text-xs">
             Results reveal after {remaining} more vote{remaining !== 1 ? "s" : ""}. Yours is
             independent — no one else's take influences your read.
           </p>
@@ -204,7 +204,7 @@ export default function CaseDetailPage() {
           <button
             type="button"
             onClick={handleShare}
-            className="bg-foreground text-background flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-medium transition-opacity hover:opacity-90"
+            className="bg-accent text-on-accent flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-medium transition-opacity hover:opacity-90"
           >
             <svg
               width="13"
@@ -219,7 +219,7 @@ export default function CaseDetailPage() {
             {copied ? "Link copied!" : "Share with your jury"}
           </button>
           {!quorumMet && (
-            <p className="text-muted-foreground text-center text-[10px]">
+            <p className="text-secondary text-center text-[10px]">
               Send this link to {remaining} friend{remaining !== 1 ? "s" : ""}. They vote blindly —
               results reveal after quorum.
             </p>
@@ -229,8 +229,8 @@ export default function CaseDetailPage() {
 
       {/* Jury: vote form */}
       {!isOwner && !hasVoted && caseRecord.status === "open" && (
-        <div className="border-border flex flex-col gap-4 border-t pt-8">
-          <p className="text-muted-foreground text-[10px] font-semibold tracking-widest uppercase">
+        <div className="border-default flex flex-col gap-4 border-t pt-8">
+          <p className="text-secondary text-[10px] font-semibold tracking-widest uppercase">
             Your take
           </p>
 
@@ -242,9 +242,9 @@ export default function CaseDetailPage() {
               onChange={(e) => setComment(e.target.value)}
               placeholder="Write your honest take first — before voting."
               rows={3}
-              className="border-input bg-background focus:ring-ring placeholder:text-muted-foreground w-full resize-none rounded-xl border px-4 py-3 text-sm leading-relaxed focus:ring-1 focus:outline-none"
+              className="border-input bg-canvas focus:ring-focus placeholder:text-secondary w-full resize-none rounded-xl border px-4 py-3 text-sm leading-relaxed focus:ring-1 focus:outline-none"
             />
-            <p className="text-muted-foreground text-[10px]">
+            <p className="text-secondary text-[10px]">
               You'll see the current vote breakdown after you weigh in.
             </p>
           </div>
@@ -297,14 +297,14 @@ export default function CaseDetailPage() {
       )}
 
       {!isOwner && hasVoted && (
-        <div className="border-border border-t pt-6">
+        <div className="border-default border-t pt-6">
           {!quorumMet ? (
-            <p className="text-muted-foreground text-center text-xs">
+            <p className="text-secondary text-center text-xs">
               Your take is in. Results reveal after {remaining} more vote
               {remaining !== 1 ? "s" : ""}.
             </p>
           ) : (
-            <p className="text-muted-foreground text-center text-xs">You've already weighed in.</p>
+            <p className="text-secondary text-center text-xs">You've already weighed in.</p>
           )}
         </div>
       )}

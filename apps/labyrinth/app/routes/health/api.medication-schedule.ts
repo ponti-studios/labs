@@ -1,6 +1,6 @@
-import type { Route } from "./+types/api.medication-schedule";
+import type { LoaderFunctionArgs } from "react-router";
 
-export async function loader(_args: Route.LoaderArgs) {
+export async function loader(_args: LoaderFunctionArgs) {
   return {
     weeklyDosages: [25, 30, 20, 35],
     penCapacity: 100,

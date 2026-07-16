@@ -1,4 +1,4 @@
-import { Input } from "@pontistudios/ui";
+import { Input } from "@pontistudios/ui/forms";
 import { cn } from "~/lib/utils";
 import { clamp } from "../theatre-model";
 import { fmt } from "../utils";
@@ -23,10 +23,10 @@ export function NumericControl({
   return (
     <div className="space-y-3">
       <div className="flex items-baseline justify-between gap-4">
-        <label htmlFor={id} className="text-emphasis-medium text-sm font-medium">
+        <label htmlFor={id} className="text-secondary text-sm font-medium">
           {label}
         </label>
-        <span className="text-foreground font-['Geist'] text-lg font-semibold tabular-nums">
+        <span className="text-primary font-['Geist'] text-lg font-semibold tabular-nums">
           {fmt(value)}
         </span>
       </div>
@@ -43,7 +43,7 @@ export function NumericControl({
           onChange(Number.isNaN(next) ? min : clamp(next, min, max));
         }}
       />
-      {hint && <p className="text-muted-foreground text-xs">{hint}</p>}
+      {hint && <p className="text-secondary text-xs">{hint}</p>}
     </div>
   );
 }

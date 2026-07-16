@@ -90,9 +90,9 @@
 .skeleton-shimmer {
   background: linear-gradient(
     90deg,
-    var(--color-muted) 25%,
-    var(--color-border) 50%,
-    var(--color-muted) 75%
+    var(--color-surface-inset) 25%,
+    var(--color-border-default) 50%,
+    var(--color-surface-inset) 75%
   );
   background-size: 200% 100%;
   animation: shimmer 1.6s ease-in-out infinite;
@@ -101,7 +101,7 @@
 @media (prefers-reduced-motion: reduce) {
   .skeleton-shimmer {
     animation: none;
-    background: var(--color-muted);
+    background: var(--color-surface-inset);
   }
 
   .list-media-pulse,

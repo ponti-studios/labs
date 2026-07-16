@@ -8,7 +8,7 @@ export default function PixelDescentRoute() {
       <div className="flex items-end justify-between gap-4 px-1">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Pixel Descent</h1>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-secondary text-sm">
             A static p5 sketch running inside the labyrinth shell.
           </p>
         </div>

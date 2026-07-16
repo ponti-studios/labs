@@ -18,7 +18,7 @@ export default function Work() {
   return (
     <div className="page-shell">
       <section className="layout-stack">
-        <h1 className="display-1 text-foreground max-w-4xl">{copy.hero.title}</h1>
+        <h1 className="display-1 text-primary max-w-4xl">{copy.hero.title}</h1>
       </section>
 
       <section className="layout-stack">
@@ -31,7 +31,7 @@ export default function Work() {
               <Link
                 to={`/work/${snapshot.slug}`}
                 prefetch="intent"
-                className="hover:bg-muted/20 focus-visible:outline-ring flex min-w-0 flex-1 flex-row items-start gap-4 transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-2 md:gap-6"
+                className="hover:bg-inset/20 focus-visible:outline-ring flex min-w-0 flex-1 flex-row items-start gap-4 transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-2 md:gap-6"
               >
                 {caseLogos[snapshot.slug] ? (
                   <ListRowMedia
@@ -41,13 +41,13 @@ export default function Work() {
                   />
                 ) : null}
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
-                  <span className="body-4 text-muted-foreground uppercase tracking-wide">
+                  <span className="body-4 text-secondary uppercase tracking-wide">
                     {snapshot.industry}
                   </span>
-                  <h3 className="heading-2 text-foreground group-hover:text-accent transition-colors motion-reduce:transition-none">
+                  <h3 className="heading-2 text-primary group-hover:text-accent transition-colors motion-reduce:transition-none">
                     {snapshot.client}
                   </h3>
-                  <p className="body-2 text-muted-foreground max-w-2xl">{snapshot.description}</p>
+                  <p className="body-2 text-secondary max-w-2xl">{snapshot.description}</p>
                 </div>
               </Link>
             </div>

@@ -21,16 +21,16 @@ function toNumber(value: unknown): number | null {
 }
 
 const tooltipStyle = {
-  backgroundColor: "var(--color-card)",
-  border: "1px solid var(--color-border)",
+  backgroundColor: "var(--color-surface-panel)",
+  border: "1px solid var(--color-border-default)",
   borderRadius: "2px",
   fontSize: "12px",
-  color: "var(--color-emphasis-medium)",
+  color: "var(--color-text-secondary)",
   padding: "6px 10px",
   boxShadow: "none",
 };
 
-const tickStyle = { fill: "var(--color-emphasis-low)", fontSize: 11 };
+const tickStyle = { fill: "var(--color-text-tertiary)", fontSize: 11 };
 
 export function TimeSeriesChart({
   data,
@@ -81,7 +81,7 @@ export function TimeSeriesChart({
             labelFormatter={(label) => formatDate(label as string)}
             formatter={(value) => [formatValue(toNumber(value) ?? 0), title]}
             contentStyle={tooltipStyle}
-            cursor={{ stroke: "var(--color-border)", strokeWidth: 1 }}
+            cursor={{ stroke: "var(--color-border-default)", strokeWidth: 1 }}
           />
           <Line
             type="monotone"
@@ -89,7 +89,7 @@ export function TimeSeriesChart({
             stroke={color}
             strokeWidth={1.5}
             dot={false}
-            activeDot={{ r: 3, stroke: color, strokeWidth: 1.5, fill: "var(--color-card)" }}
+            activeDot={{ r: 3, stroke: color, strokeWidth: 1.5, fill: "var(--color-surface-panel)" }}
           />
         </LineChart>
       </ResponsiveContainer>
