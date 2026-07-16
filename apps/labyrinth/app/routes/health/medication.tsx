@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@pontistudios/ui/primitives";
+import { Card, CardContent, CardHeader, CardTitle } from "@ponti-studios/ui/primitives";
 import { useEffect, useState, type JSX } from "react";
 
 interface MedicationSchedule {

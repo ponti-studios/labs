@@ -1,9 +1,9 @@
-import { Label } from "@pontistudios/ui/primitives";
-import { Slider } from "@pontistudios/ui/forms";
+import { Label } from "@ponti-studios/ui/primitives";
+import { Slider } from "@ponti-studios/ui/forms";
 import { useParams, useNavigate, Link } from "react-router";
 import { useState } from "react";
-import { Button } from "@pontistudios/ui/primitives";
-import { cn } from "@pontistudios/ui/utilities";
+import { Button } from "@ponti-studios/ui/primitives";
+import { cn } from "@ponti-studios/ui/utilities";
 import { formatDistanceToNow, format } from "date-fns";
 import { useMonitoredSymptoms } from "../hooks/use-monitored-symptoms";
 import { TREATMENT_GUIDANCE } from "../types/symptom";

@@ -13,7 +13,7 @@
     "baseUrl": "./",
     "paths": {
       "@/*": ["./src/*"],
-      "@pontistudios/ui": ["./src/index.ts"]
+      "@ponti-studios/ui": ["./src/index.ts"]
     }
   },
   "include": ["src"],

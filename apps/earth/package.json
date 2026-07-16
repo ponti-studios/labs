@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@pontistudios/db": "workspace:*",
-    "@pontistudios/ui": "workspace:*",
+    "@ponti-studios/ui": "workspace:*",
     "@react-router/node": "catalog:",
     "@react-router/serve": "catalog:",
     "@tanstack/react-query": "catalog:",

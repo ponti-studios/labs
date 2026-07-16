@@ -1,7 +1,7 @@
-import { CardContent, CardHeader, CardTitle, Label } from "@pontistudios/ui/primitives";
-import { Input } from "@pontistudios/ui/forms";
+import { CardContent, CardHeader, CardTitle, Label } from "@ponti-studios/ui/primitives";
+import { Input } from "@ponti-studios/ui/forms";
 import { useState, type JSX, type ChangeEvent } from "react";
-import { Card } from "@pontistudios/ui/primitives";
+import { Card } from "@ponti-studios/ui/primitives";
 
 // ─── Presets ──────────────────────────────────────────────────────────────────
 

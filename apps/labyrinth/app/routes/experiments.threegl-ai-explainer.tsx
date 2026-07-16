@@ -1,5 +1,5 @@
-import { Button } from "@pontistudios/ui/primitives";
-import { Slider } from "@pontistudios/ui/forms";
+import { Button } from "@ponti-studios/ui/primitives";
+import { Slider } from "@ponti-studios/ui/forms";
 import { useEffect, useRef, useState } from "react";
 import type {
   Clock,

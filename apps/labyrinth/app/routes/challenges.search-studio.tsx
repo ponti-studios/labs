@@ -4,7 +4,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@pontistudios/ui/forms";
+} from "@ponti-studios/ui/forms";
 import {
   LucideChevronLeft,
   LucideChevronRight,

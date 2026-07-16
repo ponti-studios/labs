@@ -1,4 +1,4 @@
-import { Button, Card, CardContent } from "@pontistudios/ui/primitives";
+import { Button, Card, CardContent } from "@ponti-studios/ui/primitives";
 import { OnscreenKeyboard } from "~/components/games/onscreen-keyboard";
 import { cva } from "class-variance-authority";
 import { memo, useEffect, useMemo, useRef, useState } from "react";

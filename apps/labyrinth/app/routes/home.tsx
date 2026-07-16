@@ -1,4 +1,4 @@
-import { Button } from "@pontistudios/ui/primitives";
+import { Button } from "@ponti-studios/ui/primitives";
 import { motion, useReducedMotion } from "framer-motion";
 import { LucideArrowBigRight } from "lucide-react";
 import { Link } from "react-router";

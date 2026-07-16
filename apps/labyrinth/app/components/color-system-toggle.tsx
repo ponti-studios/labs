@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { COLOR_MODE_ATTRIBUTE, COLOR_SYSTEM_ATTRIBUTE } from "@pontistudios/ui/tokens";
+import { COLOR_MODE_ATTRIBUTE, COLOR_SYSTEM_ATTRIBUTE } from "@ponti-studios/ui/tokens";
 import { ThemeToggle } from "./theme-toggle";
 
 type ColorSystem = "ponti";

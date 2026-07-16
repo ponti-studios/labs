@@ -1,1 +1,1 @@
-export { cn } from "@pontistudios/ui/utilities";
+export { cn } from "@ponti-studios/ui/utilities";

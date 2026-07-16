@@ -1,4 +1,4 @@
-# @pontistudios/ui
+# @ponti-studios/ui
 
 The canonical Ponti Studios UI package. It is published from this repository to GitHub Packages.
 

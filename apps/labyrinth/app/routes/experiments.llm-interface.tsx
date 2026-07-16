@@ -1,4 +1,4 @@
-import { Button } from "@pontistudios/ui/primitives";
+import { Button } from "@ponti-studios/ui/primitives";
 import {
   Dialog,
   DialogContent,
@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@pontistudios/ui/overlays";
+} from "@ponti-studios/ui/overlays";
 import {
   Copy,
   Eye,

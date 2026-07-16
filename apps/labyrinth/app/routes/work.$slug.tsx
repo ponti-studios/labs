@@ -1,4 +1,4 @@
-import { Button } from "@pontistudios/ui/primitives";
+import { Button } from "@ponti-studios/ui/primitives";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { Link, useLoaderData } from "react-router";
 import { DetailHeader, DetailNavigation } from "~/components/DetailPage";

@@ -1,6 +1,6 @@
-import { AppNavigation } from "@pontistudios/ui/navigation";
-import { Button } from "@pontistudios/ui/primitives";
-import { COLOR_MODE_ATTRIBUTE, COLOR_SYSTEM_ATTRIBUTE } from "@pontistudios/ui/tokens";
+import { AppNavigation } from "@ponti-studios/ui/navigation";
+import { Button } from "@ponti-studios/ui/primitives";
+import { COLOR_MODE_ATTRIBUTE, COLOR_SYSTEM_ATTRIBUTE } from "@ponti-studios/ui/tokens";
 import {
   isRouteErrorResponse,
   Link,

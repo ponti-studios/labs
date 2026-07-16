@@ -4,13 +4,13 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@pontistudios/ui/forms";
-import { Spinner } from "@pontistudios/ui/feedback";
+} from "@ponti-studios/ui/forms";
+import { Spinner } from "@ponti-studios/ui/feedback";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
-import { Badge } from "@pontistudios/ui/primitives";
+import { Badge } from "@ponti-studios/ui/primitives";
 
 interface Outlier {
   date: string;

@@ -1,4 +1,4 @@
-import { ScrollArea } from "@pontistudios/ui/layout";
+import { ScrollArea } from "@ponti-studios/ui/layout";
 import { ExternalLink, FolderGit2 } from "lucide-react";
 import { Link, useParams } from "react-router";
 import { DetailHeader, DetailNavigation } from "~/components/DetailPage";
