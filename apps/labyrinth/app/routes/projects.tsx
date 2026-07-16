@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import { ListRowMedia } from "~/components/ListRowMedia";
 import { projects } from "~/data/projects";
 import { t } from "~/translations";
 
@@ -43,7 +44,7 @@ export default function Projects() {
   const categoryOrder = ["product", "infrastructure", "library", "tool", "research"];
 
   return (
-    <div className="relative mx-auto flex w-full flex-col gap-16 py-20">
+    <div className="page-shell">
       <h1 className="display-1 text-foreground">The Lab</h1>
 
       {/* Projects by Category */}
@@ -52,7 +53,7 @@ export default function Projects() {
         if (!projects) return null;
 
         return (
-          <section key={category} className="flex flex-col gap-4">
+          <section key={category} className="content-stack">
             <h2 className="heading-2 text-foreground border-border/40 border-b pb-3">
               {categoryLabels[category]}
             </h2>
@@ -60,21 +61,19 @@ export default function Projects() {
               {[...projects]
                 .sort((a, b) => (STATUS_PRIORITY[a.status] ?? 0) - (STATUS_PRIORITY[b.status] ?? 0))
                 .map((project) => (
-                  <div key={project.slug} className="group flex justify-between gap-4 px-2 py-5">
+                  <div key={project.slug} className="content-list-row group justify-between">
                     <Link
                       to={`/projects/${project.slug}`}
                       prefetch="intent"
                       className="hover:bg-muted/20 focus-visible:outline-ring flex flex-1 flex-row items-center gap-3 transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-2"
                     >
-                      {project.logo && (
-                        <img
+                      {project.logo ? (
+                        <ListRowMedia
+                          fallback={project.name.slice(0, 2).toUpperCase()}
                           src={project.logo}
-                          alt={`${project.name} logo`}
-                          className="size-10 shrink-0 rounded"
-                          width={40}
-                          height={40}
+                          variant="square"
                         />
-                      )}
+                      ) : null}
                       <div className="flex flex-col gap-1">
                         <h3 className="heading-3 text-foreground group-hover:text-accent transition-colors">
                           {project.name}

@@ -125,7 +125,7 @@ export default function App() {
           </Link>
         )}
       />
-      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 md:px-0">
+      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col">
         <Outlet />
       </main>
     </QueryProvider>

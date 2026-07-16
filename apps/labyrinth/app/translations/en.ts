@@ -327,7 +327,6 @@ export const STUDIO_TRANSLATIONS_EN = {
       title: "Ready when you are.",
       body: "Thirty minutes. No pitch deck. If it's a fit, you'll leave with a clear next step.",
     },
-    faqLink: "Questions about pricing, scope, and fit",
   },
 
   work: {

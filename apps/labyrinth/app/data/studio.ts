@@ -36,6 +36,20 @@ export type ServicePillar = {
 
 const svc = t.catalog.entries;
 
+export const caseLogos: Record<string, string> = {
+  lumina: "/work/lumina.webp",
+  revrock: "/work/revrock.webp",
+  prolog: "/work/prolog.webp",
+  streamyard: "/work/streamyard.webp",
+  whistle: "/work/whistle.webp",
+  kensho: "/work/kensho.webp",
+  humana: "/work/humana.svg",
+  mimecast: "/work/mimecast.svg",
+  "help-refugees": "/work/help-refugees.webp",
+  "thomson-reuters": "/work/thomson-reuters.webp",
+  glow: "/work/glow.webp",
+};
+
 /** Intentional order: flagship product work first, then advisory/entry. */
 export const servicePillars: ServicePillar[] = [
   {

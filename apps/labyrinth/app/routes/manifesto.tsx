@@ -30,15 +30,15 @@ function ManifestoHeroHeadline() {
 
 export default function Manifesto() {
   return (
-    <div className="flex w-full flex-col">
+    <div className="page-bleed">
       {/* Hero */}
-      <section className="border-border/60 flex flex-col gap-6 border-b px-6 py-20">
+      <section className="content-section content-section-hero">
         <ManifestoHeroHeadline />
         <p className="body-1 text-muted-foreground max-w-2xl">{copy.hero.body}</p>
       </section>
 
       {/* Tenets — single-column editorial list, one idea at a time */}
-      <section className="border-border/60 flex flex-col gap-12 border-b px-6 py-20">
+      <section className="content-section gap-12">
         <ol className="flex flex-col gap-12">
           {copy.tenets.items.map((tenet, index) => (
             <li
@@ -58,7 +58,7 @@ export default function Manifesto() {
       </section>
 
       {/* Closing pull-quote */}
-      <section className="flex flex-col px-6 py-20">
+      <section className="content-section content-section-hero border-b-0">
         <blockquote className="display-2 text-accent max-w-3xl">
           &ldquo;{copy.quote}&rdquo;
         </blockquote>

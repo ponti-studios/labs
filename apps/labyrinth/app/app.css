@@ -6,6 +6,10 @@
   --color-logo-artboard: #ffffff;
 }
 
+.content-list-media-artboard {
+  @apply bg-logo-artboard;
+}
+
 @keyframes fade-slide-in {
   from {
     opacity: 0;
