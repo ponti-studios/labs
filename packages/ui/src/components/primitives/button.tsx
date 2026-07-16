@@ -23,11 +23,16 @@ const buttonVariants = cva(
         link: "border-transparent bg-transparent px-0 text-accent hover:text-accent-hover disabled:text-disabled underline-offset-4 hover:underline",
       },
       size: {
+        sm: "min-h-11 px-2.5 text-sm",
+        md: "min-h-11 px-3 text-sm",
+        lg: "min-h-12 px-4 text-base",
+        default: "",
         icon: "size-11 rounded-md p-0",
       },
     },
     defaultVariants: {
       variant: "default",
+      size: "md",
     },
   },
 );
