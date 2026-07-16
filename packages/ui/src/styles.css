@@ -67,7 +67,7 @@
 
   --color-google-maps-blue: rgba(66, 133, 244, 1);
 
-  --color-primary: #1f883d;
+  --color-primary: #000000;
   --color-primary-foreground: #ffffff;
   --color-secondary: #f6f8fa;
   --color-secondary-foreground: #25292e;
@@ -193,7 +193,7 @@
   --color-accent: #0969da;
   --color-accent-foreground: #ffffff;
   --color-google-maps-blue: rgba(66, 133, 244, 1);
-  --color-primary: #1f883d;
+  --color-primary: #000000;
   --color-primary-foreground: #ffffff;
   --color-secondary: #f6f8fa;
   --color-secondary-foreground: #25292e;
@@ -277,7 +277,7 @@
   --color-destructive-muted: rgba(218, 54, 51, 0.65);
   --color-accent: #2f81f7;
   --color-accent-foreground: #ffffff;
-  --color-primary: #238636;
+  --color-primary: #000000;
   --color-primary-foreground: #ffffff;
   --color-secondary: #21262d;
   --color-secondary-foreground: #f0f6fc;
@@ -358,7 +358,7 @@
   --color-destructive-muted: rgba(255, 59, 48, 0.65);
   --color-accent: #007aff;
   --color-accent-foreground: #ffffff;
-  --color-primary: #007aff;
+  --color-primary: #000000;
   --color-primary-foreground: #ffffff;
   --color-secondary: #f2f2f7;
   --color-secondary-foreground: #1c1c1e;
@@ -439,7 +439,7 @@
   --color-destructive-muted: rgba(255, 69, 58, 0.65);
   --color-accent: #0a84ff;
   --color-accent-foreground: #ffffff;
-  --color-primary: #0a84ff;
+  --color-primary: #000000;
   --color-primary-foreground: #ffffff;
   --color-secondary: #2c2c2e;
   --color-secondary-foreground: #ffffff;
@@ -528,7 +528,7 @@
     --color-destructive-muted: rgba(218, 54, 51, 0.65);
     --color-accent: #2f81f7;
     --color-accent-foreground: #ffffff;
-    --color-primary: #238636;
+    --color-primary: #000000;
     --color-primary-foreground: #ffffff;
     --color-secondary: #21262d;
     --color-secondary-foreground: #f0f6fc;
@@ -608,7 +608,7 @@
     --color-destructive-muted: rgba(255, 69, 58, 0.65);
     --color-accent: #0a84ff;
     --color-accent-foreground: #ffffff;
-    --color-primary: #0a84ff;
+    --color-primary: #000000;
     --color-primary-foreground: #ffffff;
     --color-secondary: #2c2c2e;
     --color-secondary-foreground: #ffffff;

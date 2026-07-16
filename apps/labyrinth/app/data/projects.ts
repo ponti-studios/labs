@@ -29,6 +29,7 @@ export const projectMetadata: ProjectMetadata[] = [
     tech: ["TypeScript", "Node.js"],
     status: "published",
     github: "https://github.com/ponti-studios/kernel",
+    url: "https://github.com/ponti-studios/kernel",
     logo: `/experiments/logo.kernel.500x500.webp`,
   },
   {

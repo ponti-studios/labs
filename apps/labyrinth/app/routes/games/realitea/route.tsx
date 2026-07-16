@@ -31,9 +31,11 @@ const TILE_BASE = cva(
     variants: {
       state: {
         absent: "border-border bg-muted text-muted-foreground",
-        correct: "border-[var(--realitea-correct-border)] bg-[var(--realitea-correct-bg)] text-[var(--realitea-correct-text)]",
+        correct:
+          "border-[var(--realitea-correct-border)] bg-[var(--realitea-correct-bg)] text-[var(--realitea-correct-text)]",
         empty: "border-border bg-background text-foreground",
-        present: "border-[var(--realitea-present-border)] bg-[var(--realitea-present-bg)] text-[var(--realitea-present-text)]",
+        present:
+          "border-[var(--realitea-present-border)] bg-[var(--realitea-present-bg)] text-[var(--realitea-present-text)]",
       },
     },
     defaultVariants: { state: "empty" },
@@ -220,7 +222,7 @@ type ErrorBoundaryProps = { error: Error };
 export function ErrorBoundary({ error }: ErrorBoundaryProps) {
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center gap-3 px-4 text-center">
-      <p className="body-4 text-muted-foreground uppercase tracking-[0.15em]">
+      <p className="body-4 text-muted-foreground tracking-[0.15em] uppercase">
         Something went wrong
       </p>
       <p className="body-4 text-muted-foreground">
@@ -331,8 +333,8 @@ export default function RealiTeaRoute() {
             <p className="mt-2">
               <span className="font-medium text-[var(--realitea-correct-text)]">Green</span> means
               the right letter is in the right place.{" "}
-              <span className="font-medium text-[var(--realitea-present-text)]">Gold</span> means the
-              letter belongs in the answer but is in the wrong place.
+              <span className="font-medium text-[var(--realitea-present-text)]">Gold</span> means
+              the letter belongs in the answer but is in the wrong place.
             </p>
           </CardContent>
         </Card>
@@ -398,9 +400,7 @@ export default function RealiTeaRoute() {
         <Card>
           <CardContent className="flex flex-col gap-4">
             <div>
-              <p className="ui-eyebrow">
-                {game.isSolved ? "The Story" : "The puzzle ended"}
-              </p>
+              <p className="ui-eyebrow">{game.isSolved ? "The Story" : "The puzzle ended"}</p>
               <p className="body-4 mt-1">{currentPuzzle.detail.toLocaleLowerCase()}</p>
             </div>
             <div className="flex justify-end gap-2">

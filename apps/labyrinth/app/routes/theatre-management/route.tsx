@@ -1,19 +1,19 @@
+import { Badge, Button, Card, CardContent, CardHeader } from "@pontistudios/ui";
+import { ArrowLeft, DollarSign } from "lucide-react";
 import { useReducer } from "react";
 import { Link } from "react-router";
-import { ArrowLeft, DollarSign } from "lucide-react";
-import { Badge, Button, Card, CardContent, CardHeader } from "@pontistudios/ui";
 
 import {
+  PLStatement,
   ProfitRevenueCard,
   RevenueMixCard,
-  WeeklyTrafficCard,
   ScreenAllocation,
   SliderControl,
-  PLStatement,
+  WeeklyTrafficCard,
 } from "./components/index";
 import {
-  formatCurrency,
   fmt,
+  formatCurrency,
   getHealthStatus,
   HEALTH_STYLES,
   INITIAL_CONFIG,
@@ -32,14 +32,9 @@ export default function TheaterEconomics() {
   const lineupMetrics = d.lineupMetrics;
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 pb-16 md:px-6">
+    <div className="mx-auto w-full max-w-6xl pb-16">
       <header className="mb-8 flex items-center gap-3">
-        <Button
-          asChild
-          variant="ghost"
-          size="sm"
-          className="text-muted-foreground hover:text-foreground"
-        >
+        <Button asChild variant="ghost" className="text-muted-foreground hover:text-foreground">
           <Link to="/" prefetch="intent">
             <ArrowLeft className="size-4" />
           </Link>

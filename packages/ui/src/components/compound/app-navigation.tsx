@@ -1,12 +1,8 @@
 import { Menu } from "lucide-react";
 import * as React from "react";
 
-import {
-  Sheet,
-  SheetContent,
-  SheetTitle,
-  SheetTrigger,
-} from "../sheet";
+import { cn } from "@/lib/utils";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../sheet";
 
 export interface AppNavigationLink {
   href: string;
@@ -34,36 +30,43 @@ export interface AppNavigationProps {
   cta?: AppNavigationCta;
   /** Current pathname used to highlight the active link. */
   activeHref?: string;
-  navHeight?: number;
   renderLink: (args: AppNavigationRenderLinkArgs) => React.ReactNode;
 }
 
 function ctaClassName(cta: AppNavigationCta, active: boolean, mobile: boolean) {
   if (mobile) {
-    return "bg-foreground text-background hover:bg-foreground/90 mt-2 flex w-full items-center justify-center rounded-xl px-4 py-3.5 text-sm font-semibold tracking-wide uppercase transition-colors";
+    return cn(
+      "mt-2 flex min-h-11 w-full items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors",
+      "void-focus",
+      cta.variant === "outline"
+        ? "border-border text-foreground hover:bg-accent bg-transparent"
+        : "bg-foreground text-background hover:bg-foreground/90",
+    );
   }
 
-  const base = "ml-1 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide uppercase transition-colors";
+  const base =
+    "void-focus ml-2 inline-flex min-h-9 items-center rounded-md px-3 text-sm font-medium";
 
   if (cta.variant === "outline") {
-    return `${base} border border-border text-foreground hover:bg-accent`;
+    return cn(base, "border-border text-foreground hover:bg-accent bg-transparent");
   }
 
-  return `${base} ${
-    active ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"
-  }`;
+  return cn(
+    base,
+    "bg-foreground text-background hover:bg-foreground/90",
+    active && "ring-ring ring-1",
+  );
 }
 
 function linkClassName(active: boolean, mobile: boolean) {
-  if (mobile) {
-    return `flex w-full items-center rounded-xl px-4 py-3.5 text-base font-semibold tracking-tight transition-colors ${
-      active ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"
-    }`;
-  }
-
-  return `px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide uppercase transition-colors ${
-    active ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"
-  }`;
+  return cn(
+    mobile
+      ? "flex min-h-11 w-full items-center rounded-md px-3 text-base"
+      : "inline-flex min-h-9 items-center rounded-md px-3 text-sm",
+    "void-focus text-muted-foreground font-medium transition-colors",
+    active && "bg-muted text-foreground",
+    "hover:bg-accent hover:text-foreground focus-visible:bg-accent focus-visible:text-foreground",
+  );
 }
 
 export function AppNavigation({
@@ -86,17 +89,17 @@ export function AppNavigation({
   };
 
   return (
-    <div className="bg-background/80 sticky top-0 z-50 flex w-full justify-center p-2 backdrop-blur-sm backdrop-saturate-150">
-      <nav className="flex w-full max-w-7xl items-center justify-between py-2">
+    <div className="bg-background/80 border-border/60 sticky top-0 z-50 flex w-full justify-center border-b px-4 backdrop-blur-sm backdrop-saturate-150">
+      <nav className="flex min-h-14 w-full max-w-7xl items-center justify-between gap-6">
         {brand &&
           renderLink({
             href: brandHref,
-            className: "shrink-0 font-semibold text-sm tracking-tight text-foreground",
+            className: "void-focus shrink-0 text-sm font-semibold tracking-tight text-foreground",
             children: brand,
           })}
 
         {/* Desktop nav */}
-        <div className="hidden items-center gap-1 sm:flex">
+        <div className="hidden min-w-0 items-center gap-1 sm:flex">
           {links?.map((link) =>
             renderLink({
               href: link.href,
@@ -120,7 +123,7 @@ export function AppNavigation({
               <button
                 type="button"
                 aria-label={mobileOpen ? "Close menu" : "Open menu"}
-                className="border-border bg-background text-foreground inline-flex size-9 shrink-0 items-center justify-center rounded-full border"
+                className="void-focus border-border bg-background text-foreground hover:bg-accent inline-flex size-11 shrink-0 items-center justify-center rounded-md border transition-colors"
               >
                 <Menu className="size-4" aria-hidden="true" />
               </button>
@@ -128,7 +131,7 @@ export function AppNavigation({
             <SheetContent side="right">
               <SheetTitle className="sr-only">Navigation menu</SheetTitle>
 
-              <div className="mt-10 flex flex-1 flex-col gap-1">
+              <div className="mt-8 flex flex-1 flex-col gap-1">
                 {links?.map((link) =>
                   renderLink({
                     href: link.href,

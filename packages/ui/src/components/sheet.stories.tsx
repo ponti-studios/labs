@@ -14,7 +14,7 @@ import {
 } from "./sheet";
 
 const meta: Meta<typeof Sheet> = {
-  title: "Internal/UI/Sheet",
+  title: "Patterns/Overlay/Sheet",
   component: Sheet,
   tags: ["autodocs"],
 };

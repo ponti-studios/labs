@@ -87,7 +87,7 @@ export function GenerativeImagePreviewPanel({
       ) : null}
 
       <div className="mt-4 flex justify-end">
-        <Button onClick={onGenerate} disabled={loading} size="lg" className="min-w-44">
+        <Button onClick={onGenerate} disabled={loading} className="min-w-44">
           <Sparkles size={16} className={loading ? "animate-spin" : ""} />
           {loading ? "Generating..." : "Generate Scene"}
         </Button>

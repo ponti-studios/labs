@@ -20,7 +20,11 @@ export default function ProjectDetail() {
       <div className="relative mx-auto flex w-full flex-col gap-8 px-6 py-20">
         <div className="flex flex-col gap-4">
           <h1 className="display-1 text-foreground">{t.projects.page.notFound}</h1>
-          <Link to="/projects" prefetch="intent" className="text-accent hover:text-accent/80 underline">
+          <Link
+            to="/projects"
+            prefetch="intent"
+            className="text-accent hover:text-accent/80 underline"
+          >
             ← {t.projects.page.back}
           </Link>
         </div>

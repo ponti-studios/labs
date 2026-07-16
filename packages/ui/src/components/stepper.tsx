@@ -36,7 +36,6 @@ function Stepper({
       <Button
         type="button"
         variant="ghost"
-        size="sm"
         onClick={() => onChange(Math.max(min, value - step))}
         disabled={disabled || atMin}
         className="border-border text-muted-foreground rounded-none rounded-l-lg border-r"
@@ -52,7 +51,6 @@ function Stepper({
       <Button
         type="button"
         variant="ghost"
-        size="sm"
         onClick={() => onChange(Math.min(max, value + step))}
         disabled={disabled || atMax}
         className="border-border text-muted-foreground rounded-none rounded-r-lg border-l"

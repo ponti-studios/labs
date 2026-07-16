@@ -90,7 +90,7 @@ export default function WorkSlug() {
         <h2 className="display-2 text-foreground max-w-3xl">{copy.nextCta.title}</h2>
         <p className="body-1 text-muted-foreground max-w-xl">{copy.nextCta.body}</p>
         <div className="flex flex-wrap items-center gap-6 pt-2">
-          <Button asChild size="lg">
+          <Button asChild>
             <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
               {t.common.bookCall}
             </a>

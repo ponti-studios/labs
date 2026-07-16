@@ -25,10 +25,7 @@ const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(
           if (!React.isValidElement(child)) return child;
           if (snap !== "none") {
             return React.cloneElement(child as React.ReactElement<{ className?: string }>, {
-              className: cn(
-                `snap-${snap}`,
-                (child.props as { className?: string }).className,
-              ),
+              className: cn(`snap-${snap}`, (child.props as { className?: string }).className),
             });
           }
           return child;

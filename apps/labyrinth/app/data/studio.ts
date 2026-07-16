@@ -20,17 +20,13 @@ export type CaseSnapshot = {
   slug: string;
   client: string;
   industry: string;
+  description: string;
   timeline: string;
   role: string;
   problem: string;
   whatWeDid: string;
   approach: readonly string[];
   outcomes: readonly CaseStat[];
-  /**
-   * Index-only teaser. Short by design — full outcomes live on the case study.
-   * value = the number/result; label = 2–4 word gloss.
-   */
-  listHook: CaseStat;
 };
 
 export type ServicePillar = {

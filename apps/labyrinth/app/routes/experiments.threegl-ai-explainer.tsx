@@ -1,6 +1,15 @@
 import { Button, Slider } from "@pontistudios/ui";
 import { useEffect, useRef, useState } from "react";
-import type { Mesh, Vector3, Color, Clock, WebGLRenderer, PerspectiveCamera, Scene, MeshBasicMaterial } from "three";
+import type {
+  Clock,
+  Color,
+  Mesh,
+  MeshBasicMaterial,
+  PerspectiveCamera,
+  Scene,
+  Vector3,
+  WebGLRenderer,
+} from "three";
 import type { OrbitControls as OrbitControlsType } from "three/examples/jsm/controls/OrbitControls.js";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -59,10 +68,18 @@ export default function ThreeglAiExplainer() {
   const isRunningRef = useRef(isRunning);
   const speedRef = useRef(speedMultiplier);
 
-  useEffect(() => { layerCountRef.current = layerCount; }, [layerCount]);
-  useEffect(() => { particleCountRef.current = particleCount; }, [particleCount]);
-  useEffect(() => { isRunningRef.current = isRunning; }, [isRunning]);
-  useEffect(() => { speedRef.current = speedMultiplier; }, [speedMultiplier]);
+  useEffect(() => {
+    layerCountRef.current = layerCount;
+  }, [layerCount]);
+  useEffect(() => {
+    particleCountRef.current = particleCount;
+  }, [particleCount]);
+  useEffect(() => {
+    isRunningRef.current = isRunning;
+  }, [isRunning]);
+  useEffect(() => {
+    speedRef.current = speedMultiplier;
+  }, [speedMultiplier]);
 
   // ── Three.js scene setup ──
   useEffect(() => {
@@ -440,7 +457,12 @@ export default function ThreeglAiExplainer() {
   }, [particleCount, layerCount]);
 
   const cancelledRef = useRef(false);
-  useEffect(() => { cancelledRef.current = false; return () => { cancelledRef.current = true; }; }, []);
+  useEffect(() => {
+    cancelledRef.current = false;
+    return () => {
+      cancelledRef.current = true;
+    };
+  }, []);
 
   const handleToggleRunning = () => setIsRunning((prev) => !prev);
 
@@ -555,16 +577,10 @@ export default function ThreeglAiExplainer() {
         </div>
 
         <div className="mt-4 flex gap-2">
-          <Button
-            type="button"
-            variant="default"
-            size="sm"
-            className="flex-1"
-            onClick={handleToggleRunning}
-          >
+          <Button type="button" variant="default" className="flex-1" onClick={handleToggleRunning}>
             {isRunning ? "Pause" : "Play"}
           </Button>
-          <Button type="button" variant="outline" size="sm" onClick={handleReset}>
+          <Button type="button" variant="outline" onClick={handleReset}>
             Reset
           </Button>
         </div>
@@ -586,9 +602,7 @@ export default function ThreeglAiExplainer() {
 
       {/* Bottom hint */}
       <div className="pointer-events-none absolute bottom-6 left-1/2 z-40 -translate-x-1/2 text-center">
-        <p className="text-xs font-medium text-white/30">
-          Drag to orbit &bull; Scroll to zoom
-        </p>
+        <p className="text-xs font-medium text-white/30">Drag to orbit &bull; Scroll to zoom</p>
       </div>
 
       <div ref={containerRef} className="h-full w-full" />

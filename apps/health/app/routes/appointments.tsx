@@ -1,5 +1,5 @@
-import { Link } from "react-router";
 import { Button } from "@pontistudios/ui";
+import { Link } from "react-router";
 import { useAppointments } from "../hooks/use-appointments";
 
 export default function Appointments() {
@@ -43,7 +43,6 @@ export default function Appointments() {
                   </div>
                   <Button
                     variant="ghost"
-                    size="sm"
                     className="text-muted-foreground shrink-0"
                     onClick={() => cancelAppointment.mutate(appt.id)}
                   >

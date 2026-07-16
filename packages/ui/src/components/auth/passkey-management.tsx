@@ -78,7 +78,6 @@ export function PasskeyManagement({
         <Button
           type="button"
           variant="outline"
-          size="sm"
           onClick={() => void handleAdd()}
           disabled={adding}
           aria-label="Add a passkey"

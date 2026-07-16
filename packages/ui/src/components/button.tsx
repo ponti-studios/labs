@@ -6,32 +6,28 @@ import { cn } from "../lib/utils";
 import { LoadingSpinner } from "./loading-spinner";
 
 const buttonVariants = cva(
-  "void-focus inline-flex !cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border text-sm font-medium outline-hidden disabled:pointer-events-none disabled:!cursor-default disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 py-2",
+  "void-focus inline-flex !cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-md border px-3 py-1.5 text-sm font-medium leading-5 outline-hidden transition-colors duration-150 disabled:pointer-events-none disabled:!cursor-default disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         default:
-          "void-hover border-transparent bg-primary text-primary-foreground [--color-interaction-hover-bg:color-mix(in_srgb,var(--color-primary)_90%,white_10%)] [--color-interaction-hover-text:var(--color-primary-foreground)] [--color-interaction-hover-border:transparent]",
+          "void-hover border-transparent bg-primary text-primary-foreground [--color-interaction-hover-bg:color-mix(in_srgb,var(--color-primary)_88%,white_12%)] [--color-interaction-hover-text:var(--color-primary-foreground)] [--color-interaction-hover-border:transparent]",
         destructive:
-          "void-hover border-transparent bg-destructive text-destructive-foreground [--color-interaction-hover-bg:color-mix(in_srgb,var(--color-destructive)_90%,white_10%)] [--color-interaction-hover-text:var(--color-destructive-foreground)] [--color-interaction-hover-border:transparent]",
+          "void-hover border-transparent bg-destructive text-destructive-foreground [--color-interaction-hover-bg:color-mix(in_srgb,var(--color-destructive)_88%,white_12%)] [--color-interaction-hover-text:var(--color-destructive-foreground)] [--color-interaction-hover-border:transparent]",
         outline:
           "void-hover border-border bg-surface text-foreground [--color-interaction-hover-bg:var(--color-bg-elevated)] [--color-interaction-hover-text:var(--color-foreground)] [--color-interaction-hover-border:var(--color-border)]",
         secondary:
-          "void-hover border-transparent bg-secondary text-secondary-foreground [--color-interaction-hover-bg:color-mix(in_srgb,var(--color-secondary)_80%,white_20%)] [--color-interaction-hover-text:var(--color-secondary-foreground)] [--color-interaction-hover-border:transparent]",
+          "void-hover border-border bg-secondary text-secondary-foreground [--color-interaction-hover-bg:color-mix(in_srgb,var(--color-secondary)_88%,white_12%)] [--color-interaction-hover-text:var(--color-secondary-foreground)] [--color-interaction-hover-border:var(--color-border)]",
         ghost:
           "void-hover border-transparent bg-transparent text-foreground [--color-interaction-hover-bg:var(--color-accent)] [--color-interaction-hover-text:var(--color-accent-foreground)] [--color-interaction-hover-border:transparent]",
-        link: "void-hover border-transparent bg-transparent text-foreground underline-offset-4 hover:underline [--color-interaction-hover-bg:transparent] [--color-interaction-hover-text:var(--color-secondary-foreground)] [--color-interaction-hover-border:transparent]",
+        link: "void-hover border-transparent bg-transparent px-0 text-foreground underline-offset-4 hover:underline [--color-interaction-hover-bg:transparent] [--color-interaction-hover-text:var(--color-secondary-foreground)] [--color-interaction-hover-border:transparent]",
       },
       size: {
-        default: "px-3 text-sm",
-        sm: "px-2 text-xs",
-        lg: "px-5 text-sm",
-        icon: "size-6",
+        icon: "size-9 rounded-md p-0",
       },
     },
     defaultVariants: {
       variant: "default",
-      size: "default",
     },
   },
 );
@@ -54,30 +50,34 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       variant,
       size,
       asChild = false,
+      "aria-label": ariaLabel,
       ...props
     },
     ref,
   ) => {
     const Comp = asChild ? Slot : "button";
-    const spinnerVariant = size === "lg" ? "md" : "sm";
+    const spinnerVariant = "sm";
 
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={cn(buttonVariants({ variant, size, className }), isLoading && "relative")}
         style={{
           ...props.style,
-          backgroundColor: isLoading ? "rgba(0, 0, 0, 0.1)" : undefined,
           cursor: disabled || isLoading ? "default" : "pointer",
         }}
         type="button"
         ref={ref}
         disabled={disabled || isLoading}
         aria-busy={isLoading}
+        aria-label={isLoading ? loadingLabel : ariaLabel}
         {...props}
       >
         {isLoading ? (
           <>
-            <LoadingSpinner variant={spinnerVariant} />
+            <span className="opacity-0">{children}</span>
+            <span className="absolute inset-0 inline-flex items-center justify-center">
+              <LoadingSpinner variant={spinnerVariant} />
+            </span>
             <span className="sr-only">{loadingLabel}</span>
           </>
         ) : (
