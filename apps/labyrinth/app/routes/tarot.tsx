@@ -135,7 +135,7 @@ export default function TarotRoute() {
               </p>
 
               <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <Button onClick={handleDrawCard} disabled={isDrawing} className="min-w-48">
+                <Button onClick={handleDrawCard} disabled={isDrawing}>
                   {isDrawing ? "Drawing..." : "Draw today’s card"}
                 </Button>
                 <p className="text-secondary text-sm">

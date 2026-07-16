@@ -688,7 +688,7 @@ export default function RedBadger() {
           onCellClick={handleCellClick}
         />
 
-        <div className="min-w-[220px] space-y-4">
+        <div className="w-full max-w-[220px] space-y-4">
           {state.pendingPos && (
             <div className="text-secondary font-mono text-xs">
               Start:{" "}

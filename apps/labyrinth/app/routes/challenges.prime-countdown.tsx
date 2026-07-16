@@ -77,7 +77,7 @@ export default function PrimeCountdown(): JSX.Element {
               value={primeStart}
               onChange={(e: ChangeEvent<HTMLInputElement>) => setPrimeStart(e.target.value)}
             />
-            <Button onClick={run} disabled={running} className="min-w-24">
+            <Button onClick={run} disabled={running}>
               {running ? (
                 <span className="flex items-center gap-2">
                   <span className="inline-block animate-spin rounded-full border-2 border-current border-t-transparent" />

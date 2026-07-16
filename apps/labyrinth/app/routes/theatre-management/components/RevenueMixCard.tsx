@@ -4,7 +4,7 @@ import { formatCompact, useCalculator } from "../utils";
 
 export function RevenueMixCard({ d }: { d: ReturnType<typeof useCalculator> }) {
   return (
-    <Card className="h-full min-h-[180px]">
+    <Card className="h-full">
       <CardHeader className="border-b-0 px-5 pt-5 pb-0">
         <div className="flex w-full items-center justify-between gap-2">
           <span className="ui-data-label">Revenue Mix</span>

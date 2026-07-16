@@ -59,6 +59,114 @@
   @apply flex flex-col gap-6 sm:flex-row sm:justify-between;
 }
 
+.detail-navigation-link {
+  @apply flex min-h-11 flex-col justify-center gap-1;
+}
+
+.navigation-shell {
+  @apply bg-canvas/80 border-subtle sticky top-0 z-50 flex w-full justify-center border-b px-4 backdrop-blur-sm backdrop-saturate-150;
+}
+
+.navigation {
+  @apply w-full max-w-7xl;
+}
+
+.navigation-inner {
+  @apply flex min-h-14 items-center justify-between gap-6;
+}
+
+.navigation-start,
+.navigation-end,
+.navigation-mobile {
+  @apply flex items-center;
+}
+
+.navigation-start {
+  @apply min-w-0;
+}
+
+.navigation-end {
+  @apply ml-auto hidden min-w-0 gap-1 sm:flex;
+}
+
+.navigation-mobile {
+  @apply sm:hidden;
+}
+
+.navigation-panel-links {
+  @apply mt-8 flex flex-1 flex-col gap-1;
+}
+
+.navigation-panel-end {
+  @apply border-default flex flex-col gap-4 border-t pt-4;
+}
+
+.navigation-panel-content {
+  @apply flex items-center gap-3;
+}
+
+.navigation-link {
+  @apply inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-md border border-transparent px-3 py-1.5 text-sm leading-5 font-medium whitespace-nowrap transition-colors duration-150;
+}
+
+.navigation-link:hover {
+  @apply bg-surface-hover text-primary;
+}
+
+.navigation-link:active {
+  @apply bg-surface-pressed;
+}
+
+.navigation-link[aria-current="page"] {
+  @apply bg-panel text-primary;
+}
+
+.navigation-link[aria-current="page"]:hover {
+  @apply bg-surface-hover;
+}
+
+.navigation-brand {
+  @apply border-transparent bg-transparent px-2;
+}
+
+.navigation-cta {
+  @apply inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-md border px-3 py-1.5 text-sm leading-5 font-medium whitespace-nowrap transition-colors duration-150;
+}
+
+.navigation-end > .navigation-cta {
+  @apply ml-2;
+}
+
+.navigation-panel-links .navigation-link,
+.navigation-panel-links .navigation-cta,
+.navigation-panel-end .navigation-cta {
+  @apply w-full justify-start;
+}
+
+.navigation-cta[data-variant="outline"] {
+  @apply border-default text-primary bg-transparent;
+}
+
+.navigation-cta[data-variant="outline"]:hover {
+  @apply bg-surface-hover;
+}
+
+.navigation-cta[data-variant="outline"]:active {
+  @apply bg-surface-pressed;
+}
+
+.navigation-cta:not([data-variant="outline"]) {
+  @apply bg-accent text-on-accent border-transparent;
+}
+
+.navigation-cta:not([data-variant="outline"]):hover {
+  @apply bg-accent-hover;
+}
+
+.navigation-cta:not([data-variant="outline"]):active {
+  @apply bg-accent-pressed;
+}
+
 /* Overlay material: an intentional surface, not a raw token name in markup. */
 .overlay-backdrop {
   background: var(--color-overlay-scrim);
@@ -831,11 +939,6 @@
   letter-spacing: -0.008em;
 }
 
-@utility focus-ring {
-  outline: 2px solid var(--color-ring-focus);
-  outline-offset: 2px;
-}
-
 @utility hover-surface {
   transition-property: background-color, color, border-color, opacity;
   transition-duration: var(--duration-fast);
@@ -941,4 +1044,9 @@
       padding-inline: 1.5rem;
     }
   }
+}
+
+/* Links share one focus language; individual links should not need to opt in. */
+a:focus-visible {
+  @apply ring-focus ring-2 ring-offset-2 outline-none;
 }
