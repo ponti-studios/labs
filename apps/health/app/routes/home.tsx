@@ -50,7 +50,6 @@ export default function Dashboard() {
                 </Link>
                 <Button
                   variant="outline"
-                  size="sm"
                   className="shrink-0"
                   onClick={() => resolveSymptom.mutate(symptom)}
                 >

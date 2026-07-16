@@ -73,7 +73,6 @@ export function OtpVerificationForm({
           <Button
             type="button"
             variant="link"
-            size="sm"
             onClick={() => void onResend()}
             disabled={isResending || isSubmitting}
             className="px-0"
@@ -86,7 +85,6 @@ export function OtpVerificationForm({
           <Button
             type="button"
             variant="link"
-            size="sm"
             onClick={onChangeEmail}
             disabled={isSubmitting}
             className="px-0"

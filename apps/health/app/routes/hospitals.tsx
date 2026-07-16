@@ -1,5 +1,5 @@
-import { Link } from "react-router";
 import { Button } from "@pontistudios/ui";
+import { Link } from "react-router";
 import { HOSPITALS } from "../lib/hospitals";
 import type { Hospital } from "../types/hospital";
 
@@ -45,7 +45,7 @@ function HospitalListItem({ hospital }: { hospital: Hospital }) {
         <p className="text-sm font-medium">{hospital.phone}</p>
       </div>
       <div className="flex gap-2 pt-3">
-        <Button size="sm" variant="outline" asChild>
+        <Button variant="outline" asChild>
           <a
             href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
               `${hospital.name} ${hospital.address}`,
@@ -56,7 +56,7 @@ function HospitalListItem({ hospital }: { hospital: Hospital }) {
             Get Directions
           </a>
         </Button>
-        <Button size="sm" asChild>
+        <Button asChild>
           <a href={`tel:${hospital.phone.replace(/[^\d+]/g, "")}`}>Call</a>
         </Button>
       </div>

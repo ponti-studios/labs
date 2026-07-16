@@ -35,7 +35,7 @@ export default function Services() {
         <ServicesHeroHeadline />
 
         <div className="flex flex-wrap items-center gap-6 pt-2">
-          <Button asChild size="lg">
+          <Button asChild>
             <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
               {t.common.bookCall}
             </a>
@@ -114,7 +114,7 @@ export default function Services() {
         <h2 className="display-2 text-foreground max-w-3xl">{copy.cta.title}</h2>
         <p className="body-1 text-muted-foreground max-w-xl">{copy.cta.body}</p>
         <div className="flex flex-wrap items-center gap-6 pt-2">
-          <Button asChild size="lg">
+          <Button asChild>
             <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
               {t.common.bookCall}
             </a>

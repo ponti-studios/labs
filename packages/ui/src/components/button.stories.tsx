@@ -3,7 +3,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { expect, userEvent, within } from "storybook/test";
 
 import { booleanControl, hiddenControl, selectControl } from "../storybook/controls";
-import { buttonSizeOptions, buttonVariantOptions } from "../storybook/options";
+import { buttonVariantOptions } from "../storybook/options";
 import { Button } from "./button";
 
 const meta: Meta = {
@@ -12,9 +12,6 @@ const meta: Meta = {
   tags: ["autodocs"],
   argTypes: {
     variant: selectControl(buttonVariantOptions, "Visual style variant of the button", {
-      defaultValue: "default",
-    }),
-    size: selectControl(buttonSizeOptions, "Size variant of the button", {
       defaultValue: "default",
     }),
     disabled: booleanControl("Prevents user interaction and applies disabled styling", false),
@@ -54,12 +51,10 @@ export const Variants: Story = {
   ),
 };
 
-export const Sizes: Story = {
+export const Icon: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-3">
-      <Button size="sm">Small</Button>
-      <Button size="default">Default</Button>
-      <Button size="lg">Large</Button>
+    <div className="flex items-center gap-3">
+      <Button>Standard</Button>
       <Button size="icon" aria-label="Add">
         <Plus className="size-4" />
       </Button>

@@ -1,4 +1,3 @@
-import { ExternalLink } from "lucide-react";
 import { Link } from "react-router";
 import { projects } from "~/data/projects";
 import { t } from "~/translations";
@@ -16,18 +15,6 @@ export function meta(): Array<{
     },
   ];
 }
-
-const PROJECTS_WITH_LOGOS = new Set([
-  "kernel",
-  "realitea",
-  "foundation",
-  "commune",
-  "hollywood",
-  "finance",
-  "career",
-  "health",
-  "earth",
-]);
 
 const STATUS_PRIORITY: Record<string, number> = {
   published: 0,
@@ -56,7 +43,7 @@ export default function Projects() {
   const categoryOrder = ["product", "infrastructure", "library", "tool", "research"];
 
   return (
-    <div className="relative mx-auto flex w-full flex-col gap-16 px-6 py-20">
+    <div className="relative mx-auto flex w-full flex-col gap-16 py-20">
       <h1 className="display-1 text-foreground">The Lab</h1>
 
       {/* Projects by Category */}
@@ -73,10 +60,7 @@ export default function Projects() {
               {[...projects]
                 .sort((a, b) => (STATUS_PRIORITY[a.status] ?? 0) - (STATUS_PRIORITY[b.status] ?? 0))
                 .map((project) => (
-                  <div
-                    key={project.slug}
-                    className="group flex items-center justify-between gap-4 px-2 py-5"
-                  >
+                  <div key={project.slug} className="group flex justify-between gap-4 px-2 py-5">
                     <Link
                       to={`/projects/${project.slug}`}
                       prefetch="intent"
@@ -86,7 +70,7 @@ export default function Projects() {
                         <img
                           src={project.logo}
                           alt={`${project.name} logo`}
-                          className="size-10 shrink-0 rounded-lg"
+                          className="size-10 shrink-0 rounded"
                           width={40}
                           height={40}
                         />
@@ -98,23 +82,6 @@ export default function Projects() {
                         <p className="body-3 text-muted-foreground">{project.shortDescription}</p>
                       </div>
                     </Link>
-                    <div className="flex items-center gap-3">
-                      {project.url ? (
-                        <a
-                          href={project.url}
-                          target={project.url.startsWith("http") ? "_blank" : undefined}
-                          rel={project.url.startsWith("http") ? "noopener noreferrer" : undefined}
-                          className="text-muted-foreground hover:text-accent transition-colors"
-                          aria-label={`Visit ${project.name}`}
-                        >
-                          <ExternalLink size={16} />
-                        </a>
-                      ) : (
-                        <div className="body-4 text-muted-foreground tracking-wide uppercase">
-                          {t.projects.statusLabels[project.status]}
-                        </div>
-                      )}
-                    </div>
                   </div>
                 ))}
             </div>

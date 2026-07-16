@@ -92,7 +92,5 @@ export const WithError: Story = {
     onCancel: () => {},
     onConfirm: () => {},
   },
-  render: (args) => (
-    <InlineEnhanceTrayPreview instruction={args.instruction} error={args.error} />
-  ),
+  render: (args) => <InlineEnhanceTrayPreview instruction={args.instruction} error={args.error} />,
 };

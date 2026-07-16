@@ -1,14 +1,6 @@
-export type ButtonVariant =
-  | "default"
-  | "primary"
-  | "destructive"
-  | "icon"
-  | "ghost"
-  | "link"
-  | "outline"
-  | "secondary";
+export type ButtonVariant = "default" | "destructive" | "ghost" | "link" | "outline" | "secondary";
 
-export type ButtonSize = "sm" | "md" | "lg" | "xs" | "icon";
+export type ButtonSize = "icon";
 
 export interface ButtonBaseProps {
   isLoading?: boolean | undefined;

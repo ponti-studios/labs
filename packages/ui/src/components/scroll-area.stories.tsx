@@ -65,7 +65,7 @@ export const Vertical: Story = {
 
 export const ScreenshotsGallery: Story = {
   render: () => (
-    <div className="flex flex-col gap-3 max-w-2xl">
+    <div className="flex max-w-2xl flex-col gap-3">
       <h2 className="text-lg font-semibold">Screenshots</h2>
       <ScrollArea className="gap-4" snap="start">
         {placeholderItems.map((item) => (

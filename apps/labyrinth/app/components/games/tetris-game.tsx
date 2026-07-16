@@ -1,6 +1,6 @@
-import { useReducer, useEffect, useCallback, useRef, memo } from "react";
-import type { FC } from "react";
 import { Button } from "@pontistudios/ui";
+import type { FC } from "react";
+import { memo, useCallback, useEffect, useReducer, useRef } from "react";
 
 // Type definitions
 interface Piece {
@@ -501,7 +501,7 @@ const TetrisGame: FC = () => {
                 <p className="text-xs font-medium tracking-[0.16em] text-zinc-400 uppercase">
                   Ready to play
                 </p>
-                <Button variant="secondary" size="sm" onClick={() => dispatch({ type: "START" })}>
+                <Button variant="secondary" onClick={() => dispatch({ type: "START" })}>
                   Start game
                 </Button>
                 <p className="text-xs text-zinc-500">or press Enter</p>
@@ -512,7 +512,7 @@ const TetrisGame: FC = () => {
             {state.paused && (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-zinc-950/90">
                 <p className="text-sm font-semibold tracking-widest text-white uppercase">Paused</p>
-                <Button variant="secondary" size="sm" onClick={() => dispatch({ type: "PAUSE" })}>
+                <Button variant="secondary" onClick={() => dispatch({ type: "PAUSE" })}>
                   Resume
                 </Button>
               </div>
@@ -525,7 +525,7 @@ const TetrisGame: FC = () => {
                   Game Over
                 </p>
                 <p className="text-xs text-zinc-400 tabular-nums">Score: {state.score}</p>
-                <Button variant="secondary" size="sm" onClick={() => dispatch({ type: "START" })}>
+                <Button variant="secondary" onClick={() => dispatch({ type: "START" })}>
                   Play again
                 </Button>
               </div>

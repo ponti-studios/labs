@@ -1,24 +1,24 @@
-import { useState, useCallback, useMemo, type JSX } from "react";
 import {
   Button,
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
   DialogTrigger,
 } from "@pontistudios/ui";
 import {
-  Trash2,
-  Plus,
+  Copy,
   Eye,
   EyeOff,
   GripVertical,
-  Copy,
-  Loader2,
   HelpCircle,
+  Loader2,
   LucideColumns2,
+  Plus,
+  Trash2,
 } from "lucide-react";
+import { useCallback, useMemo, useState, type JSX } from "react";
 
 interface ContextBlock {
   id: string;
@@ -271,7 +271,7 @@ function BlockColumn({
       <div className="flex items-center justify-between">
         <h2 className="font-semibold">{title}</h2>
         {onCopy && (
-          <Button onClick={onCopy} variant="outline" size="sm">
+          <Button onClick={onCopy} variant="outline">
             <Copy className="mr-1 h-3 w-3" />
             Copy from A
           </Button>
@@ -389,7 +389,8 @@ export default function ExperimentsLlmInterface(): JSX.Element {
             <Button
               onClick={() => setShowComparison(!showComparison)}
               variant={showComparison ? "outline" : "default"}
-              size="sm"
+              size="icon"
+              aria-label="Toggle comparison"
             >
               <LucideColumns2 />
             </Button>

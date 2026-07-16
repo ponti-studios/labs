@@ -91,9 +91,7 @@ export default function ExperimentsGlass() {
               }}
               onDragOver={(e) => e.preventDefault()}
             />
-            <Button size="sm" onClick={() => setBackgroundImage("")}>
-              Clear
-            </Button>
+            <Button onClick={() => setBackgroundImage("")}>Clear</Button>
           </div>
         </div>
 
@@ -136,7 +134,6 @@ export default function ExperimentsGlass() {
                 <Button
                   type="button"
                   variant="outline"
-                  size="sm"
                   onClick={() => setDisplacements(computeDisplacements(20, 2))}
                 >
                   Reset
@@ -144,7 +141,6 @@ export default function ExperimentsGlass() {
                 <Button
                   type="button"
                   variant="ghost"
-                  size="sm"
                   onClick={() => setDisplacements({ red: 0, green: 0, blue: 0 })}
                 >
                   No Effect

@@ -333,11 +333,10 @@ export const STUDIO_TRANSLATIONS_EN = {
   work: {
     meta: {
       title: "Selected Work | Ponti Studios",
-      description: "deployed improvements",
+      description: "Products and platforms made clearer, faster, and harder to break.",
     },
     hero: {
-      title: "Selected work",
-      description: "deployed improvements",
+      title: "The Work.",
     },
     approachTitle: "Approach",
     backToWork: "All work",
@@ -354,17 +353,15 @@ export const STUDIO_TRANSLATIONS_EN = {
       outcomeLabel: "Outcome",
       readCaseStudy: "Read the full case study →",
       // Reverse chronological. Source of truth: vault ponti-studios/projects/* — only vault-backed outcomes.
-      // listHook is index-only (short); full outcomes stay on the case study page.
       snapshots: [
         {
           slug: "lumina",
           client: "Lumina",
           industry: "EdTech",
+          description: "Learning platform for professional development.",
           timeline: "2025",
           role: "Senior Product & Platform Engineer",
-          listHook: { value: "+43%", label: "feed engagement" },
-          problem:
-            "Acquisition leaking at checkout; retention broken by discovery, course continuity, and grading trust.",
+          problem: "Checkout leakage and broken course discovery were weakening retention.",
           whatWeDid:
             "Six independently shippable workstreams across search, retention, payments, frontend performance, and grading reliability.",
           approach: [
@@ -384,11 +381,10 @@ export const STUDIO_TRANSLATIONS_EN = {
           slug: "revrock",
           client: "Revrock",
           industry: "Music",
+          description: "Tour planning and routing for independent musicians.",
           timeline: "2024–2025",
           role: "Product Lead",
-          listHook: { value: "Weeks → hrs", label: "tour planning" },
-          problem:
-            "Independent musicians planned tours on intuition and spreadsheets — no audience density, routing efficiency, or financial viability until after the tour.",
+          problem: "Musicians planned tours without reliable audience, routing, or financial data.",
           whatWeDid:
             "Product-led the MVP: user research through launch for tour routing, venue selection, and planning financials.",
           approach: [
@@ -406,11 +402,10 @@ export const STUDIO_TRANSLATIONS_EN = {
           slug: "prolog",
           client: "Prolog",
           industry: "Entertainment",
+          description: "AI-assisted submission review for showrunner teams.",
           timeline: "2024",
           role: "Product Lead",
-          listHook: { value: "~95%", label: "extraction accuracy" },
-          problem:
-            "Showrunner teams drowning in email and spreadsheet submission triage during peak staffing.",
+          problem: "Showrunner teams were overwhelmed by submission triage during peak staffing.",
           whatWeDid:
             "Designed and built an AI extraction and review pipeline with confidence scoring and human override.",
           approach: [
@@ -428,11 +423,10 @@ export const STUDIO_TRANSLATIONS_EN = {
           slug: "streamyard",
           client: "StreamYard",
           industry: "Creator",
+          description: "Live streaming tools for creators, teams, and media companies.",
           timeline: "2020–2024",
           role: "Lead Product Engineer & Product Manager",
-          listHook: { value: "$15M+", label: "enterprise ARR" },
-          problem:
-            "Solo-creator product hit a B2B ceiling — no workspaces, no real roles, no path for agencies and media teams.",
+          problem: "A creator product needed workspaces, roles, and a path into B2B.",
           whatWeDid:
             "Led product and engineering for Teams/Business tier and the creator marketplace, from architecture through launch.",
           approach: [
@@ -451,11 +445,11 @@ export const STUDIO_TRANSLATIONS_EN = {
           slug: "whistle",
           client: "Whistle",
           industry: "Education",
+          description: "Live instruction platform for dance, yoga, and fitness.",
           timeline: "2020–2021",
           role: "Platform Engineer",
-          listHook: { value: "100%", label: "class continuity" },
           problem:
-            "Generic video tools broke movement pedagogy — wrong topology, noise cancellation killing music, layouts built for conversation, and no self-hosted path for schools with minors.",
+            "Generic video tools could not support movement instruction or school privacy needs.",
           whatWeDid:
             "Built a purpose-built streaming stack for dance, yoga, and fitness instruction during COVID lockdowns.",
           approach: [
@@ -474,11 +468,10 @@ export const STUDIO_TRANSLATIONS_EN = {
           slug: "kensho",
           client: "Kensho",
           industry: "Finance",
+          description: "Streaming data infrastructure for financial research.",
           timeline: "2019–2020",
           role: "Head of Data Engineering",
-          listHook: { value: "24×", label: "data throughput" },
-          problem:
-            "Multi-modal data pipeline collapsing under peak load; operational knowledge trapped in individual heads.",
+          problem: "A multimodal data pipeline failed under load and depended on tribal knowledge.",
           whatWeDid:
             "Led batch-to-streaming platform migration, hardware-aware routing, and durable on-call and onboarding systems.",
           approach: [
@@ -497,11 +490,10 @@ export const STUDIO_TRANSLATIONS_EN = {
           slug: "humana",
           client: "Humana",
           industry: "Healthcare",
+          description: "Whole-person care tools across voice, mobile, and chat.",
           timeline: "2018–2019",
           role: "Product Lead / Architecture Lead",
-          listHook: { value: "<30s", label: "claims lag" },
-          problem:
-            "Senior care UX was a clinical safety problem; PHI on non-BAA infrastructure; enrollment and claims data hours stale; Android users locked out of health tracking.",
+          problem: "Senior care was constrained by unsafe UX, stale data, and fragmented access.",
           whatWeDid:
             "Led whole-person care product framing across voice, mobile, and chat, then a ten-issue architecture audit and redesign of the Edge platform.",
           approach: [
@@ -520,11 +512,10 @@ export const STUDIO_TRANSLATIONS_EN = {
           slug: "mimecast",
           client: "Mimecast",
           industry: "Security",
+          description: "Enterprise identity platform for white-label and global markets.",
           timeline: "2018",
           role: "Senior Software Engineer / Engineering Lead",
-          listHook: { value: "2 weeks", label: "ahead of deadline" },
-          problem:
-            "Enterprise console blocked white-label and non-English markets; a government identity platform was 4+ weeks behind with 30% of eng time lost to merge conflicts.",
+          problem: "An enterprise console blocked white-label expansion while delivery stalled.",
           whatWeDid:
             "Built theming and i18n as architecture, then recovered the identity platform with explicit ownership swimlanes.",
           approach: [
@@ -543,11 +534,11 @@ export const STUDIO_TRANSLATIONS_EN = {
           slug: "help-refugees",
           client: "Help Refugees",
           industry: "Nonprofit",
+          description: "Volunteer coordination platform for UK-wide operations.",
           timeline: "2016",
           role: "Product Engineer",
-          listHook: { value: "Sheet → app", label: "volunteer ops" },
           problem:
-            "UK refugee volunteer coordination ran on a shared Google Sheet — no roles, no validation, no audit trail, operations stuck managing the sheet instead of the work.",
+            "Volunteer coordination relied on a shared spreadsheet with no roles or audit trail.",
           whatWeDid:
             "Pro-bono React/Rails volunteer interface that replaced the sheet with role separation, validated submissions, and a full audit trail.",
           approach: [
@@ -566,11 +557,10 @@ export const STUDIO_TRANSLATIONS_EN = {
           slug: "thomson-reuters",
           client: "Thomson Reuters",
           industry: "Enterprise",
+          description: "Unified deployment and monitoring tools for global teams.",
           timeline: "2015–2018",
           role: "Senior Software Engineer",
-          listHook: { value: "97%", label: "faster API" },
-          problem:
-            "Global deploy and monitoring tooling siloed; primary API ~14s; a monolith optimized for no one.",
+          problem: "Siloed tooling, a slow API, and a monolith constrained global operations.",
           whatWeDid:
             "Unified the Compass platform, migrated the API, decomposed the monolith, and ran technical debt as a product program.",
           approach: [
@@ -590,11 +580,10 @@ export const STUDIO_TRANSLATIONS_EN = {
           slug: "glow",
           client: "Glow Digital",
           industry: "AdTech",
+          description: "Campaign optimization and automation for digital advertising teams.",
           timeline: "2013–2015",
           role: "Software Developer",
-          listHook: { value: "−90%", label: "API load" },
-          problem:
-            "Facebook Ads API rate ceilings during peak periods; campaign optimization and variation setup burned 2–5 hours a week per manager on mechanical work.",
+          problem: "Ad managers lost hours to rate limits and repetitive campaign work.",
           whatWeDid:
             "Built the platform intelligence layer — caching, request batching, and automation for bids, budgets, and campaign variations.",
           approach: [

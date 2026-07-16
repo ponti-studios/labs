@@ -2,6 +2,10 @@
 
 @source "../../../packages/ui/src";
 
+@theme {
+  --color-logo-artboard: #ffffff;
+}
+
 @keyframes fade-slide-in {
   from {
     opacity: 0;
@@ -85,16 +89,15 @@
  * progressively instead of ramping linearly. Pure CSS — no scroll listeners.
  */
 :root {
-  --carousel-fade-stops: transparent 0,
-    rgba(0, 0, 0, 0.02) calc(var(--carousel-fade-size) * 0.13),
+  --carousel-fade-stops:
+    transparent 0, rgba(0, 0, 0, 0.02) calc(var(--carousel-fade-size) * 0.13),
     rgba(0, 0, 0, 0.05) calc(var(--carousel-fade-size) * 0.198),
     rgba(0, 0, 0, 0.11) calc(var(--carousel-fade-size) * 0.27),
     rgba(0, 0, 0, 0.2) calc(var(--carousel-fade-size) * 0.35),
     rgba(0, 0, 0, 0.32) calc(var(--carousel-fade-size) * 0.435),
     rgba(0, 0, 0, 0.47) calc(var(--carousel-fade-size) * 0.53),
     rgba(0, 0, 0, 0.64) calc(var(--carousel-fade-size) * 0.66),
-    rgba(0, 0, 0, 0.83) calc(var(--carousel-fade-size) * 0.81),
-    black var(--carousel-fade-size),
+    rgba(0, 0, 0, 0.83) calc(var(--carousel-fade-size) * 0.81), black var(--carousel-fade-size),
     black calc(100% - var(--carousel-fade-size)),
     rgba(0, 0, 0, 0.83) calc(100% - (var(--carousel-fade-size) * 0.81)),
     rgba(0, 0, 0, 0.64) calc(100% - (var(--carousel-fade-size) * 0.66)),

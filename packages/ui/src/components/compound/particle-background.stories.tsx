@@ -129,11 +129,7 @@ export const Parallax: Story = {
   },
   render: (args) => (
     <div style={{ height: 1600, position: "relative", background: "#0f0f0f" }}>
-      <ParticleBackground
-        {...args}
-        style={{ position: "fixed", inset: 0 }}
-        particleCount={220}
-      />
+      <ParticleBackground {...args} style={{ position: "fixed", inset: 0 }} particleCount={220} />
       <div
         style={{
           position: "relative",

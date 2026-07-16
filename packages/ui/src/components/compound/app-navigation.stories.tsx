@@ -35,14 +35,14 @@ function renderLink({ href, className, onClick, children }: AppNavigationRenderL
   );
 }
 
-/** Adds a spacer so the page content isn't hidden behind the fixed nav. */
+/** Adds a little page content so the navigation can be viewed in context. */
 function PageContent({
-  message = "Page content appears below the fixed nav.",
+  message = "Page content appears below the sticky nav.",
 }: {
   message?: string;
 }) {
   return (
-    <div style={{ paddingTop: 73, padding: "calc(73px + 2rem) 2rem 2rem" }}>
+    <div style={{ padding: "2rem" }}>
       <p style={{ color: "var(--muted-foreground, #888)", fontSize: 14 }}>{message}</p>
     </div>
   );
@@ -76,7 +76,7 @@ export const NoCta: Story = {
   ),
 };
 
-export const CustomHeight: Story = {
+export const OutlineCta: Story = {
   render: () => (
     <>
       <AppNavigation
@@ -84,10 +84,9 @@ export const CustomHeight: Story = {
         brandHref="/"
         links={defaultLinks}
         cta={{ href: "/get-started", label: "Get started", variant: "outline" }}
-        navHeight={60}
         renderLink={renderLink}
       />
-      <PageContent message="Mobile menu offset uses navHeight=60 instead of the default 73." />
+      <PageContent message="The outline CTA keeps the same navigation geometry with a quieter emphasis." />
     </>
   ),
 };

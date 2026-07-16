@@ -111,7 +111,7 @@ export default function App() {
         activeHref={location.pathname}
         endContent={
           <div className="flex items-center gap-3">
-            <Button asChild size="sm">
+            <Button asChild>
               <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
                 {t.nav.book}
               </a>
@@ -125,7 +125,7 @@ export default function App() {
           </Link>
         )}
       />
-      <main className={cn("mx-auto flex w-full max-w-7xl flex-1 flex-col")}>
+      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 md:px-0">
         <Outlet />
       </main>
     </QueryProvider>

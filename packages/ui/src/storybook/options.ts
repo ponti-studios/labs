@@ -9,8 +9,6 @@ const buttonVariantOptions = [
   "secondary",
 ] as const;
 
-const buttonSizeOptions = ["default", "sm", "lg", "icon"] as const;
-
 const inputTypeOptions = ["text", "email", "password", "search", "number", "tel", "url"] as const;
 
 const textFieldTypeOptions = [
@@ -43,7 +41,6 @@ const codeBlockLanguageOptions = [
 ] as const;
 
 export {
-  buttonSizeOptions,
   buttonVariantOptions,
   checkboxStateOptions,
   codeBlockLanguageOptions,

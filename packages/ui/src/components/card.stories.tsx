@@ -26,10 +26,8 @@ export const Default: Story = {
         </p>
       </CardContent>
       <CardFooter className="flex justify-end gap-2">
-        <Button variant="outline" size="sm">
-          Cancel
-        </Button>
-        <Button size="sm">Confirm</Button>
+        <Button variant="outline">Cancel</Button>
+        <Button>Confirm</Button>
       </CardFooter>
     </Card>
   ),

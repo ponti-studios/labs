@@ -65,7 +65,7 @@ export default function Home() {
           <p className="body-1 text-muted-foreground max-w-2xl">{t.home.hero.subtitle}</p>
         </div>
         <div className="flex flex-wrap items-center gap-6 pt-2">
-          <Button asChild size="lg" variant="default">
+          <Button asChild variant="default">
             <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
               {t.common.bookCall}
             </a>
