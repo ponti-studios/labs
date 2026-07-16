@@ -1,16 +1,10 @@
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@pontistudios/ui/forms";
+import { Spinner } from "@pontistudios/ui/feedback";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
-import {
-  Badge,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Spinner,
-} from "@pontistudios/ui";
+import { Badge } from "@pontistudios/ui/primitives";
 
 interface Outlier {
   date: string;
@@ -84,7 +78,7 @@ function issueBadgeVariant(severity: string) {
 }
 
 function qualityScoreColor(score: number) {
-  if (score >= 0.8) return "text-foreground";
+  if (score >= 0.8) return "text-primary";
   if (score >= 0.6) return "text-amber-600";
   return "text-red-500";
 }
@@ -109,7 +103,7 @@ export default function OutlierDetectionPage() {
       <div className="flex items-center gap-3">
         <label className="ui-data-label">Metric</label>
         <Select value={selectedMetric} onValueChange={setSelectedMetric}>
-          <SelectTrigger className="border bg-card text-foreground h-7 w-52 rounded text-xs">
+          <SelectTrigger className="border-default bg-panel text-primary h-7 w-52 rounded text-xs">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -125,7 +119,7 @@ export default function OutlierDetectionPage() {
       {isLoading && <Spinner />}
 
       {isError && (
-        <p className="text-muted-foreground py-4 text-sm">
+        <p className="text-secondary py-4 text-sm">
           Failed to load outlier data. Please try again.
         </p>
       )}
@@ -157,11 +151,11 @@ export default function OutlierDetectionPage() {
             <p className="ui-data-label mb-4">Statistics</p>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-muted-foreground mb-1 text-xs">Mean Value</p>
+                <p className="text-secondary mb-1 text-xs">Mean Value</p>
                 <p className="ui-data-value">{data.statistics.mean.toLocaleString()}</p>
               </div>
               <div>
-                <p className="text-muted-foreground mb-1 text-xs">Standard Deviation</p>
+                <p className="text-secondary mb-1 text-xs">Standard Deviation</p>
                 <p className="ui-data-value">
                   {data.statistics.standardDeviation.toLocaleString()}
                 </p>
@@ -176,29 +170,29 @@ export default function OutlierDetectionPage() {
                 {data.outliers.map((outlier) => (
                   <div
                     key={`${outlier.date}-${outlier.metric}`}
-                    className="border flex items-start justify-between gap-4 border-b py-2.5 last:border-0"
+                    className="border-default flex items-start justify-between gap-4 border-b py-2.5 last:border-0"
                   >
                     <div className="min-w-0">
                       <div className="mb-0.5 flex items-center gap-2">
                         <Badge variant={outlierBadgeVariant(outlier.severity)}>
                           {outlier.severity}
                         </Badge>
-                        <span className="text-muted-foreground text-xs capitalize">
+                        <span className="text-secondary text-xs capitalize">
                           {outlier.type}
                         </span>
-                        <span className="text-muted-foreground text-xs">
+                        <span className="text-secondary text-xs">
                           {new Date(outlier.date).toLocaleDateString()}
                         </span>
                       </div>
-                      <p className="text-muted-foreground truncate text-xs">
+                      <p className="text-secondary truncate text-xs">
                         {outlier.description}
                       </p>
                     </div>
                     <div className="shrink-0 text-right">
-                      <p className="text-foreground text-sm font-light tabular-nums">
+                      <p className="text-primary text-sm font-light tabular-nums">
                         {outlier.value.toLocaleString()}
                       </p>
-                      <p className="text-muted-foreground text-xs">z={outlier.zScore}</p>
+                      <p className="text-secondary text-xs">z={outlier.zScore}</p>
                     </div>
                   </div>
                 ))}
@@ -213,17 +207,17 @@ export default function OutlierDetectionPage() {
                 {data.dataQualityIssues.map((issue) => (
                   <div
                     key={`${issue.date}-${issue.issue}`}
-                    className="border flex items-start justify-between gap-4 border-b py-2.5 last:border-0"
+                    className="border-default flex items-start justify-between gap-4 border-b py-2.5 last:border-0"
                   >
                     <div className="min-w-0">
                       <div className="mb-0.5 flex items-center gap-2">
                         <Badge variant={issueBadgeVariant(issue.severity)}>{issue.severity}</Badge>
-                        <span className="text-muted-foreground text-xs">
+                        <span className="text-secondary text-xs">
                           {new Date(issue.date).toLocaleDateString()}
                         </span>
                       </div>
-                      <p className="text-foreground text-xs">{issue.issue}</p>
-                      <p className="text-muted-foreground truncate text-xs">{issue.description}</p>
+                      <p className="text-primary text-xs">{issue.issue}</p>
+                      <p className="text-secondary truncate text-xs">{issue.description}</p>
                     </div>
                   </div>
                 ))}
@@ -238,10 +232,10 @@ export default function OutlierDetectionPage() {
                 {data.reportingArtifacts.map((artifact) => (
                   <div key={artifact.type} className="flex items-start justify-between py-2.5">
                     <div>
-                      <p className="text-foreground text-sm">{artifact.type}</p>
-                      <p className="text-muted-foreground mt-0.5 text-xs">{artifact.description}</p>
+                      <p className="text-primary text-sm">{artifact.type}</p>
+                      <p className="text-secondary mt-0.5 text-xs">{artifact.description}</p>
                     </div>
-                    <span className="text-muted-foreground ml-4 text-sm tabular-nums">
+                    <span className="text-secondary ml-4 text-sm tabular-nums">
                       {artifact.strength}%
                     </span>
                   </div>
@@ -251,7 +245,7 @@ export default function OutlierDetectionPage() {
           )}
 
           {data.outliers.length === 0 && data.dataQualityIssues.length === 0 && (
-            <p className="text-muted-foreground py-4 text-sm">
+            <p className="text-secondary py-4 text-sm">
               No significant outliers or data quality issues detected.
             </p>
           )}

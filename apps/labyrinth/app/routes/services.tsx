@@ -1,4 +1,4 @@
-import { Button } from "@pontistudios/ui";
+import { Button } from "@pontistudios/ui/primitives";
 import { motion, useReducedMotion } from "framer-motion";
 import { HelpCircle } from "lucide-react";
 import { Link } from "react-router";
@@ -14,7 +14,7 @@ export function meta(): Array<{ title?: string; name?: string; content?: string 
 function ServicesHeroHeadline() {
   const reduceMotion = useReducedMotion();
   return (
-    <h1 className="display-1 text-foreground flex max-w-4xl flex-wrap items-baseline gap-x-3 gap-y-1">
+    <h1 className="display-1 text-primary flex max-w-4xl flex-wrap items-baseline gap-x-3 gap-y-1">
       <span>{copy.hero.title}</span>
       <motion.span
         className="text-accent"
@@ -43,7 +43,7 @@ export default function Services() {
           <Link
             to="/work"
             prefetch="intent"
-            className="body-2 text-foreground underline-offset-4 hover:underline"
+            className="body-2 text-primary underline-offset-4 hover:underline"
           >
             {copy.hero.seeWork}
           </Link>
@@ -53,8 +53,8 @@ export default function Services() {
       {/* Services — editorial catalog, same for every visitor */}
       <section className="section gap-12">
         <div className="flex flex-col gap-3">
-          <h2 className="heading-2 text-foreground">{copy.services.title}</h2>
-          <p className="body-2 text-muted-foreground max-w-2xl">{copy.services.intro}</p>
+          <h2 className="heading-2 text-primary">{copy.services.title}</h2>
+          <p className="body-2 text-secondary max-w-2xl">{copy.services.intro}</p>
         </div>
 
         <div className="flex flex-col gap-16">
@@ -68,13 +68,13 @@ export default function Services() {
                     id={service.slug}
                     className="grid gap-4 sm:grid-cols-[minmax(0,14rem)_1fr] sm:gap-10"
                   >
-                    <h4 className="subheading-2 text-foreground">{service.name}</h4>
+                    <h4 className="subheading-2 text-primary">{service.name}</h4>
                     <ul className="flex flex-col gap-2">
                       {service.deliverables.map((item) => (
                         <li key={item.label} className="ui-dash-list-item">
                           <span className="ui-dash-marker">—</span>
-                          <span className="body-2 text-muted-foreground">
-                            <span className="text-foreground font-medium">{item.label}:</span>{" "}
+                          <span className="body-2 text-secondary">
+                            <span className="text-primary font-medium">{item.label}:</span>{" "}
                             {item.description}
                           </span>
                         </li>
@@ -91,18 +91,18 @@ export default function Services() {
       {/* Process — quiet, linear, same for everyone */}
       <section className="section gap-10">
         <div className="flex flex-col gap-3">
-          <h2 className="heading-2 text-foreground">{copy.process.title}</h2>
-          <p className="body-2 text-muted-foreground max-w-2xl">{copy.process.intro}</p>
+          <h2 className="heading-2 text-primary">{copy.process.title}</h2>
+          <p className="body-2 text-secondary max-w-2xl">{copy.process.intro}</p>
         </div>
         <ol className="flex flex-col gap-8">
           {t.common.contactSteps.map((step, index) => (
             <li key={step.title} className="grid gap-2 sm:grid-cols-[minmax(0,4rem)_1fr] sm:gap-8">
-              <span className="body-2 text-muted-foreground tabular-nums">
+              <span className="body-2 text-secondary tabular-nums">
                 {String(index + 1).padStart(2, "0")}
               </span>
               <div className="flex flex-col gap-1">
-                <span className="subheading-3 text-foreground">{step.title}</span>
-                <span className="body-2 text-muted-foreground">{step.description}</span>
+                <span className="subheading-3 text-primary">{step.title}</span>
+                <span className="body-2 text-secondary">{step.description}</span>
               </div>
             </li>
           ))}
@@ -111,15 +111,15 @@ export default function Services() {
 
       {/* Closing CTA */}
       <section className="section section-hero">
-        <h2 className="display-2 text-foreground max-w-3xl">{copy.cta.title}</h2>
-        <p className="body-1 text-muted-foreground max-w-xl">{copy.cta.body}</p>
+        <h2 className="display-2 text-primary max-w-3xl">{copy.cta.title}</h2>
+        <p className="body-1 text-secondary max-w-xl">{copy.cta.body}</p>
         <div className="flex flex-wrap items-center gap-6 pt-2">
           <Button asChild>
             <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
               {t.common.bookCall}
             </a>
           </Button>
-          <p className="body-3 text-muted-foreground">{t.common.replyWithin}</p>
+          <p className="body-3 text-secondary">{t.common.replyWithin}</p>
         </div>
       </section>
 
@@ -127,7 +127,7 @@ export default function Services() {
         <Link
           to="/faq"
           prefetch="intent"
-          className="body-2 text-foreground hover:text-muted-foreground flex items-center gap-2"
+          className="body-2 text-primary hover:text-secondary flex items-center gap-2"
         >
           <HelpCircle className="size-4" aria-hidden="true" />
           {t.faq.eyebrow}

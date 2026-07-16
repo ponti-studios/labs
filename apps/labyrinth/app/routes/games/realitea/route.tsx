@@ -1,4 +1,5 @@
-import { Button, Card, CardContent, OnscreenKeyboard } from "@pontistudios/ui";
+import { Button, Card, CardContent } from "@pontistudios/ui/primitives";
+import { OnscreenKeyboard } from "~/components/games/onscreen-keyboard";
 import { cva } from "class-variance-authority";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { useLoaderData, useRevalidator, type LoaderFunctionArgs } from "react-router";
@@ -30,10 +31,10 @@ const TILE_BASE = cva(
   {
     variants: {
       state: {
-        absent: "border bg-muted text-muted-foreground",
+        absent: "border-default bg-inset text-secondary",
         correct:
           "border-[var(--realitea-correct-border)] bg-[var(--realitea-correct-bg)] text-[var(--realitea-correct-text)]",
-        empty: "border bg-background text-foreground",
+        empty: "border-default bg-canvas text-primary",
         present:
           "border-[var(--realitea-present-border)] bg-[var(--realitea-present-bg)] text-[var(--realitea-present-text)]",
       },
@@ -222,10 +223,10 @@ type ErrorBoundaryProps = { error: Error };
 export function ErrorBoundary({ error }: ErrorBoundaryProps) {
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center gap-3 px-4 text-center">
-      <p className="body-4 text-muted-foreground tracking-[0.15em] uppercase">
+      <p className="body-4 text-secondary tracking-[0.15em] uppercase">
         Something went wrong
       </p>
-      <p className="body-4 text-muted-foreground">
+      <p className="body-4 text-secondary">
         {error.message || "The RealiTea puzzle couldn't load. Try refreshing the page."}
       </p>
       <Button asChild variant="default" className="mt-2">
@@ -311,8 +312,8 @@ export default function RealiTeaRoute() {
 
   return (
     <div className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-6 px-4 pb-[calc(env(safe-area-inset-bottom)+8px)]">
-      <header className="bg-background/95 sticky top-0 z-10 backdrop-blur md:static">
-        <div className="border flex items-center justify-between gap-2 rounded-md border p-2">
+      <header className="bg-canvas/95 sticky top-0 z-10 backdrop-blur md:static">
+        <div className="border-default flex items-center justify-between gap-2 rounded-md border p-2">
           <img src="/logo.realitea.png" alt="RealiTea" className="h-6 object-contain" />
           <Button
             aria-label="How to play"

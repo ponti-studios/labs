@@ -4,18 +4,6 @@ import "../src/styles.css";
 
 const preview: Preview = {
   globalTypes: {
-    colorSystem: {
-      name: "Color System",
-      description: "Active UI color system",
-      defaultValue: "primer",
-      toolbar: {
-        icon: "paintbrush",
-        items: [
-          { value: "primer", title: "Primer" },
-          { value: "apple", title: "Apple" },
-        ],
-      },
-    },
     colorMode: {
       name: "Color Mode",
       description: "Active UI color mode",
@@ -34,7 +22,7 @@ const preview: Preview = {
     (Story, context) => {
       if (typeof document !== "undefined") {
         const root = document.documentElement;
-        root.dataset.colorSystem = String(context.globals.colorSystem ?? "primer");
+        root.dataset.colorSystem = "ponti";
 
         if (context.globals.colorMode === "system") {
           delete root.dataset.colorMode;

@@ -1,15 +1,5 @@
-import {
-  Badge,
-  Card,
-  CardContent,
-  CardHeader,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Stepper,
-} from "@pontistudios/ui";
+import { Badge, Card, CardContent, CardHeader } from "@pontistudios/ui/primitives";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Stepper } from "@pontistudios/ui/forms";
 import { cn } from "~/lib/utils";
 import { Clapperboard } from "lucide-react";
 import {
@@ -49,17 +39,17 @@ export function ScreenAllocation({
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <span className="ui-data-label">Screen Allocation</span>
-              <Clapperboard className="text-muted-foreground size-4" />
+              <Clapperboard className="text-secondary size-4" />
             </div>
-            <p className="text-muted-foreground mt-1 text-xs">
+            <p className="text-secondary mt-1 text-xs">
               Roster your screens like a weekly lineup.
             </p>
           </div>
           <div className="text-right">
-            <div className="text-foreground font-mono text-sm font-semibold tabular-nums">
+            <div className="text-primary font-mono text-sm font-semibold tabular-nums">
               {allocatedScreens}/{screens}
             </div>
-            <div className="text-muted-foreground text-[11px]">screens assigned</div>
+            <div className="text-secondary text-[11px]">screens assigned</div>
           </div>
         </div>
       </CardHeader>
@@ -68,7 +58,7 @@ export function ScreenAllocation({
         <div className="space-y-4">
           <div className="space-y-3">
             <div className="flex items-baseline justify-between gap-4">
-              <label className="text-emphasis-medium text-sm font-medium">Screens</label>
+              <label className="text-secondary text-sm font-medium">Screens</label>
               <Stepper
                 value={screens}
                 min={4}
@@ -78,17 +68,17 @@ export function ScreenAllocation({
                 increaseLabel="Increase total screens"
               />
             </div>
-            <p className="text-muted-foreground text-xs">
+            <p className="text-secondary text-xs">
               The roster rebalances automatically as the house grows or shrinks.
             </p>
           </div>
 
           <div className="space-y-3">
             <div className="flex items-baseline justify-between gap-4">
-              <label htmlFor="season" className="text-emphasis-medium text-sm font-medium">
+              <label htmlFor="season" className="text-secondary text-sm font-medium">
                 Season
               </label>
-              <span className="text-muted-foreground text-xs tabular-nums">
+              <span className="text-secondary text-xs tabular-nums">
                 {SEASON_OPTIONS[season].multiplier.toFixed(2)}x
               </span>
             </div>
@@ -104,7 +94,7 @@ export function ScreenAllocation({
                 ))}
               </SelectContent>
             </Select>
-            <p className="text-muted-foreground text-xs">Simple seasonal multiplier.</p>
+            <p className="text-secondary text-xs">Simple seasonal multiplier.</p>
           </div>
         </div>
 
@@ -123,7 +113,7 @@ export function ScreenAllocation({
               >
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-foreground text-sm font-semibold">{film.label}</span>
+                    <span className="text-primary text-sm font-semibold">{film.label}</span>
                     <Badge variant="outline" className="text-[10px]">
                       {film.role}
                     </Badge>
@@ -131,7 +121,7 @@ export function ScreenAllocation({
                       {projectedImpactLabel(film.demandMultiplier)}
                     </Badge>
                   </div>
-                  <div className="text-muted-foreground mt-1 flex flex-wrap gap-x-3 gap-y-1 text-[11px]">
+                  <div className="text-secondary mt-1 flex flex-wrap gap-x-3 gap-y-1 text-[11px]">
                     <span>Studio {Math.round(film.studioCut * 100)}%</span>
                     <span>Concessions {Math.round(film.concessionMultiplier * 100)}%</span>
                   </div>
@@ -150,7 +140,7 @@ export function ScreenAllocation({
             );
           })}
 
-          <p className="text-muted-foreground text-xs">
+          <p className="text-secondary text-xs">
             {allocatedScreens === screens
               ? "Full roster locked. Shift a screen to rebalance the slate."
               : `${screens - allocatedScreens} screens remain unassigned.`}

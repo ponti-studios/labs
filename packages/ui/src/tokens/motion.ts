@@ -17,7 +17,7 @@
  * playShimmer) read the numeric constants from this file so all motion
  * stays in sync.
  *
- * CSS `void-anim-*` classes (animations.css) are reserved for Radix UI
+ * CSS `motion-anim-*` classes (animations.css) are reserved for Radix UI
  * component enter/exit only — do not add new CSS keyframe animations for
  * interactive product surfaces.
  */

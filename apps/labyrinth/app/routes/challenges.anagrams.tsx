@@ -12,21 +12,9 @@
  * algorithm linear in the number of words times the cost of sorting each word.
  */
 
-import {
-  Button,
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  Input,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@pontistudios/ui";
+import { Button, Card, CardContent, CardFooter, CardHeader, CardTitle } from "@pontistudios/ui/primitives";
+import { Input } from "@pontistudios/ui/forms";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@pontistudios/ui/data-display";
 import { useState, type ChangeEvent, type JSX } from "react";
 
 // A set of words that are all anagrams of each other
@@ -145,8 +133,8 @@ export default function Anagrams(): JSX.Element {
     <div className="flex flex-col gap-6">
       <header>
         <h2 className="text-xl font-semibold">Anagrams</h2>
-        <p className="text-muted-foreground">Group anagrams together from a list of words.</p>
-        <i className="text-muted-foreground text-xs">Courtesy of ChartHop</i>
+        <p className="text-secondary">Group anagrams together from a list of words.</p>
+        <i className="text-secondary text-xs">Courtesy of ChartHop</i>
       </header>
 
       <div className="flex gap-2">
@@ -197,7 +185,7 @@ export default function Anagrams(): JSX.Element {
                         <TableCell className={`font-mono font-medium ${color.row}`}>
                           {step.word}
                         </TableCell>
-                        <TableCell className="text-muted-foreground font-mono">
+                        <TableCell className="text-secondary font-mono">
                           {step.sortedKey}
                         </TableCell>
                         <TableCell>

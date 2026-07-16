@@ -23,7 +23,7 @@ export const STUDIO_TRANSLATIONS_EN = {
     },
     page: {
       title: "The Lab",
-      metaDescription: "Projects spanning products, infrastructure, tools, and research",
+      metaDescription: "Products, infrastructure, tools, and research I build for myself.",
       detailMetaDescription: "Project details and information",
       notFound: "Project not found",
       back: "Back to Lab",
@@ -39,11 +39,11 @@ export const STUDIO_TRANSLATIONS_EN = {
     entries: {
       kernel: {
         name: "Kernel",
-        shortDescription: "AI agent skills",
+        shortDescription: "Engineering judgment shouldn't die in someone's head. Kernel turns it into 32 skills an AI can run.",
         solution:
           "32 specialized skills for software development and content production, published to NPM and installable through skills.sh.",
         problem:
-          "Useful engineering judgment is often trapped in people's heads or buried in documentation. Kernel turns that judgment into skills an AI assistant can invoke for recurring work such as migrations, security reviews, and content production.",
+          "Good engineering judgment usually lives in someone's head, not in a doc anyone reads. Kernel turns that judgment into skills an AI assistant can actually invoke — for migrations, security reviews, content, the recurring stuff.",
         keyFeatures: [
           "32 skills across writing, music, image, development, UI, audit, and operations",
           "Install one skill or the full set with npx skills add",
@@ -57,11 +57,11 @@ export const STUDIO_TRANSLATIONS_EN = {
       },
       foundation: {
         name: "Foundation",
-        shortDescription: "Enterprise shared infrastructure with Docker & PostgreSQL",
+        shortDescription: "Every team was rebuilding the same Postgres image. Foundation means nobody has to again.",
         solution:
           "Shared infrastructure for PostgreSQL, Redis, Docker Compose environments, and CI/CD across the organization.",
         problem:
-          "Teams needing vector search or geospatial queries were rebuilding PostgreSQL images per project. Foundation provides one tested image and repeatable environments so development and production do not quietly drift apart.",
+          "Every team needing vector search or geospatial queries was rebuilding its own Postgres image. Foundation gives everyone one tested image and repeatable environments, so dev and prod stop quietly drifting apart.",
         keyFeatures: [
           "One PostgreSQL 18 image with pgvector, PostGIS, and pgRouting",
           "Docker Compose environments for development, test, and production",
@@ -76,11 +76,11 @@ export const STUDIO_TRANSLATIONS_EN = {
       },
       omiro: {
         name: "Omiro",
-        shortDescription: "Personal knowledge app for iOS",
+        shortDescription: "Your notes, tasks, and calendar don't talk to each other. Omiro makes them one connected app.",
         solution:
           "An iOS app that captures everything you want to remember — tasks, notes, events, and ideas — into one searchable, connected personal knowledge graph.",
         problem:
-          "Personal knowledge lives scattered across notes, reminders, calendars, and messages. Omiro brings it into one app where everything connects — a task links to a note, a note links to an event, and search finds it all.",
+          "Your notes, reminders, calendar, and messages don't talk to each other. Omiro puts it all in one app where a task links to a note, a note links to an event, and search actually finds it.",
         keyFeatures: [
           "Capture tasks, notes, events, and ideas in one place",
           "Connect everything through typed knowledge-graph relationships",
@@ -95,29 +95,30 @@ export const STUDIO_TRANSLATIONS_EN = {
       },
       career: {
         name: "Career",
-        shortDescription: "Track applications, interviews, and your professional pipeline",
+        shortDescription: "Your resume crushes a decade of work into two pages. Career keeps the whole story.",
         solution:
-          "A web app for managing a job search pipeline — applications, interviews, follow-ups, and offers — in one place.",
+          "A web app pairing a career-long work journal — roles, achievements, skills gained, performance history — with a job-search pipeline for applications, interviews, follow-ups, and offers.",
         problem:
-          "Job searches generate a flood of applications, recruiter conversations, and interview loops with no natural place to track them. Career turns that scattered process into a structured pipeline with status tracking and follow-up reminders.",
+          "A resume flattens years of real work into two pages a manager skims in six seconds. No wonder they can't tell what you've actually done — nobody kept the record as they went. Career logs the work itself, from your first job to your last, and runs the job-search pipeline on top of it.",
         keyFeatures: [
+          "Log roles, achievements, and skills gained as a running career timeline",
           "Track applications through stages, notes, and follow-ups",
           "Schedule interviews and keep feedback beside each application",
           "Keep recruiters and referrals connected to the search",
-          "Share data with the rest of the Hominem product family",
         ],
         technicalChallenges: [
+          "Modeling a career as a timeline of roles and events without losing the narrative",
           "Making a rich pipeline fast enough for daily updates",
           "Sharing auth and data patterns across Career, Finance, and Omiro",
         ],
       },
       finance: {
         name: "Finance",
-        shortDescription: "Personal finance dashboard with accounts, budgets, and trends",
+        shortDescription: "Money stuff is stressful. Finance makes it just numbers.",
         solution:
           "A web app for tracking personal finances — accounts, transactions, budgets, and net worth trends — with a clean dashboard.",
         problem:
-          "Personal finance tools are either too simple (mint clones) or too complex (spreadsheet-level). Finance aims for the middle: enough structure to see trends and budgets, simple enough to use weekly.",
+          "Most finance tools are either toy-simple or spreadsheet-complex. Finance sits in the middle: enough structure to see real trends and budgets, simple enough you'll actually open it every week.",
         keyFeatures: [
           "Bring accounts together and categorize transactions",
           "Set budgets around real spending categories",
@@ -131,11 +132,11 @@ export const STUDIO_TRANSLATIONS_EN = {
       },
       "hominem-api": {
         name: "Hominem API",
-        shortDescription: "HTTP & MCP server for unified personal data access",
+        shortDescription: "Three apps, same personal data. One API instead of three duct-taped together.",
         solution:
           "A centralized Hono API that serves Omiro, Career, and Finance with shared auth, typed RPC contracts, and an MCP server for AI agent access to personal data.",
         problem:
-          "Three products sharing the same personal data shouldn't each build their own API. The Hominem API provides one server with typed contracts, shared auth, and MCP protocol support so AI agents can access personal data with permission boundaries.",
+          "Three products sharing the same personal data don't need three separate APIs. Hominem is one server with typed contracts, shared auth, and MCP support — so AI agents can reach personal data without breaking permission boundaries.",
         keyFeatures: [
           "Serve web, mobile, and agents from typed Hono contracts",
           "Expose personal data through an MCP server with permission checks",
@@ -150,11 +151,11 @@ export const STUDIO_TRANSLATIONS_EN = {
       },
       hollywood: {
         name: "Hollywood",
-        shortDescription: "Entertainment research platform with structured LLM extraction",
+        shortDescription: "Entertainment research, minus the twenty scattered sources.",
         solution:
           "A local-first platform that combines entertainment data ingestion with Claude-powered extraction from unstructured submissions.",
         problem:
-          "Entertainment research is split across many sources, while the most valuable material arrives as unstructured submissions. Hollywood brings both into one searchable system and extracts useful fields automatically.",
+          "Entertainment research is scattered everywhere, and the best material shows up as unstructured submissions nobody can search. Hollywood pulls it all into one system and extracts the useful fields automatically.",
         keyFeatures: [
           "Ingest trade publications, directories, and public databases",
           "Extract structure from query letters, decks, and submissions",
@@ -169,11 +170,11 @@ export const STUDIO_TRANSLATIONS_EN = {
       },
       commune: {
         name: "Commune",
-        shortDescription: "Anonymous peer deliberation for difficult decisions",
+        shortDescription: "Anonymous strangers give you a straighter answer than your friends will.",
         solution:
           "A social decision-making app that turns a personal situation into a neutral case for a small anonymous jury.",
         problem:
-          "Advice from friends is often shaped by the way a story is told and by existing relationships. Commune separates the account from the decision: an AI creates a neutral version, then friends vote independently and explain their reasoning.",
+          "Advice from friends is shaped by how you tell the story and by the relationship underneath it. Commune strips that out: an AI writes the neutral version, then a jury votes independently and explains why.",
         keyFeatures: [
           "Turn a personal story into a neutral decision brief",
           "Collect independent agree-or-disagree votes from an anonymous jury",
@@ -188,11 +189,11 @@ export const STUDIO_TRANSLATIONS_EN = {
       },
       earth: {
         name: "Earth",
-        shortDescription: "Live map for exploring London traffic cameras",
+        shortDescription: "London's traffic cameras, on a map that doesn't fight you.",
         solution:
           "A live geospatial viewer for browsing London's TfL traffic camera network on an interactive map.",
         problem:
-          "Traffic camera data is useful only when it is easy to locate and inspect. Earth puts a large, changing camera network into a map interface with direct search, camera detail, and live availability state.",
+          "Camera data is only useful if you can find the camera fast. Earth puts a large, changing network on a map — search, camera detail, live availability, no digging.",
         keyFeatures: [
           "Explore camera locations on an interactive MapLibre map",
           "Find cameras by name or location",
@@ -207,11 +208,11 @@ export const STUDIO_TRANSLATIONS_EN = {
       },
       health: {
         name: "Health",
-        shortDescription: "Personal workspace for symptoms, care, and medication",
+        shortDescription: "Symptoms, appointments, meds — one place, not five apps.",
         solution:
           "A personal health workspace for understanding symptoms, tracking progress, and organizing care.",
         problem:
-          "Health decisions are spread across symptoms, appointments, medication, insurance, and local care options. Health brings those recurring tasks into one practical workspace instead of treating each decision as a separate lookup.",
+          "Health decisions get scattered across symptoms, appointments, medication, insurance, and finding care nearby. Health puts those recurring tasks in one workspace instead of a separate lookup every time.",
         keyFeatures: [
           "Track symptoms with guidance, monitoring, and follow-up",
           "Manage appointments from one upcoming-care view",
@@ -226,11 +227,11 @@ export const STUDIO_TRANSLATIONS_EN = {
       },
       geo: {
         name: "Geo (geokit)",
-        shortDescription: "Geocoding tools with a native review workflow",
+        shortDescription: "Automated geocoding is fast and wrong. Geo adds the review step that makes it right.",
         solution:
           "A Swift geocoding CLI and native macOS app for curating place data with Apple Maps.",
         problem:
-          "Automated geocoding is fast but ambiguous, while manual review is accurate but slow. Geo combines batch geocoding with a native workflow for checking and correcting results before they enter a dataset.",
+          "Automated geocoding is fast but wrong sometimes. Manual review is right but slow. Geo does the batch pass, then gives you a native app to check and fix results before they hit your dataset.",
         keyFeatures: [
           "Run individual queries or SQLite-backed batch processing",
           "Review and correct results in a native SwiftUI macOS app",
@@ -239,17 +240,17 @@ export const STUDIO_TRANSLATIONS_EN = {
         ],
         technicalChallenges: [
           "Adapt MapKit and CoreLocation for headless batch work",
-          "Respect Apple’s usage limits with configurable request pacing",
+          "Respect Apple's usage limits with configurable request pacing",
           "Keep CLI output and native corrections aligned through one schema",
         ],
       },
       toolbox: {
         name: "Toolbox",
-        shortDescription: "Eight CLI tools for data, media, and content",
+        shortDescription: "Eight CLI tools, built because the throwaway script always comes back.",
         solution:
           "A monorepo of eight focused CLI tools: file processing (filekit), image optimization (iconkit), video transcription (mediakit), photo metadata (photokit), content pipeline (monotone), AI agent analytics (agentkit), X post management (xkit), and Internet Archive crawling (datpiff).",
         problem:
-          "Personal automation often starts as a throwaway script and becomes a liability. Toolbox turns recurring jobs involving content, media, and personal data into tested commands with explicit safeguards.",
+          "Personal automation starts as a script you'll delete later. It never gets deleted. Toolbox turns those recurring jobs — content, media, personal data — into tested commands with real safeguards.",
         keyFeatures: [
           "Turn raw notes into scheduled social posts through Typefully",
           "Transcribe video, optimize images, and manage photo metadata",
@@ -266,11 +267,11 @@ export const STUDIO_TRANSLATIONS_EN = {
       },
       realitea: {
         name: "RealiTea",
-        shortDescription: "Daily word game built on real headlines",
+        shortDescription: "A word game that reads the news, so it's never stale.",
         solution:
           "A daily word puzzle where players guess real celebrity names by spelling them out from clues, with new puzzles generated from actual entertainment journalism every day.",
         problem:
-          "Most word games repeat the same mechanics endlessly. RealiTea uses real-time entertainment news to generate fresh puzzles daily, creating a game that's connected to the cultural moment instead of a static dictionary.",
+          "Most word games run the same mechanic forever. RealiTea pulls from live entertainment news to write a fresh puzzle every day, tied to what's actually happening instead of a static dictionary.",
         keyFeatures: [
           "Generate a fresh puzzle each day from live entertainment headlines",
           "Give letter-by-letter feedback as players solve",
@@ -308,8 +309,7 @@ export const STUDIO_TRANSLATIONS_EN = {
   services: {
     meta: {
       title: "Services | Ponti Studios",
-      description:
-        "Product engineering, design, and advisory — scoped clearly, shipped with proof.",
+      description: "Product engineering, design, and advisory. Scoped clearly, shipped with proof.",
     },
     hero: {
       title: "You have problems.",
@@ -322,7 +322,7 @@ export const STUDIO_TRANSLATIONS_EN = {
     },
     process: {
       title: "How we start",
-      intro: "Simple path from first conversation to signed scope. No process theater.",
+      intro: "First conversation to signed scope. Nothing in between but the work.",
     },
     cta: {
       title: "Ready when you are.",
@@ -361,9 +361,9 @@ export const STUDIO_TRANSLATIONS_EN = {
           description: "Learning platform for professional development.",
           timeline: "2025",
           role: "Senior Product & Platform Engineer",
-          problem: "Checkout leakage and broken course discovery were weakening retention.",
+          problem: "Checkout leakage and broken course discovery were killing retention.",
           whatWeDid:
-            "Six independently shippable workstreams across search, retention, payments, frontend performance, and grading reliability.",
+            "Six independently shippable workstreams: search, retention, payments, frontend performance, grading reliability.",
           approach: [
             "Structured the rebuild as six independently shippable workstreams with clear interface boundaries, so no single risky rewrite blocked delivery",
             "Built hybrid BM25 + pgvector search directly in Postgres instead of adding an external search service the scale didn't justify",
@@ -384,7 +384,7 @@ export const STUDIO_TRANSLATIONS_EN = {
           description: "Tour planning and routing for independent musicians.",
           timeline: "2024–2025",
           role: "Product Lead",
-          problem: "Musicians planned tours without reliable audience, routing, or financial data.",
+          problem: "Musicians were planning tours blind — no reliable audience, routing, or financial data.",
           whatWeDid:
             "Product-led the MVP: user research through launch for tour routing, venue selection, and planning financials.",
           approach: [
@@ -405,7 +405,7 @@ export const STUDIO_TRANSLATIONS_EN = {
           description: "AI-assisted submission review for showrunner teams.",
           timeline: "2024",
           role: "Product Lead",
-          problem: "Showrunner teams were overwhelmed by submission triage during peak staffing.",
+          problem: "Showrunner teams were drowning in submission triage during peak staffing.",
           whatWeDid:
             "Designed and built an AI extraction and review pipeline with confidence scoring and human override.",
           approach: [
@@ -448,8 +448,7 @@ export const STUDIO_TRANSLATIONS_EN = {
           description: "Live instruction platform for dance, yoga, and fitness.",
           timeline: "2020–2021",
           role: "Platform Engineer",
-          problem:
-            "Generic video tools could not support movement instruction or school privacy needs.",
+          problem: "Generic video tools couldn't handle movement instruction or school privacy rules.",
           whatWeDid:
             "Built a purpose-built streaming stack for dance, yoga, and fitness instruction during COVID lockdowns.",
           approach: [
@@ -471,7 +470,7 @@ export const STUDIO_TRANSLATIONS_EN = {
           description: "Streaming data infrastructure for financial research.",
           timeline: "2019–2020",
           role: "Head of Data Engineering",
-          problem: "A multimodal data pipeline failed under load and depended on tribal knowledge.",
+          problem: "A multimodal data pipeline broke under load and ran on tribal knowledge.",
           whatWeDid:
             "Led batch-to-streaming platform migration, hardware-aware routing, and durable on-call and onboarding systems.",
           approach: [
@@ -493,7 +492,7 @@ export const STUDIO_TRANSLATIONS_EN = {
           description: "Whole-person care tools across voice, mobile, and chat.",
           timeline: "2018–2019",
           role: "Product Lead / Architecture Lead",
-          problem: "Senior care was constrained by unsafe UX, stale data, and fragmented access.",
+          problem: "Senior care was held back by unsafe UX, stale data, and fragmented access.",
           whatWeDid:
             "Led whole-person care product framing across voice, mobile, and chat, then a ten-issue architecture audit and redesign of the Edge platform.",
           approach: [
@@ -537,8 +536,7 @@ export const STUDIO_TRANSLATIONS_EN = {
           description: "Volunteer coordination platform for UK-wide operations.",
           timeline: "2016",
           role: "Product Engineer",
-          problem:
-            "Volunteer coordination relied on a shared spreadsheet with no roles or audit trail.",
+          problem: "Volunteer coordination ran on a shared spreadsheet with no roles or audit trail.",
           whatWeDid:
             "Pro-bono React/Rails volunteer interface that replaced the sheet with role separation, validated submissions, and a full audit trail.",
           approach: [
@@ -560,7 +558,7 @@ export const STUDIO_TRANSLATIONS_EN = {
           description: "Unified deployment and monitoring tools for global teams.",
           timeline: "2015–2018",
           role: "Senior Software Engineer",
-          problem: "Siloed tooling, a slow API, and a monolith constrained global operations.",
+          problem: "Siloed tooling, a slow API, and a monolith were choking global operations.",
           whatWeDid:
             "Unified the Compass platform, migrated the API, decomposed the monolith, and ran technical debt as a product program.",
           approach: [
@@ -583,7 +581,7 @@ export const STUDIO_TRANSLATIONS_EN = {
           description: "Campaign optimization and automation for digital advertising teams.",
           timeline: "2013–2015",
           role: "Software Developer",
-          problem: "Ad managers lost hours to rate limits and repetitive campaign work.",
+          problem: "Ad managers were burning hours on rate limits and repetitive campaign work.",
           whatWeDid:
             "Built the platform intelligence layer — caching, request batching, and automation for bids, budgets, and campaign variations.",
           approach: [
@@ -822,32 +820,32 @@ export const STUDIO_TRANSLATIONS_EN = {
       {
         question: "How do you price engagements?",
         answer:
-          "By scope, complexity, and engagement type — not by the hour. After a discovery call I send a written proposal with deliverables, timeline, and investment. Every engagement is different; I won't pretend a rate card can replace that conversation.",
+          "By scope, complexity, and engagement type. Not by the hour. A discovery call, then a written proposal with deliverables, timeline, and investment. No rate card — no two engagements are the same.",
       },
       {
         question: "Who is this a good fit for?",
         answer:
-          "Pre-seed to Series A founders who move fast, and teams modernizing a system that's outgrown itself — especially if you've been burned by a cut-rate shop before. Not a fit: lowest-bid procurement or scope that assumes corners get cut.",
+          "Pre-seed to Series A founders who move fast, and teams modernizing a system that's outgrown itself — especially if a cut-rate shop already burned you once. Not a fit: lowest-bid procurement, or scope built assuming corners get cut.",
       },
       {
         question: "Is testing and documentation included?",
         answer:
-          "Yes, always. I do not ship untested work, and you should never be dependent on me to understand what I built. Every engagement ends with a defined handoff, not a disappearing act.",
+          "Yes, always. I don't ship untested work, and you should never need me to understand what I built. Every engagement ends with a real handoff, not a disappearing act.",
       },
       {
         question: "What's not covered by the engagement?",
         answer:
-          "Third-party software licenses, hosting, and API fees are passed through at cost. Copy, brand, and content are your responsibility — I integrate them, I don't produce them. Ongoing maintenance after project close isn't assumed — I offer retainers for that.",
+          "Third-party software licenses, hosting, and API fees are passed through at cost. Copy, brand, and content are on you — I integrate them, I don't write them. Ongoing maintenance isn't included. That's what retainers are for.",
       },
       {
         question: "Do you work with early-stage startups with limited budgets?",
         answer:
-          "Yes, with the right engagement. Early-stage founders are a strong fit for fractional product management, advisory, or a focused MVP build. I'm not a fit if the budget requires cutting quality.",
+          "Yes, with the right engagement. Early-stage founders are a strong fit for fractional product management, advisory, or a focused MVP build. Not a fit if the budget means cutting quality.",
       },
       {
         question: "Can I start with a smaller engagement before committing to a larger one?",
         answer:
-          "Yes. A technical consulting engagement or strategy workshop is a natural first step. It gives you a clear deliverable and lets us both assess whether a larger partnership makes sense.",
+          "Yes. A technical consulting engagement or strategy workshop is a natural first step. You get a real deliverable, and we both find out whether a bigger partnership makes sense.",
       },
       {
         question: "What is the payment structure?",
@@ -857,7 +855,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       {
         question: "What if the scope changes after we start?",
         answer:
-          "Scope changes happen. I handle them with a simple change order — written description of what changed, the adjusted timeline, and the adjusted investment. No surprises.",
+          "Scope changes happen. I handle them with a simple change order: what changed, the adjusted timeline, the adjusted investment. No surprises.",
       },
       {
         question: "How long does it take to get a proposal?",
@@ -883,7 +881,7 @@ export const STUDIO_TRANSLATIONS_EN = {
         {
           title: "Users first, always.",
           description:
-            "Every decision starts with the customer and works backward. I store data on-device; access is a right, not a feature I grant. User needs come before profit, always — I never sell data or use it for ads. Teams are systems, not heroic individuals.",
+            "Every decision starts with the customer and works backward. Data lives on-device; access is a right, not a feature I grant. User needs beat profit, always — I never sell data or use it for ads. Teams are systems, not heroic individuals.",
         },
         {
           title: "Judgment over theater.",
@@ -898,7 +896,7 @@ export const STUDIO_TRANSLATIONS_EN = {
         {
           title: "Simple, permanent, built to last.",
           description:
-            "Most software ships fast and dies young, built by people learning on someone else's budget. I refuse that — every codebase I deliver is clean, tested, and maintainable. Simplicity beats complexity, and I fix problems at the root, not the surface.",
+            "Most software ships fast and dies young, built by people learning on someone else's budget. I refuse that. Every codebase I deliver is clean, tested, and maintainable. Simple beats complex, and I fix problems at the root, not the surface.",
         },
         {
           title: "Wider impact, on purpose.",
@@ -908,7 +906,7 @@ export const STUDIO_TRANSLATIONS_EN = {
         {
           title: "Function over decoration.",
           description:
-            "If a feature, screen, or line of code doesn't serve your product's function, I cut it. You don't pay for decoration — every dollar buys something that actually works for your users.",
+            "If a feature, screen, or line of code doesn't serve your product's function, I cut it. You don't pay for decoration. Every dollar buys something that actually works for your users.",
         },
         {
           title: "Room to grow, not clutter.",
@@ -923,7 +921,7 @@ export const STUDIO_TRANSLATIONS_EN = {
         {
           title: "Honest, not just polished.",
           description:
-            "You get an honest picture of what's built, tested, and still rough — not complexity hidden behind a shiny surface. No surprises waiting at handoff.",
+            "You get an honest picture of what's built, tested, and still rough. Not complexity hidden behind a shiny surface. No surprises waiting at handoff.",
         },
       ],
     },
@@ -939,7 +937,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       title: "Problems, solved.",
       wordBefore: "Problems",
       wordAfter: "Solved.",
-      subtitle: "Computational business intelligence, put to work for you.",
+      subtitle: "Product and engineering built to solve the problem you actually have.",
     },
     services: {
       title: "What I do",

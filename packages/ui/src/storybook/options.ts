@@ -1,4 +1,4 @@
-import type { TextFieldType } from "../components/text-field.types";
+import type { TextFieldType } from "../components/forms/text-field.types";
 
 const buttonVariantOptions = [
   "default",

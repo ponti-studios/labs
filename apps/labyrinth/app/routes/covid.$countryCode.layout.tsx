@@ -33,7 +33,7 @@ export default function CovidCountryLayout() {
           <div className="flex items-center gap-3">
             <span className="ui-data-label">COVID-19</span>
             <span className="text-border">|</span>
-            <span className="text-muted-foreground text-xs">Analytics</span>
+            <span className="text-secondary text-xs">Analytics</span>
           </div>
 
           <CountryPicker
@@ -53,8 +53,8 @@ export default function CovidCountryLayout() {
                 prefetch="intent"
                 className={`border-b-2 px-3 py-2.5 text-xs font-medium whitespace-nowrap transition-colors duration-150 ${
                   isActive
-                    ? "border-foreground text-foreground"
-                    : "text-muted-foreground hover:text-foreground border-transparent"
+                    ? "border-foreground text-primary"
+                    : "text-secondary hover:text-primary border-transparent"
                 }`}
               >
                 {item.title}

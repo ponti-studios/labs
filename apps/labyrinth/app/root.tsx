@@ -1,10 +1,6 @@
-import {
-  AppNavigation,
-  Button,
-  COLOR_MODE_ATTRIBUTE,
-  COLOR_SYSTEM_ATTRIBUTE,
-  ParticleBackground,
-} from "@pontistudios/ui";
+import { AppNavigation } from "@pontistudios/ui/navigation";
+import { Button } from "@pontistudios/ui/primitives";
+import { COLOR_MODE_ATTRIBUTE, COLOR_SYSTEM_ATTRIBUTE } from "@pontistudios/ui/tokens";
 import {
   isRouteErrorResponse,
   Link,
@@ -20,6 +16,7 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 import { ColorSystemToggle } from "./components/color-system-toggle";
+import { ParticleBackground } from "./components/particle-background";
 import { PrefetchProvider } from "./components/prefetch-provider";
 import QueryProvider from "./components/QueryProvider";
 import { BOOK_CALL_URL } from "./data/studio";
@@ -30,10 +27,10 @@ const themeBootScript = `
 (() => {
   try {
     const root = document.documentElement;
-    const system = localStorage.getItem("labs:ui-color-system") || root.getAttribute("${COLOR_SYSTEM_ATTRIBUTE}") || "primer";
+    const system = "ponti";
     const mode = localStorage.getItem("labs:ui-color-mode") || "system";
 
-    root.setAttribute("${COLOR_SYSTEM_ATTRIBUTE}", system === "apple" ? "apple" : "primer");
+    root.setAttribute("${COLOR_SYSTEM_ATTRIBUTE}", system);
 
     if (mode === "light" || mode === "dark") {
       root.setAttribute("${COLOR_MODE_ATTRIBUTE}", mode);
@@ -41,7 +38,7 @@ const themeBootScript = `
       root.removeAttribute("${COLOR_MODE_ATTRIBUTE}");
     }
   } catch (_error) {
-    document.documentElement.setAttribute("${COLOR_SYSTEM_ATTRIBUTE}", "primer");
+    document.documentElement.setAttribute("${COLOR_SYSTEM_ATTRIBUTE}", "ponti");
     document.documentElement.removeAttribute("${COLOR_MODE_ATTRIBUTE}");
   }
 })();
@@ -63,7 +60,7 @@ export const links: Route.LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-color-system="primer" suppressHydrationWarning>
+    <html lang="en" data-color-system="ponti" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -72,7 +69,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
         <PrefetchProvider />
       </head>
-      <body className="bg-background text-foreground flex min-h-dvh flex-col overflow-x-hidden overflow-y-auto font-sans">
+      <body className="bg-canvas text-primary flex min-h-dvh flex-col overflow-x-hidden overflow-y-auto font-sans">
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -167,11 +164,11 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
         <div className="flex justify-center gap-4">
           <button
             onClick={() => window.location.reload()}
-            className="bg-primary rounded-lg px-4 py-2 text-white "
+            className="bg-accent rounded-lg px-4 py-2 text-white "
           >
             Try Again
           </button>
-          <a href="/" className="bg-secondary rounded-lg px-4 py-2 text-gray-800">
+          <a href="/" className="bg-panel rounded-lg px-4 py-2 text-gray-800">
             Go Home
           </a>
         </div>

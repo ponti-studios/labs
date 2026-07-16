@@ -18,172 +18,48 @@
       "types": "./src/index.ts",
       "import": "./src/index.ts"
     },
-    "./accordion": {
-      "types": "./src/components/accordion.tsx",
-      "import": "./src/components/accordion.tsx"
+    "./primitives": {
+      "types": "./src/components/primitives/index.ts",
+      "import": "./src/components/primitives/index.ts"
     },
-    "./alert": {
-      "types": "./src/components/alert.tsx",
-      "import": "./src/components/alert.tsx"
+    "./forms": {
+      "types": "./src/components/forms/index.ts",
+      "import": "./src/components/forms/index.ts"
     },
-    "./alert-dialog": {
-      "types": "./src/components/alert-dialog.tsx",
-      "import": "./src/components/alert-dialog.tsx"
+    "./feedback": {
+      "types": "./src/components/feedback/index.ts",
+      "import": "./src/components/feedback/index.ts"
     },
-    "./avatar": {
-      "types": "./src/components/avatar.tsx",
-      "import": "./src/components/avatar.tsx"
+    "./overlays": {
+      "types": "./src/components/overlays/index.ts",
+      "import": "./src/components/overlays/index.ts"
     },
-    "./badge": {
-      "types": "./src/components/badge.tsx",
-      "import": "./src/components/badge.tsx"
+    "./navigation": {
+      "types": "./src/components/navigation/index.ts",
+      "import": "./src/components/navigation/index.ts"
     },
-    "./button": {
-      "types": "./src/components/button.tsx",
-      "import": "./src/components/button.tsx"
+    "./data-display": {
+      "types": "./src/components/data-display/index.ts",
+      "import": "./src/components/data-display/index.ts"
     },
-    "./calendar": {
-      "types": "./src/components/calendar.tsx",
-      "import": "./src/components/calendar.tsx"
+    "./layout": {
+      "types": "./src/components/layout/index.ts",
+      "import": "./src/components/layout/index.ts"
     },
-    "./card": {
-      "types": "./src/components/card.tsx",
-      "import": "./src/components/card.tsx"
-    },
-    "./command": {
-      "types": "./src/components/command.tsx",
-      "import": "./src/components/command.tsx"
-    },
-    "./date-picker": {
-      "types": "./src/components/date-picker.tsx",
-      "import": "./src/components/date-picker.tsx"
-    },
-    "./dialog": {
-      "types": "./src/components/dialog.tsx",
-      "import": "./src/components/dialog.tsx"
-    },
-    "./drawer": {
-      "types": "./src/components/drawer.tsx",
-      "import": "./src/components/drawer.tsx"
-    },
-    "./dropdown": {
-      "types": "./src/components/dropdown-menu.tsx",
-      "import": "./src/components/dropdown-menu.tsx"
-    },
-    "./dropdown-menu": {
-      "types": "./src/components/dropdown-menu.tsx",
-      "import": "./src/components/dropdown-menu.tsx"
-    },
-    "./field": {
-      "types": "./src/components/field.tsx",
-      "import": "./src/components/field.tsx"
-    },
-    "./filters": {
-      "types": "./src/components/filters/index.ts",
-      "import": "./src/components/filters/index.ts"
-    },
-    "./hooks": {
-      "types": "./src/hooks/index.ts",
-      "import": "./src/hooks/index.ts"
-    },
-    "./hooks/sort.types": {
-      "types": "./src/hooks/sort.types.ts",
-      "import": "./src/hooks/sort.types.ts"
-    },
-    "./inbox": {
-      "types": "./src/components/inbox/index.ts",
-      "import": "./src/components/inbox/index.ts"
-    },
-    "./input": {
-      "types": "./src/components/input.tsx",
-      "import": "./src/components/input.tsx"
-    },
-    "./lib": {
+    "./utilities": {
       "types": "./src/lib/index.ts",
       "import": "./src/lib/index.ts"
-    },
-    "./lib/*": {
-      "types": "./src/lib/*.ts",
-      "import": "./src/lib/*.ts"
-    },
-    "./loading-spinner": {
-      "types": "./src/components/loading-spinner.tsx",
-      "import": "./src/components/loading-spinner.tsx"
-    },
-    "./progress": {
-      "types": "./src/components/progress.tsx",
-      "import": "./src/components/progress.tsx"
-    },
-    "./scroll-area": {
-      "types": "./src/components/scroll-area.tsx",
-      "import": "./src/components/scroll-area.tsx"
-    },
-    "./select": {
-      "types": "./src/components/select.tsx",
-      "import": "./src/components/select.tsx"
-    },
-    "./switch": {
-      "types": "./src/components/switch.tsx",
-      "import": "./src/components/switch.tsx"
-    },
-    "./table": {
-      "types": "./src/components/table.tsx",
-      "import": "./src/components/table.tsx"
-    },
-    "./tabs": {
-      "types": "./src/components/tabs.tsx",
-      "import": "./src/components/tabs.tsx"
-    },
-    "./text-field": {
-      "types": "./src/components/text-field.tsx",
-      "import": "./src/components/text-field.tsx"
-    },
-    "./textarea": {
-      "types": "./src/components/textarea.tsx",
-      "import": "./src/components/textarea.tsx"
     },
     "./tokens": {
       "types": "./src/tokens/index.ts",
       "import": "./src/tokens/index.ts"
     },
-    "./tokens/shadows": {
-      "types": "./src/tokens/shadows.ts",
-      "import": "./src/tokens/shadows.ts"
-    },
-    "./translations": {
-      "types": "./src/translations/index.ts",
-      "import": "./src/translations/index.ts"
-    },
-    "./types/upload": {
-      "types": "./src/types/upload.ts",
-      "import": "./src/types/upload.ts"
+    "./hooks": {
+      "types": "./src/hooks/index.ts",
+      "import": "./src/hooks/index.ts"
     },
     "./styles.css": "./src/styles.css",
-    "./animations.css": "./src/animations.css",
-    "./label": {
-      "types": "./src/components/label.tsx",
-      "import": "./src/components/label.tsx"
-    },
-    "./radio-group": {
-      "types": "./src/components/radio-group.tsx",
-      "import": "./src/components/radio-group.tsx"
-    },
-    "./sheet": {
-      "types": "./src/components/sheet.tsx",
-      "import": "./src/components/sheet.tsx"
-    },
-    "./slider": {
-      "types": "./src/components/slider.tsx",
-      "import": "./src/components/slider.tsx"
-    },
-    "./stepper": {
-      "types": "./src/components/stepper.tsx",
-      "import": "./src/components/stepper.tsx"
-    },
-    "./drop-zone": {
-      "types": "./src/components/drop-zone.tsx",
-      "import": "./src/components/drop-zone.tsx"
-    }
+    "./animations.css": "./src/animations.css"
   },
   "scripts": {
     "build": "vite build",
@@ -218,8 +94,7 @@
     "react": "catalog:",
     "react-day-picker": "^9.11.1",
     "react-dom": "catalog:",
-    "tailwind-merge": "catalog:",
-    "vaul": "^1.1.2"
+    "tailwind-merge": "catalog:"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^5.2.1",

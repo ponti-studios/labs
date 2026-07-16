@@ -1,4 +1,4 @@
-import { cn } from "@pontistudios/ui/lib/utils";
+import { cn } from "@pontistudios/ui/utilities";
 import type { ReactNode } from "react";
 
 type VerticalCarouselProps<T> = {

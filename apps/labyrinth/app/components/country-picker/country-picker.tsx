@@ -1,17 +1,7 @@
 "use client";
 
-import {
-  Button,
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@pontistudios/ui";
+import { Button } from "@pontistudios/ui/primitives";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, Popover, PopoverContent, PopoverTrigger } from "@pontistudios/ui/overlays";
 import { useQuery } from "@tanstack/react-query";
 import iso3166 from "iso-3166-1";
 import { Check, ChevronsUpDown, Search } from "lucide-react";

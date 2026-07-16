@@ -1,27 +1,18 @@
 "use client";
 
 import * as React from "react";
-import { COLOR_MODE_ATTRIBUTE, COLOR_SYSTEM_ATTRIBUTE, ThemeToggle } from "@pontistudios/ui";
+import { COLOR_MODE_ATTRIBUTE, COLOR_SYSTEM_ATTRIBUTE } from "@pontistudios/ui/tokens";
+import { ThemeToggle } from "./theme-toggle";
 
-type ColorSystem = "primer" | "apple";
+type ColorSystem = "ponti";
 type ColorMode = "light" | "dark";
 
-const SYSTEM_STORAGE_KEY = "labs:ui-color-system";
 const MODE_STORAGE_KEY = "labs:ui-color-mode";
 
 function applyTheme(system: ColorSystem, mode: ColorMode) {
   const root = document.documentElement;
   root.setAttribute(COLOR_SYSTEM_ATTRIBUTE, system);
   root.setAttribute(COLOR_MODE_ATTRIBUTE, mode);
-}
-
-function readStoredSystem(): ColorSystem {
-  const stored = window.localStorage.getItem(SYSTEM_STORAGE_KEY);
-  if (stored === "apple") return "apple";
-  if (stored === "primer") return "primer";
-
-  const fromDom = document.documentElement.getAttribute(COLOR_SYSTEM_ATTRIBUTE);
-  return fromDom === "apple" ? "apple" : "primer";
 }
 
 function readStoredMode(): ColorMode {
@@ -46,15 +37,13 @@ export function ColorSystemToggle() {
 }
 
 function ColorSystemToggleDev() {
-  const [system, setSystem] = React.useState<ColorSystem>("primer");
+  const system: ColorSystem = "ponti";
   const [mode, setMode] = React.useState<ColorMode>("light");
 
   React.useEffect(() => {
-    const nextSystem = readStoredSystem();
     const nextMode = readStoredMode();
-    setSystem(nextSystem);
     setMode(nextMode);
-    applyTheme(nextSystem, nextMode);
+    applyTheme(system, nextMode);
   }, []);
 
   const updateMode = React.useCallback(

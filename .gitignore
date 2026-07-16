@@ -27,6 +27,7 @@ coverage
 build
 dist
 dist-storybook
+**/storybook-static/
 tsconfig.tsbuildinfo
 build-analysis.txt
 target/

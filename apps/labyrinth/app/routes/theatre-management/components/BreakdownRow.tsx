@@ -18,14 +18,14 @@ export function BreakdownRow({
       className={cn(
         "flex items-center justify-between py-2 text-sm",
         bold && "font-semibold",
-        muted && "text-muted-foreground",
+        muted && "text-secondary",
       )}
     >
-      <span className={cn(bold ? "text-foreground" : "text-emphasis-medium")}>{label}</span>
+      <span className={cn(bold ? "text-primary" : "text-secondary")}>{label}</span>
       <span
         className={cn(
           "tabular-nums",
-          bold ? "text-foreground" : negative ? "text-destructive" : "text-emphasis-high",
+          bold ? "text-primary" : negative ? "text-destructive" : "text-primary",
         )}
       >
         {negative && "−"}

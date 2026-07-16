@@ -103,7 +103,7 @@ export const HEALTH_STYLES = {
   success: { text: "text-success", dot: "bg-success" },
   warning: { text: "text-warning", dot: "bg-warning" },
   destructive: { text: "text-destructive", dot: "bg-destructive" },
-  muted: { text: "text-muted-foreground", dot: "bg-muted-foreground" },
+  muted: { text: "text-secondary", dot: "bg-inset-foreground" },
 } as const;
 
 export function projectedImpactLabel(multiplier: number) {

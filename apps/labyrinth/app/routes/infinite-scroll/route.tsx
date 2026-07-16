@@ -76,7 +76,7 @@ function ScrollColumn({ urls, direction }: { urls: string[]; direction: "up" | "
 
 export default function InfiniteScroll() {
   return (
-    <div className="border rounded-lg border">
+    <div className="border-default rounded-lg border">
       <header className="container mx-auto px-4">
         <div className="grid grid-cols-3 gap-4">
           <ScrollColumn urls={galleryColumns[0]} direction="up" />

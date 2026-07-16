@@ -22,11 +22,11 @@ function toNumber(value: unknown): number | null {
 }
 
 const tooltipStyle = {
-  backgroundColor: "var(--color-card)",
-  border: "1px solid var(--color-border)",
+  backgroundColor: "var(--color-surface-panel)",
+  border: "1px solid var(--color-border-default)",
   borderRadius: "2px",
   fontSize: "12px",
-  color: "var(--color-emphasis-medium)",
+  color: "var(--color-text-secondary)",
   padding: "6px 10px",
   boxShadow: "none",
 };
@@ -75,14 +75,14 @@ export function TopCountriesChart({
           <XAxis
             type="number"
             tickFormatter={formatValue}
-            tick={{ fill: "var(--color-emphasis-low)", fontSize: 11 }}
+            tick={{ fill: "var(--color-text-tertiary)", fontSize: 11 }}
             axisLine={false}
             tickLine={false}
           />
           <YAxis
             type="category"
             dataKey="country"
-            tick={{ fill: "var(--color-emphasis-high)", fontSize: 11 }}
+            tick={{ fill: "var(--color-text-primary)", fontSize: 11 }}
             axisLine={false}
             tickLine={false}
             width={90}
@@ -90,7 +90,7 @@ export function TopCountriesChart({
           <Tooltip
             formatter={(value) => [formatValue(toNumber(value) ?? 0), title]}
             contentStyle={tooltipStyle}
-            cursor={{ fill: "var(--color-muted)" }}
+            cursor={{ fill: "var(--color-surface-inset)" }}
           />
           <Bar dataKey="value" fill={color} radius={[0, 2, 2, 0]} />
         </BarChart>

@@ -1,16 +1,7 @@
 import { useEffect, useState } from "react";
 import {
-  isRouteErrorResponse,
-  Link,
-  Links,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-  useLocation,
-  useNavigation,
-} from "react-router";
-import { AppNavigation } from "@pontistudios/ui";
+  isRouteErrorResponse, Link, Links, Meta, Outlet, Scripts, ScrollRestoration, useLocation, useNavigation, } from "react-router";
+import { AppNavigation } from "@pontistudios/ui/navigation";
 import "./app.css";
 import BottomSheet from "./components/BottomSheet";
 import MapLibreViewer from "./components/MapLibreViewer";
