@@ -1,4 +1,9 @@
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@pontistudios/ui/data-display";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@pontistudios/ui/data-display";
 import { Badge, Button, Card } from "@pontistudios/ui/primitives";
 import { motion } from "framer-motion";
 import { useEffect, useReducer } from "react";
@@ -110,9 +115,7 @@ export default function TarotRoute() {
 
         {!isHydrated ? (
           <Card className="border-default bg-canvas border p-8 shadow-sm">
-            <div className="text-secondary py-16 text-center">
-              Preparing today&apos;s ritual...
-            </div>
+            <div className="text-secondary py-16 text-center">Preparing today&apos;s ritual...</div>
           </Card>
         ) : result ? (
           <DailyTarotReadingView result={result} />

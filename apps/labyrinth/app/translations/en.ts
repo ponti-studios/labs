@@ -39,7 +39,8 @@ export const STUDIO_TRANSLATIONS_EN = {
     entries: {
       kernel: {
         name: "Kernel",
-        shortDescription: "Engineering judgment shouldn't die in someone's head. Kernel turns it into 32 skills an AI can run.",
+        shortDescription:
+          "Engineering judgment shouldn't die in someone's head. Kernel turns it into 32 skills an AI can run.",
         solution:
           "32 specialized skills for software development and content production, published to NPM and installable through skills.sh.",
         problem:
@@ -57,7 +58,8 @@ export const STUDIO_TRANSLATIONS_EN = {
       },
       foundation: {
         name: "Foundation",
-        shortDescription: "Every team was rebuilding the same Postgres image. Foundation means nobody has to again.",
+        shortDescription:
+          "Every team was rebuilding the same Postgres image. Foundation means nobody has to again.",
         solution:
           "Shared infrastructure for PostgreSQL, Redis, Docker Compose environments, and CI/CD across the organization.",
         problem:
@@ -76,7 +78,8 @@ export const STUDIO_TRANSLATIONS_EN = {
       },
       omiro: {
         name: "Omiro",
-        shortDescription: "Your notes, tasks, and calendar don't talk to each other. Omiro makes them one connected app.",
+        shortDescription:
+          "Your notes, tasks, and calendar don't talk to each other. Omiro makes them one connected app.",
         solution:
           "An iOS app that captures everything you want to remember — tasks, notes, events, and ideas — into one searchable, connected personal knowledge graph.",
         problem:
@@ -95,7 +98,8 @@ export const STUDIO_TRANSLATIONS_EN = {
       },
       career: {
         name: "Career",
-        shortDescription: "Your resume crushes a decade of work into two pages. Career keeps the whole story.",
+        shortDescription:
+          "Your resume crushes a decade of work into two pages. Career keeps the whole story.",
         solution:
           "A web app pairing a career-long work journal — roles, achievements, skills gained, performance history — with a job-search pipeline for applications, interviews, follow-ups, and offers.",
         problem:
@@ -132,7 +136,8 @@ export const STUDIO_TRANSLATIONS_EN = {
       },
       "hominem-api": {
         name: "Hominem API",
-        shortDescription: "Three apps, same personal data. One API instead of three duct-taped together.",
+        shortDescription:
+          "Three apps, same personal data. One API instead of three duct-taped together.",
         solution:
           "A centralized Hono API that serves Omiro, Career, and Finance with shared auth, typed RPC contracts, and an MCP server for AI agent access to personal data.",
         problem:
@@ -170,7 +175,8 @@ export const STUDIO_TRANSLATIONS_EN = {
       },
       commune: {
         name: "Commune",
-        shortDescription: "Anonymous strangers give you a straighter answer than your friends will.",
+        shortDescription:
+          "Anonymous strangers give you a straighter answer than your friends will.",
         solution:
           "A social decision-making app that turns a personal situation into a neutral case for a small anonymous jury.",
         problem:
@@ -227,7 +233,8 @@ export const STUDIO_TRANSLATIONS_EN = {
       },
       geo: {
         name: "Geo (geokit)",
-        shortDescription: "Automated geocoding is fast and wrong. Geo adds the review step that makes it right.",
+        shortDescription:
+          "Automated geocoding is fast and wrong. Geo adds the review step that makes it right.",
         solution:
           "A Swift geocoding CLI and native macOS app for curating place data with Apple Maps.",
         problem:
@@ -384,7 +391,8 @@ export const STUDIO_TRANSLATIONS_EN = {
           description: "Tour planning and routing for independent musicians.",
           timeline: "2024–2025",
           role: "Product Lead",
-          problem: "Musicians were planning tours blind — no reliable audience, routing, or financial data.",
+          problem:
+            "Musicians were planning tours blind — no reliable audience, routing, or financial data.",
           whatWeDid:
             "Product-led the MVP: user research through launch for tour routing, venue selection, and planning financials.",
           approach: [
@@ -448,7 +456,8 @@ export const STUDIO_TRANSLATIONS_EN = {
           description: "Live instruction platform for dance, yoga, and fitness.",
           timeline: "2020–2021",
           role: "Platform Engineer",
-          problem: "Generic video tools couldn't handle movement instruction or school privacy rules.",
+          problem:
+            "Generic video tools couldn't handle movement instruction or school privacy rules.",
           whatWeDid:
             "Built a purpose-built streaming stack for dance, yoga, and fitness instruction during COVID lockdowns.",
           approach: [
@@ -536,7 +545,8 @@ export const STUDIO_TRANSLATIONS_EN = {
           description: "Volunteer coordination platform for UK-wide operations.",
           timeline: "2016",
           role: "Product Engineer",
-          problem: "Volunteer coordination ran on a shared spreadsheet with no roles or audit trail.",
+          problem:
+            "Volunteer coordination ran on a shared spreadsheet with no roles or audit trail.",
           whatWeDid:
             "Pro-bono React/Rails volunteer interface that replaced the sheet with role separation, validated submissions, and a full audit trail.",
           approach: [

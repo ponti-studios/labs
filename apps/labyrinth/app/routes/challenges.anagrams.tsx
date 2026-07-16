@@ -12,9 +12,23 @@
  * algorithm linear in the number of words times the cost of sorting each word.
  */
 
-import { Button, Card, CardContent, CardFooter, CardHeader, CardTitle } from "@pontistudios/ui/primitives";
+import {
+  Button,
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@pontistudios/ui/primitives";
 import { Input } from "@pontistudios/ui/forms";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@pontistudios/ui/data-display";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@pontistudios/ui/data-display";
 import { useState, type ChangeEvent, type JSX } from "react";
 
 // A set of words that are all anagrams of each other
@@ -185,9 +199,7 @@ export default function Anagrams(): JSX.Element {
                         <TableCell className={`font-mono font-medium ${color.row}`}>
                           {step.word}
                         </TableCell>
-                        <TableCell className="text-secondary font-mono">
-                          {step.sortedKey}
-                        </TableCell>
+                        <TableCell className="text-secondary font-mono">{step.sortedKey}</TableCell>
                         <TableCell>
                           <span
                             className={`rounded border px-2 py-0.5 text-xs font-medium ${color.badge}`}

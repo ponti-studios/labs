@@ -1,5 +1,14 @@
 import * as React from "react";
-import { Links, Link, Meta, Outlet, Scripts, ScrollRestoration, isRouteErrorResponse, useLocation, } from "react-router";
+import {
+  Links,
+  Link,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  isRouteErrorResponse,
+  useLocation,
+} from "react-router";
 import { AppNavigation } from "@pontistudios/ui/navigation";
 import type { Route } from "./+types/root";
 import "./app.css";

@@ -1,5 +1,12 @@
 import { Button } from "@pontistudios/ui/primitives";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@pontistudios/ui/overlays";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@pontistudios/ui/overlays";
 import {
   Copy,
   Eye,

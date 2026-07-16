@@ -8,7 +8,13 @@ type ListRowMediaProps = {
   variant?: "square" | "wide";
 };
 
-export function ListRowMedia({ alt = "", fallback, loading = "lazy", src, variant = "square" }: ListRowMediaProps) {
+export function ListRowMedia({
+  alt = "",
+  fallback,
+  loading = "lazy",
+  src,
+  variant = "square",
+}: ListRowMediaProps) {
   const [status, setStatus] = useState<"loading" | "loaded" | "error">("loading");
   const imageRef = useRef<HTMLImageElement>(null);
 
@@ -27,9 +33,7 @@ export function ListRowMedia({ alt = "", fallback, loading = "lazy", src, varian
     >
       <span
         aria-hidden="true"
-        className={`list-media-placeholder ${
-          status === "loading" ? "opacity-100" : "opacity-0"
-        }`}
+        className={`list-media-placeholder ${status === "loading" ? "opacity-100" : "opacity-0"}`}
       >
         <span className="list-media-pulse" />
       </span>

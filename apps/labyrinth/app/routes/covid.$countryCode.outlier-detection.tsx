@@ -1,4 +1,10 @@
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@pontistudios/ui/forms";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@pontistudios/ui/forms";
 import { Spinner } from "@pontistudios/ui/feedback";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -177,16 +183,12 @@ export default function OutlierDetectionPage() {
                         <Badge variant={outlierBadgeVariant(outlier.severity)}>
                           {outlier.severity}
                         </Badge>
-                        <span className="text-secondary text-xs capitalize">
-                          {outlier.type}
-                        </span>
+                        <span className="text-secondary text-xs capitalize">{outlier.type}</span>
                         <span className="text-secondary text-xs">
                           {new Date(outlier.date).toLocaleDateString()}
                         </span>
                       </div>
-                      <p className="text-secondary truncate text-xs">
-                        {outlier.description}
-                      </p>
+                      <p className="text-secondary truncate text-xs">{outlier.description}</p>
                     </div>
                     <div className="shrink-0 text-right">
                       <p className="text-primary text-sm font-light tabular-nums">

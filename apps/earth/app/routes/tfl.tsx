@@ -59,7 +59,7 @@ export default function Tfl() {
                         {camera.lat.toFixed(4)}, {camera.lng.toFixed(4)}
                       </div>
                     </div>
-                    <span className="flex-shrink-0 font-mono text-[9px] uppercase tracking-wider">
+                    <span className="flex-shrink-0 font-mono text-[9px] tracking-wider uppercase">
                       {camera.available === "true" ? (
                         <span className="text-green-500">LIVE</span>
                       ) : (
@@ -96,7 +96,7 @@ export default function Tfl() {
           </div>
           <div className="bg-panel border-default rounded-md border p-3">
             <p className="ui-data-label">Online</p>
-            <p className="mt-1 text-sm font-semibold tabular-nums text-green-600">
+            <p className="mt-1 text-sm font-semibold text-green-600 tabular-nums">
               {isLoading ? "—" : online}
             </p>
           </div>

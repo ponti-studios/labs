@@ -1,4 +1,10 @@
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@pontistudios/ui/forms";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@pontistudios/ui/forms";
 import {
   LucideChevronLeft,
   LucideChevronRight,
@@ -157,9 +163,7 @@ function ResultRow({
             {highlightText(result.subtitle, query)}
           </span>
           <span className="text-secondary/40 text-[11px]">·</span>
-          <span className="text-secondary/70 text-[12px] tabular-nums">
-            {publishedLabel}
-          </span>
+          <span className="text-secondary/70 text-[12px] tabular-nums">{publishedLabel}</span>
           {result.location && (
             <>
               <span className="text-secondary/40 text-[11px]">·</span>
@@ -234,9 +238,7 @@ function FilterPill({
       onClick={onClick}
       className={[
         "inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus",
-        active
-          ? "bg-accent text-on-accent"
-          : "text-secondary hover:text-primary hover:bg-inset",
+        active ? "bg-accent text-on-accent" : "text-secondary hover:text-primary hover:bg-inset",
       ].join(" ")}
     >
       {children}
@@ -348,11 +350,7 @@ export default function SearchStudio() {
                 All
                 {totalResults > 0 && (
                   <span
-                    className={
-                      kindFilter === "all"
-                        ? "text-on-accent/60"
-                        : "text-secondary/60"
-                    }
+                    className={kindFilter === "all" ? "text-on-accent/60" : "text-secondary/60"}
                   >
                     {totalResults.toLocaleString()}
                   </span>
@@ -369,11 +367,7 @@ export default function SearchStudio() {
                 Films
                 {kindCounts.movie > 0 && (
                   <span
-                    className={
-                      kindFilter === "movie"
-                        ? "text-on-accent/60"
-                        : "text-secondary/60"
-                    }
+                    className={kindFilter === "movie" ? "text-on-accent/60" : "text-secondary/60"}
                   >
                     {kindCounts.movie.toLocaleString()}
                   </span>
@@ -389,13 +383,7 @@ export default function SearchStudio() {
                 <LucideTv className="h-3.5 w-3.5" />
                 TV
                 {kindCounts.tv > 0 && (
-                  <span
-                    className={
-                      kindFilter === "tv"
-                        ? "text-on-accent/60"
-                        : "text-secondary/60"
-                    }
-                  >
+                  <span className={kindFilter === "tv" ? "text-on-accent/60" : "text-secondary/60"}>
                     {kindCounts.tv.toLocaleString()}
                   </span>
                 )}
@@ -534,9 +522,7 @@ export default function SearchStudio() {
                     <LucideChevronLeft className="h-4 w-4" />
                     Previous
                   </button>
-                  <span className="text-secondary/60 text-[12px] tabular-nums">
-                    Page {page}
-                  </span>
+                  <span className="text-secondary/60 text-[12px] tabular-nums">Page {page}</span>
                   <button
                     type="button"
                     onClick={() => setPage((p) => (data?.hasNext ? p + 1 : p))}

@@ -1,6 +1,13 @@
 import { Input } from "@pontistudios/ui/forms";
 import { Label } from "@pontistudios/ui/primitives";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@pontistudios/ui/data-display";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@pontistudios/ui/data-display";
 import { useMemo, useState, type JSX, type ChangeEvent } from "react";
 import { Badge } from "@pontistudios/ui/primitives";
 
@@ -97,9 +104,7 @@ export default function FeeOrUpfront(): JSX.Element {
           </div>
 
           <div className="border-default border-t pt-3">
-            <p className="text-secondary mb-0.5 text-[10px] tracking-wide uppercase">
-              Total
-            </p>
+            <p className="text-secondary mb-0.5 text-[10px] tracking-wide uppercase">Total</p>
             <p
               className={`font-mono text-2xl font-bold tabular-nums ${winnerIsUpfront ? "text-green-700" : ""}`}
             >
@@ -172,9 +177,7 @@ export default function FeeOrUpfront(): JSX.Element {
           </div>
 
           <div className="border-default border-t pt-3">
-            <p className="text-secondary mb-0.5 text-[10px] tracking-wide uppercase">
-              Total
-            </p>
+            <p className="text-secondary mb-0.5 text-[10px] tracking-wide uppercase">Total</p>
             <p
               className={`font-mono text-2xl font-bold tabular-nums ${!winnerIsUpfront ? "text-green-700" : ""}`}
             >
@@ -186,9 +189,7 @@ export default function FeeOrUpfront(): JSX.Element {
 
       <p className="text-secondary text-center text-xs">
         {winnerIsUpfront ? "Upfront" : "Per-transaction"} saves{" "}
-        <span className="text-primary font-mono font-semibold">
-          ${result.savings.toFixed(2)}
-        </span>
+        <span className="text-primary font-mono font-semibold">${result.savings.toFixed(2)}</span>
       </p>
 
       {/* Breakdown table */}

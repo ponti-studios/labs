@@ -1,4 +1,10 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@pontistudios/ui/primitives";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@pontistudios/ui/primitives";
 import { cn } from "@pontistudios/ui/utilities";
 import type { MatchedSymptom } from "../types/symptom";
 import React from "react";

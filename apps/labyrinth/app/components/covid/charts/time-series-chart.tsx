@@ -89,7 +89,12 @@ export function TimeSeriesChart({
             stroke={color}
             strokeWidth={1.5}
             dot={false}
-            activeDot={{ r: 3, stroke: color, strokeWidth: 1.5, fill: "var(--color-surface-panel)" }}
+            activeDot={{
+              r: 3,
+              stroke: color,
+              strokeWidth: 1.5,
+              fill: "var(--color-surface-panel)",
+            }}
           />
         </LineChart>
       </ResponsiveContainer>

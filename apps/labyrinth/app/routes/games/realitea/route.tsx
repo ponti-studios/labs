@@ -223,9 +223,7 @@ type ErrorBoundaryProps = { error: Error };
 export function ErrorBoundary({ error }: ErrorBoundaryProps) {
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center gap-3 px-4 text-center">
-      <p className="body-4 text-secondary tracking-[0.15em] uppercase">
-        Something went wrong
-      </p>
+      <p className="body-4 text-secondary tracking-[0.15em] uppercase">Something went wrong</p>
       <p className="body-4 text-secondary">
         {error.message || "The RealiTea puzzle couldn't load. Try refreshing the page."}
       </p>

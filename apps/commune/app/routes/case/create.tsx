@@ -131,9 +131,7 @@ export default function CreatePage() {
               rows={2}
               className="border-input bg-canvas focus:ring-focus w-full resize-none rounded-xl border px-4 py-3 text-sm focus:ring-1 focus:outline-none"
             />
-            <p className="text-secondary text-[10px]">
-              You can edit this if it's not quite right.
-            </p>
+            <p className="text-secondary text-[10px]">You can edit this if it's not quite right.</p>
           </div>
 
           {error && (

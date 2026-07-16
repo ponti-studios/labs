@@ -475,9 +475,7 @@ const TetrisGame: FC = () => {
 
         {/* Board column */}
         <div className="flex flex-col items-center gap-3">
-          <h3 className="text-primary text-sm font-semibold tracking-widest uppercase">
-            Tetris
-          </h3>
+          <h3 className="text-primary text-sm font-semibold tracking-widest uppercase">Tetris</h3>
 
           <div className="border-default relative overflow-hidden rounded-xl border bg-zinc-950 p-1">
             <div className="grid" style={{ gridTemplateColumns: `repeat(${COLS}, 1.5rem)` }}>

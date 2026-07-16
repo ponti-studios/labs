@@ -42,9 +42,7 @@ export default function TheaterEconomics() {
         <div className="bg-border h-4 w-px" />
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-primary text-lg font-semibold tracking-tight">
-              Theater P&amp;L
-            </h1>
+            <h1 className="text-primary text-lg font-semibold tracking-tight">Theater P&amp;L</h1>
             <Badge variant="secondary" className="text-[10px]">
               Beta
             </Badge>
