@@ -497,11 +497,11 @@ importers:
         specifier: ^0.13.14
         version: 0.13.14
       '@tanstack/ai':
-        specifier: ^0.37.0
-        version: 0.37.0(@opentelemetry/api@1.9.0)
+        specifier: ^0.41.0
+        version: 0.41.0(@opentelemetry/api@1.9.0)
       '@tanstack/ai-openrouter':
         specifier: ^0.15.3
-        version: 0.15.3(@tanstack/ai@0.37.0(@opentelemetry/api@1.9.0))
+        version: 0.15.3(@tanstack/ai@0.41.0(@opentelemetry/api@1.9.0))
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -3251,8 +3251,8 @@ packages:
   '@tanstack/ai-utils@0.3.1':
     resolution: {integrity: sha512-fgbjd5DohL3k5rTWr/KInauLVYMiHVm0cnmTsNrzL3cr4wWhEld5vmFSrjiwUWACAuONjZa+uBXuS+ZSO8fwDQ==}
 
-  '@tanstack/ai@0.37.0':
-    resolution: {integrity: sha512-5vM8XCBUyk6whQZ7gAiM1nX+NqvOAOZqAJrFxlo6g+vIvIfqfNqcD378E7kmZIIt5idFkzA8/IH/00oQDsZRyg==}
+  '@tanstack/ai@0.41.0':
+    resolution: {integrity: sha512-cq6ye9/rTfcwBDv9z2t1iCUIXL+lGdtM2HZm/KiLu3u6i+MH57W7i4tbB5uTUtcCnDmOlQ7EHD97esyNJpGtNw==}
     engines: {node: '>=18'}
     peerDependencies:
       '@opentelemetry/api': '>=1.9.0'
@@ -3260,8 +3260,8 @@ packages:
       '@opentelemetry/api':
         optional: true
 
-  '@tanstack/devtools-event-client@0.4.3':
-    resolution: {integrity: sha512-OZI6QyULw0FI0wjgmeYzCIfbgPsOEzwJtCpa69XrfLMtNXLGnz3d/dIabk7frg0TmHo+Ah49w5I4KC7Tufwsvw==}
+  '@tanstack/devtools-event-client@0.4.4':
+    resolution: {integrity: sha512-6T5Yop/793YI+H+5J8Hsyj4kCih9sl4t3ElLgKioW5hk3ocn+ZdSJ94tT7vL7uabxSugWYBZlOTMPzEw2puvQw==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -8071,17 +8071,17 @@ snapshots:
 
   '@tanstack/ai-event-client@0.6.8':
     dependencies:
-      '@tanstack/devtools-event-client': 0.4.3
+      '@tanstack/devtools-event-client': 0.4.4
 
-  '@tanstack/ai-openrouter@0.15.3(@tanstack/ai@0.37.0(@opentelemetry/api@1.9.0))':
+  '@tanstack/ai-openrouter@0.15.3(@tanstack/ai@0.41.0(@opentelemetry/api@1.9.0))':
     dependencies:
       '@openrouter/sdk': 0.12.35
-      '@tanstack/ai': 0.37.0(@opentelemetry/api@1.9.0)
+      '@tanstack/ai': 0.41.0(@opentelemetry/api@1.9.0)
       '@tanstack/ai-utils': 0.3.1
 
   '@tanstack/ai-utils@0.3.1': {}
 
-  '@tanstack/ai@0.37.0(@opentelemetry/api@1.9.0)':
+  '@tanstack/ai@0.41.0(@opentelemetry/api@1.9.0)':
     dependencies:
       '@ag-ui/core': 0.0.52
       '@standard-schema/spec': 1.1.0
@@ -8091,7 +8091,7 @@ snapshots:
     optionalDependencies:
       '@opentelemetry/api': 1.9.0
 
-  '@tanstack/devtools-event-client@0.4.3': {}
+  '@tanstack/devtools-event-client@0.4.4': {}
 
   '@tanstack/query-core@5.101.2': {}
 
