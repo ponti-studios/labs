@@ -37,7 +37,7 @@ jobs:
           test "ui-v$VERSION" = "$GITHUB_REF_NAME"
 
       - name: Publish
-        run: pnpm --filter @ponti-studios/ui publish --no-git-checks
+        run: pnpm --filter @ponti-studios/ui publish --no-git-checks --force
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
