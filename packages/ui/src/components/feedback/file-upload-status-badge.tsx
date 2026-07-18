@@ -1,0 +1,33 @@
+import { memo } from "react";
+
+import { cn } from "../../lib/utils";
+
+export type FileUploadStatusValue = "uploading" | "processing" | "queued" | "done" | "error";
+
+const STATUS_CONFIG: Record<FileUploadStatusValue, { bg: string; text: string; label: string }> = {
+  uploading: { bg: "bg-muted", text: "text-foreground", label: "Uploading" },
+  processing: { bg: "bg-muted", text: "text-foreground", label: "Processing" },
+  queued: { bg: "bg-secondary", text: "text-secondary-foreground", label: "Queued" },
+  done: { bg: "bg-accent", text: "text-accent-foreground", label: "Complete" },
+  error: { bg: "bg-destructive/10", text: "text-destructive", label: "Error" },
+};
+
+export const FileUploadStatusBadge = memo(function FileUploadStatusBadge({
+  status,
+}: {
+  status?: string | undefined;
+}) {
+  if (!status) return null;
+
+  const config = STATUS_CONFIG[status as FileUploadStatusValue] ?? {
+    bg: "bg-muted",
+    text: "text-foreground",
+    label: status,
+  };
+
+  return (
+    <span className={cn("px-2 py-1 text-xs font-medium", config.bg, config.text)}>
+      {config.label}
+    </span>
+  );
+});

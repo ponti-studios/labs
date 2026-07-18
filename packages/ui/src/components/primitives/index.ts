@@ -11,3 +11,5 @@ export {
   CardTitle,
 } from "./card";
 export { Label } from "./label";
+export { StatusBadge } from "./status-badge";
+export type { StatusBadgeConfig, StatusBadgeProps } from "./status-badge";
