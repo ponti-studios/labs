@@ -500,8 +500,8 @@ importers:
         specifier: ^0.41.0
         version: 0.41.0(@opentelemetry/api@1.9.0)
       '@tanstack/ai-openrouter':
-        specifier: ^0.15.3
-        version: 0.15.3(@tanstack/ai@0.41.0(@opentelemetry/api@1.9.0))
+        specifier: ^0.15.9
+        version: 0.15.9(@tanstack/ai@0.41.0(@opentelemetry/api@1.9.0))
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -1397,8 +1397,8 @@ packages:
   '@open-draft/until@2.1.0':
     resolution: {integrity: sha512-U69T3ItWHvLwGg5eJ0n3I62nWuE6ilHlmz7zM0npLBRvPRd7e6NYmg54vvRtP5mZG7kZqZCFVdsTWo7BPtBujg==}
 
-  '@openrouter/sdk@0.12.35':
-    resolution: {integrity: sha512-s4QVLLnG1AmfW3TjnnHUqGfsCkzwVK+kboGcZmKbde09m1DPqgzl4RUFt/HJ5v97MX8aEaN0UG3mKv2S+qj2Gw==}
+  '@openrouter/sdk@0.13.20':
+    resolution: {integrity: sha512-fx4o19FHgadEldfrSOgSbXAi32hCE3O708q1nxcoxYrW6fP6/WggX3o5PmnlnObzmxrqLMkZpqg188K+Twguhg==}
 
   '@openrouter/sdk@0.13.60':
     resolution: {integrity: sha512-TIf72FuXjYAuaoXjn+AzSSKqmOcKzS5zusXfrdjtA9BvWK5LmU0x6KOt/AJLdaCyZ90R0dvFKe130P9x7GUmpQ==}
@@ -3339,10 +3339,10 @@ packages:
   '@tanstack/ai-event-client@0.6.8':
     resolution: {integrity: sha512-h7/HLz9u2LF9ba6uKFMnSZkFlkzQONJ5u3Hi+4qGxpsHyvcGRtW6v186jaFLoklndhEwyC49ytkC4eafi7Qq8w==}
 
-  '@tanstack/ai-openrouter@0.15.3':
-    resolution: {integrity: sha512-EhkdhAPQt91Vi9J0xASaknD3sCcoO+tFXRC+Q+02qxYh8yFUO4H1C7MFoShpnCrnKN5DnjeNMZFedKqq11Xg5w==}
+  '@tanstack/ai-openrouter@0.15.9':
+    resolution: {integrity: sha512-SB/YhTaolhazA5t4uOJuslhJar+lwNlxKA8x2kscKlQixmV5IQZNHDAtohbK4ACfCeQlMJVUXaiBqrwz+46NRw==}
     peerDependencies:
-      '@tanstack/ai': ^0.37.0
+      '@tanstack/ai': ^0.41.0
 
   '@tanstack/ai-utils@0.3.1':
     resolution: {integrity: sha512-fgbjd5DohL3k5rTWr/KInauLVYMiHVm0cnmTsNrzL3cr4wWhEld5vmFSrjiwUWACAuONjZa+uBXuS+ZSO8fwDQ==}
@@ -6753,7 +6753,7 @@ snapshots:
   '@open-draft/until@2.1.0':
     optional: true
 
-  '@openrouter/sdk@0.12.35':
+  '@openrouter/sdk@0.13.20':
     dependencies:
       zod: 4.4.3
 
@@ -8262,9 +8262,9 @@ snapshots:
     dependencies:
       '@tanstack/devtools-event-client': 0.4.4
 
-  '@tanstack/ai-openrouter@0.15.3(@tanstack/ai@0.41.0(@opentelemetry/api@1.9.0))':
+  '@tanstack/ai-openrouter@0.15.9(@tanstack/ai@0.41.0(@opentelemetry/api@1.9.0))':
     dependencies:
-      '@openrouter/sdk': 0.12.35
+      '@openrouter/sdk': 0.13.20
       '@tanstack/ai': 0.41.0(@opentelemetry/api@1.9.0)
       '@tanstack/ai-utils': 0.3.1
 
