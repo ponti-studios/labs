@@ -494,8 +494,8 @@ importers:
   packages/ai:
     dependencies:
       '@openrouter/sdk':
-        specifier: ^0.13.14
-        version: 0.13.14
+        specifier: ^0.13.60
+        version: 0.13.60
       '@tanstack/ai':
         specifier: ^0.41.0
         version: 0.41.0(@opentelemetry/api@1.9.0)
@@ -1400,8 +1400,8 @@ packages:
   '@openrouter/sdk@0.12.35':
     resolution: {integrity: sha512-s4QVLLnG1AmfW3TjnnHUqGfsCkzwVK+kboGcZmKbde09m1DPqgzl4RUFt/HJ5v97MX8aEaN0UG3mKv2S+qj2Gw==}
 
-  '@openrouter/sdk@0.13.14':
-    resolution: {integrity: sha512-TmtICROXoFIJyeGX6THcDYygNwg9cY8ozd9iu8Ec6Ev8u2Qa2MIsX/4Sls/MAUeZtPLabQ8idn5cAeIjfxwb7Q==}
+  '@openrouter/sdk@0.13.60':
+    resolution: {integrity: sha512-TIf72FuXjYAuaoXjn+AzSSKqmOcKzS5zusXfrdjtA9BvWK5LmU0x6KOt/AJLdaCyZ90R0dvFKe130P9x7GUmpQ==}
 
   '@opentelemetry/api@1.9.0':
     resolution: {integrity: sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg==}
@@ -6757,7 +6757,7 @@ snapshots:
     dependencies:
       zod: 4.4.3
 
-  '@openrouter/sdk@0.13.14':
+  '@openrouter/sdk@0.13.60':
     dependencies:
       zod: 4.4.3
 
