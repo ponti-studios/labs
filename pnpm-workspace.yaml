@@ -8,8 +8,8 @@ allowBuilds:
   msw: true
 catalog:
   "@playwright/test": ^1.61.1
-  "@react-router/dev": ^8.0.1
-  "@react-router/node": ^8.0.1
+  "@react-router/dev": ^8.2.0
+  "@react-router/node": ^8.2.0
   "@react-router/serve": ^8.0.1
   "@tailwindcss/vite": ^4.3.1
   "@tanstack/react-query": ^5.101.2
@@ -24,7 +24,7 @@ catalog:
   "@vitest/coverage-v8": ^4.1.9
   drizzle-orm: ^0.45.2
   jsdom: ^29.1.1
-  lucide-react: ^1.21.0
+  lucide-react: ^1.24.0
   postgres: ^3.4.9
   react: ^19.2.7
   react-dom: ^19.2.7
@@ -35,7 +35,7 @@ catalog:
   typescript: 6.0.3
   vite: ^8.1.0
   vite-plugin-devtools-json: ^1.0.0
-  vitest: ^4.1.9
+  vitest: ^4.1.10
   zod: ^4.4.3
 catalogs:
   ui:
