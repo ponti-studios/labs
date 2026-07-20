@@ -21,7 +21,7 @@
     "clean": "rm -rf dist tsconfig.tsbuildinfo"
   },
   "dependencies": {
-    "csv-parse": "7.0.0",
+    "csv-parse": "7.0.1",
     "drizzle-orm": "catalog:",
     "postgres": "catalog:",
     "zod": "catalog:"
