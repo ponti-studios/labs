@@ -28,8 +28,8 @@
     "@types/node": "catalog:",
     "jscpd": "^5.0.12",
     "knip": "^6.27.0",
-    "oxfmt": "0.56.0",
-    "oxlint": "^1.71.0",
+    "oxfmt": "catalog:shared",
+    "oxlint": "catalog:shared",
     "turbo": "^2.10.5",
     "typescript": "catalog:"
   },
