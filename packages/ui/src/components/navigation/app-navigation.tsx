@@ -72,10 +72,10 @@ export function AppNavigation({
         ...linkProps,
         ...(linkProp === "to" ? { to: href } : { href }),
         className: brand
-          ? "navigation-link navigation-brand shrink-0"
+          ? "inline-flex min-h-11 shrink-0 items-center rounded-md px-3 py-2 text-sm font-medium"
           : variant
-            ? "navigation-cta"
-            : "navigation-link",
+            ? "inline-flex min-h-11 shrink-0 items-center justify-center rounded-md px-3 py-2 text-sm font-medium"
+            : "inline-flex min-h-11 shrink-0 items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
         "aria-current": active ? "page" : undefined,
         "data-variant": variant,
       },
@@ -83,14 +83,14 @@ export function AppNavigation({
     );
 
   return (
-    <header className="navigation-shell">
-      <nav className="navigation" aria-label={ariaLabel}>
-        <div className="navigation-inner">
-          <div className="navigation-start">
+    <header className="sticky top-0 z-50 flex w-full justify-center border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <nav className="w-full max-w-7xl" aria-label={ariaLabel}>
+        <div className="flex min-h-14 items-center justify-between gap-6">
+          <div className="flex min-w-0 items-center">
             {brand && createLink({ href: brandHref, children: brand, brand: true })}
           </div>
 
-          <div className="navigation-end">
+          <div className="ml-auto hidden min-w-0 items-center gap-1 sm:flex">
             {links?.map((link) => (
               <React.Fragment key={link.href}>
                 {createLink({ href: link.href, children: link.label, active: isActive(link.href) })}
@@ -105,7 +105,7 @@ export function AppNavigation({
             {endContent}
           </div>
 
-          <div className="navigation-mobile">
+          <div className="ml-auto flex items-center sm:hidden">
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
                 <Button
@@ -116,10 +116,10 @@ export function AppNavigation({
                   <Menu className="size-4" aria-hidden="true" />
                 </Button>
               </SheetTrigger>
-              <SheetContent className="navigation-panel">
+              <SheetContent>
                 <SheetTitle className="sr-only">Navigation menu</SheetTitle>
 
-                <div className="navigation-panel-links">
+                <div className="mt-8 flex flex-1 flex-col gap-1">
                   {links?.map((link) => (
                     <SheetClose asChild key={link.href}>
                       {createLink({
@@ -132,7 +132,7 @@ export function AppNavigation({
                 </div>
 
                 {(cta || endContent) && (
-                  <div className="navigation-panel-end">
+                  <div className="flex flex-col gap-4 border-t pt-4">
                     {cta && (
                       <SheetClose asChild>
                         {createLink({
@@ -142,7 +142,7 @@ export function AppNavigation({
                         })}
                       </SheetClose>
                     )}
-                    {endContent && <div className="navigation-panel-content">{endContent}</div>}
+                    {endContent && <div className="flex items-center gap-3">{endContent}</div>}
                   </div>
                 )}
               </SheetContent>

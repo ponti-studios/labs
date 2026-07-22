@@ -21,7 +21,7 @@ export const Default: Story = {
         <CardDescription>A short description of the card's content.</CardDescription>
       </CardHeader>
       <CardContent>
-        <p className="body-2 text-secondary">
+        <p className="text-sm text-muted-foreground">
           Card body content goes here. It can be any React node.
         </p>
       </CardContent>
@@ -47,7 +47,7 @@ export const Minimal: Story = {
   render: () => (
     <Card className="w-80">
       <CardContent>
-        <p className="body-2 text-secondary">Minimal card with only content.</p>
+        <p className="text-sm text-muted-foreground">Minimal card with only content.</p>
       </CardContent>
     </Card>
   ),

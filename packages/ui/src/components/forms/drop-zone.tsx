@@ -136,7 +136,7 @@ export function DropZone({
 
       <div className="space-y-2 text-center">
         <p className="text-muted-foreground">
-          {label} <span className="text-primary font-medium">click to browse</span>
+          {label} <span className="text-foreground font-medium">click to browse</span>
         </p>
         {helpText ? <p className="text-muted-foreground text-sm">{helpText}</p> : null}
       </div>

@@ -1,11 +1,14 @@
-import * as AccordionPrimitive from "@radix-ui/react-accordion";
+import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion";
 import { ChevronDown } from "lucide-react";
 import * as React from "react";
 
 import { cn } from "../../lib/utils";
 
-function Accordion({ ...props }: React.ComponentProps<typeof AccordionPrimitive.Root>) {
-  return <AccordionPrimitive.Root data-slot="accordion" {...props} className="w-full" />;
+function Accordion({ type, collapsible: _collapsible, ...props }: React.ComponentProps<typeof AccordionPrimitive.Root> & {
+  type?: "single" | "multiple";
+  collapsible?: boolean;
+}) {
+  return <AccordionPrimitive.Root data-slot="accordion" multiple={type === "multiple"} {...props} className="w-full" />;
 }
 
 function AccordionItem({
@@ -16,7 +19,7 @@ function AccordionItem({
     <AccordionPrimitive.Item
       data-slot="accordion-item"
       className={cn(
-        "border-default bg-canvas mb-2 overflow-hidden rounded-md border last:mb-0",
+        "mb-2 overflow-hidden rounded-md border last:mb-0",
         className,
       )}
       {...props}
@@ -50,15 +53,15 @@ function AccordionContent({
   className,
   children,
   ...props
-}: React.ComponentProps<typeof AccordionPrimitive.Content>) {
+}: React.ComponentProps<typeof AccordionPrimitive.Panel>) {
   return (
-    <AccordionPrimitive.Content
+    <AccordionPrimitive.Panel
       data-slot="accordion-content"
       className="animate-accordion-down overflow-hidden text-sm"
       {...props}
     >
       <div className={cn("px-4 pt-2 pb-3", className)}>{children}</div>
-    </AccordionPrimitive.Content>
+    </AccordionPrimitive.Panel>
   );
 }
 

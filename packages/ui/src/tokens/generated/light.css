@@ -1,0 +1,54 @@
+/**
+ * Do not edit directly, this file was auto-generated.
+ */
+
+:root {
+  --color-surface-canvas: #ffffff;
+  --color-surface-panel: #f8f8f8;
+  --color-surface-raised: #ffffff;
+  --color-surface-inset: #ffffff;
+  --color-surface-hover: #e9e9e9;
+  --color-surface-pressed: #505050;
+  --color-surface-selected: #e5f0fe;
+  --color-surface-disabled: #e9e9e9;
+  --color-overlay-scrim: #000000;
+  --color-text-primary: #131313;
+  --color-text-secondary: #505050;
+  --color-text-tertiary: #717171;
+  --color-text-disabled: #8f8f8f;
+  --color-text-accent: #3b63fb;
+  --color-text-destructive: #d73220;
+  --color-text-success: #079355;
+  --color-text-warning: #d45b00;
+  --color-text-on-accent: #ffffff;
+  --color-text-on-destructive: #ffffff;
+  --color-text-on-success: #ffffff;
+  --color-text-on-warning: #000000;
+  --color-border-subtle: #dadada;
+  --color-border-default: #c6c6c6;
+  --color-border-strong: #8f8f8f;
+  --color-border-focus: #4b75ff;
+  --color-border-accent: #3b63fb;
+  --color-border-destructive: #d73220;
+  --color-accent: #3b63fb;
+  --color-accent-hover: #274dea;
+  --color-accent-pressed: #274dea;
+  --color-accent-subtle: #e5f0fe;
+  --color-destructive: #d73220;
+  --color-destructive-hover: #b72818;
+  --color-destructive-pressed: #b72818;
+  --color-destructive-subtle: #ffebe8;
+  --color-success: #05834e;
+  --color-success-subtle: #d7f7e1;
+  --color-warning: #fc7d00;
+  --color-warning-subtle: #ffeccf;
+  --color-ring-focus: #4b75ff;
+  --color-chart-1: #4b75ff;
+  --color-chart-2: #079355;
+  --color-chart-3: #4b75ff;
+  --color-chart-4: #d45b00;
+  --color-chart-5: #8f8f8f;
+  --color-chart-positive: #079355;
+  --color-chart-negative: #f03823;
+  --color-chart-neutral: #8f8f8f;
+}

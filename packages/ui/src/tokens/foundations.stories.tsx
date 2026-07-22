@@ -1,59 +1,33 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-const meta: Meta = {
-  title: "Foundations/System Lab",
-  parameters: { layout: "fullscreen" },
-};
-
+const meta: Meta = { title: "Foundations/Tailwind Defaults", parameters: { layout: "fullscreen" } };
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const SpacingAndType: Story = {
   render: () => (
-    <main className="bg-canvas text-primary grid min-h-screen gap-10 p-6 md:p-10">
+    <main className="grid min-h-screen gap-10 bg-background p-6 text-foreground md:p-10">
       <section className="grid gap-6">
         <header className="grid gap-2">
-          <p className="body-4 text-secondary">Foundations / rhythm</p>
-          <h1 className="display-1">Space gives the interface its pace.</h1>
-          <p className="body-1 text-secondary max-w-2xl">
-            The specimen uses the shared interval scale and the four local typography roles.
-          </p>
+          <p className="text-sm text-muted-foreground">Foundations / rhythm</p>
+          <h1 className="text-4xl font-semibold tracking-tight">Tailwind defaults, directly.</h1>
+          <p className="max-w-2xl text-base text-muted-foreground">The specimen uses the shared Tailwind spacing and type scales.</p>
         </header>
         <div className="grid gap-2">
-          {[4, 8, 12, 16, 24, 32, 48, 64].map((size) => (
+          {[1, 2, 3, 4, 6, 8, 12, 16].map((size) => (
             <div key={size} className="flex items-center gap-3">
-              <span className="text-secondary w-12 font-mono text-xs tabular-nums">{size}px</span>
-              <div
-                className="bg-accent h-3 rounded-sm"
-                style={{ width: size }}
-                aria-hidden="true"
-              />
+              <span className="w-12 font-mono text-xs tabular-nums text-muted-foreground">{size}</span>
+              <div className="h-3 rounded-sm bg-accent" style={{ width: `calc(var(--spacing) * ${size})` }} aria-hidden="true" />
             </div>
           ))}
         </div>
       </section>
-      <section className="border-subtle grid gap-5 rounded-xl border p-6">
-        <h2 className="heading-2">Typography roles</h2>
+      <section className="grid gap-5 rounded-xl border border-border bg-card p-6">
+        <h2 className="text-2xl font-semibold">Typography scale</h2>
         <div className="grid gap-4">
-          <div>
-            <p className="text-secondary text-xs uppercase">Display</p>
-            <p className="display-2">A clear beginning</p>
-          </div>
-          <div>
-            <p className="text-secondary text-xs uppercase">Body</p>
-            <p className="body-1 max-w-2xl">
-              Readable content should have room to breathe and should not require the user to decode
-              the container.
-            </p>
-          </div>
-          <div>
-            <p className="text-secondary text-xs uppercase">Label</p>
-            <p className="body-3 font-medium">Current collection</p>
-          </div>
-          <div>
-            <p className="text-secondary text-xs uppercase">Caption</p>
-            <p className="body-4 text-secondary">Updated just now</p>
-          </div>
+          {(["text-xs", "text-sm", "text-base", "text-lg", "text-xl", "text-2xl", "text-4xl"] as const).map((size) => (
+            <p key={size} className={`${size} text-foreground`}>{size}</p>
+          ))}
         </div>
       </section>
     </main>
@@ -62,28 +36,10 @@ export const SpacingAndType: Story = {
 
 export const Surfaces: Story = {
   render: () => (
-    <main className="bg-canvas text-primary grid min-h-screen gap-6 p-6 md:p-10">
-      <header className="grid gap-2">
-        <p className="body-4 text-secondary">Foundations / surfaces</p>
-        <h1 className="display-1">Quiet layers, clear ownership.</h1>
-      </header>
+    <main className="grid min-h-screen gap-6 bg-background p-6 text-foreground md:p-10">
+      <header className="grid gap-2"><p className="text-sm text-muted-foreground">Foundations / surfaces</p><h1 className="text-4xl font-semibold tracking-tight">Standard semantic layers.</h1></header>
       <div className="grid gap-4 md:grid-cols-2">
-        <div className="bg-canvas border-subtle grid min-h-40 content-start gap-2 rounded-xl border p-5">
-          <h2 className="heading-3">Canvas</h2>
-          <p className="body-3 text-secondary">The page background.</p>
-        </div>
-        <div className="bg-panel border-subtle grid min-h-40 content-start gap-2 rounded-xl border p-5">
-          <h2 className="heading-3">Panel</h2>
-          <p className="body-3 text-secondary">A contained region.</p>
-        </div>
-        <div className="bg-raised border-subtle grid min-h-40 content-start gap-2 rounded-xl border p-5">
-          <h2 className="heading-3">Raised</h2>
-          <p className="body-3 text-secondary">An overlay or elevated layer.</p>
-        </div>
-        <div className="bg-inset border-subtle grid min-h-40 content-start gap-2 rounded-xl border p-5">
-          <h2 className="heading-3">Inset</h2>
-          <p className="body-3 text-secondary">A recessed working region.</p>
-        </div>
+        {[["Background", "bg-background"], ["Card", "bg-card"], ["Popover", "bg-popover"], ["Muted", "bg-muted"]].map(([name, className]) => <div key={name} className={`${className} grid min-h-40 content-start gap-2 rounded-xl border border-border p-5`}><h2 className="text-lg font-semibold">{name}</h2><p className="text-sm text-muted-foreground">{className}</p></div>)}
       </div>
     </main>
   ),
@@ -91,61 +47,13 @@ export const Surfaces: Story = {
 
 export const Motion: Story = {
   render: () => (
-    <main className="bg-canvas text-primary grid min-h-screen gap-8 p-6 md:p-10">
-      <header className="grid gap-2">
-        <p className="body-4 text-secondary">Foundations / motion</p>
-        <h1 className="display-1">Motion should explain, not perform.</h1>
-        <p className="body-1 text-secondary max-w-2xl">
-          Use the Storybook motion-reduction setting to confirm that nonessential movement
-          disappears.
-        </p>
-      </header>
+    <main className="grid min-h-screen gap-8 bg-background p-6 text-foreground md:p-10">
+      <header className="grid gap-2"><p className="text-sm text-muted-foreground">Foundations / motion</p><h1 className="text-4xl font-semibold tracking-tight">Motion stays standard and reducible.</h1></header>
       <div className="grid gap-4 sm:grid-cols-3">
-        <div className="bg-panel border-subtle motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-2 grid min-h-32 place-content-center gap-2 rounded-xl border p-5 duration-150 motion-reduce:animate-none">
-          <span className="heading-3">Enter</span>
-          <span className="body-4 text-secondary">150ms / 6px</span>
-        </div>
-        <button className="bg-panel border-subtle text-primary hover:bg-surface-hover active:bg-surface-pressed focus-visible:ring-focus grid min-h-32 place-content-center gap-2 rounded-xl border p-5 text-left focus-visible:ring-2 focus-visible:outline-none motion-safe:transition-colors">
-          <span className="heading-3">Press</span>
-          <span className="body-4 text-secondary">Immediate feedback</span>
-        </button>
-        <div className="bg-panel border-subtle grid min-h-32 place-content-center gap-2 rounded-xl border p-5 motion-safe:animate-pulse motion-reduce:animate-none">
-          <span className="heading-3">Loading</span>
-          <span className="body-4 text-secondary">Geometry remains stable</span>
-        </div>
+        <div className="motion-safe:animate-in motion-safe:fade-in-0 grid min-h-32 place-content-center gap-2 rounded-xl border border-border bg-card p-5 motion-reduce:animate-none"><span className="text-lg font-semibold">Enter</span><span className="text-sm text-muted-foreground">150ms</span></div>
+        <button className="grid min-h-32 place-content-center gap-2 rounded-xl border border-border bg-card p-5 text-left transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring motion-reduce:transition-none"><span className="text-lg font-semibold">Press</span><span className="text-sm text-muted-foreground">System focus</span></button>
+        <div className="grid min-h-32 place-content-center gap-2 rounded-xl border border-border bg-card p-5 motion-safe:animate-pulse motion-reduce:animate-none"><span className="text-lg font-semibold">Loading</span><span className="text-sm text-muted-foreground">Stable geometry</span></div>
       </div>
-    </main>
-  ),
-};
-
-export const Accessibility: Story = {
-  render: () => (
-    <main className="bg-canvas text-primary grid min-h-screen gap-8 p-6 md:p-10">
-      <header className="grid gap-2">
-        <p className="body-4 text-secondary">Foundations / accessibility</p>
-        <h1 className="display-1">The system should be calm for everyone.</h1>
-      </header>
-      <section className="border-subtle grid max-w-2xl gap-5 rounded-xl border p-6">
-        <label className="grid gap-2">
-          <span className="body-3 font-medium">Email address</span>
-          <input
-            className="bg-canvas border-default text-primary focus-visible:ring-focus h-11 rounded-md border px-3 outline-none focus-visible:ring-2"
-            placeholder="you@example.com"
-          />
-          <span className="body-4 text-secondary">Use a reachable address for notifications.</span>
-        </label>
-        <div className="flex flex-wrap gap-3">
-          <button className="bg-accent text-on-accent focus-visible:ring-focus min-h-11 rounded-md px-4 focus-visible:ring-2 focus-visible:outline-none">
-            Continue
-          </button>
-          <button disabled className="bg-panel text-disabled min-h-11 rounded-md px-4">
-            Unavailable
-          </button>
-        </div>
-        <p className="body-4 text-destructive" role="alert">
-          Example error: enter a valid email address.
-        </p>
-      </section>
     </main>
   ),
 };

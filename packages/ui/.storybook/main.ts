@@ -21,6 +21,7 @@ const config: StorybookConfig = {
     const { mergeConfig } = await import("vite");
     const tailwindcss = (await import("@tailwindcss/vite")).default;
     return mergeConfig(config, {
+      root: fileURLToPath(new URL("..", import.meta.url)),
       plugins: [tailwindcss()],
       build: { target: "esnext" },
     });

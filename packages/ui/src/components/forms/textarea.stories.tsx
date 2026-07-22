@@ -22,7 +22,7 @@ function TextareaField({
 
   return (
     <div className="grid gap-2">
-      <label htmlFor={id} className="text-primary text-sm leading-none font-medium">
+      <label htmlFor={id} className="text-foreground text-sm leading-none font-medium">
         {label}
       </label>
       <Textarea
@@ -32,7 +32,7 @@ function TextareaField({
         {...props}
       />
       {helpText ? (
-        <p id={helpId} className="text-secondary text-sm">
+        <p id={helpId} className="text-muted-foreground text-sm">
           {helpText}
         </p>
       ) : null}

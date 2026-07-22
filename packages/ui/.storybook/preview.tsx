@@ -1,39 +1,8 @@
+import "../src/styles.css";
 import type { Preview } from "@storybook/react-vite";
 import { commonControlsExclude } from "../src/storybook/controls";
-import "../src/styles.css";
 
 const preview: Preview = {
-  globalTypes: {
-    colorMode: {
-      name: "Color Mode",
-      description: "Active UI color mode",
-      defaultValue: "system",
-      toolbar: {
-        icon: "mirror",
-        items: [
-          { value: "system", title: "System" },
-          { value: "light", title: "Light" },
-          { value: "dark", title: "Dark" },
-        ],
-      },
-    },
-  },
-  decorators: [
-    (Story, context) => {
-      if (typeof document !== "undefined") {
-        const root = document.documentElement;
-        root.dataset.colorSystem = "ponti";
-
-        if (context.globals.colorMode === "system") {
-          delete root.dataset.colorMode;
-        } else {
-          root.dataset.colorMode = String(context.globals.colorMode);
-        }
-      }
-
-      return <Story />;
-    },
-  ],
   parameters: {
     layout: "centered",
     controls: {
