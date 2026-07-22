@@ -8,7 +8,7 @@
     "server": "node server.js",
     "web": "webpack serve --mode development",
     "build": "webpack --mode production",
-    "test": "jest --watchAll"
+    "test": "jest"
   },
   "keywords": [
     "coding-test",
