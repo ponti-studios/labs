@@ -22,19 +22,19 @@ export function GenerativeImagePreviewPanel({
 }: GenerativeImagePreviewPanelProps) {
   return (
     <div className="flex h-[calc(100vh-220px)] flex-col lg:col-span-7">
-      <header className="border-default mb-6 flex items-center justify-between border-b pb-6">
+      <header className="border-border mb-6 flex items-center justify-between border-b pb-6">
         <h1 className="mt-1">Parametric Image Generation</h1>
         <button
           type="button"
           onClick={onTogglePrompt}
-          className="text-secondary hover:text-primary flex items-center gap-2 text-sm transition-colors"
+          className="text-muted-foreground hover:text-foreground flex items-center gap-2 text-sm transition-colors"
         >
           <Code size={16} />
           {showPrompt ? "Hide prompt" : "Show prompt"}
         </button>
       </header>
 
-      <div className="group border-default bg-inset relative flex grow items-center justify-center overflow-hidden rounded border">
+      <div className="group border-border bg-muted relative flex grow items-center justify-center overflow-hidden rounded border">
         {generatedImage ? (
           <img
             src={generatedImage}
@@ -43,11 +43,11 @@ export function GenerativeImagePreviewPanel({
           />
         ) : (
           <div className="p-8 text-center">
-            <div className="border-default bg-canvas mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full border">
-              <Sparkles className="text-secondary" size={32} />
+            <div className="border-border bg-background mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full border">
+              <Sparkles className="text-muted-foreground" size={32} />
             </div>
             <h3>Ready to Imagine</h3>
-            <p className="text-secondary mx-auto mt-2 max-w-sm">
+            <p className="text-muted-foreground mx-auto mt-2 max-w-sm">
               Configure your parameters on the left and hit generate to create a high-fidelity
               image.
             </p>
@@ -64,7 +64,7 @@ export function GenerativeImagePreviewPanel({
                 link.download = `generative-image-export-${Date.now()}.png`;
                 link.click();
               }}
-              className="border-default bg-canvas/80 text-primary hover:bg-canvas rounded border p-2 backdrop-blur transition-colors"
+              className="border-border bg-background/80 text-foreground hover:bg-background rounded border p-2 backdrop-blur transition-colors"
               title="Download"
             >
               <Download size={18} />
@@ -81,8 +81,8 @@ export function GenerativeImagePreviewPanel({
       ) : null}
 
       {showPrompt ? (
-        <div className="border-default bg-inset mt-4 h-48 overflow-y-auto rounded border p-4">
-          <pre className="text-primary font-mono text-xs">{promptText}</pre>
+        <div className="border-border bg-muted mt-4 h-48 overflow-y-auto rounded border p-4">
+          <pre className="text-foreground font-mono text-xs">{promptText}</pre>
         </div>
       ) : null}
 

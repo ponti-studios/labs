@@ -20,20 +20,20 @@ export function meta(): Array<{
 export default function Projects() {
   return (
     <div className="page-shell">
-      <h1 className="display-1 text-primary">The Lab</h1>
+      <h1 className="display-1 text-foreground">The Lab</h1>
 
       {/* Projects by Category */}
       {projectSections.map((section) => {
         return (
           <section key={section.category} className="layout-stack">
-            <h2 className="heading-2 text-primary border-subtle border-b pb-3">{section.label}</h2>
-            <div className="border-subtle divide-border-subtle divide-y border-b">
+            <h2 className="text-xl font-semibold tracking-tight text-foreground border-border border-b pb-3">{section.label}</h2>
+            <div className="border-border divide-border-border divide-y border-b">
               {section.projects.map((project) => (
                 <div key={project.slug} className="list-row group">
                   <Link
                     to={`/projects/${project.slug}`}
                     prefetch="intent"
-                    className="hover:bg-inset/20 flex min-w-0 flex-1 flex-row items-start gap-4 transition-colors outline-none md:gap-6"
+                    className="hover:bg-muted/20 flex min-w-0 flex-1 flex-row items-start gap-4 transition-colors outline-none md:gap-6"
                   >
                     {project.logo ? (
                       <ListRowMedia
@@ -43,10 +43,10 @@ export default function Projects() {
                       />
                     ) : null}
                     <div className="flex min-w-0 flex-1 flex-col gap-1">
-                      <h3 className="heading-2 text-primary group-hover:text-accent transition-colors motion-reduce:transition-none">
+                      <h3 className="text-xl font-semibold tracking-tight text-foreground group-hover:text-accent transition-colors motion-reduce:transition-none">
                         {project.name}
                       </h3>
-                      <p className="body-2 text-secondary max-w-2xl">{project.shortDescription}</p>
+                      <p className="text-sm text-muted-foreground max-w-2xl">{project.shortDescription}</p>
                     </div>
                   </Link>
                 </div>

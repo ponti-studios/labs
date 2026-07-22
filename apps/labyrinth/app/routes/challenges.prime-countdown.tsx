@@ -55,13 +55,13 @@ export default function PrimeCountdown(): JSX.Element {
     <div className="flex flex-col gap-6">
       <header>
         <h2 className="text-xl font-semibold">Prime Number Countdown</h2>
-        <p className="text-secondary">
-          yields prime numbers in from <code className="bg-inset rounded px-1 py-0.5">n</code> down
-          to <code className="bg-inset rounded px-1 py-0.5">1</code>. A number is prime if it has no
+        <p className="text-muted-foreground">
+          yields prime numbers in from <code className="bg-muted rounded px-1 py-0.5">n</code> down
+          to <code className="bg-muted rounded px-1 py-0.5">1</code>. A number is prime if it has no
           divisors other than 1 and itself — checked by trial division up to{" "}
-          <code className="bg-inset rounded px-1 py-0.5">√n</code>.
+          <code className="bg-muted rounded px-1 py-0.5">√n</code>.
         </p>
-        <i className="text-secondary text-xs">Courtesy of Goldman Sachs</i>
+        <i className="text-muted-foreground text-xs">Courtesy of Goldman Sachs</i>
       </header>
 
       <Card>
@@ -93,11 +93,11 @@ export default function PrimeCountdown(): JSX.Element {
             <>
               <div className="flex items-center gap-2">
                 <p className="font-mono font-semibold text-green-600">{primesCount}</p>
-                <p className="text-secondary text-xs font-medium">Primes found</p>
+                <p className="text-muted-foreground text-xs font-medium">Primes found</p>
               </div>
               <div className="flex items-center gap-2">
                 <p className="font-mono font-semibold">{compositeCount}</p>
-                <p className="text-secondary text-xs font-medium">Composite</p>
+                <p className="text-muted-foreground text-xs font-medium">Composite</p>
               </div>
             </>
           )}
@@ -122,7 +122,7 @@ export default function PrimeCountdown(): JSX.Element {
                     className={`inline-flex h-10 w-10 items-center justify-center rounded-lg border font-mono text-sm font-medium ${
                       entry.isPrime
                         ? "border-green-300 bg-green-50 text-green-700"
-                        : "bg-inset/40 border-default text-secondary"
+                        : "bg-muted/40 border-border text-muted-foreground"
                     }`}
                   >
                     {entry.value}

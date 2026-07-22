@@ -37,7 +37,7 @@ export default function WorkSlug() {
           <Link
             to="/work"
             prefetch="intent"
-            className="body-3 text-secondary hover:text-primary min-h-11 w-fit content-center outline-none"
+            className="text-sm text-muted-foreground hover:text-foreground min-h-11 w-fit content-center outline-none"
           >
             ← {copy.backToWork}
           </Link>
@@ -66,20 +66,20 @@ export default function WorkSlug() {
 
       {/* What I did */}
       <section className="section">
-        <h2 className="heading-2 text-primary">{proof.whatWeDidLabel}</h2>
-        <p className="body-1 text-secondary max-w-2xl">{snapshot.whatWeDid}</p>
+        <h2 className="text-xl font-semibold tracking-tight text-foreground">{proof.whatWeDidLabel}</h2>
+        <p className="text-base text-muted-foreground max-w-2xl">{snapshot.whatWeDid}</p>
       </section>
 
       {/* Approach */}
       <section className="section gap-8">
-        <h2 className="heading-2 text-primary">{copy.approachTitle}</h2>
+        <h2 className="text-xl font-semibold tracking-tight text-foreground">{copy.approachTitle}</h2>
         <ol className="flex flex-col gap-8">
           {snapshot.approach.map((step, index) => (
             <li key={step} className="grid gap-2 sm:grid-cols-[minmax(0,4rem)_1fr] sm:gap-8">
-              <span className="body-2 text-secondary tabular-nums">
+              <span className="text-sm text-muted-foreground tabular-nums">
                 {String(index + 1).padStart(2, "0")}
               </span>
-              <span className="body-1 text-primary max-w-2xl">{step}</span>
+              <span className="text-base text-foreground max-w-2xl">{step}</span>
             </li>
           ))}
         </ol>
@@ -87,12 +87,12 @@ export default function WorkSlug() {
 
       {/* Outcomes — pull quotes, not metric tiles */}
       <section className="section gap-10 md:gap-12">
-        <h2 className="heading-2 text-primary">{proof.outcomeLabel}</h2>
+        <h2 className="text-xl font-semibold tracking-tight text-foreground">{proof.outcomeLabel}</h2>
         <div className="flex flex-col gap-12">
           {snapshot.outcomes.map((outcome) => (
             <div key={outcome.label} className="flex max-w-3xl flex-col gap-1">
               <p className="display-2 text-accent">{outcome.value}</p>
-              <p className="heading-4 text-primary">{outcome.label}</p>
+              <p className="text-base font-semibold text-foreground">{outcome.label}</p>
             </div>
           ))}
         </div>
@@ -112,8 +112,8 @@ export default function WorkSlug() {
 
       {/* Close CTA */}
       <section className="section gap-6 border-b-0 py-16 md:py-20">
-        <h2 className="display-2 text-primary max-w-3xl">{copy.nextCta.title}</h2>
-        <p className="body-1 text-secondary max-w-xl">{copy.nextCta.body}</p>
+        <h2 className="display-2 text-foreground max-w-3xl">{copy.nextCta.title}</h2>
+        <p className="text-base text-muted-foreground max-w-xl">{copy.nextCta.body}</p>
         <div className="flex flex-wrap items-center gap-6 pt-2">
           <Button asChild>
             <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
@@ -123,7 +123,7 @@ export default function WorkSlug() {
           <Link
             to="/services"
             prefetch="intent"
-            className="body-2 text-primary underline-offset-4 hover:underline"
+            className="text-sm text-foreground underline-offset-4 hover:underline"
           >
             {t.home.services.cta}
           </Link>

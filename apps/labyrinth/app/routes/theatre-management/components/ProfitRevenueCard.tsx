@@ -22,14 +22,14 @@ export function ProfitRevenueCard({
       <CardHeader className="border-b-0 px-5 pt-5 pb-0">
         <div className="flex w-full items-center justify-between gap-2">
           <span className="ui-data-label">Profit &amp; Revenue</span>
-          <DollarSign className="text-secondary size-4" />
+          <DollarSign className="text-muted-foreground size-4" />
         </div>
       </CardHeader>
 
       <CardContent className="flex h-full flex-col justify-between px-5 pt-4 pb-5">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <div className="text-primary font-['Geist'] text-2xl font-semibold tracking-tight tabular-nums">
+            <div className="text-foreground font-['Geist'] text-2xl font-semibold tracking-tight tabular-nums">
               {formatCurrency(d.monthlyProfit)}
             </div>
             <div className="mt-1 flex flex-wrap items-center gap-1.5">
@@ -47,17 +47,17 @@ export function ProfitRevenueCard({
           </div>
 
           <div>
-            <div className="text-primary font-['Geist'] text-2xl font-semibold tracking-tight tabular-nums">
+            <div className="text-foreground font-['Geist'] text-2xl font-semibold tracking-tight tabular-nums">
               {formatCompact(d.grossRevenue)}
             </div>
             <div className="mt-1 flex items-center gap-1.5">
-              <TrendingUp className="text-secondary size-3" />
-              <span className="text-secondary text-xs">{fmt(d.monthlyVisitors)} visitors</span>
+              <TrendingUp className="text-muted-foreground size-3" />
+              <span className="text-muted-foreground text-xs">{fmt(d.monthlyVisitors)} visitors</span>
             </div>
           </div>
         </div>
 
-        <div className="bg-inset mt-3 flex h-2 overflow-hidden rounded-full">
+        <div className="bg-muted mt-3 flex h-2 overflow-hidden rounded-full">
           <div
             className={cn(
               "transition-all duration-300",

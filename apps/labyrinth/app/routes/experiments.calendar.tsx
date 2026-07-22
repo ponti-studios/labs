@@ -165,14 +165,14 @@ export function createShowcaseEvents(nowMinute: number): CalendarEvent[] {
 
 export default function CalendarExperiment() {
   return (
-    <main className="bg-canvas text-primary min-h-screen px-4 pt-4 pb-24 md:px-6 md:pt-6">
+    <main className="bg-background text-foreground min-h-screen px-4 pt-4 pb-24 md:px-6 md:pt-6">
       <div className="mx-auto max-w-3xl">
-        <header className="border-subtle mb-4 flex items-start justify-between gap-4 border-b pb-4">
+        <header className="border-border mb-4 flex items-start justify-between gap-4 border-b pb-4">
           <div>
             <p className="ui-data-label mb-1">Time, as it is lived</p>
-            <h1 className="heading-2">Your day in one stream.</h1>
+            <h1 className="text-xl font-semibold tracking-tight">Your day in one stream.</h1>
           </div>
-          <p className="body-4 text-secondary hidden pt-1 text-right sm:block">
+          <p className="text-xs text-muted-foreground hidden pt-1 text-right sm:block">
             Calendar experiment
           </p>
         </header>

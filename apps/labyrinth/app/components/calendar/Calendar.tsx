@@ -97,12 +97,12 @@ function TemporalContext({ context }: { context: CalendarEventContext }) {
   const Icon = iconForContext[context.icon];
 
   return (
-    <div className="border-subtle min-w-0 border-t pt-2">
-      <div className="subheading-3 text-secondary flex items-center gap-1.5 uppercase">
+    <div className="border-border min-w-0 border-t pt-2">
+      <div className="subtext-lg font-semibold tracking-tight text-muted-foreground flex items-center gap-1.5 uppercase">
         <Icon aria-hidden="true" className="size-3.5 shrink-0" />
         <span>{context.label}</span>
       </div>
-      <p className="body-3 text-primary mt-1">{context.detail}</p>
+      <p className="text-sm text-foreground mt-1">{context.detail}</p>
     </div>
   );
 }
@@ -119,8 +119,8 @@ function TemporalMoment({ event, nowMinute }: { event: CalendarEvent; nowMinute:
         isPresent
           ? "border-accent bg-accent/5 py-6"
           : isPast
-            ? "border-subtle py-3"
-            : "border-subtle border-dashed py-4"
+            ? "border-border py-3"
+            : "border-border border-dashed py-4"
       }`}
       data-event-condition={condition}
       data-event-state={isPresent ? "current" : condition}
@@ -128,7 +128,7 @@ function TemporalMoment({ event, nowMinute }: { event: CalendarEvent; nowMinute:
     >
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <div className="body-4 text-secondary flex flex-wrap items-center gap-x-2 gap-y-1 tabular-nums">
+          <div className="text-xs text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-1 tabular-nums">
             {Icon && <Icon aria-hidden="true" className="text-accent size-4 shrink-0" />}
             <span>{formatTime(event.startMinute)}</span>
             <span aria-hidden="true">·</span>
@@ -136,13 +136,13 @@ function TemporalMoment({ event, nowMinute }: { event: CalendarEvent; nowMinute:
             {isPresent && <span className="text-accent font-semibold uppercase">Here</span>}
           </div>
 
-          <h3 className={`${isPresent ? "heading-2" : "heading-4"} mt-2`}>{event.title}</h3>
-          <p className={`${isPresent ? "body-2" : "body-3"} text-secondary mt-1 max-w-2xl`}>
+          <h3 className={`${isPresent ? "text-xl font-semibold tracking-tight" : "text-base font-semibold"} mt-2`}>{event.title}</h3>
+          <p className={`${isPresent ? "text-sm" : "text-sm"} text-muted-foreground mt-1 max-w-2xl`}>
             {event.detail}
           </p>
 
           {event.location && (
-            <p className="body-4 text-secondary mt-2 flex items-center gap-1.5">
+            <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1.5">
               <MapPin aria-hidden="true" className="size-3.5 shrink-0" />
               {event.location}
             </p>
@@ -150,7 +150,7 @@ function TemporalMoment({ event, nowMinute }: { event: CalendarEvent; nowMinute:
         </div>
 
         {isPresent && (
-          <span className="body-4 text-accent hidden shrink-0 pt-1 uppercase sm:inline">
+          <span className="text-xs text-accent hidden shrink-0 pt-1 uppercase sm:inline">
             Happening now
           </span>
         )}
@@ -158,7 +158,7 @@ function TemporalMoment({ event, nowMinute }: { event: CalendarEvent; nowMinute:
 
       {event.contexts && event.contexts.length > 0 && (
         <div className={`${isPresent ? "mt-6" : "mt-3"} pl-3`}>
-          <p className="ui-data-label text-secondary mb-2">Also here</p>
+          <p className="ui-data-label text-muted-foreground mb-2">Also here</p>
           <div className="grid gap-3 sm:grid-cols-2">
             {event.contexts.map((context) => (
               <TemporalContext key={context.id} context={context} />
@@ -188,9 +188,9 @@ function DayLandmark({
   return (
     <section data-stream-day={offset}>
       <header className="flex items-center gap-3 py-8">
-        <h2 className="ui-data-label text-primary">{formatDay(date, offset)}</h2>
-        <p className="body-3 text-secondary">{formatDate(date)}</p>
-        <div className="border-subtle ml-1 h-px flex-1 border-t" />
+        <h2 className="ui-data-label text-foreground">{formatDay(date, offset)}</h2>
+        <p className="text-sm text-muted-foreground">{formatDate(date)}</p>
+        <div className="border-border ml-1 h-px flex-1 border-t" />
       </header>
 
       <div className="space-y-3">
@@ -236,12 +236,12 @@ export function Calendar({ getEvents }: CalendarProps) {
   return (
     <section aria-label="A continuous stream of lived time">
       <div className="mb-2 flex items-center justify-between gap-4">
-        <p className="body-4 text-secondary">A day in motion</p>
+        <p className="text-xs text-muted-foreground">A day in motion</p>
         <button
           type="button"
           onClick={() => scrollToNow()}
           aria-label="Return to now"
-          className="border-default bg-panel text-primary hover:bg-raised focus-visible:outline-ring inline-flex min-h-11 shrink-0 items-center gap-2 rounded-md border px-3 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+          className="border-border bg-card text-foreground hover:bg-popover focus-visible:outline-ring inline-flex min-h-11 shrink-0 items-center gap-2 rounded-md border px-3 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
         >
           <ArrowDown aria-hidden="true" className="size-4" />
           Now
@@ -260,7 +260,7 @@ export function Calendar({ getEvents }: CalendarProps) {
             />
           ))
         ) : (
-          <div className="body-2 text-secondary flex min-h-96 items-center justify-center p-6">
+          <div className="text-sm text-muted-foreground flex min-h-96 items-center justify-center p-6">
             Finding your place in time…
           </div>
         )}

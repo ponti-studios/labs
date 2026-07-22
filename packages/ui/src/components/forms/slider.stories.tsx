@@ -49,7 +49,7 @@ export const Controlled: Story = {
       <div className="w-full max-w-sm space-y-4 px-1">
         <Slider value={value} onValueChange={setValue} min={0} max={100} />
         <div className="flex justify-between text-sm">
-          <span className="text-secondary">Volume</span>
+          <span className="text-muted-foreground">Volume</span>
           <span className="font-medium tabular-nums">{value[0]}%</span>
         </div>
       </div>

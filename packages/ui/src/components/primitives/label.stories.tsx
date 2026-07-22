@@ -38,7 +38,7 @@ export const Disabled: Story = {
           (locked)
         </Label>
       </div>
-      <p className="text-secondary text-xs">
+      <p className="text-muted-foreground text-xs">
         The <code className="font-mono">peer-disabled</code> variant mutes the label when its paired
         input is disabled.
       </p>

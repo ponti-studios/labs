@@ -18,17 +18,17 @@ export default function Work() {
   return (
     <div className="page-shell">
       <section className="layout-stack">
-        <h1 className="display-1 text-primary max-w-4xl">{copy.hero.title}</h1>
+        <h1 className="display-1 text-foreground max-w-4xl">{copy.hero.title}</h1>
       </section>
 
       <section className="layout-stack">
-        <div className="border-subtle divide-border-subtle divide-y border-b">
+        <div className="border-border divide-border-border divide-y border-b">
           {caseSnapshots.map((snapshot) => (
             <div key={snapshot.slug} className="list-row group">
               <Link
                 to={`/work/${snapshot.slug}`}
                 prefetch="intent"
-                className="hover:bg-inset/20 flex min-w-0 flex-1 flex-row items-start gap-4 transition-colors outline-none md:gap-6"
+                className="hover:bg-muted/20 flex min-w-0 flex-1 flex-row items-start gap-4 transition-colors outline-none md:gap-6"
               >
                 {caseLogos[snapshot.slug] ? (
                   <ListRowMedia
@@ -38,13 +38,13 @@ export default function Work() {
                   />
                 ) : null}
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
-                  <span className="body-4 text-secondary tracking-wide uppercase">
+                  <span className="text-xs text-muted-foreground tracking-wide uppercase">
                     {snapshot.industry}
                   </span>
-                  <h3 className="heading-2 text-primary group-hover:text-accent transition-colors motion-reduce:transition-none">
+                  <h3 className="text-xl font-semibold tracking-tight text-foreground group-hover:text-accent transition-colors motion-reduce:transition-none">
                     {snapshot.client}
                   </h3>
-                  <p className="body-2 text-secondary max-w-2xl">{snapshot.description}</p>
+                  <p className="text-sm text-muted-foreground max-w-2xl">{snapshot.description}</p>
                 </div>
               </Link>
             </div>
