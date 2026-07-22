@@ -199,7 +199,9 @@ export default function SeasonalPatternsPage() {
                   <div key={insight.pattern} className="border-border border-l-2 py-0.5 pl-4">
                     <p className="text-foreground text-sm font-medium">{insight.pattern}</p>
                     <p className="text-muted-foreground mt-0.5 text-xs">{insight.description}</p>
-                    <p className="text-muted-foreground mt-1 text-xs">{insight.strength}% strength</p>
+                    <p className="text-muted-foreground mt-1 text-xs">
+                      {insight.strength}% strength
+                    </p>
                   </div>
                 ))}
               </div>

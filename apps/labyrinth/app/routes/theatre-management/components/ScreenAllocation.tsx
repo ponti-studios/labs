@@ -48,7 +48,9 @@ export function ScreenAllocation({
               <span className="ui-data-label">Screen Allocation</span>
               <Clapperboard className="text-muted-foreground size-4" />
             </div>
-            <p className="text-muted-foreground mt-1 text-xs">Roster your screens like a weekly lineup.</p>
+            <p className="text-muted-foreground mt-1 text-xs">
+              Roster your screens like a weekly lineup.
+            </p>
           </div>
           <div className="text-right">
             <div className="text-foreground font-mono text-sm font-semibold tabular-nums">

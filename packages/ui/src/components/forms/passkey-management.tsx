@@ -69,10 +69,10 @@ export function PasskeyManagement({
     <section aria-labelledby="passkey-heading" className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 id="passkey-heading" className="text-sm font-medium text-foreground">
+          <h2 id="passkey-heading" className="text-foreground text-sm font-medium">
             Passkeys
           </h2>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Sign in without a password using biometrics or a security key.
           </p>
         </div>

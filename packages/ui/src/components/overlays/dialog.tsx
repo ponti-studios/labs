@@ -63,7 +63,7 @@ function DialogOverlay({ className, ...props }: React.ComponentProps<typeof Base
     <BaseDialog.Backdrop
       data-slot="dialog-overlay"
       className={cn(
-        "bg-black/80 data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 fixed inset-0 z-50 transition-opacity",
+        "data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 fixed inset-0 z-50 bg-black/80 transition-opacity",
         className,
       )}
       {...props}
@@ -129,7 +129,7 @@ function DialogTitle({ className, ...props }: React.ComponentProps<typeof BaseDi
   return (
     <BaseDialog.Title
       data-slot="dialog-title"
-      className={cn("text-lg font-semibold leading-none tracking-tight", className)}
+      className={cn("text-lg leading-none font-semibold tracking-tight", className)}
       {...props}
     />
   );
@@ -142,7 +142,7 @@ function DialogDescription({
   return (
     <BaseDialog.Description
       data-slot="dialog-description"
-      className={cn("max-w-prose text-sm text-muted-foreground", className)}
+      className={cn("text-muted-foreground max-w-prose text-sm", className)}
       {...props}
     />
   );

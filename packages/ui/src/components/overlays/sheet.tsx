@@ -8,10 +8,16 @@ import { cn } from "../../lib/utils";
 
 const Sheet = SheetPrimitive.Root;
 
-function SheetTrigger({ asChild, children, ...props }: React.ComponentProps<typeof SheetPrimitive.Trigger> & { asChild?: boolean }) {
+function SheetTrigger({
+  asChild,
+  children,
+  ...props
+}: React.ComponentProps<typeof SheetPrimitive.Trigger> & { asChild?: boolean }) {
   return (
     <SheetPrimitive.Trigger
-      {...(asChild && React.isValidElement(children) ? { render: children as React.ReactElement } : {})}
+      {...(asChild && React.isValidElement(children)
+        ? { render: children as React.ReactElement }
+        : {})}
       {...props}
     >
       {!asChild && children}
@@ -19,10 +25,16 @@ function SheetTrigger({ asChild, children, ...props }: React.ComponentProps<type
   );
 }
 
-function SheetClose({ asChild, children, ...props }: React.ComponentProps<typeof SheetPrimitive.Close> & { asChild?: boolean }) {
+function SheetClose({
+  asChild,
+  children,
+  ...props
+}: React.ComponentProps<typeof SheetPrimitive.Close> & { asChild?: boolean }) {
   return (
     <SheetPrimitive.Close
-      {...(asChild && React.isValidElement(children) ? { render: children as React.ReactElement } : {})}
+      {...(asChild && React.isValidElement(children)
+        ? { render: children as React.ReactElement }
+        : {})}
       {...props}
     >
       {!asChild && children}
@@ -38,7 +50,7 @@ const SheetOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SheetPrimitive.Backdrop
     className={cn(
-      "bg-black/80 data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 fixed inset-0 z-50 transition-opacity",
+      "data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 fixed inset-0 z-50 bg-black/80 transition-opacity",
       className,
     )}
     {...props}
@@ -86,7 +98,11 @@ const SheetTitle = React.forwardRef<
   React.ComponentRef<typeof SheetPrimitive.Title>,
   React.ComponentPropsWithoutRef<typeof SheetPrimitive.Title>
 >(({ className, ...props }, ref) => (
-  <SheetPrimitive.Title ref={ref} className={cn("text-lg font-semibold tracking-tight", className)} {...props} />
+  <SheetPrimitive.Title
+    ref={ref}
+    className={cn("text-lg font-semibold tracking-tight", className)}
+    {...props}
+  />
 ));
 SheetTitle.displayName = SheetPrimitive.Title.displayName;
 
@@ -96,7 +112,7 @@ const SheetDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SheetPrimitive.Description
     ref={ref}
-    className={cn("max-w-prose text-sm text-muted-foreground", className)}
+    className={cn("text-muted-foreground max-w-prose text-sm", className)}
     {...props}
   />
 ));

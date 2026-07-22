@@ -34,7 +34,7 @@ export default function Manifesto() {
       {/* Hero */}
       <section className="section section-hero">
         <ManifestoHeroHeadline />
-        <p className="text-base text-muted-foreground max-w-2xl">{copy.hero.body}</p>
+        <p className="text-muted-foreground max-w-2xl text-base">{copy.hero.body}</p>
       </section>
 
       {/* Tenets — single-column editorial list, one idea at a time */}
@@ -45,12 +45,14 @@ export default function Manifesto() {
               key={tenet.title}
               className="grid gap-3 sm:grid-cols-[minmax(0,4rem)_1fr] sm:gap-10"
             >
-              <span className="text-sm text-muted-foreground tabular-nums">
+              <span className="text-muted-foreground text-sm tabular-nums">
                 {String(index + 1).padStart(2, "0")}
               </span>
               <div className="flex max-w-3xl flex-col gap-3">
-                <h2 className="text-lg font-semibold tracking-tight text-foreground">{tenet.title}</h2>
-                <p className="text-base text-muted-foreground">{tenet.description}</p>
+                <h2 className="text-foreground text-lg font-semibold tracking-tight">
+                  {tenet.title}
+                </h2>
+                <p className="text-muted-foreground text-base">{tenet.description}</p>
               </div>
             </li>
           ))}

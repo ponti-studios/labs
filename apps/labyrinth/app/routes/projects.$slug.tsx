@@ -25,7 +25,7 @@ export default function ProjectDetail() {
           <Link
             to="/projects"
             prefetch="intent"
-            className="text-sm text-accent min-h-11 w-fit content-center underline underline-offset-4 outline-none"
+            className="text-accent min-h-11 w-fit content-center text-sm underline underline-offset-4 outline-none"
           >
             ← {t.projects.page.back}
           </Link>
@@ -47,7 +47,7 @@ export default function ProjectDetail() {
           <Link
             to="/projects"
             prefetch="intent"
-            className="text-sm text-muted-foreground hover:text-foreground min-h-11 w-fit content-center outline-none"
+            className="text-muted-foreground hover:text-foreground min-h-11 w-fit content-center text-sm outline-none"
           >
             ← {t.projects.page.title}
           </Link>
@@ -90,20 +90,26 @@ export default function ProjectDetail() {
       />
 
       <section className="section">
-        <h2 className="text-xl font-semibold tracking-tight text-foreground">{t.projects.page.problem}</h2>
-        <p className="text-base text-muted-foreground max-w-2xl">{project.problem}</p>
+        <h2 className="text-foreground text-xl font-semibold tracking-tight">
+          {t.projects.page.problem}
+        </h2>
+        <p className="text-muted-foreground max-w-2xl text-base">{project.problem}</p>
       </section>
 
       {project.solution ? (
         <section className="section">
-          <h2 className="text-xl font-semibold tracking-tight text-foreground">{t.projects.page.solution}</h2>
-          <p className="text-base text-muted-foreground max-w-2xl">{project.solution}</p>
+          <h2 className="text-foreground text-xl font-semibold tracking-tight">
+            {t.projects.page.solution}
+          </h2>
+          <p className="text-muted-foreground max-w-2xl text-base">{project.solution}</p>
         </section>
       ) : null}
 
       {project.screenshots && project.screenshots.length > 0 ? (
         <section className="section">
-          <h2 className="text-xl font-semibold tracking-tight text-foreground">{t.projects.page.screenshots}</h2>
+          <h2 className="text-foreground text-xl font-semibold tracking-tight">
+            {t.projects.page.screenshots}
+          </h2>
           <ScrollArea className="-mx-4 gap-4 px-4 md:mx-0 md:px-0" snap="start">
             {project.screenshots.map((src, index) => (
               <a
@@ -131,14 +137,16 @@ export default function ProjectDetail() {
 
       {howItWorks.length > 0 ? (
         <section className="section gap-8">
-          <h2 className="text-xl font-semibold tracking-tight text-foreground">{t.projects.page.howItWorks}</h2>
+          <h2 className="text-foreground text-xl font-semibold tracking-tight">
+            {t.projects.page.howItWorks}
+          </h2>
           <ul className="flex max-w-2xl flex-col gap-3">
             {howItWorks.map((point) => (
               <li key={`${project.slug}-${point}`} className="flex gap-3">
                 <span className="text-accent mt-1" aria-hidden="true">
                   •
                 </span>
-                <span className="text-base text-muted-foreground">{point}</span>
+                <span className="text-muted-foreground text-base">{point}</span>
               </li>
             ))}
           </ul>

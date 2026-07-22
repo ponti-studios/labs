@@ -24,7 +24,8 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
           "inline-flex size-8 p-2 items-center justify-center rounded-full border bg-background text-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50",
         month_grid: "w-full border-collapse",
         weekdays: "flex",
-        weekday: "flex size-8 items-center justify-center text-[0.8rem] font-normal text-muted-foreground",
+        weekday:
+          "flex size-8 items-center justify-center text-[0.8rem] font-normal text-muted-foreground",
         week: "mt-1 flex w-full",
         day: "relative size-8 p-0 text-center text-lg focus-within:z-20",
         day_button:
@@ -34,9 +35,11 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         today: "[&>button]:bg-primary [&>button]:text-primary-foreground",
         outside: "text-muted-foreground [&>button]:text-muted-foreground",
         disabled: "text-muted-foreground opacity-50",
-        range_start: "rounded-l-md bg-primary [&>button]:bg-primary [&>button]:text-primary-foreground",
+        range_start:
+          "rounded-l-md bg-primary [&>button]:bg-primary [&>button]:text-primary-foreground",
         range_middle: "bg-primary [&>button]:rounded-none [&>button]:text-primary-foreground",
-        range_end: "rounded-r-md bg-primary [&>button]:bg-primary [&>button]:text-primary-foreground",
+        range_end:
+          "rounded-r-md bg-primary [&>button]:bg-primary [&>button]:text-primary-foreground",
         hidden: "invisible",
         ...classNames,
       }}

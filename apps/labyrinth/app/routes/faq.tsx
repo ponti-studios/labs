@@ -19,15 +19,15 @@ export default function Faq() {
       {/* Hero */}
       <section className="section section-hero">
         <h1 className="display-1 text-foreground max-w-4xl">{copy.title}</h1>
-        <p className="text-base text-muted-foreground max-w-2xl">{copy.meta.description}</p>
+        <p className="text-muted-foreground max-w-2xl text-base">{copy.meta.description}</p>
       </section>
 
       {/* Q&A — editorial stack */}
       <section className="section gap-12">
         {copy.items.map((faq) => (
           <article key={faq.question} className="flex max-w-3xl flex-col gap-3">
-            <h2 className="text-lg font-semibold tracking-tight text-foreground">{faq.question}</h2>
-            <p className="text-base text-muted-foreground">{faq.answer}</p>
+            <h2 className="text-foreground text-lg font-semibold tracking-tight">{faq.question}</h2>
+            <p className="text-muted-foreground text-base">{faq.answer}</p>
           </article>
         ))}
       </section>
@@ -35,7 +35,7 @@ export default function Faq() {
       {/* Close */}
       <section className="section section-hero border-b-0">
         <h2 className="display-2 text-foreground max-w-3xl">{t.services.cta.title}</h2>
-        <p className="text-base text-muted-foreground max-w-xl">{t.services.cta.body}</p>
+        <p className="text-muted-foreground max-w-xl text-base">{t.services.cta.body}</p>
         <div className="flex flex-wrap items-center gap-6 pt-2">
           <Button asChild>
             <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
@@ -45,7 +45,7 @@ export default function Faq() {
           <Link
             to="/services"
             prefetch="intent"
-            className="text-sm text-foreground underline-offset-4 hover:underline"
+            className="text-foreground text-sm underline-offset-4 hover:underline"
           >
             {t.home.services.cta}
           </Link>

@@ -129,7 +129,9 @@ function Section({
         </Link>
       </div>
       {empty ? (
-        <p className="text-muted-foreground rounded-md border py-4 text-center text-sm">{emptyText}</p>
+        <p className="text-muted-foreground rounded-md border py-4 text-center text-sm">
+          {emptyText}
+        </p>
       ) : (
         <div className="flex flex-col gap-2">{children}</div>
       )}

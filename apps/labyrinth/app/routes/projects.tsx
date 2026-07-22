@@ -26,7 +26,9 @@ export default function Projects() {
       {projectSections.map((section) => {
         return (
           <section key={section.category} className="layout-stack">
-            <h2 className="text-xl font-semibold tracking-tight text-foreground border-border border-b pb-3">{section.label}</h2>
+            <h2 className="text-foreground border-border border-b pb-3 text-xl font-semibold tracking-tight">
+              {section.label}
+            </h2>
             <div className="border-border divide-border-border divide-y border-b">
               {section.projects.map((project) => (
                 <div key={project.slug} className="list-row group">
@@ -43,10 +45,12 @@ export default function Projects() {
                       />
                     ) : null}
                     <div className="flex min-w-0 flex-1 flex-col gap-1">
-                      <h3 className="text-xl font-semibold tracking-tight text-foreground group-hover:text-accent transition-colors motion-reduce:transition-none">
+                      <h3 className="text-foreground group-hover:text-accent text-xl font-semibold tracking-tight transition-colors motion-reduce:transition-none">
                         {project.name}
                       </h3>
-                      <p className="text-sm text-muted-foreground max-w-2xl">{project.shortDescription}</p>
+                      <p className="text-muted-foreground max-w-2xl text-sm">
+                        {project.shortDescription}
+                      </p>
                     </div>
                   </Link>
                 </div>

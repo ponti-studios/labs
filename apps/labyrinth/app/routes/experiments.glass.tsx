@@ -106,7 +106,10 @@ export default function ExperimentsGlass() {
               ).map(({ channel, color, label }) => (
                 <div key={channel} className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor={channel} className="text-muted-foreground flex items-center gap-2">
+                    <Label
+                      htmlFor={channel}
+                      className="text-muted-foreground flex items-center gap-2"
+                    >
                       <span className={cn("inline-block size-2 rounded-full", color)} />
                       {label}
                     </Label>

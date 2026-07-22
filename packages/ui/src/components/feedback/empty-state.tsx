@@ -37,9 +37,9 @@ export function EmptyState({
     <section
       className={cn(
         "rounded-lg px-5 py-8",
-        variant === "default" && "border bg-card",
-        variant === "dashed" && "border bg-card border-dashed",
-        variant === "search" && "border bg-muted border-dashed",
+        variant === "default" && "bg-card border",
+        variant === "dashed" && "bg-card border border-dashed",
+        variant === "search" && "bg-muted border border-dashed",
         variant === "quiet" && "bg-surface",
         centered
           ? cn(
@@ -51,13 +51,23 @@ export function EmptyState({
       )}
     >
       {icon ? (
-        <div className="text-muted-foreground mb-3 flex size-11 items-center justify-center" aria-hidden>
+        <div
+          className="text-muted-foreground mb-3 flex size-11 items-center justify-center"
+          aria-hidden
+        >
           {icon}
         </div>
       ) : null}
       <div className={cn("space-y-2", centered && "max-w-[34ch]")}>
-        <h2 className={cn("text-foreground font-semibold tracking-tight", large ? "text-lg" : "text-base")}>{title}</h2>
-        {description ? <p className="text-sm text-muted-foreground">{description}</p> : null}
+        <h2
+          className={cn(
+            "text-foreground font-semibold tracking-tight",
+            large ? "text-lg" : "text-base",
+          )}
+        >
+          {title}
+        </h2>
+        {description ? <p className="text-muted-foreground text-sm">{description}</p> : null}
       </div>
       {children ? <div className="mt-3">{children}</div> : null}
       {action ? <div className="mt-4">{action}</div> : null}

@@ -5,14 +5,26 @@ import * as React from "react";
 
 import { cn } from "../../lib/utils";
 
-type SliderProps = Omit<React.ComponentProps<typeof SliderPrimitive.Root>, "onValueChange" | "value" | "defaultValue"> & {
+type SliderProps = Omit<
+  React.ComponentProps<typeof SliderPrimitive.Root>,
+  "onValueChange" | "value" | "defaultValue"
+> & {
   value?: number[];
   defaultValue?: number[];
   onValueChange?: (value: number[]) => void;
 };
 
 const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
-  ({ className, onValueChange, "aria-label": ariaLabel, "aria-labelledby": ariaLabelledby, ...props }, ref) => (
+  (
+    {
+      className,
+      onValueChange,
+      "aria-label": ariaLabel,
+      "aria-labelledby": ariaLabelledby,
+      ...props
+    },
+    ref,
+  ) => (
     <SliderPrimitive.Root
       ref={ref}
       className={cn("relative flex w-full touch-none items-center select-none", className)}
@@ -25,7 +37,7 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
       <SliderPrimitive.Thumb
         aria-label={ariaLabel ?? "Slider"}
         aria-labelledby={ariaLabelledby}
-        className="border-border focus-visible:border-ring focus-visible:bg-accent focus-visible:ring-ring block h-6 w-6 rounded-full border bg-background shadow-sm ring-1 ring-black/5 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+        className="border-border focus-visible:border-ring focus-visible:bg-accent focus-visible:ring-ring bg-background block h-6 w-6 rounded-full border shadow-sm ring-1 ring-black/5 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
       />
     </SliderPrimitive.Root>
   ),

@@ -4,11 +4,22 @@ import * as React from "react";
 
 import { cn } from "../../lib/utils";
 
-function Accordion({ type, collapsible: _collapsible, ...props }: React.ComponentProps<typeof AccordionPrimitive.Root> & {
+function Accordion({
+  type,
+  collapsible: _collapsible,
+  ...props
+}: React.ComponentProps<typeof AccordionPrimitive.Root> & {
   type?: "single" | "multiple";
   collapsible?: boolean;
 }) {
-  return <AccordionPrimitive.Root data-slot="accordion" multiple={type === "multiple"} {...props} className="w-full" />;
+  return (
+    <AccordionPrimitive.Root
+      data-slot="accordion"
+      multiple={type === "multiple"}
+      {...props}
+      className="w-full"
+    />
+  );
 }
 
 function AccordionItem({
@@ -18,10 +29,7 @@ function AccordionItem({
   return (
     <AccordionPrimitive.Item
       data-slot="accordion-item"
-      className={cn(
-        "mb-2 overflow-hidden rounded-md border last:mb-0",
-        className,
-      )}
+      className={cn("mb-2 overflow-hidden rounded-md border last:mb-0", className)}
       {...props}
     />
   );

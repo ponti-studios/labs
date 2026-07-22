@@ -115,7 +115,9 @@ export default function TarotRoute() {
 
         {!isHydrated ? (
           <Card className="border-border bg-background border p-8 shadow-sm">
-            <div className="text-muted-foreground py-16 text-center">Preparing today&apos;s ritual...</div>
+            <div className="text-muted-foreground py-16 text-center">
+              Preparing today&apos;s ritual...
+            </div>
           </Card>
         ) : result ? (
           <DailyTarotReadingView result={result} />

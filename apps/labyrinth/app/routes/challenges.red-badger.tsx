@@ -565,7 +565,9 @@ function PuzzleBar({
         </span>
       )}
       {victory && <span className="font-semibold text-green-600">Victory! 🎉</span>}
-      {!victory && <span className="text-muted-foreground/60 text-xs">Land your robot on the ★</span>}
+      {!victory && (
+        <span className="text-muted-foreground/60 text-xs">Land your robot on the ★</span>
+      )}
       <button
         onClick={() => dispatch({ type: "NEW_PUZZLE" })}
         className="text-muted-foreground hover:text-foreground ml-auto font-mono text-xs underline underline-offset-2"
@@ -697,7 +699,9 @@ export default function RedBadger() {
             </div>
           )}
           {!state.pendingPos && (
-            <div className="text-muted-foreground/60 text-xs">← Click a cell to place your robot</div>
+            <div className="text-muted-foreground/60 text-xs">
+              ← Click a cell to place your robot
+            </div>
           )}
 
           <CommandBuilder cmdInput={state.cmdInput} phase={state.phase} dispatch={dispatch} />

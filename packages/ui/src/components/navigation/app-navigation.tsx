@@ -83,7 +83,7 @@ export function AppNavigation({
     );
 
   return (
-    <header className="sticky top-0 z-50 flex w-full justify-center border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 flex w-full justify-center border-b px-4 backdrop-blur">
       <nav className="w-full max-w-7xl" aria-label={ariaLabel}>
         <div className="flex min-h-14 items-center justify-between gap-6">
           <div className="flex min-w-0 items-center">

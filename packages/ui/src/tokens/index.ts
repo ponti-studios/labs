@@ -13,9 +13,13 @@ const toBezier = (value: number[]) => `cubic-bezier(${value.join(", ")})`;
 type NormalizedSpacingKey<Key extends string> = Key extends `${infer Whole}-${infer Fraction}`
   ? `${Whole}.${Fraction}`
   : Key;
-export type SpacingToken = NormalizedSpacingKey<keyof typeof foundations["spacing-scale"] & string>;
+export type SpacingToken = NormalizedSpacingKey<
+  keyof (typeof foundations)["spacing-scale"] & string
+>;
 
-export const colorTokenNames = Object.keys(lightTokens.color) as Array<keyof typeof lightTokens.color>;
+export const colorTokenNames = Object.keys(lightTokens.color) as Array<
+  keyof typeof lightTokens.color
+>;
 export type ColorToken = keyof typeof lightTokens.color;
 export type ColorMode = "light" | "dark";
 export type ColorTheme = Readonly<Record<ColorToken, string>>;
@@ -34,7 +38,10 @@ export const colors = colorTokenNames.reduce(
 );
 
 export const spacing = Object.fromEntries(
-  Object.entries(foundations["spacing-scale"]).map(([key, value]) => [key.replace("-", "."), toPixels(value)]),
+  Object.entries(foundations["spacing-scale"]).map(([key, value]) => [
+    key.replace("-", "."),
+    toPixels(value),
+  ]),
 ) as Record<SpacingToken, number>;
 
 export const fontFamilies = Object.fromEntries(
@@ -48,7 +55,7 @@ export const textSizes = Object.fromEntries(
 export const textLineHeights = foundations["text-line-height"];
 export const fontWeights = Object.fromEntries(
   Object.entries(foundations["font-weight"]).map(([key, value]) => [key, String(value)]),
-) as Record<keyof typeof foundations["font-weight"], string>;
+) as Record<keyof (typeof foundations)["font-weight"], string>;
 export const tracking = foundations.tracking;
 export const leading = foundations.leading;
 export const radii = Object.fromEntries(

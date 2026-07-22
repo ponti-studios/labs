@@ -32,7 +32,7 @@ function Stepper({
   const atMax = value >= max;
 
   return (
-    <div className={cn("flex items-center rounded-lg border border-input bg-muted", className)}>
+    <div className={cn("border-input bg-muted flex items-center rounded-lg border", className)}>
       <Button
         type="button"
         variant="ghost"

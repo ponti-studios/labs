@@ -66,7 +66,10 @@ export default function TflCamera({ loaderData }: Route.ComponentProps) {
     <div className="space-y-3">
       {/* Header row */}
       <div className="flex items-center justify-between gap-3">
-        <Link to="/tfl" className="text-muted-foreground hover:text-foreground text-xs transition-colors">
+        <Link
+          to="/tfl"
+          className="text-muted-foreground hover:text-foreground text-xs transition-colors"
+        >
           ← Cameras
         </Link>
         <div className="flex items-center gap-1.5">

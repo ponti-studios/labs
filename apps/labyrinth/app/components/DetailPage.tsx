@@ -18,8 +18,10 @@ export function DetailHeader({ back, media, metadata, summary, title }: DetailHe
       </div>
       <div className="flex min-w-0 flex-col gap-4">
         <h1 className="display-1 text-foreground max-w-4xl">{title}</h1>
-        {metadata ? <div className="text-sm text-muted-foreground max-w-2xl">{metadata}</div> : null}
-        <p className="text-base text-foreground max-w-2xl">{summary}</p>
+        {metadata ? (
+          <div className="text-muted-foreground max-w-2xl text-sm">{metadata}</div>
+        ) : null}
+        <p className="text-foreground max-w-2xl text-base">{summary}</p>
       </div>
     </section>
   );
@@ -50,10 +52,10 @@ export function DetailNavigation({ ariaLabel, next, previous }: DetailNavigation
             aria-label={`${previous.label}: ${previous.title}`}
             className="detail-navigation-link group"
           >
-            <span className="text-xs text-muted-foreground group-hover:text-accent transition-colors motion-reduce:transition-none">
+            <span className="text-muted-foreground group-hover:text-accent text-xs transition-colors motion-reduce:transition-none">
               ← {previous.label}
             </span>
-            <span className="text-lg font-semibold tracking-tight text-foreground group-hover:text-accent transition-colors motion-reduce:transition-none">
+            <span className="text-foreground group-hover:text-accent text-lg font-semibold tracking-tight transition-colors motion-reduce:transition-none">
               {previous.title}
             </span>
           </Link>
@@ -65,10 +67,10 @@ export function DetailNavigation({ ariaLabel, next, previous }: DetailNavigation
             aria-label={`${next.label}: ${next.title}`}
             className="detail-navigation-link group sm:ml-auto sm:text-right"
           >
-            <span className="text-xs text-muted-foreground group-hover:text-accent transition-colors motion-reduce:transition-none">
+            <span className="text-muted-foreground group-hover:text-accent text-xs transition-colors motion-reduce:transition-none">
               {next.label} →
             </span>
-            <span className="text-lg font-semibold tracking-tight text-foreground group-hover:text-accent transition-colors motion-reduce:transition-none">
+            <span className="text-foreground group-hover:text-accent text-lg font-semibold tracking-tight transition-colors motion-reduce:transition-none">
               {next.title}
             </span>
           </Link>

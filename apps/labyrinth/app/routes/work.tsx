@@ -38,13 +38,13 @@ export default function Work() {
                   />
                 ) : null}
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
-                  <span className="text-xs text-muted-foreground tracking-wide uppercase">
+                  <span className="text-muted-foreground text-xs tracking-wide uppercase">
                     {snapshot.industry}
                   </span>
-                  <h3 className="text-xl font-semibold tracking-tight text-foreground group-hover:text-accent transition-colors motion-reduce:transition-none">
+                  <h3 className="text-foreground group-hover:text-accent text-xl font-semibold tracking-tight transition-colors motion-reduce:transition-none">
                     {snapshot.client}
                   </h3>
-                  <p className="text-sm text-muted-foreground max-w-2xl">{snapshot.description}</p>
+                  <p className="text-muted-foreground max-w-2xl text-sm">{snapshot.description}</p>
                 </div>
               </Link>
             </div>

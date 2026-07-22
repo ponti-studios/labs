@@ -98,11 +98,11 @@ function TemporalContext({ context }: { context: CalendarEventContext }) {
 
   return (
     <div className="border-border min-w-0 border-t pt-2">
-      <div className="subtext-lg font-semibold tracking-tight text-muted-foreground flex items-center gap-1.5 uppercase">
+      <div className="subtext-lg text-muted-foreground flex items-center gap-1.5 font-semibold tracking-tight uppercase">
         <Icon aria-hidden="true" className="size-3.5 shrink-0" />
         <span>{context.label}</span>
       </div>
-      <p className="text-sm text-foreground mt-1">{context.detail}</p>
+      <p className="text-foreground mt-1 text-sm">{context.detail}</p>
     </div>
   );
 }
@@ -128,7 +128,7 @@ function TemporalMoment({ event, nowMinute }: { event: CalendarEvent; nowMinute:
     >
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <div className="text-xs text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-1 tabular-nums">
+          <div className="text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-1 text-xs tabular-nums">
             {Icon && <Icon aria-hidden="true" className="text-accent size-4 shrink-0" />}
             <span>{formatTime(event.startMinute)}</span>
             <span aria-hidden="true">·</span>
@@ -136,13 +136,19 @@ function TemporalMoment({ event, nowMinute }: { event: CalendarEvent; nowMinute:
             {isPresent && <span className="text-accent font-semibold uppercase">Here</span>}
           </div>
 
-          <h3 className={`${isPresent ? "text-xl font-semibold tracking-tight" : "text-base font-semibold"} mt-2`}>{event.title}</h3>
-          <p className={`${isPresent ? "text-sm" : "text-sm"} text-muted-foreground mt-1 max-w-2xl`}>
+          <h3
+            className={`${isPresent ? "text-xl font-semibold tracking-tight" : "text-base font-semibold"} mt-2`}
+          >
+            {event.title}
+          </h3>
+          <p
+            className={`${isPresent ? "text-sm" : "text-sm"} text-muted-foreground mt-1 max-w-2xl`}
+          >
             {event.detail}
           </p>
 
           {event.location && (
-            <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1.5">
+            <p className="text-muted-foreground mt-2 flex items-center gap-1.5 text-xs">
               <MapPin aria-hidden="true" className="size-3.5 shrink-0" />
               {event.location}
             </p>
@@ -150,7 +156,7 @@ function TemporalMoment({ event, nowMinute }: { event: CalendarEvent; nowMinute:
         </div>
 
         {isPresent && (
-          <span className="text-xs text-accent hidden shrink-0 pt-1 uppercase sm:inline">
+          <span className="text-accent hidden shrink-0 pt-1 text-xs uppercase sm:inline">
             Happening now
           </span>
         )}
@@ -189,7 +195,7 @@ function DayLandmark({
     <section data-stream-day={offset}>
       <header className="flex items-center gap-3 py-8">
         <h2 className="ui-data-label text-foreground">{formatDay(date, offset)}</h2>
-        <p className="text-sm text-muted-foreground">{formatDate(date)}</p>
+        <p className="text-muted-foreground text-sm">{formatDate(date)}</p>
         <div className="border-border ml-1 h-px flex-1 border-t" />
       </header>
 
@@ -236,7 +242,7 @@ export function Calendar({ getEvents }: CalendarProps) {
   return (
     <section aria-label="A continuous stream of lived time">
       <div className="mb-2 flex items-center justify-between gap-4">
-        <p className="text-xs text-muted-foreground">A day in motion</p>
+        <p className="text-muted-foreground text-xs">A day in motion</p>
         <button
           type="button"
           onClick={() => scrollToNow()}
@@ -260,7 +266,7 @@ export function Calendar({ getEvents }: CalendarProps) {
             />
           ))
         ) : (
-          <div className="text-sm text-muted-foreground flex min-h-96 items-center justify-center p-6">
+          <div className="text-muted-foreground flex min-h-96 items-center justify-center p-6 text-sm">
             Finding your place in time…
           </div>
         )}

@@ -131,7 +131,9 @@ export default function CreatePage() {
               rows={2}
               className="border-input bg-background focus:ring-ring w-full resize-none rounded-xl border px-4 py-3 text-sm focus:ring-1 focus:outline-none"
             />
-            <p className="text-muted-foreground text-[10px]">You can edit this if it's not quite right.</p>
+            <p className="text-muted-foreground text-[10px]">
+              You can edit this if it's not quite right.
+            </p>
           </div>
 
           {error && (
