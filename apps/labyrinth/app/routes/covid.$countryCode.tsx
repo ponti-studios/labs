@@ -68,7 +68,9 @@ export default function CovidPage() {
   if (!timeSeriesData || timeSeriesData.length === 0) {
     return (
       <div className="ui-flat-card text-center">
-        <p className="text-muted-foreground text-sm">No COVID data available for the selected country.</p>
+        <p className="text-muted-foreground text-sm">
+          No COVID data available for the selected country.
+        </p>
       </div>
     );
   }

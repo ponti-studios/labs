@@ -240,7 +240,7 @@ function UpdateGuardClient({
                 {copy?.refreshButton ?? "Refresh"}
               </button>
             ) : null}
-          <button type="button" onClick={closePrompt} className="text-muted-foreground text-sm">
+            <button type="button" onClick={closePrompt} className="text-muted-foreground text-sm">
               {copy?.closeButton ?? "Close"}
             </button>
           </div>

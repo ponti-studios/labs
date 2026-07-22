@@ -7,11 +7,17 @@ function Popover({ ...props }: React.ComponentProps<typeof PopoverPrimitive.Root
   return <PopoverPrimitive.Root data-slot="popover" {...props} />;
 }
 
-function PopoverTrigger({ asChild, children, ...props }: React.ComponentProps<typeof PopoverPrimitive.Trigger> & { asChild?: boolean }) {
+function PopoverTrigger({
+  asChild,
+  children,
+  ...props
+}: React.ComponentProps<typeof PopoverPrimitive.Trigger> & { asChild?: boolean }) {
   return (
     <PopoverPrimitive.Trigger
       data-slot="popover-trigger"
-      {...(asChild && React.isValidElement(children) ? { render: children as React.ReactElement } : {})}
+      {...(asChild && React.isValidElement(children)
+        ? { render: children as React.ReactElement }
+        : {})}
       {...props}
     >
       {!asChild && children}
@@ -35,7 +41,12 @@ function PopoverContent({
 }) {
   return (
     <PopoverPrimitive.Portal>
-      <PopoverPrimitive.Positioner align={align} side={side} sideOffset={sideOffset} collisionAvoidance={avoidCollisions ? undefined : { side: "none", align: "none" }}>
+      <PopoverPrimitive.Positioner
+        align={align}
+        side={side}
+        sideOffset={sideOffset}
+        collisionAvoidance={avoidCollisions ? undefined : { side: "none", align: "none" }}
+      >
         <PopoverPrimitive.Popup
           data-slot="popover-content"
           className={cn(

@@ -183,12 +183,16 @@ export default function OutlierDetectionPage() {
                         <Badge variant={outlierBadgeVariant(outlier.severity)}>
                           {outlier.severity}
                         </Badge>
-                        <span className="text-muted-foreground text-xs capitalize">{outlier.type}</span>
+                        <span className="text-muted-foreground text-xs capitalize">
+                          {outlier.type}
+                        </span>
                         <span className="text-muted-foreground text-xs">
                           {new Date(outlier.date).toLocaleDateString()}
                         </span>
                       </div>
-                      <p className="text-muted-foreground truncate text-xs">{outlier.description}</p>
+                      <p className="text-muted-foreground truncate text-xs">
+                        {outlier.description}
+                      </p>
                     </div>
                     <div className="shrink-0 text-right">
                       <p className="text-foreground text-sm font-light tabular-nums">

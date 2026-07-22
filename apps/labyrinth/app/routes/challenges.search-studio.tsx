@@ -163,7 +163,9 @@ function ResultRow({
             {highlightText(result.subtitle, query)}
           </span>
           <span className="text-muted-foreground/40 text-[11px]">·</span>
-          <span className="text-muted-foreground/70 text-[12px] tabular-nums">{publishedLabel}</span>
+          <span className="text-muted-foreground/70 text-[12px] tabular-nums">
+            {publishedLabel}
+          </span>
           {result.location && (
             <>
               <span className="text-muted-foreground/40 text-[11px]">·</span>
@@ -238,7 +240,9 @@ function FilterPill({
       onClick={onClick}
       className={[
         "inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-        active ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground hover:bg-muted",
+        active
+          ? "bg-primary text-primary-foreground"
+          : "text-muted-foreground hover:text-foreground hover:bg-muted",
       ].join(" ")}
     >
       {children}
@@ -350,7 +354,9 @@ export default function SearchStudio() {
                 All
                 {totalResults > 0 && (
                   <span
-                    className={kindFilter === "all" ? "text-foreground/60" : "text-muted-foreground/60"}
+                    className={
+                      kindFilter === "all" ? "text-foreground/60" : "text-muted-foreground/60"
+                    }
                   >
                     {totalResults.toLocaleString()}
                   </span>
@@ -367,7 +373,9 @@ export default function SearchStudio() {
                 Films
                 {kindCounts.movie > 0 && (
                   <span
-                    className={kindFilter === "movie" ? "text-foreground/60" : "text-muted-foreground/60"}
+                    className={
+                      kindFilter === "movie" ? "text-foreground/60" : "text-muted-foreground/60"
+                    }
                   >
                     {kindCounts.movie.toLocaleString()}
                   </span>
@@ -383,7 +391,11 @@ export default function SearchStudio() {
                 <LucideTv className="h-3.5 w-3.5" />
                 TV
                 {kindCounts.tv > 0 && (
-                  <span className={kindFilter === "tv" ? "text-foreground/60" : "text-muted-foreground/60"}>
+                  <span
+                    className={
+                      kindFilter === "tv" ? "text-foreground/60" : "text-muted-foreground/60"
+                    }
+                  >
                     {kindCounts.tv.toLocaleString()}
                   </span>
                 )}
@@ -522,7 +534,9 @@ export default function SearchStudio() {
                     <LucideChevronLeft className="h-4 w-4" />
                     Previous
                   </button>
-                  <span className="text-muted-foreground/60 text-[12px] tabular-nums">Page {page}</span>
+                  <span className="text-muted-foreground/60 text-[12px] tabular-nums">
+                    Page {page}
+                  </span>
                   <button
                     type="button"
                     onClick={() => setPage((p) => (data?.hasNext ? p + 1 : p))}

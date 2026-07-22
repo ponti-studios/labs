@@ -104,7 +104,9 @@ export default function FeeOrUpfront(): JSX.Element {
           </div>
 
           <div className="border-border border-t pt-3">
-            <p className="text-muted-foreground mb-0.5 text-[10px] tracking-wide uppercase">Total</p>
+            <p className="text-muted-foreground mb-0.5 text-[10px] tracking-wide uppercase">
+              Total
+            </p>
             <p
               className={`font-mono text-2xl font-bold tabular-nums ${winnerIsUpfront ? "text-green-700" : ""}`}
             >
@@ -177,7 +179,9 @@ export default function FeeOrUpfront(): JSX.Element {
           </div>
 
           <div className="border-border border-t pt-3">
-            <p className="text-muted-foreground mb-0.5 text-[10px] tracking-wide uppercase">Total</p>
+            <p className="text-muted-foreground mb-0.5 text-[10px] tracking-wide uppercase">
+              Total
+            </p>
             <p
               className={`font-mono text-2xl font-bold tabular-nums ${!winnerIsUpfront ? "text-green-700" : ""}`}
             >
@@ -189,7 +193,9 @@ export default function FeeOrUpfront(): JSX.Element {
 
       <p className="text-muted-foreground text-center text-xs">
         {winnerIsUpfront ? "Upfront" : "Per-transaction"} saves{" "}
-        <span className="text-foreground font-mono font-semibold">${result.savings.toFixed(2)}</span>
+        <span className="text-foreground font-mono font-semibold">
+          ${result.savings.toFixed(2)}
+        </span>
       </p>
 
       {/* Breakdown table */}

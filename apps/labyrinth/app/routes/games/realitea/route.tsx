@@ -223,8 +223,10 @@ type ErrorBoundaryProps = { error: Error };
 export function ErrorBoundary({ error }: ErrorBoundaryProps) {
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center gap-3 px-4 text-center">
-      <p className="text-xs text-muted-foreground tracking-[0.15em] uppercase">Something went wrong</p>
-      <p className="text-xs text-muted-foreground">
+      <p className="text-muted-foreground text-xs tracking-[0.15em] uppercase">
+        Something went wrong
+      </p>
+      <p className="text-muted-foreground text-xs">
         {error.message || "The RealiTea puzzle couldn't load. Try refreshing the page."}
       </p>
       <Button asChild variant="default" className="mt-2">
@@ -400,7 +402,7 @@ export default function RealiTeaRoute() {
           <CardContent className="flex flex-col gap-4">
             <div>
               <p className="ui-eyebrow">{game.isSolved ? "The Story" : "The puzzle ended"}</p>
-              <p className="text-xs mt-1">{currentPuzzle.detail.toLocaleLowerCase()}</p>
+              <p className="mt-1 text-xs">{currentPuzzle.detail.toLocaleLowerCase()}</p>
             </div>
             <div className="flex justify-end gap-2">
               <Button aria-label="Share result" onClick={share} type="button" variant="secondary">

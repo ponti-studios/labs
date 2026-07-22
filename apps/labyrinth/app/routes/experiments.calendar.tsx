@@ -172,7 +172,7 @@ export default function CalendarExperiment() {
             <p className="ui-data-label mb-1">Time, as it is lived</p>
             <h1 className="text-xl font-semibold tracking-tight">Your day in one stream.</h1>
           </div>
-          <p className="text-xs text-muted-foreground hidden pt-1 text-right sm:block">
+          <p className="text-muted-foreground hidden pt-1 text-right text-xs sm:block">
             Calendar experiment
           </p>
         </header>

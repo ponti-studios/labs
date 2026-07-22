@@ -16,8 +16,8 @@ export function meta(): Array<{
 function Teaser({ title, to }: { title: string; to: string }) {
   return (
     <section className="section section-compact underline-offset-4 hover:cursor-pointer hover:underline">
-      <Link to={to} prefetch="intent" className="text-sm flex justify-between">
-        <h2 className="text-xl font-semibold tracking-tight text-foreground font-bold">{title}</h2>
+      <Link to={to} prefetch="intent" className="flex justify-between text-sm">
+        <h2 className="text-foreground text-xl font-bold font-semibold tracking-tight">{title}</h2>
         <LucideArrowBigRight className="text-accent" aria-hidden="true" />
       </Link>
     </section>
@@ -62,7 +62,7 @@ export default function Home() {
       <section className="section section-hero md:flex-row md:justify-between">
         <div>
           <HeroHeadline />
-          <p className="text-base text-muted-foreground max-w-2xl">{t.home.hero.subtitle}</p>
+          <p className="text-muted-foreground max-w-2xl text-base">{t.home.hero.subtitle}</p>
         </div>
         <div className="flex flex-wrap items-center gap-6 pt-2">
           <Button asChild variant="default">

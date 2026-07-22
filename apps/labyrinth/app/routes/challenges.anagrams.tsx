@@ -199,7 +199,9 @@ export default function Anagrams(): JSX.Element {
                         <TableCell className={`font-mono font-medium ${color.row}`}>
                           {step.word}
                         </TableCell>
-                        <TableCell className="text-muted-foreground font-mono">{step.sortedKey}</TableCell>
+                        <TableCell className="text-muted-foreground font-mono">
+                          {step.sortedKey}
+                        </TableCell>
                         <TableCell>
                           <span
                             className={`rounded border px-2 py-0.5 text-xs font-medium ${color.badge}`}

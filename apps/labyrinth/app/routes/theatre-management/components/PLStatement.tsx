@@ -76,7 +76,9 @@ export function PLStatement({
           <div className="mt-1.5 flex items-center gap-2">
             <span className={cn("size-1.5 rounded-full", healthDot)} />
             <span className={cn("text-xs font-medium", healthTextColor)}>{healthLabel}</span>
-            <span className="text-muted-foreground text-xs">· {(d.margin * 100).toFixed(1)}% margin</span>
+            <span className="text-muted-foreground text-xs">
+              · {(d.margin * 100).toFixed(1)}% margin
+            </span>
           </div>
         </div>
       </CardContent>

@@ -10,16 +10,11 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline:
-          "border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary:
-          "border-input bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost:
-          "border-transparent bg-transparent hover:bg-accent hover:text-accent-foreground",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline: "border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        secondary: "border-input bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "border-transparent bg-transparent hover:bg-accent hover:text-accent-foreground",
         link: "border-transparent bg-transparent px-0 text-primary underline-offset-4 hover:underline",
       },
       size: {
@@ -65,7 +60,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       const renderedChild = React.cloneElement(child, {
         children: isLoading ? (
           <>
-            <span className="opacity-0" aria-hidden="true">{child.props.children}</span>
+            <span className="opacity-0" aria-hidden="true">
+              {child.props.children}
+            </span>
             <span className="absolute inset-0 inline-flex items-center justify-center">
               <Spinner size="sm" aria-hidden="true" />
             </span>
@@ -105,7 +102,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {isLoading ? (
           <>
-            <span className="opacity-0" aria-hidden="true">{children}</span>
+            <span className="opacity-0" aria-hidden="true">
+              {children}
+            </span>
             <span className="absolute inset-0 inline-flex items-center justify-center">
               <Spinner size="sm" aria-hidden="true" />
             </span>

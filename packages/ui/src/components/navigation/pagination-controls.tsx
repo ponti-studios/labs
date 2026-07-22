@@ -19,7 +19,7 @@ export function PaginationControls({
   }
 
   return (
-    <div className="text-sm text-muted-foreground flex items-center justify-end gap-2">
+    <div className="text-muted-foreground flex items-center justify-end gap-2 text-sm">
       <Button
         type="button"
         variant="outline"
@@ -31,7 +31,7 @@ export function PaginationControls({
         <ChevronLeft className="size-4" aria-hidden />
         Previous
       </Button>
-      <span className="text-xs text-foreground">
+      <span className="text-foreground text-xs">
         Page {currentPage + 1} of {totalPages}
       </span>
       <Button
