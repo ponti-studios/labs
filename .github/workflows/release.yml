@@ -3,6 +3,12 @@ name: release-ui
 on:
   push:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: Existing UI release tag to publish once
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -14,8 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     outputs:
-      release_created: ${{ steps.release.outputs['packages--ui--release_created'] }}
-      tag_name: ${{ steps.release.outputs['packages--ui--tag_name'] }}
+      release_created: ${{ steps.release.outputs['packages/ui--release_created'] }}
+      tag_name: ${{ steps.release.outputs['packages/ui--tag_name'] }}
     steps:
       - uses: googleapis/release-please-action@v5
         id: release
@@ -26,7 +32,7 @@ jobs:
 
   publish-ui:
     needs: release-ui
-    if: ${{ needs.release-ui.outputs.release_created == 'true' }}
+    if: ${{ needs.release-ui.outputs.release_created == 'true' || (github.event_name == 'workflow_dispatch' && inputs.tag_name != '') }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -35,6 +41,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
+          ref: ${{ needs.release-ui.outputs.tag_name || inputs.tag_name }}
           fetch-depth: 0
 
       - uses: pnpm/action-setup@v6
@@ -52,13 +59,13 @@ jobs:
 
       - name: Verify release tag
         env:
-          RELEASE_TAG: ${{ needs.release-ui.outputs.tag_name }}
+          RELEASE_TAG: ${{ needs.release-ui.outputs.tag_name || inputs.tag_name }}
         run: |
           VERSION="$(node -p 'require("./packages/ui/package.json").version')"
           test "$RELEASE_TAG" = "ui-v$VERSION"
           git fetch --tags origin
           test -n "$(git rev-parse --verify "refs/tags/$RELEASE_TAG")"
-          test "$(git rev-list -n 1 "$RELEASE_TAG")" = "$GITHUB_SHA"
+          test "$(git rev-list -n 1 "$RELEASE_TAG")" = "$(git rev-parse HEAD)"
 
       - name: Publish UI package
         run: pnpm --filter @ponti-studios/ui publish --no-git-checks --provenance
