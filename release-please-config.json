@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/release-please-config.json",
+  "packages": {
+    "packages/ui": {
+      "release-type": "node",
+      "package-name": "@ponti-studios/ui",
+      "component": "ui",
+      "include-component-in-tag": true,
+      "include-v-in-tag": true
+    }
+  }
+}
