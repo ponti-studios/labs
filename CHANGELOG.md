@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.1](https://github.com/ponti-studios/labs/compare/v1.11.0...v1.11.1) (2026-07-22)
+
+
+### Bug Fixes
+
+* address UI review findings ([#203](https://github.com/ponti-studios/labs/issues/203)) ([3cc000c](https://github.com/ponti-studios/labs/commit/3cc000cc633ee3420007f2f4dad3e10cb7d1f2b7))
+
 ## [1.11.0](https://github.com/ponti-studios/labs/compare/v1.10.0...v1.11.0) (2026-07-20)
 
 
