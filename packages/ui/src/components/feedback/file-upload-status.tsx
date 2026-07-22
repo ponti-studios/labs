@@ -144,7 +144,7 @@ const ProcessingStat = memo(function ProcessingStat({
 }) {
   if (value === undefined) return null;
   return (
-    <div>
+    <div className="py-2">
       <dt className="text-muted-foreground text-sm font-medium">{label}</dt>
       <dd className="text-foreground mt-1 text-sm">{value.toLocaleString()}</dd>
     </div>

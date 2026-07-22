@@ -38,12 +38,38 @@ function CommandInput({ className, onValueChange, onChange, "aria-label": ariaLa
   );
 }
 
-function CommandList(props: React.ComponentProps<typeof CommandPrimitive.List>) {
-  return <CommandPrimitive.List data-slot="command-list" aria-label="Command results" tabIndex={0} className="max-h-75 scroll-py-1 overflow-x-hidden overflow-y-auto" {...props} />;
+function CommandList({ children, ...props }: React.ComponentProps<typeof CommandPrimitive.List>) {
+  if (typeof children === "function") {
+    return (
+      <CommandPrimitive.List data-slot="command-list" aria-label="Command results" tabIndex={0} className="max-h-75 scroll-py-1 overflow-x-hidden overflow-y-auto" {...props}>
+        {children}
+      </CommandPrimitive.List>
+    );
+  }
+
+  const listChildren: React.ReactNode[] = [];
+  const auxiliaryChildren: React.ReactNode[] = [];
+
+  React.Children.forEach(children, (child) => {
+    if (React.isValidElement(child) && (child.type === CommandEmpty || child.type === CommandSeparator)) {
+      auxiliaryChildren.push(child);
+    } else {
+      listChildren.push(child);
+    }
+  });
+
+  return (
+    <div data-slot="command-list-container" className="relative">
+      <CommandPrimitive.List data-slot="command-list" aria-label="Command results" tabIndex={0} className="max-h-75 scroll-py-1 overflow-x-hidden overflow-y-auto" {...props}>
+        {listChildren}
+      </CommandPrimitive.List>
+      {auxiliaryChildren}
+    </div>
+  );
 }
 
 function CommandEmpty({ ...props }: React.ComponentProps<typeof CommandPrimitive.Empty>) {
-  return <CommandPrimitive.Empty data-slot="command-empty" role="option" aria-disabled="true" className="py-6 text-center text-sm" {...props} />;
+  return <CommandPrimitive.Empty data-slot="command-empty" className="py-6 text-center text-sm" {...props} />;
 }
 
 function CommandGroup({ className, heading, children, ...props }: React.ComponentProps<typeof CommandPrimitive.Group> & { heading?: React.ReactNode }) {
@@ -61,8 +87,8 @@ function CommandItem({ className, onSelect, onClick, ...props }: CommandItemProp
   return <CommandPrimitive.Item data-slot="command-item" className={`data-highlighted:bg-accent data-highlighted:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-hidden select-none data-disabled:pointer-events-none data-disabled:opacity-50 ${className ?? ""}`} onClick={(event) => { onClick?.(event); onSelect?.(); }} {...props} />;
 }
 
-function CommandSeparator(props: React.ComponentProps<typeof CommandPrimitive.Separator>) {
-  return <CommandPrimitive.Separator data-slot="command-separator" role="option" aria-disabled="true" aria-hidden="true" className="bg-border -mx-1 h-px" {...props} />;
+function CommandSeparator({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="command-separator" role="presentation" aria-hidden="true" className={`bg-border -mx-1 h-px ${className ?? ""}`} {...props} />;
 }
 
 function CommandShortcut(props: React.ComponentProps<"span">) {
