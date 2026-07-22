@@ -23,14 +23,14 @@ export function FilterChip({ label, onRemove, onClick, className }: FilterChipPr
   return (
     <span
       className={cn(
-        "border-subtle bg-panel text-primary inline-flex items-center rounded-full border text-sm font-medium",
+        "border-border bg-secondary text-secondary-foreground inline-flex items-center rounded-full border text-sm font-medium",
         className,
       )}
     >
       {labelContent}
       <button
         type="button"
-        className="text-secondary hover:text-primary mr-1 flex size-10 items-center justify-center rounded-full"
+        className="text-muted-foreground hover:text-foreground mr-1 flex size-10 items-center justify-center rounded-full"
         onClick={onRemove}
         aria-label={`Remove filter: ${typeof label === "string" ? label : "selected filter"}`}
       >

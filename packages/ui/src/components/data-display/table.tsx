@@ -5,7 +5,7 @@ import { cn } from "../../lib/utils";
 const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
   ({ className, ...props }, ref) => (
     <div className="w-full overflow-auto">
-      <table ref={ref} className={cn("body-3 w-full caption-bottom", className)} {...props} />
+      <table ref={ref} className={cn("w-full caption-bottom text-sm", className)} {...props} />
     </div>
   ),
 );
@@ -31,7 +31,7 @@ const TableFooter = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
-  <tfoot ref={ref} className={cn("bg-accent text-on-accent font-medium", className)} {...props} />
+  <tfoot ref={ref} className={cn("bg-muted font-medium", className)} {...props} />
 ));
 TableFooter.displayName = "TableFooter";
 
@@ -39,7 +39,7 @@ const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTML
   ({ className, ...props }, ref) => (
     <tr
       ref={ref}
-      className={cn("data-[state=selected]:bg-inset border-default border-b", className)}
+      className={cn("data-[state=selected]:bg-muted border-b", className)}
       {...props}
     />
   ),
@@ -53,7 +53,7 @@ const TableHead = React.forwardRef<
   <th
     ref={ref}
     className={cn(
-      "ui-eyebrow h-9 px-3 text-left align-middle [&:has([role=checkbox])]:pr-0",
+      "h-9 px-3 text-left align-middle text-xs font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0",
       className,
     )}
     {...props}
@@ -77,7 +77,7 @@ const TableCaption = React.forwardRef<
   HTMLTableCaptionElement,
   React.HTMLAttributes<HTMLTableCaptionElement>
 >(({ className, ...props }, ref) => (
-  <caption ref={ref} className={cn("body-4 text-secondary mt-4", className)} {...props} />
+  <caption ref={ref} className={cn("mt-4 text-sm text-muted-foreground", className)} {...props} />
 ));
 TableCaption.displayName = "TableCaption";
 

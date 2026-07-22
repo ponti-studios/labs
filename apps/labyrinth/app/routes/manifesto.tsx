@@ -14,7 +14,7 @@ export function meta(): Array<{
 function ManifestoHeroHeadline() {
   const reduceMotion = useReducedMotion();
   return (
-    <h1 className="display-1 text-primary flex max-w-4xl flex-wrap items-baseline gap-x-3 gap-y-1">
+    <h1 className="display-1 text-foreground flex max-w-4xl flex-wrap items-baseline gap-x-3 gap-y-1">
       <span>{copy.hero.title}</span>
       <motion.span
         className="text-accent"
@@ -34,7 +34,7 @@ export default function Manifesto() {
       {/* Hero */}
       <section className="section section-hero">
         <ManifestoHeroHeadline />
-        <p className="body-1 text-secondary max-w-2xl">{copy.hero.body}</p>
+        <p className="text-base text-muted-foreground max-w-2xl">{copy.hero.body}</p>
       </section>
 
       {/* Tenets — single-column editorial list, one idea at a time */}
@@ -45,12 +45,12 @@ export default function Manifesto() {
               key={tenet.title}
               className="grid gap-3 sm:grid-cols-[minmax(0,4rem)_1fr] sm:gap-10"
             >
-              <span className="body-2 text-secondary tabular-nums">
+              <span className="text-sm text-muted-foreground tabular-nums">
                 {String(index + 1).padStart(2, "0")}
               </span>
               <div className="flex max-w-3xl flex-col gap-3">
-                <h2 className="heading-3 text-primary">{tenet.title}</h2>
-                <p className="body-1 text-secondary">{tenet.description}</p>
+                <h2 className="text-lg font-semibold tracking-tight text-foreground">{tenet.title}</h2>
+                <p className="text-base text-muted-foreground">{tenet.description}</p>
               </div>
             </li>
           ))}

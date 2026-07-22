@@ -1,4 +1,3 @@
-import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
@@ -9,12 +8,12 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-accent text-on-accent [a&]:[a&]: [a&]: [a&]:",
-        secondary: "bg-panel text-primary [a&]:[a&]: [a&]: [a&]:",
-        destructive: "bg-destructive text-on-destructive [a&]:[a&]: [a&]: [a&]:",
-        outline: "border-default text-primary [a&]:[a&]: [a&]: [a&]:",
+        default: "bg-primary text-primary-foreground [a&]:hover:bg-primary/90",
+        secondary: "bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/80",
+        destructive: "bg-destructive text-destructive-foreground [a&]:hover:bg-destructive/90",
+        outline: "border-border text-foreground [a&]:hover:bg-accent",
         ghost: "[a&]:[a&]: [a&]: [a&]:",
-        link: "text-primary underline-offset-4 [a&]:[a&]:hover:underline [a&]: [a&]: [a&]:",
+        link: "text-foreground underline-offset-4 [a&]:hover:underline",
       },
     },
     defaultVariants: {
@@ -29,7 +28,7 @@ function Badge({
   asChild = false,
   ...props
 }: React.ComponentProps<"span"> & VariantProps<typeof badgeVariants> & { asChild?: boolean }) {
-  const Comp = asChild ? Slot : "span";
+  const Comp = "span";
 
   return (
     <Comp

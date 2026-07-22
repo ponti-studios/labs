@@ -218,7 +218,7 @@ function UpdateGuardClient({
       {offlineMessage ? (
         <div className="fixed inset-x-0 bottom-16 z-50 flex justify-center px-4">
           <div className="border-border bg-surface flex items-center gap-3 rounded-md border px-4 py-2">
-            <span className="text-text-primary text-sm">{offlineMessage}</span>
+            <span className="text-foreground text-sm">{offlineMessage}</span>
           </div>
         </div>
       ) : null}
@@ -226,7 +226,7 @@ function UpdateGuardClient({
       {offlineReady || needRefresh ? (
         <div className="fixed inset-x-0 bottom-4 z-50 flex justify-center px-4">
           <div className="border-border bg-surface flex items-center gap-3 rounded-md border px-4 py-2">
-            <span className="text-text-primary text-sm">
+            <span className="text-foreground text-sm">
               {offlineReady
                 ? (copy?.offlineReady ?? "App ready to work offline")
                 : (copy?.newContentAvailable ?? "New content available")}
@@ -240,7 +240,7 @@ function UpdateGuardClient({
                 {copy?.refreshButton ?? "Refresh"}
               </button>
             ) : null}
-            <button type="button" onClick={closePrompt} className="text-text-secondary text-sm">
+          <button type="button" onClick={closePrompt} className="text-muted-foreground text-sm">
               {copy?.closeButton ?? "Close"}
             </button>
           </div>

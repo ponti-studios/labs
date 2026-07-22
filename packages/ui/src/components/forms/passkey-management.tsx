@@ -69,10 +69,10 @@ export function PasskeyManagement({
     <section aria-labelledby="passkey-heading" className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 id="passkey-heading" className="subheading-4 text-text-primary">
+          <h2 id="passkey-heading" className="text-sm font-medium text-foreground">
             Passkeys
           </h2>
-          <p className="body-3 text-text-secondary">
+          <p className="text-sm text-muted-foreground">
             Sign in without a password using biometrics or a security key.
           </p>
         </div>
@@ -98,7 +98,7 @@ export function PasskeyManagement({
       {isLoading ? (
         <p className="text-muted-foreground text-sm">Loading passkeys...</p>
       ) : passkeys.length === 0 ? (
-        <div className="border-border text-text-secondary flex items-center gap-3 border border-dashed p-4 text-sm">
+        <div className="border-border text-muted-foreground flex items-center gap-3 border border-dashed p-4 text-sm">
           <KeyRound className="size-4 shrink-0" aria-hidden />
           <span>No passkeys registered. Add one to sign in faster.</span>
         </div>
@@ -110,11 +110,11 @@ export function PasskeyManagement({
               className="border-border flex items-center justify-between border px-4 py-3 text-sm"
             >
               <div className="flex items-center gap-3">
-                <KeyRound className="text-text-secondary size-4 shrink-0" aria-hidden />
+                <KeyRound className="text-muted-foreground size-4 shrink-0" aria-hidden />
                 <div>
                   <span className="font-medium">{pk.name ?? "Passkey"}</span>
                   {pk.createdAt ? (
-                    <span className="text-text-tertiary ml-2 text-xs">
+                    <span className="text-muted-foreground ml-2 text-xs">
                       Added {new Date(pk.createdAt).toLocaleDateString()}
                     </span>
                   ) : null}

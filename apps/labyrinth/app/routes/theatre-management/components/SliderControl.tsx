@@ -22,8 +22,8 @@ export function SliderControl({
   return (
     <div className="space-y-3">
       <div className="flex items-baseline justify-between">
-        <label className="text-secondary text-sm font-medium">{label}</label>
-        <span className="text-primary font-['Geist'] text-lg font-semibold tabular-nums">
+        <label className="text-muted-foreground text-sm font-medium">{label}</label>
+        <span className="text-foreground font-['Geist'] text-lg font-semibold tabular-nums">
           {format(value)}
         </span>
       </div>
@@ -34,7 +34,7 @@ export function SliderControl({
         max={max}
         step={step}
       />
-      {hint && <p className="text-secondary text-xs">{hint}</p>}
+      {hint && <p className="text-muted-foreground text-xs">{hint}</p>}
     </div>
   );
 }

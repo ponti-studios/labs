@@ -33,11 +33,11 @@ const keyboardKeyVariants = cva(
         action: "min-h-11 shrink-0 px-3 text-sm sm:px-4 sm:text-xs",
       },
       state: {
-        inactive: "border-default bg-canvas text-primary hover:bg-inset",
-        absent: "border-default bg-inset text-secondary",
+        inactive: "border-border bg-background text-foreground hover:bg-muted",
+        absent: "border-border bg-muted text-muted-foreground",
         present: "border-amber-300 bg-amber-100 text-amber-950",
         correct: "border-emerald-300 bg-emerald-100 text-emerald-950",
-        action: "border-default bg-inset text-primary hover:bg-panel",
+        action: "border-border bg-muted text-foreground hover:bg-card",
       },
     },
     defaultVariants: {

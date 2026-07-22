@@ -49,7 +49,7 @@ function SwitchPreview({
         onCheckedChange={setCurrentChecked}
         size={size}
       />
-      <label htmlFor={id} className="text-primary text-sm leading-none font-medium">
+      <label htmlFor={id} className="text-foreground text-sm leading-none font-medium">
         {label}
       </label>
     </div>

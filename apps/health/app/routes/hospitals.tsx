@@ -6,7 +6,7 @@ import type { Hospital } from "../types/hospital";
 export default function HospitalsPage() {
   return (
     <div className="container mx-auto flex max-w-md flex-col gap-6 px-4 py-8">
-      <Link to="/" className="text-secondary hover:text-primary inline-flex text-sm">
+      <Link to="/" className="text-muted-foreground hover:text-foreground inline-flex text-sm">
         ← Dashboard
       </Link>
 
@@ -16,7 +16,7 @@ export default function HospitalsPage() {
         For life-threatening emergencies, call <strong>911</strong> immediately.
       </div>
 
-      <div className="border-default bg-inset/30 text-secondary rounded-lg border p-4 text-sm">
+      <div className="border-border bg-muted/30 text-muted-foreground rounded-lg border p-4 text-sm">
         If you need urgent in-person care, call ahead or open directions before leaving.
       </div>
 
@@ -33,7 +33,7 @@ export default function HospitalsPage() {
 
 function HospitalListItem({ hospital }: { hospital: Hospital }) {
   return (
-    <div className="hover:bg-inset/50 rounded-lg border p-4 transition-colors">
+    <div className="hover:bg-muted/50 rounded-lg border p-4 transition-colors">
       <div className="flex items-start justify-between gap-2">
         <h3 className="font-semibold">{hospital.name}</h3>
         <span className="rounded bg-blue-100 px-2 py-1 text-sm text-blue-800">
@@ -41,7 +41,7 @@ function HospitalListItem({ hospital }: { hospital: Hospital }) {
         </span>
       </div>
       <div className="flex flex-col gap-2">
-        <p className="text-secondary text-sm">{hospital.address}</p>
+        <p className="text-muted-foreground text-sm">{hospital.address}</p>
         <p className="text-sm font-medium">{hospital.phone}</p>
       </div>
       <div className="flex gap-2 pt-3">

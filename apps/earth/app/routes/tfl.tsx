@@ -23,7 +23,7 @@ export default function Tfl() {
     <div className="space-y-5">
       <div>
         <p className="ui-eyebrow mb-1">TfL Traffic Network</p>
-        <p className="text-secondary text-sm leading-relaxed">
+        <p className="text-muted-foreground text-sm leading-relaxed">
           Click a camera on the map, or search by location.
         </p>
       </div>
@@ -33,29 +33,29 @@ export default function Tfl() {
         placeholder="Search cameras…"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="bg-panel border-default text-primary placeholder:text-secondary focus:border-focus w-full rounded-md border px-3 py-2 text-sm transition-colors focus:outline-none"
+        className="bg-card border-border text-foreground placeholder:text-muted-foreground focus:border-ring w-full rounded-md border px-3 py-2 text-sm transition-colors focus:outline-none"
       />
 
       {query.trim() ? (
         <div>
           {results.length === 0 ? (
-            <p className="text-secondary py-2 text-xs">No cameras match "{query}"</p>
+            <p className="text-muted-foreground py-2 text-xs">No cameras match "{query}"</p>
           ) : (
             <ul className="space-y-1">
               {results.map((camera) => (
                 <li key={camera.id}>
                   <Link
                     to={`/tfl/${camera.id}`}
-                    className="bg-panel border-default hover:border-focus flex items-center gap-3 rounded-md border p-3 transition-colors"
+                    className="bg-card border-border hover:border-ring flex items-center gap-3 rounded-md border p-3 transition-colors"
                   >
                     <span
-                      className={`size-2 flex-shrink-0 rounded-full ${camera.available === "true" ? "bg-green-500" : "bg-inset-foreground"}`}
+                      className={`size-2 flex-shrink-0 rounded-full ${camera.available === "true" ? "bg-green-500" : "bg-muted-foreground"}`}
                     />
                     <div className="min-w-0 flex-1">
-                      <div className="text-primary truncate text-sm font-medium">
+                      <div className="text-foreground truncate text-sm font-medium">
                         {camera.commonName}
                       </div>
-                      <div className="text-secondary font-mono text-[10px]">
+                      <div className="text-muted-foreground font-mono text-[10px]">
                         {camera.lat.toFixed(4)}, {camera.lng.toFixed(4)}
                       </div>
                     </div>
@@ -63,7 +63,7 @@ export default function Tfl() {
                       {camera.available === "true" ? (
                         <span className="text-green-500">LIVE</span>
                       ) : (
-                        <span className="text-secondary">OFF</span>
+                        <span className="text-muted-foreground">OFF</span>
                       )}
                     </span>
                   </Link>
@@ -73,7 +73,7 @@ export default function Tfl() {
                 cameras.filter((c) =>
                   c.commonName.toLowerCase().includes(query.trim().toLowerCase()),
                 ).length > MAX_RESULTS && (
-                  <p className="text-secondary pt-1 text-center text-[10px]">
+                  <p className="text-muted-foreground pt-1 text-center text-[10px]">
                     Showing {MAX_RESULTS} of{" "}
                     {
                       cameras.filter((c) =>
@@ -88,13 +88,13 @@ export default function Tfl() {
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-2">
-          <div className="bg-panel border-default rounded-md border p-3">
+          <div className="bg-card border-border rounded-md border p-3">
             <p className="ui-data-label">Cameras</p>
             <p className="mt-1 text-sm font-semibold tabular-nums">
               {isLoading ? "—" : (cameras?.length ?? 0)}
             </p>
           </div>
-          <div className="bg-panel border-default rounded-md border p-3">
+          <div className="bg-card border-border rounded-md border p-3">
             <p className="ui-data-label">Online</p>
             <p className="mt-1 text-sm font-semibold text-green-600 tabular-nums">
               {isLoading ? "—" : online}

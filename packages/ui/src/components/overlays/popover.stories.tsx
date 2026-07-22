@@ -20,8 +20,8 @@ export const Default: Story = {
       </PopoverTrigger>
       <PopoverContent>
         <div className="grid gap-1.5">
-          <h4 className="text-primary leading-none font-medium">Dimensions</h4>
-          <p className="text-secondary text-sm">Set the dimensions for the layer.</p>
+          <h4 className="text-foreground leading-none font-medium">Dimensions</h4>
+          <p className="text-muted-foreground text-sm">Set the dimensions for the layer.</p>
         </div>
         <div className="grid gap-4 pt-4">
           <div className="grid grid-cols-3 items-center gap-4">

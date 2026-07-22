@@ -20,8 +20,8 @@ export function PLStatement({
   return (
     <Card>
       <CardHeader className="px-5 py-4">
-        <h2 className="text-primary text-sm font-semibold">Monthly P&amp;L</h2>
-        <span className="text-secondary font-mono text-[10px]">
+        <h2 className="text-foreground text-sm font-semibold">Monthly P&amp;L</h2>
+        <span className="text-muted-foreground font-mono text-[10px]">
           {new Date().toLocaleDateString("en-US", {
             month: "short",
             year: "numeric",
@@ -31,7 +31,7 @@ export function PLStatement({
 
       <CardContent className="divide-border divide-y px-5 py-0">
         <div className="py-3">
-          <div className="text-secondary mb-2 text-xs font-medium">Revenue</div>
+          <div className="text-muted-foreground mb-2 text-xs font-medium">Revenue</div>
           <BreakdownRow
             label="Ticket Revenue (gross)"
             value={formatCurrency(d.grossTicketRevenue)}
@@ -54,7 +54,7 @@ export function PLStatement({
         </div>
 
         <div className="py-3">
-          <div className="text-secondary mb-2 text-xs font-medium">Expenses</div>
+          <div className="text-muted-foreground mb-2 text-xs font-medium">Expenses</div>
           <BreakdownRow label="Rent" value={formatCurrency(MONTHLY_RENT)} negative />
           <BreakdownRow label="Labor" value={formatCurrency(d.dynamicLabor)} negative />
           <BreakdownRow label="Utilities" value={formatCurrency(MONTHLY_UTILITIES)} negative />
@@ -63,7 +63,7 @@ export function PLStatement({
 
         <div className="border-foreground border-t-2 py-4">
           <div className="flex items-center justify-between">
-            <span className="text-primary text-sm font-bold">Monthly Profit</span>
+            <span className="text-foreground text-sm font-bold">Monthly Profit</span>
             <span
               className={cn(
                 "font-['Geist'] text-xl font-bold tabular-nums",
@@ -76,7 +76,7 @@ export function PLStatement({
           <div className="mt-1.5 flex items-center gap-2">
             <span className={cn("size-1.5 rounded-full", healthDot)} />
             <span className={cn("text-xs font-medium", healthTextColor)}>{healthLabel}</span>
-            <span className="text-secondary text-xs">· {(d.margin * 100).toFixed(1)}% margin</span>
+            <span className="text-muted-foreground text-xs">· {(d.margin * 100).toFixed(1)}% margin</span>
           </div>
         </div>
       </CardContent>

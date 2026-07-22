@@ -15,15 +15,15 @@ export const CHART_COLORS = {
   neutral: "var(--color-chart-neutral)",
 
   background: "var(--color-surface-canvas)",
-  grid: "var(--color-border-subtle)",
+  grid: "var(--color-border)",
 
-  axis: "var(--color-text-tertiary)",
-  label: "var(--color-text-secondary)",
+  axis: "var(--color-muted-foreground)",
+  label: "var(--color-muted-foreground)",
 
   tooltip: {
     background: "var(--color-surface-panel)",
-    text: "var(--color-text-primary)",
-    border: "var(--color-border-default)",
+    text: "var(--color-foreground)",
+    border: "var(--color-border)",
   },
 } as const;
 
