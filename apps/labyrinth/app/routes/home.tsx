@@ -16,8 +16,8 @@ export function meta(): Array<{
 function Teaser({ title, to }: { title: string; to: string }) {
   return (
     <section className="section section-compact underline-offset-4 hover:cursor-pointer hover:underline">
-      <Link to={to} prefetch="intent" className="body-2 flex justify-between">
-        <h2 className="heading-2 text-primary font-bold">{title}</h2>
+      <Link to={to} prefetch="intent" className="text-sm flex justify-between">
+        <h2 className="text-xl font-semibold tracking-tight text-foreground font-bold">{title}</h2>
         <LucideArrowBigRight className="text-accent" aria-hidden="true" />
       </Link>
     </section>
@@ -31,11 +31,11 @@ function Teaser({ title, to }: { title: string; to: string }) {
 function HeroHeadline() {
   const reduceMotion = useReducedMotion();
   return (
-    <h1 className="display-1 text-primary flex max-w-4xl flex-wrap items-baseline gap-x-4 gap-y-1">
+    <h1 className="display-1 text-foreground flex max-w-4xl flex-wrap items-baseline gap-x-4 gap-y-1">
       <span>{t.home.hero.wordBefore}</span>
       <motion.span
         aria-hidden="true"
-        className="text-secondary/40 inline-block origin-left"
+        className="text-muted-foreground/40 inline-block origin-left"
         initial={reduceMotion ? false : { scaleX: 0, opacity: 0 }}
         animate={{ scaleX: 1, opacity: 1 }}
         transition={{ duration: 0.35, delay: 0.2, ease: "easeOut" }}
@@ -62,7 +62,7 @@ export default function Home() {
       <section className="section section-hero md:flex-row md:justify-between">
         <div>
           <HeroHeadline />
-          <p className="body-1 text-secondary max-w-2xl">{t.home.hero.subtitle}</p>
+          <p className="text-base text-muted-foreground max-w-2xl">{t.home.hero.subtitle}</p>
         </div>
         <div className="flex flex-wrap items-center gap-6 pt-2">
           <Button asChild variant="default">

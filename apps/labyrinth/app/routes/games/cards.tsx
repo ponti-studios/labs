@@ -79,7 +79,7 @@ function CardFace({
   return (
     <div
       className={cn(
-        "border-default bg-canvas flex w-15 flex-col items-center justify-center rounded-md border p-1",
+        "border-border bg-background flex w-15 flex-col items-center justify-center rounded-md border p-1",
         {
           "border-green-500": isWinner,
           "text-red-500": card.suit === "♥" || card.suit === "♦",
@@ -96,7 +96,7 @@ function CardFace({
 function CardBack({ index }: { index: number }) {
   return (
     <div
-      className="border-default flex w-15 flex-col items-center justify-center rounded-md border bg-slate-700 p-1 select-none"
+      className="border-border flex w-15 flex-col items-center justify-center rounded-md border bg-slate-700 p-1 select-none"
       style={{ animation: "fade-slide-in 300ms ease-out both", animationDelay: `${index * 80}ms` }}
     >
       <span className="text-xl text-slate-400">?</span>
@@ -141,7 +141,7 @@ export default function Cards() {
     <div className="mx-auto flex flex-col gap-6 md:w-3xl">
       <header>
         <h2 className="text-xl font-semibold">Luck of the Draw</h2>
-        <p className="text-secondary">Beat the house. Challenge or fold.</p>
+        <p className="text-muted-foreground">Beat the house. Challenge or fold.</p>
       </header>
 
       {phase === "idle" && (
@@ -210,7 +210,7 @@ export default function Cards() {
                   className={cn("text-lg font-semibold", {
                     "text-green-600": outcome === "player",
                     "text-red-600": outcome === "house",
-                    "text-secondary": outcome === "tie",
+                    "text-muted-foreground": outcome === "tie",
                   })}
                 >
                   {outcome === "player"

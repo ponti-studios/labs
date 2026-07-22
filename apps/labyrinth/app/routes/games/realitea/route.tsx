@@ -31,10 +31,10 @@ const TILE_BASE = cva(
   {
     variants: {
       state: {
-        absent: "border-default bg-inset text-secondary",
+        absent: "border-border bg-muted text-muted-foreground",
         correct:
           "border-[var(--realitea-correct-border)] bg-[var(--realitea-correct-bg)] text-[var(--realitea-correct-text)]",
-        empty: "border-default bg-canvas text-primary",
+        empty: "border-border bg-background text-foreground",
         present:
           "border-[var(--realitea-present-border)] bg-[var(--realitea-present-bg)] text-[var(--realitea-present-text)]",
       },
@@ -223,8 +223,8 @@ type ErrorBoundaryProps = { error: Error };
 export function ErrorBoundary({ error }: ErrorBoundaryProps) {
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center gap-3 px-4 text-center">
-      <p className="body-4 text-secondary tracking-[0.15em] uppercase">Something went wrong</p>
-      <p className="body-4 text-secondary">
+      <p className="text-xs text-muted-foreground tracking-[0.15em] uppercase">Something went wrong</p>
+      <p className="text-xs text-muted-foreground">
         {error.message || "The RealiTea puzzle couldn't load. Try refreshing the page."}
       </p>
       <Button asChild variant="default" className="mt-2">
@@ -310,8 +310,8 @@ export default function RealiTeaRoute() {
 
   return (
     <div className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-6 px-4 pb-[calc(env(safe-area-inset-bottom)+8px)]">
-      <header className="bg-canvas/95 sticky top-0 z-10 backdrop-blur md:static">
-        <div className="border-default flex items-center justify-between gap-2 rounded-md border p-2">
+      <header className="bg-background/95 sticky top-0 z-10 backdrop-blur md:static">
+        <div className="border-border flex items-center justify-between gap-2 rounded-md border p-2">
           <img src="/logo.realitea.png" alt="RealiTea" className="h-6 object-contain" />
           <Button
             aria-label="How to play"
@@ -400,7 +400,7 @@ export default function RealiTeaRoute() {
           <CardContent className="flex flex-col gap-4">
             <div>
               <p className="ui-eyebrow">{game.isSolved ? "The Story" : "The puzzle ended"}</p>
-              <p className="body-4 mt-1">{currentPuzzle.detail.toLocaleLowerCase()}</p>
+              <p className="text-xs mt-1">{currentPuzzle.detail.toLocaleLowerCase()}</p>
             </div>
             <div className="flex justify-end gap-2">
               <Button aria-label="Share result" onClick={share} type="button" variant="secondary">

@@ -65,15 +65,15 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
 const tooltipStyle = {
   backgroundColor: "var(--color-surface-panel)",
-  border: "1px solid var(--color-border-default)",
+  border: "1px solid var(--color-border-border)",
   borderRadius: "2px",
   fontSize: "12px",
-  color: "var(--color-text-secondary)",
+  color: "var(--color-text-muted-foreground)",
   padding: "6px 10px",
   boxShadow: "none",
 };
 
-const tickStyle = { fill: "var(--color-text-tertiary)", fontSize: 11 };
+const tickStyle = { fill: "var(--color-text-muted-foreground)", fontSize: 11 };
 
 export default function SeasonalPatternsPage() {
   const { countryCode } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
@@ -93,7 +93,7 @@ export default function SeasonalPatternsPage() {
       {isLoading && <Spinner />}
 
       {isError && (
-        <p className="text-secondary py-4 text-sm">
+        <p className="text-muted-foreground py-4 text-sm">
           Failed to load seasonal data. Please try again.
         </p>
       )}
@@ -163,10 +163,10 @@ export default function SeasonalPatternsPage() {
               <p className="ui-data-label mb-3">Seasonal Radar</p>
               <ResponsiveContainer width="100%" height={240}>
                 <RadarChart data={data.analysis.patterns}>
-                  <PolarGrid stroke="var(--color-border-default)" />
+                  <PolarGrid stroke="var(--color-border-border)" />
                   <PolarAngleAxis dataKey="monthName" tick={tickStyle} />
                   <PolarRadiusAxis
-                    tick={{ fill: "var(--color-text-tertiary)", fontSize: 10 }}
+                    tick={{ fill: "var(--color-text-muted-foreground)", fontSize: 10 }}
                     domain={[0, "dataMax"]}
                   />
                   <Radar
@@ -196,10 +196,10 @@ export default function SeasonalPatternsPage() {
               <p className="ui-data-label mb-3">Insights</p>
               <div className="space-y-3">
                 {data.insights.map((insight) => (
-                  <div key={insight.pattern} className="border-default border-l-2 py-0.5 pl-4">
-                    <p className="text-primary text-sm font-medium">{insight.pattern}</p>
-                    <p className="text-secondary mt-0.5 text-xs">{insight.description}</p>
-                    <p className="text-secondary mt-1 text-xs">{insight.strength}% strength</p>
+                  <div key={insight.pattern} className="border-border border-l-2 py-0.5 pl-4">
+                    <p className="text-foreground text-sm font-medium">{insight.pattern}</p>
+                    <p className="text-muted-foreground mt-0.5 text-xs">{insight.description}</p>
+                    <p className="text-muted-foreground mt-1 text-xs">{insight.strength}% strength</p>
                   </div>
                 ))}
               </div>
@@ -209,7 +209,7 @@ export default function SeasonalPatternsPage() {
           <div className="ui-flat-card overflow-hidden p-0">
             <table className="w-full text-xs">
               <thead>
-                <tr className="border-default bg-inset border-b">
+                <tr className="border-border bg-muted border-b">
                   <th className="ui-data-label px-4 py-2.5 text-left">Month</th>
                   <th className="ui-data-label px-4 py-2.5 text-right">Avg Cases</th>
                   <th className="ui-data-label px-4 py-2.5 text-right">Avg Deaths</th>
@@ -219,18 +219,18 @@ export default function SeasonalPatternsPage() {
               </thead>
               <tbody>
                 {data.analysis.patterns.map((pattern) => (
-                  <tr key={pattern.month} className="border-default border-b last:border-0">
-                    <td className="text-primary px-4 py-2.5 font-medium">{pattern.monthName}</td>
-                    <td className="text-secondary px-4 py-2.5 text-right tabular-nums">
+                  <tr key={pattern.month} className="border-border border-b last:border-0">
+                    <td className="text-foreground px-4 py-2.5 font-medium">{pattern.monthName}</td>
+                    <td className="text-muted-foreground px-4 py-2.5 text-right tabular-nums">
                       {pattern.averageCases.toLocaleString()}
                     </td>
-                    <td className="text-secondary px-4 py-2.5 text-right tabular-nums">
+                    <td className="text-muted-foreground px-4 py-2.5 text-right tabular-nums">
                       {pattern.averageDeaths.toLocaleString()}
                     </td>
-                    <td className="text-secondary px-4 py-2.5 text-right tabular-nums">
+                    <td className="text-muted-foreground px-4 py-2.5 text-right tabular-nums">
                       {pattern.caseVariance.toLocaleString()}
                     </td>
-                    <td className="text-secondary px-4 py-2.5 text-right tabular-nums">
+                    <td className="text-muted-foreground px-4 py-2.5 text-right tabular-nums">
                       {pattern.deathVariance.toLocaleString()}
                     </td>
                   </tr>
@@ -239,7 +239,7 @@ export default function SeasonalPatternsPage() {
             </table>
           </div>
 
-          <p className="text-secondary text-xs">
+          <p className="text-muted-foreground text-xs">
             {data.dataQuality.totalDataPoints.toLocaleString()} data points ·{" "}
             {data.dataQuality.monthsWithData}/12 months · avg{" "}
             {data.dataQuality.averageDataPointsPerMonth} pts/month
