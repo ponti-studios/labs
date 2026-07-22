@@ -38,7 +38,7 @@ export default function PetersonAcademy(): JSX.Element {
           <div
             key={item.name}
             style={{ marginTop: `${index * 50 + 10}px` }}
-            className="border-default text-secondary bg-inset/40 flex h-56 w-40 shrink-0 items-center justify-center rounded-lg border text-sm transition-all duration-300"
+            className="border-border text-muted-foreground bg-muted/40 flex h-56 w-40 shrink-0 items-center justify-center rounded-lg border text-sm transition-all duration-300"
           >
             {item.name}
           </div>

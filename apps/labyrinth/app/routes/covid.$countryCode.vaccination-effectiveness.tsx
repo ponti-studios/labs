@@ -58,15 +58,15 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
 const tooltipStyle = {
   backgroundColor: "var(--color-surface-panel)",
-  border: "1px solid var(--color-border-default)",
+  border: "1px solid var(--color-border-border)",
   borderRadius: "2px",
   fontSize: "12px",
-  color: "var(--color-text-secondary)",
+  color: "var(--color-text-muted-foreground)",
   padding: "6px 10px",
   boxShadow: "none",
 };
 
-const tickStyle = { fill: "var(--color-text-tertiary)", fontSize: 11 };
+const tickStyle = { fill: "var(--color-text-muted-foreground)", fontSize: 11 };
 
 export default function VaccinationEffectivenessPage() {
   const { countryCode } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
@@ -88,12 +88,12 @@ export default function VaccinationEffectivenessPage() {
       {isLoading && <Spinner />}
 
       {isError && (
-        <p className="text-secondary py-4 text-sm">
+        <p className="text-muted-foreground py-4 text-sm">
           Failed to load vaccination data. Please try again.
         </p>
       )}
 
-      {data?.error && <p className="text-secondary py-4 text-sm">{data.error}</p>}
+      {data?.error && <p className="text-muted-foreground py-4 text-sm">{data.error}</p>}
 
       {data?.effectiveness && (
         <div className="space-y-6">
@@ -133,7 +133,7 @@ export default function VaccinationEffectivenessPage() {
                   },
                 ].map(({ label, value }) => (
                   <div key={label}>
-                    <p className="text-secondary mb-1 text-xs">{label}</p>
+                    <p className="text-muted-foreground mb-1 text-xs">{label}</p>
                     <p className="ui-data-value">{value}</p>
                   </div>
                 ))}
@@ -166,7 +166,7 @@ export default function VaccinationEffectivenessPage() {
                   <YAxis tick={tickStyle} axisLine={false} tickLine={false} />
                   <Tooltip
                     contentStyle={tooltipStyle}
-                    cursor={{ stroke: "var(--color-border-default)", strokeWidth: 1 }}
+                    cursor={{ stroke: "var(--color-border-border)", strokeWidth: 1 }}
                     labelFormatter={(v) => new Date(v).toLocaleDateString()}
                   />
                   <Line
@@ -199,8 +199,8 @@ export default function VaccinationEffectivenessPage() {
                     key={milestone.threshold}
                     className="flex items-center justify-between py-2.5"
                   >
-                    <p className="text-primary text-sm">{milestone.label}</p>
-                    <p className="text-secondary text-sm tabular-nums">
+                    <p className="text-foreground text-sm">{milestone.label}</p>
+                    <p className="text-muted-foreground text-sm tabular-nums">
                       {milestone.dateReached
                         ? new Date(milestone.dateReached).toLocaleDateString()
                         : "—"}

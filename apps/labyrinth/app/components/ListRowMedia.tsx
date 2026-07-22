@@ -39,7 +39,7 @@ export function ListRowMedia({
       </span>
 
       {status === "error" ? (
-        <span className="text-secondary subheading-3 relative tracking-wide">{fallback}</span>
+        <span className="text-muted-foreground subtext-lg font-semibold tracking-tight relative tracking-wide">{fallback}</span>
       ) : (
         <img
           ref={imageRef}

@@ -147,8 +147,8 @@ export default function Anagrams(): JSX.Element {
     <div className="flex flex-col gap-6">
       <header>
         <h2 className="text-xl font-semibold">Anagrams</h2>
-        <p className="text-secondary">Group anagrams together from a list of words.</p>
-        <i className="text-secondary text-xs">Courtesy of ChartHop</i>
+        <p className="text-muted-foreground">Group anagrams together from a list of words.</p>
+        <i className="text-muted-foreground text-xs">Courtesy of ChartHop</i>
       </header>
 
       <div className="flex gap-2">
@@ -199,7 +199,7 @@ export default function Anagrams(): JSX.Element {
                         <TableCell className={`font-mono font-medium ${color.row}`}>
                           {step.word}
                         </TableCell>
-                        <TableCell className="text-secondary font-mono">{step.sortedKey}</TableCell>
+                        <TableCell className="text-muted-foreground font-mono">{step.sortedKey}</TableCell>
                         <TableCell>
                           <span
                             className={`rounded border px-2 py-0.5 text-xs font-medium ${color.badge}`}

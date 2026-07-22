@@ -1,6 +1,5 @@
 import { AppNavigation } from "@ponti-studios/ui/navigation";
 import { Button } from "@ponti-studios/ui/primitives";
-import { COLOR_MODE_ATTRIBUTE, COLOR_SYSTEM_ATTRIBUTE } from "@ponti-studios/ui/tokens";
 import {
   isRouteErrorResponse,
   Link,
@@ -15,34 +14,12 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
-import { ColorSystemToggle } from "./components/color-system-toggle";
 import { ParticleBackground } from "./components/particle-background";
 import { PrefetchProvider } from "./components/prefetch-provider";
 import QueryProvider from "./components/QueryProvider";
 import { BOOK_CALL_URL } from "./data/studio";
 import { cn } from "./lib/utils";
 import { t } from "./translations";
-
-const themeBootScript = `
-(() => {
-  try {
-    const root = document.documentElement;
-    const system = "ponti";
-    const mode = localStorage.getItem("labs:ui-color-mode") || "system";
-
-    root.setAttribute("${COLOR_SYSTEM_ATTRIBUTE}", system);
-
-    if (mode === "light" || mode === "dark") {
-      root.setAttribute("${COLOR_MODE_ATTRIBUTE}", mode);
-    } else {
-      root.removeAttribute("${COLOR_MODE_ATTRIBUTE}");
-    }
-  } catch (_error) {
-    document.documentElement.setAttribute("${COLOR_SYSTEM_ATTRIBUTE}", "ponti");
-    document.documentElement.removeAttribute("${COLOR_MODE_ATTRIBUTE}");
-  }
-})();
-`;
 
 export const links: Route.LinksFunction = () => [
   { rel: "icon", href: "/logo.realitea.png", type: "image/png" },
@@ -60,16 +37,15 @@ export const links: Route.LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-color-system="ponti" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
         <Meta />
         <Links />
         <PrefetchProvider />
       </head>
-      <body className="bg-canvas text-primary flex min-h-dvh flex-col overflow-x-hidden overflow-y-auto font-sans">
+      <body className="bg-background text-foreground flex min-h-dvh flex-col overflow-x-hidden overflow-y-auto font-sans">
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -113,7 +89,6 @@ export default function App() {
                 {t.nav.book}
               </a>
             </Button>
-            <ColorSystemToggle />
           </div>
         }
         linkComponent={Link}
@@ -166,7 +141,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
           >
             Try Again
           </button>
-          <a href="/" className="bg-panel rounded-lg px-4 py-2 text-gray-800">
+          <a href="/" className="bg-card rounded-lg px-4 py-2 text-gray-800">
             Go Home
           </a>
         </div>

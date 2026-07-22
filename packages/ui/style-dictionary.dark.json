@@ -1,0 +1,15 @@
+{
+  "source": ["tokens/dark.tokens.json"],
+  "platforms": {
+    "css": {
+      "transformGroup": "css",
+      "buildPath": "src/tokens/generated/",
+      "files": [{ "destination": "dark.css", "format": "css/variables" }]
+    },
+    "typescript": {
+      "transformGroup": "js",
+      "buildPath": "src/tokens/generated/",
+      "files": [{ "destination": "dark.colors.generated.ts", "format": "javascript/esm", "options": { "minify": true } }]
+    }
+  }
+}
