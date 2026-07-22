@@ -105,7 +105,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {isLoading ? (
           <>
-            <span className="opacity-0">{children}</span>
+            <span className="opacity-0" aria-hidden="true">{children}</span>
             <span className="absolute inset-0 inline-flex items-center justify-center">
               <Spinner size="sm" aria-hidden="true" />
             </span>

@@ -6,7 +6,7 @@ import { commonControlsExclude } from "../src/storybook/controls";
 import { colorThemes, type ColorMode } from "../src/tokens";
 
 const colorModeDecorator: Decorator = (Story, context) => {
-  const mode = (context.globals.theme ?? "light") as ColorMode;
+  const mode: ColorMode = context.globals.theme === "dark" ? "dark" : "light";
   const theme = colorThemes[mode];
   const style = Object.fromEntries(
     Object.entries(theme).map(([token, value]) => [`--color-${token}`, value]),
