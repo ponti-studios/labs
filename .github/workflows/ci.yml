@@ -43,11 +43,11 @@ jobs:
       - name: Wait for postgres
         run: |
           for i in {1..30}; do
-            docker exec postgres-test pg_isready -U postgres && break
+            docker exec postgres-test psql -U postgres -d hominem -c 'SELECT 1' && exit 0
             sleep 1
           done
-      - name: Verify postgres connection
-        run: docker exec postgres-test psql -U postgres -d hominem -c 'SELECT 1'
+          echo "postgres did not become ready with database 'hominem' in time" >&2
+          exit 1
       - name: Run migrations
         run: pnpm --filter @pontistudios/db db:migrate
         env:
