@@ -57,7 +57,7 @@ function highlightText(value: string, query: string) {
       parts.push(value.slice(lastIndex, index));
     }
     parts.push(
-      <mark key={`${index}-${match[0]}`} className="bg-accent/25 text-primary rounded-xs px-0.5">
+      <mark key={`${index}-${match[0]}`} className="bg-accent/25 text-foreground rounded-xs px-0.5">
         {match[0]}
       </mark>,
     );
@@ -81,7 +81,7 @@ function KindBadge({ kind }: { kind: SearchDocumentKind }) {
     <span
       className={[
         "inline-flex items-center gap-1 px-2 py-0.5 rounded-[4px] text-[11px] font-medium tracking-[0.06em] uppercase",
-        isMovie ? "bg-accent/8 text-primary/60" : "bg-accent/15 text-on-accent/70",
+        isMovie ? "bg-accent/8 text-foreground/60" : "bg-accent/15 text-accent-foreground/70",
       ].join(" ")}
     >
       {isMovie ? <LucideFilm className="h-3 w-3" /> : <LucideTv className="h-3 w-3" />}
@@ -94,7 +94,7 @@ function ScoreBar({ score }: { score: number }) {
   const pct = Math.min(100, Math.max(0, (score / 120) * 100));
   return (
     <div className="flex flex-col items-end gap-1.5">
-      <span className="text-primary/50 text-[12px] leading-none font-medium tabular-nums">
+      <span className="text-foreground/50 text-[12px] leading-none font-medium tabular-nums">
         {score.toFixed(1)}
       </span>
       <div
@@ -133,7 +133,7 @@ function ResultRow({
 
   return (
     <article
-      className="group border-default hover:bg-inset/40 relative -mx-4 grid items-start gap-4 rounded-lg border-b px-4 py-5 transition-colors duration-150 last:border-0 md:-mx-6 md:grid-cols-[2rem_minmax(0,1fr)_5rem] md:px-6"
+      className="group border-border hover:bg-muted/40 relative -mx-4 grid items-start gap-4 rounded-lg border-b px-4 py-5 transition-colors duration-150 last:border-0 md:-mx-6 md:grid-cols-[2rem_minmax(0,1fr)_5rem] md:px-6"
       style={{
         animation: "fade-slide-in 200ms cubic-bezier(0,0,0.2,1) both",
         animationDelay: `${index * 30}ms`,
@@ -141,7 +141,7 @@ function ResultRow({
     >
       {/* Rank */}
       <div className="hidden justify-end pt-0.5 md:flex">
-        <span className="text-primary/30 text-[11px] font-medium tracking-[0.04em] tabular-nums">
+        <span className="text-foreground/30 text-[11px] font-medium tracking-[0.04em] tabular-nums">
           {String(index + 1).padStart(2, "0")}
         </span>
       </div>
@@ -152,27 +152,27 @@ function ResultRow({
           href={result.sourceUrl}
           target="_blank"
           rel="noreferrer"
-          className="text-primary decoration-border hover:decoration-foreground/40 block min-w-0 text-[16px] leading-[1.35] font-semibold tracking-[-0.01em] underline-offset-[3px] transition-colors duration-150 hover:underline"
+          className="text-foreground decoration-border hover:decoration-foreground/40 block min-w-0 text-[16px] leading-[1.35] font-semibold tracking-[-0.01em] underline-offset-[3px] transition-colors duration-150 hover:underline"
         >
           <span className="line-clamp-2">{highlightText(result.title, query)}</span>
         </a>
 
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
           <KindBadge kind={result.kind} />
-          <span className="text-secondary text-[13px]">
+          <span className="text-muted-foreground text-[13px]">
             {highlightText(result.subtitle, query)}
           </span>
-          <span className="text-secondary/40 text-[11px]">·</span>
-          <span className="text-secondary/70 text-[12px] tabular-nums">{publishedLabel}</span>
+          <span className="text-muted-foreground/40 text-[11px]">·</span>
+          <span className="text-muted-foreground/70 text-[12px] tabular-nums">{publishedLabel}</span>
           {result.location && (
             <>
-              <span className="text-secondary/40 text-[11px]">·</span>
-              <span className="text-secondary/70 text-[12px]">{result.location}</span>
+              <span className="text-muted-foreground/40 text-[11px]">·</span>
+              <span className="text-muted-foreground/70 text-[12px]">{result.location}</span>
             </>
           )}
         </div>
 
-        <p className="text-secondary line-clamp-2 max-w-[68ch] text-[14px] leading-[1.55]">
+        <p className="text-muted-foreground line-clamp-2 max-w-[68ch] text-[14px] leading-[1.55]">
           {highlightText(result.snippet, query)}
         </p>
       </div>
@@ -183,7 +183,7 @@ function ResultRow({
       </div>
 
       {/* Mobile rank + score row */}
-      <div className="text-secondary/50 flex items-center justify-between text-[11px] md:hidden">
+      <div className="text-muted-foreground/50 flex items-center justify-between text-[11px] md:hidden">
         <span className="font-medium tabular-nums">#{index + 1}</span>
         <ScoreBar score={result.finalScore} />
       </div>
@@ -199,7 +199,7 @@ function ResultSkeletonRow({ index }: { index: number }) {
   return (
     <article
       aria-hidden="true"
-      className="border-default grid items-start gap-4 border-b py-5 last:border-0 md:grid-cols-[2rem_minmax(0,1fr)_5rem]"
+      className="border-border grid items-start gap-4 border-b py-5 last:border-0 md:grid-cols-[2rem_minmax(0,1fr)_5rem]"
       style={{ opacity: Math.max(0.3, 1 - index * 0.15) }}
     >
       <div className="hidden md:block" />
@@ -237,8 +237,8 @@ function FilterPill({
       type="button"
       onClick={onClick}
       className={[
-        "inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus",
-        active ? "bg-accent text-on-accent" : "text-secondary hover:text-primary hover:bg-inset",
+        "inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        active ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground hover:bg-muted",
       ].join(" ")}
     >
       {children}
@@ -304,14 +304,14 @@ export default function SearchStudio() {
   const hasActiveFilter = kindFilter !== "all";
 
   return (
-    <div className="bg-canvas text-primary min-h-full w-full">
+    <div className="bg-background text-foreground min-h-full w-full">
       <div className="mx-auto flex min-h-full w-full max-w-4xl flex-col gap-8 px-4 py-6 md:px-8 md:py-10">
         {/* ── Search header ── */}
         <header className="space-y-4">
           {/* Hero search bar */}
           <div className="relative">
             <LucideSearch
-              className="text-secondary pointer-events-none absolute top-1/2 left-5 h-[18px] w-[18px] -translate-y-1/2"
+              className="text-muted-foreground pointer-events-none absolute top-1/2 left-5 h-[18px] w-[18px] -translate-y-1/2"
               aria-hidden="true"
             />
             <input
@@ -322,14 +322,14 @@ export default function SearchStudio() {
               placeholder="Search titles, stars, studios, franchises…"
               autoComplete="off"
               spellCheck="false"
-              className="border-default bg-canvas text-primary placeholder:text-secondary/60 focus:border-focus/50 focus:ring-focus/30 h-14 w-full rounded-xl border pr-14 pl-[3.25rem] text-[16px] transition-[border-color,box-shadow] duration-150 focus:shadow-[0_0_0_4px_var(--color-ring-focus,rgba(160,112,58,0.12))] focus:ring-2 focus:outline-none"
+              className="border-border bg-background text-foreground placeholder:text-muted-foreground/60 focus:border-ring/50 focus:ring-ring/30 h-14 w-full rounded-xl border pr-14 pl-[3.25rem] text-[16px] transition-[border-color,box-shadow] duration-150 focus:shadow-[0_0_0_4px_var(--color-ring-ring,rgba(160,112,58,0.12))] focus:ring-2 focus:outline-none"
             />
             {query.length > 0 && (
               <button
                 type="button"
                 aria-label="Clear search"
                 onClick={() => handleQueryChange("")}
-                className="text-secondary hover:bg-inset hover:text-primary focus-visible:ring-focus absolute top-1/2 right-3 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg transition-colors duration-150 focus-visible:ring-2 focus-visible:outline-none"
+                className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring absolute top-1/2 right-3 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg transition-colors duration-150 focus-visible:ring-2 focus-visible:outline-none"
               >
                 <LucideX className="h-4 w-4" />
               </button>
@@ -350,7 +350,7 @@ export default function SearchStudio() {
                 All
                 {totalResults > 0 && (
                   <span
-                    className={kindFilter === "all" ? "text-on-accent/60" : "text-secondary/60"}
+                    className={kindFilter === "all" ? "text-foreground/60" : "text-muted-foreground/60"}
                   >
                     {totalResults.toLocaleString()}
                   </span>
@@ -367,7 +367,7 @@ export default function SearchStudio() {
                 Films
                 {kindCounts.movie > 0 && (
                   <span
-                    className={kindFilter === "movie" ? "text-on-accent/60" : "text-secondary/60"}
+                    className={kindFilter === "movie" ? "text-foreground/60" : "text-muted-foreground/60"}
                   >
                     {kindCounts.movie.toLocaleString()}
                   </span>
@@ -383,7 +383,7 @@ export default function SearchStudio() {
                 <LucideTv className="h-3.5 w-3.5" />
                 TV
                 {kindCounts.tv > 0 && (
-                  <span className={kindFilter === "tv" ? "text-on-accent/60" : "text-secondary/60"}>
+                  <span className={kindFilter === "tv" ? "text-foreground/60" : "text-muted-foreground/60"}>
                     {kindCounts.tv.toLocaleString()}
                   </span>
                 )}
@@ -392,7 +392,7 @@ export default function SearchStudio() {
                 <button
                   type="button"
                   onClick={clearFilters}
-                  className="text-secondary hover:text-primary focus-visible:ring-focus inline-flex items-center gap-1 rounded-full px-2.5 py-1.5 text-[12px] font-medium transition-colors duration-150 focus-visible:ring-2 focus-visible:outline-none"
+                  className="text-muted-foreground hover:text-foreground focus-visible:ring-ring inline-flex items-center gap-1 rounded-full px-2.5 py-1.5 text-[12px] font-medium transition-colors duration-150 focus-visible:ring-2 focus-visible:outline-none"
                 >
                   <LucideX className="h-3 w-3" />
                   Clear
@@ -403,7 +403,7 @@ export default function SearchStudio() {
             {/* Sort + pagination */}
             <div className="flex items-center gap-2">
               <Select value={sort} onValueChange={(v) => handleSortChange(v as SearchSortMode)}>
-                <SelectTrigger className="border-default bg-canvas h-9 w-[9.5rem] text-[13px]">
+                <SelectTrigger className="border-border bg-background h-9 w-[9.5rem] text-[13px]">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
                 <SelectContent>
@@ -415,17 +415,17 @@ export default function SearchStudio() {
                 </SelectContent>
               </Select>
 
-              <div className="border-default divide-border flex items-center divide-x overflow-hidden rounded-lg border">
+              <div className="border-border divide-border flex items-center divide-x overflow-hidden rounded-lg border">
                 <button
                   type="button"
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={!data?.hasPrev}
                   aria-label="Previous page"
-                  className="text-secondary hover:bg-inset hover:text-primary focus-visible:ring-focus flex h-9 w-9 items-center justify-center transition-colors duration-150 focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset disabled:pointer-events-none disabled:opacity-30"
+                  className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring flex h-9 w-9 items-center justify-center transition-colors duration-150 focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset disabled:pointer-events-none disabled:opacity-30"
                 >
                   <LucideChevronLeft className="h-4 w-4" />
                 </button>
-                <span className="text-secondary flex h-9 items-center px-3 text-[12px] font-medium tabular-nums select-none">
+                <span className="text-muted-foreground flex h-9 items-center px-3 text-[12px] font-medium tabular-nums select-none">
                   {page}
                 </span>
                 <button
@@ -433,7 +433,7 @@ export default function SearchStudio() {
                   onClick={() => setPage((p) => (data?.hasNext ? p + 1 : p))}
                   disabled={!data?.hasNext}
                   aria-label="Next page"
-                  className="text-secondary hover:bg-inset hover:text-primary focus-visible:ring-focus flex h-9 w-9 items-center justify-center transition-colors duration-150 focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset disabled:pointer-events-none disabled:opacity-30"
+                  className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring flex h-9 w-9 items-center justify-center transition-colors duration-150 focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset disabled:pointer-events-none disabled:opacity-30"
                 >
                   <LucideChevronRight className="h-4 w-4" />
                 </button>
@@ -447,12 +447,12 @@ export default function SearchStudio() {
           {isLoading ? (
             <div>
               {/* Column header */}
-              <div className="border-default hidden gap-4 border-b pb-3 md:grid md:grid-cols-[2rem_minmax(0,1fr)_5rem]">
+              <div className="border-border hidden gap-4 border-b pb-3 md:grid md:grid-cols-[2rem_minmax(0,1fr)_5rem]">
                 <div />
-                <span className="text-secondary/50 text-[11px] font-medium tracking-[0.08em] uppercase">
+                <span className="text-muted-foreground/50 text-[11px] font-medium tracking-[0.08em] uppercase">
                   Result
                 </span>
-                <span className="text-secondary/50 text-right text-[11px] font-medium tracking-[0.08em] uppercase">
+                <span className="text-muted-foreground/50 text-right text-[11px] font-medium tracking-[0.08em] uppercase">
                   Score
                 </span>
               </div>
@@ -462,14 +462,14 @@ export default function SearchStudio() {
             </div>
           ) : visibleResults.length === 0 ? (
             <div className="flex min-h-[28rem] flex-col items-center justify-center gap-4 text-center">
-              <div className="border-default bg-inset/30 flex h-16 w-16 items-center justify-center rounded-2xl border border-dashed">
-                <LucideSearch className="text-secondary/40 h-7 w-7" />
+              <div className="border-border bg-muted/30 flex h-16 w-16 items-center justify-center rounded-2xl border border-dashed">
+                <LucideSearch className="text-muted-foreground/40 h-7 w-7" />
               </div>
               <div className="max-w-[22rem] space-y-1.5">
-                <h3 className="text-primary text-[16px] font-semibold tracking-[-0.01em]">
+                <h3 className="text-foreground text-[16px] font-semibold tracking-[-0.01em]">
                   No results on this page
                 </h3>
-                <p className="text-secondary text-[14px] leading-[1.55]">
+                <p className="text-muted-foreground text-[14px] leading-[1.55]">
                   The server found matches but the active filter removed this slice. Clear filters
                   or move to another page.
                 </p>
@@ -478,14 +478,14 @@ export default function SearchStudio() {
                 <button
                   type="button"
                   onClick={clearFilters}
-                  className="border-default text-primary hover:bg-inset focus-visible:ring-focus rounded-lg border px-4 py-2 text-[13px] font-medium transition-colors duration-150 focus-visible:ring-2 focus-visible:outline-none"
+                  className="border-border text-foreground hover:bg-muted focus-visible:ring-ring rounded-lg border px-4 py-2 text-[13px] font-medium transition-colors duration-150 focus-visible:ring-2 focus-visible:outline-none"
                 >
                   Clear filters
                 </button>
                 <button
                   type="button"
                   onClick={() => setPage(1)}
-                  className="bg-accent text-on-accent focus-visible:ring-focus rounded-lg px-4 py-2 text-[13px] font-medium transition-opacity duration-150 hover:opacity-90 focus-visible:ring-2 focus-visible:outline-none"
+                  className="bg-primary text-primary-foreground focus-visible:ring-ring rounded-lg px-4 py-2 text-[13px] font-medium transition-opacity duration-150 hover:opacity-90 focus-visible:ring-2 focus-visible:outline-none"
                 >
                   Back to page 1
                 </button>
@@ -494,14 +494,14 @@ export default function SearchStudio() {
           ) : (
             <div>
               {/* Column header */}
-              <div className="border-default hidden gap-4 border-b pb-3 md:grid md:grid-cols-[2rem_minmax(0,1fr)_5rem]">
+              <div className="border-border hidden gap-4 border-b pb-3 md:grid md:grid-cols-[2rem_minmax(0,1fr)_5rem]">
                 <div />
-                <span className="text-secondary/50 text-[11px] font-medium tracking-[0.08em] uppercase">
+                <span className="text-muted-foreground/50 text-[11px] font-medium tracking-[0.08em] uppercase">
                   {totalResults > 0
                     ? `${totalResults.toLocaleString()} result${totalResults === 1 ? "" : "s"}`
                     : "Result"}
                 </span>
-                <span className="text-secondary/50 text-right text-[11px] font-medium tracking-[0.08em] uppercase">
+                <span className="text-muted-foreground/50 text-right text-[11px] font-medium tracking-[0.08em] uppercase">
                   Score
                 </span>
               </div>
@@ -512,22 +512,22 @@ export default function SearchStudio() {
 
               {/* Footer pagination */}
               {(data?.hasPrev || data?.hasNext) && (
-                <div className="border-default mt-2 flex items-center justify-between border-t pt-6">
+                <div className="border-border mt-2 flex items-center justify-between border-t pt-6">
                   <button
                     type="button"
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={!data?.hasPrev}
-                    className="text-secondary hover:text-primary focus-visible:ring-focus inline-flex items-center gap-2 rounded text-[13px] font-medium transition-colors duration-150 focus-visible:ring-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-30"
+                    className="text-muted-foreground hover:text-foreground focus-visible:ring-ring inline-flex items-center gap-2 rounded text-[13px] font-medium transition-colors duration-150 focus-visible:ring-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-30"
                   >
                     <LucideChevronLeft className="h-4 w-4" />
                     Previous
                   </button>
-                  <span className="text-secondary/60 text-[12px] tabular-nums">Page {page}</span>
+                  <span className="text-muted-foreground/60 text-[12px] tabular-nums">Page {page}</span>
                   <button
                     type="button"
                     onClick={() => setPage((p) => (data?.hasNext ? p + 1 : p))}
                     disabled={!data?.hasNext}
-                    className="text-secondary hover:text-primary focus-visible:ring-focus inline-flex items-center gap-2 rounded text-[13px] font-medium transition-colors duration-150 focus-visible:ring-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-30"
+                    className="text-muted-foreground hover:text-foreground focus-visible:ring-ring inline-flex items-center gap-2 rounded text-[13px] font-medium transition-colors duration-150 focus-visible:ring-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-30"
                   >
                     Next
                     <LucideChevronRight className="h-4 w-4" />

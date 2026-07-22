@@ -63,7 +63,7 @@ function DialogOverlay({ className, ...props }: React.ComponentProps<typeof Base
     <BaseDialog.Backdrop
       data-slot="dialog-overlay"
       className={cn(
-        "overlay-backdrop data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 fixed inset-0 z-50 transition-opacity",
+        "bg-black/80 data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 fixed inset-0 z-50 transition-opacity",
         className,
       )}
       {...props}
@@ -85,7 +85,7 @@ function DialogContent({
       <BaseDialog.Popup
         data-slot="dialog-content"
         className={cn(
-          "bg-raised text-primary border-subtle data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid max-h-[90dvh] w-[calc(100%-2rem)] max-w-[30rem] translate-x-[-50%] translate-y-[-50%] gap-6 overflow-y-auto rounded-xl border p-4 duration-200 outline-none sm:p-6",
+          "bg-popover text-popover-foreground data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid max-h-[90dvh] w-[calc(100%-2rem)] max-w-[30rem] translate-x-[-50%] translate-y-[-50%] gap-6 overflow-y-auto rounded-lg border p-4 duration-200 outline-none sm:p-6",
           className,
         )}
         {...props}
@@ -94,7 +94,7 @@ function DialogContent({
         {showCloseButton && (
           <BaseDialog.Close
             data-slot="dialog-close"
-            className="text-secondary hover:bg-inset hover:text-primary focus-visible:outline-ring absolute top-3 right-3 inline-flex size-11 items-center justify-center rounded-md border border-transparent opacity-100 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none sm:top-4 sm:right-4 [&_svg]:pointer-events-none [&_svg]:size-4.5 [&_svg]:shrink-0"
+            className="text-muted-foreground hover:bg-accent hover:text-accent-foreground focus-visible:outline-ring absolute top-3 right-3 inline-flex size-11 items-center justify-center rounded-md border border-transparent opacity-100 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none sm:top-4 sm:right-4 [&_svg]:pointer-events-none [&_svg]:size-4.5 [&_svg]:shrink-0"
           >
             <XIcon />
             <span className="sr-only">Close</span>
@@ -129,7 +129,7 @@ function DialogTitle({ className, ...props }: React.ComponentProps<typeof BaseDi
   return (
     <BaseDialog.Title
       data-slot="dialog-title"
-      className={cn("heading-2 text-primary", className)}
+      className={cn("text-lg font-semibold leading-none tracking-tight", className)}
       {...props}
     />
   );
@@ -142,7 +142,7 @@ function DialogDescription({
   return (
     <BaseDialog.Description
       data-slot="dialog-description"
-      className={cn("body-2 text-secondary max-w-prose", className)}
+      className={cn("max-w-prose text-sm text-muted-foreground", className)}
       {...props}
     />
   );

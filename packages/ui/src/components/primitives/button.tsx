@@ -1,4 +1,4 @@
-import { Slot } from "@radix-ui/react-slot";
+import { Button as BaseButton } from "@base-ui/react/button";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
@@ -6,21 +6,21 @@ import { cn } from "../../lib/utils";
 import { Spinner } from "../feedback/spinner";
 
 const buttonVariants = cva(
-  "inline-flex min-h-11 !cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-md border px-3 py-1.5 text-sm font-medium leading-5 transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:!cursor-default [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex min-h-9 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border border-transparent px-4 py-2 text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         default:
-          "border-transparent bg-accent text-on-accent hover:bg-accent-hover active:bg-accent-pressed disabled:border-subtle disabled:bg-panel disabled:text-disabled",
+          "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive:
-          "border-transparent bg-destructive text-on-destructive hover:bg-destructive-hover active:bg-destructive-pressed disabled:border-subtle disabled:bg-panel disabled:text-disabled",
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
-          "border-default bg-transparent text-primary hover:bg-surface-hover active:bg-surface-pressed disabled:border-subtle disabled:text-disabled",
+          "border-input bg-background hover:bg-accent hover:text-accent-foreground",
         secondary:
-          "border-default bg-panel text-primary hover:bg-surface-hover active:bg-surface-pressed disabled:border-subtle disabled:bg-panel disabled:text-disabled",
+          "border-input bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost:
-          "border-transparent bg-transparent text-secondary hover:bg-surface-hover hover:text-primary active:bg-surface-pressed disabled:text-disabled",
-        link: "border-transparent bg-transparent px-0 text-accent hover:text-accent-hover disabled:text-disabled underline-offset-4 hover:underline",
+          "border-transparent bg-transparent hover:bg-accent hover:text-accent-foreground",
+        link: "border-transparent bg-transparent px-0 text-primary underline-offset-4 hover:underline",
       },
       size: {
         sm: "min-h-11 px-2.5 text-sm",
@@ -60,9 +60,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref,
   ) => {
-    const Comp = asChild ? Slot : "button";
+    if (asChild && React.isValidElement(children)) {
+      return <BaseButton render={children as React.ReactElement} nativeButton={false} className={cn(buttonVariants({ variant, size, className }))} disabled={disabled || isLoading} {...props} ref={ref} />;
+    }
     return (
-      <Comp
+      <button
         className={cn(buttonVariants({ variant, size, className }), isLoading && "relative")}
         style={{
           ...props.style,
@@ -86,7 +88,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ) : (
           children
         )}
-      </Comp>
+      </button>
     );
   },
 );

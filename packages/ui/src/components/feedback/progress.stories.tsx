@@ -26,6 +26,7 @@ export const Complete: Story = {
 };
 
 export const Partial: Story = {
+  args: { value: 60 },
   render: () => (
     <div className="flex w-64 flex-col gap-4">
       <Progress value={10} />

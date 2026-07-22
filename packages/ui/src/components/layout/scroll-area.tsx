@@ -1,7 +1,9 @@
+import { ScrollArea as ScrollAreaPrimitive } from "@base-ui/react/scroll-area";
 import * as React from "react";
+
 import { cn } from "../../lib/utils";
 
-interface ScrollAreaProps extends React.HTMLAttributes<HTMLDivElement> {
+interface ScrollAreaProps extends React.ComponentProps<typeof ScrollAreaPrimitive.Root> {
   orientation?: "horizontal" | "vertical";
   snap?: "start" | "center" | "none";
 }
@@ -9,31 +11,24 @@ interface ScrollAreaProps extends React.HTMLAttributes<HTMLDivElement> {
 const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(
   ({ className, children, orientation = "horizontal", snap = "none", ...props }, ref) => {
     return (
-      <div
-        ref={ref}
-        className={cn(
-          "scrollbar-hide flex overflow-auto",
-          orientation === "horizontal" && "flex-row",
-          orientation === "vertical" && "flex-col",
-          snap !== "none" && orientation === "horizontal" && "snap-x snap-mandatory",
-          snap !== "none" && orientation === "vertical" && "snap-y snap-mandatory",
-          className,
-        )}
-        {...props}
-      >
-        {React.Children.map(children, (child) => {
-          if (!React.isValidElement(child)) return child;
-          if (snap !== "none") {
+      <ScrollAreaPrimitive.Root ref={ref} className={cn("relative", className)} {...props}>
+        <ScrollAreaPrimitive.Viewport className={cn("scrollbar-hide flex overflow-auto", orientation === "horizontal" ? "flex-row" : "flex-col")}>
+          {React.Children.map(children, (child) => {
+            if (!React.isValidElement(child)) return child;
             return React.cloneElement(child as React.ReactElement<{ className?: string }>, {
-              className: cn(`snap-${snap}`, (child.props as { className?: string }).className),
+              className: cn(
+                snap !== "none" && orientation === "horizontal" && `snap-${snap}`,
+                snap !== "none" && orientation === "vertical" && `snap-${snap}`,
+                (child.props as { className?: string }).className,
+              ),
             });
-          }
-          return child;
-        })}
-      </div>
+          })}
+        </ScrollAreaPrimitive.Viewport>
+      </ScrollAreaPrimitive.Root>
     );
   },
 );
+
 ScrollArea.displayName = "ScrollArea";
 
 export { ScrollArea };

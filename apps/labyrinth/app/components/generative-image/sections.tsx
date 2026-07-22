@@ -15,32 +15,32 @@ type InputGroupProps = {
 function InputGroup({ label, value, onChange, type = "text", help }: InputGroupProps) {
   return (
     <div className="space-y-1.5">
-      <label className="text-secondary text-xs font-medium">{label}</label>
+      <label className="text-muted-foreground text-xs font-medium">{label}</label>
       {type === "textarea" ? (
         <textarea
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          className="border-default bg-canvas text-primary focus:ring-focus h-20 w-full resize-none rounded border p-2 text-sm transition-all outline-none focus:border-transparent focus:ring-2"
+          className="border-border bg-background text-foreground focus:ring-ring h-20 w-full resize-none rounded border p-2 text-sm transition-all outline-none focus:border-transparent focus:ring-2"
         />
       ) : (
         <input
           type="text"
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          className="border-default bg-canvas text-primary focus:ring-focus w-full rounded border p-2 text-sm transition-all outline-none focus:border-transparent focus:ring-2"
+          className="border-border bg-background text-foreground focus:ring-ring w-full rounded border p-2 text-sm transition-all outline-none focus:border-transparent focus:ring-2"
         />
       )}
-      {help ? <p className="text-secondary text-xs">{help}</p> : null}
+      {help ? <p className="text-muted-foreground text-xs">{help}</p> : null}
     </div>
   );
 }
 
 function SectionPanel({ value, title, icon: Icon, children }: SectionPanelProps) {
   return (
-    <AccordionItem value={value} className="border-default border-b">
+    <AccordionItem value={value} className="border-border border-b">
       <AccordionTrigger className="py-3">
-        <div className="text-primary flex items-center gap-2 text-sm font-medium">
-          <Icon size={16} className="text-secondary" />
+        <div className="text-foreground flex items-center gap-2 text-sm font-medium">
+          <Icon size={16} className="text-muted-foreground" />
           {title}
         </div>
       </AccordionTrigger>
@@ -154,8 +154,8 @@ export const EnvironmentSection = memo(function EnvironmentSection({
         value={config.primary_prop}
         onChange={(value) => dispatch({ type: "environment/update", key: "primary_prop", value })}
       />
-      <div className="border-default border-t pt-3">
-        <p className="text-secondary mb-3 text-xs font-medium">Background</p>
+      <div className="border-border border-t pt-3">
+        <p className="text-muted-foreground mb-3 text-xs font-medium">Background</p>
         <div className="space-y-4">
           <InputGroup
             label="Visibility"
