@@ -12,4 +12,9 @@ describe("calculatePenDuration", () => {
     expect(calculatePenDuration([50, 50], 100)).toBe(2);
     expect(calculatePenDuration([10, 20, 30, 15], 100)).toBe(4);
   });
+
+  test("should stop counting once the pen runs out, ignoring later dosages", () => {
+    const result = calculatePenDuration([30, 30, 30, 30, 30], 100);
+    expect(result).toBeCloseTo(3.333, 2);
+  });
 });

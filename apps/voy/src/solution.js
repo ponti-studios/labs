@@ -8,6 +8,7 @@ function calculatePenDuration(weeklyDosages, penCapacity) {
       remaining = remaining - dosage;
     } else {
       weeks += remaining / dosage;
+      break;
     }
   }
 
