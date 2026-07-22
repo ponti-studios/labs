@@ -65,7 +65,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       const renderedChild = React.cloneElement(child, {
         children: isLoading ? (
           <>
-            <span className="opacity-0">{child.props.children}</span>
+            <span className="opacity-0" aria-hidden="true">{child.props.children}</span>
             <span className="absolute inset-0 inline-flex items-center justify-center">
               <Spinner size="sm" aria-hidden="true" />
             </span>
