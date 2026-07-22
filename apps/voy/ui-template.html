@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medication Pen Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .info {
+      margin-bottom: 20px;
+      padding: 10px;
+      background-color: #e8f4f8;
+      border-radius: 5px;
+    }
+
+    .weeks-container {
+      margin: 20px 0;
+    }
+
+    .week-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      margin: 5px 0;
+      background-color: #f9f9f9;
+      border-radius: 5px;
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #4CAF50;
+      color: white;
+      border-radius: 5px;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .loading {
+      text-align: center;
+      color: #666;
+    }
+
+    .error {
+      padding: 15px;
+      background-color: #f44336;
+      color: white;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Medication Pen Duration Calculator</h1>
+
+    <div class="info">
+      <strong>Pen Capacity:</strong> <span id="penCapacity">100mg</span>
+    </div>
+
+    <div id="content">
+      <div class="loading">Loading medication schedule...</div>
+    </div>
+
+    <div class="weeks-container" id="weeksContainer" style="display: none;">
+      <!-- Weeks will be dynamically populated here -->
+    </div>
+
+    <div class="result" id="result" style="display: none;">
+      <!-- Result will be displayed here -->
+    </div>
+  </div>
+
+  <script>
+    // TODO: Import your calculatePenDuration and fetchAndCalculate functions here
+    // For this example, we'll define them inline
+
+    /**
+     * Calculate how many weeks a medication pen will last
+     * TODO: Implement this function
+     */
+    function calculatePenDuration(weeklyDosages) {
+      // TODO: Implement your solution here
+      return 0;
+    }
+
+    /**
+     * Fetch medication schedule from API and calculate duration
+     * TODO: Implement this function
+     */
+    async function fetchAndCalculate() {
+      try {
+        const response = await fetch('http://localhost:3000/api/medication-schedule');
+        const data = await response.json();
+        return {
+          weeklyDosages: data.weeklyDosages,
+          penCapacity: data.penCapacity,
+          duration: calculatePenDuration(data.weeklyDosages)
+        };
+      } catch (error) {
+        console.error('Error:', error);
+        throw error;
+      }
+    }
+
+    /**
+     * Display the medication schedule and calculation in the UI
+     */
+    async function displayMedicationSchedule() {
+      const contentDiv = document.getElementById('content');
+      const weeksContainer = document.getElementById('weeksContainer');
+      const resultDiv = document.getElementById('result');
+      const penCapacitySpan = document.getElementById('penCapacity');
+
+      try {
+        // Fetch and calculate
+        const data = await fetchAndCalculate();
+
+        // Update pen capacity
+        penCapacitySpan.textContent = `${data.penCapacity}mg`;
+
+        // Hide loading
+        contentDiv.style.display = 'none';
+
+        // Display weeks
+        weeksContainer.innerHTML = '<h3>Weekly Dosages:</h3>';
+        data.weeklyDosages.forEach((dosage, index) => {
+          const weekItem = document.createElement('div');
+          weekItem.className = 'week-item';
+          weekItem.innerHTML = `
+            <span>Week ${index + 1}:</span>
+            <strong>${dosage}mg</strong>
+          `;
+          weeksContainer.appendChild(weekItem);
+        });
+        weeksContainer.style.display = 'block';
+
+        // Display result
+        resultDiv.textContent = `Pen will last ${data.duration.toFixed(2)} weeks`;
+        resultDiv.style.display = 'block';
+
+      } catch (error) {
+        contentDiv.innerHTML = `<div class="error">Error loading medication schedule: ${error.message}</div>`;
+      }
+    }
+
+    // Load data when page loads
+    window.addEventListener('DOMContentLoaded', displayMedicationSchedule);
+  </script>
+</body>
+</html>

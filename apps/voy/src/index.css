@@ -1,0 +1,35 @@
+:root {
+  --radius: 8px;
+  --spacing: 8px;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding-top: 50px;
+}
+
+.list-container {
+  border: 1px solid brown;
+  width: 300px;
+  height: fit-content;
+  min-height: 200px;
+  padding: 24px 16px;
+  border-radius: var(--spacing);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  padding: 0px;
+  gap: var(--spacing);
+}
+
+.list-item {
+  display: flex;
+  border-radius: var(--spacing);
+  padding: 8px 10px;
+  border: 1px solid brown;
+}
