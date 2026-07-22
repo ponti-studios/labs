@@ -7,6 +7,7 @@ import { cn } from "../../lib/utils";
 function Accordion({
   type,
   collapsible: _collapsible,
+  className,
   ...props
 }: React.ComponentProps<typeof AccordionPrimitive.Root> & {
   type?: "single" | "multiple";
@@ -17,7 +18,7 @@ function Accordion({
       data-slot="accordion"
       multiple={type === "multiple"}
       {...props}
-      className="w-full"
+      className={cn("w-full", className)}
     />
   );
 }
