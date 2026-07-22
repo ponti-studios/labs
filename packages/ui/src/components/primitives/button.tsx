@@ -78,19 +78,20 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
       return (
         <BaseButton
+          {...props}
           render={renderedChild}
           nativeButton={false}
           className={cn(buttonVariants({ variant, size, className }), isLoading && "relative")}
           disabled={disabled || isLoading}
           aria-busy={isLoading}
           aria-label={isLoading ? loadingLabel : ariaLabel}
-          {...props}
           ref={ref}
         />
       );
     }
     return (
       <button
+        {...props}
         className={cn(buttonVariants({ variant, size, className }), isLoading && "relative")}
         style={{
           ...props.style,
@@ -101,7 +102,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={disabled || isLoading}
         aria-busy={isLoading}
         aria-label={isLoading ? loadingLabel : ariaLabel}
-        {...props}
       >
         {isLoading ? (
           <>
