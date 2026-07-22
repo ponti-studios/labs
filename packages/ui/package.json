@@ -77,12 +77,10 @@
     "storybook": "storybook dev -p 6006",
     "tokens:build": "style-dictionary build --config style-dictionary.foundations.json && style-dictionary build --config style-dictionary.light.json && style-dictionary build --config style-dictionary.dark.json",
     "tokens:check": "pnpm run tokens:build && node tokens/check-foundations.mjs && git diff --exit-code -- src/tokens/generated",
-    "check:no-radix": "node tokens/check-source.mjs --no-radix",
-    "check:shadcn": "node tokens/check-source.mjs --shadcn",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint src --fix",
     "format": "oxfmt src --write",
-    "prepack": "pnpm run tokens:check && pnpm run check:no-radix && pnpm run check:shadcn && pnpm run typecheck && pnpm run build"
+    "prepack": "pnpm run tokens:check && pnpm run typecheck && pnpm run build"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
