@@ -31,11 +31,6 @@ const meta = {
       description: "When true, interaction outside the menu is disabled while open",
       table: { defaultValue: { summary: "true" } },
     },
-    dir: {
-      control: "select",
-      options: ["ltr", "rtl"],
-      description: "Reading direction of the dropdown menu",
-    },
   },
 } satisfies Meta<typeof DropdownMenu>;
 

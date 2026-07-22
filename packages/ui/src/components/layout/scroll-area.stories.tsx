@@ -25,7 +25,7 @@ export const Default: Story = {
         className="flex size-40 shrink-0 items-center justify-center rounded-lg"
         style={{ backgroundColor: item.bg }}
       >
-        <span className="text-primary font-medium">{item.label}</span>
+        <span className="text-foreground font-medium">{item.label}</span>
       </div>
     )),
   },
@@ -41,7 +41,7 @@ export const WithSnap: Story = {
         className="flex size-48 shrink-0 items-center justify-center rounded-lg"
         style={{ backgroundColor: item.bg }}
       >
-        <span className="text-primary font-medium">{item.label}</span>
+        <span className="text-foreground font-medium">{item.label}</span>
       </div>
     )),
   },
@@ -57,7 +57,7 @@ export const Vertical: Story = {
         className="flex h-24 shrink-0 items-center justify-center rounded-lg"
         style={{ backgroundColor: item.bg }}
       >
-        <span className="text-primary font-medium">{item.label}</span>
+        <span className="text-foreground font-medium">{item.label}</span>
       </div>
     )),
   },
@@ -74,7 +74,7 @@ export const ScreenshotsGallery: Story = {
             className="flex aspect-video w-72 shrink-0 items-center justify-center overflow-hidden rounded-xl border"
             style={{ backgroundColor: item.bg }}
           >
-            <span className="text-primary/70 text-sm">{item.label}</span>
+            <span className="text-foreground/70 text-sm">{item.label}</span>
           </div>
         ))}
       </ScrollArea>

@@ -37,12 +37,12 @@ export function Spinner({
     >
       <span
         className={cn(
-          "border-default border-t-accent rounded-full border-2 motion-safe:animate-spin",
+          "border-border border-t-primary rounded-full border-2 motion-safe:animate-spin",
           sizeClasses[size],
         )}
         aria-hidden="true"
       />
-      {label && <span className="text-secondary text-xs">{label}</span>}
+      {label && <span className="text-muted-foreground text-xs">{label}</span>}
     </div>
   );
 }

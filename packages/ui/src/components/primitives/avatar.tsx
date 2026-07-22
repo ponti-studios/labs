@@ -1,4 +1,4 @@
-import * as AvatarPrimitive from "@radix-ui/react-avatar";
+import { Avatar as AvatarPrimitive } from "@base-ui/react/avatar";
 import type { ClassValue } from "clsx";
 import * as React from "react";
 
@@ -84,7 +84,7 @@ function AvatarFallback({
     <AvatarPrimitive.Fallback
       data-slot="avatar-fallback"
       className={cn(
-        "bg-inset text-secondary absolute inset-0 flex items-center justify-center rounded-full",
+        "bg-muted text-muted-foreground absolute inset-0 flex items-center justify-center rounded-full",
         fallbackText[size],
         className,
       )}
@@ -119,7 +119,7 @@ function AvatarGroupCount({ className, ...props }: React.ComponentProps<"div">) 
     <div
       data-slot="avatar-group-count"
       className={cn(
-        "bg-inset text-secondary ring-background relative flex shrink-0 items-center justify-center rounded-full text-sm ring-2",
+        "bg-muted text-muted-foreground ring-background relative flex shrink-0 items-center justify-center rounded-full text-sm ring-2",
         avatarSize[size],
         groupCountSvg[size],
         className,

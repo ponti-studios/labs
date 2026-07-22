@@ -35,7 +35,7 @@ export function DatePicker({
   return (
     <div className={containerClassName}>
       {showLabel && label ? (
-        <label htmlFor={id} className="text-primary mb-2 block text-sm font-medium">
+        <label htmlFor={id} className="text-foreground mb-2 block text-sm font-medium">
           {label}
         </label>
       ) : null}
@@ -45,13 +45,13 @@ export function DatePicker({
             id={id}
             variant={variant}
             disabled={disabled}
-            className="bg-inset placeholder:text-secondary w-full justify-start text-left font-normal backdrop-blur-sm"
+            className="bg-muted placeholder:text-muted-foreground w-full justify-start text-left font-normal"
           >
             <CalendarIcon className="mr-2 size-4" />
             {value ? format(value, dateFormat) : <span>{placeholder}</span>}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="bg-canvas w-auto p-0" align={popoverAlign}>
+        <PopoverContent className="bg-popover w-auto p-0" align={popoverAlign}>
           <Calendar mode="single" selected={value} onSelect={onSelect} />
         </PopoverContent>
       </Popover>
