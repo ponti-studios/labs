@@ -12,7 +12,14 @@ const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(
   ({ className, children, orientation = "horizontal", snap = "none", ...props }, ref) => {
     return (
       <ScrollAreaPrimitive.Root ref={ref} className={cn("relative", className)} {...props}>
-        <ScrollAreaPrimitive.Viewport className={cn("scrollbar-hide flex overflow-auto", orientation === "horizontal" ? "flex-row" : "flex-col")}>
+        <ScrollAreaPrimitive.Viewport
+          className={cn(
+            "scrollbar-hide flex overflow-auto",
+            orientation === "horizontal" ? "flex-row" : "flex-col",
+            snap !== "none" && (orientation === "horizontal" ? "snap-x" : "snap-y"),
+            snap !== "none" && "snap-mandatory",
+          )}
+        >
           {React.Children.map(children, (child) => {
             if (!React.isValidElement(child)) return child;
             return React.cloneElement(child as React.ReactElement<{ className?: string }>, {

@@ -100,29 +100,37 @@ export function DropZone({
   );
 
   return (
-    <button
-      type="button"
-      className={cn(
-        "relative border-2 border-dashed p-12",
-        {
-          "border-primary bg-primary/5": dragActive,
-          "border-border bg-muted": !dragActive,
-        },
-        "flex flex-col items-center justify-center gap-4",
-        {
-          "pointer-events-none cursor-not-allowed": isImporting,
-        },
-        className,
-      )}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
-      onClick={handleClick}
-      onKeyDown={handleKeyDown}
-      tabIndex={isImporting ? -1 : 0}
-      aria-disabled={isImporting}
-      aria-label="Upload file area. Press Enter or Space to open file browser"
-    >
+    <div>
+      <button
+        type="button"
+        className={cn(
+          "relative border-2 border-dashed p-12",
+          {
+            "border-primary bg-primary/5": dragActive,
+            "border-border bg-muted": !dragActive,
+          },
+          "flex flex-col items-center justify-center gap-4",
+          {
+            "pointer-events-none cursor-not-allowed": isImporting,
+          },
+          className,
+        )}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+        onClick={handleClick}
+        onKeyDown={handleKeyDown}
+        tabIndex={isImporting ? -1 : 0}
+        aria-disabled={isImporting}
+        aria-label="Upload file area. Press Enter or Space to open file browser"
+      >
+        <div className="space-y-2 text-center">
+          <p className="text-muted-foreground">
+            {label} <span className="text-foreground font-medium">click to browse</span>
+          </p>
+          {helpText ? <p className="text-muted-foreground text-sm">{helpText}</p> : null}
+        </div>
+      </button>
       <input
         id={inputId}
         type="file"
@@ -133,13 +141,6 @@ export function DropZone({
         disabled={isImporting}
         aria-label="File input"
       />
-
-      <div className="space-y-2 text-center">
-        <p className="text-muted-foreground">
-          {label} <span className="text-foreground font-medium">click to browse</span>
-        </p>
-        {helpText ? <p className="text-muted-foreground text-sm">{helpText}</p> : null}
-      </div>
-    </button>
+    </div>
   );
 }
