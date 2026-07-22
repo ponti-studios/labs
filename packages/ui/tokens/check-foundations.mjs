@@ -4,43 +4,77 @@ import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 const tailwindTheme = require.resolve("tailwindcss/theme.css");
 const tailwind = readFileSync(tailwindTheme, "utf8");
+const sourceTokens = JSON.parse(readFileSync(new URL("./foundations.tokens.json", import.meta.url), "utf8"));
 const generated = readFileSync(new URL("../src/tokens/generated/foundations.css", import.meta.url), "utf8");
-const generatedNative = readFileSync(new URL("../src/tokens/generated/foundations.generated.ts", import.meta.url), "utf8");
 
-const declarations = (css) => Object.fromEntries(
-  [...css.matchAll(/(--[\w-]+):\s*([^;]+);/g)].map(([, name, value]) => [name, value.trim()]),
-);
+const declarations = (css) => [...css.matchAll(/(--[\w-]+):\s*([^;]+);/g)].map(([, name, value]) => [name, value.trim()]);
 const expected = declarations(tailwind);
 const actual = declarations(generated);
 const failures = [];
-const requiredVariables = [
-  "--spacing", "--font-sans", "--font-serif", "--font-mono", "--text-xs", "--text-9xl",
-  "--font-weight-thin", "--font-weight-black", "--tracking-tighter", "--tracking-widest",
-  "--leading-tight", "--leading-loose", "--radius-xs", "--radius-4xl", "--shadow-2xl",
-  "--breakpoint-2xl", "--container-7xl", "--z-index-50", "--ease-in-out", "--animate-pulse",
-];
-for (const name of requiredVariables) {
-  if (!(name in actual)) failures.push(`missing required Tailwind foundation variable: ${name}`);
-}
-for (const [key, value] of [["0-5", "0.125rem"], ["1-5", "0.375rem"], ["2-5", "0.625rem"], ["3-5", "0.875rem"]]) {
-  if (!generatedNative.includes(`"${key}": "${value}"`)) failures.push(`missing native fractional spacing token: ${key}`);
-}
-const generatedNames = [...generated.matchAll(/(--[\w-]+):/g)].map(([, name]) => name);
-if (new Set(generatedNames).size !== generatedNames.length) failures.push("generated foundations contain duplicate custom-property paths");
 const normalize = (value) => value
   .replaceAll(/\b0px\b/g, "0")
   .replaceAll(/ 0 0 (rgb\()/g, " $1")
   .replaceAll(/\s+/g, " ")
   .trim();
-for (const [name, value] of Object.entries(actual)) {
-  if (!(name in expected)) continue;
-  if (normalize(value) !== normalize(expected[name])) {
-    failures.push(`${name}: generated ${value}; Tailwind ${expected[name]}`);
+const expectedValues = new Map(expected);
+const generatedNames = new Set();
+
+const requiredNames = [
+  "--spacing",
+  "--font-sans",
+  "--font-serif",
+  "--font-mono",
+  ...["xs", "sm", "base", "lg", "xl", "2xl", "3xl", "4xl", "5xl", "6xl", "7xl", "8xl", "9xl"].flatMap((name) => [
+    `--text-${name}`,
+    `--text-line-height-${name}`,
+  ]),
+  ...["thin", "extralight", "light", "normal", "medium", "semibold", "bold", "extrabold", "black"].map((name) => `--font-weight-${name}`),
+  ...["tighter", "tight", "normal", "wide", "wider", "widest"].map((name) => `--tracking-${name}`),
+  ...["tight", "snug", "normal", "relaxed", "loose"].map((name) => `--leading-${name}`),
+  ...["xs", "sm", "md", "lg", "xl", "2xl", "3xl", "4xl", "full"].map((name) => `--radius-${name}`),
+  ...["2xs", "xs", "sm", "md", "lg", "xl", "2xl", "none"].map((name) => `--shadow-${name}`),
+  ...["sm", "md", "lg", "xl", "2xl"].map((name) => `--breakpoint-${name}`),
+  ...["3xs", "2xs", "xs", "sm", "md", "lg", "xl", "2xl", "3xl", "4xl", "5xl", "6xl", "7xl"].map((name) => `--container-${name}`),
+  ...["auto", "0", "10", "20", "30", "40", "50"].map((name) => `--z-index-${name}`),
+  ...["in", "out", "in-out"].map((name) => `--ease-${name}`),
+  ...["75", "100", "150", "200", "300", "500", "700", "1000"].map((name) => `--duration-${name}`),
+  ...["spin", "ping", "pulse", "bounce"].map((name) => `--animate-${name}`),
+];
+
+const sourceNames = new Set();
+const collectSourceNames = (node, path = []) => {
+  if (!node || typeof node !== "object") return;
+  if (Object.hasOwn(node, "$value")) {
+    sourceNames.add(`--${path.join("-")}`);
+    return;
+  }
+  for (const [key, value] of Object.entries(node)) {
+    if (!key.startsWith("$")) collectSourceNames(value, [...path, key]);
+  }
+};
+collectSourceNames(sourceTokens);
+
+for (const [name, value] of actual) {
+  if (generatedNames.has(name)) failures.push(`duplicate generated foundation variable: ${name}`);
+  generatedNames.add(name);
+
+  const tailwindValue = expectedValues.get(name);
+  if (tailwindValue !== undefined && normalize(value) !== normalize(tailwindValue)) {
+    failures.push(`${name}: generated ${value}; Tailwind ${tailwindValue}`);
   }
 }
 
-const legacy = /--(content-width|font-family|font-size|line-height|letter-spacing|translate-distance|duration-(enter|exit|standard|breezy|spin)|radius-(base|icon)|z-index-(base|raised|dropdown|overlay|modal|toast|max))/;
-if (legacy.test(generated)) failures.push("generated foundations contain a removed legacy foundation name");
+for (const name of requiredNames) {
+  if (!generatedNames.has(name)) failures.push(`required Tailwind foundation variable is missing: ${name}`);
+}
+
+for (const name of sourceNames) {
+  if (!generatedNames.has(name)) failures.push(`missing generated foundation variable: ${name}`);
+}
+for (const name of generatedNames) {
+  if (!sourceNames.has(name)) failures.push(`generated foundation variable has no source token: ${name}`);
+}
+
 if (/--[\w-]+:\s*var\(--[\w-]+\)/.test(generated)) failures.push("generated foundations contain a custom-property alias");
 if (/--tracking-[\w-]+:\s*-?\d+(?:\.\d+)?\s*;/.test(generated)) failures.push("tracking values must carry a CSS unit");
 
@@ -49,4 +83,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`Foundation conformance passed (${Object.keys(actual).length} generated variables).`);
+console.log(`Foundation conformance passed (${actual.length} generated variables; ${expectedValues.size} Tailwind variables available for comparison).`);

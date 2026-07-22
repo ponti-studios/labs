@@ -42,15 +42,15 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
 const tooltipStyle = {
   backgroundColor: "var(--color-surface-panel)",
-  border: "1px solid var(--color-border-border)",
+  border: "1px solid var(--color-border)",
   borderRadius: "2px",
   fontSize: "12px",
-  color: "var(--color-text-muted-foreground)",
+  color: "var(--color-muted-foreground)",
   padding: "6px 10px",
   boxShadow: "none",
 };
 
-const tickStyle = { fill: "var(--color-text-muted-foreground)", fontSize: 11 };
+const tickStyle = { fill: "var(--color-muted-foreground)", fontSize: 11 };
 
 export default function PandemicWavesPage() {
   const { countryCode } = useLoaderData() as Awaited<ReturnType<typeof loader>>;

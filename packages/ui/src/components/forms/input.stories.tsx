@@ -39,9 +39,9 @@ export const WithLabel: Story = {
 export const States: Story = {
   render: () => (
     <div className="flex w-72 flex-col gap-4">
-      <Input placeholder="Default" />
-      <Input placeholder="Disabled" disabled />
-      <Input defaultValue="With value" />
+      <Input aria-label="Default input" placeholder="Default" />
+      <Input aria-label="Disabled input" placeholder="Disabled" disabled />
+      <Input aria-label="Input with value" defaultValue="With value" />
     </div>
   ),
 };

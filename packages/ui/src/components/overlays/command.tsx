@@ -23,12 +23,13 @@ function CommandDialog({ title = "Command Palette", description = "Search for a 
 
 type CommandInputProps = React.ComponentProps<typeof CommandPrimitive.Input> & { onValueChange?: (value: string) => void };
 
-function CommandInput({ className, onValueChange, onChange, ...props }: CommandInputProps) {
+function CommandInput({ className, onValueChange, onChange, "aria-label": ariaLabel = "Search commands", ...props }: CommandInputProps) {
   return (
     <div data-slot="command-input-wrapper" className="flex h-9 items-center gap-2 border-b px-3">
       <SearchIcon className="size-4 shrink-0 opacity-50" />
       <CommandPrimitive.Input
         data-slot="command-input"
+        aria-label={ariaLabel}
         className={`placeholder:text-muted-foreground flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50 ${className ?? ""}`}
         onChange={(event) => { onChange?.(event); onValueChange?.(event.currentTarget.value); }}
         {...props}
@@ -37,8 +38,31 @@ function CommandInput({ className, onValueChange, onChange, ...props }: CommandI
   );
 }
 
-function CommandList(props: React.ComponentProps<typeof CommandPrimitive.List>) {
-  return <CommandPrimitive.List data-slot="command-list" className="max-h-75 scroll-py-1 overflow-x-hidden overflow-y-auto" {...props} />;
+function CommandList({ children, ...props }: React.ComponentProps<typeof CommandPrimitive.List>) {
+  if (typeof children === "function") {
+    return (
+      <CommandPrimitive.List data-slot="command-list" aria-label="Command results" tabIndex={0} className="max-h-75 scroll-py-1 overflow-x-hidden overflow-y-auto" {...props}>
+        {children}
+      </CommandPrimitive.List>
+    );
+  }
+
+  const listChildren: React.ReactNode[] = [];
+  const emptyChildren: React.ReactNode[] = [];
+
+  React.Children.forEach(children, (child) => {
+    if (React.isValidElement(child) && child.type === CommandEmpty) emptyChildren.push(child);
+    else listChildren.push(child);
+  });
+
+  return (
+    <div data-slot="command-list-container" className="relative">
+      <CommandPrimitive.List data-slot="command-list" aria-label="Command results" tabIndex={0} className="max-h-75 scroll-py-1 overflow-x-hidden overflow-y-auto" {...props}>
+        {listChildren}
+      </CommandPrimitive.List>
+      {emptyChildren}
+    </div>
+  );
 }
 
 function CommandEmpty({ ...props }: React.ComponentProps<typeof CommandPrimitive.Empty>) {
@@ -60,8 +84,8 @@ function CommandItem({ className, onSelect, onClick, ...props }: CommandItemProp
   return <CommandPrimitive.Item data-slot="command-item" className={`data-highlighted:bg-accent data-highlighted:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-hidden select-none data-disabled:pointer-events-none data-disabled:opacity-50 ${className ?? ""}`} onClick={(event) => { onClick?.(event); onSelect?.(); }} {...props} />;
 }
 
-function CommandSeparator(props: React.ComponentProps<typeof CommandPrimitive.Separator>) {
-  return <CommandPrimitive.Separator data-slot="command-separator" className="bg-border -mx-1 h-px" {...props} />;
+function CommandSeparator({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="command-separator" aria-hidden="true" className={`bg-border -mx-1 h-px ${className ?? ""}`} {...props} />;
 }
 
 function CommandShortcut(props: React.ComponentProps<"span">) {

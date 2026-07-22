@@ -30,6 +30,7 @@ export const Default: Story = {
     defaultValue: [50],
     min: 0,
     max: 100,
+    "aria-label": "Volume",
   },
 };
 
@@ -39,6 +40,7 @@ export const WithStep: Story = {
     min: 0,
     max: 100,
     step: 10,
+    "aria-label": "Volume",
   },
 };
 
@@ -47,7 +49,7 @@ export const Controlled: Story = {
     const [value, setValue] = React.useState([33]);
     return (
       <div className="w-full max-w-sm space-y-4 px-1">
-        <Slider value={value} onValueChange={setValue} min={0} max={100} />
+        <Slider aria-label="Volume" value={value} onValueChange={setValue} min={0} max={100} />
         <div className="flex justify-between text-sm">
           <span className="text-muted-foreground">Volume</span>
           <span className="font-medium tabular-nums">{value[0]}%</span>
@@ -63,5 +65,6 @@ export const Disabled: Story = {
     disabled: true,
     min: 0,
     max: 100,
+    "aria-label": "Volume",
   },
 };
