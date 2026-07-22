@@ -11,19 +11,25 @@ type SliderProps = Omit<React.ComponentProps<typeof SliderPrimitive.Root>, "onVa
   onValueChange?: (value: number[]) => void;
 };
 
-const Slider = React.forwardRef<HTMLDivElement, SliderProps>(({ className, onValueChange, ...props }, ref) => (
-  <SliderPrimitive.Root
-    ref={ref}
-    className={cn("relative flex w-full touch-none items-center select-none", className)}
-    {...props}
-    onValueChange={(value) => onValueChange?.(Array.isArray(value) ? [...value] : [value])}
-  >
-    <SliderPrimitive.Track className="bg-muted relative h-2 w-full grow overflow-hidden rounded-full">
-      <SliderPrimitive.Indicator className="bg-accent absolute h-full" />
-    </SliderPrimitive.Track>
-    <SliderPrimitive.Thumb className="border-border focus-visible:border-ring focus-visible:bg-accent focus-visible:ring-ring block h-6 w-6 rounded-full border bg-background shadow-sm ring-1 ring-black/5 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50" />
-  </SliderPrimitive.Root>
-));
+const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
+  ({ className, onValueChange, "aria-label": ariaLabel, "aria-labelledby": ariaLabelledby, ...props }, ref) => (
+    <SliderPrimitive.Root
+      ref={ref}
+      className={cn("relative flex w-full touch-none items-center select-none", className)}
+      {...props}
+      onValueChange={(value) => onValueChange?.(Array.isArray(value) ? [...value] : [value])}
+    >
+      <SliderPrimitive.Track className="bg-muted relative h-2 w-full grow overflow-hidden rounded-full">
+        <SliderPrimitive.Indicator className="bg-accent absolute h-full" />
+      </SliderPrimitive.Track>
+      <SliderPrimitive.Thumb
+        aria-label={ariaLabel ?? "Slider"}
+        aria-labelledby={ariaLabelledby}
+        className="border-border focus-visible:border-ring focus-visible:bg-accent focus-visible:ring-ring block h-6 w-6 rounded-full border bg-background shadow-sm ring-1 ring-black/5 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+      />
+    </SliderPrimitive.Root>
+  ),
+);
 Slider.displayName = "Slider";
 
 export { Slider };

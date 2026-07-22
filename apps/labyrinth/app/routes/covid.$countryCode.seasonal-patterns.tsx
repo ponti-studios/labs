@@ -65,15 +65,15 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
 const tooltipStyle = {
   backgroundColor: "var(--color-surface-panel)",
-  border: "1px solid var(--color-border-border)",
+  border: "1px solid var(--color-border)",
   borderRadius: "2px",
   fontSize: "12px",
-  color: "var(--color-text-muted-foreground)",
+  color: "var(--color-muted-foreground)",
   padding: "6px 10px",
   boxShadow: "none",
 };
 
-const tickStyle = { fill: "var(--color-text-muted-foreground)", fontSize: 11 };
+const tickStyle = { fill: "var(--color-muted-foreground)", fontSize: 11 };
 
 export default function SeasonalPatternsPage() {
   const { countryCode } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
@@ -163,10 +163,10 @@ export default function SeasonalPatternsPage() {
               <p className="ui-data-label mb-3">Seasonal Radar</p>
               <ResponsiveContainer width="100%" height={240}>
                 <RadarChart data={data.analysis.patterns}>
-                  <PolarGrid stroke="var(--color-border-border)" />
+                  <PolarGrid stroke="var(--color-border)" />
                   <PolarAngleAxis dataKey="monthName" tick={tickStyle} />
                   <PolarRadiusAxis
-                    tick={{ fill: "var(--color-text-muted-foreground)", fontSize: 10 }}
+                    tick={{ fill: "var(--color-muted-foreground)", fontSize: 10 }}
                     domain={[0, "dataMax"]}
                   />
                   <Radar

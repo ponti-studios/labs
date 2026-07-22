@@ -18,6 +18,10 @@ type OpenRouterClientOptions = {
 };
 
 type ChatRequest = NonNullable<Parameters<OpenRouter["chat"]["send"]>[0]["chatRequest"]>;
+type ChatCompletionResponse = Extract<
+  Awaited<ReturnType<OpenRouter["chat"]["send"]>>,
+  { object: "chat.completion" }
+>;
 
 type ChatCompletionOptions = OpenRouterClientOptions & {
   messages: ChatRequest["messages"];
@@ -91,7 +95,7 @@ export async function chatCompletion(options: ChatCompletionOptions = { messages
     tools,
   } = options;
   const client = createOpenRouterClient({ apiKey, httpReferer, appTitle, appCategories });
-  return client.chat.send({
+  const response = await client.chat.send({
     httpReferer,
     appTitle,
     appCategories,
@@ -105,6 +109,11 @@ export async function chatCompletion(options: ChatCompletionOptions = { messages
       ...(tools !== undefined ? { tools } : {}),
     },
   });
+
+  // `stream: false` guarantees a completion response at runtime, but the SDK
+  // exposes the stream union at the type level. Keep that boundary narrow so
+  // callers do not have to repeat an impossible stream branch.
+  return response as ChatCompletionResponse;
 }
 
 export async function generateEmbedding(content: string, options: EmbeddingOptions = {}) {
@@ -218,7 +227,7 @@ export async function generateImageFromPrompt(
     imageConfig.size = options.size;
   }
 
-  const response = await client.chat.send({
+  const response = (await client.chat.send({
     httpReferer: options.httpReferer,
     appTitle: options.appTitle,
     appCategories: options.appCategories,
@@ -229,7 +238,7 @@ export async function generateImageFromPrompt(
       stream: false,
       ...(Object.keys(imageConfig).length > 0 ? { imageConfig } : {}),
     },
-  });
+  })) as ChatCompletionResponse;
 
   const imageUrl = response.choices?.[0]?.message.images?.[0]?.imageUrl.url;
 

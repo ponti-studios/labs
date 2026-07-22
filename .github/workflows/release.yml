@@ -6,7 +6,6 @@ on:
 
 permissions:
   contents: write
-  id-token: write
   issues: write
   pull-requests: write
 
@@ -14,6 +13,9 @@ jobs:
   release-ui:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    outputs:
+      release_created: ${{ steps.release.outputs['packages/ui--release_created'] }}
+      tag_name: ${{ steps.release.outputs['packages/ui--tag_name'] }}
     steps:
       - uses: googleapis/release-please-action@v5
         id: release
@@ -22,41 +24,49 @@ jobs:
           manifest-file: .release-please-manifest.json
           token: ${{ secrets.GITHUB_TOKEN }}
 
+  publish-ui:
+    needs: release-ui
+    if: ${{ needs.release-ui.outputs.release_created == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      id-token: write
+    steps:
       - uses: actions/checkout@v6
-        if: ${{ steps.release.outputs['packages/ui--release_created'] == 'true' }}
+        with:
+          ref: ${{ needs.release-ui.outputs.tag_name }}
+          fetch-depth: 0
 
       - uses: pnpm/action-setup@v6
-        if: ${{ steps.release.outputs['packages/ui--release_created'] == 'true' }}
         with:
           run_install: false
 
       - uses: actions/setup-node@v7
-        if: ${{ steps.release.outputs['packages/ui--release_created'] == 'true' }}
         with:
           node-version: "24.14.1"
           cache: "pnpm"
           registry-url: "https://registry.npmjs.org"
 
       - name: Install dependencies
-        if: ${{ steps.release.outputs['packages/ui--release_created'] == 'true' }}
         run: pnpm install --frozen-lockfile
 
       - name: Verify release tag
-        if: ${{ steps.release.outputs['packages/ui--release_created'] == 'true' }}
         env:
-          RELEASE_TAG: ${{ steps.release.outputs['packages/ui--tag_name'] }}
+          RELEASE_TAG: ${{ needs.release-ui.outputs.tag_name }}
         run: |
           VERSION="$(node -p 'require("./packages/ui/package.json").version')"
           test "$RELEASE_TAG" = "ui-v$VERSION"
+          git fetch --tags origin
+          test -n "$(git rev-parse --verify "refs/tags/$RELEASE_TAG")"
+          test "$(git rev-list -n 1 "$RELEASE_TAG")" = "$(git rev-parse HEAD)"
 
       - name: Publish UI package
-        if: ${{ steps.release.outputs['packages/ui--release_created'] == 'true' }}
         run: pnpm --filter @ponti-studios/ui publish --no-git-checks --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
 
       - name: Verify published package
-        if: ${{ steps.release.outputs['packages/ui--release_created'] == 'true' }}
         run: |
           VERSION="$(node -p 'require("./packages/ui/package.json").version')"
           test "$(npm view "@ponti-studios/ui@$VERSION" version --registry=https://registry.npmjs.org)" = "$VERSION"

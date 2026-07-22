@@ -33,8 +33,8 @@ function PageContent({
   message?: string;
 }) {
   return (
-    <div style={{ padding: "2rem" }}>
-      <p style={{ color: "var(--muted-foreground, #888)", fontSize: 14 }}>{message}</p>
+    <div className="p-8">
+      <p className="text-muted-foreground text-sm">{message}</p>
     </div>
   );
 }

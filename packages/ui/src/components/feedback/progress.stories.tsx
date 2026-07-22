@@ -14,25 +14,26 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     value: 60,
+    "aria-label": "Upload progress",
   },
 };
 
 export const Empty: Story = {
-  args: { value: 0 },
+  args: { value: 0, "aria-label": "Upload progress" },
 };
 
 export const Complete: Story = {
-  args: { value: 100 },
+  args: { value: 100, "aria-label": "Upload progress" },
 };
 
 export const Partial: Story = {
   args: { value: 60 },
   render: () => (
     <div className="flex w-64 flex-col gap-4">
-      <Progress value={10} />
-      <Progress value={33} />
-      <Progress value={66} />
-      <Progress value={90} />
+      <Progress value={10} aria-label="Upload progress" />
+      <Progress value={33} aria-label="Upload progress" />
+      <Progress value={66} aria-label="Upload progress" />
+      <Progress value={90} aria-label="Upload progress" />
     </div>
   ),
 };

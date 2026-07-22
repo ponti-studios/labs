@@ -22,15 +22,15 @@ function toNumber(value: unknown): number | null {
 
 const tooltipStyle = {
   backgroundColor: "var(--color-surface-panel)",
-  border: "1px solid var(--color-border-border)",
+  border: "1px solid var(--color-border)",
   borderRadius: "2px",
   fontSize: "12px",
-  color: "var(--color-text-muted-foreground)",
+  color: "var(--color-muted-foreground)",
   padding: "6px 10px",
   boxShadow: "none",
 };
 
-const tickStyle = { fill: "var(--color-text-muted-foreground)", fontSize: 11 };
+const tickStyle = { fill: "var(--color-muted-foreground)", fontSize: 11 };
 
 export function TimeSeriesChart({
   data,
@@ -81,7 +81,7 @@ export function TimeSeriesChart({
             labelFormatter={(label) => formatDate(label as string)}
             formatter={(value) => [formatValue(toNumber(value) ?? 0), title]}
             contentStyle={tooltipStyle}
-            cursor={{ stroke: "var(--color-border-border)", strokeWidth: 1 }}
+            cursor={{ stroke: "var(--color-border)", strokeWidth: 1 }}
           />
           <Line
             type="monotone"

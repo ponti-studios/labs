@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.11.0](https://github.com/ponti-studios/labs/compare/v1.10.0...v1.11.0) (2026-07-20)
+
+
+### Features
+
+* **ui:** elevate 18 finance-app components ahead of finance shutdown ([#190](https://github.com/ponti-studios/labs/issues/190)) ([f838676](https://github.com/ponti-studios/labs/commit/f8386761762233af1374f557aaaa312a3547ca20))
+* **ui:** publish canonical package ([1585f72](https://github.com/ponti-studios/labs/commit/1585f72b145b10147fad6bb56bdd61f2911dead5))
+
+
+### Bug Fixes
+
+* **ui:** align package scope with registry ([513acb0](https://github.com/ponti-studios/labs/commit/513acb0deaf5c50b33c1cc6e8435634ffd32f013))
+* **ui:** publish renamed package ([232f87c](https://github.com/ponti-studios/labs/commit/232f87cdb89846834dafae1ac874b2f2af7f33f5))
+* **ui:** validate release tags ([233bd26](https://github.com/ponti-studios/labs/commit/233bd2639c45b39646331fef7f73e062e1f06832))
+
 ## [1.10.0](https://github.com/ponti-studios/labs/compare/v1.9.0...v1.10.0) (2026-07-16)
 
 
