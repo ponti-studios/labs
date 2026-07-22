@@ -46,7 +46,7 @@ export function DateMonthSelect({
         value={selectedMonthYear}
         onValueChange={(v: string | null) => v != null && onMonthChange(v)}
       >
-        <SelectTrigger className={className}>
+        <SelectTrigger className={className} aria-label={placeholder}>
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
