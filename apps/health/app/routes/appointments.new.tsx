@@ -53,16 +53,16 @@ export default function NewAppointment() {
 
   return (
     <div className="container mx-auto flex max-w-md flex-col gap-6 px-4 py-8">
-      <Link to="/appointments" className="text-secondary hover:text-primary inline-flex text-sm">
+      <Link to="/appointments" className="text-muted-foreground hover:text-foreground inline-flex text-sm">
         ← Appointments
       </Link>
 
       <h1 className="text-2xl font-bold tracking-tight">Schedule Appointment</h1>
 
-      <div className="bg-inset/30 rounded-lg border p-4">
+      <div className="bg-muted/30 rounded-lg border p-4">
         <p className="font-semibold">{DOCTOR.name}</p>
-        <p className="text-secondary text-sm">{DOCTOR.specialty}</p>
-        <p className="text-secondary text-sm">{DOCTOR.location}</p>
+        <p className="text-muted-foreground text-sm">{DOCTOR.specialty}</p>
+        <p className="text-muted-foreground text-sm">{DOCTOR.location}</p>
       </div>
 
       <div className="flex flex-col gap-3">
@@ -76,7 +76,7 @@ export default function NewAppointment() {
                 type="button"
                 onClick={() => setSelectedSlot(slot)}
                 className={`flex w-full items-center justify-between rounded-md border p-3 text-left transition-colors ${
-                  isSelected ? "border-foreground bg-accent text-on-accent" : "hover:bg-inset/50"
+                  isSelected ? "border-foreground bg-primary text-primary-foreground" : "hover:bg-muted/50"
                 }`}
               >
                 <div>

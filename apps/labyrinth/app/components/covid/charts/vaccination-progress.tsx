@@ -20,15 +20,15 @@ function toNumber(value: unknown): number | null {
 
 const tooltipStyle = {
   backgroundColor: "var(--color-surface-panel)",
-  border: "1px solid var(--color-border-default)",
+  border: "1px solid var(--color-border-border)",
   borderRadius: "2px",
   fontSize: "12px",
-  color: "var(--color-text-secondary)",
+  color: "var(--color-text-muted-foreground)",
   padding: "6px 10px",
   boxShadow: "none",
 };
 
-const tickStyle = { fill: "var(--color-text-tertiary)", fontSize: 11 };
+const tickStyle = { fill: "var(--color-text-muted-foreground)", fontSize: 11 };
 
 const legendItems = [
   { key: "partial", label: "Partial", color: "#60a5fa" },
@@ -87,7 +87,7 @@ export function VaccinationProgress({
                   : "Boosters",
             ]}
             contentStyle={tooltipStyle}
-            cursor={{ stroke: "var(--color-border-default)", strokeWidth: 1 }}
+            cursor={{ stroke: "var(--color-border-border)", strokeWidth: 1 }}
           />
           <Area type="monotone" dataKey="boosters" stroke="#fbbf24" strokeWidth={1.5} fill="none" />
           <Area type="monotone" dataKey="full" stroke="#34d399" strokeWidth={1.5} fill="none" />
@@ -98,7 +98,7 @@ export function VaccinationProgress({
         {legendItems.map(({ key, label, color }) => (
           <div key={key} className="flex items-center gap-1.5">
             <div className="h-2 w-2 rounded-full" style={{ backgroundColor: color }} />
-            <span className="text-secondary text-xs">{label}</span>
+            <span className="text-muted-foreground text-xs">{label}</span>
           </div>
         ))}
       </div>

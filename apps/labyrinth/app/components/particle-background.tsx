@@ -86,24 +86,17 @@ function useThemePalette(): ParticleBackgroundPalette {
 
   React.useEffect(() => {
     const resolve = () => {
-      const accent = toRgbTriplet(readCssVar("--color-accent", "#0969da"));
-      const foreground = toRgbTriplet(readCssVar("--color-text-primary", "#25292e"));
+      const accent = toRgbTriplet(readCssVar("--color-primary", "#0969da"));
+      const foreground = toRgbTriplet(readCssVar("--color-foreground", "#25292e"));
       setPalette({ particle: accent, link: foreground });
     };
 
     resolve();
 
-    const observer = new MutationObserver(resolve);
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["data-color-mode"],
-    });
-
     const media = window.matchMedia("(prefers-color-scheme: dark)");
     media.addEventListener("change", resolve);
 
     return () => {
-      observer.disconnect();
       media.removeEventListener("change", resolve);
     };
   }, []);

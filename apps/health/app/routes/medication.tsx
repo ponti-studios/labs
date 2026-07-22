@@ -53,7 +53,7 @@ export default function MedicationRoute(): JSX.Element {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-16">
-        <p className="text-secondary animate-pulse">Loading medication schedule…</p>
+        <p className="text-muted-foreground animate-pulse">Loading medication schedule…</p>
       </div>
     );
   }
@@ -75,7 +75,7 @@ export default function MedicationRoute(): JSX.Element {
     <div className="flex flex-col items-center gap-8 p-8">
       <div className="text-center">
         <h1 className="mb-2 text-2xl font-bold">Medication Pen Duration</h1>
-        <p className="text-secondary max-w-md">
+        <p className="text-muted-foreground max-w-md">
           Calculate how many weeks a {schedule.penCapacity}mg medication pen will last based on
           weekly dosage amounts.
         </p>
@@ -85,7 +85,7 @@ export default function MedicationRoute(): JSX.Element {
         <CardHeader>
           <CardTitle className="text-center">
             Total:{" "}
-            <span className="text-primary">
+            <span className="text-foreground">
               {Number.isInteger(totalWeeks)
                 ? `${totalWeeks} weeks`
                 : `${totalWeeks.toFixed(1)} weeks`}
@@ -97,16 +97,16 @@ export default function MedicationRoute(): JSX.Element {
             {fullWeeks.map((dose, i) => (
               <li
                 key={i}
-                className="bg-inset flex items-center justify-between rounded-md px-4 py-2"
+                className="bg-muted flex items-center justify-between rounded-md px-4 py-2"
               >
                 <span className="font-medium">Week {i + 1}</span>
-                <span className="text-secondary tabular-nums">{dose} mg</span>
+                <span className="text-muted-foreground tabular-nums">{dose} mg</span>
               </li>
             ))}
             {partialDose !== null && (
-              <li className="bg-inset/50 border-muted-foreground/20 flex items-center justify-between rounded-md border border-dashed px-4 py-2">
+              <li className="bg-muted/50 border-muted-foreground/20 flex items-center justify-between rounded-md border border-dashed px-4 py-2">
                 <span className="font-medium">Week {Math.floor(totalWeeks) + 1} (partial)</span>
-                <span className="text-secondary tabular-nums">{partialDose.toFixed(1)} mg</span>
+                <span className="text-muted-foreground tabular-nums">{partialDose.toFixed(1)} mg</span>
               </li>
             )}
           </ul>
