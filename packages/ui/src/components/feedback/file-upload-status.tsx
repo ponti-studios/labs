@@ -111,16 +111,14 @@ const ProcessingStats = memo(function ProcessingStats({ stats }: { stats: FileUp
         </div>
       )}
       {stats.total !== undefined && Object.values(stats).length ? (
-        <div className="py-2">
-          <div className="grid grid-cols-2 gap-4">
-            <ProcessingStat label="Total" value={stats.total} />
-            <ProcessingStat label="Created" value={stats.created} />
-            <ProcessingStat label="Updated" value={stats.updated} />
-            <ProcessingStat label="Skipped" value={stats.skipped} />
-            <ProcessingStat label="Merged" value={stats.merged} />
-            <ProcessingStat label="Invalid" value={stats.invalid} />
-          </div>
-        </div>
+        <>
+          <ProcessingStat label="Total" value={stats.total} />
+          <ProcessingStat label="Created" value={stats.created} />
+          <ProcessingStat label="Updated" value={stats.updated} />
+          <ProcessingStat label="Skipped" value={stats.skipped} />
+          <ProcessingStat label="Merged" value={stats.merged} />
+          <ProcessingStat label="Invalid" value={stats.invalid} />
+        </>
       ) : null}
 
       {stats.errors?.length && stats.errors.length > 0 ? (
@@ -146,7 +144,7 @@ const ProcessingStat = memo(function ProcessingStat({
 }) {
   if (value === undefined) return null;
   return (
-    <div>
+    <div className="py-2">
       <dt className="text-muted-foreground text-sm font-medium">{label}</dt>
       <dd className="text-foreground mt-1 text-sm">{value.toLocaleString()}</dd>
     </div>

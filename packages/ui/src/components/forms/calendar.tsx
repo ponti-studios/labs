@@ -32,7 +32,7 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         selected:
           "[&>button]:bg-primary [&>button]:text-primary-foreground [&>button]:hover:bg-primary/90",
         today: "[&>button]:bg-primary [&>button]:text-primary-foreground",
-        outside: "text-muted-foreground opacity-50 [&>button]:text-muted-foreground",
+        outside: "text-muted-foreground [&>button]:text-muted-foreground",
         disabled: "text-muted-foreground opacity-50",
         range_start: "rounded-l-md bg-primary [&>button]:bg-primary [&>button]:text-primary-foreground",
         range_middle: "bg-primary [&>button]:rounded-none [&>button]:text-primary-foreground",

@@ -20,15 +20,15 @@ function toNumber(value: unknown): number | null {
 
 const tooltipStyle = {
   backgroundColor: "var(--color-surface-panel)",
-  border: "1px solid var(--color-border-border)",
+  border: "1px solid var(--color-border)",
   borderRadius: "2px",
   fontSize: "12px",
-  color: "var(--color-text-muted-foreground)",
+  color: "var(--color-muted-foreground)",
   padding: "6px 10px",
   boxShadow: "none",
 };
 
-const tickStyle = { fill: "var(--color-text-muted-foreground)", fontSize: 11 };
+const tickStyle = { fill: "var(--color-muted-foreground)", fontSize: 11 };
 
 const legendItems = [
   { key: "partial", label: "Partial", color: "#60a5fa" },
@@ -87,7 +87,7 @@ export function VaccinationProgress({
                   : "Boosters",
             ]}
             contentStyle={tooltipStyle}
-            cursor={{ stroke: "var(--color-border-border)", strokeWidth: 1 }}
+            cursor={{ stroke: "var(--color-border)", strokeWidth: 1 }}
           />
           <Area type="monotone" dataKey="boosters" stroke="#fbbf24" strokeWidth={1.5} fill="none" />
           <Area type="monotone" dataKey="full" stroke="#34d399" strokeWidth={1.5} fill="none" />
