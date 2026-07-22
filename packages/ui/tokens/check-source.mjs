@@ -1,7 +1,8 @@
+import { fileURLToPath } from "node:url";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 
-const sourceDirectory = new URL("../src/", import.meta.url).pathname;
+const sourceDirectory = fileURLToPath(new URL("../src/", import.meta.url));
 const sourceFiles = [];
 
 function collectFiles(directory) {

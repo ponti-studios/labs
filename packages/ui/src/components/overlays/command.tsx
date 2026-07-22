@@ -48,14 +48,11 @@ function CommandList({ children, ...props }: React.ComponentProps<typeof Command
   }
 
   const listChildren: React.ReactNode[] = [];
-  const auxiliaryChildren: React.ReactNode[] = [];
+  const emptyChildren: React.ReactNode[] = [];
 
   React.Children.forEach(children, (child) => {
-    if (React.isValidElement(child) && (child.type === CommandEmpty || child.type === CommandSeparator)) {
-      auxiliaryChildren.push(child);
-    } else {
-      listChildren.push(child);
-    }
+    if (React.isValidElement(child) && child.type === CommandEmpty) emptyChildren.push(child);
+    else listChildren.push(child);
   });
 
   return (
@@ -63,7 +60,7 @@ function CommandList({ children, ...props }: React.ComponentProps<typeof Command
       <CommandPrimitive.List data-slot="command-list" aria-label="Command results" tabIndex={0} className="max-h-75 scroll-py-1 overflow-x-hidden overflow-y-auto" {...props}>
         {listChildren}
       </CommandPrimitive.List>
-      {auxiliaryChildren}
+      {emptyChildren}
     </div>
   );
 }
@@ -88,7 +85,7 @@ function CommandItem({ className, onSelect, onClick, ...props }: CommandItemProp
 }
 
 function CommandSeparator({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="command-separator" role="presentation" aria-hidden="true" className={`bg-border -mx-1 h-px ${className ?? ""}`} {...props} />;
+  return <div data-slot="command-separator" aria-hidden="true" className={`bg-border -mx-1 h-px ${className ?? ""}`} {...props} />;
 }
 
 function CommandShortcut(props: React.ComponentProps<"span">) {
