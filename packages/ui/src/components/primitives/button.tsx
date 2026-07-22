@@ -61,7 +61,33 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref,
   ) => {
     if (asChild && React.isValidElement(children)) {
-      return <BaseButton render={children as React.ReactElement} nativeButton={false} className={cn(buttonVariants({ variant, size, className }))} disabled={disabled || isLoading} {...props} ref={ref} />;
+      const child = children as React.ReactElement<{ children?: React.ReactNode }>;
+      const renderedChild = React.cloneElement(child, {
+        children: isLoading ? (
+          <>
+            <span className="opacity-0">{child.props.children}</span>
+            <span className="absolute inset-0 inline-flex items-center justify-center">
+              <Spinner size="sm" aria-hidden="true" />
+            </span>
+            <span className="sr-only">{loadingLabel}</span>
+          </>
+        ) : (
+          child.props.children
+        ),
+      });
+
+      return (
+        <BaseButton
+          render={renderedChild}
+          nativeButton={false}
+          className={cn(buttonVariants({ variant, size, className }), isLoading && "relative")}
+          disabled={disabled || isLoading}
+          aria-busy={isLoading}
+          aria-label={isLoading ? loadingLabel : ariaLabel}
+          {...props}
+          ref={ref}
+        />
+      );
     }
     return (
       <button

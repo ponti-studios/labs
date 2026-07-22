@@ -23,10 +23,10 @@ function toNumber(value: unknown): number | null {
 
 const tooltipStyle = {
   backgroundColor: "var(--color-surface-panel)",
-  border: "1px solid var(--color-border-border)",
+  border: "1px solid var(--color-border)",
   borderRadius: "2px",
   fontSize: "12px",
-  color: "var(--color-text-muted-foreground)",
+  color: "var(--color-muted-foreground)",
   padding: "6px 10px",
   boxShadow: "none",
 };
@@ -75,14 +75,14 @@ export function TopCountriesChart({
           <XAxis
             type="number"
             tickFormatter={formatValue}
-            tick={{ fill: "var(--color-text-muted-foreground)", fontSize: 11 }}
+            tick={{ fill: "var(--color-muted-foreground)", fontSize: 11 }}
             axisLine={false}
             tickLine={false}
           />
           <YAxis
             type="category"
             dataKey="country"
-            tick={{ fill: "var(--color-text-foreground)", fontSize: 11 }}
+            tick={{ fill: "var(--color-foreground)", fontSize: 11 }}
             axisLine={false}
             tickLine={false}
             width={90}
