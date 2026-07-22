@@ -73,6 +73,7 @@ const preview: Preview = {
   decorators: [storybookThemeDecorator, colorModeDecorator],
   parameters: {
     layout: "centered",
+    a11y: { test: "error" },
     controls: {
       exclude: commonControlsExclude,
       matchers: {
