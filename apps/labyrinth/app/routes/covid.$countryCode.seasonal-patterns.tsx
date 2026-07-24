@@ -64,7 +64,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 const tooltipStyle = {
-  backgroundColor: "var(--color-panel)",
+  backgroundColor: "var(--color-card)",
   border: "1px solid var(--color-border)",
   borderRadius: "2px",
   fontSize: "12px",
@@ -132,7 +132,7 @@ export default function SeasonalPatternsPage() {
                 >
                   <CartesianGrid
                     strokeDasharray="4 4"
-                    stroke="var(--color-inset)"
+                    stroke="var(--color-muted)"
                     vertical={false}
                   />
                   <XAxis
@@ -147,7 +147,7 @@ export default function SeasonalPatternsPage() {
                   <YAxis tick={tickStyle} axisLine={false} tickLine={false} />
                   <Tooltip
                     contentStyle={tooltipStyle}
-                    cursor={{ fill: "var(--color-inset)" }}
+                    cursor={{ fill: "var(--color-muted)" }}
                   />
                   <Bar
                     dataKey="averageCases"

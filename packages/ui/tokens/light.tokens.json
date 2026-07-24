@@ -3,42 +3,21 @@
     "org.ponti.upstream": "@radix-ui/colors@3.0.0 (slate, indigo, red, green, amber, violet, teal, orange)",
     "org.ponti.license": "MIT"
   },
-  "color": {
-    "canvas": {
+    "background": {
       "$type": "color",
       "$value": "rgb(252, 252, 253)"
     },
-    "panel": {
+    "card": {
       "$type": "color",
       "$value": "rgb(249, 249, 251)"
     },
-    "raised": {
+    "popover": {
       "$type": "color",
       "$value": "rgb(240, 240, 243)"
     },
-    "inset": {
+    "muted": {
       "$type": "color",
       "$value": "rgb(249, 249, 251)"
-    },
-    "hover": {
-      "$type": "color",
-      "$value": "rgb(232, 232, 236)"
-    },
-    "pressed": {
-      "$type": "color",
-      "$value": "rgb(224, 225, 230)"
-    },
-    "selected": {
-      "$type": "color",
-      "$value": "rgb(237, 242, 254)"
-    },
-    "disabled-surface": {
-      "$type": "color",
-      "$value": "rgb(240, 240, 243)"
-    },
-    "overlay": {
-      "$type": "color",
-      "$value": "rgb(0, 0, 0)"
     },
     "text-primary": {
       "$type": "color",
@@ -52,11 +31,7 @@
       "$type": "color",
       "$value": "rgb(128, 131, 141)"
     },
-    "disabled-foreground": {
-      "$type": "color",
-      "$value": "rgb(185, 187, 198)"
-    },
-    "accent": {
+    "primary": {
       "$type": "color",
       "$value": "rgb(62, 99, 221)"
     },
@@ -72,61 +47,21 @@
       "$type": "color",
       "$value": "rgb(255, 197, 61)"
     },
-    "on-accent": {
+    "primary-foreground": {
       "$type": "color",
       "$value": "rgb(255, 255, 255)"
     },
-    "on-destructive": {
+    "destructive-foreground": {
       "$type": "color",
       "$value": "rgb(255, 255, 255)"
-    },
-    "border-subtle": {
-      "$type": "color",
-      "$value": "rgb(217, 217, 224)"
     },
     "border-default": {
       "$type": "color",
       "$value": "rgb(205, 206, 214)"
     },
-    "border-strong": {
-      "$type": "color",
-      "$value": "rgb(185, 187, 198)"
-    },
     "focus-ring": {
       "$type": "color",
       "$value": "rgb(62, 99, 221)"
-    },
-    "accent-hover": {
-      "$type": "color",
-      "$value": "rgb(51, 88, 212)"
-    },
-    "accent-pressed": {
-      "$type": "color",
-      "$value": "rgb(51, 88, 212)"
-    },
-    "accent-subtle": {
-      "$type": "color",
-      "$value": "rgb(237, 242, 254)"
-    },
-    "destructive-hover": {
-      "$type": "color",
-      "$value": "rgb(220, 62, 66)"
-    },
-    "destructive-pressed": {
-      "$type": "color",
-      "$value": "rgb(220, 62, 66)"
-    },
-    "destructive-subtle": {
-      "$type": "color",
-      "$value": "rgb(254, 235, 236)"
-    },
-    "success-subtle": {
-      "$type": "color",
-      "$value": "rgb(230, 246, 235)"
-    },
-    "warning-subtle": {
-      "$type": "color",
-      "$value": "rgb(255, 247, 194)"
     },
     "chart-1": {
       "$type": "color",
@@ -160,5 +95,4 @@
       "$type": "color",
       "$value": "rgb(185, 187, 198)"
     }
-  }
 }

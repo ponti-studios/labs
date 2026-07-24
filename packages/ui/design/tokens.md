@@ -10,57 +10,37 @@ Tokens are the shared vocabulary between design decisions and implementation. Th
 
 ## Canonical semantic roles
 
-### Surfaces
+The shared system uses the shadcn/Tailwind semantic vocabulary wherever it
+already expresses the role. Components should consume these names directly;
+the generated CSS variables intentionally omit the `color-` prefix so the
+Tailwind theme can map them without self-references.
 
 | Token | Meaning |
 | --- | --- |
-| `surface-canvas` | The page or app background. |
-| `surface-panel` | A contained region or quiet control surface. |
-| `surface-raised` | A surface above the page, such as a dialog or sheet. |
-| `surface-inset` | A recessed region or input background. |
-| `surface-hover` | Hover feedback on a neutral interactive surface. |
-| `surface-pressed` | Pressed feedback on a neutral interactive surface. |
-| `surface-selected` | Persistent selection or current location. |
-| `surface-disabled` | Disabled control background. |
-| `overlay-scrim` | Backdrop behind an attention-demanding surface. |
-
-### Content
-
-| Token | Meaning |
-| --- | --- |
+| `background` | The page or app background. |
+| `card` | A contained panel or quiet control surface. |
+| `popover` | A raised transient surface such as a menu, dialog, or sheet. |
+| `muted` | A recessed or quiet neutral surface. |
 | `text-primary` | The main readable content. |
 | `text-secondary` | Supporting content and labels. |
-| `text-tertiary` | Quiet metadata and captions. |
-| `text-disabled` | Disabled or unavailable content. |
-| `text-accent` | An accent-colored link or active label. |
-| `text-destructive` | Destructive or invalid content. |
-| `text-success` | Positive status content. |
-| `text-warning` | Cautionary status content. |
-| `text-on-accent` | Content on an accent surface. |
-| `text-on-destructive` | Content on a destructive surface. |
-| `text-on-success` | Content on a success surface. |
-| `text-on-warning` | Content on a warning surface. |
-
-### Structure
-
-| Token | Meaning |
-| --- | --- |
-| `border-subtle` | Quiet grouping or dividers. |
+| `tertiary` | Quiet metadata and captions. |
+| `primary` | Primary action and selection color. |
+| `primary-foreground` | Content placed on a primary surface. |
+| `destructive` | Destructive or invalid action and content color. |
+| `destructive-foreground` | Content placed on a destructive surface. |
+| `success` | Positive status color. |
+| `warning` | Cautionary status color. |
 | `border-default` | Standard control and container borders. |
-| `border-strong` | Deliberately emphasized structure. |
-| `border-focus` | Keyboard focus and active control indication. |
-| `border-accent` | Accent-colored structure. |
-| `border-destructive` | Destructive or invalid structure. |
-| `ring-focus` | The visible focus ring color. |
+| `focus-ring` | The visible keyboard focus indicator. |
 
 ### Intent
 
 | Token family | Meaning |
 | --- | --- |
-| `accent`, `accent-hover`, `accent-pressed`, `accent-subtle` | Primary action and selection. |
-| `destructive`, `destructive-hover`, `destructive-pressed`, `destructive-subtle` | Irreversible or dangerous actions. |
-| `success`, `success-subtle` | Positive completion or health. |
-| `warning`, `warning-subtle` | Caution requiring attention. |
+| `primary` | Primary action and selection. |
+| `destructive` | Irreversible or dangerous actions. |
+| `success` | Positive completion or health. |
+| `warning` | Caution requiring attention. |
 
 ### Data visualization
 

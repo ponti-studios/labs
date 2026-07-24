@@ -38,7 +38,7 @@ function TabsContent({ className, ...props }: React.ComponentProps<typeof TabsPr
     <TabsPrimitive.Panel
       data-slot="tabs-content"
       className={cn(
-        "focus-visible:bg-accent/10 mt-2 rounded-md focus-visible:border focus-visible:outline-none",
+        "focus-visible:bg-muted/10 mt-2 rounded-md focus-visible:border focus-visible:outline-none",
         className,
       )}
       {...props}

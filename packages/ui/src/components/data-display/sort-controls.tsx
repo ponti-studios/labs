@@ -60,7 +60,7 @@ export function SortControls({
               <DropdownMenuItem
                 key={sort.field}
                 onSelect={(e) => e.preventDefault()}
-                className={`p-0 focus:bg-transparent ${index === focusedSortIndex ? "bg-accent" : ""}`}
+                className={`p-0 focus:bg-transparent ${index === focusedSortIndex ? "bg-muted" : ""}`}
               >
                 <SortRow
                   sortOption={sort}

@@ -32,12 +32,12 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
       onValueChange={(value) => onValueChange?.(Array.isArray(value) ? [...value] : [value])}
     >
       <SliderPrimitive.Track className="bg-muted relative h-2 w-full grow overflow-hidden rounded-full">
-        <SliderPrimitive.Indicator className="bg-accent absolute h-full" />
+        <SliderPrimitive.Indicator className="bg-primary absolute h-full" />
       </SliderPrimitive.Track>
       <SliderPrimitive.Thumb
         aria-label={ariaLabel ?? "Slider"}
         aria-labelledby={ariaLabelledby}
-        className="border-border focus-visible:border-ring focus-visible:bg-accent focus-visible:ring-ring bg-background block h-6 w-6 rounded-full border shadow-sm ring-1 ring-black/5 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+        className="border-border focus-visible:border-ring focus-visible:bg-primary focus-visible:ring-ring bg-background block h-6 w-6 rounded-full border shadow-sm ring-1 ring-black/5 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
       />
     </SliderPrimitive.Root>
   ),

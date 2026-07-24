@@ -58,7 +58,7 @@ function Avatar({
           <span
             data-slot="avatar-badge"
             className={cn(
-              "bg-accent ring-background absolute right-0 bottom-0 z-10 rounded-full ring-2",
+              "bg-primary ring-background absolute right-0 bottom-0 z-10 rounded-full ring-2",
               badgeDotSize[size],
             )}
           />
