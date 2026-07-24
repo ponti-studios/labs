@@ -6,94 +6,25 @@ settings:
 
 catalogs:
   default:
-    '@playwright/test':
-      specifier: ^1.61.1
-      version: 1.61.1
-    '@react-router/dev':
-      specifier: ^8.2.0
-      version: 8.2.0
-    '@react-router/node':
-      specifier: ^8.2.0
-      version: 8.2.0
-    '@react-router/serve':
-      specifier: ^8.2.0
-      version: 8.2.0
     '@tailwindcss/vite':
       specifier: ^4.3.3
       version: 4.3.3
-    '@tanstack/react-query':
-      specifier: ^5.101.3
-      version: 5.101.3
-    '@testing-library/dom':
-      specifier: ^10.4.1
-      version: 10.4.1
-    '@testing-library/jest-dom':
-      specifier: ^7.0.0
-      version: 7.0.0
-    '@testing-library/react':
-      specifier: ^16.3.2
-      version: 16.3.2
     '@types/node':
       specifier: ^26.1.1
       version: 26.1.1
-    '@types/react':
-      specifier: ^19.2.17
-      version: 19.2.17
-    '@types/react-dom':
-      specifier: ^19.2.3
-      version: 19.2.3
-    '@vitest/coverage-v8':
-      specifier: ^4.1.10
-      version: 4.1.10
-    drizzle-orm:
-      specifier: ^0.45.2
-      version: 0.45.2
-    jsdom:
-      specifier: ^29.1.1
-      version: 29.1.1
-    lucide-react:
-      specifier: ^1.24.0
-      version: 1.25.0
     playwright:
       specifier: ^1.61.1
       version: 1.61.1
-    postgres:
-      specifier: ^3.4.9
-      version: 3.4.9
-    react:
-      specifier: ^19.2.7
-      version: 19.2.7
-    react-dom:
-      specifier: ^19.2.7
-      version: 19.2.7
-    react-router:
-      specifier: ^8.2.0
-      version: 8.2.0
     tailwindcss:
       specifier: ^4.3.3
       version: 4.3.3
-    tsx:
-      specifier: ^4.23.1
-      version: 4.23.1
-    typescript:
-      specifier: 6.0.3
-      version: 6.0.3
     vite:
       specifier: ^8.1.5
       version: 8.1.5
-    vite-plugin-devtools-json:
-      specifier: ^1.1.0
-      version: 1.1.0
     vitest:
       specifier: ^4.1.10
       version: 4.1.10
   shared:
-    framer-motion:
-      specifier: ^12.42.2
-      version: 12.42.2
-    isbot:
-      specifier: ^5.2.1
-      version: 5.2.1
     oxfmt:
       specifier: 0.59.0
       version: 0.59.0
@@ -619,15 +550,9 @@ importers:
       '@base-ui/react':
         specifier: ^1.6.0
         version: 1.6.0(@date-fns/tz@1.5.0)(@types/react@19.2.17)(date-fns@4.4.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@fontsource/ibm-plex-mono':
-        specifier: ^5.3.0
-        version: 5.3.0
-      '@fontsource/ibm-plex-sans':
-        specifier: ^5.3.0
-        version: 5.3.0
-      '@fontsource/ibm-plex-serif':
-        specifier: ^5.3.0
-        version: 5.3.0
+      '@radix-ui/colors':
+        specifier: ^3.0.0
+        version: 3.0.0
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -1776,15 +1701,6 @@ packages:
   '@floating-ui/utils@0.2.11':
     resolution: {integrity: sha512-RiB/yIh78pcIxl6lLMG0CgBXAZ2Y0eVHqMPYugu+9U0AeT6YBeiJpf7lbdJNIugFP5SIjwNRgo4DhR1Qxi26Gg==}
 
-  '@fontsource/ibm-plex-mono@5.3.0':
-    resolution: {integrity: sha512-eTgnZjZEGk1QtD3ZstF+Vclo2HLAni8YMy34/DxllwZvyz1lR/1RF/xTiAquOBO7MvqBx8D2Ig2WCPMVfdZu7Q==}
-
-  '@fontsource/ibm-plex-sans@5.3.0':
-    resolution: {integrity: sha512-CbE4CbbEEZJX860XyUiRpsksXIQR8Rp2XDva2VO53NJox9tVNtusrysd2x5YkUEY3ErQ66W1IiiQL8/wihhw5w==}
-
-  '@fontsource/ibm-plex-serif@5.3.0':
-    resolution: {integrity: sha512-zwPfHB7EJbS5B8qnitPigJYzNdnt6PUeaoOA1gAAt//1pjpTVZN5sOU14NIAZ+C1xypL6GWsUG2VMYJW9bhJqQ==}
-
   '@inquirer/ansi@2.0.7':
     resolution: {integrity: sha512-3eTuUO1vH2cZm2ZKHeQxnOqlTi9EfZDGgIe3BL3I4u+rJHocr9Fz86M4fjYABPvFnQG/gGK551HqDiIcETwU6Q==}
     engines: {node: '>=23.5.0 || ^22.13.0 || ^20.17.0'}
@@ -2875,6 +2791,9 @@ packages:
 
   '@polka/url@1.0.0-next.29':
     resolution: {integrity: sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==}
+
+  '@radix-ui/colors@3.0.0':
+    resolution: {integrity: sha512-FUOsGBkHrYJwCSEtWRCIfQbZG7q1e6DgxCIOe1SUQzDe/7rXXeA47s8yCn6fuTNQAj1Zq4oTFi9Yjp3wzElcxg==}
 
   '@react-native/normalize-colors@0.74.89':
     resolution: {integrity: sha512-qoMMXddVKVhZ8PA1AbUCk83trpd6N+1nF2A6k1i6LsQObyS92fELuk8kU/lQs6M7BsMHwqyLCpQJ1uFgNvIQXg==}
@@ -7213,15 +7132,8 @@ packages:
     resolution: {integrity: sha512-azl+t0z7pw/z958Gy9svOTuzqIk6xq+NSheJzn5MMWtWTFywIacg2wUlzKFGtt3cthx0r2SxMK0yzJOR0IES7Q==}
     engines: {node: '>=14.0.0'}
 
-  tldts-core@7.0.28:
-    resolution: {integrity: sha512-7W5Efjhsc3chVdFhqtaU0KtK32J37Zcr9RKtID54nG+tIpcY79CQK/veYPODxtD/LJ4Lue66jvrQzIX2Z2/pUQ==}
-
   tldts-core@7.4.9:
     resolution: {integrity: sha512-DxKfPBI52p2msTEu7MPhdpdDTBhhVQg1a/8PjQckeyAvO13eMYElX545grIp6nnTGIMZlRvFZPvFhvI/WIz2Vg==}
-
-  tldts@7.0.28:
-    resolution: {integrity: sha512-+Zg3vWhRUv8B1maGSTFdev9mjoo8Etn2Ayfs4cnjlD3CsGkxXX4QyW3j2WJ0wdjYcYmy7Lx2RDsZMhgCWafKIw==}
-    hasBin: true
 
   tldts@7.4.9:
     resolution: {integrity: sha512-3kZ8wQQ/k5DrChD4X4FVvr2D7E5uoRgAqkPyLpSCGUvqOvqu+JEdr3mwMUaVWb+vMHZaKhF5fp2PBigKsui7hA==}
@@ -7241,10 +7153,6 @@ packages:
   totalist@3.0.1:
     resolution: {integrity: sha512-sf4i37nQ2LBx4m3wB74y+ubopq6W/dIzXg0FDGjsYnZHVa1Da8FH853wlL2gtUhg+xJXjfk3kUZS3BRoQeoQBQ==}
     engines: {node: '>=6'}
-
-  tough-cookie@6.0.1:
-    resolution: {integrity: sha512-LktZQb3IeoUWB9lqR5EWTHgW/VTITCXg4D21M+lvybRVdylLrRMnqaIONLVb5mav8vM19m44HIcGq4qASeu2Qw==}
-    engines: {node: '>=16'}
 
   tough-cookie@6.0.2:
     resolution: {integrity: sha512-exgYmnmL/sJpR3upZfXG5PoatXQii55xAiXGXzY+sROLZ/Y+SLcp9PgJNI9Vz37HpQ74WvDcLT8eqm+kV3FzrA==}
@@ -8981,12 +8889,6 @@ snapshots:
 
   '@floating-ui/utils@0.2.11': {}
 
-  '@fontsource/ibm-plex-mono@5.3.0': {}
-
-  '@fontsource/ibm-plex-sans@5.3.0': {}
-
-  '@fontsource/ibm-plex-serif@5.3.0': {}
-
   '@inquirer/ansi@2.0.7':
     optional: true
 
@@ -9850,6 +9752,8 @@ snapshots:
       playwright: 1.61.1
 
   '@polka/url@1.0.0-next.29': {}
+
+  '@radix-ui/colors@3.0.0': {}
 
   '@react-native/normalize-colors@0.74.89': {}
 
@@ -12759,7 +12663,7 @@ snapshots:
       parse5: 8.0.1
       saxes: 6.0.0
       symbol-tree: 3.2.4
-      tough-cookie: 6.0.1
+      tough-cookie: 6.0.2
       undici: 7.28.0
       w3c-xmlserializer: 5.0.0
       webidl-conversions: 8.0.1
@@ -14471,19 +14375,11 @@ snapshots:
 
   tinyspy@4.0.4: {}
 
-  tldts-core@7.0.28: {}
-
-  tldts-core@7.4.9:
-    optional: true
-
-  tldts@7.0.28:
-    dependencies:
-      tldts-core: 7.0.28
+  tldts-core@7.4.9: {}
 
   tldts@7.4.9:
     dependencies:
       tldts-core: 7.4.9
-    optional: true
 
   tmpl@1.0.5: {}
 
@@ -14495,14 +14391,9 @@ snapshots:
 
   totalist@3.0.1: {}
 
-  tough-cookie@6.0.1:
-    dependencies:
-      tldts: 7.0.28
-
   tough-cookie@6.0.2:
     dependencies:
       tldts: 7.4.9
-    optional: true
 
   tr46@0.0.3: {}
 

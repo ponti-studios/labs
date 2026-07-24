@@ -15,13 +15,13 @@ export function FilterChip({ label, onRemove, onClick, className }: FilterChipPr
   const labelContent = onClick ? (
     <button
       type="button"
-      className="focus-visible:ring-ring min-h-11 rounded-full px-3 text-left transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+      className="focus-visible:ring-ring min-h-9 rounded-full px-3 text-left transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
       onClick={onClick}
     >
       {label}
     </button>
   ) : (
-    <span className="flex min-h-11 items-center px-3">{label}</span>
+    <span className="flex min-h-9 items-center px-3">{label}</span>
   );
 
   return (
@@ -36,7 +36,7 @@ export function FilterChip({ label, onRemove, onClick, className }: FilterChipPr
       {labelContent}
       <button
         type="button"
-        className="text-muted-foreground hover:text-foreground focus-visible:ring-ring mr-1 flex size-11 items-center justify-center rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+        className="text-muted-foreground hover:text-foreground focus-visible:ring-ring mr-1 flex size-9 items-center justify-center rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
         onClick={onRemove}
         aria-label={`Remove filter: ${typeof label === "string" ? label : "selected filter"}`}
       >

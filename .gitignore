@@ -28,6 +28,7 @@ build
 dist
 dist-storybook
 **/storybook-static/
+packages/ui/.storybook/generated/
 tsconfig.tsbuildinfo
 build-analysis.txt
 target/

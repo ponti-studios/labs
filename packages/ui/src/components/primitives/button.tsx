@@ -6,7 +6,7 @@ import { cn } from "../../lib/utils";
 import { Spinner } from "../feedback/spinner";
 
 const buttonVariants = cva(
-  "inline-flex min-h-9 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border border-transparent px-4 py-2 text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border border-transparent font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -18,11 +18,10 @@ const buttonVariants = cva(
         link: "border-transparent bg-transparent px-0 text-primary underline-offset-4 hover:underline",
       },
       size: {
-        sm: "min-h-11 px-2.5 text-sm",
-        md: "min-h-11 px-3 text-sm",
-        lg: "min-h-12 px-4 text-base",
-        default: "",
-        icon: "size-11 rounded-md p-0",
+        sm: "min-h-8 px-2.5 text-xs",
+        md: "min-h-9 px-3 text-sm",
+        lg: "min-h-10 px-4 text-base",
+        icon: "size-9 rounded-md p-0",
       },
     },
     defaultVariants: {

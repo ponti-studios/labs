@@ -54,8 +54,8 @@ const collectSourceNames = (node, path = []) => {
 };
 collectSourceNames(sourceTokens);
 
-// Font families are an intentional brand override (IBM Plex, not Tailwind's
-// system-font default) — every other foundation name is meant to stay
+// Font families use our own system-ui stack ordering rather than Tailwind's
+// exact default wording — every other foundation name is meant to stay
 // aligned with Tailwind's own scale, but font-* is exempt from that check.
 const brandOverrideNames = new Set(["--font-sans", "--font-serif", "--font-mono"]);
 

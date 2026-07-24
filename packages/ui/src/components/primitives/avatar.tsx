@@ -46,7 +46,11 @@ function Avatar({
     <AvatarContext.Provider value={{ size }}>
       <AvatarPrimitive.Root
         data-slot="avatar"
-        className={cn("relative shrink-0 rounded-full select-none", avatarSize[size], className)}
+        className={cn(
+          "relative inline-flex shrink-0 rounded-full select-none",
+          avatarSize[size],
+          className,
+        )}
         {...props}
       >
         {children}

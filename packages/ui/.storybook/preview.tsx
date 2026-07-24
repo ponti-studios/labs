@@ -1,61 +1,16 @@
-import "../src/styles.css";
 import { withThemeByClassName } from "@storybook/addon-themes";
-import type { Decorator, Preview } from "@storybook/react-vite";
-import type { CSSProperties } from "react";
+import type { Preview } from "@storybook/react-vite";
 import { commonControlsExclude } from "../src/storybook/controls";
-import { colorThemes, type ColorMode } from "../src/tokens";
+import "../src/styles.css";
+import "./generated/dark-theme-class.css";
 
-const colorModeDecorator: Decorator = (Story, context) => {
-  const mode: ColorMode = context.globals.theme === "dark" ? "dark" : "light";
-  const theme = colorThemes[mode];
-  const style = Object.fromEntries(
-    Object.entries(theme).map(([token, value]) => [`--color-${token}`, value]),
-  ) as CSSProperties;
-
-  Object.assign(style, {
-    "--ponti-primary": theme.accent,
-    "--ponti-primary-foreground": theme["on-accent"],
-    "--ponti-destructive": theme.destructive,
-    "--ponti-destructive-foreground": theme["on-destructive"],
-    "--ponti-foreground": theme["text-primary"],
-    "--ponti-muted-foreground": theme["text-secondary"],
-    "--ponti-border": theme["border-default"],
-    "--ponti-ring": theme["focus-ring"],
-    "--color-background": theme["canvas"],
-    "--color-foreground": theme["text-primary"],
-    "--color-card": theme["panel"],
-    "--color-card-foreground": theme["text-primary"],
-    "--color-popover": theme["raised"],
-    "--color-popover-foreground": theme["text-primary"],
-    "--color-primary": theme.accent,
-    "--color-primary-foreground": theme["on-accent"],
-    "--color-secondary": theme["panel"],
-    "--color-secondary-foreground": theme["text-primary"],
-    "--color-muted": theme["inset"],
-    "--color-muted-foreground": theme["text-secondary"],
-    "--color-accent": theme.accent,
-    "--color-accent-foreground": theme["text-primary"],
-    "--color-destructive": theme.destructive,
-    "--color-destructive-foreground": theme["on-destructive"],
-    "--color-success": theme.success,
-    "--color-warning": theme.warning,
-    "--color-border": theme["border-default"],
-    "--color-input": theme["border-default"],
-    "--color-ring": theme["focus-ring"],
-    "--color-chart-1": theme["chart-1"],
-    "--color-chart-2": theme["chart-2"],
-    "--color-chart-3": theme["chart-3"],
-    "--color-chart-4": theme["chart-4"],
-    "--color-chart-5": theme["chart-5"],
-  });
-
-  return (
-    <div className="min-h-screen bg-background text-foreground" style={style}>
-      <Story />
-    </div>
-  );
-};
-
+// The shipped stylesheet only switches theme via `prefers-color-scheme`
+// (real apps have no manual toggle). `dark-theme-class.css` is a
+// Storybook-only build of the same dark tokens keyed off the
+// `storybook-theme-dark` class instead, so the addon-themes toolbar below
+// can preview dark mode without depending on the OS setting. It's generated
+// by `style-dictionary.dark-storybook.json` (see the `storybook`/`tokens:build`
+// scripts) — never hand-edit it.
 const storybookThemeDecorator = withThemeByClassName({
   themes: { light: "storybook-theme-light", dark: "storybook-theme-dark" },
   defaultTheme: "light",
@@ -74,7 +29,7 @@ const preview: Preview = {
     },
   },
   initialGlobals: { theme: "light" },
-  decorators: [storybookThemeDecorator, colorModeDecorator],
+  decorators: [storybookThemeDecorator],
   parameters: {
     layout: "centered",
     a11y: { test: "error" },
