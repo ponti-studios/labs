@@ -4,7 +4,7 @@ import * as React from "react";
 import { cn } from "../../lib/utils";
 
 const badgeVariants = cva(
-  "inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden whitespace-nowrap rounded border border-transparent px-1.5 py-px text-xs font-medium [&>svg]:size-3 [&>svg]:pointer-events-none aria-invalid:border-destructive aria-invalid:ring-destructive/20",
+  "state-settle inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden whitespace-nowrap rounded border border-transparent px-1.5 py-px text-xs font-medium [&>svg]:size-3 [&>svg]:pointer-events-none aria-invalid:border-destructive aria-invalid:ring-destructive/20",
   {
     variants: {
       variant: {
@@ -14,6 +14,9 @@ const badgeVariants = cva(
         outline: "border-border text-foreground [a&]:hover:bg-accent",
         ghost: "[a&]:[a&]: [a&]: [a&]:",
         link: "text-foreground underline-offset-4 [a&]:hover:underline",
+        /** Quiet metadata marker for real reference IDs (case/appointment/feed
+         * numbers) — never for decorative sequence markers. */
+        ref: "ref-tag border-transparent bg-transparent px-0 py-0 font-normal",
       },
     },
     defaultVariants: {
