@@ -2,9 +2,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { REALITEA_ANSWER_LENGTH } from "~/lib/realitea";
 
-/** How long (ms) each tile takes to flip during the reveal animation.
+/** How long (ms) each tile takes to power on during the reveal animation.
  *  Must match the `realitea-tile-reveal` keyframe duration in realitea.css. */
-const TILE_REVEAL_STEP_MS = 250;
+export const TILE_REVEAL_STEP_MS = 420;
 
 export function useAnimation() {
   const [revealingGuessIndex, setRevealingGuessIndex] = useState<number | null>(null);

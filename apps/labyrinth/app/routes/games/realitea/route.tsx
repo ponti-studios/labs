@@ -1,6 +1,5 @@
 import { Button, Card, CardContent } from "@ponti-studios/ui/primitives";
 import { OnscreenKeyboard } from "~/components/games/onscreen-keyboard";
-import { cva } from "class-variance-authority";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { useLoaderData, useRevalidator, type LoaderFunctionArgs } from "react-router";
 
@@ -9,7 +8,6 @@ import {
   MAX_GUESSES,
   REALITEA_ANSWER_LENGTH,
   type GameStatus,
-  type LetterState,
   type PublicDailyPuzzle,
   type RealiteaGuess,
 } from "~/lib/realitea";
@@ -20,59 +18,12 @@ import { cn } from "~/lib/utils";
 import { readGameState, saveGameState } from "./game-state";
 import { useRealiTeaGame } from "./use-game";
 import { useRealiTeaShare } from "./use-share";
+import { RealiTeaTile, type RealiTeaTileState } from "./realitea-tile";
 
 import "./realitea.css";
 import { LucideHelpCircle, LucideNewspaper, LucideShare } from "lucide-react";
 
 const TZ_COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // one year in seconds
-
-const TILE_BASE = cva(
-  "flex h-[3.6rem] w-[3.6rem] items-center justify-center rounded-md border text-[1.35rem] font-bold uppercase transition-colors sm:h-12 sm:w-12 sm:text-lg md:h-14 md:w-14",
-  {
-    variants: {
-      state: {
-        absent: "border-border bg-muted text-muted-foreground",
-        correct:
-          "border-[var(--realitea-correct-border)] bg-[var(--realitea-correct-bg)] text-[var(--realitea-correct-text)]",
-        empty: "border-border bg-background text-foreground",
-        present:
-          "border-[var(--realitea-present-border)] bg-[var(--realitea-present-bg)] text-[var(--realitea-present-text)]",
-      },
-    },
-    defaultVariants: { state: "empty" },
-  },
-);
-
-const TILE_REVEAL_STYLES: Record<
-  LetterState,
-  { backgroundColor: string; borderColor: string; color: string }
-> = {
-  absent: {
-    backgroundColor: "var(--muted)",
-    borderColor: "var(--border)",
-    color: "var(--muted-foreground)",
-  },
-  present: {
-    backgroundColor: "var(--realitea-present-bg)",
-    borderColor: "var(--realitea-present-border)",
-    color: "var(--realitea-present-text)",
-  },
-  correct: {
-    backgroundColor: "var(--realitea-correct-bg)",
-    borderColor: "var(--realitea-correct-border)",
-    color: "var(--realitea-correct-text)",
-  },
-};
-
-function getTileRevealStyle(state: LetterState): React.CSSProperties {
-  const finalStyle = TILE_REVEAL_STYLES[state];
-
-  return {
-    "--tile-final-background": finalStyle.backgroundColor,
-    "--tile-final-border": finalStyle.borderColor,
-    "--tile-final-color": finalStyle.color,
-  } as React.CSSProperties;
-}
 
 function parseTzCookie(cookieHeader: string): string | null {
   for (const part of cookieHeader.split(";")) {
@@ -127,7 +78,7 @@ const EmptyGuessRow = memo(function EmptyGuessRow() {
   return (
     <div className="flex gap-1.5 sm:gap-1">
       {Array.from({ length: REALITEA_ANSWER_LENGTH }).map((_, cellIndex) => (
-        <div key={`empty-cell-${cellIndex}`} className={TILE_BASE({ state: "empty" })} />
+        <RealiTeaTile key={`empty-cell-${cellIndex}`} state="empty" />
       ))}
     </div>
   );
@@ -150,20 +101,15 @@ const RevealedGuessRow = memo(function RevealedGuessRow({
         const isTileRevealed = !isRevealingThisRow || cellIndex < revealedTileCount;
         const isAnimatingTile =
           isRevealingThisRow && revealedTileCount > 0 && cellIndex === revealedTileCount - 1;
-        const tileState = isTileRevealed ? guess.states[cellIndex] : undefined;
+        const tileState: RealiTeaTileState = isTileRevealed ? guess.states[cellIndex] : "empty";
 
         return (
-          <div
+          <RealiTeaTile
             key={`revealed-cell-${cellIndex}`}
-            className={cn(
-              TILE_BASE({ state: tileState ?? "empty" }),
-              "flex items-center justify-center",
-              isAnimatingTile && "realitea-tile-reveal",
-            )}
-            style={isAnimatingTile ? getTileRevealStyle(guess.states[cellIndex]) : undefined}
-          >
-            {guess.word[cellIndex] ?? ""}
-          </div>
+            state={tileState}
+            letter={guess.word[cellIndex] ?? ""}
+            isRevealing={isAnimatingTile}
+          />
         );
       })}
     </div>
@@ -193,17 +139,13 @@ const CurrentGuessRow = memo(function CurrentGuessRow({
       )}
     >
       {Array.from({ length: REALITEA_ANSWER_LENGTH }).map((_, cellIndex) => (
-        <div
+        <RealiTeaTile
           key={`current-cell-${cellIndex}`}
-          aria-label={`Letter ${cellIndex + 1}`}
-          className={cn(
-            TILE_BASE({ state: "empty" }),
-            "flex items-center justify-center",
-            hasError && "realitea-tile-error",
-          )}
-        >
-          {currentGuess[cellIndex] ?? ""}
-        </div>
+          state={currentGuess[cellIndex] ? "typed" : "empty"}
+          letter={currentGuess[cellIndex] ?? ""}
+          ariaLabel={`Letter ${cellIndex + 1}`}
+          hasError={hasError}
+        />
       ))}
     </div>
   );
@@ -425,6 +367,7 @@ export default function RealiTeaRoute() {
         </Card>
       ) : (
         <OnscreenKeyboard
+          appearance="realitea"
           letterStates={keyboardState}
           onLetter={game.addLetter}
           onEnter={game.submitGuess}
