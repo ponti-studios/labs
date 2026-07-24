@@ -126,7 +126,7 @@ function resolveGuess(result: GuessResultPayload) {
 async function finishTileReveal() {
   for (let step = 0; step < REALITEA_ANSWER_LENGTH + 3; step += 1) {
     await act(async () => {
-      vi.advanceTimersByTime(250);
+      vi.advanceTimersByTime(420);
     });
   }
 }
@@ -217,6 +217,17 @@ describe("RealiTeaRoute", () => {
     window.localStorage.clear();
     vi.unstubAllGlobals();
     guessControl.reset();
+  });
+
+  it("renders Black Lacquer tile and keyboard presentation states", async () => {
+    const { user } = await renderRoute();
+
+    expect(screen.getByLabelText("Letter 1")).toHaveAttribute("data-state", "empty");
+    expect(screen.getByRole("button", { name: "Q" })).toHaveClass("realitea-key");
+
+    await user.keyboard("E");
+
+    expect(screen.getByLabelText("Letter 1")).toHaveAttribute("data-state", "typed");
   });
 
   it("restores saved progress for the same puzzle key after reload", async () => {

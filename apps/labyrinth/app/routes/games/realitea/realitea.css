@@ -1,18 +1,139 @@
-/*
- * RealiTea-specific animation styles and game color tokens.
- * Color values are exposed as CSS custom properties so both the CVA tile
- * variants and the reveal keyframes read from the same source of truth.
- */
+/* RealiTea's product expression: black lacquer, champagne gold, and marquee bulbs. */
 
 :root {
-  --realitea-correct-bg: #d1fae5;
-  --realitea-correct-border: #6ee7b7;
-  --realitea-correct-text: #022c22;
-  --realitea-present-bg: #fef3c7;
-  --realitea-present-border: #fcd34d;
-  --realitea-present-text: #451a03;
+  --realitea-lacquer-top: #181818;
+  --realitea-lacquer-bottom: #050505;
+  --realitea-gold-light: #f3d98c;
+  --realitea-gold: #b68a36;
+  --realitea-gold-dark: #7f5513;
+  --realitea-letter: #f4e8ce;
+  --realitea-correct-bg: #122d0c;
+  --realitea-correct-border: #c9ff82;
+  --realitea-correct-text: #efffdc;
+  --realitea-present-bg: #2d1d00;
+  --realitea-present-border: #ffd15b;
+  --realitea-present-text: #fff1be;
   --realitea-error-bg: #fee2e2;
   --realitea-error-border: #ef4444;
+}
+
+.realitea-tile {
+  --realitea-tile-size: clamp(54px, 15vw, 82px);
+  --realitea-radius: clamp(11px, 3.1vw, 17px);
+  --realitea-bulb-size: clamp(3.5px, 0.95vw, 5px);
+  --realitea-bulb-inset: clamp(4px, 7%, 6px);
+  --realitea-tile-letter: var(--realitea-letter);
+
+  position: relative;
+  display: grid;
+  width: var(--realitea-tile-size);
+  height: var(--realitea-tile-size);
+  place-items: center;
+  isolation: isolate;
+  overflow: visible;
+  border-radius: var(--realitea-radius);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.12) 0%,
+      rgba(255, 255, 255, 0.03) 28%,
+      transparent 42%
+    ),
+    linear-gradient(
+      180deg,
+      var(--realitea-lacquer-top) 0%,
+      #090909 70%,
+      var(--realitea-lacquer-bottom) 100%
+    );
+  color: var(--realitea-tile-letter);
+  font-size: clamp(1.1rem, calc(var(--realitea-tile-size) * 0.42), 1.5rem);
+  font-weight: 750;
+  text-transform: uppercase;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -8px 18px rgba(0, 0, 0, 0.5),
+    0 4px 10px rgba(0, 0, 0, 0.18);
+}
+
+.realitea-tile::before {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  padding: 2px;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    var(--realitea-gold-light) 0%,
+    var(--realitea-gold-dark) 100%
+  );
+  content: "";
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+}
+
+.realitea-tile-letter {
+  position: relative;
+  z-index: 2;
+  line-height: 1;
+}
+
+.realitea-tile-bulbs {
+  position: absolute;
+  inset: var(--realitea-bulb-inset);
+  z-index: 1;
+  pointer-events: none;
+  border-radius: calc(var(--realitea-radius) - var(--realitea-bulb-inset));
+}
+
+.realitea-tile-bulb {
+  position: absolute;
+  width: var(--realitea-bulb-size);
+  height: var(--realitea-bulb-size);
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  background: var(--realitea-bulb-color);
+  box-shadow: 0 0 4px var(--realitea-bulb-glow);
+}
+
+.realitea-tile[data-state="correct"] {
+  --realitea-bulb-color: var(--realitea-correct-border);
+  --realitea-bulb-glow: rgba(133, 255, 77, 0.8);
+  --realitea-tile-letter: var(--realitea-correct-text);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.12), transparent 42%),
+    radial-gradient(circle at 50% 55%, #245917 0%, var(--realitea-correct-bg) 50%, #081007 100%);
+}
+
+.realitea-tile[data-state="present"] {
+  --realitea-bulb-color: var(--realitea-present-border);
+  --realitea-bulb-glow: rgba(255, 177, 20, 0.85);
+  --realitea-tile-letter: var(--realitea-present-text);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.12), transparent 42%),
+    radial-gradient(circle at 50% 55%, #684800 0%, var(--realitea-present-bg) 55%, #100900 100%);
+}
+
+.realitea-tile[data-state="absent"] {
+  --realitea-tile-letter: #777;
+  filter: saturate(0.2);
+}
+
+.realitea-tile[data-state="typed"] {
+  animation: realitea-type-pop 160ms ease-out;
+}
+
+.realitea-tile-reveal {
+  animation: realitea-marquee-reveal 420ms ease-out forwards;
+}
+
+.realitea-tile-reveal .realitea-tile-bulbs {
+  animation: realitea-bulb-flicker 420ms steps(1, end);
 }
 
 .realitea-row-shake {
@@ -23,9 +144,101 @@
   animation: realitea-tile-error 0.4s ease;
 }
 
-.realitea-tile-reveal {
-  animation: realitea-tile-reveal 250ms ease forwards;
-  transform-style: preserve-3d;
+.realitea-keyboard .realitea-key {
+  min-height: 44px;
+  border-color: var(--realitea-gold);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.1), transparent 42%),
+    linear-gradient(180deg, var(--realitea-lacquer-top), var(--realitea-lacquer-bottom));
+  color: var(--realitea-letter);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 3px 8px rgba(0, 0, 0, 0.18);
+}
+
+.realitea-keyboard .realitea-key:hover:not(:disabled),
+.realitea-keyboard .realitea-key:focus-visible {
+  border-color: var(--realitea-gold-light);
+  background-color: #202020;
+}
+
+.realitea-keyboard .realitea-key-correct {
+  border-color: var(--realitea-correct-border);
+  background: radial-gradient(circle at 50% 45%, #245917, var(--realitea-correct-bg) 70%);
+  color: var(--realitea-correct-text);
+  box-shadow:
+    0 0 9px rgba(133, 255, 77, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.realitea-keyboard .realitea-key-present {
+  border-color: var(--realitea-present-border);
+  background: radial-gradient(circle at 50% 45%, #684800, var(--realitea-present-bg) 70%);
+  color: var(--realitea-present-text);
+  box-shadow:
+    0 0 9px rgba(255, 177, 20, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.realitea-keyboard .realitea-key-absent {
+  border-color: #3d3d3d;
+  color: #777;
+  filter: saturate(0.05);
+  opacity: 0.9;
+}
+
+@keyframes realitea-type-pop {
+  0% {
+    transform: scale(0.92);
+  }
+  65% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes realitea-marquee-reveal {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  35% {
+    transform: scale(0.96);
+    filter: brightness(0.55);
+  }
+  58% {
+    transform: scale(1.035);
+    filter: brightness(1.45);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+@keyframes realitea-bulb-flicker {
+  0%,
+  28% {
+    opacity: 0;
+  }
+  29% {
+    opacity: 1;
+  }
+  38% {
+    opacity: 0.25;
+  }
+  47% {
+    opacity: 1;
+  }
+  58% {
+    opacity: 0.55;
+  }
+  70%,
+  100% {
+    opacity: 1;
+  }
 }
 
 @keyframes realitea-shake {
@@ -46,38 +259,21 @@
 @keyframes realitea-tile-error {
   0%,
   100% {
-    background-color: var(--background);
-    border-color: var(--border);
+    box-shadow: 0 0 0 0 transparent;
   }
   50% {
-    background-color: var(--realitea-error-bg);
-    border-color: var(--realitea-error-border);
+    box-shadow:
+      0 0 0 2px var(--realitea-error-border),
+      0 0 12px rgba(239, 68, 68, 0.35);
   }
 }
 
-@keyframes realitea-tile-reveal {
-  0% {
-    background-color: var(--background);
-    border-color: var(--border);
-    color: var(--foreground);
-    transform: rotateX(0deg);
-  }
-  49% {
-    background-color: var(--background);
-    border-color: var(--border);
-    color: var(--foreground);
-    transform: rotateX(90deg);
-  }
-  50% {
-    background-color: var(--tile-final-background);
-    border-color: var(--tile-final-border);
-    color: var(--tile-final-color);
-    transform: rotateX(90deg);
-  }
-  100% {
-    background-color: var(--tile-final-background);
-    border-color: var(--tile-final-border);
-    color: var(--tile-final-color);
-    transform: rotateX(0deg);
+@media (prefers-reduced-motion: reduce) {
+  .realitea-tile,
+  .realitea-tile-bulbs,
+  .realitea-row-shake,
+  .realitea-tile-error {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
   }
 }
