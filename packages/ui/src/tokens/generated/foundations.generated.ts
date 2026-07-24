@@ -43,6 +43,7 @@ export default {
   },
   font: {
     sans: [
+      "IBM Plex Sans",
       "-apple-system",
       "BlinkMacSystemFont",
       "Segoe UI",
@@ -57,6 +58,7 @@ export default {
       "Noto Color Emoji",
     ],
     serif: [
+      "IBM Plex Serif",
       "ui-serif",
       "Georgia",
       "Cambria",
@@ -65,6 +67,7 @@ export default {
       "serif",
     ],
     mono: [
+      "IBM Plex Mono",
       "ui-monospace",
       "SFMono-Regular",
       "Menlo",

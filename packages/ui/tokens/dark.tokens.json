@@ -6,35 +6,35 @@
   "color": {
     "canvas": {
       "$type": "color",
-      "$value": "rgb(17, 17, 17)"
+      "$value": "rgb(21, 22, 26)"
     },
     "panel": {
       "$type": "color",
-      "$value": "rgb(27, 27, 27)"
+      "$value": "rgb(29, 31, 36)"
     },
     "raised": {
       "$type": "color",
-      "$value": "rgb(34, 34, 34)"
+      "$value": "rgb(36, 38, 44)"
     },
     "inset": {
       "$type": "color",
-      "$value": "rgb(34, 34, 34)"
+      "$value": "rgb(36, 38, 44)"
     },
     "hover": {
       "$type": "color",
-      "$value": "rgb(57, 57, 57)"
+      "$value": "rgb(46, 49, 56)"
     },
     "pressed": {
       "$type": "color",
-      "$value": "rgb(109, 109, 109)"
+      "$value": "rgb(109, 109, 116)"
     },
     "selected": {
       "$type": "color",
-      "$value": "rgb(12, 33, 117)"
+      "$value": "rgb(28, 44, 76)"
     },
     "disabled-surface": {
       "$type": "color",
-      "$value": "rgb(57, 57, 57)"
+      "$value": "rgb(46, 49, 56)"
     },
     "overlay": {
       "$type": "color",
@@ -42,131 +42,131 @@
     },
     "text-primary": {
       "$type": "color",
-      "$value": "rgb(242, 242, 242)"
+      "$value": "rgb(242, 241, 237)"
     },
     "text-secondary": {
       "$type": "color",
-      "$value": "rgb(175, 175, 175)"
+      "$value": "rgb(181, 179, 172)"
     },
     "tertiary": {
       "$type": "color",
-      "$value": "rgb(138, 138, 138)"
+      "$value": "rgb(139, 137, 131)"
     },
     "disabled-foreground": {
       "$type": "color",
-      "$value": "rgb(109, 109, 109)"
+      "$value": "rgb(109, 107, 102)"
     },
     "accent": {
       "$type": "color",
-      "$value": "rgb(86, 129, 255)"
+      "$value": "rgb(110, 150, 217)"
     },
     "destructive": {
       "$type": "color",
-      "$value": "rgb(252, 67, 46)"
+      "$value": "rgb(226, 112, 92)"
     },
     "success": {
       "$type": "color",
-      "$value": "rgb(9, 157, 89)"
+      "$value": "rgb(79, 190, 133)"
     },
     "warning": {
       "$type": "color",
-      "$value": "rgb(224, 100, 0)"
+      "$value": "rgb(224, 162, 61)"
     },
     "on-accent": {
       "$type": "color",
-      "$value": "rgb(255, 255, 255)"
+      "$value": "rgb(26, 26, 30)"
     },
     "on-destructive": {
       "$type": "color",
-      "$value": "rgb(255, 255, 255)"
+      "$value": "rgb(26, 26, 30)"
     },
     "on-success": {
       "$type": "color",
-      "$value": "rgb(255, 255, 255)"
+      "$value": "rgb(26, 26, 30)"
     },
     "on-warning": {
       "$type": "color",
-      "$value": "rgb(0, 0, 0)"
+      "$value": "rgb(26, 26, 30)"
     },
     "border-subtle": {
       "$type": "color",
-      "$value": "rgb(57, 57, 57)"
+      "$value": "rgb(44, 46, 52)"
     },
     "border-default": {
       "$type": "color",
-      "$value": "rgb(68, 68, 68)"
+      "$value": "rgb(58, 61, 68)"
     },
     "border-strong": {
       "$type": "color",
-      "$value": "rgb(109, 109, 109)"
+      "$value": "rgb(99, 102, 110)"
     },
     "focus-ring": {
       "$type": "color",
-      "$value": "rgb(64, 105, 253)"
+      "$value": "rgb(134, 166, 224)"
     },
     "accent-hover": {
       "$type": "color",
-      "$value": "rgb(73, 115, 251)"
+      "$value": "rgb(140, 174, 230)"
     },
     "accent-pressed": {
       "$type": "color",
-      "$value": "rgb(73, 115, 251)"
+      "$value": "rgb(140, 174, 230)"
     },
     "accent-subtle": {
       "$type": "color",
-      "$value": "rgb(13, 43, 140)"
+      "$value": "rgb(28, 44, 76)"
     },
     "destructive-hover": {
       "$type": "color",
-      "$value": "rgb(252, 46, 23)"
+      "$value": "rgb(234, 139, 121)"
     },
     "destructive-pressed": {
       "$type": "color",
-      "$value": "rgb(252, 46, 23)"
+      "$value": "rgb(234, 139, 121)"
     },
     "destructive-subtle": {
       "$type": "color",
-      "$value": "rgb(135, 18, 0)"
+      "$value": "rgb(58, 30, 24)"
     },
     "success-subtle": {
       "$type": "color",
-      "$value": "rgb(1, 74, 53)"
+      "$value": "rgb(18, 58, 40)"
     },
     "warning-subtle": {
       "$type": "color",
-      "$value": "rgb(80, 27, 0)"
+      "$value": "rgb(61, 42, 13)"
     },
     "chart-1": {
       "$type": "color",
-      "$value": "rgb(86, 129, 255)"
+      "$value": "rgb(110, 150, 217)"
     },
     "chart-2": {
       "$type": "color",
-      "$value": "rgb(9, 157, 89)"
+      "$value": "rgb(169, 140, 201)"
     },
     "chart-3": {
       "$type": "color",
-      "$value": "rgb(86, 129, 255)"
+      "$value": "rgb(79, 184, 176)"
     },
     "chart-4": {
       "$type": "color",
-      "$value": "rgb(224, 100, 0)"
+      "$value": "rgb(217, 154, 78)"
     },
     "chart-5": {
       "$type": "color",
-      "$value": "rgb(138, 138, 138)"
+      "$value": "rgb(201, 125, 147)"
     },
     "chart-positive": {
       "$type": "color",
-      "$value": "rgb(9, 157, 89)"
+      "$value": "rgb(79, 190, 133)"
     },
     "chart-negative": {
       "$type": "color",
-      "$value": "rgb(252, 67, 46)"
+      "$value": "rgb(226, 112, 92)"
     },
     "chart-neutral": {
       "$type": "color",
-      "$value": "rgb(138, 138, 138)"
+      "$value": "rgb(99, 102, 110)"
     }
   }
 }
