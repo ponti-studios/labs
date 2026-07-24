@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.0](https://github.com/ponti-studios/labs/compare/ui-v0.3.0...ui-v0.4.0) (2026-07-24)
+
+
+### Features
+
+* add design rationale and implementation brief template ([4dfae32](https://github.com/ponti-studios/labs/commit/4dfae32c33d496e4f620a393a041e15db690b103))
+
+
+### Bug Fixes
+
+* merge caller className into Accordion instead of overwriting it ([029a107](https://github.com/ponti-studios/labs/commit/029a107d38aadcb361bc665923acb4980eab6eef))
+
 ## [0.3.0](https://github.com/ponti-studios/labs/compare/ui-v0.2.0...ui-v0.3.0) (2026-07-22)
 
 
