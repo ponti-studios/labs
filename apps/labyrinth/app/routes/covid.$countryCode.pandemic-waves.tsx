@@ -41,7 +41,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 const tooltipStyle = {
-  backgroundColor: "var(--color-surface-panel)",
+  backgroundColor: "var(--color-panel)",
   border: "1px solid var(--color-border)",
   borderRadius: "2px",
   fontSize: "12px",
@@ -108,7 +108,7 @@ export default function PandemicWavesPage() {
                 <YAxis tick={tickStyle} axisLine={false} tickLine={false} />
                 <Tooltip
                   contentStyle={tooltipStyle}
-                  cursor={{ fill: "var(--color-surface-inset)" }}
+                  cursor={{ fill: "var(--color-inset)" }}
                   labelFormatter={(v) => `Wave ${v}`}
                 />
                 <Bar dataKey="peakValue" fill="#8b5cf6" radius={[2, 2, 0, 0]} name="Peak Value" />

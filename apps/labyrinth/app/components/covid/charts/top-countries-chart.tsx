@@ -22,7 +22,7 @@ function toNumber(value: unknown): number | null {
 }
 
 const tooltipStyle = {
-  backgroundColor: "var(--color-surface-panel)",
+  backgroundColor: "var(--color-panel)",
   border: "1px solid var(--color-border)",
   borderRadius: "2px",
   fontSize: "12px",
@@ -90,7 +90,7 @@ export function TopCountriesChart({
           <Tooltip
             formatter={(value) => [formatValue(toNumber(value) ?? 0), title]}
             contentStyle={tooltipStyle}
-            cursor={{ fill: "var(--color-surface-inset)" }}
+            cursor={{ fill: "var(--color-inset)" }}
           />
           <Bar dataKey="value" fill={color} radius={[0, 2, 2, 0]} />
         </BarChart>

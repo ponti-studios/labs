@@ -7,39 +7,45 @@
 /* Keep generated token names isolated from Tailwind's standard role names. */
 :root {
   --ponti-primary: var(--color-accent);
-  --ponti-primary-foreground: var(--color-text-on-accent);
+  --ponti-primary-foreground: var(--color-on-accent);
   --ponti-destructive: var(--color-destructive);
-  --ponti-destructive-foreground: var(--color-text-on-destructive);
+  --ponti-destructive-foreground: var(--color-on-destructive);
+  --ponti-success: var(--color-success);
+  --ponti-warning: var(--color-warning);
   --ponti-foreground: var(--color-text-primary);
   --ponti-muted-foreground: var(--color-text-secondary);
   --ponti-border: var(--color-border-default);
-  --ponti-ring: var(--color-ring-focus);
+  --ponti-ring: var(--color-focus-ring);
 }
 
 /* shadcn New York semantic contract. Values are generated from the DTCG
  * source; this file only names the roles consumed by web components. */
 @theme inline {
-  --color-background: var(--color-surface-canvas);
+  --color-background: var(--color-canvas);
   --color-foreground: var(--ponti-foreground);
-  --color-card: var(--color-surface-panel);
-  --color-card-foreground: var(--color-text-primary);
-  --color-popover: var(--color-surface-raised);
-  --color-popover-foreground: var(--color-text-primary);
+  --color-card: var(--color-panel);
+  --color-card-foreground: var(--ponti-foreground);
+  --color-popover: var(--color-raised);
+  --color-popover-foreground: var(--ponti-foreground);
   --color-primary: var(--ponti-primary);
   --color-primary-foreground: var(--ponti-primary-foreground);
-  --color-secondary: var(--color-surface-panel);
-  --color-secondary-foreground: var(--color-text-primary);
-  --color-muted: var(--color-surface-inset);
+  --color-secondary: var(--color-panel);
+  --color-secondary-foreground: var(--ponti-foreground);
+  --color-muted: var(--color-inset);
   --color-muted-foreground: var(--ponti-muted-foreground);
-  --color-accent-foreground: var(--color-text-primary);
+  --color-accent: var(--ponti-primary);
+  --color-accent-foreground: var(--ponti-foreground);
+  --color-destructive: var(--ponti-destructive);
   --color-destructive-foreground: var(--ponti-destructive-foreground);
+  --color-success: var(--ponti-success);
+  --color-warning: var(--ponti-warning);
   --color-border: var(--ponti-border);
   --color-input: var(--ponti-border);
   --color-ring: var(--ponti-ring);
-  --color-chart-1: var(--color-border-focus);
+  --color-chart-1: var(--color-focus-ring);
   --color-chart-2: var(--color-chart-positive);
-  --color-chart-3: var(--color-border-focus);
-  --color-chart-4: var(--color-text-warning);
+  --color-chart-3: var(--color-focus-ring);
+  --color-chart-4: var(--ponti-warning);
   --color-chart-5: var(--color-border-strong);
 }
 

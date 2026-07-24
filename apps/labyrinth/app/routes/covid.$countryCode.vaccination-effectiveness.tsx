@@ -57,7 +57,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 const tooltipStyle = {
-  backgroundColor: "var(--color-surface-panel)",
+  backgroundColor: "var(--color-panel)",
   border: "1px solid var(--color-border)",
   borderRadius: "2px",
   fontSize: "12px",
@@ -148,7 +148,7 @@ export default function VaccinationEffectivenessPage() {
                 <LineChart data={data.timeline} margin={{ top: 0, right: 8, bottom: 0, left: 0 }}>
                   <CartesianGrid
                     strokeDasharray="4 4"
-                    stroke="var(--color-surface-inset)"
+                    stroke="var(--color-inset)"
                     vertical={false}
                   />
                   <XAxis

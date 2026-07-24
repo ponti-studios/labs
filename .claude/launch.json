@@ -30,7 +30,7 @@
   ,{
       "name": "storybook",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@pontistudios/ui", "storybook"],
+      "runtimeArgs": ["--filter", "@ponti-studios/ui", "storybook"],
       "port": 6006,
       "autoPort": true
     }
