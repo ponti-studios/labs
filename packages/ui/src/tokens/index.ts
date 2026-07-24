@@ -17,24 +17,22 @@ export type SpacingToken = NormalizedSpacingKey<
   keyof (typeof foundations)["spacing-scale"] & string
 >;
 
-export const colorTokenNames = Object.keys(lightTokens.color) as Array<
-  keyof typeof lightTokens.color
->;
-export type ColorToken = keyof typeof lightTokens.color;
+export const colorTokenNames = Object.keys(lightTokens) as Array<keyof typeof lightTokens>;
+export type ColorToken = keyof typeof lightTokens;
 export type ColorMode = "light" | "dark";
 export type ColorTheme = Readonly<Record<ColorToken, string>>;
 
 export const colorThemes = {
-  light: lightTokens.color,
-  dark: darkTokens.color,
+  light: lightTokens,
+  dark: darkTokens,
 } as const satisfies Record<ColorMode, ColorTheme>;
 
 export const colors = colorTokenNames.reduce(
   (accumulator, token) => {
-    accumulator[token] = `var(--color-${token})`;
+    accumulator[token] = `var(--${token})`;
     return accumulator;
   },
-  {} as Record<ColorToken, `var(--color-${string})`>,
+  {} as Record<ColorToken, `var(--${string})`>,
 );
 
 export const spacing = Object.fromEntries(

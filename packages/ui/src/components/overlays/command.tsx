@@ -153,7 +153,7 @@ function CommandItem({ className, onSelect, onClick, ...props }: CommandItemProp
   return (
     <CommandPrimitive.Item
       data-slot="command-item"
-      className={`data-highlighted:bg-accent data-highlighted:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-hidden select-none data-disabled:pointer-events-none data-disabled:opacity-50 ${className ?? ""}`}
+      className={`data-highlighted:bg-muted data-highlighted:text-muted-foreground relative flex cursor-default items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-hidden select-none data-disabled:pointer-events-none data-disabled:opacity-50 ${className ?? ""}`}
       onClick={(event) => {
         onClick?.(event);
         onSelect?.();

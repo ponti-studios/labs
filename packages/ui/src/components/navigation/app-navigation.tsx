@@ -75,7 +75,7 @@ export function AppNavigation({
           ? "inline-flex min-h-9 shrink-0 items-center rounded-md px-3 py-2 text-sm font-medium"
           : variant
             ? "inline-flex min-h-9 shrink-0 items-center justify-center rounded-md px-3 py-2 text-sm font-medium"
-            : "inline-flex min-h-9 shrink-0 items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
+            : "inline-flex min-h-9 shrink-0 items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-muted hover:text-muted-foreground",
         "aria-current": active ? "page" : undefined,
         "data-variant": variant,
       },

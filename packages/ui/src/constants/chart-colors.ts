@@ -14,14 +14,14 @@ export const CHART_COLORS = {
   negative: "var(--color-chart-negative)",
   neutral: "var(--color-chart-neutral)",
 
-  background: "var(--color-canvas)",
+  background: "var(--color-background)",
   grid: "var(--color-border)",
 
   axis: "var(--color-muted-foreground)",
   label: "var(--color-muted-foreground)",
 
   tooltip: {
-    background: "var(--color-panel)",
+    background: "var(--color-card)",
     text: "var(--color-foreground)",
     border: "var(--color-border)",
   },

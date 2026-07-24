@@ -21,7 +21,7 @@ function toNumber(value: unknown): number | null {
 }
 
 const tooltipStyle = {
-  backgroundColor: "var(--color-panel)",
+  backgroundColor: "var(--color-card)",
   border: "1px solid var(--color-border)",
   borderRadius: "2px",
   fontSize: "12px",
@@ -93,7 +93,7 @@ export function TimeSeriesChart({
               r: 3,
               stroke: color,
               strokeWidth: 1.5,
-              fill: "var(--color-panel)",
+              fill: "var(--color-card)",
             }}
           />
         </LineChart>

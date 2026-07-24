@@ -11,7 +11,7 @@ const badgeVariants = cva(
         default: "bg-primary text-primary-foreground [a&]:hover:bg-primary/90",
         secondary: "bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/80",
         destructive: "bg-destructive text-destructive-foreground [a&]:hover:bg-destructive/90",
-        outline: "border-border text-foreground [a&]:hover:bg-accent",
+        outline: "border-border text-foreground [a&]:hover:bg-muted",
         ghost: "[a&]:[a&]: [a&]: [a&]:",
         link: "text-foreground underline-offset-4 [a&]:hover:underline",
         /** Quiet metadata marker for real reference IDs (case/appointment/feed
