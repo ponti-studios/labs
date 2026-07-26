@@ -1,10 +1,8 @@
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
-import { calculateTheaterEconomics, DEFAULT_SCREEN_ALLOCATION } from "./theatre-model";
-import type { ScreenAllocationMap, SeasonKey, TheaterInputs } from "./theatre-model";
 import {
   BreakdownRow,
   NumericControl,
@@ -16,6 +14,8 @@ import {
   StatRow,
   WeeklyTrafficCard,
 } from "./components/index";
+import type { ScreenAllocationMap, SeasonKey, TheaterInputs } from "./theatre-model";
+import { calculateTheaterEconomics, DEFAULT_SCREEN_ALLOCATION } from "./theatre-model";
 
 // --- Mocks -------------------------------------------------------------------
 

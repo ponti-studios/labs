@@ -1,83 +1,42 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-function chain(rows: unknown[]) {
-  const thenable: PromiseLike<unknown[]> = {
-    then: (onFulfilled) => Promise.resolve(rows).then(onFulfilled),
+vi.mock("@pontistudios/db", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@pontistudios/db")>();
+  const { createTestDb, cleanAll } = await import("../../../../test-utils/test-db");
+  const tables = {
+    articles: actual.articles,
+    caseUpdates: actual.caseUpdates,
+    covidData: actual.covidData,
+    dailyPuzzles: actual.dailyPuzzles,
+    feedGames: actual.feedGames,
+    feeds: actual.feeds,
+    games: actual.games,
+    searchDocuments: actual.searchDocuments,
+    relationshipCases: actual.relationshipCases,
+    relationshipVerdicts: actual.relationshipVerdicts,
+    tflCameras: actual.tflCameras,
   };
-  const handler: ProxyHandler<object> = {
-    get(_target, prop) {
-      if (prop === "then") return thenable.then.bind(thenable);
-      return () => proxy;
-    },
-  };
-  const proxy: object = new Proxy({}, handler);
-  return proxy;
-}
-
-const { dbMock, gamesFindFirstMock, tableMocks } = vi.hoisted(() => {
-  const gamesFindFirstMock = vi.fn();
-  const dbMock = {
-    query: { games: { findFirst: gamesFindFirstMock } },
-    select: vi.fn(),
-    insert: vi.fn(),
-    update: vi.fn(),
-    delete: vi.fn(),
-  };
-  const tableMocks = {
-    games: { id: "games.id", slug: "games.slug" },
-    feeds: { id: "feeds.id", url: "feeds.url", active: "feeds.active" },
-    feedGames: { feedId: "feedGames.feedId", gameId: "feedGames.gameId" },
-    articles: {
-      id: "articles.id",
-      feedId: "articles.feedId",
-      url: "articles.url",
-      status: "articles.status",
-      publishedAt: "articles.publishedAt",
-    },
-    dailyPuzzles: {
-      id: "dailyPuzzles.id",
-      gameId: "dailyPuzzles.gameId",
-      articleId: "dailyPuzzles.articleId",
-      dateUtc: "dailyPuzzles.dateUtc",
-      normalizedAnswer: "dailyPuzzles.normalizedAnswer",
-      createdAt: "dailyPuzzles.createdAt",
-    },
-  };
-  return { dbMock, gamesFindFirstMock, tableMocks };
+  return { ...actual, db: createTestDb(tables), __cleanAll: cleanAll };
 });
 
-vi.mock("@pontistudios/db", () => ({
-  and: vi.fn((...args) => ({ type: "and", args })),
-  count: vi.fn(() => "count()"),
-  db: dbMock,
-  desc: vi.fn((col) => ({ type: "desc", col })),
-  eq: vi.fn((col, val) => ({ type: "eq", col, val })),
-  gte: vi.fn((col, val) => ({ type: "gte", col, val })),
-  lt: vi.fn((col, val) => ({ type: "lt", col, val })),
-  lte: vi.fn((col, val) => ({ type: "lte", col, val })),
-  inArray: vi.fn((col, vals) => ({ type: "inArray", col, vals })),
-  games: tableMocks.games,
-  feeds: tableMocks.feeds,
-  feedGames: tableMocks.feedGames,
-  articles: tableMocks.articles,
-  dailyPuzzles: tableMocks.dailyPuzzles,
-}));
+import { db, __cleanAll, dailyPuzzles, feedGames, articles, feeds, games } from "@pontistudios/db";
 
-beforeEach(() => {
-  vi.clearAllMocks();
+beforeEach(async () => {
+  await __cleanAll();
 });
 
 describe("getGameBySlug", () => {
   it("returns the game row when one exists", async () => {
-    const row = { id: 1, slug: "rhobh" };
-    gamesFindFirstMock.mockResolvedValue(row);
+    const [game] = await db
+      .insert(games)
+      .values({ slug: "rhobh", name: "RHOBH", systemPromptPath: "prompts/rhobh.txt" })
+      .returning();
     const { getGameBySlug } = await import("../repository");
     const result = await getGameBySlug("rhobh");
-    expect(result).toEqual(row);
+    expect(result).toEqual(game);
   });
 
   it("returns null when no game exists", async () => {
-    gamesFindFirstMock.mockResolvedValue(undefined);
     const { getGameBySlug } = await import("../repository");
     const result = await getGameBySlug("missing");
     expect(result).toBeNull();
@@ -86,28 +45,91 @@ describe("getGameBySlug", () => {
 
 describe("loadPuzzleForDate", () => {
   it("joins the puzzle with its source article", async () => {
-    const puzzleRow = { id: 1, dateUtc: "2026-06-25", answer: "BRAVO" };
-    const articleRow = { id: 9, url: "https://realityblurb.com/a", title: "A" };
-    dbMock.select.mockReturnValue(chain([{ puzzle: puzzleRow, article: articleRow }]));
+    const [game] = await db
+      .insert(games)
+      .values({ slug: "rhobh", name: "RHOBH", systemPromptPath: "prompts/rhobh.txt" })
+      .returning();
+    const [feed] = await db
+      .insert(feeds)
+      .values({ url: "https://example.com/feed", label: "Test Feed" })
+      .returning();
+    const [article] = await db
+      .insert(articles)
+      .values({ feedId: feed.id, url: "https://example.com/a", title: "Article A" })
+      .returning();
+    const [puzzle] = await db
+      .insert(dailyPuzzles)
+      .values({
+        gameId: game.id,
+        articleId: article.id,
+        dateUtc: "2026-06-25",
+        answer: "BRAVO",
+        answerType: "storyline",
+        normalizedAnswer: "BRAVO",
+        clue: "Clue text",
+        detail: "Detail text",
+      })
+      .returning();
+
     const { loadPuzzleForDate } = await import("../repository");
-    const result = await loadPuzzleForDate(1, "2026-06-25");
-    expect(result).toEqual({ ...puzzleRow, article: articleRow });
+    const result = await loadPuzzleForDate(game.id, "2026-06-25");
+
+    expect(result).toBeDefined();
+    expect(result!.id).toBe(puzzle.id);
+    expect(result!.answer).toBe("BRAVO");
+    expect(result!.article).toBeDefined();
+    expect(result!.article.url).toBe("https://example.com/a");
   });
 
-  it("returns null when no row exists", async () => {
-    dbMock.select.mockReturnValue(chain([]));
+  it("returns null when no puzzle exists for the date", async () => {
     const { loadPuzzleForDate } = await import("../repository");
-    const result = await loadPuzzleForDate(1, "2026-06-25");
+    const result = await loadPuzzleForDate(999, "2026-06-25");
     expect(result).toBeNull();
   });
 });
 
 describe("getStoredAnswers", () => {
   it("returns a Set of normalizedAnswer values scoped to the game", async () => {
-    const rows = [{ normalizedAnswer: "BRAVO" }, { normalizedAnswer: "DISCO" }];
-    dbMock.select.mockReturnValue(chain(rows));
+    const [game] = await db
+      .insert(games)
+      .values({ slug: "rhobh", name: "RHOBH", systemPromptPath: "prompts/rhobh.txt" })
+      .returning();
+    const [feed] = await db
+      .insert(feeds)
+      .values({ url: "https://example.com/feed", label: "Test Feed" })
+      .returning();
+    const [a1] = await db
+      .insert(articles)
+      .values({ feedId: feed.id, url: "https://example.com/1", title: "One" })
+      .returning();
+    const [a2] = await db
+      .insert(articles)
+      .values({ feedId: feed.id, url: "https://example.com/2", title: "Two" })
+      .returning();
+    await db.insert(dailyPuzzles).values({
+      gameId: game.id,
+      articleId: a1.id,
+      dateUtc: "2026-06-25",
+      answer: "BRAVO",
+      answerType: "storyline",
+      normalizedAnswer: "BRAVO",
+      clue: "c1",
+      detail: "d1",
+    });
+    await db.insert(dailyPuzzles).values({
+      gameId: game.id,
+      articleId: a2.id,
+      dateUtc: "2026-06-26",
+      answer: "DISCO",
+      answerType: "place",
+      normalizedAnswer: "DISCO",
+      clue: "c2",
+      detail: "d2",
+    });
+
     const { getStoredAnswers } = await import("../repository");
-    const result = await getStoredAnswers(1);
+    const result = await getStoredAnswers(game.id);
+
     expect(result).toBeInstanceOf(Set);
     expect(result.has("BRAVO")).toBe(true);
     expect(result.has("DISCO")).toBe(true);
@@ -116,20 +138,17 @@ describe("getStoredAnswers", () => {
 
 describe("upsertArticles", () => {
   it("dedupes on url via onConflictDoNothing and returns the inserted count", async () => {
-    const insertedRows = [{ id: 1 }];
-    const onConflictDoNothing = vi.fn().mockReturnValue({
-      returning: vi.fn().mockResolvedValue(insertedRows),
-    });
-    const values = vi.fn().mockReturnValue({ onConflictDoNothing });
-    dbMock.insert.mockReturnValue({ values });
+    const [feed] = await db
+      .insert(feeds)
+      .values({ url: "https://example.com/feed", label: "Test Feed" })
+      .returning();
 
     const { upsertArticles } = await import("../repository");
-    const result = await upsertArticles(1, [
-      { url: "https://realityblurb.com/a", title: "A" },
-      { url: "https://realityblurb.com/a", title: "A duplicate within the same batch" },
+    const result = await upsertArticles(feed.id, [
+      { url: "https://example.com/a", title: "A" },
+      { url: "https://example.com/a", title: "A duplicate" },
     ]);
 
-    expect(onConflictDoNothing).toHaveBeenCalledWith({ target: tableMocks.articles.url });
     expect(result).toBe(1);
   });
 
@@ -137,16 +156,51 @@ describe("upsertArticles", () => {
     const { upsertArticles } = await import("../repository");
     const result = await upsertArticles(1, []);
     expect(result).toBe(0);
-    expect(dbMock.insert).not.toHaveBeenCalled();
   });
 });
 
 describe("getExistingDateKeys", () => {
   it("returns date strings from rows scoped to the game", async () => {
-    const rows = [{ dateUtc: "2026-06-26" }, { dateUtc: "2026-06-27" }];
-    dbMock.select.mockReturnValue(chain(rows));
+    const [game] = await db
+      .insert(games)
+      .values({ slug: "rhobh", name: "RHOBH", systemPromptPath: "prompts/rhobh.txt" })
+      .returning();
+    const [feed] = await db
+      .insert(feeds)
+      .values({ url: "https://example.com/feed", label: "Test Feed" })
+      .returning();
+    const [a1] = await db
+      .insert(articles)
+      .values({ feedId: feed.id, url: "https://example.com/1", title: "One" })
+      .returning();
+    const [a2] = await db
+      .insert(articles)
+      .values({ feedId: feed.id, url: "https://example.com/2", title: "Two" })
+      .returning();
+    await db.insert(dailyPuzzles).values({
+      gameId: game.id,
+      articleId: a1.id,
+      dateUtc: "2026-06-26",
+      answer: "BRAVO",
+      answerType: "storyline",
+      normalizedAnswer: "BRAVO",
+      clue: "c1",
+      detail: "d1",
+    });
+    await db.insert(dailyPuzzles).values({
+      gameId: game.id,
+      articleId: a2.id,
+      dateUtc: "2026-06-27",
+      answer: "DISCO",
+      answerType: "place",
+      normalizedAnswer: "DISCO",
+      clue: "c2",
+      detail: "d2",
+    });
+
     const { getExistingDateKeys } = await import("../repository");
-    const result = await getExistingDateKeys(1, "2026-06-26", "2026-06-27");
+    const result = await getExistingDateKeys(game.id, "2026-06-26", "2026-06-27");
+
     expect(result).toEqual(["2026-06-26", "2026-06-27"]);
   });
 });
