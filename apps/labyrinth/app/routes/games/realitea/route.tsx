@@ -155,9 +155,29 @@ const CurrentGuessRow = memo(function CurrentGuessRow({
  * Skeleton that React Router renders during SSR / before hydration. The route
  * reads `localStorage` for restored progress on the client, which would
  * otherwise mismatch the server-rendered output.
+ *
+ * Tiles match the live grid dimensions so there is zero layout shift.
+ * A staggered fade animation sweeps across all 30 tiles.
  */
 export function HydrateFallback() {
-  return <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-4 py-3" />;
+  return (
+    <div className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center px-4">
+      <div className="w-fit space-y-1 sm:space-y-0.5">
+        {Array.from({ length: 6 }).map((_, row) => (
+          <div key={row} className="flex gap-1.5 sm:gap-1">
+            {Array.from({ length: 5 }).map((_, col) => (
+              <RealiTeaTile
+                key={col}
+                state="empty"
+                loading
+                style={{ animationDelay: `${(row * 5 + col) * 100}ms` }}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 type ErrorBoundaryProps = { error: Error };

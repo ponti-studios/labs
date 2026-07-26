@@ -1,28 +1,51 @@
-/* RealiTea's product expression: black lacquer, champagne gold, and marquee bulbs. */
+/* RealiTea's product expression: black lacquer and champagne gold. */
 
 :root {
-  --realitea-lacquer-top: #181818;
-  --realitea-lacquer-bottom: #050505;
-  --realitea-gold-light: #f3d98c;
-  --realitea-gold: #b68a36;
-  --realitea-gold-dark: #7f5513;
-  --realitea-letter: #f4e8ce;
-  --realitea-correct-bg: #122d0c;
-  --realitea-correct-border: #c9ff82;
-  --realitea-correct-text: #efffdc;
-  --realitea-present-bg: #2d1d00;
-  --realitea-present-border: #ffd15b;
-  --realitea-present-text: #fff1be;
-  --realitea-error-bg: #fee2e2;
-  --realitea-error-border: #ef4444;
+  /* Sizing */
+  --realitea-tile-size: clamp(54px, 15vw, 82px);
+  --realitea-radius: clamp(11px, 3.1vw, 17px);
+
+  /* Palette — solids */
+  --realitea-lacquer-top: rgba(24, 24, 24, 1);
+  --realitea-lacquer-bottom: rgba(5, 5, 5, 1);
+  --realitea-lacquer-mid: rgba(9, 9, 9, 1);
+  --realitea-gold-light: rgba(243, 217, 140, 1);
+  --realitea-gold: rgba(182, 138, 54, 1);
+  --realitea-gold-dark: rgba(127, 85, 19, 1);
+  --realitea-cream: rgba(244, 232, 206, 1);
+  --realitea-correct-bg: rgba(18, 45, 12, 1);
+  --realitea-correct-border: rgba(201, 255, 130, 1);
+  --realitea-correct-text: rgba(239, 255, 220, 1);
+  --realitea-correct-inner: rgba(36, 89, 23, 1);
+  --realitea-correct-outer: rgba(8, 16, 7, 1);
+  --realitea-present-bg: rgba(45, 29, 0, 1);
+  --realitea-present-border: rgba(255, 209, 91, 1);
+  --realitea-present-text: rgba(255, 241, 190, 1);
+  --realitea-present-inner: rgba(104, 72, 0, 1);
+  --realitea-present-outer: rgba(16, 9, 0, 1);
+  --realitea-error-border: rgba(239, 68, 68, 1);
+  --realitea-absent-border: rgba(61, 61, 61, 1);
+  --realitea-absent-color: rgba(119, 119, 119, 1);
+  --realitea-skeleton-bg: rgba(17, 17, 17, 1);
+  --realitea-key-hover-bg: rgba(32, 32, 32, 1);
+
+  /* Specular highlights — white at three opacities */
+  --realitea-specular-high: rgba(255, 255, 255, 0.12);
+  --realitea-specular-mid: rgba(255, 255, 255, 0.08);
+  --realitea-specular-low: rgba(255, 255, 255, 0.04);
+
+  /* Shadows */
+  --realitea-shadow-deep: rgba(0, 0, 0, 0.5);
+  --realitea-shadow-drop: rgba(0, 0, 0, 0.18);
+
+  /* Glows */
+  --realitea-glow-correct-soft: rgba(133, 255, 77, 0.35);
+  --realitea-glow-present-soft: rgba(255, 177, 20, 0.35);
+  --realitea-glow-error: rgba(239, 68, 68, 0.35);
 }
 
 .realitea-tile {
-  --realitea-tile-size: clamp(54px, 15vw, 82px);
-  --realitea-radius: clamp(11px, 3.1vw, 17px);
-  --realitea-bulb-size: clamp(3.5px, 0.95vw, 5px);
-  --realitea-bulb-inset: clamp(4px, 7%, 6px);
-  --realitea-tile-letter: var(--realitea-letter);
+  --realitea-tile-letter: var(--realitea-cream);
 
   position: relative;
   display: grid;
@@ -35,14 +58,14 @@
   background:
     linear-gradient(
       145deg,
-      rgba(255, 255, 255, 0.12) 0%,
-      rgba(255, 255, 255, 0.03) 28%,
+      var(--realitea-specular-high) 0%,
+      var(--realitea-specular-low) 28%,
       transparent 42%
     ),
     linear-gradient(
       180deg,
       var(--realitea-lacquer-top) 0%,
-      #090909 70%,
+      var(--realitea-lacquer-mid) 70%,
       var(--realitea-lacquer-bottom) 100%
     );
   color: var(--realitea-tile-letter);
@@ -50,9 +73,9 @@
   font-weight: 750;
   text-transform: uppercase;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.12),
-    inset 0 -8px 18px rgba(0, 0, 0, 0.5),
-    0 4px 10px rgba(0, 0, 0, 0.18);
+    inset 0 1px 0 var(--realitea-specular-high),
+    inset 0 -8px 18px var(--realitea-shadow-deep),
+    0 4px 10px var(--realitea-shadow-drop);
 }
 
 .realitea-tile::before {
@@ -68,12 +91,12 @@
   );
   content: "";
   mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
+    linear-gradient(rgba(0, 0, 0, 1) 0 0) content-box,
+    linear-gradient(rgba(0, 0, 0, 1) 0 0);
   mask-composite: exclude;
   -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
+    linear-gradient(rgba(0, 0, 0, 1) 0 0) content-box,
+    linear-gradient(rgba(0, 0, 0, 1) 0 0);
   -webkit-mask-composite: xor;
 }
 
@@ -83,44 +106,22 @@
   line-height: 1;
 }
 
-.realitea-tile-bulbs {
-  position: absolute;
-  inset: var(--realitea-bulb-inset);
-  z-index: 1;
-  pointer-events: none;
-  border-radius: calc(var(--realitea-radius) - var(--realitea-bulb-inset));
-}
-
-.realitea-tile-bulb {
-  position: absolute;
-  width: var(--realitea-bulb-size);
-  height: var(--realitea-bulb-size);
-  transform: translate(-50%, -50%);
-  border-radius: 999px;
-  background: var(--realitea-bulb-color);
-  box-shadow: 0 0 4px var(--realitea-bulb-glow);
-}
-
 .realitea-tile[data-state="correct"] {
-  --realitea-bulb-color: var(--realitea-correct-border);
-  --realitea-bulb-glow: rgba(133, 255, 77, 0.8);
   --realitea-tile-letter: var(--realitea-correct-text);
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.12), transparent 42%),
-    radial-gradient(circle at 50% 55%, #245917 0%, var(--realitea-correct-bg) 50%, #081007 100%);
+    linear-gradient(145deg, var(--realitea-specular-high), transparent 42%),
+    radial-gradient(circle at 50% 55%, var(--realitea-correct-inner) 0%, var(--realitea-correct-bg) 50%, var(--realitea-correct-outer) 100%);
 }
 
 .realitea-tile[data-state="present"] {
-  --realitea-bulb-color: var(--realitea-present-border);
-  --realitea-bulb-glow: rgba(255, 177, 20, 0.85);
   --realitea-tile-letter: var(--realitea-present-text);
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.12), transparent 42%),
-    radial-gradient(circle at 50% 55%, #684800 0%, var(--realitea-present-bg) 55%, #100900 100%);
+    linear-gradient(145deg, var(--realitea-specular-high), transparent 42%),
+    radial-gradient(circle at 50% 55%, var(--realitea-present-inner) 0%, var(--realitea-present-bg) 55%, var(--realitea-present-outer) 100%);
 }
 
 .realitea-tile[data-state="absent"] {
-  --realitea-tile-letter: #777;
+  --realitea-tile-letter: var(--realitea-absent-color);
   filter: saturate(0.2);
 }
 
@@ -130,10 +131,6 @@
 
 .realitea-tile-reveal {
   animation: realitea-marquee-reveal 420ms ease-out forwards;
-}
-
-.realitea-tile-reveal .realitea-tile-bulbs {
-  animation: realitea-bulb-flicker 420ms steps(1, end);
 }
 
 .realitea-row-shake {
@@ -148,41 +145,41 @@
   min-height: 44px;
   border-color: var(--realitea-gold);
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.1), transparent 42%),
+    linear-gradient(145deg, var(--realitea-specular-mid), transparent 42%),
     linear-gradient(180deg, var(--realitea-lacquer-top), var(--realitea-lacquer-bottom));
-  color: var(--realitea-letter);
+  color: var(--realitea-cream);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    0 3px 8px rgba(0, 0, 0, 0.18);
+    inset 0 1px 0 var(--realitea-specular-mid),
+    0 3px 8px var(--realitea-shadow-drop);
 }
 
 .realitea-keyboard .realitea-key:hover:not(:disabled),
 .realitea-keyboard .realitea-key:focus-visible {
   border-color: var(--realitea-gold-light);
-  background-color: #202020;
+  background-color: var(--realitea-key-hover-bg);
 }
 
 .realitea-keyboard .realitea-key-correct {
   border-color: var(--realitea-correct-border);
-  background: radial-gradient(circle at 50% 45%, #245917, var(--realitea-correct-bg) 70%);
+  background: radial-gradient(circle at 50% 45%, var(--realitea-correct-inner), var(--realitea-correct-bg) 70%);
   color: var(--realitea-correct-text);
   box-shadow:
-    0 0 9px rgba(133, 255, 77, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    0 0 9px var(--realitea-glow-correct-soft),
+    inset 0 1px 0 var(--realitea-specular-high);
 }
 
 .realitea-keyboard .realitea-key-present {
   border-color: var(--realitea-present-border);
-  background: radial-gradient(circle at 50% 45%, #684800, var(--realitea-present-bg) 70%);
+  background: radial-gradient(circle at 50% 45%, var(--realitea-present-inner), var(--realitea-present-bg) 70%);
   color: var(--realitea-present-text);
   box-shadow:
-    0 0 9px rgba(255, 177, 20, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    0 0 9px var(--realitea-glow-present-soft),
+    inset 0 1px 0 var(--realitea-specular-high);
 }
 
 .realitea-keyboard .realitea-key-absent {
-  border-color: #3d3d3d;
-  color: #777;
+  border-color: var(--realitea-absent-border);
+  color: var(--realitea-absent-color);
   filter: saturate(0.05);
   opacity: 0.9;
 }
@@ -218,29 +215,6 @@
   }
 }
 
-@keyframes realitea-bulb-flicker {
-  0%,
-  28% {
-    opacity: 0;
-  }
-  29% {
-    opacity: 1;
-  }
-  38% {
-    opacity: 0.25;
-  }
-  47% {
-    opacity: 1;
-  }
-  58% {
-    opacity: 0.55;
-  }
-  70%,
-  100% {
-    opacity: 1;
-  }
-}
-
 @keyframes realitea-shake {
   0%,
   100% {
@@ -264,16 +238,41 @@
   50% {
     box-shadow:
       0 0 0 2px var(--realitea-error-border),
-      0 0 12px rgba(239, 68, 68, 0.35);
+      0 0 12px var(--realitea-glow-error);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .realitea-tile,
-  .realitea-tile-bulbs,
   .realitea-row-shake,
-  .realitea-tile-error {
+  .realitea-tile-error,
+  .realitea-skeleton-tile {
     animation: none !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* ── HydrateFallback skeleton ──────────────────────────────────────────── */
+
+.realitea-tile-skeleton {
+  background:
+    linear-gradient(
+      145deg,
+      var(--realitea-specular-low) 0%,
+      var(--realitea-specular-low) 30%,
+      transparent 50%
+    ),
+    var(--realitea-skeleton-bg);
+  border: 1px solid var(--realitea-specular-low);
+  box-shadow: none;
+  animation: realitea-skeleton-fade 3s ease-in-out infinite both;
+}
+
+.realitea-tile-skeleton::before {
+  display: none;
+}
+
+@keyframes realitea-skeleton-fade {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.7; }
 }

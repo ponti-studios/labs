@@ -11,7 +11,7 @@ import { addDaysToDateKey, getDateKey } from "./date";
 import { createLogger } from "../logger.server";
 import type { PuzzleRecord } from "./types";
 import { getGameBySlug, loadMostRecentPuzzle, loadPuzzleForDate } from "./repository";
-import { isValidWord } from "../word-list.server";
+import { isValidWord } from "./word-list.server";
 
 const logger = createLogger();
 

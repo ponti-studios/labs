@@ -1,5 +1,5 @@
 import { normalizeGuess, REALITEA_ANSWER_LENGTH } from "./index";
-import { isDictionaryWord } from "../word-list.server";
+import { isDictionaryWord } from "./word-list.server";
 import type { ValidationResult } from "./types";
 
 const BRAVO_PRIMARY_SOURCE_DOMAIN = "realityblurb.com";

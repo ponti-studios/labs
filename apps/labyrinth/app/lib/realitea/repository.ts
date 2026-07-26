@@ -17,6 +17,7 @@
  * out of every future `status = 'pending'` selection query.
  */
 
+import type { Article, DailyPuzzle, Game } from "@pontistudios/db";
 import {
   and,
   articles,
@@ -26,14 +27,12 @@ import {
   desc,
   eq,
   feedGames,
-  feeds,
   games,
   gte,
   inArray,
   lt,
   lte,
 } from "@pontistudios/db";
-import type { Article, DailyPuzzle, Game } from "@pontistudios/db";
 
 import { addDaysToDateKey, buildDateRange, getDateKey } from "./date";
 import type { PuzzleRecord } from "./types";

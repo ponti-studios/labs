@@ -64,6 +64,10 @@
       "types": "./src/tokens/index.ts",
       "import": "./src/tokens/index.ts"
     },
+    "./native": {
+      "types": "./src/native/index.ts",
+      "import": "./src/native/index.ts"
+    },
     "./hooks": {
       "types": "./src/hooks/index.ts",
       "import": "./src/hooks/index.ts"
@@ -115,6 +119,7 @@
     "playwright": "catalog:",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
+    "react-native": "0.86.0",
     "storybook": "^10.5.3",
     "style-dictionary": "5.5.0",
     "tailwindcss": "catalog:",
@@ -124,7 +129,16 @@
   },
   "peerDependencies": {
     "react": "^18.2.0 || ^19.0.0",
-    "react-dom": "^18.2.0 || ^19.0.0"
+    "react-dom": "^18.2.0 || ^19.0.0",
+    "react-native": ">=0.74"
   },
-  "packageManager": "pnpm@10.30.3"
+  "packageManager": "pnpm@10.30.3",
+  "peerDependenciesMeta": {
+    "react-dom": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    }
+  }
 }

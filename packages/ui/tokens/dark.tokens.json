@@ -94,5 +94,9 @@
     "chart-neutral": {
       "$type": "color",
       "$value": "rgb(90, 97, 105)"
+    },
+    "overlay-scrim": {
+      "$type": "color",
+      "$value": "rgb(0, 0, 0)"
     }
 }
