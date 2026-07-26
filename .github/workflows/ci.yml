@@ -16,47 +16,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  db-migrate:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    env:
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-      TURBO_TELEMETRY_DISABLED: "1"
-      POSTGRES_IMAGE: ghcr.io/ponti-studios/foundation/postgres:1.0.5
-    steps:
-      - uses: actions/checkout@v6
-      - uses: pnpm/action-setup@v6
-        with:
-          run_install: false
-      - uses: actions/setup-node@v7
-        with:
-          node-version: "24.14.1"
-          cache: "pnpm"
-      - run: pnpm install --frozen-lockfile
-      - name: Log in to GHCR
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
-      - name: Pull PostgreSQL image
-        run: docker pull "$POSTGRES_IMAGE"
-      - name: Start PostgreSQL
-        run: docker run -d --name postgres-test -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=hominem -p 5433:5432 "$POSTGRES_IMAGE"
-      - name: Wait for postgres
-        run: |
-          for i in {1..30}; do
-            docker exec postgres-test psql -U postgres -d hominem -c 'SELECT 1' && exit 0
-            sleep 1
-          done
-          echo "postgres did not become ready with database 'hominem' in time" >&2
-          exit 1
-      - name: Run migrations
-        run: pnpm --filter @pontistudios/db db:migrate
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5433/hominem
-
   lint-and-test:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: db-migrate
     services:
       postgres-test:
         image: ghcr.io/ponti-studios/foundation/postgres:1.0.5

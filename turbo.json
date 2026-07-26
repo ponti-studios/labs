@@ -20,8 +20,7 @@
     "SENDGRID_SENDER_NAME",
     "NEXT_PUBLIC_API_URL",
     "VERCEL_URL",
-    "OPENROUTER_API_KEY",
-    "ANTHROPIC_API_KEY"
+    "OPENROUTER_API_KEY"
   ],
   "tasks": {
     "build": {

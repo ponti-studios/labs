@@ -30,8 +30,7 @@
     "@types/node": "catalog:",
     "drizzle-kit": "^0.31.10",
     "tsx": "catalog:",
-    "typescript": "catalog:",
-    "vitest": "catalog:"
+    "typescript": "catalog:"
   },
   "packageManager": "pnpm@10.30.3"
 }
