@@ -69,7 +69,8 @@ jobs:
           test "$(git rev-list -n 1 "$RELEASE_TAG")" = "$(git rev-parse HEAD)"
 
       - name: Publish UI package
-        run: pnpm --filter @ponti-studios/ui publish --no-git-checks --provenance
+        working-directory: packages/ui
+        run: npm publish --provenance --access public
 
       - name: Verify published package
         run: |
@@ -103,7 +104,8 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Publish UI package
-        run: pnpm --filter @ponti-studios/ui publish --no-git-checks --provenance
+        working-directory: packages/ui
+        run: npm publish --provenance --access public
 
       - name: Verify published package
         run: |
