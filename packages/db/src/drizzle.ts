@@ -9,8 +9,11 @@ let _client: postgres.Sql | null = null;
 
 function getDatabaseUrl(): string {
   const url = process.env.DATABASE_URL;
-  if (!url) throw new Error("DATABASE_URL environment variable is required");
-  return url;
+  if (url) return url;
+  if (process.env.NODE_ENV === "test") {
+    return "postgresql://postgres:postgres@localhost:4433/labs-test";
+  }
+  throw new Error("DATABASE_URL environment variable is required");
 }
 
 function initializeDb() {

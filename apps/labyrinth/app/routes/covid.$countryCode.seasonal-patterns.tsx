@@ -145,10 +145,7 @@ export default function SeasonalPatternsPage() {
                     height={48}
                   />
                   <YAxis tick={tickStyle} axisLine={false} tickLine={false} />
-                  <Tooltip
-                    contentStyle={tooltipStyle}
-                    cursor={{ fill: "var(--color-muted)" }}
-                  />
+                  <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "var(--color-muted)" }} />
                   <Bar
                     dataKey="averageCases"
                     fill="#d97706"

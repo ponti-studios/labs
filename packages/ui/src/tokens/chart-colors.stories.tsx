@@ -78,16 +78,13 @@ export const CategoricalPalette: Story = {
         <p className="text-muted-foreground text-sm">Foundations / charts</p>
         <h1 className="text-4xl font-semibold tracking-tight">Chart colors</h1>
         <p className="text-muted-foreground max-w-2xl text-base">
-          <code className="font-mono">chart-1</code> through <code className="font-mono">
-            chart-5
-          </code>{" "}
-          are an ordinal palette for arbitrary categorical series (e.g. one line per country) —
-          there's no fixed meaning to a given slot, so they're assigned by index, not by what the
-          data represents. That's different from{" "}
-          <code className="font-mono">chart-positive</code>/<code className="font-mono">
-            chart-negative
-          </code>
-          /<code className="font-mono">chart-neutral</code> below, which carry real meaning
+          <code className="font-mono">chart-1</code> through{" "}
+          <code className="font-mono">chart-5</code> are an ordinal palette for arbitrary
+          categorical series (e.g. one line per country) — there's no fixed meaning to a given slot,
+          so they're assigned by index, not by what the data represents. That's different from{" "}
+          <code className="font-mono">chart-positive</code>/
+          <code className="font-mono">chart-negative</code>/
+          <code className="font-mono">chart-neutral</code> below, which carry real meaning
           (up/down/flat) and should stay semantic in any chart that shows a directional delta.
         </p>
       </header>
@@ -112,8 +109,8 @@ export const CategoricalPalette: Story = {
       <section className="border-border bg-card grid gap-5 rounded-xl border p-6">
         <h2 className="text-2xl font-semibold">Grouped bar chart (mock)</h2>
         <p className="text-muted-foreground max-w-2xl text-sm">
-          Three unrelated categories, five series each — a stress test for how distinguishable
-          the palette stays side by side.
+          Three unrelated categories, five series each — a stress test for how distinguishable the
+          palette stays side by side.
         </p>
         <div className="flex items-end gap-8" style={{ height: 220 }}>
           {BAR_DATA.map((group, groupIndex) => (

@@ -1,25 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-
-vi.mock("@pontistudios/db", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@pontistudios/db")>();
-  const { createTestDb } = await import("../../../data/test-db");
-  const tables = {
-    articles: actual.articles,
-    caseUpdates: actual.caseUpdates,
-    covidData: actual.covidData,
-    dailyPuzzles: actual.dailyPuzzles,
-    feedGames: actual.feedGames,
-    feeds: actual.feeds,
-    games: actual.games,
-    searchDocuments: actual.searchDocuments,
-    relationshipCases: actual.relationshipCases,
-    relationshipVerdicts: actual.relationshipVerdicts,
-    tflCameras: actual.tflCameras,
-  };
-  return { ...actual, db: createTestDb(tables) };
-});
-
 import { articles, dailyPuzzles, db, feeds, games } from "@pontistudios/db";
+import { beforeEach, describe, expect, it } from "vitest";
 import { cleanAll } from "../../../data/test-db";
 
 beforeEach(async () => {
