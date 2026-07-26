@@ -1,7 +1,7 @@
 import type { ActionFunctionArgs } from "react-router";
 
 import { getGameBySlug } from "~/lib/realitea/repository";
-import { isValidWord } from "~/lib/word-list.server";
+import { isValidWord } from "~/lib/realitea/word-list.server";
 
 const RHOBH_GAME_SLUG = "rhobh";
 

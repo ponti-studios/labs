@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@pontistudios/db", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@pontistudios/db")>();
-  const { createTestDb, cleanAll } = await import("../../../../test-utils/test-db");
+  const { createTestDb } = await import("../../../../test-utils/test-db");
   const tables = {
     articles: actual.articles,
     caseUpdates: actual.caseUpdates,
@@ -16,13 +16,14 @@ vi.mock("@pontistudios/db", async (importOriginal) => {
     relationshipVerdicts: actual.relationshipVerdicts,
     tflCameras: actual.tflCameras,
   };
-  return { ...actual, db: createTestDb(tables), __cleanAll: cleanAll };
+  return { ...actual, db: createTestDb(tables) };
 });
 
-import { db, __cleanAll, dailyPuzzles, feedGames, articles, feeds, games } from "@pontistudios/db";
+import { db, articles, dailyPuzzles, feeds, games } from "@pontistudios/db";
+import { cleanAll } from "../../../../test-utils/test-db";
 
 beforeEach(async () => {
-  await __cleanAll();
+  await cleanAll();
 });
 
 describe("getGameBySlug", () => {

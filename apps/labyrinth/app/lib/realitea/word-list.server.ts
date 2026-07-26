@@ -10,13 +10,13 @@ import { readFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { getStoredAnswers } from "./realitea/repository";
-import { REALITEA_ANSWER_LENGTH } from "./realitea";
+import { getStoredAnswers } from "./repository";
+import { REALITEA_ANSWER_LENGTH } from "./index";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const wordSet = new Set(
-  readFileSync(resolve(__dirname, "../data/words/5.txt"), "utf-8")
+  readFileSync(resolve(__dirname, "../../data/words/5.txt"), "utf-8")
     .split("\n")
     .map((w) => w.trim())
     .filter(Boolean),

@@ -7,7 +7,6 @@ import {
   rebalanceAllocationForCategory,
   rebalanceAllocationForScreens,
   type FilmCategory,
-  type ScreenAllocationMap,
   type SeasonKey,
   type TheaterInputs,
 } from "./theatre-model";
