@@ -1,11 +1,11 @@
-function calculatePenDuration(weeklyDosages, penCapacity) {
+export function calculatePenDuration(weeklyDosages: number[], penCapacity: number): number {
   let weeks = 0;
   let remaining = penCapacity;
 
   for (const dosage of weeklyDosages) {
     if (dosage <= remaining) {
       weeks += 1;
-      remaining = remaining - dosage;
+      remaining -= dosage;
     } else {
       weeks += remaining / dosage;
       break;
@@ -14,5 +14,3 @@ function calculatePenDuration(weeklyDosages, penCapacity) {
 
   return weeks;
 }
-
-module.exports = { calculatePenDuration };

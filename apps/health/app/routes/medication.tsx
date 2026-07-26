@@ -1,6 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@ponti-studios/ui/primitives";
 import { useEffect, useState, type JSX } from "react";
 
+import { calculatePenDuration } from "~/lib/medication-calculator";
+
 interface MedicationSchedule {
   weeklyDosages: number[];
   penCapacity: number;
@@ -66,7 +68,7 @@ export default function MedicationRoute(): JSX.Element {
     );
   }
 
-  const totalWeeks = calculateDosages(schedule.weeklyDosages, schedule.penCapacity);
+  const totalWeeks = calculatePenDuration(schedule.weeklyDosages, schedule.penCapacity);
   const fullWeeks = schedule.weeklyDosages.filter((_, i) => i < Math.floor(totalWeeks));
   const partialDose =
     totalWeeks % 1 !== 0 ? schedule.weeklyDosages[Math.floor(totalWeeks)] * (totalWeeks % 1) : null;
