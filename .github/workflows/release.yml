@@ -3,6 +3,13 @@ name: release-ui
 on:
   push:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Branch or tag to publish from (default: main)'
+        required: false
+        type: string
+        default: 'main'
 
 permissions:
   contents: write
@@ -60,6 +67,40 @@ jobs:
           git fetch --tags origin
           test -n "$(git rev-parse --verify "refs/tags/$RELEASE_TAG")"
           test "$(git rev-list -n 1 "$RELEASE_TAG")" = "$(git rev-parse HEAD)"
+
+      - name: Publish UI package
+        run: pnpm --filter @ponti-studios/ui publish --no-git-checks --provenance
+
+      - name: Verify published package
+        run: |
+          VERSION="$(node -p 'require("./packages/ui/package.json").version')"
+          test "$(npm view "@ponti-studios/ui@$VERSION" version --registry=https://registry.npmjs.org)" = "$VERSION"
+
+  publish-ui-manual:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref }}
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v6
+        with:
+          run_install: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24.14.1"
+          cache: "pnpm"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Publish UI package
         run: pnpm --filter @ponti-studios/ui publish --no-git-checks --provenance
