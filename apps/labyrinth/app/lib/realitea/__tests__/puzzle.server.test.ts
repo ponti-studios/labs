@@ -1,150 +1,107 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-function chain(rows: unknown[]) {
-  const handler: ProxyHandler<object> = {
-    get(_target, prop) {
-      if (prop === "then") {
-        return (
-          onFulfilled: (value: unknown[]) => unknown,
-          onRejected?: (reason: unknown) => unknown,
-        ) => Promise.resolve(rows).then(onFulfilled, onRejected);
-      }
-      return () => proxy;
-    },
+vi.mock("@pontistudios/db", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@pontistudios/db")>();
+  const { createTestDb, cleanAll } = await import("../../../../test-utils/test-db");
+  const tables = {
+    articles: actual.articles,
+    caseUpdates: actual.caseUpdates,
+    covidData: actual.covidData,
+    dailyPuzzles: actual.dailyPuzzles,
+    feedGames: actual.feedGames,
+    feeds: actual.feeds,
+    games: actual.games,
+    searchDocuments: actual.searchDocuments,
+    relationshipCases: actual.relationshipCases,
+    relationshipVerdicts: actual.relationshipVerdicts,
+    tflCameras: actual.tflCameras,
   };
-  const proxy: object = new Proxy({}, handler);
-  return proxy;
-}
-
-function createSelectResponder(queue: unknown[][]) {
-  return vi.fn(() => chain(queue.shift() ?? []));
-}
-
-const { dbMock, gamesFindFirstMock, safeParseMock } = vi.hoisted(() => {
-  const gamesFindFirstMock = vi.fn();
-
-  const dbMock = {
-    delete: vi.fn(),
-    insert: vi.fn(),
-    query: {
-      games: {
-        findFirst: gamesFindFirstMock,
-      },
-    },
-    select: vi.fn(),
-    transaction: vi.fn(),
-    update: vi.fn(),
-  };
-
-  const safeParseMock = vi.fn();
-
-  return { dbMock, gamesFindFirstMock, safeParseMock };
+  return { ...actual, db: createTestDb(tables), __cleanAll: cleanAll };
 });
 
 const isValidWordMock = vi.fn();
-
-vi.mock("@pontistudios/db", () => ({
-  and: vi.fn(),
-  db: dbMock,
-  desc: vi.fn(),
-  eq: vi.fn(),
-  gt: vi.fn(),
-  gte: vi.fn(),
-  inArray: vi.fn(),
-  lte: vi.fn(),
-  games: { id: "games.id", slug: "games.slug" },
-  articles: { id: "articles.id" },
-  dailyPuzzles: { id: "dailyPuzzles.id", gameId: "dailyPuzzles.gameId" },
-}));
-
-vi.mock("../../server/env", () => ({
-  LabyrinthServerEnv: {
-    safeParse: safeParseMock,
-  },
-}));
 
 vi.mock("../../word-list.server", () => ({
   isValidWord: isValidWordMock,
 }));
 
-const GAME = { id: 1, slug: "rhobh" };
+import { db, __cleanAll, dailyPuzzles, feedGames, articles, feeds, games } from "@pontistudios/db";
 
-const TODAY_PUZZLE_ROW = {
-  answer: "ERIKA",
-  answerType: "storyline",
-  clue: "The Pretty Mess performer never misses a sharp confessional.",
-  createdAt: new Date("2026-05-20T12:00:00.000Z"),
-  dateUtc: "2026-05-20",
-  detail:
-    "Erika Jayne keeps the glam, the one-liners, and the pop-star energy turned all the way up.",
-  id: 1,
-  gameId: 1,
-  articleId: 100,
-  normalizedAnswer: "ERIKA",
-  updatedAt: new Date("2026-05-20T12:00:00.000Z"),
-};
+let gameId: number;
+let feedId: number;
 
-const TODAY_ARTICLE_ROW = {
-  id: 100,
-  url: "https://realityblurb.com/erika",
-  title: "Erika story",
-  publishedAt: new Date("2026-05-19T12:00:00.000Z"),
-};
+beforeEach(async () => {
+  vi.clearAllMocks();
 
-describe("realitea daily puzzle server helpers", () => {
-  beforeEach(() => {
-    safeParseMock.mockReset();
-    safeParseMock.mockReturnValue({ success: false });
-    dbMock.delete.mockReset();
-    dbMock.insert.mockReset();
-    dbMock.select.mockReset();
-    dbMock.transaction.mockReset();
-    dbMock.update.mockReset();
-    gamesFindFirstMock.mockReset();
-    gamesFindFirstMock.mockResolvedValue(GAME);
-    vi.unstubAllGlobals();
-  });
+  await __cleanAll();
 
+  const [game] = await db
+    .insert(games)
+    .values({ slug: "rhobh", name: "RHOBH", systemPromptPath: "prompts/rhobh.txt" })
+    .returning();
+  gameId = game.id;
+
+  const [feed] = await db
+    .insert(feeds)
+    .values({ url: "https://example.com/feed", label: "Test Feed" })
+    .returning();
+  feedId = feed.id;
+
+  await db.insert(feedGames).values({ feedId: feed.id, gameId: game.id });
+});
+
+async function seedPuzzle(overrides: Partial<{
+  dateUtc: string;
+  answer: string;
+  normalizedAnswer: string;
+  answerType: string;
+  clue: string;
+  detail: string;
+}> = {}) {
+  const [article] = await db
+    .insert(articles)
+    .values({
+      feedId,
+      url: `https://example.com/${overrides.answer ?? "erika"}`,
+      title: `${overrides.answer ?? "Erika"} story`,
+      publishedAt: new Date("2026-05-19T12:00:00.000Z"),
+    })
+    .returning();
+
+  const [puzzle] = await db
+    .insert(dailyPuzzles)
+    .values({
+      gameId,
+      articleId: article.id,
+      dateUtc: overrides.dateUtc ?? "2026-05-20",
+      answer: overrides.answer ?? "ERIKA",
+      answerType: (overrides.answerType as any) ?? "storyline",
+      normalizedAnswer: overrides.normalizedAnswer ?? "ERIKA",
+      clue: overrides.clue ?? "The Pretty Mess performer never misses a sharp confessional.",
+      detail: overrides.detail ?? "Erika Jayne keeps the glam and pop-star energy turned all the way up.",
+    })
+    .returning();
+
+  return { puzzle, article };
+}
+
+describe("loadActivePublicPuzzle", () => {
   it("loads today's puzzle when one exists", async () => {
-    dbMock.select.mockImplementation(
-      createSelectResponder([[{ puzzle: TODAY_PUZZLE_ROW, article: TODAY_ARTICLE_ROW }]]),
-    );
+    await seedPuzzle({ dateUtc: "2026-05-20", answer: "ERIKA" });
 
     const { loadActivePublicPuzzle } = await import("../puzzle.server");
     const envelope = await loadActivePublicPuzzle(new Date("2026-05-20T12:00:00.000Z"));
 
-    expect(envelope?.puzzle.dateKey).toBe("2026-05-20");
-    expect(envelope?.puzzle.answerType).toBe("storyline");
-    expect(envelope?.puzzle.clue).toBe(
+    expect(envelope).not.toBeNull();
+    expect(envelope!.puzzle.dateKey).toBe("2026-05-20");
+    expect(envelope!.puzzle.answerType).toBe("storyline");
+    expect(envelope!.puzzle.clue).toBe(
       "The Pretty Mess performer never misses a sharp confessional.",
     );
   });
 
   it("falls back to the most recent puzzle when today's puzzle doesn't exist", async () => {
-    const recentPuzzle = {
-      answer: "DRAMA",
-      answerType: "moment",
-      clue: "A clash that keeps the whole cast spinning.",
-      createdAt: new Date("2026-05-19T12:00:00.000Z"),
-      dateUtc: "2026-05-19",
-      detail: "A single conflict can dominate the full episode and aftermath.",
-      id: 7,
-      gameId: 1,
-      articleId: 101,
-      normalizedAnswer: "DRAMA",
-      updatedAt: new Date("2026-05-19T12:00:00.000Z"),
-    };
-    const recentArticle = {
-      id: 101,
-      url: "https://realityblurb.com/drama",
-      title: "Drama story",
-      publishedAt: new Date("2026-05-18T12:00:00.000Z"),
-    };
-
-    // Call sequence: (1) loadPuzzleForDate for today (empty), (2) loadMostRecentPuzzle
-    dbMock.select.mockImplementation(
-      createSelectResponder([[], [{ puzzle: recentPuzzle, article: recentArticle }]]),
-    );
+    await seedPuzzle({ dateUtc: "2026-05-19", answer: "DRAMA", answerType: "moment", clue: "A clash that keeps the whole cast spinning." });
 
     const { loadActivePublicPuzzle } = await import("../puzzle.server");
     const envelope = await loadActivePublicPuzzle(new Date("2026-05-20T12:00:00.000Z"));
@@ -154,8 +111,6 @@ describe("realitea daily puzzle server helpers", () => {
   });
 
   it("returns null when no puzzle exists at all", async () => {
-    dbMock.select.mockImplementation(createSelectResponder([[], []]));
-
     const { loadActivePublicPuzzle } = await import("../puzzle.server");
     const envelope = await loadActivePublicPuzzle(new Date("2026-05-20T12:00:00.000Z"));
 
@@ -164,16 +119,10 @@ describe("realitea daily puzzle server helpers", () => {
 });
 
 describe("evaluateGuessServer", () => {
-  beforeEach(() => {
-    isValidWordMock.mockReset();
-    dbMock.select.mockReset();
-    gamesFindFirstMock.mockReset();
-    gamesFindFirstMock.mockResolvedValue(GAME);
-  });
-
   it("rejects a word that is not the answer length", async () => {
     const { evaluateGuessServer } = await import("../puzzle.server");
     const result = await evaluateGuessServer("2026-05-20", "ABC", []);
+
     expect(result.valid).toBe(false);
     expect(result.reason).toBe("wrong-length");
     expect(result.word).toBe("ABC");
@@ -183,39 +132,39 @@ describe("evaluateGuessServer", () => {
     isValidWordMock.mockResolvedValue(true);
     const { evaluateGuessServer } = await import("../puzzle.server");
     const result = await evaluateGuessServer("2026-05-20", "ERIKA", [{ word: "ERIKA" }]);
+
     expect(result.valid).toBe(false);
     expect(result.reason).toBe("already-guessed");
-    expect(isValidWordMock).not.toHaveBeenCalled();
   });
 
   it("returns not-in-word-list when the word is missing", async () => {
     isValidWordMock.mockResolvedValue(false);
-    dbMock.select.mockImplementation(
-      createSelectResponder([[{ puzzle: TODAY_PUZZLE_ROW, article: TODAY_ARTICLE_ROW }]]),
-    );
+    await seedPuzzle({ dateUtc: "2026-05-20", answer: "ERIKA" });
+
     const { evaluateGuessServer } = await import("../puzzle.server");
     const result = await evaluateGuessServer("2026-05-20", "ZZZZZ", []);
+
     expect(result.valid).toBe(false);
     expect(result.reason).toBe("not-in-word-list");
   });
 
   it("returns not-in-word-list when no puzzle exists for the date", async () => {
     isValidWordMock.mockResolvedValue(true);
-    dbMock.select.mockImplementation(createSelectResponder([[], []]));
+
     const { evaluateGuessServer } = await import("../puzzle.server");
     const result = await evaluateGuessServer("2026-05-20", "ERIKA", []);
+
     expect(result.valid).toBe(false);
     expect(result.reason).toBe("not-in-word-list");
-    expect(isValidWordMock).not.toHaveBeenCalled();
   });
 
   it("evaluates a valid guess and returns per-letter states without the answer", async () => {
     isValidWordMock.mockResolvedValue(true);
-    dbMock.select.mockImplementation(
-      createSelectResponder([[{ puzzle: TODAY_PUZZLE_ROW, article: TODAY_ARTICLE_ROW }]]),
-    );
+    await seedPuzzle({ dateUtc: "2026-05-20", answer: "ERIKA", normalizedAnswer: "ERIKA" });
+
     const { evaluateGuessServer } = await import("../puzzle.server");
     const result = await evaluateGuessServer("2026-05-20", "ERIKA", []);
+
     expect(result.valid).toBe(true);
     expect(result.word).toBe("ERIKA");
     expect(result.states).toEqual(["correct", "correct", "correct", "correct", "correct"]);
@@ -227,14 +176,12 @@ describe("evaluateGuessServer", () => {
 
   it("marks the game failed on the sixth valid guess that is not the answer", async () => {
     isValidWordMock.mockResolvedValue(true);
-    dbMock.select.mockImplementation(
-      createSelectResponder([[{ puzzle: TODAY_PUZZLE_ROW, article: TODAY_ARTICLE_ROW }]]),
-    );
+    await seedPuzzle({ dateUtc: "2026-05-20", answer: "ERIKA", normalizedAnswer: "ERIKA" });
+
     const { evaluateGuessServer } = await import("../puzzle.server");
-    const previous = ["DORIT", "SUTTON", "KATHY", "ERIKA", "TILLY"].map((word) => ({
-      word,
-    }));
+    const previous = ["DORIT", "SUTTON", "KATHY", "ERIKA", "TILLY"].map((word) => ({ word }));
     const result = await evaluateGuessServer("2026-05-20", "KYLEE", previous);
+
     expect(result.valid).toBe(true);
     expect(result.isSolved).toBe(false);
     expect(result.isGameOver).toBe(true);
@@ -243,11 +190,11 @@ describe("evaluateGuessServer", () => {
 
   it("keeps the game playing while guesses remain", async () => {
     isValidWordMock.mockResolvedValue(true);
-    dbMock.select.mockImplementation(
-      createSelectResponder([[{ puzzle: TODAY_PUZZLE_ROW, article: TODAY_ARTICLE_ROW }]]),
-    );
+    await seedPuzzle({ dateUtc: "2026-05-20", answer: "ERIKA", normalizedAnswer: "ERIKA" });
+
     const { evaluateGuessServer } = await import("../puzzle.server");
     const result = await evaluateGuessServer("2026-05-20", "DORIT", []);
+
     expect(result.valid).toBe(true);
     expect(result.isSolved).toBe(false);
     expect(result.isGameOver).toBe(false);

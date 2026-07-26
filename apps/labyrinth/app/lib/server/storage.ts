@@ -1,23 +1,28 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
 type StorageEnv = {
-  s3Endpoint: string;
-  s3Region: string;
-  s3Bucket: string;
-  s3AccessKeyId: string;
-  s3SecretAccessKey: string;
-  s3PublicUrl: string;
+  r2Endpoint: string;
+  r2Bucket: string;
+  r2AccessKeyId: string;
+  r2SecretAccessKey: string;
+  r2PublicUrl: string;
 };
 
+function getIsLocalEndpoint(endpoint: string): boolean {
+  const hostname = new URL(endpoint).hostname;
+  return ["localhost", "127.0.0.1", "::1", "host.docker.internal", "minio"].includes(hostname);
+}
+
 function createS3Client(env: StorageEnv) {
+  const isLocalEndpoint = getIsLocalEndpoint(env.r2Endpoint);
   return new S3Client({
-    endpoint: env.s3Endpoint,
-    region: env.s3Region,
+    endpoint: env.r2Endpoint,
+    region: isLocalEndpoint ? "us-east-1" : "auto",
     credentials: {
-      accessKeyId: env.s3AccessKeyId,
-      secretAccessKey: env.s3SecretAccessKey,
+      accessKeyId: env.r2AccessKeyId,
+      secretAccessKey: env.r2SecretAccessKey,
     },
-    forcePathStyle: true,
+    forcePathStyle: isLocalEndpoint,
   });
 }
 
@@ -48,12 +53,12 @@ export async function uploadImage(imageData: string, key: string, env: StorageEn
 
   await client.send(
     new PutObjectCommand({
-      Bucket: env.s3Bucket,
+      Bucket: env.r2Bucket,
       Key: key,
       Body: buffer,
       ContentType: contentType,
     }),
   );
 
-  return `${env.s3PublicUrl}/${env.s3Bucket}/${key}`;
+  return `${env.r2PublicUrl}/${env.r2Bucket}/${key}`;
 }
