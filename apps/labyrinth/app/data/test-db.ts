@@ -1,16 +1,16 @@
-import pg from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
-
-const TEST_URL =
-  process.env.TEST_DATABASE_URL ??
-  "postgresql://postgres:postgres@localhost:4433/labs-test";
+import pg from "pg";
 
 function assertSafe(): string {
-  const parsed = new URL(TEST_URL);
+  const url = process.env.DATABASE_URL;
+  if (!url) {
+    throw new Error("DATABASE_URL must be set to a test database when running these tests");
+  }
+  const parsed = new URL(url);
   if (!["localhost", "127.0.0.1", "[::1]"].includes(parsed.hostname)) {
     throw new Error(`Unsafe test database host: ${parsed.hostname}`);
   }
-  return TEST_URL;
+  return url;
 }
 
 let _pool: pg.Pool | null = null;
