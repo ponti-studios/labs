@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.4.0](https://github.com/ponti-studios/labs/compare/ui-v0.3.0...ui-v0.4.0) (2026-07-24)
+
+
+### Features
+
+* add design rationale and implementation brief template ([4dfae32](https://github.com/ponti-studios/labs/commit/4dfae32c33d496e4f620a393a041e15db690b103))
+* **ui:** give packages/ui a distinctive visual identity — "Ink & Docket" ([b909d65](https://github.com/ponti-studios/labs/commit/b909d65f3dee38ec35df3647d9817340c613c52e))
+
+
+### Bug Fixes
+
+* merge caller className into Accordion instead of overwriting it ([029a107](https://github.com/ponti-studios/labs/commit/029a107d38aadcb361bc665923acb4980eab6eef))
+* update color variables and references across components and styles ([866d315](https://github.com/ponti-studios/labs/commit/866d31535412478292b8c969e4a09f568912d07b))
+
 ## [0.3.0](https://github.com/ponti-studios/labs/compare/ui-v0.2.0...ui-v0.3.0) (2026-07-22)
 
 
