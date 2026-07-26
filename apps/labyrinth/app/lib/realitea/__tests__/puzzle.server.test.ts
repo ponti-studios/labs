@@ -1,16 +1,12 @@
 import { describe, expect, it, vi } from "vitest";
 
-const {
-  getGameBySlugMock,
-  loadPuzzleForDateMock,
-  loadMostRecentPuzzleMock,
-  isValidWordMock,
-} = vi.hoisted(() => ({
-  getGameBySlugMock: vi.fn(),
-  loadPuzzleForDateMock: vi.fn(),
-  loadMostRecentPuzzleMock: vi.fn(),
-  isValidWordMock: vi.fn(),
-}));
+const { getGameBySlugMock, loadPuzzleForDateMock, loadMostRecentPuzzleMock, isValidWordMock } =
+  vi.hoisted(() => ({
+    getGameBySlugMock: vi.fn(),
+    loadPuzzleForDateMock: vi.fn(),
+    loadMostRecentPuzzleMock: vi.fn(),
+    isValidWordMock: vi.fn(),
+  }));
 
 vi.mock("../repository", () => ({
   getGameBySlug: getGameBySlugMock,
@@ -24,16 +20,18 @@ vi.mock("../word-list.server", () => ({
 
 const GAME = { id: 1, slug: "rhobh" };
 
-function makePuzzle(overrides: Partial<{
-  dateUtc: string;
-  answer: string;
-  normalizedAnswer: string;
-  answerType: string;
-  clue: string;
-  detail: string;
-  articleUrl: string;
-  articleTitle: string;
-}> = {}) {
+function makePuzzle(
+  overrides: Partial<{
+    dateUtc: string;
+    answer: string;
+    normalizedAnswer: string;
+    answerType: string;
+    clue: string;
+    detail: string;
+    articleUrl: string;
+    articleTitle: string;
+  }> = {},
+) {
   return {
     id: 1,
     gameId: 1,
@@ -43,7 +41,8 @@ function makePuzzle(overrides: Partial<{
     answerType: overrides.answerType ?? "storyline",
     normalizedAnswer: overrides.normalizedAnswer ?? "ERIKA",
     clue: overrides.clue ?? "The Pretty Mess performer never misses a sharp confessional.",
-    detail: overrides.detail ?? "Erika Jayne keeps the glam and pop-star energy turned all the way up.",
+    detail:
+      overrides.detail ?? "Erika Jayne keeps the glam and pop-star energy turned all the way up.",
     createdAt: new Date("2026-05-20T12:00:00.000Z"),
     updatedAt: new Date("2026-05-20T12:00:00.000Z"),
     article: {

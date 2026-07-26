@@ -24,13 +24,7 @@ export function RealiTeaTile({
   style,
 }: RealiTeaTileProps) {
   if (loading) {
-    return (
-      <div
-        className="realitea-tile realitea-tile-skeleton"
-        aria-hidden
-        style={style}
-      />
-    );
+    return <div className="realitea-tile realitea-tile-skeleton" aria-hidden style={style} />;
   }
 
   return (
