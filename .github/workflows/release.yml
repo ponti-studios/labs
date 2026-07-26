@@ -63,8 +63,6 @@ jobs:
 
       - name: Publish UI package
         run: pnpm --filter @ponti-studios/ui publish --no-git-checks --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
 
       - name: Verify published package
         run: |
