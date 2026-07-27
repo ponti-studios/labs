@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/ponti-studios/labs/compare/ui-v0.4.0...ui-v0.4.1) (2026-07-27)
+
+
+### Bug Fixes
+
+* **ui:** resync generated foundations.css with style-dictionary output ([800c16f](https://github.com/ponti-studios/labs/commit/800c16f81e2ef9bac51c72d3e1f8651732718bda))
+
 ## [0.4.0](https://github.com/ponti-studios/labs/compare/ui-v0.3.0...ui-v0.4.0) (2026-07-24)
 
 
