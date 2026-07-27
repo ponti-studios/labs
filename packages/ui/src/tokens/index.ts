@@ -27,14 +27,6 @@ export const colorThemes = {
   dark: darkTokens,
 } as const satisfies Record<ColorMode, ColorTheme>;
 
-export const colors = colorTokenNames.reduce(
-  (accumulator, token) => {
-    accumulator[token] = `var(--${token})`;
-    return accumulator;
-  },
-  {} as Record<ColorToken, `var(--${string})`>,
-);
-
 export const spacing = Object.fromEntries(
   Object.entries(foundations["spacing-scale"]).map(([key, value]) => [
     key.replace("-", "."),

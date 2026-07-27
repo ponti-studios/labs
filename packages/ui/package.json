@@ -1,6 +1,6 @@
 {
   "name": "@ponti-studios/ui",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": false,
   "description": "Shared UI component library for ponti-studios labs",
   "license": "MIT",
@@ -14,13 +14,13 @@
     "access": "public"
   },
   "files": [
-    "dist",
     "src",
     "THIRD_PARTY_NOTICES.md"
   ],
   "type": "module",
   "sideEffects": [
     "./src/styles.css",
+    "./src/tokens.css",
     "./src/animations.css"
   ],
   "exports": {
@@ -64,6 +64,10 @@
       "types": "./src/tokens/index.ts",
       "import": "./src/tokens/index.ts"
     },
+    "./tokens/css-vars": {
+      "types": "./src/tokens/css-vars.ts",
+      "import": "./src/tokens/css-vars.ts"
+    },
     "./native": {
       "types": "./src/native/index.ts",
       "import": "./src/native/index.ts"
@@ -73,10 +77,11 @@
       "import": "./src/hooks/index.ts"
     },
     "./styles.css": "./src/styles.css",
+    "./tokens.css": "./src/tokens.css",
     "./animations.css": "./src/animations.css"
   },
   "scripts": {
-    "build": "vite build",
+    "build": "tsc --noEmit",
     "dev": "vite",
     "storybook": "style-dictionary build --config style-dictionary.dark-storybook.json && storybook dev -p 6006",
     "check:source": "node tokens/check-source.mjs",
@@ -86,7 +91,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "oxlint src --fix",
     "format": "oxfmt src --write",
-    "prepack": "pnpm run tokens:check && pnpm run check:source && pnpm run typecheck && pnpm run build"
+    "prepack": "pnpm run tokens:check && pnpm run check:source && pnpm run typecheck"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",

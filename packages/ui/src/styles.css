@@ -1,7 +1,5 @@
 @import "tailwindcss";
-@import "./tokens/generated/foundations.css";
-@import "./tokens/generated/light.css";
-@import "./tokens/generated/dark.css" (prefers-color-scheme: dark);
+@import "./tokens.css";
 @import "./animations.css";
 
 /* shadcn New York semantic contract. Values are generated from the DTCG
