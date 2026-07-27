@@ -11,6 +11,7 @@ import {
 } from "../app/lib/realitea/repository";
 import { createLogger } from "../app/lib/logger.server";
 import { REALITEA_READY_INVENTORY_DAYS } from "../app/lib/realitea/validation";
+import { LabyrinthServerEnv } from "../app/lib/server/env";
 
 const logger = createLogger();
 const RHOBH_GAME_SLUG = "rhobh";
@@ -45,6 +46,8 @@ export function computeHealthStatus(
 }
 
 async function main() {
+  LabyrinthServerEnv.parse(process.env);
+
   const now = new Date();
   const dateKey = getDateKey(now);
   const healthLogger = logger.child({

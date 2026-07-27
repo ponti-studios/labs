@@ -6,6 +6,7 @@ import { parseArgs } from "node:util";
 import { getDateKey } from "../app/lib/realitea/date";
 import { previewCandidates } from "../app/lib/realitea/generation";
 import type { GenerationPreviewResult } from "../app/lib/realitea/types";
+import { LabyrinthServerEnv } from "../app/lib/server/env";
 
 interface PreviewOptions {
   dateKey: string;
@@ -28,13 +29,6 @@ function parsePreviewArgs(): PreviewOptions {
     feedUrl: values["feed-url"],
     promptFile: values["prompt-file"],
   };
-}
-
-function requireEnvironment() {
-  const missing = ["OPENROUTER_API_KEY"].filter((key) => !process.env[key]);
-  if (missing.length > 0) {
-    throw new Error(`Missing required environment variables: ${missing.join(", ")}`);
-  }
 }
 
 const DIVIDER = "━".repeat(50);
@@ -107,7 +101,7 @@ function printResultSection(result: GenerationPreviewResult) {
 }
 
 async function main() {
-  requireEnvironment();
+  LabyrinthServerEnv.parse(process.env);
   const opts = parsePreviewArgs();
 
   let systemPrompt: string | undefined;

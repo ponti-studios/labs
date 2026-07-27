@@ -60,12 +60,11 @@ This ensures every script validates the same set of required variables and produ
 
 ## RealiTea Puzzle Generation
 
-- The single entry point for all puzzle management is `scripts/realitea.reconcile.ts`
-- Normal mode: `pnpm realitea:reconcile` (gap-fill, daily cron)
-- Force-regenerate mode: `pnpm realitea:reconcile -- --force` (deletes and regenerates all future puzzles)
+- The single entry point for all puzzle management is `scripts/realitea.generate.ts`
+- Normal mode: `pnpm realitea:generate` (gap-fill, daily cron)
+- Force-regenerate mode: `pnpm realitea:generate -- --force` (deletes and regenerates all future puzzles)
 - Do not create separate "regenerate" scripts — the `--force` flag handles that
-- The cron workflow is `.github/workflows/cron-realitea-generate.yml`
-- The manual regenerate workflow is `.github/workflows/realitea-regenerate.yml`
+- Both the daily cron and manual force-regenerate runs share one workflow: `.github/workflows/realitea-generate.yml` (schedule trigger runs gap-fill mode; `workflow_dispatch` trigger runs `--force --days-ahead=<input>`)
 
 ## Storybook Development Only
 
