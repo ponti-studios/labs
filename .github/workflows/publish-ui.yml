@@ -75,7 +75,17 @@ jobs:
       - name: Verify published package
         run: |
           VERSION="$(node -p 'require("./packages/ui/package.json").version')"
-          test "$(npm view "@ponti-studios/ui@$VERSION" version --registry=https://registry.npmjs.org)" = "$VERSION"
+          for attempt in $(seq 1 10); do
+            RESOLVED="$(npm view "@ponti-studios/ui@$VERSION" version --registry=https://registry.npmjs.org 2>/dev/null || true)"
+            if [ "$RESOLVED" = "$VERSION" ]; then
+              echo "Resolved @ponti-studios/ui@$VERSION on attempt $attempt"
+              exit 0
+            fi
+            echo "Attempt $attempt: @ponti-studios/ui@$VERSION not yet resolvable, retrying in 10s..."
+            sleep 10
+          done
+          echo "::error::@ponti-studios/ui@$VERSION did not become resolvable after 10 attempts"
+          exit 1
 
   publish-ui-manual:
     if: ${{ github.event_name == 'workflow_dispatch' }}
@@ -110,4 +120,14 @@ jobs:
       - name: Verify published package
         run: |
           VERSION="$(node -p 'require("./packages/ui/package.json").version')"
-          test "$(npm view "@ponti-studios/ui@$VERSION" version --registry=https://registry.npmjs.org)" = "$VERSION"
+          for attempt in $(seq 1 10); do
+            RESOLVED="$(npm view "@ponti-studios/ui@$VERSION" version --registry=https://registry.npmjs.org 2>/dev/null || true)"
+            if [ "$RESOLVED" = "$VERSION" ]; then
+              echo "Resolved @ponti-studios/ui@$VERSION on attempt $attempt"
+              exit 0
+            fi
+            echo "Attempt $attempt: @ponti-studios/ui@$VERSION not yet resolvable, retrying in 10s..."
+            sleep 10
+          done
+          echo "::error::@ponti-studios/ui@$VERSION did not become resolvable after 10 attempts"
+          exit 1
