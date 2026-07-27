@@ -46,6 +46,7 @@
     "react-router": "catalog:",
     "recharts": "^3.9.2",
     "three": "^0.185.1",
+    "drizzle-orm": "catalog:",
     "vitest": "catalog:",
     "zod": "catalog:"
   },
@@ -67,7 +68,6 @@
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "^6.0.3",
     "@vitest/coverage-v8": "catalog:",
-    "drizzle-orm": "catalog:",
     "jsdom": "catalog:",
     "pg": "^8.22.0",
     "playwright": "catalog:",
