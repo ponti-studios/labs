@@ -36,7 +36,7 @@
   },
   "destructive": {
     "$type": "color",
-    "$value": "rgb(229, 72, 77)"
+    "$value": "rgb(206, 44, 49)"
   },
   "success": {
     "$type": "color",
@@ -53,6 +53,10 @@
   "destructive-foreground": {
     "$type": "color",
     "$value": "rgb(255, 255, 255)"
+  },
+  "text-destructive": {
+    "$type": "color",
+    "$value": "rgb(200, 44, 49)"
   },
   "border-default": {
     "$type": "color",

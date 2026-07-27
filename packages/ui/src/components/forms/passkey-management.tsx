@@ -90,7 +90,7 @@ export function PasskeyManagement({
       </div>
 
       {error ? (
-        <p role="alert" className="text-destructive text-sm">
+        <p role="alert" className="text-destructive-text text-sm">
           {error}
         </p>
       ) : null}
@@ -125,7 +125,7 @@ export function PasskeyManagement({
                 onClick={() => void handleDelete(pk.id)}
                 disabled={deletingId === pk.id}
                 aria-label={`Remove passkey ${pk.name ?? pk.id}`}
-                className="hover:text-destructive text-muted-foreground focus-visible:ring-ring rounded-sm focus-visible:ring-2 focus-visible:outline-none disabled:opacity-50"
+                className="hover:text-destructive-text text-muted-foreground focus-visible:ring-ring rounded-sm focus-visible:ring-2 focus-visible:outline-none disabled:opacity-50"
               >
                 <Trash2 className="size-4" aria-hidden />
               </button>

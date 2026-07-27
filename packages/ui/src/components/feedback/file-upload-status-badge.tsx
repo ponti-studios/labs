@@ -9,7 +9,7 @@ const STATUS_CONFIG: Record<FileUploadStatusValue, { bg: string; text: string; l
   processing: { bg: "bg-muted", text: "text-foreground", label: "Processing" },
   queued: { bg: "bg-secondary", text: "text-secondary-foreground", label: "Queued" },
   done: { bg: "bg-muted", text: "text-muted-foreground", label: "Complete" },
-  error: { bg: "bg-destructive/10", text: "text-destructive", label: "Error" },
+  error: { bg: "bg-destructive/10", text: "text-destructive-text", label: "Error" },
 };
 
 export const FileUploadStatusBadge = memo(function FileUploadStatusBadge({

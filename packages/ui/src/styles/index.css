@@ -23,6 +23,11 @@
   --color-accent-foreground: var(--primary-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  /* Distinct from --color-destructive: that pairs with white for solid
+   * backgrounds (buttons, badges) and is the same value in both themes.
+   * This pairs with the page background for standalone text (error
+   * messages, alert copy) and must differ per theme to stay AA-compliant. */
+  --color-destructive-text: var(--text-destructive);
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-border: var(--border-default);
