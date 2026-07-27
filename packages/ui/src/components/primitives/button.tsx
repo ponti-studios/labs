@@ -49,6 +49,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       variant,
       size,
       asChild = false,
+      // Defaults to "button" — same safe default the native element loses
+      // once it's rendered inside a <form> — but must stay overridable so
+      // consumers can pass type="submit"/"reset".
+      type = "button",
       "aria-label": ariaLabel,
       ...props
     },
@@ -75,6 +79,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       return (
         <BaseButton
           {...props}
+          type={type}
           render={renderedChild}
           nativeButton={false}
           className={cn(buttonVariants({ variant, size, className }), isLoading && "relative")}
@@ -93,7 +98,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           ...props.style,
           cursor: disabled || isLoading ? "default" : "pointer",
         }}
-        type="button"
+        type={type}
         ref={ref}
         disabled={disabled || isLoading}
         aria-busy={isLoading}
