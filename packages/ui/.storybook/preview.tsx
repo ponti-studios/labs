@@ -1,7 +1,7 @@
 import { withThemeByClassName } from "@storybook/addon-themes";
 import type { Preview } from "@storybook/react-vite";
 import { commonControlsExclude } from "../src/storybook/controls";
-import "../src/styles.css";
+import "../src/styles/index.css";
 import "./generated/dark-theme-class.css";
 
 // The shipped stylesheet only switches theme via `prefers-color-scheme`

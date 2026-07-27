@@ -71,7 +71,10 @@ This ensures every script validates the same set of required variables and produ
 - `@ponti-studios/ui` versioning and publishing to npm are fully owned by release-please. See `packages/ui/README.md`'s "Release" section for the full flow.
 - Never hand-edit the `version` field in `packages/ui/package.json`. It is written by release-please's standing `chore(main): release ui X.Y.Z` PR, computed from Conventional Commit types (`fix:` → patch, `feat:` → minor, `feat!:`/`BREAKING CHANGE:` → major) since the last release. A manual edit gets silently overwritten by the next push to `main`.
 - Never manually create or push a `ui-v<version>` tag. The tag is created only by merging the release-please PR, which is what triggers the `publish-ui` job in `.github/workflows/publish-ui.yml`.
-- Never hand-edit files under `packages/ui/src/tokens/generated/` or `packages/ui/.storybook/generated/`. They must exactly match a fresh `pnpm --filter @ponti-studios/ui run tokens:build`; `tokens:check` diffs against that and fails `prepack` (and therefore the publish) otherwise. If a formatter or editor touches these paths, revert and regenerate instead — see `.oxfmtrc.json`'s `ignorePatterns` for the paths already excluded from repo-wide formatting for this reason.
+- DO NOT edit files in:
+ - `packages/ui/src/styles/tokens/generated/`
+ - `packages/ui/.storybook/generated/`.
+ - `pnpm --filter @ponti-studios/ui run tokens:build`; `tokens:check` diffs against generated files and fails `prepack` and publishing otherwise. If a formatter or editor touches these paths, revert and regenerate instead — see `.oxfmtrc.json`'s `ignorePatterns` for the paths already excluded from repo-wide formatting for this reason.
 - To ship a change, land properly typed Conventional Commits under `packages/ui/`, then find or wait for the release PR and merge it. That merge is the entire release action — there is nothing else to run or push by hand.
 
 ## Storybook Development Only

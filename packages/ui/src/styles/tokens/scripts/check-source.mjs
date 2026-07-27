@@ -2,7 +2,7 @@ import { fileURLToPath } from "node:url";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 
-const sourceDirectory = fileURLToPath(new URL("../src/", import.meta.url));
+const sourceDirectory = fileURLToPath(new URL("../../../", import.meta.url));
 const sourceFiles = [];
 
 function collectFiles(directory) {
@@ -19,7 +19,10 @@ collectFiles(sourceDirectory);
 const checks = [
   { name: "Radix imports", pattern: /@radix-ui\// },
   { name: "legacy semantic utility classes", pattern: /(?:\bbg-canvas\b|\bborder-default\b)/ },
-  { name: "invalid shadcn semantic classes", pattern: /(?:text|bg|border)-foreground-foreground\b/ },
+  {
+    name: "invalid shadcn semantic classes",
+    pattern: /(?:text|bg|border)-foreground-foreground\b/,
+  },
 ];
 const failures = [];
 
@@ -27,7 +30,8 @@ for (const file of sourceFiles) {
   const source = readFileSync(file, "utf8");
   for (const check of checks) {
     if (check.name === "legacy semantic utility classes" && file.endsWith(".css")) continue;
-    if (check.pattern.test(source)) failures.push(`${check.name}: ${relative(sourceDirectory, file)}`);
+    if (check.pattern.test(source))
+      failures.push(`${check.name}: ${relative(sourceDirectory, file)}`);
   }
 }
 

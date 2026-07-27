@@ -20,7 +20,7 @@ Releases are owned by [release-please](https://github.com/googleapis/release-ple
 
 ### Generated files must never be hand-edited
 
-`src/tokens/generated/**` and `.storybook/generated/**` are produced only by `pnpm run tokens:build` (style-dictionary) from the DTCG source in `tokens/*.tokens.json`. `tokens:check` enforces this with `git diff --exit-code -- src/tokens/generated` after a fresh rebuild — if the committed file doesn't byte-for-byte match what the tool just produced, the check (and therefore `prepack` and the publish) fails. This has happened in practice when a repo-wide formatter (oxfmt) reformatted a generated CSS file directly; `.oxfmtrc.json`'s `ignorePatterns` now excludes both generated directories specifically to prevent that recurring. If `tokens:check` fails on a file you didn't intend to touch, run `pnpm run tokens:build` and commit the regenerated output — don't hand-format it back into place.
+`src/styles/tokens/generated/**` and `.storybook/generated/**` are produced only by `pnpm run tokens:build` (style-dictionary) from the DTCG source in `src/styles/tokens/source/*.tokens.json`. `tokens:check` enforces this with `git diff --exit-code -- src/styles/tokens/generated` after a fresh rebuild — if the committed file doesn't byte-for-byte match what the tool just produced, the check (and therefore `prepack` and the publish) fails. This has happened in practice when a repo-wide formatter (oxfmt) reformatted a generated CSS file directly; `.oxfmtrc.json`'s `ignorePatterns` now excludes both generated directories specifically to prevent that recurring. If `tokens:check` fails on a file you didn't intend to touch, run `pnpm run tokens:build` and commit the regenerated output — don't hand-format it back into place.
 
 ## Consumers
 
@@ -40,7 +40,7 @@ CI consumers should use a secret-backed npm token with read access.
 
 ### Ships TypeScript source, not a bundle
 
-This package has no build output — every `exports` entry resolves to a file under `src/`. Consumers are expected to transpile the package themselves (Vite, Metro, Next, etc. all do this for workspace/npm packages by default). This is deliberate: Tailwind v4 class detection for consumers of `./styles.css` or `./tokens.css` requires an `@source` directive pointing at the installed package's `src/`, e.g.
+This package has no build output — every `exports` entry resolves to a file under `src/`. Consumers are expected to transpile the package themselves (Vite, Metro, Next, etc. all do this for workspace/npm packages by default). Tailwind v4 class detection for consumers of `./styles.css` requires an `@source` directive pointing at the installed package's `src/`, e.g.
 
 ```css
 @source "../../../node_modules/@ponti-studios/ui/src";

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import { Button } from "../components/primitives/button";
+import { Button } from "../../components/primitives/button";
 import { colorTokenNames } from "./index";
 
 const meta: Meta = { title: "Foundations/Colors", parameters: { layout: "fullscreen" } };

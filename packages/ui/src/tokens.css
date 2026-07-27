@@ -1,3 +1,0 @@
-@import "./tokens/generated/foundations.css";
-@import "./tokens/generated/light.css";
-@import "./tokens/generated/dark.css" (prefers-color-scheme: dark);

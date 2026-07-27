@@ -9,19 +9,14 @@
     "url": "git+https://github.com/ponti-studios/labs.git",
     "directory": "packages/ui"
   },
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org",
-    "access": "public"
-  },
   "files": [
     "src",
     "THIRD_PARTY_NOTICES.md"
   ],
   "type": "module",
   "sideEffects": [
-    "./src/styles.css",
-    "./src/tokens.css",
-    "./src/animations.css"
+    "./src/styles/index.css",
+    "./src/styles/animations.css"
   ],
   "exports": {
     ".": {
@@ -61,12 +56,12 @@
       "import": "./src/lib/index.ts"
     },
     "./tokens": {
-      "types": "./src/tokens/index.ts",
-      "import": "./src/tokens/index.ts"
+      "types": "./src/styles/tokens/index.ts",
+      "import": "./src/styles/tokens/index.ts"
     },
     "./tokens/css-vars": {
-      "types": "./src/tokens/css-vars.ts",
-      "import": "./src/tokens/css-vars.ts"
+      "types": "./src/styles/tokens/css-vars.ts",
+      "import": "./src/styles/tokens/css-vars.ts"
     },
     "./native": {
       "types": "./src/native/index.ts",
@@ -76,18 +71,21 @@
       "types": "./src/hooks/index.ts",
       "import": "./src/hooks/index.ts"
     },
-    "./styles.css": "./src/styles.css",
-    "./tokens.css": "./src/tokens.css",
-    "./animations.css": "./src/animations.css"
+    "./styles.css": "./src/styles/index.css",
+    "./animations.css": "./src/styles/animations.css"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   },
   "scripts": {
     "build": "tsc --noEmit",
     "dev": "vite",
-    "storybook": "style-dictionary build --config style-dictionary.dark-storybook.json && storybook dev -p 6006",
-    "check:source": "node tokens/check-source.mjs",
+    "storybook": "style-dictionary build --config src/styles/tokens/style-dictionary.dark-storybook.json && storybook dev -p 6006",
+    "check:source": "node src/styles/tokens/scripts/check-source.mjs",
     "test:a11y": "vitest --run --config vitest.config.ts",
-    "tokens:build": "style-dictionary build --config style-dictionary.foundations.json && style-dictionary build --config style-dictionary.light.json && style-dictionary build --config style-dictionary.dark.json && style-dictionary build --config style-dictionary.dark-storybook.json",
-    "tokens:check": "pnpm run tokens:build && node tokens/check-foundations.mjs && git diff --exit-code -- src/tokens/generated",
+    "tokens:build": "style-dictionary build --config src/styles/tokens/style-dictionary.foundations.json && style-dictionary build --config src/styles/tokens/style-dictionary.light.json && style-dictionary build --config src/styles/tokens/style-dictionary.dark.json && style-dictionary build --config src/styles/tokens/style-dictionary.dark-storybook.json",
+    "tokens:check": "pnpm run tokens:build && node src/styles/tokens/scripts/check-foundations.mjs && git diff --exit-code -- src/styles/tokens/generated",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint src --fix",
     "format": "oxfmt src --write",
@@ -137,7 +135,6 @@
     "react-dom": "^18.2.0 || ^19.0.0",
     "react-native": ">=0.74"
   },
-  "packageManager": "pnpm@10.30.3",
   "peerDependenciesMeta": {
     "react-dom": {
       "optional": true
@@ -145,5 +142,6 @@
     "react-native": {
       "optional": true
     }
-  }
+  },
+  "packageManager": "pnpm@10.30.3"
 }
