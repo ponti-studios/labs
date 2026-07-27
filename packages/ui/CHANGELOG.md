@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.2](https://github.com/ponti-studios/labs/compare/ui-v0.4.1...ui-v0.4.2) (2026-07-27)
+
+
+### Bug Fixes
+
+* **ui:** fix destructive-red contrast regression from the 0.4 palette ([1949a76](https://github.com/ponti-studios/labs/commit/1949a7663221e49ddf0b4d6a439f285321817efb))
+* **ui:** forward Button's type prop instead of forcing type="button" ([2358e0d](https://github.com/ponti-studios/labs/commit/2358e0db9c84f469ab3a83e2019742d1bf7abac9))
+
 ## [0.4.1](https://github.com/ponti-studios/labs/compare/ui-v0.4.0...ui-v0.4.1) (2026-07-27)
 
 
