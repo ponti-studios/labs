@@ -30,7 +30,7 @@
     "knip": "^6.27.0",
     "oxfmt": "catalog:shared",
     "oxlint": "catalog:shared",
-    "turbo": "^2.10.5",
+    "turbo": "^2.10.7",
     "typescript": "catalog:"
   },
   "engines": {

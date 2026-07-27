@@ -167,7 +167,9 @@ export default function VaccinationEffectivenessPage() {
                   <Tooltip
                     contentStyle={tooltipStyle}
                     cursor={{ stroke: "var(--color-border)", strokeWidth: 1 }}
-                    labelFormatter={(v) => new Date(v).toLocaleDateString()}
+                    labelFormatter={(v) =>
+                      new Date(v as string).toLocaleDateString()
+                    }
                   />
                   <Line
                     type="monotone"

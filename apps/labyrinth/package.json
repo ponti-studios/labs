@@ -43,7 +43,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-router": "catalog:",
-    "recharts": "^3.9.2",
+    "recharts": "^3.10.1",
     "three": "^0.185.1",
     "drizzle-orm": "catalog:",
     "vitest": "catalog:",

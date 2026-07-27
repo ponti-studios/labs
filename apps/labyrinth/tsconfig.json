@@ -12,7 +12,6 @@
   "compilerOptions": {
     "types": ["node", "vite/client", "google.maps"],
     "rootDirs": [".", "./.react-router/types"],
-    "baseUrl": ".",
     "paths": {
       "~/*": ["./app/*"],
       "@pontistudios/ai": ["../../packages/ai/src/index.ts"],
