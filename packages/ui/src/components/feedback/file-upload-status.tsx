@@ -86,7 +86,7 @@ export const FileUploadStatus = memo(function FileUploadStatus({
   if (status === "error") {
     return (
       <output className="mt-2" role="alert">
-        <div className="bg-destructive/10 text-destructive flex items-start gap-2 p-3">
+        <div className="bg-destructive/10 text-destructive-text flex items-start gap-2 p-3">
           <XIcon className="mt-0.5 h-5 w-5 flex-shrink-0" aria-hidden="true" />
           <span className="text-sm">{error}</span>
         </div>
@@ -125,7 +125,7 @@ const ProcessingStats = memo(function ProcessingStats({ stats }: { stats: FileUp
         <div className="py-2">
           <dt className="text-foreground text-sm font-medium">Errors</dt>
           <dd className="mt-1">
-            <span className="bg-destructive/10 text-destructive inline-flex items-center px-2 py-1 text-xs font-medium">
+            <span className="bg-destructive/10 text-destructive-text inline-flex items-center px-2 py-1 text-xs font-medium">
               {stats.errors.length} error{stats.errors.length > 1 ? "s" : ""}
             </span>
           </dd>

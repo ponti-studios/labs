@@ -30,7 +30,7 @@ function Field({ label, helpText, error, required, children, id: externalId }: F
           htmlFor={id}
           className={cn(
             "text-foreground text-sm font-medium",
-            required && "after:text-destructive after:ml-0.5 after:content-['*']",
+            required && "after:text-destructive-text after:ml-0.5 after:content-['*']",
           )}
         >
           {label}
@@ -50,7 +50,7 @@ function Field({ label, helpText, error, required, children, id: externalId }: F
         : children}
 
       {error ? (
-        <p id={errorId} role="alert" className="text-destructive text-sm">
+        <p id={errorId} role="alert" className="text-destructive-text text-sm">
           {error}
         </p>
       ) : helpText ? (
