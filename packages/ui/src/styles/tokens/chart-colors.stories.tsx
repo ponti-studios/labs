@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import { CHART_CSS_VARS } from "../constants/chart-colors";
+import { CHART_CSS_VARS } from "../../constants/chart-colors";
 
 const meta: Meta = { title: "Foundations/Charts", parameters: { layout: "fullscreen" } };
 export default meta;

@@ -9,7 +9,7 @@ export { normalizeOtp, OTP_LENGTH } from "./lib/auth";
 export { copyToClipboard } from "./lib/clipboard";
 export { createMemoryStorage } from "./lib/create-memory-storage";
 export { cn } from "./lib/utils";
-export { colors } from "./tokens/css-vars";
+export { colors } from "./styles/tokens/css-vars";
 export {
   animations,
   colorThemes,
@@ -29,7 +29,7 @@ export {
   transitionDurations,
   breakpoints,
   zIndices,
-} from "./tokens/index";
+} from "./styles/tokens/index";
 export type {
   ColorMode,
   ColorTheme,
@@ -41,4 +41,4 @@ export type {
   SpacingToken,
   TextSizeToken,
   TrackingToken,
-} from "./tokens/index";
+} from "./styles/tokens/index";

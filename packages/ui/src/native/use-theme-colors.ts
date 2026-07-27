@@ -1,6 +1,6 @@
 import { useColorScheme } from "react-native";
 
-import { colorThemes, type ColorMode, type ColorTheme } from "../tokens";
+import { colorThemes, type ColorMode, type ColorTheme } from "../styles/tokens/index";
 
 /**
  * Resolves the active color mode from the OS appearance setting.

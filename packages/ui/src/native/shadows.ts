@@ -1,4 +1,4 @@
-import { shadows, type ShadowToken } from "../tokens";
+import { shadows, type ShadowToken } from "../styles/tokens/index";
 
 /**
  * One layer of a shadow in the shape React Native's `boxShadow` expects.
