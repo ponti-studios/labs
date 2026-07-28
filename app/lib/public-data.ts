@@ -97,3 +97,37 @@ export async function fetchCountries(): Promise<z.infer<typeof countrySchema>[]>
   if (!res.ok) throw new Error(`public-data API error: ${res.status}`);
   return z.array(countrySchema).parse(await res.json());
 }
+
+const tflCameraPropertiesSchema = z.object({
+  available: z.string(),
+  imageUrl: z.string(),
+  videoUrl: z.string(),
+  view: z.string(),
+});
+
+const tflCameraSchema = z.object({
+  id: z.number(),
+  tfl_id: z.string(),
+  common_name: z.string(),
+  place_type: z.string(),
+  lat: z.number(),
+  lng: z.number(),
+  properties: z.string(),
+});
+
+export type TflCamera = z.infer<typeof tflCameraSchema>;
+
+export type TflCameraParsed = Omit<TflCamera, "properties"> & {
+  properties: z.infer<typeof tflCameraPropertiesSchema>;
+};
+
+export async function fetchTflCameras(type?: string): Promise<TflCameraParsed[]> {
+  const params = new URLSearchParams();
+  if (type) params.set("type", type);
+  const qs = params.toString();
+  const url = `${BASE}/tfl/cameras${qs ? `?${qs}` : ""}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`public-data API error: ${res.status}`);
+  const raw = z.array(tflCameraSchema).parse(await res.json());
+  return raw.map((c) => ({ ...c, properties: tflCameraPropertiesSchema.parse(JSON.parse(c.properties)) }));
+}
