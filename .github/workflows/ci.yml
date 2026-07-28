@@ -51,7 +51,7 @@ jobs:
           cache: "pnpm"
       - run: pnpm install --frozen-lockfile
       - name: Migrate test database
-        run: pnpm --filter @pontistudios/db db:migrate
+        run: pnpm --filter @pontistudios/labyrinth db:migrate
       - run: pnpm run lint
       - run: pnpm run test
       - run: pnpm --filter @pontistudios/labyrinth test:realitea

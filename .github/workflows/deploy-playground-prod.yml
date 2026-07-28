@@ -5,11 +5,10 @@ on:
     branches: [main]
     paths:
       - "apps/labyrinth/**"
-      - "packages/**"
       - "package.json"
       - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
       - ".github/workflows/deploy-playground-prod.yml"
-      - ".github/workflows/reusable-db-migrate.yml"
       - ".github/workflows/reusable-railway-deploy.yml"
   workflow_dispatch:
 
@@ -22,9 +21,22 @@ concurrency:
 
 jobs:
   migrate:
-    uses: ./.github/workflows/reusable-db-migrate.yml
-    secrets:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+        with:
+          run_install: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: "pnpm"
+      - run: pnpm install --frozen-lockfile --filter @pontistudios/labyrinth...
+      - name: Run migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: pnpm --filter @pontistudios/labyrinth db:migrate
 
   deploy:
     needs: migrate
