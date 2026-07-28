@@ -4,14 +4,14 @@
     {
       "name": "labyrinth",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@pontistudios/labyrinth", "dev"],
+      "runtimeArgs": ["dev"],
       "port": 3001
     },
     {
       "name": "storybook",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@ponti-studios/ui", "storybook"],
-      "port": 6006,
+      "runtimeArgs": ["storybook"],
+      "port": 6007,
       "autoPort": true
     }
   ]

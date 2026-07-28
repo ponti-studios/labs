@@ -1,10 +1,5 @@
 import { generateEmbedding } from "~/lib/server/ai";
-import {
-  db,
-  getTableColumns,
-  searchDocuments as searchDocumentsTable,
-  sql,
-} from "~/lib/server/db";
+import { db, getTableColumns, searchDocuments as searchDocumentsTable, sql } from "~/lib/server/db";
 import type { LoaderFunctionArgs } from "react-router";
 
 import { searchDocuments } from "~/lib/search.server";

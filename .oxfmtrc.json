@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
-  "ignorePatterns": ["packages/ui/src/styles/tokens/generated/**", "packages/ui/.storybook/generated/**"],
+  "ignorePatterns": [],
   "tabWidth": 2,
   "sortTailwindcss": {
     "functions": ["clsx", "cn"],

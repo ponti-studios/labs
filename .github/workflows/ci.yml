@@ -36,9 +36,6 @@ jobs:
           --health-timeout 5s
           --health-retries 10
     env:
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-      TURBO_TELEMETRY_DISABLED: "1"
       DATABASE_URL: postgresql://postgres:postgres@localhost:4433/labs-test
     steps:
       - uses: actions/checkout@v6
@@ -51,19 +48,15 @@ jobs:
           cache: "pnpm"
       - run: pnpm install --frozen-lockfile
       - name: Migrate test database
-        run: pnpm --filter @pontistudios/labyrinth db:migrate
-      - run: pnpm run lint
-      - run: pnpm run test
-      - run: pnpm --filter @pontistudios/labyrinth test:realitea
+        run: pnpm db:migrate
+      - run: pnpm lint
+      - run: pnpm test
+      - run: pnpm test:realitea
 
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: lint-and-test
-    env:
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-      TURBO_TELEMETRY_DISABLED: "1"
     steps:
       - uses: actions/checkout@v6
       - uses: pnpm/action-setup@v6
@@ -74,7 +67,7 @@ jobs:
           node-version: "24.14.1"
           cache: "pnpm"
       - run: pnpm install --frozen-lockfile
-      - run: pnpm run build
+      - run: pnpm build
 
   analyze:
     name: CodeQL Analysis

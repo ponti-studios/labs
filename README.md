@@ -1,66 +1,45 @@
-# Ponti Studios Monorepo
+# Labyrinth
 
-## Development Ports
-
-### Labs (~/Developer/labs)
-
-| App / Service | Port | URL                   |
-| ------------- | ---- | --------------------- |
-| Labyrinth     | 3001 | http://localhost:3001 |
-| Health        | 3003 | http://localhost:3003 |
-| Commune       | 3005 | http://localhost:3005 |
-| Earth         | 3006 | http://localhost:3006 |
-| UI (package)  | 3007 | (Storybook)           |
-
+Ponti Studios portfolio and playground — React Router app with puzzles, data visualization, tarot, and experiments.
 
 ## Getting Started
 
-### 1. Start foundation (shared infra)
-
 ```bash
-# Clone foundation alongside labs
+# 1. Start foundation (shared infra)
 git clone https://github.com/ponti-studios/foundation.git ../foundation
-
-# Start postgres + redis
 cd ../foundation && just docker-up
+
+# 2. Install and run
+pnpm install
+pnpm dev
 ```
 
-Foundation runs:
-
-- PostgreSQL on `localhost:5434`
-- PostgreSQL test on `localhost:4433`
+Foundation provides:
+- PostgreSQL on `localhost:5434` (database: `hominem`)
+- PostgreSQL test on `localhost:4433` (database: `labs-test`)
 - Redis on `localhost:6379`
+- MinIO on `localhost:9000`
 
-Credentials: `postgres` / `postgres`
+Credentials: `postgres` / `postgres` | `minioadmin` / `minioadmin`
 
-Labs uses the `hominem` PostgreSQL database locally. App tables live under the
-`labs` schema inside that database, so `DATABASE_URL` should point to
-`postgresql://postgres:postgres@localhost:5434/hominem`.
+### Scripts
 
-### 2. Develop
-**Note:** Apps connect to `localhost:5434` (foundation postgres) by default.
+| Command                        | Purpose                                  |
+| ------------------------------ | ---------------------------------------- |
+| `pnpm dev`                     | Start dev server (port 3001)             |
+| `pnpm build`                   | Production build                         |
+| `pnpm start`                   | Start production server                  |
+| `pnpm test`                    | Run unit tests                           |
+| `pnpm test:realitea`           | Run RealiTea-specific tests              |
+| `pnpm typecheck`               | Type-check the project                   |
+| `pnpm lint`                    | Lint with oxlint                         |
+| `pnpm format`                  | Format with oxfmt                        |
+| `pnpm db:generate`             | Generate Drizzle migration               |
+| `pnpm db:migrate`              | Apply Drizzle migrations                 |
+| `pnpm storybook`               | Start Storybook (port 6007)              |
+| `pnpm realitea:generate`       | Generate RealiTea puzzles                |
+| `pnpm search:seed`             | Seed search corpus                       |
 
-To start a single app:
+### Deployment
 
-```bash
-pnpm dev:labyrinth
-pnpm dev:commune
-pnpm dev:health
-pnpm dev:earth
-pnpm dev:ui    # Storybook
-```
-
-## Apps
-
-- **Labyrinth** (`apps/labyrinth`) — React Router app at port 3001. Real-time puzzle generation, daily challenges, and data visualization.
-- **Commune** (`apps/commune`) — React Router app at port 3005. Social relationship voting and community decision-making.
-- **Health** (`apps/health`) — React Router app at port 3003. Medical data dashboard and health tracking.
-- **Earth** (`apps/earth`) — React Router app at port 3006. Geographic data browser with MapLibre, TfL camera feeds, and location intelligence.
-
-## Packages
-
-- **`@ponti-studios/ui`** — Shared React UI component library (Tailwind, CVA, Storybook at port 3007).
-- **`@pontistudios/db`** — Database layer built on Drizzle ORM with PostgreSQL. Schema, migrations, and seed scripts for the shared `labs` database.
-- **`@pontistudios/ai`** — AI/LLM utilities wrapping OpenRouter and TanStack AI for multi-model inference.
-- **`@pontistudios/tsconfig`** — Shared TypeScript configuration presets.
-- **`@pontistudios/db-test`** — Test fixtures, factories, and database helpers for integration tests.
+Deployed to Railway via `.github/workflows/deploy-playground-prod.yml` on push to `main`.
