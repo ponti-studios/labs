@@ -10,7 +10,7 @@ RUN corepack enable
 
 FROM base AS builder
 
-COPY package.json pnpm-lock.yaml ./
+COPY .npmrc package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile --prod --ignore-scripts
 
 COPY . .
