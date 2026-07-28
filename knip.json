@@ -17,15 +17,6 @@
         "tailwindcss"
       ]
     },
-    "apps/commune": {
-      "entry": [
-        "app/routes/**/*.{ts,tsx}",
-        "server.ts"
-      ],
-      "project": ["app/**/*.{ts,tsx}", "server.ts"],
-      "ignore": ["build/**", "app/.react-router/**"],
-      "ignoreDependencies": ["tailwindcss"]
-    },
     "packages/ui": {
       "entry": [
         "src/index.ts",

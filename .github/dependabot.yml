@@ -17,7 +17,6 @@ updates:
       prefix: "chore(deps)"
 
   - package-ecosystem: docker
-    directory: /apps/commune
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
