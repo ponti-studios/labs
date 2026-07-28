@@ -1,4 +1,4 @@
-import { and, covidData, db, eq, gte, lte, sql, type CovidData } from "~/lib/server/db";
+import { fetchCovidData, type CovidRow } from "~/lib/public-data";
 import type { LoaderFunctionArgs } from "react-router";
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -6,14 +6,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const url = new URL(request.url);
     const searchParams = url.searchParams;
 
-    // Parse query parameters
     const country = searchParams.get("country");
     const startDate = searchParams.get("startDate");
     const endDate = searchParams.get("endDate");
     const page = Number.parseInt(searchParams.get("page") || "1");
-    const limit = Math.min(Number.parseInt(searchParams.get("limit") || "1000"), 5000); // Max 5000 items per page for data analysis
+    const limit = Math.min(Number.parseInt(searchParams.get("limit") || "1000"), 5000);
 
-    // Validate pagination parameters
     if (page < 1) {
       return Response.json({ error: "Page must be greater than 0" }, { status: 400 });
     }
@@ -22,63 +20,22 @@ export async function loader({ request }: LoaderFunctionArgs) {
       return Response.json({ error: "Limit must be greater than 0" }, { status: 400 });
     }
 
-    // Build where conditions
-    const conditions = [];
+    const isoCode = country && country !== "global" ? country : "OWID_WRL";
+    const allRows = await fetchCovidData(isoCode, startDate ?? undefined, endDate ?? undefined);
 
-    // Filter by country if provided
-    if (country && country !== "global") {
-      if (country === "OWID_WRL") {
-        // Global data in OWID format
-        conditions.push(eq(covidData.isoCode, "OWID_WRL"));
-      } else {
-        // Filter by ISO code or location name
-        conditions.push(eq(covidData.isoCode, country));
-      }
-    }
+    const sorted = allRows.sort((a, b) => {
+      const dateA = a.date ?? "";
+      const dateB = b.date ?? "";
+      if (dateA !== dateB) return dateA.localeCompare(dateB);
+      return (a.location ?? "").localeCompare(b.location ?? "");
+    });
 
-    // Filter by date range if provided
-    if (startDate) {
-      conditions.push(gte(covidData.date, startDate));
-    }
-
-    if (endDate) {
-      conditions.push(lte(covidData.date, endDate));
-    }
-
-    // Build the query based on whether we have conditions
-    let records: CovidData[];
-    let totalResult: { count: number }[];
-
-    if (conditions.length > 0) {
-      // With conditions
-      records = await db
-        .select()
-        .from(covidData)
-        .where(and(...conditions))
-        .orderBy(covidData.date, covidData.location)
-        .limit(limit)
-        .offset((page - 1) * limit);
-
-      totalResult = await db
-        .select({ count: sql<number>`count(*)` })
-        .from(covidData)
-        .where(and(...conditions));
-    } else {
-      // Without conditions
-      records = await db
-        .select()
-        .from(covidData)
-        .orderBy(covidData.date, covidData.location)
-        .limit(limit)
-        .offset((page - 1) * limit);
-
-      totalResult = await db.select({ count: sql<number>`count(*)` }).from(covidData);
-    }
-    const total = totalResult[0]?.count || 0;
+    const total = sorted.length;
     const totalPages = Math.ceil(total / limit);
+    const data = sorted.slice((page - 1) * limit, page * limit) as CovidRow[];
 
     return Response.json({
-      data: records,
+      data,
       pagination: {
         page,
         limit,
@@ -87,11 +44,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
         hasNext: page < totalPages,
         hasPrev: page > 1,
       },
-      filters: {
-        country,
-        startDate,
-        endDate,
-      },
+      filters: { country, startDate, endDate },
     });
   } catch (error) {
     console.error("Failed to load COVID data:", error);

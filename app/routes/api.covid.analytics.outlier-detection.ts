@@ -1,6 +1,5 @@
-import { eq } from "~/lib/server/db";
+import { fetchCovidData } from "~/lib/public-data";
 import type { LoaderFunctionArgs } from "react-router";
-import { covidData, db } from "~/lib/server/db";
 
 interface Outlier {
   date: string;
@@ -22,65 +21,36 @@ interface DataQualityIssue {
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
     const url = new URL(request.url);
-    const searchParams = url.searchParams;
-    const country = searchParams.get("country") || "OWID_WRL";
-    const metric = searchParams.get("metric") || "newCasesSmoothed";
+    const country = url.searchParams.get("country") || "OWID_WRL";
+    const metric = url.searchParams.get("metric") || "newCasesSmoothed";
 
-    // Get time series data
-    const data = await db
-      .select({
-        date: covidData.date,
-        newCases: covidData.newCases,
-        newDeaths: covidData.newDeaths,
-        newCasesSmoothed: covidData.newCasesSmoothed,
-        newDeathsSmoothed: covidData.newDeathsSmoothed,
-        totalCases: covidData.totalCases,
-        totalDeaths: covidData.totalDeaths,
-        newVaccinations: covidData.newVaccinations,
-        positiveRate: covidData.positiveRate,
-      })
-      .from(covidData)
-      .where(eq(covidData.isoCode, country))
-      .orderBy(covidData.date);
+    const allRows = await fetchCovidData(country);
+    const data = allRows.sort((a, b) => (a.date ?? "").localeCompare(b.date ?? ""));
 
     if (data.length === 0) {
-      return Response.json({
-        country,
-        error: "No data found for outlier detection",
-      });
+      return Response.json({ country, error: "No data found for outlier detection" });
     }
 
-    // Extract values for the specified metric
     const values = data
-      .map((row) => {
-        const value = row[metric as keyof typeof row] as number;
-        return {
-          date: row.date || "",
-          value: value || 0,
-        };
-      })
+      .map((row) => ({
+        date: row.date || "",
+        value: (row as unknown as Record<string, number | null>)[metric] ?? 0,
+        totalCases: row.totalCases || 0,
+        totalDeaths: row.totalDeaths || 0,
+      }))
       .filter((item) => item.value > 0);
 
     if (values.length < 10) {
-      return Response.json({
-        country,
-        metric,
-        error: "Insufficient data for outlier detection",
-      });
+      return Response.json({ country, metric, error: "Insufficient data for outlier detection" });
     }
 
-    // Calculate statistical measures
-    const calculateStats = (vals: number[]) => {
-      const mean = vals.reduce((sum, val) => sum + val, 0) / vals.length;
-      const variance = vals.reduce((sum, val) => sum + (val - mean) ** 2, 0) / vals.length;
-      const stdDev = Math.sqrt(variance);
-
-      return { mean, stdDev };
+    const calcStats = (vals: number[]) => {
+      const mean = vals.reduce((s, v) => s + v, 0) / vals.length;
+      const variance = vals.reduce((s, v) => s + (v - mean) ** 2, 0) / vals.length;
+      return { mean, stdDev: Math.sqrt(variance) };
     };
 
-    const { mean, stdDev } = calculateStats(values.map((v) => v.value));
-
-    // Detect outliers using Z-score method
+    const { mean, stdDev } = calcStats(values.map((v) => v.value));
     const outliers: Outlier[] = [];
     const dataQualityIssues: DataQualityIssue[] = [];
 
@@ -88,11 +58,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
       const current = values[i];
       const zScore = stdDev > 0 ? Math.abs(current.value - mean) / stdDev : 0;
 
-      // Outlier detection (Z-score > 2.5 = outlier, > 3.5 = extreme outlier)
       if (zScore > 2.5) {
-        const severity = zScore > 3.5 ? "high" : zScore > 3 ? "medium" : "low";
-        const type = current.value > mean ? "spike" : "drop";
-
+        const severity: "low" | "medium" | "high" =
+          zScore > 3.5 ? "high" : zScore > 3 ? "medium" : "low";
+        const type: "spike" | "drop" = current.value > mean ? "spike" : "drop";
         outliers.push({
           date: current.date,
           value: current.value,
@@ -100,45 +69,32 @@ export async function loader({ request }: LoaderFunctionArgs) {
           zScore: Math.round(zScore * 100) / 100,
           type,
           severity,
-          description: `${
-            type === "spike" ? "Unusual spike" : "Unusual drop"
-          } in ${metric} (${zScore.toFixed(1)} standard deviations from mean)`,
+          description: `${type === "spike" ? "Unusual spike" : "Unusual drop"} in ${metric} (${zScore.toFixed(1)} sd from mean)`,
         });
       }
 
-      // Data quality checks
       if (i > 0) {
-        const previous = values[i - 1];
-        const percentChange =
-          previous.value > 0
-            ? Math.abs((current.value - previous.value) / previous.value) * 100
-            : 0;
-
-        // Flag sudden jumps (>500% day-over-day change)
-        if (percentChange > 500) {
+        const prev = values[i - 1];
+        const pctChange =
+          prev.value > 0 ? Math.abs((current.value - prev.value) / prev.value) * 100 : 0;
+        if (pctChange > 500) {
           dataQualityIssues.push({
             date: current.date,
             issue: "Sudden Jump",
             severity: "warning",
-            description: `${percentChange.toFixed(0)}% day-over-day change in ${metric}`,
+            description: `${pctChange.toFixed(0)}% day-over-day change in ${metric}`,
           });
         }
-
-        // Flag impossible decreases in cumulative metrics
-        if (
-          (metric === "totalCases" || metric === "totalDeaths") &&
-          current.value < previous.value
-        ) {
+        if ((metric === "totalCases" || metric === "totalDeaths") && current.value < prev.value) {
           dataQualityIssues.push({
             date: current.date,
             issue: "Negative Growth",
             severity: "error",
-            description: `${metric} decreased from ${previous.value} to ${current.value}`,
+            description: `${metric} decreased from ${prev.value} to ${current.value}`,
           });
         }
       }
 
-      // Check for zero/null values in active periods
       if (i > 30 && i < values.length - 30 && current.value === 0) {
         dataQualityIssues.push({
           date: current.date,
@@ -149,72 +105,35 @@ export async function loader({ request }: LoaderFunctionArgs) {
       }
     }
 
-    // Detect reporting artifacts (e.g., weekly patterns)
-    const detectReportingArtifacts = () => {
-      const artifacts = [];
+    const dayOfWeekValues: Record<number, number[]> = {};
+    for (let d = 0; d < 7; d++) dayOfWeekValues[d] = [];
+    for (const item of values) {
+      dayOfWeekValues[new Date(item.date).getDay()].push(item.value);
+    }
+    const dayAvgs = Object.values(dayOfWeekValues).map((v) =>
+      v.length > 0 ? v.reduce((s, x) => s + x, 0) / v.length : 0,
+    );
+    const overallAvg = dayAvgs.reduce((s, v) => s + v, 0) / 7;
+    const reportingArtifacts: { type: string; description: string; strength: number }[] = [];
+    if (overallAvg > 0 && (Math.max(...dayAvgs) - Math.min(...dayAvgs)) / overallAvg > 0.5) {
+      reportingArtifacts.push({
+        type: "Weekly Reporting Pattern",
+        description: "Significant variation in reporting by day of week detected",
+        strength: Math.round(((Math.max(...dayAvgs) - Math.min(...dayAvgs)) / overallAvg) * 100),
+      });
+    }
 
-      // Check for weekly reporting patterns
-      const dayOfWeekValues: Record<number, number[]> = {};
-      for (let i = 0; i < 7; i++) {
-        dayOfWeekValues[i] = [];
-      }
-
-      for (const item of values) {
-        const dayOfWeek = new Date(item.date).getDay();
-        dayOfWeekValues[dayOfWeek].push(item.value);
-      }
-
-      // Calculate variance across days of week
-      const dayAverages = Object.values(dayOfWeekValues).map((vals) =>
-        vals.length > 0 ? vals.reduce((sum, val) => sum + val, 0) / vals.length : 0,
-      );
-
-      const overallAvg = dayAverages.reduce((sum, val) => sum + val, 0) / 7;
-      const maxDayAvg = Math.max(...dayAverages);
-      const minDayAvg = Math.min(...dayAverages);
-
-      if (overallAvg > 0 && (maxDayAvg - minDayAvg) / overallAvg > 0.5) {
-        artifacts.push({
-          type: "Weekly Reporting Pattern",
-          description: "Significant variation in reporting by day of week detected",
-          strength: Math.round(((maxDayAvg - minDayAvg) / overallAvg) * 100),
-        });
-      }
-
-      return artifacts;
-    };
-
-    const reportingArtifacts = detectReportingArtifacts();
-
-    // Calculate overall data quality score
-    const calculateDataQualityScore = () => {
-      let score = 100;
-
-      // Penalize for outliers
-      score -= Math.min(30, outliers.length * 2);
-
-      // Penalize for data quality issues
-      score -= Math.min(
-        20,
-        dataQualityIssues.filter((issue) => issue.severity === "error").length * 5,
-      );
-      score -= Math.min(
-        15,
-        dataQualityIssues.filter((issue) => issue.severity === "warning").length * 2,
-      );
-
-      // Penalize for reporting artifacts
-      score -= Math.min(10, reportingArtifacts.length * 5);
-
-      return Math.max(0, score) / 100;
-    };
-
-    const dataQualityScore = calculateDataQualityScore();
+    let score = 100;
+    score -= Math.min(30, outliers.length * 2);
+    score -= Math.min(20, dataQualityIssues.filter((q) => q.severity === "error").length * 5);
+    score -= Math.min(15, dataQualityIssues.filter((q) => q.severity === "warning").length * 2);
+    score -= Math.min(10, reportingArtifacts.length * 5);
+    const dataQualityScore = Math.max(0, score) / 100;
 
     return Response.json({
       country,
       metric,
-      outliers: outliers.sort((a, b) => b.zScore - a.zScore), // Sort by severity
+      outliers: outliers.sort((a, b) => b.zScore - a.zScore),
       dataQualityIssues,
       reportingArtifacts,
       dataQualityScore: Math.round(dataQualityScore * 100) / 100,

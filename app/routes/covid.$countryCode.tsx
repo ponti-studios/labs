@@ -1,4 +1,4 @@
-import type { CovidData } from "~/lib/server/db";
+import type { CovidRow } from "~/lib/public-data";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
 import { StatsOverview } from "~/components/covid/charts/stats-overview";
@@ -151,7 +151,7 @@ export default function CovidPage() {
           title="Reproduction Rate (R)"
           color="#8b5cf6"
         />
-        {timeSeriesData.some((record: CovidData) => record.newVaccinationsSmoothed !== null) ? (
+        {timeSeriesData.some((record: CovidRow) => record.newVaccinationsSmoothed !== null) ? (
           <TimeSeriesChart
             data={timeSeriesData}
             metric="newVaccinationsSmoothed"
@@ -166,14 +166,14 @@ export default function CovidPage() {
             color="#f59e0b"
           />
         )}
-        {timeSeriesData.some((record: CovidData) => record.positiveRate !== null) ? (
+        {timeSeriesData.some((record: CovidRow) => record.positiveRate !== null) ? (
           <TimeSeriesChart
             data={timeSeriesData}
             metric="positiveRate"
             title="Test Positivity Rate"
             color="#f59e0b"
           />
-        ) : timeSeriesData.some((record: CovidData) => record.icuPatientsPerMillion !== null) ? (
+        ) : timeSeriesData.some((record: CovidRow) => record.icuPatientsPerMillion !== null) ? (
           <TimeSeriesChart
             data={timeSeriesData}
             metric="icuPatientsPerMillion"
