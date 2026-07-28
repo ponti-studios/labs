@@ -15,8 +15,8 @@ importers:
         specifier: ^0.12.35
         version: 0.12.79
       '@ponti-studios/ui':
-        specifier: 0.4.2
-        version: 0.4.2(@date-fns/tz@1.5.0)(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: 0.4.3
+        version: 0.4.3(@date-fns/tz@1.5.0)(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@react-router/node':
         specifier: ^8.2.0
         version: 8.3.0(react-router@8.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(typescript@6.0.3)
@@ -1518,8 +1518,8 @@ packages:
   '@pinojs/redact@0.4.0':
     resolution: {integrity: sha512-k2ENnmBugE/rzQfEcdWHcCY+/FM3VLzH9cYEsbdsoqrvzAKRhUZeRNhAZvB8OitQJ1TBed3yqWtdjzS6wJKBwg==}
 
-  '@ponti-studios/ui@0.4.2':
-    resolution: {integrity: sha512-Jap2gRbEW7wweo6E0uWZjRv6yVI9mCzzgacRgivSE8O7alt1iQaCim9Vz7nOEJgDZzlSor+kPjDC9Le1kcCk1g==}
+  '@ponti-studios/ui@0.4.3':
+    resolution: {integrity: sha512-EwYuburU7Wuuoi+76VosTQWgKHaJNatpc3PXwSnrS9Won6FlSClQeZPiIYLYz4WffWE8kabxV9HJqfUIt4+vEg==}
     peerDependencies:
       react: ^18.2.0 || ^19.0.0
       react-dom: ^18.2.0 || ^19.0.0
@@ -4963,7 +4963,7 @@ snapshots:
 
   '@pinojs/redact@0.4.0': {}
 
-  '@ponti-studios/ui@0.4.2(@date-fns/tz@1.5.0)(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@ponti-studios/ui@0.4.3(@date-fns/tz@1.5.0)(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@base-ui/react': 1.6.0(@date-fns/tz@1.5.0)(@types/react@19.2.17)(date-fns@4.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@radix-ui/colors': 3.0.0
