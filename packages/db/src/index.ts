@@ -12,7 +12,6 @@ export type {
   NewGame,
   PuzzleAnswerType,
 } from "./schema/realitea";
-export type { NewTflCamera, TflCamera } from "./schema/tfl";
 export type {
   CaseUpdate,
   NewCaseUpdate,
@@ -33,7 +32,6 @@ export {
   searchDocuments,
   relationshipCases,
   relationshipVerdicts,
-  tflCameras,
 } from "./schema";
 
 export * from "drizzle-orm";
@@ -43,5 +41,4 @@ export {
   appendSearchCorpus,
   populateCovidData,
   populateSearchCorpus,
-  populateTflCameras,
 } from "./loaders";
