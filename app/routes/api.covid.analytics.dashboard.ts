@@ -1,4 +1,4 @@
-import { fetchCovidData } from "~/lib/public-data";
+import { fetchCovidData, type CovidRow } from "~/lib/public-data";
 import type { LoaderFunctionArgs } from "react-router";
 
 interface Summary {
@@ -8,23 +8,6 @@ interface Summary {
   population: number;
   case_fatality_rate: number;
   vaccination_rate: number;
-}
-
-interface Metrics {
-  new_cases_daily: number;
-  new_deaths_daily: number;
-  new_vaccinations_daily: number;
-  test_positivity_rate: number;
-  reproduction_rate: number;
-  hospital_occupancy: number;
-}
-
-interface TrendData {
-  date: string;
-  new_cases: number;
-  new_deaths: number;
-  new_vaccinations: number;
-  test_positivity_rate: number;
 }
 
 function toNumber(value: unknown): number {
@@ -65,22 +48,22 @@ export async function loader({ request }: LoaderFunctionArgs) {
           : 0,
     };
 
-    const metrics: Metrics = {
-      new_cases_daily: toNumber(latest.new_cases),
-      new_deaths_daily: toNumber(latest.new_deaths),
-      new_vaccinations_daily: toNumber(latest.new_vaccinations),
-      test_positivity_rate: toNumber(latest.positive_rate),
+    const metrics = {
+      new_cases: toNumber(latest.new_cases),
+      new_deaths: toNumber(latest.new_deaths),
+      new_vaccinations: toNumber(latest.new_vaccinations),
+      positive_rate: toNumber(latest.positive_rate),
       reproduction_rate: toNumber(latest.reproduction_rate),
-      hospital_occupancy: toNumber(latest.icu_patients_per_million),
+      icu_patients_per_million: toNumber(latest.icu_patients_per_million),
     };
 
     const last30 = sorted.slice(0, 30).reverse();
-    const trends: TrendData[] = last30.map((row) => ({
+    const trends = last30.map((row) => ({
       date: row.date || "",
       new_cases: toNumber(row.new_cases),
       new_deaths: toNumber(row.new_deaths),
       new_vaccinations: toNumber(row.new_vaccinations),
-      test_positivity_rate: toNumber(row.positive_rate),
+      positive_rate: toNumber(row.positive_rate),
     }));
 
     const calcTrend = (data: number[]) => {

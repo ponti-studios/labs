@@ -1,4 +1,4 @@
-import { fetchCovidData } from "~/lib/public-data";
+import { fetchCovidData, type CovidRow } from "~/lib/public-data";
 import type { LoaderFunctionArgs } from "react-router";
 
 type VaccinationEffectiveness = {
@@ -7,14 +7,6 @@ type VaccinationEffectiveness = {
   againstDeath: number;
   breakthroughRate: number;
 };
-
-interface VaccinationTimeline {
-  date: string;
-  fully_vaccinated_per_hundred: number;
-  new_cases_smoothed: number;
-  new_deaths_smoothed: number;
-  hosp_patients_per_million: number;
-}
 
 function toNumber(value: unknown): number {
   if (typeof value === "number" && Number.isFinite(value)) return value;
@@ -46,9 +38,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
         timeline: [],
         milestones: [],
         vaccinationStats: {
-          fullyVaccinatedPerHundred: 0,
-          totalVaccinations: 0,
-          dailyVaccinations: 0,
+          people_fully_vaccinated_per_hundred: 0,
+          total_vaccinations: 0,
+          new_vaccinations: 0,
         },
         totalDataPoints: 0,
       });
@@ -110,9 +102,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
     const effectiveness = calculateEffectiveness();
 
-    const timeline: VaccinationTimeline[] = data.map((row) => ({
+    const timeline = data.map((row) => ({
       date: row.date || "",
-      fully_vaccinated_per_hundred: toNumber(row.people_fully_vaccinated_per_hundred),
+      people_fully_vaccinated_per_hundred: toNumber(row.people_fully_vaccinated_per_hundred),
       new_cases_smoothed: toNumber(row.new_cases_smoothed),
       new_deaths_smoothed: toNumber(row.new_deaths_smoothed),
       hosp_patients_per_million: toNumber(row.hosp_patients_per_million),
@@ -129,9 +121,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
     const latest = data[data.length - 1];
     const vaccinationStats = {
-      fully_vaccinated_per_hundred: toNumber(latest?.people_fully_vaccinated_per_hundred),
+      people_fully_vaccinated_per_hundred: toNumber(latest?.people_fully_vaccinated_per_hundred),
       total_vaccinations: toNumber(latest?.total_vaccinations),
-      daily_vaccinations: toNumber(latest?.new_vaccinations),
+      new_vaccinations: toNumber(latest?.new_vaccinations),
     };
 
     return Response.json({
