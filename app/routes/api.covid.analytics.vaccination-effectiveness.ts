@@ -1,6 +1,5 @@
-import { and, eq, gte } from "~/lib/server/db";
+import { fetchCovidData } from "~/lib/public-data";
 import type { LoaderFunctionArgs } from "react-router";
-import { covidData, db } from "~/lib/server/db";
 
 type VaccinationEffectiveness = {
   overall: number;
@@ -18,9 +17,7 @@ interface VaccinationTimeline {
 }
 
 function toNumber(value: unknown): number {
-  if (typeof value === "number") {
-    return Number.isFinite(value) ? value : 0;
-  }
+  if (typeof value === "number" && Number.isFinite(value)) return value;
   if (typeof value === "string" && value.trim() !== "") {
     const parsed = Number(value);
     return Number.isFinite(parsed) ? parsed : 0;
@@ -31,30 +28,16 @@ function toNumber(value: unknown): number {
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
     const url = new URL(request.url);
-    const searchParams = url.searchParams;
-    const country = searchParams.get("country") || "OWID_WRL";
+    const country = url.searchParams.get("country") || "OWID_WRL";
 
-    // Get vaccination timeline data for the last 12 months
-    // Since date is stored as text, we'll calculate the cutoff date as a string
     const twelveMonthsAgo = new Date();
     twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
-    const cutoffDate = twelveMonthsAgo.toISOString().split("T")[0]; // YYYY-MM-DD format
+    const cutoffDate = twelveMonthsAgo.toISOString().split("T")[0];
 
-    const timelineData = await db
-      .select({
-        date: covidData.date,
-        fullyVaccinatedPerHundred: covidData.peopleFullyVaccinatedPerHundred,
-        newCasesSmoothed: covidData.newCasesSmoothed,
-        newDeathsSmoothed: covidData.newDeathsSmoothed,
-        hospitalPatientsPerMillion: covidData.hospPatientsPerMillion,
-        totalVaccinations: covidData.totalVaccinations,
-        newVaccinations: covidData.newVaccinations,
-      })
-      .from(covidData)
-      .where(and(eq(covidData.isoCode, country), gte(covidData.date, cutoffDate)))
-      .orderBy(covidData.date);
+    const allRows = await fetchCovidData(country, cutoffDate);
+    const data = allRows.sort((a, b) => (a.date ?? "").localeCompare(b.date ?? ""));
 
-    if (timelineData.length === 0) {
+    if (data.length === 0) {
       return Response.json({
         country,
         error: "No vaccination data found for country",
@@ -75,113 +58,82 @@ export async function loader({ request }: LoaderFunctionArgs) {
       });
     }
 
-    // Calculate vaccination effectiveness metrics
-    const calculateEffectiveness = (data: typeof timelineData): VaccinationEffectiveness => {
-      // Split data into pre and post-vaccination periods
-      const preVaccination = data.filter((d) => toNumber(d.fullyVaccinatedPerHundred) < 10);
-      const postVaccination = data.filter((d) => toNumber(d.fullyVaccinatedPerHundred) >= 50);
+    const calculateEffectiveness = (): VaccinationEffectiveness => {
+      const preVax = data.filter((d) => toNumber(d.peopleFullyVaccinatedPerHundred) < 10);
+      const postVax = data.filter((d) => toNumber(d.peopleFullyVaccinatedPerHundred) >= 50);
 
-      if (preVaccination.length === 0 || postVaccination.length === 0) {
-        return {
-          overall: 0,
-          againstHospitalization: 0,
-          againstDeath: 0,
-          breakthroughRate: 0,
-        };
+      if (preVax.length === 0 || postVax.length === 0) {
+        return { overall: 0, againstHospitalization: 0, againstDeath: 0, breakthroughRate: 0 };
       }
 
-      // Calculate average rates for each period
       const preVaxCaseRate =
-        preVaccination.reduce((sum, d) => sum + toNumber(d.newCasesSmoothed), 0) /
-        preVaccination.length;
+        preVax.reduce((s, d) => s + toNumber(d.newCasesSmoothed), 0) / preVax.length;
       const postVaxCaseRate =
-        postVaccination.reduce((sum, d) => sum + toNumber(d.newCasesSmoothed), 0) /
-        postVaccination.length;
-
+        postVax.reduce((s, d) => s + toNumber(d.newCasesSmoothed), 0) / postVax.length;
       const preVaxDeathRate =
-        preVaccination.reduce((sum, d) => sum + toNumber(d.newDeathsSmoothed), 0) /
-        preVaccination.length;
+        preVax.reduce((s, d) => s + toNumber(d.newDeathsSmoothed), 0) / preVax.length;
       const postVaxDeathRate =
-        postVaccination.reduce((sum, d) => sum + toNumber(d.newDeathsSmoothed), 0) /
-        postVaccination.length;
-
-      const preVaxHospitalizationRate =
-        preVaccination.reduce((sum, d) => sum + toNumber(d.hospitalPatientsPerMillion), 0) /
-        preVaccination.length;
-      const postVaxHospitalizationRate =
-        postVaccination.reduce((sum, d) => sum + toNumber(d.hospitalPatientsPerMillion), 0) /
-        postVaccination.length;
-
-      // Calculate effectiveness percentages
-      const overallEffectiveness =
-        preVaxCaseRate > 0
-          ? Math.max(0, Math.min(100, ((preVaxCaseRate - postVaxCaseRate) / preVaxCaseRate) * 100))
-          : 0;
-
-      const hospitalizationEffectiveness =
-        preVaxHospitalizationRate > 0
-          ? Math.max(
-              0,
-              Math.min(
-                100,
-                ((preVaxHospitalizationRate - postVaxHospitalizationRate) /
-                  preVaxHospitalizationRate) *
-                  100,
-              ),
-            )
-          : 0;
-
-      const deathEffectiveness =
-        preVaxDeathRate > 0
-          ? Math.max(
-              0,
-              Math.min(100, ((preVaxDeathRate - postVaxDeathRate) / preVaxDeathRate) * 100),
-            )
-          : 0;
-
-      // Estimate breakthrough rate (simplified calculation)
-      const breakthroughRate = postVaxCaseRate > 0 ? Math.min(50, postVaxCaseRate / 10) : 0;
+        postVax.reduce((s, d) => s + toNumber(d.newDeathsSmoothed), 0) / postVax.length;
+      const preVaxHospRate =
+        preVax.reduce((s, d) => s + toNumber(d.hospPatientsPerMillion), 0) / preVax.length;
+      const postVaxHospRate =
+        postVax.reduce((s, d) => s + toNumber(d.hospPatientsPerMillion), 0) / postVax.length;
 
       return {
-        overall: Math.round(overallEffectiveness * 100) / 100,
-        againstHospitalization: Math.round(hospitalizationEffectiveness * 100) / 100,
-        againstDeath: Math.round(deathEffectiveness * 100) / 100,
-        breakthroughRate: Math.round(breakthroughRate * 100) / 100,
+        overall:
+          preVaxCaseRate > 0
+            ? Math.round(
+                Math.max(
+                  0,
+                  Math.min(100, ((preVaxCaseRate - postVaxCaseRate) / preVaxCaseRate) * 100),
+                ) * 100,
+              ) / 100
+            : 0,
+        againstHospitalization:
+          preVaxHospRate > 0
+            ? Math.round(
+                Math.max(
+                  0,
+                  Math.min(100, ((preVaxHospRate - postVaxHospRate) / preVaxHospRate) * 100),
+                ) * 100,
+              ) / 100
+            : 0,
+        againstDeath:
+          preVaxDeathRate > 0
+            ? Math.round(
+                Math.max(
+                  0,
+                  Math.min(100, ((preVaxDeathRate - postVaxDeathRate) / preVaxDeathRate) * 100),
+                ) * 100,
+              ) / 100
+            : 0,
+        breakthroughRate:
+          postVaxCaseRate > 0 ? Math.round(Math.min(50, postVaxCaseRate / 10) * 100) / 100 : 0,
       };
     };
 
-    const effectiveness = calculateEffectiveness(timelineData);
+    const effectiveness = calculateEffectiveness();
 
-    // Format timeline data
-    const timeline: VaccinationTimeline[] = timelineData.map((row) => ({
+    const timeline: VaccinationTimeline[] = data.map((row) => ({
       date: row.date || "",
-      fullyVaccinatedPerHundred: toNumber(row.fullyVaccinatedPerHundred),
+      fullyVaccinatedPerHundred: toNumber(row.peopleFullyVaccinatedPerHundred),
       newCasesSmoothed: toNumber(row.newCasesSmoothed),
       newDeathsSmoothed: toNumber(row.newDeathsSmoothed),
-      hospitalPatientsPerMillion: toNumber(row.hospitalPatientsPerMillion),
+      hospitalPatientsPerMillion: toNumber(row.hospPatientsPerMillion),
     }));
 
-    // Calculate vaccination milestones
-    const milestones = [
-      { threshold: 10, label: "10% Fully Vaccinated" },
-      { threshold: 25, label: "25% Fully Vaccinated" },
-      { threshold: 50, label: "50% Fully Vaccinated" },
-      { threshold: 70, label: "70% Fully Vaccinated" },
-      { threshold: 80, label: "80% Fully Vaccinated" },
-    ].map((milestone) => {
-      const reachedDate = timelineData.find(
-        (d) => toNumber(d.fullyVaccinatedPerHundred) >= milestone.threshold,
-      );
+    const milestones = [10, 25, 50, 70, 80].map((threshold) => {
+      const reached = data.find((d) => toNumber(d.peopleFullyVaccinatedPerHundred) >= threshold);
       return {
-        ...milestone,
-        dateReached: reachedDate?.date || null,
+        threshold,
+        label: `${threshold}% Fully Vaccinated`,
+        dateReached: reached?.date || null,
       };
     });
 
-    // Get latest vaccination stats
-    const latest = timelineData[timelineData.length - 1];
+    const latest = data[data.length - 1];
     const vaccinationStats = {
-      fullyVaccinatedPerHundred: toNumber(latest?.fullyVaccinatedPerHundred),
+      fullyVaccinatedPerHundred: toNumber(latest?.peopleFullyVaccinatedPerHundred),
       totalVaccinations: toNumber(latest?.totalVaccinations),
       dailyVaccinations: toNumber(latest?.newVaccinations),
     };
@@ -192,7 +144,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       timeline,
       milestones,
       vaccinationStats,
-      totalDataPoints: timelineData.length,
+      totalDataPoints: data.length,
     });
   } catch (error) {
     console.error("Error in vaccination effectiveness analysis:", error);

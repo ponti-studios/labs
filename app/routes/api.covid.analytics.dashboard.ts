@@ -1,4 +1,4 @@
-import { and, covidData, db, desc, eq, isNotNull } from "~/lib/server/db";
+import { fetchCovidData } from "~/lib/public-data";
 import type { LoaderFunctionArgs } from "react-router";
 
 interface Summary {
@@ -28,9 +28,7 @@ interface TrendData {
 }
 
 function toNumber(value: unknown): number {
-  if (typeof value === "number") {
-    return Number.isFinite(value) ? value : 0;
-  }
+  if (typeof value === "number" && Number.isFinite(value)) return value;
   if (typeof value === "string" && value.trim() !== "") {
     const parsed = Number(value);
     return Number.isFinite(parsed) ? parsed : 0;
@@ -41,30 +39,19 @@ function toNumber(value: unknown): number {
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
     const url = new URL(request.url);
-    const searchParams = url.searchParams;
-    const country = searchParams.get("country") || "OWID_WRL";
+    const country = url.searchParams.get("country") || "OWID_WRL";
 
-    // Get latest summary data
-    const latestData = await db
-      .select()
-      .from(covidData)
-      .where(and(eq(covidData.isoCode, country), isNotNull(covidData.totalCases)))
-      .orderBy(desc(covidData.date))
-      .limit(1);
+    const allRows = await fetchCovidData(country);
+    const sorted = allRows
+      .filter((r) => r.totalCases !== null)
+      .sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""));
 
-    if (latestData.length === 0) {
-      return Response.json(
-        {
-          error: "No data found for country",
-          country,
-        },
-        { status: 404 },
-      );
+    if (sorted.length === 0) {
+      return Response.json({ error: "No data found for country", country }, { status: 404 });
     }
 
-    const latest = latestData[0];
+    const latest = sorted[0];
 
-    // Calculate summary metrics
     const summary: Summary = {
       totalCases: latest.totalCases || 0,
       totalDeaths: latest.totalDeaths || 0,
@@ -80,7 +67,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
           : 0,
     };
 
-    // Get current metrics (daily values)
     const metrics: Metrics = {
       newCasesDaily: toNumber(latest.newCases),
       newDeathsDaily: toNumber(latest.newDeaths),
@@ -90,39 +76,25 @@ export async function loader({ request }: LoaderFunctionArgs) {
       hospitalOccupancy: toNumber(latest.icuPatientsPerMillion),
     };
 
-    // Get 30-day trend data
-    const trendData = await db
-      .select({
-        date: covidData.date,
-        newCases: covidData.newCases,
-        newDeaths: covidData.newDeaths,
-        newVaccinations: covidData.newVaccinations,
-        testPositivityRate: covidData.positiveRate,
-      })
-      .from(covidData)
-      .where(eq(covidData.isoCode, country))
-      .orderBy(desc(covidData.date))
-      .limit(30);
-
-    const trends: TrendData[] = trendData.reverse().map((row) => ({
+    const last30 = sorted.slice(0, 30).reverse();
+    const trends: TrendData[] = last30.map((row) => ({
       date: row.date || "",
       newCases: toNumber(row.newCases),
       newDeaths: toNumber(row.newDeaths),
       newVaccinations: toNumber(row.newVaccinations),
-      testPositivityRate: toNumber(row.testPositivityRate),
+      testPositivityRate: toNumber(row.positiveRate),
     }));
 
-    // Calculate trend analysis
-    const calculateTrend = (data: number[]) => {
+    const calcTrend = (data: number[]) => {
       if (data.length < 7) return 0;
       const recent = data.slice(-7).reduce((a, b) => a + b, 0) / 7;
       const previous = data.slice(-14, -7).reduce((a, b) => a + b, 0) / 7;
       return previous > 0 ? ((recent - previous) / previous) * 100 : 0;
     };
 
-    const caseTrend = calculateTrend(trends.map((t) => t.newCases));
-    const deathTrend = calculateTrend(trends.map((t) => t.newDeaths));
-    const vaccinationTrend = calculateTrend(trends.map((t) => t.newVaccinations));
+    const caseTrend = calcTrend(trends.map((t) => t.newCases));
+    const deathTrend = calcTrend(trends.map((t) => t.newDeaths));
+    const vaccinationTrend = calcTrend(trends.map((t) => t.newVaccinations));
 
     return Response.json({
       country,
@@ -147,7 +119,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       },
     });
   } catch (error) {
-    console.error("Error in  analytics:", error);
-    return Response.json({ error: "Failed to load  analytics" }, { status: 500 });
+    console.error("Error in analytics:", error);
+    return Response.json({ error: "Failed to load analytics" }, { status: 500 });
   }
 }

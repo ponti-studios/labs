@@ -1,9 +1,7 @@
-// React Router compatible version of covid actions
-
-import { and, covidData, db, eq, isNotNull, sql, type CovidData } from "~/lib/server/db";
+import { fetchCovidData, fetchCountries, type CovidRow } from "~/lib/public-data";
 
 interface ApiResponse {
-  data: CovidData[];
+  data: CovidRow[];
   pagination: {
     page: number;
     limit: number;
@@ -12,31 +10,17 @@ interface ApiResponse {
     hasNext: boolean;
     hasPrev: boolean;
   };
-  filters: {
-    country: string | null;
-    startDate: string | null;
-    endDate: string | null;
-  };
+  filters: { country: string | null; startDate: string | null; endDate: string | null };
 }
 
-// Fetch COVID stats - adapted for React Router
 export async function getCovidStats(countryCode: string): Promise<ApiResponse> {
   try {
-    const conditions = [];
-
-    if (countryCode && countryCode !== "OWID_WRL") {
-      conditions.push(eq(covidData.isoCode, countryCode));
-    } else {
-      conditions.push(eq(covidData.isoCode, "OWID_WRL"));
-    }
-
-    // Get latest data for stats
-    const records = await db
-      .select()
-      .from(covidData)
-      .where(and(...conditions))
-      .orderBy(sql`${covidData.date} DESC`)
-      .limit(1);
+    const isoCode = countryCode && countryCode !== "OWID_WRL" ? countryCode : "OWID_WRL";
+    const allRows = await fetchCovidData(isoCode);
+    const sorted = allRows
+      .filter((r) => r.totalCases !== null)
+      .sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""));
+    const records = sorted.slice(0, 1);
 
     return {
       data: records,
@@ -48,11 +32,7 @@ export async function getCovidStats(countryCode: string): Promise<ApiResponse> {
         hasNext: false,
         hasPrev: false,
       },
-      filters: {
-        country: countryCode,
-        startDate: null,
-        endDate: null,
-      },
+      filters: { country: countryCode, startDate: null, endDate: null },
     };
   } catch (error) {
     console.error("Error fetching COVID stats:", error);
@@ -60,27 +40,15 @@ export async function getCovidStats(countryCode: string): Promise<ApiResponse> {
   }
 }
 
-// Fetch COVID time series data
 export async function getCovidTimeSeries(countryCode: string, limit = 1000): Promise<ApiResponse> {
   try {
-    const conditions = [];
-
-    if (countryCode && countryCode !== "OWID_WRL") {
-      conditions.push(eq(covidData.isoCode, countryCode));
-    } else {
-      conditions.push(eq(covidData.isoCode, "OWID_WRL"));
-    }
-
-    // Fetch recent data only to reduce size
-    const records = await db
-      .select()
-      .from(covidData)
-      .where(and(...conditions))
-      .orderBy(sql`${covidData.date} DESC`)
-      .limit(limit);
+    const isoCode = countryCode && countryCode !== "OWID_WRL" ? countryCode : "OWID_WRL";
+    const allRows = await fetchCovidData(isoCode);
+    const sorted = allRows.sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""));
+    const records = sorted.slice(0, limit).reverse();
 
     return {
-      data: records.reverse(), // Return in chronological order
+      data: records,
       pagination: {
         page: 1,
         limit,
@@ -89,11 +57,7 @@ export async function getCovidTimeSeries(countryCode: string, limit = 1000): Pro
         hasNext: false,
         hasPrev: false,
       },
-      filters: {
-        country: countryCode,
-        startDate: null,
-        endDate: null,
-      },
+      filters: { country: countryCode, startDate: null, endDate: null },
     };
   } catch (error) {
     console.error("Error fetching COVID time series:", error);
@@ -101,33 +65,24 @@ export async function getCovidTimeSeries(countryCode: string, limit = 1000): Pro
   }
 }
 
-// Get available countries
 export async function getAvailableCountries(): Promise<string[]> {
   try {
-    const countries = await db
-      .selectDistinct({ isoCode: covidData.isoCode })
-      .from(covidData)
-      .where(isNotNull(covidData.isoCode));
-
-    return countries.map((c) => c.isoCode).filter(Boolean) as string[];
+    const countries = await fetchCountries();
+    return countries.map((c) => c.iso_code).filter((c) => !c.startsWith("OWID_"));
   } catch (error) {
     console.error("Error fetching available countries:", error);
     return [];
   }
 }
 
-// Get global aggregated data
 export async function getGlobalCovidData(): Promise<ApiResponse> {
   try {
-    const records = await db
-      .select()
-      .from(covidData)
-      .where(eq(covidData.isoCode, "OWID_WRL"))
-      .orderBy(sql`${covidData.date} DESC`)
-      .limit(365); // Last year of data
+    const allRows = await fetchCovidData("OWID_WRL");
+    const sorted = allRows.sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""));
+    const records = sorted.slice(0, 365).reverse();
 
     return {
-      data: records.reverse(), // Return in chronological order
+      data: records,
       pagination: {
         page: 1,
         limit: 365,
@@ -136,11 +91,7 @@ export async function getGlobalCovidData(): Promise<ApiResponse> {
         hasNext: false,
         hasPrev: false,
       },
-      filters: {
-        country: "OWID_WRL",
-        startDate: null,
-        endDate: null,
-      },
+      filters: { country: "OWID_WRL", startDate: null, endDate: null },
     };
   } catch (error) {
     console.error("Error fetching global COVID data:", error);

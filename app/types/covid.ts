@@ -1,5 +1,5 @@
-import type { CovidData } from "~/lib/server/db";
+import type { CovidRow } from "~/lib/public-data";
 
-export type CovidDataRecord = CovidData & {
+export type CovidDataRecord = CovidRow & {
   vaccinationDataDate?: string | null;
 };
