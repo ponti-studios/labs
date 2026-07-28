@@ -110,7 +110,9 @@ export default function OutlierDetectionPage() {
         <label className="ui-data-label">Metric</label>
         <Select value={selectedMetric} onValueChange={setSelectedMetric}>
           <SelectTrigger className="border-border bg-card text-foreground h-7 w-52 rounded text-xs">
-            <SelectValue />
+            <SelectValue>
+              {(v: string | null) => metrics.find((m) => m.value === v)?.label ?? v ?? ""}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {metrics.map((metric) => (

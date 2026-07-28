@@ -7,6 +7,13 @@ import { useLoaderData } from "react-router";
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Select } from "@ponti-studios/ui/forms";
 
+const metricLabels: Record<string, string> = {
+  new_cases_smoothed: "New Cases (Smoothed)",
+  new_deaths_smoothed: "New Deaths (Smoothed)",
+  new_cases: "New Cases (Raw)",
+  new_deaths: "New Deaths (Raw)",
+};
+
 interface WaveData {
   wave: number;
   start_date: string;
@@ -73,7 +80,9 @@ export default function PandemicWavesPage() {
         <label className="ui-data-label">Metric</label>
         <Select value={metric} onValueChange={setMetric}>
           <SelectTrigger className="border-border bg-card text-foreground h-7 w-52 rounded text-xs">
-            <SelectValue />
+            <SelectValue>
+              {(v: string | null) => metricLabels[v ?? ""] ?? v ?? ""}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="new_cases_smoothed">New Cases (Smoothed)</SelectItem>
