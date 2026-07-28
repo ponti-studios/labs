@@ -46,9 +46,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
       });
     }
 
+    const vaxData = data.filter((d) => d.people_fully_vaccinated_per_hundred !== null);
+
     const calculateEffectiveness = (): VaccinationEffectiveness => {
-      const preVax = data.filter((d) => toNumber(d.people_fully_vaccinated_per_hundred) < 10);
-      const postVax = data.filter((d) => toNumber(d.people_fully_vaccinated_per_hundred) >= 50);
+      const preVax = vaxData.filter((d) => toNumber(d.people_fully_vaccinated_per_hundred) < 10);
+      const postVax = vaxData.filter((d) => toNumber(d.people_fully_vaccinated_per_hundred) >= 50);
 
       if (preVax.length === 0 || postVax.length === 0) {
         return { overall: 0, againstHospitalization: 0, againstDeath: 0, breakthroughRate: 0 };
@@ -111,7 +113,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     }));
 
     const milestones = [10, 25, 50, 70, 80].map((threshold) => {
-      const reached = data.find((d) => toNumber(d.people_fully_vaccinated_per_hundred) >= threshold);
+      const reached = vaxData.find((d) => toNumber(d.people_fully_vaccinated_per_hundred) >= threshold);
       return {
         threshold,
         label: `${threshold}% Fully Vaccinated`,
@@ -119,11 +121,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
       };
     });
 
-    const latest = data[data.length - 1];
+    const latestVax = vaxData[vaxData.length - 1];
     const vaccinationStats = {
-      people_fully_vaccinated_per_hundred: toNumber(latest?.people_fully_vaccinated_per_hundred),
-      total_vaccinations: toNumber(latest?.total_vaccinations),
-      new_vaccinations: toNumber(latest?.new_vaccinations),
+      people_fully_vaccinated_per_hundred: toNumber(latestVax?.people_fully_vaccinated_per_hundred),
+      total_vaccinations: toNumber(latestVax?.total_vaccinations),
+      new_vaccinations: toNumber(latestVax?.new_vaccinations),
     };
 
     return Response.json({
