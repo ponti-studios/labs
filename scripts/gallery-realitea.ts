@@ -13,8 +13,8 @@ import { getGameBySlug, loadMostRecentPuzzle, loadPuzzleForDate } from "../app/l
 /**
  * Captures gallery-ready assets for the RealiTea game:
  *
- *   pnpm --filter @pontistudios/labyrinth gallery:realitea:screenshot
- *   pnpm --filter @pontistudios/labyrinth gallery:realitea:solve
+ *   pnpm gallery:realitea:screenshot
+ *   pnpm gallery:realitea:solve
  *
  * Both look up the real answer being served today (same fallback the app
  * itself uses — today's puzzle, or the most recent one if today's hasn't been

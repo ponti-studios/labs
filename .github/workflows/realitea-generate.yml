@@ -2,7 +2,6 @@ name: realitea - generate
 
 on:
   schedule:
-    # Daily at 5:00 PM UTC = 9:00 AM Pacific (DST-safe)
     - cron: "0 17 * * *"
   workflow_dispatch:
     inputs:
@@ -36,18 +35,18 @@ jobs:
           cache: "pnpm"
 
       - name: install-dependencies
-        run: pnpm install --frozen-lockfile --filter @pontistudios/labyrinth...
+        run: pnpm install --frozen-lockfile
 
       - name: run-db-migrations
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: pnpm --filter @pontistudios/labyrinth db:migrate
+        run: pnpm db:migrate
 
       - name: ingest-feeds
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-        run: pnpm --filter @pontistudios/labyrinth exec tsx scripts/realitea-ingest.ts
+        run: tsx scripts/realitea-ingest.ts
 
       - name: generate
         env:
@@ -55,13 +54,13 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            pnpm --filter @pontistudios/labyrinth realitea:generate --force --days-ahead=${{ github.event.inputs.daysAhead }}
+            pnpm realitea:generate --force --days-ahead=${{ github.event.inputs.daysAhead }}
           else
-            pnpm --filter @pontistudios/labyrinth realitea:generate
+            pnpm realitea:generate
           fi
 
       - name: health-check
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-        run: pnpm --filter @pontistudios/labyrinth exec tsx scripts/realitea-health-check.ts
+        run: tsx scripts/realitea-health-check.ts

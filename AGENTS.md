@@ -1,6 +1,6 @@
-# Agent Rules — Ponti Studios Labs
+# Agent Rules — Labyrinth
 
-This file defines hard constraints for AI agents working in this monorepo.
+This file defines hard constraints for AI agents working in this repository.
 Violating these rules will produce incorrect or unsafe work.
 
 ## Database Migrations (Drizzle Only)
@@ -21,9 +21,9 @@ schema file → drizzle-kit generate → migration SQL → drizzle-kit migrate �
 
 **Required workflow for any schema change:**
 
-1. Edit a schema file in `packages/db/src/schema/` (e.g. `puzzles.ts`, `base.ts`)
-2. Run `pnpm --filter @pontistudios/db db:generate` to create the migration SQL and snapshot
-3. Run `pnpm --filter @pontistudios/db db:migrate` to apply locally and verify
+1. Edit a schema file in `app/lib/server/db/schema/` (e.g. `base.ts`, `realitea.ts`)
+2. Run `pnpm db:generate` to create the migration SQL and snapshot
+3. Run `pnpm db:migrate` to apply locally and verify
 4. Commit the schema change, generated migration file, and snapshot together
 
 **Idempotent migrations (`IF NOT EXISTS` / `IF EXISTS`) are never the right answer.**
@@ -31,13 +31,12 @@ If a column or table is missing, the appropriate migration was never applied —
 
 ### Reference
 
-| Command                                      | Purpose                                         |
-| -------------------------------------------- | ----------------------------------------------- |
-| `pnpm --filter @pontistudios/db db:generate` | Generate a migration from schema changes        |
-| `pnpm --filter @pontistudios/db db:migrate`  | Apply pending migrations to the target DB       |
-| `pnpm --filter @pontistudios/db db:check`    | Check for schema drift                          |
-| `packages/db/drizzle.config.ts`              | Drizzle configuration (schema glob, output dir) |
-| `packages/db/src/schema/`                    | All table schema files live here                |
+| Command              | Purpose                                     |
+| -------------------- | ------------------------------------------- |
+| `pnpm db:generate`   | Generate a migration from schema changes    |
+| `pnpm db:migrate`    | Apply pending migrations to the target DB   |
+| `drizzle.config.ts`  | Drizzle configuration (schema glob, output) |
+| `app/lib/server/db/schema/` | All table schema files live here     |
 
 ### What to do when a migration was skipped in production
 
@@ -51,7 +50,7 @@ The purpose of this rule is to keep `_journal.json`, the snapshot files, and the
 
 ## Script Environment Validation
 
-All scripts (`scripts/*.ts`) must validate their environment using `LabyrinthServerEnv.parse(process.env)` from `apps/labyrinth/app/lib/server/env.ts`.
+All scripts (`scripts/*.ts`) must validate their environment using `LabyrinthServerEnv.parse(process.env)` from `app/lib/server/env.ts`.
 
 - ❌ Do not define ad-hoc `requireEnvironment()` functions
 - ❌ Do not inline `if (!process.env.X)` checks
@@ -66,20 +65,9 @@ This ensures every script validates the same set of required variables and produ
 - Do not create separate "regenerate" scripts — the `--force` flag handles that
 - Both the daily cron and manual force-regenerate runs share one workflow: `.github/workflows/realitea-generate.yml` (schedule trigger runs gap-fill mode; `workflow_dispatch` trigger runs `--force --days-ahead=<input>`)
 
-## packages/ui Releases (release-please, not manual tags)
-
-- `@ponti-studios/ui` versioning and publishing to npm are fully owned by release-please. See `packages/ui/README.md`'s "Release" section for the full flow.
-- Never hand-edit the `version` field in `packages/ui/package.json`. It is written by release-please's standing `chore(main): release ui X.Y.Z` PR, computed from Conventional Commit types (`fix:` → patch, `feat:` → minor, `feat!:`/`BREAKING CHANGE:` → major) since the last release. A manual edit gets silently overwritten by the next push to `main`.
-- Never manually create or push a `ui-v<version>` tag. The tag is created only by merging the release-please PR, which is what triggers the `publish-ui` job in `.github/workflows/publish-ui.yml`.
-- DO NOT edit files in:
- - `packages/ui/src/styles/tokens/generated/`
- - `packages/ui/.storybook/generated/`.
- - `pnpm --filter @ponti-studios/ui run tokens:build`; `tokens:check` diffs against generated files and fails `prepack` and publishing otherwise. If a formatter or editor touches these paths, revert and regenerate instead — see `.oxfmtrc.json`'s `ignorePatterns` for the paths already excluded from repo-wide formatting for this reason.
-- To ship a change, land properly typed Conventional Commits under `packages/ui/`, then find or wait for the release PR and merge it. That merge is the entire release action — there is nothing else to run or push by hand.
-
 ## Storybook Development Only
 
 - Storybook is development-only in this repository.
 - Never run `storybook build`, `build-storybook`, or any equivalent production Storybook export.
-- Use the package's `storybook` script (`storybook dev -p 6006`) for local validation.
+- Use the `storybook` script (`storybook dev -p 6007`) for local validation.
 - Do not add CI, package scripts, or deployment steps that build Storybook statically.
