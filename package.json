@@ -6,7 +6,6 @@
     "check": "pnpm lint && pnpm typecheck && pnpm test",
     "clean": "bash scripts/clean.sh",
     "dev": "turbo run dev",
-    "dev:commune": "turbo run dev --filter=@pontistudios/commune",
     "dev:labyrinth": "turbo run dev --filter=@pontistudios/labyrinth",
     "dev:ui": "turbo run storybook --filter=@ponti-studios/ui",
     "lint": "turbo run lint",

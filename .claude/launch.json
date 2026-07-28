@@ -8,12 +8,6 @@
       "port": 3001
     },
     {
-      "name": "commune",
-      "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@pontistudios/commune", "dev"],
-      "port": 3005
-    },
-    {
       "name": "storybook",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@ponti-studios/ui", "storybook"],
