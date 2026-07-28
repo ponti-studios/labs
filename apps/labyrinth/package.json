@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "react-router build",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
     "dev": "react-router dev",
     "lint": "oxlint app --fix",
     "format": "oxfmt app --write",
