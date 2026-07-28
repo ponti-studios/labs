@@ -24,7 +24,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1091.0",
     "@openrouter/sdk": "^0.12.35",
-    "@ponti-studios/ui": "workspace:*",
+    "@ponti-studios/ui": "0.4.2",
     "@react-router/node": "catalog:",
     "@react-router/serve": "catalog:",
     "@tanstack/ai": "^0.22.1",
