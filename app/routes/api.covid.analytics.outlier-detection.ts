@@ -35,8 +35,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
       .map((row) => ({
         date: row.date || "",
         value: (row as unknown as Record<string, number | null>)[metric] ?? 0,
-        totalCases: row.totalCases || 0,
-        totalDeaths: row.totalDeaths || 0,
+        totalCases: row.total_cases|| 0,
+        totalDeaths: row.total_deaths|| 0,
       }))
       .filter((item) => item.value > 0);
 

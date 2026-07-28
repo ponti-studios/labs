@@ -13,7 +13,7 @@ interface WaveData {
   endDate: string;
   peakDate: string;
   peakValue: number;
-  totalCases: number;
+  total_cases: number;
   duration: number;
   avgDailyGrowth: number;
 }
@@ -54,7 +54,7 @@ const tickStyle = { fill: "var(--color-muted-foreground)", fontSize: 11 };
 
 export default function PandemicWavesPage() {
   const { countryCode } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
-  const [metric, setMetric] = useState<string>("newCasesSmoothed");
+  const [metric, setMetric] = useState<string>("new_cases_smoothed");
 
   const { data, isLoading, isError } = useQuery<WaveAnalysisResponse>({
     queryKey: ["pandemic-waves", countryCode, metric],
@@ -76,10 +76,10 @@ export default function PandemicWavesPage() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="newCasesSmoothed">New Cases (Smoothed)</SelectItem>
-            <SelectItem value="newDeathsSmoothed">New Deaths (Smoothed)</SelectItem>
-            <SelectItem value="newCases">New Cases (Raw)</SelectItem>
-            <SelectItem value="newDeaths">New Deaths (Raw)</SelectItem>
+            <SelectItem value="new_cases_smoothed">New Cases (Smoothed)</SelectItem>
+            <SelectItem value="new_deaths_smoothed">New Deaths (Smoothed)</SelectItem>
+            <SelectItem value="new_cases">New Cases (Raw)</SelectItem>
+            <SelectItem value="new_deaths">New Deaths (Raw)</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -134,7 +134,7 @@ export default function PandemicWavesPage() {
                   <div>
                     <p className="text-muted-foreground text-xs">Total Cases</p>
                     <p className="text-foreground text-xs tabular-nums">
-                      {wave.totalCases.toLocaleString()}
+                      {wave.total_cases.toLocaleString()}
                     </p>
                   </div>
                   <div>

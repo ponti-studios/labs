@@ -49,9 +49,9 @@ export function VaccinationProgress({
     .sort((a, b) => new Date(a.date as string).getTime() - new Date(b.date as string).getTime())
     .map((item) => ({
       date: item.date as string,
-      partial: toNumber(item.peopleVaccinatedPerHundred),
-      full: toNumber(item.peopleFullyVaccinatedPerHundred),
-      boosters: toNumber(item.totalBoostersPerHundred),
+      partial: toNumber(item.people_vaccinated_per_hundred),
+      full: toNumber(item.people_fully_vaccinated_per_hundred),
+      boosters: toNumber(item.total_boosters_per_hundred),
     }));
 
   if (combinedData.length < 3) return null;

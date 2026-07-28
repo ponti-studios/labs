@@ -59,25 +59,25 @@ export async function loader({ request }: LoaderFunctionArgs) {
     }
 
     const calculateEffectiveness = (): VaccinationEffectiveness => {
-      const preVax = data.filter((d) => toNumber(d.peopleFullyVaccinatedPerHundred) < 10);
-      const postVax = data.filter((d) => toNumber(d.peopleFullyVaccinatedPerHundred) >= 50);
+      const preVax = data.filter((d) => toNumber(d.people_fully_vaccinated_per_hundred) < 10);
+      const postVax = data.filter((d) => toNumber(d.people_fully_vaccinated_per_hundred) >= 50);
 
       if (preVax.length === 0 || postVax.length === 0) {
         return { overall: 0, againstHospitalization: 0, againstDeath: 0, breakthroughRate: 0 };
       }
 
       const preVaxCaseRate =
-        preVax.reduce((s, d) => s + toNumber(d.newCasesSmoothed), 0) / preVax.length;
+        preVax.reduce((s, d) => s + toNumber(d.new_cases_smoothed), 0) / preVax.length;
       const postVaxCaseRate =
-        postVax.reduce((s, d) => s + toNumber(d.newCasesSmoothed), 0) / postVax.length;
+        postVax.reduce((s, d) => s + toNumber(d.new_cases_smoothed), 0) / postVax.length;
       const preVaxDeathRate =
-        preVax.reduce((s, d) => s + toNumber(d.newDeathsSmoothed), 0) / preVax.length;
+        preVax.reduce((s, d) => s + toNumber(d.new_deaths_smoothed), 0) / preVax.length;
       const postVaxDeathRate =
-        postVax.reduce((s, d) => s + toNumber(d.newDeathsSmoothed), 0) / postVax.length;
+        postVax.reduce((s, d) => s + toNumber(d.new_deaths_smoothed), 0) / postVax.length;
       const preVaxHospRate =
-        preVax.reduce((s, d) => s + toNumber(d.hospPatientsPerMillion), 0) / preVax.length;
+        preVax.reduce((s, d) => s + toNumber(d.hosp_patients_per_million), 0) / preVax.length;
       const postVaxHospRate =
-        postVax.reduce((s, d) => s + toNumber(d.hospPatientsPerMillion), 0) / postVax.length;
+        postVax.reduce((s, d) => s + toNumber(d.hosp_patients_per_million), 0) / postVax.length;
 
       return {
         overall:
@@ -116,14 +116,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
     const timeline: VaccinationTimeline[] = data.map((row) => ({
       date: row.date || "",
-      fullyVaccinatedPerHundred: toNumber(row.peopleFullyVaccinatedPerHundred),
-      newCasesSmoothed: toNumber(row.newCasesSmoothed),
-      newDeathsSmoothed: toNumber(row.newDeathsSmoothed),
-      hospitalPatientsPerMillion: toNumber(row.hospPatientsPerMillion),
+      fullyVaccinatedPerHundred: toNumber(row.people_fully_vaccinated_per_hundred),
+      newCasesSmoothed: toNumber(row.new_cases_smoothed),
+      newDeathsSmoothed: toNumber(row.new_deaths_smoothed),
+      hospitalPatientsPerMillion: toNumber(row.hosp_patients_per_million),
     }));
 
     const milestones = [10, 25, 50, 70, 80].map((threshold) => {
-      const reached = data.find((d) => toNumber(d.peopleFullyVaccinatedPerHundred) >= threshold);
+      const reached = data.find((d) => toNumber(d.people_fully_vaccinated_per_hundred) >= threshold);
       return {
         threshold,
         label: `${threshold}% Fully Vaccinated`,
@@ -133,9 +133,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
     const latest = data[data.length - 1];
     const vaccinationStats = {
-      fullyVaccinatedPerHundred: toNumber(latest?.peopleFullyVaccinatedPerHundred),
-      totalVaccinations: toNumber(latest?.totalVaccinations),
-      dailyVaccinations: toNumber(latest?.newVaccinations),
+      fullyVaccinatedPerHundred: toNumber(latest?.people_fully_vaccinated_per_hundred),
+      totalVaccinations: toNumber(latest?.total_vaccinations),
+      dailyVaccinations: toNumber(latest?.new_vaccinations),
     };
 
     return Response.json({
