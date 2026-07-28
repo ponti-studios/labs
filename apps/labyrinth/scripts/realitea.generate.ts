@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { parseArgs } from "node:util";
 
-import { closeDb } from "@pontistudios/db";
+import { closeDb } from "~/lib/server/db";
 
 import { addDaysToDateKey, buildDateRange, getDateKey } from "../app/lib/realitea/date";
 import { getErrorMessage } from "../app/lib/errors";

@@ -1,4 +1,4 @@
-import { articles, dailyPuzzles, db, feeds, games } from "@pontistudios/db";
+import { articles, dailyPuzzles, db, feeds, games } from "~/lib/server/db";
 import { beforeEach, describe, expect, it } from "vitest";
 import { cleanAll } from "../../../data/test-db";
 

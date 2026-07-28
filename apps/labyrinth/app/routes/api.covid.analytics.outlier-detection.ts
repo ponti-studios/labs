@@ -1,6 +1,6 @@
-import { eq } from "@pontistudios/db";
+import { eq } from "~/lib/server/db";
 import type { LoaderFunctionArgs } from "react-router";
-import { covidData, db } from "@pontistudios/db";
+import { covidData, db } from "~/lib/server/db";
 
 interface Outlier {
   date: string;

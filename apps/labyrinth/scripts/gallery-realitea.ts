@@ -4,7 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 
-import { closeDb } from "@pontistudios/db";
+import { closeDb } from "~/lib/server/db";
 import { chromium, type Page } from "playwright";
 
 import { getDateKey } from "../app/lib/realitea/date";

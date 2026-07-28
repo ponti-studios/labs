@@ -1,6 +1,6 @@
 import "dotenv/config";
 
-import { closeDb } from "@pontistudios/db";
+import { closeDb } from "~/lib/server/db";
 
 import { getErrorMessage } from "../app/lib/errors";
 import { ingestAllActiveFeeds } from "../app/lib/realitea/ingest";

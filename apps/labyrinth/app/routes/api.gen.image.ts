@@ -1,4 +1,4 @@
-import { generateImageFromPrompt } from "@pontistudios/ai";
+import { generateImageFromPrompt } from "~/lib/server/ai";
 import type { ActionFunctionArgs } from "react-router";
 import { z } from "zod";
 

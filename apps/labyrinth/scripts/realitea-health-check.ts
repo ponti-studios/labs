@@ -1,6 +1,6 @@
 import "dotenv/config";
 
-import { closeDb } from "@pontistudios/db";
+import { closeDb } from "~/lib/server/db";
 
 import { getDateKey } from "../app/lib/realitea/date";
 import { getErrorMessage } from "../app/lib/errors";

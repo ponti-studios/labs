@@ -1,4 +1,4 @@
-import type { CovidData } from "@pontistudios/db";
+import type { CovidData } from "~/lib/server/db";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
 import { StatsOverview } from "~/components/covid/charts/stats-overview";

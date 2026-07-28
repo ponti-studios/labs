@@ -1,6 +1,6 @@
-import { and, eq, gte, sql } from "@pontistudios/db";
+import { and, eq, gte, sql } from "~/lib/server/db";
 import type { LoaderFunctionArgs } from "react-router";
-import { covidData, db } from "@pontistudios/db";
+import { covidData, db } from "~/lib/server/db";
 
 interface WaveData {
   wave: number;

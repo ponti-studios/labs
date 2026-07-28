@@ -8,8 +8,8 @@
  * re-polling a feed that returns the same items is a no-op.
  */
 
-import { db, eq, feeds } from "@pontistudios/db";
-import type { Feed } from "@pontistudios/db";
+import { db, eq, feeds } from "~/lib/server/db";
+import type { Feed } from "~/lib/server/db";
 import { XMLParser } from "fast-xml-parser";
 
 import { getErrorMessage } from "../errors";

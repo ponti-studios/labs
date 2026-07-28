@@ -16,7 +16,7 @@ import {
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { type ReactNode, useDeferredValue, useMemo, useState } from "react";
 
-import type { SearchDocumentKind } from "@pontistudios/db";
+import type { SearchDocumentKind } from "~/lib/server/db";
 
 import type { SearchResponse, SearchSortMode } from "~/lib/search-types";
 

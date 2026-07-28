@@ -3,7 +3,7 @@ import { parseArgs } from "node:util";
 
 import { XMLParser } from "fast-xml-parser";
 
-import { generateEmbedding } from "@pontistudios/ai";
+import { generateEmbedding } from "~/lib/server/ai";
 import {
   appendSearchCorpus,
   closeDb,
@@ -13,7 +13,7 @@ import {
   searchDocuments,
   type NewSearchDocument,
   populateSearchCorpus,
-} from "@pontistudios/db";
+} from "~/lib/server/db";
 
 import { getErrorMessage } from "../app/lib/errors";
 import { LabyrinthServerEnv } from "../app/lib/server/env";

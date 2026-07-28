@@ -1,10 +1,10 @@
-import { generateEmbedding } from "@pontistudios/ai";
+import { generateEmbedding } from "~/lib/server/ai";
 import {
   db,
   getTableColumns,
   searchDocuments as searchDocumentsTable,
   sql,
-} from "@pontistudios/db";
+} from "~/lib/server/db";
 import type { LoaderFunctionArgs } from "react-router";
 
 import { searchDocuments } from "~/lib/search.server";
