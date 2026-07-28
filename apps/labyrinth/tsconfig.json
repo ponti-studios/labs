@@ -1,5 +1,35 @@
 {
-  "extends": "@pontistudios/tsconfig/react.json",
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "composite": false,
+    "declaration": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "inlineSources": false,
+    "isolatedModules": true,
+    "ignoreDeprecations": "6.0",
+    "jsx": "react-jsx",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "preserveWatchOutput": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "target": "ES2022",
+    "allowJs": false,
+    "types": ["node", "vite/client", "google.maps"],
+    "rootDirs": [".", "./.react-router/types"],
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./app/*"]
+    },
+    "noEmit": true
+  },
   "include": ["**/*", "**/.server/**/*", "**/.client/**/*", ".react-router/types/**/*"],
   "exclude": [
     "app/routes/svelte/**/*",
@@ -8,17 +38,5 @@
     "app/lib/semantic-search.ts",
     "app/lib/server/**/*",
     "coverage/**/*"
-  ],
-  "compilerOptions": {
-    "types": ["node", "vite/client", "google.maps"],
-    "rootDirs": [".", "./.react-router/types"],
-    "baseUrl": ".",
-    "paths": {
-      "~/*": ["./app/*"],
-      "@pontistudios/ai": ["../../packages/ai/src/index.ts"],
-      "@pontistudios/db": ["../../packages/db/src/index.ts"]
-    },
-    "noEmit": true,
-    "ignoreDeprecations": "6.0"
-  }
+  ]
 }
