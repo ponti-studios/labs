@@ -1,4 +1,4 @@
-import { and, covidData, db, desc, eq, isNotNull } from "@pontistudios/db";
+import { and, covidData, db, desc, eq, isNotNull } from "~/lib/server/db";
 import type { LoaderFunctionArgs } from "react-router";
 
 interface Summary {

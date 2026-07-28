@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { chatCompletion } from "@pontistudios/ai";
+import { chatCompletion } from "~/lib/server/ai";
 import { buildFallbackDailyReading } from "~/lib/tarot-daily";
 import type { DailyTarotCard, DailyTarotReading, DailyTarotResult } from "~/lib/tarot-types";
 

@@ -1,6 +1,6 @@
 // React Router compatible version of covid actions
 
-import { and, covidData, db, eq, isNotNull, sql, type CovidData } from "@pontistudios/db";
+import { and, covidData, db, eq, isNotNull, sql, type CovidData } from "~/lib/server/db";
 
 interface ApiResponse {
   data: CovidData[];

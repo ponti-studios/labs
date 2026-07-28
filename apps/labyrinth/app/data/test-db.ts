@@ -1,4 +1,4 @@
-import { db } from "@pontistudios/db";
+import { db } from "~/lib/server/db";
 
 export async function cleanAll() {
   await db.execute("DELETE FROM labs.daily_puzzles");

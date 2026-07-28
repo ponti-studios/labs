@@ -1,4 +1,4 @@
-import { chatCompletion } from "@pontistudios/ai";
+import { chatCompletion } from "~/lib/server/ai";
 import type { ActionFunctionArgs } from "react-router";
 import { z } from "zod";
 

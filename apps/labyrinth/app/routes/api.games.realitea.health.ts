@@ -1,6 +1,6 @@
 import type { LoaderFunctionArgs } from "react-router";
 
-import { count, dailyPuzzles, db, desc, eq } from "@pontistudios/db";
+import { count, dailyPuzzles, db, desc, eq } from "~/lib/server/db";
 
 import { createLogger } from "~/lib/logger.server";
 import { requireAdminAuth } from "~/lib/server/admin-auth";

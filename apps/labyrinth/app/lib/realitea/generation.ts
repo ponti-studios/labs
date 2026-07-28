@@ -1,6 +1,6 @@
-import { chatCompletion } from "@pontistudios/ai";
-import { dailyPuzzles, db } from "@pontistudios/db";
-import type { Article, Game } from "@pontistudios/db";
+import { chatCompletion } from "~/lib/server/ai";
+import { dailyPuzzles, db } from "~/lib/server/db";
+import type { Article, Game } from "~/lib/server/db";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";

@@ -1,4 +1,4 @@
-import type { SearchDocument, SearchDocumentKind } from "@pontistudios/db";
+import type { SearchDocument, SearchDocumentKind } from "~/lib/server/db";
 
 import type {
   SearchFacetCount,

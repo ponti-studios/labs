@@ -3,7 +3,7 @@ import type {
   DailyPuzzle as DailyPuzzleRow,
   Game,
   PuzzleAnswerType,
-} from "@pontistudios/db";
+} from "~/lib/server/db";
 export type { Article, Game, PuzzleAnswerType };
 
 // ── Game engine types ─────────────────────────────────────────────────────

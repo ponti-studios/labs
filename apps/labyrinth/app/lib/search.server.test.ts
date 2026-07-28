@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import type { SearchDocument } from "@pontistudios/db";
+import type { SearchDocument } from "~/lib/server/db";
 
 import { searchDocuments } from "./search.server";
 

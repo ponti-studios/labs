@@ -1,4 +1,4 @@
-import { and, covidData, db, eq, gte, lte, sql, type CovidData } from "@pontistudios/db";
+import { and, covidData, db, eq, gte, lte, sql, type CovidData } from "~/lib/server/db";
 import type { LoaderFunctionArgs } from "react-router";
 
 export async function loader({ request }: LoaderFunctionArgs) {

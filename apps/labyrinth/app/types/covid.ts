@@ -1,4 +1,4 @@
-import type { CovidData } from "@pontistudios/db";
+import type { CovidData } from "~/lib/server/db";
 
 export type CovidDataRecord = CovidData & {
   vaccinationDataDate?: string | null;
