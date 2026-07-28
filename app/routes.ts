@@ -40,6 +40,7 @@ const apiRoutes = [
   route("/api/search", "routes/api.search.ts"),
   route("/api/tarot", "routes/api.tarot.ts"),
   route("/api/words/validate", "routes/api.words.validate.ts"),
+  route("/api/earth/cameras", "routes/api.earth.cameras.ts"),
 ] satisfies RouteConfig;
 
 // ────────────────────────────────────────────────────────────────────────────
