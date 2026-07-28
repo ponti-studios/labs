@@ -53,7 +53,6 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@pontistudios/tsconfig": "workspace:*",
     "@react-router/dev": "catalog:",
     "@storybook/addon-a11y": "10.5.3",
     "@storybook/addon-docs": "^10.5.3",
