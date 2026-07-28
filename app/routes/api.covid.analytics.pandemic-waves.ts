@@ -1,4 +1,4 @@
-import { fetchCovidData } from "~/lib/public-data";
+import { fetchCovidData, type CovidRow } from "~/lib/public-data";
 import type { LoaderFunctionArgs } from "react-router";
 
 interface WaveData {
@@ -16,7 +16,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   try {
     const url = new URL(request.url);
     const country = url.searchParams.get("country") || "OWID_WRL";
-    const metric = url.searchParams.get("metric") || "newCasesSmoothed";
+    const metric = url.searchParams.get("metric") || "new_cases_smoothed";
 
     const allRows = await fetchCovidData(country);
     const data = allRows
@@ -28,7 +28,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const validData = data
       .map((d) => ({
         date: d.date as string,
-        value: (d as unknown as Record<string, number | null>)[metric] ?? 0,
+        value: (d[metric as keyof CovidRow] ?? 0) as number,
         total_cases: d.total_cases || 0,
       }))
       .filter((d) => d.value > 0);
@@ -36,7 +36,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     if (validData.length < 7)
       return Response.json({ waves: [], error: "Insufficient data for wave analysis" });
 
-    const smoothedData = metric.includes("Smoothed") ? validData : applySmoothing(validData);
+    const smoothedData = metric.includes("smoothed") ? validData : applySmoothing(validData);
     const waves = detectWaves(smoothedData);
 
     return Response.json({ country, metric, waves, totalDataPoints: validData.length });

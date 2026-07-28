@@ -25,9 +25,10 @@ interface VaccinationResponse {
   effectiveness?: VaccinationEffectiveness;
   timeline?: Array<{
     date: string;
-    fully_vaccinated_per_hundred: number;
+    people_fully_vaccinated_per_hundred: number;
     new_cases_smoothed: number;
     new_deaths_smoothed: number;
+    hosp_patients_per_million: number;
   }>;
   milestones?: Array<{
     threshold: number;
@@ -35,9 +36,9 @@ interface VaccinationResponse {
     dateReached: string | null;
   }>;
   vaccinationStats?: {
-    fully_vaccinated_per_hundred: number;
+    people_fully_vaccinated_per_hundred: number;
     total_vaccinations: number;
-    daily_vaccinations: number;
+    new_vaccinations: number;
   };
 }
 
@@ -121,7 +122,7 @@ export default function VaccinationEffectivenessPage() {
                 {[
                   {
                     label: "Fully Vaccinated",
-                    value: `${data.vaccinationStats.fully_vaccinated_per_hundred?.toFixed(1) ?? "—"}%`,
+                    value: `${data.vaccinationStats.people_fully_vaccinated_per_hundred?.toFixed(1) ?? "—"}%`,
                   },
                   {
                     label: "Total Vaccinations",
@@ -129,7 +130,7 @@ export default function VaccinationEffectivenessPage() {
                   },
                   {
                     label: "Daily Vaccinations",
-                    value: data.vaccinationStats.daily_vaccinations?.toLocaleString() ?? "—",
+                    value: data.vaccinationStats.new_vaccinations?.toLocaleString() ?? "—",
                   },
                 ].map(({ label, value }) => (
                   <div key={label}>
@@ -171,7 +172,7 @@ export default function VaccinationEffectivenessPage() {
                   />
                   <Line
                     type="monotone"
-                    dataKey="fully_vaccinated_per_hundred"
+                    dataKey="people_fully_vaccinated_per_hundred"
                     stroke="#3b82f6"
                     strokeWidth={1.5}
                     dot={false}

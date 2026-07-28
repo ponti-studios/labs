@@ -1,4 +1,4 @@
-import { fetchCovidData } from "~/lib/public-data";
+import { fetchCovidData, type CovidRow } from "~/lib/public-data";
 import type { LoaderFunctionArgs } from "react-router";
 
 interface SeasonalPattern {

@@ -1,4 +1,4 @@
-import { fetchCovidData } from "~/lib/public-data";
+import { fetchCovidData, type CovidRow } from "~/lib/public-data";
 import type { LoaderFunctionArgs } from "react-router";
 
 interface Outlier {
@@ -22,7 +22,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   try {
     const url = new URL(request.url);
     const country = url.searchParams.get("country") || "OWID_WRL";
-    const metric = url.searchParams.get("metric") || "newCasesSmoothed";
+    const metric = url.searchParams.get("metric") || "new_cases_smoothed";
 
     const allRows = await fetchCovidData(country);
     const data = allRows.sort((a, b) => (a.date ?? "").localeCompare(b.date ?? ""));
@@ -34,9 +34,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const values = data
       .map((row) => ({
         date: row.date || "",
-        value: (row as unknown as Record<string, number | null>)[metric] ?? 0,
-        totalCases: row.total_cases|| 0,
-        totalDeaths: row.total_deaths|| 0,
+        value: (row[metric as keyof CovidRow] ?? 0) as number,
+        total_cases: row.total_cases|| 0,
+        total_deaths: row.total_deaths|| 0,
       }))
       .filter((item) => item.value > 0);
 
@@ -85,7 +85,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
             description: `${pctChange.toFixed(0)}% day-over-day change in ${metric}`,
           });
         }
-        if ((metric === "totalCases" || metric === "totalDeaths") && current.value < prev.value) {
+        if ((metric === "total_cases" || metric === "total_deaths") && current.value < prev.value) {
           dataQualityIssues.push({
             date: current.date,
             issue: "Negative Growth",
