@@ -3,13 +3,13 @@ import type { LoaderFunctionArgs } from "react-router";
 
 interface WaveData {
   wave: number;
-  startDate: string;
-  endDate: string;
-  peakDate: string;
-  peakValue: number;
-  totalCases: number;
+  start_date: string;
+  end_date: string;
+  peak_date: string;
+  peak_value: number;
+  total_cases: number;
   duration: number;
-  avgDailyGrowth: number;
+  avg_daily_growth: number;
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -29,7 +29,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       .map((d) => ({
         date: d.date as string,
         value: (d as unknown as Record<string, number | null>)[metric] ?? 0,
-        totalCases: d.total_cases|| 0,
+        total_cases: d.total_cases || 0,
       }))
       .filter((d) => d.value > 0);
 
@@ -46,7 +46,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 }
 
-function applySmoothing(data: Array<{ date: string; value: number; totalCases: number }>) {
+function applySmoothing(data: Array<{ date: string; value: number; total_cases: number }>) {
   return data.map((_, i) => {
     const start = Math.max(0, i - 3);
     const end = Math.min(data.length - 1, i + 3);
@@ -60,7 +60,7 @@ function applySmoothing(data: Array<{ date: string; value: number; totalCases: n
   });
 }
 
-function detectWaves(data: Array<{ date: string; value: number; totalCases: number }>): WaveData[] {
+function detectWaves(data: Array<{ date: string; value: number; total_cases: number }>): WaveData[] {
   if (data.length < 21) return [];
   const waves: WaveData[] = [];
   const minPeakValue = calculateDynamicThreshold(data);
@@ -87,13 +87,13 @@ function detectWaves(data: Array<{ date: string; value: number; totalCases: numb
     const avgDailyGrowth = calculateAverageGrowthRate(waveData);
     waves.push({
       wave: waveNumber++,
-      startDate: data[waveStart].date,
-      endDate: data[waveEnd].date,
-      peakDate: data[peak].date,
-      peakValue: Math.round(data[peak].value),
-      totalCases: Math.round(totalCases),
+      start_date: data[waveStart].date,
+      end_date: data[waveEnd].date,
+      peak_date: data[peak].date,
+      peak_value: Math.round(data[peak].value),
+      total_cases: Math.round(totalCases),
       duration,
-      avgDailyGrowth: Math.round(avgDailyGrowth * 10000) / 10000,
+      avg_daily_growth: Math.round(avgDailyGrowth * 10000) / 10000,
     });
     i = waveEnd + 1;
   }

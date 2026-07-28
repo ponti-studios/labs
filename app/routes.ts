@@ -48,7 +48,6 @@ const apiRoutes = [
 // source tree but are not served.
 // ────────────────────────────────────────────────────────────────────────────
 
-/*
 const featureRoutes = [
   route("/gen/image", "routes/gen.image.tsx"),
   route("/tarot", "routes/tarot.tsx"),
@@ -63,7 +62,6 @@ const featureRoutes = [
   route("/games/cards", "routes/games/cards.tsx"),
   route("/games/tetris", "routes/games/tetris.tsx"),
 ] satisfies RouteConfig;
-*/
 
 /*
 const experimentRoutes = [
@@ -93,7 +91,6 @@ const challengeRoutes = [
 ] satisfies RouteConfig;
 */
 
-const featureRoutes: RouteConfig = [];
 const experimentRoutes = [
   route("/experiments/calendar", "routes/experiments.calendar.tsx"),
   route("/experiments/theatre-management", "routes/theatre-management/route.tsx"),

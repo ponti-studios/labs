@@ -9,13 +9,13 @@ import { Select } from "@ponti-studios/ui/forms";
 
 interface WaveData {
   wave: number;
-  startDate: string;
-  endDate: string;
-  peakDate: string;
-  peakValue: number;
+  start_date: string;
+  end_date: string;
+  peak_date: string;
+  peak_value: number;
   total_cases: number;
   duration: number;
-  avgDailyGrowth: number;
+  avg_daily_growth: number;
 }
 
 interface WaveAnalysisResponse {
@@ -111,7 +111,7 @@ export default function PandemicWavesPage() {
                   cursor={{ fill: "var(--color-muted)" }}
                   labelFormatter={(v) => `Wave ${v}`}
                 />
-                <Bar dataKey="peakValue" fill="#8b5cf6" radius={[2, 2, 0, 0]} name="Peak Value" />
+                <Bar dataKey="peak_value" fill="#8b5cf6" radius={[2, 2, 0, 0]} name="Peak Value" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -123,12 +123,12 @@ export default function PandemicWavesPage() {
                   <p className="ui-data-label">Wave {wave.wave}</p>
                   <span className="text-muted-foreground text-xs">{wave.duration} days</span>
                 </div>
-                <p className="ui-data-value mb-3">{wave.peakValue.toLocaleString()}</p>
+                <p className="ui-data-value mb-3">{wave.peak_value.toLocaleString()}</p>
                 <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                   <div>
                     <p className="text-muted-foreground text-xs">Peak Date</p>
                     <p className="text-foreground text-xs">
-                      {new Date(wave.peakDate).toLocaleDateString()}
+                      {new Date(wave.peak_date).toLocaleDateString()}
                     </p>
                   </div>
                   <div>
@@ -139,13 +139,13 @@ export default function PandemicWavesPage() {
                   </div>
                   <div>
                     <p className="text-muted-foreground text-xs">Avg Growth</p>
-                    <p className="text-foreground text-xs">{wave.avgDailyGrowth.toFixed(2)}%</p>
+                    <p className="text-foreground text-xs">{wave.avg_daily_growth.toFixed(2)}%</p>
                   </div>
                   <div>
                     <p className="text-muted-foreground text-xs">Period</p>
                     <p className="text-foreground text-xs">
-                      {new Date(wave.startDate).toLocaleDateString()} –{" "}
-                      {new Date(wave.endDate).toLocaleDateString()}
+                      {new Date(wave.start_date).toLocaleDateString()} –{" "}
+                      {new Date(wave.end_date).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
@@ -163,7 +163,7 @@ export default function PandemicWavesPage() {
               <div>
                 <p className="text-muted-foreground mb-1 text-xs">Highest Peak</p>
                 <p className="ui-data-value">
-                  {Math.max(...data.waves.map((w) => w.peakValue)).toLocaleString()}
+                  {Math.max(...data.waves.map((w) => w.peak_value)).toLocaleString()}
                 </p>
               </div>
               <div>
