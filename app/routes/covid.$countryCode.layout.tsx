@@ -1,5 +1,8 @@
+import { Suspense } from "react";
 import { Link, Outlet, useLocation, useNavigate, useParams } from "react-router";
 import { CountryPicker } from "~/components/country-picker/country-picker";
+import CovidLoading from "~/components/covid/CovidLoading";
+import { TabErrorBoundary } from "~/components/covid/TabErrorBoundary";
 
 export default function CovidCountryLayout() {
   const navigate = useNavigate();
@@ -65,7 +68,11 @@ export default function CovidCountryLayout() {
       </header>
 
       <main className="mx-auto max-w-6xl px-6 py-8">
-        <Outlet />
+        <TabErrorBoundary>
+          <Suspense fallback={<CovidLoading />}>
+            <Outlet />
+          </Suspense>
+        </TabErrorBoundary>
       </main>
     </>
   );

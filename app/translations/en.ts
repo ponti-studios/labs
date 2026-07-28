@@ -292,6 +292,26 @@ export const STUDIO_TRANSLATIONS_EN = {
           "Keep difficulty consistent across changing source material",
         ],
       },
+      covid: {
+        name: "COVID Analytics",
+        shortDescription: "Interactive pandemic data exploration across 50+ metrics and every country.",
+        solution:
+          "An analytics dashboard with wave detection, seasonal pattern analysis, vaccination effectiveness modeling, and outlier detection — built directly on the OWID COVID dataset.",
+        problem:
+          "Raw pandemic data is massive and opaque. The OWID dataset covers every country across 50-plus metrics, but making sense of a three-year pandemic requires more than a CSV download.",
+        keyFeatures: [
+          "Explore pandemic metrics across any country with interactive charts",
+          "Detect pandemic waves with peak dates, intensity, and growth rates",
+          "Uncover seasonal patterns and vaccination effectiveness trends",
+          "Identify statistical outliers and data quality issues",
+          "Switch between five analytics tabs without waiting with Suspense and React Query caching",
+        ],
+        technicalChallenges: [
+          "Processing half a million time-series rows for instant exploration",
+          "Building wave-detection algorithms that work across different transmission patterns",
+          "Keeping five analytics tabs snappy with React Suspense and React Query caching",
+        ],
+      },
     },
   },
 

@@ -19,6 +19,7 @@ const productRoutes = [
 const apiRoutes = [
   route("/api/countries/list", "routes/api.countries.list.ts"),
   route("/api/covid", "routes/api.covid.ts"),
+  route("/api/covid/dashboard", "routes/api.covid.dashboard.ts"),
   route("/api/covid/analytics/dashboard", "routes/api.covid.analytics.dashboard.ts"),
   route(
     "/api/covid/analytics/outlier-detection",

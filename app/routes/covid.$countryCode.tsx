@@ -1,16 +1,18 @@
 import type { CovidRow } from "~/lib/public-data";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { StatsOverview } from "~/components/covid/charts/stats-overview";
 import { TimeSeriesChart } from "~/components/covid/charts/time-series-chart";
 import { TopCountriesChart } from "~/components/covid/charts/top-countries-chart";
 import { VaccinationProgress } from "~/components/covid/charts/vaccination-progress";
-import {
-  getAvailableCountries,
-  getCovidStats,
-  getCovidTimeSeries,
-  getGlobalCovidData,
-} from "~/lib/covid-actions";
+
+interface DashboardResponse {
+  countryCode: string;
+  statsData: CovidRow | null;
+  timeSeriesData: CovidRow[];
+  globalComparisonData: CovidRow[];
+}
 
 export const meta: MetaFunction<typeof loader> = ({ params }) => {
   const countryCode = params.countryCode || "OWID_WRL";
@@ -30,42 +32,24 @@ export const meta: MetaFunction<typeof loader> = ({ params }) => {
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const { countryCode } = params;
-
   if (!countryCode) throw new Response("Country code is required", { status: 400 });
-
-  try {
-    const availableCountries = await getAvailableCountries();
-    if (!availableCountries.includes(countryCode) && countryCode !== "OWID_WRL") {
-      throw new Response("Country not found", { status: 404 });
-    }
-  } catch (error) {
-    console.error("Error validating country code:", error);
-  }
-
-  try {
-    const [statsResponse, timeSeriesResponse, globalComparisonResponse] = await Promise.all([
-      getCovidStats(countryCode),
-      getCovidTimeSeries(countryCode, 500),
-      countryCode !== "OWID_WRL" ? getGlobalCovidData() : Promise.resolve({ data: [] }),
-    ]);
-
-    return {
-      countryCode,
-      statsData: statsResponse.data?.[0] || null,
-      timeSeriesData: timeSeriesResponse.data || [],
-      globalComparisonData: globalComparisonResponse.data || [],
-    };
-  } catch (error) {
-    console.error("Error fetching COVID data:", error);
-    throw new Response("Failed to fetch COVID data", { status: 500 });
-  }
+  return { countryCode };
 }
 
 export default function CovidPage() {
-  const { countryCode, statsData, timeSeriesData, globalComparisonData } =
-    useLoaderData() as Awaited<ReturnType<typeof loader>>;
+  const { countryCode } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
 
-  if (!timeSeriesData || timeSeriesData.length === 0) {
+  const { data } = useSuspenseQuery<DashboardResponse>({
+    queryKey: ["covid-dashboard", countryCode],
+    queryFn: () =>
+      fetch(`/api/covid/dashboard?country=${countryCode}`).then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch dashboard data");
+        return res.json();
+      }),
+    staleTime: 1000 * 60 * 60,
+  });
+
+  if (!data.timeSeriesData || data.timeSeriesData.length === 0) {
     return (
       <div className="ui-flat-card text-center">
         <p className="text-muted-foreground text-sm">
@@ -74,6 +58,8 @@ export default function CovidPage() {
       </div>
     );
   }
+
+  const { statsData, timeSeriesData, globalComparisonData } = data;
 
   return (
     <div className="space-y-6">

@@ -161,6 +161,17 @@ const toolbox: Project = {
   github: "https://github.com/ponti-studios/toolbox",
 };
 
+const covid: Project = {
+  ...t.projects.entries.covid,
+  slug: "covid",
+  category: "research",
+  tech: ["TypeScript", "React", "React Router", "Recharts", "TanStack Query"],
+  status: "published",
+  github: "https://github.com/ponti-studios/labs",
+  url: "/covid",
+  logo: "/experiments/logo.covid.500x500.webp",
+};
+
 // Detail navigation order is explicit and independent from the category presentation order.
 export const projects: Project[] = [
   kernel,
@@ -174,6 +185,7 @@ export const projects: Project[] = [
   foundation,
   hollywood,
   realitea,
+  covid,
   geo,
   toolbox,
 ];
@@ -189,6 +201,11 @@ export const projectSections: ProjectSection[] = [
     category: "infrastructure",
     label: t.projects.categoryLabels.infrastructure,
     projects: [hominemApi, foundation, hollywood],
+  },
+  {
+    category: "research",
+    label: t.projects.categoryLabels.research,
+    projects: [covid],
   },
   {
     category: "library",

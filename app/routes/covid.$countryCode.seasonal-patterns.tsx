@@ -1,5 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
-import { Spinner } from "@ponti-studios/ui/feedback";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
 import {
@@ -78,7 +77,7 @@ const tickStyle = { fill: "var(--color-muted-foreground)", fontSize: 11 };
 export default function SeasonalPatternsPage() {
   const { countryCode } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
 
-  const { data, isLoading, isError } = useQuery<SeasonalResponse>({
+  const { data } = useSuspenseQuery<SeasonalResponse>({
     queryKey: ["seasonal-patterns", countryCode],
     queryFn: () => {
       const params = new URLSearchParams();
@@ -90,161 +89,149 @@ export default function SeasonalPatternsPage() {
 
   return (
     <div className="space-y-6">
-      {isLoading && <Spinner />}
+      <div className="grid grid-cols-3 gap-3">
+        {[
+          {
+            label: "Seasonality Strength",
+            value: `${(data.analysis.seasonalityStrength * 100).toFixed(1)}%`,
+          },
+          {
+            label: "Peak Month",
+            value: data.analysis.patterns[data.analysis.peakMonth - 1]?.monthName ?? "—",
+          },
+          {
+            label: "Trough Month",
+            value: data.analysis.patterns[data.analysis.troughMonth - 1]?.monthName ?? "—",
+          },
+        ].map(({ label, value }) => (
+          <div key={label} className="ui-flat-card">
+            <p className="ui-data-label mb-2">{label}</p>
+            <p className="ui-data-value">{value}</p>
+          </div>
+        ))}
+      </div>
 
-      {isError && (
-        <p className="text-muted-foreground py-4 text-sm">
-          Failed to load seasonal data. Please try again.
-        </p>
-      )}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <div className="ui-flat-card">
+          <p className="ui-data-label mb-3">Monthly Case Patterns</p>
+          <ResponsiveContainer width="100%" height={240}>
+            <BarChart
+              data={data.analysis.patterns}
+              margin={{ top: 0, right: 8, bottom: 24, left: 0 }}
+            >
+              <CartesianGrid
+                strokeDasharray="4 4"
+                stroke="var(--color-muted)"
+                vertical={false}
+              />
+              <XAxis
+                dataKey="monthName"
+                tick={tickStyle}
+                axisLine={false}
+                tickLine={false}
+                angle={-45}
+                textAnchor="end"
+                height={48}
+              />
+              <YAxis tick={tickStyle} axisLine={false} tickLine={false} />
+              <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "var(--color-muted)" }} />
+              <Bar
+                dataKey="averageCases"
+                fill="#d97706"
+                radius={[2, 2, 0, 0]}
+                name="Average Cases"
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
 
-      {data && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-3 gap-3">
-            {[
-              {
-                label: "Seasonality Strength",
-                value: `${(data.analysis.seasonalityStrength * 100).toFixed(1)}%`,
-              },
-              {
-                label: "Peak Month",
-                value: data.analysis.patterns[data.analysis.peakMonth - 1]?.monthName ?? "—",
-              },
-              {
-                label: "Trough Month",
-                value: data.analysis.patterns[data.analysis.troughMonth - 1]?.monthName ?? "—",
-              },
-            ].map(({ label, value }) => (
-              <div key={label} className="ui-flat-card">
-                <p className="ui-data-label mb-2">{label}</p>
-                <p className="ui-data-value">{value}</p>
+        <div className="ui-flat-card">
+          <p className="ui-data-label mb-3">Seasonal Radar</p>
+          <ResponsiveContainer width="100%" height={240}>
+            <RadarChart data={data.analysis.patterns}>
+              <PolarGrid stroke="var(--color-border)" />
+              <PolarAngleAxis dataKey="monthName" tick={tickStyle} />
+              <PolarRadiusAxis
+                tick={{ fill: "var(--color-muted-foreground)", fontSize: 10 }}
+                domain={[0, "dataMax"]}
+              />
+              <Radar
+                name="Avg Cases"
+                dataKey="averageCases"
+                stroke="#d97706"
+                fill="#d97706"
+                fillOpacity={0.15}
+                strokeWidth={1.5}
+              />
+              <Radar
+                name="Avg Deaths"
+                dataKey="averageDeaths"
+                stroke="#dc2626"
+                fill="#dc2626"
+                fillOpacity={0.15}
+                strokeWidth={1.5}
+              />
+              <Tooltip contentStyle={tooltipStyle} />
+            </RadarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {data.insights.length > 0 && (
+        <div className="ui-flat-card">
+          <p className="ui-data-label mb-3">Insights</p>
+          <div className="space-y-3">
+            {data.insights.map((insight) => (
+              <div key={insight.pattern} className="border-border border-l-2 py-0.5 pl-4">
+                <p className="text-foreground text-sm font-medium">{insight.pattern}</p>
+                <p className="text-muted-foreground mt-0.5 text-xs">{insight.description}</p>
+                <p className="text-muted-foreground mt-1 text-xs">
+                  {insight.strength}% strength
+                </p>
               </div>
             ))}
           </div>
-
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <div className="ui-flat-card">
-              <p className="ui-data-label mb-3">Monthly Case Patterns</p>
-              <ResponsiveContainer width="100%" height={240}>
-                <BarChart
-                  data={data.analysis.patterns}
-                  margin={{ top: 0, right: 8, bottom: 24, left: 0 }}
-                >
-                  <CartesianGrid
-                    strokeDasharray="4 4"
-                    stroke="var(--color-muted)"
-                    vertical={false}
-                  />
-                  <XAxis
-                    dataKey="monthName"
-                    tick={tickStyle}
-                    axisLine={false}
-                    tickLine={false}
-                    angle={-45}
-                    textAnchor="end"
-                    height={48}
-                  />
-                  <YAxis tick={tickStyle} axisLine={false} tickLine={false} />
-                  <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "var(--color-muted)" }} />
-                  <Bar
-                    dataKey="averageCases"
-                    fill="#d97706"
-                    radius={[2, 2, 0, 0]}
-                    name="Average Cases"
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-
-            <div className="ui-flat-card">
-              <p className="ui-data-label mb-3">Seasonal Radar</p>
-              <ResponsiveContainer width="100%" height={240}>
-                <RadarChart data={data.analysis.patterns}>
-                  <PolarGrid stroke="var(--color-border)" />
-                  <PolarAngleAxis dataKey="monthName" tick={tickStyle} />
-                  <PolarRadiusAxis
-                    tick={{ fill: "var(--color-muted-foreground)", fontSize: 10 }}
-                    domain={[0, "dataMax"]}
-                  />
-                  <Radar
-                    name="Avg Cases"
-                    dataKey="averageCases"
-                    stroke="#d97706"
-                    fill="#d97706"
-                    fillOpacity={0.15}
-                    strokeWidth={1.5}
-                  />
-                  <Radar
-                    name="Avg Deaths"
-                    dataKey="averageDeaths"
-                    stroke="#dc2626"
-                    fill="#dc2626"
-                    fillOpacity={0.15}
-                    strokeWidth={1.5}
-                  />
-                  <Tooltip contentStyle={tooltipStyle} />
-                </RadarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          {data.insights.length > 0 && (
-            <div className="ui-flat-card">
-              <p className="ui-data-label mb-3">Insights</p>
-              <div className="space-y-3">
-                {data.insights.map((insight) => (
-                  <div key={insight.pattern} className="border-border border-l-2 py-0.5 pl-4">
-                    <p className="text-foreground text-sm font-medium">{insight.pattern}</p>
-                    <p className="text-muted-foreground mt-0.5 text-xs">{insight.description}</p>
-                    <p className="text-muted-foreground mt-1 text-xs">
-                      {insight.strength}% strength
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div className="ui-flat-card overflow-hidden p-0">
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="border-border bg-muted border-b">
-                  <th className="ui-data-label px-4 py-2.5 text-left">Month</th>
-                  <th className="ui-data-label px-4 py-2.5 text-right">Avg Cases</th>
-                  <th className="ui-data-label px-4 py-2.5 text-right">Avg Deaths</th>
-                  <th className="ui-data-label px-4 py-2.5 text-right">Case Variance</th>
-                  <th className="ui-data-label px-4 py-2.5 text-right">Death Variance</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.analysis.patterns.map((pattern) => (
-                  <tr key={pattern.month} className="border-border border-b last:border-0">
-                    <td className="text-foreground px-4 py-2.5 font-medium">{pattern.monthName}</td>
-                    <td className="text-muted-foreground px-4 py-2.5 text-right tabular-nums">
-                      {pattern.averageCases.toLocaleString()}
-                    </td>
-                    <td className="text-muted-foreground px-4 py-2.5 text-right tabular-nums">
-                      {pattern.averageDeaths.toLocaleString()}
-                    </td>
-                    <td className="text-muted-foreground px-4 py-2.5 text-right tabular-nums">
-                      {pattern.caseVariance.toLocaleString()}
-                    </td>
-                    <td className="text-muted-foreground px-4 py-2.5 text-right tabular-nums">
-                      {pattern.deathVariance.toLocaleString()}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <p className="text-muted-foreground text-xs">
-            {data.dataQuality.totalDataPoints.toLocaleString()} data points ·{" "}
-            {data.dataQuality.monthsWithData}/12 months · avg{" "}
-            {data.dataQuality.averageDataPointsPerMonth} pts/month
-          </p>
         </div>
       )}
+
+      <div className="ui-flat-card overflow-hidden p-0">
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="border-border bg-muted border-b">
+              <th className="ui-data-label px-4 py-2.5 text-left">Month</th>
+              <th className="ui-data-label px-4 py-2.5 text-right">Avg Cases</th>
+              <th className="ui-data-label px-4 py-2.5 text-right">Avg Deaths</th>
+              <th className="ui-data-label px-4 py-2.5 text-right">Case Variance</th>
+              <th className="ui-data-label px-4 py-2.5 text-right">Death Variance</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.analysis.patterns.map((pattern) => (
+              <tr key={pattern.month} className="border-border border-b last:border-0">
+                <td className="text-foreground px-4 py-2.5 font-medium">{pattern.monthName}</td>
+                <td className="text-muted-foreground px-4 py-2.5 text-right tabular-nums">
+                  {pattern.averageCases.toLocaleString()}
+                </td>
+                <td className="text-muted-foreground px-4 py-2.5 text-right tabular-nums">
+                  {pattern.averageDeaths.toLocaleString()}
+                </td>
+                <td className="text-muted-foreground px-4 py-2.5 text-right tabular-nums">
+                  {pattern.caseVariance.toLocaleString()}
+                </td>
+                <td className="text-muted-foreground px-4 py-2.5 text-right tabular-nums">
+                  {pattern.deathVariance.toLocaleString()}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <p className="text-muted-foreground text-xs">
+        {data.dataQuality.totalDataPoints.toLocaleString()} data points ·{" "}
+        {data.dataQuality.monthsWithData}/12 months · avg{" "}
+        {data.dataQuality.averageDataPointsPerMonth} pts/month
+      </p>
     </div>
   );
 }
