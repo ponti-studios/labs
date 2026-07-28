@@ -57,6 +57,13 @@
       "when": 1783600000001,
       "tag": "0007_fresh_gambit",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1785213997317,
+      "tag": "0008_white_makkari",
+      "breakpoints": true
     }
   ]
 }

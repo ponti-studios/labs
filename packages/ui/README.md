@@ -2,6 +2,15 @@
 
 The canonical Ponti Studios UI package. It is published from this repository to npm.
 
+## Design
+
+The design system is documented in `docs/`:
+
+- [Foundations](./docs/foundations.md) — color, spacing, radius, typography, elevation, iconography, motion tokens
+- [Primitives](./docs/primitives.md) — component contracts (variants, sizes, states)
+- [Patterns](./docs/patterns.md) — screen composition rules
+- [Review gates](./docs/review-gates.md) — pass/fail review criteria
+
 ## Release
 
 Releases are owned by [release-please](https://github.com/googleapis/release-please), not by hand-edited version numbers or manually pushed tags. The workflow is defined once, in `.github/workflows/publish-ui.yml`, and has three jobs:
