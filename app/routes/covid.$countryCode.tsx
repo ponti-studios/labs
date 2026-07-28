@@ -82,19 +82,19 @@ export default function CovidPage() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <TimeSeriesChart
           data={timeSeriesData}
-          metric="totalCases"
+          metric="total_cases"
           title="Total Cases"
           color="#3b82f6"
         />
         <TimeSeriesChart
           data={timeSeriesData}
-          metric="totalDeaths"
+          metric="total_deaths"
           title="Total Deaths"
           color="#ef4444"
         />
         <TimeSeriesChart
           data={timeSeriesData}
-          metric="newCasesSmoothed"
+          metric="new_cases_smoothed"
           title="New Cases (7-day avg)"
           color="#f59e0b"
         />
@@ -107,28 +107,28 @@ export default function CovidPage() {
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <TopCountriesChart
               data={globalComparisonData}
-              metric="totalCasesPerMillion"
+              metric="total_cases_per_million"
               title="Cases per Million"
               color="#3b82f6"
               limit={15}
             />
             <TopCountriesChart
               data={globalComparisonData}
-              metric="totalDeathsPerMillion"
+              metric="total_deaths_per_million"
               title="Deaths per Million"
               color="#ef4444"
               limit={15}
             />
             <TopCountriesChart
               data={globalComparisonData}
-              metric="peopleFullyVaccinatedPerHundred"
+              metric="people_fully_vaccinated_per_hundred"
               title="Vaccination Rate"
               color="#10b981"
               limit={15}
             />
             <TopCountriesChart
               data={globalComparisonData}
-              metric="stringencyIndex"
+              metric="stringency_index"
               title="Government Response Stringency"
               color="#8b5cf6"
               limit={15}
@@ -141,49 +141,49 @@ export default function CovidPage() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <TimeSeriesChart
           data={timeSeriesData}
-          metric="newDeathsSmoothed"
+          metric="new_deaths_smoothed"
           title="New Deaths (7-day avg)"
           color="#dc2626"
         />
         <TimeSeriesChart
           data={timeSeriesData}
-          metric="reproductionRate"
+          metric="reproduction_rate"
           title="Reproduction Rate (R)"
           color="#8b5cf6"
         />
-        {timeSeriesData.some((record: CovidRow) => record.newVaccinationsSmoothed !== null) ? (
+        {timeSeriesData.some((record: CovidRow) => record.new_vaccinations_smoothed!== null) ? (
           <TimeSeriesChart
             data={timeSeriesData}
-            metric="newVaccinationsSmoothed"
+            metric="new_vaccinations_smoothed"
             title="New Vaccinations (7-day avg)"
             color="#059669"
           />
         ) : (
           <TimeSeriesChart
             data={timeSeriesData}
-            metric="totalDeathsPerMillion"
+            metric="total_deaths_per_million"
             title="Total Deaths per Million"
             color="#f59e0b"
           />
         )}
-        {timeSeriesData.some((record: CovidRow) => record.positiveRate !== null) ? (
+        {timeSeriesData.some((record: CovidRow) => record.positive_rate!== null) ? (
           <TimeSeriesChart
             data={timeSeriesData}
-            metric="positiveRate"
+            metric="positive_rate"
             title="Test Positivity Rate"
             color="#f59e0b"
           />
-        ) : timeSeriesData.some((record: CovidRow) => record.icuPatientsPerMillion !== null) ? (
+        ) : timeSeriesData.some((record: CovidRow) => record.icu_patients_per_million!== null) ? (
           <TimeSeriesChart
             data={timeSeriesData}
-            metric="icuPatientsPerMillion"
+            metric="icu_patients_per_million"
             title="ICU Patients per Million"
             color="#ef4444"
           />
         ) : (
           <TimeSeriesChart
             data={timeSeriesData}
-            metric="totalCasesPerMillion"
+            metric="total_cases_per_million"
             title="Total Cases per Million"
             color="#8b5cf6"
           />

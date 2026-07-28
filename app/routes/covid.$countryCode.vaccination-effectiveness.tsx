@@ -25,9 +25,9 @@ interface VaccinationResponse {
   effectiveness?: VaccinationEffectiveness;
   timeline?: Array<{
     date: string;
-    fullyVaccinatedPerHundred: number;
-    newCasesSmoothed: number;
-    newDeathsSmoothed: number;
+    fully_vaccinated_per_hundred: number;
+    new_cases_smoothed: number;
+    new_deaths_smoothed: number;
   }>;
   milestones?: Array<{
     threshold: number;
@@ -35,9 +35,9 @@ interface VaccinationResponse {
     dateReached: string | null;
   }>;
   vaccinationStats?: {
-    fullyVaccinatedPerHundred: number;
-    totalVaccinations: number;
-    dailyVaccinations: number;
+    fully_vaccinated_per_hundred: number;
+    total_vaccinations: number;
+    daily_vaccinations: number;
   };
 }
 
@@ -121,15 +121,15 @@ export default function VaccinationEffectivenessPage() {
                 {[
                   {
                     label: "Fully Vaccinated",
-                    value: `${data.vaccinationStats.fullyVaccinatedPerHundred?.toFixed(1) ?? "—"}%`,
+                    value: `${data.vaccinationStats.fully_vaccinated_per_hundred?.toFixed(1) ?? "—"}%`,
                   },
                   {
                     label: "Total Vaccinations",
-                    value: data.vaccinationStats.totalVaccinations?.toLocaleString() ?? "—",
+                    value: data.vaccinationStats.total_vaccinations?.toLocaleString() ?? "—",
                   },
                   {
                     label: "Daily Vaccinations",
-                    value: data.vaccinationStats.dailyVaccinations?.toLocaleString() ?? "—",
+                    value: data.vaccinationStats.daily_vaccinations?.toLocaleString() ?? "—",
                   },
                 ].map(({ label, value }) => (
                   <div key={label}>
@@ -171,7 +171,7 @@ export default function VaccinationEffectivenessPage() {
                   />
                   <Line
                     type="monotone"
-                    dataKey="fullyVaccinatedPerHundred"
+                    dataKey="fully_vaccinated_per_hundred"
                     stroke="#3b82f6"
                     strokeWidth={1.5}
                     dot={false}
@@ -179,7 +179,7 @@ export default function VaccinationEffectivenessPage() {
                   />
                   <Line
                     type="monotone"
-                    dataKey="newCasesSmoothed"
+                    dataKey="new_cases_smoothed"
                     stroke="#ef4444"
                     strokeWidth={1.5}
                     dot={false}

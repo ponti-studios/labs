@@ -32,14 +32,14 @@ export function StatsOverview({ data, countryCode: _countryCode }: StatsOverview
   }
 
   const stats = [
-    { label: "Total Cases", value: latestData.totalCases, change: latestData.newCasesSmoothed },
-    { label: "Total Deaths", value: latestData.totalDeaths, change: latestData.newDeathsSmoothed },
+    { label: "Total Cases", value: latestData.total_cases, change: latestData.new_cases_smoothed},
+    { label: "Total Deaths", value: latestData.total_deaths, change: latestData.new_deaths_smoothed},
     {
       label: "Fully Vaccinated",
-      value: latestData.peopleFullyVaccinated,
-      change: latestData.newVaccinationsSmoothed,
+      value: latestData.people_fully_vaccinated,
+      change: latestData.new_vaccinations_smoothed,
     },
-    { label: "Cases per Million", value: latestData.totalCasesPerMillion },
+    { label: "Cases per Million", value: latestData.total_cases_per_million},
   ];
 
   return (

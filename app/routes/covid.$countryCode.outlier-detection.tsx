@@ -65,12 +65,12 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 const metrics = [
-  { value: "newCasesSmoothed", label: "New Cases (7-day avg)" },
-  { value: "newDeathsSmoothed", label: "New Deaths (7-day avg)" },
-  { value: "newVaccinations", label: "New Vaccinations" },
-  { value: "positiveRate", label: "Test Positivity Rate" },
-  { value: "totalCases", label: "Total Cases" },
-  { value: "totalDeaths", label: "Total Deaths" },
+  { value: "new_cases_smoothed", label: "New Cases (7-day avg)" },
+  { value: "new_deaths_smoothed", label: "New Deaths (7-day avg)" },
+  { value: "new_vaccinations", label: "New Vaccinations" },
+  { value: "positive_rate", label: "Test Positivity Rate" },
+  { value: "total_cases", label: "Total Cases" },
+  { value: "total_deaths", label: "Total Deaths" },
 ];
 
 function outlierBadgeVariant(severity: string) {
@@ -91,7 +91,7 @@ function qualityScoreColor(score: number) {
 
 export default function OutlierDetectionPage() {
   const { countryCode } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
-  const [selectedMetric, setSelectedMetric] = useState("newCasesSmoothed");
+  const [selectedMetric, setSelectedMetric] = useState("new_cases_smoothed");
 
   const { data, isLoading, isError } = useQuery<OutlierResponse>({
     queryKey: ["outlier-detection", countryCode, selectedMetric],

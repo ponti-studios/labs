@@ -18,7 +18,7 @@ export async function getCovidStats(countryCode: string): Promise<ApiResponse> {
     const isoCode = countryCode && countryCode !== "OWID_WRL" ? countryCode : "OWID_WRL";
     const allRows = await fetchCovidData(isoCode);
     const sorted = allRows
-      .filter((r) => r.totalCases !== null)
+      .filter((r) => r.total_cases!== null)
       .sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""));
     const records = sorted.slice(0, 1);
 
