@@ -5,12 +5,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@ponti-studios/ui/forms";
-import { Spinner } from "@ponti-studios/ui/feedback";
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { Suspense, useState } from "react";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
 import { Badge } from "@ponti-studios/ui/primitives";
+import { TabErrorBoundary } from "~/components/covid/TabErrorBoundary";
+import CovidLoading from "~/components/covid/CovidLoading";
 
 interface Outlier {
   date: string;
@@ -89,11 +90,14 @@ function qualityScoreColor(score: number) {
   return "text-red-500";
 }
 
-export default function OutlierDetectionPage() {
-  const { countryCode } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
-  const [selectedMetric, setSelectedMetric] = useState("new_cases_smoothed");
-
-  const { data, isLoading, isError } = useQuery<OutlierResponse>({
+function OutlierContent({
+  countryCode,
+  selectedMetric,
+}: {
+  countryCode: string;
+  selectedMetric: string;
+}) {
+  const { data } = useSuspenseQuery<OutlierResponse>({
     queryKey: ["outlier-detection", countryCode, selectedMetric],
     queryFn: () => {
       const params = new URLSearchParams();
@@ -103,6 +107,135 @@ export default function OutlierDetectionPage() {
     },
     staleTime: 1000 * 60 * 60,
   });
+
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <div className="ui-flat-card">
+          <p className="ui-data-label mb-2">Data Quality Score</p>
+          <p className={`ui-data-value ${qualityScoreColor(data.dataQualityScore)}`}>
+            {(data.dataQualityScore * 100).toFixed(1)}%
+          </p>
+        </div>
+        <div className="ui-flat-card">
+          <p className="ui-data-label mb-2">Outliers Found</p>
+          <p className="ui-data-value">{data.outliers.length}</p>
+        </div>
+        <div className="ui-flat-card">
+          <p className="ui-data-label mb-2">Quality Issues</p>
+          <p className="ui-data-value">{data.dataQualityIssues.length}</p>
+        </div>
+        <div className="ui-flat-card">
+          <p className="ui-data-label mb-2">Data Points</p>
+          <p className="ui-data-value">{data.statistics.totalDataPoints.toLocaleString()}</p>
+        </div>
+      </div>
+
+      <div className="ui-flat-card">
+        <p className="ui-data-label mb-4">Statistics</p>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <p className="text-muted-foreground mb-1 text-xs">Mean Value</p>
+            <p className="ui-data-value">{data.statistics.mean.toLocaleString()}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground mb-1 text-xs">Standard Deviation</p>
+            <p className="ui-data-value">{data.statistics.standardDeviation.toLocaleString()}</p>
+          </div>
+        </div>
+      </div>
+
+      {data.outliers.length > 0 && (
+        <div className="ui-flat-card">
+          <p className="ui-data-label mb-3">Detected Outliers</p>
+          <div className="max-h-80 space-y-0 overflow-y-auto">
+            {data.outliers.map((outlier) => (
+              <div
+                key={`${outlier.date}-${outlier.metric}`}
+                className="border-border flex items-start justify-between gap-4 border-b py-2.5 last:border-0"
+              >
+                <div className="min-w-0">
+                  <div className="mb-0.5 flex items-center gap-2">
+                    <Badge variant={outlierBadgeVariant(outlier.severity)}>
+                      {outlier.severity}
+                    </Badge>
+                    <span className="text-muted-foreground text-xs capitalize">
+                      {outlier.type}
+                    </span>
+                    <span className="text-muted-foreground text-xs">
+                      {new Date(outlier.date).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <p className="text-muted-foreground truncate text-xs">{outlier.description}</p>
+                </div>
+                <div className="shrink-0 text-right">
+                  <p className="text-foreground text-sm font-light tabular-nums">
+                    {outlier.value.toLocaleString()}
+                  </p>
+                  <p className="text-muted-foreground text-xs">z={outlier.zScore}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {data.dataQualityIssues.length > 0 && (
+        <div className="ui-flat-card">
+          <p className="ui-data-label mb-3">Data Quality Issues</p>
+          <div className="max-h-80 overflow-y-auto">
+            {data.dataQualityIssues.map((issue) => (
+              <div
+                key={`${issue.date}-${issue.issue}`}
+                className="border-border flex items-start justify-between gap-4 border-b py-2.5 last:border-0"
+              >
+                <div className="min-w-0">
+                  <div className="mb-0.5 flex items-center gap-2">
+                    <Badge variant={issueBadgeVariant(issue.severity)}>{issue.severity}</Badge>
+                    <span className="text-muted-foreground text-xs">
+                      {new Date(issue.date).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <p className="text-foreground text-xs">{issue.issue}</p>
+                  <p className="text-muted-foreground truncate text-xs">{issue.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {data.reportingArtifacts.length > 0 && (
+        <div className="ui-flat-card">
+          <p className="ui-data-label mb-3">Reporting Artifacts</p>
+          <div className="divide-border divide-y">
+            {data.reportingArtifacts.map((artifact) => (
+              <div key={artifact.type} className="flex items-start justify-between py-2.5">
+                <div>
+                  <p className="text-foreground text-sm">{artifact.type}</p>
+                  <p className="text-muted-foreground mt-0.5 text-xs">{artifact.description}</p>
+                </div>
+                <span className="text-muted-foreground ml-4 text-sm tabular-nums">
+                  {artifact.strength}%
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {data.outliers.length === 0 && data.dataQualityIssues.length === 0 && (
+        <p className="text-muted-foreground py-4 text-sm">
+          No significant outliers or data quality issues detected.
+        </p>
+      )}
+    </div>
+  );
+}
+
+export default function OutlierDetectionPage() {
+  const { countryCode } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
+  const [selectedMetric, setSelectedMetric] = useState("new_cases_smoothed");
 
   return (
     <div className="space-y-6">
@@ -124,141 +257,11 @@ export default function OutlierDetectionPage() {
         </Select>
       </div>
 
-      {isLoading && <Spinner />}
-
-      {isError && (
-        <p className="text-muted-foreground py-4 text-sm">
-          Failed to load outlier data. Please try again.
-        </p>
-      )}
-
-      {data && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-            <div className="ui-flat-card">
-              <p className="ui-data-label mb-2">Data Quality Score</p>
-              <p className={`ui-data-value ${qualityScoreColor(data.dataQualityScore)}`}>
-                {(data.dataQualityScore * 100).toFixed(1)}%
-              </p>
-            </div>
-            <div className="ui-flat-card">
-              <p className="ui-data-label mb-2">Outliers Found</p>
-              <p className="ui-data-value">{data.outliers.length}</p>
-            </div>
-            <div className="ui-flat-card">
-              <p className="ui-data-label mb-2">Quality Issues</p>
-              <p className="ui-data-value">{data.dataQualityIssues.length}</p>
-            </div>
-            <div className="ui-flat-card">
-              <p className="ui-data-label mb-2">Data Points</p>
-              <p className="ui-data-value">{data.statistics.totalDataPoints.toLocaleString()}</p>
-            </div>
-          </div>
-
-          <div className="ui-flat-card">
-            <p className="ui-data-label mb-4">Statistics</p>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-muted-foreground mb-1 text-xs">Mean Value</p>
-                <p className="ui-data-value">{data.statistics.mean.toLocaleString()}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground mb-1 text-xs">Standard Deviation</p>
-                <p className="ui-data-value">
-                  {data.statistics.standardDeviation.toLocaleString()}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {data.outliers.length > 0 && (
-            <div className="ui-flat-card">
-              <p className="ui-data-label mb-3">Detected Outliers</p>
-              <div className="max-h-80 space-y-0 overflow-y-auto">
-                {data.outliers.map((outlier) => (
-                  <div
-                    key={`${outlier.date}-${outlier.metric}`}
-                    className="border-border flex items-start justify-between gap-4 border-b py-2.5 last:border-0"
-                  >
-                    <div className="min-w-0">
-                      <div className="mb-0.5 flex items-center gap-2">
-                        <Badge variant={outlierBadgeVariant(outlier.severity)}>
-                          {outlier.severity}
-                        </Badge>
-                        <span className="text-muted-foreground text-xs capitalize">
-                          {outlier.type}
-                        </span>
-                        <span className="text-muted-foreground text-xs">
-                          {new Date(outlier.date).toLocaleDateString()}
-                        </span>
-                      </div>
-                      <p className="text-muted-foreground truncate text-xs">
-                        {outlier.description}
-                      </p>
-                    </div>
-                    <div className="shrink-0 text-right">
-                      <p className="text-foreground text-sm font-light tabular-nums">
-                        {outlier.value.toLocaleString()}
-                      </p>
-                      <p className="text-muted-foreground text-xs">z={outlier.zScore}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {data.dataQualityIssues.length > 0 && (
-            <div className="ui-flat-card">
-              <p className="ui-data-label mb-3">Data Quality Issues</p>
-              <div className="max-h-80 overflow-y-auto">
-                {data.dataQualityIssues.map((issue) => (
-                  <div
-                    key={`${issue.date}-${issue.issue}`}
-                    className="border-border flex items-start justify-between gap-4 border-b py-2.5 last:border-0"
-                  >
-                    <div className="min-w-0">
-                      <div className="mb-0.5 flex items-center gap-2">
-                        <Badge variant={issueBadgeVariant(issue.severity)}>{issue.severity}</Badge>
-                        <span className="text-muted-foreground text-xs">
-                          {new Date(issue.date).toLocaleDateString()}
-                        </span>
-                      </div>
-                      <p className="text-foreground text-xs">{issue.issue}</p>
-                      <p className="text-muted-foreground truncate text-xs">{issue.description}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {data.reportingArtifacts.length > 0 && (
-            <div className="ui-flat-card">
-              <p className="ui-data-label mb-3">Reporting Artifacts</p>
-              <div className="divide-border divide-y">
-                {data.reportingArtifacts.map((artifact) => (
-                  <div key={artifact.type} className="flex items-start justify-between py-2.5">
-                    <div>
-                      <p className="text-foreground text-sm">{artifact.type}</p>
-                      <p className="text-muted-foreground mt-0.5 text-xs">{artifact.description}</p>
-                    </div>
-                    <span className="text-muted-foreground ml-4 text-sm tabular-nums">
-                      {artifact.strength}%
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {data.outliers.length === 0 && data.dataQualityIssues.length === 0 && (
-            <p className="text-muted-foreground py-4 text-sm">
-              No significant outliers or data quality issues detected.
-            </p>
-          )}
-        </div>
-      )}
+      <TabErrorBoundary>
+        <Suspense fallback={<CovidLoading />}>
+          <OutlierContent countryCode={countryCode} selectedMetric={selectedMetric} />
+        </Suspense>
+      </TabErrorBoundary>
     </div>
   );
 }

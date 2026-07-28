@@ -1,11 +1,12 @@
 import { SelectContent, SelectItem, SelectTrigger, SelectValue } from "@ponti-studios/ui/forms";
-import { Spinner } from "@ponti-studios/ui/feedback";
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { Suspense, useState } from "react";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Select } from "@ponti-studios/ui/forms";
+import { TabErrorBoundary } from "~/components/covid/TabErrorBoundary";
+import CovidLoading from "~/components/covid/CovidLoading";
 
 const metricLabels: Record<string, string> = {
   new_cases_smoothed: "New Cases (Smoothed)",
@@ -59,11 +60,8 @@ const tooltipStyle = {
 
 const tickStyle = { fill: "var(--color-muted-foreground)", fontSize: 11 };
 
-export default function PandemicWavesPage() {
-  const { countryCode } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
-  const [metric, setMetric] = useState<string>("new_cases_smoothed");
-
-  const { data, isLoading, isError } = useQuery<WaveAnalysisResponse>({
+function WavesContent({ countryCode, metric }: { countryCode: string; metric: string }) {
+  const { data } = useSuspenseQuery<WaveAnalysisResponse>({
     queryKey: ["pandemic-waves", countryCode, metric],
     queryFn: () => {
       const params = new URLSearchParams();
@@ -73,6 +71,100 @@ export default function PandemicWavesPage() {
     },
     staleTime: 1000 * 60 * 60,
   });
+
+  if (!data.waves) {
+    return (
+      <p className="text-muted-foreground py-4 text-sm">No wave data available for this metric.</p>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="ui-flat-card">
+        <p className="ui-data-label mb-3">Wave Intensity</p>
+        <ResponsiveContainer width="100%" height={260}>
+          <BarChart data={data.waves} margin={{ top: 0, right: 8, bottom: 0, left: 0 }}>
+            <XAxis
+              dataKey="wave"
+              tick={tickStyle}
+              axisLine={false}
+              tickLine={false}
+              tickFormatter={(v) => `Wave ${v}`}
+            />
+            <YAxis tick={tickStyle} axisLine={false} tickLine={false} />
+            <Tooltip
+              contentStyle={tooltipStyle}
+              cursor={{ fill: "var(--color-muted)" }}
+              labelFormatter={(v) => `Wave ${v}`}
+            />
+            <Bar dataKey="peak_value" fill="#8b5cf6" radius={[2, 2, 0, 0]} name="Peak Value" />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+        {data.waves.map((wave) => (
+          <div key={wave.wave} className="ui-flat-card">
+            <div className="mb-3 flex items-center justify-between">
+              <p className="ui-data-label">Wave {wave.wave}</p>
+              <span className="text-muted-foreground text-xs">{wave.duration} days</span>
+            </div>
+            <p className="ui-data-value mb-3">{wave.peak_value.toLocaleString()}</p>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+              <div>
+                <p className="text-muted-foreground text-xs">Peak Date</p>
+                <p className="text-foreground text-xs">
+                  {new Date(wave.peak_date).toLocaleDateString()}
+                </p>
+              </div>
+              <div>
+                <p className="text-muted-foreground text-xs">Total Cases</p>
+                <p className="text-foreground text-xs tabular-nums">
+                  {wave.total_cases.toLocaleString()}
+                </p>
+              </div>
+              <div>
+                <p className="text-muted-foreground text-xs">Avg Growth</p>
+                <p className="text-foreground text-xs">{wave.avg_daily_growth.toFixed(2)}%</p>
+              </div>
+              <div>
+                <p className="text-muted-foreground text-xs">Period</p>
+                <p className="text-foreground text-xs">
+                  {new Date(wave.start_date).toLocaleDateString()} –{" "}
+                  {new Date(wave.end_date).toLocaleDateString()}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="ui-flat-card">
+        <p className="ui-data-label mb-4">Summary</p>
+        <div className="grid grid-cols-3 gap-4">
+          <div>
+            <p className="text-muted-foreground mb-1 text-xs">Total Waves</p>
+            <p className="ui-data-value">{data.waves.length}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground mb-1 text-xs">Highest Peak</p>
+            <p className="ui-data-value">
+              {Math.max(...data.waves.map((w) => w.peak_value)).toLocaleString()}
+            </p>
+          </div>
+          <div>
+            <p className="text-muted-foreground mb-1 text-xs">Data Points</p>
+            <p className="ui-data-value">{data.totalDataPoints.toLocaleString()}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function PandemicWavesPage() {
+  const { countryCode } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
+  const [metric, setMetric] = useState<string>("new_cases_smoothed");
 
   return (
     <div className="space-y-6">
@@ -93,96 +185,11 @@ export default function PandemicWavesPage() {
         </Select>
       </div>
 
-      {isLoading && <Spinner />}
-
-      {isError && (
-        <p className="text-muted-foreground py-4 text-sm">
-          Failed to load wave data. Please try again.
-        </p>
-      )}
-
-      {data?.waves && (
-        <div className="space-y-6">
-          <div className="ui-flat-card">
-            <p className="ui-data-label mb-3">Wave Intensity</p>
-            <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={data.waves} margin={{ top: 0, right: 8, bottom: 0, left: 0 }}>
-                <XAxis
-                  dataKey="wave"
-                  tick={tickStyle}
-                  axisLine={false}
-                  tickLine={false}
-                  tickFormatter={(v) => `Wave ${v}`}
-                />
-                <YAxis tick={tickStyle} axisLine={false} tickLine={false} />
-                <Tooltip
-                  contentStyle={tooltipStyle}
-                  cursor={{ fill: "var(--color-muted)" }}
-                  labelFormatter={(v) => `Wave ${v}`}
-                />
-                <Bar dataKey="peak_value" fill="#8b5cf6" radius={[2, 2, 0, 0]} name="Peak Value" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-            {data.waves.map((wave) => (
-              <div key={wave.wave} className="ui-flat-card">
-                <div className="mb-3 flex items-center justify-between">
-                  <p className="ui-data-label">Wave {wave.wave}</p>
-                  <span className="text-muted-foreground text-xs">{wave.duration} days</span>
-                </div>
-                <p className="ui-data-value mb-3">{wave.peak_value.toLocaleString()}</p>
-                <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-                  <div>
-                    <p className="text-muted-foreground text-xs">Peak Date</p>
-                    <p className="text-foreground text-xs">
-                      {new Date(wave.peak_date).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground text-xs">Total Cases</p>
-                    <p className="text-foreground text-xs tabular-nums">
-                      {wave.total_cases.toLocaleString()}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground text-xs">Avg Growth</p>
-                    <p className="text-foreground text-xs">{wave.avg_daily_growth.toFixed(2)}%</p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground text-xs">Period</p>
-                    <p className="text-foreground text-xs">
-                      {new Date(wave.start_date).toLocaleDateString()} –{" "}
-                      {new Date(wave.end_date).toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="ui-flat-card">
-            <p className="ui-data-label mb-4">Summary</p>
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <p className="text-muted-foreground mb-1 text-xs">Total Waves</p>
-                <p className="ui-data-value">{data.waves.length}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground mb-1 text-xs">Highest Peak</p>
-                <p className="ui-data-value">
-                  {Math.max(...data.waves.map((w) => w.peak_value)).toLocaleString()}
-                </p>
-              </div>
-              <div>
-                <p className="text-muted-foreground mb-1 text-xs">Data Points</p>
-                <p className="ui-data-value">{data.totalDataPoints.toLocaleString()}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <TabErrorBoundary>
+        <Suspense fallback={<CovidLoading />}>
+          <WavesContent countryCode={countryCode} metric={metric} />
+        </Suspense>
+      </TabErrorBoundary>
     </div>
   );
 }

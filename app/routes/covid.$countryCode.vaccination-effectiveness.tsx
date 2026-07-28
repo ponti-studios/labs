@@ -1,5 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
-import { Spinner } from "@ponti-studios/ui/feedback";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
 import {
@@ -72,7 +71,7 @@ const tickStyle = { fill: "var(--color-muted-foreground)", fontSize: 11 };
 export default function VaccinationEffectivenessPage() {
   const { countryCode } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
 
-  const { data, isLoading, isError } = useQuery<VaccinationResponse>({
+  const { data } = useSuspenseQuery<VaccinationResponse>({
     queryKey: ["vaccination-effectiveness", countryCode],
     queryFn: () => {
       const params = new URLSearchParams();
@@ -84,19 +83,17 @@ export default function VaccinationEffectivenessPage() {
     staleTime: 1000 * 60 * 60,
   });
 
+  if (data.error) {
+    return (
+      <div className="ui-flat-card text-center">
+        <p className="text-muted-foreground text-sm">{data.error}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      {isLoading && <Spinner />}
-
-      {isError && (
-        <p className="text-muted-foreground py-4 text-sm">
-          Failed to load vaccination data. Please try again.
-        </p>
-      )}
-
-      {data?.error && <p className="text-muted-foreground py-4 text-sm">{data.error}</p>}
-
-      {data?.effectiveness && (
+      {data.effectiveness && (
         <div className="space-y-6">
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             {[
