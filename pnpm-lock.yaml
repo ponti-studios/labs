@@ -18,8 +18,8 @@ importers:
         specifier: ^0.1.1
         version: 0.1.1(drizzle-kit@0.31.10)(drizzle-orm@0.45.2(kysely@0.29.4)(pg@8.22.0)(postgres@3.4.9))(pg@8.22.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(vitest@4.1.10)
       '@ponti-studios/ui':
-        specifier: 0.4.3
-        version: 0.4.3(@date-fns/tz@1.5.0)(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: 0.4.4
+        version: 0.4.4(@date-fns/tz@1.5.0)(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@react-router/node':
         specifier: ^8.2.0
         version: 8.3.0(react-router@8.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(typescript@6.0.3)
@@ -1605,17 +1605,12 @@ packages:
     peerDependencies:
       react: 19.2.8
 
-  '@ponti-studios/ui@0.4.3':
-    resolution: {integrity: sha512-EwYuburU7Wuuoi+76VosTQWgKHaJNatpc3PXwSnrS9Won6FlSClQeZPiIYLYz4WffWE8kabxV9HJqfUIt4+vEg==}
+  '@ponti-studios/ui@0.4.4':
+    resolution: {integrity: sha512-f1LlpJ3rlpIAxDUmcTjXWyXkokCEbXmV3VDeZ2oRYS8wU0LdmiazvqZN1cIIH9H0i9MkRxAJ/vyaslD3bjS/DQ==, tarball: https://npm.pkg.github.com/download/@ponti-studios/ui/0.4.4/8fd78c029244d9e7c1c14c8dfa92072bc6ebbe7c}
     peerDependencies:
       react: ^18.2.0 || ^19.0.0
       react-dom: ^18.2.0 || ^19.0.0
       react-native: '>=0.74'
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
-      react-native:
-        optional: true
 
   '@radix-ui/colors@3.0.0':
     resolution: {integrity: sha512-FUOsGBkHrYJwCSEtWRCIfQbZG7q1e6DgxCIOe1SUQzDe/7rXXeA47s8yCn6fuTNQAj1Zq4oTFi9Yjp3wzElcxg==}
@@ -5216,7 +5211,7 @@ snapshots:
       - vitest
       - vue
 
-  '@ponti-studios/ui@0.4.3(@date-fns/tz@1.5.0)(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@ponti-studios/ui@0.4.4(@date-fns/tz@1.5.0)(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@base-ui/react': 1.6.0(@date-fns/tz@1.5.0)(@types/react@19.2.17)(date-fns@4.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@radix-ui/colors': 3.0.0
@@ -5226,9 +5221,8 @@ snapshots:
       lucide-react: 1.27.0(react@19.2.8)
       react: 19.2.8
       react-day-picker: 10.0.1(@types/react@19.2.17)(react@19.2.8)
-      tailwind-merge: 3.6.0
-    optionalDependencies:
       react-dom: 19.2.8(react@19.2.8)
+      tailwind-merge: 3.6.0
     transitivePeerDependencies:
       - '@date-fns/tz'
       - '@types/react'
