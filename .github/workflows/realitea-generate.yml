@@ -13,6 +13,8 @@ on:
 
 permissions:
   contents: read
+  # Needed to install @ponti-studios/auth from GitHub Packages.
+  packages: read
 
 concurrency:
   group: realitea-generate
@@ -33,6 +35,9 @@ jobs:
         with:
           node-version: "24.14.1"
           cache: "pnpm"
+
+      - name: authenticate-to-github-packages
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
 
       - name: install-dependencies
         run: pnpm install --frozen-lockfile

@@ -65,6 +65,32 @@ This ensures every script validates the same set of required variables and produ
 - Do not create separate "regenerate" scripts — the `--force` flag handles that
 - Both the daily cron and manual force-regenerate runs share one workflow: `.github/workflows/realitea-generate.yml` (schedule trigger runs gap-fill mode; `workflow_dispatch` trigger runs `--force --days-ahead=<input>`)
 
+## Authentication (Hominem)
+
+Hominem's Better Auth deployment is the sole auth authority for this repo. Labs
+never issues or validates its own sessions, and never hosts a login form.
+
+- Session checks go through `getHominemUser()` in `app/lib/server/hominem-auth.ts`
+  (server-only — it forwards the request's `Cookie` header to the Hominem API).
+- To send a player to sign in, use `buildHominemLoginUrl(returnTo)`. `returnTo`
+  must be an absolute labs URL; the Hominem API only honors origins it trusts as
+  `LABS_URL`.
+- ❌ Do not add a login/OTP form, session table, or token issuance to this repo.
+
+### GitHub Packages
+
+`@ponti-studios/auth` is published to GitHub Packages, which requires a token
+**even though the package is public**. `pnpm install` fails with a 401 without one.
+
+- The scope→registry mapping is committed in `.npmrc`; the credential is not —
+  pnpm refuses to expand env vars in a committed `.npmrc`.
+- Local setup: add to your **user-level** `~/.npmrc`:
+  `//npm.pkg.github.com/:_authToken=<PAT with read:packages>`
+- CI workflows write that same line using the run's own `GITHUB_TOKEN`, and each
+  needs `packages: read`. Job-level `permissions:` blocks replace the
+  workflow-level one, so it must be repeated per job that installs (see the
+  CodeQL job in `ci.yml`).
+
 ## Storybook Development Only
 
 - Storybook is development-only in this repository.
