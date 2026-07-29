@@ -36,6 +36,8 @@ on:
 
 permissions:
   contents: read
+  # Needed to pass GITHUB_TOKEN through as GITHUB_PACKAGES_TOKEN below.
+  packages: read
 
 jobs:
   deploy:
