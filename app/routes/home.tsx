@@ -25,31 +25,34 @@ function Teaser({ title, to }: { title: string; to: string }) {
 }
 
 /**
- * "Problems" sits still — the arrow draws in, then "Solved." cuts in.
- * One reveal, once, on load — not a loop. Respects reduced motion.
+ * "Building" sits still. "what should exist." fades in letter by letter in accent blue.
  */
 function HeroHeadline() {
   const reduceMotion = useReducedMotion();
+  const after = t.home.hero.wordAfter;
   return (
-    <h1 className="display-1 text-foreground flex max-w-4xl flex-wrap items-baseline gap-x-4 gap-y-1">
-      <span>{t.home.hero.wordBefore}</span>
-      <motion.span
-        aria-hidden="true"
-        className="text-muted-foreground/40 inline-block origin-left"
-        initial={reduceMotion ? false : { scaleX: 0, opacity: 0 }}
-        animate={{ scaleX: 1, opacity: 1 }}
-        transition={{ duration: 0.35, delay: 0.2, ease: "easeOut" }}
-      >
-        →
-      </motion.span>
-      <span className="sr-only">, </span>
+    <h1 className="display-1 text-foreground max-w-4xl">
+      <span>{t.home.hero.wordBefore}</span>{" "}
       <motion.span
         className="text-accent"
-        initial={reduceMotion ? false : { opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.2, delay: 0.55, ease: "easeOut" }}
+        initial={reduceMotion ? false : "hidden"}
+        animate="visible"
+        variants={{
+          hidden: {},
+          visible: { transition: { staggerChildren: 0.03, delayChildren: 0.3 } },
+        }}
       >
-        {t.home.hero.wordAfter}
+        {after.split("").map((char, i) => (
+          <motion.span
+            key={i}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: { opacity: 1 },
+            }}
+          >
+            {char}
+          </motion.span>
+        ))}
       </motion.span>
     </h1>
   );

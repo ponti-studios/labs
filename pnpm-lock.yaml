@@ -41,9 +41,6 @@ importers:
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
-      csv-parse:
-        specifier: ^5.6.0
-        version: 5.6.0
       dotenv:
         specifier: ^17.4.2
         version: 17.4.2
@@ -57,7 +54,7 @@ importers:
         specifier: ^12.42.2
         version: 12.42.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       isbot:
-        specifier: ^5.2.1
+        specifier: ^5
         version: 5.2.1
       iso-3166-1:
         specifier: ^2.1.1
@@ -108,27 +105,18 @@ importers:
       '@storybook/addon-links':
         specifier: ^10.5.3
         version: 10.5.5(@types/react@19.2.17)(react@19.2.8)(storybook@10.5.5(@types/react@19.2.17)(prettier@3.9.6)(react@19.2.8))
-      '@storybook/addon-themes':
-        specifier: 10.5.3
-        version: 10.5.3(storybook@10.5.5(@types/react@19.2.17)(prettier@3.9.6)(react@19.2.8))
       '@storybook/react-vite':
         specifier: ^10.5.3
         version: 10.5.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(esbuild@0.28.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(storybook@10.5.5(@types/react@19.2.17)(prettier@3.9.6)(react@19.2.8))(typescript@6.0.3)(vite@8.1.5(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1))
       '@tailwindcss/vite':
         specifier: ^4.3.3
         version: 4.3.3(vite@8.1.5(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1))
-      '@testing-library/dom':
-        specifier: ^10.4.1
-        version: 10.4.1
       '@testing-library/react':
         specifier: ^16.3.2
         version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@testing-library/user-event':
         specifier: ^14.6.1
         version: 14.6.1(@testing-library/dom@10.4.1)
-      '@types/google.maps':
-        specifier: ^3.65.2
-        version: 3.65.3
       '@types/node':
         specifier: ^26.1.1
         version: 26.1.2
@@ -1762,11 +1750,6 @@ packages:
       react:
         optional: true
 
-  '@storybook/addon-themes@10.5.3':
-    resolution: {integrity: sha512-bEHqMgkwqM6fENwYGptZz/lYzNs5SVdVnI8qTKqTC5S6mwkJ3mzTXF/5MPVZb4BelgfV/KzAWrRF9QR5OFitsA==}
-    peerDependencies:
-      storybook: ^10.5.3
-
   '@storybook/builder-vite@10.5.5':
     resolution: {integrity: sha512-dQoJ7gUl8y0z5rV9cE0mz6qTBNmN9R4GOLIZk98rJ8CwduNJOb9eGZXusDzzvnYcp8TnNkqDtyx4tXQSUDInPQ==}
     peerDependencies:
@@ -2066,9 +2049,6 @@ packages:
   '@types/estree@1.0.9':
     resolution: {integrity: sha512-GhdPgy1el4/ImP05X05Uw4cw2/M93BCUmnEvWZNStlCzEKME4Fkk+YpoA5OiHNQmoS7Cafb8Xa3Pya8m1Qrzeg==}
 
-  '@types/google.maps@3.65.3':
-    resolution: {integrity: sha512-tqbbx7MUtoDk+RwpZMymPDj6Skez0FhqDZNhLhS5UDmCx4D1dgP+BJOHTebiO/rhjJLa1f8te2p6mJJeFKVFOQ==}
-
   '@types/mdx@2.0.14':
     resolution: {integrity: sha512-T48PeuJtvLosNTPVhfnIp3i/n3a4g4Bad7YCq5k64D4u7NwDrAotikQ+5+sjtUvBmxCMlbo3dVL+C2dP0rWHzg==}
 
@@ -2339,9 +2319,6 @@ packages:
 
   csstype@3.2.3:
     resolution: {integrity: sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==}
-
-  csv-parse@5.6.0:
-    resolution: {integrity: sha512-l3nz3euub2QMg5ouu5U09Ew9Wf6/wQ8I++ch1loQ0ljmzhmfZYrH9fflS22i/PQEvsPvxCwxgz5q7UB8K1JO4Q==}
 
   d3-array@3.2.4:
     resolution: {integrity: sha512-tdQAmyA18i4J7wprpYq8ClcxZy3SC31QMeByyCFyRt7BVHdREQZ5lpzoe5mFEYZUWe+oq8HBvk9JjpibyEV4Jg==}
@@ -5189,11 +5166,6 @@ snapshots:
       '@types/react': 19.2.17
       react: 19.2.8
 
-  '@storybook/addon-themes@10.5.3(storybook@10.5.5(@types/react@19.2.17)(prettier@3.9.6)(react@19.2.8))':
-    dependencies:
-      storybook: 10.5.5(@types/react@19.2.17)(prettier@3.9.6)(react@19.2.8)
-      ts-dedent: 2.3.0
-
   '@storybook/builder-vite@10.5.5(esbuild@0.28.1)(storybook@10.5.5(@types/react@19.2.17)(prettier@3.9.6)(react@19.2.8))(vite@8.1.5(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1))':
     dependencies:
       '@storybook/csf-plugin': 10.5.5(esbuild@0.28.1)(storybook@10.5.5(@types/react@19.2.17)(prettier@3.9.6)(react@19.2.8))(vite@8.1.5(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1))
@@ -5474,8 +5446,6 @@ snapshots:
   '@types/doctrine@0.0.9': {}
 
   '@types/estree@1.0.9': {}
-
-  '@types/google.maps@3.65.3': {}
 
   '@types/mdx@2.0.14': {}
 
@@ -5760,8 +5730,6 @@ snapshots:
   css.escape@1.5.1: {}
 
   csstype@3.2.3: {}
-
-  csv-parse@5.6.0: {}
 
   d3-array@3.2.4:
     dependencies:

@@ -964,10 +964,10 @@ export const STUDIO_TRANSLATIONS_EN = {
       description: "Premium product and engineering for teams who refuse to compromise on quality.",
     },
     hero: {
-      title: "Problems, solved.",
-      wordBefore: "Problems",
-      wordAfter: "Solved.",
-      subtitle: "Product and engineering built to solve the problem you actually have.",
+      title: "Building what should exist.",
+      wordBefore: "Building",
+      wordAfter: "what should exist.",
+      subtitle: "Beautiful things, for problems worth solving.",
     },
     services: {
       title: "What I do",

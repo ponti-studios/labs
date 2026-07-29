@@ -43,12 +43,6 @@ const apiRoutes = [
   route("/api/words/validate", "routes/api.words.validate.ts"),
 ] satisfies RouteConfig;
 
-// ────────────────────────────────────────────────────────────────────────────
-// Experiments, features, and challenges — disabled while being rewritten.
-// These are hidden from the public site. The route files still exist in the
-// source tree but are not served.
-// ────────────────────────────────────────────────────────────────────────────
-
 const featureRoutes = [
   route("/gen/image", "routes/gen.image.tsx"),
   route("/tarot", "routes/tarot.tsx"),
@@ -63,6 +57,12 @@ const featureRoutes = [
   route("/games/cards", "routes/games/cards.tsx"),
   route("/games/tetris", "routes/games/tetris.tsx"),
 ] satisfies RouteConfig;
+
+// ────────────────────────────────────────────────────────────────────────────
+// Experiments, features, and challenges — disabled while being rewritten.
+// These are hidden from the public site. The route files still exist in the
+// source tree but are not served.
+// ────────────────────────────────────────────────────────────────────────────
 
 /*
 const experimentRoutes = [
