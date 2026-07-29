@@ -15,5 +15,6 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - run: npm install -g @railway/cli@4.58.0
-      - run: railway status --service ${{ secrets.RAILWAY_SERVICE_PLAYGROUND }}
-      - run: railway logs --service ${{ secrets.RAILWAY_SERVICE_PLAYGROUND }} --build || true
+      - run: railway status --json
+      - run: railway logs --service ${{ secrets.RAILWAY_SERVICE_PLAYGROUND }} --build --lines 200 || true
+      - run: railway logs --service ${{ secrets.RAILWAY_SERVICE_PLAYGROUND }} --lines 200 || true
