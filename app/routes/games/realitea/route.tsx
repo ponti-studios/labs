@@ -13,6 +13,7 @@ import {
 } from "~/lib/realitea";
 import { getDateKey } from "~/lib/realitea/date";
 import { loadActivePublicPuzzle } from "~/lib/realitea/puzzle.server";
+import { buildHominemLoginUrl } from "~/lib/server/hominem-auth";
 import { cn } from "~/lib/utils";
 
 import { readGameState, saveGameState } from "./game-state";
@@ -44,6 +45,26 @@ function parseTzCookie(cookieHeader: string): string | null {
   return null;
 }
 
+// Hominem's redirect policy only trusts LABS_URL's own origin (see task 3),
+// so the return URL must round-trip through https even if the request
+// reaches this server over plain http behind Railway's proxy.
+function resolveReturnTo(request: Request): string {
+  const url = new URL(request.url);
+  if (url.hostname !== "localhost" && url.hostname !== "127.0.0.1") {
+    url.protocol = "https:";
+  }
+  // React Router's client-side revalidation (e.g. the timezone-sync effect
+  // below) fetches this loader via a "<path>.data" endpoint, which would
+  // otherwise leak into the login redirect and send the player back to a
+  // JSON response instead of the page.
+  if (url.pathname.endsWith(".data")) {
+    url.pathname = url.pathname.slice(0, -".data".length);
+  }
+  url.search = "";
+  url.hash = "";
+  return url.toString();
+}
+
 export async function loader({ request }: LoaderFunctionArgs) {
   const timeZone = parseTzCookie(request.headers.get("Cookie") ?? "") ?? "UTC";
   const envelope = await loadActivePublicPuzzle(new Date(), timeZone);
@@ -58,11 +79,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
     );
   }
 
-  return Response.json(envelope);
+  const loginUrl = buildHominemLoginUrl(resolveReturnTo(request));
+
+  return Response.json({ ...envelope, loginUrl });
 }
 
 export type LoaderData = {
   puzzle: PublicDailyPuzzle;
+  loginUrl: string;
 };
 
 export function meta() {
@@ -205,6 +229,7 @@ export default function RealiTeaRoute() {
   const revalidator = useRevalidator();
 
   const currentPuzzle = initial.puzzle;
+  const loginUrl = initial.loginUrl;
 
   // On first mount, store the user's IANA timezone in a cookie so the server
   // can serve the puzzle for the user's local calendar date rather than UTC.
@@ -364,7 +389,21 @@ export default function RealiTeaRoute() {
         ) : null}
       </div>
 
-      {game.isGameOver ? (
+      {game.authRequired ? (
+        <Card className="border-(--realitea-present-border)">
+          <CardContent className="flex flex-col gap-3 text-center">
+            <div>
+              <p className="ui-eyebrow">Free guess used</p>
+              <p className="mt-1 text-sm">
+                Sign in to keep playing — six guesses a day, saved automatically.
+              </p>
+            </div>
+            <Button asChild variant="default">
+              <a href={loginUrl}>Sign in to keep playing</a>
+            </Button>
+          </CardContent>
+        </Card>
+      ) : game.isGameOver ? (
         <Card>
           <CardContent className="flex flex-col gap-4">
             <div>

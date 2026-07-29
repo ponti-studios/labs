@@ -48,6 +48,30 @@ describe("RealiTea route loader", () => {
     expect(payload.puzzle.dateKey).toBe("2026-05-20");
   }, 15_000);
 
+  it("builds a login return URL pointing back at the page, stripping any .data suffix", async () => {
+    loadActivePublicPuzzle.mockResolvedValue({
+      puzzle: {
+        answerType: "moment",
+        clue: "A clash that keeps the whole cast spinning.",
+        dateKey: "2026-05-20",
+        detail: "A single RHOBH conflict can dominate the full episode and aftermath.",
+        sources: [],
+      },
+    });
+
+    const { loader } = await import("../route");
+    // React Router's client-side revalidation fetches the loader via a
+    // "<path>.data" endpoint — the login redirect must not leak that suffix.
+    const response = await loader(
+      createLoaderArgs("https://labs.ponti.io/games/realitea.data?index"),
+    );
+    const payload = await response.json();
+
+    const loginUrl = new URL(payload.loginUrl);
+    const next = loginUrl.searchParams.get("next");
+    expect(next).toBe("https://labs.ponti.io/games/realitea");
+  });
+
   it("throws a RealiTea-specific 404 error when no puzzle exists for today", async () => {
     loadActivePublicPuzzle.mockResolvedValue(null);
 
