@@ -43,6 +43,7 @@ jobs:
     timeout-minutes: ${{ inputs.timeout-minutes }}
     env:
       RAILWAY_TOKEN: ${{ secrets.railway_token }}
+      GITHUB_PACKAGES_TOKEN: ${{ secrets.github_packages_token }}
 
     steps:
       - name: checkout-code
@@ -64,8 +65,8 @@ jobs:
         run: cp "${{ inputs.config_path }}" railway.json
 
       - name: set-github-packages-token
-        if: secrets.github_packages_token != ''
-        run: railway variables --set "GITHUB_PACKAGES_TOKEN=${{ secrets.github_packages_token }}" --service ${{ secrets.railway_service }} --skip-deploys
+        if: env.GITHUB_PACKAGES_TOKEN != ''
+        run: railway variables --set "GITHUB_PACKAGES_TOKEN=$GITHUB_PACKAGES_TOKEN" --service ${{ secrets.railway_service }} --skip-deploys
 
       - name: deploy-to-railway
         run: railway up --service ${{ secrets.railway_service }} --detach --ci
