@@ -17,7 +17,7 @@
  * out of every future `status = 'pending'` selection query.
  */
 
-import type { Article, DailyPuzzle, Game } from "~/lib/server/db";
+import type { Article, DailyPuzzle, Game, RealiteaAttempt } from "~/lib/server/db";
 import {
   and,
   articles,
@@ -32,6 +32,8 @@ import {
   inArray,
   lt,
   lte,
+  realiteaAttempts,
+  sql,
 } from "~/lib/server/db";
 
 import { addDaysToDateKey, buildDateRange, getDateKey } from "./date";
@@ -289,6 +291,75 @@ export async function deletePuzzlesFromDate(gameId: number, fromDateKey: string)
     .where(and(eq(dailyPuzzles.gameId, gameId), gte(dailyPuzzles.dateUtc, fromDateKey)))
     .returning({ id: dailyPuzzles.id });
   return result.length;
+}
+
+// ── Attempts (server-side guess tracking) ────────────────────────────────────
+
+export async function loadAttempt(
+  userId: string,
+  gameId: number,
+  dateUtc: string,
+): Promise<RealiteaAttempt | null> {
+  const row = await db.query.realiteaAttempts.findFirst({
+    where: and(
+      eq(realiteaAttempts.hominemUserId, userId),
+      eq(realiteaAttempts.gameId, gameId),
+      eq(realiteaAttempts.dateUtc, dateUtc),
+    ),
+  });
+  return row ?? null;
+}
+
+export async function createAttempt(
+  userId: string,
+  gameId: number,
+  dateUtc: string,
+): Promise<RealiteaAttempt> {
+  const [row] = await db
+    .insert(realiteaAttempts)
+    .values({ hominemUserId: userId, gameId, dateUtc })
+    .returning();
+  return row;
+}
+
+export async function appendGuess(
+  attemptId: number,
+  guess: { word: string; states: ("absent" | "correct" | "present")[] },
+  status: "playing" | "solved" | "failed",
+): Promise<void> {
+  const now = new Date().toISOString();
+  await db
+    .update(realiteaAttempts)
+    .set({
+      guesses: sql`${realiteaAttempts.guesses} || ${JSON.stringify([guess])}::jsonb`,
+      guessedAt: sql`${realiteaAttempts.guessedAt} || ${JSON.stringify([now])}::jsonb`,
+      status,
+      updatedAt: new Date(),
+    })
+    .where(eq(realiteaAttempts.id, attemptId));
+}
+
+export async function countRecentGuesses(
+  userId: string,
+  windowMs: number,
+): Promise<number> {
+  const cutoff = new Date(Date.now() - windowMs).toISOString();
+  const rows = await db
+    .select({ guessedAt: realiteaAttempts.guessedAt })
+    .from(realiteaAttempts)
+    .where(
+      and(
+        eq(realiteaAttempts.hominemUserId, userId),
+        gte(realiteaAttempts.updatedAt, new Date(cutoff)),
+      ),
+    );
+  let total = 0;
+  for (const row of rows) {
+    for (const ts of row.guessedAt as string[]) {
+      if (ts >= cutoff) total++;
+    }
+  }
+  return total;
 }
 
 export type { Article, DailyPuzzle, Game };

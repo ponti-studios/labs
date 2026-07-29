@@ -38,7 +38,13 @@ export interface RealiteaGuess {
   states: LetterState[];
 }
 
-type GuessRejectReason = "not-in-word-list" | "wrong-length" | "already-guessed";
+type GuessRejectReason =
+  | "not-in-word-list"
+  | "wrong-length"
+  | "already-guessed"
+  | "auth-required"
+  | "rate-limited"
+  | "game-over";
 
 export interface RealiteaGuessResult {
   valid: boolean;
@@ -48,6 +54,8 @@ export interface RealiteaGuessResult {
   isGameOver?: boolean;
   status?: GameStatus;
   reason?: GuessRejectReason;
+  authRequired?: boolean;
+  remainingGuesses?: number;
 }
 
 /**
