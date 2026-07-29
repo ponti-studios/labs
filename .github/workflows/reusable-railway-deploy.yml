@@ -30,6 +30,9 @@ on:
       railway_service:
         description: Railway service identifier
         required: true
+      github_packages_token:
+        description: Token for GitHub Packages, exposed to the Dockerfile as a build arg
+        required: false
 
 permissions:
   contents: read
@@ -59,6 +62,10 @@ jobs:
       - name: stage-railway-config
         if: inputs.config_path != ''
         run: cp "${{ inputs.config_path }}" railway.json
+
+      - name: set-github-packages-token
+        if: secrets.github_packages_token != ''
+        run: railway variables --set "GITHUB_PACKAGES_TOKEN=${{ secrets.github_packages_token }}" --service ${{ secrets.railway_service }} --skip-deploys
 
       - name: deploy-to-railway
         run: railway up --service ${{ secrets.railway_service }} --detach --ci
