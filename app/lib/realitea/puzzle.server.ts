@@ -9,11 +9,25 @@ import {
 } from "./index";
 import { addDaysToDateKey, getDateKey } from "./date";
 import { createLogger } from "../logger.server";
+import type { HominemUser } from "../server/hominem-auth";
 import type { PuzzleRecord } from "./types";
-import { getGameBySlug, loadMostRecentPuzzle, loadPuzzleForDate } from "./repository";
+import {
+  appendGuess,
+  countRecentGuesses,
+  createAttempt,
+  getGameBySlug,
+  loadAttempt,
+  loadMostRecentPuzzle,
+  loadPuzzleForDate,
+} from "./repository";
 import { isValidWord } from "./word-list.server";
 
 const logger = createLogger();
+
+// Guesses-per-minute limit, enforced across all of a user's puzzles at once
+// (not per-puzzle) — see countRecentGuesses in repository.ts.
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX_GUESSES = 10;
 
 // The public route only serves the RHOBH game today; this becomes a param
 // once the route layer supports selecting a game.
@@ -94,21 +108,32 @@ export async function loadActivePublicPuzzle(
 /**
  * Server-evaluates a guess. The answer never leaves the server: callers receive
  * per-letter states and the post-guess status only.
+ *
+ * `user` is the resolved Hominem session (null for anonymous). Anonymous
+ * players get exactly one unpersisted guess, gated by `anonymousGuessCount` —
+ * the number of guesses the client has already accumulated in its own local
+ * state. That count is client-reported and therefore not adversarially
+ * secure, but nothing sensitive depends on it: the six-guess cap, the
+ * duplicate-guess check, and the guesses-per-minute rate limit are all
+ * authoritative only once a user is signed in and backed by
+ * `realitea_attempts`, which is the actual gap this closes (see
+ * docs/realitea-audit/01-no-server-side-attempt-tracking.md).
  */
 export async function evaluateGuessServer(
   dateKey: string,
   rawWord: string,
-  previousGuesses: readonly { word: string }[],
+  user: HominemUser | null,
+  anonymousGuessCount: number,
 ): Promise<RealiteaGuessResult> {
-  const childLogger = logger.child({ operation: "evaluateGuessServer", requestedDateKey: dateKey });
+  const childLogger = logger.child({
+    operation: "evaluateGuessServer",
+    requestedDateKey: dateKey,
+    userId: user?.id ?? null,
+  });
   const word = normalizeGuess(rawWord);
 
   if (word.length !== REALITEA_ANSWER_LENGTH) {
     return { valid: false, word, reason: "wrong-length" };
-  }
-
-  if (previousGuesses.some((guess) => guess.word === word)) {
-    return { valid: false, word, reason: "already-guessed" };
   }
 
   // Try exact dateKey, then previous day as grace period for midnight-rollover games
@@ -132,6 +157,30 @@ export async function evaluateGuessServer(
     return { valid: false, word, reason: "not-in-word-list" };
   }
 
+  const resolvedDateKey = puzzle.dateUtc;
+
+  let attempt = null as Awaited<ReturnType<typeof loadAttempt>>;
+  if (user) {
+    attempt = await loadAttempt(user.id, gameId, resolvedDateKey);
+
+    if (attempt) {
+      if (attempt.status !== "playing") {
+        return { valid: false, word, reason: "game-over", isGameOver: true, status: attempt.status };
+      }
+      if (attempt.guesses.some((guess) => guess.word === word)) {
+        return { valid: false, word, reason: "already-guessed" };
+      }
+    }
+
+    const recentGuessCount = await countRecentGuesses(user.id, RATE_LIMIT_WINDOW_MS);
+    if (recentGuessCount >= RATE_LIMIT_MAX_GUESSES) {
+      childLogger.warn({ event: "[GUESS_RATE_LIMITED]", recentGuessCount }, "rate limit exceeded");
+      return { valid: false, word, reason: "rate-limited" };
+    }
+  } else if (anonymousGuessCount >= 1) {
+    return { valid: false, word, reason: "auth-required", authRequired: true };
+  }
+
   const inWordList = await isValidWord(word, gameId);
   if (!inWordList) {
     return { valid: false, word, reason: "not-in-word-list" };
@@ -139,7 +188,33 @@ export async function evaluateGuessServer(
 
   const states = evaluateGuess(puzzle.answer, word);
   const isSolved = isGuessSolved({ word, states });
-  const guessCount = previousGuesses.length + 1;
+
+  if (!user) {
+    // Anonymous free guess: scored but never persisted. Game is over either
+    // way — solved outright, or the player must sign in to keep going.
+    return {
+      valid: true,
+      word,
+      states,
+      isSolved,
+      isGameOver: true,
+      status: isSolved ? "solved" : "playing",
+      authRequired: !isSolved,
+    };
+  }
+
+  if (!attempt) {
+    try {
+      attempt = await createAttempt(user.id, gameId, resolvedDateKey);
+    } catch {
+      // Concurrent request already created it (unique index on
+      // hominem_user_id/game_id/date_utc) — reload rather than fail.
+      attempt = await loadAttempt(user.id, gameId, resolvedDateKey);
+      if (!attempt) throw new Error("Failed to create or load realitea attempt");
+    }
+  }
+
+  const guessCount = attempt.guesses.length + 1;
   const isGameOver = isSolved || guessCount >= MAX_GUESSES;
   const status: RealiteaGuessResult["status"] = isSolved
     ? "solved"
@@ -147,5 +222,15 @@ export async function evaluateGuessServer(
       ? "failed"
       : "playing";
 
-  return { valid: true, word, states, isSolved, isGameOver, status };
+  await appendGuess(attempt.id, { word, states }, status);
+
+  return {
+    valid: true,
+    word,
+    states,
+    isSolved,
+    isGameOver,
+    status,
+    remainingGuesses: Math.max(0, MAX_GUESSES - guessCount),
+  };
 }

@@ -1,17 +1,33 @@
 import { describe, expect, it, vi } from "vitest";
 
-const { getGameBySlugMock, loadPuzzleForDateMock, loadMostRecentPuzzleMock, isValidWordMock } =
-  vi.hoisted(() => ({
-    getGameBySlugMock: vi.fn(),
-    loadPuzzleForDateMock: vi.fn(),
-    loadMostRecentPuzzleMock: vi.fn(),
-    isValidWordMock: vi.fn(),
-  }));
+const {
+  getGameBySlugMock,
+  loadPuzzleForDateMock,
+  loadMostRecentPuzzleMock,
+  isValidWordMock,
+  loadAttemptMock,
+  createAttemptMock,
+  appendGuessMock,
+  countRecentGuessesMock,
+} = vi.hoisted(() => ({
+  getGameBySlugMock: vi.fn(),
+  loadPuzzleForDateMock: vi.fn(),
+  loadMostRecentPuzzleMock: vi.fn(),
+  isValidWordMock: vi.fn(),
+  loadAttemptMock: vi.fn(),
+  createAttemptMock: vi.fn(),
+  appendGuessMock: vi.fn(),
+  countRecentGuessesMock: vi.fn(),
+}));
 
 vi.mock("../repository", () => ({
   getGameBySlug: getGameBySlugMock,
   loadPuzzleForDate: loadPuzzleForDateMock,
   loadMostRecentPuzzle: loadMostRecentPuzzleMock,
+  loadAttempt: loadAttemptMock,
+  createAttempt: createAttemptMock,
+  appendGuess: appendGuessMock,
+  countRecentGuesses: countRecentGuessesMock,
 }));
 
 vi.mock("../word-list.server", () => ({
@@ -19,6 +35,7 @@ vi.mock("../word-list.server", () => ({
 }));
 
 const GAME = { id: 1, slug: "rhobh" };
+const USER = { id: "user-1", email: "user@example.com" };
 
 function makePuzzle(
   overrides: Partial<{
@@ -50,6 +67,26 @@ function makePuzzle(
       title: overrides.articleTitle ?? "Erika story",
       publishedAt: new Date("2026-05-19T12:00:00.000Z"),
     },
+  };
+}
+
+function makeAttempt(
+  overrides: Partial<{
+    id: number;
+    guesses: { word: string; states: ("absent" | "correct" | "present")[] }[];
+    status: "playing" | "solved" | "failed";
+  }> = {},
+) {
+  return {
+    id: overrides.id ?? 10,
+    hominemUserId: USER.id,
+    gameId: GAME.id,
+    dateUtc: "2026-05-20",
+    guesses: overrides.guesses ?? [],
+    guessedAt: (overrides.guesses ?? []).map(() => new Date().toISOString()),
+    status: overrides.status ?? "playing",
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 }
 
@@ -112,20 +149,11 @@ describe("loadActivePublicPuzzle", () => {
 describe("evaluateGuessServer", () => {
   it("rejects a word that is not the answer length", async () => {
     const { evaluateGuessServer } = await import("../puzzle.server");
-    const result = await evaluateGuessServer("2026-05-20", "ABC", []);
+    const result = await evaluateGuessServer("2026-05-20", "ABC", null, 0);
 
     expect(result.valid).toBe(false);
     expect(result.reason).toBe("wrong-length");
     expect(result.word).toBe("ABC");
-    expect(getGameBySlugMock).not.toHaveBeenCalled();
-  });
-
-  it("rejects an already-guessed word before touching the repository", async () => {
-    const { evaluateGuessServer } = await import("../puzzle.server");
-    const result = await evaluateGuessServer("2026-05-20", "ERIKA", [{ word: "ERIKA" }]);
-
-    expect(result.valid).toBe(false);
-    expect(result.reason).toBe("already-guessed");
     expect(getGameBySlugMock).not.toHaveBeenCalled();
   });
 
@@ -135,7 +163,7 @@ describe("evaluateGuessServer", () => {
     isValidWordMock.mockResolvedValue(false);
 
     const { evaluateGuessServer } = await import("../puzzle.server");
-    const result = await evaluateGuessServer("2026-05-20", "ZZZZZ", []);
+    const result = await evaluateGuessServer("2026-05-20", "ZZZZZ", null, 0);
 
     expect(result.valid).toBe(false);
     expect(result.reason).toBe("not-in-word-list");
@@ -146,56 +174,164 @@ describe("evaluateGuessServer", () => {
     loadPuzzleForDateMock.mockResolvedValue(null);
 
     const { evaluateGuessServer } = await import("../puzzle.server");
-    const result = await evaluateGuessServer("2026-05-20", "ERIKA", []);
+    const result = await evaluateGuessServer("2026-05-20", "ERIKA", null, 0);
 
     expect(result.valid).toBe(false);
     expect(result.reason).toBe("not-in-word-list");
     expect(isValidWordMock).not.toHaveBeenCalled();
   });
 
-  it("evaluates a valid guess and returns per-letter states without the answer", async () => {
-    getGameBySlugMock.mockResolvedValue(GAME);
-    loadPuzzleForDateMock.mockResolvedValue(makePuzzle({ answer: "ERIKA" }));
-    isValidWordMock.mockResolvedValue(true);
+  describe("anonymous players", () => {
+    it("evaluates a first guess without persisting anything", async () => {
+      getGameBySlugMock.mockResolvedValue(GAME);
+      loadPuzzleForDateMock.mockResolvedValue(makePuzzle({ answer: "ERIKA" }));
+      isValidWordMock.mockResolvedValue(true);
 
-    const { evaluateGuessServer } = await import("../puzzle.server");
-    const result = await evaluateGuessServer("2026-05-20", "ERIKA", []);
+      const { evaluateGuessServer } = await import("../puzzle.server");
+      const result = await evaluateGuessServer("2026-05-20", "DORIT", null, 0);
 
-    expect(result.valid).toBe(true);
-    expect(result.word).toBe("ERIKA");
-    expect(result.states).toEqual(["correct", "correct", "correct", "correct", "correct"]);
-    expect(result.isSolved).toBe(true);
-    expect(result.isGameOver).toBe(true);
-    expect(result.status).toBe("solved");
-    expect((result as { answer?: string }).answer).toBeUndefined();
+      expect(result.valid).toBe(true);
+      expect(result.isGameOver).toBe(true);
+      expect(result.authRequired).toBe(true);
+      expect(createAttemptMock).not.toHaveBeenCalled();
+      expect(appendGuessMock).not.toHaveBeenCalled();
+    });
+
+    it("does not require auth when the free guess solves the puzzle", async () => {
+      getGameBySlugMock.mockResolvedValue(GAME);
+      loadPuzzleForDateMock.mockResolvedValue(makePuzzle({ answer: "ERIKA" }));
+      isValidWordMock.mockResolvedValue(true);
+
+      const { evaluateGuessServer } = await import("../puzzle.server");
+      const result = await evaluateGuessServer("2026-05-20", "ERIKA", null, 0);
+
+      expect(result.valid).toBe(true);
+      expect(result.isSolved).toBe(true);
+      expect(result.authRequired).toBe(false);
+    });
+
+    it("rejects a second guess with auth-required, without scoring it", async () => {
+      getGameBySlugMock.mockResolvedValue(GAME);
+      loadPuzzleForDateMock.mockResolvedValue(makePuzzle({ answer: "ERIKA" }));
+
+      const { evaluateGuessServer } = await import("../puzzle.server");
+      const result = await evaluateGuessServer("2026-05-20", "DORIT", null, 1);
+
+      expect(result.valid).toBe(false);
+      expect(result.reason).toBe("auth-required");
+      expect(result.authRequired).toBe(true);
+      expect(isValidWordMock).not.toHaveBeenCalled();
+    });
   });
 
-  it("marks the game failed on the sixth valid guess that is not the answer", async () => {
-    getGameBySlugMock.mockResolvedValue(GAME);
-    loadPuzzleForDateMock.mockResolvedValue(makePuzzle({ answer: "ERIKA" }));
-    isValidWordMock.mockResolvedValue(true);
+  describe("authenticated players", () => {
+    it("creates an attempt and persists the first guess", async () => {
+      getGameBySlugMock.mockResolvedValue(GAME);
+      loadPuzzleForDateMock.mockResolvedValue(makePuzzle({ answer: "ERIKA" }));
+      isValidWordMock.mockResolvedValue(true);
+      loadAttemptMock.mockResolvedValue(null);
+      countRecentGuessesMock.mockResolvedValue(0);
+      createAttemptMock.mockResolvedValue(makeAttempt({ guesses: [] }));
 
-    const { evaluateGuessServer } = await import("../puzzle.server");
-    const previous = ["DORIT", "SUTTON", "KATHY", "ERIKA", "TILLY"].map((word) => ({ word }));
-    const result = await evaluateGuessServer("2026-05-20", "KYLEE", previous);
+      const { evaluateGuessServer } = await import("../puzzle.server");
+      const result = await evaluateGuessServer("2026-05-20", "DORIT", USER, 0);
 
-    expect(result.valid).toBe(true);
-    expect(result.isSolved).toBe(false);
-    expect(result.isGameOver).toBe(true);
-    expect(result.status).toBe("failed");
-  });
+      expect(result.valid).toBe(true);
+      expect(result.status).toBe("playing");
+      expect(result.remainingGuesses).toBe(5);
+      expect(createAttemptMock).toHaveBeenCalledWith(USER.id, GAME.id, "2026-05-20");
+      expect(appendGuessMock).toHaveBeenCalledWith(
+        10,
+        { word: "DORIT", states: expect.any(Array) },
+        "playing",
+      );
+    });
 
-  it("keeps the game playing while guesses remain", async () => {
-    getGameBySlugMock.mockResolvedValue(GAME);
-    loadPuzzleForDateMock.mockResolvedValue(makePuzzle({ answer: "ERIKA" }));
-    isValidWordMock.mockResolvedValue(true);
+    it("solves the puzzle and marks the attempt solved", async () => {
+      getGameBySlugMock.mockResolvedValue(GAME);
+      loadPuzzleForDateMock.mockResolvedValue(makePuzzle({ answer: "ERIKA" }));
+      isValidWordMock.mockResolvedValue(true);
+      loadAttemptMock.mockResolvedValue(makeAttempt({ guesses: [] }));
+      countRecentGuessesMock.mockResolvedValue(0);
 
-    const { evaluateGuessServer } = await import("../puzzle.server");
-    const result = await evaluateGuessServer("2026-05-20", "DORIT", []);
+      const { evaluateGuessServer } = await import("../puzzle.server");
+      const result = await evaluateGuessServer("2026-05-20", "ERIKA", USER, 0);
 
-    expect(result.valid).toBe(true);
-    expect(result.isSolved).toBe(false);
-    expect(result.isGameOver).toBe(false);
-    expect(result.status).toBe("playing");
+      expect(result.valid).toBe(true);
+      expect(result.isSolved).toBe(true);
+      expect(result.isGameOver).toBe(true);
+      expect(result.status).toBe("solved");
+      expect(createAttemptMock).not.toHaveBeenCalled();
+    });
+
+    it("marks the attempt failed on the sixth non-answer guess", async () => {
+      getGameBySlugMock.mockResolvedValue(GAME);
+      loadPuzzleForDateMock.mockResolvedValue(makePuzzle({ answer: "ERIKA" }));
+      isValidWordMock.mockResolvedValue(true);
+      const priorGuesses = ["DORIT", "SUTTON", "KATHY", "SHEREE", "TILLY"].map((word) => ({
+        word,
+        states: ["absent", "absent", "absent", "absent", "absent"] as (
+          | "absent"
+          | "present"
+          | "correct"
+        )[],
+      }));
+      loadAttemptMock.mockResolvedValue(makeAttempt({ guesses: priorGuesses }));
+      countRecentGuessesMock.mockResolvedValue(0);
+
+      const { evaluateGuessServer } = await import("../puzzle.server");
+      const result = await evaluateGuessServer("2026-05-20", "KYLEE", USER, 0);
+
+      expect(result.valid).toBe(true);
+      expect(result.isSolved).toBe(false);
+      expect(result.isGameOver).toBe(true);
+      expect(result.status).toBe("failed");
+      expect(result.remainingGuesses).toBe(0);
+    });
+
+    it("rejects a duplicate guess against the persisted attempt, not the client", async () => {
+      getGameBySlugMock.mockResolvedValue(GAME);
+      loadPuzzleForDateMock.mockResolvedValue(makePuzzle({ answer: "ERIKA" }));
+      loadAttemptMock.mockResolvedValue(
+        makeAttempt({ guesses: [{ word: "DORIT", states: ["absent"] as never }] }),
+      );
+      countRecentGuessesMock.mockResolvedValue(0);
+
+      const { evaluateGuessServer } = await import("../puzzle.server");
+      const result = await evaluateGuessServer("2026-05-20", "DORIT", USER, 0);
+
+      expect(result.valid).toBe(false);
+      expect(result.reason).toBe("already-guessed");
+      expect(isValidWordMock).not.toHaveBeenCalled();
+    });
+
+    it("rejects further guesses once the attempt is no longer playing", async () => {
+      getGameBySlugMock.mockResolvedValue(GAME);
+      loadPuzzleForDateMock.mockResolvedValue(makePuzzle({ answer: "ERIKA" }));
+      loadAttemptMock.mockResolvedValue(makeAttempt({ status: "solved" }));
+
+      const { evaluateGuessServer } = await import("../puzzle.server");
+      const result = await evaluateGuessServer("2026-05-20", "DORIT", USER, 0);
+
+      expect(result.valid).toBe(false);
+      expect(result.reason).toBe("game-over");
+      expect(result.isGameOver).toBe(true);
+      expect(countRecentGuessesMock).not.toHaveBeenCalled();
+    });
+
+    it("rejects guesses once the per-minute rate limit is hit", async () => {
+      getGameBySlugMock.mockResolvedValue(GAME);
+      loadPuzzleForDateMock.mockResolvedValue(makePuzzle({ answer: "ERIKA" }));
+      loadAttemptMock.mockResolvedValue(null);
+      countRecentGuessesMock.mockResolvedValue(10);
+
+      const { evaluateGuessServer } = await import("../puzzle.server");
+      const result = await evaluateGuessServer("2026-05-20", "DORIT", USER, 0);
+
+      expect(result.valid).toBe(false);
+      expect(result.reason).toBe("rate-limited");
+      expect(isValidWordMock).not.toHaveBeenCalled();
+      expect(createAttemptMock).not.toHaveBeenCalled();
+    });
   });
 });
