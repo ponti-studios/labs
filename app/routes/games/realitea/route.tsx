@@ -1,7 +1,7 @@
 import { Button, Card, CardContent } from "@ponti-studios/ui/primitives";
-import { OnscreenKeyboard } from "~/components/games/onscreen-keyboard";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { useLoaderData, useRevalidator, type LoaderFunctionArgs } from "react-router";
+import { OnscreenKeyboard } from "~/components/games/onscreen-keyboard";
 
 import {
   getKeyboardState,
@@ -16,12 +16,13 @@ import { loadActivePublicPuzzle } from "~/lib/realitea/puzzle.server";
 import { cn } from "~/lib/utils";
 
 import { readGameState, saveGameState } from "./game-state";
+import { RealiTeaTile, type RealiTeaTileState } from "./realitea-tile";
 import { useRealiTeaGame } from "./use-game";
 import { useRealiTeaShare } from "./use-share";
-import { RealiTeaTile, type RealiTeaTileState } from "./realitea-tile";
+
+import { LucideHelpCircle, LucideNewspaper, LucideShare } from "lucide-react";
 
 import "./realitea.css";
-import { LucideHelpCircle, LucideNewspaper, LucideShare } from "lucide-react";
 
 const TZ_COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // one year in seconds
 
@@ -76,7 +77,7 @@ export function meta() {
 
 const EmptyGuessRow = memo(function EmptyGuessRow() {
   return (
-    <div className="flex gap-1.5 sm:gap-1">
+    <div className="flex gap-[var(--realitea-tile-gap)]">
       {Array.from({ length: REALITEA_ANSWER_LENGTH }).map((_, cellIndex) => (
         <RealiTeaTile key={`empty-cell-${cellIndex}`} state="empty" />
       ))}
@@ -96,7 +97,7 @@ const RevealedGuessRow = memo(function RevealedGuessRow({
   revealedTileCount,
 }: RevealedGuessRowProps) {
   return (
-    <div className="flex gap-1.5 sm:gap-1">
+    <div className="flex gap-[var(--realitea-tile-gap)]">
       {Array.from({ length: REALITEA_ANSWER_LENGTH }).map((_, cellIndex) => {
         const isTileRevealed = !isRevealingThisRow || cellIndex < revealedTileCount;
         const isAnimatingTile =
@@ -132,7 +133,7 @@ const CurrentGuessRow = memo(function CurrentGuessRow({
   return (
     <div
       className={cn(
-        "flex gap-1.5 transition-opacity sm:gap-1",
+        "flex gap-[var(--realitea-tile-gap)] transition-opacity",
         hasError && "realitea-tile-error",
         isShaking && "realitea-row-shake",
         isValidationPending && "opacity-60",
@@ -162,9 +163,9 @@ const CurrentGuessRow = memo(function CurrentGuessRow({
 export function HydrateFallback() {
   return (
     <div className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center px-4">
-      <div className="w-fit space-y-1 sm:space-y-0.5">
+      <div className="flex w-fit flex-col gap-[var(--realitea-tile-gap)]">
         {Array.from({ length: 6 }).map((_, row) => (
-          <div key={row} className="flex gap-1.5 sm:gap-1">
+          <div key={row} className="flex gap-[var(--realitea-tile-gap)]">
             {Array.from({ length: 5 }).map((_, col) => (
               <RealiTeaTile
                 key={col}
@@ -274,13 +275,17 @@ export default function RealiTeaRoute() {
 
   return (
     <div className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-6 px-4 pb-[calc(env(safe-area-inset-bottom)+8px)]">
-      <header className="bg-background/95 sticky top-0 z-10 backdrop-blur md:static">
-        <div className="border-border flex items-center justify-between gap-2 rounded-md border p-2">
-          <img src="/logo.realitea.png" alt="RealiTea" className="h-6 object-contain" />
+      <header className="sticky top-0 z-10 backdrop-blur md:static">
+        <div className="realitea-header relative flex flex-col items-center gap-1 px-2 pt-3 pb-4">
+          <img
+            src="/experiments/logo.realitea.500x500.webp"
+            alt="RealiTea"
+            className="h-20 object-contain sm:h-24"
+          />
           <Button
             aria-label="How to play"
             variant="ghost"
-            className="px-1"
+            className="absolute top-2 right-2 px-1"
             onClick={() => setShowInstructions((v) => !v)}
             type="button"
           >
@@ -294,24 +299,24 @@ export default function RealiTeaRoute() {
           <CardContent>
             <p>Guess today&apos;s reality TV answer in 6 tries.</p>
             <p className="mt-2">
-              <span className="font-medium text-[var(--realitea-correct-text)]">Green</span> means
-              the right letter is in the right place.{" "}
-              <span className="font-medium text-[var(--realitea-present-text)]">Gold</span> means
-              the letter belongs in the answer but is in the wrong place.
+              <span className="font-medium text-(--realitea-correct-text)">Green</span> means the
+              right letter is in the right place.{" "}
+              <span className="font-medium text-(--realitea-present-text)">Gold</span> means the
+              letter belongs in the answer but is in the wrong place.
             </p>
           </CardContent>
         </Card>
       )}
 
       {shouldShowClue && (
-        <div className="rounded-md border border-[var(--realitea-present-border)] bg-[var(--realitea-present-bg)] p-3 text-sm leading-5 text-[var(--realitea-present-text)]">
+        <div className="rounded-md border border-(--realitea-present-border) bg-(--realitea-present-bg) p-3 text-sm leading-5 text-(--realitea-present-text)">
           <p className="ui-eyebrow">Final clue</p>
           <p className="mt-1">{currentPuzzle.clue}</p>
         </div>
       )}
 
       <div className="flex flex-1 flex-col items-center justify-center gap-2">
-        <div className="w-fit space-y-1 sm:space-y-0.5">
+        <div className="flex w-fit flex-col gap-[var(--realitea-tile-gap)]">
           {Array.from({
             length: game.isGameOver ? game.guesses.length : MAX_GUESSES,
           }).map((_, rowIndex) => {
@@ -349,7 +354,7 @@ export default function RealiTeaRoute() {
 
         {game.errorMessage ? (
           <p
-            className="min-h-[1em] text-center text-xs font-medium text-[var(--realitea-error-border)]"
+            className="min-h-[1em] text-center text-xs font-medium text-(--realitea-error-border)"
             role="status"
             aria-live="polite"
             aria-atomic="true"

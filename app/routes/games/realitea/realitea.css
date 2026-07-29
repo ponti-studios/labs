@@ -2,7 +2,8 @@
 
 :root {
   /* Sizing */
-  --realitea-tile-size: clamp(54px, 15vw, 82px);
+  --realitea-tile-size: clamp(54px, 15vw, 76px);
+  --realitea-tile-gap: clamp(8px, 2.6vw, 12px);
   --realitea-radius: clamp(11px, 3.1vw, 17px);
 
   /* Palette — solids */
@@ -42,6 +43,24 @@
   --realitea-glow-correct-soft: rgba(133, 255, 77, 0.35);
   --realitea-glow-present-soft: rgba(255, 177, 20, 0.35);
   --realitea-glow-error: rgba(239, 68, 68, 0.35);
+}
+
+.realitea-header::after {
+  position: absolute;
+  right: 12%;
+  bottom: 0;
+  left: 12%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--realitea-gold) 20%,
+    var(--realitea-gold-light) 50%,
+    var(--realitea-gold) 80%,
+    transparent
+  );
+  opacity: 0.5;
+  content: "";
 }
 
 .realitea-tile {
