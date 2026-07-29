@@ -45,24 +45,6 @@
   --realitea-glow-error: rgba(239, 68, 68, 0.35);
 }
 
-.realitea-header::after {
-  position: absolute;
-  right: 12%;
-  bottom: 0;
-  left: 12%;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--realitea-gold) 20%,
-    var(--realitea-gold-light) 50%,
-    var(--realitea-gold) 80%,
-    transparent
-  );
-  opacity: 0.5;
-  content: "";
-}
-
 .realitea-tile {
   --realitea-tile-letter: var(--realitea-cream);
 

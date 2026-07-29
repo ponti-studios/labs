@@ -101,7 +101,7 @@ export function meta() {
 
 const EmptyGuessRow = memo(function EmptyGuessRow() {
   return (
-    <div className="flex gap-[var(--realitea-tile-gap)]">
+    <div className="flex gap-(--realitea-tile-gap)">
       {Array.from({ length: REALITEA_ANSWER_LENGTH }).map((_, cellIndex) => (
         <RealiTeaTile key={`empty-cell-${cellIndex}`} state="empty" />
       ))}
@@ -121,7 +121,7 @@ const RevealedGuessRow = memo(function RevealedGuessRow({
   revealedTileCount,
 }: RevealedGuessRowProps) {
   return (
-    <div className="flex gap-[var(--realitea-tile-gap)]">
+    <div className="flex gap-(--realitea-tile-gap)">
       {Array.from({ length: REALITEA_ANSWER_LENGTH }).map((_, cellIndex) => {
         const isTileRevealed = !isRevealingThisRow || cellIndex < revealedTileCount;
         const isAnimatingTile =
@@ -157,7 +157,7 @@ const CurrentGuessRow = memo(function CurrentGuessRow({
   return (
     <div
       className={cn(
-        "flex gap-[var(--realitea-tile-gap)] transition-opacity",
+        "flex gap-(--realitea-tile-gap) transition-opacity",
         hasError && "realitea-tile-error",
         isShaking && "realitea-row-shake",
         isValidationPending && "opacity-60",
@@ -187,9 +187,9 @@ const CurrentGuessRow = memo(function CurrentGuessRow({
 export function HydrateFallback() {
   return (
     <div className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center px-4">
-      <div className="flex w-fit flex-col gap-[var(--realitea-tile-gap)]">
+      <div className="flex w-fit flex-col gap-(--realitea-tile-gap)">
         {Array.from({ length: 6 }).map((_, row) => (
-          <div key={row} className="flex gap-[var(--realitea-tile-gap)]">
+          <div key={row} className="flex gap-(--realitea-tile-gap)">
             {Array.from({ length: 5 }).map((_, col) => (
               <RealiTeaTile
                 key={col}
@@ -301,21 +301,21 @@ export default function RealiTeaRoute() {
   return (
     <div className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-6 px-4 pb-[calc(env(safe-area-inset-bottom)+8px)]">
       <header className="sticky top-0 z-10 backdrop-blur md:static">
-        <div className="realitea-header relative flex flex-col items-center gap-1 px-2 pt-3 pb-4">
+        <div className="relative flex items-center justify-center pt-4 pb-0">
           <img
             src="/experiments/logo.realitea.500x500.webp"
             alt="RealiTea"
-            className="h-20 object-contain sm:h-24"
+            className="h-20 object-contain sm:h-14"
           />
-          <Button
+          {/* <Button
             aria-label="How to play"
             variant="ghost"
-            className="absolute top-2 right-2 px-1"
+            className="self-end"
             onClick={() => setShowInstructions((v) => !v)}
             type="button"
           >
             <LucideHelpCircle />
-          </Button>
+          </Button> */}
         </div>
       </header>
 
@@ -341,7 +341,7 @@ export default function RealiTeaRoute() {
       )}
 
       <div className="flex flex-1 flex-col items-center justify-center gap-2">
-        <div className="flex w-fit flex-col gap-[var(--realitea-tile-gap)]">
+        <div className="flex w-fit flex-col gap-(--realitea-tile-gap)">
           {Array.from({
             length: game.isGameOver ? game.guesses.length : MAX_GUESSES,
           }).map((_, rowIndex) => {
