@@ -22,7 +22,7 @@
     "strictNullChecks": true,
     "target": "ES2022",
     "allowJs": false,
-    "types": ["node", "vite/client", "google.maps"],
+    "types": ["node", "vite/client"],
     "rootDirs": [".", "./.react-router/types"],
     "baseUrl": ".",
     "paths": {

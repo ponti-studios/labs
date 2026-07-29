@@ -1,14 +1,9 @@
 import { OpenRouter } from "@openrouter/sdk";
-import { chat } from "@tanstack/ai";
-import { createOpenRouterText, openRouterText } from "@tanstack/ai-openrouter";
-import { webFetchTool, webSearchTool } from "@tanstack/ai-openrouter/tools";
 
-const DEFAULT_TEXT_MODEL: Parameters<typeof createOpenRouterText>[0] =
-  "google/gemini-3.1-flash-lite";
+const DEFAULT_TEXT_MODEL = "google/gemini-3.1-flash-lite";
 const DEFAULT_IMAGE_MODEL = "x-ai/grok-imagine-image-quality";
 const DEFAULT_EMBEDDING_MODEL = "google/gemini-embedding-2";
 const DEFAULT_EMBEDDING_DIMENSIONS = 3072;
-const DEFAULT_TRANSCRIPTION_MODEL = "mistralai/voxtral-mini-transcribe";
 
 type OpenRouterClientOptions = {
   apiKey?: string;
@@ -42,10 +37,6 @@ type ImageGenerationOptions = OpenRouterClientOptions & {
   size?: string;
 };
 
-type TranscriptionOptions = OpenRouterClientOptions & {
-  language?: string;
-};
-
 type EmbeddingOptions = OpenRouterClientOptions & {
   inputType?: string;
   dimensions?: number;
@@ -61,7 +52,7 @@ function resolveOpenRouterApiKey(apiKey?: string) {
   return resolvedApiKey;
 }
 
-export function createOpenRouterClient(options: OpenRouterClientOptions = {}) {
+function createOpenRouterClient(options: OpenRouterClientOptions = {}) {
   return new OpenRouter({
     apiKey: resolveOpenRouterApiKey(options.apiKey),
     httpReferer: options.httpReferer,
@@ -70,18 +61,7 @@ export function createOpenRouterClient(options: OpenRouterClientOptions = {}) {
   });
 }
 
-export function createOpenRouterTextAdapter(options: OpenRouterClientOptions = {}) {
-  const apiKey = resolveOpenRouterApiKey(options.apiKey);
-  return createOpenRouterText(DEFAULT_TEXT_MODEL, apiKey, {
-    httpReferer: options.httpReferer,
-    appTitle: options.appTitle,
-    appCategories: options.appCategories,
-  });
-}
-
-export { chat, openRouterText, webFetchTool, webSearchTool };
-
-/** Send a chat completion using the default text model. No programmatic model override is allowed. */
+/** Send a chat completion using the default text model. */
 export async function chatCompletion(options: ChatCompletionOptions = { messages: [] }) {
   const {
     apiKey,
@@ -135,57 +115,6 @@ export async function generateEmbedding(content: string, options: EmbeddingOptio
   const embedding = embeddingResponse.data[0]?.embedding;
 
   return Array.isArray(embedding) ? embedding : [];
-}
-
-function toAudioFormat(mimeType: string) {
-  if (mimeType.includes("webm")) {
-    return "webm";
-  }
-
-  if (mimeType.includes("mpeg") || mimeType.includes("mp3")) {
-    return "mp3";
-  }
-
-  if (mimeType.includes("wav")) {
-    return "wav";
-  }
-
-  if (mimeType.includes("ogg")) {
-    return "ogg";
-  }
-
-  if (mimeType.includes("aac")) {
-    return "aac";
-  }
-
-  if (mimeType.includes("flac")) {
-    return "flac";
-  }
-
-  return mimeType;
-}
-
-export async function transcribeAudio(
-  audioBase64: string,
-  mimeType: string,
-  options: TranscriptionOptions = {},
-) {
-  const client = createOpenRouterClient(options);
-  const response = await client.stt.createTranscription({
-    httpReferer: options.httpReferer,
-    appTitle: options.appTitle,
-    appCategories: options.appCategories,
-    sttRequest: {
-      model: DEFAULT_TRANSCRIPTION_MODEL,
-      inputAudio: {
-        data: audioBase64,
-        format: toAudioFormat(mimeType),
-      },
-      language: options.language,
-    },
-  });
-
-  return response.text;
 }
 
 export async function generateImageFromPrompt(
@@ -274,10 +203,3 @@ export async function generateImageFromPrompt(
 
   throw new Error("No image data received from OpenRouter");
 }
-
-export {
-  DEFAULT_EMBEDDING_MODEL,
-  DEFAULT_IMAGE_MODEL,
-  DEFAULT_TEXT_MODEL,
-  DEFAULT_TRANSCRIPTION_MODEL,
-};
