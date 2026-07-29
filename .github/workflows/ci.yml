@@ -46,6 +46,11 @@ jobs:
         with:
           node-version: "24.14.1"
           cache: "pnpm"
+      # @ponti-studios/auth lives in GitHub Packages, which requires a token
+      # even for public packages. pnpm won't expand env vars in the committed
+      # project .npmrc, so the credential goes in the runner's user-level one.
+      - name: Authenticate to GitHub Packages
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
       - run: pnpm install --frozen-lockfile
       - name: Migrate test database
         run: pnpm db:migrate
@@ -66,6 +71,8 @@ jobs:
         with:
           node-version: "24.14.1"
           cache: "pnpm"
+      - name: Authenticate to GitHub Packages
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
 
@@ -77,6 +84,10 @@ jobs:
       actions: read
       contents: read
       security-events: write
+      # Job-level permissions replace the workflow-level block, so this has to
+      # be repeated here — autobuild installs dependencies, which now include
+      # @ponti-studios/auth from GitHub Packages.
+      packages: read
 
     strategy:
       fail-fast: false
@@ -86,6 +97,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+
+      - name: Authenticate to GitHub Packages
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
