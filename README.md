@@ -7,7 +7,7 @@ Ponti Studios portfolio and playground — React Router app with puzzles, data v
 ```bash
 # 1. Start foundation (shared infra)
 git clone https://github.com/ponti-studios/foundation.git ../foundation
-cd ../foundation && just docker-up
+cd ../foundation && just up
 
 # 2. Install and run
 pnpm install
