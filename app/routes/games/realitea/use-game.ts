@@ -19,6 +19,11 @@ export interface RealiTeaGameState {
   status: GameStatus;
   isSolved: boolean;
   isGameOver: boolean;
+  // True once an anonymous player has used their one free guess (or tried a
+  // second) without it solving the puzzle. isGameOver is also true in this
+  // state, but callers that need to distinguish "sign in to keep playing"
+  // from a genuinely finished game (solved/6 guesses) should check this.
+  authRequired: boolean;
   isRevealingRow: boolean;
   isValidationPending: boolean;
   currentGuess: string;
@@ -43,13 +48,14 @@ export function useRealiTeaGame({
   initialGuesses,
 }: UseRealiTeaGameOptions): RealiTeaGameState {
   const [guesses, setGuesses] = useState<RealiteaGuess[]>(() => [...initialGuesses]);
+  const [authRequired, setAuthRequired] = useState(false);
   const wordValidator = useFetcher<RealiteaGuessResult>();
 
   const anim = useAnimation();
   const isRevealingRow = anim.revealingGuessIndex !== null;
   const isValidationPending = wordValidator.state !== "idle";
   const status = useMemo(() => deriveGameStatus(guesses), [guesses]);
-  const isGameOver = status !== "playing";
+  const isGameOver = status !== "playing" || authRequired;
   const canMutateGuess = !isGameOver && !isValidationPending && !isRevealingRow;
 
   const typing = useTyping(!canMutateGuess);
@@ -62,6 +68,7 @@ export function useRealiTeaGame({
     if (puzzle.dateKey === prevDateKeyRef.current) return;
     prevDateKeyRef.current = puzzle.dateKey;
     setGuesses([]);
+    setAuthRequired(false);
     typing.setCurrentGuess("");
     anim.resetAnimation();
   }, [puzzle.dateKey]);
@@ -151,6 +158,10 @@ export function useRealiTeaGame({
       if (result.reason === "not-in-word-list") anim.animateError("Not in word list", true);
       else if (result.reason === "wrong-length") anim.animateError("Not enough letters", true);
       else if (result.reason === "already-guessed") anim.animateError("Already guessed", true);
+      else if (result.reason === "rate-limited")
+        anim.animateError("Too many guesses — slow down", true);
+      else if (result.reason === "game-over") anim.animateError("This puzzle is already over", true);
+      if (result.reason === "auth-required") setAuthRequired(true);
       return;
     }
 
@@ -167,6 +178,7 @@ export function useRealiTeaGame({
       });
       typing.setCurrentGuess("");
       anim.startReveal(guesses.length);
+      if (result.authRequired) setAuthRequired(true);
     }
   }, [wordValidator.data, wordValidator.state, guesses.length]);
 
@@ -175,6 +187,7 @@ export function useRealiTeaGame({
     status,
     isSolved: status === "solved",
     isGameOver,
+    authRequired,
     isRevealingRow,
     isValidationPending,
     currentGuess: typing.currentGuess,

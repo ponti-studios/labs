@@ -33,7 +33,14 @@ interface GuessResultPayload {
   isSolved?: boolean;
   isGameOver?: boolean;
   status?: "playing" | "solved" | "failed";
-  reason?: "not-in-word-list" | "wrong-length" | "already-guessed";
+  reason?:
+    | "not-in-word-list"
+    | "wrong-length"
+    | "already-guessed"
+    | "auth-required"
+    | "rate-limited"
+    | "game-over";
+  authRequired?: boolean;
 }
 
 const guessControl = createControlledRouteAction<GuessRequest, GuessResultPayload>({
@@ -78,6 +85,7 @@ function toDateKey(date: Date): string {
 }
 
 let routePuzzle = buildPublicPuzzle();
+const STUB_LOGIN_URL = "https://api.ponti.io/login?next=https%3A%2F%2Flabs.ponti.io%2Fgames%2Frealitea";
 
 async function renderRoute(initial: { puzzle?: PublicDailyPuzzle } = {}) {
   const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
@@ -88,7 +96,7 @@ async function renderRoute(initial: { puzzle?: PublicDailyPuzzle } = {}) {
       path: "/",
       Component: RealiTeaRoute,
       HydrateFallback: () => null,
-      loader: () => ({ puzzle: initial.puzzle ?? routePuzzle }),
+      loader: () => ({ puzzle: initial.puzzle ?? routePuzzle, loginUrl: STUB_LOGIN_URL }),
     },
     {
       id: "routes/api.games.realitea.guess",
@@ -313,6 +321,45 @@ describe("RealiTeaRoute", () => {
       expect(screen.getByText("Not in word list")).toBeInTheDocument();
     });
     expect(getTextboxValues()).toEqual(Array.from({ length: invalidGuess.length }, () => "Z"));
+  });
+
+  it("shows a sign-in prompt when the free anonymous guess is used up", async () => {
+    const guess = "DORIT";
+    const { user } = await renderRoute();
+
+    await enterGuess(user, guess);
+    await submitCurrentGuess(user);
+    await expectGuessCalls([guess]);
+    await resolveGuess({
+      ...buildGuessResult(DEFAULT_ANSWER, guess),
+      authRequired: true,
+    });
+    await finishTileReveal();
+
+    const link = await screen.findByRole("button", { name: /sign in to keep playing/i });
+    expect(link).toHaveAttribute("href", STUB_LOGIN_URL);
+    // The keyboard is replaced by the sign-in prompt, not shown alongside it.
+    expect(screen.queryByRole("button", { name: "Q" })).not.toBeInTheDocument();
+  });
+
+  it("locks input entirely once the free anonymous guess requires auth", async () => {
+    const first = "DORIT";
+    const { user } = await renderRoute();
+
+    await enterGuess(user, first);
+    await submitCurrentGuess(user);
+    await expectGuessCalls([first]);
+    await resolveGuess({
+      ...buildGuessResult(DEFAULT_ANSWER, first),
+      authRequired: true,
+    });
+    await finishTileReveal();
+    await screen.findByRole("button", { name: /sign in to keep playing/i });
+
+    // Typing is disabled once authRequired flips isGameOver — no second
+    // request should ever reach the server for an anonymous player.
+    await user.keyboard("SUTTON{Enter}");
+    expect(guessControl.getRequests().map((r) => r.word)).toEqual([first]);
   });
 
   it("renders error message text inside the aria-live region", async () => {
