@@ -8,6 +8,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
   useLocation,
   useNavigation,
 } from "react-router";
@@ -18,8 +19,13 @@ import { ParticleBackground } from "./components/particle-background";
 import { PrefetchProvider } from "./components/prefetch-provider";
 import QueryProvider from "./components/QueryProvider";
 import { BOOK_CALL_URL } from "./data/studio";
+import { getHominemUser } from "./lib/server/hominem-auth";
 import { cn } from "./lib/utils";
 import { t } from "./translations";
+
+export async function loader({ request }: Route.LoaderArgs) {
+  return { user: await getHominemUser(request) };
+}
 
 export const links: Route.LinksFunction = () => [
   { rel: "icon", href: "/logo.realitea.png", type: "image/png" },
@@ -55,9 +61,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const { user } = useLoaderData<typeof loader>();
   const location = useLocation();
   const navigation = useNavigation();
   const isNavigating = navigation.state !== "idle";
+  const isAuthenticated = user !== null;
 
   return (
     <QueryProvider>
@@ -75,21 +83,38 @@ export default function App() {
       <AppNavigation
         brand={<img src="/logo.ponti.png" alt={t.nav.brandAlt} className="size-6" />}
         brandHref="/"
-        links={[
-          { href: "/services", label: t.nav.services },
-          { href: "/work", label: t.nav.work },
-          { href: "/projects", label: t.nav.projects },
-          { href: "/manifesto", label: t.nav.manifesto },
-        ]}
+        links={
+          isAuthenticated
+            ? [{ href: "/games/realitea", label: t.nav.realitea }]
+            : [
+                { href: "/services", label: t.nav.services },
+                { href: "/work", label: t.nav.work },
+                { href: "/projects", label: t.nav.projects },
+                { href: "/manifesto", label: t.nav.manifesto },
+              ]
+        }
         activeHref={location.pathname}
         endContent={
-          <div className="flex items-center gap-3">
-            <Button asChild>
-              <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
-                {t.nav.book}
-              </a>
-            </Button>
-          </div>
+          isAuthenticated ? (
+            <a
+              href={
+                import.meta.env.NODE_ENV === "development"
+                  ? "https://localhost:4451"
+                  : "https://career.ponti.io"
+              }
+              className="hover:bg-muted hover:text-muted-foreground inline-flex min-h-9 shrink-0 items-center rounded-md px-3 py-2 text-sm font-medium"
+            >
+              {t.nav.career}
+            </a>
+          ) : (
+            <div className="flex items-center gap-3">
+              <Button asChild>
+                <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
+                  {t.nav.book}
+                </a>
+              </Button>
+            </div>
+          )
         }
         linkComponent={Link}
         linkProp="to"
