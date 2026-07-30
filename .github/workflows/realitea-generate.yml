@@ -46,7 +46,7 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-        run: tsx scripts/realitea-ingest.ts
+        run: pnpm realitea:ingest
 
       - name: generate
         env:
@@ -63,4 +63,4 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-        run: tsx scripts/realitea-health-check.ts
+        run: pnpm realitea:health-check
