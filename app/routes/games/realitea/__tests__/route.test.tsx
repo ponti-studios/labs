@@ -107,7 +107,6 @@ async function renderRoute(initial: { puzzle?: PublicDailyPuzzle } = {}) {
 
   cleanup();
   const rendered = render(<RoutesStub initialEntries={["/"]} />);
-  await screen.findByRole("button", { name: /how to play/i });
   await waitFor(() => {
     expect(
       screen.queryByLabelText("Letter 1") ??

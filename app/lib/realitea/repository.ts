@@ -362,4 +362,72 @@ export async function countRecentGuesses(
   return total;
 }
 
+// ── History & stats ──────────────────────────────────────────────────────────
+
+export interface AttemptWithPuzzle {
+  attempt: RealiteaAttempt;
+  puzzle: PuzzleRecord;
+}
+
+/**
+ * Page of a user's attempts for `gameId`, newest date first, joined with the
+ * puzzle each attempt belongs to. There's no FK between `realiteaAttempts`
+ * and `dailyPuzzles` (see the schema's design note), so the join matches on
+ * `gameId` + `dateUtc` instead — the same key `loadAttempt`/`createAttempt`
+ * already use to correlate the two tables.
+ *
+ * `page` is 1-indexed. Real LIMIT/OFFSET pagination since this table grows
+ * unbounded over the game's lifetime, unlike `loadAllAttemptsForUser` below.
+ */
+export async function listAttemptsForUser(
+  userId: string,
+  gameId: number,
+  { page, pageSize }: { page: number; pageSize: number },
+): Promise<{ rows: AttemptWithPuzzle[]; total: number }> {
+  const where = and(eq(realiteaAttempts.hominemUserId, userId), eq(realiteaAttempts.gameId, gameId));
+
+  const [rows, totalRows] = await Promise.all([
+    db
+      .select({ attempt: realiteaAttempts, puzzle: dailyPuzzles, article: articles })
+      .from(realiteaAttempts)
+      .innerJoin(
+        dailyPuzzles,
+        and(
+          eq(dailyPuzzles.gameId, realiteaAttempts.gameId),
+          eq(dailyPuzzles.dateUtc, realiteaAttempts.dateUtc),
+        ),
+      )
+      .innerJoin(articles, eq(dailyPuzzles.articleId, articles.id))
+      .where(where)
+      .orderBy(desc(realiteaAttempts.dateUtc))
+      .limit(pageSize)
+      .offset((page - 1) * pageSize),
+    db.select({ value: count() }).from(realiteaAttempts).where(where),
+  ]);
+
+  return {
+    rows: rows.map((row) => ({
+      attempt: row.attempt,
+      puzzle: { ...row.puzzle, article: row.article },
+    })),
+    total: totalRows[0]?.value ?? 0,
+  };
+}
+
+/**
+ * ALL of a user's attempts for `gameId`, unpaginated, newest date first —
+ * used only as input to stats/streak computation (see stats.ts), never
+ * rendered directly. Row count is bounded by days-since-launch per user, so
+ * a full fetch here is cheap even for a long-lived player.
+ */
+export async function loadAllAttemptsForUser(
+  userId: string,
+  gameId: number,
+): Promise<RealiteaAttempt[]> {
+  return db.query.realiteaAttempts.findMany({
+    where: and(eq(realiteaAttempts.hominemUserId, userId), eq(realiteaAttempts.gameId, gameId)),
+    orderBy: desc(realiteaAttempts.dateUtc),
+  });
+}
+
 export type { Article, DailyPuzzle, Game };

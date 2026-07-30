@@ -4,7 +4,9 @@ import {
   MAX_GUESSES,
   normalizeGuess,
   REALITEA_ANSWER_LENGTH,
+  type GameStatus,
   type PublicDailyPuzzle,
+  type RealiteaGuess,
   type RealiteaGuessResult,
 } from "./index";
 import { addDaysToDateKey, getDateKey } from "./date";
@@ -103,6 +105,44 @@ export async function loadActivePublicPuzzle(
     "puzzle loaded",
   );
   return { puzzle: toPublicDailyPuzzle(puzzle) };
+}
+
+export interface DatedPuzzleEnvelope {
+  puzzle: PublicDailyPuzzle;
+  /** null when signed out, or when signed in but the date has never been
+   *  attempted — both cases mean "no prior guesses to seed." */
+  attempt: { guesses: RealiteaGuess[]; status: GameStatus } | null;
+}
+
+/**
+ * Resolves a puzzle for an *exact* requested date — no previous-day grace
+ * period, unlike loadActivePublicPuzzle/evaluateGuessServer. Grace period
+ * exists there for midnight-rollover on "today"; a request for a specific
+ * historical date should 404 if that exact date has no puzzle, not silently
+ * substitute a different one.
+ *
+ * Only loads the signed-in user's attempt for this date; anonymous callers
+ * always get `attempt: null` — the route decides what to do with that (see
+ * date.$date.tsx: anonymous visitors get a read-only clue teaser, not a
+ * playable board, since the per-date anonymous free-guess design in
+ * evaluateGuessServer isn't meant to be exercised against arbitrary dates).
+ */
+export async function loadPuzzleForSpecificDate(
+  dateKey: string,
+  user: HominemUser | null,
+): Promise<DatedPuzzleEnvelope | null> {
+  const gameId = await requireRhobhGameId();
+  const puzzle = await loadPuzzleForDate(gameId, dateKey);
+  if (!puzzle) return null;
+
+  const attemptRow = user ? await loadAttempt(user.id, gameId, dateKey) : null;
+
+  return {
+    puzzle: toPublicDailyPuzzle(puzzle),
+    attempt: attemptRow
+      ? { guesses: attemptRow.guesses as RealiteaGuess[], status: attemptRow.status }
+      : null,
+  };
 }
 
 /**

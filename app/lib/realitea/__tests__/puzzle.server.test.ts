@@ -335,3 +335,59 @@ describe("evaluateGuessServer", () => {
     });
   });
 });
+
+describe("loadPuzzleForSpecificDate", () => {
+  it("returns null when no puzzle exists for that exact date (no grace period)", async () => {
+    getGameBySlugMock.mockResolvedValue(GAME);
+    loadPuzzleForDateMock.mockResolvedValue(null);
+
+    const { loadPuzzleForSpecificDate } = await import("../puzzle.server");
+    const result = await loadPuzzleForSpecificDate("2026-05-20", USER);
+
+    expect(result).toBeNull();
+    // No previous-day fallback lookup, unlike evaluateGuessServer's grace period.
+    expect(loadPuzzleForDateMock).toHaveBeenCalledTimes(1);
+    expect(loadPuzzleForDateMock).toHaveBeenCalledWith(1, "2026-05-20");
+  });
+
+  it("returns attempt: null for an anonymous caller without loading an attempt", async () => {
+    getGameBySlugMock.mockResolvedValue(GAME);
+    loadPuzzleForDateMock.mockResolvedValue(makePuzzle());
+
+    const { loadPuzzleForSpecificDate } = await import("../puzzle.server");
+    const result = await loadPuzzleForSpecificDate("2026-05-20", null);
+
+    expect(result?.attempt).toBeNull();
+    expect(loadAttemptMock).not.toHaveBeenCalled();
+  });
+
+  it("returns attempt: null for a signed-in user who hasn't played that date", async () => {
+    getGameBySlugMock.mockResolvedValue(GAME);
+    loadPuzzleForDateMock.mockResolvedValue(makePuzzle());
+    loadAttemptMock.mockResolvedValue(null);
+
+    const { loadPuzzleForSpecificDate } = await import("../puzzle.server");
+    const result = await loadPuzzleForSpecificDate("2026-05-20", USER);
+
+    expect(result?.attempt).toBeNull();
+    expect(loadAttemptMock).toHaveBeenCalledWith(USER.id, 1, "2026-05-20");
+  });
+
+  it("returns the persisted guesses and status for a signed-in user's existing attempt", async () => {
+    getGameBySlugMock.mockResolvedValue(GAME);
+    loadPuzzleForDateMock.mockResolvedValue(makePuzzle());
+    loadAttemptMock.mockResolvedValue(
+      makeAttempt({ status: "solved", guesses: [{ word: "ERIKA", states: ["correct"] as never }] }),
+    );
+
+    const { loadPuzzleForSpecificDate } = await import("../puzzle.server");
+    const result = await loadPuzzleForSpecificDate("2026-05-20", USER);
+
+    expect(result?.attempt).toEqual({
+      status: "solved",
+      guesses: [{ word: "ERIKA", states: ["correct"] }],
+    });
+    // Never leaks the raw answer to the caller.
+    expect((result!.puzzle as { answer?: string }).answer).toBeUndefined();
+  });
+});

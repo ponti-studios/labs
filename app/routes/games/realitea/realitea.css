@@ -45,6 +45,18 @@
   --realitea-glow-error: rgba(239, 68, 68, 0.35);
 }
 
+/* Compact tile-grid preview used in history list rows — same palette, fixed
+   small size regardless of viewport since it's a thumbnail, not the board. */
+.realitea-history-mini {
+  --realitea-tile-size: 22px;
+  --realitea-tile-gap: 3px;
+  --realitea-radius: 5px;
+}
+
+.realitea-history-mini .realitea-tile {
+  font-size: 0.65rem;
+}
+
 .realitea-tile {
   --realitea-tile-letter: var(--realitea-cream);
 
