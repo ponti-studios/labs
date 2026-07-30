@@ -57,6 +57,16 @@
   font-size: 0.65rem;
 }
 
+/* Larger, non-interactive preview grid used on the homepage's featured
+   product card — bigger than the history thumbnail, but fixed-size rather
+   than the fluid clamp() the real board uses, since it never fills a
+   full-width board container. */
+.realitea-hero-preview {
+  --realitea-tile-size: clamp(38px, 7vw, 52px);
+  --realitea-tile-gap: 6px;
+  --realitea-radius: 9px;
+}
+
 .realitea-tile {
   --realitea-tile-letter: var(--realitea-cream);
 
