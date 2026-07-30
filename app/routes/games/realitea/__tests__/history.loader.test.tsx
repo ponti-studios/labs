@@ -43,11 +43,11 @@ describe("RealiTea history route loader", () => {
     loadPuzzleHistoryMock.mockResolvedValue({
       rows: [],
       page: 1,
-      pageSize: 20,
-      total: 0,
       totalPages: 1,
       hasNext: false,
       hasPrev: false,
+      weekStartKey: "2026-07-23",
+      weekEndKey: "2026-07-29",
       stats: { gamesPlayed: 0, gamesSolved: 0, winRate: 0, currentStreak: 0, maxStreak: 0, guessDistribution: {} },
       playableUnplayedDateKeys: [],
     });
@@ -57,7 +57,7 @@ describe("RealiTea history route loader", () => {
     const payload = await response.json();
 
     expect(payload.signedIn).toBe(true);
-    expect(loadPuzzleHistoryMock).toHaveBeenCalledWith("user-1", { page: 1, pageSize: 20 });
+    expect(loadPuzzleHistoryMock).toHaveBeenCalledWith("user-1", { page: 1 });
   });
 
   it("parses the page search param", async () => {
@@ -65,11 +65,11 @@ describe("RealiTea history route loader", () => {
     loadPuzzleHistoryMock.mockResolvedValue({
       rows: [],
       page: 3,
-      pageSize: 20,
-      total: 0,
-      totalPages: 1,
+      totalPages: 3,
       hasNext: false,
-      hasPrev: false,
+      hasPrev: true,
+      weekStartKey: "2026-07-09",
+      weekEndKey: "2026-07-15",
       stats: { gamesPlayed: 0, gamesSolved: 0, winRate: 0, currentStreak: 0, maxStreak: 0, guessDistribution: {} },
       playableUnplayedDateKeys: [],
     });
@@ -77,7 +77,7 @@ describe("RealiTea history route loader", () => {
     const { loader } = await import("../history");
     await loader(createLoaderArgs("https://labs.ponti.io/games/realitea/history?page=3"));
 
-    expect(loadPuzzleHistoryMock).toHaveBeenCalledWith("user-1", { page: 3, pageSize: 20 });
+    expect(loadPuzzleHistoryMock).toHaveBeenCalledWith("user-1", { page: 3 });
   });
 
   it("falls back to page 1 for an invalid page param", async () => {
@@ -85,11 +85,11 @@ describe("RealiTea history route loader", () => {
     loadPuzzleHistoryMock.mockResolvedValue({
       rows: [],
       page: 1,
-      pageSize: 20,
-      total: 0,
       totalPages: 1,
       hasNext: false,
       hasPrev: false,
+      weekStartKey: "2026-07-23",
+      weekEndKey: "2026-07-29",
       stats: { gamesPlayed: 0, gamesSolved: 0, winRate: 0, currentStreak: 0, maxStreak: 0, guessDistribution: {} },
       playableUnplayedDateKeys: [],
     });
@@ -97,6 +97,6 @@ describe("RealiTea history route loader", () => {
     const { loader } = await import("../history");
     await loader(createLoaderArgs("https://labs.ponti.io/games/realitea/history?page=not-a-number"));
 
-    expect(loadPuzzleHistoryMock).toHaveBeenCalledWith("user-1", { page: 1, pageSize: 20 });
+    expect(loadPuzzleHistoryMock).toHaveBeenCalledWith("user-1", { page: 1 });
   });
 });

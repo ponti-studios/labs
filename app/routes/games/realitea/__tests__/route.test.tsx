@@ -12,9 +12,9 @@ import {
   type RealiteaGuess,
 } from "~/lib/realitea";
 
+import { createControlledRouteAction } from "../../../controlled-route-action";
 import { readGameState } from "../game-state";
 import RealiTeaRoute from "../route";
-import { createControlledRouteAction } from "../../../controlled-route-action";
 import {
   expectAccessibilityMessageContent,
   expectMessageClearsAfterAnimation,
@@ -85,7 +85,9 @@ function toDateKey(date: Date): string {
 }
 
 let routePuzzle = buildPublicPuzzle();
-const STUB_LOGIN_URL = "https://api.ponti.io/login?next=https%3A%2F%2Flabs.ponti.io%2Fgames%2Frealitea";
+const STUB_LOGIN_URL = new URL("https://api.ponti.io");
+STUB_LOGIN_URL.searchParams.set("next", "https://labs.ponti.io/games/realitea");
+const STUB_LOGIN_URL_STRING = STUB_LOGIN_URL.toString();
 
 async function renderRoute(initial: { puzzle?: PublicDailyPuzzle } = {}) {
   const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
@@ -96,7 +98,7 @@ async function renderRoute(initial: { puzzle?: PublicDailyPuzzle } = {}) {
       path: "/",
       Component: RealiTeaRoute,
       HydrateFallback: () => null,
-      loader: () => ({ puzzle: initial.puzzle ?? routePuzzle, loginUrl: STUB_LOGIN_URL }),
+      loader: () => ({ puzzle: initial.puzzle ?? routePuzzle, loginUrl: STUB_LOGIN_URL_STRING }),
     },
     {
       id: "routes/api.games.realitea.guess",
@@ -114,6 +116,9 @@ async function renderRoute(initial: { puzzle?: PublicDailyPuzzle } = {}) {
         screen.queryByText("The puzzle ended"),
     ).toBeTruthy();
   });
+
+  // Wait for the initial render to complete and any animations to settle.
+  await act(async () => await Promise.resolve());
 
   return { user, ...rendered };
 }
@@ -336,7 +341,7 @@ describe("RealiTeaRoute", () => {
     await finishTileReveal();
 
     const link = await screen.findByRole("button", { name: /sign in to keep playing/i });
-    expect(link).toHaveAttribute("href", STUB_LOGIN_URL);
+    expect(link).toHaveAttribute("href", STUB_LOGIN_URL_STRING);
     // The keyboard is replaced by the sign-in prompt, not shown alongside it.
     expect(screen.queryByRole("button", { name: "Q" })).not.toBeInTheDocument();
   });

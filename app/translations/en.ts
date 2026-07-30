@@ -3,7 +3,7 @@ export const STUDIO_TRANSLATIONS_EN = {
     brandAlt: "Ponti Studios",
     services: "Services",
     work: "Work",
-    projects: "Projects",
+    projects: "Lab",
     manifesto: "Manifesto",
     book: "Book",
   },
@@ -22,7 +22,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       archived: "Archived",
     },
     page: {
-      title: "The Lab",
+      title: "Lab",
       metaDescription: "Products, infrastructure, tools, and research I build for myself.",
       detailMetaDescription: "Project details and information",
       notFound: "Project not found",
@@ -294,7 +294,8 @@ export const STUDIO_TRANSLATIONS_EN = {
       },
       covid: {
         name: "COVID Analytics",
-        shortDescription: "Interactive pandemic data exploration across 50+ metrics and every country.",
+        shortDescription:
+          "Interactive pandemic data exploration across 50+ metrics and every country.",
         solution:
           "An analytics dashboard with wave detection, seasonal pattern analysis, vaccination effectiveness modeling, and outlier detection — built directly on the OWID COVID dataset.",
         problem:
@@ -978,10 +979,17 @@ export const STUDIO_TRANSLATIONS_EN = {
       title: "Work",
     },
     projects: {
-      title: "The Lab",
+      title: "Lab",
     },
     principles: {
       title: "Manifesto",
+    },
+    realitea: {
+      eyebrow: "Featured product",
+      title: "Realitea",
+      description: "Wordle for reality-TV fans.",
+      cta: "Play today",
+      live: "Live",
     },
     lab: {
       title: "Playground",

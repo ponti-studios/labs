@@ -370,48 +370,57 @@ export interface AttemptWithPuzzle {
 }
 
 /**
- * Page of a user's attempts for `gameId`, newest date first, joined with the
- * puzzle each attempt belongs to. There's no FK between `realiteaAttempts`
- * and `dailyPuzzles` (see the schema's design note), so the join matches on
- * `gameId` + `dateUtc` instead — the same key `loadAttempt`/`createAttempt`
- * already use to correlate the two tables.
+ * A user's attempts for `gameId` within `[fromKey, toKey]` (inclusive),
+ * newest date first, joined with the puzzle each attempt belongs to.
+ * There's no FK between `realiteaAttempts` and `dailyPuzzles` (see the
+ * schema's design note), so the join matches on `gameId` + `dateUtc`
+ * instead — the same key `loadAttempt`/`createAttempt` already use to
+ * correlate the two tables.
  *
- * `page` is 1-indexed. Real LIMIT/OFFSET pagination since this table grows
- * unbounded over the game's lifetime, unlike `loadAllAttemptsForUser` below.
+ * The history page paginates by calendar week rather than row count, so the
+ * caller supplies a 7-day window instead of a page/pageSize offset.
  */
-export async function listAttemptsForUser(
+export async function listAttemptsForUserInRange(
   userId: string,
   gameId: number,
-  { page, pageSize }: { page: number; pageSize: number },
-): Promise<{ rows: AttemptWithPuzzle[]; total: number }> {
-  const where = and(eq(realiteaAttempts.hominemUserId, userId), eq(realiteaAttempts.gameId, gameId));
+  { fromKey, toKey }: { fromKey: string; toKey: string },
+): Promise<AttemptWithPuzzle[]> {
+  const rows = await db
+    .select({ attempt: realiteaAttempts, puzzle: dailyPuzzles, article: articles })
+    .from(realiteaAttempts)
+    .innerJoin(
+      dailyPuzzles,
+      and(
+        eq(dailyPuzzles.gameId, realiteaAttempts.gameId),
+        eq(dailyPuzzles.dateUtc, realiteaAttempts.dateUtc),
+      ),
+    )
+    .innerJoin(articles, eq(dailyPuzzles.articleId, articles.id))
+    .where(
+      and(
+        eq(realiteaAttempts.hominemUserId, userId),
+        eq(realiteaAttempts.gameId, gameId),
+        gte(realiteaAttempts.dateUtc, fromKey),
+        lte(realiteaAttempts.dateUtc, toKey),
+      ),
+    )
+    .orderBy(desc(realiteaAttempts.dateUtc));
 
-  const [rows, totalRows] = await Promise.all([
-    db
-      .select({ attempt: realiteaAttempts, puzzle: dailyPuzzles, article: articles })
-      .from(realiteaAttempts)
-      .innerJoin(
-        dailyPuzzles,
-        and(
-          eq(dailyPuzzles.gameId, realiteaAttempts.gameId),
-          eq(dailyPuzzles.dateUtc, realiteaAttempts.dateUtc),
-        ),
-      )
-      .innerJoin(articles, eq(dailyPuzzles.articleId, articles.id))
-      .where(where)
-      .orderBy(desc(realiteaAttempts.dateUtc))
-      .limit(pageSize)
-      .offset((page - 1) * pageSize),
-    db.select({ value: count() }).from(realiteaAttempts).where(where),
-  ]);
+  return rows.map((row) => ({
+    attempt: row.attempt,
+    puzzle: { ...row.puzzle, article: row.article },
+  }));
+}
 
-  return {
-    rows: rows.map((row) => ({
-      attempt: row.attempt,
-      puzzle: { ...row.puzzle, article: row.article },
-    })),
-    total: totalRows[0]?.value ?? 0,
-  };
+/** Earliest `dateUtc` with a puzzle for `gameId`, or `null` if none exist yet. */
+export async function getEarliestPuzzleDateKey(gameId: number): Promise<string | null> {
+  const rows = await db
+    .select({ dateUtc: dailyPuzzles.dateUtc })
+    .from(dailyPuzzles)
+    .where(eq(dailyPuzzles.gameId, gameId))
+    .orderBy(dailyPuzzles.dateUtc)
+    .limit(1);
+  return rows[0]?.dateUtc ?? null;
 }
 
 /**

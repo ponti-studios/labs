@@ -1,6 +1,12 @@
 import type { GameStatus, RealiteaGuess } from "./index";
-import { addDaysToDateKey, getDateKey } from "./date";
-import { getExistingDateKeys, getGameBySlug, listAttemptsForUser, loadAllAttemptsForUser } from "./repository";
+import { addDaysToDateKey, daysBetweenDateKeys, getDateKey } from "./date";
+import {
+  getEarliestPuzzleDateKey,
+  getExistingDateKeys,
+  getGameBySlug,
+  listAttemptsForUserInRange,
+  loadAllAttemptsForUser,
+} from "./repository";
 import { computeHistoryStats, type PuzzleHistoryStats } from "./stats";
 import type { PuzzleAnswerType } from "./types";
 
@@ -20,6 +26,11 @@ async function requireRhobhGameId(): Promise<number> {
 // to how long the game has existed so far.
 const PLAYABLE_LOOKBACK_DAYS = 90;
 
+// The history list paginates by calendar week (rolling 7-day windows
+// anchored to today), not by row count — RealiTea is a one-puzzle-per-day
+// game, so a "week" is a more meaningful unit than an arbitrary row count.
+const WEEK_DAYS = 7;
+
 export interface PuzzleHistoryRow {
   dateKey: string;
   status: GameStatus;
@@ -34,11 +45,12 @@ export interface PuzzleHistoryRow {
 export interface PuzzleHistoryPage {
   rows: PuzzleHistoryRow[];
   page: number;
-  pageSize: number;
-  total: number;
   totalPages: number;
   hasNext: boolean;
   hasPrev: boolean;
+  /** The 7-day window this page covers, inclusive. */
+  weekStartKey: string;
+  weekEndKey: string;
   stats: PuzzleHistoryStats;
   /** Puzzle dates within the lookback window with no attempt row at all,
    *  oldest first. */
@@ -47,18 +59,22 @@ export interface PuzzleHistoryPage {
 
 export async function loadPuzzleHistory(
   userId: string,
-  { page, pageSize }: { page: number; pageSize: number },
+  { page }: { page: number },
 ): Promise<PuzzleHistoryPage> {
   const gameId = await requireRhobhGameId();
+  const todayKey = getDateKey(new Date(), "UTC");
 
-  const [{ rows, total }, allAttempts] = await Promise.all([
-    listAttemptsForUser(userId, gameId, { page, pageSize }),
+  const weekEndKey = addDaysToDateKey(todayKey, -(page - 1) * WEEK_DAYS) ?? todayKey;
+  const weekStartKey = addDaysToDateKey(weekEndKey, -(WEEK_DAYS - 1)) ?? weekEndKey;
+
+  const [rows, allAttempts, earliestPuzzleKey] = await Promise.all([
+    listAttemptsForUserInRange(userId, gameId, { fromKey: weekStartKey, toKey: weekEndKey }),
     loadAllAttemptsForUser(userId, gameId),
+    getEarliestPuzzleDateKey(gameId),
   ]);
 
   const stats = computeHistoryStats(allAttempts);
 
-  const todayKey = getDateKey(new Date(), "UTC");
   const fromKey = addDaysToDateKey(todayKey, -PLAYABLE_LOOKBACK_DAYS) ?? todayKey;
   const existingDateKeys = await getExistingDateKeys(gameId, fromKey, todayKey);
   const attemptedDateKeys = new Set(allAttempts.map((a) => a.dateUtc));
@@ -66,7 +82,8 @@ export async function loadPuzzleHistory(
     .filter((dateKey) => !attemptedDateKeys.has(dateKey))
     .sort();
 
-  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const totalDays = earliestPuzzleKey ? (daysBetweenDateKeys(earliestPuzzleKey, todayKey) ?? 0) + 1 : 1;
+  const totalPages = Math.max(1, Math.ceil(totalDays / WEEK_DAYS));
 
   return {
     rows: rows.map(({ attempt, puzzle }) => ({
@@ -78,11 +95,11 @@ export async function loadPuzzleHistory(
       detail: attempt.status === "playing" ? null : puzzle.detail,
     })),
     page,
-    pageSize,
-    total,
     totalPages,
     hasNext: page < totalPages,
     hasPrev: page > 1,
+    weekStartKey,
+    weekEndKey,
     stats,
     playableUnplayedDateKeys,
   };
