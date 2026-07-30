@@ -307,7 +307,7 @@ export default function RealiTeaRoute() {
             alt="RealiTea"
             className="h-20 object-contain sm:h-14"
           />
-          {/* <Button
+          <Button
             aria-label="How to play"
             variant="ghost"
             className="self-end"
@@ -315,7 +315,7 @@ export default function RealiTeaRoute() {
             type="button"
           >
             <LucideHelpCircle />
-          </Button> */}
+          </Button>
         </div>
       </header>
 
