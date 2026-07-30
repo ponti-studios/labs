@@ -1601,12 +1601,12 @@ packages:
     resolution: {integrity: sha512-k2ENnmBugE/rzQfEcdWHcCY+/FM3VLzH9cYEsbdsoqrvzAKRhUZeRNhAZvB8OitQJ1TBed3yqWtdjzS6wJKBwg==}
 
   '@ponti-studios/auth@0.1.1':
-    resolution: {integrity: sha512-/TCUo/4u1gYHLZtRmFJWo+P+ODWIshYIi59s8eedAGnWdugPfqGKu194J1t3/1PInNAuzwNp+T83pPkmzPr/eA==, tarball: https://npm.pkg.github.com/download/@ponti-studios/auth/0.1.1/bc23813ff7efdb6a1a0f97b54d84fcc48de76b24}
+    resolution: {integrity: sha512-6FDw/HR8w8c/C82ngDsGaa+Ofaf+9awfm0eM8v+zRU+/q2Ee3TtbAcv5hgFn+L48gByEDxlRqExlhCMmlfzpbQ==}
     peerDependencies:
       react: 19.2.8
 
   '@ponti-studios/ui@0.6.0':
-    resolution: {integrity: sha512-N5iEiZiIfvASBq/n1VdwO84cl1cFJVkXFp1wOKvt5d7sUUL+I/5armCktHbccACH0MQWucG3RtTTjTc6KADzpw==, tarball: https://npm.pkg.github.com/download/@ponti-studios/ui/0.6.0/cfbbec82cc0f562172b52dbe74f016cc5e31d655}
+    resolution: {integrity: sha512-OwRXwCDkA+NwhjD3cFcKz5//Bht4KgAaAYHO7+xljymhaRrP23zhssftR5zZ7VhzNBk9SzX7nZmy91xmd+6PFQ==}
     peerDependencies:
       react: ^18.2.0 || ^19.0.0
       react-dom: ^18.2.0 || ^19.0.0
