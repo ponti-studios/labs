@@ -1,0 +1,2 @@
+patchedDependencies:
+  '@ponti-studios/auth@0.1.1': patches/@ponti-studios__auth@0.1.1.patch

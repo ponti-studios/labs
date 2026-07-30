@@ -1,0 +1,69 @@
+diff --git a/package.json b/package.json
+index 59c15822a1e135cda6792a79f1e49bc681303647..eb9b0417c1161bd07e2c486c57e1a26fe4b63572 100644
+--- a/package.json
++++ b/package.json
+@@ -13,44 +13,44 @@
+   "type": "module",
+   "exports": {
+     ".": {
+-      "types": "./src/index.ts",
+-      "default": "./src/index.ts"
++      "types": "./build/index.d.ts",
++      "default": "./build/index.js"
+     },
+     "./types": {
+-      "types": "./src/types.ts",
+-      "default": "./src/types.ts"
++      "types": "./build/types.d.ts",
++      "default": "./build/types.js"
+     },
+     "./shared/mask-email": {
+-      "types": "./src/shared/mask-email.ts",
+-      "default": "./src/shared/mask-email.ts"
++      "types": "./build/shared/mask-email.d.ts",
++      "default": "./build/shared/mask-email.js"
+     },
+     "./shared/validation": {
+-      "types": "./src/shared/validation.ts",
+-      "default": "./src/shared/validation.ts"
++      "types": "./build/shared/validation.d.ts",
++      "default": "./build/shared/validation.js"
+     },
+     "./shared/redirect-policy": {
+-      "types": "./src/shared/redirect-policy.ts",
+-      "default": "./src/shared/redirect-policy.ts"
++      "types": "./build/shared/redirect-policy.d.ts",
++      "default": "./build/shared/redirect-policy.js"
+     },
+     "./shared/protocol": {
+-      "types": "./src/shared/protocol.ts",
+-      "default": "./src/shared/protocol.ts"
++      "types": "./build/shared/protocol.d.ts",
++      "default": "./build/shared/protocol.js"
+     },
+     "./client/provider": {
+-      "types": "./src/client/provider.tsx",
+-      "default": "./src/client/provider.tsx"
++      "types": "./build/client/provider.d.ts",
++      "default": "./build/client/provider.js"
+     },
+     "./client/email-auth": {
+-      "types": "./src/client/email-auth.ts",
+-      "default": "./src/client/email-auth.ts"
++      "types": "./build/client/email-auth.d.ts",
++      "default": "./build/client/email-auth.js"
+     },
+     "./client/email-otp-route": {
+-      "types": "./src/client/email-otp-route.ts",
+-      "default": "./src/client/email-otp-route.ts"
++      "types": "./build/client/email-otp-route.d.ts",
++      "default": "./build/client/email-otp-route.js"
+     },
+     "./server": {
+-      "types": "./src/server.ts",
+-      "default": "./src/server.ts"
++      "types": "./build/server.d.ts",
++      "default": "./build/server.js"
+     }
+   },
+   "publishConfig": {
