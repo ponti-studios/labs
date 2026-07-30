@@ -22,6 +22,14 @@ export function addDaysToDateKey(value: string, days: number): string | null {
   return getDateKey(date);
 }
 
+/** Whole days between two date keys (`toKey` - `fromKey`), or `null` if either is malformed. */
+export function daysBetweenDateKeys(fromKey: string, toKey: string): number | null {
+  const from = parseDate(fromKey);
+  const to = parseDate(toKey);
+  if (!from || !to) return null;
+  return Math.round((to.getTime() - from.getTime()) / (24 * 60 * 60 * 1000));
+}
+
 /**
  * Build a contiguous array of date keys from `startKey` forward.
  *
