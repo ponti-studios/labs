@@ -77,19 +77,11 @@ never issues or validates its own sessions, and never hosts a login form.
   `LABS_URL`.
 - ❌ Do not add a login/OTP form, session table, or token issuance to this repo.
 
-### GitHub Packages
+### Public npm Packages
 
-`@ponti-studios/auth` is published to GitHub Packages, which requires a token
-**even though the package is public**. `pnpm install` fails with a 401 without one.
-
-- The scope→registry mapping is committed in `.npmrc`; the credential is not —
-  pnpm refuses to expand env vars in a committed `.npmrc`.
-- Local setup: add to your **user-level** `~/.npmrc`:
-  `//npm.pkg.github.com/:_authToken=<PAT with read:packages>`
-- CI workflows write that same line using the run's own `GITHUB_TOKEN`, and each
-  needs `packages: read`. Job-level `permissions:` blocks replace the
-  workflow-level one, so it must be repeated per job that installs (see the
-  CodeQL job in `ci.yml`).
+`@ponti-studios/auth` and `@ponti-studios/ui` are published as public npm
+packages. No GitHub Packages token or registry override is required to install
+them locally or in CI.
 
 ## Storybook Development Only
 

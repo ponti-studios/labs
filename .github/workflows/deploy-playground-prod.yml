@@ -17,8 +17,6 @@ on:
 
 permissions:
   contents: read
-  # Needed to install @ponti-studios/auth from GitHub Packages.
-  packages: read
 
 concurrency:
   group: deploy-labyrinth-prod-${{ github.ref }}
@@ -37,8 +35,6 @@ jobs:
         with:
           node-version: "24"
           cache: "pnpm"
-      - name: Authenticate to GitHub Packages
-        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
       - run: pnpm install --frozen-lockfile
       - name: Run migrations
         env:
@@ -55,4 +51,3 @@ jobs:
     secrets:
       railway_token: ${{ secrets.RAILWAY_TOKEN }}
       railway_service: ${{ secrets.RAILWAY_SERVICE_PLAYGROUND }}
-      github_packages_token: ${{ secrets.GITHUB_TOKEN }}

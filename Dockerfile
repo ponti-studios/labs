@@ -10,14 +10,7 @@ RUN corepack enable
 
 FROM base AS builder
 
-# @ponti-studios/* packages live in GitHub Packages, which requires a token
-# even for public packages. Railway builds run on its own remote builder with
-# no access to repo secrets directly, so the token comes in as a build arg —
-# Railway auto-injects service variables as Docker build args when the name
-# matches an ARG declared here (see reusable-railway-deploy.yml).
-ARG GITHUB_PACKAGES_TOKEN
 COPY .npmrc package.json pnpm-lock.yaml ./
-RUN if [ -n "$GITHUB_PACKAGES_TOKEN" ]; then echo "//npm.pkg.github.com/:_authToken=$GITHUB_PACKAGES_TOKEN" >> ~/.npmrc; fi
 RUN pnpm install --frozen-lockfile --prod --ignore-scripts
 
 COPY . .
