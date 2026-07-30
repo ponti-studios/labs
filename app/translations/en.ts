@@ -6,6 +6,8 @@ export const STUDIO_TRANSLATIONS_EN = {
     projects: "Lab",
     manifesto: "Manifesto",
     book: "Book",
+    realitea: "RealiTea",
+    career: "Career",
   },
   projects: {
     categoryLabels: {
