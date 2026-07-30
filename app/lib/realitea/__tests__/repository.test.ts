@@ -216,8 +216,8 @@ async function seedGameWithPuzzles(dateKeys: string[]) {
   return game;
 }
 
-describe("listAttemptsForUser", () => {
-  it("returns a page of attempts newest date first, joined with their puzzle", async () => {
+describe("listAttemptsForUserInRange", () => {
+  it("returns attempts within the range, newest date first, joined with their puzzle", async () => {
     const game = await seedGameWithPuzzles(["2026-06-25", "2026-06-26", "2026-06-27"]);
     await db.insert(realiteaAttempts).values([
       { hominemUserId: "user-1", gameId: game.id, dateUtc: "2026-06-25", status: "solved" },
@@ -225,19 +225,17 @@ describe("listAttemptsForUser", () => {
       { hominemUserId: "user-1", gameId: game.id, dateUtc: "2026-06-27", status: "playing" },
     ]);
 
-    const { listAttemptsForUser } = await import("../repository");
-    const result = await listAttemptsForUser("user-1", game.id, { page: 1, pageSize: 20 });
+    const { listAttemptsForUserInRange } = await import("../repository");
+    const result = await listAttemptsForUserInRange("user-1", game.id, {
+      fromKey: "2026-06-25",
+      toKey: "2026-06-27",
+    });
 
-    expect(result.total).toBe(3);
-    expect(result.rows.map((r) => r.attempt.dateUtc)).toEqual([
-      "2026-06-27",
-      "2026-06-26",
-      "2026-06-25",
-    ]);
-    expect(result.rows[0].puzzle.clue).toBe("clue for 2026-06-27");
+    expect(result.map((r) => r.attempt.dateUtc)).toEqual(["2026-06-27", "2026-06-26", "2026-06-25"]);
+    expect(result[0].puzzle.clue).toBe("clue for 2026-06-27");
   });
 
-  it("paginates via LIMIT/OFFSET", async () => {
+  it("excludes attempts outside the requested date window", async () => {
     const game = await seedGameWithPuzzles(["2026-06-25", "2026-06-26", "2026-06-27"]);
     await db.insert(realiteaAttempts).values([
       { hominemUserId: "user-1", gameId: game.id, dateUtc: "2026-06-25", status: "solved" },
@@ -245,14 +243,18 @@ describe("listAttemptsForUser", () => {
       { hominemUserId: "user-1", gameId: game.id, dateUtc: "2026-06-27", status: "solved" },
     ]);
 
-    const { listAttemptsForUser } = await import("../repository");
-    const page1 = await listAttemptsForUser("user-1", game.id, { page: 1, pageSize: 2 });
-    const page2 = await listAttemptsForUser("user-1", game.id, { page: 2, pageSize: 2 });
+    const { listAttemptsForUserInRange } = await import("../repository");
+    const week1 = await listAttemptsForUserInRange("user-1", game.id, {
+      fromKey: "2026-06-27",
+      toKey: "2026-06-27",
+    });
+    const week2 = await listAttemptsForUserInRange("user-1", game.id, {
+      fromKey: "2026-06-25",
+      toKey: "2026-06-26",
+    });
 
-    expect(page1.rows.map((r) => r.attempt.dateUtc)).toEqual(["2026-06-27", "2026-06-26"]);
-    expect(page2.rows.map((r) => r.attempt.dateUtc)).toEqual(["2026-06-25"]);
-    expect(page1.total).toBe(3);
-    expect(page2.total).toBe(3);
+    expect(week1.map((r) => r.attempt.dateUtc)).toEqual(["2026-06-27"]);
+    expect(week2.map((r) => r.attempt.dateUtc)).toEqual(["2026-06-26", "2026-06-25"]);
   });
 
   it("never leaks another user's attempts", async () => {
@@ -262,12 +264,37 @@ describe("listAttemptsForUser", () => {
       { hominemUserId: "user-2", gameId: game.id, dateUtc: "2026-06-25", status: "solved" },
     ]);
 
-    const { listAttemptsForUser } = await import("../repository");
-    const result = await listAttemptsForUser("user-1", game.id, { page: 1, pageSize: 20 });
+    const { listAttemptsForUserInRange } = await import("../repository");
+    const result = await listAttemptsForUserInRange("user-1", game.id, {
+      fromKey: "2026-06-25",
+      toKey: "2026-06-25",
+    });
 
-    expect(result.total).toBe(1);
-    expect(result.rows).toHaveLength(1);
-    expect(result.rows[0].attempt.hominemUserId).toBe("user-1");
+    expect(result).toHaveLength(1);
+    expect(result[0].attempt.hominemUserId).toBe("user-1");
+  });
+});
+
+describe("getEarliestPuzzleDateKey", () => {
+  it("returns the earliest dateUtc for the game", async () => {
+    const game = await seedGameWithPuzzles(["2026-06-26", "2026-06-25", "2026-06-27"]);
+
+    const { getEarliestPuzzleDateKey } = await import("../repository");
+    const result = await getEarliestPuzzleDateKey(game.id);
+
+    expect(result).toBe("2026-06-25");
+  });
+
+  it("returns null when the game has no puzzles", async () => {
+    const [game] = await db
+      .insert(games)
+      .values({ slug: "rhobh", name: "RHOBH", systemPromptPath: "prompts/rhobh.txt" })
+      .returning();
+
+    const { getEarliestPuzzleDateKey } = await import("../repository");
+    const result = await getEarliestPuzzleDateKey(game.id);
+
+    expect(result).toBeNull();
   });
 });
 
