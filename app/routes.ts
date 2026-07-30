@@ -14,6 +14,8 @@ const studioRoutes = [
 
 const productRoutes = [
   route("/games/realitea", "routes/games/realitea/route.tsx"),
+  route("/games/realitea/history", "routes/games/realitea/history.tsx"),
+  route("/games/realitea/:date", "routes/games/realitea/date.$date.tsx"),
 ] satisfies RouteConfig;
 
 const apiRoutes = [

@@ -15,6 +15,7 @@
     "realitea:health-check": "tsx --tsconfig tsconfig.json scripts/realitea-health-check.ts",
     "realitea:preview": "tsx --tsconfig tsconfig.json scripts/realitea-preview.ts",
     "realitea:generate": "tsx --tsconfig tsconfig.json scripts/realitea.generate.ts",
+    "realitea:seed-history": "tsx --tsconfig tsconfig.json scripts/realitea.seed-history.ts",
     "gallery:realitea:screenshot": "tsx --tsconfig tsconfig.json scripts/gallery-realitea.ts --mode screenshot",
     "gallery:realitea:solve": "tsx --tsconfig tsconfig.json scripts/gallery-realitea.ts --mode solve",
     "start": "react-router-serve ./build/server/index.js --port=${PORT:-3000}",
