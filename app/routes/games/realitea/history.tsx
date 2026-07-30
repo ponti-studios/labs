@@ -1,3 +1,4 @@
+import { EmptyState } from "@ponti-studios/ui/feedback";
 import {
   Sheet,
   SheetContent,
@@ -6,7 +7,6 @@ import {
   SheetTrigger,
 } from "@ponti-studios/ui/overlays";
 import { Button, StatusBadge, type StatusBadgeConfig } from "@ponti-studios/ui/primitives";
-import { EmptyState } from "@ponti-studios/ui/feedback";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { Link, useLoaderData, useSearchParams, type LoaderFunctionArgs } from "react-router";
@@ -87,7 +87,7 @@ function UnplayedSheet({ dateKeys }: UnplayedSheetProps) {
   return (
     <Sheet onOpenChange={(open) => !open && setPage(0)}>
       <SheetTrigger asChild>
-        <Button variant="outline" size="sm">
+        <Button variant="outline" size="sm" className="inline-flex gap-2">
           Unplayed
           {dateKeys.length > 0 && (
             <span className="text-muted-foreground text-xs">{dateKeys.length}</span>
