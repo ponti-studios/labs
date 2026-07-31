@@ -8,7 +8,12 @@ vi.mock("@ponti-studios/auth/server", () => ({
   getServerAuth: mocks.getServerAuth,
 }));
 
-import { buildHominemLoginUrl, getHominemApiUrl, getHominemUser } from "../hominem-auth";
+import {
+  buildHominemLoginUrl,
+  getHominemApiUrl,
+  getHominemInternalApiUrl,
+  getHominemUser,
+} from "../hominem-auth";
 
 const ORIGINAL_API_URL = process.env.HOMINEM_API_URL;
 
@@ -35,6 +40,29 @@ describe("getHominemApiUrl", () => {
   it("uses HOMINEM_API_URL when set", () => {
     process.env.HOMINEM_API_URL = "https://api.ponti.io";
     expect(getHominemApiUrl()).toBe("https://api.ponti.io");
+  });
+});
+
+describe("getHominemInternalApiUrl", () => {
+  const ORIGINAL_INTERNAL_API_URL = process.env.HOMINEM_INTERNAL_API_URL;
+
+  afterEach(() => {
+    if (ORIGINAL_INTERNAL_API_URL === undefined) delete process.env.HOMINEM_INTERNAL_API_URL;
+    else process.env.HOMINEM_INTERNAL_API_URL = ORIGINAL_INTERNAL_API_URL;
+    if (ORIGINAL_API_URL === undefined) delete process.env.HOMINEM_API_URL;
+    else process.env.HOMINEM_API_URL = ORIGINAL_API_URL;
+  });
+
+  it("falls back to getHominemApiUrl when HOMINEM_INTERNAL_API_URL is unset", () => {
+    delete process.env.HOMINEM_INTERNAL_API_URL;
+    process.env.HOMINEM_API_URL = "https://api.ponti.io";
+    expect(getHominemInternalApiUrl()).toBe("https://api.ponti.io");
+  });
+
+  it("prefers HOMINEM_INTERNAL_API_URL when set, bypassing the public URL", () => {
+    process.env.HOMINEM_API_URL = "https://api.ponti.io";
+    process.env.HOMINEM_INTERNAL_API_URL = "http://hominem-api-production.railway.internal:8080";
+    expect(getHominemInternalApiUrl()).toBe("http://hominem-api-production.railway.internal:8080");
   });
 });
 
@@ -89,7 +117,7 @@ describe("getHominemUser", () => {
     await getHominemUser(request);
 
     expect(mocks.getServerAuth).toHaveBeenCalledWith(request, {
-      apiBaseUrl: getHominemApiUrl(),
+      apiBaseUrl: getHominemInternalApiUrl(),
     });
   });
 });
