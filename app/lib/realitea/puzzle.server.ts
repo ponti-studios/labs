@@ -61,13 +61,21 @@ function toPublicDailyPuzzle(record: PuzzleRecord): PublicDailyPuzzle {
 
 // ── Public API ───────────────────────────────────────────────────────────────
 
-export async function loadActivePublicPuzzle(
+/**
+ * Resolves the puzzle actually served for "today" — today's own puzzle, or
+ * (grace-period fallback) the most recently created one if today's isn't
+ * ready yet. Shared by loadActivePublicPuzzle and loadActivePuzzleAttempt so
+ * both agree on exactly which puzzle "today" refers to; an attempt must be
+ * looked up against the *served* date, not the nominal one, since that's
+ * what evaluateGuessServer keys guesses by too.
+ */
+async function resolveActivePuzzle(
   now: Date,
-  timeZone = "UTC",
-): Promise<{ puzzle: PublicDailyPuzzle } | null> {
+  timeZone: string,
+): Promise<{ gameId: number; puzzle: PuzzleRecord } | null> {
   const dateKey = getDateKey(now, timeZone);
   const childLogger = logger.child({
-    operation: "loadActivePublicPuzzle",
+    operation: "resolveActivePuzzle",
     dateKey,
     timestamp: now.toISOString(),
   });
@@ -104,7 +112,46 @@ export async function loadActivePublicPuzzle(
     },
     "puzzle loaded",
   );
-  return { puzzle: toPublicDailyPuzzle(puzzle) };
+  return { gameId, puzzle };
+}
+
+export async function loadActivePublicPuzzle(
+  now: Date,
+  timeZone = "UTC",
+): Promise<{ puzzle: PublicDailyPuzzle } | null> {
+  const resolved = await resolveActivePuzzle(now, timeZone);
+  if (!resolved) return null;
+  return { puzzle: toPublicDailyPuzzle(resolved.puzzle) };
+}
+
+export interface ActivePuzzleAttempt {
+  guesses: RealiteaGuess[];
+  status: GameStatus;
+}
+
+/**
+ * The signed-in player's existing progress on "today"'s puzzle, read
+ * straight from `realitea_attempts` — the same table evaluateGuessServer
+ * writes to. This is what the client's React Query hook polls/refetches so
+ * a solve on one device shows up on another without relying on
+ * device-local storage. Returns null for anonymous callers or a
+ * signed-in player who hasn't attempted today's puzzle yet — both mean
+ * "no prior guesses to seed."
+ */
+export async function loadActivePuzzleAttempt(
+  now: Date,
+  timeZone: string,
+  user: HominemUser | null,
+): Promise<ActivePuzzleAttempt | null> {
+  if (!user) return null;
+
+  const resolved = await resolveActivePuzzle(now, timeZone);
+  if (!resolved) return null;
+
+  const attemptRow = await loadAttempt(user.id, resolved.gameId, resolved.puzzle.dateUtc);
+  if (!attemptRow) return null;
+
+  return { guesses: attemptRow.guesses as RealiteaGuess[], status: attemptRow.status };
 }
 
 export interface DatedPuzzleEnvelope {

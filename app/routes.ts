@@ -32,6 +32,7 @@ const apiRoutes = [
   ),
   route("/api/gen/image", "routes/api.gen.image.ts"),
   route("/api/gen/predict", "routes/api.gen.predict.ts"),
+  route("/api/games/realitea/attempt", "routes/api.games.realitea.attempt.ts"),
   route("/api/games/realitea/guess", "routes/api.games.realitea.guess.ts"),
   route("/api/games/realitea/health", "routes/api.games.realitea.health.ts"),
   route("/api/search", "routes/api.search.ts"),

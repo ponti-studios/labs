@@ -191,7 +191,7 @@ CREATE INDEX "realitea_attempts_user_updated_idx"
 
 Committed as `83103339` ("Add realitea_attempts table for server-side guess
 tracking"). Getting this applied to production required an unplanned
-migration-history repair — see **Incident 3** below.
+migration-history repair — see [incident 3](incidents/003-production-migration-history-diverged.md).
 
 ### Repository functions added (`app/lib/realitea/repository.ts`)
 
@@ -335,222 +335,23 @@ clean; verified live against the dev server + real DB.
 
 Task 6 work was blocked for most of this session by a chain of CI/deploy
 failures unrelated to the auth feature itself but blocking any further
-`main` pushes from being trustworthy. Documented here because the fixes are
-now permanent parts of the build/deploy pipeline.
+`main` pushes from being trustworthy, followed by two production auth
+outages found during and after QA. Each incident now has its own file with
+queryable frontmatter under [docs/incidents/](incidents/) — see
+[incidents/README.md](incidents/README.md) for the full index (severity,
+category, services, tags). Summary:
 
-### Incident 1 — `@ponti-studios/ui@0.4.3` 404 from GitHub Packages
-
-**Symptom:** CI failing on `pnpm install` with a 404 for
-`@ponti-studios/ui@0.4.3`.
-
-**Root cause:** the UI package (`~/Developer/ponti-studios-ui`) had only
-ever been published to npmjs.org (`publishConfig.registry:
-https://registry.npmjs.org`), but labs' `.npmrc` routes the whole
-`@ponti-studios` scope to GitHub Packages
-(`npm.pkg.github.com`). GitHub Packages requires an auth token even for
-public packages, and more fundamentally, the package had simply never been
-published there.
-
-**Fix (chosen explicitly by the user: option "1", publish to GitHub
-Packages, over the alternative of pointing labs' `.npmrc` back at
-npmjs.org):**
-- `~/Developer/ponti-studios-ui/package.json`:
-  `publishConfig.registry` → `https://npm.pkg.github.com`.
-- `~/Developer/ponti-studios-ui/.github/workflows/publish.yml`: rewrote the
-  `publish` job — `registry-url: "https://npm.pkg.github.com"`,
-  `permissions: packages: write` (was `id-token: write`),
-  `NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}` for `npm publish --access
-  public`; removed the npmjs.org-specific verification step that polled
-  `npm view ... --registry=https://registry.npmjs.org`.
-- Manually published `0.4.3` and `0.4.4` from their existing git tags with
-  `npm publish --registry=https://npm.pkg.github.com --access public
-  --ignore-scripts` (the `--ignore-scripts` flag was a one-time workaround
-  because `0.4.3`'s `prepack` → `tokens:check` step failed on
-  style-dictionary output formatting differences specific to that historical
-  tag — not a repo change).
-- Committed as `beba04b` in the UI repo.
-
-### Incident 2 — Still 404 after publishing: stale lockfile
-
-**Symptom:** publishing the package didn't fix labs' install.
-
-**Root cause:** labs' `pnpm-lock.yaml` had a stale entry for
-`@ponti-studios/ui@0.4.3` left over from npmjs.org resolution.
-npmjs.org-resolved lockfile entries don't need an explicit `tarball:` field
-— pnpm computes the URL by convention
-(`.../-/{pkg}-{version}.tgz`). GitHub Packages uses a non-standard tarball
-URL scheme (`.../download/{scope}/{pkg}/{version}/{shasum}`) that breaks
-that convention-based fallback, so the lockfile needed an explicit
-`tarball:` field pnpm hadn't been asked to record yet.
-
-**Fix:** `pnpm store prune` + `pnpm update @ponti-studios/ui --latest`,
-which bumped labs to `0.4.4` and captured the correct explicit `tarball:`
-URL. Verified with a clean `rm -rf node_modules && pnpm install
---frozen-lockfile && pnpm build`.
-
-### Incident 3 — Production migration history diverged (`case_updates`)
-
-**Symptom:** `deploy-labyrinth-prod`'s `migrate` job failing with no
-diagnostic output — just a frozen spinner.
-
-**Root cause of the silent failure:** drizzle-kit's CLI progress renderer
-(`MigrateProgress.render()` in `drizzle-kit/bin.cjs`) treats a `"rejected"`
-status identically to `"pending"` and never surfaces the caught error
-object — a drizzle-kit bug, confirmed by reading the compiled source.
-Worked around with a temporary script (`scripts/debug-migrate.ts`, deleted
-after use) calling `drizzle-orm/postgres-js/migrator`'s `migrate()`
-directly to expose the real error, run in prod via a temporary
-`workflow_dispatch` workflow (`.github/workflows/debug-migrate.yml`, also
-deleted after use).
-
-**Root cause of the actual migration failure:** the real error was `DROP
-TABLE "labs"."case_updates" CASCADE` failing because the table didn't
-exist. Diagnosed by hash-matching every local migration file's SHA256
-against the 5 rows tracked in prod's `labs.__drizzle_migrations`: one
-tracked row (hash `730a701c...`) had **no corresponding file** in the
-current `migrations/` directory at all — the local migration history had
-been rewritten/regenerated at some point *after* it was already applied to
-production, which violates the repo's own rule (`AGENTS.md`) against
-editing already-applied migrations.
-
-Given the destructive, hard-to-reverse nature of hand-editing production's
-migration tracking table, this was paused and escalated rather than guessed
-at. **User's explicit instruction: "just delete the stale tracking row and
-re-run."**
-
-That alone wasn't sufficient — replaying migration `0011`'s `DROP TABLE
-case_updates` would still fail on a genuinely-absent table. So a bare
-`case_updates` table shell (exact original column definition from
-`0000_baseline.sql`, no FK/index since it's dropped again seconds later)
-was recreated to let migration `0011` complete legitimately, without
-hand-editing any committed migration file.
-
-Verified via the one-off debug workflow: `MIGRATE_DEBUG_SUCCESS`, confirmed
-final `labs` schema table list including `realitea_attempts`. Debug files
-cleaned up afterward (commit `3155e9d1`).
-
-Sequence of commits: `67827889` (debug script), `57552c95`
-(introspection), `00202196` (the actual repair), `3155e9d1` (cleanup).
-
-### Incident 4 — Railway remote build had no GitHub Packages auth (first 401)
-
-**Symptom:** after the above fixes, `deploy-labyrinth-prod` reported
-success on GitHub Actions, but the user reported "The github actions for
-labs is failing" / the Railway service was crashing.
-
-**Root cause:** Railway's `railway up --detach --ci` uploads code and
-returns immediately — the GitHub Actions job going green only confirms the
-*upload* succeeded, not that Railway's own remote Docker build ("Metal
-builder") completed. That remote builder has zero access to GitHub Actions
-secrets by default, and the `Dockerfile` had no mechanism to receive a
-GitHub Packages token for its own `pnpm install` of `@ponti-studios/*`
-packages.
-
-**Fix:**
-- `Dockerfile`: added `ARG GITHUB_PACKAGES_TOKEN` to the `builder` stage,
-  writing it into `~/.npmrc` before `pnpm install` — but only in the
-  intermediate stage never copied into the final `runner` stage, so the
-  token doesn't ship in the image (BuildKit still warns
-  `SecretsUsedInArgOrEnv` since it persists in build cache/layer history).
-- `.github/workflows/reusable-railway-deploy.yml`: added an optional
-  `github_packages_token` secret input, and a step that runs `railway
-  variables --set "GITHUB_PACKAGES_TOKEN=$GITHUB_PACKAGES_TOKEN" --service
-  ... --skip-deploys` before `railway up` — this works because Railway
-  auto-injects service variables as Docker build `ARG`s whenever the ARG
-  name matches the variable name.
-- `.github/workflows/deploy-playground-prod.yml`: passed
-  `secrets.NODE_AUTH_TOKEN` through as `github_packages_token` (later found
-  to be the wrong token — see Incident 6).
-
-**A secondary bug hit while wiring this in:** the first attempt used `if:
-secrets.github_packages_token != ''` on a step, which caused the entire
-run to fail validation with zero jobs scheduled ("workflow file issue")
-despite valid YAML — GitHub Actions disallows referencing `secrets.*`
-directly in a step's `if:` for reusable (`workflow_call`) workflows. Fixed
-by routing it through `env: GITHUB_PACKAGES_TOKEN: ${{
-secrets.github_packages_token }}` first and using `if: env.GITHUB_PACKAGES_TOKEN
-!= ''`. Also had to add `packages: read` to
-`reusable-railway-deploy.yml`'s workflow-level `permissions:` block, since a
-reusable workflow's effective token permissions are the *intersection* of
-caller and callee permission blocks — the caller alone granting
-`packages: read` wasn't enough.
-
-### Incident 5 — "It cannot move on until all services are deploying properly"
-
-After the above fix, GitHub Actions reported `migrate: success` and
-`deploy: success`, and an HTTP 200 check against `labs.ponti.io` passed.
-This was reported to the user as "all services are deploying and running
-properly now."
-
-**The user then pasted the actual Railway build logs, proving that claim
-false.** This is the pivotal moment of the session: it established that
-GitHub Actions "success" + an HTTP 200 check are *not* sufficient evidence
-of a real deploy — a failed new build simply leaves Railway serving the
-previous, still-working deployment, which is exactly what an HTTP 200
-check can't distinguish from a successful new one. The user's explicit
-standard from this point forward: **"we cannot move on until all services
-are deploying properly,"** verified genuinely, not by proxy.
-
-### Incident 6 — Railway remote build 401, second occurrence (wrong token type)
-
-**Symptom (from the user's pasted logs):**
-```
-ERR_PNPM_FETCH_401 GET https://npm.pkg.github.com/download/@ponti-studios/ui/0.4.4/...: Unauthorized - 401
-Build Failed: ... "pnpm install --frozen-lockfile --prod --ignore-scripts" did not complete successfully: exit code: 1
-```
-The token *was* being passed through correctly this time (visible in
-plaintext in the build log, redacted here) —
-but GitHub Packages still rejected it.
-
-**Root cause:** the token's `npm_` prefix identifies it as an **npmjs.org**
-access token (from `secrets.NODE_AUTH_TOKEN`), not a GitHub PAT (`ghp_` /
-`github_pat_`). It was structurally the wrong *type* of credential — valid
-only against `registry.npmjs.org`, never valid against
-`npm.pkg.github.com`, regardless of how correctly it was plumbed through.
-
-**Fix (commit `f7a573e6`):** `deploy-playground-prod.yml` now passes
-`secrets.GITHUB_TOKEN` — the job's own automatic, ephemeral, already-proven
-GitHub Packages-valid token (used successfully by the `migrate` job's own
-`pnpm install` step earlier in the same workflow) — instead of
-`NODE_AUTH_TOKEN`. `reusable-railway-deploy.yml`'s workflow-level
-`permissions:` also gained `packages: read` for this to take effect
-(same intersection-of-permissions rule as Incident 4).
-
-### Verification (this session, following Incident 5's lesson directly)
-
-Rather than trust GitHub Actions' report again, a temporary
-`workflow_dispatch`-only diagnostic workflow was added
-(`.github/workflows/debug-railway-status.yml`) to query Railway's CLI
-directly for the authoritative build/deploy logs of the triggered run.
-
-Two iterations were needed to get the Railway CLI invocation right:
-- `railway status --service <id>` doesn't accept a `--service` flag at all
-  (that flag only exists on `railway logs`) — fixed to `railway status
-  --json`, which works off the token's implicitly linked project without
-  needing `railway link` first.
-- `railway logs --service <id> --build` and `railway logs --service <id>`
-  (deploy logs) both work with `--service`.
-
-The resulting logs, read directly from Railway (not GitHub Actions),
-confirmed a genuine success end to end:
-- `[builder 6/6] RUN pnpm build` completed (`✓ built in 4.05s` for both
-  client and SSR bundles).
-- `exporting to docker image format` / `image push` completed.
-- The new deploy container logged `Starting Container`.
-- `curl -s -o /dev/null -w "%{http_code}" https://labs.ponti.io` → `200`.
-
-The diagnostic workflow was then deleted (commit `bdb72f8c`) — it was
-purely a one-time verification tool and isn't part of the permanent
-pipeline (unlike the `github_packages_token` plumbing in
-`reusable-railway-deploy.yml` / `deploy-playground-prod.yml` / `Dockerfile`,
-which are permanent fixes).
-
-**Commit sequence for incidents 4–6:** `4a23184d` (pass token into build),
-`d438c5e1` (fix `secrets.*` in step `if:`), `f7a573e6` (fix token type),
-`8768b58b`/`59d29af9` (add/fix debug workflow), `bdb72f8c` (remove debug
-workflow).
-
----
+1. [`@ponti-studios/ui@0.4.3` 404 from GitHub Packages](incidents/001-ui-package-404-github-packages.md)
+2. [Still 404 after publishing: stale lockfile](incidents/002-stale-lockfile-github-packages.md)
+3. [Production migration history diverged (`case_updates`)](incidents/003-production-migration-history-diverged.md)
+4. [Railway remote build had no GitHub Packages auth (first 401)](incidents/004-railway-build-no-github-packages-auth.md)
+5. ["It cannot move on until all services are deploying properly"](incidents/005-ci-green-but-not-deployed.md)
+6. [Railway remote build 401, second occurrence (wrong token type)](incidents/006-railway-build-wrong-token-type.md)
+7. [`@ponti-studios/ui` upgrade broke Tailwind content scanning again (twice)](incidents/007-tailwind-content-scanning-broken-twice.md)
+8. [New users couldn't sign in: `LABS_URL` not configured in Hominem's production environment](incidents/008-labs-url-not-configured.md)
+9. [GitHub Packages unreadable on Railway; then the npm republish shipped a broken package](incidents/009-github-packages-unreadable-and-broken-npm-package.md)
+10. [Signed-in players silently treated as anonymous: Cloudflare's bot-challenge blocked the server-to-server session check](incidents/010-cloudflare-blocked-session-check.md)
+11. [Cross-device progress not synced: today's puzzle was seeded from localStorage, not the server](incidents/011-cross-device-progress-not-synced.md)
 
 ## Current baseline (end of this session)
 
@@ -558,11 +359,13 @@ workflow).
   Actions-side).
 - `@ponti-studios/ui` and `@ponti-studios/auth` are both now installed from
   the public npmjs.org registry, not GitHub Packages — Railway couldn't read
-  GitHub Packages at all (Incident 9A), so both packages were republished
-  publicly and all the token/registry-override plumbing was removed. The
-  republished `@ponti-studios/auth@0.1.1` shipped with broken subpath
-  exports, patched around in this repo (Incident 9B) — see **Incidents 7–9**
-  below for the full history of everything that's gone wrong with these two
+  GitHub Packages at all ([incident 9, part A](incidents/009-github-packages-unreadable-and-broken-npm-package.md)),
+  so both packages were republished publicly and all the token/registry-override
+  plumbing was removed. The republished `@ponti-studios/auth@0.1.1` shipped
+  with broken subpath exports, patched around in this repo
+  ([incident 9, part B](incidents/009-github-packages-unreadable-and-broken-npm-package.md)) —
+  see [incidents 7](incidents/007-tailwind-content-scanning-broken-twice.md)–[9](incidents/009-github-packages-unreadable-and-broken-npm-package.md)
+  for the full history of everything that's gone wrong with these two
   packages across this session.
 - Production's `labs` schema migration history is consistent with the
   committed `migrations/` directory again, including `realitea_attempts`.
@@ -572,199 +375,15 @@ workflow).
   guess with a sign-in nudge, and the client surfaces that nudge instead of
   silently failing or leaking the answer.
 - **Sign-in from RealiTea is confirmed working end-to-end in production**,
-  including for brand-new users — see Incident 8 for the `LABS_URL`
-  misconfiguration that briefly blocked this.
+  including for brand-new users — see
+  [incident 8](incidents/008-labs-url-not-configured.md) for the `LABS_URL`
+  misconfiguration that briefly blocked this, and
+  [incident 10](incidents/010-cloudflare-blocked-session-check.md) for a
+  second, differently-shaped outage found afterward: signed-in players were
+  silently treated as anonymous because Cloudflare's bot-challenge in front
+  of `api.ponti.io` was intercepting labs' server-to-server session check.
 - Also shipped in this session, adjacent to the auth work: a header redesign
   for the RealiTea route (large centered logo, gold divider) and a tile-grid
-  gap/sizing pass (see **Incident 7** below for the logo-asset regression
-  this surfaced and fixed).
+  gap/sizing pass (see [incident 7](incidents/007-tailwind-content-scanning-broken-twice.md)
+  for the logo-asset regression this surfaced and fixed).
 
-## Incident 7 — `@ponti-studios/ui` upgrade broke Tailwind content scanning again (twice)
-
-Two more outages hit `labs.ponti.io` after this doc's original incident log
-was written, both triggered by touching `@ponti-studios/ui`'s version again
-after Incident 6 had already reverted it to `0.4.3`:
-
-1. **Silent revert regression.** Bumping straight back to `0.4.4` (to pick
-   up an unrelated fix) reintroduced Incident 6's exact symptom: the
-   compiled CSS bundle collapsed from ~104KB with real Tailwind utilities to
-   ~17KB with almost none, because `0.4.4`'s `styles.css` switched from
-   `@import "tailwindcss"` to `@reference "tailwindcss"` — a real, documented
-   breaking change in the package's own contract (its header comment says
-   the *consuming app* must now own the Tailwind import), not something
-   pinning the version around can dodge. `app/app.css` never did that
-   import itself; it relied on the old transitive one.
-2. **User upgraded to `0.6.0` directly** (outside this session's prior
-   version pinning), which still exhibited the identical break — confirmed
-   locally by diffing the `0.4.3`/`0.6.0` tarballs byte-for-byte (identical
-   file list, only `styles.css`'s Tailwind import line differed).
-
-**Durable fix:** `app/app.css` now has its own `@import "tailwindcss";`
-line, ahead of `@import "@ponti-studios/ui/styles.css";`, matching the order
-the package's docs require. This makes the app correct for `0.4.4` *and*
-`0.6.0` *and* any future version — the fix is in labs' own CSS entry point,
-not a version pin. Verified by a clean-cache local build (`rm -rf
-node_modules/.vite .react-router build && pnpm build`) showing ~105KB of CSS
-with `.fixed{}`/`.absolute{}`/etc. present, then confirmed live in
-production by diffing the served CSS filename/byte size before and after
-deploy. `@ponti-studios/ui` is now pinned at `0.6.0`.
-
-**Lesson for next time:** a `@ponti-studios/ui` version bump that changes
-*nothing visibly wrong in isolated component testing* can still silently
-gut the whole app's Tailwind output, because the failure mode is
-"almost all utility classes vanish," not a build error — `pnpm build`
-succeeds either way. Any future bump should be spot-checked by grepping the
-built CSS for a well-known utility class (e.g. `.fixed{`), not just by the
-build exiting 0.
-
----
-
-## Incident 8 — New users couldn't sign in: `LABS_URL` not configured in Hominem's production environment
-
-### Symptom
-
-Discovered during manual QA of the anonymous → sign-in journey (task 6/7
-verification): a real player hitting "sign in to keep playing" from RealiTea
-landed on a Hominem error page instead of the login form:
-
-> OAuth access — ERROR — Authorization stopped
-> Open the sign-in link from the app or client you came from.
-> Return to your MCP client and try again.
-
-This blocked every new sign-up through RealiTea (and any other
-Hominem-integrated app using the same `?next=` app-redirect pattern).
-
-### Root cause
-
-- Labs sends players to `${HOMINEM_API_URL}/login?next=<returnTo>` via
-  `buildHominemLoginUrl` (`app/lib/server/hominem-auth.ts`).
-- Hominem's `/login` route
-  (`~/Developer/hominem/services/api/src/routes/login.tsx`) calls
-  `resolveResume(resumeQuery)`, which for app-redirect mode calls
-  `resolveAppRedirectUrl(next, getTrustedOrigins())`
-  (`~/Developer/hominem/packages/auth/src/shared/redirect-policy.ts`) — this
-  rejects the URL unless `next`'s **origin** is in the trusted-origins
-  allowlist.
-- `getTrustedOrigins()`
-  (`~/Developer/hominem/services/api/src/auth/better-auth.ts:19`) includes
-  `env.LABS_URL`, defined in the shared env schema
-  (`~/Developer/hominem/packages/env/src/api.ts:18`) as `z.url().default(
-  'http://localhost:3001')`.
-- In production this was resolving to that localhost default — never
-  overridden — so `https://labs.ponti.io`'s origin failed the check.
-  `resolveAppRedirectUrl` returned `null` → `resolveResume` returned `null` →
-  `/login`'s handler rendered the generic error page with **no `mode` prop**,
-  which defaults to the OAuth-flavored copy ("Return to your MCP
-  client...") — exactly matching the reported error, even though this was
-  the plain app-redirect flow, not an MCP OAuth flow at all.
-- This confirms task 3 from earlier in this doc ("Add `LABS_URL` trusted
-  origin + login redirect-back mode") was only ever completed in *code* — the
-  actual environment variable was never configured on Hominem's production
-  deployment.
-
-Reproduced directly: `curl
-"https://api.ponti.io/login?next=https%3A%2F%2Flabs.ponti.io%2Fgames%2Frealitea"`
-returned the error page.
-
-### Resolution
-
-`LABS_URL` is now set correctly in Hominem's production environment — the
-same reproduction now returns the normal "Sign in" page. It isn't fully
-confirmed from labs' side alone whether this was a standalone env-var fix or
-related to Incident 9 below (if Hominem's own Railway deploys were *also*
-stuck on the GitHub-Packages install problem, it could have been running a
-pre-`LABS_URL`-wiring build the whole time) — recorded as an open question,
-not asserted as a causal link that isn't independently verified.
-
----
-
-## Incident 9 — GitHub Packages unreadable on Railway; then the npm republish shipped a broken package
-
-### Part A — Railway couldn't install from GitHub Packages at all
-
-At some point after Incident 6 (which set up `GITHUB_PACKAGES_TOKEN`
-plumbing through `Dockerfile`/`reusable-railway-deploy.yml` to let Railway's
-remote builder authenticate to `npm.pkg.github.com`), Railway's build
-environment stopped being able to read GitHub Packages entirely — this
-affected any Hominem-owned package (`@ponti-studios/auth`,
-`@ponti-studios/ui`) that labs depended on.
-
-**Fix:** both packages were republished to the public npmjs.org registry
-instead (`@ponti-studios/ui@0.6.0`, `@ponti-studios/auth@0.1.1`). Labs'
-`main` commit `4e7ee459` ("Consume public auth and UI packages") removed all
-the `GITHUB_PACKAGES_TOKEN` plumbing this repo had accumulated: the
-`@ponti-studios:registry=https://npm.pkg.github.com` line in `.npmrc`, the
-`Authorization to GitHub Packages` step in every CI workflow
-(`ci.yml`, `deploy-playground-prod.yml`, `realitea-generate.yml`), the
-`ARG GITHUB_PACKAGES_TOKEN`/`railway variables --set` steps in the Dockerfile
-and `reusable-railway-deploy.yml`, and the corresponding `AGENTS.md`
-section — net simplification, since installing from a public npm registry
-needs no token at all. Deployed cleanly (`deploy-labyrinth-prod` run
-`30517155439`, verified green).
-
-### Part B — the republished `@ponti-studios/auth@0.1.1` had broken subpath exports
-
-The very next deploy broke differently — the Railway build log showed:
-
-```
-Error: [vite]: Rolldown failed to resolve import "@ponti-studios/auth/server"
-from "/app/app/lib/server/hominem-auth.ts".
-```
-
-**Root cause**, confirmed by inspecting the actual published tarball
-(`npm pack @ponti-studios/auth@0.1.1`):
-
-- `package.json`'s `"files": ["build"]` means only the compiled
-  `build/*.js` output is included in what's published — `src/` is excluded.
-- But the top-level `"exports"` field in that same `package.json` still
-  points every subpath at `./src/*.ts` (e.g. `"./server": {"default":
-  "./src/server.ts"}`) — files that don't exist in the published package.
-- The package correctly has a `"publishConfig": { "exports": {...} }` block
-  pointing every subpath at the matching `./build/*.js` file instead — the
-  standard fix-up mechanism for exactly this situation. But Node's module
-  resolution (and Vite/Rolldown, which follows it) only ever reads the
-  **top-level** `"exports"` field at runtime; `publishConfig` is purely a
-  publish-time instruction the publishing tool is responsible for promoting
-  into the real fields *before* writing to the registry. That promotion
-  never happened — the published manifest has both blocks present,
-  unswapped.
-- Confirmed `@ponti-studios/ui@0.6.0` does **not** have this problem — its
-  `files` field (`["src", ...]`) matches its own top-level `exports`
-  (`./src/*.ts`) exactly, since that package ships raw source with no build
-  step. Isolated to `@ponti-studios/auth`.
-- No earlier working version exists to fall back to — `0.1.1` is the only
-  version ever published to npmjs.org for this package.
-
-**Stopgap fix (this repo, commit `0b94b458`):** a `pnpm patch`
-(`patches/@ponti-studios__auth@0.1.1.patch`, registered via
-`pnpm-workspace.yaml`'s `patchedDependencies`) that rewrites the installed
-package's `exports` field to match its own `publishConfig.exports`
-verbatim — i.e. every subpath now correctly points at `./build/*.js`. The
-`Dockerfile`'s first `COPY` step was extended to include
-`pnpm-workspace.yaml` and `patches/` alongside `.npmrc`/`package.json`/
-`pnpm-lock.yaml`, so the patch applies on the very first `pnpm install`
-layer, not just the later full one.
-
-Verified in three stages before pushing: local `pnpm build` (clean cache),
-a full local `docker build .` (reproducing Railway's exact build
-environment), and finally the real Railway build log itself via `railway
-logs --service labyrinth --build` (not just GitHub Actions reporting green)
-through to a passing healthcheck.
-
-**The durable fix belongs upstream**, in `@ponti-studios/auth`'s own publish
-pipeline (make the publish step actually promote `publishConfig.exports`
-into `exports` before `npm publish`, then republish as `0.1.2`) — out of
-scope for this repo, which only patches around it.
-
-**Lesson for next time:** `publishConfig` overrides are not automatically
-applied by a plain `npm publish` for arbitrary fields like `exports` — only
-a small, npm-version-dependent set of fields (`registry`, `tag`, `access`,
-...) get auto-promoted, and even that has shifted across npm versions. A
-package publish step that relies on `publishConfig.exports` needs to either
-use a purpose-built tool that performs this promotion (e.g. `publint`-aware
-tooling, or a manual `package.json` swap script) or hand-author the
-top-level `exports` to already point at the built output. `pnpm build`
-succeeding for the *publishing* package proves nothing about whether its
-*consumers* can resolve it — the failure only surfaces downstream, in
-whoever's `pnpm install` + bundler tries to actually import a subpath.
-build exiting 0.

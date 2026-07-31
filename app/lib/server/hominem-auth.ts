@@ -18,6 +18,22 @@ export function getHominemApiUrl(): string {
   return process.env.HOMINEM_API_URL ?? DEFAULT_HOMINEM_API_URL;
 }
 
+/**
+ * Base URL for the server-to-server session check only — never expose this to
+ * the browser. In production this is Hominem's Railway-private address
+ * (HOMINEM_INTERNAL_API_URL), which reaches the API directly over Railway's
+ * internal network instead of the public api.ponti.io hostname. That's
+ * required because Cloudflare's bot-challenge in front of api.ponti.io
+ * intercepts server-to-server fetches (no real browser to solve the
+ * challenge) and returns its "Just a moment..." interstitial instead of
+ * proxying to the origin, which getServerAuth silently reads as "no session"
+ * (see docs/hominem-auth-integration.md, Incident 10). Falls back to the
+ * public URL when unset, so local dev and tests are unaffected.
+ */
+export function getHominemInternalApiUrl(): string {
+  return process.env.HOMINEM_INTERNAL_API_URL ?? getHominemApiUrl();
+}
+
 export type HominemUser = {
   id: string;
   email?: string | null;
@@ -34,7 +50,7 @@ export type HominemUser = {
  */
 export async function getHominemUser(request: Request): Promise<HominemUser | null> {
   try {
-    const { user } = await getServerAuth(request, { apiBaseUrl: getHominemApiUrl() });
+    const { user } = await getServerAuth(request, { apiBaseUrl: getHominemInternalApiUrl() });
     if (!user?.id) return null;
     return { id: user.id, email: user.email ?? null };
   } catch {

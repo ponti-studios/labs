@@ -1,37 +1,20 @@
 import { Button } from "@ponti-studios/ui/primitives";
-import { useEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useRef } from "react";
 import { useLoaderData, useRevalidator, type LoaderFunctionArgs } from "react-router";
 
-import { type GameStatus, type PublicDailyPuzzle, type RealiteaGuess } from "~/lib/realitea";
+import { type PublicDailyPuzzle } from "~/lib/realitea";
 import { getDateKey } from "~/lib/realitea/date";
-import { loadActivePublicPuzzle } from "~/lib/realitea/puzzle.server";
+import { loadActivePublicPuzzle, type ActivePuzzleAttempt } from "~/lib/realitea/puzzle.server";
 import { buildHominemLoginUrl } from "~/lib/server/hominem-auth";
 
 import { RealiTeaGameBoard, RealiTeaGameBoardSkeleton } from "./game-board";
-import { readGameState, saveGameState } from "./game-state";
 import { resolveReturnTo } from "./return-to.server";
+import { parseTzCookie } from "./tz-cookie.server";
 
 import "./realitea.css";
 
 const TZ_COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // one year in seconds
-
-function parseTzCookie(cookieHeader: string): string | null {
-  for (const part of cookieHeader.split(";")) {
-    const eqIdx = part.indexOf("=");
-    if (eqIdx === -1) continue;
-    const name = part.slice(0, eqIdx).trim();
-    if (name !== "tz") continue;
-    const value = decodeURIComponent(part.slice(eqIdx + 1).trim());
-    try {
-      // Validate that the value is a recognized IANA timezone name
-      Intl.DateTimeFormat(undefined, { timeZone: value });
-      return value;
-    } catch {
-      return null;
-    }
-  }
-  return null;
-}
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const timeZone = parseTzCookie(request.headers.get("Cookie") ?? "") ?? "UTC";
@@ -69,8 +52,9 @@ export function meta() {
 
 /**
  * Skeleton that React Router renders during SSR / before hydration. The route
- * reads `localStorage` for restored progress on the client, which would
- * otherwise mismatch the server-rendered output.
+ * then fetches the signed-in player's server-side attempt (React Query),
+ * which shows the same skeleton again briefly until that resolves — see the
+ * `attemptQuery.isPending` check below.
  */
 export function HydrateFallback() {
   return <RealiTeaGameBoardSkeleton />;
@@ -129,30 +113,42 @@ export default function RealiTeaRoute() {
     }
   }, []);
 
-  // Read once at mount. We deliberately do not subscribe to localStorage.
-  // useState lazy initializer runs exactly once per mount — one-shot seed,
-  // not reactive state. If the puzzle rolls over at midnight, the reset
-  // effect inside useRealiTeaGame (via RealiTeaGameBoard) handles the
-  // transition.
-  const [seed] = useState(() => {
-    if (typeof window === "undefined") {
-      return { guesses: [] as RealiteaGuess[], status: "playing" as GameStatus };
-    }
-    const stored = readGameState(currentPuzzle.dateKey);
-    return {
-      guesses: stored?.guesses ?? [],
-      status: stored?.status ?? ("playing" as GameStatus),
-    };
+  // Server-authoritative progress for signed-in players, not device-local
+  // storage — a solve on one device shows up on another on the next fetch.
+  // `refetchOnWindowFocus` (React Query's default) is what makes "switch
+  // back to this tab after solving elsewhere" self-correct without a manual
+  // reload. Returns `{ attempt: null }` for anonymous callers and signed-in
+  // players who haven't attempted today's puzzle yet — both mean "start
+  // empty," same as before.
+  const attemptQuery = useQuery({
+    queryKey: ["realitea-attempt", currentPuzzle.dateKey],
+    queryFn: async () => {
+      const response = await fetch("/api/games/realitea/attempt");
+      if (!response.ok) throw new Error(`Failed to load attempt: ${response.status}`);
+      const data = (await response.json()) as { attempt: ActivePuzzleAttempt | null };
+      return data.attempt;
+    },
   });
+
+  if (attemptQuery.isPending) {
+    return <RealiTeaGameBoardSkeleton />;
+  }
+
+  // RealiTeaGameBoard seeds its guesses once at mount (see use-game.ts) and
+  // isn't reactive to prop changes after that. A background refetch (e.g.
+  // the window-focus refetch above) updates `attemptQuery.data` without
+  // remounting the board by default — so the `key` forces a remount, and a
+  // fresh reseed, whenever the *content* of the fetched attempt actually
+  // changes (guess count or status), not on every refetch.
+  const attempt = attemptQuery.data;
+  const boardKey = attempt ? `${attempt.status}:${attempt.guesses.length}` : "none";
 
   return (
     <RealiTeaGameBoard
+      key={boardKey}
       puzzle={currentPuzzle}
-      initialGuesses={seed.guesses}
+      initialGuesses={attempt?.guesses ?? []}
       loginUrl={loginUrl}
-      onGameChange={({ guesses, status }) =>
-        saveGameState({ puzzleKey: currentPuzzle.dateKey, guesses: [...guesses], status })
-      }
     />
   );
 }

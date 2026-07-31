@@ -1,6 +1,6 @@
 import { Button, Card, CardContent } from "@ponti-studios/ui/primitives";
 import { LucideHistory, LucideNewspaper, LucideShare } from "lucide-react";
-import { memo, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import { Link } from "react-router";
 import { OnscreenKeyboard } from "~/components/games/onscreen-keyboard";
 
@@ -8,7 +8,6 @@ import {
   getKeyboardState,
   MAX_GUESSES,
   REALITEA_ANSWER_LENGTH,
-  type GameStatus,
   type PublicDailyPuzzle,
   type RealiteaGuess,
 } from "~/lib/realitea";
@@ -99,10 +98,6 @@ export interface RealiTeaGameBoardProps {
   puzzle: PublicDailyPuzzle;
   initialGuesses: readonly RealiteaGuess[];
   loginUrl: string;
-  /** Called whenever guesses/status change — e.g. to persist to
-   *  localStorage. Read via a ref internally so an inline arrow function
-   *  passed by the caller doesn't retrigger the effect every render. */
-  onGameChange?: (state: { guesses: readonly RealiteaGuess[]; status: GameStatus }) => void;
 }
 
 /**
@@ -111,24 +106,13 @@ export interface RealiTeaGameBoardProps {
  * (route.tsx) and the "specific date" route (date.$date.tsx); each owns its
  * own loader/seed logic and passes the result in as props.
  */
-export function RealiTeaGameBoard({
-  puzzle,
-  initialGuesses,
-  loginUrl,
-  onGameChange,
-}: RealiTeaGameBoardProps) {
+export function RealiTeaGameBoard({ puzzle, initialGuesses, loginUrl }: RealiTeaGameBoardProps) {
   // No control currently toggles this — the "how to play" button was
   // removed from the header — but the card itself is kept in case a future
   // entry point (e.g. a help icon elsewhere) wants to flip it back on.
   const [showInstructions] = useState(false);
 
   const game = useRealiTeaGame({ puzzle, initialGuesses });
-
-  const onGameChangeRef = useRef(onGameChange);
-  onGameChangeRef.current = onGameChange;
-  useEffect(() => {
-    onGameChangeRef.current?.({ guesses: game.guesses, status: game.status });
-  }, [game.guesses, game.status]);
 
   const keyboardState = useMemo(() => getKeyboardState(game.guesses), [game.guesses]);
   const shouldShowClue = !game.isGameOver && game.guesses.length === MAX_GUESSES - 1;

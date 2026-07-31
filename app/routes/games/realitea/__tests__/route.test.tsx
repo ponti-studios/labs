@@ -1,4 +1,4 @@
-import { createMemoryStorage } from "@ponti-studios/ui/utilities";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createRoutesStub } from "react-router";
@@ -8,12 +8,12 @@ import {
   evaluateGuess,
   MAX_GUESSES,
   REALITEA_ANSWER_LENGTH,
+  type GameStatus,
   type PublicDailyPuzzle,
   type RealiteaGuess,
 } from "~/lib/realitea";
 
 import { createControlledRouteAction } from "../../../controlled-route-action";
-import { readGameState } from "../game-state";
 import RealiTeaRoute from "../route";
 import {
   expectAccessibilityMessageContent,
@@ -89,8 +89,33 @@ const STUB_LOGIN_URL = new URL("https://api.ponti.io");
 STUB_LOGIN_URL.searchParams.set("next", "https://labs.ponti.io/games/realitea");
 const STUB_LOGIN_URL_STRING = STUB_LOGIN_URL.toString();
 
+// The route seeds guesses from the server-authoritative attempt (React
+// Query, GET /api/games/realitea/attempt) instead of localStorage — see
+// docs/incidents/011-cross-device-progress-not-synced.md. Tests configure
+// what that endpoint returns via `mockAttempt` instead of seeding
+// localStorage directly.
+type MockAttempt = { guesses: RealiteaGuess[]; status: GameStatus } | null;
+let mockAttempt: MockAttempt = null;
+
+function stubAttemptFetch() {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (input: RequestInfo | URL) => {
+      const url = typeof input === "string" ? input : input.toString();
+      if (url.includes("/api/games/realitea/attempt")) {
+        return new Response(JSON.stringify({ attempt: mockAttempt }), {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        });
+      }
+      throw new Error(`Unexpected fetch in test: ${url}`);
+    }),
+  );
+}
+
 async function renderRoute(initial: { puzzle?: PublicDailyPuzzle } = {}) {
   const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
 
   const RoutesStub = createRoutesStub([
     {
@@ -108,7 +133,11 @@ async function renderRoute(initial: { puzzle?: PublicDailyPuzzle } = {}) {
   ]);
 
   cleanup();
-  const rendered = render(<RoutesStub initialEntries={["/"]} />);
+  const rendered = render(
+    <QueryClientProvider client={queryClient}>
+      <RoutesStub initialEntries={["/"]} />
+    </QueryClientProvider>,
+  );
   await waitFor(() => {
     expect(
       screen.queryByLabelText("Letter 1") ??
@@ -162,15 +191,11 @@ function getTextboxValues() {
 }
 
 function seedSolvedGame(answer = DEFAULT_ANSWER) {
-  const puzzleKey = routePuzzle.dateKey;
   const guess: RealiteaGuess = {
     word: answer,
     states: ["correct", "correct", "correct", "correct", "correct"],
   };
-  window.localStorage.setItem(
-    `labyrinth:realitea:${puzzleKey}`,
-    JSON.stringify({ puzzleKey, guesses: [guess], status: "solved" }),
-  );
+  mockAttempt = { guesses: [guess], status: "solved" };
 }
 
 /**
@@ -213,20 +238,13 @@ describe("RealiTeaRoute", () => {
     vi.setSystemTime(new Date("2026-05-20T12:00:00.000Z"));
     guessControl.reset();
     routePuzzle = buildPublicPuzzle();
-
-    const localStorage = createMemoryStorage();
-    vi.stubGlobal("localStorage", localStorage);
-    Object.defineProperty(window, "localStorage", {
-      value: localStorage,
-      configurable: true,
-    });
-    window.localStorage.clear();
+    mockAttempt = null;
+    stubAttemptFetch();
   });
 
   afterEach(() => {
     cleanup();
     vi.useRealTimers();
-    window.localStorage.clear();
     vi.unstubAllGlobals();
     guessControl.reset();
   });
@@ -242,8 +260,7 @@ describe("RealiTeaRoute", () => {
     expect(screen.getByLabelText("Letter 1")).toHaveAttribute("data-state", "typed");
   });
 
-  it("restores saved progress for the same puzzle key after reload", async () => {
-    const puzzleKey = routePuzzle.dateKey;
+  it("shows a solved puzzle on a fresh mount once the server has recorded it", async () => {
     const { user } = await renderRoute();
 
     await enterGuess(user, DEFAULT_ANSWER);
@@ -257,32 +274,56 @@ describe("RealiTeaRoute", () => {
     });
     expect(screen.getByText(routePuzzle.detail.toLocaleLowerCase())).toBeInTheDocument();
 
+    // Simulate the server having recorded the solve, the way
+    // evaluateGuessServer would for a signed-in player — a fresh mount
+    // (equivalent to a reload, or a different device) reflects the
+    // server-authoritative attempt instead of anything device-local.
+    mockAttempt = {
+      guesses: [
+        { word: DEFAULT_ANSWER, states: ["correct", "correct", "correct", "correct", "correct"] },
+      ],
+      status: "solved",
+    };
+
     await renderRoute();
 
     await waitFor(() => {
       expect(screen.getByText("The Story")).toBeInTheDocument();
       expect(screen.getByText(routePuzzle.detail.toLocaleLowerCase())).toBeInTheDocument();
-      const stored = readGameState(puzzleKey);
-      expect(stored?.guesses.map((g) => g.word)).toEqual([DEFAULT_ANSWER]);
-      expect(stored?.status).toBe("solved");
     });
   });
 
-  it("discards stale saved progress for a different puzzle key", async () => {
-    const staleKey = "2026-05-19";
-    window.localStorage.setItem(
-      `labyrinth:realitea:${staleKey}`,
-      JSON.stringify({
-        puzzleKey: staleKey,
-        guesses: [{ word: "KYLE", states: ["correct", "correct", "correct", "correct", "absent"] }],
-        status: "solved",
-      }),
-    );
+  it("starts empty for a new puzzle date even if the previous date had guesses", async () => {
+    const wrongGuess = "DORIT";
+    mockAttempt = {
+      guesses: [{ word: wrongGuess, states: evaluateGuess(DEFAULT_ANSWER, wrongGuess) }],
+      status: "playing",
+    };
+    const { user: sameDateUser } = await renderRoute();
 
-    await renderRoute();
+    // Re-submitting the seeded guess is rejected as a duplicate — proof the
+    // guess was actually restored from the mocked server attempt, not just
+    // that the puzzle rendered.
+    await enterGuess(sameDateUser, wrongGuess);
+    await submitCurrentGuess(sameDateUser);
+    await waitFor(() => {
+      expect(screen.getByText("Already guessed")).toBeInTheDocument();
+    });
+    expect(guessControl.getRequests()).toEqual([]);
 
-    expect(getTextboxes()).toHaveLength(DEFAULT_ANSWER.length);
-    expect(screen.queryByText("KYLE")).not.toBeInTheDocument();
+    // The puzzle rolled over to a new date, and the (mocked) server has no
+    // attempt yet for that new date — the query key is scoped per date, so
+    // the previous date's guess must not leak into the new one: the same
+    // word should now submit as a fresh guess instead of a duplicate.
+    mockAttempt = null;
+    const { user: newDateUser } = await renderRoute({
+      puzzle: buildPublicPuzzle(DEFAULT_ANSWER, new Date("2026-05-21T12:00:00.000Z")),
+    });
+
+    await enterGuess(newDateUser, wrongGuess);
+    await submitCurrentGuess(newDateUser);
+    await expectGuessCalls([wrongGuess]);
+    expect(screen.queryByText("Already guessed")).not.toBeInTheDocument();
   });
 
   it("shows an error when the guess is too short", async () => {
@@ -427,35 +468,17 @@ describe("RealiTeaRoute", () => {
   });
 
   it("reveals the clue only when one guess remains", async () => {
-    const puzzleKey = routePuzzle.dateKey;
     const seededWords = ["BEEEE", "CDDDD", "EDEEE", "FDFFF", "GDEEE"].slice(0, MAX_GUESSES - 1);
     const seededGuesses: RealiteaGuess[] = seededWords.map((word) => ({
       word,
       states: evaluateGuess(DEFAULT_ANSWER, word),
     }));
 
-    window.localStorage.setItem(
-      `labyrinth:realitea:${puzzleKey}`,
-      JSON.stringify({
-        puzzleKey,
-        guesses: seededGuesses.slice(0, MAX_GUESSES - 2),
-        status: "playing",
-      }),
-    );
-
+    mockAttempt = { guesses: seededGuesses.slice(0, MAX_GUESSES - 2), status: "playing" };
     await renderRoute();
     expect(screen.queryByText("Final clue")).not.toBeInTheDocument();
 
-    window.localStorage.clear();
-    window.localStorage.setItem(
-      `labyrinth:realitea:${puzzleKey}`,
-      JSON.stringify({
-        puzzleKey,
-        guesses: seededGuesses,
-        status: "playing",
-      }),
-    );
-
+    mockAttempt = { guesses: seededGuesses, status: "playing" };
     await renderRoute();
     expect(screen.getByText("Final clue")).toBeInTheDocument();
     expect(screen.getByText(routePuzzle.clue)).toBeInTheDocument();
