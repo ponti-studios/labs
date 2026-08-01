@@ -125,13 +125,13 @@ export function RealiTeaGameBoard({ puzzle, initialGuesses, loginUrl }: RealiTea
   });
 
   return (
-    <div className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-6 px-4 pb-[calc(env(safe-area-inset-bottom)+8px)]">
+    <div className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-3 px-4 pb-[calc(env(safe-area-inset-bottom)+88px)] sm:gap-6 sm:pb-[calc(env(safe-area-inset-bottom)+24px)]">
       <header className="sticky top-0 z-10 backdrop-blur md:static">
-        <div className="relative flex items-center justify-center pt-4 pb-0">
+        <div className="relative flex items-center justify-center pt-2 pb-0 sm:pt-4">
           <img
             src="/experiments/logo.realitea.500x500.webp"
             alt="RealiTea"
-            className="h-20 object-contain sm:h-14"
+            className="h-14 object-contain sm:h-20"
           />
           <Button asChild aria-label="Your puzzle history" variant="ghost" className="absolute right-0">
             <Link to="/games/realitea/history">
@@ -163,7 +163,7 @@ export function RealiTeaGameBoard({ puzzle, initialGuesses, loginUrl }: RealiTea
       )}
 
       <div className="flex flex-1 flex-col items-center justify-center gap-2">
-        <div className="flex w-fit flex-col gap-(--realitea-tile-gap)">
+        <div className="flex w-fit flex-col gap-(--realitea-tile-gap)" data-testid="realitea-tile-grid">
           {Array.from({
             length: game.isGameOver ? game.guesses.length : MAX_GUESSES,
           }).map((_, rowIndex) => {

@@ -74,6 +74,7 @@ export function OnscreenKeyboard({
         appearance === "realitea" && "realitea-keyboard",
         className,
       )}
+      data-testid="onscreen-keyboard"
     >
       {ROWS.map((row, i) => (
         <div key={row} className="flex w-full items-center justify-center gap-0.5 sm:gap-1">
