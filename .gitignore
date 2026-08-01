@@ -38,4 +38,7 @@ npm-debug.log*
 # NX Workspaces
 .nx/cache
 .nx/workspace-data
+
+# Generated demo/reference screenshots (scripts/realitea-tile-states.ts)
+public/screenshots/tile-states/
 **/.claude/settings.local.json

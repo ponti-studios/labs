@@ -2,9 +2,9 @@
 
 :root {
   /* Sizing */
-  --realitea-tile-size: clamp(54px, 15vw, 76px);
-  --realitea-tile-gap: clamp(8px, 2.6vw, 12px);
-  --realitea-radius: clamp(11px, 3.1vw, 17px);
+  --realitea-tile-size: clamp(42px, 12vw, 64px);
+  --realitea-tile-gap: clamp(6px, 2vw, 10px);
+  --realitea-radius: clamp(9px, 2.6vw, 15px);
 
   /* Palette — solids */
   --realitea-lacquer-top: rgba(24, 24, 24, 1);
@@ -19,11 +19,11 @@
   --realitea-correct-text: rgba(239, 255, 220, 1);
   --realitea-correct-inner: rgba(36, 89, 23, 1);
   --realitea-correct-outer: rgba(8, 16, 7, 1);
-  --realitea-present-bg: rgba(45, 29, 0, 1);
+  --realitea-present-bg: rgba(168, 118, 20, 1);
   --realitea-present-border: rgba(255, 209, 91, 1);
-  --realitea-present-text: rgba(255, 241, 190, 1);
-  --realitea-present-inner: rgba(104, 72, 0, 1);
-  --realitea-present-outer: rgba(16, 9, 0, 1);
+  --realitea-present-text: rgba(15, 10, 0, 1);
+  --realitea-present-inner: rgba(224, 168, 46, 1);
+  --realitea-present-outer: rgba(66, 44, 6, 1);
   --realitea-error-border: rgba(239, 68, 68, 1);
   --realitea-absent-border: rgba(61, 61, 61, 1);
   --realitea-absent-color: rgba(119, 119, 119, 1);
@@ -41,7 +41,7 @@
 
   /* Glows */
   --realitea-glow-correct-soft: rgba(133, 255, 77, 0.35);
-  --realitea-glow-present-soft: rgba(255, 177, 20, 0.35);
+  --realitea-glow-present-soft: rgba(255, 196, 40, 0.45);
   --realitea-glow-error: rgba(239, 68, 68, 0.35);
 }
 
