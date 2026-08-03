@@ -120,7 +120,29 @@ describe("loadActivePublicPuzzle", () => {
 
     expect(envelope?.puzzle.dateKey).toBe("2026-05-19");
     expect(envelope?.puzzle.answerType).toBe("moment");
-    expect(loadMostRecentPuzzleMock).toHaveBeenCalledWith(1);
+    expect(loadMostRecentPuzzleMock).toHaveBeenCalledWith(1, "2026-05-20");
+  });
+
+  it("does not advance Los Angeles to London's next day after the London rollover", async () => {
+    getGameBySlugMock.mockResolvedValue(GAME);
+    loadPuzzleForDateMock.mockResolvedValue(null);
+    loadMostRecentPuzzleMock.mockImplementation((_gameId: number, dateKey?: string) =>
+      Promise.resolve(
+        dateKey
+          ? makePuzzle({ dateUtc: "2026-05-20", answer: "DORIT" })
+          : makePuzzle({ dateUtc: "2026-05-21", answer: "ERIKA" }),
+      ),
+    );
+
+    const { loadActivePublicPuzzle } = await import("../puzzle.server");
+    const envelope = await loadActivePublicPuzzle(
+      new Date("2026-05-21T00:30:00.000Z"),
+      "America/Los_Angeles",
+    );
+
+    expect(envelope?.puzzle.dateKey).toBe("2026-05-20");
+    expect(loadPuzzleForDateMock).toHaveBeenCalledWith(1, "2026-05-20");
+    expect(loadMostRecentPuzzleMock).toHaveBeenCalledWith(1, "2026-05-20");
   });
 
   it("returns null when no puzzle exists at all", async () => {

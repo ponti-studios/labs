@@ -8,7 +8,8 @@ const { getHominemUserMock, loadPuzzleForSpecificDateMock } = vi.hoisted(() => (
 
 vi.mock("~/lib/server/hominem-auth", () => ({
   getHominemUser: getHominemUserMock,
-  buildHominemLoginUrl: (returnTo: string) => `https://api.ponti.io/login?next=${encodeURIComponent(returnTo)}`,
+  buildHominemLoginUrl: (returnTo: string) =>
+    `https://api.ponti.io/login?next=${encodeURIComponent(returnTo)}`,
 }));
 
 vi.mock("~/lib/realitea/puzzle.server", () => ({

@@ -119,11 +119,7 @@ export default function SeasonalPatternsPage() {
               data={data.analysis.patterns}
               margin={{ top: 0, right: 8, bottom: 24, left: 0 }}
             >
-              <CartesianGrid
-                strokeDasharray="4 4"
-                stroke="var(--color-muted)"
-                vertical={false}
-              />
+              <CartesianGrid strokeDasharray="4 4" stroke="var(--color-muted)" vertical={false} />
               <XAxis
                 dataKey="monthName"
                 tick={tickStyle}
@@ -185,9 +181,7 @@ export default function SeasonalPatternsPage() {
               <div key={insight.pattern} className="border-border border-l-2 py-0.5 pl-4">
                 <p className="text-foreground text-sm font-medium">{insight.pattern}</p>
                 <p className="text-muted-foreground mt-0.5 text-xs">{insight.description}</p>
-                <p className="text-muted-foreground mt-1 text-xs">
-                  {insight.strength}% strength
-                </p>
+                <p className="text-muted-foreground mt-1 text-xs">{insight.strength}% strength</p>
               </div>
             ))}
           </div>

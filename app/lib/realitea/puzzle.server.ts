@@ -83,9 +83,10 @@ async function resolveActivePuzzle(
   const gameId = await requireRhobhGameId();
   let puzzle = await loadPuzzleForDate(gameId, dateKey);
 
-  // Fallback: serve the most-recently created puzzle of any date
+  // Fallback: serve the most-recently created puzzle from today or earlier.
+  // Never serve future inventory across a timezone boundary.
   if (!puzzle) {
-    puzzle = await loadMostRecentPuzzle(gameId);
+    puzzle = await loadMostRecentPuzzle(gameId, dateKey);
     if (puzzle) {
       childLogger.warn(
         {
@@ -252,7 +253,13 @@ export async function evaluateGuessServer(
 
     if (attempt) {
       if (attempt.status !== "playing") {
-        return { valid: false, word, reason: "game-over", isGameOver: true, status: attempt.status };
+        return {
+          valid: false,
+          word,
+          reason: "game-over",
+          isGameOver: true,
+          status: attempt.status,
+        };
       }
       if (attempt.guesses.some((guess) => guess.word === word)) {
         return { valid: false, word, reason: "already-guessed" };

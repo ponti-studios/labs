@@ -1,9 +1,5 @@
 import type { LoaderFunctionArgs } from "react-router";
-import {
-  getCovidStats,
-  getCovidTimeSeries,
-  getGlobalCovidData,
-} from "~/lib/covid-actions";
+import { getCovidStats, getCovidTimeSeries, getGlobalCovidData } from "~/lib/covid-actions";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);

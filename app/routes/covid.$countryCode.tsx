@@ -1,11 +1,11 @@
-import type { CovidRow } from "~/lib/public-data";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { StatsOverview } from "~/components/covid/charts/stats-overview";
 import { TimeSeriesChart } from "~/components/covid/charts/time-series-chart";
 import { TopCountriesChart } from "~/components/covid/charts/top-countries-chart";
 import { VaccinationProgress } from "~/components/covid/charts/vaccination-progress";
+import type { CovidRow } from "~/lib/public-data";
 
 interface DashboardResponse {
   countryCode: string;
@@ -137,7 +137,7 @@ export default function CovidPage() {
           title="Reproduction Rate (R)"
           color="#8b5cf6"
         />
-        {timeSeriesData.some((record: CovidRow) => record.new_vaccinations_smoothed!== null) ? (
+        {timeSeriesData.some((record) => record.new_vaccinations_smoothed !== null) ? (
           <TimeSeriesChart
             data={timeSeriesData}
             metric="new_vaccinations_smoothed"
@@ -152,14 +152,14 @@ export default function CovidPage() {
             color="#f59e0b"
           />
         )}
-        {timeSeriesData.some((record: CovidRow) => record.positive_rate!== null) ? (
+        {timeSeriesData.some((record) => record.positive_rate !== null) ? (
           <TimeSeriesChart
             data={timeSeriesData}
             metric="positive_rate"
             title="Test Positivity Rate"
             color="#f59e0b"
           />
-        ) : timeSeriesData.some((record: CovidRow) => record.icu_patients_per_million!== null) ? (
+        ) : timeSeriesData.some((record) => record.icu_patients_per_million !== null) ? (
           <TimeSeriesChart
             data={timeSeriesData}
             metric="icu_patients_per_million"

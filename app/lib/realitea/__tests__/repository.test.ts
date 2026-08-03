@@ -231,7 +231,11 @@ describe("listAttemptsForUserInRange", () => {
       toKey: "2026-06-27",
     });
 
-    expect(result.map((r) => r.attempt.dateUtc)).toEqual(["2026-06-27", "2026-06-26", "2026-06-25"]);
+    expect(result.map((r) => r.attempt.dateUtc)).toEqual([
+      "2026-06-27",
+      "2026-06-26",
+      "2026-06-25",
+    ]);
     expect(result[0].puzzle.clue).toBe("clue for 2026-06-27");
   });
 

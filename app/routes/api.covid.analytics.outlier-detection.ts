@@ -35,8 +35,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
       .map((row) => ({
         date: row.date || "",
         value: (row[metric as keyof CovidRow] ?? 0) as number,
-        total_cases: row.total_cases|| 0,
-        total_deaths: row.total_deaths|| 0,
+        total_cases: row.total_cases || 0,
+        total_deaths: row.total_deaths || 0,
       }))
       .filter((item) => item.value > 0);
 

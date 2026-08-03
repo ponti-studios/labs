@@ -133,7 +133,12 @@ export function RealiTeaGameBoard({ puzzle, initialGuesses, loginUrl }: RealiTea
             alt="RealiTea"
             className="h-14 object-contain sm:h-20"
           />
-          <Button asChild aria-label="Your puzzle history" variant="ghost" className="absolute right-0">
+          <Button
+            asChild
+            aria-label="Your puzzle history"
+            variant="ghost"
+            className="absolute right-0"
+          >
             <Link to="/games/realitea/history">
               <LucideHistory />
             </Link>
@@ -163,7 +168,10 @@ export function RealiTeaGameBoard({ puzzle, initialGuesses, loginUrl }: RealiTea
       )}
 
       <div className="flex flex-1 flex-col items-center justify-center gap-2">
-        <div className="flex w-fit flex-col gap-(--realitea-tile-gap)" data-testid="realitea-tile-grid">
+        <div
+          className="flex w-fit flex-col gap-(--realitea-tile-gap)"
+          data-testid="realitea-tile-grid"
+        >
           {Array.from({
             length: game.isGameOver ? game.guesses.length : MAX_GUESSES,
           }).map((_, rowIndex) => {

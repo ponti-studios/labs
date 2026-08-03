@@ -60,7 +60,9 @@ function applySmoothing(data: Array<{ date: string; value: number; total_cases: 
   });
 }
 
-function detectWaves(data: Array<{ date: string; value: number; total_cases: number }>): WaveData[] {
+function detectWaves(
+  data: Array<{ date: string; value: number; total_cases: number }>,
+): WaveData[] {
   if (data.length < 21) return [];
   const waves: WaveData[] = [];
   const minPeakValue = calculateDynamicThreshold(data);

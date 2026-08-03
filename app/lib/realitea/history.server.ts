@@ -82,7 +82,9 @@ export async function loadPuzzleHistory(
     .filter((dateKey) => !attemptedDateKeys.has(dateKey))
     .sort();
 
-  const totalDays = earliestPuzzleKey ? (daysBetweenDateKeys(earliestPuzzleKey, todayKey) ?? 0) + 1 : 1;
+  const totalDays = earliestPuzzleKey
+    ? (daysBetweenDateKeys(earliestPuzzleKey, todayKey) ?? 0) + 1
+    : 1;
   const totalPages = Math.max(1, Math.ceil(totalDays / WEEK_DAYS));
 
   return {

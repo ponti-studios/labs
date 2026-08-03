@@ -8,7 +8,8 @@ const { getHominemUserMock, loadPuzzleHistoryMock } = vi.hoisted(() => ({
 
 vi.mock("~/lib/server/hominem-auth", () => ({
   getHominemUser: getHominemUserMock,
-  buildHominemLoginUrl: (returnTo: string) => `https://api.ponti.io/login?next=${encodeURIComponent(returnTo)}`,
+  buildHominemLoginUrl: (returnTo: string) =>
+    `https://api.ponti.io/login?next=${encodeURIComponent(returnTo)}`,
 }));
 
 vi.mock("~/lib/realitea/history.server", () => ({
@@ -17,7 +18,13 @@ vi.mock("~/lib/realitea/history.server", () => ({
 
 function createLoaderArgs(url: string): LoaderFunctionArgs {
   const request = new Request(url);
-  return { context: {}, params: {}, pattern: "", request, url: new URL(request.url) } as LoaderFunctionArgs;
+  return {
+    context: {},
+    params: {},
+    pattern: "",
+    request,
+    url: new URL(request.url),
+  } as LoaderFunctionArgs;
 }
 
 describe("RealiTea history route loader", () => {
@@ -48,7 +55,14 @@ describe("RealiTea history route loader", () => {
       hasPrev: false,
       weekStartKey: "2026-07-23",
       weekEndKey: "2026-07-29",
-      stats: { gamesPlayed: 0, gamesSolved: 0, winRate: 0, currentStreak: 0, maxStreak: 0, guessDistribution: {} },
+      stats: {
+        gamesPlayed: 0,
+        gamesSolved: 0,
+        winRate: 0,
+        currentStreak: 0,
+        maxStreak: 0,
+        guessDistribution: {},
+      },
       playableUnplayedDateKeys: [],
     });
 
@@ -70,7 +84,14 @@ describe("RealiTea history route loader", () => {
       hasPrev: true,
       weekStartKey: "2026-07-09",
       weekEndKey: "2026-07-15",
-      stats: { gamesPlayed: 0, gamesSolved: 0, winRate: 0, currentStreak: 0, maxStreak: 0, guessDistribution: {} },
+      stats: {
+        gamesPlayed: 0,
+        gamesSolved: 0,
+        winRate: 0,
+        currentStreak: 0,
+        maxStreak: 0,
+        guessDistribution: {},
+      },
       playableUnplayedDateKeys: [],
     });
 
@@ -90,12 +111,21 @@ describe("RealiTea history route loader", () => {
       hasPrev: false,
       weekStartKey: "2026-07-23",
       weekEndKey: "2026-07-29",
-      stats: { gamesPlayed: 0, gamesSolved: 0, winRate: 0, currentStreak: 0, maxStreak: 0, guessDistribution: {} },
+      stats: {
+        gamesPlayed: 0,
+        gamesSolved: 0,
+        winRate: 0,
+        currentStreak: 0,
+        maxStreak: 0,
+        guessDistribution: {},
+      },
       playableUnplayedDateKeys: [],
     });
 
     const { loader } = await import("../history");
-    await loader(createLoaderArgs("https://labs.ponti.io/games/realitea/history?page=not-a-number"));
+    await loader(
+      createLoaderArgs("https://labs.ponti.io/games/realitea/history?page=not-a-number"),
+    );
 
     expect(loadPuzzleHistoryMock).toHaveBeenCalledWith("user-1", { page: 1 });
   });

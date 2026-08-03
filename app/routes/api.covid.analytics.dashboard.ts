@@ -1,5 +1,5 @@
-import { fetchCovidData, type CovidRow } from "~/lib/public-data";
 import type { LoaderFunctionArgs } from "react-router";
+import { fetchCovidData } from "~/lib/public-data";
 
 interface Summary {
   total_cases: number;
@@ -26,7 +26,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
     const allRows = await fetchCovidData(country);
     const sorted = allRows
-      .filter((r) => r.total_cases!== null)
+      .filter((r) => r.total_cases !== null)
       .sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""));
 
     if (sorted.length === 0) {
@@ -36,15 +36,17 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const latest = sorted[0];
 
     const summary: Summary = {
-      total_cases: latest.total_cases|| 0,
-      total_deaths: latest.total_deaths|| 0,
-      total_vaccinations: latest.total_vaccinations|| 0,
+      total_cases: latest.total_cases || 0,
+      total_deaths: latest.total_deaths || 0,
+      total_vaccinations: latest.total_vaccinations || 0,
       population: latest.population || 0,
       case_fatality_rate:
-        latest.total_cases&& latest.total_deaths? (latest.total_deaths/ latest.total_cases) * 100
+        latest.total_cases && latest.total_deaths
+          ? (latest.total_deaths / latest.total_cases) * 100
           : 0,
       vaccination_rate:
-        latest.population && latest.total_vaccinations? (latest.total_vaccinations/ latest.population) * 100
+        latest.population && latest.total_vaccinations
+          ? (latest.total_vaccinations / latest.population) * 100
           : 0,
     };
 
