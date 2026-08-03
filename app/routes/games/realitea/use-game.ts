@@ -160,7 +160,8 @@ export function useRealiTeaGame({
       else if (result.reason === "already-guessed") anim.animateError("Already guessed", true);
       else if (result.reason === "rate-limited")
         anim.animateError("Too many guesses — slow down", true);
-      else if (result.reason === "game-over") anim.animateError("This puzzle is already over", true);
+      else if (result.reason === "game-over")
+        anim.animateError("This puzzle is already over", true);
       if (result.reason === "auth-required") setAuthRequired(true);
       return;
     }

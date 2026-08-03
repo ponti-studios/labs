@@ -27,3 +27,4 @@ grep -l "tags:.*auth" docs/incidents/*.md
 | [9](009-github-packages-unreadable-and-broken-npm-package.md) | GitHub Packages unreadable on Railway; then the npm republish shipped a broken package | 2026-07-29 | critical | dependency-publishing |
 | [10](010-cloudflare-blocked-session-check.md) | Signed-in players silently treated as anonymous: Cloudflare's bot-challenge blocked the server-to-server session check | 2026-07-31 | critical | networking |
 | [11](011-cross-device-progress-not-synced.md) | Cross-device progress not synced: today's puzzle was seeded from localStorage, not the server | 2026-07-31 | high | state-management |
+| [12](012-realitea-future-puzzle-served-across-timezone-boundary.md) | RealiTea served the next day's puzzle before the player's local midnight | 2026-08-03 | high | timezone |

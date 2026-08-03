@@ -126,6 +126,10 @@ export default function RealiTeaDateRoute() {
   }
 
   return (
-    <RealiTeaGameBoard puzzle={puzzle} initialGuesses={attempt?.guesses ?? []} loginUrl={loginUrl} />
+    <RealiTeaGameBoard
+      puzzle={puzzle}
+      initialGuesses={attempt?.guesses ?? []}
+      loginUrl={loginUrl}
+    />
   );
 }

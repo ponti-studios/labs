@@ -1,7 +1,6 @@
 import { z } from "zod";
 
-const BASE =
-  process.env.PUBLIC_DATA_URL ?? "https://public-data-production.up.railway.app";
+const BASE = process.env.PUBLIC_DATA_URL ?? "https://public-data-production.up.railway.app";
 
 export const covidRowSchema = z.object({
   iso_code: z.string(),
@@ -81,7 +80,11 @@ const countrySchema = z.object({
   continent: z.string().nullable(),
 });
 
-export async function fetchCovidData(isoCode: string, start?: string, end?: string): Promise<CovidRow[]> {
+export async function fetchCovidData(
+  isoCode: string,
+  start?: string,
+  end?: string,
+): Promise<CovidRow[]> {
   const params = new URLSearchParams();
   if (start) params.set("start", start);
   if (end) params.set("end", end);

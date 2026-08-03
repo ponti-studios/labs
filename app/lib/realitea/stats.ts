@@ -48,7 +48,9 @@ export function computeHistoryStats(attempts: readonly StatsAttempt[]): PuzzleHi
 
   const winRate = gamesPlayed === 0 ? 0 : gamesSolved / gamesPlayed;
 
-  const sorted = [...attempts].sort((a, b) => (a.dateUtc < b.dateUtc ? 1 : a.dateUtc > b.dateUtc ? -1 : 0));
+  const sorted = [...attempts].sort((a, b) =>
+    a.dateUtc < b.dateUtc ? 1 : a.dateUtc > b.dateUtc ? -1 : 0,
+  );
 
   let currentStreak = 0;
   for (let i = 0; i < sorted.length; i++) {

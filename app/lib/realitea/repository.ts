@@ -103,15 +103,23 @@ export async function loadPuzzleForDate(
 }
 
 /**
- * Most-recently-created puzzle for a game, regardless of date. Used as a
- * last-resort fallback when nothing exists for the requested date.
+ * Most-recently-created puzzle for a game, optionally bounded to a calendar
+ * date. The unbounded form is used by tooling; active-puzzle fallback always
+ * supplies `dateKey` so future inventory cannot be served.
  */
-export async function loadMostRecentPuzzle(gameId: number): Promise<PuzzleRecord | null> {
+export async function loadMostRecentPuzzle(
+  gameId: number,
+  dateKey?: string,
+): Promise<PuzzleRecord | null> {
   const rows = await db
     .select({ puzzle: dailyPuzzles, article: articles })
     .from(dailyPuzzles)
     .innerJoin(articles, eq(dailyPuzzles.articleId, articles.id))
-    .where(eq(dailyPuzzles.gameId, gameId))
+    .where(
+      dateKey
+        ? and(eq(dailyPuzzles.gameId, gameId), lte(dailyPuzzles.dateUtc, dateKey))
+        : eq(dailyPuzzles.gameId, gameId),
+    )
     .orderBy(desc(dailyPuzzles.createdAt))
     .limit(1);
   const row = rows[0];
@@ -339,10 +347,7 @@ export async function appendGuess(
     .where(eq(realiteaAttempts.id, attemptId));
 }
 
-export async function countRecentGuesses(
-  userId: string,
-  windowMs: number,
-): Promise<number> {
+export async function countRecentGuesses(userId: string, windowMs: number): Promise<number> {
   const cutoff = new Date(Date.now() - windowMs).toISOString();
   const rows = await db
     .select({ guessedAt: realiteaAttempts.guessedAt })

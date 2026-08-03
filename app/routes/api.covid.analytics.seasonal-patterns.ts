@@ -1,5 +1,5 @@
-import { fetchCovidData, type CovidRow } from "~/lib/public-data";
 import type { LoaderFunctionArgs } from "react-router";
+import { fetchCovidData } from "~/lib/public-data";
 
 interface SeasonalPattern {
   month: number;
@@ -34,8 +34,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
     for (const row of data) {
       if (row.date) {
         const month = new Date(row.date).getMonth() + 1;
-        const cases = row.new_cases_smoothed|| row.new_cases|| 0;
-        const deaths = row.new_deaths_smoothed|| row.new_deaths|| 0;
+        const cases = row.new_cases_smoothed || row.new_cases || 0;
+        const deaths = row.new_deaths_smoothed || row.new_deaths || 0;
         if (cases > 0) monthlyData[month].cases.push(cases);
         if (deaths > 0) monthlyData[month].deaths.push(deaths);
       }

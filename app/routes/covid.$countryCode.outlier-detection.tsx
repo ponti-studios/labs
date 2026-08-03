@@ -159,9 +159,7 @@ function OutlierContent({
                     <Badge variant={outlierBadgeVariant(outlier.severity)}>
                       {outlier.severity}
                     </Badge>
-                    <span className="text-muted-foreground text-xs capitalize">
-                      {outlier.type}
-                    </span>
+                    <span className="text-muted-foreground text-xs capitalize">{outlier.type}</span>
                     <span className="text-muted-foreground text-xs">
                       {new Date(outlier.date).toLocaleDateString()}
                     </span>

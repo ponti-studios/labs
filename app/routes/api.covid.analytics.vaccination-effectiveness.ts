@@ -1,5 +1,5 @@
-import { fetchCovidData, type CovidRow } from "~/lib/public-data";
 import type { LoaderFunctionArgs } from "react-router";
+import { fetchCovidData } from "~/lib/public-data";
 
 type VaccinationEffectiveness = {
   overall: number;
@@ -113,7 +113,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
     }));
 
     const milestones = [10, 25, 50, 70, 80].map((threshold) => {
-      const reached = vaxData.find((d) => toNumber(d.people_fully_vaccinated_per_hundred) >= threshold);
+      const reached = vaxData.find(
+        (d) => toNumber(d.people_fully_vaccinated_per_hundred) >= threshold,
+      );
       return {
         threshold,
         label: `${threshold}% Fully Vaccinated`,

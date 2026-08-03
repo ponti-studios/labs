@@ -172,9 +172,7 @@ export default function PandemicWavesPage() {
         <label className="ui-data-label">Metric</label>
         <Select value={metric} onValueChange={setMetric}>
           <SelectTrigger className="border-border bg-card text-foreground h-7 w-52 rounded text-xs">
-            <SelectValue>
-              {(v: string | null) => metricLabels[v ?? ""] ?? v ?? ""}
-            </SelectValue>
+            <SelectValue>{(v: string | null) => metricLabels[v ?? ""] ?? v ?? ""}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="new_cases_smoothed">New Cases (Smoothed)</SelectItem>

@@ -4,17 +4,18 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 
-import { closeDb } from "~/lib/server/db";
 import { chromium, type Page } from "playwright";
+import { closeDb } from "~/lib/server/db";
 
 import { getDateKey } from "../app/lib/realitea/date";
-import { getGameBySlug, loadMostRecentPuzzle, loadPuzzleForDate } from "../app/lib/realitea/repository";
+import {
+  getGameBySlug,
+  loadMostRecentPuzzle,
+  loadPuzzleForDate,
+} from "../app/lib/realitea/repository";
 
 /**
  * Captures gallery-ready assets for the RealiTea game:
- *
- *   pnpm gallery:realitea:screenshot
- *   pnpm gallery:realitea:solve
  *
  * Both look up the real answer being served today (same fallback the app
  * itself uses — today's puzzle, or the most recent one if today's hasn't been
@@ -73,7 +74,8 @@ async function resolveTodaysAnswer(): Promise<string> {
   if (!game) throw new Error(`Game not found: ${REALITEA_GAME_SLUG}`);
 
   const dateKey = getDateKey(new Date());
-  const puzzle = (await loadPuzzleForDate(game.id, dateKey)) ?? (await loadMostRecentPuzzle(game.id));
+  const puzzle =
+    (await loadPuzzleForDate(game.id, dateKey)) ?? (await loadMostRecentPuzzle(game.id));
   if (!puzzle) throw new Error("No RealiTea puzzle available in the database");
 
   return puzzle.answer.toUpperCase();
