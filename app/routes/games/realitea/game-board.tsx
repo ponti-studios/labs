@@ -1,6 +1,6 @@
 import { Button, Card, CardContent } from "@ponti-studios/ui/primitives";
-import { LucideHistory, LucideNewspaper, LucideShare } from "lucide-react";
-import { memo, useMemo, useState } from "react";
+import { LucideHistory } from "lucide-react";
+import { memo, useCallback, useMemo, useState } from "react";
 import { Link } from "react-router";
 import { OnscreenKeyboard } from "~/components/games/onscreen-keyboard";
 
@@ -11,6 +11,7 @@ import {
   type PublicDailyPuzzle,
   type RealiteaGuess,
 } from "~/lib/realitea";
+import { buildRealiTeaShareText } from "~/lib/realitea/share";
 import { cn } from "~/lib/utils";
 
 import { RealiTeaTile, type RealiTeaTileState } from "./realitea-tile";
@@ -124,8 +125,19 @@ export function RealiTeaGameBoard({ puzzle, initialGuesses, loginUrl }: RealiTea
     onResult: game.clearError,
   });
 
+  const copyStory = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(buildRealiTeaShareText(game.guesses, game.isSolved));
+      game.clearError();
+    } catch {
+      // Clipboard permission denied or unavailable — the "Share the drama"
+      // button above already covers the prompt-copy fallback.
+    }
+  }, [game.guesses, game.isSolved, game.clearError]);
+
   return (
-    <div className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-3 px-4 pb-[calc(env(safe-area-inset-bottom)+88px)] sm:gap-6 sm:pb-[calc(env(safe-area-inset-bottom)+24px)]">
+    <div className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-3 px-4 pt-2 pb-[calc(env(safe-area-inset-bottom)+184px)] sm:gap-6 sm:pt-4">
+      <div className="realitea-backdrop" aria-hidden="true" />
       <header className="sticky top-0 z-10 backdrop-blur md:static">
         <div className="relative flex items-center justify-center pt-2 pb-0 sm:pt-4">
           <img
@@ -151,9 +163,9 @@ export function RealiTeaGameBoard({ puzzle, initialGuesses, loginUrl }: RealiTea
           <CardContent>
             <p>Guess today&apos;s reality TV answer in 6 tries.</p>
             <p className="mt-2">
-              <span className="font-medium text-(--realitea-correct-text)">Green</span> means the
+              <span className="font-medium text-(--realitea-correct-accent)">Pink</span> means the
               right letter is in the right place.{" "}
-              <span className="font-medium text-(--realitea-present-text)">Gold</span> means the
+              <span className="font-medium text-(--realitea-present-accent)">Gold</span> means the
               letter belongs in the answer but is in the wrong place.
             </p>
           </CardContent>
@@ -234,39 +246,76 @@ export function RealiTeaGameBoard({ puzzle, initialGuesses, loginUrl }: RealiTea
           </CardContent>
         </Card>
       ) : game.isGameOver ? (
-        <Card>
-          <CardContent className="flex flex-col gap-4">
-            <div>
-              <p className="ui-eyebrow">{game.isSolved ? "The Story" : "The puzzle ended"}</p>
-              <p className="mt-1 text-xs">{puzzle.detail.toLocaleLowerCase()}</p>
+        <div className="flex flex-col gap-3">
+          <div className="realitea-solved-row">
+            <span className="realitea-solved-squiggle" aria-hidden>
+              〜
+            </span>
+            <span className="realitea-solved-badge">
+              {game.isSolved ? `Solved in ${game.guesses.length}` : "Out of guesses"}
+            </span>
+            <span className="realitea-solved-squiggle" aria-hidden>
+              〜
+            </span>
+          </div>
+
+          <div>
+            <div className="realitea-receipt flex gap-4">
+              <div className="realitea-receipt-body">
+                <p className="realitea-receipt-heading">The Receipt</p>
+                <p className="mt-2">{puzzle.detail}</p>
+              </div>
+              <div className="realitea-receipt-divider" aria-hidden />
+              <div className="realitea-receipt-stamp" aria-hidden>
+                Real
+                <br />
+                Tea
+                <br />
+                Daily.
+              </div>
             </div>
-            <div className="flex justify-end gap-2">
-              <Button aria-label="Share result" onClick={share} type="button" variant="secondary">
-                <LucideShare size={18} />
-              </Button>
-              {puzzle.sources.length > 0 && (
-                <Button asChild variant="default">
-                  <a
-                    href={puzzle.sources[0].url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title={puzzle.sources[0].title}
-                  >
-                    <LucideNewspaper size={18} />
-                  </a>
-                </Button>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+            <div className="realitea-receipt-torn" aria-hidden />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <button
+              aria-label="Share result"
+              className="realitea-share-button"
+              onClick={share}
+              type="button"
+            >
+              Share the drama
+            </button>
+            <button
+              className="realitea-copy-link"
+              onClick={copyStory}
+              type="button"
+            >
+              Copy story
+            </button>
+            {puzzle.sources.length > 0 && (
+              <a
+                className="realitea-source-link"
+                href={puzzle.sources[0].url}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={puzzle.sources[0].title}
+              >
+                Read the source ↗
+              </a>
+            )}
+          </div>
+        </div>
       ) : (
-        <OnscreenKeyboard
-          appearance="realitea"
-          letterStates={keyboardState}
-          onLetter={game.addLetter}
-          onEnter={game.submitGuess}
-          onBackspace={game.removeLetter}
-        />
+        <div className="realitea-keyboard-dock">
+          <OnscreenKeyboard
+            appearance="realitea"
+            letterStates={keyboardState}
+            onLetter={game.addLetter}
+            onEnter={game.submitGuess}
+            onBackspace={game.removeLetter}
+          />
+        </div>
       )}
     </div>
   );
@@ -279,6 +328,7 @@ export function RealiTeaGameBoard({ puzzle, initialGuesses, loginUrl }: RealiTea
 export function RealiTeaGameBoardSkeleton() {
   return (
     <div className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center px-4">
+      <div className="realitea-backdrop" aria-hidden="true" />
       <div className="flex w-fit flex-col gap-(--realitea-tile-gap)">
         {Array.from({ length: 6 }).map((_, row) => (
           <div key={row} className="flex gap-(--realitea-tile-gap)">

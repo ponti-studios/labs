@@ -17,6 +17,7 @@
     "realitea:preview": "JITI_TSCONFIG_PATHS=1 jiti scripts/realitea-preview.ts",
     "realitea:generate": "JITI_TSCONFIG_PATHS=1 jiti scripts/realitea-generate.ts",
     "realitea:seed-history": "JITI_TSCONFIG_PATHS=1 jiti scripts/realitea-seed-history.ts",
+    "realitea:seed-dev": "JITI_TSCONFIG_PATHS=1 jiti scripts/realitea-seed-dev.ts",
     "realitea:gallery:screenshot": "JITI_TSCONFIG_PATHS=1 jiti scripts/realitea-gallery.ts --mode screenshot",
     "realitea:gallery:solve": "JITI_TSCONFIG_PATHS=1 jiti scripts/realitea-gallery.ts --mode solve",
     "realitea:tile-states": "JITI_TSCONFIG_PATHS=1 jiti scripts/realitea-tile-states.ts",

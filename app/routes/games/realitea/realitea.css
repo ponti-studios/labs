@@ -1,4 +1,5 @@
-/* RealiTea's product expression: black lacquer and champagne gold. */
+/* RealiTea's product expression: tabloid receipt — cream newsprint, ink
+   black, gossip-column pink, and a wink of gold for the near-misses. */
 
 :root {
   /* Sizing */
@@ -6,43 +7,65 @@
   --realitea-tile-gap: clamp(6px, 2vw, 10px);
   --realitea-radius: clamp(9px, 2.6vw, 15px);
 
-  /* Palette — solids */
-  --realitea-lacquer-top: rgba(24, 24, 24, 1);
-  --realitea-lacquer-bottom: rgba(5, 5, 5, 1);
-  --realitea-lacquer-mid: rgba(9, 9, 9, 1);
-  --realitea-gold-light: rgba(243, 217, 140, 1);
-  --realitea-gold: rgba(182, 138, 54, 1);
-  --realitea-gold-dark: rgba(127, 85, 19, 1);
-  --realitea-cream: rgba(244, 232, 206, 1);
-  --realitea-correct-bg: rgba(18, 45, 12, 1);
-  --realitea-correct-border: rgba(201, 255, 130, 1);
-  --realitea-correct-text: rgba(239, 255, 220, 1);
-  --realitea-correct-inner: rgba(36, 89, 23, 1);
-  --realitea-correct-outer: rgba(8, 16, 7, 1);
-  --realitea-present-bg: rgba(168, 118, 20, 1);
-  --realitea-present-border: rgba(255, 209, 91, 1);
-  --realitea-present-text: rgba(15, 10, 0, 1);
-  --realitea-present-inner: rgba(224, 168, 46, 1);
-  --realitea-present-outer: rgba(66, 44, 6, 1);
-  --realitea-error-border: rgba(239, 68, 68, 1);
-  --realitea-absent-border: rgba(61, 61, 61, 1);
-  --realitea-absent-color: rgba(119, 119, 119, 1);
-  --realitea-skeleton-bg: rgba(17, 17, 17, 1);
-  --realitea-key-hover-bg: rgba(32, 32, 32, 1);
+  /* Palette — page + paper */
+  --realitea-bg: rgba(247, 241, 226, 1);
+  --realitea-paper: rgba(255, 253, 247, 1);
+  --realitea-paper-border: rgba(23, 19, 13, 0.14);
+  --realitea-ink: rgba(23, 19, 13, 1);
+  --realitea-ink-muted: rgba(23, 19, 13, 0.62);
 
-  /* Specular highlights — white at three opacities */
-  --realitea-specular-high: rgba(255, 255, 255, 0.12);
-  --realitea-specular-mid: rgba(255, 255, 255, 0.08);
-  --realitea-specular-low: rgba(255, 255, 255, 0.04);
+  /* Palette — tile states (also used flat, unmodified, on keyboard keys) */
+  --realitea-absent-bg: rgba(20, 20, 20, 1);
+  --realitea-absent-text: rgba(245, 241, 230, 1);
+
+  --realitea-present-bg: rgba(231, 167, 58, 1);
+  --realitea-present-text: rgba(32, 20, 4, 1);
+  --realitea-present-border: rgba(178, 122, 22, 0.55);
+  --realitea-present-accent: rgba(156, 102, 18, 1);
+
+  --realitea-correct-bg: rgba(236, 33, 102, 1);
+  --realitea-correct-text: rgba(255, 255, 255, 1);
+  --realitea-correct-border: rgba(168, 15, 66, 0.5);
+  --realitea-correct-accent: rgba(214, 17, 91, 1);
+
+  --realitea-error-border: rgba(217, 45, 32, 1);
+  --realitea-glow-error: rgba(217, 45, 32, 0.3);
+
+  --realitea-skeleton-bg: rgba(233, 225, 205, 1);
+
+  /* Accents */
+  --realitea-badge-bg: rgba(76, 95, 224, 1);
+  --realitea-badge-text: rgba(255, 255, 255, 1);
+  --realitea-share-bg: rgba(240, 28, 91, 1);
+  --realitea-share-bg-hover: rgba(199, 19, 80, 1);
+  --realitea-share-text: rgba(23, 4, 12, 1);
+  --realitea-link-text: rgba(52, 78, 217, 1);
 
   /* Shadows */
-  --realitea-shadow-deep: rgba(0, 0, 0, 0.5);
-  --realitea-shadow-drop: rgba(0, 0, 0, 0.18);
+  --realitea-shadow-drop: rgba(23, 19, 13, 0.14);
+}
 
-  /* Glows */
-  --realitea-glow-correct-soft: rgba(133, 255, 77, 0.35);
-  --realitea-glow-present-soft: rgba(255, 196, 40, 0.45);
-  --realitea-glow-error: rgba(239, 68, 68, 0.35);
+/* Cream "newsprint" backdrop behind every RealiTea screen — fixed to the
+   full viewport (not just the centered content column) so the theme reads
+   as the page's own background, not a card floating on the site's default
+   background. Independent of the site's own light/dark toggle since
+   RealiTea is a fixed brand palette.
+
+   No explicit z-index: it must render as the very first child of the route
+   content, so it stacks (in DOM/paint order, at the shared implicit "auto"
+   level) behind ParticleBackground's *later* siblings — the tile grid,
+   keyboard, etc. — while still painting above ParticleBackground itself,
+   which sits earlier in the tree. A numeric z-index here would instead
+   compare against the whole document's stacking contexts and paint over
+   the very content it's meant to sit behind (the sticky header's z-10
+   still wins regardless, since it comes later in the tree). `pointer-
+   events: none` keeps it from intercepting clicks meant for content
+   stacked above it. */
+.realitea-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--realitea-bg);
+  pointer-events: none;
 }
 
 /* Compact tile-grid preview used in history list rows — same palette, fixed
@@ -68,7 +91,7 @@
 }
 
 .realitea-tile {
-  --realitea-tile-letter: var(--realitea-cream);
+  --realitea-tile-letter: var(--realitea-ink);
 
   position: relative;
   display: grid;
@@ -78,49 +101,13 @@
   isolation: isolate;
   overflow: visible;
   border-radius: var(--realitea-radius);
-  background:
-    linear-gradient(
-      145deg,
-      var(--realitea-specular-high) 0%,
-      var(--realitea-specular-low) 28%,
-      transparent 42%
-    ),
-    linear-gradient(
-      180deg,
-      var(--realitea-lacquer-top) 0%,
-      var(--realitea-lacquer-mid) 70%,
-      var(--realitea-lacquer-bottom) 100%
-    );
+  background: var(--realitea-paper);
+  border: 2px solid var(--realitea-paper-border);
   color: var(--realitea-tile-letter);
   font-size: clamp(1.1rem, calc(var(--realitea-tile-size) * 0.42), 1.5rem);
-  font-weight: 750;
+  font-weight: 800;
   text-transform: uppercase;
-  box-shadow:
-    inset 0 1px 0 var(--realitea-specular-high),
-    inset 0 -8px 18px var(--realitea-shadow-deep),
-    0 4px 10px var(--realitea-shadow-drop);
-}
-
-.realitea-tile::before {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  padding: 2px;
-  border-radius: inherit;
-  background: linear-gradient(
-    135deg,
-    var(--realitea-gold-light) 0%,
-    var(--realitea-gold-dark) 100%
-  );
-  content: "";
-  mask:
-    linear-gradient(rgba(0, 0, 0, 1) 0 0) content-box,
-    linear-gradient(rgba(0, 0, 0, 1) 0 0);
-  mask-composite: exclude;
-  -webkit-mask:
-    linear-gradient(rgba(0, 0, 0, 1) 0 0) content-box,
-    linear-gradient(rgba(0, 0, 0, 1) 0 0);
-  -webkit-mask-composite: xor;
+  box-shadow: 0 1px 2px var(--realitea-shadow-drop);
 }
 
 .realitea-tile-letter {
@@ -131,34 +118,24 @@
 
 .realitea-tile[data-state="correct"] {
   --realitea-tile-letter: var(--realitea-correct-text);
-  background:
-    linear-gradient(145deg, var(--realitea-specular-high), transparent 42%),
-    radial-gradient(
-      circle at 50% 55%,
-      var(--realitea-correct-inner) 0%,
-      var(--realitea-correct-bg) 50%,
-      var(--realitea-correct-outer) 100%
-    );
+  border-color: transparent;
+  background: var(--realitea-correct-bg);
 }
 
 .realitea-tile[data-state="present"] {
   --realitea-tile-letter: var(--realitea-present-text);
-  background:
-    linear-gradient(145deg, var(--realitea-specular-high), transparent 42%),
-    radial-gradient(
-      circle at 50% 55%,
-      var(--realitea-present-inner) 0%,
-      var(--realitea-present-bg) 55%,
-      var(--realitea-present-outer) 100%
-    );
+  border-color: transparent;
+  background: var(--realitea-present-bg);
 }
 
 .realitea-tile[data-state="absent"] {
-  --realitea-tile-letter: var(--realitea-absent-color);
-  filter: saturate(0.2);
+  --realitea-tile-letter: var(--realitea-absent-text);
+  border-color: transparent;
+  background: var(--realitea-absent-bg);
 }
 
 .realitea-tile[data-state="typed"] {
+  border-color: var(--realitea-ink);
   animation: realitea-type-pop 160ms ease-out;
 }
 
@@ -174,55 +151,59 @@
   animation: realitea-tile-error 0.4s ease;
 }
 
+/* Pins the keyboard to the bottom of the viewport (not the bottom of the
+   page's own scrollable content) so it's always reachable without
+   scrolling — mirrors the sticky header at the top. `z-index: 10` matches
+   the header's, and both sit below the nav's sticky z-50. The content
+   column's own bottom padding (see game-board.tsx) reserves space equal to
+   this dock's height so it never overlaps the tile grid or receipt. */
+.realitea-keyboard-dock {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  background: var(--realitea-bg);
+  padding: 0.5rem 1rem calc(env(safe-area-inset-bottom) + 0.5rem);
+}
+
+.realitea-keyboard-dock .realitea-keyboard {
+  width: 100%;
+  max-width: 32rem;
+}
+
 .realitea-keyboard .realitea-key {
-  min-height: 44px;
-  border-color: var(--realitea-gold);
-  background:
-    linear-gradient(145deg, var(--realitea-specular-mid), transparent 42%),
-    linear-gradient(180deg, var(--realitea-lacquer-top), var(--realitea-lacquer-bottom));
-  color: var(--realitea-cream);
-  box-shadow:
-    inset 0 1px 0 var(--realitea-specular-mid),
-    0 3px 8px var(--realitea-shadow-drop);
+  height: 46px;
+  border: 2px solid var(--realitea-paper-border);
+  border-radius: 10px;
+  background: var(--realitea-paper);
+  color: var(--realitea-ink);
+  box-shadow: 0 1px 2px var(--realitea-shadow-drop);
 }
 
 .realitea-keyboard .realitea-key:hover:not(:disabled),
 .realitea-keyboard .realitea-key:focus-visible {
-  border-color: var(--realitea-gold-light);
-  background-color: var(--realitea-key-hover-bg);
+  border-color: var(--realitea-ink);
+  background: var(--realitea-bg);
 }
 
 .realitea-keyboard .realitea-key-correct {
-  border-color: var(--realitea-correct-border);
-  background: radial-gradient(
-    circle at 50% 45%,
-    var(--realitea-correct-inner),
-    var(--realitea-correct-bg) 70%
-  );
+  border-color: transparent;
+  background: var(--realitea-correct-bg);
   color: var(--realitea-correct-text);
-  box-shadow:
-    0 0 9px var(--realitea-glow-correct-soft),
-    inset 0 1px 0 var(--realitea-specular-high);
 }
 
 .realitea-keyboard .realitea-key-present {
-  border-color: var(--realitea-present-border);
-  background: radial-gradient(
-    circle at 50% 45%,
-    var(--realitea-present-inner),
-    var(--realitea-present-bg) 70%
-  );
+  border-color: transparent;
+  background: var(--realitea-present-bg);
   color: var(--realitea-present-text);
-  box-shadow:
-    0 0 9px var(--realitea-glow-present-soft),
-    inset 0 1px 0 var(--realitea-specular-high);
 }
 
 .realitea-keyboard .realitea-key-absent {
-  border-color: var(--realitea-absent-border);
-  color: var(--realitea-absent-color);
-  filter: saturate(0.05);
-  opacity: 0.9;
+  border-color: transparent;
+  background: var(--realitea-absent-bg);
+  color: var(--realitea-absent-text);
 }
 
 @keyframes realitea-type-pop {
@@ -244,11 +225,11 @@
   }
   35% {
     transform: scale(0.96);
-    filter: brightness(0.55);
+    filter: brightness(0.7);
   }
   58% {
     transform: scale(1.035);
-    filter: brightness(1.45);
+    filter: brightness(1.25);
   }
   100% {
     transform: scale(1);
@@ -293,32 +274,166 @@
   }
 }
 
+/* ── "SOLVED IN X" badge ───────────────────────────────────────────────── */
+
+.realitea-solved-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.realitea-solved-squiggle {
+  color: var(--realitea-ink-muted);
+  font-size: 0.9rem;
+  letter-spacing: -0.1em;
+}
+
+.realitea-solved-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: var(--realitea-badge-bg);
+  padding: 0.4rem 1.1rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--realitea-badge-text);
+  box-shadow: 0 3px 8px var(--realitea-shadow-drop);
+}
+
+/* ── The Receipt (result card) ─────────────────────────────────────────── */
+
+.realitea-receipt {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  border-radius: 14px 14px 0 0;
+  border: 1px solid var(--realitea-paper-border);
+  border-bottom: none;
+  background: var(--realitea-paper);
+  padding: 1.5rem 1.5rem 1.75rem;
+  box-shadow: 0 6px 16px var(--realitea-shadow-drop);
+}
+
+.realitea-receipt-torn {
+  position: relative;
+  height: 14px;
+  margin-top: -1px;
+  background: var(--realitea-paper);
+  border-left: 1px solid var(--realitea-paper-border);
+  border-right: 1px solid var(--realitea-paper-border);
+  mask-image: linear-gradient(-45deg, transparent 8.5px, var(--realitea-paper) 8.5px),
+    linear-gradient(45deg, transparent 8.5px, var(--realitea-paper) 8.5px);
+  mask-size: 17px 17px;
+  mask-repeat: repeat-x;
+  mask-position: bottom left;
+  -webkit-mask-image: linear-gradient(-45deg, transparent 8.5px, var(--realitea-paper) 8.5px),
+    linear-gradient(45deg, transparent 8.5px, var(--realitea-paper) 8.5px);
+  -webkit-mask-size: 17px 17px;
+  -webkit-mask-repeat: repeat-x;
+  -webkit-mask-position: bottom left;
+  filter: drop-shadow(0 3px 3px var(--realitea-shadow-drop));
+}
+
+.realitea-receipt-heading {
+  font-size: clamp(1.5rem, 5vw, 1.9rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--realitea-ink);
+}
+
+.realitea-receipt-body {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--realitea-ink);
+}
+
+.realitea-receipt-stamp {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  flex-shrink: 0;
+  border: 2px solid var(--realitea-correct-accent);
+  border-radius: 6px;
+  padding: 6px 4px;
+  transform: rotate(3deg);
+  text-align: center;
+  font-size: 0.62rem;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--realitea-correct-accent);
+}
+
+.realitea-receipt-divider {
+  align-self: stretch;
+  width: 0;
+  border-left: 1px dashed var(--realitea-paper-border);
+}
+
+/* ── Share button + copy link ──────────────────────────────────────────── */
+
+.realitea-share-button {
+  width: 100%;
+  border-radius: 12px;
+  border: none;
+  background: var(--realitea-share-bg);
+  padding: 0.9rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--realitea-share-text);
+  box-shadow: 0 4px 12px var(--realitea-shadow-drop);
+  transition: background-color 150ms ease;
+}
+
+.realitea-share-button:hover:not(:disabled) {
+  background: var(--realitea-share-bg-hover);
+}
+
+.realitea-copy-link {
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--realitea-link-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.realitea-source-link {
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--realitea-ink-muted);
+}
+
 /* ── HydrateFallback skeleton ──────────────────────────────────────────── */
 
 .realitea-tile-skeleton {
-  background:
-    linear-gradient(
-      145deg,
-      var(--realitea-specular-low) 0%,
-      var(--realitea-specular-low) 30%,
-      transparent 50%
-    ),
-    var(--realitea-skeleton-bg);
-  border: 1px solid var(--realitea-specular-low);
+  background: var(--realitea-skeleton-bg);
+  border: 2px solid var(--realitea-paper-border);
   box-shadow: none;
   animation: realitea-skeleton-fade 3s ease-in-out infinite both;
-}
-
-.realitea-tile-skeleton::before {
-  display: none;
 }
 
 @keyframes realitea-skeleton-fade {
   0%,
   100% {
-    opacity: 0.25;
+    opacity: 0.4;
   }
   50% {
-    opacity: 0.7;
+    opacity: 0.85;
   }
 }
