@@ -141,8 +141,7 @@ async function renderRoute(initial: { puzzle?: PublicDailyPuzzle } = {}) {
   await waitFor(() => {
     expect(
       screen.queryByLabelText("Letter 1") ??
-        screen.queryByText("The Story") ??
-        screen.queryByText("The puzzle ended"),
+        screen.queryByText("The Receipt"),
     ).toBeTruthy();
   });
 
@@ -270,9 +269,9 @@ describe("RealiTeaRoute", () => {
     await finishTileReveal();
 
     await waitFor(() => {
-      expect(screen.getByText("The Story")).toBeInTheDocument();
+      expect(screen.getByText("The Receipt")).toBeInTheDocument();
     });
-    expect(screen.getByText(routePuzzle.detail.toLocaleLowerCase())).toBeInTheDocument();
+    expect(screen.getByText(routePuzzle.detail)).toBeInTheDocument();
 
     // Simulate the server having recorded the solve, the way
     // evaluateGuessServer would for a signed-in player — a fresh mount
@@ -288,8 +287,8 @@ describe("RealiTeaRoute", () => {
     await renderRoute();
 
     await waitFor(() => {
-      expect(screen.getByText("The Story")).toBeInTheDocument();
-      expect(screen.getByText(routePuzzle.detail.toLocaleLowerCase())).toBeInTheDocument();
+      expect(screen.getByText("The Receipt")).toBeInTheDocument();
+      expect(screen.getByText(routePuzzle.detail)).toBeInTheDocument();
     });
   });
 
