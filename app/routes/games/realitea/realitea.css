@@ -43,6 +43,11 @@
 
   /* Shadows */
   --realitea-shadow-drop: rgba(23, 19, 13, 0.14);
+
+  /* Motion — stronger than the browser's built-in `ease`/`ease-out`, which
+     read as weak/linear-ish for UI. See the `animate` skill. */
+  --realitea-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --realitea-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
 /* Cream "newsprint" backdrop behind every RealiTea screen — fixed to the
@@ -108,6 +113,7 @@
   font-weight: 800;
   text-transform: uppercase;
   box-shadow: 0 1px 2px var(--realitea-shadow-drop);
+  transition: box-shadow 150ms var(--realitea-ease-out);
 }
 
 .realitea-tile-letter {
@@ -136,19 +142,22 @@
 
 .realitea-tile[data-state="typed"] {
   border-color: var(--realitea-ink);
-  animation: realitea-type-pop 160ms ease-out;
+  animation: realitea-type-pop 160ms var(--realitea-ease-out);
 }
 
 .realitea-tile-reveal {
-  animation: realitea-marquee-reveal 420ms ease-out forwards;
+  animation: realitea-marquee-reveal 420ms var(--realitea-ease-in-out) forwards;
 }
 
-.realitea-row-shake {
-  animation: realitea-shake 0.4s ease;
-}
-
+/* Row shake (the transform) is driven imperatively via WAAPI in
+   game-board.tsx, not a CSS class — see the comment on SHAKE_KEYFRAMES
+   there for why. This is a plain state-driven transition instead of a
+   keyframe pulse, so it retargets correctly if a second wrong guess lands
+   before the first glow has faded. */
 .realitea-tile-error {
-  animation: realitea-tile-error 0.4s ease;
+  box-shadow:
+    0 0 0 2px var(--realitea-error-border),
+    0 0 12px var(--realitea-glow-error);
 }
 
 /* Pins the keyboard to the bottom of the viewport (not the bottom of the
@@ -237,36 +246,8 @@
   }
 }
 
-@keyframes realitea-shake {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  20%,
-  60% {
-    transform: translateX(-6px);
-  }
-  40%,
-  80% {
-    transform: translateX(6px);
-  }
-}
-
-@keyframes realitea-tile-error {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 transparent;
-  }
-  50% {
-    box-shadow:
-      0 0 0 2px var(--realitea-error-border),
-      0 0 12px var(--realitea-glow-error);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .realitea-tile,
-  .realitea-row-shake,
   .realitea-tile-error,
   .realitea-skeleton-tile {
     animation: none !important;
