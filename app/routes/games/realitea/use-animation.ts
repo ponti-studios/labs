@@ -11,6 +11,11 @@ export function useAnimation() {
   const [revealedTileCount, setRevealedTileCount] = useState(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isShaking, setIsShaking] = useState(false);
+  // Bumped on every shake-triggering animateError call. Consumers watch
+  // this (not isShaking) to imperatively replay the shake via WAAPI, since
+  // isShaking can stay `true` across two rapid wrong guesses and wouldn't
+  // otherwise signal that a *new* shake should play.
+  const [shakeToken, setShakeToken] = useState(0);
   const shakeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const revealTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -42,6 +47,7 @@ export function useAnimation() {
     if (shakeTimerRef.current) clearTimeout(shakeTimerRef.current);
     setErrorMessage(message);
     setIsShaking(shake);
+    if (shake) setShakeToken((token) => token + 1);
     shakeTimerRef.current = setTimeout(() => {
       setIsShaking(false);
       setErrorMessage(null);
@@ -93,6 +99,7 @@ export function useAnimation() {
     errorMessage,
     isShaking,
     hasError,
+    shakeToken,
     animateError,
     clearError,
     startReveal,

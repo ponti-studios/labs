@@ -30,6 +30,7 @@ export interface RealiTeaGameState {
   errorMessage: string | null;
   isShaking: boolean;
   hasError: boolean;
+  shakeToken: number;
   revealedTileCount: number;
   revealingGuessIndex: number | null;
   addLetter: (value: string) => void;
@@ -195,6 +196,7 @@ export function useRealiTeaGame({
     errorMessage: anim.errorMessage,
     isShaking: anim.isShaking,
     hasError: anim.hasError,
+    shakeToken: anim.shakeToken,
     revealedTileCount: anim.revealedTileCount,
     revealingGuessIndex: anim.revealingGuessIndex,
     addLetter: typing.addLetter,

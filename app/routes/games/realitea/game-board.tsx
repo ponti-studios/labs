@@ -1,6 +1,6 @@
 import { Button, Card, CardContent } from "@ponti-studios/ui/primitives";
 import { LucideHistory } from "lucide-react";
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
 import { OnscreenKeyboard } from "~/components/games/onscreen-keyboard";
 
@@ -60,25 +60,60 @@ const RevealedGuessRow = memo(function RevealedGuessRow({
   );
 });
 
+// Shake is feedback for a rejected guess — an occasional, user-initiated
+// action (never a keyboard shortcut fired 100+/day), so motion is warranted.
+// Driven imperatively via WAAPI (not a CSS keyframe class) because the user
+// can submit several wrong guesses in a row: a class-based keyframe
+// animation only replays when the class transitions false→true, so back-to-
+// back errors while `hasError` was already true would silently no-op.
+// Calling `element.animate()` again always starts a fresh run.
+const SHAKE_KEYFRAMES: Keyframe[] = [
+  { transform: "translateX(0)" },
+  { transform: "translateX(-6px)", offset: 0.2 },
+  { transform: "translateX(6px)", offset: 0.4 },
+  { transform: "translateX(-6px)", offset: 0.6 },
+  { transform: "translateX(6px)", offset: 0.8 },
+  { transform: "translateX(0)" },
+];
+// Mirrors --realitea-ease-in-out in realitea.css — WAAPI can't read CSS
+// custom properties, so the curve is duplicated here.
+const REALITEA_EASE_IN_OUT = "cubic-bezier(0.77, 0, 0.175, 1)";
+
 type CurrentGuessRowProps = {
   currentGuess: string;
   hasError: boolean;
-  isShaking: boolean;
+  shakeToken: number;
   isValidationPending: boolean;
 };
 
 const CurrentGuessRow = memo(function CurrentGuessRow({
   currentGuess,
   hasError,
-  isShaking,
+  shakeToken,
   isValidationPending,
 }: CurrentGuessRowProps) {
+  const rowRef = useRef<HTMLDivElement>(null);
+  const shakeAnimationRef = useRef<Animation | null>(null);
+
+  useEffect(() => {
+    // shakeToken starts at 0; skip the effect's initial run on mount.
+    if (shakeToken === 0) return;
+    const row = rowRef.current;
+    if (!row) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    shakeAnimationRef.current?.cancel();
+    shakeAnimationRef.current = row.animate(SHAKE_KEYFRAMES, {
+      duration: 400,
+      easing: REALITEA_EASE_IN_OUT,
+    });
+  }, [shakeToken]);
+
   return (
     <div
+      ref={rowRef}
       className={cn(
         "flex gap-(--realitea-tile-gap) transition-opacity",
-        hasError && "realitea-tile-error",
-        isShaking && "realitea-row-shake",
         isValidationPending && "opacity-60",
       )}
     >
@@ -209,7 +244,7 @@ export function RealiTeaGameBoard({ puzzle, initialGuesses, loginUrl }: RealiTea
                   key={`current-${rowIndex}`}
                   currentGuess={game.currentGuess}
                   hasError={game.hasError}
-                  isShaking={game.isShaking}
+                  shakeToken={game.shakeToken}
                   isValidationPending={game.isValidationPending}
                 />
               );
@@ -219,16 +254,21 @@ export function RealiTeaGameBoard({ puzzle, initialGuesses, loginUrl }: RealiTea
           })}
         </div>
 
-        {game.errorMessage ? (
-          <p
-            className="min-h-[1em] text-center text-xs font-medium text-(--realitea-error-border)"
-            role="status"
-            aria-live="polite"
-            aria-atomic="true"
-          >
-            {game.errorMessage}
-          </p>
-        ) : null}
+        {/* Always mounted (never conditionally rendered) so this row's height
+            is reserved whether or not there's a message — otherwise the
+            centered board above jumps every time an error message
+            appears/disappears. `min-h-[1em]` sets that reserved height. */}
+        <p
+          className={cn(
+            "min-h-[1em] text-center text-xs font-medium text-(--realitea-error-border) transition-opacity duration-150",
+            game.errorMessage ? "opacity-100" : "opacity-0",
+          )}
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {game.errorMessage}
+        </p>
       </div>
 
       {game.authRequired ? (
