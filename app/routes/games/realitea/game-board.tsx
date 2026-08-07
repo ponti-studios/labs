@@ -172,11 +172,10 @@ export function RealiTeaGameBoard({ puzzle, initialGuesses, loginUrl }: RealiTea
 
   return (
     <div className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-3 px-4 pt-2 pb-[calc(env(safe-area-inset-bottom)+184px)] sm:gap-6 sm:pt-4">
-      <div className="realitea-backdrop" aria-hidden="true" />
       <header className="sticky top-0 z-10 backdrop-blur md:static">
         <div className="relative flex items-center justify-center pt-2 pb-0 sm:pt-4">
           <img
-            src="/experiments/logo.realitea.500x500.webp"
+            src="/experiments/logo.realitea.png"
             alt="RealiTea"
             className="h-14 object-contain sm:h-20"
           />
@@ -326,11 +325,7 @@ export function RealiTeaGameBoard({ puzzle, initialGuesses, loginUrl }: RealiTea
             >
               Share the drama
             </button>
-            <button
-              className="realitea-copy-link"
-              onClick={copyStory}
-              type="button"
-            >
+            <button className="realitea-copy-link" onClick={copyStory} type="button">
               Copy story
             </button>
             {puzzle.sources.length > 0 && (
@@ -368,7 +363,6 @@ export function RealiTeaGameBoard({ puzzle, initialGuesses, loginUrl }: RealiTea
 export function RealiTeaGameBoardSkeleton() {
   return (
     <div className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center px-4">
-      <div className="realitea-backdrop" aria-hidden="true" />
       <div className="flex w-fit flex-col gap-(--realitea-tile-gap)">
         {Array.from({ length: 6 }).map((_, row) => (
           <div key={row} className="flex gap-(--realitea-tile-gap)">

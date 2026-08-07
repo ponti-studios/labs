@@ -84,11 +84,10 @@ function SignedOutTeaser({
 }) {
   return (
     <div className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-3 px-4 pb-[calc(env(safe-area-inset-bottom)+88px)] sm:gap-6 sm:pb-[calc(env(safe-area-inset-bottom)+24px)]">
-      <div className="realitea-backdrop" aria-hidden="true" />
       <header className="sticky top-0 z-10 backdrop-blur md:static">
         <div className="relative flex items-center justify-center pt-2 pb-0 sm:pt-4">
           <img
-            src="/experiments/logo.realitea.500x500.webp"
+            src="/experiments/logo.realitea.webp"
             alt="RealiTea"
             className="h-14 object-contain sm:h-20"
           />

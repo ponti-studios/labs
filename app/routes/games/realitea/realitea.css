@@ -50,29 +50,6 @@
   --realitea-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
-/* Cream "newsprint" backdrop behind every RealiTea screen — fixed to the
-   full viewport (not just the centered content column) so the theme reads
-   as the page's own background, not a card floating on the site's default
-   background. Independent of the site's own light/dark toggle since
-   RealiTea is a fixed brand palette.
-
-   No explicit z-index: it must render as the very first child of the route
-   content, so it stacks (in DOM/paint order, at the shared implicit "auto"
-   level) behind ParticleBackground's *later* siblings — the tile grid,
-   keyboard, etc. — while still painting above ParticleBackground itself,
-   which sits earlier in the tree. A numeric z-index here would instead
-   compare against the whole document's stacking contexts and paint over
-   the very content it's meant to sit behind (the sticky header's z-10
-   still wins regardless, since it comes later in the tree). `pointer-
-   events: none` keeps it from intercepting clicks meant for content
-   stacked above it. */
-.realitea-backdrop {
-  position: fixed;
-  inset: 0;
-  background: var(--realitea-bg);
-  pointer-events: none;
-}
-
 /* Compact tile-grid preview used in history list rows — same palette, fixed
    small size regardless of viewport since it's a thumbnail, not the board. */
 .realitea-history-mini {
@@ -169,12 +146,16 @@
 .realitea-keyboard-dock {
   position: fixed;
   inset-inline: 0;
-  bottom: 0;
+  bottom: calc(env(safe-area-inset-bottom) + 0.5rem);
   z-index: 10;
   display: flex;
   justify-content: center;
+  max-width: 32rem;
+  margin: 0 auto;
+  border-radius: var(--radius-lg);
   background: var(--realitea-bg);
-  padding: 0.5rem 1rem calc(env(safe-area-inset-bottom) + 0.5rem);
+  opacity: 0.97;
+  padding: 0.5rem 0.75rem calc(env(safe-area-inset-bottom) + 0.5rem);
 }
 
 .realitea-keyboard-dock .realitea-keyboard {
@@ -305,12 +286,14 @@
   background: var(--realitea-paper);
   border-left: 1px solid var(--realitea-paper-border);
   border-right: 1px solid var(--realitea-paper-border);
-  mask-image: linear-gradient(-45deg, transparent 8.5px, var(--realitea-paper) 8.5px),
+  mask-image:
+    linear-gradient(-45deg, transparent 8.5px, var(--realitea-paper) 8.5px),
     linear-gradient(45deg, transparent 8.5px, var(--realitea-paper) 8.5px);
   mask-size: 17px 17px;
   mask-repeat: repeat-x;
   mask-position: bottom left;
-  -webkit-mask-image: linear-gradient(-45deg, transparent 8.5px, var(--realitea-paper) 8.5px),
+  -webkit-mask-image:
+    linear-gradient(-45deg, transparent 8.5px, var(--realitea-paper) 8.5px),
     linear-gradient(45deg, transparent 8.5px, var(--realitea-paper) 8.5px);
   -webkit-mask-size: 17px 17px;
   -webkit-mask-repeat: repeat-x;
