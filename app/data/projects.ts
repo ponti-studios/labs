@@ -140,7 +140,7 @@ const realitea: Project = {
   github: "https://github.com/ponti-studios/labs",
   url: "/games/realitea",
   screenshots: ["/screenshots/realitea-gameplay.png", "/screenshots/realitea-solved.png"],
-  logo: "/experiments/logo.realitea.500x500.webp",
+  logo: "/experiments/logo.realitea.webp",
 };
 
 const geo: Project = {

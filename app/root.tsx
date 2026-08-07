@@ -28,7 +28,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export const links: Route.LinksFunction = () => [
-  { rel: "icon", href: "/logo.realitea.png", type: "image/png" },
+  { rel: "icon", href: "/experiments/logo.realitea.png", type: "image/png" },
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
     rel: "preconnect",
