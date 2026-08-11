@@ -5,6 +5,7 @@ import { OnscreenKeyboard } from "~/components/games/onscreen-keyboard";
 import {
   getKeyboardState,
   MAX_GUESSES,
+  REALITEA_ANSWER_LENGTH,
   type PublicDailyPuzzle,
   type RealiteaGuess,
 } from "~/lib/realitea";
@@ -110,12 +111,12 @@ export function RealiTeaGameBoardSkeleton() {
       <div className={styles.skeleton}>
         {Array.from({ length: MAX_GUESSES }).map((_, row) => (
           <div className={styles.skeletonRow} key={row}>
-            {Array.from({ length: 5 }).map((_, col) => (
+            {Array.from({ length: REALITEA_ANSWER_LENGTH }).map((_, col) => (
               <RealiTeaTile
                 key={col}
                 state="empty"
                 loading
-                style={{ animationDelay: `${(row * 5 + col) * 100}ms` }}
+                style={{ animationDelay: `${(row * REALITEA_ANSWER_LENGTH + col) * 100}ms` }}
               />
             ))}
           </div>

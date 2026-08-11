@@ -64,7 +64,8 @@ export function useRealiTeaGame({
     | { type: "puzzle changed" };
   const submissionReducer = (state: SubmissionState, event: SubmissionEvent): SubmissionState => {
     if (event.type === "puzzle changed") return { status: "idle" };
-    if (event.type === "submit started") return { status: "submitting", ...event };
+    if (event.type === "submit started")
+      return { status: "submitting", id: event.id, dateKey: event.dateKey, word: event.word, guessIndex: event.guessIndex };
     if (state.status !== "submitting" || state.id !== event.id || state.dateKey !== event.dateKey) {
       return state;
     }
