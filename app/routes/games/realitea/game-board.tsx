@@ -101,6 +101,7 @@ const CurrentGuessRow = memo(function CurrentGuessRow({
     const row = rowRef.current;
     if (!row) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (typeof row.animate !== "function") return;
 
     shakeAnimationRef.current?.cancel();
     shakeAnimationRef.current = row.animate(SHAKE_KEYFRAMES, {
