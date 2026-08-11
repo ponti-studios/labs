@@ -100,6 +100,7 @@ describe("loadActivePublicPuzzle", () => {
 
     expect(envelope).not.toBeNull();
     expect(envelope!.puzzle.dateKey).toBe("2026-05-20");
+    expect(envelope!.puzzle.isFallback).toBe(false);
     expect(envelope!.puzzle.answerType).toBe("storyline");
     expect(envelope!.puzzle.clue).toBe(
       "The Pretty Mess performer never misses a sharp confessional.",
@@ -119,6 +120,7 @@ describe("loadActivePublicPuzzle", () => {
     const envelope = await loadActivePublicPuzzle(new Date("2026-05-20T12:00:00.000Z"));
 
     expect(envelope?.puzzle.dateKey).toBe("2026-05-19");
+    expect(envelope?.puzzle.isFallback).toBe(true);
     expect(envelope?.puzzle.answerType).toBe("moment");
     expect(loadMostRecentPuzzleMock).toHaveBeenCalledWith(1, "2026-05-20");
   });
