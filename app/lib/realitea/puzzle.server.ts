@@ -1,5 +1,6 @@
 import {
   evaluateGuess,
+  hasGuessedWord,
   isGuessSolved,
   MAX_GUESSES,
   normalizeGuess,
@@ -43,12 +44,13 @@ async function requireRhobhGameId(): Promise<number> {
 
 // ── DTO mapping ──────────────────────────────────────────────────────────────
 
-function toPublicDailyPuzzle(record: PuzzleRecord): PublicDailyPuzzle {
+export function toPublicDailyPuzzle(record: PuzzleRecord, isFallback = false): PublicDailyPuzzle {
   return {
     answerType: record.answerType,
     clue: record.clue,
     dateKey: record.dateUtc,
     detail: record.detail,
+    isFallback,
     sources: [
       {
         url: record.article.url,
@@ -72,7 +74,7 @@ function toPublicDailyPuzzle(record: PuzzleRecord): PublicDailyPuzzle {
 async function resolveActivePuzzle(
   now: Date,
   timeZone: string,
-): Promise<{ gameId: number; puzzle: PuzzleRecord } | null> {
+): Promise<{ gameId: number; puzzle: PuzzleRecord; isFallback: boolean } | null> {
   const dateKey = getDateKey(now, timeZone);
   const childLogger = logger.child({
     operation: "resolveActivePuzzle",
@@ -113,7 +115,7 @@ async function resolveActivePuzzle(
     },
     "puzzle loaded",
   );
-  return { gameId, puzzle };
+  return { gameId, puzzle, isFallback: puzzle.dateUtc !== dateKey };
 }
 
 export async function loadActivePublicPuzzle(
@@ -122,7 +124,7 @@ export async function loadActivePublicPuzzle(
 ): Promise<{ puzzle: PublicDailyPuzzle } | null> {
   const resolved = await resolveActivePuzzle(now, timeZone);
   if (!resolved) return null;
-  return { puzzle: toPublicDailyPuzzle(resolved.puzzle) };
+  return { puzzle: toPublicDailyPuzzle(resolved.puzzle, resolved.isFallback) };
 }
 
 export interface ActivePuzzleAttempt {
@@ -186,7 +188,7 @@ export async function loadPuzzleForSpecificDate(
   const attemptRow = user ? await loadAttempt(user.id, gameId, dateKey) : null;
 
   return {
-    puzzle: toPublicDailyPuzzle(puzzle),
+    puzzle: toPublicDailyPuzzle(puzzle, false),
     attempt: attemptRow
       ? { guesses: attemptRow.guesses as RealiteaGuess[], status: attemptRow.status }
       : null,
@@ -261,7 +263,7 @@ export async function evaluateGuessServer(
           status: attempt.status,
         };
       }
-      if (attempt.guesses.some((guess) => guess.word === word)) {
+      if (hasGuessedWord(attempt.guesses as RealiteaGuess[], word)) {
         return { valid: false, word, reason: "already-guessed" };
       }
     }

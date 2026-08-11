@@ -6,6 +6,17 @@ const BRAVO_PRIMARY_SOURCE_DOMAIN = "realityblurb.com";
 export const BRAVO_REPEAT_WINDOW_DAYS = 90;
 export const REALITEA_READY_INVENTORY_DAYS = 7;
 
+const PROMPT_CONTROL_MARKERS = [
+  /ignore\s+(?:all\s+)?previous\s+instructions/i,
+  /\bsystem\s*:/i,
+  /\bdeveloper\s*:/i,
+  /\bassistant\s*:/i,
+];
+
+function containsPromptControlText(value: string): boolean {
+  return PROMPT_CONTROL_MARKERS.some((marker) => marker.test(value));
+}
+
 export function validateCandidate(
   candidate: {
     answer: string;
@@ -39,6 +50,9 @@ export function validateCandidate(
     candidate.detail.toUpperCase().includes(normalizedAnswer)
   ) {
     reasons.push("answer is leaked in clue or detail");
+  }
+  if (containsPromptControlText(candidate.clue) || containsPromptControlText(candidate.detail)) {
+    reasons.push("clue or detail contains prompt-control text");
   }
   if (previousAnswers.has(normalizedAnswer)) {
     reasons.push("answer repeats inside cooldown window");

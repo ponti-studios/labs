@@ -1,5 +1,8 @@
 # 01 — No server-side attempt tracking
 
+**Status: Partially resolved.** Authenticated players now use authoritative persisted
+attempts. Anonymous play remains one stateless free guess by product choice.
+
 **Category:** Security / integrity
 **Severity:** High
 

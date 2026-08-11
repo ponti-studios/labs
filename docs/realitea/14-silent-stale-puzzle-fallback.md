@@ -1,5 +1,8 @@
 # 14 — Silent stale-puzzle fallback
 
+**Status: Resolved.** The public puzzle model carries `isFallback`, and the active board
+discloses bounded previous-puzzle fallback without changing exact-date history routes.
+
 **Category:** Data flow / architecture
 **Severity:** Low-Medium
 

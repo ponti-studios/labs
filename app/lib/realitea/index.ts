@@ -15,6 +15,15 @@ export function normalizeGuess(value: string): string {
   return value.replaceAll(/[^a-z]/gi, "").toUpperCase();
 }
 
+export function isGuessLengthValid(value: string): boolean {
+  return normalizeGuess(value).length === REALITEA_ANSWER_LENGTH;
+}
+
+export function hasGuessedWord(guesses: readonly RealiteaGuess[], word: string): boolean {
+  const normalizedWord = normalizeGuess(word);
+  return guesses.some((guess) => normalizeGuess(guess.word) === normalizedWord);
+}
+
 export function evaluateGuess(answer: string, guess: string): LetterState[] {
   const normalizedAnswer = normalizeGuess(answer);
   const normalizedGuess = normalizeGuess(guess);

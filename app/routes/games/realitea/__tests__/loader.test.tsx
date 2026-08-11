@@ -1,5 +1,8 @@
+import { render, screen } from "@testing-library/react";
 import type { LoaderFunctionArgs } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+import type { Route } from "../+types/route";
 
 const loadActivePublicPuzzle = vi.fn();
 
@@ -96,5 +99,28 @@ describe("RealiTea route loader", () => {
       },
       status: 404,
     });
+  });
+
+  it("shows the loader's specific error in the route error boundary", async () => {
+    const { ErrorBoundary } = await import("../route");
+
+    render(
+      <ErrorBoundary
+        params={{}}
+        error={
+          {
+            status: 404,
+            statusText: "No RealiTea puzzle found for today",
+            data: {
+              code: "REALITEA_PUZZLE_NOT_FOUND",
+              error: "No RealiTea puzzle found for today",
+            },
+            internal: false,
+          } as Route.ErrorBoundaryProps["error"]
+        }
+      />,
+    );
+
+    expect(screen.getByText("No RealiTea puzzle found for today")).toBeInTheDocument();
   });
 });

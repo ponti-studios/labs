@@ -1,5 +1,8 @@
 # 11 — No landscape/orientation handling
 
+**Status: Resolved for the supported target.** Short landscape layouts use viewport
+height to reduce tile, header, and keyboard-dock spacing; the target is 667×375.
+
 **Category:** Responsive design
 **Severity:** Medium
 

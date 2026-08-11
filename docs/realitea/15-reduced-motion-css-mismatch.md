@@ -1,5 +1,8 @@
 # 15 — prefers-reduced-motion CSS references wrong/missing classes
 
+**Status: Resolved.** Reveal, error, skeleton, and tile animations are covered by the
+reduced-motion selector.
+
 **Category:** UI/design, accessibility
 **Severity:** Low-Medium (easy fix, real accessibility miss)
 

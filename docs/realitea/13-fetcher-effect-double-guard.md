@@ -1,5 +1,8 @@
 # 13 — Fetcher-result effect needs two idempotency guards
 
+**Status: Resolved.** Submission lifecycle events carry a monotonic request ID and
+puzzle date, so stale fetcher results cannot mutate the active game.
+
 **Category:** Data flow / architecture, React best practices
 **Severity:** Medium (fragility, not a confirmed bug beyond [05](05-stale-processed-word-ref.md))
 

@@ -1,7 +1,13 @@
 import { Button } from "@ponti-studios/ui/primitives";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
-import { useLoaderData, useRevalidator, type LoaderFunctionArgs } from "react-router";
+import {
+  isRouteErrorResponse,
+  useLoaderData,
+  useRevalidator,
+  type LoaderFunctionArgs,
+} from "react-router";
+import type { Route } from "./+types/route";
 
 import { type PublicDailyPuzzle } from "~/lib/realitea";
 import { getDateKey } from "~/lib/realitea/date";
@@ -60,17 +66,28 @@ export function HydrateFallback() {
   return <RealiTeaGameBoardSkeleton />;
 }
 
-type ErrorBoundaryProps = { error: Error };
+export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+  let message = "The RealiTea puzzle couldn't load. Try refreshing the page.";
 
-export function ErrorBoundary({ error }: ErrorBoundaryProps) {
+  if (isRouteErrorResponse(error)) {
+    const routeErrorMessage =
+      typeof error.data === "object" &&
+      error.data !== null &&
+      "error" in error.data &&
+      typeof error.data.error === "string"
+        ? error.data.error
+        : null;
+    message = routeErrorMessage ?? (error.statusText || message);
+  } else if (error instanceof Error) {
+    message = error.message || message;
+  }
+
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center gap-3 px-4 text-center">
       <p className="text-muted-foreground text-xs tracking-[0.15em] uppercase">
         Something went wrong
       </p>
-      <p className="text-muted-foreground text-xs">
-        {error.message || "The RealiTea puzzle couldn't load. Try refreshing the page."}
-      </p>
+      <p className="text-muted-foreground text-xs">{message}</p>
       <Button asChild variant="default" className="mt-2">
         <a href="/games/realitea">Reload</a>
       </Button>

@@ -1,5 +1,8 @@
 # 03 — generation.ts has zero test coverage + prompt-injection surface
 
+**Status: Resolved.** Feed text is bounded and sanitized, article data is delimited,
+model output is schema-validated, and common prompt-control markers are rejected.
+
 **Category:** Security / integrity, test coverage
 **Severity:** Medium
 
