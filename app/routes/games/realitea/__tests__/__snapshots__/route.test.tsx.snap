@@ -4,7 +4,7 @@ exports[`RealiTeaRoute > error message container structure is stable 1`] = `
 <p
   aria-atomic="true"
   aria-live="polite"
-  class="min-h-[1em] text-center text-xs font-medium text-(--realitea-error-border)"
+  class="min-h-[1em] text-center text-xs font-medium text-(--realitea-error-border) transition-opacity duration-150 opacity-100"
   role="status"
 >
   Not enough letters
