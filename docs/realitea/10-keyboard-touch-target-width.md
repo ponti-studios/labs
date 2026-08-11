@@ -1,5 +1,8 @@
 # 10 — Onscreen keyboard keys too narrow on small phones
 
+**Status: Resolved for the practical AA target.** Letter keys now have a 24px minimum
+width while preserving the existing compact three-row keyboard.
+
 **Category:** Responsive design, accessibility
 **Severity:** Medium
 

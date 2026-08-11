@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { useFetcher } from "react-router";
 
 import {
   deriveGameStatus,
+  hasGuessedWord,
+  isGuessLengthValid,
   normalizeGuess,
-  REALITEA_ANSWER_LENGTH,
   type GameStatus,
   type PublicDailyPuzzle,
   type RealiteaGuess,
@@ -52,6 +53,27 @@ export function useRealiTeaGame({
   const [authRequired, setAuthRequired] = useState(false);
   const wordValidator = useFetcher<RealiteaGuessResult>();
 
+  type SubmissionState =
+    | { status: "idle" }
+    | { status: "submitting"; id: number; dateKey: string; word: string; guessIndex: number };
+  type SubmissionEvent =
+    | { type: "submit started"; id: number; dateKey: string; word: string; guessIndex: number }
+    | { type: "validation succeeded"; id: number; dateKey: string }
+    | { type: "validation rejected"; id: number; dateKey: string }
+    | { type: "request failed"; id: number; dateKey: string }
+    | { type: "puzzle changed" };
+  const submissionReducer = (state: SubmissionState, event: SubmissionEvent): SubmissionState => {
+    if (event.type === "puzzle changed") return { status: "idle" };
+    if (event.type === "submit started") return { status: "submitting", ...event };
+    if (state.status !== "submitting" || state.id !== event.id || state.dateKey !== event.dateKey) {
+      return state;
+    }
+    return { status: "idle" };
+  };
+  const [submission, dispatchSubmission] = useReducer(submissionReducer, { status: "idle" });
+  const nextSubmissionIdRef = useRef(0);
+  const fetcherWasSubmittingRef = useRef(false);
+
   const anim = useAnimation();
   const isRevealingRow = anim.revealingGuessIndex !== null;
   const isValidationPending = wordValidator.state !== "idle";
@@ -70,21 +92,11 @@ export function useRealiTeaGame({
     prevDateKeyRef.current = puzzle.dateKey;
     setGuesses([]);
     setAuthRequired(false);
+    dispatchSubmission({ type: "puzzle changed" });
+    fetcherWasSubmittingRef.current = false;
     typing.setCurrentGuess("");
     anim.resetAnimation();
   }, [puzzle.dateKey]);
-
-  // Track the previous fetcher state so we can detect network failures
-  // (state transition "submitting" → "idle" without data).
-  const prevFetcherStateRef = useRef(wordValidator.state);
-  useEffect(() => {
-    prevFetcherStateRef.current = wordValidator.state;
-  }, [wordValidator.state]);
-
-  // Guards the fetcher-result effect against double-processing the same
-  // guess (e.g. when the effect re-fires because `guesses.length` changed
-  // after `setGuesses` commits the new guess).
-  const lastProcessedWordRef = useRef<string | null>(null);
 
   // Stable refs so the keydown listener never needs to be re-registered
   // when these callbacks change identity between renders.
@@ -98,6 +110,12 @@ export function useRealiTeaGame({
     if (isGameOver) return;
     const handler = (e: KeyboardEvent) => {
       if (e.ctrlKey || e.metaKey || e.altKey) return;
+      if (
+        e.target instanceof HTMLElement &&
+        (e.target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(e.target.tagName))
+      ) {
+        return;
+      }
       if (e.key === "Enter") {
         e.preventDefault();
         submitGuessRef.current();
@@ -117,12 +135,12 @@ export function useRealiTeaGame({
     if (!canMutateGuess) return;
     const guess = normalizeGuess(typing.currentGuess);
 
-    if (guess.length !== REALITEA_ANSWER_LENGTH) {
+    if (!isGuessLengthValid(guess)) {
       anim.animateError("Not enough letters", true);
       return;
     }
 
-    if (guesses.some((existing) => existing.word === guess)) {
+    if (hasGuessedWord(guesses, guess)) {
       anim.animateError("Already guessed", true);
       return;
     }
@@ -139,23 +157,43 @@ export function useRealiTeaGame({
         encType: "application/json",
       },
     );
+    nextSubmissionIdRef.current += 1;
+    dispatchSubmission({
+      type: "submit started",
+      id: nextSubmissionIdRef.current,
+      dateKey: puzzle.dateKey,
+      word: guess,
+      guessIndex: guesses.length,
+    });
   };
   submitGuessRef.current = submitGuess;
 
   useEffect(() => {
-    if (wordValidator.state !== "idle") return;
+    if (wordValidator.state === "submitting") {
+      fetcherWasSubmittingRef.current = true;
+      return;
+    }
+    if (wordValidator.state !== "idle" || !fetcherWasSubmittingRef.current) return;
+    fetcherWasSubmittingRef.current = false;
+    if (submission.status !== "submitting" || submission.dateKey !== puzzle.dateKey) return;
 
-    // Network / server failure — fetcher went idle without producing data
+    const submissionId = submission.id;
+
+    // A fetcher can return to idle without data when the request fails.
     if (!wordValidator.data) {
-      if (prevFetcherStateRef.current === "submitting") {
-        anim.animateError("Network error — try again", false);
-      }
+      dispatchSubmission({ type: "request failed", id: submissionId, dateKey: puzzle.dateKey });
+      anim.animateError("Network error — try again", false);
       return;
     }
 
     const result = wordValidator.data;
 
     if (!result.valid) {
+      dispatchSubmission({
+        type: "validation rejected",
+        id: submissionId,
+        dateKey: puzzle.dateKey,
+      });
       if (result.reason === "not-in-word-list") anim.animateError("Not in word list", true);
       else if (result.reason === "wrong-length") anim.animateError("Not enough letters", true);
       else if (result.reason === "already-guessed") anim.animateError("Already guessed", true);
@@ -167,22 +205,21 @@ export function useRealiTeaGame({
       return;
     }
 
-    // Guard against re-processing the same word when the effect re-fires
-    // after `setGuesses` triggers a re-render.
-    if (lastProcessedWordRef.current === result.word) return;
-
     if (result.word && result.states) {
-      lastProcessedWordRef.current = result.word;
+      dispatchSubmission({
+        type: "validation succeeded",
+        id: submissionId,
+        dateKey: puzzle.dateKey,
+      });
       setGuesses((prev) => {
-        // Idempotency guard for the async state update
-        if (prev.at(-1)?.word === result.word) return prev;
+        if (hasGuessedWord(prev, result.word!)) return prev;
         return [...prev, { word: result.word!, states: result.states! }];
       });
       typing.setCurrentGuess("");
-      anim.startReveal(guesses.length);
+      anim.startReveal(submission.guessIndex);
       if (result.authRequired) setAuthRequired(true);
     }
-  }, [wordValidator.data, wordValidator.state, guesses.length]);
+  }, [wordValidator.data, wordValidator.state, submission, puzzle.dateKey]);
 
   return {
     guesses,

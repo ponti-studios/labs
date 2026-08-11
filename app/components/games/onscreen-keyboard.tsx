@@ -31,7 +31,7 @@ const keyboardKeyVariants = cva(
   {
     variants: {
       kind: {
-        letter: "min-h-11 min-w-0 flex-1 px-0 text-base sm:text-sm",
+        letter: "min-h-11 min-w-6 flex-1 px-0 text-base sm:text-sm",
         action: "min-h-11 shrink-0 px-3 text-sm sm:px-4 sm:text-xs",
       },
       state: {
