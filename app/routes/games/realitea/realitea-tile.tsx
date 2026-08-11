@@ -30,6 +30,7 @@ export function RealiTeaTile({
   return (
     <div
       aria-label={ariaLabel}
+      role={ariaLabel ? "img" : undefined}
       className={cn(
         "realitea-tile",
         isRevealing && "realitea-tile-reveal",

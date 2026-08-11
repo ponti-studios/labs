@@ -16,6 +16,7 @@ import { getErrorMessage } from "../errors";
 import { createLogger } from "../logger.server";
 
 import { upsertArticles } from "./repository";
+import { MAX_FEED_DESCRIPTION_LENGTH, MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "./feed-text";
 import type { FeedItem } from "./types";
 
 const logger = createLogger();
@@ -60,16 +61,17 @@ export async function fetchFeedItems(feedUrl: string): Promise<FeedItem[]> {
   const xml = await res.text();
   const parser = new XMLParser({ ignoreAttributes: false });
   const parsed = parser.parse(xml);
-  const items: unknown[] = parsed?.rss?.channel?.item ?? [];
+  const rawItems: unknown = parsed?.rss?.channel?.item ?? [];
+  const items: unknown[] = Array.isArray(rawItems) ? rawItems : rawItems ? [rawItems] : [];
   return items.map((item: unknown) => {
     const i = item as Record<string, unknown>;
-    const description = String(i["description"] ?? "").replace(/<|>/g, "");
+    const description = sanitizeFeedText(i["description"], MAX_FEED_DESCRIPTION_LENGTH);
     const imageUrl =
       extractUrlLikeNode(i["media:content"]) ??
       extractUrlLikeNode(i["media:thumbnail"]) ??
       extractUrlLikeNode(i["enclosure"]);
     return {
-      title: String(i["title"] ?? ""),
+      title: sanitizeFeedText(i["title"], MAX_FEED_TITLE_LENGTH),
       link: String(i["link"] ?? ""),
       pubDate: String(i["pubDate"] ?? ""),
       description,
