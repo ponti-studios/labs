@@ -67,6 +67,14 @@ export function OnscreenKeyboard({
       appearance === "realitea" && `realitea-key realitea-key-${state}`,
     );
 
+  const keyLabel = (letter: string, state: LetterState | "action") => {
+    if (state === "action") return letter === "Enter" ? "Enter guess" : "Delete last letter";
+    if (state === "correct") return `${letter} — correct`;
+    if (state === "present") return `${letter} — present in word`;
+    if (state === "absent") return `${letter} — not in word`;
+    return letter;
+  };
+
   return (
     <div
       className={cn(
@@ -82,6 +90,7 @@ export function OnscreenKeyboard({
             <button
               className={keyClass("action", "action")}
               disabled={disabled}
+              aria-label={keyLabel("Enter", "action")}
               tabIndex={readOnly ? -1 : undefined}
               onClick={onEnter ? () => onEnter() : undefined}
               type="button"
@@ -94,6 +103,7 @@ export function OnscreenKeyboard({
               key={letter}
               className={keyClass("letter", letterStates[letter] ?? "inactive")}
               disabled={disabled}
+              aria-label={keyLabel(letter, letterStates[letter] ?? "inactive")}
               tabIndex={readOnly ? -1 : undefined}
               onClick={onLetter ? () => onLetter(letter) : undefined}
               type="button"
@@ -105,6 +115,7 @@ export function OnscreenKeyboard({
             <button
               className={keyClass("action", "action")}
               disabled={disabled}
+              aria-label={keyLabel("Backspace", "action")}
               tabIndex={readOnly ? -1 : undefined}
               onClick={onBackspace ? () => onBackspace() : undefined}
               type="button"
