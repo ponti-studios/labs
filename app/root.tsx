@@ -1,4 +1,7 @@
-import { AppNavigation } from "@ponti-studios/ui/navigation";
+import { Briefcase, FlaskConical, ScrollText, Wrench } from "lucide-react";
+import { useMemo } from "react";
+
+import { Navigation } from "@ponti-studios/ui/navigation";
 import { Button } from "@ponti-studios/ui/primitives";
 import {
   isRouteErrorResponse,
@@ -41,6 +44,14 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
+// Icons for the unauthenticated mobile nav grid's non-logo tiles, keyed by href.
+const NAV_ICONS: Record<string, typeof Wrench> = {
+  "/services": Wrench,
+  "/work": Briefcase,
+  "/projects": FlaskConical,
+  "/manifesto": ScrollText,
+};
+
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -66,6 +77,34 @@ export default function App() {
   const navigation = useNavigation();
   const isNavigating = navigation.state !== "idle";
   const isAuthenticated = user !== null;
+  const navLinks = useMemo<
+    Array<
+      | { href: string; label: string; isExternal?: false; logo?: string }
+      | { href: string; label: string; isExternal: true; logo: string }
+    >
+  >(() => {
+    if (isAuthenticated) {
+      return [
+        { href: "/games/realitea", label: t.nav.realitea, logo: "/experiments/logo.realitea.png" },
+        {
+          href:
+            import.meta.env.NODE_ENV === "development"
+              ? "https://localhost:4451"
+              : "https://career.ponti.io",
+          label: t.nav.career,
+          isExternal: true,
+          logo: "/experiments/logo.career.500x500.webp",
+        },
+      ];
+    }
+
+    return [
+      { href: "/services", label: t.nav.services },
+      { href: "/work", label: t.nav.work },
+      { href: "/projects", label: t.nav.projects },
+      { href: "/manifesto", label: t.nav.manifesto },
+    ];
+  }, [isAuthenticated]);
 
   return (
     <QueryProvider>
@@ -80,46 +119,100 @@ export default function App() {
       <div className="sr-only" aria-live="polite" aria-atomic="true">
         {isNavigating ? "Loading page" : ""}
       </div>
-      <AppNavigation
-        brand={<img src="/logo.ponti.png" alt={t.nav.brandAlt} className="size-6" />}
-        brandHref="/"
-        links={
-          isAuthenticated
-            ? [{ href: "/games/realitea", label: t.nav.realitea }]
-            : [
-                { href: "/services", label: t.nav.services },
-                { href: "/work", label: t.nav.work },
-                { href: "/projects", label: t.nav.projects },
-                { href: "/manifesto", label: t.nav.manifesto },
-              ]
-        }
-        activeHref={location.pathname}
-        endContent={
-          isAuthenticated ? (
-            <a
-              href={
-                import.meta.env.NODE_ENV === "development"
-                  ? "https://localhost:4451"
-                  : "https://career.ponti.io"
-              }
-              className="hover:bg-muted hover:text-muted-foreground inline-flex min-h-9 shrink-0 items-center rounded-md px-3 py-2 text-sm font-medium"
-            >
-              {t.nav.career}
-            </a>
-          ) : (
-            <div className="flex items-center gap-3">
-              <Button asChild>
+      <Navigation ariaLabel="Primary navigation" variant="nokia">
+        <Navigation.Brand>
+          <Link to="/" className="flex items-center">
+            <img src="/logo.ponti.png" alt={t.nav.brandAlt} className="size-6" />
+          </Link>
+        </Navigation.Brand>
+
+        <Navigation.List className="grid! grid-cols-3 gap-3 sm:flex! sm:grid-cols-none sm:gap-1">
+          {navLinks.map((link) => {
+            const isExternalLink = "isExternal" in link && link.isExternal;
+            const logo = "logo" in link ? link.logo : undefined;
+            const isActive =
+              !isExternalLink &&
+              (link.href === location.pathname ||
+                (link.href !== "/" && location.pathname.startsWith(`${link.href}/`)));
+
+            const content = logo ? (
+              <>
+                <img
+                  src={logo}
+                  alt={link.label}
+                  className="border-nokia-ink h-9 w-9 contrast-125 grayscale sm:h-6 sm:w-6 sm:rounded-full sm:border-0 sm:contrast-100 sm:grayscale-0"
+                />
+                <span className="font-nokia mt-1 block text-base tracking-widest uppercase sm:sr-only">
+                  {link.label}
+                </span>
+              </>
+            ) : (
+              (() => {
+                const Icon = NAV_ICONS[link.href];
+                return (
+                  <>
+                    <span className="border-nokia-ink flex size-10 items-center justify-center border-2 sm:hidden">
+                      {Icon && <Icon className="size-5" strokeWidth={2} aria-hidden="true" />}
+                    </span>
+                    <span className="font-nokia mt-1 block text-base tracking-widest uppercase sm:hidden">
+                      {link.label}
+                    </span>
+                    <span className="hidden sm:inline">{link.label}</span>
+                  </>
+                );
+              })()
+            );
+
+            const tileClassName = cn(
+              "group flex !h-auto !max-h-none w-full flex-col items-center justify-center gap-0.5 rounded-none border-2 border-transparent px-2 py-3 text-center transition-colors duration-100 sm:!h-9 sm:!max-h-9 sm:flex-row sm:justify-center sm:gap-1.5 sm:rounded-md sm:px-2 sm:py-1.5",
+              "active:bg-nokia-ink active:text-nokia-screen sm:active:bg-transparent sm:active:text-inherit",
+              isActive
+                ? "border-nokia-ink bg-nokia-ink text-nokia-screen sm:bg-muted sm:ring-border sm:border-transparent sm:text-inherit sm:ring-1"
+                : "border-nokia-ink/40 sm:border-transparent",
+            );
+
+            if (isExternalLink) {
+              return (
+                <Navigation.Item key={link.href} asChild active={false} className={tileClassName}>
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex w-full flex-col items-center sm:flex-row"
+                  >
+                    {content}
+                  </a>
+                </Navigation.Item>
+              );
+            }
+
+            return (
+              <Navigation.Item key={link.href} asChild active={isActive} className={tileClassName}>
+                <Link
+                  to={link.href}
+                  prefetch="intent"
+                  className="flex w-full flex-col items-center sm:flex-row"
+                >
+                  {content}
+                </Link>
+              </Navigation.Item>
+            );
+          })}
+
+          {!isAuthenticated && (
+            <Navigation.Action>
+              <Button
+                asChild
+                className="border-nokia-ink bg-nokia-ink font-nokia text-nokia-screen hover:bg-nokia-ink/90 sm:bg-primary sm:text-primary-foreground sm:hover:bg-primary/90 rounded-none border-2 text-lg tracking-widest uppercase sm:rounded-md sm:border-0 sm:font-sans sm:text-sm sm:tracking-normal sm:normal-case"
+              >
                 <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
                   {t.nav.book}
                 </a>
               </Button>
-            </div>
-          )
-        }
-        linkComponent={Link}
-        linkProp="to"
-        linkProps={{ prefetch: "intent" }}
-      />
+            </Navigation.Action>
+          )}
+        </Navigation.List>
+      </Navigation>
       <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col">
         <Outlet />
       </main>

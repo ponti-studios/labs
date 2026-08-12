@@ -1,6 +1,8 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { LucideArrowBigRight } from "lucide-react";
 import { Link } from "react-router";
+import { ProjectsWallet } from "~/components/projects-wallet/projects-wallet";
+import type { FeaturedProject } from "~/components/projects-wallet/project-card";
 import { RealiTeaTile } from "~/routes/games/realitea/realitea-tile";
 import { t } from "~/translations";
 
@@ -72,33 +74,72 @@ const PREVIEW_ROWS = [
   ],
 ];
 
-function RealiTeaFeaturedCard() {
+// Standalone so it can be passed as `ProjectCard`'s `preview` slot — the
+// masked-number band on RealiTea's card face. Relies on the card's `group`
+// class (from project-card.tsx) for the hover stagger-lift.
+function RealiTeaCardPreview() {
   return (
-    <Link
-      to="/games/realitea"
-      prefetch="intent"
-      data-testid="makers-of-realitea"
-      className="border-border bg-card hover:border-accent/50 flex max-w-fit flex-col gap-4 rounded-xl border p-4 px-8 transition-colors"
-    >
-      <h2 className="text-accent flex items-center justify-between gap-1 text-2xl font-bold tracking-tight">
-        <span className="flex gap-2 ">{t.home.realitea.title}</span>
-        <LucideArrowBigRight />
-      </h2>
-
-      <div className="flex flex-col gap-3">
-        <div className="realitea-hero-preview flex flex-col items-center gap-(--realitea-tile-gap)">
-          {PREVIEW_ROWS.map((row, rowIndex) => (
-            <div key={rowIndex} className="flex gap-(--realitea-tile-gap)">
-              {row.map((tile, tileIndex) => (
-                <RealiTeaTile key={tileIndex} state={tile.state} letter={tile.letter} />
-              ))}
+    <div className="realitea-hero-preview flex flex-col items-center gap-(--realitea-tile-gap)">
+      {PREVIEW_ROWS.map((row, rowIndex) => (
+        <div key={rowIndex} className="flex gap-(--realitea-tile-gap)">
+          {row.map((tile, tileIndex) => (
+            <div
+              key={tileIndex}
+              className="motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover:-translate-y-1"
+              style={{ transitionDelay: `${(rowIndex * 4 + tileIndex) * 30}ms` }}
+            >
+              <RealiTeaTile state={tile.state} letter={tile.letter} />
             </div>
           ))}
         </div>
-      </div>
-    </Link>
+      ))}
+    </div>
   );
 }
+
+const FEATURED_PROJECTS: FeaturedProject[] = [
+  {
+    id: "realitea",
+    href: "/games/realitea",
+    logo: "/experiments/logo.realitea.webp",
+    logoAlt: t.nav.realitea,
+    title: t.home.realitea.title,
+    eyebrow: t.home.realitea.eyebrow,
+    description: t.home.realitea.description,
+    cta: t.home.realitea.cta,
+    theme: "realitea",
+    status: t.home.realitea.live,
+    preview: <RealiTeaCardPreview />,
+  },
+  {
+    id: "career",
+    href:
+      import.meta.env.NODE_ENV === "development"
+        ? "https://localhost:4451"
+        : "https://career.ponti.io",
+    isExternal: true,
+    logo: "/experiments/logo.career.500x500.webp",
+    logoAlt: t.nav.career,
+    title: t.home.career.title,
+    eyebrow: t.home.career.eyebrow,
+    description: t.home.career.description,
+    cta: t.home.career.cta,
+    theme: "slate",
+    status: t.home.career.live,
+  },
+  {
+    id: "omiro",
+    href: "/projects/omiro",
+    logo: "/experiments/logo.omiro.500x500.webp",
+    logoAlt: t.projects.entries.omiro.name,
+    title: t.home.omiro.title,
+    eyebrow: t.home.omiro.eyebrow,
+    description: t.home.omiro.description,
+    cta: t.home.omiro.cta,
+    theme: "midnight",
+    status: t.projects.statusLabels.active,
+  },
+];
 
 export default function Home() {
   return (
@@ -120,9 +161,7 @@ export default function Home() {
 
       <section className="flex flex-col gap-6 px-6 py-8">
         <h2 className="text-foreground text-xl font-semibold tracking-tight">Featured Projects</h2>
-        <div className="flex gap-6">
-          <RealiTeaFeaturedCard />
-        </div>
+        <ProjectsWallet projects={FEATURED_PROJECTS} />
       </section>
     </div>
   );

@@ -16,7 +16,7 @@
 }
 
 .logo {
-  @apply h-6;
+  @apply h-12;
   object-fit: contain;
 }
 
@@ -30,19 +30,14 @@
 
 .popover {
   position: relative;
-  z-index: 100;
   border-color: var(--realitea-present-border);
-  background: var(--realitea-present-bg);
-  color: var(--realitea-present-text);
+  border-width: 2px;
+  background: var(--background);
 }
 
 @media (min-width: 640px) {
   .inner {
     padding-top: 1rem;
-  }
-
-  .logo {
-    height: 5rem;
   }
 }
 

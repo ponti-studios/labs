@@ -24,5 +24,6 @@ minimumReleaseAgeExclude:
   - '@oxfmt/binding-win32-x64-msvc@0.62.0'
   - oxfmt@0.62.0
   - '@tanstack/ai-openrouter@0.16.1'
+  - '@ponti-studios/ui@1.4.0'
 patchedDependencies:
   '@ponti-studios/auth@0.1.1': patches/@ponti-studios__auth@0.1.1.patch
