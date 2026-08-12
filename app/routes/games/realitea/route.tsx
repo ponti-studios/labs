@@ -1,4 +1,5 @@
 import { Button } from "@ponti-studios/ui/primitives";
+import * as Sentry from "@sentry/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import {
@@ -80,6 +81,14 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     message = routeErrorMessage ?? (error.statusText || message);
   } else if (error instanceof Error) {
     message = error.message || message;
+  }
+
+  if (error && !isRouteErrorResponse(error)) {
+    Sentry.withScope((scope) => {
+      scope.setTag("game", "realitea");
+      scope.setTag("realitea_surface", "daily-puzzle");
+      Sentry.captureException(error);
+    });
   }
 
   return (
