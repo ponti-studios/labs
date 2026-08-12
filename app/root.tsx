@@ -42,17 +42,7 @@ export const links: Route.LinksFunction = () => [
     rel: "stylesheet",
     href: "https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap",
   },
-  {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=VT323&display=swap",
-  },
 ];
-
-// Nokia 3310-style monochrome LCD panel for the mobile nav sheet.
-const NOKIA_SHEET_CLASSNAME =
-  "nokia-screen rounded-none border-[6px] border-nokia-bezel bg-nokia-screen p-4 font-nokia text-nokia-ink shadow-[0_0_0_3px_var(--color-nokia-screen-deep),0_10px_30px_-6px_rgba(0,0,0,0.65)]";
-const NOKIA_SHEET_CLOSE_CLASSNAME =
-  "text-nokia-ink hover:bg-nokia-ink hover:text-nokia-screen rounded-none border-2 border-nokia-ink sm:text-muted-foreground sm:hover:bg-muted sm:hover:text-muted-foreground sm:rounded-md sm:border-transparent";
 
 // Icons for the unauthenticated mobile nav grid's non-logo tiles, keyed by href.
 const NAV_ICONS: Record<string, typeof Wrench> = {
@@ -129,18 +119,14 @@ export default function App() {
       <div className="sr-only" aria-live="polite" aria-atomic="true">
         {isNavigating ? "Loading page" : ""}
       </div>
-      <Navigation
-        ariaLabel="Primary navigation"
-        mobileSheetClassName={NOKIA_SHEET_CLASSNAME}
-        mobileSheetCloseClassName={NOKIA_SHEET_CLOSE_CLASSNAME}
-      >
+      <Navigation ariaLabel="Primary navigation" variant="nokia">
         <Navigation.Brand>
           <Link to="/" className="flex items-center">
             <img src="/logo.ponti.png" alt={t.nav.brandAlt} className="size-6" />
           </Link>
         </Navigation.Brand>
 
-        <Navigation.List className="!grid grid-cols-3 gap-3 sm:!flex sm:grid-cols-none sm:gap-1">
+        <Navigation.List className="grid! grid-cols-3 gap-3 sm:flex! sm:grid-cols-none sm:gap-1">
           {navLinks.map((link) => {
             const isExternalLink = "isExternal" in link && link.isExternal;
             const logo = "logo" in link ? link.logo : undefined;
@@ -154,9 +140,9 @@ export default function App() {
                 <img
                   src={logo}
                   alt={link.label}
-                  className="border-nokia-ink h-9 w-9 grayscale contrast-125 sm:h-6 sm:w-6 sm:rounded-full sm:border-0 sm:grayscale-0 sm:contrast-100"
+                  className="border-nokia-ink h-9 w-9 contrast-125 grayscale sm:h-6 sm:w-6 sm:rounded-full sm:border-0 sm:contrast-100 sm:grayscale-0"
                 />
-                <span className="mt-1 block font-nokia text-base tracking-widest uppercase sm:sr-only">
+                <span className="font-nokia mt-1 block text-base tracking-widest uppercase sm:sr-only">
                   {link.label}
                 </span>
               </>
@@ -168,7 +154,7 @@ export default function App() {
                     <span className="border-nokia-ink flex size-10 items-center justify-center border-2 sm:hidden">
                       {Icon && <Icon className="size-5" strokeWidth={2} aria-hidden="true" />}
                     </span>
-                    <span className="mt-1 block font-nokia text-base tracking-widest uppercase sm:hidden">
+                    <span className="font-nokia mt-1 block text-base tracking-widest uppercase sm:hidden">
                       {link.label}
                     </span>
                     <span className="hidden sm:inline">{link.label}</span>
@@ -178,7 +164,7 @@ export default function App() {
             );
 
             const tileClassName = cn(
-              "group !h-auto !max-h-none flex w-full flex-col items-center justify-center gap-0.5 rounded-none border-2 border-transparent px-2 py-3 text-center transition-colors duration-100 sm:!h-9 sm:!max-h-9 sm:flex-row sm:justify-center sm:gap-1.5 sm:rounded-md sm:px-2 sm:py-1.5",
+              "group flex !h-auto !max-h-none w-full flex-col items-center justify-center gap-0.5 rounded-none border-2 border-transparent px-2 py-3 text-center transition-colors duration-100 sm:!h-9 sm:!max-h-9 sm:flex-row sm:justify-center sm:gap-1.5 sm:rounded-md sm:px-2 sm:py-1.5",
               "active:bg-nokia-ink active:text-nokia-screen sm:active:bg-transparent sm:active:text-inherit",
               isActive
                 ? "border-nokia-ink bg-nokia-ink text-nokia-screen sm:bg-muted sm:ring-border sm:border-transparent sm:text-inherit sm:ring-1"
@@ -217,7 +203,7 @@ export default function App() {
             <Navigation.Action>
               <Button
                 asChild
-                className="rounded-none border-2 border-nokia-ink bg-nokia-ink font-nokia text-lg tracking-widest text-nokia-screen uppercase hover:bg-nokia-ink/90 sm:rounded-md sm:border-0 sm:bg-primary sm:font-sans sm:text-sm sm:tracking-normal sm:text-primary-foreground sm:normal-case sm:hover:bg-primary/90"
+                className="border-nokia-ink bg-nokia-ink font-nokia text-nokia-screen hover:bg-nokia-ink/90 sm:bg-primary sm:text-primary-foreground sm:hover:bg-primary/90 rounded-none border-2 text-lg tracking-widest uppercase sm:rounded-md sm:border-0 sm:font-sans sm:text-sm sm:tracking-normal sm:normal-case"
               >
                 <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
                   {t.nav.book}

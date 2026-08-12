@@ -62,14 +62,14 @@
   font-size: 0.65rem;
 }
 
-/* Larger, non-interactive preview grid used on the homepage's featured
-   product card — bigger than the history thumbnail, but fixed-size rather
-   than the fluid clamp() the real board uses, since it never fills a
-   full-width board container. */
+/* Compact, non-interactive preview grid used as the "masked number" band on
+   the homepage's featured-project credit card — small and fixed-size since
+   it has to fit inside a fixed-aspect card face alongside the logo, status
+   pill, and title. */
 .realitea-hero-preview {
-  --realitea-tile-size: clamp(38px, 7vw, 52px);
-  --realitea-tile-gap: 6px;
-  --realitea-radius: 9px;
+  --realitea-tile-size: clamp(24px, 6vw, 30px);
+  --realitea-tile-gap: 4px;
+  --realitea-radius: 6px;
 }
 
 .realitea-tile {
