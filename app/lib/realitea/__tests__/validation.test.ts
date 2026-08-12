@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { GenerateReasonType } from "../admin/generate-copy";
 import { getDateKey } from "../date";
 import { validateCandidate } from "../validation";
 
@@ -22,7 +23,7 @@ describe("realitea daily puzzle helpers", () => {
 
     expect(result.normalizedAnswer).toBe("TEASET");
     expect(result.valid).toBe(false);
-    expect(result.reasons).toContain("answer must normalize to exactly five letters");
+    expect(result.reasons).toContain(GenerateReasonType.NotFiveLetters);
   });
 
   it("accepts answers that normalize to exactly five letters", () => {
@@ -48,7 +49,7 @@ describe("realitea daily puzzle helpers", () => {
     });
 
     expect(result.valid).toBe(false);
-    expect(result.reasons).toContain("answer is not in the accepted five-letter word list");
+    expect(result.reasons).toContain(GenerateReasonType.NotDictionaryWord);
   });
 
   it("rejects answers whose normalized length is not exactly five", () => {
@@ -62,7 +63,7 @@ describe("realitea daily puzzle helpers", () => {
     });
 
     expect(result.valid).toBe(false);
-    expect(result.reasons).toContain("answer must normalize to exactly five letters");
+    expect(result.reasons).toContain(GenerateReasonType.NotFiveLetters);
   });
 
   it("rejects candidates that leak the answer in the clue or detail", () => {
@@ -76,7 +77,7 @@ describe("realitea daily puzzle helpers", () => {
     });
 
     expect(result.valid).toBe(false);
-    expect(result.reasons).toContain("answer is leaked in clue or detail");
+    expect(result.reasons).toContain(GenerateReasonType.AnswerLeaked);
   });
 
   it("rejects answers that repeat inside the cooldown window", () => {
@@ -93,7 +94,7 @@ describe("realitea daily puzzle helpers", () => {
     );
 
     expect(result.valid).toBe(false);
-    expect(result.reasons).toContain("answer repeats inside cooldown window");
+    expect(result.reasons).toContain(GenerateReasonType.RepeatInWindow);
   });
 
   it("rejects candidates missing a realityblurb.com source URL", () => {
@@ -113,7 +114,7 @@ describe("realitea daily puzzle helpers", () => {
     });
 
     expect(result.valid).toBe(false);
-    expect(result.reasons).toContain("candidate is missing a realityblurb.com source URL");
+    expect(result.reasons).toContain(GenerateReasonType.MissingSource);
   });
 
   it("rejects system, developer, and assistant role markers in candidate copy", () => {
@@ -126,7 +127,7 @@ describe("realitea daily puzzle helpers", () => {
     });
 
     expect(result.valid).toBe(false);
-    expect(result.reasons).toContain("clue or detail contains prompt-control text");
+    expect(result.reasons).toContain(GenerateReasonType.PromptControlText);
   });
 
   it("rejects candidates with no source URLs", () => {
@@ -140,7 +141,7 @@ describe("realitea daily puzzle helpers", () => {
     });
 
     expect(result.valid).toBe(false);
-    expect(result.reasons).toContain("candidate is missing a realityblurb.com source URL");
+    expect(result.reasons).toContain(GenerateReasonType.MissingSource);
   });
 
   it("accepts valid candidates with a realityblurb.com source URL", () => {
@@ -167,9 +168,7 @@ describe("realitea daily puzzle helpers", () => {
     });
 
     expect(result.valid).toBe(false);
-    expect(result.reasons).toContain(
-      "answer type must not be a person; prefer a storyline, moment, place, or phrase",
-    );
+    expect(result.reasons).toContain(GenerateReasonType.PersonAnswerType);
   });
 
   it("uses the canonical UTC day boundary", () => {

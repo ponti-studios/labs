@@ -4,8 +4,15 @@ import * as schema from "./schema";
 
 export * from "drizzle-orm";
 
-let _db: ReturnType<typeof drizzle> | null = null;
-let _client: postgres.Sql | null = null;
+type GlobalDb = typeof globalThis & {
+  __labsSql?: postgres.Sql;
+  __labsDb?: ReturnType<typeof drizzle<typeof schema>>;
+};
+
+const globalDb = globalThis as GlobalDb;
+
+let _db: ReturnType<typeof drizzle<typeof schema>> | null = globalDb.__labsDb ?? null;
+let _client: postgres.Sql | null = globalDb.__labsSql ?? null;
 
 function getDatabaseUrl(): string {
   const url = process.env.DATABASE_URL;
@@ -16,15 +23,27 @@ function getDatabaseUrl(): string {
   throw new Error("DATABASE_URL environment variable is required");
 }
 
+function poolSize() {
+  if (process.env.NODE_ENV === "test") return 2;
+  if (process.env.NODE_ENV === "production") return 10;
+  return 4;
+}
+
 function initializeClient() {
   if (_client) return _client;
-  _client = postgres(getDatabaseUrl());
+  _client = postgres(getDatabaseUrl(), {
+    max: poolSize(),
+    idle_timeout: 20,
+    connect_timeout: 10,
+  });
+  globalDb.__labsSql = _client;
   return _client;
 }
 
 function initializeDb() {
   if (_db) return _db;
   _db = drizzle(initializeClient(), { schema });
+  globalDb.__labsDb = _db;
   return _db;
 }
 
@@ -43,5 +62,7 @@ export function closeDb() {
     _client.end();
     _client = null;
     _db = null;
+    globalDb.__labsSql = undefined;
+    globalDb.__labsDb = undefined;
   }
 }

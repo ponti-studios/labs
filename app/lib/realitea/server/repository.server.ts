@@ -39,6 +39,8 @@ import {
   lt,
   lte,
   gamesAttempts,
+  generationCandidates,
+  generationRuns,
   sql,
 } from "~/lib/server/db";
 
@@ -220,14 +222,14 @@ export async function listTopicFeedHosts(): Promise<string[]> {
   });
 }
 
-export async function countRecentPreviewActions(hominemUserId: string, since: Date): Promise<number> {
+export async function countRecentGenerateActions(hominemUserId: string, since: Date): Promise<number> {
   const [row] = await db
     .select({ value: count() })
     .from(adminActions)
     .where(
       and(
         eq(adminActions.hominemUserId, hominemUserId),
-        eq(adminActions.kind, "preview"),
+        inArray(adminActions.kind, ["generate", "preview"]),
         gte(adminActions.at, since),
       ),
     );
@@ -338,6 +340,86 @@ export async function getExistingDateKeys(
       ),
     );
   return rows.map((r) => r.dateUtc);
+}
+
+/** Every published puzzle date for a topic, oldest first. */
+export async function listAllPuzzleDateKeys(gameId: number): Promise<string[]> {
+  const rows = await db
+    .select({ dateUtc: gamesPuzzles.dateUtc })
+    .from(gamesPuzzles)
+    .where(eq(gamesPuzzles.gamesTopicId, gameId))
+    .orderBy(gamesPuzzles.dateUtc);
+  return rows.map((r) => r.dateUtc);
+}
+
+export async function listGenerationsForTopic(
+  gameId: number,
+  options: { limit?: number; dateKey?: string } = {},
+) {
+  const conditions = [eq(generationRuns.gamesTopicId, gameId)];
+  if (options.dateKey) {
+    conditions.push(sql`${generationRuns.dateKey} = ${options.dateKey}::date`);
+  }
+  return db
+    .select({
+      id: generationRuns.id,
+      dateKey: generationRuns.dateKey,
+      status: generationRuns.status,
+      sourceMode: generationRuns.sourceMode,
+      model: generationRuns.model,
+      publishable: generationRuns.publishable,
+      llmError: generationRuns.llmError,
+      createdByEmail: generationRuns.createdByEmail,
+      createdAt: generationRuns.createdAt,
+      finishedAt: generationRuns.finishedAt,
+    })
+    .from(generationRuns)
+    .where(and(...conditions))
+    .orderBy(desc(generationRuns.createdAt))
+    .limit(options.limit ?? 20);
+}
+
+export async function getGenerationWithCandidates(gameId: number, generationId: number) {
+  const [generation] = await db
+    .select({
+      id: generationRuns.id,
+      dateKey: generationRuns.dateKey,
+      status: generationRuns.status,
+      sourceMode: generationRuns.sourceMode,
+      model: generationRuns.model,
+      publishable: generationRuns.publishable,
+      llmError: generationRuns.llmError,
+      feedError: generationRuns.feedError,
+      promptSource: generationRuns.promptSource,
+      promptPath: generationRuns.promptPath,
+      selectedIndex: generationRuns.selectedIndex,
+      feedItemCount: generationRuns.feedItemCount,
+      createdByEmail: generationRuns.createdByEmail,
+      createdAt: generationRuns.createdAt,
+      finishedAt: generationRuns.finishedAt,
+    })
+    .from(generationRuns)
+    .where(and(eq(generationRuns.id, generationId), eq(generationRuns.gamesTopicId, gameId)))
+    .limit(1);
+  if (!generation) return null;
+
+  const candidates = await db
+    .select({
+      id: generationCandidates.id,
+      ordinal: generationCandidates.ordinal,
+      payload: generationCandidates.payload,
+      valid: generationCandidates.valid,
+      reasons: generationCandidates.reasons,
+      articleId: generationCandidates.articleId,
+      articleTitle: articles.title,
+      articleUrl: articles.url,
+    })
+    .from(generationCandidates)
+    .leftJoin(articles, eq(generationCandidates.articleId, articles.id))
+    .where(eq(generationCandidates.runId, generationId))
+    .orderBy(generationCandidates.ordinal);
+
+  return { generation, candidates };
 }
 
 /**

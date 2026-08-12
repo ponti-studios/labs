@@ -25,10 +25,10 @@ import {
 import type { PuzzleAnswerType } from "../core/types";
 import type { PuzzleRecord } from "../server/types";
 import type {
-  CandidatePreview,
+  ScoredCandidate,
   FeedItem,
-  GenerationPreviewResult,
-  PreviewCandidatesOptions,
+  GenerateCandidatesResult,
+  GenerateCandidatesOptions,
 } from "./types";
 import { validateCandidate } from "./candidate-validation";
 import {
@@ -234,7 +234,7 @@ async function recordGenerateFailure(
   });
 }
 
-async function callGenerationApiForPreview(
+async function callGenerationApiForCandidates(
   dateKey: string,
   excludedAnswers: string[],
   feedItems: FeedItem[],
@@ -242,7 +242,7 @@ async function callGenerationApiForPreview(
   answerLength: number,
   sourceDomains: string[],
   model?: string,
-): Promise<{ candidates: CandidatePreview[]; llmError: string | null }> {
+): Promise<{ candidates: ScoredCandidate[]; llmError: string | null }> {
   try {
     const response = await chatCompletion({
       ...(model !== undefined ? { model } : {}),
@@ -274,7 +274,7 @@ async function callGenerationApiForPreview(
     const parsed = generationResponseSchema.parse(JSON.parse(cleanedContent));
     const previousAnswers = new Set(excludedAnswers);
 
-    const candidates: CandidatePreview[] = parsed.candidates.map((candidate) => ({
+    const candidates: ScoredCandidate[] = parsed.candidates.map((candidate) => ({
       candidate,
       validation: validateCandidate(candidate, previousAnswers, { sourceDomains }),
     }));
@@ -288,11 +288,11 @@ async function callGenerationApiForPreview(
   }
 }
 
-/** Preview generation against a live feed pull, bypassing the article inventory entirely. Used for prompt/tuning iteration only. */
-export async function previewCandidates(
+/** Score candidates without writing a published puzzle. Used by the admin generate page and CLI. */
+export async function generateCandidates(
   dateKey: string,
-  options: PreviewCandidatesOptions = {},
-): Promise<GenerationPreviewResult> {
+  options: GenerateCandidatesOptions = {},
+): Promise<GenerateCandidatesResult> {
   const feedUrl = options.feedUrl ?? REALITY_BLURB_FEED_URL;
   let feedItems: FeedItem[] = [];
   let feedError: string | null = null;
@@ -307,7 +307,7 @@ export async function previewCandidates(
     }
   }
 
-  const { candidates, llmError } = await callGenerationApiForPreview(
+  const { candidates, llmError } = await callGenerationApiForCandidates(
     dateKey,
     options.excludedAnswers ?? [],
     feedItems,

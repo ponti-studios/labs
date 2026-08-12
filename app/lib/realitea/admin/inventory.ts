@@ -1,4 +1,11 @@
+import type {
+  GenerationPromptSource,
+  GenerationRunStatus,
+  GenerationSourceMode,
+} from "~/lib/server/db";
+
 import { addDaysToDateKey, buildDateRange, getDateKey } from "../core/date";
+import { MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "../generation/feed-text";
 import { isLiveDate, liveDateKeys, PRIMARY_PLAYER_TZ, REALITEA_READY_INVENTORY_DAYS } from "../ops";
 import {
   countAttemptsByDate,
@@ -7,8 +14,16 @@ import {
   getActiveGames,
   getExistingDateKeys,
   getGameBySlug,
+  listAllPuzzleDateKeys,
+  getGenerationWithCandidates,
+  listGenerationsForTopic,
   loadPuzzleForDate,
 } from "../server/repository.server";
+
+/** Default overview window: 5 days ago, today, 5 days ahead. */
+export const ADMIN_INVENTORY_LOOKBACK_DAYS = 5;
+export const ADMIN_INVENTORY_LOOKAHEAD_DAYS = 5;
+export const ADMIN_RECENT_GENERATIONS_LIMIT = 20;
 
 export type InventoryCellState = "live" | "ready" | "missing";
 
@@ -20,16 +35,66 @@ export type InventoryCell = {
   attemptCount: number;
 };
 
+export type AdminGeneration = {
+  id: number;
+  dateKey: string;
+  status: GenerationRunStatus;
+  sourceMode: GenerationSourceMode;
+  model: string;
+  publishable: boolean;
+  llmError: string | null;
+  createdByEmail: string | null;
+  createdAt: string;
+  finishedAt: string | null;
+};
+
+export type AdminGenerationCandidate = {
+  id: number;
+  ordinal: number;
+  valid: boolean;
+  reasons: string[];
+  articleId: number | null;
+  articleTitle: string | null;
+  articleUrl: string | null;
+  candidate: {
+    answer: string;
+    answerType: string;
+    clue: string;
+    detail: string;
+    sources: Array<{ url: string; title: string; publishedAt: string }>;
+  };
+};
+
+export type AdminGenerationDetail = AdminGeneration & {
+  feedError: string | null;
+  promptSource: GenerationPromptSource;
+  promptPath: string | null;
+  selectedIndex: number | null;
+  feedItemCount: number;
+  candidates: AdminGenerationCandidate[];
+};
+
+export function overviewInventoryDateKeys(utcToday: string): string[] {
+  const startKey = addDaysToDateKey(utcToday, -ADMIN_INVENTORY_LOOKBACK_DAYS);
+  if (!startKey) return [];
+  return buildDateRange(startKey, {
+    daysAhead: ADMIN_INVENTORY_LOOKBACK_DAYS + 1 + ADMIN_INVENTORY_LOOKAHEAD_DAYS,
+  });
+}
+
+function mergeInventoryDateKeys(utcToday: string, existingKeys: string[]): string[] {
+  return [...new Set([...overviewInventoryDateKeys(utcToday), ...existingKeys])].sort();
+}
+
 export function buildInventoryCells(input: {
   now: Date;
   existingKeys: string[];
   attemptCounts: Map<string, number>;
+  dateKeys?: string[];
 }): InventoryCell[] {
   const utcToday = getDateKey(input.now, "UTC");
   const pacificToday = getDateKey(input.now, PRIMARY_PLAYER_TZ);
-  const startKey = addDaysToDateKey(utcToday, -7);
-  if (!startKey) return [];
-  const dateKeys = buildDateRange(startKey, { daysAhead: 7 + 1 + REALITEA_READY_INVENTORY_DAYS });
+  const dateKeys = input.dateKeys ?? overviewInventoryDateKeys(utcToday);
   const existing = new Set(input.existingKeys);
   const live = liveDateKeys(input.now);
 
@@ -57,22 +122,99 @@ export async function resolveAdminGame(slug: string) {
   return fallback ?? null;
 }
 
+function asDateKey(value: string | Date): string {
+  return value instanceof Date ? getDateKey(value, "UTC") : value;
+}
+
+function serializeGeneration(
+  generation: Awaited<ReturnType<typeof listGenerationsForTopic>>[number],
+): AdminGeneration {
+  return {
+    id: generation.id,
+    dateKey: asDateKey(generation.dateKey),
+    status: generation.status,
+    sourceMode: generation.sourceMode,
+    model: generation.model,
+    publishable: generation.publishable,
+    llmError: generation.llmError,
+    createdByEmail: generation.createdByEmail,
+    createdAt: generation.createdAt.toISOString(),
+    finishedAt: generation.finishedAt?.toISOString() ?? null,
+  };
+}
+
+export function parseCandidatePayload(value: unknown): AdminGenerationCandidate["candidate"] {
+  const row = value && typeof value === "object" ? (value as Record<string, unknown>) : {};
+  const sources = Array.isArray(row.sources)
+    ? row.sources.flatMap((source) => {
+        if (!source || typeof source !== "object") return [];
+        const entry = source as Record<string, unknown>;
+        return [
+          {
+            url: typeof entry.url === "string" ? entry.url : "",
+            title: typeof entry.title === "string" ? entry.title : "",
+            publishedAt: typeof entry.publishedAt === "string" ? entry.publishedAt : "",
+          },
+        ];
+      })
+    : [];
+  return {
+    answer: typeof row.answer === "string" ? row.answer : "",
+    answerType: typeof row.answerType === "string" ? row.answerType : "",
+    clue: typeof row.clue === "string" ? row.clue : "",
+    detail: typeof row.detail === "string" ? row.detail : "",
+    sources,
+  };
+}
+
+export async function loadAdminGeneration(slug: string, generationId: number) {
+  const game = await resolveAdminGame(slug);
+  if (!game) return null;
+  const detail = await getGenerationWithCandidates(game.id, generationId);
+  if (!detail) return null;
+
+  return {
+    game: { id: game.id, slug: game.slug, name: game.name },
+    generation: {
+      ...serializeGeneration(detail.generation),
+      feedError: detail.generation.feedError,
+      promptSource: detail.generation.promptSource,
+      promptPath: detail.generation.promptPath,
+      selectedIndex: detail.generation.selectedIndex,
+      feedItemCount: detail.generation.feedItemCount,
+      candidates: detail.candidates.map((candidate) => ({
+        id: candidate.id,
+        ordinal: candidate.ordinal,
+        valid: candidate.valid,
+        reasons: candidate.reasons,
+        articleId: candidate.articleId,
+        articleTitle: candidate.articleTitle
+          ? sanitizeFeedText(candidate.articleTitle, MAX_FEED_TITLE_LENGTH)
+          : null,
+        articleUrl: candidate.articleUrl,
+        candidate: parseCandidatePayload(candidate.payload),
+      })),
+    } satisfies AdminGenerationDetail,
+  };
+}
+
 export async function loadAdminOverview(slug: string, now = new Date()) {
   const game = await resolveAdminGame(slug);
   if (!game) return null;
 
   const utcToday = getDateKey(now, "UTC");
-  const startKey = addDaysToDateKey(utcToday, -7);
-  const endKey = addDaysToDateKey(utcToday, REALITEA_READY_INVENTORY_DAYS);
+  const dateKeys = overviewInventoryDateKeys(utcToday);
+  const startKey = dateKeys[0];
+  const endKey = dateKeys[dateKeys.length - 1];
   if (!startKey || !endKey) return null;
 
-  const [existingKeys, pendingArticles, inventoryDepth, todayPuzzle] = await Promise.all([
+  const [existingKeys, pendingArticles, inventoryDepth, todayPuzzle, runs] = await Promise.all([
     getExistingDateKeys(game.id, startKey, endKey),
     countPendingArticlesForGame(game.id),
     countInventoryForRange(game.id, utcToday, REALITEA_READY_INVENTORY_DAYS),
     loadPuzzleForDate(game.id, utcToday),
+    listGenerationsForTopic(game.id, { limit: ADMIN_RECENT_GENERATIONS_LIMIT }),
   ]);
-  const dateKeys = buildDateRange(startKey, { endKey });
   const attemptCounts = await countAttemptsByDate(game.id, dateKeys);
 
   return {
@@ -82,22 +224,47 @@ export async function loadAdminOverview(slug: string, now = new Date()) {
     pendingArticles,
     inventoryDepth,
     todayPuzzlePresent: todayPuzzle !== null,
-    cells: buildInventoryCells({ now, existingKeys, attemptCounts }),
+    cells: buildInventoryCells({ now, existingKeys, attemptCounts, dateKeys }).reverse(),
+    generations: runs.map(serializeGeneration),
+  };
+}
+
+export async function loadAdminInventory(slug: string, now = new Date()) {
+  const game = await resolveAdminGame(slug);
+  if (!game) return null;
+
+  const utcToday = getDateKey(now, "UTC");
+  const publishedKeys = await listAllPuzzleDateKeys(game.id);
+  const dateKeys = mergeInventoryDateKeys(utcToday, publishedKeys);
+  const attemptCounts = await countAttemptsByDate(game.id, dateKeys);
+
+  return {
+    game: { id: game.id, slug: game.slug, name: game.name },
+    utcToday,
+    pacificToday: getDateKey(now, PRIMARY_PLAYER_TZ),
+    cells: buildInventoryCells({
+      now,
+      existingKeys: publishedKeys,
+      attemptCounts,
+      dateKeys,
+    }).reverse(),
   };
 }
 
 export async function loadAdminDate(slug: string, dateKey: string, now = new Date()) {
   const game = await resolveAdminGame(slug);
   if (!game) return null;
-  const [puzzle, attemptCounts] = await Promise.all([
+  const [puzzle, attemptCounts, runs] = await Promise.all([
     loadPuzzleForDate(game.id, dateKey),
     countAttemptsByDate(game.id, [dateKey]),
+    listGenerationsForTopic(game.id, { dateKey }),
   ]);
   return {
     game: { id: game.id, slug: game.slug, name: game.name },
     dateKey,
     live: isLiveDate(dateKey, now),
-    attemptCount: attemptCounts.get(dateKey) ?? 0,
+    playerCount: attemptCounts.get(dateKey) ?? 0,
+    generations: runs.map(serializeGeneration),
     puzzle: puzzle
       ? {
           id: puzzle.id,
@@ -111,7 +278,7 @@ export async function loadAdminDate(slug: string, dateKey: string, now = new Dat
           article: {
             id: puzzle.article.id,
             url: puzzle.article.url,
-            title: puzzle.article.title,
+            title: sanitizeFeedText(puzzle.article.title, MAX_FEED_TITLE_LENGTH),
             status: puzzle.article.status,
             rejectionCount: puzzle.article.rejectionCount,
             rejectionReason: puzzle.article.rejectionReason,

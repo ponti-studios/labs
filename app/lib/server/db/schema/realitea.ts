@@ -87,6 +87,7 @@ export type GenerationPromptSource = (typeof generationPromptSourceValues)[numbe
 
 export const realiteaAdminActionKindValues = [
   "preview",
+  "generate",
   "publish",
   "replace",
   "hand_edit",
@@ -100,7 +101,7 @@ export const realiteaAdminActionKindValues = [
 export type RealiteaAdminActionKind = (typeof realiteaAdminActionKindValues)[number];
 
 // ── realitea_generation_runs ─────────────────────────────────────────────────
-// Event: one LLM preview (or compare-leg). Not the published puzzle.
+// Event: one generation (or compare-leg). Not the published puzzle.
 // Retention may delete these rows; published games_puzzles.generation_run_id
 // must SET NULL so live inventory is not deleted or blocked.
 

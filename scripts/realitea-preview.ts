@@ -3,8 +3,8 @@ import path from "node:path";
 import { parseArgs } from "node:util";
 
 import { getDateKey } from "../app/lib/realitea/core/date";
-import { previewCandidates } from "../app/lib/realitea/generation/generate.server";
-import type { GenerationPreviewResult } from "../app/lib/realitea/generation/types";
+import { generateCandidates } from "../app/lib/realitea/generation/generate.server";
+import type { GenerateCandidatesResult } from "../app/lib/realitea/generation/types";
 import { runScript } from "./_shared/run-script";
 
 interface PreviewOptions {
@@ -32,7 +32,7 @@ function parsePreviewArgs(): PreviewOptions {
 
 const DIVIDER = "━".repeat(50);
 
-function printFeedSection(result: GenerationPreviewResult) {
+function printFeedSection(result: GenerateCandidatesResult) {
   console.log(`\nFEED (${result.feedItemCount} items)`);
   if (result.feedItemCount === 0) {
     console.log("  (no items retrieved)");
@@ -47,7 +47,7 @@ function printFeedSection(result: GenerationPreviewResult) {
   }
 }
 
-function printCandidatesSection(result: GenerationPreviewResult) {
+function printCandidatesSection(result: GenerateCandidatesResult) {
   console.log(`\n${DIVIDER}\n`);
   console.log(`CANDIDATES (${result.candidates.length} from LLM)\n`);
 
@@ -76,7 +76,7 @@ function printCandidatesSection(result: GenerationPreviewResult) {
   });
 }
 
-function printResultSection(result: GenerationPreviewResult) {
+function printResultSection(result: GenerateCandidatesResult) {
   console.log(DIVIDER);
   console.log("\nRESULT");
 
@@ -109,11 +109,11 @@ async function main() {
     console.log(`Using custom prompt: ${opts.promptFile}`);
   }
 
-  console.log(`\nRealiTea Preview — ${opts.dateKey}`);
+  console.log(`\nRealiTea generation — ${opts.dateKey}`);
   console.log(`Feed: ${opts.feedUrl ?? "https://realityblurb.com/feed"}`);
   console.log(DIVIDER);
 
-  const result = await previewCandidates(opts.dateKey, {
+  const result = await generateCandidates(opts.dateKey, {
     feedUrl: opts.feedUrl,
     systemPrompt,
   });

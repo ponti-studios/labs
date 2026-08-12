@@ -17,6 +17,8 @@ import { requireRealiteaAdmin } from "~/lib/realitea/admin/auth";
 import { loadAdminDate } from "~/lib/realitea/admin/inventory";
 import { isDateKey } from "~/lib/realitea/date";
 
+import { GenerationsList } from "./inventory-list";
+
 import "../realitea.css";
 
 const DEFAULT_GAME = "rhobh";
@@ -63,19 +65,30 @@ export default function RealiTeaAdminDate() {
       <SectionIntro
         eyebrow={detail.game.name}
         title={detail.dateKey}
-        description={`${detail.attemptCount} attempt${detail.attemptCount === 1 ? "" : "s"}`}
-        actions={<StatusBadge status={detail.live ? "live" : "scheduled"} config={DATE_CLASS} />}
+        description={
+          detail.puzzle
+            ? `Published puzzle · ${detail.playerCount} player${detail.playerCount === 1 ? "" : "s"} started this day`
+            : `No published puzzle · ${detail.playerCount} player${detail.playerCount === 1 ? "" : "s"} started this day`
+        }
+        actions={
+          <div className="flex items-center gap-2">
+            <StatusBadge status={detail.live ? "live" : "scheduled"} config={DATE_CLASS} />
+            <Button asChild>
+              <Link to={`/games/realitea/admin/generate?game=${detail.game.slug}`}>Generate</Link>
+            </Button>
+          </div>
+        }
       />
 
       {detail.puzzle ? (
         <Card>
           <CardHeader>
             <CardTitle>
-              {detail.puzzle.answer}{" "}
-              <Badge variant="outline">{detail.puzzle.answerType}</Badge>
+              {detail.puzzle.answer} <Badge variant="outline">{detail.puzzle.answerType}</Badge>
             </CardTitle>
             <CardDescription>
-              Prompt {detail.puzzle.promptPath ?? "unknown"} · model {detail.puzzle.model ?? "unknown"}
+              Prompt {detail.puzzle.promptPath ?? "unknown"} · model{" "}
+              {detail.puzzle.model ?? "unknown"}
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-3 text-sm">
@@ -88,7 +101,10 @@ export default function RealiTeaAdminDate() {
               <p>{detail.puzzle.detail}</p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              <a href={detail.puzzle.article.url} className="text-primary underline-offset-4 hover:underline">
+              <a
+                href={detail.puzzle.article.url}
+                className="text-primary underline-offset-4 hover:underline"
+              >
                 {detail.puzzle.article.title}
               </a>
               <StatusBadge status={detail.puzzle.article.status} config={ARTICLE_STATUS} />
@@ -99,14 +115,21 @@ export default function RealiTeaAdminDate() {
       ) : (
         <EmptyState
           title="No published puzzle"
-          description="This date has no live row. Generate from the preview studio, then publish."
+          description="This date has no published puzzle. Generate candidates, then publish."
           action={
             <Button asChild>
-              <Link to={`/games/realitea/admin/preview?game=${detail.game.slug}`}>Try generation</Link>
+              <Link to={`/games/realitea/admin/generate?game=${detail.game.slug}`}>
+                Generate
+              </Link>
             </Button>
           }
         />
       )}
+
+      <section className="flex flex-col gap-3">
+        <h2 className="text-xl font-medium">Generations</h2>
+        <GenerationsList generations={detail.generations} gameSlug={detail.game.slug} />
+      </section>
     </main>
   );
 }
