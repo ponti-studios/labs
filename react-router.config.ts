@@ -1,5 +1,13 @@
 import type { Config } from "@react-router/dev/config";
+import { sentryOnBuildEnd } from "@sentry/react-router";
 
-export default {
+const hasSentryBuildConfig = Boolean(
+  process.env.SENTRY_AUTH_TOKEN && process.env.SENTRY_ORG && process.env.SENTRY_PROJECT,
+);
+
+const config: Config = {
   ssr: true,
-} satisfies Config;
+  ...(hasSentryBuildConfig ? { buildEnd: sentryOnBuildEnd } : {}),
+};
+
+export default config;
