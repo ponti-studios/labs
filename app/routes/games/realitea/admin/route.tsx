@@ -3,7 +3,6 @@ import { SectionIntro } from "@ponti-studios/ui/layout";
 import { Button } from "@ponti-studios/ui/primitives";
 import { Link, useLoaderData, type LoaderFunctionArgs } from "react-router";
 
-import { requireRealiteaAdmin } from "~/lib/realitea/admin/auth";
 import { loadAdminOverview } from "~/lib/realitea/admin/inventory";
 
 import { GenerationsList, InventoryList } from "./inventory-list";
@@ -17,8 +16,6 @@ export function meta() {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  await requireRealiteaAdmin(request, "loader");
-
   const slug = new URL(request.url).searchParams.get("game") ?? DEFAULT_GAME;
   const overview = await loadAdminOverview(slug);
   if (!overview) {
@@ -33,15 +30,17 @@ export default function RealiTeaAdminOverview() {
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-col gap-8 p-6">
       <SectionIntro
-        eyebrow="Operator console"
         title={overview.game.name}
         description={`UTC today ${overview.utcToday} · PT today ${overview.pacificToday}`}
         actions={
-          <Button asChild>
-            <Link to={`/games/realitea/admin/generate?game=${overview.game.slug}`}>
-              Generate
-            </Link>
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button asChild variant="outline">
+              <Link to="/games/realitea/admin/topics">Articles</Link>
+            </Button>
+            <Button asChild>
+              <Link to={`/games/realitea/admin/generate?game=${overview.game.slug}`}>Generate</Link>
+            </Button>
+          </div>
         }
       />
 
@@ -59,7 +58,8 @@ export default function RealiTeaAdminOverview() {
           <div>
             <h2 className="text-lg font-medium">Inventory</h2>
             <p className="text-muted-foreground text-sm">
-              Published puzzles. Players are signed-in people who started that day — not generations.
+              Published puzzles. Players are signed-in people who started that day — not
+              generations.
             </p>
           </div>
           <Button asChild variant="outline" size="sm">

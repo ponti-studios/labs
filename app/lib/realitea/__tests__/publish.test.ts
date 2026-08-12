@@ -4,7 +4,7 @@ import { articles, db, eq, gamesPuzzles, gamesTopics, generationCandidates, gene
 import { cleanAll } from "../../../data/test-db";
 import { publishCandidate } from "../admin/publish";
 
-const ACTOR = { id: "ops-1", email: "ops@ponti.io" };
+const ACTOR = "ops-1";
 
 async function seedPublishable() {
   const [game] = await db
@@ -78,7 +78,7 @@ describe("publishCandidate", () => {
       game,
       generationId: generation.id,
       candidateId: candidate.id,
-      actor: ACTOR,
+      userId: ACTOR,
     });
     expect(result.ok).toBe(true);
     if (!result.ok) return;
@@ -120,7 +120,7 @@ describe("publishCandidate", () => {
       game,
       generationId: generation.id,
       candidateId: candidate.id,
-      actor: ACTOR,
+      userId: ACTOR,
     });
     expect(result.ok).toBe(true);
     if (!result.ok) return;
@@ -140,7 +140,7 @@ describe("publishCandidate", () => {
       game,
       generationId: generation.id,
       candidateId: candidate.id,
-      actor: ACTOR,
+      userId: ACTOR,
     });
     expect(result).toMatchObject({ ok: false, code: "NOT_PUBLISHABLE" });
   });

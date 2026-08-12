@@ -10,7 +10,13 @@ vi.mock("~/lib/server/hominem-auth", () => ({
     `https://api.ponti.io/login?next=${encodeURIComponent(returnTo)}`,
 }));
 
-import { requireRealiteaAdmin } from "../admin/auth";
+import { RouterContextProvider } from "react-router";
+
+import {
+  getRealiteaAdminActor,
+  requireRealiteaAdmin,
+  requireRealiteaAdminMiddleware,
+} from "../admin/auth";
 
 const ORIGINAL = {
   ADMIN_SECRET: process.env.ADMIN_SECRET,
@@ -81,7 +87,7 @@ describe("requireRealiteaAdmin", () => {
   it("accepts Basic + Hominem in test without an allowlist", async () => {
     getHominemUserMock.mockResolvedValue({ id: "u1", email: "ops@ponti.io" });
     const result = await requireRealiteaAdmin(adminRequest(), "loader");
-    expect(result.user.id).toBe("u1");
+    expect(result.userId).toBe("u1");
   });
 
   it("lets local development open the console without Basic or Hominem", async () => {
@@ -92,6 +98,62 @@ describe("requireRealiteaAdmin", () => {
       new Request("http://localhost:3001/games/realitea/admin"),
       "loader",
     );
-    expect(result.user.id).toBe("local-dev");
+    expect(result.userId).toBe("local-dev");
+  });
+});
+
+describe("requireRealiteaAdminMiddleware", () => {
+  beforeEach(() => {
+    process.env.ADMIN_SECRET = "secret";
+    delete process.env.REALITEA_ADMIN_EMAILS;
+    delete process.env.RAILWAY_ENVIRONMENT;
+    process.env.NODE_ENV = "test";
+    getHominemUserMock.mockReset();
+  });
+
+  afterEach(() => {
+    for (const [key, value] of Object.entries(ORIGINAL)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  });
+
+  it("sets the actor on context for a GET", async () => {
+    getHominemUserMock.mockResolvedValue({ id: "u1", email: "ops@ponti.io" });
+    const request = adminRequest();
+    const context = new RouterContextProvider();
+    await requireRealiteaAdminMiddleware(
+      {
+        context,
+        params: {},
+        pattern: "",
+        request,
+        url: new URL(request.url),
+      },
+      async () => new Response(),
+    );
+    expect(getRealiteaAdminActor(context).userId).toBe("u1");
+  });
+
+  it("returns 401 JSON for a POST without a Hominem session", async () => {
+    getHominemUserMock.mockResolvedValue(null);
+    const credentials = Buffer.from("admin:secret").toString("base64");
+    const request = new Request("https://labs.ponti.io/games/realitea/admin", {
+      method: "POST",
+      headers: { Authorization: `Basic ${credentials}` },
+    });
+    const context = new RouterContextProvider();
+    await expect(
+      requireRealiteaAdminMiddleware(
+        {
+          context,
+          params: {},
+          pattern: "",
+          request,
+          url: new URL(request.url),
+        },
+        async () => new Response(),
+      ),
+    ).rejects.toMatchObject({ status: 401 });
   });
 });

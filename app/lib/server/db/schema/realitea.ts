@@ -288,7 +288,6 @@ export const adminActions = labs.table(
     id: serial("id").primaryKey(),
     at: timestamp("at").defaultNow().notNull(),
     hominemUserId: text("hominem_user_id").notNull(),
-    email: text("email"),
     kind: text("kind", { enum: realiteaAdminActionKindValues }).notNull(),
     gamesTopicId: integer("games_topic_id")
       .notNull()

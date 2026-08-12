@@ -2,7 +2,6 @@ import { SectionIntro } from "@ponti-studios/ui/layout";
 import { Button } from "@ponti-studios/ui/primitives";
 import { Link, useLoaderData, type LoaderFunctionArgs } from "react-router";
 
-import { requireRealiteaAdmin } from "~/lib/realitea/admin/auth";
 import { loadAdminInventory } from "~/lib/realitea/admin/inventory";
 
 import { InventoryList } from "./inventory-list";
@@ -16,8 +15,6 @@ export function meta() {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  await requireRealiteaAdmin(request, "loader");
-
   const slug = new URL(request.url).searchParams.get("game") ?? DEFAULT_GAME;
   const inventory = await loadAdminInventory(slug);
   if (!inventory) {

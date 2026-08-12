@@ -13,7 +13,6 @@ import {
 } from "@ponti-studios/ui/primitives";
 import { Link, useLoaderData, type LoaderFunctionArgs } from "react-router";
 
-import { requireRealiteaAdmin } from "~/lib/realitea/admin/auth";
 import { loadAdminDate } from "~/lib/realitea/admin/inventory";
 import { isDateKey } from "~/lib/realitea/date";
 
@@ -40,8 +39,6 @@ export function meta() {
 }
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  await requireRealiteaAdmin(request, "loader");
-
   const dateKey = params.date;
   if (!dateKey || !isDateKey(dateKey)) {
     throw Response.json({ error: "Invalid date" }, { status: 400 });

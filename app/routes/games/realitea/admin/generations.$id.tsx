@@ -8,7 +8,7 @@ import {
   type LoaderFunctionArgs,
 } from "react-router";
 
-import { requireRealiteaAdmin } from "~/lib/realitea/admin/auth";
+import { getRealiteaAdminActor } from "~/lib/realitea/admin/auth";
 import { loadAdminGeneration, resolveAdminGame } from "~/lib/realitea/admin/inventory";
 import { publishCandidate } from "~/lib/realitea/admin/publish";
 import { assertSameOrigin } from "~/lib/server/origin";
@@ -30,8 +30,6 @@ export function meta() {
 }
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  await requireRealiteaAdmin(request, "loader");
-
   const generationId = Number.parseInt(params.id ?? "", 10);
   if (!Number.isInteger(generationId) || generationId < 1) {
     throw Response.json({ error: "Invalid generation" }, { status: 400 });
@@ -43,11 +41,11 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   return detail;
 }
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ request, params, context }: ActionFunctionArgs) {
   const originDenied = assertSameOrigin(request);
   if (originDenied) return originDenied;
 
-  const auth = await requireRealiteaAdmin(request, "action");
+  const auth = getRealiteaAdminActor(context);
   const generationId = Number.parseInt(params.id ?? "", 10);
   const form = await request.formData();
   const candidateId = Number.parseInt(String(form.get("candidateId") ?? ""), 10);
@@ -64,7 +62,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     game,
     generationId,
     candidateId,
-    actor: auth.user,
+    userId: auth.userId,
   });
   if (!result.ok) {
     return Response.json({ ok: false as const, error: result.error }, { status: 400 });

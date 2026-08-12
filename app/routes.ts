@@ -1,4 +1,4 @@
-import { index, route, type RouteConfig } from "@react-router/dev/routes";
+import { index, layout, prefix, route, type RouteConfig } from "@react-router/dev/routes";
 
 const homeRoutes = [index("routes/home.tsx")] satisfies RouteConfig;
 
@@ -54,17 +54,25 @@ const featureRoutes = [
   ]),
 
   // Games
-  route("/games/realitea", "routes/games/realitea/route.tsx"),
-  route("/games/realitea/history", "routes/games/realitea/history.tsx"),
-  route("/games/realitea/admin", "routes/games/realitea/admin/route.tsx"),
-  route("/games/realitea/admin/inventory", "routes/games/realitea/admin/inventory.tsx"),
-  route("/games/realitea/admin/generate", "routes/games/realitea/admin/generate.tsx"),
-  route("/games/realitea/admin/generate/events", "routes/games/realitea/admin/generate.events.ts"),
-  route("/games/realitea/admin/preview", "routes/games/realitea/admin/preview-redirect.ts"),
-  route("/games/realitea/admin/preview/events", "routes/games/realitea/admin/preview.events.ts"),
-  route("/games/realitea/admin/generations/:id", "routes/games/realitea/admin/generations.$id.tsx"),
-  route("/games/realitea/admin/dates/:date", "routes/games/realitea/admin/dates.$date.tsx"),
-  route("/games/realitea/:date", "routes/games/realitea/date.$date.tsx"),
+  ...prefix("/games/realitea", [
+    layout("routes/games/realitea/brand.tsx", [
+      index("routes/games/realitea/route.tsx"),
+      route("history", "routes/games/realitea/history.tsx"),
+      route("admin", "routes/games/realitea/admin/layout.tsx", [
+        index("routes/games/realitea/admin/route.tsx"),
+        route("inventory", "routes/games/realitea/admin/inventory.tsx"),
+        route("generate", "routes/games/realitea/admin/generate.tsx"),
+        route("generate/events", "routes/games/realitea/admin/generate.events.ts"),
+        route("preview", "routes/games/realitea/admin/preview-redirect.ts"),
+        route("preview/events", "routes/games/realitea/admin/preview.events.ts"),
+        route("topics", "routes/games/realitea/admin/topics.tsx"),
+        route("topics/:slug", "routes/games/realitea/admin/topics.$slug.tsx"),
+        route("generations/:id", "routes/games/realitea/admin/generations.$id.tsx"),
+        route("dates/:date", "routes/games/realitea/admin/dates.$date.tsx"),
+      ]),
+      route(":date", "routes/games/realitea/date.$date.tsx"),
+    ]),
+  ]),
   route("/games/cards", "routes/games/cards.tsx"),
   route("/games/tetris", "routes/games/tetris.tsx"),
 ] satisfies RouteConfig;

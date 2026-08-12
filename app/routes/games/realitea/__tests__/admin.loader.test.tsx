@@ -2,25 +2,25 @@ import type { LoaderFunctionArgs } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const {
-  requireRealiteaAdminMock,
   loadAdminOverviewMock,
   loadAdminInventoryMock,
   loadAdminGenerationMock,
+  loadAdminTopicsMock,
 } = vi.hoisted(() => ({
-  requireRealiteaAdminMock: vi.fn(),
   loadAdminOverviewMock: vi.fn(),
   loadAdminInventoryMock: vi.fn(),
   loadAdminGenerationMock: vi.fn(),
-}));
-
-vi.mock("~/lib/realitea/admin/auth", () => ({
-  requireRealiteaAdmin: requireRealiteaAdminMock,
+  loadAdminTopicsMock: vi.fn(),
 }));
 
 vi.mock("~/lib/realitea/admin/inventory", () => ({
   loadAdminOverview: loadAdminOverviewMock,
   loadAdminInventory: loadAdminInventoryMock,
   loadAdminGeneration: loadAdminGenerationMock,
+}));
+
+vi.mock("~/lib/realitea/admin/articles.server", () => ({
+  loadAdminTopics: loadAdminTopicsMock,
 }));
 
 function createLoaderArgs(url: string): LoaderFunctionArgs {
@@ -34,14 +34,25 @@ function createLoaderArgs(url: string): LoaderFunctionArgs {
   } as LoaderFunctionArgs;
 }
 
+describe("RealiTea admin topics loader", () => {
+  beforeEach(() => {
+    loadAdminTopicsMock.mockReset();
+  });
+
+  it("loads topics for an authenticated admin", async () => {
+    loadAdminTopicsMock.mockResolvedValue([{ slug: "rhobh", counts: { pending: 2 } }]);
+    const { loader } = await import("../admin/topics");
+    const result = await loader();
+    expect(result).toEqual({ topics: [{ slug: "rhobh", counts: { pending: 2 } }] });
+  });
+});
+
 describe("RealiTea admin inventory loader", () => {
   beforeEach(() => {
-    requireRealiteaAdminMock.mockReset();
     loadAdminInventoryMock.mockReset();
   });
 
   it("loads the full inventory for an authenticated admin", async () => {
-    requireRealiteaAdminMock.mockResolvedValue({ user: { id: "u1", email: "ops@ponti.io" } });
     loadAdminInventoryMock.mockResolvedValue({ game: { slug: "rhobh" }, cells: [] });
     const { loader } = await import("../admin/inventory");
     const result = await loader(createLoaderArgs("https://labs.ponti.io/games/realitea/admin/inventory"));
@@ -52,12 +63,10 @@ describe("RealiTea admin inventory loader", () => {
 
 describe("RealiTea admin generation loader", () => {
   beforeEach(() => {
-    requireRealiteaAdminMock.mockReset();
     loadAdminGenerationMock.mockReset();
   });
 
   it("loads a generation for an authenticated admin", async () => {
-    requireRealiteaAdminMock.mockResolvedValue({ user: { id: "u1", email: "ops@ponti.io" } });
     loadAdminGenerationMock.mockResolvedValue({
       game: { slug: "rhobh" },
       generation: { id: 9, candidates: [] },
@@ -71,7 +80,6 @@ describe("RealiTea admin generation loader", () => {
   });
 
   it("throws 404 when the generation is missing", async () => {
-    requireRealiteaAdminMock.mockResolvedValue({ user: { id: "u1", email: "ops@ponti.io" } });
     loadAdminGenerationMock.mockResolvedValue(null);
     const { loader } = await import("../admin/generations.$id");
     const args = createLoaderArgs("https://labs.ponti.io/games/realitea/admin/generations/9");
@@ -82,21 +90,10 @@ describe("RealiTea admin generation loader", () => {
 
 describe("RealiTea admin overview loader", () => {
   beforeEach(() => {
-    requireRealiteaAdminMock.mockReset();
     loadAdminOverviewMock.mockReset();
   });
 
-  it("does not load inventory when auth throws", async () => {
-    requireRealiteaAdminMock.mockRejectedValue(new Response("Unauthorized", { status: 401 }));
-    const { loader } = await import("../admin/route");
-    await expect(
-      loader(createLoaderArgs("https://labs.ponti.io/games/realitea/admin")),
-    ).rejects.toMatchObject({ status: 401 });
-    expect(loadAdminOverviewMock).not.toHaveBeenCalled();
-  });
-
   it("loads the inventory overview for an authenticated admin", async () => {
-    requireRealiteaAdminMock.mockResolvedValue({ user: { id: "u1", email: "ops@ponti.io" } });
     loadAdminOverviewMock.mockResolvedValue({ game: { slug: "rhobh" }, cells: [] });
     const { loader } = await import("../admin/route");
     const result = await loader(createLoaderArgs("https://labs.ponti.io/games/realitea/admin"));
@@ -105,7 +102,6 @@ describe("RealiTea admin overview loader", () => {
   });
 
   it("throws 404 when no topic exists", async () => {
-    requireRealiteaAdminMock.mockResolvedValue({ user: { id: "u1", email: "ops@ponti.io" } });
     loadAdminOverviewMock.mockResolvedValue(null);
     const { loader } = await import("../admin/route");
     await expect(loader(createLoaderArgs("https://labs.ponti.io/games/realitea/admin"))).rejects.toMatchObject({

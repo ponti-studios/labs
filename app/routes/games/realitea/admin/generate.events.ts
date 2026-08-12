@@ -1,6 +1,6 @@
 import type { ActionFunctionArgs } from "react-router";
 
-import { requireRealiteaAdmin } from "~/lib/realitea/admin/auth";
+import { getRealiteaAdminActor } from "~/lib/realitea/admin/auth";
 import { resolveAdminGame } from "~/lib/realitea/admin/inventory";
 import { readGenerateForm } from "~/lib/realitea/admin/generate-form";
 import { createGeneration, type GenerateProgressEvent } from "~/lib/realitea/admin/generate";
@@ -8,11 +8,11 @@ import { assertSameOrigin } from "~/lib/server/origin";
 
 const DEFAULT_GAME = "rhobh";
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ request, context }: ActionFunctionArgs) {
   const originDenied = assertSameOrigin(request);
   if (originDenied) return originDenied;
 
-  const auth = await requireRealiteaAdmin(request, "action");
+  const auth = getRealiteaAdminActor(context);
   const form = await request.formData();
   const slug = String(form.get("game") ?? DEFAULT_GAME);
   const game = await resolveAdminGame(slug);
@@ -29,7 +29,7 @@ export async function action({ request }: ActionFunctionArgs) {
         await new Promise<void>((resolve) => setTimeout(resolve, 0));
       };
       try {
-        const result = await createGeneration(game, input, auth.user, (event) => send(event));
+        const result = await createGeneration(game, input, auth.userId, (event) => send(event));
         await send({ type: "result", result });
       } catch (error) {
         await send({
