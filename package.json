@@ -30,7 +30,7 @@
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.1091.0",
+    "@aws-sdk/client-s3": "^3.1106.0",
     "@mozilla/readability": "^0.6.0",
     "@openrouter/sdk": "^1.2.6",
     "@ponti-studios/auth": "^0.1.1",
