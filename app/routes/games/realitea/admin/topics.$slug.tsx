@@ -55,10 +55,14 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
   const slug = params.slug ?? "";
   const result = await refreshTopicArticlesBySlug(slug, auth.userId);
   if (!result.ok) {
-    const status = result.error === "Topic not found" ? 404 : 400;
-    return Response.json({ ok: false as const, error: result.error }, { status });
+    return { ok: false as const, error: result.error };
   }
-  return { ok: true as const, ...result };
+  return {
+    ok: true as const,
+    inserted: result.inserted,
+    scanned: result.scanned,
+    expired: result.expired,
+  };
 }
 
 function formatPublishedAt(iso: string | null) {

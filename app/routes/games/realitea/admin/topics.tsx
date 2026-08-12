@@ -34,10 +34,15 @@ export async function action({ request, context }: ActionFunctionArgs) {
   const slug = String(form.get("slug") ?? "");
   const result = await refreshTopicArticlesBySlug(slug, auth.userId);
   if (!result.ok) {
-    const status = result.error === "Topic not found" ? 404 : 400;
-    return Response.json({ ok: false as const, error: result.error }, { status });
+    return { ok: false as const, error: result.error, slug };
   }
-  return { ...result, ok: true, slug };
+  return {
+    ok: true as const,
+    slug,
+    inserted: result.inserted,
+    scanned: result.scanned,
+    expired: result.expired,
+  };
 }
 
 function RefreshButton({ slug }: { slug: string }) {

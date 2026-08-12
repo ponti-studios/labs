@@ -25,7 +25,7 @@ export function RealiTeaGameHeader({
         <img src="/experiments/logo.realitea.png" alt="RealiTea" className={styles.logo} />
         {topics.length > 1 && (
           <div className={styles.topicControl}>
-            <Select value={gameSlug} onValueChange={onTopicChange}>
+            <Select value={gameSlug} onValueChange={(value) => value && onTopicChange?.(value)}>
               <SelectTrigger aria-label="Topic" className={styles.topicSelect}>
                 <SelectValue />
               </SelectTrigger>

@@ -170,7 +170,7 @@ export default function PandemicWavesPage() {
     <div className="space-y-6">
       <div className="flex items-center gap-3">
         <label className="ui-data-label">Metric</label>
-        <Select value={metric} onValueChange={setMetric}>
+        <Select value={metric} onValueChange={(value) => value && setMetric(value)}>
           <SelectTrigger className="border-border bg-card text-foreground h-7 w-52 rounded text-xs">
             <SelectValue>{(v: string | null) => metricLabels[v ?? ""] ?? v ?? ""}</SelectValue>
           </SelectTrigger>
