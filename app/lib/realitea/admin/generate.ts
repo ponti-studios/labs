@@ -1,8 +1,6 @@
 import { DEFAULT_TEXT_MODEL, getConfiguredTextModel } from "~/lib/server/ai";
 import { and, db, eq, generationCandidates, generationRuns, lt } from "~/lib/server/db";
 import type { Article, GamesTopic } from "~/lib/server/db";
-import type { HominemUser } from "~/lib/server/hominem-auth";
-
 import { GenerateReasonType } from "./generate-copy";
 import { isDateKey, parseDate } from "../core/date";
 import { MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "../generation/feed-text";
@@ -185,7 +183,7 @@ export type GenerateErr = {
 export async function createGeneration(
   game: GamesTopic,
   input: GenerateRequest,
-  actor: HominemUser,
+  userId: string,
   onProgress?: (event: GenerateProgressEvent) => void | Promise<void>,
 ): Promise<GenerateOk | GenerateErr> {
   const progress = async (event: GenerateProgressEvent) => {
@@ -211,7 +209,7 @@ export async function createGeneration(
   if (!prompt.ok) return prompt;
 
   const hourAgo = new Date(Date.now() - 60 * 60 * 1000);
-  const recent = await countRecentGenerateActions(actor.id, hourAgo);
+  const recent = await countRecentGenerateActions(userId, hourAgo);
   if (recent >= GENERATION_RATE_LIMIT) {
     return { ok: false, code: "RATE_LIMITED", error: "generation rate limit is 20 per hour" };
   }
@@ -265,8 +263,7 @@ export async function createGeneration(
       feedItemCount: source.feedItems.length,
       publishable: source.publishable,
       compareGroupId: input.compareGroupId,
-      createdByHominemUserId: actor.id,
-      createdByEmail: actor.email ?? null,
+      createdByHominemUserId: userId,
     })
     .returning();
   if (!run) return { ok: false, code: "INVALID_SOURCE", error: "failed to create generation" };
@@ -349,8 +346,7 @@ export async function createGeneration(
     .where(eq(generationRuns.id, run.id));
 
   await recordAdminAction({
-    hominemUserId: actor.id,
-    email: actor.email,
+    hominemUserId: userId,
     kind: "generate",
     gamesTopicId: game.id,
     dateUtc: input.dateKey,

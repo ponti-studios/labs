@@ -3,7 +3,6 @@ import { SectionIntro } from "@ponti-studios/ui/layout";
 import { useState } from "react";
 import { Link, useLoaderData, type LoaderFunctionArgs } from "react-router";
 
-import { requireRealiteaAdmin } from "~/lib/realitea/admin/auth";
 import {
   GENERATION_PROMPT_FILES,
   studioModelAllowlist,
@@ -31,8 +30,6 @@ export function meta() {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  await requireRealiteaAdmin(request, "loader");
-
   const slug = new URL(request.url).searchParams.get("game") ?? DEFAULT_GAME;
   const game = await resolveAdminGame(slug);
   if (!game) throw Response.json({ error: "No active RealiTea topic found" }, { status: 404 });

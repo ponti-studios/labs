@@ -284,6 +284,40 @@ export async function expireStaleArticles(game: GamesTopic, now: Date): Promise<
   return result.length;
 }
 
+export async function countArticlesByStatus(
+  topicId: number,
+): Promise<Record<Article["status"], number>> {
+  const counts: Record<Article["status"], number> = {
+    pending: 0,
+    used: 0,
+    rejected: 0,
+    expired: 0,
+  };
+  const rows = await db
+    .select({ status: articles.status, value: count() })
+    .from(articles)
+    .where(eq(articles.gamesTopicId, topicId))
+    .groupBy(articles.status);
+  for (const row of rows) {
+    counts[row.status] = row.value;
+  }
+  return counts;
+}
+
+export async function listArticlesForTopic(
+  topicId: number,
+  options: { status?: Article["status"]; limit?: number } = {},
+): Promise<Article[]> {
+  const filters = [eq(articles.gamesTopicId, topicId)];
+  if (options.status) filters.push(eq(articles.status, options.status));
+  return db
+    .select()
+    .from(articles)
+    .where(and(...filters))
+    .orderBy(desc(articles.publishedAt), desc(articles.id))
+    .limit(options.limit ?? 100);
+}
+
 /** Count of pending (usable) articles for a game — the ingest backlog depth. */
 export async function countPendingArticlesForGame(gameId: number): Promise<number> {
   const rows = await db
@@ -485,7 +519,6 @@ export async function backfillPuzzlePublishedAt(): Promise<number> {
 
 export async function recordAdminAction(input: {
   hominemUserId?: string;
-  email?: string | null;
   kind: RealiteaAdminActionKind;
   gamesTopicId: number;
   dateUtc?: string;
@@ -495,7 +528,6 @@ export async function recordAdminAction(input: {
 }): Promise<void> {
   await db.insert(adminActions).values({
     hominemUserId: input.hominemUserId ?? "system:generate",
-    email: input.email ?? null,
     kind: input.kind,
     gamesTopicId: input.gamesTopicId,
     dateUtc: input.dateUtc,

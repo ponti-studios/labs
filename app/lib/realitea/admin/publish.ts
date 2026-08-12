@@ -10,8 +10,6 @@ import {
   puzzleRevisions,
 } from "~/lib/server/db";
 import type { GamesTopic } from "~/lib/server/db";
-import type { HominemUser } from "~/lib/server/hominem-auth";
-
 import { explainGenerateReason } from "./generate-copy";
 import { parseDate } from "../core/date";
 import { normalizeGuess } from "../core/rules";
@@ -39,7 +37,7 @@ export async function publishCandidate(input: {
   game: GamesTopic;
   generationId: number;
   candidateId: number;
-  actor: HominemUser;
+  userId: string;
 }): Promise<PublishResult> {
   const [generation] = await db
     .select()
@@ -124,7 +122,7 @@ export async function publishCandidate(input: {
       puzzleId: existing.id,
       snapshot: existing,
       attemptsSnapshot: attemptRows,
-      replacedByHominemUserId: input.actor.id,
+      replacedByHominemUserId: input.userId,
     });
     await db.update(gamesPuzzles).set(puzzleValues).where(eq(gamesPuzzles.id, existing.id));
     puzzleId = existing.id;
@@ -149,8 +147,7 @@ export async function publishCandidate(input: {
     .set({ selectedIndex: candidate.ordinal })
     .where(eq(generationRuns.id, generation.id));
   await recordAdminAction({
-    hominemUserId: input.actor.id,
-    email: input.actor.email,
+    hominemUserId: input.userId,
     kind: replaced ? "replace" : "publish",
     gamesTopicId: input.game.id,
     dateUtc: dateKey,

@@ -1,11 +1,18 @@
-import { redirect } from "react-router";
+import {
+  createContext,
+  redirect,
+  type MiddlewareFunction,
+  type RouterContextProvider,
+} from "react-router";
 
 import { requireAdminAuth } from "~/lib/server/admin-auth";
-import { buildHominemLoginUrl, getHominemUser, type HominemUser } from "~/lib/server/hominem-auth";
+import { buildHominemLoginUrl, getHominemUser } from "~/lib/server/hominem-auth";
 
 export type RealiteaAdminActor = {
-  user: HominemUser;
+  userId: string;
 };
+
+export const realiteaAdminActorContext = createContext<RealiteaAdminActor>();
 
 function allowlistRequired() {
   return process.env.NODE_ENV === "production" || Boolean(process.env.RAILWAY_ENVIRONMENT);
@@ -30,7 +37,7 @@ export async function requireRealiteaAdmin(
 ): Promise<RealiteaAdminActor> {
   if (isLocalDev()) {
     const user = await getHominemUser(request);
-    return { user: user ?? { id: "local-dev", email: "dev@localhost" } };
+    return { userId: user?.id ?? "local-dev" };
   }
 
   const denied = requireAdminAuth(request);
@@ -54,5 +61,19 @@ export async function requireRealiteaAdmin(
     }
   }
 
-  return { user };
+  return { userId: user.id };
+}
+
+function requestKind(request: Request): "loader" | "action" {
+  return request.method === "GET" || request.method === "HEAD" ? "loader" : "action";
+}
+
+/** Parent-route middleware: runs before child loaders/actions and short-circuits on deny. */
+export const requireRealiteaAdminMiddleware: MiddlewareFunction = async ({ request, context }) => {
+  const actor = await requireRealiteaAdmin(request, requestKind(request));
+  context.set(realiteaAdminActorContext, actor);
+};
+
+export function getRealiteaAdminActor(context: Readonly<RouterContextProvider>): RealiteaAdminActor {
+  return context.get(realiteaAdminActorContext);
 }

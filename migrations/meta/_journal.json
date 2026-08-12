@@ -134,6 +134,13 @@
       "when": 1786564895918,
       "tag": "0018_short_killer_shrike",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1786574680476,
+      "tag": "0019_little_franklin_storm",
+      "breakpoints": true
     }
   ]
 }
