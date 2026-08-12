@@ -239,7 +239,7 @@ export default function OutlierDetectionPage() {
     <div className="space-y-6">
       <div className="flex items-center gap-3">
         <label className="ui-data-label">Metric</label>
-        <Select value={selectedMetric} onValueChange={setSelectedMetric}>
+        <Select value={selectedMetric} onValueChange={(value) => value && setSelectedMetric(value)}>
           <SelectTrigger className="border-border bg-card text-foreground h-7 w-52 rounded text-xs">
             <SelectValue>
               {(v: string | null) => metrics.find((m) => m.value === v)?.label ?? v ?? ""}
