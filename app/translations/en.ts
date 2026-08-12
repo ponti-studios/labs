@@ -993,6 +993,19 @@ export const STUDIO_TRANSLATIONS_EN = {
       cta: "Play today",
       live: "Live",
     },
+    career: {
+      eyebrow: "Featured product",
+      title: "Career",
+      description: "Your resume crushes a decade of work into two pages. Career keeps the whole story.",
+      cta: "Visit site",
+      live: "Live",
+    },
+    omiro: {
+      eyebrow: "In development",
+      title: "Omiro",
+      description: "Your notes, tasks, and calendar don't talk to each other. Omiro makes them one connected app.",
+      cta: "Learn more",
+    },
     lab: {
       title: "Playground",
       description: "practice and play.",
