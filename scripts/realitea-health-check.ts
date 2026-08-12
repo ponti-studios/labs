@@ -6,7 +6,7 @@ import { getDateKey } from "../app/lib/realitea/date";
 import { getErrorMessage } from "../app/lib/errors";
 import {
   countInventoryForRange,
-  getGameBySlug,
+  getActiveGames,
   loadPuzzleForDate,
 } from "../app/lib/realitea/repository";
 import { createLogger } from "../app/lib/logger.server";
@@ -14,7 +14,6 @@ import { REALITEA_READY_INVENTORY_DAYS } from "../app/lib/realitea/validation";
 import { LabyrinthServerEnv } from "../app/lib/server/env";
 
 const logger = createLogger();
-const RHOBH_GAME_SLUG = "rhobh";
 
 export type HealthStatus = "OK" | "DEGRADED";
 
@@ -56,37 +55,25 @@ async function main() {
     timestamp: now.toISOString(),
   });
 
-  const game = await getGameBySlug(RHOBH_GAME_SLUG);
-  if (!game) throw new Error(`Game not found: ${RHOBH_GAME_SLUG}`);
-
-  const [todaysPuzzle, inventoryDepth] = await Promise.all([
-    loadPuzzleForDate(game.id, dateKey),
-    countInventoryForRange(game.id, dateKey, REALITEA_READY_INVENTORY_DAYS),
-  ]);
-
-  // "any puzzle exists" is approximated by checking today + recent inventory;
-  // true existence check only needed if inventory is also zero
-  const hasAnyPuzzle = !!todaysPuzzle || inventoryDepth > 0;
-
-  const result = computeHealthStatus(inventoryDepth, !!todaysPuzzle, hasAnyPuzzle);
-
-  if (result.issues.length > 0) {
+  const games = await getActiveGames();
+  if (games.length === 0) throw new Error("No active RealiTea games found");
+  let degraded = false;
+  for (const game of games) {
+    const [todaysPuzzle, inventoryDepth] = await Promise.all([
+      loadPuzzleForDate(game.id, dateKey),
+      countInventoryForRange(game.id, dateKey, REALITEA_READY_INVENTORY_DAYS),
+    ]);
+    const result = computeHealthStatus(inventoryDepth, !!todaysPuzzle, !!todaysPuzzle || inventoryDepth > 0);
+    if (result.status !== "OK") degraded = true;
     for (const issue of result.issues) {
-      healthLogger.warn({ event: "[HEALTH_ISSUE]" }, issue);
+      healthLogger.warn({ event: "[HEALTH_ISSUE]", game: game.slug }, issue);
     }
+    healthLogger.info(
+      { event: "[HEALTH_GAME_COMPLETE]", game: game.slug, status: result.status, hasTodaysPuzzle: !!todaysPuzzle, inventoryDepth },
+      `${game.slug} health: ${result.status}`,
+    );
   }
-
-  healthLogger.info(
-    {
-      event: "[HEALTH_CHECK_COMPLETE]",
-      status: result.status,
-      hasTodaysPuzzle: !!todaysPuzzle,
-      inventoryDepth,
-    },
-    `health check: ${result.status}`,
-  );
-
-  if (result.status !== "OK") process.exit(1);
+  if (degraded) process.exit(1);
 }
 
 if (!process.env.VITEST) {

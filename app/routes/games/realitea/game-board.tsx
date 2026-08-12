@@ -23,6 +23,7 @@ export interface RealiTeaGameBoardProps {
   puzzle: PublicDailyPuzzle;
   initialGuesses: readonly RealiteaGuess[];
   loginUrl: string;
+  gameSlug: string;
 }
 
 /**
@@ -30,9 +31,9 @@ export interface RealiTeaGameBoardProps {
  * specific-date route. Feature sections live in focused components so this
  * file owns only game orchestration and composition.
  */
-export function RealiTeaGameBoard({ puzzle, initialGuesses, loginUrl }: RealiTeaGameBoardProps) {
+export function RealiTeaGameBoard({ puzzle, initialGuesses, loginUrl, gameSlug }: RealiTeaGameBoardProps) {
   const [showInstructions] = useState(false);
-  const game = useRealiTeaGame({ puzzle, initialGuesses });
+  const game = useRealiTeaGame({ puzzle, initialGuesses, gameSlug });
   const keyboardState = useMemo(() => getKeyboardState(game.guesses), [game.guesses]);
   const shouldShowClue = !game.isGameOver && game.guesses.length === MAX_GUESSES - 1;
 
@@ -56,7 +57,7 @@ export function RealiTeaGameBoard({ puzzle, initialGuesses, loginUrl }: RealiTea
     <div
       className={`${styles.shell} mx-auto flex w-full max-w-lg flex-1 flex-col gap-3 px-4 pt-2 sm:gap-6 sm:pt-4`}
     >
-      <RealiTeaGameHeader isFallback={puzzle.isFallback} />
+      <RealiTeaGameHeader isFallback={puzzle.isFallback} gameSlug={gameSlug} />
 
       {showInstructions && (
         <Card>

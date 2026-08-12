@@ -16,8 +16,10 @@ import { labs } from "./base";
 
 // ── games ────────────────────────────────────────────────────────────────────
 // Entity: a durable puzzle game/show (rhobh, vanderpump, ...). Owns the
-// generation config that used to be hardcoded per-app (system prompt,
-// answer length, cooldown window, article staleness cutoff).
+// generation configuration for the current editorial profile. RealiTea's
+// answer length is a product invariant (five letters); answer_length remains
+// for compatibility with the generalized schema but generation must not vary
+// it by genre or source.
 
 export const games = labs.table("games", {
   id: serial("id").primaryKey(),
@@ -81,6 +83,7 @@ export const articles = labs.table(
     url: text("url").notNull().unique(),
     title: text("title").notNull(),
     description: text("description"),
+    articleText: text("article_text"),
     imageUrl: text("image_url"),
     publishedAt: timestamp("published_at"),
     fetchedAt: timestamp("fetched_at").defaultNow().notNull(),

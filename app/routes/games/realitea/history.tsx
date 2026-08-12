@@ -21,6 +21,7 @@ import { resolveReturnTo } from "./return-to.server";
 import "./realitea.css";
 
 const UNPLAYED_PAGE_SIZE = 10;
+const DEFAULT_REALITEA_GAME_SLUG = "rhobh";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const loginUrl = buildHominemLoginUrl(resolveReturnTo(request));
@@ -33,15 +34,18 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const pageParam = Number.parseInt(url.searchParams.get("page") ?? "1", 10);
   const page = Number.isFinite(pageParam) && pageParam >= 1 ? pageParam : 1;
+  const gameSlug = url.searchParams.get("game") ?? DEFAULT_REALITEA_GAME_SLUG;
 
-  const history = await loadPuzzleHistory(user.id, { page });
+  const history = gameSlug === DEFAULT_REALITEA_GAME_SLUG
+    ? await loadPuzzleHistory(user.id, { page })
+    : await loadPuzzleHistory(user.id, { page }, gameSlug);
 
-  return Response.json({ signedIn: true as const, loginUrl, history });
+  return Response.json({ signedIn: true as const, loginUrl, history, gameSlug });
 }
 
 export type LoaderData =
   | { signedIn: false; loginUrl: string }
-  | { signedIn: true; loginUrl: string; history: PuzzleHistoryPage };
+  | { signedIn: true; loginUrl: string; history: PuzzleHistoryPage; gameSlug: string };
 
 export function meta() {
   return [
@@ -74,11 +78,12 @@ function formatShortDate(dateKey: string) {
 
 interface UnplayedSheetProps {
   dateKeys: readonly string[];
+  gameSlug: string;
 }
 
 /** Newest-first, paginated locally — the loader already bounds this to a
  *  90-day lookback window, so no extra data fetch is needed to page it. */
-function UnplayedSheet({ dateKeys }: UnplayedSheetProps) {
+function UnplayedSheet({ dateKeys, gameSlug }: UnplayedSheetProps) {
   const [page, setPage] = useState(0);
   const newestFirst = [...dateKeys].reverse();
   const totalPages = Math.max(1, Math.ceil(newestFirst.length / UNPLAYED_PAGE_SIZE));
@@ -105,7 +110,7 @@ function UnplayedSheet({ dateKeys }: UnplayedSheetProps) {
             {shown.map((dateKey) => (
               <li key={dateKey}>
                 <Link
-                  to={`/games/realitea/${dateKey}`}
+                  to={`/games/realitea/${dateKey}?game=${encodeURIComponent(gameSlug)}`}
                   className="hover:bg-muted/50 flex items-center justify-between rounded-md px-2 py-3 text-sm transition-colors"
                 >
                   {formatDate(dateKey)}
@@ -221,7 +226,7 @@ export default function RealiTeaHistoryRoute() {
     );
   }
 
-  const { history } = data;
+  const { history, gameSlug } = data;
   const hasPlayed = history.stats.gamesPlayed > 0;
 
   return (
@@ -231,7 +236,7 @@ export default function RealiTeaHistoryRoute() {
           <p className="ui-eyebrow">RealiTea</p>
           <h1 className="display-2">Your history</h1>
         </div>
-        <UnplayedSheet dateKeys={history.playableUnplayedDateKeys} />
+        <UnplayedSheet dateKeys={history.playableUnplayedDateKeys} gameSlug={gameSlug} />
       </header>
 
       {hasPlayed && (
@@ -260,7 +265,7 @@ export default function RealiTeaHistoryRoute() {
           }
           action={
             <Button asChild variant="default">
-              <Link to="/games/realitea">Play today&apos;s puzzle</Link>
+              <Link to={`/games/realitea?game=${encodeURIComponent(gameSlug)}`}>Play today&apos;s puzzle</Link>
             </Button>
           }
         />
@@ -271,7 +276,7 @@ export default function RealiTeaHistoryRoute() {
             return (
               <li key={row.dateKey}>
                 <Link
-                  to={`/games/realitea/${row.dateKey}`}
+                  to={`/games/realitea/${row.dateKey}?game=${encodeURIComponent(gameSlug)}`}
                   className="hover:bg-muted/50 flex items-center gap-4 rounded-md px-2 py-4 transition-colors"
                 >
                   {lastGuess && (

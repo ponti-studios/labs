@@ -2,7 +2,7 @@ import type { ActionFunctionArgs } from "react-router";
 import { z } from "zod";
 
 import { getHominemUser } from "~/lib/server/hominem-auth";
-import { evaluateGuessServer } from "~/lib/realitea/puzzle.server";
+import { DEFAULT_REALITEA_GAME_SLUG, evaluateGuessServer } from "~/lib/realitea/puzzle.server";
 
 const payloadSchema = z.object({
   dateKey: z.string().min(1),
@@ -14,6 +14,7 @@ const payloadSchema = z.object({
     .max(6)
     .default([]),
   word: z.string().min(1).max(64),
+  gameSlug: z.string().min(1).max(80).default(DEFAULT_REALITEA_GAME_SLUG),
 });
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -35,6 +36,7 @@ export async function action({ request }: ActionFunctionArgs) {
     parsed.word,
     user,
     parsed.previousGuesses.length,
+    parsed.gameSlug,
   );
 
   return Response.json(result);

@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import {
   isRouteErrorResponse,
   useLoaderData,
+  useSearchParams,
   useRevalidator,
   type LoaderFunctionArgs,
 } from "react-router";
@@ -22,10 +23,12 @@ import { parseTzCookie } from "./tz-cookie.server";
 import "./realitea.css";
 
 const TZ_COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // one year in seconds
+const DEFAULT_REALITEA_GAME_SLUG = "rhobh";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const timeZone = parseTzCookie(request.headers.get("Cookie") ?? "") ?? "UTC";
-  const envelope = await loadActivePublicPuzzle(new Date(), timeZone);
+  const gameSlug = new URL(request.url).searchParams.get("game") ?? DEFAULT_REALITEA_GAME_SLUG;
+  const envelope = await loadActivePublicPuzzle(new Date(), timeZone, gameSlug);
 
   if (!envelope) {
     throw Response.json(
@@ -39,7 +42,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const loginUrl = buildHominemLoginUrl(resolveReturnTo(request));
 
-  return Response.json({ ...envelope, loginUrl });
+  return Response.json({ ...envelope, loginUrl, gameSlug });
 }
 
 export type LoaderData = {
@@ -106,10 +109,20 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 
 export default function RealiTeaRoute() {
   const initial = useLoaderData<LoaderData>();
+  const [searchParams, setSearchParams] = useSearchParams();
   const revalidator = useRevalidator();
 
   const currentPuzzle = initial.puzzle;
   const loginUrl = initial.loginUrl;
+  const gameSlug = searchParams.get("game") ?? DEFAULT_REALITEA_GAME_SLUG;
+  const gamesQuery = useQuery({
+    queryKey: ["realitea-games"],
+    queryFn: async () => {
+      const response = await fetch("/api/games/realitea/games");
+      if (!response.ok) throw new Error(`Failed to load RealiTea games: ${response.status}`);
+      return (await response.json()) as { games: { slug: string; name: string }[] };
+    },
+  });
 
   // On first mount, store the user's IANA timezone in a cookie so the server
   // can serve the puzzle for the user's local calendar date rather than UTC.
@@ -147,9 +160,11 @@ export default function RealiTeaRoute() {
   // players who haven't attempted today's puzzle yet — both mean "start
   // empty," same as before.
   const attemptQuery = useQuery({
-    queryKey: ["realitea-attempt", currentPuzzle.dateKey],
+    queryKey: ["realitea-attempt", gameSlug, currentPuzzle.dateKey],
     queryFn: async () => {
-      const response = await fetch("/api/games/realitea/attempt");
+      const response = await fetch(
+        `/api/games/realitea/attempt?game=${encodeURIComponent(gameSlug)}`,
+      );
       if (!response.ok) throw new Error(`Failed to load attempt: ${response.status}`);
       const data = (await response.json()) as { attempt: ActivePuzzleAttempt | null };
       return data.attempt;
@@ -167,14 +182,37 @@ export default function RealiTeaRoute() {
   // fresh reseed, whenever the *content* of the fetched attempt actually
   // changes (guess count or status), not on every refetch.
   const attempt = attemptQuery.data;
-  const boardKey = attempt ? `${attempt.status}:${attempt.guesses.length}` : "none";
+  const boardKey = `${gameSlug}:${attempt ? `${attempt.status}:${attempt.guesses.length}` : "none"}`;
 
   return (
-    <RealiTeaGameBoard
-      key={boardKey}
-      puzzle={currentPuzzle}
-      initialGuesses={attempt?.guesses ?? []}
-      loginUrl={loginUrl}
-    />
+    <div className="mx-auto flex w-full max-w-lg flex-col gap-3 px-4 pt-4">
+      {gamesQuery.data && gamesQuery.data.games.length > 1 && (
+        <label className="text-muted-foreground flex items-center justify-between gap-3 text-sm">
+          <span>Topic</span>
+          <select
+            className="border-border bg-background rounded-md border px-3 py-2 text-foreground"
+            value={gameSlug}
+            onChange={(event) => {
+              const next = new URLSearchParams(searchParams);
+              next.set("game", event.target.value);
+              setSearchParams(next);
+            }}
+          >
+            {gamesQuery.data.games.map((game) => (
+              <option key={game.slug} value={game.slug}>
+                {game.name}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
+      <RealiTeaGameBoard
+        key={boardKey}
+        puzzle={currentPuzzle}
+        initialGuesses={attempt?.guesses ?? []}
+        loginUrl={loginUrl}
+        gameSlug={gameSlug}
+      />
+    </div>
   );
 }

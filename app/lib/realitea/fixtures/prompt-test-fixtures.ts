@@ -1,0 +1,71 @@
+import type { FeedItem } from "../generation/types";
+
+export interface PromptTestFixture {
+  id: string;
+  genre: string;
+  sourceDomains: string[];
+  expectedAnswers: string[];
+  feedItems: FeedItem[];
+}
+
+const item = (source: string, title: string, description: string): FeedItem => ({
+  title,
+  link: `https://${source}/test/${title.toLowerCase().replaceAll(/[^a-z0-9]+/g, "-")}`,
+  pubDate: "2026-08-12T00:00:00Z",
+  description,
+});
+
+export const PROMPT_TEST_FIXTURES: PromptTestFixture[] = [
+  {
+    id: "tech-product-launch",
+    genre: "technology",
+    sourceDomains: ["techcrunch.com"],
+    expectedAnswers: ["HINGE", "WATCH"],
+    feedItems: [
+      item(
+        "techcrunch.com",
+        "New foldable phone uses a titanium hinge to improve durability",
+        "The company says its redesigned hinge reduces the crease and keeps the display flat when opened.",
+      ),
+    ],
+  },
+  {
+    id: "celebrity-divorce",
+    genre: "celebrity",
+    sourceDomains: ["pagesix.com"],
+    expectedAnswers: ["SPLIT", "SUED"],
+    feedItems: [
+      item(
+        "pagesix.com",
+        "Comedian addresses painful divorce from longtime spouse",
+        "The comedian said the marriage ended after nearly two decades and described the separation as difficult.",
+      ),
+    ],
+  },
+  {
+    id: "sports-crowd-reaction",
+    genre: "sports",
+    sourceDomains: ["espn.com"],
+    expectedAnswers: ["BOOED", "CHEER"],
+    feedItems: [
+      item(
+        "espn.com",
+        "Fans boo coach as players defend her after a difficult loss",
+        "The crowd voiced its disapproval during the game, while the team's leading players publicly backed the coach.",
+      ),
+    ],
+  },
+  {
+    id: "food-restaurant-closure",
+    genre: "food",
+    sourceDomains: ["eater.com"],
+    expectedAnswers: ["CLOSE", "LEASE", "CHEF"],
+    feedItems: [
+      item(
+        "eater.com",
+        "Beloved neighborhood restaurant will close after 18 years",
+        "The owners cited rising rent and thanked regulars; the chef plans to announce a new project later this year.",
+      ),
+    ],
+  },
+];

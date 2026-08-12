@@ -10,6 +10,8 @@ import { resolveReturnTo } from "./return-to.server";
 
 import "./realitea.css";
 
+const DEFAULT_REALITEA_GAME_SLUG = "rhobh";
+
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const dateKey = params.date;
   if (!dateKey || !isDateKey(dateKey)) {
@@ -20,7 +22,10 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   }
 
   const user = await getHominemUser(request);
-  const envelope = await loadPuzzleForSpecificDate(dateKey, user);
+  const gameSlug = new URL(request.url).searchParams.get("game") ?? DEFAULT_REALITEA_GAME_SLUG;
+  const envelope = gameSlug === DEFAULT_REALITEA_GAME_SLUG
+    ? await loadPuzzleForSpecificDate(dateKey, user)
+    : await loadPuzzleForSpecificDate(dateKey, user, gameSlug);
 
   if (!envelope) {
     throw Response.json(
@@ -31,10 +36,10 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const loginUrl = buildHominemLoginUrl(resolveReturnTo(request));
 
-  return Response.json({ ...envelope, signedIn: user !== null, loginUrl });
+  return Response.json({ ...envelope, signedIn: user !== null, loginUrl, gameSlug });
 }
 
-export type LoaderData = DatedPuzzleEnvelope & { signedIn: boolean; loginUrl: string };
+export type LoaderData = DatedPuzzleEnvelope & { signedIn: boolean; loginUrl: string; gameSlug: string };
 
 export function meta({ params }: { params: { date?: string } }) {
   return [
@@ -119,7 +124,7 @@ function SignedOutTeaser({
 }
 
 export default function RealiTeaDateRoute() {
-  const { puzzle, attempt, signedIn, loginUrl } = useLoaderData<LoaderData>();
+  const { puzzle, attempt, signedIn, loginUrl, gameSlug } = useLoaderData<LoaderData>();
 
   if (!signedIn) {
     return <SignedOutTeaser dateKey={puzzle.dateKey} clue={puzzle.clue} loginUrl={loginUrl} />;
@@ -130,6 +135,7 @@ export default function RealiTeaDateRoute() {
       puzzle={puzzle}
       initialGuesses={attempt?.guesses ?? []}
       loginUrl={loginUrl}
+      gameSlug={gameSlug}
     />
   );
 }
