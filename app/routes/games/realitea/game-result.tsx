@@ -1,6 +1,6 @@
 import { Button, Card, CardContent } from "@ponti-studios/ui/primitives";
 
-import type { PublicDailyPuzzle } from "~/lib/realitea";
+import type { PublicGamesPuzzle } from "~/lib/realitea";
 
 import type { RealiTeaGameState } from "./use-game";
 
@@ -8,7 +8,7 @@ import styles from "./game-result.module.css";
 
 interface RealiTeaGameResultProps {
   game: RealiTeaGameState;
-  puzzle: PublicDailyPuzzle;
+  puzzle: PublicGamesPuzzle;
   loginUrl: string;
   onShare: () => void;
   onCopy: () => void;
@@ -100,3 +100,4 @@ export function RealiTeaGameResult({
     </div>
   );
 }
+

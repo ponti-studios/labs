@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import type { PublicDailyPuzzle, RealiteaGuess } from "~/lib/realitea";
+import type { PublicGamesPuzzle, RealiteaGuess } from "~/lib/realitea";
 import { shareRealiTeaResult } from "~/lib/realitea/share";
 
 export type ShareOutcome = "copied" | "prompt" | "error";
@@ -19,7 +19,7 @@ export function useRealiTeaShare({
   isSolved,
   onResult,
 }: {
-  puzzle: PublicDailyPuzzle;
+  puzzle: PublicGamesPuzzle;
   guesses: readonly RealiteaGuess[];
   isSolved: boolean;
   onResult: (outcome: ShareOutcome) => void;
@@ -51,3 +51,4 @@ export function useRealiTeaShare({
 
   return { share };
 }
+

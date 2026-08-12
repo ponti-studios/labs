@@ -11,7 +11,7 @@ import {
 } from "react-router";
 import type { Route } from "./+types/route";
 
-import { type PublicDailyPuzzle } from "~/lib/realitea";
+import { type PublicGamesPuzzle } from "~/lib/realitea";
 import { getDateKey } from "~/lib/realitea/date";
 import { loadActivePublicPuzzle, type ActivePuzzleAttempt } from "~/lib/realitea/puzzle.server";
 import { buildHominemLoginUrl } from "~/lib/server/hominem-auth";
@@ -46,7 +46,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export type LoaderData = {
-  puzzle: PublicDailyPuzzle;
+  puzzle: PublicGamesPuzzle;
   loginUrl: string;
 };
 
@@ -186,32 +186,18 @@ export default function RealiTeaRoute() {
 
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-3 px-4 pt-4">
-      {gamesQuery.data && gamesQuery.data.games.length > 1 && (
-        <label className="text-muted-foreground flex items-center justify-between gap-3 text-sm">
-          <span>Topic</span>
-          <select
-            className="border-border bg-background rounded-md border px-3 py-2 text-foreground"
-            value={gameSlug}
-            onChange={(event) => {
-              const next = new URLSearchParams(searchParams);
-              next.set("game", event.target.value);
-              setSearchParams(next);
-            }}
-          >
-            {gamesQuery.data.games.map((game) => (
-              <option key={game.slug} value={game.slug}>
-                {game.name}
-              </option>
-            ))}
-          </select>
-        </label>
-      )}
       <RealiTeaGameBoard
         key={boardKey}
         puzzle={currentPuzzle}
         initialGuesses={attempt?.guesses ?? []}
         loginUrl={loginUrl}
         gameSlug={gameSlug}
+        topics={gamesQuery.data?.games}
+        onTopicChange={(slug) => {
+          const next = new URLSearchParams(searchParams);
+          next.set("game", slug);
+          setSearchParams(next);
+        }}
       />
     </div>
   );

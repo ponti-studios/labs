@@ -6,7 +6,7 @@ import {
   getKeyboardState,
   MAX_GUESSES,
   REALITEA_ANSWER_LENGTH,
-  type PublicDailyPuzzle,
+  type PublicGamesPuzzle,
   type RealiteaGuess,
 } from "~/lib/realitea";
 import { buildRealiTeaShareText } from "~/lib/realitea/share";
@@ -20,10 +20,12 @@ import { useRealiTeaGame } from "./use-game";
 import { useRealiTeaShare } from "./use-share";
 
 export interface RealiTeaGameBoardProps {
-  puzzle: PublicDailyPuzzle;
+  puzzle: PublicGamesPuzzle;
   initialGuesses: readonly RealiteaGuess[];
   loginUrl: string;
   gameSlug: string;
+  topics?: { slug: string; name: string }[];
+  onTopicChange?: (slug: string) => void;
 }
 
 /**
@@ -31,7 +33,14 @@ export interface RealiTeaGameBoardProps {
  * specific-date route. Feature sections live in focused components so this
  * file owns only game orchestration and composition.
  */
-export function RealiTeaGameBoard({ puzzle, initialGuesses, loginUrl, gameSlug }: RealiTeaGameBoardProps) {
+export function RealiTeaGameBoard({
+  puzzle,
+  initialGuesses,
+  loginUrl,
+  gameSlug,
+  topics,
+  onTopicChange,
+}: RealiTeaGameBoardProps) {
   const [showInstructions] = useState(false);
   const game = useRealiTeaGame({ puzzle, initialGuesses, gameSlug });
   const keyboardState = useMemo(() => getKeyboardState(game.guesses), [game.guesses]);
@@ -57,7 +66,12 @@ export function RealiTeaGameBoard({ puzzle, initialGuesses, loginUrl, gameSlug }
     <div
       className={`${styles.shell} mx-auto flex w-full max-w-lg flex-1 flex-col gap-3 px-4 pt-2 sm:gap-6 sm:pt-4`}
     >
-      <RealiTeaGameHeader isFallback={puzzle.isFallback} gameSlug={gameSlug} />
+      <RealiTeaGameHeader
+        isFallback={puzzle.isFallback}
+        gameSlug={gameSlug}
+        topics={topics}
+        onTopicChange={onTopicChange}
+      />
 
       {showInstructions && (
         <Card>
