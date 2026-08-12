@@ -78,23 +78,31 @@ function RealiTeaFeaturedCard() {
       to="/games/realitea"
       prefetch="intent"
       data-testid="makers-of-realitea"
-      className="border-border bg-card hover:border-accent/50 flex max-w-fit flex-col gap-4 rounded-xl border p-4 px-8 transition-colors"
+      className="border-border bg-card hover:border-accent/50 group grid gap-8 rounded-xl border p-6 transition-colors md:grid-cols-[1fr_auto] md:items-center md:gap-16 md:p-10"
     >
-      <h2 className="text-accent flex items-center justify-between gap-1 text-2xl font-bold tracking-tight">
-        <span className="flex gap-2 ">{t.home.realitea.title}</span>
-        <LucideArrowBigRight />
-      </h2>
-
       <div className="flex flex-col gap-3">
-        <div className="realitea-hero-preview flex flex-col items-center gap-(--realitea-tile-gap)">
-          {PREVIEW_ROWS.map((row, rowIndex) => (
-            <div key={rowIndex} className="flex gap-(--realitea-tile-gap)">
-              {row.map((tile, tileIndex) => (
-                <RealiTeaTile key={tileIndex} state={tile.state} letter={tile.letter} />
-              ))}
-            </div>
-          ))}
-        </div>
+        <span className="text-accent bg-accent/10 inline-flex w-fit items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold tracking-wide uppercase">
+          <span className="bg-accent size-1.5 rounded-full" aria-hidden="true" />
+          {t.home.realitea.eyebrow}
+        </span>
+        <h2 className="text-foreground text-3xl font-bold tracking-tight">
+          {t.home.realitea.title}
+        </h2>
+        <p className="text-muted-foreground max-w-md text-base">{t.home.realitea.description}</p>
+        <span className="text-accent mt-2 inline-flex items-center gap-1 text-sm font-semibold transition-[gap] group-hover:gap-2">
+          {t.home.realitea.cta}
+          <LucideArrowBigRight className="size-4" aria-hidden="true" />
+        </span>
+      </div>
+
+      <div className="realitea-hero-preview flex flex-col items-center gap-(--realitea-tile-gap) md:shrink-0">
+        {PREVIEW_ROWS.map((row, rowIndex) => (
+          <div key={rowIndex} className="flex gap-(--realitea-tile-gap)">
+            {row.map((tile, tileIndex) => (
+              <RealiTeaTile key={tileIndex} state={tile.state} letter={tile.letter} />
+            ))}
+          </div>
+        ))}
       </div>
     </Link>
   );
@@ -120,9 +128,7 @@ export default function Home() {
 
       <section className="flex flex-col gap-6 px-6 py-8">
         <h2 className="text-foreground text-xl font-semibold tracking-tight">Featured Projects</h2>
-        <div className="flex gap-6">
-          <RealiTeaFeaturedCard />
-        </div>
+        <RealiTeaFeaturedCard />
       </section>
     </div>
   );

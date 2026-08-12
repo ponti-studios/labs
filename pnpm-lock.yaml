@@ -6,6 +6,7 @@ settings:
 
 patchedDependencies:
   '@ponti-studios/auth@0.1.1': 27ad6224609be803b9c7abf5d6836bae53b9ac75ab464eb7777da0ae40d07bf0
+  '@ponti-studios/ui@1.3.0': ebae59c05e9df76de6b45fe41d128b7c9dd0f63caf506b6a607ae8be7f3d10fe
 
 importers:
 
@@ -22,7 +23,7 @@ importers:
         version: 0.1.1(patch_hash=27ad6224609be803b9c7abf5d6836bae53b9ac75ab464eb7777da0ae40d07bf0)(drizzle-kit@0.31.10)(drizzle-orm@0.45.2(kysely@0.29.4)(pg@8.22.0)(postgres@3.4.9))(pg@8.22.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(vitest@4.1.10)
       '@ponti-studios/ui':
         specifier: 1.3.0
-        version: 1.3.0(@date-fns/tz@1.5.0)(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 1.3.0(patch_hash=ebae59c05e9df76de6b45fe41d128b7c9dd0f63caf506b6a607ae8be7f3d10fe)(@date-fns/tz@1.5.0)(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@react-router/node':
         specifier: ^8.2.0
         version: 8.3.0(react-router@8.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(typescript@6.0.3)
@@ -5233,7 +5234,7 @@ snapshots:
       - vitest
       - vue
 
-  '@ponti-studios/ui@1.3.0(@date-fns/tz@1.5.0)(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@ponti-studios/ui@1.3.0(patch_hash=ebae59c05e9df76de6b45fe41d128b7c9dd0f63caf506b6a607ae8be7f3d10fe)(@date-fns/tz@1.5.0)(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@base-ui/react': 1.6.0(@date-fns/tz@1.5.0)(@types/react@19.2.18)(date-fns@4.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@radix-ui/colors': 3.0.0

@@ -26,3 +26,4 @@ minimumReleaseAgeExclude:
   - '@tanstack/ai-openrouter@0.16.1'
 patchedDependencies:
   '@ponti-studios/auth@0.1.1': patches/@ponti-studios__auth@0.1.1.patch
+  '@ponti-studios/ui@1.3.0': patches/@ponti-studios__ui@1.3.0.patch

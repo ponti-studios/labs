@@ -1,0 +1,68 @@
+diff --git a/src/components/navigation/app-navigation.tsx b/src/components/navigation/app-navigation.tsx
+index 43a675e0461c4a848d9c26bac334503974460ce6..e8c9f7a0f8b05042d2995f6f85a680470a9153a1 100644
+--- a/src/components/navigation/app-navigation.tsx
++++ b/src/components/navigation/app-navigation.tsx
+@@ -14,6 +14,10 @@ export interface NavigationRootProps {
+   children: ReactNode;
+   ariaLabel?: string;
+   className?: string;
++  /** Applied to the mobile Sheet's content panel, for a custom look on small viewports. */
++  mobileSheetClassName?: string;
++  /** Applied to the mobile Sheet's close button, for a custom look on small viewports. */
++  mobileSheetCloseClassName?: string;
+ }
+ 
+ /**
+@@ -30,6 +34,8 @@ function NavigationRoot({
+   children,
+   ariaLabel = "Primary navigation",
+   className,
++  mobileSheetClassName,
++  mobileSheetCloseClassName,
+ }: NavigationRootProps) {
+   const [mobileOpen, setMobileOpen] = React.useState(false);
+ 
+@@ -63,7 +69,7 @@ function NavigationRoot({
+                 <Menu className="size-4" aria-hidden="true" />
+               </Button>
+             </SheetTrigger>
+-            <SheetContent>
++            <SheetContent className={mobileSheetClassName} closeClassName={mobileSheetCloseClassName}>
+               <SheetTitle className="sr-only">Navigation menu</SheetTitle>
+               <div className="mt-8 flex flex-1 flex-col gap-4">
+                 <MobileMenuContext.Provider value={true}>{rest}</MobileMenuContext.Provider>
+diff --git a/src/components/overlays/sheet.tsx b/src/components/overlays/sheet.tsx
+index ad3c710bd0ba5e60636201e8d356a51fba348910..eb625109e33789f5de46ce8ca8ba4a6a0faa3f95 100644
+--- a/src/components/overlays/sheet.tsx
++++ b/src/components/overlays/sheet.tsx
+@@ -72,12 +72,14 @@ const sheetClassName = [
+   "md:w-3/4 md:max-w-sm md:min-h-0",
+ ];
+ 
+-interface SheetContentProps extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Popup> {}
++interface SheetContentProps extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Popup> {
++  closeClassName?: string;
++}
+ 
+ const SheetContent = React.forwardRef<
+   React.ComponentRef<typeof SheetPrimitive.Popup>,
+   SheetContentProps
+->(({ className, children, ...props }, ref) => (
++>(({ className, closeClassName, children, ...props }, ref) => (
+   <SheetPortal>
+     <SheetOverlay />
+     <SheetPrimitive.Popup
+@@ -86,7 +88,12 @@ const SheetContent = React.forwardRef<
+       className={cn(sheetClassName, className)}
+       {...props}
+     >
+-      <SheetPrimitive.Close className="text-muted-foreground hover:bg-muted hover:text-muted-foreground focus-visible:outline-ring absolute top-3 right-3 inline-flex size-9 items-center justify-center rounded-md border border-transparent transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none md:top-4 md:right-4">
++      <SheetPrimitive.Close
++        className={cn(
++          "text-muted-foreground hover:bg-muted hover:text-muted-foreground focus-visible:outline-ring absolute top-3 right-3 inline-flex size-9 items-center justify-center rounded-md border border-transparent transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none md:top-4 md:right-4",
++          closeClassName,
++        )}
++      >
+         <X className="size-4.5" />
+         <span className="sr-only">Close</span>
+       </SheetPrimitive.Close>
