@@ -3,7 +3,7 @@ import "dotenv/config";
 import { closeDb } from "~/lib/server/db";
 
 import { getErrorMessage } from "../app/lib/errors";
-import { ingestAllActiveFeeds } from "../app/lib/realitea/ingest";
+import { ensureRealiteaCatalog, ingestAllActiveFeeds } from "../app/lib/realitea/ingest";
 import { createLogger } from "../app/lib/logger.server";
 import { LabyrinthServerEnv } from "../app/lib/server/env";
 
@@ -15,6 +15,7 @@ async function main() {
   const ingestLogger = logger.child({ operation: "realiteaIngest" });
   ingestLogger.info({ event: "[INGEST_START]" }, "starting feed ingest run");
 
+  await ensureRealiteaCatalog();
   const insertedCount = await ingestAllActiveFeeds();
 
   ingestLogger.info(

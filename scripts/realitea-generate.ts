@@ -8,8 +8,8 @@ import { getErrorMessage } from "../app/lib/errors";
 import {
   countInventoryForRange,
   deletePuzzlesFromDate,
+  getActiveGames,
   getExistingDateKeys,
-  getGameBySlug,
 } from "../app/lib/realitea/repository";
 import { generatePuzzleForGame } from "../app/lib/realitea/generation";
 import { createLogger } from "../app/lib/logger.server";
@@ -17,7 +17,6 @@ import { REALITEA_READY_INVENTORY_DAYS } from "../app/lib/realitea/validation";
 import { LabyrinthServerEnv } from "../app/lib/server/env";
 
 const logger = createLogger();
-const RHOBH_GAME_SLUG = "rhobh";
 
 export function computeGaps(dateRange: string[], existingKeys: string[]): string[] {
   const existing = new Set(existingKeys);
@@ -50,72 +49,53 @@ async function main() {
 
   reconcileLogger.info({ event: "[RECONCILE_START]" }, "starting reconcile run");
 
-  const game = await getGameBySlug(RHOBH_GAME_SLUG);
-  if (!game) throw new Error(`Game not found: ${RHOBH_GAME_SLUG}`);
+  const games = await getActiveGames();
+  if (games.length === 0) throw new Error("No active RealiTea games found");
 
   const nextDayKey = addDaysToDateKey(runDateKey, 1);
   if (!nextDayKey) throw new Error("Failed to compute next date key");
 
-  let deletedCount = 0;
-  const targetDateKeys = buildDateRange(nextDayKey, { daysAhead });
-  const lastDayKey = targetDateKeys[targetDateKeys.length - 1];
+  let totalDeleted = 0;
+  let totalGenerated = 0;
+  let totalFailed = 0;
+  for (const game of games) {
+    const targetDateKeys = buildDateRange(nextDayKey, { daysAhead });
+    const lastDayKey = targetDateKeys[targetDateKeys.length - 1];
+    const deletedCount = force ? await deletePuzzlesFromDate(game.id, nextDayKey) : 0;
+    const existingKeys = force ? [] : await getExistingDateKeys(game.id, nextDayKey, lastDayKey);
+    const gapDateKeys = computeGaps(targetDateKeys, existingKeys);
+    let generatedCount = 0;
+    let failedCount = 0;
 
-  if (force) {
-    deletedCount = await deletePuzzlesFromDate(game.id, nextDayKey);
+    for (const dateKey of gapDateKeys) {
+      try {
+        if (await generatePuzzleForGame(game, dateKey)) generatedCount++;
+        else failedCount++;
+      } catch (err) {
+        failedCount++;
+        reconcileLogger.error(
+          { event: "[GENERATION_ERROR]", game: game.slug, dateKey, error: getErrorMessage(err) },
+          `error generating ${game.slug} puzzle for ${dateKey}`,
+        );
+      }
+    }
+
+    const inventoryDepth = await countInventoryForRange(game.id, runDateKey, REALITEA_READY_INVENTORY_DAYS);
+    totalDeleted += deletedCount;
+    totalGenerated += generatedCount;
+    totalFailed += failedCount;
     reconcileLogger.info(
-      { event: "[FORCE_DELETED]", count: deletedCount },
-      `deleted ${deletedCount} puzzles`,
+      { event: "[RECONCILE_GAME_COMPLETE]", game: game.slug, force, deletedCount, generatedCount, failedCount, inventoryDepth },
+      `${game.slug}: ${generatedCount}/${gapDateKeys.length} generated`,
     );
   }
 
-  const existingKeys = force ? [] : await getExistingDateKeys(game.id, nextDayKey, lastDayKey);
-  const gapDateKeys = computeGaps(targetDateKeys, existingKeys);
-
-  let generatedCount = 0;
-  let failedCount = 0;
-
-  for (const dateKey of gapDateKeys) {
-    try {
-      const created = await generatePuzzleForGame(game, dateKey);
-      if (created) {
-        generatedCount++;
-      } else {
-        failedCount++;
-        reconcileLogger.error(
-          { event: "[GENERATION_FAILED]", dateKey },
-          "generation returned null",
-        );
-      }
-    } catch (err) {
-      failedCount++;
-      reconcileLogger.error(
-        { event: "[GENERATION_ERROR]", dateKey, error: getErrorMessage(err) },
-        `error generating puzzle for ${dateKey}`,
-      );
-    }
-  }
-
-  const inventoryDepth = await countInventoryForRange(
-    game.id,
-    runDateKey,
-    REALITEA_READY_INVENTORY_DAYS,
-  );
-
   reconcileLogger.info(
-    {
-      event: "[RECONCILE_COMPLETE]",
-      force,
-      deleted: deletedCount,
-      generated: generatedCount,
-      failed: failedCount,
-      inventoryDepth,
-    },
-    `reconcile complete: ${generatedCount}/${gapDateKeys.length} generated`,
+    { event: "[RECONCILE_COMPLETE]", force, games: games.map((game) => game.slug), deleted: totalDeleted, generated: totalGenerated, failed: totalFailed },
+    `reconcile complete across ${games.length} game(s): ${totalGenerated} generated`,
   );
 
-  if (failedCount > 0) {
-    throw new Error(`${failedCount} puzzle(s) failed to generate`);
-  }
+  if (totalFailed > 0) throw new Error(`${totalFailed} puzzle(s) failed to generate`);
 }
 
 if (!process.env.VITEST) {

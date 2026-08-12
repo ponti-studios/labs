@@ -13,6 +13,8 @@ node_modules
 # testing
 coverage
 
+# RealiTea source fixtures are intentionally committed; keep only local overrides out.
+
 # build
 .next
 build

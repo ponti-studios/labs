@@ -1,0 +1,80 @@
+import { normalizeGuess, REALITEA_ANSWER_LENGTH } from "../core/rules";
+import { isDictionaryWord } from "../server/word-list.server";
+import type { ValidationResult } from "./types";
+
+const DEFAULT_SOURCE_DOMAIN = "realityblurb.com";
+export const DEFAULT_REPEAT_WINDOW_DAYS = 90;
+/** @deprecated Use DEFAULT_REPEAT_WINDOW_DAYS. */
+export const BRAVO_REPEAT_WINDOW_DAYS = DEFAULT_REPEAT_WINDOW_DAYS;
+export const REALITEA_READY_INVENTORY_DAYS = 7;
+
+const PROMPT_CONTROL_MARKERS = [
+  /ignore\s+(?:all\s+)?previous\s+instructions/i,
+  /\bsystem\s*:/i,
+  /\bdeveloper\s*:/i,
+  /\bassistant\s*:/i,
+];
+
+function containsPromptControlText(value: string): boolean {
+  return PROMPT_CONTROL_MARKERS.some((marker) => marker.test(value));
+}
+
+export function validateCandidate(
+  candidate: {
+    answer: string;
+    answerType: string;
+    clue: string;
+    detail: string;
+    sources: { url: string; title?: string; publishedAt?: string }[];
+  },
+  previousAnswers: Set<string> = new Set(),
+  options: { sourceDomains?: string[] } = {},
+): ValidationResult {
+  const reasons: string[] = [];
+  const normalizedAnswer = normalizeGuess(candidate.answer);
+
+  if (normalizedAnswer.length !== REALITEA_ANSWER_LENGTH) {
+    reasons.push("answer must normalize to exactly five letters");
+  }
+  if (!normalizedAnswer || /[^A-Z]/.test(normalizedAnswer)) {
+    reasons.push("answer does not normalize cleanly to letters");
+  }
+  if (normalizedAnswer.length === REALITEA_ANSWER_LENGTH && !isDictionaryWord(normalizedAnswer)) {
+    reasons.push("answer is not in the accepted five-letter word list");
+  }
+  if (!candidate.answerType) {
+    reasons.push("answer type is missing");
+  }
+  if (candidate.answerType === "person") {
+    reasons.push("answer type must not be a person; prefer a storyline, moment, place, or phrase");
+  }
+  if (
+    candidate.clue.toUpperCase().includes(normalizedAnswer) ||
+    candidate.detail.toUpperCase().includes(normalizedAnswer)
+  ) {
+    reasons.push("answer is leaked in clue or detail");
+  }
+  if (containsPromptControlText(candidate.clue) || containsPromptControlText(candidate.detail)) {
+    reasons.push("clue or detail contains prompt-control text");
+  }
+  if (previousAnswers.has(normalizedAnswer)) {
+    reasons.push("answer repeats inside cooldown window");
+  }
+  const allowedSourceDomains = options.sourceDomains ?? [DEFAULT_SOURCE_DOMAIN];
+  const hasAllowedSource = candidate.sources.some((s) => {
+    try {
+      return allowedSourceDomains.includes(new URL(s.url).hostname.replace(/^www\./, ""));
+    } catch {
+      return false;
+    }
+  });
+  if (!hasAllowedSource) {
+    reasons.push(
+      allowedSourceDomains.length === 1 && allowedSourceDomains[0] === DEFAULT_SOURCE_DOMAIN
+        ? "candidate is missing a realityblurb.com source URL"
+        : `candidate is missing a source URL from: ${allowedSourceDomains.join(", ")}`,
+    );
+  }
+
+  return { normalizedAnswer, reasons, valid: reasons.length === 0 };
+}

@@ -43,11 +43,13 @@ export interface RealiTeaGameState {
 interface UseRealiTeaGameOptions {
   puzzle: PublicDailyPuzzle;
   initialGuesses: readonly RealiteaGuess[];
+  gameSlug: string;
 }
 
 export function useRealiTeaGame({
   puzzle,
   initialGuesses,
+  gameSlug,
 }: UseRealiTeaGameOptions): RealiTeaGameState {
   const [guesses, setGuesses] = useState<RealiteaGuess[]>(() => [...initialGuesses]);
   const [authRequired, setAuthRequired] = useState(false);
@@ -149,6 +151,7 @@ export function useRealiTeaGame({
     wordValidator.submit(
       {
         dateKey: puzzle.dateKey,
+        gameSlug,
         previousGuesses: guesses.map((g) => ({ word: g.word })),
         word: guess,
       },

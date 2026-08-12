@@ -1,6 +1,6 @@
 import { OpenRouter } from "@openrouter/sdk";
 
-const DEFAULT_TEXT_MODEL = "google/gemini-3.1-flash-lite";
+export const DEFAULT_TEXT_MODEL = "deepseek/deepseek-v4-flash";
 const DEFAULT_IMAGE_MODEL = "x-ai/grok-imagine-image-quality";
 const DEFAULT_EMBEDDING_MODEL = "google/gemini-embedding-2";
 const DEFAULT_EMBEDDING_DIMENSIONS = 3072;
@@ -62,6 +62,10 @@ function createOpenRouterClient(options: OpenRouterClientOptions = {}) {
 }
 
 /** Send a chat completion using the default text model. */
+export function getConfiguredTextModel() {
+  return process.env.REALITEA_AI_MODEL ?? DEFAULT_TEXT_MODEL;
+}
+
 export async function chatCompletion(options: ChatCompletionOptions = { messages: [] }) {
   const {
     apiKey,
@@ -80,7 +84,7 @@ export async function chatCompletion(options: ChatCompletionOptions = { messages
     appTitle,
     appCategories,
     chatRequest: {
-      model: DEFAULT_TEXT_MODEL,
+      model: getConfiguredTextModel(),
       stream: false,
       messages,
       ...(maxTokens !== undefined ? { maxTokens } : {}),

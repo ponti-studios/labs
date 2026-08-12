@@ -1,0 +1,337 @@
+import {
+  evaluateGuess,
+  hasGuessedWord,
+  isGuessSolved,
+  MAX_GUESSES,
+  normalizeGuess,
+  REALITEA_ANSWER_LENGTH,
+  type GameStatus,
+  type PublicDailyPuzzle,
+  type RealiteaGuess,
+  type RealiteaGuessResult,
+} from "../core/rules";
+import { addDaysToDateKey, getDateKey } from "../core/date";
+import { createLogger } from "../../logger.server";
+import type { HominemUser } from "../../server/hominem-auth";
+import type { PuzzleRecord } from "./types";
+import {
+  appendGuess,
+  countRecentGuesses,
+  createAttempt,
+  getGameBySlug,
+  loadAttempt,
+  loadMostRecentPuzzle,
+  loadPuzzleForDate,
+} from "../repository";
+import { isValidWord } from "../word-list.server";
+
+const logger = createLogger();
+
+// Guesses-per-minute limit, enforced across all of a user's puzzles at once
+// (not per-puzzle) — see countRecentGuesses in repository.ts.
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX_GUESSES = 10;
+
+// The public route only serves the RHOBH game today; this becomes a param
+// once the route layer supports selecting a game.
+export const DEFAULT_REALITEA_GAME_SLUG = "rhobh";
+
+async function requireGameId(gameSlug = DEFAULT_REALITEA_GAME_SLUG): Promise<number> {
+  const game = await getGameBySlug(gameSlug);
+  if (!game) throw new Error(`Game not found: ${gameSlug}`);
+  return game.id;
+}
+
+// ── DTO mapping ──────────────────────────────────────────────────────────────
+
+export function toPublicDailyPuzzle(record: PuzzleRecord, isFallback = false): PublicDailyPuzzle {
+  return {
+    answerType: record.answerType,
+    clue: record.clue,
+    dateKey: record.dateUtc,
+    detail: record.detail,
+    isFallback,
+    sources: [
+      {
+        url: record.article.url,
+        title: record.article.title,
+        publishedAt: record.article.publishedAt?.toISOString() ?? "",
+      },
+    ],
+  };
+}
+
+// ── Public API ───────────────────────────────────────────────────────────────
+
+/**
+ * Resolves the puzzle actually served for "today" — today's own puzzle, or
+ * (grace-period fallback) the most recently created one if today's isn't
+ * ready yet. Shared by loadActivePublicPuzzle and loadActivePuzzleAttempt so
+ * both agree on exactly which puzzle "today" refers to; an attempt must be
+ * looked up against the *served* date, not the nominal one, since that's
+ * what evaluateGuessServer keys guesses by too.
+ */
+async function resolveActivePuzzle(
+  now: Date,
+  timeZone: string,
+  gameSlug = DEFAULT_REALITEA_GAME_SLUG,
+): Promise<{ gameId: number; puzzle: PuzzleRecord; isFallback: boolean } | null> {
+  const dateKey = getDateKey(now, timeZone);
+  const childLogger = logger.child({
+    operation: "resolveActivePuzzle",
+    dateKey,
+    timestamp: now.toISOString(),
+  });
+
+  const gameId = await requireGameId(gameSlug);
+  let puzzle = await loadPuzzleForDate(gameId, dateKey);
+
+  // Fallback: serve the most-recently created puzzle from today or earlier.
+  // Never serve future inventory across a timezone boundary.
+  if (!puzzle) {
+    puzzle = await loadMostRecentPuzzle(gameId, dateKey);
+    if (puzzle) {
+      childLogger.warn(
+        {
+          event: "[FALLBACK_ACTIVATED_ANY_PUZZLE]",
+          puzzle_id: puzzle.id,
+          intended_dateKey: dateKey,
+          served_dateKey: puzzle.dateUtc,
+        },
+        "no puzzle for today; serving most recent puzzle as fallback",
+      );
+    }
+  }
+
+  if (!puzzle) {
+    childLogger.error({ event: "[ERROR_NO_PUZZLE_AVAILABLE]" }, "no puzzle available");
+    return null;
+  }
+
+  childLogger.info(
+    {
+      event: "[PUZZLE_AVAILABLE]",
+      puzzle_id: puzzle.id,
+      dateKey: puzzle.dateUtc,
+    },
+    "puzzle loaded",
+  );
+  return { gameId, puzzle, isFallback: puzzle.dateUtc !== dateKey };
+}
+
+export async function loadActivePublicPuzzle(
+  now: Date,
+  timeZone = "UTC",
+  gameSlug = DEFAULT_REALITEA_GAME_SLUG,
+): Promise<{ puzzle: PublicDailyPuzzle } | null> {
+  const resolved = await resolveActivePuzzle(now, timeZone, gameSlug);
+  if (!resolved) return null;
+  return { puzzle: toPublicDailyPuzzle(resolved.puzzle, resolved.isFallback) };
+}
+
+export interface ActivePuzzleAttempt {
+  guesses: RealiteaGuess[];
+  status: GameStatus;
+}
+
+/**
+ * The signed-in player's existing progress on "today"'s puzzle, read
+ * straight from `realitea_attempts` — the same table evaluateGuessServer
+ * writes to. This is what the client's React Query hook polls/refetches so
+ * a solve on one device shows up on another without relying on
+ * device-local storage. Returns null for anonymous callers or a
+ * signed-in player who hasn't attempted today's puzzle yet — both mean
+ * "no prior guesses to seed."
+ */
+export async function loadActivePuzzleAttempt(
+  now: Date,
+  timeZone: string,
+  user: HominemUser | null,
+  gameSlug = DEFAULT_REALITEA_GAME_SLUG,
+): Promise<ActivePuzzleAttempt | null> {
+  if (!user) return null;
+
+  const resolved = await resolveActivePuzzle(now, timeZone, gameSlug);
+  if (!resolved) return null;
+
+  const attemptRow = await loadAttempt(user.id, resolved.gameId, resolved.puzzle.dateUtc);
+  if (!attemptRow) return null;
+
+  return { guesses: attemptRow.guesses as RealiteaGuess[], status: attemptRow.status };
+}
+
+export interface DatedPuzzleEnvelope {
+  puzzle: PublicDailyPuzzle;
+  /** null when signed out, or when signed in but the date has never been
+   *  attempted — both cases mean "no prior guesses to seed." */
+  attempt: { guesses: RealiteaGuess[]; status: GameStatus } | null;
+}
+
+/**
+ * Resolves a puzzle for an *exact* requested date — no previous-day grace
+ * period, unlike loadActivePublicPuzzle/evaluateGuessServer. Grace period
+ * exists there for midnight-rollover on "today"; a request for a specific
+ * historical date should 404 if that exact date has no puzzle, not silently
+ * substitute a different one.
+ *
+ * Only loads the signed-in user's attempt for this date; anonymous callers
+ * always get `attempt: null` — the route decides what to do with that (see
+ * date.$date.tsx: anonymous visitors get a read-only clue teaser, not a
+ * playable board, since the per-date anonymous free-guess design in
+ * evaluateGuessServer isn't meant to be exercised against arbitrary dates).
+ */
+export async function loadPuzzleForSpecificDate(
+  dateKey: string,
+  user: HominemUser | null,
+  gameSlug = DEFAULT_REALITEA_GAME_SLUG,
+): Promise<DatedPuzzleEnvelope | null> {
+  const gameId = await requireGameId(gameSlug);
+  const puzzle = await loadPuzzleForDate(gameId, dateKey);
+  if (!puzzle) return null;
+
+  const attemptRow = user ? await loadAttempt(user.id, gameId, dateKey) : null;
+
+  return {
+    puzzle: toPublicDailyPuzzle(puzzle, false),
+    attempt: attemptRow
+      ? { guesses: attemptRow.guesses as RealiteaGuess[], status: attemptRow.status }
+      : null,
+  };
+}
+
+/**
+ * Server-evaluates a guess. The answer never leaves the server: callers receive
+ * per-letter states and the post-guess status only.
+ *
+ * `user` is the resolved Hominem session (null for anonymous). Anonymous
+ * players get exactly one unpersisted guess, gated by `anonymousGuessCount` —
+ * the number of guesses the client has already accumulated in its own local
+ * state. That count is client-reported and therefore not adversarially
+ * secure, but nothing sensitive depends on it: the six-guess cap, the
+ * duplicate-guess check, and the guesses-per-minute rate limit are all
+ * authoritative only once a user is signed in and backed by
+ * `realitea_attempts`, which is the actual gap this closes (see
+ * docs/realitea-audit/01-no-server-side-attempt-tracking.md).
+ */
+export async function evaluateGuessServer(
+  dateKey: string,
+  rawWord: string,
+  user: HominemUser | null,
+  anonymousGuessCount: number,
+  gameSlug = DEFAULT_REALITEA_GAME_SLUG,
+): Promise<RealiteaGuessResult> {
+  const childLogger = logger.child({
+    operation: "evaluateGuessServer",
+    requestedDateKey: dateKey,
+    userId: user?.id ?? null,
+  });
+  const word = normalizeGuess(rawWord);
+
+  if (word.length !== REALITEA_ANSWER_LENGTH) {
+    return { valid: false, word, reason: "wrong-length" };
+  }
+
+  // Try exact dateKey, then previous day as grace period for midnight-rollover games
+  const gameId = await requireGameId(gameSlug);
+  let puzzle = await loadPuzzleForDate(gameId, dateKey);
+  if (!puzzle) {
+    const prevDateKey = addDaysToDateKey(dateKey, -1);
+    if (prevDateKey) {
+      puzzle = await loadPuzzleForDate(gameId, prevDateKey);
+      if (puzzle) {
+        childLogger.info(
+          { event: "[GUESS_GRACE_PERIOD_ACCEPTED]", acceptedDateKey: prevDateKey, word },
+          "guess accepted via previous-day grace period",
+        );
+      }
+    }
+  }
+
+  if (!puzzle) {
+    childLogger.warn({ event: "[GUESS_PUZZLE_NOT_FOUND]", word }, "no puzzle found for dateKey");
+    return { valid: false, word, reason: "not-in-word-list" };
+  }
+
+  const resolvedDateKey = puzzle.dateUtc;
+
+  let attempt = null as Awaited<ReturnType<typeof loadAttempt>>;
+  if (user) {
+    attempt = await loadAttempt(user.id, gameId, resolvedDateKey);
+
+    if (attempt) {
+      if (attempt.status !== "playing") {
+        return {
+          valid: false,
+          word,
+          reason: "game-over",
+          isGameOver: true,
+          status: attempt.status,
+        };
+      }
+      if (hasGuessedWord(attempt.guesses as RealiteaGuess[], word)) {
+        return { valid: false, word, reason: "already-guessed" };
+      }
+    }
+
+    const recentGuessCount = await countRecentGuesses(user.id, RATE_LIMIT_WINDOW_MS);
+    if (recentGuessCount >= RATE_LIMIT_MAX_GUESSES) {
+      childLogger.warn({ event: "[GUESS_RATE_LIMITED]", recentGuessCount }, "rate limit exceeded");
+      return { valid: false, word, reason: "rate-limited" };
+    }
+  } else if (anonymousGuessCount >= 1) {
+    return { valid: false, word, reason: "auth-required", authRequired: true };
+  }
+
+  const inWordList = await isValidWord(word, gameId);
+  if (!inWordList) {
+    return { valid: false, word, reason: "not-in-word-list" };
+  }
+
+  const states = evaluateGuess(puzzle.answer, word);
+  const isSolved = isGuessSolved({ word, states });
+
+  if (!user) {
+    // Anonymous free guess: scored but never persisted. Game is over either
+    // way — solved outright, or the player must sign in to keep going.
+    return {
+      valid: true,
+      word,
+      states,
+      isSolved,
+      isGameOver: true,
+      status: isSolved ? "solved" : "playing",
+      authRequired: !isSolved,
+    };
+  }
+
+  if (!attempt) {
+    try {
+      attempt = await createAttempt(user.id, gameId, resolvedDateKey);
+    } catch {
+      // Concurrent request already created it (unique index on
+      // hominem_user_id/game_id/date_utc) — reload rather than fail.
+      attempt = await loadAttempt(user.id, gameId, resolvedDateKey);
+      if (!attempt) throw new Error("Failed to create or load realitea attempt");
+    }
+  }
+
+  const guessCount = attempt.guesses.length + 1;
+  const isGameOver = isSolved || guessCount >= MAX_GUESSES;
+  const status: RealiteaGuessResult["status"] = isSolved
+    ? "solved"
+    : guessCount >= MAX_GUESSES
+      ? "failed"
+      : "playing";
+
+  await appendGuess(attempt.id, { word, states }, status);
+
+  return {
+    valid: true,
+    word,
+    states,
+    isSolved,
+    isGameOver,
+    status,
+    remainingGuesses: Math.max(0, MAX_GUESSES - guessCount),
+  };
+}

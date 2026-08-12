@@ -7,9 +7,10 @@ import styles from "./game-header.module.css";
 
 interface RealiTeaGameHeaderProps {
   isFallback: boolean;
+  gameSlug: string;
 }
 
-export function RealiTeaGameHeader({ isFallback }: RealiTeaGameHeaderProps) {
+export function RealiTeaGameHeader({ isFallback, gameSlug }: RealiTeaGameHeaderProps) {
   return (
     <header className={styles.header}>
       <div className={styles.inner}>
@@ -36,7 +37,7 @@ export function RealiTeaGameHeader({ isFallback }: RealiTeaGameHeaderProps) {
             </Popover>
           )}
           <Button asChild aria-label="Your puzzle history" variant="ghost" size="icon">
-            <Link to="/games/realitea/history">
+            <Link to={`/games/realitea/history?game=${encodeURIComponent(gameSlug)}`}>
               <LucideHistory aria-hidden="true" />
             </Link>
           </Button>
