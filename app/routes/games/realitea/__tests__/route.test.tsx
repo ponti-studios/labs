@@ -9,7 +9,7 @@ import {
   MAX_GUESSES,
   REALITEA_ANSWER_LENGTH,
   type GameStatus,
-  type PublicDailyPuzzle,
+  type PublicGamesPuzzle,
   type RealiteaGuess,
 } from "~/lib/realitea";
 
@@ -66,7 +66,7 @@ const DEFAULT_ANSWER = "ERIKA";
 function buildPublicPuzzle(
   answer = DEFAULT_ANSWER,
   date: Date = new Date("2026-05-20T12:00:00.000Z"),
-): PublicDailyPuzzle {
+): PublicGamesPuzzle {
   return {
     answerType: "storyline",
     clue: "The Pretty Mess performer never misses a sharp confessional.",
@@ -114,7 +114,7 @@ function stubAttemptFetch() {
   );
 }
 
-async function renderRoute(initial: { puzzle?: PublicDailyPuzzle } = {}) {
+async function renderRoute(initial: { puzzle?: PublicGamesPuzzle } = {}) {
   const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
 
@@ -576,3 +576,4 @@ describe("RealiTeaRoute", () => {
     await expectGuessCalls([DEFAULT_ANSWER]);
   });
 });
+

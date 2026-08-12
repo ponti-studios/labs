@@ -7,7 +7,7 @@ import {
   isGuessLengthValid,
   normalizeGuess,
   type GameStatus,
-  type PublicDailyPuzzle,
+  type PublicGamesPuzzle,
   type RealiteaGuess,
   type RealiteaGuessResult,
 } from "~/lib/realitea";
@@ -41,7 +41,7 @@ export interface RealiTeaGameState {
 }
 
 interface UseRealiTeaGameOptions {
-  puzzle: PublicDailyPuzzle;
+  puzzle: PublicGamesPuzzle;
   initialGuesses: readonly RealiteaGuess[];
   gameSlug: string;
 }
@@ -246,3 +246,4 @@ export function useRealiTeaGame({
     clearError: anim.clearError,
   };
 }
+
