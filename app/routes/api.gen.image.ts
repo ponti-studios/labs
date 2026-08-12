@@ -3,6 +3,7 @@ import type { ActionFunctionArgs } from "react-router";
 import { z } from "zod";
 
 import { LabyrinthServerEnv } from "~/lib/server/env";
+import { assertSameOrigin } from "~/lib/server/origin";
 import { uploadImage } from "~/lib/server/storage";
 import { buildGenerativeImagePrompt } from "~/components/generative-image/state";
 
@@ -46,23 +47,13 @@ const requestSchema = z.object({
   config: generativeImageConfigSchema,
 });
 
-function isAllowedOrigin(request: Request) {
-  const origin = request.headers.get("Origin");
-  if (!origin) {
-    return false;
-  }
-
-  return origin === new URL(request.url).origin;
-}
-
 export async function action({ request }: ActionFunctionArgs) {
   if (request.method !== "POST") {
     return Response.json({ error: "Method not allowed" }, { status: 405 });
   }
 
-  if (!isAllowedOrigin(request)) {
-    return Response.json({ error: "Forbidden" }, { status: 403 });
-  }
+  const originDenied = assertSameOrigin(request);
+  if (originDenied) return originDenied;
 
   const env = LabyrinthServerEnv.parse(process.env);
 

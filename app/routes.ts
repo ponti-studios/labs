@@ -56,6 +56,10 @@ const featureRoutes = [
   // Games
   route("/games/realitea", "routes/games/realitea/route.tsx"),
   route("/games/realitea/history", "routes/games/realitea/history.tsx"),
+  route("/games/realitea/admin", "routes/games/realitea/admin/route.tsx"),
+  route("/games/realitea/admin/preview", "routes/games/realitea/admin/preview.tsx"),
+  route("/games/realitea/admin/preview/events", "routes/games/realitea/admin/preview.events.ts"),
+  route("/games/realitea/admin/dates/:date", "routes/games/realitea/admin/dates.$date.tsx"),
   route("/games/realitea/:date", "routes/games/realitea/date.$date.tsx"),
   route("/games/cards", "routes/games/cards.tsx"),
   route("/games/tetris", "routes/games/tetris.tsx"),
