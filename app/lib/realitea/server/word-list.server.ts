@@ -1,22 +1,20 @@
 /**
  * Server-only word list module.
  *
- * Reads the official 5-letter word list from disk.  In Vite dev & production SSR
- * this resolves against the source tree (dev) or build output (prod, after the
- * Dockerfile copies the words directory into the bundle).  When executed directly
- * via `tsx` (e.g. the reconcile script) it also resolves correctly from source.
+ * Reads the official 5-letter word list from the application source layout. The
+ * Docker image preserves this path so local development, scripts, and SSR use the
+ * same location.
  */
 import { readFileSync } from "node:fs";
-import { resolve, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { resolve } from "node:path";
 
 import { getStoredAnswers } from "./repository.server";
 import { REALITEA_ANSWER_LENGTH } from "../core/rules";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const wordListPath = resolve(process.cwd(), "app/data/words/5.txt");
 
 const wordSet = new Set(
-  readFileSync(resolve(__dirname, "../../../data/words/5.txt"), "utf-8")
+  readFileSync(wordListPath, "utf-8")
     .split("\n")
     .map((w) => w.trim())
     .filter(Boolean),

@@ -1,7 +1,7 @@
 export const REALITEA_GAME_CATALOG = [
   {
     slug: "rhobh",
-    name: "Real Housewives of Beverly Hills",
+    name: "Reality",
     genre: "celebrity",
     feedUrl: "https://realityblurb.com/feed",
     feedLabel: "Reality Blurb",
