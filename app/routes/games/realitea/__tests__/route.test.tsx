@@ -73,6 +73,7 @@ function buildPublicPuzzle(
     dateKey: toDateKey(date),
     detail:
       "Erika Jayne keeps the glam, the one-liners, and the pop-star energy turned all the way up.",
+    isFallback: false,
     sources: [],
   };
 }
@@ -139,10 +140,7 @@ async function renderRoute(initial: { puzzle?: PublicDailyPuzzle } = {}) {
     </QueryClientProvider>,
   );
   await waitFor(() => {
-    expect(
-      screen.queryByLabelText("Letter 1") ??
-        screen.queryByText("The Receipt"),
-    ).toBeTruthy();
+    expect(screen.queryByLabelText("Letter 1") ?? screen.queryByText("The Receipt")).toBeTruthy();
   });
 
   // Wait for the initial render to complete and any animations to settle.
@@ -257,6 +255,48 @@ describe("RealiTeaRoute", () => {
     await user.keyboard("E");
 
     expect(screen.getByLabelText("Letter 1")).toHaveAttribute("data-state", "typed");
+  });
+
+  it("discloses when the active puzzle is a bounded fallback", async () => {
+    routePuzzle = { ...routePuzzle, isFallback: true };
+
+    const { user } = await renderRoute();
+
+    await user.click(screen.getByRole("button", { name: "Why am I seeing this puzzle?" }));
+
+    expect(
+      screen.getByText("Today's puzzle isn't ready yet — you're seeing the most recent puzzle."),
+    ).toBeInTheDocument();
+  });
+
+  it("announces revealed tile and keyboard states", async () => {
+    const wrongGuess = "DORIT";
+    const { user } = await renderRoute();
+
+    await enterGuess(user, wrongGuess);
+    await submitCurrentGuess(user);
+    await expectGuessCalls([wrongGuess]);
+    await resolveGuess(buildGuessResult(DEFAULT_ANSWER, wrongGuess));
+    await finishTileReveal();
+
+    expect(screen.getByRole("img", { name: "D: not in the word" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", { name: "R: present, in the wrong position" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "R — present in word" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "D — not in word" })).toBeInTheDocument();
+  });
+
+  it("does not capture typing from a focused text input", async () => {
+    const { user } = await renderRoute();
+    const input = document.createElement("input");
+    document.body.append(input);
+    input.focus();
+
+    await user.keyboard("ERIKA");
+
+    expect(getTextboxValues()).toEqual(Array.from({ length: REALITEA_ANSWER_LENGTH }, () => ""));
+    input.remove();
   });
 
   it("shows a solved puzzle on a fresh mount once the server has recorded it", async () => {

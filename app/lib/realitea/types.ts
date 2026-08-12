@@ -31,7 +31,10 @@ interface DailyPuzzleDto {
 }
 
 // Do not send the `answer` to the client.
-export interface PublicDailyPuzzle extends Omit<DailyPuzzleDto, "answer"> {}
+export interface PublicDailyPuzzle extends Omit<DailyPuzzleDto, "answer"> {
+  /** True when today's bounded previous-puzzle fallback is being served. */
+  isFallback: boolean;
+}
 
 export interface RealiteaGuess {
   word: string;

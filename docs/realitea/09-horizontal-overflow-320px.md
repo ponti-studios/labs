@@ -1,5 +1,8 @@
 # 09 — Horizontal overflow at 320px viewport width
 
+**Status: Resolved for the practical mobile target.** The board uses viewport-aware
+tile sizing and the compact keyboard remains usable at 320px portrait.
+
 **Category:** Responsive design
 **Severity:** Medium (visual bug on smallest supported devices)
 

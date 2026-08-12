@@ -1,5 +1,8 @@
 # 16 — Undefined keyboard key CSS classes (specificity race)
 
+**Status: Resolved.** Neutral and action keyboard states now have explicit RealiTea
+rules alongside correct, present, and absent states.
+
 **Category:** UI/design
 **Severity:** Low
 

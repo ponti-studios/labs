@@ -1,5 +1,8 @@
 # 12 — Duplicated guess-validation logic (client vs server)
 
+**Status: Resolved.** Normalization, answer-length, and duplicate-guess predicates are
+shared by the client and server; the server remains authoritative.
+
 **Category:** Data flow / architecture
 **Severity:** Low-Medium (maintainability, not a bug today)
 
