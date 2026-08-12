@@ -32,6 +32,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 export const links: Route.LinksFunction = () => [
   { rel: "icon", href: "/experiments/logo.realitea.png", type: "image/png" },
+  { rel: "apple-touch-icon", href: "/apple-touch-icon.png", type: "image/png" },
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
     rel: "preconnect",
@@ -140,7 +141,7 @@ export default function App() {
                 <img
                   src={logo}
                   alt={link.label}
-                  className="border-nokia-ink h-9 w-9 contrast-125 grayscale sm:h-6 sm:w-6 sm:rounded-full sm:border-0 sm:contrast-100 sm:grayscale-0"
+                  className="border-nokia-ink size-6 contrast-125 grayscale sm:border-0 sm:contrast-100 sm:grayscale-0"
                 />
                 <span className="font-nokia mt-1 block text-base tracking-widest uppercase sm:sr-only">
                   {link.label}
