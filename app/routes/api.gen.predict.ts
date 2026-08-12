@@ -2,26 +2,19 @@ import { chatCompletion } from "~/lib/server/ai";
 import type { ActionFunctionArgs } from "react-router";
 import { z } from "zod";
 
+import { assertSameOrigin } from "~/lib/server/origin";
+
 const requestSchema = z.object({
   context: z.string().min(1),
 });
-
-function isAllowedOrigin(request: Request) {
-  const origin = request.headers.get("Origin");
-  if (!origin) {
-    return false;
-  }
-  return origin === new URL(request.url).origin;
-}
 
 export async function action({ request }: ActionFunctionArgs) {
   if (request.method !== "POST") {
     return Response.json({ error: "Method not allowed" }, { status: 405 });
   }
 
-  if (!isAllowedOrigin(request)) {
-    return Response.json({ error: "Forbidden" }, { status: 403 });
-  }
+  const originDenied = assertSameOrigin(request);
+  if (originDenied) return originDenied;
 
   try {
     const body = requestSchema.parse(await request.json());
