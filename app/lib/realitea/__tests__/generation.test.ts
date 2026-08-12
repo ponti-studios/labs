@@ -4,8 +4,9 @@ const { chatCompletionMock } = vi.hoisted(() => ({ chatCompletionMock: vi.fn() }
 
 vi.mock("~/lib/server/ai", () => ({ chatCompletion: chatCompletionMock }));
 
-import { buildMessages, getSystemPromptForGame, previewCandidates } from "../generation";
+import { buildMessages, getSystemPromptForGame, generateCandidates } from "../generation";
 import { MAX_FEED_DESCRIPTION_LENGTH, MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "../feed-text";
+import { GenerateReasonType } from "../admin/generate-copy";
 import { validateCandidate } from "../validation";
 
 describe("generation input boundaries", () => {
@@ -18,6 +19,16 @@ describe("generation input boundaries", () => {
 
     expect(title).toBe("Headline");
     expect(description).toHaveLength(MAX_FEED_DESCRIPTION_LENGTH);
+  });
+
+  it("decodes HTML entities in feed titles", () => {
+    expect(sanitizeFeedText("&#8220;Kyle&#8221; &amp; friends", MAX_FEED_TITLE_LENGTH)).toBe(
+      "\u201CKyle\u201D & friends",
+    );
+    expect(sanitizeFeedText("&ldquo;Kyle&rdquo; &#x26; co", MAX_FEED_TITLE_LENGTH)).toBe(
+      "\u201CKyle\u201D & co",
+    );
+    expect(sanitizeFeedText("&lt;b&gt;Bold&lt;/b&gt;", MAX_FEED_TITLE_LENGTH)).toBe("Bold");
   });
 
   it("delimits article data and tells the model to ignore embedded instructions", () => {
@@ -90,7 +101,7 @@ describe("generation input boundaries", () => {
 
     expect(valid.valid).toBe(true);
     expect(rejected.valid).toBe(false);
-    expect(rejected.reasons).toContain("clue or detail contains prompt-control text");
+    expect(rejected.reasons).toContain(GenerateReasonType.PromptControlText);
   });
 
   it("accepts a valid mocked LLM response while preserving feed boundaries", async () => {
@@ -156,7 +167,7 @@ describe("generation input boundaries", () => {
       ],
     });
 
-    const result = await previewCandidates("2026-06-25", {
+    const result = await generateCandidates("2026-06-25", {
       feedUrl: "https://realityblurb.com/feed",
       systemPrompt: "Generate a five-letter answer.",
       model: "deepseek/deepseek-v4-flash",

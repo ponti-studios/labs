@@ -3,7 +3,7 @@ import path from "node:path";
 import { parseArgs } from "node:util";
 
 import { getDateKey } from "../app/lib/realitea/core/date";
-import { previewCandidates } from "../app/lib/realitea/generation/generate.server";
+import { generateCandidates } from "../app/lib/realitea/generation/generate.server";
 import { PROMPT_TEST_FIXTURES } from "../app/lib/realitea/fixtures/prompt-test-fixtures";
 import { readSourceFixture, type SourceFixture } from "../app/lib/realitea/fixtures/source-fixtures";
 import { runScript } from "./_shared/run-script";
@@ -35,7 +35,7 @@ function parseOptions(): Options {
   };
 }
 
-function fixturePasses(fixture: (typeof PROMPT_TEST_FIXTURES)[number], result: Awaited<ReturnType<typeof previewCandidates>>) {
+function fixturePasses(fixture: (typeof PROMPT_TEST_FIXTURES)[number], result: Awaited<ReturnType<typeof generateCandidates>>) {
   const selected = result.selectedIndex === null ? null : result.candidates[result.selectedIndex];
   return selected !== null && selected !== undefined && fixture.expectedAnswers.includes(selected.validation.normalizedAnswer);
 }
@@ -63,7 +63,7 @@ async function main() {
     console.log("─".repeat(72));
 
     for (const fixture of fixtures) {
-      const result = await previewCandidates(options.dateKey, {
+      const result = await generateCandidates(options.dateKey, {
         feedItems: "feedItems" in fixture ? fixture.feedItems : fixture.items,
         feedUrl: "sourceUrl" in fixture ? fixture.sourceUrl : `https://${fixture.sourceDomains[0]}/test-feed`,
         systemPrompt: prompt,

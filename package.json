@@ -34,7 +34,7 @@
     "@mozilla/readability": "^0.6.0",
     "@openrouter/sdk": "^1.2.6",
     "@ponti-studios/auth": "^0.1.1",
-    "@ponti-studios/ui": "1.4.0",
+    "@ponti-studios/ui": "1.5.1",
     "@react-router/node": "^8.2.0",
     "@react-router/serve": "^8.2.0",
     "@sentry/node": "^10.70.0",

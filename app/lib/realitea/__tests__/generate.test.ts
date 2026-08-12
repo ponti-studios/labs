@@ -6,25 +6,25 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { articles, db, gamesPuzzles, gamesTopics, generationRuns } from "~/lib/server/db";
 import { cleanAll } from "../../../data/test-db";
-import { assertPreviewFeedUrl, expireGenerationRuns, reapStaleGenerationRuns } from "../admin/preview";
+import { assertGenerateFeedUrl, expireGenerations, reapStaleGenerations } from "../admin/generate";
 import { matchArticle } from "../generation/generate.server";
 
-const PREVIEW_SOURCE = readFileSync(
-  join(dirname(fileURLToPath(import.meta.url)), "../admin/preview.ts"),
+const GENERATE_SOURCE = readFileSync(
+  join(dirname(fileURLToPath(import.meta.url)), "../admin/generate.ts"),
   "utf-8",
 );
 
-describe("preview isolation", () => {
+describe("generate isolation", () => {
   it("does not call inventory-mutating generate helpers", () => {
-    expect(PREVIEW_SOURCE).not.toMatch(/\bdeletePuzzlesFromDate\b/);
-    expect(PREVIEW_SOURCE).not.toMatch(/\bdeletePuzzlesInRange\b/);
-    expect(PREVIEW_SOURCE).not.toMatch(/\bmarkArticleUsed\b/);
-    expect(PREVIEW_SOURCE).not.toMatch(/\brecordArticleRejection\b/);
-    expect(PREVIEW_SOURCE).not.toMatch(/\bgeneratePuzzleForGame\b/);
+    expect(GENERATE_SOURCE).not.toMatch(/\bdeletePuzzlesFromDate\b/);
+    expect(GENERATE_SOURCE).not.toMatch(/\bdeletePuzzlesInRange\b/);
+    expect(GENERATE_SOURCE).not.toMatch(/\bmarkArticleUsed\b/);
+    expect(GENERATE_SOURCE).not.toMatch(/\brecordArticleRejection\b/);
+    expect(GENERATE_SOURCE).not.toMatch(/\bgeneratePuzzleForGame\b/);
   });
 });
 
-describe("assertPreviewFeedUrl", () => {
+describe("assertGenerateFeedUrl", () => {
   const originalEnv = process.env.NODE_ENV;
   const originalRailway = process.env.RAILWAY_ENVIRONMENT;
 
@@ -35,15 +35,15 @@ describe("assertPreviewFeedUrl", () => {
   });
 
   it("rejects http, loopback, and link-local metadata hosts", async () => {
-    await expect(assertPreviewFeedUrl("http://127.0.0.1/feed")).resolves.toMatchObject({
+    await expect(assertGenerateFeedUrl("http://127.0.0.1/feed")).resolves.toMatchObject({
       ok: false,
       code: "HTTP_NOT_ALLOWED",
     });
-    await expect(assertPreviewFeedUrl("https://127.0.0.1/feed")).resolves.toMatchObject({
+    await expect(assertGenerateFeedUrl("https://127.0.0.1/feed")).resolves.toMatchObject({
       ok: false,
       code: "PRIVATE_HOST",
     });
-    await expect(assertPreviewFeedUrl("https://169.254.169.254/latest/meta-data")).resolves.toMatchObject({
+    await expect(assertGenerateFeedUrl("https://169.254.169.254/latest/meta-data")).resolves.toMatchObject({
       ok: false,
       code: "PRIVATE_HOST",
     });
@@ -51,7 +51,7 @@ describe("assertPreviewFeedUrl", () => {
 
   it("rejects an unknown https host in production", async () => {
     process.env.RAILWAY_ENVIRONMENT = "production";
-    await expect(assertPreviewFeedUrl("https://evil.example/feed")).resolves.toMatchObject({
+    await expect(assertGenerateFeedUrl("https://evil.example/feed")).resolves.toMatchObject({
       ok: false,
       code: "HOST_NOT_ALLOWED",
     });
@@ -60,7 +60,7 @@ describe("assertPreviewFeedUrl", () => {
   it("allows an arbitrary https host outside production", async () => {
     process.env.NODE_ENV = "test";
     delete process.env.RAILWAY_ENVIRONMENT;
-    await expect(assertPreviewFeedUrl("https://example.com/feed")).resolves.toEqual({
+    await expect(assertGenerateFeedUrl("https://example.com/feed")).resolves.toEqual({
       ok: true,
       href: "https://example.com/feed",
     });
@@ -153,7 +153,7 @@ describe("generation run retention", () => {
       })
       .returning();
 
-    expect(await expireGenerationRuns(30)).toBe(1);
+    expect(await expireGenerations(30)).toBe(1);
     const remaining = await db.query.gamesPuzzles.findFirst({
       where: (table, { eq }) => eq(table.id, puzzle.id),
     });
@@ -187,7 +187,7 @@ describe("generation run retention", () => {
       })
       .returning();
 
-    expect(await reapStaleGenerationRuns()).toBe(1);
+    expect(await reapStaleGenerations()).toBe(1);
     const remaining = await db.query.generationRuns.findFirst({
       where: (table, { eq }) => eq(table.id, run.id),
     });

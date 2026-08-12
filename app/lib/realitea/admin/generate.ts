@@ -3,18 +3,20 @@ import { and, db, eq, generationCandidates, generationRuns, lt } from "~/lib/ser
 import type { Article, GamesTopic } from "~/lib/server/db";
 import type { HominemUser } from "~/lib/server/hominem-auth";
 
+import { GenerateReasonType } from "./generate-copy";
 import { isDateKey, parseDate } from "../core/date";
+import { MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "../generation/feed-text";
 import { PROMPT_TEST_FIXTURES } from "../fixtures/prompt-test-fixtures";
 import {
   articleToFeedItem,
   getSystemPromptForGame,
   matchArticle,
-  previewCandidates,
+  generateCandidates,
 } from "../generation/generate.server";
 import { fetchFeedItems } from "../generation/ingest.server";
 import type { FeedItem } from "../generation/types";
 import {
-  countRecentPreviewActions,
+  countRecentGenerateActions,
   getPendingArticlesByIds,
   getPendingArticlesForGame,
   getPendingArticlesForTopics,
@@ -24,13 +26,13 @@ import {
   recordAdminAction,
 } from "../server/repository.server";
 
-const PREVIEW_RATE_LIMIT = 20;
-const PREVIEW_ARTICLE_CAP = 12;
+const GENERATION_RATE_LIMIT = 20;
+const GENERATION_ARTICLE_CAP = 12;
 const GENERATION_BATCH_SIZE = 8;
 const RUN_TTL_DAYS = 30;
 const REAP_AFTER_MS = 10 * 60 * 1000;
 
-export const PREVIEW_PROMPT_FILES = [
+export const GENERATION_PROMPT_FILES = [
   "app/lib/prompts/realitea-generation.md",
   "app/lib/prompts/realitea-generation-v2.md",
 ] as const;
@@ -39,11 +41,11 @@ export function studioModelAllowlist(): string[] {
   return [...new Set([DEFAULT_TEXT_MODEL, getConfiguredTextModel()])];
 }
 
-export type PreviewSourceMode = "inventory" | "feeds" | "articles" | "rss" | "fixtures";
+export type GenerateSourceMode = "inventory" | "feeds" | "articles" | "rss" | "fixtures";
 
-export type PreviewRequest = {
+export type GenerateRequest = {
   dateKey: string;
-  sourceMode: PreviewSourceMode;
+  sourceMode: GenerateSourceMode;
   feedIds?: number[];
   articleIds?: number[];
   feedUrl?: string;
@@ -55,7 +57,7 @@ export type PreviewRequest = {
   compareGroupId?: string;
 };
 
-export type PreviewFeedUrlResult =
+export type GenerateFeedUrlResult =
   | { ok: true; href: string }
   | { ok: false; code: "INVALID_URL" | "HTTP_NOT_ALLOWED" | "PRIVATE_HOST" | "HOST_NOT_ALLOWED" };
 
@@ -84,7 +86,7 @@ function productionLock() {
   return process.env.NODE_ENV === "production" || Boolean(process.env.RAILWAY_ENVIRONMENT);
 }
 
-export async function assertPreviewFeedUrl(raw: string): Promise<PreviewFeedUrlResult> {
+export async function assertGenerateFeedUrl(raw: string): Promise<GenerateFeedUrlResult> {
   let parsed: URL;
   try {
     parsed = new URL(raw);
@@ -103,7 +105,7 @@ export async function assertPreviewFeedUrl(raw: string): Promise<PreviewFeedUrlR
   return { ok: true, href: parsed.href };
 }
 
-export async function expireGenerationRuns(olderThanDays = RUN_TTL_DAYS): Promise<number> {
+export async function expireGenerations(olderThanDays = RUN_TTL_DAYS): Promise<number> {
   const cutoff = new Date(Date.now() - olderThanDays * 24 * 60 * 60 * 1000);
   const deleted = await db
     .delete(generationRuns)
@@ -112,7 +114,7 @@ export async function expireGenerationRuns(olderThanDays = RUN_TTL_DAYS): Promis
   return deleted.length;
 }
 
-export async function reapStaleGenerationRuns(): Promise<number> {
+export async function reapStaleGenerations(): Promise<number> {
   const cutoff = new Date(Date.now() - REAP_AFTER_MS);
   const updated = await db
     .update(generationRuns)
@@ -126,16 +128,16 @@ export async function reapStaleGenerationRuns(): Promise<number> {
   return updated.length;
 }
 
-export type PreviewStage = "prepare" | "articles" | "model" | "score" | "done";
+export type GenerateStage = "prepare" | "articles" | "model" | "score" | "done";
 
-export type PreviewProgressEvent = {
+export type GenerateProgressEvent = {
   type: "stage";
-  stage: PreviewStage;
+  stage: GenerateStage;
   label: string;
   detail: string;
 };
 
-export type PreviewCandidateView = {
+export type GenerateCandidateView = {
   id: number;
   ordinal: number;
   valid: boolean;
@@ -152,9 +154,9 @@ export type PreviewCandidateView = {
   };
 };
 
-export type PreviewOk = {
+export type GenerateOk = {
   ok: true;
-  runId: number;
+  generationId: number;
   publishable: boolean;
   model: string;
   promptSource: "file" | "paste";
@@ -162,10 +164,10 @@ export type PreviewOk = {
   feedError: string | null;
   llmError: string | null;
   articleCount: number;
-  candidates: PreviewCandidateView[];
+  candidates: GenerateCandidateView[];
 };
 
-export type PreviewErr = {
+export type GenerateErr = {
   ok: false;
   code:
     | "INVALID_DATE"
@@ -180,14 +182,16 @@ export type PreviewErr = {
   error: string;
 };
 
-export async function runPreview(
+export async function createGeneration(
   game: GamesTopic,
-  input: PreviewRequest,
+  input: GenerateRequest,
   actor: HominemUser,
-  onProgress?: (event: PreviewProgressEvent) => void,
-): Promise<PreviewOk | PreviewErr> {
-  const progress = onProgress ?? (() => {});
-  progress({
+  onProgress?: (event: GenerateProgressEvent) => void | Promise<void>,
+): Promise<GenerateOk | GenerateErr> {
+  const progress = async (event: GenerateProgressEvent) => {
+    await onProgress?.(event);
+  };
+  await progress({
     type: "stage",
     stage: "prepare",
     label: "Checking the request",
@@ -207,15 +211,15 @@ export async function runPreview(
   if (!prompt.ok) return prompt;
 
   const hourAgo = new Date(Date.now() - 60 * 60 * 1000);
-  const recent = await countRecentPreviewActions(actor.id, hourAgo);
-  if (recent >= PREVIEW_RATE_LIMIT) {
-    return { ok: false, code: "RATE_LIMITED", error: "preview rate limit is 20 per hour" };
+  const recent = await countRecentGenerateActions(actor.id, hourAgo);
+  if (recent >= GENERATION_RATE_LIMIT) {
+    return { ok: false, code: "RATE_LIMITED", error: "generation rate limit is 20 per hour" };
   }
 
-  await reapStaleGenerationRuns();
-  await expireGenerationRuns();
+  await reapStaleGenerations();
+  await expireGenerations();
 
-  progress({
+  await progress({
     type: "stage",
     stage: "articles",
     label: "Gathering stories",
@@ -230,7 +234,7 @@ export async function runPreview(
   const source = await resolveSource(game, input);
   if (!source.ok) return source;
 
-  progress({
+  await progress({
     type: "stage",
     stage: "articles",
     label: "Gathering stories",
@@ -265,16 +269,16 @@ export async function runPreview(
       createdByEmail: actor.email ?? null,
     })
     .returning();
-  if (!run) return { ok: false, code: "INVALID_SOURCE", error: "failed to create preview run" };
+  if (!run) return { ok: false, code: "INVALID_SOURCE", error: "failed to create generation" };
 
-  progress({
+  await progress({
     type: "stage",
     stage: "model",
     label: "Asking the model",
     detail: `One completion on ${model}. This can take up to a minute.`,
   });
 
-  const preview = await previewCandidates(input.dateKey, {
+  const generated = await generateCandidates(input.dateKey, {
     feedItems: source.feedItems,
     feedUrl: source.feedUrl,
     systemPrompt: prompt.promptText,
@@ -282,17 +286,17 @@ export async function runPreview(
     model,
   });
 
-  progress({
+  await progress({
     type: "stage",
     stage: "score",
     label: "Checking each word",
     detail: "Five letters, dictionary, leaks, and a matching story.",
   });
 
-  const storedCandidates = preview.candidates.map((entry, ordinal) => {
+  const storedCandidates = generated.candidates.map((entry, ordinal) => {
     const article = source.publishable ? matchArticle(entry.candidate, source.articles) : null;
     const reasons = [...entry.validation.reasons];
-    if (source.publishable && !article) reasons.push("unmatched-article");
+    if (source.publishable && !article) reasons.push(GenerateReasonType.UnmatchedArticle);
     const valid = source.publishable
       ? entry.validation.valid && article !== null
       : entry.validation.valid;
@@ -303,7 +307,10 @@ export async function runPreview(
       valid,
       reasons,
       articleId: article?.id ?? null,
-      articleTitle: article?.title ?? entry.candidate.sources[0]?.title ?? null,
+      articleTitle: sanitizeFeedText(
+        article?.title ?? entry.candidate.sources[0]?.title ?? "",
+        MAX_FEED_TITLE_LENGTH,
+      ) || null,
       articleUrl: article?.url ?? entry.candidate.sources[0]?.url ?? null,
       candidate: entry.candidate,
     };
@@ -328,15 +335,15 @@ export async function runPreview(
           .returning();
 
   const selectedIndex = storedCandidates.findIndex((candidate) => candidate.valid);
-  const failed = Boolean(preview.llmError || preview.feedError);
+  const failed = Boolean(generated.llmError || generated.feedError);
   await db
     .update(generationRuns)
     .set({
       status: failed ? "failed" : "succeeded",
       selectedIndex: selectedIndex === -1 ? null : selectedIndex,
-      feedError: preview.feedError,
-      llmError: preview.llmError,
-      feedItemCount: preview.feedItemCount,
+      feedError: generated.feedError,
+      llmError: generated.llmError,
+      feedItemCount: generated.feedItemCount,
       finishedAt: new Date(),
     })
     .where(eq(generationRuns.id, run.id));
@@ -344,14 +351,14 @@ export async function runPreview(
   await recordAdminAction({
     hominemUserId: actor.id,
     email: actor.email,
-    kind: "preview",
+    kind: "generate",
     gamesTopicId: game.id,
     dateUtc: input.dateKey,
-    payload: { sourceMode: input.sourceMode, model, runId: run.id },
+    payload: { sourceMode: input.sourceMode, model, generationId: run.id },
     result: { candidateCount: storedCandidates.length, selectedIndex, failed },
   });
 
-  progress({
+  await progress({
     type: "stage",
     stage: "done",
     label: "Ready to review",
@@ -360,13 +367,13 @@ export async function runPreview(
 
   return {
     ok: true,
-    runId: run.id,
+    generationId: run.id,
     publishable: source.publishable,
     model,
     promptSource: prompt.promptSource,
     selectedIndex: selectedIndex === -1 ? null : selectedIndex,
-    feedError: preview.feedError,
-    llmError: preview.llmError,
+    feedError: generated.feedError,
+    llmError: generated.llmError,
     articleCount: source.feedItems.length,
     candidates: inserted.map((row, index) => ({
       id: row.id,
@@ -376,14 +383,14 @@ export async function runPreview(
       articleId: row.articleId,
       articleTitle: storedCandidates[index]?.articleTitle ?? null,
       articleUrl: storedCandidates[index]?.articleUrl ?? null,
-      candidate: row.payload as PreviewOk["candidates"][number]["candidate"],
+      candidate: row.payload as GenerateOk["candidates"][number]["candidate"],
     })),
   };
 }
 
-function resolvePrompt(game: GamesTopic, input: PreviewRequest):
+function resolvePrompt(game: GamesTopic, input: GenerateRequest):
   | { ok: true; promptSource: "file" | "paste"; promptPath: string | null; promptText: string }
-  | PreviewErr {
+  | GenerateErr {
   if (input.promptSource === "paste") {
     const promptText = input.promptText?.trim() ?? "";
     if (promptText.length < 20) {
@@ -392,7 +399,7 @@ function resolvePrompt(game: GamesTopic, input: PreviewRequest):
     return { ok: true, promptSource: "paste", promptPath: null, promptText };
   }
   const promptPath = input.promptPath ?? game.systemPromptPath;
-  if (!PREVIEW_PROMPT_FILES.includes(promptPath as (typeof PREVIEW_PROMPT_FILES)[number])
+  if (!GENERATION_PROMPT_FILES.includes(promptPath as (typeof GENERATION_PROMPT_FILES)[number])
     && promptPath !== game.systemPromptPath) {
     return { ok: false, code: "INVALID_PROMPT", error: "prompt file is not allowed" };
   }
@@ -406,14 +413,14 @@ function resolvePrompt(game: GamesTopic, input: PreviewRequest):
 
 async function resolveSource(
   game: GamesTopic,
-  input: PreviewRequest,
+  input: GenerateRequest,
 ): Promise<
   | { ok: true; feedItems: FeedItem[]; articles: Article[]; feedUrl: string; publishable: boolean }
-  | PreviewErr
+  | GenerateErr
 > {
   if (input.sourceMode === "rss") {
     if (!input.feedUrl) return { ok: false, code: "INVALID_SOURCE", error: "feedUrl is required" };
-    const allowed = await assertPreviewFeedUrl(input.feedUrl);
+    const allowed = await assertGenerateFeedUrl(input.feedUrl);
     if (!allowed.ok) return { ok: false, code: allowed.code, error: allowed.code };
     try {
       const feedItems = await fetchFeedItems(allowed.href);
@@ -437,7 +444,7 @@ async function resolveSource(
 
   let articles: Article[] = [];
   if (input.sourceMode === "articles") {
-    articles = await getPendingArticlesByIds(input.articleIds ?? [], PREVIEW_ARTICLE_CAP);
+    articles = await getPendingArticlesByIds(input.articleIds ?? [], GENERATION_ARTICLE_CAP);
   } else if (input.sourceMode === "feeds") {
     articles = await getPendingArticlesForTopics(input.feedIds ?? [game.id], GENERATION_BATCH_SIZE);
   } else {

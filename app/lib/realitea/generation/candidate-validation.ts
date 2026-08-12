@@ -1,3 +1,4 @@
+import { GenerateReasonType } from "../admin/generate-copy";
 import { normalizeGuess, REALITEA_ANSWER_LENGTH } from "../core/rules";
 import { isDictionaryWord } from "../server/word-list.server";
 import type { ValidationResult } from "./types";
@@ -30,35 +31,35 @@ export function validateCandidate(
   previousAnswers: Set<string> = new Set(),
   options: { sourceDomains?: string[] } = {},
 ): ValidationResult {
-  const reasons: string[] = [];
+  const reasons: GenerateReasonType[] = [];
   const normalizedAnswer = normalizeGuess(candidate.answer);
 
   if (normalizedAnswer.length !== REALITEA_ANSWER_LENGTH) {
-    reasons.push("answer must normalize to exactly five letters");
+    reasons.push(GenerateReasonType.NotFiveLetters);
   }
   if (!normalizedAnswer || /[^A-Z]/.test(normalizedAnswer)) {
-    reasons.push("answer does not normalize cleanly to letters");
+    reasons.push(GenerateReasonType.NotLetters);
   }
   if (normalizedAnswer.length === REALITEA_ANSWER_LENGTH && !isDictionaryWord(normalizedAnswer)) {
-    reasons.push("answer is not in the accepted five-letter word list");
+    reasons.push(GenerateReasonType.NotDictionaryWord);
   }
   if (!candidate.answerType) {
-    reasons.push("answer type is missing");
+    reasons.push(GenerateReasonType.MissingAnswerType);
   }
   if (candidate.answerType === "person") {
-    reasons.push("answer type must not be a person; prefer a storyline, moment, place, or phrase");
+    reasons.push(GenerateReasonType.PersonAnswerType);
   }
   if (
     candidate.clue.toUpperCase().includes(normalizedAnswer) ||
     candidate.detail.toUpperCase().includes(normalizedAnswer)
   ) {
-    reasons.push("answer is leaked in clue or detail");
+    reasons.push(GenerateReasonType.AnswerLeaked);
   }
   if (containsPromptControlText(candidate.clue) || containsPromptControlText(candidate.detail)) {
-    reasons.push("clue or detail contains prompt-control text");
+    reasons.push(GenerateReasonType.PromptControlText);
   }
   if (previousAnswers.has(normalizedAnswer)) {
-    reasons.push("answer repeats inside cooldown window");
+    reasons.push(GenerateReasonType.RepeatInWindow);
   }
   const allowedSourceDomains = options.sourceDomains ?? [DEFAULT_SOURCE_DOMAIN];
   const hasAllowedSource = candidate.sources.some((s) => {
@@ -69,11 +70,7 @@ export function validateCandidate(
     }
   });
   if (!hasAllowedSource) {
-    reasons.push(
-      allowedSourceDomains.length === 1 && allowedSourceDomains[0] === DEFAULT_SOURCE_DOMAIN
-        ? "candidate is missing a realityblurb.com source URL"
-        : `candidate is missing a source URL from: ${allowedSourceDomains.join(", ")}`,
-    );
+    reasons.push(GenerateReasonType.MissingSource);
   }
 
   return { normalizedAnswer, reasons, valid: reasons.length === 0 };

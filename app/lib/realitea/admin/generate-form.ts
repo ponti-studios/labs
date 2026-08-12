@@ -1,6 +1,6 @@
-import type { PreviewRequest, PreviewSourceMode } from "./preview";
+import type { GenerateRequest, GenerateSourceMode } from "./generate";
 
-export function readPreviewForm(form: FormData): PreviewRequest {
+export function readGenerateForm(form: FormData): GenerateRequest {
   const feedIds = String(form.get("feedIds") ?? "")
     .split(",")
     .map((value) => Number.parseInt(value.trim(), 10))
@@ -12,8 +12,11 @@ export function readPreviewForm(form: FormData): PreviewRequest {
 
   return {
     dateKey: String(form.get("dateKey") ?? ""),
-    sourceMode: String(form.get("sourceMode") ?? "inventory") as PreviewSourceMode,
-    promptSource: form.get("promptSource") === "paste" ? "paste" : "file",
+    sourceMode: String(form.get("sourceMode") ?? "inventory") as GenerateSourceMode,
+    promptSource:
+      form.get("promptSource") === "paste" || form.get("promptChoice") === "custom"
+        ? "paste"
+        : "file",
     ...(form.get("promptPath") ? { promptPath: String(form.get("promptPath")) } : {}),
     ...(form.get("promptText") ? { promptText: String(form.get("promptText")) } : {}),
     ...(form.get("model") ? { model: String(form.get("model")) } : {}),

@@ -1,20 +1,16 @@
 import { MetricCard } from "@ponti-studios/ui/data-display";
 import { SectionIntro } from "@ponti-studios/ui/layout";
-import { Button, Card, CardContent, StatusBadge, type StatusBadgeConfig } from "@ponti-studios/ui/primitives";
+import { Button } from "@ponti-studios/ui/primitives";
 import { Link, useLoaderData, type LoaderFunctionArgs } from "react-router";
 
 import { requireRealiteaAdmin } from "~/lib/realitea/admin/auth";
-import { loadAdminOverview, type InventoryCellState } from "~/lib/realitea/admin/inventory";
+import { loadAdminOverview } from "~/lib/realitea/admin/inventory";
+
+import { GenerationsList, InventoryList } from "./inventory-list";
 
 import "../realitea.css";
 
 const DEFAULT_GAME = "rhobh";
-
-const CELL_STATUS: Record<InventoryCellState, StatusBadgeConfig> = {
-  live: { label: "Live", variant: "default" },
-  ready: { label: "Ready", variant: "outline" },
-  missing: { label: "Missing", variant: "secondary" },
-};
 
 export function meta() {
   return [{ title: "RealiTea admin" }, { name: "robots", content: "noindex" }];
@@ -42,8 +38,8 @@ export default function RealiTeaAdminOverview() {
         description={`UTC today ${overview.utcToday} · PT today ${overview.pacificToday}`}
         actions={
           <Button asChild>
-            <Link to={`/games/realitea/admin/preview?game=${overview.game.slug}`}>
-              Try generation
+            <Link to={`/games/realitea/admin/generate?game=${overview.game.slug}`}>
+              Generate
             </Link>
           </Button>
         }
@@ -59,30 +55,28 @@ export default function RealiTeaAdminOverview() {
       </section>
 
       <section className="flex flex-col gap-3">
-        <h2 className="text-lg font-medium">Inventory</h2>
-        <ol className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-          {overview.cells.map((cell) => (
-            <li key={cell.dateKey}>
-              <Link
-                to={`/games/realitea/admin/dates/${cell.dateKey}?game=${overview.game.slug}`}
-                className="block"
-              >
-                <Card className="hover:bg-muted/40 transition-colors">
-                  <CardContent className="flex items-center justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="font-medium">{cell.dateKey}</p>
-                      <p className="text-muted-foreground text-xs">
-                        {cell.isUtcToday ? "UTC today" : cell.isPacificToday ? "PT today" : "Scheduled"}
-                        {cell.attemptCount > 0 ? ` · ${cell.attemptCount} attempts` : ""}
-                      </p>
-                    </div>
-                    <StatusBadge status={cell.state} config={CELL_STATUS} />
-                  </CardContent>
-                </Card>
-              </Link>
-            </li>
-          ))}
-        </ol>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h2 className="text-lg font-medium">Inventory</h2>
+            <p className="text-muted-foreground text-sm">
+              Published puzzles. Players are signed-in people who started that day — not generations.
+            </p>
+          </div>
+          <Button asChild variant="outline" size="sm">
+            <Link to={`/games/realitea/admin/inventory?game=${overview.game.slug}`}>View all</Link>
+          </Button>
+        </div>
+        <InventoryList cells={overview.cells} gameSlug={overview.game.slug} />
+      </section>
+
+      <section className="flex flex-col gap-3">
+        <div>
+          <h2 className="text-lg font-medium">Generations</h2>
+          <p className="text-muted-foreground text-sm">
+            One model try for one date. It does not replace the published puzzle.
+          </p>
+        </div>
+        <GenerationsList generations={overview.generations} gameSlug={overview.game.slug} />
       </section>
     </main>
   );

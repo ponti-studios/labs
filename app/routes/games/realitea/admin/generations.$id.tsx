@@ -1,0 +1,99 @@
+import { SectionIntro } from "@ponti-studios/ui/layout";
+import { Button, StatusBadge, type StatusBadgeConfig } from "@ponti-studios/ui/primitives";
+import {
+  Link,
+  redirect,
+  useLoaderData,
+  type ActionFunctionArgs,
+  type LoaderFunctionArgs,
+} from "react-router";
+
+import { requireRealiteaAdmin } from "~/lib/realitea/admin/auth";
+import { loadAdminGeneration, resolveAdminGame } from "~/lib/realitea/admin/inventory";
+import { publishCandidate } from "~/lib/realitea/admin/publish";
+import { assertSameOrigin } from "~/lib/server/origin";
+
+import { CandidateCards } from "./components/candidate-cards";
+
+import "../realitea.css";
+
+const DEFAULT_GAME = "rhobh";
+
+const GENERATION_STATUS: Record<"running" | "succeeded" | "failed", StatusBadgeConfig> = {
+  running: { label: "Running", variant: "outline" },
+  succeeded: { label: "Succeeded", variant: "default" },
+  failed: { label: "Failed", variant: "destructive" },
+};
+
+export function meta() {
+  return [{ title: "RealiTea generation" }, { name: "robots", content: "noindex" }];
+}
+
+export async function loader({ request, params }: LoaderFunctionArgs) {
+  await requireRealiteaAdmin(request, "loader");
+
+  const generationId = Number.parseInt(params.id ?? "", 10);
+  if (!Number.isInteger(generationId) || generationId < 1) {
+    throw Response.json({ error: "Invalid generation" }, { status: 400 });
+  }
+
+  const slug = new URL(request.url).searchParams.get("game") ?? DEFAULT_GAME;
+  const detail = await loadAdminGeneration(slug, generationId);
+  if (!detail) throw Response.json({ error: "Generation not found" }, { status: 404 });
+  return detail;
+}
+
+export async function action({ request, params }: ActionFunctionArgs) {
+  const originDenied = assertSameOrigin(request);
+  if (originDenied) return originDenied;
+
+  const auth = await requireRealiteaAdmin(request, "action");
+  const generationId = Number.parseInt(params.id ?? "", 10);
+  const form = await request.formData();
+  const candidateId = Number.parseInt(String(form.get("candidateId") ?? ""), 10);
+  if (!Number.isInteger(generationId) || !Number.isInteger(candidateId)) {
+    return Response.json({ ok: false as const, error: "Invalid publish request" }, { status: 400 });
+  }
+
+  const slug = new URL(request.url).searchParams.get("game") ?? DEFAULT_GAME;
+  const game = await resolveAdminGame(slug);
+  if (!game)
+    return Response.json({ ok: false as const, error: "Topic not found" }, { status: 404 });
+
+  const result = await publishCandidate({
+    game,
+    generationId,
+    candidateId,
+    actor: auth.user,
+  });
+  if (!result.ok) {
+    return Response.json({ ok: false as const, error: result.error }, { status: 400 });
+  }
+  return redirect(`/games/realitea/admin/dates/${result.dateKey}?game=${game.slug}`);
+}
+
+export default function RealiTeaAdminGeneration() {
+  const { game, generation } = useLoaderData<typeof loader>();
+
+  return (
+    <main className="mx-auto flex w-full max-w-3xl flex-col gap-8 p-6">
+      <Button asChild variant="ghost" size="sm" className="w-fit">
+        <Link to={`/games/realitea/admin?game=${game.slug}`}>← Admin</Link>
+      </Button>
+
+      <SectionIntro
+        eyebrow={game.name}
+        title={`Generation ${generation.id}`}
+        description={`${generation.dateKey} · ${generation.sourceMode} · ${generation.model}`}
+        actions={<StatusBadge status={generation.status} config={GENERATION_STATUS} />}
+      />
+
+      <CandidateCards
+        candidates={generation.candidates}
+        generationId={generation.id}
+        gameSlug={game.slug}
+        publishable={generation.publishable}
+      />
+    </main>
+  );
+}

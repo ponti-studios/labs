@@ -24,8 +24,8 @@ importers:
         specifier: ^0.1.1
         version: 0.1.1(patch_hash=27ad6224609be803b9c7abf5d6836bae53b9ac75ab464eb7777da0ae40d07bf0)(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.10)(drizzle-orm@0.45.2(@opentelemetry/api@1.9.1)(kysely@0.29.4)(pg@8.22.0)(postgres@3.4.9))(pg@8.22.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(vitest@4.1.10)
       '@ponti-studios/ui':
-        specifier: 1.4.0
-        version: 1.4.0(@date-fns/tz@1.5.0)(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: 1.5.1
+        version: 1.5.1(@date-fns/tz@1.5.0)(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@react-router/node':
         specifier: ^8.2.0
         version: 8.3.0(react-router@8.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(typescript@6.0.3)
@@ -1678,8 +1678,8 @@ packages:
     peerDependencies:
       react: 'catalog:'
 
-  '@ponti-studios/ui@1.4.0':
-    resolution: {integrity: sha512-LG7ZT8/zunn0Eq/UyGfzWTkxlFKpyC54fdUt6kLEu4YsV1u49ZFhr1EJh5/8e9KPvlr59MxOhKtiOWxpmBRsXQ==}
+  '@ponti-studios/ui@1.5.1':
+    resolution: {integrity: sha512-wRj3ZTB5oiUfV/EVUpK/Di+ymr6RBlmDxREM7pi574V/gbf33Y4KJcjXIj1TToauoGIw95ezqZ8g5zXgGjnszQ==}
     peerDependencies:
       react: ^18.2.0 || ^19.0.0
       react-dom: ^18.2.0 || ^19.0.0
@@ -5613,7 +5613,7 @@ snapshots:
       - vitest
       - vue
 
-  '@ponti-studios/ui@1.4.0(@date-fns/tz@1.5.0)(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@ponti-studios/ui@1.5.1(@date-fns/tz@1.5.0)(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@base-ui/react': 1.6.0(@date-fns/tz@1.5.0)(@types/react@19.2.18)(date-fns@4.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@radix-ui/colors': 3.0.0

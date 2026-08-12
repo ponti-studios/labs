@@ -286,7 +286,7 @@ export const STUDIO_TRANSLATIONS_EN = {
           "Give letter-by-letter feedback as players solve",
           "Reconcile scheduled puzzles through Drizzle and PostgreSQL",
           "Check puzzle quality and freshness before publication",
-          "Preview and manage puzzles from an admin panel",
+          "Generate and manage puzzles from an admin panel",
         ],
         technicalChallenges: [
           "Turn raw, unstructured news into playable puzzles",
