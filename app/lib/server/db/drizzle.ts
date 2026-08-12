@@ -16,11 +16,20 @@ function getDatabaseUrl(): string {
   throw new Error("DATABASE_URL environment variable is required");
 }
 
+function initializeClient() {
+  if (_client) return _client;
+  _client = postgres(getDatabaseUrl());
+  return _client;
+}
+
 function initializeDb() {
   if (_db) return _db;
-  _client = postgres(getDatabaseUrl());
-  _db = drizzle(_client, { schema });
+  _db = drizzle(initializeClient(), { schema });
   return _db;
+}
+
+export function getSql() {
+  return initializeClient();
 }
 
 export const db = new Proxy({} as ReturnType<typeof drizzle<typeof schema>>, {

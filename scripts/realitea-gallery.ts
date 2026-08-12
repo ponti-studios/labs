@@ -1,18 +1,17 @@
-import "dotenv/config";
 import { mkdir, rename, rm } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 
 import { chromium, type Page } from "playwright";
-import { closeDb } from "~/lib/server/db";
 
-import { getDateKey } from "../app/lib/realitea/date";
+import { getDateKey } from "../app/lib/realitea/core/date";
 import {
   getGameBySlug,
   loadMostRecentPuzzle,
   loadPuzzleForDate,
-} from "../app/lib/realitea/repository";
+} from "../app/lib/realitea/server/repository.server";
+import { runScript } from "./_shared/run-script";
 
 /**
  * Captures gallery-ready assets for the RealiTea game:
@@ -112,26 +111,29 @@ async function captureScreenshots(opts: Options) {
   }
 
   const browser = await chromium.launch({ headless: opts.headless });
-  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  try {
+    const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 
-  await resetBoard(page, `${opts.baseUrl}/games/realitea`);
+    await resetBoard(page, `${opts.baseUrl}/games/realitea`);
 
-  // Play every guess except the last (the answer) first, so the board shows
-  // real yellow/gray feedback without being solved yet.
-  for (const guess of guesses.slice(0, -1)) await typeWord(page, guess);
-  const gameplayOut = path.join(opts.outDir, "realitea-gameplay.png");
-  await page.screenshot({ path: gameplayOut });
-  console.log(`Saved screenshot: ${gameplayOut}`);
+    // Play every guess except the last (the answer) first, so the board shows
+    // real yellow/gray feedback without being solved yet.
+    for (const guess of guesses.slice(0, -1)) await typeWord(page, guess);
+    const gameplayOut = path.join(opts.outDir, "realitea-gameplay.png");
+    await page.screenshot({ path: gameplayOut });
+    console.log(`Saved screenshot: ${gameplayOut}`);
 
-  // Final guess solves it.
-  await typeWord(page, guesses[guesses.length - 1]);
-  await page.waitForTimeout(500);
-  const solvedOut = path.join(opts.outDir, "realitea-solved.png");
-  await page.screenshot({ path: solvedOut });
-  console.log(`Saved screenshot: ${solvedOut}`);
-  console.log(`Answer solved: ${answer} (guesses: ${guesses.join(", ")})`);
+    // Final guess solves it.
+    await typeWord(page, guesses[guesses.length - 1]);
+    await page.waitForTimeout(500);
+    const solvedOut = path.join(opts.outDir, "realitea-solved.png");
+    await page.screenshot({ path: solvedOut });
+    console.log(`Saved screenshot: ${solvedOut}`);
+    console.log(`Answer solved: ${answer} (guesses: ${guesses.join(", ")})`);
 
-  await browser.close();
+  } finally {
+    await browser.close();
+  }
 }
 
 async function captureSolveVideo(opts: Options) {
@@ -183,10 +185,4 @@ async function main() {
   }
 }
 
-try {
-  await main();
-} finally {
-  // Looking up today's answer opens a DB connection; closing it explicitly
-  // lets the process exit instead of hanging on an open pool.
-  closeDb();
-}
+if (!process.env.VITEST) await runScript(main);

@@ -1,17 +1,10 @@
-import "dotenv/config";
-
-import { closeDb } from "~/lib/server/db";
-
-import { getErrorMessage } from "../app/lib/errors";
-import { ensureRealiteaCatalog, ingestAllActiveFeeds } from "../app/lib/realitea/ingest";
+import { ensureRealiteaCatalog, ingestAllActiveFeeds } from "../app/lib/realitea/generation/ingest.server";
 import { createLogger } from "../app/lib/logger.server";
-import { LabyrinthServerEnv } from "../app/lib/server/env";
+import { runScript } from "./_shared/run-script";
 
 const logger = createLogger();
 
 async function main() {
-  LabyrinthServerEnv.parse(process.env);
-
   const ingestLogger = logger.child({ operation: "realiteaIngest" });
   ingestLogger.info({ event: "[INGEST_START]" }, "starting feed ingest run");
 
@@ -24,13 +17,4 @@ async function main() {
   );
 }
 
-if (!process.env.VITEST) {
-  try {
-    await main();
-  } catch (err) {
-    logger.error({ event: "[INGEST_FAILED]", error: getErrorMessage(err) }, "ingest run failed");
-    process.exit(1);
-  } finally {
-    closeDb();
-  }
-}
+if (!process.env.VITEST) await runScript(main);

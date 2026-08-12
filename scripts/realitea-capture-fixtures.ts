@@ -1,10 +1,9 @@
-import "dotenv/config";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { parseArgs } from "node:util";
 
-import { fetchFeedItems } from "../app/lib/realitea/ingest";
-import { LabyrinthServerEnv } from "../app/lib/server/env";
+import { fetchFeedItems } from "../app/lib/realitea/generation/ingest.server";
+import { runScript } from "./_shared/run-script";
 
 const DEFAULT_FEEDS = [
   { id: "tech-news", genre: "technology", url: "https://techcrunch.com/feed/" },
@@ -31,7 +30,6 @@ function parseOptions() {
 }
 
 async function main() {
-  LabyrinthServerEnv.parse(process.env);
   const options = parseOptions();
   const feeds = options.feedIds.length === 0
     ? DEFAULT_FEEDS
@@ -55,4 +53,4 @@ async function main() {
   }
 }
 
-await main();
+if (!process.env.VITEST) await runScript(main);

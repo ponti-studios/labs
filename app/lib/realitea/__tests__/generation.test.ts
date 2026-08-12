@@ -159,11 +159,16 @@ describe("generation input boundaries", () => {
     const result = await previewCandidates("2026-06-25", {
       feedUrl: "https://realityblurb.com/feed",
       systemPrompt: "Generate a five-letter answer.",
+      model: "deepseek/deepseek-v4-flash",
     });
 
     expect(result.feedItemCount).toBe(1);
     expect(result.selectedIndex).toBe(0);
     expect(result.candidates[0]?.validation.valid).toBe(true);
     expect(chatCompletionMock).toHaveBeenCalledOnce();
+    expect(chatCompletionMock).toHaveBeenCalledWith(
+      expect.objectContaining({ model: "deepseek/deepseek-v4-flash" }),
+    );
   });
 });
+

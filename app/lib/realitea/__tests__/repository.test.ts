@@ -1,4 +1,4 @@
-import { articles, dailyPuzzles, db, feeds, games, realiteaAttempts } from "~/lib/server/db";
+import { articles, gamesPuzzles, db, gamesTopics, gamesAttempts } from "~/lib/server/db";
 import { beforeEach, describe, expect, it } from "vitest";
 import { cleanAll } from "../../../data/test-db";
 
@@ -9,8 +9,8 @@ beforeEach(async () => {
 describe("getGameBySlug", () => {
   it("returns the game row when one exists", async () => {
     const [game] = await db
-      .insert(games)
-      .values({ slug: "rhobh", name: "RHOBH", systemPromptPath: "prompts/rhobh.txt" })
+      .insert(gamesTopics)
+      .values({ slug: "rhobh", name: "RHOBH", feedUrl: "https://example.com/feed", feedLabel: "Test Feed", systemPromptPath: "prompts/rhobh.txt" })
       .returning();
     const { getGameBySlug } = await import("../repository");
     const result = await getGameBySlug("rhobh");
@@ -27,21 +27,17 @@ describe("getGameBySlug", () => {
 describe("loadPuzzleForDate", () => {
   it("joins the puzzle with its source article", async () => {
     const [game] = await db
-      .insert(games)
-      .values({ slug: "rhobh", name: "RHOBH", systemPromptPath: "prompts/rhobh.txt" })
+      .insert(gamesTopics)
+      .values({ slug: "rhobh", name: "RHOBH", feedUrl: "https://example.com/feed", feedLabel: "Test Feed", systemPromptPath: "prompts/rhobh.txt" })
       .returning();
-    const [feed] = await db
-      .insert(feeds)
-      .values({ url: "https://example.com/feed", label: "Test Feed" })
-      .returning();
-    const [article] = await db
+        const [article] = await db
       .insert(articles)
-      .values({ feedId: feed.id, url: "https://example.com/a", title: "Article A" })
+      .values({ gamesTopicId: game.id, url: "https://example.com/a", title: "Article A" })
       .returning();
     const [puzzle] = await db
-      .insert(dailyPuzzles)
+      .insert(gamesPuzzles)
       .values({
-        gameId: game.id,
+        gamesTopicId: game.id,
         articleId: article.id,
         dateUtc: "2026-06-25",
         answer: "BRAVO",
@@ -72,23 +68,19 @@ describe("loadPuzzleForDate", () => {
 describe("getStoredAnswers", () => {
   it("returns a Set of normalizedAnswer values scoped to the game", async () => {
     const [game] = await db
-      .insert(games)
-      .values({ slug: "rhobh", name: "RHOBH", systemPromptPath: "prompts/rhobh.txt" })
+      .insert(gamesTopics)
+      .values({ slug: "rhobh", name: "RHOBH", feedUrl: "https://example.com/feed", feedLabel: "Test Feed", systemPromptPath: "prompts/rhobh.txt" })
       .returning();
-    const [feed] = await db
-      .insert(feeds)
-      .values({ url: "https://example.com/feed", label: "Test Feed" })
-      .returning();
-    const [a1] = await db
+        const [a1] = await db
       .insert(articles)
-      .values({ feedId: feed.id, url: "https://example.com/1", title: "One" })
+      .values({ gamesTopicId: game.id, url: "https://example.com/1", title: "One" })
       .returning();
     const [a2] = await db
       .insert(articles)
-      .values({ feedId: feed.id, url: "https://example.com/2", title: "Two" })
+      .values({ gamesTopicId: game.id, url: "https://example.com/2", title: "Two" })
       .returning();
-    await db.insert(dailyPuzzles).values({
-      gameId: game.id,
+    await db.insert(gamesPuzzles).values({
+      gamesTopicId: game.id,
       articleId: a1.id,
       dateUtc: "2026-06-25",
       answer: "BRAVO",
@@ -97,8 +89,8 @@ describe("getStoredAnswers", () => {
       clue: "c1",
       detail: "d1",
     });
-    await db.insert(dailyPuzzles).values({
-      gameId: game.id,
+    await db.insert(gamesPuzzles).values({
+      gamesTopicId: game.id,
       articleId: a2.id,
       dateUtc: "2026-06-26",
       answer: "DISCO",
@@ -119,13 +111,19 @@ describe("getStoredAnswers", () => {
 
 describe("upsertArticles", () => {
   it("dedupes on url via onConflictDoNothing and returns the inserted count", async () => {
-    const [feed] = await db
-      .insert(feeds)
-      .values({ url: "https://example.com/feed", label: "Test Feed" })
+    const [game] = await db
+      .insert(gamesTopics)
+      .values({
+        slug: "rhobh",
+        name: "RHOBH",
+        feedUrl: "https://example.com/feed",
+        feedLabel: "Test Feed",
+        systemPromptPath: "prompts/rhobh.txt",
+      })
       .returning();
 
     const { upsertArticles } = await import("../repository");
-    const result = await upsertArticles(feed.id, [
+    const result = await upsertArticles(game.id, [
       { url: "https://example.com/a", title: "A" },
       { url: "https://example.com/a", title: "A duplicate" },
     ]);
@@ -143,23 +141,19 @@ describe("upsertArticles", () => {
 describe("getExistingDateKeys", () => {
   it("returns date strings from rows scoped to the game", async () => {
     const [game] = await db
-      .insert(games)
-      .values({ slug: "rhobh", name: "RHOBH", systemPromptPath: "prompts/rhobh.txt" })
+      .insert(gamesTopics)
+      .values({ slug: "rhobh", name: "RHOBH", feedUrl: "https://example.com/feed", feedLabel: "Test Feed", systemPromptPath: "prompts/rhobh.txt" })
       .returning();
-    const [feed] = await db
-      .insert(feeds)
-      .values({ url: "https://example.com/feed", label: "Test Feed" })
-      .returning();
-    const [a1] = await db
+        const [a1] = await db
       .insert(articles)
-      .values({ feedId: feed.id, url: "https://example.com/1", title: "One" })
+      .values({ gamesTopicId: game.id, url: "https://example.com/1", title: "One" })
       .returning();
     const [a2] = await db
       .insert(articles)
-      .values({ feedId: feed.id, url: "https://example.com/2", title: "Two" })
+      .values({ gamesTopicId: game.id, url: "https://example.com/2", title: "Two" })
       .returning();
-    await db.insert(dailyPuzzles).values({
-      gameId: game.id,
+    await db.insert(gamesPuzzles).values({
+      gamesTopicId: game.id,
       articleId: a1.id,
       dateUtc: "2026-06-26",
       answer: "BRAVO",
@@ -168,8 +162,8 @@ describe("getExistingDateKeys", () => {
       clue: "c1",
       detail: "d1",
     });
-    await db.insert(dailyPuzzles).values({
-      gameId: game.id,
+    await db.insert(gamesPuzzles).values({
+      gamesTopicId: game.id,
       articleId: a2.id,
       dateUtc: "2026-06-27",
       answer: "DISCO",
@@ -186,23 +180,29 @@ describe("getExistingDateKeys", () => {
   });
 });
 
+describe("deletePuzzlesInRange", () => {
+  it("does not delete a puzzle after the inclusive end of the window", async () => {
+    const game = await seedGameWithPuzzles(["2026-08-13", "2026-08-14", "2026-08-15"]);
+    const { deletePuzzlesInRange, getExistingDateKeys } = await import("../repository");
+    const deleted = await deletePuzzlesInRange(game.id, "2026-08-13", "2026-08-14");
+    expect(deleted).toBe(2);
+    expect(await getExistingDateKeys(game.id, "2026-08-13", "2026-08-15")).toEqual(["2026-08-15"]);
+  });
+});
+
 async function seedGameWithPuzzles(dateKeys: string[]) {
   const [game] = await db
-    .insert(games)
-    .values({ slug: "rhobh", name: "RHOBH", systemPromptPath: "prompts/rhobh.txt" })
-    .returning();
-  const [feed] = await db
-    .insert(feeds)
-    .values({ url: "https://example.com/feed", label: "Test Feed" })
+    .insert(gamesTopics)
+    .values({ slug: "rhobh", name: "RHOBH", feedUrl: "https://example.com/feed", feedLabel: "Test Feed", systemPromptPath: "prompts/rhobh.txt" })
     .returning();
 
   for (const dateKey of dateKeys) {
     const [article] = await db
       .insert(articles)
-      .values({ feedId: feed.id, url: `https://example.com/${dateKey}`, title: dateKey })
+      .values({ gamesTopicId: game.id, url: `https://example.com/${dateKey}`, title: dateKey })
       .returning();
-    await db.insert(dailyPuzzles).values({
-      gameId: game.id,
+    await db.insert(gamesPuzzles).values({
+      gamesTopicId: game.id,
       articleId: article.id,
       dateUtc: dateKey,
       answer: "BRAVO",
@@ -219,10 +219,10 @@ async function seedGameWithPuzzles(dateKeys: string[]) {
 describe("listAttemptsForUserInRange", () => {
   it("returns attempts within the range, newest date first, joined with their puzzle", async () => {
     const game = await seedGameWithPuzzles(["2026-06-25", "2026-06-26", "2026-06-27"]);
-    await db.insert(realiteaAttempts).values([
-      { hominemUserId: "user-1", gameId: game.id, dateUtc: "2026-06-25", status: "solved" },
-      { hominemUserId: "user-1", gameId: game.id, dateUtc: "2026-06-26", status: "failed" },
-      { hominemUserId: "user-1", gameId: game.id, dateUtc: "2026-06-27", status: "playing" },
+    await db.insert(gamesAttempts).values([
+      { hominemUserId: "user-1", gamesTopicId: game.id, dateUtc: "2026-06-25", status: "solved" },
+      { hominemUserId: "user-1", gamesTopicId: game.id, dateUtc: "2026-06-26", status: "failed" },
+      { hominemUserId: "user-1", gamesTopicId: game.id, dateUtc: "2026-06-27", status: "playing" },
     ]);
 
     const { listAttemptsForUserInRange } = await import("../repository");
@@ -241,10 +241,10 @@ describe("listAttemptsForUserInRange", () => {
 
   it("excludes attempts outside the requested date window", async () => {
     const game = await seedGameWithPuzzles(["2026-06-25", "2026-06-26", "2026-06-27"]);
-    await db.insert(realiteaAttempts).values([
-      { hominemUserId: "user-1", gameId: game.id, dateUtc: "2026-06-25", status: "solved" },
-      { hominemUserId: "user-1", gameId: game.id, dateUtc: "2026-06-26", status: "solved" },
-      { hominemUserId: "user-1", gameId: game.id, dateUtc: "2026-06-27", status: "solved" },
+    await db.insert(gamesAttempts).values([
+      { hominemUserId: "user-1", gamesTopicId: game.id, dateUtc: "2026-06-25", status: "solved" },
+      { hominemUserId: "user-1", gamesTopicId: game.id, dateUtc: "2026-06-26", status: "solved" },
+      { hominemUserId: "user-1", gamesTopicId: game.id, dateUtc: "2026-06-27", status: "solved" },
     ]);
 
     const { listAttemptsForUserInRange } = await import("../repository");
@@ -263,9 +263,9 @@ describe("listAttemptsForUserInRange", () => {
 
   it("never leaks another user's attempts", async () => {
     const game = await seedGameWithPuzzles(["2026-06-25"]);
-    await db.insert(realiteaAttempts).values([
-      { hominemUserId: "user-1", gameId: game.id, dateUtc: "2026-06-25", status: "solved" },
-      { hominemUserId: "user-2", gameId: game.id, dateUtc: "2026-06-25", status: "solved" },
+    await db.insert(gamesAttempts).values([
+      { hominemUserId: "user-1", gamesTopicId: game.id, dateUtc: "2026-06-25", status: "solved" },
+      { hominemUserId: "user-2", gamesTopicId: game.id, dateUtc: "2026-06-25", status: "solved" },
     ]);
 
     const { listAttemptsForUserInRange } = await import("../repository");
@@ -291,8 +291,8 @@ describe("getEarliestPuzzleDateKey", () => {
 
   it("returns null when the game has no puzzles", async () => {
     const [game] = await db
-      .insert(games)
-      .values({ slug: "rhobh", name: "RHOBH", systemPromptPath: "prompts/rhobh.txt" })
+      .insert(gamesTopics)
+      .values({ slug: "rhobh", name: "RHOBH", feedUrl: "https://example.com/feed", feedLabel: "Test Feed", systemPromptPath: "prompts/rhobh.txt" })
       .returning();
 
     const { getEarliestPuzzleDateKey } = await import("../repository");
@@ -305,10 +305,10 @@ describe("getEarliestPuzzleDateKey", () => {
 describe("loadAllAttemptsForUser", () => {
   it("returns every attempt for the user, unpaginated, newest date first", async () => {
     const game = await seedGameWithPuzzles(["2026-06-25", "2026-06-26", "2026-06-27"]);
-    await db.insert(realiteaAttempts).values([
-      { hominemUserId: "user-1", gameId: game.id, dateUtc: "2026-06-25", status: "solved" },
-      { hominemUserId: "user-1", gameId: game.id, dateUtc: "2026-06-26", status: "failed" },
-      { hominemUserId: "user-1", gameId: game.id, dateUtc: "2026-06-27", status: "playing" },
+    await db.insert(gamesAttempts).values([
+      { hominemUserId: "user-1", gamesTopicId: game.id, dateUtc: "2026-06-25", status: "solved" },
+      { hominemUserId: "user-1", gamesTopicId: game.id, dateUtc: "2026-06-26", status: "failed" },
+      { hominemUserId: "user-1", gamesTopicId: game.id, dateUtc: "2026-06-27", status: "playing" },
     ]);
 
     const { loadAllAttemptsForUser } = await import("../repository");
@@ -326,3 +326,4 @@ describe("loadAllAttemptsForUser", () => {
     expect(result).toEqual([]);
   });
 });
+

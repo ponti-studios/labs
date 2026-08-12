@@ -1,5 +1,5 @@
-import type { Article, DailyPuzzle as DailyPuzzleRow } from "~/lib/server/db";
+import type { Article, GamesPuzzle as GamesPuzzleRow } from "~/lib/server/db";
 
-export interface PuzzleRecord extends DailyPuzzleRow {
-  article: Pick<Article, "url" | "title" | "publishedAt">;
+export interface PuzzleRecord extends GamesPuzzleRow {
+  article: Article;
 }

@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 
 import { chromium, type Page } from "playwright";
+import { runScript } from "./_shared/run-script";
 
 type ColorScheme = "light" | "dark";
 
@@ -143,4 +144,4 @@ async function main() {
   }
 }
 
-await main();
+if (!process.env.VITEST) await runScript(main);

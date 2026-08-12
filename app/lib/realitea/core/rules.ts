@@ -3,7 +3,7 @@ import type { GameStatus, LetterState, RealiteaGuess } from "./types";
 export type {
   GameStatus,
   LetterState,
-  PublicDailyPuzzle,
+  PublicGamesPuzzle,
   RealiteaGuess,
   RealiteaGuessResult,
 } from "./types";
@@ -84,3 +84,4 @@ export function deriveGameStatus(guesses: readonly RealiteaGuess[]): GameStatus 
   if (guesses.length >= MAX_GUESSES) return "failed";
   return "playing";
 }
+

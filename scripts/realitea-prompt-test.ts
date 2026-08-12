@@ -1,21 +1,18 @@
-import "dotenv/config";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { parseArgs } from "node:util";
 
-import { getDateKey } from "../app/lib/realitea/date";
-import { previewCandidates } from "../app/lib/realitea/generation";
-import { PROMPT_TEST_FIXTURES } from "../app/lib/realitea/prompt-test-fixtures";
-import { readSourceFixture, type SourceFixture } from "../app/lib/realitea/source-fixtures";
-import { LabyrinthServerEnv } from "../app/lib/server/env";
+import { getDateKey } from "../app/lib/realitea/core/date";
+import { previewCandidates } from "../app/lib/realitea/generation/generate.server";
+import { PROMPT_TEST_FIXTURES } from "../app/lib/realitea/fixtures/prompt-test-fixtures";
+import { readSourceFixture, type SourceFixture } from "../app/lib/realitea/fixtures/source-fixtures";
+import { runScript } from "./_shared/run-script";
 
 type Options = {
   promptFiles: string[];
   dateKey: string;
   sourceFixtures: string[];
   model?: string;
-  baseUrl?: string;
-  maxTokens?: string;
 };
 
 function parseOptions(): Options {
@@ -26,8 +23,6 @@ function parseOptions(): Options {
       "date-key": { type: "string" },
       "source-fixture": { type: "string", multiple: true },
       model: { type: "string" },
-      "base-url": { type: "string" },
-      "max-tokens": { type: "string" },
     },
     strict: true,
   });
@@ -37,8 +32,6 @@ function parseOptions(): Options {
     dateKey: values["date-key"] ?? getDateKey(new Date()),
     sourceFixtures: values["source-fixture"] ?? [],
     model: values.model,
-    baseUrl: values["base-url"],
-    maxTokens: values["max-tokens"],
   };
 }
 
@@ -48,11 +41,7 @@ function fixturePasses(fixture: (typeof PROMPT_TEST_FIXTURES)[number], result: A
 }
 
 async function main() {
-  LabyrinthServerEnv.parse(process.env);
   const options = parseOptions();
-  if (options.model) process.env.REALITEA_AI_MODEL = options.model;
-  if (options.baseUrl) process.env.REALITEA_AI_BASE_URL = options.baseUrl;
-  if (options.maxTokens) process.env.REALITEA_AI_MAX_TOKENS = options.maxTokens;
   const promptFiles = options.promptFiles.length > 0
     ? options.promptFiles
     : [
@@ -78,6 +67,7 @@ async function main() {
         feedItems: "feedItems" in fixture ? fixture.feedItems : fixture.items,
         feedUrl: "sourceUrl" in fixture ? fixture.sourceUrl : `https://${fixture.sourceDomains[0]}/test-feed`,
         systemPrompt: prompt,
+        ...(options.model !== undefined ? { model: options.model } : {}),
       });
       const pass = "expectedAnswers" in fixture ? fixturePasses(fixture, result) : result.selectedIndex !== null;
       if (pass) passed++;
@@ -97,4 +87,4 @@ async function main() {
   }
 }
 
-await main();
+if (!process.env.VITEST) await runScript(main);

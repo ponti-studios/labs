@@ -20,6 +20,7 @@ type ChatCompletionResponse = Extract<
 
 type ChatCompletionOptions = OpenRouterClientOptions & {
   messages: ChatRequest["messages"];
+  model?: string;
   maxTokens?: number;
   temperature?: number;
   responseFormat?: ChatRequest["responseFormat"];
@@ -73,6 +74,7 @@ export async function chatCompletion(options: ChatCompletionOptions = { messages
     appTitle,
     appCategories,
     messages,
+    model,
     maxTokens,
     temperature,
     responseFormat,
@@ -84,7 +86,7 @@ export async function chatCompletion(options: ChatCompletionOptions = { messages
     appTitle,
     appCategories,
     chatRequest: {
-      model: getConfiguredTextModel(),
+      model: model ?? getConfiguredTextModel(),
       stream: false,
       messages,
       ...(maxTokens !== undefined ? { maxTokens } : {}),

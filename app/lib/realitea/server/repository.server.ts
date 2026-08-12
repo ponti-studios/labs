@@ -1,7 +1,7 @@
 /**
- * Data-access layer for the RealiTea puzzle domain (`games`, `feeds`,
- * `feed_games`, `articles`, `daily_puzzles` — physically still named
- * `rhobh_daily_puzzles`, see packages/db/src/schema/realitea.ts).
+ * Data-access layer for the RealiTea puzzle domain (`games_topics`,
+ * `articles`, `games_puzzles` — physically still named
+ * `rhobh_games_puzzles`, see packages/db/src/schema/realitea.ts).
  *
  * All exported functions are standalone — there is no class wrapper because
  * the module has zero instance state. Every function operates on the shared
@@ -17,22 +17,28 @@
  * out of every future `status = 'pending'` selection query.
  */
 
-import type { Article, DailyPuzzle, Game, RealiteaAttempt } from "~/lib/server/db";
+import type {
+  Article,
+  GamesPuzzle,
+  GamesTopic,
+  GamesAttempt,
+  RealiteaAdminActionKind,
+} from "~/lib/server/db";
 import {
+  adminActions,
   and,
   articles,
   count,
-  dailyPuzzles,
+  gamesPuzzles,
   db,
   desc,
   eq,
-  feedGames,
-  games,
+  gamesTopics,
   gte,
   inArray,
   lt,
   lte,
-  realiteaAttempts,
+  gamesAttempts,
   sql,
 } from "~/lib/server/db";
 
@@ -41,13 +47,13 @@ import type { PuzzleRecord } from "./types";
 
 // ── Games ────────────────────────────────────────────────────────────────────
 
-export async function getGameBySlug(slug: string): Promise<Game | null> {
-  const row = await db.query.games.findFirst({ where: eq(games.slug, slug) });
+export async function getGameBySlug(slug: string): Promise<GamesTopic | null> {
+  const row = await db.query.gamesTopics.findFirst({ where: eq(gamesTopics.slug, slug) });
   return row ?? null;
 }
 
-export async function getActiveGames(): Promise<Game[]> {
-  return db.query.games.findMany({ where: eq(games.active, true), orderBy: games.name });
+export async function getActiveGames(): Promise<GamesTopic[]> {
+  return db.query.gamesTopics.findMany({ where: eq(gamesTopics.active, true), orderBy: gamesTopics.name });
 }
 
 // ── Queries ──────────────────────────────────────────────────────────────────
@@ -59,14 +65,14 @@ export async function getActiveGames(): Promise<Game[]> {
  * Used during puzzle generation to avoid repeating an answer that was used
  * too recently within the same game.
  */
-export async function getRecentAnswers(game: Game, date: Date): Promise<Set<string>> {
+export async function getRecentAnswers(game: GamesTopic, date: Date): Promise<Set<string>> {
   const cutoff = new Date(date);
   cutoff.setUTCDate(cutoff.getUTCDate() - game.repeatWindowDays);
   const cutoffDateValue = getDateKey(cutoff);
   const rows = await db
-    .select({ normalizedAnswer: dailyPuzzles.normalizedAnswer })
-    .from(dailyPuzzles)
-    .where(and(eq(dailyPuzzles.gameId, game.id), gte(dailyPuzzles.dateUtc, cutoffDateValue)));
+    .select({ normalizedAnswer: gamesPuzzles.normalizedAnswer })
+    .from(gamesPuzzles)
+    .where(and(eq(gamesPuzzles.gamesTopicId, game.id), gte(gamesPuzzles.dateUtc, cutoffDateValue)));
   return new Set(rows.map((r) => r.normalizedAnswer));
 }
 
@@ -78,9 +84,9 @@ export async function getRecentAnswers(game: Game, date: Date): Promise<Set<stri
  */
 export async function getStoredAnswers(gameId: number): Promise<Set<string>> {
   const rows = await db
-    .select({ normalizedAnswer: dailyPuzzles.normalizedAnswer })
-    .from(dailyPuzzles)
-    .where(eq(dailyPuzzles.gameId, gameId));
+    .select({ normalizedAnswer: gamesPuzzles.normalizedAnswer })
+    .from(gamesPuzzles)
+    .where(eq(gamesPuzzles.gamesTopicId, gameId));
   return new Set(rows.map((r) => r.normalizedAnswer));
 }
 
@@ -96,11 +102,11 @@ export async function loadPuzzleForDate(
   dateKey: string,
 ): Promise<PuzzleRecord | null> {
   const rows = await db
-    .select({ puzzle: dailyPuzzles, article: articles })
-    .from(dailyPuzzles)
-    .innerJoin(articles, eq(dailyPuzzles.articleId, articles.id))
-    .where(and(eq(dailyPuzzles.gameId, gameId), eq(dailyPuzzles.dateUtc, dateKey)))
-    .orderBy(desc(dailyPuzzles.createdAt))
+    .select({ puzzle: gamesPuzzles, article: articles })
+    .from(gamesPuzzles)
+    .innerJoin(articles, eq(gamesPuzzles.articleId, articles.id))
+    .where(and(eq(gamesPuzzles.gamesTopicId, gameId), eq(gamesPuzzles.dateUtc, dateKey)))
+    .orderBy(desc(gamesPuzzles.createdAt))
     .limit(1);
   const row = rows[0];
   return row ? { ...row.puzzle, article: row.article } : null;
@@ -116,15 +122,15 @@ export async function loadMostRecentPuzzle(
   dateKey?: string,
 ): Promise<PuzzleRecord | null> {
   const rows = await db
-    .select({ puzzle: dailyPuzzles, article: articles })
-    .from(dailyPuzzles)
-    .innerJoin(articles, eq(dailyPuzzles.articleId, articles.id))
+    .select({ puzzle: gamesPuzzles, article: articles })
+    .from(gamesPuzzles)
+    .innerJoin(articles, eq(gamesPuzzles.articleId, articles.id))
     .where(
       dateKey
-        ? and(eq(dailyPuzzles.gameId, gameId), lte(dailyPuzzles.dateUtc, dateKey))
-        : eq(dailyPuzzles.gameId, gameId),
+        ? and(eq(gamesPuzzles.gamesTopicId, gameId), lte(gamesPuzzles.dateUtc, dateKey))
+        : eq(gamesPuzzles.gamesTopicId, gameId),
     )
-    .orderBy(desc(dailyPuzzles.createdAt))
+    .orderBy(desc(gamesPuzzles.createdAt))
     .limit(1);
   const row = rows[0];
   return row ? { ...row.puzzle, article: row.article } : null;
@@ -137,7 +143,7 @@ export async function loadMostRecentPuzzle(
  * Re-ingesting a feed that returns the same items is a no-op.
  */
 export async function upsertArticles(
-  feedId: number,
+  gamesTopicId: number,
   items: {
     url: string;
     title: string;
@@ -152,7 +158,7 @@ export async function upsertArticles(
     .insert(articles)
     .values(
       items.map((item) => ({
-        feedId,
+        gamesTopicId,
         url: item.url,
         title: item.title,
         description: item.description ?? null,
@@ -170,15 +176,62 @@ export async function upsertArticles(
  * Pending articles eligible for `game` (reachable via one of its feeds),
  * oldest published first, capped at `limit`.
  */
-export async function getPendingArticlesForGame(game: Game, limit: number): Promise<Article[]> {
+export async function getPendingArticlesForGame(game: GamesTopic, limit: number): Promise<Article[]> {
   const rows = await db
     .select({ article: articles })
     .from(articles)
-    .innerJoin(feedGames, eq(feedGames.feedId, articles.feedId))
-    .where(and(eq(feedGames.gameId, game.id), eq(articles.status, "pending")))
+    .where(and(eq(articles.gamesTopicId, game.id), eq(articles.status, "pending")))
     .orderBy(articles.publishedAt)
     .limit(limit);
   return rows.map((r) => r.article);
+}
+
+export async function getPendingArticlesForTopics(topicIds: number[], limit: number): Promise<Article[]> {
+  if (topicIds.length === 0) return [];
+  const rows = await db
+    .select({ article: articles })
+    .from(articles)
+    .where(and(inArray(articles.gamesTopicId, topicIds), eq(articles.status, "pending")))
+    .orderBy(articles.publishedAt)
+    .limit(limit);
+  return rows.map((r) => r.article);
+}
+
+export async function getPendingArticlesByIds(articleIds: number[], limit: number): Promise<Article[]> {
+  if (articleIds.length === 0) return [];
+  const rows = await db
+    .select({ article: articles })
+    .from(articles)
+    .where(and(inArray(articles.id, articleIds.slice(0, limit)), eq(articles.status, "pending")));
+  return rows.map((r) => r.article);
+}
+
+export async function listTopicFeedHosts(): Promise<string[]> {
+  const rows = await db
+    .select({ feedUrl: gamesTopics.feedUrl })
+    .from(gamesTopics)
+    .where(eq(gamesTopics.active, true));
+  return rows.flatMap((row) => {
+    try {
+      return [new URL(row.feedUrl).hostname.replace(/^www\./, "")];
+    } catch {
+      return [];
+    }
+  });
+}
+
+export async function countRecentPreviewActions(hominemUserId: string, since: Date): Promise<number> {
+  const [row] = await db
+    .select({ value: count() })
+    .from(adminActions)
+    .where(
+      and(
+        eq(adminActions.hominemUserId, hominemUserId),
+        eq(adminActions.kind, "preview"),
+        gte(adminActions.at, since),
+      ),
+    );
+  return row?.value ?? 0;
 }
 
 export async function markArticleUsed(articleId: number): Promise<void> {
@@ -212,7 +265,7 @@ export async function recordArticleRejection(
  * Mark pending articles older than `game.articleExpiryDays` as 'expired' so
  * they drop out of future selection. Returns the number expired.
  */
-export async function expireStaleArticles(game: Game, now: Date): Promise<number> {
+export async function expireStaleArticles(game: GamesTopic, now: Date): Promise<number> {
   const cutoff = new Date(now);
   cutoff.setUTCDate(cutoff.getUTCDate() - game.articleExpiryDays);
   const result = await db
@@ -222,13 +275,7 @@ export async function expireStaleArticles(game: Game, now: Date): Promise<number
       and(
         eq(articles.status, "pending"),
         lt(articles.publishedAt, cutoff),
-        inArray(
-          articles.feedId,
-          db
-            .select({ feedId: feedGames.feedId })
-            .from(feedGames)
-            .where(eq(feedGames.gameId, game.id)),
-        ),
+        eq(articles.gamesTopicId, game.id),
       ),
     )
     .returning({ id: articles.id });
@@ -240,8 +287,7 @@ export async function countPendingArticlesForGame(gameId: number): Promise<numbe
   const rows = await db
     .select({ value: count() })
     .from(articles)
-    .innerJoin(feedGames, eq(feedGames.feedId, articles.feedId))
-    .where(and(eq(feedGames.gameId, gameId), eq(articles.status, "pending")));
+    .where(and(eq(articles.gamesTopicId, gameId), eq(articles.status, "pending")));
   return rows[0]?.value ?? 0;
 }
 
@@ -264,8 +310,8 @@ export async function countInventoryForRange(
   if (dateKeys.length === 0) return 0;
   const [row] = await db
     .select({ value: count() })
-    .from(dailyPuzzles)
-    .where(and(eq(dailyPuzzles.gameId, gameId), inArray(dailyPuzzles.dateUtc, dateKeys)));
+    .from(gamesPuzzles)
+    .where(and(eq(gamesPuzzles.gamesTopicId, gameId), inArray(gamesPuzzles.dateUtc, dateKeys)));
   return row?.value ?? 0;
 }
 
@@ -282,13 +328,13 @@ export async function getExistingDateKeys(
   toKey: string,
 ): Promise<string[]> {
   const rows = await db
-    .select({ dateUtc: dailyPuzzles.dateUtc })
-    .from(dailyPuzzles)
+    .select({ dateUtc: gamesPuzzles.dateUtc })
+    .from(gamesPuzzles)
     .where(
       and(
-        eq(dailyPuzzles.gameId, gameId),
-        gte(dailyPuzzles.dateUtc, fromKey),
-        lte(dailyPuzzles.dateUtc, toKey),
+        eq(gamesPuzzles.gamesTopicId, gameId),
+        gte(gamesPuzzles.dateUtc, fromKey),
+        lte(gamesPuzzles.dateUtc, toKey),
       ),
     );
   return rows.map((r) => r.dateUtc);
@@ -297,14 +343,84 @@ export async function getExistingDateKeys(
 /**
  * Delete all puzzles for `gameId` whose `dateUtc` is >= `fromDateKey`.
  *
- * Returns the number of deleted records.
+ * Returns the number of deleted records. Prefer `deletePuzzlesInRange` for
+ * generate ops — this unbounded form must not be called from admin HTTP.
  */
 export async function deletePuzzlesFromDate(gameId: number, fromDateKey: string): Promise<number> {
   const result = await db
-    .delete(dailyPuzzles)
-    .where(and(eq(dailyPuzzles.gameId, gameId), gte(dailyPuzzles.dateUtc, fromDateKey)))
-    .returning({ id: dailyPuzzles.id });
+    .delete(gamesPuzzles)
+    .where(and(eq(gamesPuzzles.gamesTopicId, gameId), gte(gamesPuzzles.dateUtc, fromDateKey)))
+    .returning({ id: gamesPuzzles.id });
   return result.length;
+}
+
+/**
+ * Delete puzzles for `gameId` whose `dateUtc` is in `[fromKey, toKey]`.
+ */
+export async function deletePuzzlesInRange(
+  gameId: number,
+  fromKey: string,
+  toKey: string,
+): Promise<number> {
+  const result = await db
+    .delete(gamesPuzzles)
+    .where(
+      and(
+        eq(gamesPuzzles.gamesTopicId, gameId),
+        gte(gamesPuzzles.dateUtc, fromKey),
+        lte(gamesPuzzles.dateUtc, toKey),
+      ),
+    )
+    .returning({ id: gamesPuzzles.id });
+  return result.length;
+}
+
+export async function countAttemptsByDate(
+  gameId: number,
+  dateKeys: string[],
+): Promise<Map<string, number>> {
+  const counts = new Map<string, number>(dateKeys.map((dateKey) => [dateKey, 0]));
+  if (dateKeys.length === 0) return counts;
+  const rows = await db
+    .select({ dateUtc: gamesAttempts.dateUtc, value: count() })
+    .from(gamesAttempts)
+    .where(and(eq(gamesAttempts.gamesTopicId, gameId), inArray(gamesAttempts.dateUtc, dateKeys)))
+    .groupBy(gamesAttempts.dateUtc);
+  for (const row of rows) {
+    counts.set(row.dateUtc, row.value);
+  }
+  return counts;
+}
+
+export async function backfillPuzzlePublishedAt(): Promise<number> {
+  const result = await db
+    .update(gamesPuzzles)
+    .set({ publishedAt: sql`${gamesPuzzles.createdAt}` })
+    .where(sql`${gamesPuzzles.publishedAt} IS NULL`)
+    .returning({ id: gamesPuzzles.id });
+  return result.length;
+}
+
+export async function recordAdminAction(input: {
+  hominemUserId?: string;
+  email?: string | null;
+  kind: RealiteaAdminActionKind;
+  gamesTopicId: number;
+  dateUtc?: string;
+  dryRun?: boolean;
+  payload?: Record<string, unknown>;
+  result?: Record<string, unknown>;
+}): Promise<void> {
+  await db.insert(adminActions).values({
+    hominemUserId: input.hominemUserId ?? "system:generate",
+    email: input.email ?? null,
+    kind: input.kind,
+    gamesTopicId: input.gamesTopicId,
+    dateUtc: input.dateUtc,
+    dryRun: input.dryRun ?? false,
+    payload: input.payload ?? {},
+    result: input.result ?? {},
+  });
 }
 
 // ── Attempts (server-side guess tracking) ────────────────────────────────────
@@ -313,12 +429,12 @@ export async function loadAttempt(
   userId: string,
   gameId: number,
   dateUtc: string,
-): Promise<RealiteaAttempt | null> {
-  const row = await db.query.realiteaAttempts.findFirst({
+): Promise<GamesAttempt | null> {
+  const row = await db.query.gamesAttempts.findFirst({
     where: and(
-      eq(realiteaAttempts.hominemUserId, userId),
-      eq(realiteaAttempts.gameId, gameId),
-      eq(realiteaAttempts.dateUtc, dateUtc),
+      eq(gamesAttempts.hominemUserId, userId),
+      eq(gamesAttempts.gamesTopicId, gameId),
+      eq(gamesAttempts.dateUtc, dateUtc),
     ),
   });
   return row ?? null;
@@ -328,10 +444,10 @@ export async function createAttempt(
   userId: string,
   gameId: number,
   dateUtc: string,
-): Promise<RealiteaAttempt> {
+): Promise<GamesAttempt> {
   const [row] = await db
-    .insert(realiteaAttempts)
-    .values({ hominemUserId: userId, gameId, dateUtc })
+    .insert(gamesAttempts)
+    .values({ hominemUserId: userId, gamesTopicId: gameId, dateUtc })
     .returning();
   return row;
 }
@@ -343,25 +459,25 @@ export async function appendGuess(
 ): Promise<void> {
   const now = new Date().toISOString();
   await db
-    .update(realiteaAttempts)
+    .update(gamesAttempts)
     .set({
-      guesses: sql`${realiteaAttempts.guesses} || ${JSON.stringify([guess])}::jsonb`,
-      guessedAt: sql`${realiteaAttempts.guessedAt} || ${JSON.stringify([now])}::jsonb`,
+      guesses: sql`${gamesAttempts.guesses} || ${JSON.stringify([guess])}::jsonb`,
+      guessedAt: sql`${gamesAttempts.guessedAt} || ${JSON.stringify([now])}::jsonb`,
       status,
       updatedAt: new Date(),
     })
-    .where(eq(realiteaAttempts.id, attemptId));
+    .where(eq(gamesAttempts.id, attemptId));
 }
 
 export async function countRecentGuesses(userId: string, windowMs: number): Promise<number> {
   const cutoff = new Date(Date.now() - windowMs).toISOString();
   const rows = await db
-    .select({ guessedAt: realiteaAttempts.guessedAt })
-    .from(realiteaAttempts)
+    .select({ guessedAt: gamesAttempts.guessedAt })
+    .from(gamesAttempts)
     .where(
       and(
-        eq(realiteaAttempts.hominemUserId, userId),
-        gte(realiteaAttempts.updatedAt, new Date(cutoff)),
+        eq(gamesAttempts.hominemUserId, userId),
+        gte(gamesAttempts.updatedAt, new Date(cutoff)),
       ),
     );
   let total = 0;
@@ -376,14 +492,14 @@ export async function countRecentGuesses(userId: string, windowMs: number): Prom
 // ── History & stats ──────────────────────────────────────────────────────────
 
 export interface AttemptWithPuzzle {
-  attempt: RealiteaAttempt;
+  attempt: GamesAttempt;
   puzzle: PuzzleRecord;
 }
 
 /**
  * A user's attempts for `gameId` within `[fromKey, toKey]` (inclusive),
  * newest date first, joined with the puzzle each attempt belongs to.
- * There's no FK between `realiteaAttempts` and `dailyPuzzles` (see the
+ * There's no FK between `gamesAttempts` and `gamesPuzzles` (see the
  * schema's design note), so the join matches on `gameId` + `dateUtc`
  * instead — the same key `loadAttempt`/`createAttempt` already use to
  * correlate the two tables.
@@ -397,25 +513,25 @@ export async function listAttemptsForUserInRange(
   { fromKey, toKey }: { fromKey: string; toKey: string },
 ): Promise<AttemptWithPuzzle[]> {
   const rows = await db
-    .select({ attempt: realiteaAttempts, puzzle: dailyPuzzles, article: articles })
-    .from(realiteaAttempts)
+    .select({ attempt: gamesAttempts, puzzle: gamesPuzzles, article: articles })
+    .from(gamesAttempts)
     .innerJoin(
-      dailyPuzzles,
+      gamesPuzzles,
       and(
-        eq(dailyPuzzles.gameId, realiteaAttempts.gameId),
-        eq(dailyPuzzles.dateUtc, realiteaAttempts.dateUtc),
+        eq(gamesPuzzles.gamesTopicId, gamesAttempts.gamesTopicId),
+        eq(gamesPuzzles.dateUtc, gamesAttempts.dateUtc),
       ),
     )
-    .innerJoin(articles, eq(dailyPuzzles.articleId, articles.id))
+    .innerJoin(articles, eq(gamesPuzzles.articleId, articles.id))
     .where(
       and(
-        eq(realiteaAttempts.hominemUserId, userId),
-        eq(realiteaAttempts.gameId, gameId),
-        gte(realiteaAttempts.dateUtc, fromKey),
-        lte(realiteaAttempts.dateUtc, toKey),
+        eq(gamesAttempts.hominemUserId, userId),
+        eq(gamesAttempts.gamesTopicId, gameId),
+        gte(gamesAttempts.dateUtc, fromKey),
+        lte(gamesAttempts.dateUtc, toKey),
       ),
     )
-    .orderBy(desc(realiteaAttempts.dateUtc));
+    .orderBy(desc(gamesAttempts.dateUtc));
 
   return rows.map((row) => ({
     attempt: row.attempt,
@@ -426,10 +542,10 @@ export async function listAttemptsForUserInRange(
 /** Earliest `dateUtc` with a puzzle for `gameId`, or `null` if none exist yet. */
 export async function getEarliestPuzzleDateKey(gameId: number): Promise<string | null> {
   const rows = await db
-    .select({ dateUtc: dailyPuzzles.dateUtc })
-    .from(dailyPuzzles)
-    .where(eq(dailyPuzzles.gameId, gameId))
-    .orderBy(dailyPuzzles.dateUtc)
+    .select({ dateUtc: gamesPuzzles.dateUtc })
+    .from(gamesPuzzles)
+    .where(eq(gamesPuzzles.gamesTopicId, gameId))
+    .orderBy(gamesPuzzles.dateUtc)
     .limit(1);
   return rows[0]?.dateUtc ?? null;
 }
@@ -443,11 +559,12 @@ export async function getEarliestPuzzleDateKey(gameId: number): Promise<string |
 export async function loadAllAttemptsForUser(
   userId: string,
   gameId: number,
-): Promise<RealiteaAttempt[]> {
-  return db.query.realiteaAttempts.findMany({
-    where: and(eq(realiteaAttempts.hominemUserId, userId), eq(realiteaAttempts.gameId, gameId)),
-    orderBy: desc(realiteaAttempts.dateUtc),
+): Promise<GamesAttempt[]> {
+  return db.query.gamesAttempts.findMany({
+    where: and(eq(gamesAttempts.hominemUserId, userId), eq(gamesAttempts.gamesTopicId, gameId)),
+    orderBy: desc(gamesAttempts.dateUtc),
   });
 }
 
-export type { Article, DailyPuzzle, Game };
+export type { Article, GamesPuzzle, GamesTopic };
+
