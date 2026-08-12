@@ -1,6 +1,6 @@
 import { chatCompletion, getConfiguredTextModel } from "~/lib/server/ai";
-import { dailyPuzzles, db } from "~/lib/server/db";
-import type { Article, Game } from "~/lib/server/db";
+import { gamesPuzzles, db } from "~/lib/server/db";
+import type { Article, GamesTopic } from "~/lib/server/db";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -19,6 +19,7 @@ import {
   getStoredAnswers,
   loadPuzzleForDate,
   markArticleUsed,
+  recordAdminAction,
   recordArticleRejection,
 } from "../server/repository.server";
 import type { PuzzleAnswerType } from "../core/types";
@@ -60,7 +61,7 @@ function readSystemPrompt(promptPath: string): string {
   return prompt;
 }
 
-export function getSystemPromptForGame(game: Pick<Game, "systemPromptPath">): string {
+export function getSystemPromptForGame(game: Pick<GamesTopic, "systemPromptPath">): string {
   return readSystemPrompt(game.systemPromptPath);
 }
 
@@ -134,13 +135,13 @@ export function buildMessages(
 }
 
 /** Find the pending article a candidate's sources point at, if any. */
-function matchArticle(candidate: Candidate, pendingArticles: Article[]): Article | null {
+export function matchArticle(candidate: Candidate, pendingArticles: Article[]): Article | null {
   const candidateUrls = new Set(candidate.sources.map((s) => s.url));
   return pendingArticles.find((article) => candidateUrls.has(article.url)) ?? null;
 }
 
 async function callGenerationApi(
-  game: Game,
+  game: GamesTopic,
   dateKey: string,
   excludedAnswers: string[],
   pendingArticles: Article[],
@@ -210,8 +211,27 @@ async function callGenerationApi(
       { event: "[GENERATION_API_ERROR]", error: getErrorMessage(err) },
       "generation API call failed",
     );
+    await recordGenerateFailure(game.id, dateKey, "system:generate", "GENERATION_API_ERROR", {
+      error: getErrorMessage(err),
+    });
     return null;
   }
+}
+
+async function recordGenerateFailure(
+  gamesTopicId: number,
+  dateKey: string,
+  actor: string,
+  code: string,
+  extra: Record<string, unknown> = {},
+) {
+  await recordAdminAction({
+    hominemUserId: actor,
+    kind: "gap_fill_one",
+    gamesTopicId,
+    dateUtc: dateKey,
+    payload: { code, ...extra },
+  });
 }
 
 async function callGenerationApiForPreview(
@@ -221,9 +241,11 @@ async function callGenerationApiForPreview(
   systemPrompt: string,
   answerLength: number,
   sourceDomains: string[],
+  model?: string,
 ): Promise<{ candidates: CandidatePreview[]; llmError: string | null }> {
   try {
     const response = await chatCompletion({
+      ...(model !== undefined ? { model } : {}),
       messages: buildMessages(
         dateKey,
         excludedAnswers,
@@ -293,6 +315,7 @@ export async function previewCandidates(
       getSystemPromptForGame({ systemPromptPath: "app/lib/prompts/realitea-generation.md" }),
     REALITEA_ANSWER_LENGTH,
     getSourceDomains(feedItems.map((item) => item.link)),
+    options.model,
   );
 
   const selectedIndex = candidates.findIndex((c) => c.validation.valid);
@@ -313,10 +336,18 @@ export async function previewCandidates(
  * Generate (or return the existing) puzzle for `game` on `dateKey`, drawing
  * from that game's pending article backlog instead of a live feed pull.
  */
+export type GeneratePuzzleForGameOptions = {
+  maxAttempts?: number;
+  actor?: string;
+};
+
 export async function generatePuzzleForGame(
-  game: Game,
+  game: GamesTopic,
   dateKey: string,
+  options: GeneratePuzzleForGameOptions = {},
 ): Promise<PuzzleRecord | null> {
+  const maxAttempts = options.maxAttempts ?? 3;
+  const actor = options.actor ?? "system:generate";
   const childLogger = logger.child({
     operation: "generatePuzzleForGame",
     game: game.slug,
@@ -335,6 +366,7 @@ export async function generatePuzzleForGame(
   const date = parseDate(dateKey);
   if (!date) {
     childLogger.error({ event: "[ERROR_INVALID_DATEKEY]", input: dateKey }, "invalid date key");
+    await recordGenerateFailure(game.id, dateKey, actor, "ERROR_INVALID_DATEKEY");
     throw new Error(`Invalid date key: ${dateKey}`);
   }
 
@@ -352,6 +384,7 @@ export async function generatePuzzleForGame(
       { event: "[ARTICLE_BACKLOG_EMPTY]" },
       "no pending articles available, cannot generate puzzle",
     );
+    await recordGenerateFailure(game.id, dateKey, actor, "ARTICLE_BACKLOG_EMPTY");
     return null;
   }
 
@@ -367,9 +400,9 @@ export async function generatePuzzleForGame(
   );
 
   let result: { candidate: Candidate; article: Article } | null = null;
-  for (let attempt = 0; attempt < 3 && !result; attempt++) {
+  for (let attempt = 0; attempt < maxAttempts && !result; attempt++) {
     result = await callGenerationApi(game, dateKey, excludedAnswers, pendingArticles, systemPrompt);
-    if (!result && attempt < 2) {
+    if (!result && attempt < maxAttempts - 1) {
       const delayMs = Math.pow(2, attempt) * 1000;
       await new Promise((r) => setTimeout(r, delayMs));
     }
@@ -380,6 +413,9 @@ export async function generatePuzzleForGame(
       { event: "[GENERATION_EXHAUSTED]" },
       "puzzle generation failed after all attempts",
     );
+    await recordGenerateFailure(game.id, dateKey, actor, "GENERATION_EXHAUSTED", {
+      maxAttempts,
+    });
     return null;
   }
 
@@ -387,9 +423,9 @@ export async function generatePuzzleForGame(
   const now = new Date();
 
   const inserted = await db
-    .insert(dailyPuzzles)
+    .insert(gamesPuzzles)
     .values({
-      gameId: game.id,
+      gamesTopicId: game.id,
       articleId: article.id,
       answer: candidate.answer,
       answerType: candidate.answerType as PuzzleAnswerType,
@@ -398,6 +434,9 @@ export async function generatePuzzleForGame(
       dateUtc: getDateKey(date),
       detail: candidate.detail,
       normalizedAnswer: normalizeGuess(candidate.answer),
+      promptPath: game.systemPromptPath,
+      model: getConfiguredTextModel(),
+      publishedAt: now,
       updatedAt: now,
     })
     .returning();
@@ -410,3 +449,4 @@ export async function generatePuzzleForGame(
   );
   return { ...inserted[0], article } as PuzzleRecord;
 }
+

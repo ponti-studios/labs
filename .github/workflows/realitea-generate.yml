@@ -1,14 +1,35 @@
 name: realitea - generate
+run-name: realitea-${{ inputs.mode || 'schedule' }}-${{ inputs.requestId || github.run_id }}
 
 on:
   schedule:
     - cron: "0 17 * * *"
   workflow_dispatch:
     inputs:
+      mode:
+        description: "gap_fill leaves existing rows; force deletes then regenerates the window"
+        required: false
+        default: force
+        type: choice
+        options:
+          - force
+          - gap_fill
       daysAhead:
-        description: "Force-regenerate: number of days ahead to regenerate (manual runs only)"
+        description: "Days ahead from tomorrow when from/to are omitted"
         required: false
         default: "7"
+        type: string
+      from:
+        description: "Inclusive YYYY-MM-DD start (optional; requires to)"
+        required: false
+        type: string
+      to:
+        description: "Inclusive YYYY-MM-DD end (optional; requires from)"
+        required: false
+        type: string
+      requestId:
+        description: "Console bind id; ignored by the generate script"
+        required: false
         type: string
 
 permissions:
@@ -53,11 +74,18 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            pnpm realitea:generate --force --days-ahead=${{ github.event.inputs.daysAhead }}
-          else
+          if [ "${{ github.event_name }}" = "schedule" ]; then
             pnpm realitea:generate
+            exit 0
           fi
+          ARGS=(--days-ahead="${{ github.event.inputs.daysAhead }}")
+          if [ -n "${{ github.event.inputs.from }}" ] && [ -n "${{ github.event.inputs.to }}" ]; then
+            ARGS+=(--from="${{ github.event.inputs.from }}" --to="${{ github.event.inputs.to }}")
+          fi
+          if [ "${{ github.event.inputs.mode }}" != "gap_fill" ]; then
+            ARGS+=(--force)
+          fi
+          pnpm realitea:generate "${ARGS[@]}"
 
       - name: health-check
         env:

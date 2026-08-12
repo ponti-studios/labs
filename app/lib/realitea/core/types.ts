@@ -13,9 +13,9 @@ export interface PuzzleSource {
 
 /**
  * Server-side puzzle with the answer. Never leaves the server.
- * `PublicDailyPuzzle` is the client-safe counterpart.
+ * `PublicGamesPuzzle` is the client-safe counterpart.
  */
-interface DailyPuzzleDto {
+interface GamesPuzzleDto {
   answer: string;
   answerType: PuzzleAnswerType;
   clue: string;
@@ -25,7 +25,7 @@ interface DailyPuzzleDto {
 }
 
 // Do not send the `answer` to the client.
-export interface PublicDailyPuzzle extends Omit<DailyPuzzleDto, "answer"> {
+export interface PublicGamesPuzzle extends Omit<GamesPuzzleDto, "answer"> {
   /** True when today's bounded previous-puzzle fallback is being served. */
   isFallback: boolean;
 }
@@ -60,3 +60,4 @@ export interface RealiteaGuessResult {
  * generated from (`sources` used to live as a jsonb blob on the puzzle row;
  * it now lives on the linked `articles` row and is joined in at read time).
  */
+

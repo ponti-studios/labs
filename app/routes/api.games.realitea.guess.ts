@@ -8,7 +8,7 @@ const payloadSchema = z.object({
   dateKey: z.string().min(1),
   // Only trusted for anonymous players, and only to gate the single free
   // guess client-side — see evaluateGuessServer's doc comment. Signed-in
-  // players are checked against realitea_attempts instead.
+  // players are checked against games_attempts instead.
   previousGuesses: z
     .array(z.object({ word: z.string().min(1) }))
     .max(6)
@@ -41,3 +41,4 @@ export async function action({ request }: ActionFunctionArgs) {
 
   return Response.json(result);
 }
+

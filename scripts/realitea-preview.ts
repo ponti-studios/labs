@@ -1,12 +1,11 @@
-import "dotenv/config";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { parseArgs } from "node:util";
 
-import { getDateKey } from "../app/lib/realitea/date";
-import { previewCandidates } from "../app/lib/realitea/generation";
-import type { GenerationPreviewResult } from "../app/lib/realitea/types";
-import { LabyrinthServerEnv } from "../app/lib/server/env";
+import { getDateKey } from "../app/lib/realitea/core/date";
+import { previewCandidates } from "../app/lib/realitea/generation/generate.server";
+import type { GenerationPreviewResult } from "../app/lib/realitea/generation/types";
+import { runScript } from "./_shared/run-script";
 
 interface PreviewOptions {
   dateKey: string;
@@ -101,7 +100,6 @@ function printResultSection(result: GenerationPreviewResult) {
 }
 
 async function main() {
-  LabyrinthServerEnv.parse(process.env);
   const opts = parsePreviewArgs();
 
   let systemPrompt: string | undefined;
@@ -125,4 +123,4 @@ async function main() {
   printResultSection(result);
 }
 
-await main();
+if (!process.env.VITEST) await runScript(main);

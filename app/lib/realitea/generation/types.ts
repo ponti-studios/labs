@@ -42,4 +42,5 @@ export interface PreviewCandidatesOptions {
   feedItems?: FeedItem[];
   systemPrompt?: string;
   excludedAnswers?: string[];
+  model?: string;
 }

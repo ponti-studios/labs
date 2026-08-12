@@ -8,8 +8,8 @@
  * re-polling a feed that returns the same items is a no-op.
  */
 
-import { db, eq, feedGames, feeds, games } from "~/lib/server/db";
-import type { Feed } from "~/lib/server/db";
+import { db, eq, gamesTopics } from "~/lib/server/db";
+import type { GamesTopic } from "~/lib/server/db";
 import { Readability } from "@mozilla/readability";
 import { XMLParser } from "fast-xml-parser";
 import { JSDOM } from "jsdom";
@@ -129,12 +129,12 @@ function parsePubDate(pubDate: string): Date | undefined {
 }
 
 /** Fetch one feed and store any articles not already known by url. Returns the count newly inserted. */
-export async function ingestFeed(feed: Feed): Promise<number> {
-  const childLogger = logger.child({ operation: "ingestFeed", feedId: feed.id, url: feed.url });
+export async function ingestFeed(topic: GamesTopic): Promise<number> {
+  const childLogger = logger.child({ operation: "ingestFeed", gamesTopicId: topic.id, url: topic.feedUrl });
   try {
-    const items = await fetchFeedItems(feed.url);
+    const items = await fetchFeedItems(topic.feedUrl);
     const inserted = await upsertArticles(
-      feed.id,
+      topic.id,
       items
         .filter((item) => item.link)
         .map((item) => ({
@@ -162,33 +162,29 @@ export async function ingestFeed(feed: Feed): Promise<number> {
 
 /** Ingest every active feed. Returns the total number of new articles inserted. */
 export async function ingestAllActiveFeeds(): Promise<number> {
-  const activeFeeds = await db.query.feeds.findMany({ where: eq(feeds.active, true) });
-  const results = await Promise.all(activeFeeds.map((feed) => ingestFeed(feed)));
+  const activeTopics = await db.query.gamesTopics.findMany({ where: eq(gamesTopics.active, true) });
+  const results = await Promise.all(activeTopics.map((topic) => ingestFeed(topic)));
   return results.reduce((sum, n) => sum + n, 0);
 }
 
-/** Ensure every production topic has its feed and game link before ingest runs. */
+/** Ensure every production topic has its game and feed configuration before ingest runs. */
 export async function ensureRealiteaCatalog(): Promise<void> {
   for (const entry of REALITEA_GAME_CATALOG) {
     const [feed] = await db
-      .insert(feeds)
-      .values({ url: entry.feedUrl, label: entry.feedLabel, active: true })
-      .onConflictDoUpdate({ target: feeds.url, set: { label: entry.feedLabel, active: true } })
-      .returning({ id: feeds.id });
-    const [game] = await db
-      .insert(games)
+      .insert(gamesTopics)
       .values({
         slug: entry.slug,
         name: entry.name,
+        feedUrl: entry.feedUrl,
+        feedLabel: entry.feedLabel,
         systemPromptPath: "app/lib/prompts/realitea-generation.md",
         answerLength: 5,
       })
       .onConflictDoUpdate({
-        target: games.slug,
-        set: { name: entry.name, systemPromptPath: "app/lib/prompts/realitea-generation.md", active: true },
+        target: gamesTopics.slug,
+        set: { name: entry.name, feedUrl: entry.feedUrl, feedLabel: entry.feedLabel, systemPromptPath: "app/lib/prompts/realitea-generation.md", active: true },
       })
-      .returning({ id: games.id });
-    if (!feed || !game) throw new Error(`Failed to provision RealiTea catalog entry: ${entry.slug}`);
-    await db.insert(feedGames).values({ feedId: feed.id, gameId: game.id }).onConflictDoNothing();
+      .returning({ id: gamesTopics.id });
+    if (!feed) throw new Error(`Failed to provision RealiTea catalog entry: ${entry.slug}`);
   }
 }

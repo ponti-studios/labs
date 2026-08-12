@@ -1,6 +1,6 @@
 import type { LoaderFunctionArgs } from "react-router";
 
-import { count, dailyPuzzles, db, desc, eq } from "~/lib/server/db";
+import { count, gamesPuzzles, db, desc, eq } from "~/lib/server/db";
 
 import { createLogger } from "~/lib/logger.server";
 import { requireAdminAuth } from "~/lib/server/admin-auth";
@@ -42,12 +42,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
       loadPuzzleForDate(game.id, dateKey),
       db
         .select({ value: count() })
-        .from(dailyPuzzles)
-        .where(eq(dailyPuzzles.gameId, game.id))
+        .from(gamesPuzzles)
+        .where(eq(gamesPuzzles.gamesTopicId, game.id))
         .then((rows) => rows[0]?.value ?? 0),
-      db.query.dailyPuzzles.findMany({
-        where: eq(dailyPuzzles.gameId, game.id),
-        orderBy: desc(dailyPuzzles.createdAt),
+      db.query.gamesPuzzles.findMany({
+        where: eq(gamesPuzzles.gamesTopicId, game.id),
+        orderBy: desc(gamesPuzzles.createdAt),
         limit: 14,
       }),
       countInventoryForRange(game.id, dateKey, 7),
@@ -90,3 +90,4 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   return Response.json(health);
 }
+

@@ -6,7 +6,7 @@ import {
   normalizeGuess,
   REALITEA_ANSWER_LENGTH,
   type GameStatus,
-  type PublicDailyPuzzle,
+  type PublicGamesPuzzle,
   type RealiteaGuess,
   type RealiteaGuessResult,
 } from "../core/rules";
@@ -44,7 +44,7 @@ async function requireGameId(gameSlug = DEFAULT_REALITEA_GAME_SLUG): Promise<num
 
 // ── DTO mapping ──────────────────────────────────────────────────────────────
 
-export function toPublicDailyPuzzle(record: PuzzleRecord, isFallback = false): PublicDailyPuzzle {
+export function toPublicGamesPuzzle(record: PuzzleRecord, isFallback = false): PublicGamesPuzzle {
   return {
     answerType: record.answerType,
     clue: record.clue,
@@ -123,10 +123,10 @@ export async function loadActivePublicPuzzle(
   now: Date,
   timeZone = "UTC",
   gameSlug = DEFAULT_REALITEA_GAME_SLUG,
-): Promise<{ puzzle: PublicDailyPuzzle } | null> {
+): Promise<{ puzzle: PublicGamesPuzzle } | null> {
   const resolved = await resolveActivePuzzle(now, timeZone, gameSlug);
   if (!resolved) return null;
-  return { puzzle: toPublicDailyPuzzle(resolved.puzzle, resolved.isFallback) };
+  return { puzzle: toPublicGamesPuzzle(resolved.puzzle, resolved.isFallback) };
 }
 
 export interface ActivePuzzleAttempt {
@@ -136,7 +136,7 @@ export interface ActivePuzzleAttempt {
 
 /**
  * The signed-in player's existing progress on "today"'s puzzle, read
- * straight from `realitea_attempts` — the same table evaluateGuessServer
+ * straight from `games_attempts` — the same table evaluateGuessServer
  * writes to. This is what the client's React Query hook polls/refetches so
  * a solve on one device shows up on another without relying on
  * device-local storage. Returns null for anonymous callers or a
@@ -161,7 +161,7 @@ export async function loadActivePuzzleAttempt(
 }
 
 export interface DatedPuzzleEnvelope {
-  puzzle: PublicDailyPuzzle;
+  puzzle: PublicGamesPuzzle;
   /** null when signed out, or when signed in but the date has never been
    *  attempted — both cases mean "no prior guesses to seed." */
   attempt: { guesses: RealiteaGuess[]; status: GameStatus } | null;
@@ -192,7 +192,7 @@ export async function loadPuzzleForSpecificDate(
   const attemptRow = user ? await loadAttempt(user.id, gameId, dateKey) : null;
 
   return {
-    puzzle: toPublicDailyPuzzle(puzzle, false),
+    puzzle: toPublicGamesPuzzle(puzzle, false),
     attempt: attemptRow
       ? { guesses: attemptRow.guesses as RealiteaGuess[], status: attemptRow.status }
       : null,
@@ -210,7 +210,7 @@ export async function loadPuzzleForSpecificDate(
  * secure, but nothing sensitive depends on it: the six-guess cap, the
  * duplicate-guess check, and the guesses-per-minute rate limit are all
  * authoritative only once a user is signed in and backed by
- * `realitea_attempts`, which is the actual gap this closes (see
+ * `games_attempts`, which is the actual gap this closes (see
  * docs/realitea-audit/01-no-server-side-attempt-tracking.md).
  */
 export async function evaluateGuessServer(
@@ -335,3 +335,4 @@ export async function evaluateGuessServer(
     remainingGuesses: Math.max(0, MAX_GUESSES - guessCount),
   };
 }
+
