@@ -10,6 +10,8 @@ import { LucideArrowBigRight } from "lucide-react";
 import { type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
 import { Link } from "react-router";
 
+import { cn } from "~/lib/utils";
+
 import { CARD_THEMES, type CardThemeName } from "./card-themes";
 
 const MotionLink = motion.create(Link);
@@ -28,21 +30,41 @@ export type FeaturedProject = {
   theme: CardThemeName;
   /** e.g. "Live" — rendered as a chip-position status pill. Omitted if not provided. */
   status?: string;
-  /** Custom center-band content (e.g. a game preview). Falls back to a masked-number pattern. */
+  /** Custom center-band content (e.g. a game preview). Falls back to a fake embossed card number. */
   preview?: ReactNode;
 };
 
 // Max tilt at the card's edges — subtle, not a gimbal.
 const CARD_TILT_DEGREES = 5;
 
-function DefaultPreview({ foreground }: { foreground: string }) {
+// Deterministic per-card "PAN" so the fallback preview reads like an
+// embossed card number instead of a placeholder — same seed always
+// produces the same digits, so server and client render match.
+function seededCardDigits(seed: string, length: number): string {
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+  }
+  let digits = "";
+  for (let i = 0; i < length; i++) {
+    hash = (hash * 1103515245 + 12345) >>> 0;
+    digits += hash % 10;
+  }
+  return digits;
+}
+
+function formatCardNumber(seed: string): string {
+  return seededCardDigits(seed, 16).match(/.{1,4}/g)!.join(" ");
+}
+
+function DefaultPreview({ foreground, seed }: { foreground: string; seed: string }) {
   return (
     <span
       aria-hidden="true"
-      className="font-mono text-lg tracking-[0.35em]"
-      style={{ color: foreground, opacity: 0.35 }}
+      className="font-mono text-sm tracking-[0.1em] whitespace-nowrap tabular-nums"
+      style={{ color: foreground, opacity: 0.75 }}
     >
-      •••• •••• •••• ••••
+      {formatCardNumber(seed)}
     </span>
   );
 }
@@ -133,8 +155,13 @@ export function ProjectCard({
         )}
       </div>
 
-      <div className="relative z-10 flex flex-1 items-center justify-center">
-        {preview ?? <DefaultPreview foreground={themeTokens.foreground} />}
+      <div
+        className={cn(
+          "relative z-10 flex flex-1",
+          preview ? "items-center justify-center" : "items-end justify-start",
+        )}
+      >
+        {preview ?? <DefaultPreview foreground={themeTokens.foreground} seed={title} />}
       </div>
 
       <div className="relative z-10 mt-auto flex items-end justify-between transition-opacity duration-200 group-hover:opacity-0">

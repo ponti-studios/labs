@@ -19,9 +19,11 @@ export type CardTheme = {
   accent: string;
 };
 
-// Ten swappable "card stock" skins. `realitea` reuses RealiTea's own brand
-// tokens (see app/routes/games/realitea/realitea.css); the rest are
-// original premium-card palettes for future featured projects.
+// Ten swappable "card stock" skins. `realitea` is a fixed "black card"
+// finish in RealiTea's own brand colors (ink, paper, gossip pink) — static
+// on purpose, unlike the in-game surfaces, so the card doesn't flip
+// light/dark with the visitor's system theme. The rest are original
+// premium-card palettes for future featured projects.
 export const CARD_THEMES: Record<CardThemeName, CardTheme> = {
   obsidian: {
     background: "linear-gradient(135deg, #1a1a1d 0%, #000000 100%)",
@@ -29,9 +31,9 @@ export const CARD_THEMES: Record<CardThemeName, CardTheme> = {
     accent: "#7dd3fc",
   },
   realitea: {
-    background: "var(--realitea-ink)",
-    foreground: "var(--realitea-paper)",
-    accent: "var(--realitea-correct-bg)",
+    background: "linear-gradient(135deg, #3d3021 0%, #1c160f 45%, #0d0a06 100%)",
+    foreground: "#fffdf7",
+    accent: "#ec2166",
   },
   platinum: {
     background: "linear-gradient(135deg, #d8dbe0 0%, #9aa1ac 100%)",
