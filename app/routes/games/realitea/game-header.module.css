@@ -35,6 +35,10 @@
   padding-left: 0.25rem;
 }
 
+.topicSelect :global(*[data-slot="select-value"]) {
+  color: var(--realitea-ink);
+}
+
 .topicSelect:hover,
 .topicSelect:focus-visible {
   background: transparent;
