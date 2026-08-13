@@ -23,6 +23,7 @@
     "realitea:gallery:screenshot": "JITI_TSCONFIG_PATHS=1 jiti scripts/realitea-gallery.ts --mode screenshot",
     "realitea:gallery:solve": "JITI_TSCONFIG_PATHS=1 jiti scripts/realitea-gallery.ts --mode solve",
     "realitea:tile-states": "JITI_TSCONFIG_PATHS=1 jiti scripts/realitea-tile-states.ts",
+    "connections:simulate": "JITI_TSCONFIG_PATHS=1 jiti scripts/connections/simulate.ts",
     "start": "react-router-serve ./build/server/index.js --port=${PORT:-3000}",
     "test": "DEBUG_PRINT_LIMIT=500 vitest run --environment jsdom --coverage --reporter verbose --passWithNoTests",
     "test:realitea": "DEBUG_PRINT_LIMIT=500 vitest run --config vitest.realitea.config.ts --reporter verbose",
