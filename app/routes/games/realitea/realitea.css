@@ -17,6 +17,7 @@
   /* Palette — tile states (also used flat, unmodified, on keyboard keys) */
   --realitea-absent-bg: rgba(20, 20, 20, 1);
   --realitea-absent-text: rgba(245, 241, 230, 1);
+  --realitea-absent-border: transparent;
 
   --realitea-present-bg: rgba(231, 167, 58, 1);
   --realitea-present-text: rgba(32, 20, 4, 1);
@@ -64,6 +65,10 @@
     --realitea-shadow-drop: rgba(0, 0, 0, 0.35);
     --realitea-present-accent: rgba(246, 190, 78, 1);
     --realitea-link-text: rgba(143, 166, 255, 1);
+
+    /* The absent key's near-black fill sits too close to the dark page
+       background to read as its own key without a hairline border. */
+    --realitea-absent-border: rgba(245, 241, 230, 0.18);
   }
 }
 
@@ -194,7 +199,7 @@
 }
 
 .realitea-keyboard .realitea-key-absent {
-  border-color: transparent;
+  border-color: var(--realitea-absent-border);
   background: var(--realitea-absent-bg);
   color: var(--realitea-absent-text);
 }
