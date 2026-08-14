@@ -20,7 +20,7 @@ const {
   countRecentGuessesMock: vi.fn(),
 }));
 
-vi.mock("../repository", () => ({
+vi.mock("../server/repository.server", () => ({
   getGameBySlug: getGameBySlugMock,
   loadPuzzleForDate: loadPuzzleForDateMock,
   loadMostRecentPuzzle: loadMostRecentPuzzleMock,
@@ -30,7 +30,7 @@ vi.mock("../repository", () => ({
   countRecentGuesses: countRecentGuessesMock,
 }));
 
-vi.mock("../word-list.server", () => ({
+vi.mock("../server/word-list.server", () => ({
   isValidWord: isValidWordMock,
 }));
 
@@ -95,7 +95,7 @@ describe("loadActivePublicPuzzle", () => {
     getGameBySlugMock.mockResolvedValue(GAME);
     loadPuzzleForDateMock.mockResolvedValue(makePuzzle());
 
-    const { loadActivePublicPuzzle } = await import("../puzzle.server");
+    const { loadActivePublicPuzzle } = await import("../server/puzzle.server");
     const envelope = await loadActivePublicPuzzle(new Date("2026-05-20T12:00:00.000Z"));
 
     expect(envelope).not.toBeNull();
@@ -116,7 +116,7 @@ describe("loadActivePublicPuzzle", () => {
       makePuzzle({ dateUtc: "2026-05-19", answer: "DRAMA", answerType: "moment" }),
     );
 
-    const { loadActivePublicPuzzle } = await import("../puzzle.server");
+    const { loadActivePublicPuzzle } = await import("../server/puzzle.server");
     const envelope = await loadActivePublicPuzzle(new Date("2026-05-20T12:00:00.000Z"));
 
     expect(envelope?.puzzle.dateKey).toBe("2026-05-19");
@@ -136,7 +136,7 @@ describe("loadActivePublicPuzzle", () => {
       ),
     );
 
-    const { loadActivePublicPuzzle } = await import("../puzzle.server");
+    const { loadActivePublicPuzzle } = await import("../server/puzzle.server");
     const envelope = await loadActivePublicPuzzle(
       new Date("2026-05-21T00:30:00.000Z"),
       "America/Los_Angeles",
@@ -152,7 +152,7 @@ describe("loadActivePublicPuzzle", () => {
     loadPuzzleForDateMock.mockResolvedValue(null);
     loadMostRecentPuzzleMock.mockResolvedValue(null);
 
-    const { loadActivePublicPuzzle } = await import("../puzzle.server");
+    const { loadActivePublicPuzzle } = await import("../server/puzzle.server");
     const envelope = await loadActivePublicPuzzle(new Date("2026-05-20T12:00:00.000Z"));
 
     expect(envelope).toBeNull();
@@ -163,7 +163,7 @@ describe("loadActivePublicPuzzle", () => {
     loadPuzzleForDateMock.mockResolvedValue(null);
     loadMostRecentPuzzleMock.mockResolvedValue(null);
 
-    const { loadActivePublicPuzzle } = await import("../puzzle.server");
+    const { loadActivePublicPuzzle } = await import("../server/puzzle.server");
     await loadActivePublicPuzzle(new Date("2026-05-20T12:00:00.000Z"));
 
     expect(getGameBySlugMock).toHaveBeenCalledWith("rhobh");
@@ -172,7 +172,7 @@ describe("loadActivePublicPuzzle", () => {
 
 describe("evaluateGuessServer", () => {
   it("rejects a word that is not the answer length", async () => {
-    const { evaluateGuessServer } = await import("../puzzle.server");
+    const { evaluateGuessServer } = await import("../server/puzzle.server");
     const result = await evaluateGuessServer("2026-05-20", "ABC", null, 0);
 
     expect(result.valid).toBe(false);
@@ -186,7 +186,7 @@ describe("evaluateGuessServer", () => {
     loadPuzzleForDateMock.mockResolvedValue(makePuzzle());
     isValidWordMock.mockResolvedValue(false);
 
-    const { evaluateGuessServer } = await import("../puzzle.server");
+    const { evaluateGuessServer } = await import("../server/puzzle.server");
     const result = await evaluateGuessServer("2026-05-20", "ZZZZZ", null, 0);
 
     expect(result.valid).toBe(false);
@@ -197,7 +197,7 @@ describe("evaluateGuessServer", () => {
     getGameBySlugMock.mockResolvedValue(GAME);
     loadPuzzleForDateMock.mockResolvedValue(null);
 
-    const { evaluateGuessServer } = await import("../puzzle.server");
+    const { evaluateGuessServer } = await import("../server/puzzle.server");
     const result = await evaluateGuessServer("2026-05-20", "ERIKA", null, 0);
 
     expect(result.valid).toBe(false);
@@ -211,7 +211,7 @@ describe("evaluateGuessServer", () => {
       loadPuzzleForDateMock.mockResolvedValue(makePuzzle({ answer: "ERIKA" }));
       isValidWordMock.mockResolvedValue(true);
 
-      const { evaluateGuessServer } = await import("../puzzle.server");
+      const { evaluateGuessServer } = await import("../server/puzzle.server");
       const result = await evaluateGuessServer("2026-05-20", "DORIT", null, 0);
 
       expect(result.valid).toBe(true);
@@ -226,7 +226,7 @@ describe("evaluateGuessServer", () => {
       loadPuzzleForDateMock.mockResolvedValue(makePuzzle({ answer: "ERIKA" }));
       isValidWordMock.mockResolvedValue(true);
 
-      const { evaluateGuessServer } = await import("../puzzle.server");
+      const { evaluateGuessServer } = await import("../server/puzzle.server");
       const result = await evaluateGuessServer("2026-05-20", "ERIKA", null, 0);
 
       expect(result.valid).toBe(true);
@@ -238,7 +238,7 @@ describe("evaluateGuessServer", () => {
       getGameBySlugMock.mockResolvedValue(GAME);
       loadPuzzleForDateMock.mockResolvedValue(makePuzzle({ answer: "ERIKA" }));
 
-      const { evaluateGuessServer } = await import("../puzzle.server");
+      const { evaluateGuessServer } = await import("../server/puzzle.server");
       const result = await evaluateGuessServer("2026-05-20", "DORIT", null, 1);
 
       expect(result.valid).toBe(false);
@@ -257,7 +257,7 @@ describe("evaluateGuessServer", () => {
       countRecentGuessesMock.mockResolvedValue(0);
       createAttemptMock.mockResolvedValue(makeAttempt({ guesses: [] }));
 
-      const { evaluateGuessServer } = await import("../puzzle.server");
+      const { evaluateGuessServer } = await import("../server/puzzle.server");
       const result = await evaluateGuessServer("2026-05-20", "DORIT", USER, 0);
 
       expect(result.valid).toBe(true);
@@ -278,7 +278,7 @@ describe("evaluateGuessServer", () => {
       loadAttemptMock.mockResolvedValue(makeAttempt({ guesses: [] }));
       countRecentGuessesMock.mockResolvedValue(0);
 
-      const { evaluateGuessServer } = await import("../puzzle.server");
+      const { evaluateGuessServer } = await import("../server/puzzle.server");
       const result = await evaluateGuessServer("2026-05-20", "ERIKA", USER, 0);
 
       expect(result.valid).toBe(true);
@@ -303,7 +303,7 @@ describe("evaluateGuessServer", () => {
       loadAttemptMock.mockResolvedValue(makeAttempt({ guesses: priorGuesses }));
       countRecentGuessesMock.mockResolvedValue(0);
 
-      const { evaluateGuessServer } = await import("../puzzle.server");
+      const { evaluateGuessServer } = await import("../server/puzzle.server");
       const result = await evaluateGuessServer("2026-05-20", "KYLEE", USER, 0);
 
       expect(result.valid).toBe(true);
@@ -321,7 +321,7 @@ describe("evaluateGuessServer", () => {
       );
       countRecentGuessesMock.mockResolvedValue(0);
 
-      const { evaluateGuessServer } = await import("../puzzle.server");
+      const { evaluateGuessServer } = await import("../server/puzzle.server");
       const result = await evaluateGuessServer("2026-05-20", "DORIT", USER, 0);
 
       expect(result.valid).toBe(false);
@@ -334,7 +334,7 @@ describe("evaluateGuessServer", () => {
       loadPuzzleForDateMock.mockResolvedValue(makePuzzle({ answer: "ERIKA" }));
       loadAttemptMock.mockResolvedValue(makeAttempt({ status: "solved" }));
 
-      const { evaluateGuessServer } = await import("../puzzle.server");
+      const { evaluateGuessServer } = await import("../server/puzzle.server");
       const result = await evaluateGuessServer("2026-05-20", "DORIT", USER, 0);
 
       expect(result.valid).toBe(false);
@@ -349,7 +349,7 @@ describe("evaluateGuessServer", () => {
       loadAttemptMock.mockResolvedValue(null);
       countRecentGuessesMock.mockResolvedValue(10);
 
-      const { evaluateGuessServer } = await import("../puzzle.server");
+      const { evaluateGuessServer } = await import("../server/puzzle.server");
       const result = await evaluateGuessServer("2026-05-20", "DORIT", USER, 0);
 
       expect(result.valid).toBe(false);
@@ -365,7 +365,7 @@ describe("loadPuzzleForSpecificDate", () => {
     getGameBySlugMock.mockResolvedValue(GAME);
     loadPuzzleForDateMock.mockResolvedValue(null);
 
-    const { loadPuzzleForSpecificDate } = await import("../puzzle.server");
+    const { loadPuzzleForSpecificDate } = await import("../server/puzzle.server");
     const result = await loadPuzzleForSpecificDate("2026-05-20", USER);
 
     expect(result).toBeNull();
@@ -378,7 +378,7 @@ describe("loadPuzzleForSpecificDate", () => {
     getGameBySlugMock.mockResolvedValue(GAME);
     loadPuzzleForDateMock.mockResolvedValue(makePuzzle());
 
-    const { loadPuzzleForSpecificDate } = await import("../puzzle.server");
+    const { loadPuzzleForSpecificDate } = await import("../server/puzzle.server");
     const result = await loadPuzzleForSpecificDate("2026-05-20", null);
 
     expect(result?.attempt).toBeNull();
@@ -390,7 +390,7 @@ describe("loadPuzzleForSpecificDate", () => {
     loadPuzzleForDateMock.mockResolvedValue(makePuzzle());
     loadAttemptMock.mockResolvedValue(null);
 
-    const { loadPuzzleForSpecificDate } = await import("../puzzle.server");
+    const { loadPuzzleForSpecificDate } = await import("../server/puzzle.server");
     const result = await loadPuzzleForSpecificDate("2026-05-20", USER);
 
     expect(result?.attempt).toBeNull();
@@ -404,7 +404,7 @@ describe("loadPuzzleForSpecificDate", () => {
       makeAttempt({ status: "solved", guesses: [{ word: "ERIKA", states: ["correct"] as never }] }),
     );
 
-    const { loadPuzzleForSpecificDate } = await import("../puzzle.server");
+    const { loadPuzzleForSpecificDate } = await import("../server/puzzle.server");
     const result = await loadPuzzleForSpecificDate("2026-05-20", USER);
 
     expect(result?.attempt).toEqual({

@@ -31,6 +31,7 @@ export function RealiTeaTile({
     <div
       aria-label={ariaLabel}
       role={ariaLabel ? "img" : undefined}
+      data-testid="realitea-tile"
       className={cn(
         "realitea-tile",
         isRevealing && "realitea-tile-reveal",

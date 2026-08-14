@@ -10,6 +10,7 @@ export function useAnimation() {
   const [revealingGuessIndex, setRevealingGuessIndex] = useState<number | null>(null);
   const [revealedTileCount, setRevealedTileCount] = useState(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorCode, setErrorCode] = useState<string | null>(null);
   const [isShaking, setIsShaking] = useState(false);
   // Bumped on every shake-triggering animateError call. Consumers watch
   // this (not isShaking) to imperatively replay the shake via WAAPI, since
@@ -43,9 +44,10 @@ export function useAnimation() {
    * Important: Parent component must render {message} inside aria-live region.
    * If element exists but has no text, tests using screen.getByText() will fail.
    */
-  const animateError = useCallback((message: string, shake: boolean) => {
+  const animateError = useCallback((message: string, shake: boolean, code?: string) => {
     if (shakeTimerRef.current) clearTimeout(shakeTimerRef.current);
     setErrorMessage(message);
+    setErrorCode(code ?? null);
     setIsShaking(shake);
     if (shake) setShakeToken((token) => token + 1);
     shakeTimerRef.current = setTimeout(() => {
@@ -57,6 +59,7 @@ export function useAnimation() {
   const clearError = useCallback(() => {
     if (shakeTimerRef.current) clearTimeout(shakeTimerRef.current);
     setErrorMessage(null);
+    setErrorCode(null);
     setIsShaking(false);
   }, []);
 
@@ -71,6 +74,7 @@ export function useAnimation() {
     if (shakeTimerRef.current) clearTimeout(shakeTimerRef.current);
     if (revealTimerRef.current) clearTimeout(revealTimerRef.current);
     setErrorMessage(null);
+    setErrorCode(null);
     setIsShaking(false);
     setRevealingGuessIndex(null);
     setRevealedTileCount(0);
@@ -97,6 +101,7 @@ export function useAnimation() {
     revealingGuessIndex,
     revealedTileCount,
     errorMessage,
+    errorCode,
     isShaking,
     hasError,
     shakeToken,

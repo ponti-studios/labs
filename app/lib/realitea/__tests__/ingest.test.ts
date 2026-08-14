@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { extractArticleText, fetchFeedItems } from "../ingest";
+import { extractArticleText, fetchFeedItems } from "../generation/ingest.server";
 
 describe("fetchFeedItems", () => {
   it("normalizes RSS markup and control content while preserving safe fields", async () => {

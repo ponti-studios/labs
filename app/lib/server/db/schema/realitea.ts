@@ -218,9 +218,9 @@ export type AttemptStatus = (typeof attemptStatusValues)[number];
 
 /**
  * Persisted shape of a scored guess. Kept structurally identical to
- * `RealiteaGuess` in app/lib/realitea/types.ts, but declared here rather than
- * imported: that module imports from this one, so importing back would be
- * circular. repository.ts touches both and will fail to compile if they drift.
+ * `RealiteaGuess` in app/lib/realitea/core/types.ts, but declared here rather
+ * than imported: the domain types sit above this schema, so importing back
+ * would be circular. Drift will fail repository tests.
  */
 type StoredGuess = {
   word: string;

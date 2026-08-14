@@ -1,3 +1,5 @@
+export const DEFAULT_REALITEA_GAME_SLUG = "rhobh";
+
 export const REALITEA_GAME_CATALOG = [
   {
     slug: "rhobh",

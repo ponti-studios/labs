@@ -12,13 +12,13 @@ describe("getGameBySlug", () => {
       .insert(gamesTopics)
       .values({ slug: "rhobh", name: "RHOBH", feedUrl: "https://example.com/feed", feedLabel: "Test Feed", systemPromptPath: "prompts/rhobh.txt" })
       .returning();
-    const { getGameBySlug } = await import("../repository");
+    const { getGameBySlug } = await import("../server/repository.server");
     const result = await getGameBySlug("rhobh");
     expect(result).toEqual(game);
   });
 
   it("returns null when no game exists", async () => {
-    const { getGameBySlug } = await import("../repository");
+    const { getGameBySlug } = await import("../server/repository.server");
     const result = await getGameBySlug("missing");
     expect(result).toBeNull();
   });
@@ -48,7 +48,7 @@ describe("loadPuzzleForDate", () => {
       })
       .returning();
 
-    const { loadPuzzleForDate } = await import("../repository");
+    const { loadPuzzleForDate } = await import("../server/repository.server");
     const result = await loadPuzzleForDate(game.id, "2026-06-25");
 
     expect(result).toBeDefined();
@@ -59,7 +59,7 @@ describe("loadPuzzleForDate", () => {
   });
 
   it("returns null when no puzzle exists for the date", async () => {
-    const { loadPuzzleForDate } = await import("../repository");
+    const { loadPuzzleForDate } = await import("../server/repository.server");
     const result = await loadPuzzleForDate(999, "2026-06-25");
     expect(result).toBeNull();
   });
@@ -100,7 +100,7 @@ describe("getStoredAnswers", () => {
       detail: "d2",
     });
 
-    const { getStoredAnswers } = await import("../repository");
+    const { getStoredAnswers } = await import("../server/repository.server");
     const result = await getStoredAnswers(game.id);
 
     expect(result).toBeInstanceOf(Set);
@@ -122,7 +122,7 @@ describe("upsertArticles", () => {
       })
       .returning();
 
-    const { upsertArticles } = await import("../repository");
+    const { upsertArticles } = await import("../server/repository.server");
     const result = await upsertArticles(game.id, [
       { url: "https://example.com/a", title: "A" },
       { url: "https://example.com/a", title: "A duplicate" },
@@ -132,7 +132,7 @@ describe("upsertArticles", () => {
   });
 
   it("returns 0 without querying when given no items", async () => {
-    const { upsertArticles } = await import("../repository");
+    const { upsertArticles } = await import("../server/repository.server");
     const result = await upsertArticles(1, []);
     expect(result).toBe(0);
   });
@@ -173,7 +173,7 @@ describe("getExistingDateKeys", () => {
       detail: "d2",
     });
 
-    const { getExistingDateKeys } = await import("../repository");
+    const { getExistingDateKeys } = await import("../server/repository.server");
     const result = await getExistingDateKeys(game.id, "2026-06-26", "2026-06-27");
 
     expect(result).toEqual(["2026-06-26", "2026-06-27"]);
@@ -183,7 +183,7 @@ describe("getExistingDateKeys", () => {
 describe("deletePuzzlesInRange", () => {
   it("does not delete a puzzle after the inclusive end of the window", async () => {
     const game = await seedGameWithPuzzles(["2026-08-13", "2026-08-14", "2026-08-15"]);
-    const { deletePuzzlesInRange, getExistingDateKeys } = await import("../repository");
+    const { deletePuzzlesInRange, getExistingDateKeys } = await import("../server/repository.server");
     const deleted = await deletePuzzlesInRange(game.id, "2026-08-13", "2026-08-14");
     expect(deleted).toBe(2);
     expect(await getExistingDateKeys(game.id, "2026-08-13", "2026-08-15")).toEqual(["2026-08-15"]);
@@ -225,7 +225,7 @@ describe("listAttemptsForUserInRange", () => {
       { hominemUserId: "user-1", gamesTopicId: game.id, dateUtc: "2026-06-27", status: "playing" },
     ]);
 
-    const { listAttemptsForUserInRange } = await import("../repository");
+    const { listAttemptsForUserInRange } = await import("../server/repository.server");
     const result = await listAttemptsForUserInRange("user-1", game.id, {
       fromKey: "2026-06-25",
       toKey: "2026-06-27",
@@ -247,7 +247,7 @@ describe("listAttemptsForUserInRange", () => {
       { hominemUserId: "user-1", gamesTopicId: game.id, dateUtc: "2026-06-27", status: "solved" },
     ]);
 
-    const { listAttemptsForUserInRange } = await import("../repository");
+    const { listAttemptsForUserInRange } = await import("../server/repository.server");
     const week1 = await listAttemptsForUserInRange("user-1", game.id, {
       fromKey: "2026-06-27",
       toKey: "2026-06-27",
@@ -268,7 +268,7 @@ describe("listAttemptsForUserInRange", () => {
       { hominemUserId: "user-2", gamesTopicId: game.id, dateUtc: "2026-06-25", status: "solved" },
     ]);
 
-    const { listAttemptsForUserInRange } = await import("../repository");
+    const { listAttemptsForUserInRange } = await import("../server/repository.server");
     const result = await listAttemptsForUserInRange("user-1", game.id, {
       fromKey: "2026-06-25",
       toKey: "2026-06-25",
@@ -283,7 +283,7 @@ describe("getEarliestPuzzleDateKey", () => {
   it("returns the earliest dateUtc for the game", async () => {
     const game = await seedGameWithPuzzles(["2026-06-26", "2026-06-25", "2026-06-27"]);
 
-    const { getEarliestPuzzleDateKey } = await import("../repository");
+    const { getEarliestPuzzleDateKey } = await import("../server/repository.server");
     const result = await getEarliestPuzzleDateKey(game.id);
 
     expect(result).toBe("2026-06-25");
@@ -295,7 +295,7 @@ describe("getEarliestPuzzleDateKey", () => {
       .values({ slug: "rhobh", name: "RHOBH", feedUrl: "https://example.com/feed", feedLabel: "Test Feed", systemPromptPath: "prompts/rhobh.txt" })
       .returning();
 
-    const { getEarliestPuzzleDateKey } = await import("../repository");
+    const { getEarliestPuzzleDateKey } = await import("../server/repository.server");
     const result = await getEarliestPuzzleDateKey(game.id);
 
     expect(result).toBeNull();
@@ -311,7 +311,7 @@ describe("loadAllAttemptsForUser", () => {
       { hominemUserId: "user-1", gamesTopicId: game.id, dateUtc: "2026-06-27", status: "playing" },
     ]);
 
-    const { loadAllAttemptsForUser } = await import("../repository");
+    const { loadAllAttemptsForUser } = await import("../server/repository.server");
     const result = await loadAllAttemptsForUser("user-1", game.id);
 
     expect(result.map((r) => r.dateUtc)).toEqual(["2026-06-27", "2026-06-26", "2026-06-25"]);
@@ -320,7 +320,7 @@ describe("loadAllAttemptsForUser", () => {
   it("returns an empty array when the user has no attempts", async () => {
     const game = await seedGameWithPuzzles([]);
 
-    const { loadAllAttemptsForUser } = await import("../repository");
+    const { loadAllAttemptsForUser } = await import("../server/repository.server");
     const result = await loadAllAttemptsForUser("user-1", game.id);
 
     expect(result).toEqual([]);

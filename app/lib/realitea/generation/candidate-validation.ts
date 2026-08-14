@@ -4,9 +4,6 @@ import { isDictionaryWord } from "../server/word-list.server";
 import type { ValidationResult } from "./types";
 
 const DEFAULT_SOURCE_DOMAIN = "realityblurb.com";
-export const DEFAULT_REPEAT_WINDOW_DAYS = 90;
-/** @deprecated Use DEFAULT_REPEAT_WINDOW_DAYS. */
-export const BRAVO_REPEAT_WINDOW_DAYS = DEFAULT_REPEAT_WINDOW_DAYS;
 export const REALITEA_READY_INVENTORY_DAYS = 7;
 
 const PROMPT_CONTROL_MARKERS = [

@@ -3,18 +3,19 @@ import { SectionIntro } from "@ponti-studios/ui/layout";
 import { useState } from "react";
 import { Link, useLoaderData, type LoaderFunctionArgs } from "react-router";
 
+import { studioModelAllowlist } from "~/lib/realitea/admin/generate.server";
 import {
   GENERATION_PROMPT_FILES,
-  studioModelAllowlist,
   type GenerateErr,
   type GenerateOk,
   type GenerateProgressEvent,
-} from "~/lib/realitea/admin/generate";
+} from "~/lib/realitea/admin/generate-types";
 import { resolveAdminGame } from "~/lib/realitea/admin/inventory";
-import { getDateKey } from "~/lib/realitea/date";
-import { MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "~/lib/realitea/feed-text";
+import { getDateKey } from "~/lib/realitea/core/date";
+import { DEFAULT_REALITEA_GAME_SLUG } from "~/lib/realitea/generation/catalog";
+import { MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "~/lib/realitea/generation/feed-text";
 import { PROMPT_TEST_FIXTURES } from "~/lib/realitea/fixtures/prompt-test-fixtures";
-import { getActiveGames, getPendingArticlesForGame } from "~/lib/realitea/repository";
+import { getActiveGames, getPendingArticlesForGame } from "~/lib/realitea/server/repository.server";
 
 import { GenerateForm } from "./components/generate-form";
 import { GenerateProgress } from "./components/generate-progress";
@@ -23,14 +24,12 @@ import { readGenerateStream } from "./components/generate-stream";
 
 import "../realitea.css";
 
-const DEFAULT_GAME = "rhobh";
-
 export function meta() {
   return [{ title: "RealiTea generate" }, { name: "robots", content: "noindex" }];
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const slug = new URL(request.url).searchParams.get("game") ?? DEFAULT_GAME;
+  const slug = new URL(request.url).searchParams.get("game") ?? DEFAULT_REALITEA_GAME_SLUG;
   const game = await resolveAdminGame(slug);
   if (!game) throw Response.json({ error: "No active RealiTea topic found" }, { status: 404 });
   const [topics, pendingArticles] = await Promise.all([

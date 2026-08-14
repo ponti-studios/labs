@@ -5,6 +5,8 @@ exports[`RealiTeaRoute > error message container structure is stable 1`] = `
   aria-atomic="true"
   aria-live="polite"
   class="_errorMessage_105811 _visible_105811"
+  data-error="wrong-length"
+  data-testid="realitea-status"
   role="status"
 >
   Not enough letters

@@ -1,5 +1,4 @@
-import { Card, CardContent } from "@ponti-studios/ui/primitives";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { OnscreenKeyboard } from "~/components/games/onscreen-keyboard";
 
 import {
@@ -9,7 +8,7 @@ import {
   type PublicGamesPuzzle,
   type RealiteaGuess,
 } from "~/lib/realitea";
-import { buildRealiTeaShareText } from "~/lib/realitea/share";
+import { buildRealiTeaShareText } from "~/lib/realitea/client/share";
 
 import { RealiTeaGameHeader } from "./game-header";
 import styles from "./game-board.module.css";
@@ -41,7 +40,6 @@ export function RealiTeaGameBoard({
   topics,
   onTopicChange,
 }: RealiTeaGameBoardProps) {
-  const [showInstructions] = useState(false);
   const game = useRealiTeaGame({ puzzle, initialGuesses, gameSlug });
   const keyboardState = useMemo(() => getKeyboardState(game.guesses), [game.guesses]);
   const shouldShowClue = !game.isGameOver && game.guesses.length === MAX_GUESSES - 1;
@@ -72,20 +70,6 @@ export function RealiTeaGameBoard({
         topics={topics}
         onTopicChange={onTopicChange}
       />
-
-      {showInstructions && (
-        <Card>
-          <CardContent>
-            <p>Guess today&apos;s reality TV answer in 6 tries.</p>
-            <p className="mt-2">
-              <span className="font-medium text-(--realitea-correct-accent)">Pink</span> means the
-              right letter is in the right place.{" "}
-              <span className="font-medium text-(--realitea-present-accent)">Gold</span> means the
-              letter belongs in the answer but is in the wrong place.
-            </p>
-          </CardContent>
-        </Card>
-      )}
 
       {shouldShowClue && (
         <div className={styles.clue}>

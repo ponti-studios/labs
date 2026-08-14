@@ -109,7 +109,6 @@ function CandidateCard({
           <p className="text-lg tracking-[0.12em]">Detail</p>
           <p>{candidate.candidate.detail}</p>
         </div>
-        <div className="flex flex-wrap items-center gap-2"></div>
         <div className="flex items-center justify-end gap-2">
           <div>
             {candidate.reasons.length > 0 ? (

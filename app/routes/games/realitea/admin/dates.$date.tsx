@@ -14,13 +14,12 @@ import {
 import { Link, useLoaderData, type LoaderFunctionArgs } from "react-router";
 
 import { loadAdminDate } from "~/lib/realitea/admin/inventory";
-import { isDateKey } from "~/lib/realitea/date";
+import { isDateKey } from "~/lib/realitea/core/date";
+import { DEFAULT_REALITEA_GAME_SLUG } from "~/lib/realitea/generation/catalog";
 
 import { GenerationsList } from "./inventory-list";
 
 import "../realitea.css";
-
-const DEFAULT_GAME = "rhobh";
 
 const DATE_CLASS: Record<"live" | "scheduled", StatusBadgeConfig> = {
   live: { label: "Live", variant: "default" },
@@ -44,7 +43,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     throw Response.json({ error: "Invalid date" }, { status: 400 });
   }
 
-  const slug = new URL(request.url).searchParams.get("game") ?? DEFAULT_GAME;
+  const slug = new URL(request.url).searchParams.get("game") ?? DEFAULT_REALITEA_GAME_SLUG;
   const detail = await loadAdminDate(slug, dateKey);
   if (!detail) throw Response.json({ error: `No active RealiTea topic found` }, { status: 404 });
   return detail;

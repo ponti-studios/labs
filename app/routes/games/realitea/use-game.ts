@@ -29,6 +29,7 @@ export interface RealiTeaGameState {
   isValidationPending: boolean;
   currentGuess: string;
   errorMessage: string | null;
+  errorCode: string | null;
   isShaking: boolean;
   hasError: boolean;
   shakeToken: number;
@@ -139,12 +140,12 @@ export function useRealiTeaGame({
     const guess = normalizeGuess(typing.currentGuess);
 
     if (!isGuessLengthValid(guess)) {
-      anim.animateError("Not enough letters", true);
+      anim.animateError("Not enough letters", true, "wrong-length");
       return;
     }
 
     if (hasGuessedWord(guesses, guess)) {
-      anim.animateError("Already guessed", true);
+      anim.animateError("Already guessed", true, "already-guessed");
       return;
     }
 
@@ -186,7 +187,7 @@ export function useRealiTeaGame({
     // A fetcher can return to idle without data when the request fails.
     if (!wordValidator.data) {
       dispatchSubmission({ type: "request failed", id: submissionId, dateKey: puzzle.dateKey });
-      anim.animateError("Network error — try again", false);
+      anim.animateError("Network error — try again", false, "network");
       return;
     }
 
@@ -198,13 +199,16 @@ export function useRealiTeaGame({
         id: submissionId,
         dateKey: puzzle.dateKey,
       });
-      if (result.reason === "not-in-word-list") anim.animateError("Not in word list", true);
-      else if (result.reason === "wrong-length") anim.animateError("Not enough letters", true);
-      else if (result.reason === "already-guessed") anim.animateError("Already guessed", true);
+      if (result.reason === "not-in-word-list")
+        anim.animateError("Not in word list", true, "not-in-word-list");
+      else if (result.reason === "wrong-length")
+        anim.animateError("Not enough letters", true, "wrong-length");
+      else if (result.reason === "already-guessed")
+        anim.animateError("Already guessed", true, "already-guessed");
       else if (result.reason === "rate-limited")
-        anim.animateError("Too many guesses — slow down", true);
+        anim.animateError("Too many guesses — slow down", true, "rate-limited");
       else if (result.reason === "game-over")
-        anim.animateError("This puzzle is already over", true);
+        anim.animateError("This puzzle is already over", true, "game-over");
       if (result.reason === "auth-required") setAuthRequired(true);
       return;
     }
@@ -235,6 +239,7 @@ export function useRealiTeaGame({
     isValidationPending,
     currentGuess: typing.currentGuess,
     errorMessage: anim.errorMessage,
+    errorCode: anim.errorCode,
     isShaking: anim.isShaking,
     hasError: anim.hasError,
     shakeToken: anim.shakeToken,

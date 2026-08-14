@@ -3,10 +3,10 @@ import type { ActionFunctionArgs } from "react-router";
 import { getRealiteaAdminActor } from "~/lib/realitea/admin/auth";
 import { resolveAdminGame } from "~/lib/realitea/admin/inventory";
 import { readGenerateForm } from "~/lib/realitea/admin/generate-form";
-import { createGeneration, type GenerateProgressEvent } from "~/lib/realitea/admin/generate";
+import { createGeneration } from "~/lib/realitea/admin/generate.server";
+import type { GenerateProgressEvent } from "~/lib/realitea/admin/generate-types";
+import { DEFAULT_REALITEA_GAME_SLUG } from "~/lib/realitea/generation/catalog";
 import { assertSameOrigin } from "~/lib/server/origin";
-
-const DEFAULT_GAME = "rhobh";
 
 export async function action({ request, context }: ActionFunctionArgs) {
   const originDenied = assertSameOrigin(request);
@@ -14,7 +14,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
   const auth = getRealiteaAdminActor(context);
   const form = await request.formData();
-  const slug = String(form.get("game") ?? DEFAULT_GAME);
+  const slug = String(form.get("game") ?? DEFAULT_REALITEA_GAME_SLUG);
   const game = await resolveAdminGame(slug);
   if (!game) {
     return Response.json({ ok: false, error: "No active RealiTea topic found" }, { status: 404 });

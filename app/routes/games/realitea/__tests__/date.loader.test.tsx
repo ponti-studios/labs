@@ -12,7 +12,7 @@ vi.mock("~/lib/server/hominem-auth", () => ({
     `https://api.ponti.io/login?next=${encodeURIComponent(returnTo)}`,
 }));
 
-vi.mock("~/lib/realitea/puzzle.server", () => ({
+vi.mock("~/lib/realitea/server/puzzle.server", () => ({
   loadPuzzleForSpecificDate: loadPuzzleForSpecificDateMock,
 }));
 
@@ -82,7 +82,7 @@ describe("RealiTea date route loader", () => {
     expect(payload.signedIn).toBe(false);
     expect(payload.puzzle.dateKey).toBe("2026-05-20");
     expect(payload.attempt).toBeNull();
-    expect(loadPuzzleForSpecificDateMock).toHaveBeenCalledWith("2026-05-20", null);
+    expect(loadPuzzleForSpecificDateMock).toHaveBeenCalledWith("2026-05-20", null, "rhobh");
   });
 
   it("returns signedIn: true with the persisted attempt for a signed-in visitor", async () => {
@@ -101,6 +101,6 @@ describe("RealiTea date route loader", () => {
 
     expect(payload.signedIn).toBe(true);
     expect(payload.attempt.status).toBe("playing");
-    expect(loadPuzzleForSpecificDateMock).toHaveBeenCalledWith("2026-05-20", user);
+    expect(loadPuzzleForSpecificDateMock).toHaveBeenCalledWith("2026-05-20", user, "rhobh");
   });
 });

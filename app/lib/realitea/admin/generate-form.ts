@@ -1,4 +1,4 @@
-import type { GenerateRequest, GenerateSourceMode } from "./generate";
+import type { GenerateRequest, GenerateSourceMode } from "./generate-types";
 
 export function readGenerateForm(form: FormData): GenerateRequest {
   const feedIds = String(form.get("feedIds") ?? "")

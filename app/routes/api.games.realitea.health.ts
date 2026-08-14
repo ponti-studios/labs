@@ -4,16 +4,16 @@ import { count, gamesPuzzles, db, desc, eq } from "~/lib/server/db";
 
 import { createLogger } from "~/lib/logger.server";
 import { requireAdminAuth } from "~/lib/server/admin-auth";
-import { getDateKey } from "~/lib/realitea/date";
+import { getDateKey } from "~/lib/realitea/core/date";
+import { DEFAULT_REALITEA_GAME_SLUG } from "~/lib/realitea/generation/catalog";
 import {
   countInventoryForRange,
   countPendingArticlesForGame,
   getGameBySlug,
   loadPuzzleForDate,
-} from "~/lib/realitea/repository";
+} from "~/lib/realitea/server/repository.server";
 
 const logger = createLogger();
-const RHOBH_GAME_SLUG = "rhobh";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const denied = requireAdminAuth(request);
@@ -27,10 +27,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
     dateKey,
   });
 
-  const game = await getGameBySlug(RHOBH_GAME_SLUG);
+  const game = await getGameBySlug(DEFAULT_REALITEA_GAME_SLUG);
   if (!game) {
     return Response.json(
-      { health: "DEGRADED", error: `game not found: ${RHOBH_GAME_SLUG}` },
+      { health: "DEGRADED", error: `game not found: ${DEFAULT_REALITEA_GAME_SLUG}` },
       {
         status: 500,
       },

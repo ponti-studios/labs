@@ -55,9 +55,3 @@ export interface RealiteaGuessResult {
   remainingGuesses?: number;
 }
 
-/**
- * Domain DTO for a generated puzzle, joined with the single article it was
- * generated from (`sources` used to live as a jsonb blob on the puzzle row;
- * it now lives on the linked `articles` row and is joined in at read time).
- */
-
