@@ -59,7 +59,7 @@ export const PROMPT_TEST_FIXTURES: PromptTestFixture[] = [
     id: "cbs-sports-penalty-save",
     genre: "sports",
     sourceDomains: ["cbssports.com"],
-    expectedAnswers: ["GUARD", "BLOCK"],
+    expectedAnswers: ["BLOCK"],
     feedItems: [
       {
         title: "Rookie goalkeeper preserves club's lead with final-minute penalty save",
