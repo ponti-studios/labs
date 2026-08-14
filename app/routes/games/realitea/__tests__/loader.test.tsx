@@ -6,7 +6,7 @@ import type { Route } from "../+types/route";
 
 const loadActivePublicPuzzle = vi.fn();
 
-vi.mock("../../../../lib/realitea/puzzle.server", () => ({
+vi.mock("../../../../lib/realitea/server/puzzle.server", () => ({
   loadActivePublicPuzzle,
 }));
 

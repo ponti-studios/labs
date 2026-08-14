@@ -6,11 +6,11 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { articles, db, gamesPuzzles, gamesTopics, generationRuns } from "~/lib/server/db";
 import { cleanAll } from "../../../data/test-db";
-import { assertGenerateFeedUrl, expireGenerations, reapStaleGenerations } from "../admin/generate";
+import { assertGenerateFeedUrl, expireGenerations, reapStaleGenerations } from "../admin/generate.server";
 import { matchArticle } from "../generation/generate.server";
 
 const GENERATE_SOURCE = readFileSync(
-  join(dirname(fileURLToPath(import.meta.url)), "../admin/generate.ts"),
+  join(dirname(fileURLToPath(import.meta.url)), "../admin/generate.server.ts"),
   "utf-8",
 );
 

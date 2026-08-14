@@ -19,7 +19,7 @@ import {
 } from "@ponti-studios/ui/primitives";
 import { useState } from "react";
 
-import type { GenerateSourceMode } from "~/lib/realitea/admin/generate";
+import type { GenerateSourceMode } from "~/lib/realitea/admin/generate-types";
 
 import styles from "./generate-form.module.css";
 

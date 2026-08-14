@@ -2,6 +2,14 @@ import { DEFAULT_TEXT_MODEL, getConfiguredTextModel } from "~/lib/server/ai";
 import { and, db, eq, generationCandidates, generationRuns, lt } from "~/lib/server/db";
 import type { Article, GamesTopic } from "~/lib/server/db";
 import { GenerateReasonType } from "./generate-copy";
+import {
+  GENERATION_PROMPT_FILES,
+  type GenerateErr,
+  type GenerateFeedUrlResult,
+  type GenerateOk,
+  type GenerateProgressEvent,
+  type GenerateRequest,
+} from "./generate-types";
 import { isDateKey, parseDate } from "../core/date";
 import { MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "../generation/feed-text";
 import { PROMPT_TEST_FIXTURES } from "../fixtures/prompt-test-fixtures";
@@ -30,34 +38,9 @@ const GENERATION_BATCH_SIZE = 8;
 const RUN_TTL_DAYS = 30;
 const REAP_AFTER_MS = 10 * 60 * 1000;
 
-export const GENERATION_PROMPT_FILES = [
-  "app/lib/prompts/realitea-generation.md",
-  "app/lib/prompts/realitea-generation-v2.md",
-] as const;
-
 export function studioModelAllowlist(): string[] {
   return [...new Set([DEFAULT_TEXT_MODEL, getConfiguredTextModel()])];
 }
-
-export type GenerateSourceMode = "inventory" | "feeds" | "articles" | "rss" | "fixtures";
-
-export type GenerateRequest = {
-  dateKey: string;
-  sourceMode: GenerateSourceMode;
-  feedIds?: number[];
-  articleIds?: number[];
-  feedUrl?: string;
-  fixtureId?: string;
-  promptSource: "file" | "paste";
-  promptPath?: string;
-  promptText?: string;
-  model?: string;
-  compareGroupId?: string;
-};
-
-export type GenerateFeedUrlResult =
-  | { ok: true; href: string }
-  | { ok: false; code: "INVALID_URL" | "HTTP_NOT_ALLOWED" | "PRIVATE_HOST" | "HOST_NOT_ALLOWED" };
 
 const PRIVATE_V4 = [
   /^127\./,
@@ -125,60 +108,6 @@ export async function reapStaleGenerations(): Promise<number> {
     .returning({ id: generationRuns.id });
   return updated.length;
 }
-
-export type GenerateStage = "prepare" | "articles" | "model" | "score" | "done";
-
-export type GenerateProgressEvent = {
-  type: "stage";
-  stage: GenerateStage;
-  label: string;
-  detail: string;
-};
-
-export type GenerateCandidateView = {
-  id: number;
-  ordinal: number;
-  valid: boolean;
-  reasons: string[];
-  articleId: number | null;
-  articleTitle: string | null;
-  articleUrl: string | null;
-  candidate: {
-    answer: string;
-    answerType: string;
-    clue: string;
-    detail: string;
-    sources: Array<{ url: string; title: string; publishedAt: string }>;
-  };
-};
-
-export type GenerateOk = {
-  ok: true;
-  generationId: number;
-  publishable: boolean;
-  model: string;
-  promptSource: "file" | "paste";
-  selectedIndex: number | null;
-  feedError: string | null;
-  llmError: string | null;
-  articleCount: number;
-  candidates: GenerateCandidateView[];
-};
-
-export type GenerateErr = {
-  ok: false;
-  code:
-    | "INVALID_DATE"
-    | "INVALID_PROMPT"
-    | "INVALID_MODEL"
-    | "RATE_LIMITED"
-    | "INVALID_SOURCE"
-    | "INVALID_URL"
-    | "HTTP_NOT_ALLOWED"
-    | "PRIVATE_HOST"
-    | "HOST_NOT_ALLOWED";
-  error: string;
-};
 
 export async function createGeneration(
   game: GamesTopic,

@@ -457,20 +457,6 @@ export async function getGenerationWithCandidates(gameId: number, generationId: 
 }
 
 /**
- * Delete all puzzles for `gameId` whose `dateUtc` is >= `fromDateKey`.
- *
- * Returns the number of deleted records. Prefer `deletePuzzlesInRange` for
- * generate ops — this unbounded form must not be called from admin HTTP.
- */
-export async function deletePuzzlesFromDate(gameId: number, fromDateKey: string): Promise<number> {
-  const result = await db
-    .delete(gamesPuzzles)
-    .where(and(eq(gamesPuzzles.gamesTopicId, gameId), gte(gamesPuzzles.dateUtc, fromDateKey)))
-    .returning({ id: gamesPuzzles.id });
-  return result.length;
-}
-
-/**
  * Delete puzzles for `gameId` whose `dateUtc` is in `[fromKey, toKey]`.
  */
 export async function deletePuzzlesInRange(

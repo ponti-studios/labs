@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@pont
 import { Check } from "lucide-react";
 
 import { generateStagePercent } from "~/lib/realitea/admin/generate-copy";
-import type { GenerateProgressEvent } from "~/lib/realitea/admin/generate";
+import type { GenerateProgressEvent } from "~/lib/realitea/admin/generate-types";
 
 import styles from "./generate-progress.module.css";
 

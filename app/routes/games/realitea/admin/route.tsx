@@ -4,19 +4,18 @@ import { Button } from "@ponti-studios/ui/primitives";
 import { Link, useLoaderData, type LoaderFunctionArgs } from "react-router";
 
 import { loadAdminOverview } from "~/lib/realitea/admin/inventory";
+import { DEFAULT_REALITEA_GAME_SLUG } from "~/lib/realitea/generation/catalog";
 
 import { GenerationsList, InventoryList } from "./inventory-list";
 
 import "../realitea.css";
-
-const DEFAULT_GAME = "rhobh";
 
 export function meta() {
   return [{ title: "RealiTea admin" }, { name: "robots", content: "noindex" }];
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const slug = new URL(request.url).searchParams.get("game") ?? DEFAULT_GAME;
+  const slug = new URL(request.url).searchParams.get("game") ?? DEFAULT_REALITEA_GAME_SLUG;
   const overview = await loadAdminOverview(slug);
   if (!overview) {
     throw Response.json({ error: `No active RealiTea topic found` }, { status: 404 });

@@ -12,7 +12,8 @@ import { useState } from "react";
 import { Link, useLoaderData, useSearchParams, type LoaderFunctionArgs } from "react-router";
 
 import type { GameStatus } from "~/lib/realitea";
-import { loadPuzzleHistory, type PuzzleHistoryPage } from "~/lib/realitea/history.server";
+import { DEFAULT_REALITEA_GAME_SLUG } from "~/lib/realitea/generation/catalog";
+import { loadPuzzleHistory, type PuzzleHistoryPage } from "~/lib/realitea/server/history.server";
 import { buildHominemLoginUrl, getHominemUser } from "~/lib/server/hominem-auth";
 
 import { RealiTeaTile } from "./realitea-tile";
@@ -21,7 +22,6 @@ import { resolveReturnTo } from "./return-to.server";
 import "./realitea.css";
 
 const UNPLAYED_PAGE_SIZE = 10;
-const DEFAULT_REALITEA_GAME_SLUG = "rhobh";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const loginUrl = buildHominemLoginUrl(resolveReturnTo(request));
@@ -36,9 +36,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const page = Number.isFinite(pageParam) && pageParam >= 1 ? pageParam : 1;
   const gameSlug = url.searchParams.get("game") ?? DEFAULT_REALITEA_GAME_SLUG;
 
-  const history = gameSlug === DEFAULT_REALITEA_GAME_SLUG
-    ? await loadPuzzleHistory(user.id, { page })
-    : await loadPuzzleHistory(user.id, { page }, gameSlug);
+  const history = await loadPuzzleHistory(user.id, { page }, gameSlug);
 
   return Response.json({ signedIn: true as const, loginUrl, history, gameSlug });
 }
@@ -212,7 +210,10 @@ export default function RealiTeaHistoryRoute() {
 
   if (!data.signedIn) {
     return (
-      <div className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center px-4 py-10">
+      <div
+        className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center px-4 py-10"
+        data-testid="realitea-history-guest"
+      >
         <EmptyState
           title="Sign in to see your puzzle history"
           description="Track every puzzle you've played, your win rate, and your streak."

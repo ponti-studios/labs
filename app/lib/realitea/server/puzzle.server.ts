@@ -22,19 +22,16 @@ import {
   loadAttempt,
   loadMostRecentPuzzle,
   loadPuzzleForDate,
-} from "../repository";
-import { isValidWord } from "../word-list.server";
+} from "./repository.server";
+import { isValidWord } from "./word-list.server";
+import { DEFAULT_REALITEA_GAME_SLUG } from "../generation/catalog";
 
 const logger = createLogger();
 
 // Guesses-per-minute limit, enforced across all of a user's puzzles at once
-// (not per-puzzle) — see countRecentGuesses in repository.ts.
+// (not per-puzzle) — see countRecentGuesses in repository.server.ts.
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX_GUESSES = 10;
-
-// The public route only serves the RHOBH game today; this becomes a param
-// once the route layer supports selecting a game.
-export const DEFAULT_REALITEA_GAME_SLUG = "rhobh";
 
 async function requireGameId(gameSlug = DEFAULT_REALITEA_GAME_SLUG): Promise<number> {
   const game = await getGameBySlug(gameSlug);

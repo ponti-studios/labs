@@ -1,6 +1,6 @@
 import { Alert, AlertDescription, AlertTitle } from "@ponti-studios/ui/feedback";
 
-import type { GenerateErr, GenerateOk } from "~/lib/realitea/admin/generate";
+import type { GenerateErr, GenerateOk } from "~/lib/realitea/admin/generate-types";
 
 import { CandidateCards } from "./candidate-cards";
 import styles from "./generate-result.module.css";

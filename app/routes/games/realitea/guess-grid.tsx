@@ -152,6 +152,8 @@ export function RealiTeaGuessGrid({ game }: { game: RealiTeaGameState }) {
         role="status"
         aria-live="polite"
         aria-atomic="true"
+        data-testid="realitea-status"
+        data-error={game.errorCode ?? undefined}
       >
         {game.errorMessage}
       </p>

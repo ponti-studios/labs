@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { computeHistoryStats } from "../stats";
+import { computeHistoryStats } from "../core/stats";
 
 type StoredGuess = { word: string; states: ("absent" | "correct" | "present")[] };
 type Fixture = { dateUtc: string; status: "playing" | "solved" | "failed"; guesses: StoredGuess[] };

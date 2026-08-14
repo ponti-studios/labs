@@ -11,13 +11,12 @@ import {
 import { getRealiteaAdminActor } from "~/lib/realitea/admin/auth";
 import { loadAdminGeneration, resolveAdminGame } from "~/lib/realitea/admin/inventory";
 import { publishCandidate } from "~/lib/realitea/admin/publish";
+import { DEFAULT_REALITEA_GAME_SLUG } from "~/lib/realitea/generation/catalog";
 import { assertSameOrigin } from "~/lib/server/origin";
 
 import { CandidateCards } from "./components/candidate-cards";
 
 import "../realitea.css";
-
-const DEFAULT_GAME = "rhobh";
 
 const GENERATION_STATUS: Record<"running" | "succeeded" | "failed", StatusBadgeConfig> = {
   running: { label: "Running", variant: "outline" },
@@ -35,7 +34,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     throw Response.json({ error: "Invalid generation" }, { status: 400 });
   }
 
-  const slug = new URL(request.url).searchParams.get("game") ?? DEFAULT_GAME;
+  const slug = new URL(request.url).searchParams.get("game") ?? DEFAULT_REALITEA_GAME_SLUG;
   const detail = await loadAdminGeneration(slug, generationId);
   if (!detail) throw Response.json({ error: "Generation not found" }, { status: 404 });
   return detail;
@@ -53,7 +52,7 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
     return Response.json({ ok: false as const, error: "Invalid publish request" }, { status: 400 });
   }
 
-  const slug = new URL(request.url).searchParams.get("game") ?? DEFAULT_GAME;
+  const slug = new URL(request.url).searchParams.get("game") ?? DEFAULT_REALITEA_GAME_SLUG;
   const game = await resolveAdminGame(slug);
   if (!game)
     return Response.json({ ok: false as const, error: "Topic not found" }, { status: 404 });

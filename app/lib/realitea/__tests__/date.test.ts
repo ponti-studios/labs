@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { daysBetweenDateKeys } from "../date";
+import { daysBetweenDateKeys } from "../core/date";
 
 describe("daysBetweenDateKeys", () => {
   it("returns 0 for the same date", () => {

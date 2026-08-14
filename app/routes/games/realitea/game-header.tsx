@@ -22,16 +22,29 @@ export function RealiTeaGameHeader({
   return (
     <header className={styles.header}>
       <div className={styles.inner}>
-        <img src="/experiments/logo.realitea.png" alt="RealiTea" className={styles.logo} />
+        <img
+          src="/experiments/logo.realitea.png"
+          alt="RealiTea"
+          className={styles.logo}
+          data-testid="realitea-logo"
+        />
         {topics.length > 1 && (
-          <div className={styles.topicControl}>
+          <div className={styles.topicControl} data-testid="realitea-topic" data-slug={gameSlug}>
             <Select value={gameSlug} onValueChange={(value) => value && onTopicChange?.(value)}>
-              <SelectTrigger aria-label="Topic" className={styles.topicSelect}>
+              <SelectTrigger
+                aria-label="Topic"
+                className={styles.topicSelect}
+                data-testid="realitea-topic-select"
+              >
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 {topics.map((topic) => (
-                  <SelectItem key={topic.slug} value={topic.slug}>
+                  <SelectItem
+                    key={topic.slug}
+                    value={topic.slug}
+                    data-testid={`realitea-topic-option-${topic.slug}`}
+                  >
                     {topic.name}
                   </SelectItem>
                 ))}
@@ -61,7 +74,10 @@ export function RealiTeaGameHeader({
             </Popover>
           )}
           <Button asChild aria-label="Your puzzle history" variant="ghost" size="icon">
-            <Link to={`/games/realitea/history?game=${encodeURIComponent(gameSlug)}`}>
+            <Link
+              to={`/games/realitea/history?game=${encodeURIComponent(gameSlug)}`}
+              data-testid="realitea-history-link"
+            >
               <LucideHistory aria-hidden="true" />
             </Link>
           </Button>

@@ -91,6 +91,7 @@ export function OnscreenKeyboard({
               className={keyClass("action", "action")}
               disabled={disabled}
               aria-label={keyLabel("Enter", "action")}
+              data-testid="keyboard-key-enter"
               tabIndex={readOnly ? -1 : undefined}
               onClick={onEnter ? () => onEnter() : undefined}
               type="button"
@@ -104,6 +105,7 @@ export function OnscreenKeyboard({
               className={keyClass("letter", letterStates[letter] ?? "inactive")}
               disabled={disabled}
               aria-label={keyLabel(letter, letterStates[letter] ?? "inactive")}
+              data-testid={`keyboard-key-${letter}`}
               tabIndex={readOnly ? -1 : undefined}
               onClick={onLetter ? () => onLetter(letter) : undefined}
               type="button"
@@ -116,6 +118,7 @@ export function OnscreenKeyboard({
               className={keyClass("action", "action")}
               disabled={disabled}
               aria-label={keyLabel("Backspace", "action")}
+              data-testid="keyboard-key-backspace"
               tabIndex={readOnly ? -1 : undefined}
               onClick={onBackspace ? () => onBackspace() : undefined}
               type="button"

@@ -12,7 +12,7 @@ vi.mock("~/lib/server/hominem-auth", () => ({
     `https://api.ponti.io/login?next=${encodeURIComponent(returnTo)}`,
 }));
 
-vi.mock("~/lib/realitea/history.server", () => ({
+vi.mock("~/lib/realitea/server/history.server", () => ({
   loadPuzzleHistory: loadPuzzleHistoryMock,
 }));
 
@@ -71,7 +71,7 @@ describe("RealiTea history route loader", () => {
     const payload = await response.json();
 
     expect(payload.signedIn).toBe(true);
-    expect(loadPuzzleHistoryMock).toHaveBeenCalledWith("user-1", { page: 1 });
+    expect(loadPuzzleHistoryMock).toHaveBeenCalledWith("user-1", { page: 1 }, "rhobh");
   });
 
   it("parses the page search param", async () => {
@@ -98,7 +98,7 @@ describe("RealiTea history route loader", () => {
     const { loader } = await import("../history");
     await loader(createLoaderArgs("https://labs.ponti.io/games/realitea/history?page=3"));
 
-    expect(loadPuzzleHistoryMock).toHaveBeenCalledWith("user-1", { page: 3 });
+    expect(loadPuzzleHistoryMock).toHaveBeenCalledWith("user-1", { page: 3 }, "rhobh");
   });
 
   it("falls back to page 1 for an invalid page param", async () => {
@@ -127,6 +127,6 @@ describe("RealiTea history route loader", () => {
       createLoaderArgs("https://labs.ponti.io/games/realitea/history?page=not-a-number"),
     );
 
-    expect(loadPuzzleHistoryMock).toHaveBeenCalledWith("user-1", { page: 1 });
+    expect(loadPuzzleHistoryMock).toHaveBeenCalledWith("user-1", { page: 1 }, "rhobh");
   });
 });

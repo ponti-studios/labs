@@ -23,7 +23,7 @@ export function RealiTeaGameResult({
 }: RealiTeaGameResultProps) {
   if (game.authRequired) {
     return (
-      <Card className="border-(--realitea-present-border)">
+      <Card className="border-(--realitea-present-border)" data-testid="realitea-auth-required">
         <CardContent className="flex flex-col gap-3 text-center">
           <div>
             <p className="ui-eyebrow">Free guess used</p>
@@ -32,7 +32,9 @@ export function RealiTeaGameResult({
             </p>
           </div>
           <Button asChild variant="default">
-            <a href={loginUrl}>Sign in to keep playing</a>
+            <a href={loginUrl} data-testid="realitea-auth-signin">
+              Sign in to keep playing
+            </a>
           </Button>
         </CardContent>
       </Card>
@@ -42,12 +44,17 @@ export function RealiTeaGameResult({
   if (!game.isGameOver) return null;
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3" data-testid="realitea-result">
       <div className={styles.solvedRow}>
         <span className={styles.squiggle} aria-hidden>
           〜
         </span>
-        <span className={styles.badge}>
+        <span
+          className={styles.badge}
+          data-testid="realitea-result-badge"
+          data-solved={game.isSolved ? "true" : "false"}
+          data-guesses={game.guesses.length}
+        >
           {game.isSolved ? `Solved in ${game.guesses.length}` : "Out of guesses"}
         </span>
         <span className={styles.squiggle} aria-hidden>
@@ -56,7 +63,7 @@ export function RealiTeaGameResult({
       </div>
 
       <div>
-        <div className={`${styles.receipt} flex gap-4`}>
+        <div className={`${styles.receipt} flex gap-4`} data-testid="realitea-receipt">
           <div className={styles.receiptBody}>
             <p className={styles.receiptHeading}>The Receipt</p>
             <p className="mt-2">{puzzle.detail}</p>
@@ -77,12 +84,18 @@ export function RealiTeaGameResult({
         <button
           aria-label="Share result"
           className={styles.shareButton}
+          data-testid="realitea-share"
           onClick={onShare}
           type="button"
         >
           Share the drama
         </button>
-        <button className={styles.copyLink} onClick={onCopy} type="button">
+        <button
+          className={styles.copyLink}
+          data-testid="realitea-copy-story"
+          onClick={onCopy}
+          type="button"
+        >
           Copy story
         </button>
         {puzzle.sources.length > 0 && (

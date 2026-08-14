@@ -2,7 +2,8 @@ import type { ActionFunctionArgs } from "react-router";
 import { z } from "zod";
 
 import { getHominemUser } from "~/lib/server/hominem-auth";
-import { DEFAULT_REALITEA_GAME_SLUG, evaluateGuessServer } from "~/lib/realitea/puzzle.server";
+import { DEFAULT_REALITEA_GAME_SLUG } from "~/lib/realitea/generation/catalog";
+import { evaluateGuessServer } from "~/lib/realitea/server/puzzle.server";
 
 const payloadSchema = z.object({
   dateKey: z.string().min(1),

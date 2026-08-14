@@ -4,10 +4,10 @@ const { chatCompletionMock } = vi.hoisted(() => ({ chatCompletionMock: vi.fn() }
 
 vi.mock("~/lib/server/ai", () => ({ chatCompletion: chatCompletionMock }));
 
-import { buildMessages, getSystemPromptForGame, generateCandidates } from "../generation";
-import { MAX_FEED_DESCRIPTION_LENGTH, MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "../feed-text";
 import { GenerateReasonType } from "../admin/generate-copy";
-import { validateCandidate } from "../validation";
+import { validateCandidate } from "../generation/candidate-validation";
+import { MAX_FEED_DESCRIPTION_LENGTH, MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "../generation/feed-text";
+import { buildMessages, getSystemPromptForGame, generateCandidates } from "../generation/generate.server";
 
 describe("generation input boundaries", () => {
   it("bounds and sanitizes untrusted feed text", () => {

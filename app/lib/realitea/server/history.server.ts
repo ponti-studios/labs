@@ -6,13 +6,9 @@ import {
   getGameBySlug,
   listAttemptsForUserInRange,
   loadAllAttemptsForUser,
-} from "../repository";
+} from "./repository.server";
 import { computeHistoryStats, type PuzzleHistoryStats } from "../core/stats";
-
-// The public route only serves the RHOBH game today; duplicated from
-// puzzle.server.ts's private requireRhobhGameId rather than exporting it,
-// to avoid coupling these two server-composition modules together.
-const DEFAULT_REALITEA_GAME_SLUG = "rhobh";
+import { DEFAULT_REALITEA_GAME_SLUG } from "../generation/catalog";
 
 async function requireGameId(gameSlug = DEFAULT_REALITEA_GAME_SLUG): Promise<number> {
   const game = await getGameBySlug(gameSlug);

@@ -1,6 +1,6 @@
 import { flushSync } from "react-dom";
 
-import type { GenerateErr, GenerateOk, GenerateProgressEvent } from "~/lib/realitea/admin/generate";
+import type { GenerateErr, GenerateOk, GenerateProgressEvent } from "~/lib/realitea/admin/generate-types";
 
 type GenerateStreamEvent =
   | GenerateProgressEvent

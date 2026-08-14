@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
 import { GenerateReasonType } from "../admin/generate-copy";
-import { getDateKey } from "../date";
-import { validateCandidate } from "../validation";
+import { getDateKey } from "../core/date";
+import { validateCandidate } from "../generation/candidate-validation";
 
 const BRAVO_SOURCE = {
   url: "https://realityblurb.com/2026/06/25/test-story",

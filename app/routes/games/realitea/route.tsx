@@ -12,8 +12,9 @@ import {
 import type { Route } from "./+types/route";
 
 import { type PublicGamesPuzzle } from "~/lib/realitea";
-import { getDateKey } from "~/lib/realitea/date";
-import { loadActivePublicPuzzle, type ActivePuzzleAttempt } from "~/lib/realitea/puzzle.server";
+import { getDateKey } from "~/lib/realitea/core/date";
+import { DEFAULT_REALITEA_GAME_SLUG } from "~/lib/realitea/generation/catalog";
+import { loadActivePublicPuzzle, type ActivePuzzleAttempt } from "~/lib/realitea/server/puzzle.server";
 import { buildHominemLoginUrl } from "~/lib/server/hominem-auth";
 
 import { RealiTeaGameBoard, RealiTeaGameBoardSkeleton } from "./game-board";
@@ -23,7 +24,6 @@ import { parseTzCookie } from "./tz-cookie.server";
 import "./realitea.css";
 
 const TZ_COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // one year in seconds
-const DEFAULT_REALITEA_GAME_SLUG = "rhobh";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const timeZone = parseTzCookie(request.headers.get("Cookie") ?? "") ?? "UTC";

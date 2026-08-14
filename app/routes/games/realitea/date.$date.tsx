@@ -1,16 +1,15 @@
 import { Button, Card, CardContent } from "@ponti-studios/ui/primitives";
 import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 
-import { isDateKey } from "~/lib/realitea/date";
-import { loadPuzzleForSpecificDate, type DatedPuzzleEnvelope } from "~/lib/realitea/puzzle.server";
+import { isDateKey } from "~/lib/realitea/core/date";
+import { DEFAULT_REALITEA_GAME_SLUG } from "~/lib/realitea/generation/catalog";
+import { loadPuzzleForSpecificDate, type DatedPuzzleEnvelope } from "~/lib/realitea/server/puzzle.server";
 import { buildHominemLoginUrl, getHominemUser } from "~/lib/server/hominem-auth";
 
 import { RealiTeaGameBoard, RealiTeaGameBoardSkeleton } from "./game-board";
 import { resolveReturnTo } from "./return-to.server";
 
 import "./realitea.css";
-
-const DEFAULT_REALITEA_GAME_SLUG = "rhobh";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const dateKey = params.date;
@@ -23,9 +22,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const user = await getHominemUser(request);
   const gameSlug = new URL(request.url).searchParams.get("game") ?? DEFAULT_REALITEA_GAME_SLUG;
-  const envelope = gameSlug === DEFAULT_REALITEA_GAME_SLUG
-    ? await loadPuzzleForSpecificDate(dateKey, user)
-    : await loadPuzzleForSpecificDate(dateKey, user, gameSlug);
+  const envelope = await loadPuzzleForSpecificDate(dateKey, user, gameSlug);
 
   if (!envelope) {
     throw Response.json(

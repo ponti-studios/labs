@@ -75,7 +75,7 @@ async function main() {
   reconcileLogger.info({ event: "[RECONCILE_START]" }, "starting reconcile run");
   await backfillPuzzlePublishedAt();
   const { expireGenerations, reapStaleGenerations } = await import(
-    "../app/lib/realitea/admin/generate"
+    "../app/lib/realitea/admin/generate.server"
   );
   await reapStaleGenerations();
   await expireGenerations();
