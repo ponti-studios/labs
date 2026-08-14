@@ -45,14 +45,31 @@ export const PROMPT_TEST_FIXTURES: PromptTestFixture[] = [
   {
     id: "sports-crowd-reaction",
     genre: "sports",
-    sourceDomains: ["espn.com"],
+    sourceDomains: ["cbssports.com"],
     expectedAnswers: ["BOOED", "CHEER"],
     feedItems: [
       item(
-        "espn.com",
+        "cbssports.com",
         "Fans boo coach as players defend her after a difficult loss",
         "The crowd voiced its disapproval during the game, while the team's leading players publicly backed the coach.",
       ),
+    ],
+  },
+  {
+    id: "cbs-sports-penalty-save",
+    genre: "sports",
+    sourceDomains: ["cbssports.com"],
+    expectedAnswers: ["GUARD", "BLOCK"],
+    feedItems: [
+      {
+        title: "Rookie goalkeeper preserves club's lead with final-minute penalty save",
+        link: "https://www.cbssports.com/soccer/news/rookie-goalkeeper-preserves-clubs-lead/",
+        pubDate: "2026-08-12T00:00:00Z",
+        description:
+          "The 19-year-old goalkeeper stopped a penalty in stoppage time to secure a narrow victory.",
+        articleText:
+          "With the score tied late in the match, the rookie goalkeeper held position and denied the opposing striker from the spot. The stop preserved the club's one-goal advantage and sealed its first win of the season.",
+      },
     ],
   },
   {
