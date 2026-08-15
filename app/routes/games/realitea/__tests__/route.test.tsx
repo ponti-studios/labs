@@ -1,4 +1,3 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createRoutesStub } from "react-router";
@@ -90,33 +89,15 @@ const STUB_LOGIN_URL = new URL("https://api.ponti.io");
 STUB_LOGIN_URL.searchParams.set("next", "https://labs.ponti.io/games/realitea");
 const STUB_LOGIN_URL_STRING = STUB_LOGIN_URL.toString();
 
-// The route seeds guesses from the server-authoritative attempt (React
-// Query, GET /api/games/realitea/attempt) instead of localStorage — see
+// The route seeds guesses from the server-authoritative attempt returned by
+// its loader instead of localStorage — see
 // docs/incidents/011-cross-device-progress-not-synced.md. Tests configure
-// what that endpoint returns via `mockAttempt` instead of seeding
-// localStorage directly.
+// the loader response via `mockAttempt`.
 type MockAttempt = { guesses: RealiteaGuess[]; status: GameStatus } | null;
 let mockAttempt: MockAttempt = null;
 
-function stubAttemptFetch() {
-  vi.stubGlobal(
-    "fetch",
-    vi.fn(async (input: RequestInfo | URL) => {
-      const url = typeof input === "string" ? input : input.toString();
-      if (url.includes("/api/games/realitea/attempt")) {
-        return new Response(JSON.stringify({ attempt: mockAttempt }), {
-          status: 200,
-          headers: { "content-type": "application/json" },
-        });
-      }
-      throw new Error(`Unexpected fetch in test: ${url}`);
-    }),
-  );
-}
-
 async function renderRoute(initial: { puzzle?: PublicGamesPuzzle } = {}) {
   const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
 
   const RoutesStub = createRoutesStub([
     {
@@ -124,7 +105,13 @@ async function renderRoute(initial: { puzzle?: PublicGamesPuzzle } = {}) {
       path: "/",
       Component: RealiTeaRoute,
       HydrateFallback: () => null,
-      loader: () => ({ puzzle: initial.puzzle ?? routePuzzle, loginUrl: STUB_LOGIN_URL_STRING }),
+      loader: () => ({
+        puzzle: initial.puzzle ?? routePuzzle,
+        attempt: mockAttempt,
+        games: [{ slug: "rhobh", name: "Reality" }],
+        loginUrl: STUB_LOGIN_URL_STRING,
+        gameSlug: "rhobh",
+      }),
     },
     {
       id: "routes/api.games.realitea.guess",
@@ -134,11 +121,7 @@ async function renderRoute(initial: { puzzle?: PublicGamesPuzzle } = {}) {
   ]);
 
   cleanup();
-  const rendered = render(
-    <QueryClientProvider client={queryClient}>
-      <RoutesStub initialEntries={["/"]} />
-    </QueryClientProvider>,
-  );
+  const rendered = render(<RoutesStub initialEntries={["/"]} />);
   await waitFor(() => {
     expect(screen.queryByLabelText("Letter 1") ?? screen.queryByText("The Receipt")).toBeTruthy();
   });
@@ -236,7 +219,6 @@ describe("RealiTeaRoute", () => {
     guessControl.reset();
     routePuzzle = buildPublicPuzzle();
     mockAttempt = null;
-    stubAttemptFetch();
   });
 
   afterEach(() => {
@@ -351,9 +333,9 @@ describe("RealiTeaRoute", () => {
     expect(guessControl.getRequests()).toEqual([]);
 
     // The puzzle rolled over to a new date, and the (mocked) server has no
-    // attempt yet for that new date — the query key is scoped per date, so
-    // the previous date's guess must not leak into the new one: the same
-    // word should now submit as a fresh guess instead of a duplicate.
+    // attempt yet for that new date, so the previous date's guess must not
+    // leak into the new one: the same word should now submit as a fresh
+    // guess instead of a duplicate.
     mockAttempt = null;
     const { user: newDateUser } = await renderRoute({
       puzzle: buildPublicPuzzle(DEFAULT_ANSWER, new Date("2026-05-21T12:00:00.000Z")),
@@ -576,4 +558,3 @@ describe("RealiTeaRoute", () => {
     await expectGuessCalls([DEFAULT_ANSWER]);
   });
 });
-
