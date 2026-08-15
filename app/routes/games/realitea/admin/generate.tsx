@@ -1,6 +1,6 @@
 import { Button } from "@ponti-studios/ui/primitives";
 import { SectionIntro } from "@ponti-studios/ui/layout";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLoaderData, type LoaderFunctionArgs } from "react-router";
 
 import { studioModelAllowlist } from "~/lib/realitea/admin/generate.server";
@@ -15,12 +15,16 @@ import { getDateKey } from "~/lib/realitea/core/date";
 import { DEFAULT_REALITEA_GAME_SLUG } from "~/lib/realitea/generation/catalog";
 import { MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "~/lib/realitea/generation/feed-text";
 import { PROMPT_TEST_FIXTURES } from "~/lib/realitea/fixtures/prompt-test-fixtures";
-import { getActiveGames, getPendingArticlesForGame } from "~/lib/realitea/server/repository.server";
+import {
+  getActiveAdminGenerationRun,
+  getActiveGames,
+  getPendingArticlesForGame,
+} from "~/lib/realitea/server/repository.server";
 
 import { GenerateForm } from "./components/generate-form";
 import { GenerateProgress } from "./components/generate-progress";
 import { GenerateResult } from "./components/generate-result";
-import { readGenerateStream } from "./components/generate-stream";
+import { subscribeToGenerateStream } from "./components/generate-stream";
 
 import "../realitea.css";
 
@@ -32,9 +36,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const slug = new URL(request.url).searchParams.get("game") ?? DEFAULT_REALITEA_GAME_SLUG;
   const game = await resolveAdminGame(slug);
   if (!game) throw Response.json({ error: "No active RealiTea topic found" }, { status: 404 });
-  const [topics, pendingArticles] = await Promise.all([
+  const [topics, pendingArticles, activeRun] = await Promise.all([
     getActiveGames(),
     getPendingArticlesForGame(game, 50),
+    getActiveAdminGenerationRun(game.id),
   ]);
 
   return {
@@ -48,14 +53,46 @@ export async function loader({ request }: LoaderFunctionArgs) {
       title: sanitizeFeedText(article.title, MAX_FEED_TITLE_LENGTH),
     })),
     fixtures: PROMPT_TEST_FIXTURES.map((fixture) => fixture.id),
+    activeRunId: activeRun?.id ?? null,
   };
 }
 
 export default function RealiTeaAdminGenerate() {
   const data = useLoaderData<typeof loader>();
-  const [running, setRunning] = useState(false);
+  const [running, setRunning] = useState(data.activeRunId !== null);
   const [stage, setStage] = useState<GenerateProgressEvent | null>(null);
   const [result, setResult] = useState<GenerateOk | GenerateErr | null>(null);
+  const unsubscribeRef = useRef<(() => void) | null>(null);
+
+  function watch(runId: number) {
+    unsubscribeRef.current?.();
+    unsubscribeRef.current = subscribeToGenerateStream(
+      runId,
+      data.game.slug,
+      setStage,
+      (finalResult) => {
+        setResult(finalResult);
+        setRunning(false);
+      },
+    );
+  }
+
+  // Resume watching a run that was already in progress when this page loaded
+  // (e.g. the admin reloaded, or navigated back to it) — the run itself
+  // never depended on this component being mounted.
+  useEffect(() => {
+    if (data.activeRunId !== null) {
+      setStage({
+        type: "stage",
+        stage: "model",
+        label: "Still working",
+        detail: "Reconnecting to a generation already in progress.",
+      });
+      watch(data.activeRunId);
+    }
+    return () => unsubscribeRef.current?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data.activeRunId]);
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -74,24 +111,20 @@ export default function RealiTeaAdminGenerate() {
         method: "POST",
         body: form,
         credentials: "same-origin",
-        headers: { Accept: "application/x-ndjson" },
       });
-      if (!response.ok || !response.body) {
-        setResult({
-          ok: false,
-          code: "INVALID_SOURCE",
-          error: `Generation failed (${response.status})`,
-        });
+      const started: { ok: true; runId: number } | GenerateErr = await response.json();
+      if (!started.ok) {
+        setResult(started);
+        setRunning(false);
         return;
       }
-      await readGenerateStream(response.body, setStage, setResult);
+      watch(started.runId);
     } catch (error) {
       setResult({
         ok: false,
         code: "INVALID_SOURCE",
         error: error instanceof Error ? error.message : "Generation failed",
       });
-    } finally {
       setRunning(false);
     }
   }

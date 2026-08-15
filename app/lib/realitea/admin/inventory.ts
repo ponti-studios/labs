@@ -4,6 +4,8 @@ import type {
   GenerationSourceMode,
 } from "~/lib/server/db";
 
+import { reapStaleGenerations } from "./generate.server";
+import type { GenerateErr, GenerateOk } from "./generate-types";
 import { addDaysToDateKey, buildDateRange, getDateKey } from "../core/date";
 import { MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "../generation/feed-text";
 import { isLiveDate, liveDateKeys, PRIMARY_PLAYER_TZ, REALITEA_READY_INVENTORY_DAYS } from "../ops";
@@ -46,6 +48,13 @@ export type AdminGeneration = {
   createdByEmail: string | null;
   createdAt: string;
   finishedAt: string | null;
+  requestedMaxTokens: number | null;
+  reasoningEffort: string | null;
+  promptTokens: number | null;
+  completionTokens: number | null;
+  reasoningTokens: number | null;
+  totalTokens: number | null;
+  costUsd: number | null;
 };
 
 export type AdminGenerationCandidate = {
@@ -140,6 +149,13 @@ function serializeGeneration(
     createdByEmail: generation.createdByEmail,
     createdAt: generation.createdAt.toISOString(),
     finishedAt: generation.finishedAt?.toISOString() ?? null,
+    requestedMaxTokens: generation.requestedMaxTokens,
+    reasoningEffort: generation.reasoningEffort,
+    promptTokens: generation.promptTokens,
+    completionTokens: generation.completionTokens,
+    reasoningTokens: generation.reasoningTokens,
+    totalTokens: generation.totalTokens,
+    costUsd: generation.costUsd,
   };
 }
 
@@ -164,6 +180,34 @@ export function parseCandidatePayload(value: unknown): AdminGenerationCandidate[
     clue: typeof row.clue === "string" ? row.clue : "",
     detail: typeof row.detail === "string" ? row.detail : "",
     sources,
+  };
+}
+
+/** Adapts a persisted run into the wire shape the generate UI already renders (GenerateResult/CandidateCards). */
+export function toGenerateOk(detail: AdminGenerationDetail): GenerateOk | GenerateErr {
+  if (detail.status === "failed" && detail.candidates.length === 0 && !detail.llmError && !detail.feedError) {
+    return { ok: false, code: "INVALID_SOURCE", error: "Generation failed" };
+  }
+  return {
+    ok: true,
+    generationId: detail.id,
+    publishable: detail.publishable,
+    model: detail.model,
+    promptSource: detail.promptSource,
+    selectedIndex: detail.selectedIndex,
+    feedError: detail.feedError,
+    llmError: detail.llmError,
+    articleCount: detail.feedItemCount,
+    usage: {
+      requestedMaxTokens: detail.requestedMaxTokens,
+      reasoningEffort: detail.reasoningEffort,
+      promptTokens: detail.promptTokens,
+      completionTokens: detail.completionTokens,
+      reasoningTokens: detail.reasoningTokens,
+      totalTokens: detail.totalTokens,
+      costUsd: detail.costUsd,
+    },
+    candidates: detail.candidates,
   };
 }
 
@@ -202,6 +246,8 @@ export async function loadAdminOverview(slug: string, now = new Date()) {
   const game = await resolveAdminGame(slug);
   if (!game) return null;
 
+  await reapStaleGenerations();
+
   const utcToday = getDateKey(now, "UTC");
   const dateKeys = overviewInventoryDateKeys(utcToday);
   const startKey = dateKeys[0];
@@ -226,6 +272,7 @@ export async function loadAdminOverview(slug: string, now = new Date()) {
     todayPuzzlePresent: todayPuzzle !== null,
     cells: buildInventoryCells({ now, existingKeys, attemptCounts, dateKeys }).reverse(),
     generations: runs.map(serializeGeneration),
+    recentGenerationCostUsd: runs.reduce((sum, run) => sum + (run.costUsd ?? 0), 0),
   };
 }
 
@@ -254,6 +301,7 @@ export async function loadAdminInventory(slug: string, now = new Date()) {
 export async function loadAdminDate(slug: string, dateKey: string, now = new Date()) {
   const game = await resolveAdminGame(slug);
   if (!game) return null;
+  await reapStaleGenerations();
   const [puzzle, attemptCounts, runs] = await Promise.all([
     loadPuzzleForDate(game.id, dateKey),
     countAttemptsByDate(game.id, [dateKey]),

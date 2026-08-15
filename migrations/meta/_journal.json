@@ -141,6 +141,20 @@
       "when": 1786574680476,
       "tag": "0019_little_franklin_storm",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1786811572859,
+      "tag": "0020_married_arachne",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1786822574915,
+      "tag": "0021_smiling_fenris",
+      "breakpoints": true
     }
   ]
 }

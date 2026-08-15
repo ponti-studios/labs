@@ -1,6 +1,7 @@
-import { chatCompletion, getConfiguredTextModel } from "~/lib/server/ai";
-import { gamesPuzzles, db } from "~/lib/server/db";
-import type { Article, GamesTopic } from "~/lib/server/db";
+import { chatCompletion, getConfiguredTextModel, type ChatReasoningEffort } from "~/lib/server/ai";
+import { eq, gamesPuzzles, generationRuns, db } from "~/lib/server/db";
+import type { Article, GamesTopic, GenerationEnvironment, ReasoningEffort } from "~/lib/server/db";
+import { randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -29,6 +30,7 @@ import type {
   FeedItem,
   GenerateCandidatesResult,
   GenerateCandidatesOptions,
+  GenerationUsage,
 } from "./types";
 import { validateCandidate } from "./candidate-validation";
 import {
@@ -140,84 +142,6 @@ export function matchArticle(candidate: Candidate, pendingArticles: Article[]): 
   return pendingArticles.find((article) => candidateUrls.has(article.url)) ?? null;
 }
 
-async function callGenerationApi(
-  game: GamesTopic,
-  dateKey: string,
-  excludedAnswers: string[],
-  pendingArticles: Article[],
-  systemPrompt: string,
-): Promise<{ candidate: Candidate; article: Article } | null> {
-  const childLogger = logger.child({ operation: "callGenerationApi", game: game.slug, dateKey });
-
-  try {
-    const response = await chatCompletion({
-      messages: buildMessages(
-        dateKey,
-        excludedAnswers,
-        pendingArticles.map(articleToFeedItem),
-        systemPrompt,
-        REALITEA_ANSWER_LENGTH,
-        getSourceDomains(pendingArticles.map((article) => article.url)),
-      ),
-      maxTokens: 2000,
-      responseFormat: {
-        type: "json_schema",
-        jsonSchema: {
-          name: "generation_response",
-          schema: z.toJSONSchema(generationResponseSchema),
-          strict: true,
-        },
-      },
-    });
-
-    const content = response.choices?.[0]?.message?.content;
-    if (!content || typeof content !== "string") return null;
-
-    const cleanedContent = content.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
-    const parsed = generationResponseSchema.parse(JSON.parse(cleanedContent));
-    const previousAnswers = new Set(excludedAnswers);
-
-    for (const candidate of parsed.candidates) {
-      const article = matchArticle(candidate, pendingArticles);
-      const result = validateCandidate(candidate, previousAnswers, {
-        sourceDomains: getSourceDomains(pendingArticles.map((article) => article.url)),
-      });
-
-      if (!article) {
-        childLogger.warn(
-          { event: "[GENERATION_CANDIDATE_UNMATCHED]", answer: candidate.answer },
-          "candidate cited a source outside the offered article batch; skipping",
-        );
-        continue;
-      }
-
-      if (result.valid) return { candidate, article };
-
-      childLogger.warn(
-        {
-          event: "[GENERATION_CANDIDATE_REJECTED]",
-          answer: candidate.answer,
-          articleId: article.id,
-          reasons: result.reasons,
-        },
-        "candidate rejected",
-      );
-      await recordArticleRejection(article.id, result.reasons.join("; "), MAX_ARTICLE_REJECTIONS);
-    }
-
-    return null;
-  } catch (err) {
-    childLogger.error(
-      { event: "[GENERATION_API_ERROR]", error: getErrorMessage(err) },
-      "generation API call failed",
-    );
-    await recordGenerateFailure(game.id, dateKey, "system:generate", "GENERATION_API_ERROR", {
-      error: getErrorMessage(err),
-    });
-    return null;
-  }
-}
-
 async function recordGenerateFailure(
   gamesTopicId: number,
   dateKey: string,
@@ -234,6 +158,58 @@ async function recordGenerateFailure(
   });
 }
 
+export const DEFAULT_GENERATION_MAX_TOKENS = 4000;
+
+/** Prompt file used by `generateCandidates` when no `systemPrompt` override is given. */
+export const DEFAULT_GENERATION_PROMPT_PATH = "app/lib/prompts/realitea-generation.md";
+
+/** Overridable without a redeploy, mirroring REALITEA_AI_MODEL — lets ops raise the budget if a model needs more room to reason. */
+export function getConfiguredMaxTokens(): number {
+  const raw = process.env.REALITEA_MAX_TOKENS;
+  const parsed = raw ? Number.parseInt(raw, 10) : Number.NaN;
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : DEFAULT_GENERATION_MAX_TOKENS;
+}
+
+export function getConfiguredReasoningEffort(): string | undefined {
+  const raw = process.env.REALITEA_REASONING_EFFORT;
+  return raw && raw !== "default" ? raw : undefined;
+}
+
+/** Where this process is running, for cost attribution. Detected, never user-supplied. */
+export function detectRunEnvironment(): GenerationEnvironment {
+  if (process.env.GITHUB_ACTIONS) return "github_actions";
+  if (process.env.RAILWAY_ENVIRONMENT) return "railway";
+  if (process.env.NODE_ENV === "production") return "production";
+  return "local";
+}
+
+function usageFromResponse(
+  response: Awaited<ReturnType<typeof chatCompletion>>,
+  requestedMaxTokens: number,
+  reasoningEffort: string | undefined,
+): GenerationUsage {
+  const usage = response.usage;
+  return {
+    requestedMaxTokens,
+    reasoningEffort: reasoningEffort ?? null,
+    promptTokens: usage?.promptTokens ?? null,
+    completionTokens: usage?.completionTokens ?? null,
+    reasoningTokens: usage?.completionTokensDetails?.reasoningTokens ?? null,
+    totalTokens: usage?.totalTokens ?? null,
+    costUsd: usage?.cost ?? null,
+  };
+}
+
+const EMPTY_USAGE: GenerationUsage = {
+  requestedMaxTokens: null,
+  reasoningEffort: null,
+  promptTokens: null,
+  completionTokens: null,
+  reasoningTokens: null,
+  totalTokens: null,
+  costUsd: null,
+};
+
 async function callGenerationApiForCandidates(
   dateKey: string,
   excludedAnswers: string[],
@@ -242,7 +218,9 @@ async function callGenerationApiForCandidates(
   answerLength: number,
   sourceDomains: string[],
   model?: string,
-): Promise<{ candidates: ScoredCandidate[]; llmError: string | null }> {
+  maxTokens: number = DEFAULT_GENERATION_MAX_TOKENS,
+  reasoningEffort?: string,
+): Promise<{ candidates: ScoredCandidate[]; llmError: string | null; usage: GenerationUsage }> {
   try {
     const response = await chatCompletion({
       ...(model !== undefined ? { model } : {}),
@@ -254,7 +232,10 @@ async function callGenerationApiForCandidates(
         answerLength,
         sourceDomains,
       ),
-      maxTokens: 2000,
+      maxTokens,
+      ...(reasoningEffort !== undefined && reasoningEffort !== "default"
+        ? { reasoningEffort: reasoningEffort as ChatReasoningEffort }
+        : {}),
       responseFormat: {
         type: "json_schema",
         jsonSchema: {
@@ -265,9 +246,10 @@ async function callGenerationApiForCandidates(
       },
     });
 
+    const usage = usageFromResponse(response, maxTokens, reasoningEffort);
     const content = response.choices?.[0]?.message?.content;
     if (!content || typeof content !== "string") {
-      return { candidates: [], llmError: "LLM returned empty content" };
+      return { candidates: [], llmError: "LLM returned empty content", usage };
     }
 
     const cleanedContent = content.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
@@ -279,13 +261,77 @@ async function callGenerationApiForCandidates(
       validation: validateCandidate(candidate, previousAnswers, { sourceDomains }),
     }));
 
-    return { candidates, llmError: null };
+    return { candidates, llmError: null, usage };
   } catch (err) {
     return {
       candidates: [],
       llmError: getErrorMessage(err),
+      usage: { ...EMPTY_USAGE, requestedMaxTokens: maxTokens, reasoningEffort: reasoningEffort ?? null },
     };
   }
+}
+
+/** One LLM attempt for the cron/gap-fill path. Reuses callGenerationApiForCandidates so the cron path gets the same maxTokens/reasoningEffort/usage handling as the admin UI. */
+async function callGenerationApi(
+  game: GamesTopic,
+  dateKey: string,
+  excludedAnswers: string[],
+  pendingArticles: Article[],
+  systemPrompt: string,
+  maxTokens: number,
+  reasoningEffort: string | undefined,
+): Promise<{
+  candidate: Candidate | null;
+  article: Article | null;
+  llmError: string | null;
+  usage: GenerationUsage;
+}> {
+  const childLogger = logger.child({ operation: "callGenerationApi", game: game.slug, dateKey });
+  const sourceDomains = getSourceDomains(pendingArticles.map((article) => article.url));
+
+  const { candidates, llmError, usage } = await callGenerationApiForCandidates(
+    dateKey,
+    excludedAnswers,
+    pendingArticles.map(articleToFeedItem),
+    systemPrompt,
+    REALITEA_ANSWER_LENGTH,
+    sourceDomains,
+    getConfiguredTextModel(),
+    maxTokens,
+    reasoningEffort,
+  );
+
+  if (llmError) {
+    childLogger.error({ event: "[GENERATION_API_ERROR]", error: llmError }, "generation API call failed");
+    return { candidate: null, article: null, llmError, usage };
+  }
+
+  for (const { candidate, validation } of candidates) {
+    const article = matchArticle(candidate, pendingArticles);
+
+    if (!article) {
+      childLogger.warn(
+        { event: "[GENERATION_CANDIDATE_UNMATCHED]", answer: candidate.answer },
+        "candidate cited a source outside the offered article batch; skipping",
+      );
+      continue;
+    }
+
+    if (validation.valid) return { candidate, article, llmError: null, usage };
+
+    childLogger.warn(
+      {
+        event: "[GENERATION_CANDIDATE_REJECTED]",
+        answer: candidate.answer,
+        articleId: article.id,
+        reasons: validation.reasons,
+      },
+      "candidate rejected",
+    );
+    await recordArticleRejection(article.id, validation.reasons.join("; "), MAX_ARTICLE_REJECTIONS);
+  }
+
+  return { candidate: null, article: null, llmError: null, usage };
 }
 
 /** Score candidates without writing a published puzzle. Used by the admin generate page and CLI. */
@@ -307,15 +353,17 @@ export async function generateCandidates(
     }
   }
 
-  const { candidates, llmError } = await callGenerationApiForCandidates(
+  const { candidates, llmError, usage } = await callGenerationApiForCandidates(
     dateKey,
     options.excludedAnswers ?? [],
     feedItems,
     options.systemPrompt ??
-      getSystemPromptForGame({ systemPromptPath: "app/lib/prompts/realitea-generation.md" }),
+      getSystemPromptForGame({ systemPromptPath: DEFAULT_GENERATION_PROMPT_PATH }),
     REALITEA_ANSWER_LENGTH,
     getSourceDomains(feedItems.map((item) => item.link)),
     options.model,
+    options.maxTokens,
+    options.reasoningEffort,
   );
 
   const selectedIndex = candidates.findIndex((c) => c.validation.valid);
@@ -329,6 +377,7 @@ export async function generateCandidates(
     selectedIndex: selectedIndex === -1 ? null : selectedIndex,
     feedError,
     llmError,
+    usage,
   };
 }
 
@@ -339,6 +388,8 @@ export async function generateCandidates(
 export type GeneratePuzzleForGameOptions = {
   maxAttempts?: number;
   actor?: string;
+  maxTokens?: number;
+  reasoningEffort?: string;
 };
 
 export async function generatePuzzleForGame(
@@ -348,6 +399,10 @@ export async function generatePuzzleForGame(
 ): Promise<PuzzleRecord | null> {
   const maxAttempts = options.maxAttempts ?? 3;
   const actor = options.actor ?? "system:generate";
+  const maxTokens = options.maxTokens ?? getConfiguredMaxTokens();
+  const reasoningEffort = options.reasoningEffort ?? getConfiguredReasoningEffort();
+  const compareGroupId = randomUUID();
+  const runEnvironment = detectRunEnvironment();
   const childLogger = logger.child({
     operation: "generatePuzzleForGame",
     game: game.slug,
@@ -400,9 +455,66 @@ export async function generatePuzzleForGame(
   );
 
   let result: { candidate: Candidate; article: Article } | null = null;
+  let winningRunId: number | null = null;
   for (let attempt = 0; attempt < maxAttempts && !result; attempt++) {
-    result = await callGenerationApi(game, dateKey, excludedAnswers, pendingArticles, systemPrompt);
-    if (!result && attempt < maxAttempts - 1) {
+    const [run] = await db
+      .insert(generationRuns)
+      .values({
+        gamesTopicId: game.id,
+        dateKey,
+        status: "running",
+        sourceMode: "inventory",
+        articleIds: pendingArticles.map((article) => article.id),
+        feedUrl: game.feedUrl,
+        promptSource: "file",
+        promptPath: game.systemPromptPath,
+        promptText: systemPrompt,
+        model: getConfiguredTextModel(),
+        excludedAnswerCount: excludedAnswers.length,
+        feedItemCount: pendingArticles.length,
+        publishable: true,
+        compareGroupId,
+        requestedMaxTokens: maxTokens,
+        reasoningEffort: (reasoningEffort ?? "default") as ReasoningEffort,
+        trigger: "cron",
+        environment: runEnvironment,
+        createdByHominemUserId: actor,
+      })
+      .returning();
+
+    const attemptResult = await callGenerationApi(
+      game,
+      dateKey,
+      excludedAnswers,
+      pendingArticles,
+      systemPrompt,
+      maxTokens,
+      reasoningEffort,
+    );
+
+    if (run) {
+      await db
+        .update(generationRuns)
+        .set({
+          status: attemptResult.candidate ? "succeeded" : "failed",
+          llmError: attemptResult.llmError,
+          promptTokens: attemptResult.usage.promptTokens,
+          completionTokens: attemptResult.usage.completionTokens,
+          reasoningTokens: attemptResult.usage.reasoningTokens,
+          totalTokens: attemptResult.usage.totalTokens,
+          costUsd: attemptResult.usage.costUsd,
+          finishedAt: new Date(),
+        })
+        .where(eq(generationRuns.id, run.id));
+    }
+
+    if (attemptResult.candidate && attemptResult.article) {
+      result = { candidate: attemptResult.candidate, article: attemptResult.article };
+      winningRunId = run?.id ?? null;
+      break;
+    }
+
+    if (attempt < maxAttempts - 1) {
       const delayMs = Math.pow(2, attempt) * 1000;
       await new Promise((r) => setTimeout(r, delayMs));
     }
@@ -436,6 +548,7 @@ export async function generatePuzzleForGame(
       normalizedAnswer: normalizeGuess(candidate.answer),
       promptPath: game.systemPromptPath,
       model: getConfiguredTextModel(),
+      generationRunId: winningRunId,
       publishedAt: now,
       updatedAt: now,
     })
