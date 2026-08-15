@@ -25,7 +25,7 @@ export function NumericControl({
         <label htmlFor={id} className="text-muted-foreground text-sm font-medium">
           {label}
         </label>
-        <span className="text-foreground font-['Geist'] text-lg font-semibold tabular-nums">
+        <span className="text-foreground font-sans text-lg font-semibold tabular-nums">
           {fmt(value)}
         </span>
       </div>
