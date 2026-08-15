@@ -3,9 +3,18 @@ import path from "node:path";
 import { parseArgs } from "node:util";
 
 import { getDateKey } from "../app/lib/realitea/core/date";
-import { generateCandidates } from "../app/lib/realitea/generation/generate.server";
+import {
+  DEFAULT_GENERATION_PROMPT_PATH,
+  detectRunEnvironment,
+  generateCandidates,
+  getSystemPromptForGame,
+} from "../app/lib/realitea/generation/generate.server";
 import type { GenerateCandidatesResult } from "../app/lib/realitea/generation/types";
+import { getConfiguredTextModel } from "../app/lib/server/ai";
+import { db, eq, generationRuns } from "../app/lib/server/db";
 import { runScript } from "./_shared/run-script";
+
+const CLI_ACTOR = "cli:realitea-preview";
 
 interface PreviewOptions {
   dateKey: string;
@@ -113,10 +122,71 @@ async function main() {
   console.log(`Feed: ${opts.feedUrl ?? "https://realityblurb.com/feed"}`);
   console.log(DIVIDER);
 
+  const model = getConfiguredTextModel();
+  // Always "file": even with no --prompt-file flag, generateCandidates falls
+  // back to reading DEFAULT_GENERATION_PROMPT_PATH from disk — never a paste.
+  const promptSource: "file" = "file";
+  const promptPath = opts.promptFile ?? DEFAULT_GENERATION_PROMPT_PATH;
+  const promptText =
+    systemPrompt ?? getSystemPromptForGame({ systemPromptPath: DEFAULT_GENERATION_PROMPT_PATH });
+
+  let runId: number | null = null;
+  try {
+    const [run] = await db
+      .insert(generationRuns)
+      .values({
+        gamesTopicId: null,
+        dateKey: opts.dateKey,
+        status: "running",
+        sourceMode: "rss",
+        feedUrl: opts.feedUrl ?? null,
+        promptSource,
+        promptPath,
+        promptText,
+        model,
+        publishable: false,
+        createdByHominemUserId: CLI_ACTOR,
+        trigger: "cli",
+        environment: detectRunEnvironment(),
+      })
+      .returning({ id: generationRuns.id });
+    runId = run?.id ?? null;
+  } catch (err) {
+    console.error("Failed to record generation run:", err instanceof Error ? err.message : err);
+  }
+
   const result = await generateCandidates(opts.dateKey, {
     feedUrl: opts.feedUrl,
     systemPrompt,
+    model,
   });
+
+  if (runId !== null) {
+    try {
+      await db
+        .update(generationRuns)
+        .set({
+          status: result.llmError || result.feedError ? "failed" : "succeeded",
+          selectedIndex: result.selectedIndex,
+          feedError: result.feedError,
+          llmError: result.llmError,
+          feedItemCount: result.feedItemCount,
+          promptTokens: result.usage.promptTokens,
+          completionTokens: result.usage.completionTokens,
+          reasoningTokens: result.usage.reasoningTokens,
+          totalTokens: result.usage.totalTokens,
+          costUsd: result.usage.costUsd,
+          requestedMaxTokens: result.usage.requestedMaxTokens,
+          finishedAt: new Date(),
+        })
+        .where(eq(generationRuns.id, runId));
+    } catch (err) {
+      console.error(
+        "Failed to update generation run:",
+        err instanceof Error ? err.message : err,
+      );
+    }
+  }
 
   printFeedSection(result);
   printCandidatesSection(result);

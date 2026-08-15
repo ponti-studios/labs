@@ -3,10 +3,17 @@ import path from "node:path";
 import { parseArgs } from "node:util";
 
 import { getDateKey } from "../app/lib/realitea/core/date";
-import { generateCandidates } from "../app/lib/realitea/generation/generate.server";
+import {
+  detectRunEnvironment,
+  generateCandidates,
+} from "../app/lib/realitea/generation/generate.server";
 import { PROMPT_TEST_FIXTURES } from "../app/lib/realitea/fixtures/prompt-test-fixtures";
 import { readSourceFixture, type SourceFixture } from "../app/lib/realitea/fixtures/source-fixtures";
+import { getConfiguredTextModel } from "../app/lib/server/ai";
+import { db, eq, generationRuns } from "../app/lib/server/db";
 import { runScript } from "./_shared/run-script";
+
+const CLI_ACTOR = "cli:realitea-prompt-test";
 
 type Options = {
   promptFiles: string[];
@@ -40,6 +47,67 @@ function fixturePasses(fixture: (typeof PROMPT_TEST_FIXTURES)[number], result: A
   return selected !== null && selected !== undefined && fixture.expectedAnswers.includes(selected.validation.normalizedAnswer);
 }
 
+async function recordRun(input: {
+  dateKey: string;
+  feedUrl: string;
+  promptPath: string;
+  promptText: string;
+  model: string;
+}): Promise<number | null> {
+  try {
+    const [run] = await db
+      .insert(generationRuns)
+      .values({
+        gamesTopicId: null,
+        dateKey: input.dateKey,
+        status: "running",
+        sourceMode: "fixtures",
+        feedUrl: input.feedUrl,
+        promptSource: "file",
+        promptPath: input.promptPath,
+        promptText: input.promptText,
+        model: input.model,
+        publishable: false,
+        createdByHominemUserId: CLI_ACTOR,
+        trigger: "cli",
+        environment: detectRunEnvironment(),
+      })
+      .returning({ id: generationRuns.id });
+    return run?.id ?? null;
+  } catch (err) {
+    console.error("Failed to record generation run:", err instanceof Error ? err.message : err);
+    return null;
+  }
+}
+
+async function finishRun(
+  runId: number | null,
+  result: Awaited<ReturnType<typeof generateCandidates>>,
+): Promise<void> {
+  if (runId === null) return;
+  try {
+    await db
+      .update(generationRuns)
+      .set({
+        status: result.llmError || result.feedError ? "failed" : "succeeded",
+        selectedIndex: result.selectedIndex,
+        feedError: result.feedError,
+        llmError: result.llmError,
+        feedItemCount: result.feedItemCount,
+        promptTokens: result.usage.promptTokens,
+        completionTokens: result.usage.completionTokens,
+        reasoningTokens: result.usage.reasoningTokens,
+        totalTokens: result.usage.totalTokens,
+        costUsd: result.usage.costUsd,
+        requestedMaxTokens: result.usage.requestedMaxTokens,
+        finishedAt: new Date(),
+      })
+      .where(eq(generationRuns.id, runId));
+  } catch (err) {
+    console.error("Failed to update generation run:", err instanceof Error ? err.message : err);
+  }
+}
+
 async function main() {
   const options = parseOptions();
   const promptFiles = options.promptFiles.length > 0
@@ -54,6 +122,8 @@ async function main() {
   const fixtures: Array<(typeof PROMPT_TEST_FIXTURES)[number] | SourceFixture> =
     sourceFixtures.length > 0 ? sourceFixtures : PROMPT_TEST_FIXTURES;
 
+  const model = options.model ?? getConfiguredTextModel();
+
   for (const promptFile of promptFiles) {
     const resolved = path.resolve(promptFile);
     const prompt = await readFile(resolved, "utf-8");
@@ -63,12 +133,25 @@ async function main() {
     console.log("─".repeat(72));
 
     for (const fixture of fixtures) {
+      const feedUrl = "sourceUrl" in fixture ? fixture.sourceUrl : `https://${fixture.sourceDomains[0]}/test-feed`;
+
+      const runId = await recordRun({
+        dateKey: options.dateKey,
+        feedUrl,
+        promptPath: promptFile,
+        promptText: prompt,
+        model,
+      });
+
       const result = await generateCandidates(options.dateKey, {
         feedItems: "feedItems" in fixture ? fixture.feedItems : fixture.items,
-        feedUrl: "sourceUrl" in fixture ? fixture.sourceUrl : `https://${fixture.sourceDomains[0]}/test-feed`,
+        feedUrl,
         systemPrompt: prompt,
-        ...(options.model !== undefined ? { model: options.model } : {}),
+        model,
       });
+
+      await finishRun(runId, result);
+
       const pass = "expectedAnswers" in fixture ? fixturePasses(fixture, result) : result.selectedIndex !== null;
       if (pass) passed++;
       const selected = result.selectedIndex === null

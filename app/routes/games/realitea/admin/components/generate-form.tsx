@@ -19,11 +19,21 @@ import {
 } from "@ponti-studios/ui/primitives";
 import { useState } from "react";
 
-import type { GenerateSourceMode } from "~/lib/realitea/admin/generate-types";
+import { GENERATE_REASONING_EFFORTS, type GenerateReasoningEffort, type GenerateSourceMode } from "~/lib/realitea/admin/generate-types";
 
 import styles from "./generate-form.module.css";
 
 export const CUSTOM_PROMPT = "custom";
+export const DEFAULT_MAX_TOKENS = 4000;
+
+const REASONING_EFFORT_LABELS: Record<GenerateReasoningEffort, string> = {
+  default: "Default",
+  none: "None (fastest, cheapest)",
+  minimal: "Minimal",
+  low: "Low",
+  medium: "Medium",
+  high: "High",
+};
 
 export type GenerateFormValues = {
   gameSlug: string;
@@ -63,6 +73,8 @@ export function GenerateForm({
   const [fixtureId, setFixtureId] = useState("none");
   const [promptChoice, setPromptChoice] = useState(data.promptFiles[0] ?? CUSTOM_PROMPT);
   const [model, setModel] = useState(data.models[0] ?? "");
+  const [maxTokens, setMaxTokens] = useState(String(DEFAULT_MAX_TOKENS));
+  const [reasoningEffort, setReasoningEffort] = useState<GenerateReasoningEffort>("default");
 
   return (
     <Card>
@@ -233,6 +245,48 @@ export function GenerateForm({
                 ))}
               </SelectContent>
             </Select>
+          </div>
+          <div className={styles.field}>
+            <Label htmlFor="maxTokens">Max tokens</Label>
+            <Input
+              id="maxTokens"
+              name="maxTokens"
+              type="number"
+              min={200}
+              max={16000}
+              step={100}
+              value={maxTokens}
+              onChange={(event) => setMaxTokens(event.target.value)}
+            />
+            <p className="text-muted-foreground text-xs">
+              Total completion budget. Reasoning models spend part of this thinking before they
+              answer — too low and the model can run out of room before it writes anything.
+            </p>
+          </div>
+          <div className={styles.field}>
+            <Label htmlFor="reasoningEffort">Reasoning effort</Label>
+            <input type="hidden" name="reasoningEffort" value={reasoningEffort} />
+            <Select
+              value={reasoningEffort}
+              onValueChange={(value) => {
+                if (value) setReasoningEffort(value as GenerateReasoningEffort);
+              }}
+            >
+              <SelectTrigger id="reasoningEffort" className={styles.trigger}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {GENERATE_REASONING_EFFORTS.map((effort) => (
+                  <SelectItem key={effort} value={effort}>
+                    {REASONING_EFFORT_LABELS[effort]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-muted-foreground text-xs">
+              Caps how much the model "thinks" before answering. Lower effort is cheaper and
+              faster but can hurt answer quality; not every model honors this.
+            </p>
           </div>
           <Button type="submit" className="w-fit" isLoading={running} disabled={running}>
             {running ? "Generating" : "Generate"}

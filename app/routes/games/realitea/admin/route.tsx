@@ -3,6 +3,7 @@ import { SectionIntro } from "@ponti-studios/ui/layout";
 import { Button } from "@ponti-studios/ui/primitives";
 import { Link, useLoaderData, type LoaderFunctionArgs } from "react-router";
 
+import { formatUsd } from "~/lib/realitea/admin/format";
 import { loadAdminOverview } from "~/lib/realitea/admin/inventory";
 import { DEFAULT_REALITEA_GAME_SLUG } from "~/lib/realitea/generation/catalog";
 
@@ -36,6 +37,9 @@ export default function RealiTeaAdminOverview() {
             <Button asChild variant="outline">
               <Link to="/games/realitea/admin/topics">Articles</Link>
             </Button>
+            <Button asChild variant="outline">
+              <Link to="/games/realitea/admin/costs">Costs</Link>
+            </Button>
             <Button asChild>
               <Link to={`/games/realitea/admin/generate?game=${overview.game.slug}`}>Generate</Link>
             </Button>
@@ -43,12 +47,16 @@ export default function RealiTeaAdminOverview() {
         }
       />
 
-      <section className="grid gap-3 sm:grid-cols-3">
+      <section className="grid gap-3 sm:grid-cols-4">
         <MetricCard label="Inventory depth" value={overview.inventoryDepth} />
         <MetricCard label="Pending articles" value={overview.pendingArticles} />
         <MetricCard
           label="UTC today puzzle"
           value={overview.todayPuzzlePresent ? "Ready" : "Missing"}
+        />
+        <MetricCard
+          label="Recent generation cost"
+          value={formatUsd(overview.recentGenerationCostUsd)}
         />
       </section>
 

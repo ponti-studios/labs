@@ -9,6 +9,7 @@ import {
 } from "react-router";
 
 import { getRealiteaAdminActor } from "~/lib/realitea/admin/auth";
+import { formatTokenCount, formatUsd } from "~/lib/realitea/admin/format";
 import { loadAdminGeneration, resolveAdminGame } from "~/lib/realitea/admin/inventory";
 import { publishCandidate } from "~/lib/realitea/admin/publish";
 import { DEFAULT_REALITEA_GAME_SLUG } from "~/lib/realitea/generation/catalog";
@@ -84,6 +85,28 @@ export default function RealiTeaAdminGeneration() {
         description={`${generation.dateKey} · ${generation.sourceMode} · ${generation.model}`}
         actions={<StatusBadge status={generation.status} config={GENERATION_STATUS} />}
       />
+
+      <dl className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm sm:grid-cols-4">
+        <div>
+          <dt className="text-muted-foreground">Max tokens</dt>
+          <dd>{generation.requestedMaxTokens ?? "—"}</dd>
+        </div>
+        <div>
+          <dt className="text-muted-foreground">Reasoning effort</dt>
+          <dd>{generation.reasoningEffort ?? "default"}</dd>
+        </div>
+        <div>
+          <dt className="text-muted-foreground">Tokens (prompt / completion / reasoning)</dt>
+          <dd>
+            {formatTokenCount(generation.promptTokens)} / {formatTokenCount(generation.completionTokens)} /{" "}
+            {formatTokenCount(generation.reasoningTokens)}
+          </dd>
+        </div>
+        <div>
+          <dt className="text-muted-foreground">Cost</dt>
+          <dd>{formatUsd(generation.costUsd)}</dd>
+        </div>
+      </dl>
 
       <CandidateCards
         candidates={generation.candidates}
