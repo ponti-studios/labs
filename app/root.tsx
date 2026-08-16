@@ -31,8 +31,18 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export const links: Route.LinksFunction = () => [
+  { rel: "icon", href: "/favicon.ico", sizes: "48x48" },
+  { rel: "icon", href: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
+  { rel: "icon", href: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
   { rel: "icon", href: "/favicon.png", type: "image/png" },
   { rel: "apple-touch-icon", href: "/apple-touch-icon.png", type: "image/png" },
+  {
+    rel: "apple-touch-icon",
+    href: "/apple-touch-icon-120x120.png",
+    type: "image/png",
+    sizes: "120x120",
+  },
+  { rel: "manifest", href: "/site.webmanifest" },
 ];
 
 // Icons for the unauthenticated mobile nav grid's non-logo tiles, keyed by href.
