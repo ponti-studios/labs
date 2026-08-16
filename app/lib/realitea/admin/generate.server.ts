@@ -121,8 +121,13 @@ export async function reapStaleGenerations(): Promise<number> {
  * WITHOUT being awaited, so this returns as soon as the run exists. Progress
  * after that point is delivered over the in-memory bus (see
  * generation-events.server.ts) and picked up by the SSE route — the run
- * itself is never tied to the request/response lifecycle, so a closed tab,
- * a proxy timeout, or a page reload can't orphan or interrupt it.
+ * itself is never tied to the *client's* request/response lifecycle, so a
+ * closed tab, a proxy timeout, or a page reload can reconnect and resume
+ * watching it. "Resumable" here means the UI can reattach — it does NOT mean
+ * the generation survives a server process restart: `runGenerationInBackground`
+ * is an unawaited in-process promise, so a deploy or crash mid-run kills the
+ * work and the row is left stuck at "running" until `reapStaleGenerations`
+ * marks it failed.
  */
 export async function startGeneration(
   game: GamesTopic,

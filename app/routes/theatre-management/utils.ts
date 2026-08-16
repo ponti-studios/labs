@@ -1,5 +1,7 @@
 import { useMemo } from "react";
 
+import { formatCurrency } from "~/lib/utils";
+
 import {
   calculateTheaterEconomics,
   clamp,
@@ -59,14 +61,7 @@ export function theaterReducer(state: TheaterInputs, action: TheaterAction): The
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-export function formatCurrency(n: number) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(n);
-}
+export { formatCurrency };
 
 export function fmt(n: number) {
   return n.toLocaleString();
