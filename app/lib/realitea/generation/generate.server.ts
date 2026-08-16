@@ -1,5 +1,5 @@
 import { chatCompletion, getConfiguredTextModel, type ChatReasoningEffort } from "~/lib/server/ai";
-import { eq, gamesPuzzles, generationRuns, db } from "~/lib/server/db";
+import { and, eq, gamesPuzzles, generationRuns, db } from "~/lib/server/db";
 import type { Article, GamesTopic, GenerationEnvironment, ReasoningEffort } from "~/lib/server/db";
 import { randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
@@ -189,6 +189,17 @@ function usageFromResponse(
   reasoningEffort: string | undefined,
 ): GenerationUsage {
   const usage = response.usage;
+  // The OpenRouter SDK's docs claim cost is always included alongside token
+  // counts (no request-side opt-in field exists to set on this SDK
+  // version) — but that's unverified against a live response. If tokens
+  // came back but cost didn't, that's worth knowing about rather than
+  // silently persisting `null` forever. See docs/tasks/01-cost-tracking-silently-broken.md.
+  if (usage && (usage.promptTokens || usage.completionTokens) && usage.cost == null) {
+    logger.warn(
+      { event: "[GENERATION_USAGE_MISSING_COST]", usage },
+      "OpenRouter response included token usage but no cost — see docs/tasks/01-cost-tracking-silently-broken.md",
+    );
+  }
   return {
     requestedMaxTokens,
     reasoningEffort: reasoningEffort ?? null,
@@ -275,6 +286,7 @@ async function callGenerationApiForCandidates(
 async function callGenerationApi(
   game: GamesTopic,
   dateKey: string,
+  actor: string,
   excludedAnswers: string[],
   pendingArticles: Article[],
   systemPrompt: string,
@@ -303,32 +315,46 @@ async function callGenerationApi(
 
   if (llmError) {
     childLogger.error({ event: "[GENERATION_API_ERROR]", error: llmError }, "generation API call failed");
+    await recordGenerateFailure(game.id, dateKey, actor, "GENERATION_API_ERROR", { error: llmError });
     return { candidate: null, article: null, llmError, usage };
   }
 
-  for (const { candidate, validation } of candidates) {
-    const article = matchArticle(candidate, pendingArticles);
+  try {
+    for (const { candidate, validation } of candidates) {
+      const article = matchArticle(candidate, pendingArticles);
 
-    if (!article) {
+      if (!article) {
+        childLogger.warn(
+          { event: "[GENERATION_CANDIDATE_UNMATCHED]", answer: candidate.answer },
+          "candidate cited a source outside the offered article batch; skipping",
+        );
+        continue;
+      }
+
+      if (validation.valid) return { candidate, article, llmError: null, usage };
+
       childLogger.warn(
-        { event: "[GENERATION_CANDIDATE_UNMATCHED]", answer: candidate.answer },
-        "candidate cited a source outside the offered article batch; skipping",
+        {
+          event: "[GENERATION_CANDIDATE_REJECTED]",
+          answer: candidate.answer,
+          articleId: article.id,
+          reasons: validation.reasons,
+        },
+        "candidate rejected",
       );
-      continue;
+      await recordArticleRejection(article.id, validation.reasons.join("; "), MAX_ARTICLE_REJECTIONS);
     }
-
-    if (validation.valid) return { candidate, article, llmError: null, usage };
-
-    childLogger.warn(
-      {
-        event: "[GENERATION_CANDIDATE_REJECTED]",
-        answer: candidate.answer,
-        articleId: article.id,
-        reasons: validation.reasons,
-      },
-      "candidate rejected",
+  } catch (err) {
+    // Matching/scoring a candidate can hit the DB (recordArticleRejection). A
+    // failure here must fail this attempt only, not propagate out of
+    // generatePuzzleForGame and abort the rest of the cron run's dateKeys/games.
+    const matchError = getErrorMessage(err);
+    childLogger.error(
+      { event: "[GENERATION_MATCH_ERROR]", error: matchError },
+      "candidate matching/scoring failed",
     );
-    await recordArticleRejection(article.id, validation.reasons.join("; "), MAX_ARTICLE_REJECTIONS);
+    await recordGenerateFailure(game.id, dateKey, actor, "GENERATION_MATCH_ERROR", { error: matchError });
+    return { candidate: null, article: null, llmError: matchError, usage };
   }
 
   return { candidate: null, article: null, llmError: null, usage };
@@ -485,6 +511,7 @@ export async function generatePuzzleForGame(
     const attemptResult = await callGenerationApi(
       game,
       dateKey,
+      actor,
       excludedAnswers,
       pendingArticles,
       systemPrompt,
@@ -505,7 +532,7 @@ export async function generatePuzzleForGame(
           costUsd: attemptResult.usage.costUsd,
           finishedAt: new Date(),
         })
-        .where(eq(generationRuns.id, run.id));
+        .where(and(eq(generationRuns.id, run.id), eq(generationRuns.status, "running")));
     }
 
     if (attemptResult.candidate && attemptResult.article) {
