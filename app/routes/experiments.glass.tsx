@@ -23,6 +23,7 @@ export default function ExperimentsGlass() {
   const [backgroundImage, setBackgroundImage] = useState(
     "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg/1280px-%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg",
   );
+  const [controlsOpen, setControlsOpen] = useState(false);
   const dragRef = useRef({
     startX: 0,
     startY: 0,
@@ -30,35 +31,63 @@ export default function ExperimentsGlass() {
     startMouseY: 0,
   });
 
-  const handleMouseDown = useCallback(
-    (e: React.MouseEvent) => {
+  const handleDragStart = useCallback(
+    (clientX: number, clientY: number) => {
       setIsDragging(true);
       dragRef.current = {
         startX: position.x,
         startY: position.y,
-        startMouseX: e.clientX,
-        startMouseY: e.clientY,
+        startMouseX: clientX,
+        startMouseY: clientY,
       };
     },
     [position.x, position.y],
   );
 
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      handleDragStart(e.clientX, e.clientY);
+    },
+    [handleDragStart],
+  );
+
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      const touch = e.touches[0];
+      if (touch) {
+        handleDragStart(touch.clientX, touch.clientY);
+      }
+    },
+    [handleDragStart],
+  );
+
   useEffect(() => {
     if (!isDragging) return;
 
-    const onMove = (e: MouseEvent) => {
-      setPosition({
-        x: dragRef.current.startX + e.clientX - dragRef.current.startMouseX,
-        y: dragRef.current.startY + e.clientY - dragRef.current.startMouseY,
-      });
+    const onMove = (e: MouseEvent | TouchEvent) => {
+      const clientX = e instanceof TouchEvent ? e.touches[0]?.clientX : (e as MouseEvent).clientX;
+      const clientY = e instanceof TouchEvent ? e.touches[0]?.clientY : (e as MouseEvent).clientY;
+
+      if (clientX !== undefined && clientY !== undefined) {
+        setPosition({
+          x: dragRef.current.startX + clientX - dragRef.current.startMouseX,
+          y: dragRef.current.startY + clientY - dragRef.current.startMouseY,
+        });
+      }
     };
+
     const onUp = () => setIsDragging(false);
 
-    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mousemove", onMove as EventListener);
     window.addEventListener("mouseup", onUp);
+    window.addEventListener("touchmove", onMove as EventListener, { passive: false });
+    window.addEventListener("touchend", onUp);
+
     return () => {
-      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mousemove", onMove as EventListener);
       window.removeEventListener("mouseup", onUp);
+      window.removeEventListener("touchmove", onMove as EventListener);
+      window.removeEventListener("touchend", onUp);
     };
   }, [isDragging]);
 
@@ -66,8 +95,32 @@ export default function ExperimentsGlass() {
     <div className="w-full bg-slate-950 text-white">
       {/* Interactive Glass Section */}
       <div className="relative min-h-screen w-full overflow-hidden">
-        {/* Controls panel */}
-        <div className="bg-card absolute top-4 right-4 z-50 max-w-72 rounded-lg p-3">
+        {/* Controls panel — Mobile: bottom sheet, Desktop: sidebar */}
+        <div
+          className={cn(
+            "bg-card z-50 rounded-lg transition-all duration-300",
+            // Mobile: bottom sheet
+            "fixed bottom-0 left-0 right-0 md:absolute md:bottom-auto md:top-4 md:right-4",
+            "w-full md:max-w-72 md:w-auto",
+            "max-h-[60vh] md:max-h-none overflow-y-auto md:overflow-visible",
+            "rounded-t-lg md:rounded-lg rounded-b-none md:rounded-b-lg",
+            "p-4 md:p-3",
+            "border-t border-slate-700 md:border-t-0",
+            // Show/hide logic
+            controlsOpen ? "translate-y-0" : "translate-y-full md:translate-y-0",
+          )}
+        >
+          {/* Mobile close button */}
+          <button
+            onClick={() => setControlsOpen(false)}
+            className="md:hidden absolute top-2 right-2 p-2 text-slate-400 hover:text-slate-200"
+            aria-label="Close controls"
+          >
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
           <p className="text-muted-foreground mb-1 text-xs font-medium">Glass Effect</p>
           <p className="mb-3 text-sm">
             Drag the glass overlay to view chromatic aberration using SVG displacement maps.
@@ -157,13 +210,27 @@ export default function ExperimentsGlass() {
           style={{ backgroundImage: `url(${backgroundImage})` }}
         />
 
-        {/* Draggable Glass SVG */}
+        {/* Mobile: Controls toggle button */}
+        <button
+          onClick={() => setControlsOpen(!controlsOpen)}
+          className={cn(
+            "md:hidden fixed bottom-6 left-1/2 z-40 -translate-x-1/2 transform transition-all",
+            controlsOpen ? "opacity-0 pointer-events-none" : "opacity-100",
+            "bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2",
+          )}
+        >
+          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          Settings
+        </button>
+
+        {/* Draggable Glass SVG — Responsive sizing */}
         <svg
           data-testid="glass-svg"
           role="button"
           tabIndex={0}
-          width="200"
-          height="200"
           viewBox="0 0 220 220"
           xmlns="http://www.w3.org/2000/svg"
           aria-label="Draggable glass effect"
@@ -172,9 +239,13 @@ export default function ExperimentsGlass() {
             top: `${position.y}px`,
             cursor: isDragging ? "grabbing" : "grab",
             overflow: "visible",
+            width: "clamp(120px, 40vw, 220px)",
+            height: "clamp(120px, 40vw, 220px)",
+            willChange: isDragging ? "transform" : "auto",
           }}
           className="absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 rounded-lg"
           onMouseDown={handleMouseDown}
+          onTouchStart={handleTouchStart}
         >
           <defs>
             <GlassFilter displacements={displacements} />
@@ -212,21 +283,21 @@ export default function ExperimentsGlass() {
       </div>
 
       {/* Technical Essay Section */}
-      <div className="relative min-h-screen w-full bg-gradient-to-b from-slate-950 to-slate-900 px-6 py-20">
-        <div className="mx-auto max-w-3xl space-y-24">
+      <div className="relative min-h-screen w-full bg-gradient-to-b from-slate-950 to-slate-900 px-4 sm:px-6 py-12 sm:py-20">
+        <div className="mx-auto max-w-3xl space-y-8 sm:space-y-12 md:space-y-16 lg:space-y-24">
           {/* Hero Section */}
-          <div className="space-y-8">
+          <div className="space-y-6 sm:space-y-8">
             <div className="space-y-4 text-center">
-              <h1 className="text-5xl font-bold tracking-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">
                 The <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">Physics of Glass</span>
               </h1>
-              <p className="text-xl text-slate-300">
+              <p className="text-base sm:text-lg md:text-xl text-slate-300">
                 How SVG filters recreate the refraction, dispersion, and light behavior of real glass
               </p>
             </div>
 
-            <div className="mx-auto max-w-2xl rounded-xl border border-slate-700 bg-slate-900/50 p-8 backdrop-blur">
-              <p className="leading-relaxed text-slate-300">
+            <div className="mx-auto max-w-2xl rounded-xl border border-slate-700 bg-slate-900/50 p-6 sm:p-8 backdrop-blur">
+              <p className="leading-relaxed text-sm sm:text-base text-slate-300">
                 Glass is not a solid in the classical sense—it's a supercooled liquid in a solid state. When light
                 passes through it, the atoms bend and refract the light rays, creating the effects we see: distortion,
                 color separation, and the illusion of depth. In this essay, we'll explore how to simulate these
@@ -236,9 +307,9 @@ export default function ExperimentsGlass() {
           </div>
 
           {/* Section 1: Refraction Basics */}
-          <section className="space-y-8">
+          <section className="space-y-6 sm:space-y-8">
             <div>
-              <h2 className="mb-3 text-3xl font-bold">Part 1: Refraction & Snell's Law</h2>
+              <h2 className="mb-3 text-2xl sm:text-3xl md:text-3xl font-bold">Part 1: Refraction & Snell's Law</h2>
               <div className="h-1 w-24 bg-gradient-to-r from-cyan-400 to-transparent" />
             </div>
 
@@ -261,11 +332,12 @@ export default function ExperimentsGlass() {
                 the bending.
               </p>
 
-              <div className="relative overflow-hidden rounded-lg border border-slate-700 bg-slate-900/30 p-8">
+              <div className="relative overflow-hidden rounded-lg border border-slate-700 bg-slate-900/30 p-4 sm:p-8">
                 <svg
                   viewBox="0 0 400 300"
                   className="mx-auto w-full max-w-md"
                   xmlns="http://www.w3.org/2000/svg"
+                  style={{ fontSize: "clamp(10px, 3vw, 14px)" }}
                 >
                   {/* Glass surface */}
                   <line x1="50" y1="150" x2="350" y2="150" stroke="rgba(148,163,184,0.5)" strokeWidth="2" />
@@ -323,7 +395,7 @@ export default function ExperimentsGlass() {
           {/* Section 2: Chromatic Aberration */}
           <section className="space-y-8">
             <div>
-              <h2 className="mb-3 text-3xl font-bold">Part 2: Chromatic Aberration</h2>
+              <h2 className="mb-3 text-2xl sm:text-3xl font-bold">Part 2: Chromatic Aberration</h2>
               <div className="h-1 w-24 bg-gradient-to-r from-cyan-400 to-transparent" />
             </div>
 
@@ -334,11 +406,12 @@ export default function ExperimentsGlass() {
                 prisms split white light into rainbows.
               </p>
 
-              <div className="relative overflow-hidden rounded-lg border border-slate-700 bg-slate-900/30 p-8">
+              <div className="relative overflow-hidden rounded-lg border border-slate-700 bg-slate-900/30 p-4 sm:p-8">
                 <svg
                   viewBox="0 0 400 200"
                   className="mx-auto w-full max-w-md"
                   xmlns="http://www.w3.org/2000/svg"
+                  style={{ fontSize: "clamp(10px, 3vw, 14px)" }}
                 >
                   {/* White light entering prism */}
                   <line x1="50" y1="100" x2="100" y2="100" stroke="rgba(255,255,255,0.8)" strokeWidth="3" />
@@ -402,7 +475,7 @@ export default function ExperimentsGlass() {
           {/* Section 3: feDisplacementMap Mechanics */}
           <section className="space-y-8">
             <div>
-              <h2 className="mb-3 text-3xl font-bold">Part 3: How feDisplacementMap Works</h2>
+              <h2 className="mb-3 text-2xl sm:text-3xl font-bold">Part 3: How feDisplacementMap Works</h2>
               <div className="h-1 w-24 bg-gradient-to-r from-cyan-400 to-transparent" />
             </div>
 
@@ -455,7 +528,7 @@ export default function ExperimentsGlass() {
           {/* Section 4: Practical Implementation */}
           <section className="space-y-8">
             <div>
-              <h2 className="mb-3 text-3xl font-bold">Part 4: Building the Glass Effect</h2>
+              <h2 className="mb-3 text-2xl sm:text-3xl font-bold">Part 4: Building the Glass Effect</h2>
               <div className="h-1 w-24 bg-gradient-to-r from-cyan-400 to-transparent" />
             </div>
 
@@ -545,7 +618,7 @@ export default function ExperimentsGlass() {
           {/* Section 5: Why This Matters */}
           <section className="space-y-8">
             <div>
-              <h2 className="mb-3 text-3xl font-bold">Part 5: Why This Technique Matters</h2>
+              <h2 className="mb-3 text-2xl sm:text-3xl font-bold">Part 5: Why This Technique Matters</h2>
               <div className="h-1 w-24 bg-gradient-to-r from-cyan-400 to-transparent" />
             </div>
 
@@ -596,7 +669,7 @@ export default function ExperimentsGlass() {
 
           {/* Closing */}
           <div className="space-y-6 border-t border-slate-700 pt-12 text-center">
-            <h3 className="text-2xl font-bold">Ready to Experiment?</h3>
+            <h3 className="text-xl sm:text-2xl font-bold">Ready to Experiment?</h3>
             <p className="text-slate-400">
               Scroll back up and try adjusting the RGB displacement sliders. Each channel shift simulates a different
               wavelength of light bending through the glass. Lower values = subtle refraction; higher values = dramatic
