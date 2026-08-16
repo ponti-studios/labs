@@ -1016,7 +1016,6 @@ export const STUDIO_TRANSLATIONS_EN = {
             { path: "/games/realitea", label: "RealiTea" },
             { path: "/games/cards", label: "Cards" },
             { path: "/games/tetris", label: "Tetris" },
-            { path: "/experiments/career-resume-animated", label: "Career Resume Animated" },
             { path: "/experiments/calendar", label: "Calendar" },
             { path: "/experiments/pixel-descent.html", label: "Pixel Descent" },
             { path: "/experiments/theatre-management", label: "Theatre Management" },

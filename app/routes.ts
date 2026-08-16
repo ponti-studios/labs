@@ -88,7 +88,6 @@ const experimentRoutes = [
   route("/experiments/infinite-scroll", "routes/infinite-scroll/route.tsx"),
   route("/experiments/threegl-ai-explainer", "routes/experiments.threegl-ai-explainer.tsx"),
   route("/experiments/llm-interface", "routes/experiments.llm-interface.tsx"),
-  route("/experiments/career-resume-animated", "routes/experiments.career-resume-animated.tsx"),
 
   // TODO Challenges
   route("/challenges/anagrams", "routes/challenges.anagrams.tsx"),
