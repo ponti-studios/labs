@@ -1,13 +1,8 @@
-const USD_FORMATTER = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 4,
-});
+import { formatCurrency } from "~/lib/utils";
 
 export function formatUsd(value: number | null | undefined): string {
   if (value === null || value === undefined) return "—";
-  return USD_FORMATTER.format(value);
+  return formatCurrency(value, { minimumFractionDigits: 2, maximumFractionDigits: 4 });
 }
 
 export function formatTokenCount(value: number | null | undefined): string {

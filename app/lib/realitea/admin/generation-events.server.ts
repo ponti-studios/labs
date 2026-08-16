@@ -12,6 +12,13 @@ type Listener = (event: GenerationStreamEvent) => void;
  * polls the DB as a fallback for the case where a subscriber's process
  * restarted (deploy, crash) mid-run, so nothing here needs to survive that.
  * Stored on globalThis so it survives Vite HMR module reloads in dev.
+ *
+ * This ONLY works because there is exactly one server process. If this app
+ * is ever deployed with more than one replica, publishGenerationEvent calls
+ * made in one process will never reach a subscriber in another — live
+ * per-stage progress would go silent for cross-process pairs (the DB poll
+ * fallback still delivers the final success/failure outcome within its
+ * polling interval, so no result is lost, just the intermediate updates).
  */
 type GlobalBus = typeof globalThis & {
   __realiteaGenerationBus?: Map<number, Set<Listener>>;
