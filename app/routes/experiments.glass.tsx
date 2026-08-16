@@ -24,12 +24,14 @@ export default function ExperimentsGlass() {
     "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg/1280px-%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg",
   );
   const [controlsOpen, setControlsOpen] = useState(false);
+  const [visibleSections, setVisibleSections] = useState<Set<number>>(new Set());
   const dragRef = useRef({
     startX: 0,
     startY: 0,
     startMouseX: 0,
     startMouseY: 0,
   });
+  const sectionsRef = useRef<HTMLElement[]>([]);
 
   const handleDragStart = useCallback(
     (clientX: number, clientY: number) => {
@@ -65,8 +67,8 @@ export default function ExperimentsGlass() {
     if (!isDragging) return;
 
     const onMove = (e: MouseEvent | TouchEvent) => {
-      const clientX = e instanceof TouchEvent ? e.touches[0]?.clientX : (e as MouseEvent).clientX;
-      const clientY = e instanceof TouchEvent ? e.touches[0]?.clientY : (e as MouseEvent).clientY;
+      const clientX = "touches" in e ? e.touches[0]?.clientX : (e as MouseEvent).clientX;
+      const clientY = "touches" in e ? e.touches[0]?.clientY : (e as MouseEvent).clientY;
 
       if (clientX !== undefined && clientY !== undefined) {
         setPosition({
@@ -90,6 +92,40 @@ export default function ExperimentsGlass() {
       window.removeEventListener("touchend", onUp);
     };
   }, [isDragging]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        setVisibleSections((prev) => {
+          let changed = false;
+          const next = new Set(prev);
+
+          entries.forEach((entry) => {
+            const index = sectionsRef.current.indexOf(entry.target as HTMLElement);
+            if (index < 0) return;
+
+            const isVisible = next.has(index);
+            if (entry.isIntersecting && !isVisible) {
+              next.add(index);
+              changed = true;
+            } else if (!entry.isIntersecting && isVisible) {
+              next.delete(index);
+              changed = true;
+            }
+          });
+
+          return changed ? next : prev;
+        });
+      },
+      { threshold: 0.1 },
+    );
+
+    sectionsRef.current.forEach((section) => {
+      if (section) observer.observe(section);
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div className="w-full bg-slate-950 text-white">
@@ -235,15 +271,16 @@ export default function ExperimentsGlass() {
           xmlns="http://www.w3.org/2000/svg"
           aria-label="Draggable glass effect"
           style={{
-            left: `${position.x}px`,
-            top: `${position.y}px`,
+            left: `calc(50% + ${position.x}px)`,
+            top: `calc(50% + ${position.y}px)`,
+            transform: "translate(-50%, -50%)",
             cursor: isDragging ? "grabbing" : "grab",
             overflow: "visible",
             width: "clamp(120px, 40vw, 220px)",
             height: "clamp(120px, 40vw, 220px)",
             willChange: isDragging ? "transform" : "auto",
           }}
-          className="absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 rounded-lg"
+          className="absolute z-50 rounded-lg"
           onMouseDown={handleMouseDown}
           onTouchStart={handleTouchStart}
         >
@@ -307,7 +344,12 @@ export default function ExperimentsGlass() {
           </div>
 
           {/* Section 1: Refraction Basics */}
-          <section className="space-y-6 sm:space-y-8">
+          <section
+            ref={(el) => {
+              if (el) sectionsRef.current[0] = el;
+            }}
+            className={cn("space-y-6 sm:space-y-8", visibleSections.has(0) ? "visible" : "")}
+          >
             <div>
               <h2 className="mb-3 text-2xl sm:text-3xl md:text-3xl font-bold">Part 1: Refraction & Snell's Law</h2>
               <div className="h-1 w-24 bg-gradient-to-r from-cyan-400 to-transparent" />
@@ -393,7 +435,12 @@ export default function ExperimentsGlass() {
           </section>
 
           {/* Section 2: Chromatic Aberration */}
-          <section className="space-y-8">
+          <section
+            ref={(el) => {
+              if (el) sectionsRef.current[1] = el;
+            }}
+            className={cn("space-y-8", visibleSections.has(1) ? "visible" : "")}
+          >
             <div>
               <h2 className="mb-3 text-2xl sm:text-3xl font-bold">Part 2: Chromatic Aberration</h2>
               <div className="h-1 w-24 bg-gradient-to-r from-cyan-400 to-transparent" />
@@ -473,7 +520,12 @@ export default function ExperimentsGlass() {
           </section>
 
           {/* Section 3: feDisplacementMap Mechanics */}
-          <section className="space-y-8">
+          <section
+            ref={(el) => {
+              if (el) sectionsRef.current[2] = el;
+            }}
+            className={cn("space-y-8", visibleSections.has(2) ? "visible" : "")}
+          >
             <div>
               <h2 className="mb-3 text-2xl sm:text-3xl font-bold">Part 3: How feDisplacementMap Works</h2>
               <div className="h-1 w-24 bg-gradient-to-r from-cyan-400 to-transparent" />
@@ -526,7 +578,12 @@ export default function ExperimentsGlass() {
           </section>
 
           {/* Section 4: Practical Implementation */}
-          <section className="space-y-8">
+          <section
+            ref={(el) => {
+              if (el) sectionsRef.current[3] = el;
+            }}
+            className={cn("space-y-8", visibleSections.has(3) ? "visible" : "")}
+          >
             <div>
               <h2 className="mb-3 text-2xl sm:text-3xl font-bold">Part 4: Building the Glass Effect</h2>
               <div className="h-1 w-24 bg-gradient-to-r from-cyan-400 to-transparent" />
@@ -616,7 +673,12 @@ export default function ExperimentsGlass() {
           </section>
 
           {/* Section 5: Why This Matters */}
-          <section className="space-y-8">
+          <section
+            ref={(el) => {
+              if (el) sectionsRef.current[4] = el;
+            }}
+            className={cn("space-y-8", visibleSections.has(4) ? "visible" : "")}
+          >
             <div>
               <h2 className="mb-3 text-2xl sm:text-3xl font-bold">Part 5: Why This Technique Matters</h2>
               <div className="h-1 w-24 bg-gradient-to-r from-cyan-400 to-transparent" />
@@ -705,10 +767,15 @@ export default function ExperimentsGlass() {
         }
 
         section {
-          animation: fadeInUp 0.6s ease-out;
+          animation: fadeInUp 0.6s ease-out forwards;
+          animation-play-state: paused;
         }
 
-        section:nth-child(n+2) {
+        section.visible {
+          animation-play-state: running;
+        }
+
+        section:nth-of-type(n+2).visible {
           animation-delay: 0.1s;
         }
       `}</style>
