@@ -96,15 +96,25 @@ export default function ExperimentsGlass() {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
-          const index = sectionsRef.current.indexOf(entry.target as HTMLElement);
-          setVisibleSections((prev) => {
-            const next = new Set(prev);
-            if (entry.isIntersecting) {
+        setVisibleSections((prev) => {
+          let changed = false;
+          const next = new Set(prev);
+
+          entries.forEach((entry) => {
+            const index = sectionsRef.current.indexOf(entry.target as HTMLElement);
+            if (index < 0) return;
+
+            const isVisible = next.has(index);
+            if (entry.isIntersecting && !isVisible) {
               next.add(index);
+              changed = true;
+            } else if (!entry.isIntersecting && isVisible) {
+              next.delete(index);
+              changed = true;
             }
-            return next;
           });
+
+          return changed ? next : prev;
         });
       },
       { threshold: 0.1 },
@@ -765,7 +775,7 @@ export default function ExperimentsGlass() {
           animation-play-state: running;
         }
 
-        section:nth-child(n+2).visible {
+        section:nth-of-type(n+2).visible {
           animation-delay: 0.1s;
         }
       `}</style>
