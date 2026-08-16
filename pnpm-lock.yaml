@@ -115,8 +115,8 @@ importers:
         specifier: ^8.2.0
         version: 8.3.0(@react-router/serve@8.3.0(react-router@8.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(typescript@6.0.3))(react-router@8.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(typescript@6.0.3)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.4))
       '@storybook/addon-a11y':
-        specifier: 10.5.3
-        version: 10.5.3(storybook@10.5.7(@types/react@19.2.18)(prettier@3.9.6)(react@19.2.8))
+        specifier: 10.5.7
+        version: 10.5.7(storybook@10.5.7(@types/react@19.2.18)(prettier@3.9.6)(react@19.2.8))
       '@storybook/addon-docs':
         specifier: ^10.5.3
         version: 10.5.5(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(esbuild@0.28.2)(storybook@10.5.7(@types/react@19.2.18)(prettier@3.9.6)(react@19.2.8))(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.4))
@@ -2042,10 +2042,10 @@ packages:
   '@standard-schema/utils@0.3.0':
     resolution: {integrity: sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==}
 
-  '@storybook/addon-a11y@10.5.3':
-    resolution: {integrity: sha512-UJqvVfkTYFT+7MVTVzyMYxZoc2NNJQF+XE5fA8ABuMtQdBWYEgL2O3fjK0TR0F1JcXJZonj4trzyVNCVPjJi5Q==}
+  '@storybook/addon-a11y@10.5.7':
+    resolution: {integrity: sha512-I30rsNz6aA3xg3811MEry40uJDHP3l5SOkfqtmNkp7y4NdqTDdKhmbhhDAZQX1WWEk6GeMBGr3AJ3TCz7r7JmQ==}
     peerDependencies:
-      storybook: ^10.5.3
+      storybook: ^10.5.7
 
   '@storybook/addon-docs@10.5.5':
     resolution: {integrity: sha512-0YpKlimS4XE0kQ8Maa5coeefQxdyDrBHg1wOP3WTPuBe4FolFSCDveR0ge2+vuUBk+fZfn2+l+3Q2jmAWaRGDg==}
@@ -2522,8 +2522,8 @@ packages:
     resolution: {integrity: sha512-kNOjDqAh7px0XWNI+4QbzoiR/nTkHAWNud2uvnJquD1/x5a7EQZMJT0AczqK0Qn67oY/TTQ1LbUKajZpp3I9tQ==}
     engines: {node: '>=8.0.0'}
 
-  axe-core@4.12.1:
-    resolution: {integrity: sha512-s7iGf5GaVMxEG0ENN9x+xTr7GFZCb1ZP/1uATUpCEK2X78nDB3RwbtFCo9pGAf9ru+VwoQ464DkaLEeRM08wJA==}
+  axe-core@4.13.0:
+    resolution: {integrity: sha512-UzGt8zg7Ny8djbYMhxl2zuEevVa7r2gJjYY5Lwr1xM7+XU2nd6CkIWFTVcCIbAP63vSz71NaVyyuSk9lHKcy0A==}
     engines: {node: '>=4'}
 
   babel-dead-code-elimination@1.0.12:
@@ -5982,10 +5982,10 @@ snapshots:
 
   '@standard-schema/utils@0.3.0': {}
 
-  '@storybook/addon-a11y@10.5.3(storybook@10.5.7(@types/react@19.2.18)(prettier@3.9.6)(react@19.2.8))':
+  '@storybook/addon-a11y@10.5.7(storybook@10.5.7(@types/react@19.2.18)(prettier@3.9.6)(react@19.2.8))':
     dependencies:
       '@storybook/global': 5.0.0
-      axe-core: 4.12.1
+      axe-core: 4.13.0
       storybook: 10.5.7(@types/react@19.2.18)(prettier@3.9.6)(react@19.2.8)
 
   '@storybook/addon-docs@10.5.5(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(esbuild@0.28.2)(storybook@10.5.7(@types/react@19.2.18)(prettier@3.9.6)(react@19.2.8))(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.4))':
@@ -6469,7 +6469,7 @@ snapshots:
 
   atomic-sleep@1.0.0: {}
 
-  axe-core@4.12.1: {}
+  axe-core@4.13.0: {}
 
   babel-dead-code-elimination@1.0.12:
     dependencies:
