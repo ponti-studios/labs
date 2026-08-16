@@ -1,5 +1,5 @@
 import { chatCompletion, getConfiguredTextModel, type ChatReasoningEffort } from "~/lib/server/ai";
-import { eq, gamesPuzzles, generationRuns, db } from "~/lib/server/db";
+import { and, eq, gamesPuzzles, generationRuns, db } from "~/lib/server/db";
 import type { Article, GamesTopic, GenerationEnvironment, ReasoningEffort } from "~/lib/server/db";
 import { randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
@@ -353,6 +353,7 @@ async function callGenerationApi(
       { event: "[GENERATION_MATCH_ERROR]", error: matchError },
       "candidate matching/scoring failed",
     );
+    await recordGenerateFailure(game.id, dateKey, actor, "GENERATION_MATCH_ERROR", { error: matchError });
     return { candidate: null, article: null, llmError: matchError, usage };
   }
 
@@ -531,7 +532,7 @@ export async function generatePuzzleForGame(
           costUsd: attemptResult.usage.costUsd,
           finishedAt: new Date(),
         })
-        .where(eq(generationRuns.id, run.id));
+        .where(and(eq(generationRuns.id, run.id), eq(generationRuns.status, "running")));
     }
 
     if (attemptResult.candidate && attemptResult.article) {
