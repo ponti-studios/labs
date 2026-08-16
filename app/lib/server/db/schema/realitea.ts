@@ -3,6 +3,7 @@ import {
   boolean,
   check,
   date,
+  doublePrecision,
   index,
   integer,
   jsonb,
@@ -85,6 +86,32 @@ export type GenerationSourceMode = (typeof generationSourceModeValues)[number];
 export const generationPromptSourceValues = ["file", "paste"] as const;
 export type GenerationPromptSource = (typeof generationPromptSourceValues)[number];
 
+// What actually initiated the run — orthogonal to sourceMode, which is about
+// where the ARTICLES came from, not who/what asked the model to run.
+export const generationTriggerValues = ["admin_ui", "cron", "cli"] as const;
+export type GenerationTrigger = (typeof generationTriggerValues)[number];
+
+// Where the process ran. Derived automatically from env vars, never user-supplied.
+export const generationEnvironmentValues = [
+  "local",
+  "github_actions",
+  "railway",
+  "production",
+  "unknown",
+] as const;
+export type GenerationEnvironment = (typeof generationEnvironmentValues)[number];
+
+// "default" omits the reasoning param entirely and lets the provider decide.
+export const reasoningEffortValues = [
+  "default",
+  "none",
+  "minimal",
+  "low",
+  "medium",
+  "high",
+] as const;
+export type ReasoningEffort = (typeof reasoningEffortValues)[number];
+
 export const realiteaAdminActionKindValues = [
   "preview",
   "generate",
@@ -109,9 +136,11 @@ export const generationRuns = labs.table(
   "realitea_generation_runs",
   {
     id: serial("id").primaryKey(),
-    gamesTopicId: integer("games_topic_id")
-      .notNull()
-      .references(() => gamesTopics.id, { onDelete: "restrict" }),
+    // Nullable: CLI eval/preview scripts can run against an ad-hoc --feed-url
+    // with no corresponding games_topics row, but we still want their cost tracked.
+    gamesTopicId: integer("games_topic_id").references(() => gamesTopics.id, {
+      onDelete: "restrict",
+    }),
     dateKey: date("date_key").notNull(),
     status: text("status", { enum: generationRunStatusValues }).notNull().default("running"),
     sourceMode: text("source_mode", { enum: generationSourceModeValues }).notNull(),
@@ -128,6 +157,15 @@ export const generationRuns = labs.table(
     feedError: text("feed_error"),
     llmError: text("llm_error"),
     compareGroupId: text("compare_group_id"),
+    requestedMaxTokens: integer("requested_max_tokens"),
+    reasoningEffort: text("reasoning_effort", { enum: reasoningEffortValues }),
+    promptTokens: integer("prompt_tokens"),
+    completionTokens: integer("completion_tokens"),
+    reasoningTokens: integer("reasoning_tokens"),
+    totalTokens: integer("total_tokens"),
+    costUsd: doublePrecision("cost_usd"),
+    trigger: text("trigger", { enum: generationTriggerValues }),
+    environment: text("environment", { enum: generationEnvironmentValues }),
     publishable: boolean("publishable").notNull().default(false),
     createdByHominemUserId: text("created_by_hominem_user_id").notNull(),
     createdByEmail: text("created_by_email"),

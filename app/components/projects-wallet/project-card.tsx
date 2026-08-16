@@ -114,7 +114,7 @@ export function ProjectCard({
   }
 
   // `background` (not `background-color`) so gradient themes render — a
-  // Tailwind `bg-[var(...)]` class would only ever set background-color.
+  // A Tailwind background-color utility would only ever set background-color.
   // Cast: CSS custom properties aren't in framer-motion's MotionStyle type.
   const cardStyle = {
     ...(reduceMotion ? {} : { rotateX, rotateY, transformPerspective: 800 }),

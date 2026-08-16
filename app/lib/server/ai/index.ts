@@ -17,6 +17,8 @@ type ChatCompletionResponse = Extract<
   Awaited<ReturnType<OpenRouter["chat"]["send"]>>,
   { object: "chat.completion" }
 >;
+export type ChatUsage = ChatCompletionResponse["usage"];
+export type ChatReasoningEffort = ChatRequest["reasoningEffort"];
 
 type ChatCompletionOptions = OpenRouterClientOptions & {
   messages: ChatRequest["messages"];
@@ -25,6 +27,8 @@ type ChatCompletionOptions = OpenRouterClientOptions & {
   temperature?: number;
   responseFormat?: ChatRequest["responseFormat"];
   tools?: ChatRequest["tools"];
+  /** Constrains reasoning-model "thinking" tokens, which otherwise count against maxTokens and can starve the actual answer. */
+  reasoningEffort?: ChatReasoningEffort;
 };
 
 type ImageGenerationOptions = OpenRouterClientOptions & {
@@ -79,6 +83,7 @@ export async function chatCompletion(options: ChatCompletionOptions = { messages
     temperature,
     responseFormat,
     tools,
+    reasoningEffort,
   } = options;
   const client = createOpenRouterClient({ apiKey, httpReferer, appTitle, appCategories });
   const response = await client.chat.send({
@@ -93,6 +98,7 @@ export async function chatCompletion(options: ChatCompletionOptions = { messages
       ...(temperature !== undefined ? { temperature } : {}),
       ...(responseFormat !== undefined ? { responseFormat } : {}),
       ...(tools !== undefined ? { tools } : {}),
+      ...(reasoningEffort !== undefined ? { reasoningEffort } : {}),
     },
   });
 

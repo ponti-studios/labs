@@ -29,7 +29,7 @@ export function ProfitRevenueCard({
       <CardContent className="flex h-full flex-col justify-between px-5 pt-4 pb-5">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <div className="text-foreground font-['Geist'] text-2xl font-semibold tracking-tight tabular-nums">
+            <div className="text-foreground font-sans text-2xl font-semibold tracking-tight tabular-nums">
               {formatCurrency(d.monthlyProfit)}
             </div>
             <div className="mt-1 flex flex-wrap items-center gap-1.5">
@@ -47,7 +47,7 @@ export function ProfitRevenueCard({
           </div>
 
           <div>
-            <div className="text-foreground font-['Geist'] text-2xl font-semibold tracking-tight tabular-nums">
+            <div className="text-foreground font-sans text-2xl font-semibold tracking-tight tabular-nums">
               {formatCompact(d.grossRevenue)}
             </div>
             <div className="mt-1 flex items-center gap-1.5">

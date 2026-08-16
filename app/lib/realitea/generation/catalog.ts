@@ -33,7 +33,7 @@ export const REALITEA_GAME_CATALOG = [
     slug: "sports",
     name: "Sports News",
     genre: "sports",
-    feedUrl: "https://www.espn.com/espn/rss/news",
-    feedLabel: "ESPN",
+    feedUrl: "https://www.cbssports.com/rss/headlines/",
+    feedLabel: "CBS Sports",
   },
 ] as const;

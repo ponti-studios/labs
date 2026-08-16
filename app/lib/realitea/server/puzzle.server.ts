@@ -131,6 +131,39 @@ export interface ActivePuzzleAttempt {
   status: GameStatus;
 }
 
+export interface ActivePuzzleEnvelope {
+  puzzle: PublicGamesPuzzle;
+  attempt: ActivePuzzleAttempt | null;
+}
+
+/**
+ * Loads the public puzzle and the signed-in player's progress from one active
+ * puzzle resolution. The daily route uses this to avoid making the browser
+ * wait for a second attempt request after the page has already rendered.
+ */
+export async function loadActivePublicPuzzleWithAttempt(
+  now: Date,
+  timeZone = "UTC",
+  user: HominemUser | null,
+  gameSlug = DEFAULT_REALITEA_GAME_SLUG,
+): Promise<ActivePuzzleEnvelope | null> {
+  const resolved = await resolveActivePuzzle(now, timeZone, gameSlug);
+  if (!resolved) return null;
+
+  let attempt: ActivePuzzleAttempt | null = null;
+  if (user) {
+    const attemptRow = await loadAttempt(user.id, resolved.gameId, resolved.puzzle.dateUtc);
+    if (attemptRow) {
+      attempt = { guesses: attemptRow.guesses as RealiteaGuess[], status: attemptRow.status };
+    }
+  }
+
+  return {
+    puzzle: toPublicGamesPuzzle(resolved.puzzle, resolved.isFallback),
+    attempt,
+  };
+}
+
 /**
  * The signed-in player's existing progress on "today"'s puzzle, read
  * straight from `games_attempts` — the same table evaluateGuessServer
@@ -147,14 +180,8 @@ export async function loadActivePuzzleAttempt(
   gameSlug = DEFAULT_REALITEA_GAME_SLUG,
 ): Promise<ActivePuzzleAttempt | null> {
   if (!user) return null;
-
-  const resolved = await resolveActivePuzzle(now, timeZone, gameSlug);
-  if (!resolved) return null;
-
-  const attemptRow = await loadAttempt(user.id, resolved.gameId, resolved.puzzle.dateUtc);
-  if (!attemptRow) return null;
-
-  return { guesses: attemptRow.guesses as RealiteaGuess[], status: attemptRow.status };
+  const envelope = await loadActivePublicPuzzleWithAttempt(now, timeZone, user, gameSlug);
+  return envelope?.attempt ?? null;
 }
 
 export interface DatedPuzzleEnvelope {
@@ -332,4 +359,3 @@ export async function evaluateGuessServer(
     remainingGuesses: Math.max(0, MAX_GUESSES - guessCount),
   };
 }
-

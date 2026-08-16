@@ -4,15 +4,33 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { Route } from "../+types/route";
 
-const loadActivePublicPuzzle = vi.fn();
+const loadActivePublicPuzzleWithAttempt = vi.fn();
+const getActiveGames = vi.fn();
 
 vi.mock("../../../../lib/realitea/server/puzzle.server", () => ({
-  loadActivePublicPuzzle,
+  loadActivePublicPuzzleWithAttempt,
 }));
+
+vi.mock("../../../../lib/realitea/server/repository.server", () => ({
+  getActiveGames,
+}));
+
+vi.mock("../../../../lib/server/hominem-auth", async () => {
+  const actual = await vi.importActual<typeof import("../../../../lib/server/hominem-auth")>(
+    "../../../../lib/server/hominem-auth",
+  );
+
+  return {
+    ...actual,
+    getHominemUser: vi.fn().mockResolvedValue(null),
+  };
+});
 
 describe("RealiTea route loader", () => {
   beforeEach(() => {
-    loadActivePublicPuzzle.mockReset();
+    loadActivePublicPuzzleWithAttempt.mockReset();
+    getActiveGames.mockReset();
+    getActiveGames.mockResolvedValue([]);
     vi.useFakeTimers({ shouldAdvanceTime: true });
     vi.setSystemTime(new Date("2026-05-20T12:00:00.000Z"));
   });
@@ -32,7 +50,7 @@ describe("RealiTea route loader", () => {
   }
 
   it("returns the public puzzle (no answer) when one is available", async () => {
-    loadActivePublicPuzzle.mockResolvedValue({
+    loadActivePublicPuzzleWithAttempt.mockResolvedValue({
       puzzle: {
         answerType: "moment",
         clue: "A clash that keeps the whole cast spinning.",
@@ -40,6 +58,7 @@ describe("RealiTea route loader", () => {
         detail: "A single RHOBH conflict can dominate the full episode and aftermath.",
         sources: [],
       },
+      attempt: null,
     });
 
     const { loader } = await import("../route");
@@ -52,7 +71,7 @@ describe("RealiTea route loader", () => {
   }, 15_000);
 
   it("builds a login return URL pointing back at the page, stripping any .data suffix", async () => {
-    loadActivePublicPuzzle.mockResolvedValue({
+    loadActivePublicPuzzleWithAttempt.mockResolvedValue({
       puzzle: {
         answerType: "moment",
         clue: "A clash that keeps the whole cast spinning.",
@@ -60,6 +79,7 @@ describe("RealiTea route loader", () => {
         detail: "A single RHOBH conflict can dominate the full episode and aftermath.",
         sources: [],
       },
+      attempt: null,
     });
 
     const { loader } = await import("../route");
@@ -76,7 +96,7 @@ describe("RealiTea route loader", () => {
   });
 
   it("throws a RealiTea-specific 404 error when no puzzle exists for today", async () => {
-    loadActivePublicPuzzle.mockResolvedValue(null);
+    loadActivePublicPuzzleWithAttempt.mockResolvedValue(null);
 
     const { loader } = await import("../route");
 

@@ -10,6 +10,7 @@ import {
 import { StatusBadge, type StatusBadgeConfig } from "@ponti-studios/ui/primitives";
 import { Link } from "react-router";
 
+import { formatTokenCount, formatUsd } from "~/lib/realitea/admin/format";
 import type { AdminGeneration, InventoryCell, InventoryCellState } from "~/lib/realitea/admin/inventory";
 
 export const CELL_STATUS: Record<InventoryCellState, StatusBadgeConfig> = {
@@ -23,6 +24,14 @@ const GENERATION_STATUS: Record<AdminGeneration["status"], StatusBadgeConfig> = 
   succeeded: { label: "Succeeded", variant: "default" },
   failed: { label: "Failed", variant: "destructive" },
 };
+
+const ERROR_LABELS: Record<string, string> = {
+  reaped: "Timed out — no response after 10+ minutes",
+};
+
+function friendlyError(llmError: string): string {
+  return ERROR_LABELS[llmError] ?? llmError;
+}
 
 function cellWhen(cell: InventoryCell) {
   if (cell.isUtcToday) return "UTC today";
@@ -99,6 +108,8 @@ export function GenerationsList({
           <TableHead>Status</TableHead>
           <TableHead>Source</TableHead>
           <TableHead>Model</TableHead>
+          <TableHead>Tokens</TableHead>
+          <TableHead>Cost</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -121,14 +132,38 @@ export function GenerationsList({
               </Link>
             </TableCell>
             <TableCell>
-              <StatusBadge status={generation.status} config={GENERATION_STATUS} />
+              <div className="flex flex-col gap-0.5">
+                <StatusBadge status={generation.status} config={GENERATION_STATUS} />
+                {generation.llmError ? (
+                  <span
+                    className="text-destructive block max-w-[220px] truncate text-xs"
+                    title={friendlyError(generation.llmError)}
+                  >
+                    {friendlyError(generation.llmError)}
+                  </span>
+                ) : null}
+              </div>
             </TableCell>
             <TableCell className="text-muted-foreground">
               {generation.sourceMode}
               {generation.publishable ? "" : " · not publishable"}
-              {generation.llmError ? ` · ${generation.llmError}` : ""}
             </TableCell>
             <TableCell className="text-muted-foreground">{generation.model}</TableCell>
+            <TableCell className="text-muted-foreground whitespace-nowrap">
+              {generation.status === "running" ? (
+                "…"
+              ) : (
+                <>
+                  {formatTokenCount(generation.totalTokens)}
+                  {generation.reasoningTokens
+                    ? ` (${formatTokenCount(generation.reasoningTokens)} reasoning)`
+                    : ""}
+                </>
+              )}
+            </TableCell>
+            <TableCell className="text-muted-foreground whitespace-nowrap">
+              {generation.status === "running" ? "…" : formatUsd(generation.costUsd)}
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>

@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { OnscreenKeyboard } from "~/components/games/onscreen-keyboard";
 
 import {
@@ -40,6 +40,7 @@ export function RealiTeaGameBoard({
   topics,
   onTopicChange,
 }: RealiTeaGameBoardProps) {
+  const [isOffline, setIsOffline] = useState(false);
   const game = useRealiTeaGame({ puzzle, initialGuesses, gameSlug });
   const keyboardState = useMemo(() => getKeyboardState(game.guesses), [game.guesses]);
   const shouldShowClue = !game.isGameOver && game.guesses.length === MAX_GUESSES - 1;
@@ -60,6 +61,17 @@ export function RealiTeaGameBoard({
     }
   }, [game.guesses, game.isSolved, game.clearError]);
 
+  useEffect(() => {
+    const updateOnlineState = () => setIsOffline(!navigator.onLine);
+    updateOnlineState();
+    window.addEventListener("online", updateOnlineState);
+    window.addEventListener("offline", updateOnlineState);
+    return () => {
+      window.removeEventListener("online", updateOnlineState);
+      window.removeEventListener("offline", updateOnlineState);
+    };
+  }, []);
+
   return (
     <div
       className={`${styles.shell} mx-auto flex w-full max-w-lg flex-1 flex-col gap-3 px-4 pt-2 sm:gap-6 sm:pt-4`}
@@ -70,6 +82,20 @@ export function RealiTeaGameBoard({
         topics={topics}
         onTopicChange={onTopicChange}
       />
+
+      {isOffline && (
+        <div
+          role="status"
+          className="rounded-md border px-3 py-2 text-center text-xs"
+          style={{
+            borderColor: "var(--realitea-error-border)",
+            background: "var(--realitea-paper)",
+            color: "var(--realitea-ink)",
+          }}
+        >
+          You&apos;re offline. Guesses will be available when your connection returns.
+        </div>
+      )}
 
       {shouldShowClue && (
         <div className={styles.clue}>

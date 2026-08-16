@@ -1,5 +1,6 @@
 import { Alert, AlertDescription, AlertTitle } from "@ponti-studios/ui/feedback";
 
+import { formatTokenCount, formatUsd } from "~/lib/realitea/admin/format";
 import type { GenerateErr, GenerateOk } from "~/lib/realitea/admin/generate-types";
 
 import { CandidateCards } from "./candidate-cards";
@@ -23,6 +24,12 @@ export function GenerateResult({
 
   return (
     <section className={styles.section}>
+      <p className="text-muted-foreground text-sm">
+        {formatTokenCount(result.usage.totalTokens)} tokens
+        {result.usage.reasoningTokens ? ` (${formatTokenCount(result.usage.reasoningTokens)} reasoning)` : ""}
+        {" · "}
+        {formatUsd(result.usage.costUsd)}
+      </p>
       <div className={styles.card}>
         <CandidateCards
           candidates={result.candidates}

@@ -23,7 +23,7 @@ export function SliderControl({
     <div className="space-y-3">
       <div className="flex items-baseline justify-between">
         <label className="text-muted-foreground text-sm font-medium">{label}</label>
-        <span className="text-foreground font-['Geist'] text-lg font-semibold tabular-nums">
+        <span className="text-foreground font-sans text-lg font-semibold tabular-nums">
           {format(value)}
         </span>
       </div>

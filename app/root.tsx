@@ -31,18 +31,18 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export const links: Route.LinksFunction = () => [
+  { rel: "icon", href: "/favicon.ico", sizes: "48x48" },
+  { rel: "icon", href: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
+  { rel: "icon", href: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
   { rel: "icon", href: "/favicon.png", type: "image/png" },
   { rel: "apple-touch-icon", href: "/apple-touch-icon.png", type: "image/png" },
-  { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
-    rel: "preconnect",
-    href: "https://fonts.gstatic.com",
-    crossOrigin: "anonymous",
+    rel: "apple-touch-icon",
+    href: "/apple-touch-icon-120x120.png",
+    type: "image/png",
+    sizes: "120x120",
   },
-  {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap",
-  },
+  { rel: "manifest", href: "/site.webmanifest" },
 ];
 
 // Icons for the unauthenticated mobile nav grid's non-logo tiles, keyed by href.
@@ -109,7 +109,10 @@ export default function App() {
 
   return (
     <QueryProvider>
-      <ParticleBackground className="fixed" />
+      <ParticleBackground
+        className="fixed"
+        enabled={!location.pathname.startsWith("/games/realitea")}
+      />
       <div
         aria-hidden="true"
         className={cn(
