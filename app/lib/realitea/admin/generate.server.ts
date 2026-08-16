@@ -310,7 +310,7 @@ async function runGenerationInBackground(
         costUsd: generated.usage.costUsd,
         finishedAt: new Date(),
       })
-      .where(eq(generationRuns.id, runId));
+      .where(and(eq(generationRuns.id, runId), eq(generationRuns.status, "running")));
 
     await recordAdminAction({
       hominemUserId: userId,
@@ -331,7 +331,7 @@ async function runGenerationInBackground(
     await db
       .update(generationRuns)
       .set({ status: "failed", llmError: getErrorMessage(err), finishedAt: new Date() })
-      .where(eq(generationRuns.id, runId));
+      .where(and(eq(generationRuns.id, runId), eq(generationRuns.status, "running")));
     publish({
       type: "stage",
       stage: "done",

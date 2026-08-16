@@ -82,6 +82,7 @@ export default function RealiTeaAdminGenerate() {
   // never depended on this component being mounted.
   useEffect(() => {
     if (data.activeRunId !== null) {
+      setRunning(true);
       setStage({
         type: "stage",
         stage: "model",
