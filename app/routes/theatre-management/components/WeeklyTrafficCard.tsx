@@ -18,7 +18,7 @@ export function WeeklyTrafficCard({ d }: { d: ReturnType<typeof useCalculator> }
 
       <CardContent className="flex h-full flex-col justify-between px-5 pt-4 pb-5">
         <div>
-          <div className="text-foreground font-['Geist'] text-2xl font-semibold tracking-tight tabular-nums">
+          <div className="text-foreground font-sans text-2xl font-semibold tracking-tight tabular-nums">
             {fmt(d.weeklyAttendance)}
           </div>
           <div className="mt-3 space-y-1.5">

@@ -9,7 +9,7 @@ const DEFAULT_FEEDS = [
   { id: "tech-news", genre: "technology", url: "https://techcrunch.com/feed/" },
   { id: "page-six", genre: "celebrity", url: "https://pagesix.com/feed/" },
   { id: "tmz", genre: "celebrity", url: "https://www.tmz.com/rss.xml" },
-  { id: "sports-news", genre: "sports", url: "https://www.espn.com/espn/rss/news" },
+  { id: "sports-news", genre: "sports", url: "https://www.cbssports.com/rss/headlines/" },
 ];
 
 function parseOptions() {

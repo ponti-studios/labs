@@ -1,15 +1,16 @@
 import { DEFAULT_TEXT_MODEL, getConfiguredTextModel } from "~/lib/server/ai";
 import { and, db, eq, generationCandidates, generationRuns, lt } from "~/lib/server/db";
 import type { Article, GamesTopic } from "~/lib/server/db";
+import { getErrorMessage } from "../../errors";
 import { GenerateReasonType } from "./generate-copy";
 import {
   GENERATION_PROMPT_FILES,
   type GenerateErr,
   type GenerateFeedUrlResult,
-  type GenerateOk,
   type GenerateProgressEvent,
   type GenerateRequest,
 } from "./generate-types";
+import { publishGenerationEvent } from "./generation-events.server";
 import { isDateKey, parseDate } from "../core/date";
 import { MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "../generation/feed-text";
 import { PROMPT_TEST_FIXTURES } from "../fixtures/prompt-test-fixtures";
@@ -18,6 +19,8 @@ import {
   getSystemPromptForGame,
   matchArticle,
   generateCandidates,
+  DEFAULT_GENERATION_MAX_TOKENS,
+  detectRunEnvironment,
 } from "../generation/generate.server";
 import { fetchFeedItems } from "../generation/ingest.server";
 import type { FeedItem } from "../generation/types";
@@ -37,6 +40,8 @@ const GENERATION_ARTICLE_CAP = 12;
 const GENERATION_BATCH_SIZE = 8;
 const RUN_TTL_DAYS = 30;
 const REAP_AFTER_MS = 10 * 60 * 1000;
+const MIN_GENERATION_MAX_TOKENS = 200;
+const MAX_GENERATION_MAX_TOKENS = 16_000;
 
 export function studioModelAllowlist(): string[] {
   return [...new Set([DEFAULT_TEXT_MODEL, getConfiguredTextModel()])];
@@ -109,22 +114,26 @@ export async function reapStaleGenerations(): Promise<number> {
   return updated.length;
 }
 
-export async function createGeneration(
+/**
+ * Validates the request, resolves sources, and inserts the "running" row —
+ * all fast, synchronous work bounded by one HTTP request/response. The slow
+ * part (the actual LLM call) is handed off to `runGenerationInBackground`
+ * WITHOUT being awaited, so this returns as soon as the run exists. Progress
+ * after that point is delivered over the in-memory bus (see
+ * generation-events.server.ts) and picked up by the SSE route — the run
+ * itself is never tied to the *client's* request/response lifecycle, so a
+ * closed tab, a proxy timeout, or a page reload can reconnect and resume
+ * watching it. "Resumable" here means the UI can reattach — it does NOT mean
+ * the generation survives a server process restart: `runGenerationInBackground`
+ * is an unawaited in-process promise, so a deploy or crash mid-run kills the
+ * work and the row is left stuck at "running" until `reapStaleGenerations`
+ * marks it failed.
+ */
+export async function startGeneration(
   game: GamesTopic,
   input: GenerateRequest,
   userId: string,
-  onProgress?: (event: GenerateProgressEvent) => void | Promise<void>,
-): Promise<GenerateOk | GenerateErr> {
-  const progress = async (event: GenerateProgressEvent) => {
-    await onProgress?.(event);
-  };
-  await progress({
-    type: "stage",
-    stage: "prepare",
-    label: "Checking the request",
-    detail: "Validating the date, prompt, and model.",
-  });
-
+): Promise<{ ok: true; runId: number } | GenerateErr> {
   if (!isDateKey(input.dateKey)) {
     return { ok: false, code: "INVALID_DATE", error: "dateKey must be YYYY-MM-DD" };
   }
@@ -133,6 +142,19 @@ export async function createGeneration(
   if (!studioModelAllowlist().includes(model)) {
     return { ok: false, code: "INVALID_MODEL", error: `model is not on the studio allowlist` };
   }
+
+  if (
+    input.maxTokens !== undefined &&
+    (input.maxTokens < MIN_GENERATION_MAX_TOKENS || input.maxTokens > MAX_GENERATION_MAX_TOKENS)
+  ) {
+    return {
+      ok: false,
+      code: "INVALID_MAX_TOKENS",
+      error: `maxTokens must be between ${MIN_GENERATION_MAX_TOKENS} and ${MAX_GENERATION_MAX_TOKENS}`,
+    };
+  }
+  const maxTokens = input.maxTokens ?? DEFAULT_GENERATION_MAX_TOKENS;
+  const reasoningEffort = input.reasoningEffort ?? "default";
 
   const prompt = resolvePrompt(game, input);
   if (!prompt.ok) return prompt;
@@ -146,27 +168,8 @@ export async function createGeneration(
   await reapStaleGenerations();
   await expireGenerations();
 
-  await progress({
-    type: "stage",
-    stage: "articles",
-    label: "Gathering stories",
-    detail:
-      input.sourceMode === "rss"
-        ? "Fetching the live feed."
-        : input.sourceMode === "fixtures"
-          ? "Loading the saved fixture."
-          : "Pulling pending articles for this topic.",
-  });
-
   const source = await resolveSource(game, input);
   if (!source.ok) return source;
-
-  await progress({
-    type: "stage",
-    stage: "articles",
-    label: "Gathering stories",
-    detail: `${source.feedItems.length} stor${source.feedItems.length === 1 ? "y" : "ies"} ready.`,
-  });
 
   const date = parseDate(input.dateKey);
   const [recentAnswers, storedAnswers] = date
@@ -193,124 +196,149 @@ export async function createGeneration(
       publishable: source.publishable,
       compareGroupId: input.compareGroupId,
       createdByHominemUserId: userId,
+      requestedMaxTokens: maxTokens,
+      reasoningEffort,
+      trigger: "admin_ui",
+      environment: detectRunEnvironment(),
     })
     .returning();
   if (!run) return { ok: false, code: "INVALID_SOURCE", error: "failed to create generation" };
 
-  await progress({
-    type: "stage",
-    stage: "model",
-    label: "Asking the model",
-    detail: `One completion on ${model}. This can take up to a minute.`,
-  });
-
-  const generated = await generateCandidates(input.dateKey, {
-    feedItems: source.feedItems,
-    feedUrl: source.feedUrl,
-    systemPrompt: prompt.promptText,
+  void runGenerationInBackground(run.id, game, input, userId, {
+    model,
+    maxTokens,
+    reasoningEffort,
+    prompt,
+    source,
     excludedAnswers,
-    model,
   });
 
-  await progress({
-    type: "stage",
-    stage: "score",
-    label: "Checking each word",
-    detail: "Five letters, dictionary, leaks, and a matching story.",
-  });
+  return { ok: true, runId: run.id };
+}
 
-  const storedCandidates = generated.candidates.map((entry, ordinal) => {
-    const article = source.publishable ? matchArticle(entry.candidate, source.articles) : null;
-    const reasons = [...entry.validation.reasons];
-    if (source.publishable && !article) reasons.push(GenerateReasonType.UnmatchedArticle);
-    const valid = source.publishable
-      ? entry.validation.valid && article !== null
-      : entry.validation.valid;
-    return {
-      ordinal,
-      payload: entry.candidate,
-      normalizedAnswer: entry.validation.normalizedAnswer,
-      valid,
-      reasons,
-      articleId: article?.id ?? null,
-      articleTitle: sanitizeFeedText(
-        article?.title ?? entry.candidate.sources[0]?.title ?? "",
-        MAX_FEED_TITLE_LENGTH,
-      ) || null,
-      articleUrl: article?.url ?? entry.candidate.sources[0]?.url ?? null,
-      candidate: entry.candidate,
-    };
-  });
+async function runGenerationInBackground(
+  runId: number,
+  game: GamesTopic,
+  input: GenerateRequest,
+  userId: string,
+  ctx: {
+    model: string;
+    maxTokens: number;
+    reasoningEffort: string;
+    prompt: { promptSource: "file" | "paste"; promptPath: string | null; promptText: string };
+    source: { feedItems: FeedItem[]; articles: Article[]; feedUrl: string; publishable: boolean };
+    excludedAnswers: string[];
+  },
+): Promise<void> {
+  const publish = (event: GenerateProgressEvent) => publishGenerationEvent(runId, event);
+  try {
+    publish({
+      type: "stage",
+      stage: "model",
+      label: "Asking the model",
+      detail: `One completion on ${ctx.model}. This can take up to a minute.`,
+    });
 
-  const inserted =
-    storedCandidates.length === 0
-      ? []
-      : await db
-          .insert(generationCandidates)
-          .values(
-            storedCandidates.map((candidate) => ({
-              runId: run.id,
-              ordinal: candidate.ordinal,
-              payload: candidate.payload,
-              normalizedAnswer: candidate.normalizedAnswer,
-              valid: candidate.valid,
-              reasons: candidate.reasons,
-              articleId: candidate.articleId,
-            })),
-          )
-          .returning();
+    const generated = await generateCandidates(input.dateKey, {
+      feedItems: ctx.source.feedItems,
+      feedUrl: ctx.source.feedUrl,
+      systemPrompt: ctx.prompt.promptText,
+      excludedAnswers: ctx.excludedAnswers,
+      model: ctx.model,
+      maxTokens: ctx.maxTokens,
+      reasoningEffort: ctx.reasoningEffort,
+    });
 
-  const selectedIndex = storedCandidates.findIndex((candidate) => candidate.valid);
-  const failed = Boolean(generated.llmError || generated.feedError);
-  await db
-    .update(generationRuns)
-    .set({
-      status: failed ? "failed" : "succeeded",
-      selectedIndex: selectedIndex === -1 ? null : selectedIndex,
-      feedError: generated.feedError,
-      llmError: generated.llmError,
-      feedItemCount: generated.feedItemCount,
-      finishedAt: new Date(),
-    })
-    .where(eq(generationRuns.id, run.id));
+    publish({
+      type: "stage",
+      stage: "score",
+      label: "Checking each word",
+      detail: "Five letters, dictionary, leaks, and a matching story.",
+    });
 
-  await recordAdminAction({
-    hominemUserId: userId,
-    kind: "generate",
-    gamesTopicId: game.id,
-    dateUtc: input.dateKey,
-    payload: { sourceMode: input.sourceMode, model, generationId: run.id },
-    result: { candidateCount: storedCandidates.length, selectedIndex, failed },
-  });
+    const storedCandidates = generated.candidates.map((entry, ordinal) => {
+      const article = ctx.source.publishable ? matchArticle(entry.candidate, ctx.source.articles) : null;
+      const reasons = [...entry.validation.reasons];
+      if (ctx.source.publishable && !article) reasons.push(GenerateReasonType.UnmatchedArticle);
+      const valid = ctx.source.publishable
+        ? entry.validation.valid && article !== null
+        : entry.validation.valid;
+      return {
+        ordinal,
+        payload: entry.candidate,
+        normalizedAnswer: entry.validation.normalizedAnswer,
+        valid,
+        reasons,
+        articleId: article?.id ?? null,
+        articleTitle: sanitizeFeedText(
+          article?.title ?? entry.candidate.sources[0]?.title ?? "",
+          MAX_FEED_TITLE_LENGTH,
+        ) || null,
+        articleUrl: article?.url ?? entry.candidate.sources[0]?.url ?? null,
+        candidate: entry.candidate,
+      };
+    });
 
-  await progress({
-    type: "stage",
-    stage: "done",
-    label: "Ready to review",
-    detail: `${storedCandidates.filter((candidate) => candidate.valid).length} of ${storedCandidates.length} could become a puzzle.`,
-  });
+    if (storedCandidates.length > 0) {
+      await db.insert(generationCandidates).values(
+        storedCandidates.map((candidate) => ({
+          runId,
+          ordinal: candidate.ordinal,
+          payload: candidate.payload,
+          normalizedAnswer: candidate.normalizedAnswer,
+          valid: candidate.valid,
+          reasons: candidate.reasons,
+          articleId: candidate.articleId,
+        })),
+      );
+    }
 
-  return {
-    ok: true,
-    generationId: run.id,
-    publishable: source.publishable,
-    model,
-    promptSource: prompt.promptSource,
-    selectedIndex: selectedIndex === -1 ? null : selectedIndex,
-    feedError: generated.feedError,
-    llmError: generated.llmError,
-    articleCount: source.feedItems.length,
-    candidates: inserted.map((row, index) => ({
-      id: row.id,
-      ordinal: row.ordinal,
-      valid: row.valid,
-      reasons: row.reasons,
-      articleId: row.articleId,
-      articleTitle: storedCandidates[index]?.articleTitle ?? null,
-      articleUrl: storedCandidates[index]?.articleUrl ?? null,
-      candidate: row.payload as GenerateOk["candidates"][number]["candidate"],
-    })),
-  };
+    const selectedIndex = storedCandidates.findIndex((candidate) => candidate.valid);
+    const failed = Boolean(generated.llmError || generated.feedError);
+    await db
+      .update(generationRuns)
+      .set({
+        status: failed ? "failed" : "succeeded",
+        selectedIndex: selectedIndex === -1 ? null : selectedIndex,
+        feedError: generated.feedError,
+        llmError: generated.llmError,
+        feedItemCount: generated.feedItemCount,
+        promptTokens: generated.usage.promptTokens,
+        completionTokens: generated.usage.completionTokens,
+        reasoningTokens: generated.usage.reasoningTokens,
+        totalTokens: generated.usage.totalTokens,
+        costUsd: generated.usage.costUsd,
+        finishedAt: new Date(),
+      })
+      .where(eq(generationRuns.id, runId));
+
+    await recordAdminAction({
+      hominemUserId: userId,
+      kind: "generate",
+      gamesTopicId: game.id,
+      dateUtc: input.dateKey,
+      payload: { sourceMode: input.sourceMode, model: ctx.model, generationId: runId },
+      result: { candidateCount: storedCandidates.length, selectedIndex, failed },
+    });
+
+    publish({
+      type: "stage",
+      stage: "done",
+      label: "Ready to review",
+      detail: `${storedCandidates.filter((candidate) => candidate.valid).length} of ${storedCandidates.length} could become a puzzle.`,
+    });
+  } catch (err) {
+    await db
+      .update(generationRuns)
+      .set({ status: "failed", llmError: getErrorMessage(err), finishedAt: new Date() })
+      .where(eq(generationRuns.id, runId));
+    publish({
+      type: "stage",
+      stage: "done",
+      label: "Ready to review",
+      detail: "The generation failed.",
+    });
+  }
 }
 
 function resolvePrompt(game: GamesTopic, input: GenerateRequest):

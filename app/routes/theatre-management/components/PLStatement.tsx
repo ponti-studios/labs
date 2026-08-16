@@ -66,7 +66,7 @@ export function PLStatement({
             <span className="text-foreground text-sm font-bold">Monthly Profit</span>
             <span
               className={cn(
-                "font-['Geist'] text-xl font-bold tabular-nums",
+                "font-sans text-xl font-bold tabular-nums",
                 d.monthlyProfit >= 0 ? "text-success" : "text-destructive",
               )}
             >

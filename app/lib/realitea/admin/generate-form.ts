@@ -1,4 +1,4 @@
-import type { GenerateRequest, GenerateSourceMode } from "./generate-types";
+import { GENERATE_REASONING_EFFORTS, type GenerateReasoningEffort, type GenerateRequest, type GenerateSourceMode } from "./generate-types";
 
 export function readGenerateForm(form: FormData): GenerateRequest {
   const feedIds = String(form.get("feedIds") ?? "")
@@ -9,6 +9,13 @@ export function readGenerateForm(form: FormData): GenerateRequest {
     .split(",")
     .map((value) => Number.parseInt(value.trim(), 10))
     .filter((value) => Number.isInteger(value));
+  const maxTokensRaw = Number.parseInt(String(form.get("maxTokens") ?? ""), 10);
+  const reasoningEffortRaw = String(form.get("reasoningEffort") ?? "");
+  const reasoningEffort = GENERATE_REASONING_EFFORTS.includes(
+    reasoningEffortRaw as GenerateReasoningEffort,
+  )
+    ? (reasoningEffortRaw as GenerateReasoningEffort)
+    : undefined;
 
   return {
     dateKey: String(form.get("dateKey") ?? ""),
@@ -27,5 +34,7 @@ export function readGenerateForm(form: FormData): GenerateRequest {
     ...(form.get("compareGroupId") ? { compareGroupId: String(form.get("compareGroupId")) } : {}),
     ...(feedIds.length > 0 ? { feedIds } : {}),
     ...(articleIds.length > 0 ? { articleIds } : {}),
+    ...(Number.isInteger(maxTokensRaw) && maxTokensRaw > 0 ? { maxTokens: maxTokensRaw } : {}),
+    ...(reasoningEffort ? { reasoningEffort } : {}),
   };
 }

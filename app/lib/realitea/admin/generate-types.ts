@@ -1,9 +1,22 @@
+import type { GenerationUsage } from "../generation/types";
+
 export const GENERATION_PROMPT_FILES = [
   "app/lib/prompts/realitea-generation.md",
   "app/lib/prompts/realitea-generation-v2.md",
 ] as const;
 
 export type GenerateSourceMode = "inventory" | "feeds" | "articles" | "rss" | "fixtures";
+
+export type GenerateReasoningEffort = "default" | "none" | "minimal" | "low" | "medium" | "high";
+
+export const GENERATE_REASONING_EFFORTS: GenerateReasoningEffort[] = [
+  "default",
+  "none",
+  "minimal",
+  "low",
+  "medium",
+  "high",
+];
 
 export type GenerateRequest = {
   dateKey: string;
@@ -17,6 +30,8 @@ export type GenerateRequest = {
   promptText?: string;
   model?: string;
   compareGroupId?: string;
+  maxTokens?: number;
+  reasoningEffort?: GenerateReasoningEffort;
 };
 
 export type GenerateFeedUrlResult =
@@ -60,6 +75,7 @@ export type GenerateOk = {
   llmError: string | null;
   articleCount: number;
   candidates: GenerateCandidateView[];
+  usage: GenerationUsage;
 };
 
 export type GenerateErr = {
@@ -68,6 +84,7 @@ export type GenerateErr = {
     | "INVALID_DATE"
     | "INVALID_PROMPT"
     | "INVALID_MODEL"
+    | "INVALID_MAX_TOKENS"
     | "RATE_LIMITED"
     | "INVALID_SOURCE"
     | "INVALID_URL"

@@ -110,7 +110,7 @@ export default function TheaterEconomics() {
               <div className="border-border border-t pt-4">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-foreground font-semibold">Total Monthly Expenses</span>
-                  <span className="text-foreground font-['Geist'] text-lg font-semibold tabular-nums">
+                  <span className="text-foreground font-sans text-lg font-semibold tabular-nums">
                     {formatCurrency(d.totalExpenses)}
                   </span>
                 </div>
