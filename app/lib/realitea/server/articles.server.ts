@@ -7,7 +7,7 @@
  */
 
 import type { Article, GamesTopic } from "~/lib/server/db";
-import { and, articles, count, db, desc, eq, inArray, lt } from "~/lib/server/db";
+import { and, articles, count, db, desc, eq, inArray, lt, sql } from "~/lib/server/db";
 
 /**
  * Insert newly-seen articles for a feed, deduped globally on `url`.
@@ -44,8 +44,21 @@ export async function upsertArticles(
 }
 
 /**
- * Pending articles eligible for `game`, oldest published first, capped at
- * `limit`.
+ * Pending articles eligible for `game`, most recently published first,
+ * capped at `limit`.
+ *
+ * Newest-first matters: ingestion runs daily and typically adds more
+ * candidates than a single day's generation consumes, so a backlog of
+ * pending articles accumulates. Ordering oldest-first would keep offering
+ * the LLM the same aging cohort ahead of freshly ingested articles until it
+ * neared `articleExpiryDays`, producing puzzles built on month-old news.
+ * Sorting newest-first ensures each day's game is generated from the
+ * freshest available article instead.
+ *
+ * `publishedAt` is nullable, and Postgres sorts `NULL` first in a plain
+ * `DESC` order — that would put undated articles ahead of the freshest
+ * dated ones, defeating the point of this ordering. `NULLS LAST` keeps
+ * undated articles as a last resort rather than the default pick.
  */
 export async function getPendingArticlesForGame(
   game: GamesTopic,
@@ -54,6 +67,7 @@ export async function getPendingArticlesForGame(
   return getPendingArticlesForTopics([game.id], limit);
 }
 
+/** Same as {@link getPendingArticlesForGame}, but across multiple topics — see its docstring for the newest-first rationale. */
 export async function getPendingArticlesForTopics(
   topicIds: number[],
   limit: number,
@@ -63,7 +77,7 @@ export async function getPendingArticlesForTopics(
     .select({ article: articles })
     .from(articles)
     .where(and(inArray(articles.gamesTopicId, topicIds), eq(articles.status, "pending")))
-    .orderBy(articles.publishedAt)
+    .orderBy(sql`${articles.publishedAt} DESC NULLS LAST`)
     .limit(limit);
   return rows.map((r) => r.article);
 }
