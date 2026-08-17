@@ -4,11 +4,8 @@ import { closeDb } from "~/lib/server/db";
 
 import { getDateKey } from "../app/lib/realitea/core/date";
 import { getErrorMessage } from "../app/lib/errors";
-import {
-  countInventoryForRange,
-  getActiveGames,
-  loadPuzzleForDate,
-} from "../app/lib/realitea/server/repository.server";
+import { getActiveGames } from "../app/lib/realitea/server/games.server";
+import { countInventoryForRange, loadPuzzleForDate } from "../app/lib/realitea/server/puzzles.server";
 import { createLogger } from "../app/lib/logger.server";
 import { REALITEA_READY_INVENTORY_DAYS } from "../app/lib/realitea/generation/candidate-validation";
 import { LabyrinthServerEnv } from "../app/lib/server/env";

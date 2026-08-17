@@ -15,11 +15,9 @@ import { getDateKey } from "~/lib/realitea/core/date";
 import { DEFAULT_REALITEA_GAME_SLUG } from "~/lib/realitea/generation/catalog";
 import { MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "~/lib/realitea/generation/feed-text";
 import { PROMPT_TEST_FIXTURES } from "~/lib/realitea/fixtures/prompt-test-fixtures";
-import {
-  getActiveAdminGenerationRun,
-  getActiveGames,
-  getPendingArticlesForGame,
-} from "~/lib/realitea/server/repository.server";
+import { getPendingArticlesForGame } from "~/lib/realitea/server/articles.server";
+import { getActiveGames } from "~/lib/realitea/server/games.server";
+import { getActiveAdminGenerationRun } from "~/lib/realitea/server/generation-runs.server";
 
 import { GenerateForm } from "./components/generate-form";
 import { GenerateProgress } from "./components/generate-progress";

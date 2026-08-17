@@ -31,13 +31,13 @@ Before returning a candidate, ask all three questions:
 Return only JSON in this shape:
 
 {
-  "candidates": [
-    {
-      "answer": "UPPERCASE",
-      "answerType": "moment|object|phrase|place|storyline",
-      "clue": "One concise situational sentence.",
-      "detail": "A concrete post-solve synopsis supported by the source.",
-      "sources": [{ "url": "...", "title": "...", "publishedAt": "..." }]
-    }
-  ]
+"candidates": [
+{
+"answer": "UPPERCASE",
+"answerType": "moment|object|phrase|place|storyline",
+"clue": "One concise situational sentence.",
+"detail": "A concrete post-solve synopsis supported by the source.",
+"sources": [{ "url": "...", "title": "...", "publishedAt": "..." }]
+}
+]
 }

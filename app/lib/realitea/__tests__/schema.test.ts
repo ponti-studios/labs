@@ -1,13 +1,15 @@
 import { getTableConfig } from "drizzle-orm/pg-core";
 import { describe, expect, it } from "vitest";
 
-import { gamesPuzzles, generationCandidates, generationRuns } from "~/lib/server/db/schema/realitea";
+import {
+  gamesPuzzles,
+  generationCandidates,
+  generationRuns,
+} from "~/lib/server/db/schema/realitea";
 
 function foreignKeyOnDelete(table: Parameters<typeof getTableConfig>[0], columnName: string) {
   return getTableConfig(table).foreignKeys.find((foreignKey) =>
-    foreignKey
-      .reference()
-      .columns.some((column) => column.name === columnName),
+    foreignKey.reference().columns.some((column) => column.name === columnName),
   )?.onDelete;
 }
 
@@ -24,4 +26,3 @@ describe("realitea admin schema", () => {
     expect(foreignKeyOnDelete(generationRuns, "games_topic_id")).toBe("restrict");
   });
 });
-

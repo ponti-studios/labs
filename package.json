@@ -42,7 +42,7 @@
     "@sentry/node": "^10.70.0",
     "@sentry/react-router": "^10.70.0",
     "@tanstack/ai": "0.44.0",
-    "@tanstack/ai-openrouter": "0.16.1",
+    "@tanstack/ai-openrouter": "0.17.0",
     "@tanstack/react-query": "^5.101.3",
     "@testing-library/jest-dom": "^7.0.0",
     "@types/three": "^0.185.4",

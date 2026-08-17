@@ -396,11 +396,8 @@ export default function ThreeglAiExplainer() {
       (p.mesh.material as unknown as MeshBasicMaterial).dispose();
     });
 
-    // We need THREE for spawning — since we're in a separate effect, use the scene's
-    // renderer to get the THREE reference. But we can't import it at module level.
-    // Instead, we respawn particles inside the animation loop check or use a flag.
-    // For simplicity, we just clear and let the next animation frame handle it.
-    // Actually, the simplest approach: use the scene.background to test THREE is loaded.
+    // Geometry/material classes require the dynamically imported THREE module,
+    // which isn't available at module scope, so respawning happens in an async helper below.
     if (!s.scene) return;
 
     // We'll dynamically import THREE just for spawning

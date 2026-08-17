@@ -1,7 +1,7 @@
 import type { ActionFunctionArgs } from "react-router";
 
 import { DEFAULT_REALITEA_GAME_SLUG } from "~/lib/realitea/generation/catalog";
-import { getGameBySlug } from "~/lib/realitea/server/repository.server";
+import { getGameBySlug } from "~/lib/realitea/server/games.server";
 import { isValidWord } from "~/lib/realitea/server/word-list.server";
 
 export async function action({ request }: ActionFunctionArgs) {

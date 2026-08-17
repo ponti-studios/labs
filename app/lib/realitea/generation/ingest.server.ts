@@ -17,7 +17,7 @@ import { JSDOM } from "jsdom";
 import { getErrorMessage } from "../../errors";
 import { createLogger } from "../../logger.server";
 
-import { upsertArticles } from "../server/repository.server";
+import { upsertArticles } from "../server/articles.server";
 import {
   MAX_ARTICLE_TEXT_LENGTH,
   MAX_FEED_DESCRIPTION_LENGTH,
@@ -87,10 +87,12 @@ export async function fetchFeedItems(feedUrl: string): Promise<FeedItem[]> {
     };
   });
 
-  return Promise.all(feedItems.map(async (item) => ({
-    ...item,
-    articleText: item.link ? await fetchArticleText(item.link) : "",
-  })));
+  return Promise.all(
+    feedItems.map(async (item) => ({
+      ...item,
+      articleText: item.link ? await fetchArticleText(item.link) : "",
+    })),
+  );
 }
 
 /** Extract readable article text with Mozilla Readability; RSS metadata remains the fallback. */
@@ -130,7 +132,11 @@ function parsePubDate(pubDate: string): Date | undefined {
 
 /** Fetch one feed and store any articles not already known by url. Returns the count newly inserted. */
 export async function ingestFeed(topic: GamesTopic): Promise<number> {
-  const childLogger = logger.child({ operation: "ingestFeed", gamesTopicId: topic.id, url: topic.feedUrl });
+  const childLogger = logger.child({
+    operation: "ingestFeed",
+    gamesTopicId: topic.id,
+    url: topic.feedUrl,
+  });
   try {
     const items = await fetchFeedItems(topic.feedUrl);
     const inserted = await upsertArticles(
@@ -182,7 +188,13 @@ export async function ensureRealiteaCatalog(): Promise<void> {
       })
       .onConflictDoUpdate({
         target: gamesTopics.slug,
-        set: { name: entry.name, feedUrl: entry.feedUrl, feedLabel: entry.feedLabel, systemPromptPath: "app/lib/prompts/realitea-generation.md", active: true },
+        set: {
+          name: entry.name,
+          feedUrl: entry.feedUrl,
+          feedLabel: entry.feedLabel,
+          systemPromptPath: "app/lib/prompts/realitea-generation.md",
+          active: true,
+        },
       })
       .returning({ id: gamesTopics.id });
     if (!feed) throw new Error(`Failed to provision RealiTea catalog entry: ${entry.slug}`);

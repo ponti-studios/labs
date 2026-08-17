@@ -6,7 +6,11 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { articles, db, gamesPuzzles, gamesTopics, generationRuns } from "~/lib/server/db";
 import { cleanAll } from "../../../data/test-db";
-import { assertGenerateFeedUrl, expireGenerations, reapStaleGenerations } from "../admin/generate.server";
+import {
+  assertGenerateFeedUrl,
+  expireGenerations,
+  reapStaleGenerations,
+} from "../admin/generate.server";
 import { matchArticle } from "../generation/generate.server";
 
 const GENERATE_SOURCE = readFileSync(
@@ -43,7 +47,9 @@ describe("assertGenerateFeedUrl", () => {
       ok: false,
       code: "PRIVATE_HOST",
     });
-    await expect(assertGenerateFeedUrl("https://169.254.169.254/latest/meta-data")).resolves.toMatchObject({
+    await expect(
+      assertGenerateFeedUrl("https://169.254.169.254/latest/meta-data"),
+    ).resolves.toMatchObject({
       ok: false,
       code: "PRIVATE_HOST",
     });
@@ -195,4 +201,3 @@ describe("generation run retention", () => {
     expect(remaining?.llmError).toBe("reaped");
   });
 });
-

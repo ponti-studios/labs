@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 // Mock heavy dependencies to prevent top-level side-effects when importing the script
-vi.mock("../app/lib/realitea/server/repository.server", () => ({
+vi.mock("../app/lib/realitea/server/puzzles.server", () => ({
   countInventoryForRange: vi.fn(),
   loadPuzzleForDate: vi.fn(),
 }));

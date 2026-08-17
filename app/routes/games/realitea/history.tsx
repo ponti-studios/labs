@@ -266,7 +266,9 @@ export default function RealiTeaHistoryRoute() {
           }
           action={
             <Button asChild variant="default">
-              <Link to={`/games/realitea?game=${encodeURIComponent(gameSlug)}`}>Play today&apos;s puzzle</Link>
+              <Link to={`/games/realitea?game=${encodeURIComponent(gameSlug)}`}>
+                Play today&apos;s puzzle
+              </Link>
             </Button>
           }
         />

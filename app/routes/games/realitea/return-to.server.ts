@@ -1,8 +1,7 @@
 /**
- * Hominem's redirect policy only trusts LABS_URL's own origin (see
- * docs/hominem-auth-integration.md, task 3), so the return URL must
- * round-trip through https even if the request reaches this server over
- * plain http behind Railway's proxy. Shared by every RealiTea route that
+ * Hominem's redirect policy only trusts LABS_URL's own origin, so the return
+ * URL must round-trip through https even if the request reaches this server
+ * over plain http behind Railway's proxy. Shared by every RealiTea route that
  * builds a Hominem login URL.
  */
 export function resolveReturnTo(request: Request): string {

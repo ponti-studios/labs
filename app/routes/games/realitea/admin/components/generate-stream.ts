@@ -1,4 +1,8 @@
-import type { GenerateErr, GenerateOk, GenerateProgressEvent } from "~/lib/realitea/admin/generate-types";
+import type {
+  GenerateErr,
+  GenerateOk,
+  GenerateProgressEvent,
+} from "~/lib/realitea/admin/generate-types";
 
 type GenerateStreamEvent =
   | GenerateProgressEvent

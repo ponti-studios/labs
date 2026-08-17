@@ -66,7 +66,7 @@ function createOpenRouterClient(options: OpenRouterClientOptions = {}) {
   });
 }
 
-/** Send a chat completion using the default text model. */
+/** Resolves the text model to use for chat completions, defaulting to DEFAULT_TEXT_MODEL. */
 export function getConfiguredTextModel() {
   return process.env.REALITEA_AI_MODEL ?? DEFAULT_TEXT_MODEL;
 }

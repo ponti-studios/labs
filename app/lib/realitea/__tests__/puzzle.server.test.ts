@@ -20,10 +20,16 @@ const {
   countRecentGuessesMock: vi.fn(),
 }));
 
-vi.mock("../server/repository.server", () => ({
+vi.mock("../server/games.server", () => ({
   getGameBySlug: getGameBySlugMock,
+}));
+
+vi.mock("../server/puzzles.server", () => ({
   loadPuzzleForDate: loadPuzzleForDateMock,
   loadMostRecentPuzzle: loadMostRecentPuzzleMock,
+}));
+
+vi.mock("../server/attempts.server", () => ({
   loadAttempt: loadAttemptMock,
   createAttempt: createAttemptMock,
   appendGuess: appendGuessMock,

@@ -114,9 +114,7 @@ export default function RealiTeaAdminDate() {
           description="This date has no published puzzle. Generate candidates, then publish."
           action={
             <Button asChild>
-              <Link to={`/games/realitea/admin/generate?game=${detail.game.slug}`}>
-                Generate
-              </Link>
+              <Link to={`/games/realitea/admin/generate?game=${detail.game.slug}`}>Generate</Link>
             </Button>
           }
         />

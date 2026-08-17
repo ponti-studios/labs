@@ -15,11 +15,19 @@ import { parseDate } from "../core/date";
 import { normalizeGuess } from "../core/rules";
 import type { PuzzleAnswerType } from "../core/types";
 import { validateCandidate } from "../generation/candidate-validation";
-import { getRecentAnswers, getStoredAnswers, loadPuzzleForDate, markArticleUsed, recordAdminAction } from "../server/repository.server";
+import { recordAdminAction } from "../server/admin-actions.server";
+import { markArticleUsed } from "../server/articles.server";
+import { getRecentAnswers, getStoredAnswers, loadPuzzleForDate } from "../server/puzzles.server";
 
 import { parseCandidatePayload } from "./inventory";
 
-const ANSWER_TYPES = new Set<PuzzleAnswerType>(["moment", "object", "phrase", "place", "storyline"]);
+const ANSWER_TYPES = new Set<PuzzleAnswerType>([
+  "moment",
+  "object",
+  "phrase",
+  "place",
+  "storyline",
+]);
 
 export type PublishResult =
   | { ok: true; puzzleId: number; dateKey: string; replaced: boolean }
@@ -42,7 +50,12 @@ export async function publishCandidate(input: {
   const [generation] = await db
     .select()
     .from(generationRuns)
-    .where(and(eq(generationRuns.id, input.generationId), eq(generationRuns.gamesTopicId, input.game.id)))
+    .where(
+      and(
+        eq(generationRuns.id, input.generationId),
+        eq(generationRuns.gamesTopicId, input.game.id),
+      ),
+    )
     .limit(1);
   if (!generation) return { ok: false, code: "NOT_FOUND", error: "Generation not found" };
 
@@ -68,7 +81,11 @@ export async function publishCandidate(input: {
     return { ok: false, code: "INVALID_CANDIDATE", error: "Answer type is not allowed" };
   }
 
-  const [article] = await db.select().from(articles).where(eq(articles.id, candidate.articleId)).limit(1);
+  const [article] = await db
+    .select()
+    .from(articles)
+    .where(eq(articles.id, candidate.articleId))
+    .limit(1);
   if (!article || article.gamesTopicId !== input.game.id) {
     return { ok: false, code: "NOT_PUBLISHABLE", error: "This draft has no matching story" };
   }
@@ -115,7 +132,9 @@ export async function publishCandidate(input: {
     const attemptRows = await db
       .select()
       .from(gamesAttempts)
-      .where(and(eq(gamesAttempts.gamesTopicId, input.game.id), eq(gamesAttempts.dateUtc, dateKey)));
+      .where(
+        and(eq(gamesAttempts.gamesTopicId, input.game.id), eq(gamesAttempts.dateUtc, dateKey)),
+      );
     await db.insert(puzzleRevisions).values({
       gamesTopicId: input.game.id,
       dateUtc: dateKey,
@@ -137,7 +156,8 @@ export async function publishCandidate(input: {
         ...puzzleValues,
       })
       .returning({ id: gamesPuzzles.id });
-    if (!inserted) return { ok: false, code: "INVALID_CANDIDATE", error: "Failed to write the puzzle" };
+    if (!inserted)
+      return { ok: false, code: "INVALID_CANDIDATE", error: "Failed to write the puzzle" };
     puzzleId = inserted.id;
   }
 

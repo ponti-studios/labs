@@ -1,20 +1,12 @@
 ---
-title: RealiTea Gameplay and UX
-project: realitea
+title: Gameplay and UX
+summary: The interaction rules that keep guess feedback, input, and reveal pacing consistent across desktop and mobile.
 type: reference
 status: active
-client: null
-industry: null
 owner: charlesponti
-tags:
-  - ux
-  - interaction-design
-  - game-design
-  - frontend
-related:
-  - ./index.md
-  - ./reliability-and-testing.md
-summary: The interaction design decisions that made RealiTea feel fair, legible, and polished across desktop and mobile.
+tags: [ux, interaction-design, frontend]
+related: [./reliability-and-testing.md, ./architecture.md]
+updated: 2026-08-16
 ---
 
 # RealiTea Gameplay and UX
@@ -63,5 +55,4 @@ It also takes a pragmatic fallback path: clipboard first, `window.prompt` second
 
 ## Read next
 
-- [Back to the overview](./index.md)
 - [Reliability and testing lessons](./reliability-and-testing.md)

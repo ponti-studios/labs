@@ -136,10 +136,10 @@ export default function ExperimentsGlass() {
           className={cn(
             "bg-card z-50 rounded-lg transition-all duration-300",
             // Mobile: bottom sheet
-            "fixed bottom-0 left-0 right-0 md:absolute md:bottom-auto md:top-4 md:right-4",
-            "w-full md:max-w-72 md:w-auto",
-            "max-h-[60vh] md:max-h-none overflow-y-auto md:overflow-visible",
-            "rounded-t-lg md:rounded-lg rounded-b-none md:rounded-b-lg",
+            "fixed right-0 bottom-0 left-0 md:absolute md:top-4 md:right-4 md:bottom-auto",
+            "w-full md:w-auto md:max-w-72",
+            "max-h-[60vh] overflow-y-auto md:max-h-none md:overflow-visible",
+            "rounded-t-lg rounded-b-none md:rounded-lg md:rounded-b-lg",
             "p-4 md:p-3",
             "border-t border-slate-700 md:border-t-0",
             // Show/hide logic
@@ -149,11 +149,16 @@ export default function ExperimentsGlass() {
           {/* Mobile close button */}
           <button
             onClick={() => setControlsOpen(false)}
-            className="md:hidden absolute top-2 right-2 p-2 text-slate-400 hover:text-slate-200"
+            className="absolute top-2 right-2 p-2 text-slate-400 hover:text-slate-200 md:hidden"
             aria-label="Close controls"
           >
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
 
@@ -250,14 +255,24 @@ export default function ExperimentsGlass() {
         <button
           onClick={() => setControlsOpen(!controlsOpen)}
           className={cn(
-            "md:hidden fixed bottom-6 left-1/2 z-40 -translate-x-1/2 transform transition-all",
-            controlsOpen ? "opacity-0 pointer-events-none" : "opacity-100",
-            "bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2",
+            "fixed bottom-6 left-1/2 z-40 -translate-x-1/2 transform transition-all md:hidden",
+            controlsOpen ? "pointer-events-none opacity-0" : "opacity-100",
+            "flex items-center gap-2 rounded-full bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700",
           )}
         >
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+            />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+            />
           </svg>
           Settings
         </button>
@@ -320,25 +335,30 @@ export default function ExperimentsGlass() {
       </div>
 
       {/* Technical Essay Section */}
-      <div className="relative min-h-screen w-full bg-gradient-to-b from-slate-950 to-slate-900 px-4 sm:px-6 py-12 sm:py-20">
+      <div className="relative min-h-screen w-full bg-gradient-to-b from-slate-950 to-slate-900 px-4 py-12 sm:px-6 sm:py-20">
         <div className="mx-auto max-w-3xl space-y-8 sm:space-y-12 md:space-y-16 lg:space-y-24">
           {/* Hero Section */}
           <div className="space-y-6 sm:space-y-8">
             <div className="space-y-4 text-center">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">
-                The <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">Physics of Glass</span>
+              <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
+                The{" "}
+                <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+                  Physics of Glass
+                </span>
               </h1>
-              <p className="text-base sm:text-lg md:text-xl text-slate-300">
-                How SVG filters recreate the refraction, dispersion, and light behavior of real glass
+              <p className="text-base text-slate-300 sm:text-lg md:text-xl">
+                How SVG filters recreate the refraction, dispersion, and light behavior of real
+                glass
               </p>
             </div>
 
-            <div className="mx-auto max-w-2xl rounded-xl border border-slate-700 bg-slate-900/50 p-6 sm:p-8 backdrop-blur">
-              <p className="leading-relaxed text-sm sm:text-base text-slate-300">
-                Glass is not a solid in the classical sense—it's a supercooled liquid in a solid state. When light
-                passes through it, the atoms bend and refract the light rays, creating the effects we see: distortion,
-                color separation, and the illusion of depth. In this essay, we'll explore how to simulate these
-                phenomena using nothing but SVG filters and a little mathematics.
+            <div className="mx-auto max-w-2xl rounded-xl border border-slate-700 bg-slate-900/50 p-6 backdrop-blur sm:p-8">
+              <p className="text-sm leading-relaxed text-slate-300 sm:text-base">
+                Glass is not a solid in the classical sense—it's a supercooled liquid in a solid
+                state. When light passes through it, the atoms bend and refract the light rays,
+                creating the effects we see: distortion, color separation, and the illusion of
+                depth. In this essay, we'll explore how to simulate these phenomena using nothing
+                but SVG filters and a little mathematics.
               </p>
             </div>
           </div>
@@ -351,27 +371,30 @@ export default function ExperimentsGlass() {
             className={cn("space-y-6 sm:space-y-8", visibleSections.has(0) ? "visible" : "")}
           >
             <div>
-              <h2 className="mb-3 text-2xl sm:text-3xl md:text-3xl font-bold">Part 1: Refraction & Snell's Law</h2>
+              <h2 className="mb-3 text-2xl font-bold sm:text-3xl md:text-3xl">
+                Part 1: Refraction & Snell's Law
+              </h2>
               <div className="h-1 w-24 bg-gradient-to-r from-cyan-400 to-transparent" />
             </div>
 
             <div className="space-y-4">
               <p className="leading-relaxed text-slate-300">
-                When light travels from one medium to another (air to glass, or glass to air), it bends according to{" "}
-                <strong>Snell's Law</strong>:
+                When light travels from one medium to another (air to glass, or glass to air), it
+                bends according to <strong>Snell's Law</strong>:
               </p>
 
               <div className="rounded-lg border border-slate-700 bg-slate-900/50 p-6 font-mono">
                 <p className="text-cyan-300">n₁ × sin(θ₁) = n₂ × sin(θ₂)</p>
                 <p className="mt-2 text-sm text-slate-400">
-                  where <em>n</em> is the refractive index and <em>θ</em> is the angle from the normal
+                  where <em>n</em> is the refractive index and <em>θ</em> is the angle from the
+                  normal
                 </p>
               </div>
 
               <p className="leading-relaxed text-slate-300">
-                The <strong>refractive index</strong> of common glass is about 1.5, while air is 1.0. This difference
-                causes light to bend when crossing the boundary. The greater the angle of incidence, the more dramatic
-                the bending.
+                The <strong>refractive index</strong> of common glass is about 1.5, while air is
+                1.0. This difference causes light to bend when crossing the boundary. The greater
+                the angle of incidence, the more dramatic the bending.
               </p>
 
               <div className="relative overflow-hidden rounded-lg border border-slate-700 bg-slate-900/30 p-4 sm:p-8">
@@ -382,7 +405,14 @@ export default function ExperimentsGlass() {
                   style={{ fontSize: "clamp(10px, 3vw, 14px)" }}
                 >
                   {/* Glass surface */}
-                  <line x1="50" y1="150" x2="350" y2="150" stroke="rgba(148,163,184,0.5)" strokeWidth="2" />
+                  <line
+                    x1="50"
+                    y1="150"
+                    x2="350"
+                    y2="150"
+                    stroke="rgba(148,163,184,0.5)"
+                    strokeWidth="2"
+                  />
                   <text x="360" y="155" fontSize="12" fill="rgba(148,163,184,0.7)">
                     Glass Surface
                   </text>
@@ -398,7 +428,14 @@ export default function ExperimentsGlass() {
                   </text>
 
                   {/* Incident ray */}
-                  <line x1="200" y1="50" x2="200" y2="150" stroke="rgba(34,197,94,0.8)" strokeWidth="2" />
+                  <line
+                    x1="200"
+                    y1="50"
+                    x2="200"
+                    y2="150"
+                    stroke="rgba(34,197,94,0.8)"
+                    strokeWidth="2"
+                  />
                   <circle cx="200" cy="50" r="4" fill="rgba(34,197,94,0.8)" />
 
                   {/* Normal line */}
@@ -413,7 +450,14 @@ export default function ExperimentsGlass() {
                   />
 
                   {/* Refracted ray */}
-                  <line x1="200" y1="150" x2="260" y2="250" stroke="rgba(59,130,246,0.8)" strokeWidth="2" />
+                  <line
+                    x1="200"
+                    y1="150"
+                    x2="260"
+                    y2="250"
+                    stroke="rgba(59,130,246,0.8)"
+                    strokeWidth="2"
+                  />
                   <circle cx="260" cy="250" r="4" fill="rgba(59,130,246,0.8)" />
 
                   {/* Angle annotations */}
@@ -427,9 +471,13 @@ export default function ExperimentsGlass() {
               </div>
 
               <p className="leading-relaxed text-slate-300">
-                In our SVG implementation, we use <code className="rounded bg-slate-800 px-2 py-1 font-mono text-cyan-300">feDisplacementMap</code> to simulate
-                this bending. Instead of calculating actual rays, we shift pixel coordinates based on a displacement
-                map—effectively creating the illusion of refraction.
+                In our SVG implementation, we use{" "}
+                <code className="rounded bg-slate-800 px-2 py-1 font-mono text-cyan-300">
+                  feDisplacementMap
+                </code>{" "}
+                to simulate this bending. Instead of calculating actual rays, we shift pixel
+                coordinates based on a displacement map—effectively creating the illusion of
+                refraction.
               </p>
             </div>
           </section>
@@ -442,15 +490,15 @@ export default function ExperimentsGlass() {
             className={cn("space-y-8", visibleSections.has(1) ? "visible" : "")}
           >
             <div>
-              <h2 className="mb-3 text-2xl sm:text-3xl font-bold">Part 2: Chromatic Aberration</h2>
+              <h2 className="mb-3 text-2xl font-bold sm:text-3xl">Part 2: Chromatic Aberration</h2>
               <div className="h-1 w-24 bg-gradient-to-r from-cyan-400 to-transparent" />
             </div>
 
             <div className="space-y-4">
               <p className="leading-relaxed text-slate-300">
-                Real glass doesn't refract all colors equally. Shorter wavelengths (blue light) refract more than
-                longer wavelengths (red light). This phenomenon is called <strong>dispersion</strong>, and it's why
-                prisms split white light into rainbows.
+                Real glass doesn't refract all colors equally. Shorter wavelengths (blue light)
+                refract more than longer wavelengths (red light). This phenomenon is called{" "}
+                <strong>dispersion</strong>, and it's why prisms split white light into rainbows.
               </p>
 
               <div className="relative overflow-hidden rounded-lg border border-slate-700 bg-slate-900/30 p-4 sm:p-8">
@@ -461,22 +509,55 @@ export default function ExperimentsGlass() {
                   style={{ fontSize: "clamp(10px, 3vw, 14px)" }}
                 >
                   {/* White light entering prism */}
-                  <line x1="50" y1="100" x2="100" y2="100" stroke="rgba(255,255,255,0.8)" strokeWidth="3" />
+                  <line
+                    x1="50"
+                    y1="100"
+                    x2="100"
+                    y2="100"
+                    stroke="rgba(255,255,255,0.8)"
+                    strokeWidth="3"
+                  />
                   <circle cx="40" cy="100" r="5" fill="rgba(255,255,255,0.8)" />
 
                   {/* Prism shape */}
-                  <polygon points="100,50 100,150 200,100" fill="rgba(59,130,246,0.1)" stroke="rgba(59,130,246,0.5)" strokeWidth="2" />
+                  <polygon
+                    points="100,50 100,150 200,100"
+                    fill="rgba(59,130,246,0.1)"
+                    stroke="rgba(59,130,246,0.5)"
+                    strokeWidth="2"
+                  />
 
                   {/* Red ray (least refraction) */}
-                  <line x1="200" y1="100" x2="330" y2="70" stroke="rgba(239,68,68,0.8)" strokeWidth="2" />
+                  <line
+                    x1="200"
+                    y1="100"
+                    x2="330"
+                    y2="70"
+                    stroke="rgba(239,68,68,0.8)"
+                    strokeWidth="2"
+                  />
                   <circle cx="340" cy="65" r="4" fill="rgba(239,68,68,0.8)" />
 
                   {/* Green ray (medium refraction) */}
-                  <line x1="200" y1="100" x2="330" y2="100" stroke="rgba(34,197,94,0.8)" strokeWidth="2" />
+                  <line
+                    x1="200"
+                    y1="100"
+                    x2="330"
+                    y2="100"
+                    stroke="rgba(34,197,94,0.8)"
+                    strokeWidth="2"
+                  />
                   <circle cx="340" cy="100" r="4" fill="rgba(34,197,94,0.8)" />
 
                   {/* Blue ray (most refraction) */}
-                  <line x1="200" y1="100" x2="330" y2="130" stroke="rgba(59,130,246,0.8)" strokeWidth="2" />
+                  <line
+                    x1="200"
+                    y1="100"
+                    x2="330"
+                    y2="130"
+                    stroke="rgba(59,130,246,0.8)"
+                    strokeWidth="2"
+                  />
                   <circle cx="340" cy="135" r="4" fill="rgba(59,130,246,0.8)" />
 
                   {/* Labels */}
@@ -493,9 +574,9 @@ export default function ExperimentsGlass() {
               </div>
 
               <p className="leading-relaxed text-slate-300">
-                To simulate this in SVG, we apply <strong>three displacement passes</strong>—one for each RGB channel—using
-                slightly different scale values. The displacement map stays the same, but we extract and manipulate each
-                color channel independently:
+                To simulate this in SVG, we apply <strong>three displacement passes</strong>—one for
+                each RGB channel—using slightly different scale values. The displacement map stays
+                the same, but we extract and manipulate each color channel independently:
               </p>
 
               <div className="rounded-lg border border-slate-700 bg-slate-900/50 p-6 font-mono text-sm">
@@ -513,8 +594,9 @@ export default function ExperimentsGlass() {
               </div>
 
               <p className="leading-relaxed text-slate-300">
-                Each channel gets shifted by its own scale value, then they're recombined using screen blending.
-                This creates the characteristic color fringing you see at the edges of the glass effect.
+                Each channel gets shifted by its own scale value, then they're recombined using
+                screen blending. This creates the characteristic color fringing you see at the edges
+                of the glass effect.
               </p>
             </div>
           </section>
@@ -527,15 +609,21 @@ export default function ExperimentsGlass() {
             className={cn("space-y-8", visibleSections.has(2) ? "visible" : "")}
           >
             <div>
-              <h2 className="mb-3 text-2xl sm:text-3xl font-bold">Part 3: How feDisplacementMap Works</h2>
+              <h2 className="mb-3 text-2xl font-bold sm:text-3xl">
+                Part 3: How feDisplacementMap Works
+              </h2>
               <div className="h-1 w-24 bg-gradient-to-r from-cyan-400 to-transparent" />
             </div>
 
             <div className="space-y-4">
               <p className="leading-relaxed text-slate-300">
-                SVG's <code className="rounded bg-slate-800 px-2 py-1 font-mono text-cyan-300">feDisplacementMap</code> is the core
-                primitive that makes our glass effect possible. It works by looking up displacement values from a
-                secondary image (the displacement map) and shifting source pixels based on those values.
+                SVG's{" "}
+                <code className="rounded bg-slate-800 px-2 py-1 font-mono text-cyan-300">
+                  feDisplacementMap
+                </code>{" "}
+                is the core primitive that makes our glass effect possible. It works by looking up
+                displacement values from a secondary image (the displacement map) and shifting
+                source pixels based on those values.
               </p>
 
               <div className="rounded-lg border border-slate-700 bg-slate-900/50 p-6">
@@ -543,8 +631,9 @@ export default function ExperimentsGlass() {
                   x' = x + scale × (displacement_value / 255 − 0.5)
                 </p>
                 <p className="text-sm text-slate-400">
-                  For each output pixel at (x, y), look up the displacement map at that same location. The pixel
-                  brightness (0–255) is normalized to −0.5–0.5 range, then multiplied by the scale factor.
+                  For each output pixel at (x, y), look up the displacement map at that same
+                  location. The pixel brightness (0–255) is normalized to −0.5–0.5 range, then
+                  multiplied by the scale factor.
                 </p>
               </div>
 
@@ -570,9 +659,9 @@ export default function ExperimentsGlass() {
               </div>
 
               <p className="leading-relaxed text-slate-300">
-                In our implementation, the displacement map is a rounded rectangle: dark edges and blurred gray
-                interior. This creates smooth, natural-looking refraction at the edges while leaving the center
-                relatively undistorted.
+                In our implementation, the displacement map is a rounded rectangle: dark edges and
+                blurred gray interior. This creates smooth, natural-looking refraction at the edges
+                while leaving the center relatively undistorted.
               </p>
             </div>
           </section>
@@ -585,13 +674,16 @@ export default function ExperimentsGlass() {
             className={cn("space-y-8", visibleSections.has(3) ? "visible" : "")}
           >
             <div>
-              <h2 className="mb-3 text-2xl sm:text-3xl font-bold">Part 4: Building the Glass Effect</h2>
+              <h2 className="mb-3 text-2xl font-bold sm:text-3xl">
+                Part 4: Building the Glass Effect
+              </h2>
               <div className="h-1 w-24 bg-gradient-to-r from-cyan-400 to-transparent" />
             </div>
 
             <div className="space-y-4">
               <p className="leading-relaxed text-slate-300">
-                Our glassmorphism effect is built in stages, each adding a layer of visual complexity:
+                Our glassmorphism effect is built in stages, each adding a layer of visual
+                complexity:
               </p>
 
               <div className="space-y-3">
@@ -635,16 +727,24 @@ export default function ExperimentsGlass() {
               </div>
 
               <div className="rounded-lg border border-slate-700 bg-slate-900/50 p-6">
-                <p className="mb-3 font-mono text-sm text-cyan-300">The Mathematics of Refraction</p>
+                <p className="mb-3 font-mono text-sm text-cyan-300">
+                  The Mathematics of Refraction
+                </p>
                 <div className="space-y-2 font-mono text-sm text-slate-300">
                   <p>
-                    <span className="text-slate-500">// Convert desired pixel refraction to scale values</span>
+                    <span className="text-slate-500">
+                      // Convert desired pixel refraction to scale values
+                    </span>
                   </p>
                   <p>
-                    <span className="text-slate-500">// The displacement map's neutral gray (127, 127, 127)</span>
+                    <span className="text-slate-500">
+                      // The displacement map's neutral gray (127, 127, 127)
+                    </span>
                   </p>
                   <p>
-                    <span className="text-slate-500">// when shifted gives a maximum deviation of ±0.5</span>
+                    <span className="text-slate-500">
+                      // when shifted gives a maximum deviation of ±0.5
+                    </span>
                   </p>
                   <p className="mt-2">
                     <span className="text-green-400">const</span>{" "}
@@ -680,14 +780,17 @@ export default function ExperimentsGlass() {
             className={cn("space-y-8", visibleSections.has(4) ? "visible" : "")}
           >
             <div>
-              <h2 className="mb-3 text-2xl sm:text-3xl font-bold">Part 5: Why This Technique Matters</h2>
+              <h2 className="mb-3 text-2xl font-bold sm:text-3xl">
+                Part 5: Why This Technique Matters
+              </h2>
               <div className="h-1 w-24 bg-gradient-to-r from-cyan-400 to-transparent" />
             </div>
 
             <div className="space-y-4">
               <p className="leading-relaxed text-slate-300">
-                This approach demonstrates how fundamental physics can be baked into visual design. We're not using
-                canvas blurs or CSS filters—we're building a physically plausible light simulation using pure SVG.
+                This approach demonstrates how fundamental physics can be baked into visual design.
+                We're not using canvas blurs or CSS filters—we're building a physically plausible
+                light simulation using pure SVG.
               </p>
 
               <div className="grid gap-4 md:grid-cols-2">
@@ -709,10 +812,7 @@ export default function ExperimentsGlass() {
                     desc: "Modern browsers render SVG filters on the GPU",
                   },
                 ].map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="rounded-lg border border-slate-700 bg-slate-900/50 p-4"
-                  >
+                  <div key={idx} className="rounded-lg border border-slate-700 bg-slate-900/50 p-4">
                     <h4 className="mb-1 font-semibold text-slate-200">{item.title}</h4>
                     <p className="text-sm text-slate-400">{item.desc}</p>
                   </div>
@@ -721,9 +821,10 @@ export default function ExperimentsGlass() {
 
               <div className="rounded-xl border border-cyan-500/30 bg-cyan-500/5 p-6">
                 <p className="text-slate-200">
-                  <strong>The Takeaway:</strong> Great visual effects aren't magic—they're applied physics. By
-                  understanding the underlying principles (Snell's Law, dispersion, light blending), we can build
-                  stunning effects that feel real because they <em>are</em> real (simulated).
+                  <strong>The Takeaway:</strong> Great visual effects aren't magic—they're applied
+                  physics. By understanding the underlying principles (Snell's Law, dispersion,
+                  light blending), we can build stunning effects that feel real because they{" "}
+                  <em>are</em> real (simulated).
                 </p>
               </div>
             </div>
@@ -731,15 +832,15 @@ export default function ExperimentsGlass() {
 
           {/* Closing */}
           <div className="space-y-6 border-t border-slate-700 pt-12 text-center">
-            <h3 className="text-xl sm:text-2xl font-bold">Ready to Experiment?</h3>
+            <h3 className="text-xl font-bold sm:text-2xl">Ready to Experiment?</h3>
             <p className="text-slate-400">
-              Scroll back up and try adjusting the RGB displacement sliders. Each channel shift simulates a different
-              wavelength of light bending through the glass. Lower values = subtle refraction; higher values = dramatic
-              chromatic aberration.
+              Scroll back up and try adjusting the RGB displacement sliders. Each channel shift
+              simulates a different wavelength of light bending through the glass. Lower values =
+              subtle refraction; higher values = dramatic chromatic aberration.
             </p>
             <p className="text-sm text-slate-500">
-              Challenge: Can you recreate the color fringing of a real prism? Try setting red to -40, green to 0, and
-              blue to +40.
+              Challenge: Can you recreate the color fringing of a real prism? Try setting red to
+              -40, green to 0, and blue to +40.
             </p>
           </div>
         </div>
@@ -873,7 +974,7 @@ interface FilterRect {
  *
  * All filter layer SVGs share:
  *   - A fixed 200×200 canvas with a 220×220 viewBox (extra space absorbs blur bleed)
- *   - A single rounded-rectangle shape: x=50 y=50 w=100 h=100 rx=25
+ *   - A single rounded-rectangle shape: x=0 y=0 w=220 h=220 rx=8
  *
  * Multiple rects are layered in order (first = bottom).
  */

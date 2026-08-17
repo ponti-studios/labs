@@ -98,7 +98,8 @@ export default function RealiTeaAdminGeneration() {
         <div>
           <dt className="text-muted-foreground">Tokens (prompt / completion / reasoning)</dt>
           <dd>
-            {formatTokenCount(generation.promptTokens)} / {formatTokenCount(generation.completionTokens)} /{" "}
+            {formatTokenCount(generation.promptTokens)} /{" "}
+            {formatTokenCount(generation.completionTokens)} /{" "}
             {formatTokenCount(generation.reasoningTokens)}
           </dd>
         </div>

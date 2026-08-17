@@ -24,16 +24,14 @@ import {
 } from "../generation/generate.server";
 import { fetchFeedItems } from "../generation/ingest.server";
 import type { FeedItem } from "../generation/types";
+import { countRecentGenerateActions, recordAdminAction } from "../server/admin-actions.server";
 import {
-  countRecentGenerateActions,
   getPendingArticlesByIds,
   getPendingArticlesForGame,
   getPendingArticlesForTopics,
-  getRecentAnswers,
-  getStoredAnswers,
-  listTopicFeedHosts,
-  recordAdminAction,
-} from "../server/repository.server";
+} from "../server/articles.server";
+import { listTopicFeedHosts } from "../server/games.server";
+import { getRecentAnswers, getStoredAnswers } from "../server/puzzles.server";
 
 const GENERATION_RATE_LIMIT = 20;
 const GENERATION_ARTICLE_CAP = 12;
@@ -62,7 +60,12 @@ function isBlockedHostname(hostname: string): boolean {
     return true;
   }
   if (PRIVATE_V4.some((pattern) => pattern.test(host))) return true;
-  if (host === "::1" || host.startsWith("fc") || host.startsWith("fd") || host.startsWith("fe80:")) {
+  if (
+    host === "::1" ||
+    host.startsWith("fc") ||
+    host.startsWith("fd") ||
+    host.startsWith("fe80:")
+  ) {
     return true;
   }
   return false;
@@ -257,7 +260,9 @@ async function runGenerationInBackground(
     });
 
     const storedCandidates = generated.candidates.map((entry, ordinal) => {
-      const article = ctx.source.publishable ? matchArticle(entry.candidate, ctx.source.articles) : null;
+      const article = ctx.source.publishable
+        ? matchArticle(entry.candidate, ctx.source.articles)
+        : null;
       const reasons = [...entry.validation.reasons];
       if (ctx.source.publishable && !article) reasons.push(GenerateReasonType.UnmatchedArticle);
       const valid = ctx.source.publishable
@@ -270,10 +275,11 @@ async function runGenerationInBackground(
         valid,
         reasons,
         articleId: article?.id ?? null,
-        articleTitle: sanitizeFeedText(
-          article?.title ?? entry.candidate.sources[0]?.title ?? "",
-          MAX_FEED_TITLE_LENGTH,
-        ) || null,
+        articleTitle:
+          sanitizeFeedText(
+            article?.title ?? entry.candidate.sources[0]?.title ?? "",
+            MAX_FEED_TITLE_LENGTH,
+          ) || null,
         articleUrl: article?.url ?? entry.candidate.sources[0]?.url ?? null,
         candidate: entry.candidate,
       };
@@ -341,7 +347,10 @@ async function runGenerationInBackground(
   }
 }
 
-function resolvePrompt(game: GamesTopic, input: GenerateRequest):
+function resolvePrompt(
+  game: GamesTopic,
+  input: GenerateRequest,
+):
   | { ok: true; promptSource: "file" | "paste"; promptPath: string | null; promptText: string }
   | GenerateErr {
   if (input.promptSource === "paste") {
@@ -352,8 +361,10 @@ function resolvePrompt(game: GamesTopic, input: GenerateRequest):
     return { ok: true, promptSource: "paste", promptPath: null, promptText };
   }
   const promptPath = input.promptPath ?? game.systemPromptPath;
-  if (!GENERATION_PROMPT_FILES.includes(promptPath as (typeof GENERATION_PROMPT_FILES)[number])
-    && promptPath !== game.systemPromptPath) {
+  if (
+    !GENERATION_PROMPT_FILES.includes(promptPath as (typeof GENERATION_PROMPT_FILES)[number]) &&
+    promptPath !== game.systemPromptPath
+  ) {
     return { ok: false, code: "INVALID_PROMPT", error: "prompt file is not allowed" };
   }
   return {
@@ -412,4 +423,3 @@ async function resolveSource(
     publishable: true,
   };
 }
-
