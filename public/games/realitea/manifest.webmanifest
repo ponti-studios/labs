@@ -1,9 +1,10 @@
 {
   "name": "RealiTea",
   "short_name": "RealiTea",
+  "id": "/games/realitea/",
   "description": "A daily reality TV word game.",
-  "start_url": "/games/realitea",
-  "scope": "/games/realitea",
+  "start_url": "/games/realitea/",
+  "scope": "/games/realitea/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#f7f2e8",
