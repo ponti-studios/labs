@@ -68,7 +68,7 @@ function createOpenRouterClient(options: OpenRouterClientOptions = {}) {
 
 /** Resolves the text model to use for chat completions, defaulting to DEFAULT_TEXT_MODEL. */
 export function getConfiguredTextModel() {
-  return process.env.REALITEA_AI_MODEL ?? DEFAULT_TEXT_MODEL;
+  return process.env.WHAT_AI_MODEL ?? DEFAULT_TEXT_MODEL;
 }
 
 export async function chatCompletion(options: ChatCompletionOptions = { messages: [] }) {

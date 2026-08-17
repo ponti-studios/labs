@@ -46,7 +46,7 @@ export type HominemUser = {
  *
  * Fails closed: any transport error, non-2xx, or unparseable payload from the
  * Hominem API yields null (treated as "not signed in") rather than throwing,
- * so an API outage degrades RealiTea to anonymous play instead of a 500.
+ * so an API outage degrades What to anonymous play instead of a 500.
  */
 export async function getHominemUser(request: Request): Promise<HominemUser | null> {
   try {

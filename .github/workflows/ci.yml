@@ -54,7 +54,7 @@ jobs:
       - run: pnpm lint:check
       - run: pnpm typecheck
       - run: pnpm test
-      - run: pnpm test:realitea
+      - run: pnpm test:what
 
   build:
     runs-on: ubuntu-latest
@@ -70,12 +70,12 @@ jobs:
           cache: "pnpm"
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
-      - name: Verify RealiTea performance guardrails
+      - name: Verify What performance guardrails
         run: |
-          test -f public/games/realitea/manifest.webmanifest
-          test -f public/games/realitea/sw.js
-          test -f public/games/realitea/icons/icon-192.png
-          test -f public/games/realitea/icons/icon-512.png
+          test -f public/games/what/manifest.webmanifest
+          test -f public/games/what/sw.js
+          test -f public/games/what/icons/icon-192.png
+          test -f public/games/what/icons/icon-512.png
           if rg -n 'fonts\.googleapis\.com|fonts\.gstatic\.com|font-\[.Geist.|"Geist"|"Inter"' app; then
             echo "Custom font loading or references found in app source"
             exit 1

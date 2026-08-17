@@ -19,8 +19,8 @@ export interface OnscreenKeyboardProps {
   disabled?: boolean;
   /** Display only — keys render at full opacity with no hover/click effects. */
   readOnly?: boolean;
-  /** Product-scoped visual treatment for RealiTea. */
-  appearance?: "default" | "realitea";
+  /** Product-scoped visual treatment for What. */
+  appearance?: "default" | "what";
   className?: string;
 }
 
@@ -64,7 +64,7 @@ export function OnscreenKeyboard({
       keyboardKeyVariants({ kind, state }),
       readOnly && "pointer-events-none cursor-default",
       disabled && "cursor-not-allowed opacity-50",
-      appearance === "realitea" && `realitea-key realitea-key-${state}`,
+      appearance === "what" && `what-key what-key-${state}`,
     );
 
   const keyLabel = (letter: string, state: LetterState | "action") => {
@@ -77,11 +77,7 @@ export function OnscreenKeyboard({
 
   return (
     <div
-      className={cn(
-        "w-full space-y-1.5",
-        appearance === "realitea" && "realitea-keyboard",
-        className,
-      )}
+      className={cn("w-full space-y-1.5", appearance === "what" && "what-keyboard", className)}
       data-testid="onscreen-keyboard"
     >
       {ROWS.map((row, i) => (

@@ -50,7 +50,7 @@ A test prompt ("come up with a Connections game") produced a genuinely well-form
 - **Before this signal:** WordNet clustering was the primary *generator*; the LLM's role was mostly polish (pick the best 4 from a cluster, write a label).
 - **After this signal:** the LLM is the primary *generator* of both words and groupings — including the enumerable categories WordNet can't touch at all. WordNet, jargon-file, and the curated lists become the **grounding/verification layer**: is this claimed double-meaning real, per a source of truth, not per the model's say-so; is this claimed group free of the collisions our picker already knows how to detect.
 
-That mirrors RealiTea's existing discipline exactly — a model generates, the server never trusts it blind, ground truth validates before anything publishes. One good example doesn't establish a track record; it establishes that the generation side is worth building, with validation held to the same bar RealiTea already proved out.
+That mirrors What's existing discipline exactly — a model generates, the server never trusts it blind, ground truth validates before anything publishes. One good example doesn't establish a track record; it establishes that the generation side is worth building, with validation held to the same bar What already proved out.
 
 ## Read next
 

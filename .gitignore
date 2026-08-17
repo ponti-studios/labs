@@ -13,7 +13,7 @@ node_modules
 # testing
 coverage
 
-# RealiTea source fixtures are intentionally committed; keep only local overrides out.
+# What source fixtures are intentionally committed; keep only local overrides out.
 
 # build
 .next
@@ -41,6 +41,6 @@ npm-debug.log*
 .nx/cache
 .nx/workspace-data
 
-# Generated demo/reference screenshots (scripts/realitea-tile-states.ts)
+# Generated demo/reference screenshots (scripts/what-tile-states.ts)
 public/screenshots/tile-states/
 **/.claude/settings.local.json

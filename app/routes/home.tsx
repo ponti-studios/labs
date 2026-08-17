@@ -3,10 +3,10 @@ import { LucideArrowBigRight } from "lucide-react";
 import { Link } from "react-router";
 import { ProjectsWallet } from "~/components/projects-wallet/projects-wallet";
 import type { FeaturedProject } from "~/components/projects-wallet/project-card";
-import { RealiTeaTile } from "~/routes/games/realitea/realitea-tile";
+import { WhatTile } from "~/routes/games/what/what-tile";
 import { t } from "~/translations";
 
-import "~/routes/games/realitea/realitea.css";
+import "~/routes/games/what/what.css";
 
 export function meta(): Array<{
   title?: string;
@@ -75,20 +75,20 @@ const PREVIEW_ROWS = [
 ];
 
 // Standalone so it can be passed as `ProjectCard`'s `preview` slot — the
-// masked-number band on RealiTea's card face. Relies on the card's `group`
+// masked-number band on What's card face. Relies on the card's `group`
 // class (from project-card.tsx) for the hover stagger-lift.
-function RealiTeaCardPreview() {
+function WhatCardPreview() {
   return (
-    <div className="realitea-hero-preview flex flex-col items-center gap-(--realitea-tile-gap)">
+    <div className="what-hero-preview flex flex-col items-center gap-(--what-tile-gap)">
       {PREVIEW_ROWS.map((row, rowIndex) => (
-        <div key={rowIndex} className="flex gap-(--realitea-tile-gap)">
+        <div key={rowIndex} className="flex gap-(--what-tile-gap)">
           {row.map((tile, tileIndex) => (
             <div
               key={tileIndex}
               className="motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover:-translate-y-1"
               style={{ transitionDelay: `${(rowIndex * 4 + tileIndex) * 30}ms` }}
             >
-              <RealiTeaTile state={tile.state} letter={tile.letter} />
+              <WhatTile state={tile.state} letter={tile.letter} />
             </div>
           ))}
         </div>
@@ -99,17 +99,17 @@ function RealiTeaCardPreview() {
 
 const FEATURED_PROJECTS: FeaturedProject[] = [
   {
-    id: "realitea",
-    href: "/games/realitea",
-    logo: "/experiments/logo.realitea.webp",
-    logoAlt: t.nav.realitea,
-    title: t.home.realitea.title,
-    eyebrow: t.home.realitea.eyebrow,
-    description: t.home.realitea.description,
-    cta: t.home.realitea.cta,
-    theme: "realitea",
-    status: t.home.realitea.live,
-    preview: <RealiTeaCardPreview />,
+    id: "what",
+    href: "/games/what",
+    logo: "/experiments/logo.what.webp",
+    logoAlt: t.nav.what,
+    title: t.home.what.title,
+    eyebrow: t.home.what.eyebrow,
+    description: t.home.what.description,
+    cta: t.home.what.cta,
+    theme: "what",
+    status: t.home.what.live,
+    preview: <WhatCardPreview />,
   },
   {
     id: "career",

@@ -15,6 +15,7 @@ pnpm dev
 ```
 
 Foundation provides:
+
 - PostgreSQL on `localhost:5434` (database: `hominem`)
 - PostgreSQL test on `localhost:4433` (database: `labs-test`)
 - Redis on `localhost:6379`
@@ -24,21 +25,21 @@ Credentials: `postgres` / `postgres` | `minioadmin` / `minioadmin`
 
 ### Scripts
 
-| Command                        | Purpose                                  |
-| ------------------------------ | ---------------------------------------- |
-| `pnpm dev`                     | Start dev server (port 3001)             |
-| `pnpm build`                   | Production build                         |
-| `pnpm start`                   | Start production server                  |
-| `pnpm test`                    | Run unit tests                           |
-| `pnpm test:realitea`           | Run RealiTea-specific tests              |
-| `pnpm typecheck`               | Type-check the project                   |
-| `pnpm lint`                    | Lint with oxlint                         |
-| `pnpm format`                  | Format with oxfmt                        |
-| `pnpm db:generate`             | Generate Drizzle migration               |
-| `pnpm db:migrate`              | Apply Drizzle migrations                 |
-| `pnpm storybook`               | Start Storybook (port 6007)              |
-| `pnpm realitea:generate`       | Generate RealiTea puzzles                |
-| `pnpm search:seed`             | Seed search corpus                       |
+| Command              | Purpose                      |
+| -------------------- | ---------------------------- |
+| `pnpm dev`           | Start dev server (port 3001) |
+| `pnpm build`         | Production build             |
+| `pnpm start`         | Start production server      |
+| `pnpm test`          | Run unit tests               |
+| `pnpm test:what`     | Run WH?T-specific tests      |
+| `pnpm typecheck`     | Type-check the project       |
+| `pnpm lint`          | Lint with oxlint             |
+| `pnpm format`        | Format with oxfmt            |
+| `pnpm db:generate`   | Generate Drizzle migration   |
+| `pnpm db:migrate`    | Apply Drizzle migrations     |
+| `pnpm storybook`     | Start Storybook (port 6007)  |
+| `pnpm what:generate` | Generate WH?T puzzles        |
+| `pnpm search:seed`   | Seed search corpus           |
 
 ### Deployment
 

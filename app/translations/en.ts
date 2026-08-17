@@ -6,7 +6,7 @@ export const STUDIO_TRANSLATIONS_EN = {
     projects: "Lab",
     manifesto: "Manifesto",
     book: "Book",
-    realitea: "RealiTea",
+    what: "WH?T",
     career: "Career",
   },
   projects: {
@@ -274,13 +274,13 @@ export const STUDIO_TRANSLATIONS_EN = {
           "Keep six toolchains coherent behind one command surface",
         ],
       },
-      realitea: {
-        name: "RealiTea",
+      what: {
+        name: "WH?T",
         shortDescription: "A word game that reads the news, so it's never stale.",
         solution:
           "A daily word puzzle where players guess real celebrity names by spelling them out from clues, with new puzzles generated from actual entertainment journalism every day.",
         problem:
-          "Most word games run the same mechanic forever. RealiTea pulls from live entertainment news to write a fresh puzzle every day, tied to what's actually happening instead of a static dictionary.",
+          "Most word games run the same mechanic forever. WH?T pulls from live entertainment news to write a fresh puzzle every day, tied to what's actually happening instead of a static dictionary.",
         keyFeatures: [
           "Generate a fresh puzzle each day from live entertainment headlines",
           "Give letter-by-letter feedback as players solve",
@@ -986,9 +986,9 @@ export const STUDIO_TRANSLATIONS_EN = {
     principles: {
       title: "Manifesto",
     },
-    realitea: {
+    what: {
       eyebrow: "Featured product",
-      title: "Realitea",
+      title: "WH?T",
       description: "Wordle for reality-TV fans.",
       cta: "Play today",
       live: "Live",
@@ -1015,7 +1015,7 @@ export const STUDIO_TRANSLATIONS_EN = {
         {
           name: "Experiments",
           entries: [
-            { path: "/games/realitea", label: "RealiTea" },
+            { path: "/games/what", label: "WH?T" },
             { path: "/games/cards", label: "Cards" },
             { path: "/games/tetris", label: "Tetris" },
             { path: "/experiments/calendar", label: "Calendar" },

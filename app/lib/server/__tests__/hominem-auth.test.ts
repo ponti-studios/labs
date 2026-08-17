@@ -18,7 +18,7 @@ import {
 const ORIGINAL_API_URL = process.env.HOMINEM_API_URL;
 
 function makeRequest(cookie?: string): Request {
-  return new Request("https://labs.ponti.io/games/realitea", {
+  return new Request("https://labs.ponti.io/games/what", {
     headers: cookie ? { cookie } : {},
   });
 }
@@ -125,11 +125,11 @@ describe("getHominemUser", () => {
 describe("buildHominemLoginUrl", () => {
   it("points at the Hominem login page with an encoded next param", () => {
     process.env.HOMINEM_API_URL = "https://api.ponti.io";
-    const url = new URL(buildHominemLoginUrl("https://labs.ponti.io/games/realitea"));
+    const url = new URL(buildHominemLoginUrl("https://labs.ponti.io/games/what"));
 
     expect(url.origin).toBe("https://api.ponti.io");
     expect(url.pathname).toBe("/login");
-    expect(url.searchParams.get("next")).toBe("https://labs.ponti.io/games/realitea");
+    expect(url.searchParams.get("next")).toBe("https://labs.ponti.io/games/what");
 
     if (ORIGINAL_API_URL === undefined) delete process.env.HOMINEM_API_URL;
     else process.env.HOMINEM_API_URL = ORIGINAL_API_URL;

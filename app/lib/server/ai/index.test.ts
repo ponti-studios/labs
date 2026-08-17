@@ -11,8 +11,8 @@ describe("text model resolution", () => {
     expect(DEFAULT_TEXT_MODEL).toBe("deepseek/deepseek-v4-flash");
   });
 
-  it("uses REALITEA_AI_MODEL when set", () => {
-    vi.stubEnv("REALITEA_AI_MODEL", "google/gemini-3.1-flash-lite");
+  it("uses WHAT_AI_MODEL when set", () => {
+    vi.stubEnv("WHAT_AI_MODEL", "google/gemini-3.1-flash-lite");
     expect(getConfiguredTextModel()).toBe("google/gemini-3.1-flash-lite");
   });
 });
