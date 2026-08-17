@@ -1,19 +1,12 @@
 ---
-title: Connections API Design
-project: connections
-type: spec
-status: active
-client: null
-industry: null
-owner: charlesponti
-tags:
-  - api
-  - game-design
-  - react-router
-related:
-  - ./__index.md
-  - ./game-generation.md
+title: API Design
 summary: The wire protocol for the software-industry Connections game — server-authoritative validation, a compact public puzzle payload, and index-based guesses.
+type: proposal
+status: proposed
+owner: charlesponti
+tags: [api, game-design, react-router]
+related: [./__index.md, ./word-sourcing.md, ./game-generation.md]
+updated: 2026-08-17
 ---
 
 # Connections API Design

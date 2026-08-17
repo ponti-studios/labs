@@ -1,21 +1,12 @@
 ---
-title: Connections Case Study
-project: connections
-type: case-study
-status: active
-client: null
-industry: null
-owner: charlesponti
-tags:
-  - case-study
-  - game-design
-  - ai
-  - product-engineering
-related:
-  - ./api-design.md
-  - ./word-sourcing.md
-  - ./game-generation.md
+title: Connections
 summary: A Connections-style daily game for the software industry — same server-authoritative, generate-then-validate discipline RealiTea proved out, applied to a much harder content-validation problem.
+type: proposal
+status: proposed
+owner: charlesponti
+tags: [game-design, ai, product-engineering]
+related: [./api-design.md, ./word-sourcing.md, ./game-generation.md]
+updated: 2026-08-17
 ---
 
 # Connections

@@ -1,20 +1,12 @@
 ---
-title: Connections Word Sourcing
-project: connections
-type: spec
-status: active
-client: null
-industry: null
-owner: charlesponti
-tags:
-  - data
-  - nlp
-  - game-design
-  - ai
-related:
-  - ./__index.md
-  - ./game-generation.md
+title: Word Sourcing
 summary: Where category-group words and their cross-domain overlaps come from — a curated software-industry seed pool, WordNet for grounding, and an LLM for generation, not the other way around.
+type: proposal
+status: proposed
+owner: charlesponti
+tags: [data, nlp, game-design, ai]
+related: [./__index.md, ./api-design.md, ./game-generation.md]
+updated: 2026-08-17
 ---
 
 # Connections Word Sourcing

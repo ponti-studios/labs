@@ -1,21 +1,12 @@
 ---
-title: Connections Game Generation
-project: connections
-type: spec
-status: active
-client: null
-industry: null
-owner: charlesponti
-tags:
-  - architecture
-  - ai
-  - game-design
-  - backend
-related:
-  - ./__index.md
-  - ./api-design.md
-  - ./word-sourcing.md
+title: Game Generation
 summary: How category groups get assembled into a daily puzzle without collisions, and the generate-then-validate architecture for producing the groups themselves.
+type: proposal
+status: proposed
+owner: charlesponti
+tags: [architecture, ai, game-design, backend]
+related: [./__index.md, ./api-design.md, ./word-sourcing.md]
+updated: 2026-08-17
 ---
 
 # Connections Game Generation
