@@ -3,7 +3,10 @@ import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 
 import { isDateKey } from "~/lib/realitea/core/date";
 import { DEFAULT_REALITEA_GAME_SLUG } from "~/lib/realitea/generation/catalog";
-import { loadPuzzleForSpecificDate, type DatedPuzzleEnvelope } from "~/lib/realitea/server/puzzle.server";
+import {
+  loadPuzzleForSpecificDate,
+  type DatedPuzzleEnvelope,
+} from "~/lib/realitea/server/puzzle.server";
 import { buildHominemLoginUrl, getHominemUser } from "~/lib/server/hominem-auth";
 
 import { RealiTeaGameBoard, RealiTeaGameBoardSkeleton } from "./game-board";
@@ -36,7 +39,11 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   return Response.json({ ...envelope, signedIn: user !== null, loginUrl, gameSlug });
 }
 
-export type LoaderData = DatedPuzzleEnvelope & { signedIn: boolean; loginUrl: string; gameSlug: string };
+export type LoaderData = DatedPuzzleEnvelope & {
+  signedIn: boolean;
+  loginUrl: string;
+  gameSlug: string;
+};
 
 export function meta({ params }: { params: { date?: string } }) {
   return [

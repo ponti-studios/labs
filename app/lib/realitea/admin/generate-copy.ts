@@ -29,13 +29,22 @@ const REASON_COPY: Record<GenerateReasonType, string> = {
 
 const LEGACY_REASON_TYPES: Array<{ match: string; type: GenerateReasonType }> = [
   { match: "unmatched-article", type: GenerateReasonType.UnmatchedArticle },
-  { match: "answer must normalize to exactly five letters", type: GenerateReasonType.NotFiveLetters },
+  {
+    match: "answer must normalize to exactly five letters",
+    type: GenerateReasonType.NotFiveLetters,
+  },
   { match: "answer does not normalize cleanly to letters", type: GenerateReasonType.NotLetters },
-  { match: "answer is not in the accepted five-letter word list", type: GenerateReasonType.NotDictionaryWord },
+  {
+    match: "answer is not in the accepted five-letter word list",
+    type: GenerateReasonType.NotDictionaryWord,
+  },
   { match: "answer type is missing", type: GenerateReasonType.MissingAnswerType },
   { match: "answer type must not be a person", type: GenerateReasonType.PersonAnswerType },
   { match: "answer is leaked in clue or detail", type: GenerateReasonType.AnswerLeaked },
-  { match: "clue or detail contains prompt-control text", type: GenerateReasonType.PromptControlText },
+  {
+    match: "clue or detail contains prompt-control text",
+    type: GenerateReasonType.PromptControlText,
+  },
   { match: "answer repeats inside cooldown window", type: GenerateReasonType.RepeatInWindow },
   { match: "missing a", type: GenerateReasonType.MissingSource },
 ];

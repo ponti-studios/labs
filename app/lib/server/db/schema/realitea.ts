@@ -7,7 +7,6 @@ import {
   index,
   integer,
   jsonb,
-  primaryKey,
   serial,
   text,
   timestamp,
@@ -40,9 +39,8 @@ export const gamesTopics = labs.table("games_topics", {
 });
 
 // ── articles ─────────────────────────────────────────────────────────────────
-// Entity: an ingested article, deduped globally on url. Game-agnostic —
-// eligibility for a game is derived via feed_games, and "used" is global:
-// once an article becomes a puzzle for any game it is retired everywhere.
+// Entity: an ingested article, deduped globally on url, owned by exactly one
+// games_topic. Status/lifecycle is scoped to that topic, not global.
 
 export const articleStatusValues = ["pending", "used", "rejected", "expired"] as const;
 export type ArticleStatus = (typeof articleStatusValues)[number];
@@ -124,6 +122,7 @@ export const realiteaAdminActionKindValues = [
   "regenerate_dry_run",
   "dispatch_generate",
   "lock_busy",
+  "generation_circuit_open",
 ] as const;
 export type RealiteaAdminActionKind = (typeof realiteaAdminActionKindValues)[number];
 
@@ -196,12 +195,14 @@ export const generationCandidates = labs.table(
     handEdited: boolean("hand_edited").notNull().default(false),
     articleId: integer("article_id").references(() => articles.id, { onDelete: "restrict" }),
   },
-  (table) => [uniqueIndex("realitea_generation_candidates_run_ordinal_idx").on(table.runId, table.ordinal)],
+  (table) => [
+    uniqueIndex("realitea_generation_candidates_run_ordinal_idx").on(table.runId, table.ordinal),
+  ],
 );
 
 // ── games_puzzles ────────────────────────────────────────────────────────────
 // Entity: a puzzle for one game on one date, generated from exactly one
-// article. Generalized from rhobh_games_puzzles — game_id replaces the
+// article. Generalized from rhobh_games_puzzles — games_topic_id replaces the
 // implicit "this table is only rhobh" assumption, article_id replaces the
 // jsonb sources array now that generation is strictly one-article-in.
 //
@@ -358,4 +359,3 @@ export type PuzzleRevision = typeof puzzleRevisions.$inferSelect;
 export type NewPuzzleRevision = typeof puzzleRevisions.$inferInsert;
 export type AdminAction = typeof adminActions.$inferSelect;
 export type NewAdminAction = typeof adminActions.$inferInsert;
-

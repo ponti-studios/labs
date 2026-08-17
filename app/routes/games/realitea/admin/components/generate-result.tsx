@@ -26,7 +26,9 @@ export function GenerateResult({
     <section className={styles.section}>
       <p className="text-muted-foreground text-sm">
         {formatTokenCount(result.usage.totalTokens)} tokens
-        {result.usage.reasoningTokens ? ` (${formatTokenCount(result.usage.reasoningTokens)} reasoning)` : ""}
+        {result.usage.reasoningTokens
+          ? ` (${formatTokenCount(result.usage.reasoningTokens)} reasoning)`
+          : ""}
         {" · "}
         {formatUsd(result.usage.costUsd)}
       </p>

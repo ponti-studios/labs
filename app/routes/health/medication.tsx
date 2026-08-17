@@ -7,7 +7,8 @@ interface MedicationSchedule {
   description: string;
 }
 /**
- * Get the number of complete dosages a prescription can provide.
+ * Get the number of weeks (fractional for a partial final week) a
+ * prescription can cover, given weekly dosage amounts.
  *
  * @param weeklyDosages
  * @param prescription

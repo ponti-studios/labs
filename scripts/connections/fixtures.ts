@@ -37,8 +37,8 @@ export const fixtureBank: CategoryGroup[] = [
     riskWords: ["Atom"],
   },
   // y5 intentionally shares the literal word "Java" with y1's risk list, and
-  // also collides with y6 on the word "Swift" — used to test that the
-  // picker never seats y1 alongside y5, or y1 alongside y6.
+  // y1 also collides with y6 on the word "Swift" (y1's other risk word) —
+  // used to test that the picker never seats y1 alongside y5, or y1 alongside y6.
   {
     id: "y5",
     category: "Coffee Terms Borrowed by Tech",

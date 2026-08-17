@@ -1,6 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import { articles, db, eq, gamesPuzzles, gamesTopics, generationCandidates, generationRuns } from "~/lib/server/db";
+import {
+  articles,
+  db,
+  eq,
+  gamesPuzzles,
+  gamesTopics,
+  generationCandidates,
+  generationRuns,
+} from "~/lib/server/db";
 import { cleanAll } from "../../../data/test-db";
 import { publishCandidate } from "../admin/publish";
 
@@ -135,7 +143,10 @@ describe("publishCandidate", () => {
 
   it("refuses a review-only generation", async () => {
     const { game, generation, candidate } = await seedPublishable();
-    await db.update(generationRuns).set({ publishable: false }).where(eq(generationRuns.id, generation.id));
+    await db
+      .update(generationRuns)
+      .set({ publishable: false })
+      .where(eq(generationRuns.id, generation.id));
     const result = await publishCandidate({
       game,
       generationId: generation.id,

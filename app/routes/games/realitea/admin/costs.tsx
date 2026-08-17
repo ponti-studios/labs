@@ -16,7 +16,7 @@ import { formatTokenCount, formatUsd } from "~/lib/realitea/admin/format";
 import {
   getGenerationCostReport,
   type GenerationCostBreakdownRow,
-} from "~/lib/realitea/server/repository.server";
+} from "~/lib/realitea/server/generation-runs.server";
 
 import "../realitea.css";
 
@@ -92,7 +92,11 @@ export default function RealiTeaAdminCosts() {
       </section>
 
       <BreakdownTable title="Trigger" rows={report.byTrigger} emptyLabel="No triggers" />
-      <BreakdownTable title="Environment" rows={report.byEnvironment} emptyLabel="No environments" />
+      <BreakdownTable
+        title="Environment"
+        rows={report.byEnvironment}
+        emptyLabel="No environments"
+      />
       <BreakdownTable title="Model" rows={report.byModel} emptyLabel="No models" />
     </main>
   );

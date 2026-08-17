@@ -1,4 +1,15 @@
-# RealiTea source fixtures
+---
+title: Source Fixtures
+summary: How to capture offline RSS/article snapshots for prompt testing without live feeds.
+type: guide
+status: active
+owner: charlesponti
+tags: [generation, testing, fixtures]
+related: [./prompt-evaluation.md, ./candidate-generation.md]
+updated: 2026-08-16
+---
+
+# Source Fixtures
 
 Use the real RSS feeds to create reusable, offline prompt inputs:
 

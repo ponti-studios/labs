@@ -90,9 +90,8 @@ STUB_LOGIN_URL.searchParams.set("next", "https://labs.ponti.io/games/realitea");
 const STUB_LOGIN_URL_STRING = STUB_LOGIN_URL.toString();
 
 // The route seeds guesses from the server-authoritative attempt returned by
-// its loader instead of localStorage — see
-// docs/incidents/011-cross-device-progress-not-synced.md. Tests configure
-// the loader response via `mockAttempt`.
+// its loader instead of localStorage. Tests configure the loader response
+// via `mockAttempt`.
 type MockAttempt = { guesses: RealiteaGuess[]; status: GameStatus } | null;
 let mockAttempt: MockAttempt = null;
 

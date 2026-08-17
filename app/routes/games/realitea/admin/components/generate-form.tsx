@@ -19,7 +19,11 @@ import {
 } from "@ponti-studios/ui/primitives";
 import { useState } from "react";
 
-import { GENERATE_REASONING_EFFORTS, type GenerateReasoningEffort, type GenerateSourceMode } from "~/lib/realitea/admin/generate-types";
+import {
+  GENERATE_REASONING_EFFORTS,
+  type GenerateReasoningEffort,
+  type GenerateSourceMode,
+} from "~/lib/realitea/admin/generate-types";
 
 import styles from "./generate-form.module.css";
 
@@ -284,8 +288,8 @@ export function GenerateForm({
               </SelectContent>
             </Select>
             <p className="text-muted-foreground text-xs">
-              Caps how much the model "thinks" before answering. Lower effort is cheaper and
-              faster but can hurt answer quality; not every model honors this.
+              Caps how much the model "thinks" before answering. Lower effort is cheaper and faster
+              but can hurt answer quality; not every model honors this.
             </p>
           </div>
           <Button type="submit" className="w-fit" isLoading={running} disabled={running}>

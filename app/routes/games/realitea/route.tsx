@@ -18,7 +18,7 @@ import {
   type ActivePuzzleAttempt,
 } from "~/lib/realitea/server/puzzle.server";
 import { buildHominemLoginUrl, getHominemUser } from "~/lib/server/hominem-auth";
-import { getActiveGames } from "~/lib/realitea/server/repository.server";
+import { getActiveGames } from "~/lib/realitea/server/games.server";
 
 import { RealiTeaGameBoard, RealiTeaGameBoardSkeleton } from "./game-board";
 import { resolveReturnTo } from "./return-to.server";

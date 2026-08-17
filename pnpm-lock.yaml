@@ -42,8 +42,8 @@ importers:
         specifier: 0.44.0
         version: 0.44.0(@opentelemetry/api@1.9.1)(zod@4.4.3)
       '@tanstack/ai-openrouter':
-        specifier: 0.16.1
-        version: 0.16.1(@tanstack/ai@0.44.0(@opentelemetry/api@1.9.1)(zod@4.4.3))
+        specifier: 0.17.0
+        version: 0.17.0(@tanstack/ai@0.44.0(@opentelemetry/api@1.9.1)(zod@4.4.3))
       '@tanstack/react-query':
         specifier: ^5.101.3
         version: 5.101.4(react@19.2.8)
@@ -2240,10 +2240,10 @@ packages:
   '@tanstack/ai-event-client@0.8.0':
     resolution: {integrity: sha512-UzhGQERwGU0yymziuGiHXNnKRZeR2JaGoPXeNzKuHwQtUmvMu1H8g0C9wpkpksj+pmTQPhdEBUOMlU6NhLDVpA==}
 
-  '@tanstack/ai-openrouter@0.16.1':
-    resolution: {integrity: sha512-/71STIl3lsR5suGSvOSl/sHuktY6co7SBP+24c66Gdai1ptDvNgA+lql/aLM67P8pMvD4aNTWi/xh6lr8mLhaw==}
+  '@tanstack/ai-openrouter@0.17.0':
+    resolution: {integrity: sha512-rD0lljULNKyfY2DIFdWt6tvNzS4tHXr0IqT/GJ7dSMuYpRBZy033RtMcVsZW5h1O0g+1N4UG4QycccL0Rj124Q==}
     peerDependencies:
-      '@tanstack/ai': ^0.44.0
+      '@tanstack/ai': ^0.44.1
 
   '@tanstack/ai-utils@0.4.0':
     resolution: {integrity: sha512-xqvAgPJkIuGk1m+jZKyb7vBTQIaBmUD9EVzlPkDWWMp80n69uwL0TnBZCVk+OwL9goTQiFy648dnBfLsiJgl6A==}
@@ -6162,7 +6162,7 @@ snapshots:
     dependencies:
       '@tanstack/devtools-event-client': 0.4.4
 
-  '@tanstack/ai-openrouter@0.16.1(@tanstack/ai@0.44.0(@opentelemetry/api@1.9.1)(zod@4.4.3))':
+  '@tanstack/ai-openrouter@0.17.0(@tanstack/ai@0.44.0(@opentelemetry/api@1.9.1)(zod@4.4.3))':
     dependencies:
       '@openrouter/sdk': 0.13.20
       '@tanstack/ai': 0.44.0(@opentelemetry/api@1.9.1)(zod@4.4.3)

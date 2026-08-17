@@ -284,7 +284,7 @@ export const STUDIO_TRANSLATIONS_EN = {
         keyFeatures: [
           "Generate a fresh puzzle each day from live entertainment headlines",
           "Give letter-by-letter feedback as players solve",
-          "Reconcile scheduled puzzles through Drizzle and PostgreSQL",
+          "Generate scheduled puzzles through Drizzle and PostgreSQL",
           "Check puzzle quality and freshness before publication",
           "Generate and manage puzzles from an admin panel",
         ],
@@ -996,14 +996,16 @@ export const STUDIO_TRANSLATIONS_EN = {
     career: {
       eyebrow: "Featured product",
       title: "Career",
-      description: "Your resume crushes a decade of work into two pages. Career keeps the whole story.",
+      description:
+        "Your resume crushes a decade of work into two pages. Career keeps the whole story.",
       cta: "Visit site",
       live: "Live",
     },
     omiro: {
       eyebrow: "In development",
       title: "Omiro",
-      description: "Your notes, tasks, and calendar don't talk to each other. Omiro makes them one connected app.",
+      description:
+        "Your notes, tasks, and calendar don't talk to each other. Omiro makes them one connected app.",
       cta: "Learn more",
     },
     lab: {

@@ -1,5 +1,11 @@
 import { Progress, Spinner } from "@ponti-studios/ui/feedback";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@ponti-studios/ui/primitives";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@ponti-studios/ui/primitives";
 import { Check } from "lucide-react";
 
 import { generateStagePercent } from "~/lib/realitea/admin/generate-copy";
@@ -66,10 +72,7 @@ export function GenerateProgress({
           {running ? "Working" : "Last generation"}
         </CardTitle>
         <CardDescription>
-          <span
-            key={`${stage?.stage ?? "idle"}:${stage?.detail ?? ""}`}
-            className={styles.detail}
-          >
+          <span key={`${stage?.stage ?? "idle"}:${stage?.detail ?? ""}`} className={styles.detail}>
             {stage?.detail ?? "Waiting for the first update."}
           </span>
         </CardDescription>

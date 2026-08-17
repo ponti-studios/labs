@@ -54,4 +54,3 @@ export interface RealiteaGuessResult {
   authRequired?: boolean;
   remainingGuesses?: number;
 }
-

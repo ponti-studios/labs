@@ -1,12 +1,5 @@
 import { EmptyState } from "@ponti-studios/ui/feedback";
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@ponti-studios/ui/primitives";
+import { Button, Card, CardContent, CardHeader, CardTitle } from "@ponti-studios/ui/primitives";
 import { Link2, LucideCheck } from "lucide-react";
 import { useFetcher } from "react-router";
 

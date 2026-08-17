@@ -11,7 +11,7 @@ vi.mock("../../../../lib/realitea/server/puzzle.server", () => ({
   loadActivePublicPuzzleWithAttempt,
 }));
 
-vi.mock("../../../../lib/realitea/server/repository.server", () => ({
+vi.mock("../../../../lib/realitea/server/games.server", () => ({
   getActiveGames,
 }));
 

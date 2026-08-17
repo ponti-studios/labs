@@ -11,7 +11,11 @@ import { StatusBadge, type StatusBadgeConfig } from "@ponti-studios/ui/primitive
 import { Link } from "react-router";
 
 import { formatTokenCount, formatUsd } from "~/lib/realitea/admin/format";
-import type { AdminGeneration, InventoryCell, InventoryCellState } from "~/lib/realitea/admin/inventory";
+import type {
+  AdminGeneration,
+  InventoryCell,
+  InventoryCellState,
+} from "~/lib/realitea/admin/inventory";
 
 export const CELL_STATUS: Record<InventoryCellState, StatusBadgeConfig> = {
   live: { label: "Live", variant: "default" },
@@ -39,15 +43,11 @@ function cellWhen(cell: InventoryCell) {
   return "Scheduled";
 }
 
-export function InventoryList({
-  cells,
-  gameSlug,
-}: {
-  cells: InventoryCell[];
-  gameSlug: string;
-}) {
+export function InventoryList({ cells, gameSlug }: { cells: InventoryCell[]; gameSlug: string }) {
   if (cells.length === 0) {
-    return <EmptyState title="No inventory dates" description="There are no dates in this window." />;
+    return (
+      <EmptyState title="No inventory dates" description="There are no dates in this window." />
+    );
   }
 
   return (

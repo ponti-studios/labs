@@ -1,11 +1,9 @@
 import { getSql } from "./drizzle";
 
-/** Fixed int4 pair for `pg_try_advisory_lock`. Shared by CLI, Actions, and HTTP generate. */
+/** Fixed int4 pair for `pg_try_advisory_lock`. Used by the realitea:generate CLI script (run locally and from GitHub Actions). */
 export const REALITEA_GENERATE_LOCK_KEYS = [42, 17] as const;
 
-export type GenerateLockResult<T> =
-  | { ok: true; value: T }
-  | { ok: false; code: "lock_busy" };
+export type GenerateLockResult<T> = { ok: true; value: T } | { ok: false; code: "lock_busy" };
 
 /**
  * Run `fn` while holding a session advisory lock on a reserved postgres.js

@@ -6,12 +6,9 @@ import { createLogger } from "~/lib/logger.server";
 import { requireAdminAuth } from "~/lib/server/admin-auth";
 import { getDateKey } from "~/lib/realitea/core/date";
 import { DEFAULT_REALITEA_GAME_SLUG } from "~/lib/realitea/generation/catalog";
-import {
-  countInventoryForRange,
-  countPendingArticlesForGame,
-  getGameBySlug,
-  loadPuzzleForDate,
-} from "~/lib/realitea/server/repository.server";
+import { countPendingArticlesForGame } from "~/lib/realitea/server/articles.server";
+import { getGameBySlug } from "~/lib/realitea/server/games.server";
+import { countInventoryForRange, loadPuzzleForDate } from "~/lib/realitea/server/puzzles.server";
 
 const logger = createLogger();
 
@@ -90,4 +87,3 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   return Response.json(health);
 }
-

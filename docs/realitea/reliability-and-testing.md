@@ -1,50 +1,31 @@
 ---
-title: RealiTea Reliability and Testing
-project: realitea
+title: Reliability and Testing
+summary: The failure modes RealiTea guards against, and how the test suite covers them.
 type: reference
 status: active
-client: null
-industry: null
 owner: charlesponti
-tags:
-  - testing
-  - reliability
-  - qa
-  - frontend
-related:
-  - ./index.md
-  - ./architecture.md
-  - ./gameplay-and-ux.md
-summary: The failure modes that mattered most in RealiTea and the testing strategy used to keep a simple game trustworthy.
+tags: [testing, reliability, frontend]
+related: [./architecture.md, ./gameplay-and-ux.md]
+updated: 2026-08-16
 ---
 
-# RealiTea Reliability and Testing
+# Reliability and Testing
 
-The hardest bugs in RealiTea were not crashes. They were the quiet state mismatches that make a game feel unfair. Reliability work focused on removing those trust breaks before anyone saw them.
+RealiTea's failure modes are quiet state mismatches, not crashes — a guess accepted twice, stale state carried across a day boundary, an interstitial reveal state that accepts a new guess. Each guard below closes one of those.
 
-## The critical bug: concurrent validation submissions
+## Concurrent validation submissions are serialized
 
-One of the sharpest defects came from repeated Enter presses during server validation. Without a guard, a pending validation request could be overwritten by another submit, leaving the route in a confused state where the wrong guess could be committed.
+A pending validation request can be overwritten by another submit if nothing guards it — repeated Enter presses during server validation is the trigger. A new submission can only begin when the fetcher is idle, so validation is a controlled handoff, not a loose async race.
 
-The fix was small but decisive: a new submission can only begin when the fetcher is idle. That turned validation from a loose async action into a controlled handoff.
+## Input locking covers every input path, not just the primary one
 
-## Input locking had to be complete, not partial
+Physical keyboard input and the on-screen keyboard both route through the same shared `addLetter`/`removeLetter`/`submitGuess` handlers, so a single `canMutateGuess` flag locks both at once while validation is active — there is no separate mobile-fallback path that needs its own lock. The same flag applies during staged reveal: a guess still resolving blocks the next one.
 
-Once validation moved to the server, the UI had to treat an in-flight guess as immutable. Partial locking was never going to be enough.
+## Persistence rejects stale state
 
-Physical keyboard input and on-screen keyboard interaction both route through the same shared `addLetter`/`removeLetter`/`submitGuess` handlers, so a single `canMutateGuess` flag locks both at once while validation is active — there is no separate "mobile fallback" input path to lock independently.
+Local persistence stores a puzzle key alongside the saved game state and rejects a restore whose key doesn't match the current puzzle. Without that check, an open tab left overnight would carry yesterday's board state into today's puzzle at day rollover.
 
-The same rule applies during staged reveal. If the game is still resolving the previous guess, it should not accept the next one yet.
-
-## Persistence only works if stale state is rejected
-
-Local persistence improves continuity, but it can also leak yesterday’s state into today’s puzzle if the restore logic is naive. RealiTea avoids that by storing a puzzle key with the saved game state and rejecting restored state that does not match the current key.
-
-That check matters most around day rollover, where an open tab can otherwise carry the wrong state forward.
-
-## Test coverage followed the actual failure modes
-
-The test suite was refreshed around the current architecture rather than older assumptions. That includes coverage for:
+## Test coverage
 
 - database-backed daily puzzle loading,
 - serving-time fallback to the most recent puzzle when today's has not published,
@@ -55,16 +36,13 @@ The test suite was refreshed around the current architecture rather than older a
 - share visibility,
 - locked input while a guess is in flight.
 
-Pure helper tests continue to cover normalization, date stability, duplicate-letter evaluation, keyboard-state priority, and guess limits. Share formatting and daily puzzle validation are tested separately so the route does not have to carry every guarantee on its own.
+Pure helper tests cover normalization, date stability, duplicate-letter evaluation, keyboard-state priority, and guess limits, separately from share formatting and daily puzzle validation — so the route doesn't have to carry every guarantee on its own.
 
-## The remaining tradeoff
+## Known tradeoff
 
-The main unresolved tradeoff is that there is no curated-archive fallback at generation time — only a serving-time rule that repeats the most recent approved puzzle. That is acceptable for continuity but would get repetitive if the generation path were unavailable for too long.
-
-It is not a launch blocker, but it is the clearest remaining quality lever if the product keeps growing.
+There is no curated-archive fallback at generation time, only a serving-time rule that repeats the most recent approved puzzle. That's acceptable for continuity but gets repetitive if generation is unavailable for an extended stretch — the clearest remaining reliability lever if it becomes a problem.
 
 ## Read next
 
-- [Back to the overview](./index.md)
 - [Architecture and daily pipeline details](./architecture.md)
 - [Gameplay and UX decisions](./gameplay-and-ux.md)

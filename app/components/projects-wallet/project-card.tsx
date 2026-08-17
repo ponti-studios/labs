@@ -54,7 +54,9 @@ function seededCardDigits(seed: string, length: number): string {
 }
 
 function formatCardNumber(seed: string): string {
-  return seededCardDigits(seed, 16).match(/.{1,4}/g)!.join(" ");
+  return seededCardDigits(seed, 16)
+    .match(/.{1,4}/g)!
+    .join(" ");
 }
 
 function DefaultPreview({ foreground, seed }: { foreground: string; seed: string }) {
@@ -149,7 +151,10 @@ export function ProjectCard({
               color: "var(--card-accent)",
             }}
           >
-            <span className="size-1.5 rounded-full" style={{ backgroundColor: "var(--card-accent)" }} />
+            <span
+              className="size-1.5 rounded-full"
+              style={{ backgroundColor: "var(--card-accent)" }}
+            />
             {status}
           </span>
         )}
@@ -165,12 +170,17 @@ export function ProjectCard({
       </div>
 
       <div className="relative z-10 mt-auto flex items-end justify-between transition-opacity duration-200 group-hover:opacity-0">
-        <span className="text-xs font-semibold tracking-[0.15em] uppercase opacity-90">{title}</span>
+        <span className="text-xs font-semibold tracking-[0.15em] uppercase opacity-90">
+          {title}
+        </span>
         <LucideArrowBigRight className="size-4 opacity-50" aria-hidden="true" />
       </div>
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex flex-col gap-1 bg-gradient-to-t from-black via-black/85 to-transparent p-4 opacity-0 transition-opacity duration-200 ease-out motion-safe:translate-y-2 motion-safe:transition-[opacity,transform] group-hover:opacity-100 motion-safe:group-hover:translate-y-0 sm:p-5">
-        <span className="text-[10px] font-semibold tracking-wide uppercase" style={{ color: "var(--card-accent)" }}>
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex flex-col gap-1 bg-gradient-to-t from-black via-black/85 to-transparent p-4 opacity-0 transition-opacity duration-200 ease-out group-hover:opacity-100 motion-safe:translate-y-2 motion-safe:transition-[opacity,transform] motion-safe:group-hover:translate-y-0 sm:p-5">
+        <span
+          className="text-[10px] font-semibold tracking-wide uppercase"
+          style={{ color: "var(--card-accent)" }}
+        >
           {eyebrow}
         </span>
         <span className="text-sm font-semibold text-white">{title}</span>

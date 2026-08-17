@@ -1,7 +1,14 @@
 import type { LoaderFunctionArgs } from "react-router";
 
-import { loadAdminGeneration, resolveAdminGame, toGenerateOk } from "~/lib/realitea/admin/inventory";
-import { subscribeToGeneration, type GenerationStreamEvent } from "~/lib/realitea/admin/generation-events.server";
+import {
+  loadAdminGeneration,
+  resolveAdminGame,
+  toGenerateOk,
+} from "~/lib/realitea/admin/inventory";
+import {
+  subscribeToGeneration,
+  type GenerationStreamEvent,
+} from "~/lib/realitea/admin/generation-events.server";
 import { DEFAULT_REALITEA_GAME_SLUG } from "~/lib/realitea/generation/catalog";
 import { db, eq, generationRuns } from "~/lib/server/db";
 

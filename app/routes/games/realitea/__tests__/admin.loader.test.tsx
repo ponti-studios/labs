@@ -55,7 +55,9 @@ describe("RealiTea admin inventory loader", () => {
   it("loads the full inventory for an authenticated admin", async () => {
     loadAdminInventoryMock.mockResolvedValue({ game: { slug: "rhobh" }, cells: [] });
     const { loader } = await import("../admin/inventory");
-    const result = await loader(createLoaderArgs("https://labs.ponti.io/games/realitea/admin/inventory"));
+    const result = await loader(
+      createLoaderArgs("https://labs.ponti.io/games/realitea/admin/inventory"),
+    );
     expect(result).toEqual({ game: { slug: "rhobh" }, cells: [] });
     expect(loadAdminInventoryMock).toHaveBeenCalledWith("rhobh");
   });
@@ -104,7 +106,9 @@ describe("RealiTea admin overview loader", () => {
   it("throws 404 when no topic exists", async () => {
     loadAdminOverviewMock.mockResolvedValue(null);
     const { loader } = await import("../admin/route");
-    await expect(loader(createLoaderArgs("https://labs.ponti.io/games/realitea/admin"))).rejects.toMatchObject({
+    await expect(
+      loader(createLoaderArgs("https://labs.ponti.io/games/realitea/admin")),
+    ).rejects.toMatchObject({
       status: 404,
     });
   });

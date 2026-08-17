@@ -8,7 +8,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-import { getStoredAnswers } from "./repository.server";
+import { getStoredAnswers } from "./puzzles.server";
 import { REALITEA_ANSWER_LENGTH } from "../core/rules";
 
 const wordListPath = resolve(process.cwd(), "app/data/words/5.txt");

@@ -10,4 +10,3 @@ export async function cleanAll() {
   await db.execute("DELETE FROM labs.articles");
   await db.execute("DELETE FROM labs.games_topics");
 }
-

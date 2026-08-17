@@ -52,7 +52,9 @@ export async function requireRealiteaAdmin(
 
   const allowlist = parseAllowlist();
   if (allowlistRequired() && allowlist === null) {
-    throw new Response("Admin allowlist not configured — set REALITEA_ADMIN_EMAILS", { status: 503 });
+    throw new Response("Admin allowlist not configured — set REALITEA_ADMIN_EMAILS", {
+      status: 503,
+    });
   }
   if (allowlist) {
     const email = user.email?.trim().toLowerCase();
@@ -74,6 +76,8 @@ export const requireRealiteaAdminMiddleware: MiddlewareFunction = async ({ reque
   context.set(realiteaAdminActorContext, actor);
 };
 
-export function getRealiteaAdminActor(context: Readonly<RouterContextProvider>): RealiteaAdminActor {
+export function getRealiteaAdminActor(
+  context: Readonly<RouterContextProvider>,
+): RealiteaAdminActor {
   return context.get(realiteaAdminActorContext);
 }
