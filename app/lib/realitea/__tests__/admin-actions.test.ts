@@ -1,25 +1,11 @@
-import { adminActions, db, eq, gamesTopics, sql } from "~/lib/server/db";
+import { adminActions, db, eq, sql } from "~/lib/server/db";
 import { beforeEach, describe, expect, it } from "vitest";
 import { cleanAll } from "../../../data/test-db";
+import { seedGame } from "./test-helpers";
 
 beforeEach(async () => {
   await cleanAll();
 });
-
-async function seedGame(overrides: Partial<typeof gamesTopics.$inferInsert> = {}) {
-  const [game] = await db
-    .insert(gamesTopics)
-    .values({
-      slug: "rhobh",
-      name: "RHOBH",
-      feedUrl: "https://example.com/feed",
-      feedLabel: "Test Feed",
-      systemPromptPath: "prompts/rhobh.txt",
-      ...overrides,
-    })
-    .returning();
-  return game;
-}
 
 describe("recordAdminAction", () => {
   it("inserts a row with the given kind, defaulting payload/result/dryRun", async () => {

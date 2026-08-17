@@ -1,46 +1,11 @@
-import { articles, gamesAttempts, gamesPuzzles, db, gamesTopics } from "~/lib/server/db";
+import { gamesAttempts, db } from "~/lib/server/db";
 import { beforeEach, describe, expect, it } from "vitest";
 import { cleanAll } from "../../../data/test-db";
+import { seedGame, seedGameWithPuzzles } from "./test-helpers";
 
 beforeEach(async () => {
   await cleanAll();
 });
-
-async function seedGame(overrides: Partial<typeof gamesTopics.$inferInsert> = {}) {
-  const [game] = await db
-    .insert(gamesTopics)
-    .values({
-      slug: "rhobh",
-      name: "RHOBH",
-      feedUrl: "https://example.com/feed",
-      feedLabel: "Test Feed",
-      systemPromptPath: "prompts/rhobh.txt",
-      ...overrides,
-    })
-    .returning();
-  return game;
-}
-
-async function seedGameWithPuzzles(dateKeys: string[]) {
-  const game = await seedGame();
-  for (const dateKey of dateKeys) {
-    const [article] = await db
-      .insert(articles)
-      .values({ gamesTopicId: game.id, url: `https://example.com/${dateKey}`, title: dateKey })
-      .returning();
-    await db.insert(gamesPuzzles).values({
-      gamesTopicId: game.id,
-      articleId: article.id,
-      dateUtc: dateKey,
-      answer: "BRAVO",
-      answerType: "storyline",
-      normalizedAnswer: "BRAVO",
-      clue: `clue for ${dateKey}`,
-      detail: `detail for ${dateKey}`,
-    });
-  }
-  return game;
-}
 
 describe("loadAttempt / createAttempt", () => {
   it("returns null before an attempt exists, then the row after creating one", async () => {
