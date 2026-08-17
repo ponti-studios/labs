@@ -11,6 +11,14 @@ on:
       - "pnpm-lock.yaml"
       - "Dockerfile"
       - "railway.json"
+      - "public/**"
+      - "*.config.*"
+      - "drizzle.config.ts"
+      - "react-router.config.ts"
+      - "tsconfig.json"
+      - ".oxlintrc.json"
+      - ".oxfmtrc.json"
+      - "vitest*.ts"
       - ".github/workflows/deploy-playground-prod.yml"
       - ".github/workflows/reusable-railway-deploy.yml"
   workflow_dispatch:
@@ -20,18 +28,20 @@ permissions:
 
 concurrency:
   group: deploy-labyrinth-prod-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   migrate:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    environment: Production
     steps:
-      - uses: actions/checkout@v6
-      - uses: pnpm/action-setup@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.0.2
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
         with:
           run_install: false
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: "24"
           cache: "pnpm"
@@ -42,6 +52,7 @@ jobs:
         run: pnpm db:migrate
 
   deploy:
+    if: github.ref == 'refs/heads/main'
     needs: migrate
     uses: ./.github/workflows/reusable-railway-deploy.yml
     with:
@@ -50,4 +61,4 @@ jobs:
       timeout-minutes: 10
     secrets:
       railway_token: ${{ secrets.RAILWAY_TOKEN }}
-      railway_service: ${{ secrets.RAILWAY_SERVICE_PLAYGROUND }}
+      railway_service: ${{ secrets.RAILWAY_SERVICE }}

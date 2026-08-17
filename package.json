@@ -9,6 +9,7 @@
     "db:migrate": "drizzle-kit migrate",
     "dev": "react-router dev",
     "lint": "oxlint app --fix",
+    "lint:check": "oxlint app",
     "format": "oxfmt app --write",
     "search:seed": "JITI_TSCONFIG_PATHS=1 jiti scripts/load-search-corpus.ts",
     "search:sync": "JITI_TSCONFIG_PATHS=1 jiti scripts/load-search-corpus.ts --mode sync",

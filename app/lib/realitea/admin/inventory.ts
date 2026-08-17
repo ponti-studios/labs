@@ -11,7 +11,10 @@ import { MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "../generation/feed-text
 import { countAttemptsByDate } from "../server/attempts.server";
 import { countPendingArticlesForGame } from "../server/articles.server";
 import { getActiveGames, getGameBySlug } from "../server/games.server";
-import { getGenerationWithCandidates, listGenerationsForTopic } from "../server/generation-runs.server";
+import {
+  getGenerationWithCandidates,
+  listGenerationsForTopic,
+} from "../server/generation-runs.server";
 import {
   countInventoryForRange,
   getExistingDateKeys,

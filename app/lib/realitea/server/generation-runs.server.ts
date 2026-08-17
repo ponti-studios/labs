@@ -4,7 +4,18 @@
  * before any candidate is published to `games_puzzles`.
  */
 
-import { and, articles, count, db, desc, eq, generationCandidates, generationRuns, gte, sql } from "~/lib/server/db";
+import {
+  and,
+  articles,
+  count,
+  db,
+  desc,
+  eq,
+  generationCandidates,
+  generationRuns,
+  gte,
+  sql,
+} from "~/lib/server/db";
 
 export async function listGenerationsForTopic(
   gameId: number,
