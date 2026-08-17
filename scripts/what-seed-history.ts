@@ -2,6 +2,7 @@
 import { parseArgs } from "node:util";
 
 import { addDaysToDateKey, getDateKey } from "../app/lib/what/core/date";
+import { ensureWhatCatalog } from "../app/lib/what/generation/ingest.server";
 import {
   ensureSeedPuzzle,
   requireSeedGame,
@@ -48,6 +49,7 @@ function parseCliArgs() {
 
 async function main() {
   const { userId } = parseCliArgs();
+  await ensureWhatCatalog();
   const game = await requireSeedGame();
   const today = getDateKey(new Date(), "UTC");
   const plan: Array<{ offset: number; status: SeedAttemptStatus }> = [

@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 import { articles, db, gamesPuzzles } from "~/lib/server/db";
 
@@ -22,7 +22,6 @@ export async function ensureSeedPuzzle(
   dateKey: string,
   rawAnswer: string,
   options: {
-    force?: boolean;
     title?: string;
     cluePrefix?: string;
     detailPrefix?: string;
@@ -30,13 +29,7 @@ export async function ensureSeedPuzzle(
   } = {},
 ) {
   const existing = await loadPuzzleForDate(gameId, dateKey);
-  if (existing && !options.force) return existing;
-
-  if (existing && options.force) {
-    await db
-      .delete(gamesPuzzles)
-      .where(and(eq(gamesPuzzles.gamesTopicId, gameId), eq(gamesPuzzles.dateUtc, dateKey)));
-  }
+  if (existing) return existing;
 
   const answer = normalizeGuess(rawAnswer);
   if (answer.length !== 5) {
