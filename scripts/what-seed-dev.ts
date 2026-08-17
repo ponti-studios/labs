@@ -2,6 +2,7 @@
 import { parseArgs } from "node:util";
 
 import { addDaysToDateKey, getDateKey } from "../app/lib/what/core/date";
+import { ensureWhatCatalog } from "../app/lib/what/generation/ingest.server";
 import { ensureSeedPuzzle, requireSeedGame } from "../app/lib/what/server/dev-seed.server";
 import { runScript } from "./_shared/run-script";
 
@@ -14,18 +15,18 @@ function parseCliArgs() {
     options: {
       days: { type: "string" },
       answer: { type: "string" },
-      force: { type: "boolean" },
     },
     strict: true,
   });
   const days = values.days ? Number.parseInt(values.days, 10) : 1;
   if (!Number.isInteger(days) || days < 1)
     throw new Error(`--days must be a positive integer, got: ${values.days}`);
-  return { days, answer: values.answer, force: values.force ?? false };
+  return { days, answer: values.answer };
 }
 
 async function main() {
-  const { days, answer, force } = parseCliArgs();
+  const { days, answer } = parseCliArgs();
+  await ensureWhatCatalog();
   const game = await requireSeedGame();
   console.log(`Seeding ${days} day(s) of What dev fixtures\n`);
 
@@ -36,7 +37,6 @@ async function main() {
     const rawAnswer =
       offset === 0 && answer ? answer : DEFAULT_ANSWERS[offset % DEFAULT_ANSWERS.length];
     const puzzle = await ensureSeedPuzzle(game.id, dateKey, rawAnswer, {
-      force,
       articleUrl: `${SEED_TOPIC_FEED_URL}/${dateKey}`,
       cluePrefix: "Dev fixture clue",
       detailPrefix: "Dev fixture story detail",
