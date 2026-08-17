@@ -12,7 +12,9 @@ import {
   getActiveGames,
 } from "../app/lib/realitea/server/repository.server";
 import {
+  CIRCUIT_BREAKER_THRESHOLD,
   computeGaps,
+  createCircuitBreaker,
   REALITEA_READY_INVENTORY_DAYS,
   resolveGenerateWindow,
   runGenerateWindow,
@@ -87,8 +89,10 @@ async function main() {
     let totalDeleted = 0;
     let totalGenerated = 0;
     let totalFailed = 0;
+    let totalSkipped = 0;
+    const circuit = createCircuitBreaker();
     for (const game of games) {
-      const result = await runGenerateWindow(game, window);
+      const result = await runGenerateWindow(game, window, circuit);
       if (result.aborted) {
         reconcileLogger.error(
           { event: "[RECONCILE_ABORTED]", game: game.slug, aborted: result.aborted },
@@ -104,6 +108,7 @@ async function main() {
       totalDeleted += result.deletedCount;
       totalGenerated += result.generatedCount;
       totalFailed += result.failedCount;
+      totalSkipped += result.skippedCount;
       reconcileLogger.info(
         {
           event: "[RECONCILE_GAME_COMPLETE]",
@@ -112,12 +117,27 @@ async function main() {
           deletedCount: result.deletedCount,
           generatedCount: result.generatedCount,
           failedCount: result.failedCount,
+          skippedCount: result.skippedCount,
           inventoryDepth,
         },
         `${game.slug}: ${result.generatedCount} generated`,
       );
+      if (result.circuitOpened) {
+        reconcileLogger.error(
+          { event: "[RECONCILE_CIRCUIT_OPEN]", game: game.slug, consecutiveFailures: circuit.consecutiveFailures },
+          `${circuit.consecutiveFailures} consecutive generation failures — stopping the rest of this run instead of exhausting the attempt budget`,
+        );
+        break;
+      }
     }
-    return { totalDeleted, totalGenerated, totalFailed, games: games.map((game) => game.slug) };
+    return {
+      totalDeleted,
+      totalGenerated,
+      totalFailed,
+      totalSkipped,
+      circuitOpened: circuit.open,
+      games: games.map((game) => game.slug),
+    };
   });
 
   if (!locked.ok) {
@@ -125,7 +145,7 @@ async function main() {
     throw new Error("lock_busy");
   }
 
-  const { totalDeleted, totalGenerated, totalFailed, games } = locked.value;
+  const { totalDeleted, totalGenerated, totalFailed, totalSkipped, circuitOpened, games } = locked.value;
   reconcileLogger.info(
     {
       event: "[RECONCILE_COMPLETE]",
@@ -134,10 +154,17 @@ async function main() {
       deleted: totalDeleted,
       generated: totalGenerated,
       failed: totalFailed,
+      skipped: totalSkipped,
+      circuitOpened,
     },
     `reconcile complete across ${games.length} game(s): ${totalGenerated} generated`,
   );
 
+  if (circuitOpened) {
+    throw new Error(
+      `generation circuit breaker tripped after ${CIRCUIT_BREAKER_THRESHOLD} consecutive failures — provider likely degraded, ${totalSkipped} date(s) skipped`,
+    );
+  }
   if (totalFailed > 0) throw new Error(`${totalFailed} puzzle(s) failed to generate`);
 }
 

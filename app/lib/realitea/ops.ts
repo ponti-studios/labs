@@ -14,6 +14,37 @@ export const PRIMARY_PLAYER_TZ = "America/Los_Angeles";
 export const MAX_GENERATE_SPAN_DAYS = 14;
 export const GENERATE_ACTOR = "system:generate";
 
+/**
+ * Consecutive generation failures (across dates and games, within one
+ * `main()` invocation of scripts/realitea-generate.ts) before the run stops
+ * attempting further dates/games instead of burning its full attempt budget
+ * on a degraded provider. See docs/tasks/06-no-circuit-breaker-on-provider-degradation.md.
+ */
+export const CIRCUIT_BREAKER_THRESHOLD = 6;
+
+export type CircuitBreaker = {
+  consecutiveFailures: number;
+  open: boolean;
+};
+
+export function createCircuitBreaker(): CircuitBreaker {
+  return { consecutiveFailures: 0, open: false };
+}
+
+/** Records one attempt's outcome. Returns true the moment the breaker trips open. */
+function recordCircuitAttempt(circuit: CircuitBreaker, succeeded: boolean): boolean {
+  if (succeeded) {
+    circuit.consecutiveFailures = 0;
+    return false;
+  }
+  circuit.consecutiveFailures++;
+  if (circuit.consecutiveFailures >= CIRCUIT_BREAKER_THRESHOLD && !circuit.open) {
+    circuit.open = true;
+    return true;
+  }
+  return false;
+}
+
 export function computeGaps(dateRange: string[], existingKeys: string[]): string[] {
   const existing = new Set(existingKeys);
   return dateRange.filter((dateKey) => !existing.has(dateKey));
@@ -114,7 +145,24 @@ export async function gapFillOne(game: GamesTopic, dateKey: string, maxAttempts 
   return generatePuzzleForGame(game, dateKey, { maxAttempts, actor: GENERATE_ACTOR });
 }
 
-export async function runGenerateWindow(game: GamesTopic, window: Extract<GenerateWindow, { ok: true }>) {
+async function recordCircuitOpen(
+  game: GamesTopic,
+  dateKey: string,
+  circuit: CircuitBreaker,
+): Promise<void> {
+  await recordAdminAction({
+    kind: "generation_circuit_open",
+    gamesTopicId: game.id,
+    dateUtc: dateKey,
+    payload: { consecutiveFailures: circuit.consecutiveFailures, threshold: CIRCUIT_BREAKER_THRESHOLD },
+  });
+}
+
+export async function runGenerateWindow(
+  game: GamesTopic,
+  window: Extract<GenerateWindow, { ok: true }>,
+  circuit: CircuitBreaker = createCircuitBreaker(),
+) {
   if (window.force) {
     const plan = await planScopedRegenerate(game, window);
     if (!plan.ok) {
@@ -124,41 +172,61 @@ export async function runGenerateWindow(game: GamesTopic, window: Extract<Genera
         payload: { from: window.fromKey, to: window.toKey, code: plan.code },
         result: plan,
       });
-      return { deletedCount: 0, generatedCount: 0, failedCount: 0, aborted: plan };
+      return { deletedCount: 0, generatedCount: 0, failedCount: 0, skippedCount: 0, circuitOpened: false, aborted: plan };
     }
     const deletedCount = await deletePuzzlesInRange(game.id, window.fromKey, window.toKey);
     let generatedCount = 0;
     let failedCount = 0;
+    let skippedCount = 0;
+    let circuitOpened = false;
     for (const dateKey of window.dateKeys) {
+      if (circuit.open) {
+        skippedCount++;
+        continue;
+      }
       const puzzle = await generatePuzzleForGame(game, dateKey, { actor: GENERATE_ACTOR });
       if (puzzle) generatedCount++;
       else failedCount++;
+      if (recordCircuitAttempt(circuit, puzzle !== null)) {
+        circuitOpened = true;
+        await recordCircuitOpen(game, dateKey, circuit);
+      }
     }
     await recordAdminAction({
       kind: "gap_fill",
       gamesTopicId: game.id,
       payload: { force: true, from: window.fromKey, to: window.toKey },
-      result: { deletedCount, generatedCount, failedCount },
+      result: { deletedCount, generatedCount, failedCount, skippedCount, circuitOpened },
     });
-    return { deletedCount, generatedCount, failedCount, aborted: null };
+    return { deletedCount, generatedCount, failedCount, skippedCount, circuitOpened, aborted: null };
   }
 
   const plan = await planGapFill(game, window);
   let generatedCount = 0;
   let failedCount = 0;
+  let skippedCount = 0;
+  let circuitOpened = false;
   for (const dateKey of plan.missingKeys) {
+    if (circuit.open) {
+      skippedCount++;
+      continue;
+    }
     const puzzle = await generatePuzzleForGame(game, dateKey, { actor: GENERATE_ACTOR });
     if (puzzle) generatedCount++;
     else failedCount++;
+    if (recordCircuitAttempt(circuit, puzzle !== null)) {
+      circuitOpened = true;
+      await recordCircuitOpen(game, dateKey, circuit);
+    }
   }
   await recordAdminAction({
     kind: "gap_fill",
     gamesTopicId: game.id,
     dateUtc: window.fromKey,
     payload: { force: false, from: window.fromKey, to: window.toKey, missing: plan.missingKeys },
-    result: { generatedCount, failedCount },
+    result: { generatedCount, failedCount, skippedCount, circuitOpened },
   });
-  return { deletedCount: 0, generatedCount, failedCount, aborted: null };
+  return { deletedCount: 0, generatedCount, failedCount, skippedCount, circuitOpened, aborted: null };
 }
 
 export { REALITEA_READY_INVENTORY_DAYS };

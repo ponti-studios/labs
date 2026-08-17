@@ -1,10 +1,19 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
+const { generatePuzzleForGameMock } = vi.hoisted(() => ({ generatePuzzleForGameMock: vi.fn() }));
+
+vi.mock("../generation/generate.server", () => ({ generatePuzzleForGame: generatePuzzleForGameMock }));
+
+import { db, gamesTopics } from "~/lib/server/db";
+import { cleanAll } from "../../../data/test-db";
 import {
+  CIRCUIT_BREAKER_THRESHOLD,
   computeGaps,
+  createCircuitBreaker,
   isLiveDate,
   liveDateKeys,
   resolveGenerateWindow,
+  runGenerateWindow,
 } from "../ops";
 
 describe("resolveGenerateWindow", () => {
@@ -95,5 +104,76 @@ describe("live dates", () => {
     expect(live.has("2026-08-12")).toBe(true);
     expect(isLiveDate("2026-08-12", now)).toBe(true);
     expect(isLiveDate("2026-08-14", now)).toBe(false);
+  });
+});
+
+describe("runGenerateWindow circuit breaker", () => {
+  beforeEach(async () => {
+    await cleanAll();
+    generatePuzzleForGameMock.mockReset();
+  });
+
+  async function insertGame() {
+    const [game] = await db
+      .insert(gamesTopics)
+      .values({
+        slug: "rhobh",
+        name: "RHOBH",
+        feedUrl: "https://example.com/feed",
+        feedLabel: "Test Feed",
+        systemPromptPath: "prompts/rhobh.txt",
+      })
+      .returning();
+    return game;
+  }
+
+  it("stops attempting further dates once consecutive failures hit the threshold", async () => {
+    const game = await insertGame();
+    generatePuzzleForGameMock.mockResolvedValue(null);
+
+    const window = resolveGenerateWindow({
+      force: false,
+      daysAhead: 10,
+      todayKey: "2026-06-01",
+      now: new Date("2026-06-01T18:00:00Z"),
+    });
+    if (!window.ok) throw new Error("expected a valid window");
+    expect(window.dateKeys.length).toBeGreaterThan(CIRCUIT_BREAKER_THRESHOLD);
+
+    const circuit = createCircuitBreaker();
+    const result = await runGenerateWindow(game, window, circuit);
+
+    expect(circuit.open).toBe(true);
+    expect(result.circuitOpened).toBe(true);
+    expect(generatePuzzleForGameMock).toHaveBeenCalledTimes(CIRCUIT_BREAKER_THRESHOLD);
+    expect(result.failedCount).toBe(CIRCUIT_BREAKER_THRESHOLD);
+    expect(result.skippedCount).toBe(window.dateKeys.length - CIRCUIT_BREAKER_THRESHOLD);
+  });
+
+  it("resets the consecutive-failure count after a success, so the breaker doesn't trip", async () => {
+    const game = await insertGame();
+    let call = 0;
+    generatePuzzleForGameMock.mockImplementation(async () => {
+      call++;
+      // Fail every attempt except every third — never CIRCUIT_BREAKER_THRESHOLD
+      // consecutive failures in a row.
+      return call % 3 === 0 ? { id: call } : null;
+    });
+
+    const window = resolveGenerateWindow({
+      force: false,
+      daysAhead: 10,
+      todayKey: "2026-06-01",
+      now: new Date("2026-06-01T18:00:00Z"),
+    });
+    if (!window.ok) throw new Error("expected a valid window");
+
+    const circuit = createCircuitBreaker();
+    const result = await runGenerateWindow(game, window, circuit);
+
+    expect(circuit.open).toBe(false);
+    expect(result.circuitOpened).toBe(false);
+    expect(result.skippedCount).toBe(0);
+    expect(generatePuzzleForGameMock).toHaveBeenCalledTimes(window.dateKeys.length);
   });
 });

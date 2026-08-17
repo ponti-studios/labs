@@ -124,6 +124,7 @@ export const realiteaAdminActionKindValues = [
   "regenerate_dry_run",
   "dispatch_generate",
   "lock_busy",
+  "generation_circuit_open",
 ] as const;
 export type RealiteaAdminActionKind = (typeof realiteaAdminActionKindValues)[number];
 

@@ -1,6 +1,6 @@
 # 06 — Cron generation has no circuit breaker, burns the full 30-minute budget on a bad provider day
 
-**Status:** Open
+**Status:** Fixed
 **Category:** Reliability / operations
 **Severity:** Medium — not a correctness bug, but a real operational cost and blast-radius problem
 
@@ -89,6 +89,47 @@ Lower-effort complementary options worth considering alongside this:
   to fail the whole run fast if the provider is obviously down, before
   spending on the real batch.
 
-## Next step
+## What was implemented
 
-Not started. Ticket filed for follow-up; no code changed yet.
+A shared `CircuitBreaker` (`app/lib/realitea/ops.ts`) tracks consecutive
+generation failures across every date and every game within one invocation
+of `scripts/realitea-generate.ts`:
+
+- `createCircuitBreaker()` / `recordCircuitAttempt()` — a `{ consecutiveFailures, open }`
+  counter; a success resets it to zero, a failure increments it, and it
+  trips `open = true` once `CIRCUIT_BREAKER_THRESHOLD` (6) consecutive
+  failures are hit.
+- `runGenerateWindow(game, window, circuit)` now takes the breaker as a
+  third parameter (defaulted for callers that don't care, e.g. tests) and
+  checks `circuit.open` before each date's attempt in both the `force` and
+  gap-fill loops — remaining dates are counted as `skippedCount`, not
+  attempted or counted as failures.
+- The moment the breaker trips, a `generation_circuit_open` admin-action
+  audit row is recorded (new enum value on `realiteaAdminActionKindValues`
+  — TS-level only, no DB migration needed since the column is plain `text`)
+  with `{ consecutiveFailures, threshold }`, distinct from per-date
+  `gap_fill`/`gap_fill_one` failure entries.
+- `scripts/realitea-generate.ts` creates one `CircuitBreaker` before the
+  outer game loop and passes it into every `runGenerateWindow` call, so the
+  breaker's state is shared across games, not just within one game's dates.
+  When a game's result reports `circuitOpened`, the outer loop `break`s
+  instead of continuing to the next game. The run then throws a distinct
+  error (`generation circuit breaker tripped after N consecutive
+  failures...`) rather than the generic `"N puzzle(s) failed to generate"`,
+  so the failure reason is unambiguous in the workflow logs.
+
+Not implemented (left as the "lower-effort complementary options" in the
+original writeup, not required to close this ticket): reducing
+`timeout-minutes`, and a pre-flight canary call. Worth revisiting if the
+threshold of 6 turns out to be miscalibrated in practice.
+
+## Verification
+
+- `pnpm exec tsc --noEmit` clean.
+- `pnpm test:realitea` — 121 tests passing, including two new cases in
+  `app/lib/realitea/__tests__/ops.test.ts`: one confirms the breaker trips
+  at exactly `CIRCUIT_BREAKER_THRESHOLD` consecutive failures and skips the
+  rest of the window; the other confirms a periodic success resets the
+  counter so the breaker never trips.
+- `pnpm exec vitest run app/lib/realitea app/routes/games/realitea` (default
+  suite) — 39 tests passing, unaffected.

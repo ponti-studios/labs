@@ -7,11 +7,12 @@ cost-tracked, resumable puzzle generation` change (`57ed331d`) that's now on
 content; the sixth came from investigating a live production failure while
 closing out ticket 01.
 
-Four of the original five bugs are fixed and merged (PR
-[#240](https://github.com/ponti-studios/labs/pull/240),
-`fix/realitea-generation-correctness-bugs`). Ticket 01 turned out to be a
-false alarm on closer investigation — resolved, no code change needed beyond
-a diagnostic log left in place. Ticket 06 is newly filed, not started.
+All six items are now resolved. The original five bugs were fixed and merged
+across PR [#240](https://github.com/ponti-studios/labs/pull/240) and a
+same-day follow-up commit (`11e29839`, merged via PR #241) that closed gaps
+the first fix missed. Ticket 01 turned out to be a false alarm on closer
+investigation. Ticket 06 (circuit breaker) is implemented and tested, not
+yet merged.
 
 | # | Title | Severity | Status | File |
 |---|---|---|---|---|
@@ -20,7 +21,7 @@ a diagnostic log left in place. Ticket 06 is newly filed, not started.
 | [03](03-stale-running-flag-allows-duplicate-generation.md) | Resumed-run effect never sets `running`, admin can fire a duplicate generation | Medium | Fixed | `app/routes/games/realitea/admin/generate.tsx` |
 | [04](04-unguarded-candidate-loop-aborts-cron-run.md) | Unguarded candidate-matching loop can abort an entire cron invocation | Medium | Fixed | `app/lib/realitea/generation/generate.server.ts` |
 | [05](05-per-attempt-failures-missing-from-audit-trail.md) | Per-attempt LLM failures no longer recorded in the admin-action audit trail | Low | Fixed | `app/lib/realitea/generation/generate.server.ts` |
-| [06](06-no-circuit-breaker-on-provider-degradation.md) | Cron generation has no circuit breaker, burns the full 30-minute budget on a bad provider day | Medium | Open | `app/lib/realitea/ops.ts` |
+| [06](06-no-circuit-breaker-on-provider-degradation.md) | Cron generation has no circuit breaker, burns the full 30-minute budget on a bad provider day | Medium | Fixed (not yet merged) | `app/lib/realitea/ops.ts` |
 
 ## How 01–05 were found
 
