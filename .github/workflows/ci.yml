@@ -9,7 +9,6 @@ on:
 
 permissions:
   contents: read
-  packages: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -19,6 +18,9 @@ jobs:
   lint-and-test:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      contents: read
+      packages: read
     services:
       postgres-test:
         image: ghcr.io/ponti-studios/foundation/postgres:1.0.5
@@ -38,31 +40,31 @@ jobs:
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:4433/labs-test
     steps:
-      - uses: actions/checkout@v6
-      - uses: pnpm/action-setup@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.0.2
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
         with:
           run_install: false
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: "24.14.1"
           cache: "pnpm"
       - run: pnpm install --frozen-lockfile
       - name: Migrate test database
         run: pnpm db:migrate
-      - run: pnpm lint
+      - run: pnpm lint:check
+      - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm test:realitea
 
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: lint-and-test
     steps:
-      - uses: actions/checkout@v6
-      - uses: pnpm/action-setup@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.0.2
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
         with:
           run_install: false
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: "24.14.1"
           cache: "pnpm"
@@ -95,17 +97,14 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.0.2
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@ff2f1c621b7f889edc0d3c761ac2e6a3f8cdb0dd # v4
         with:
           languages: ${{ matrix.language }}
 
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v3
-
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@ff2f1c621b7f889edc0d3c761ac2e6a3f8cdb0dd # v4
         with:
           category: "/language:${{matrix.language}}"

@@ -38,9 +38,8 @@ describe("appendGuess", () => {
 describe("countRecentGuesses", () => {
   it("counts guesses across attempts within the time window", async () => {
     const game = await seedGame();
-    const { createAttempt, appendGuess, countRecentGuesses } = await import(
-      "../server/attempts.server"
-    );
+    const { createAttempt, appendGuess, countRecentGuesses } =
+      await import("../server/attempts.server");
     const attempt = await createAttempt("user-1", game.id, "2026-06-25");
     await appendGuess(attempt.id, { word: "BRAVO", states: ["absent"] }, "playing");
     await appendGuess(attempt.id, { word: "DISCO", states: ["absent"] }, "playing");
@@ -52,9 +51,8 @@ describe("countRecentGuesses", () => {
 
   it("does not count another user's guesses", async () => {
     const game = await seedGame();
-    const { createAttempt, appendGuess, countRecentGuesses } = await import(
-      "../server/attempts.server"
-    );
+    const { createAttempt, appendGuess, countRecentGuesses } =
+      await import("../server/attempts.server");
     const attempt = await createAttempt("user-2", game.id, "2026-06-25");
     await appendGuess(attempt.id, { word: "BRAVO", states: ["absent"] }, "playing");
 
@@ -97,7 +95,11 @@ describe("listAttemptsForUserInRange", () => {
       toKey: "2026-06-27",
     });
 
-    expect(result.map((r) => r.attempt.dateUtc)).toEqual(["2026-06-27", "2026-06-26", "2026-06-25"]);
+    expect(result.map((r) => r.attempt.dateUtc)).toEqual([
+      "2026-06-27",
+      "2026-06-26",
+      "2026-06-25",
+    ]);
     expect(result[0].puzzle.clue).toBe("clue for 2026-06-27");
   });
 
