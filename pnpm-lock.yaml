@@ -18,8 +18,8 @@ importers:
         specifier: ^0.6.0
         version: 0.6.0
       '@openrouter/sdk':
-        specifier: ^1.2.6
-        version: 1.2.6
+        specifier: ^1.2.34
+        version: 1.2.34
       '@ponti-studios/auth':
         specifier: ^0.1.1
         version: 0.1.1(patch_hash=27ad6224609be803b9c7abf5d6836bae53b9ac75ab464eb7777da0ae40d07bf0)(@opentelemetry/api@1.9.1)(drizzle-kit@0.31.10)(drizzle-orm@0.45.2(@opentelemetry/api@1.9.1)(kysely@0.29.4)(pg@8.23.0)(postgres@3.4.9))(pg@8.23.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(vitest@4.1.10)
@@ -1133,8 +1133,8 @@ packages:
   '@openrouter/sdk@0.13.20':
     resolution: {integrity: sha512-fx4o19FHgadEldfrSOgSbXAi32hCE3O708q1nxcoxYrW6fP6/WggX3o5PmnlnObzmxrqLMkZpqg188K+Twguhg==}
 
-  '@openrouter/sdk@1.2.6':
-    resolution: {integrity: sha512-lCUbrOk6TjPtfxv5m9KqFqZ2qnzOaj2tj98ulRZlMVnb8FOeEyVHJ04qX5c+qI0P0BoKkxly1cn0rOjyUAHvQA==}
+  '@openrouter/sdk@1.2.34':
+    resolution: {integrity: sha512-KdbGP/emkkdl+UG7GXJyMsImSlirCsDe2V2zdoOBAV/FS+omDwIbhWdO6N5nxGTtz6bESgE9fi3MsbMCHaSxYw==}
 
   '@opentelemetry/api-logs@0.220.0':
     resolution: {integrity: sha512-CmVa4ImJ+ynfrPMNaAXHET6Bhb44SwzmfyVJFq9ni2jgXJR/l7C6gfVFddNmHP+ZOkP9cf4f9DBe68qVLTHc9w==}
@@ -5289,7 +5289,7 @@ snapshots:
     dependencies:
       zod: 4.4.3
 
-  '@openrouter/sdk@1.2.6':
+  '@openrouter/sdk@1.2.34':
     dependencies:
       zod: 4.4.3
 
