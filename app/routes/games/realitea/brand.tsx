@@ -21,7 +21,7 @@ export default function RealiteaBrand() {
     if (!("serviceWorker" in navigator)) return;
 
     void navigator.serviceWorker.register("/games/realitea/sw.js", {
-      scope: "/games/realitea",
+      scope: "/games/realitea/",
     });
   }, []);
 

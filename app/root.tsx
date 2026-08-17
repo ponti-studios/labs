@@ -42,7 +42,6 @@ export const links: Route.LinksFunction = () => [
     type: "image/png",
     sizes: "120x120",
   },
-  { rel: "manifest", href: "/site.webmanifest" },
 ];
 
 // Icons for the unauthenticated mobile nav grid's non-logo tiles, keyed by href.
