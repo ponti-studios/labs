@@ -9,12 +9,9 @@ import {
 import { isLiveDate, type GenerateRange } from "./generate-range";
 import { REALITEA_READY_INVENTORY_DAYS } from "./generation/candidate-validation";
 import { generatePuzzleForGame } from "./generation/generate.server";
-import {
-  countAttemptsByDate,
-  deletePuzzlesInRange,
-  getExistingDateKeys,
-  recordAdminAction,
-} from "./server/repository.server";
+import { recordAdminAction } from "./server/admin-actions.server";
+import { countAttemptsByDate } from "./server/attempts.server";
+import { deletePuzzlesInRange, getExistingDateKeys } from "./server/puzzles.server";
 
 export const GENERATE_ACTOR = "system:generate";
 

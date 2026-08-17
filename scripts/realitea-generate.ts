@@ -16,11 +16,11 @@ import {
   REALITEA_READY_INVENTORY_DAYS,
   runGenerateRange,
 } from "../app/lib/realitea/generation-runner";
+import { getActiveGames } from "../app/lib/realitea/server/games.server";
 import {
   backfillPuzzlePublishedAt,
   countInventoryForRange,
-  getActiveGames,
-} from "../app/lib/realitea/server/repository.server";
+} from "../app/lib/realitea/server/puzzles.server";
 import { LabyrinthServerEnv } from "../app/lib/server/env";
 
 const logger = createLogger();

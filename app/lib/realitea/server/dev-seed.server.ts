@@ -3,13 +3,9 @@ import { and, eq } from "drizzle-orm";
 import { articles, db, gamesPuzzles } from "~/lib/server/db";
 
 import { evaluateGuess, isGuessSolved, normalizeGuess } from "../core/rules";
-import {
-  appendGuess,
-  createAttempt,
-  getGameBySlug,
-  loadAttempt,
-  loadPuzzleForDate,
-} from "./repository.server";
+import { appendGuess, createAttempt, loadAttempt } from "./attempts.server";
+import { getGameBySlug } from "./games.server";
+import { loadPuzzleForDate } from "./puzzles.server";
 
 export const REALITEA_SEED_GAME_SLUG = "rhobh";
 

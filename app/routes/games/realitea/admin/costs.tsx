@@ -16,7 +16,7 @@ import { formatTokenCount, formatUsd } from "~/lib/realitea/admin/format";
 import {
   getGenerationCostReport,
   type GenerationCostBreakdownRow,
-} from "~/lib/realitea/server/repository.server";
+} from "~/lib/realitea/server/generation-runs.server";
 
 import "../realitea.css";
 

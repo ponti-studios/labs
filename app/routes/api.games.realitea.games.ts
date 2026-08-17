@@ -1,4 +1,4 @@
-import { getActiveGames } from "~/lib/realitea/server/repository.server";
+import { getActiveGames } from "~/lib/realitea/server/games.server";
 
 export async function loader() {
   const games = await getActiveGames();

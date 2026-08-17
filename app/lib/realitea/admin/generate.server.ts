@@ -24,16 +24,14 @@ import {
 } from "../generation/generate.server";
 import { fetchFeedItems } from "../generation/ingest.server";
 import type { FeedItem } from "../generation/types";
+import { countRecentGenerateActions, recordAdminAction } from "../server/admin-actions.server";
 import {
-  countRecentGenerateActions,
   getPendingArticlesByIds,
   getPendingArticlesForGame,
   getPendingArticlesForTopics,
-  getRecentAnswers,
-  getStoredAnswers,
-  listTopicFeedHosts,
-  recordAdminAction,
-} from "../server/repository.server";
+} from "../server/articles.server";
+import { listTopicFeedHosts } from "../server/games.server";
+import { getRecentAnswers, getStoredAnswers } from "../server/puzzles.server";
 
 const GENERATION_RATE_LIMIT = 20;
 const GENERATION_ARTICLE_CAP = 12;

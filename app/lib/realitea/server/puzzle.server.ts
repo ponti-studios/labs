@@ -14,22 +14,16 @@ import { addDaysToDateKey, getDateKey } from "../core/date";
 import { createLogger } from "../../logger.server";
 import type { HominemUser } from "../../server/hominem-auth";
 import type { PuzzleRecord } from "./types";
-import {
-  appendGuess,
-  countRecentGuesses,
-  createAttempt,
-  getGameBySlug,
-  loadAttempt,
-  loadMostRecentPuzzle,
-  loadPuzzleForDate,
-} from "./repository.server";
+import { appendGuess, countRecentGuesses, createAttempt, loadAttempt } from "./attempts.server";
+import { getGameBySlug } from "./games.server";
+import { loadMostRecentPuzzle, loadPuzzleForDate } from "./puzzles.server";
 import { isValidWord } from "./word-list.server";
 import { DEFAULT_REALITEA_GAME_SLUG } from "../generation/catalog";
 
 const logger = createLogger();
 
 // Guesses-per-minute limit, enforced across all of a user's puzzles at once
-// (not per-puzzle) — see countRecentGuesses in repository.server.ts.
+// (not per-puzzle) — see countRecentGuesses in attempts.server.ts.
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX_GUESSES = 10;
 

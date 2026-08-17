@@ -9,7 +9,7 @@ vi.mock("../generation/generate.server", () => ({
   generatePuzzleForGame: generatePuzzleForGameMock,
 }));
 
-vi.mock("../server/repository.server", () => ({
+vi.mock("../server/puzzles.server", () => ({
   getExistingDateKeys: getExistingDateKeysMock,
 }));
 

@@ -6,11 +6,8 @@ import { parseArgs } from "node:util";
 import { chromium, type Page } from "playwright";
 
 import { getDateKey } from "../app/lib/realitea/core/date";
-import {
-  getGameBySlug,
-  loadMostRecentPuzzle,
-  loadPuzzleForDate,
-} from "../app/lib/realitea/server/repository.server";
+import { getGameBySlug } from "../app/lib/realitea/server/games.server";
+import { loadMostRecentPuzzle, loadPuzzleForDate } from "../app/lib/realitea/server/puzzles.server";
 import { runScript } from "./_shared/run-script";
 
 /**

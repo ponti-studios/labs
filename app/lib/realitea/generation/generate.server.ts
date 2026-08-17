@@ -13,16 +13,14 @@ import { createLogger } from "../../logger.server";
 import { normalizeGuess, REALITEA_ANSWER_LENGTH } from "../core/rules";
 import { getDateKey, parseDate } from "../core/date";
 import { fetchFeedItems } from "./ingest.server";
+import { recordAdminAction } from "../server/admin-actions.server";
 import {
   expireStaleArticles,
   getPendingArticlesForGame,
-  getRecentAnswers,
-  getStoredAnswers,
-  loadPuzzleForDate,
   markArticleUsed,
-  recordAdminAction,
   recordArticleRejection,
-} from "../server/repository.server";
+} from "../server/articles.server";
+import { getRecentAnswers, getStoredAnswers, loadPuzzleForDate } from "../server/puzzles.server";
 import type { PuzzleAnswerType } from "../core/types";
 import type { PuzzleRecord } from "../server/types";
 import type {

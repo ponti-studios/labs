@@ -8,18 +8,16 @@ import { addDaysToDateKey, buildDateRange, getDateKey } from "../core/date";
 import { isLiveDate, liveDateKeys, PRIMARY_PLAYER_TZ } from "../generate-range";
 import { REALITEA_READY_INVENTORY_DAYS } from "../generation/candidate-validation";
 import { MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "../generation/feed-text";
+import { countAttemptsByDate } from "../server/attempts.server";
+import { countPendingArticlesForGame } from "../server/articles.server";
+import { getActiveGames, getGameBySlug } from "../server/games.server";
+import { getGenerationWithCandidates, listGenerationsForTopic } from "../server/generation-runs.server";
 import {
-  countAttemptsByDate,
   countInventoryForRange,
-  countPendingArticlesForGame,
-  getActiveGames,
   getExistingDateKeys,
-  getGameBySlug,
-  getGenerationWithCandidates,
   listAllPuzzleDateKeys,
-  listGenerationsForTopic,
   loadPuzzleForDate,
-} from "../server/repository.server";
+} from "../server/puzzles.server";
 import type { GenerateErr, GenerateOk } from "./generate-types";
 import { reapStaleGenerations } from "./generate.server";
 

@@ -17,7 +17,7 @@ import { JSDOM } from "jsdom";
 import { getErrorMessage } from "../../errors";
 import { createLogger } from "../../logger.server";
 
-import { upsertArticles } from "../server/repository.server";
+import { upsertArticles } from "../server/articles.server";
 import {
   MAX_ARTICLE_TEXT_LENGTH,
   MAX_FEED_DESCRIPTION_LENGTH,

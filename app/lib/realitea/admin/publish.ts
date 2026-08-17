@@ -15,13 +15,9 @@ import { parseDate } from "../core/date";
 import { normalizeGuess } from "../core/rules";
 import type { PuzzleAnswerType } from "../core/types";
 import { validateCandidate } from "../generation/candidate-validation";
-import {
-  getRecentAnswers,
-  getStoredAnswers,
-  loadPuzzleForDate,
-  markArticleUsed,
-  recordAdminAction,
-} from "../server/repository.server";
+import { recordAdminAction } from "../server/admin-actions.server";
+import { markArticleUsed } from "../server/articles.server";
+import { getRecentAnswers, getStoredAnswers, loadPuzzleForDate } from "../server/puzzles.server";
 
 import { parseCandidatePayload } from "./inventory";
 

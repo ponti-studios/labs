@@ -3,15 +3,14 @@ import type { Article, GamesTopic } from "~/lib/server/db";
 import { getErrorMessage } from "../../errors";
 import { MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "../generation/feed-text";
 import { fetchFeedItems } from "../generation/ingest.server";
+import { recordAdminAction } from "../server/admin-actions.server";
 import {
   countArticlesByStatus,
   expireStaleArticles,
-  getActiveGames,
-  getGameBySlug,
   listArticlesForTopic,
-  recordAdminAction,
   upsertArticles,
-} from "../server/repository.server";
+} from "../server/articles.server";
+import { getActiveGames, getGameBySlug } from "../server/games.server";
 
 export type TopicArticleSummary = {
   id: number;
