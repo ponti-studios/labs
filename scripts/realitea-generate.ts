@@ -4,29 +4,28 @@ import { parseArgs } from "node:util";
 import { closeDb } from "~/lib/server/db";
 import { withGenerateLock } from "~/lib/server/db/advisory-lock";
 
-import { getDateKey } from "../app/lib/realitea/core/date";
 import { getErrorMessage } from "../app/lib/errors";
+import { createLogger } from "../app/lib/logger.server";
+import {
+  CIRCUIT_BREAKER_THRESHOLD,
+  createCircuitBreaker,
+} from "../app/lib/realitea/circuit-breaker";
+import { getDateKey } from "../app/lib/realitea/core/date";
+import { resolveGenerateRange } from "../app/lib/realitea/generate-range";
+import {
+  REALITEA_READY_INVENTORY_DAYS,
+  runGenerateRange,
+} from "../app/lib/realitea/generation-runner";
 import {
   backfillPuzzlePublishedAt,
   countInventoryForRange,
   getActiveGames,
 } from "../app/lib/realitea/server/repository.server";
-import {
-  CIRCUIT_BREAKER_THRESHOLD,
-  computeGaps,
-  createCircuitBreaker,
-  REALITEA_READY_INVENTORY_DAYS,
-  resolveGenerateWindow,
-  runGenerateWindow,
-} from "../app/lib/realitea/ops";
-import { createLogger } from "../app/lib/logger.server";
 import { LabyrinthServerEnv } from "../app/lib/server/env";
 
 const logger = createLogger();
 
-export { computeGaps };
-
-function parseReconcileArgs(): {
+function parseGenerateArgs(): {
   force: boolean;
   daysAhead: number;
   from?: string;
@@ -55,30 +54,29 @@ function parseReconcileArgs(): {
 async function main() {
   LabyrinthServerEnv.parse(process.env);
 
-  const args = parseReconcileArgs();
+  const args = parseGenerateArgs();
   const runDateKey = getDateKey(new Date());
-  const window = resolveGenerateWindow({
+  const range = resolveGenerateRange({
     force: args.force,
     daysAhead: args.daysAhead,
     todayKey: runDateKey,
     ...(args.from !== undefined ? { from: args.from } : {}),
     ...(args.to !== undefined ? { to: args.to } : {}),
   });
-  if (!window.ok) throw new Error(window.error);
+  if (!range.ok) throw new Error(range.error);
 
-  const reconcileLogger = logger.child({
-    operation: "reconcile",
+  const generateLogger = logger.child({
+    operation: "generate",
     runDateKey,
-    force: window.force,
-    from: window.fromKey,
-    to: window.toKey,
+    force: range.force,
+    from: range.fromKey,
+    to: range.toKey,
   });
 
-  reconcileLogger.info({ event: "[RECONCILE_START]" }, "starting reconcile run");
+  generateLogger.info({ event: "[GENERATE_START]" }, "starting generate run");
   await backfillPuzzlePublishedAt();
-  const { expireGenerations, reapStaleGenerations } = await import(
-    "../app/lib/realitea/admin/generate.server"
-  );
+  const { expireGenerations, reapStaleGenerations } =
+    await import("../app/lib/realitea/admin/generate.server");
   await reapStaleGenerations();
   await expireGenerations();
 
@@ -92,10 +90,10 @@ async function main() {
     let totalSkipped = 0;
     const circuit = createCircuitBreaker();
     for (const game of games) {
-      const result = await runGenerateWindow(game, window, circuit);
+      const result = await runGenerateRange(game, range, circuit);
       if (result.aborted) {
-        reconcileLogger.error(
-          { event: "[RECONCILE_ABORTED]", game: game.slug, aborted: result.aborted },
+        generateLogger.error(
+          { event: "[GENERATE_ABORTED]", game: game.slug, aborted: result.aborted },
           `${game.slug}: regenerate aborted`,
         );
         throw new Error(`${game.slug}: regenerate aborted (${result.aborted.code})`);
@@ -109,11 +107,11 @@ async function main() {
       totalGenerated += result.generatedCount;
       totalFailed += result.failedCount;
       totalSkipped += result.skippedCount;
-      reconcileLogger.info(
+      generateLogger.info(
         {
-          event: "[RECONCILE_GAME_COMPLETE]",
+          event: "[GENERATE_GAME_COMPLETE]",
           game: game.slug,
-          force: window.force,
+          force: range.force,
           deletedCount: result.deletedCount,
           generatedCount: result.generatedCount,
           failedCount: result.failedCount,
@@ -123,8 +121,12 @@ async function main() {
         `${game.slug}: ${result.generatedCount} generated`,
       );
       if (result.circuitOpened) {
-        reconcileLogger.error(
-          { event: "[RECONCILE_CIRCUIT_OPEN]", game: game.slug, consecutiveFailures: circuit.consecutiveFailures },
+        generateLogger.error(
+          {
+            event: "[GENERATE_CIRCUIT_OPEN]",
+            game: game.slug,
+            consecutiveFailures: circuit.consecutiveFailures,
+          },
           `${circuit.consecutiveFailures} consecutive generation failures — stopping the rest of this run instead of exhausting the attempt budget`,
         );
         break;
@@ -141,15 +143,16 @@ async function main() {
   });
 
   if (!locked.ok) {
-    reconcileLogger.error({ event: "[LOCK_BUSY]" }, "another generate run holds the lock");
+    generateLogger.error({ event: "[LOCK_BUSY]" }, "another generate run holds the lock");
     throw new Error("lock_busy");
   }
 
-  const { totalDeleted, totalGenerated, totalFailed, totalSkipped, circuitOpened, games } = locked.value;
-  reconcileLogger.info(
+  const { totalDeleted, totalGenerated, totalFailed, totalSkipped, circuitOpened, games } =
+    locked.value;
+  generateLogger.info(
     {
-      event: "[RECONCILE_COMPLETE]",
-      force: window.force,
+      event: "[GENERATE_COMPLETE]",
+      force: range.force,
       games,
       deleted: totalDeleted,
       generated: totalGenerated,
@@ -157,7 +160,7 @@ async function main() {
       skipped: totalSkipped,
       circuitOpened,
     },
-    `reconcile complete across ${games.length} game(s): ${totalGenerated} generated`,
+    `generate complete across ${games.length} game(s): ${totalGenerated} generated`,
   );
 
   if (circuitOpened) {
@@ -173,8 +176,8 @@ if (!process.env.VITEST) {
     await main();
   } catch (err) {
     logger.error(
-      { event: "[RECONCILE_FAILED]", error: getErrorMessage(err) },
-      "reconcile run failed",
+      { event: "[GENERATE_FAILED]", error: getErrorMessage(err) },
+      "generate run failed",
     );
     process.exit(1);
   } finally {

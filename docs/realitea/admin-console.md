@@ -120,16 +120,16 @@ Lead with the job. The UI is a capability surface, not a mock.
 
 ### The operator jobs, in words
 
-1. **“I want to see what DeepSeek + v2 would produce from this morning’s TMZ + Page Six backlog, without touching the next seven days.”**  
+1. **“I want to see what DeepSeek + v2 would produce from this morning’s TMZ + Page Six backlog, without touching the next seven days.”**
    Create a preview run. Choose article source (pending inventory, selected feed IDs, selected article IDs, or a live RSS URL). Choose prompt (`v1` file, `v2` file, or pasted). Choose model (default `deepseek/deepseek-v4-flash` or an allowlisted override). Get 3–5 scored candidates. Nothing is written to `daily_puzzles`.
 
-2. **“Wednesday’s live puzzle is wrong / leaked / off-brand. Replace just that day.”**  
+2. **“Wednesday’s live puzzle is wrong / leaked / off-brand. Replace just that day.”**
    Open the date. See the live row, article, generation metadata, and `N` attempts (`playing` / `solved` / `failed`). Generate or pick a candidate. Confirm. If `N > 0`, the default is **blocked**; override is a second typed confirmation and a documented attempt policy (below).
 
-3. **“The cron left Thursday empty.”**  
+3. **“The cron left Thursday empty.”**
    Inventory cell is `missing`. Failure panel shows `ARTICLE_BACKLOG_EMPTY` or `GENERATION_EXHAUSTED` from the last ops/CLI write (cron and console share the same failure rows). Operator can ingest (otherwise next ingest is the 17:00 UTC generate workflow), then gap-fill **that one date** in-request, or dispatch the generate workflow for N days.
 
-4. **“I need to regenerate Friday–Sunday with the new prompt file already on the game row, but leave next week alone.”**  
+4. **“I need to regenerate Friday–Sunday with the new prompt file already on the game row, but leave next week alone.”**
    Dry-run lists the dates that would be deleted and regenerated. Confirm. Never includes today or the past (UTC **or** primary player TZ — see date class). If any selected date has attempts, **abort** and send the operator to the date inspector. Multi-day live run is a `workflow_dispatch` of `realitea-generate.yml` with a date-range input, not `deletePuzzlesFromDate` from tomorrow-to-infinity and not a 14-minute HTTP action.
 
 ---
@@ -258,7 +258,7 @@ Required extractions / extensions:
 | `getSystemPromptForGame` | Already exported; reads `game.systemPromptPath` | Reuse. Preview file mode calls this with a synthetic `{ systemPromptPath }`. Do not invent a second prompt loader. |
 | `articleToFeedItem` | **Already** includes sanitized `articleText` (24_000) for cron and preview | **Adopt.** Console PRs must not revert this or fork a title-only mapper. Optional later: a cheaper preview cap is a separate flag, not v1. |
 | `generatePuzzleForGame` | Inserts published row; **3** `callGenerationApi` attempts with 1s/2s backoff | Keep as cron / CLI publisher with `maxAttempts` default **3**. HTTP `gap-fill-one` calls `generatePuzzleForGame({ maxAttempts: 1 })`. Admin **publish** goes through `publishPuzzle`. Write the same failure rows (required in the ops PR). |
-| `computeGaps` + reconcile loop | Lives in `scripts/realitea-generate.ts` | Move to `ops.ts`. `--force --days-ahead=N` deletes **only** `[tomorrow, tomorrow+N)` unless `--from`/`--to` set. CLI also accepts `--from` / `--to` for Friday–Sunday. |
+| Generate-range planning + generation loop | `generate-range.ts`, `generation-runner.ts`, and `scripts/realitea-generate.ts` | `--force --days-ahead=N` deletes **only** `[tomorrow, tomorrow+N)` unless `--from`/`--to` are set. The CLI also accepts `--from` / `--to` for Friday–Sunday. |
 | `validateCandidate` | Unchanged | **Only** publish path. Hand-edits re-run it. No admin bypass for length, leakage, prompt-control, or missing source. |
 
 Prompt files remain on disk:
@@ -566,9 +566,9 @@ Implementation notes:
 1. Token `REALITEA_GENERATE_DISPATCH_TOKEN` is read **only** in this server module. Never put it in a loader DTO, cookie, or client bundle. PAT scopes: **`actions:write` + `actions:read`** on `ponti-studios/labs` (`write` to dispatch, `read` to list/get runs). `contents: read` is already on the workflow itself.
 2. Generate a `requestId` (UUID) **before** the POST. Persist the audit row immediately: `{ requestId, dispatchSentAt, actor, mode, from, to, daysAhead, runId: null }`.
 3. `POST https://api.github.com/repos/ponti-studios/labs/actions/workflows/realitea-generate.yml/dispatches` with `Authorization: Bearer $TOKEN`, `Accept: application/vnd.github+json`, body `{ ref: "main", inputs: { mode, daysAhead, from, to, requestId } }`. 204 on success; GitHub does **not** return a run id. `workflow_dispatch` has no `client_payload`; the idempotency marker is the `requestId` **input** plus the workflow `run-name` (PR 3 YAML): `run-name: "realitea-${{ inputs.mode }}-${{ inputs.requestId }}"`.
-4. Resolve `runId` by listing `GET .../actions/workflows/realitea-generate.yml/runs?event=workflow_dispatch&per_page=10` with **backoff 1s / 2s / 4s / 8s** (stop by ~20s). A candidate must match `path` = this workflow **and** (`display_title` or `name`) contains `requestId`.  
-   - **0 matches** after retries → `{ runId: null, unresolved: true, htmlUrl: workflow url }`. Persist unresolved. **Do not guess** the newest run.  
-   - **>1 match** → same: refuse to bind (two operators or a human “Run workflow” in the same window).  
+4. Resolve `runId` by listing `GET .../actions/workflows/realitea-generate.yml/runs?event=workflow_dispatch&per_page=10` with **backoff 1s / 2s / 4s / 8s** (stop by ~20s). A candidate must match `path` = this workflow **and** (`display_title` or `name`) contains `requestId`.
+   - **0 matches** after retries → `{ runId: null, unresolved: true, htmlUrl: workflow url }`. Persist unresolved. **Do not guess** the newest run.
+   - **>1 match** → same: refuse to bind (two operators or a human “Run workflow” in the same window).
    - **exactly 1** → persist that `runId` on the audit row.
 5. Job status loader is keyed by **`requestId`** (stable even when `runId` is still null). Admin-auth’d server polls `GET .../actions/runs/:id` once bound. The browser only polls **labs** (`/games/realitea/admin/jobs/:requestId`), never `api.github.com`.
 6. Timeout UX: if the run is `queued`/`in_progress` for > 35 minutes, show failed/stale and the Actions `htmlUrl`. Unresolved dispatches show the workflow URL and “watch Actions — bind failed.” Inventory cells refresh from Postgres, not from GitHub.

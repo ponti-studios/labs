@@ -4,11 +4,10 @@ import type {
   GenerationSourceMode,
 } from "~/lib/server/db";
 
-import { reapStaleGenerations } from "./generate.server";
-import type { GenerateErr, GenerateOk } from "./generate-types";
 import { addDaysToDateKey, buildDateRange, getDateKey } from "../core/date";
+import { isLiveDate, liveDateKeys, PRIMARY_PLAYER_TZ } from "../generate-range";
+import { REALITEA_READY_INVENTORY_DAYS } from "../generation/candidate-validation";
 import { MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "../generation/feed-text";
-import { isLiveDate, liveDateKeys, PRIMARY_PLAYER_TZ, REALITEA_READY_INVENTORY_DAYS } from "../ops";
 import {
   countAttemptsByDate,
   countInventoryForRange,
@@ -16,11 +15,13 @@ import {
   getActiveGames,
   getExistingDateKeys,
   getGameBySlug,
-  listAllPuzzleDateKeys,
   getGenerationWithCandidates,
+  listAllPuzzleDateKeys,
   listGenerationsForTopic,
   loadPuzzleForDate,
 } from "../server/repository.server";
+import type { GenerateErr, GenerateOk } from "./generate-types";
+import { reapStaleGenerations } from "./generate.server";
 
 /** Default overview window: 5 days ago, today, 5 days ahead. */
 export const ADMIN_INVENTORY_LOOKBACK_DAYS = 5;
@@ -109,11 +110,7 @@ export function buildInventoryCells(input: {
 
   return dateKeys.map((dateKey) => {
     const hasPuzzle = existing.has(dateKey);
-    const state: InventoryCellState = !hasPuzzle
-      ? "missing"
-      : live.has(dateKey)
-        ? "live"
-        : "ready";
+    const state: InventoryCellState = !hasPuzzle ? "missing" : live.has(dateKey) ? "live" : "ready";
     return {
       dateKey,
       state,
@@ -185,7 +182,12 @@ export function parseCandidatePayload(value: unknown): AdminGenerationCandidate[
 
 /** Adapts a persisted run into the wire shape the generate UI already renders (GenerateResult/CandidateCards). */
 export function toGenerateOk(detail: AdminGenerationDetail): GenerateOk | GenerateErr {
-  if (detail.status === "failed" && detail.candidates.length === 0 && !detail.llmError && !detail.feedError) {
+  if (
+    detail.status === "failed" &&
+    detail.candidates.length === 0 &&
+    !detail.llmError &&
+    !detail.feedError
+  ) {
     return { ok: false, code: "INVALID_SOURCE", error: "Generation failed" };
   }
   return {

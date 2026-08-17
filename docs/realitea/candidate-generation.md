@@ -1,7 +1,7 @@
 ### **1. Trigger**
 
 - **Frequency:** Once a day.
-- **Runner:** GitHub Actions (`cron-realitea-generate.yml`, cron `0 17 * * *` — 9am Pacific / 17:00 UTC, chosen to stay DST-safe rather than targeting midnight UTC) runs `pnpm --filter @pontistudios/labyrinth realitea:reconcile`, which fills gaps in a forward inventory window (default 7 days) rather than generating a single day's puzzle directly. A second workflow, `realitea-regenerate.yml`, is manual (`workflow_dispatch`) for on-demand regeneration.
+- **Runner:** GitHub Actions (`cron-realitea-generate.yml`, cron `0 17 * * *` — 9am Pacific / 17:00 UTC, chosen to stay DST-safe rather than targeting midnight UTC) runs `pnpm realitea:generate`, which fills gaps in a forward inventory range (default 7 days) rather than generating a single day's puzzle directly. A second workflow, `realitea-regenerate.yml`, is manual (`workflow_dispatch`) for on-demand regeneration.
 
 ### **2. Ingestion**
 

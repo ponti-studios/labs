@@ -19,9 +19,9 @@
 
 import type {
   Article,
+  GamesAttempt,
   GamesPuzzle,
   GamesTopic,
-  GamesAttempt,
   RealiteaAdminActionKind,
 } from "~/lib/server/db";
 import {
@@ -29,18 +29,18 @@ import {
   and,
   articles,
   count,
-  gamesPuzzles,
   db,
   desc,
   eq,
+  gamesAttempts,
+  gamesPuzzles,
   gamesTopics,
+  generationCandidates,
+  generationRuns,
   gte,
   inArray,
   lt,
   lte,
-  gamesAttempts,
-  generationCandidates,
-  generationRuns,
   sql,
 } from "~/lib/server/db";
 
@@ -55,7 +55,10 @@ export async function getGameBySlug(slug: string): Promise<GamesTopic | null> {
 }
 
 export async function getActiveGames(): Promise<GamesTopic[]> {
-  return db.query.gamesTopics.findMany({ where: eq(gamesTopics.active, true), orderBy: gamesTopics.name });
+  return db.query.gamesTopics.findMany({
+    where: eq(gamesTopics.active, true),
+    orderBy: gamesTopics.name,
+  });
 }
 
 // ── Queries ──────────────────────────────────────────────────────────────────
@@ -178,7 +181,10 @@ export async function upsertArticles(
  * Pending articles eligible for `game` (reachable via one of its feeds),
  * oldest published first, capped at `limit`.
  */
-export async function getPendingArticlesForGame(game: GamesTopic, limit: number): Promise<Article[]> {
+export async function getPendingArticlesForGame(
+  game: GamesTopic,
+  limit: number,
+): Promise<Article[]> {
   const rows = await db
     .select({ article: articles })
     .from(articles)
@@ -188,7 +194,10 @@ export async function getPendingArticlesForGame(game: GamesTopic, limit: number)
   return rows.map((r) => r.article);
 }
 
-export async function getPendingArticlesForTopics(topicIds: number[], limit: number): Promise<Article[]> {
+export async function getPendingArticlesForTopics(
+  topicIds: number[],
+  limit: number,
+): Promise<Article[]> {
   if (topicIds.length === 0) return [];
   const rows = await db
     .select({ article: articles })
@@ -199,7 +208,10 @@ export async function getPendingArticlesForTopics(topicIds: number[], limit: num
   return rows.map((r) => r.article);
 }
 
-export async function getPendingArticlesByIds(articleIds: number[], limit: number): Promise<Article[]> {
+export async function getPendingArticlesByIds(
+  articleIds: number[],
+  limit: number,
+): Promise<Article[]> {
   if (articleIds.length === 0) return [];
   const rows = await db
     .select({ article: articles })
@@ -222,7 +234,10 @@ export async function listTopicFeedHosts(): Promise<string[]> {
   });
 }
 
-export async function countRecentGenerateActions(hominemUserId: string, since: Date): Promise<number> {
+export async function countRecentGenerateActions(
+  hominemUserId: string,
+  since: Date,
+): Promise<number> {
   const [row] = await db
     .select({ value: count() })
     .from(adminActions)
@@ -355,7 +370,7 @@ export async function countInventoryForRange(
  * Return the `date_utc` values that already have a puzzle for `gameId` in
  * [fromKey, toKey].
  *
- * Used by the reconcile script to determine which dates need gap-filling
+ * Used by the generate script to determine which dates need gap-filling
  * without an inline Drizzle query.
  */
 export async function getExistingDateKeys(
@@ -706,10 +721,7 @@ export async function countRecentGuesses(userId: string, windowMs: number): Prom
     .select({ guessedAt: gamesAttempts.guessedAt })
     .from(gamesAttempts)
     .where(
-      and(
-        eq(gamesAttempts.hominemUserId, userId),
-        gte(gamesAttempts.updatedAt, new Date(cutoff)),
-      ),
+      and(eq(gamesAttempts.hominemUserId, userId), gte(gamesAttempts.updatedAt, new Date(cutoff))),
     );
   let total = 0;
   for (const row of rows) {
@@ -798,4 +810,3 @@ export async function loadAllAttemptsForUser(
 }
 
 export type { Article, GamesPuzzle, GamesTopic };
-
