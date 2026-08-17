@@ -76,3 +76,15 @@ tracing the full causal chain — not inferred from the diff alone. The
 verifier found the completion handler's missing status guard to be worse
 than the original candidate finding assumed (no guard exists at all, so the
 DB row itself is corrupted, not just the SSE view).
+
+## Addendum
+
+The initial fix (PR #240) only added the `status = 'running'` guard to the
+**admin** background-completion handler
+(`app/lib/realitea/admin/generate.server.ts`). The same race exists on the
+**cron/gap-fill** path — `generatePuzzleForGame`'s own `generationRuns`
+update in `app/lib/realitea/generation/generate.server.ts` had the identical
+unguarded `.where(eq(generationRuns.id, run.id))`. Caught and fixed in a
+follow-up commit (`11e29839`, `fix(realitea): close remaining reap-race and
+audit-trail gaps on cron path`) directly on `main`. Both paths now carry the
+guard.

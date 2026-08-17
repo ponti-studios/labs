@@ -70,3 +70,13 @@ CONFIRMED by an independent verifier comparing the pre-rewrite version (via
 `git show 57ed331d^:...`) against the current file and confirming
 `recordGenerateFailure`'s only remaining attempt-related call site is the
 exhausted-retries path.
+
+## Addendum
+
+The initial fix (PR #240) restored `recordGenerateFailure` for the
+`GENERATION_API_ERROR` branch (LLM call itself failing) but missed the
+sibling `GENERATION_MATCH_ERROR` branch added for ticket 04 (the
+candidate-matching loop's new catch block) — that branch logged the error
+but still didn't write an audit-trail entry, reopening the same gap for a
+different failure mode. Caught and fixed in a follow-up commit (`11e29839`,
+same commit as the ticket 02 addendum) directly on `main`.
