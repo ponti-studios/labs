@@ -92,7 +92,11 @@ export default function RealiTeaAdminCosts() {
       </section>
 
       <BreakdownTable title="Trigger" rows={report.byTrigger} emptyLabel="No triggers" />
-      <BreakdownTable title="Environment" rows={report.byEnvironment} emptyLabel="No environments" />
+      <BreakdownTable
+        title="Environment"
+        rows={report.byEnvironment}
+        emptyLabel="No environments"
+      />
       <BreakdownTable title="Model" rows={report.byModel} emptyLabel="No models" />
     </main>
   );

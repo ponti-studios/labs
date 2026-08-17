@@ -25,7 +25,13 @@ export async function ensureSeedPuzzle(
   gameId: number,
   dateKey: string,
   rawAnswer: string,
-  options: { force?: boolean; title?: string; cluePrefix?: string; detailPrefix?: string; articleUrl?: string } = {},
+  options: {
+    force?: boolean;
+    title?: string;
+    cluePrefix?: string;
+    detailPrefix?: string;
+    articleUrl?: string;
+  } = {},
 ) {
   const existing = await loadPuzzleForDate(gameId, dateKey);
   if (existing && !options.force) return existing;
@@ -38,10 +44,13 @@ export async function ensureSeedPuzzle(
 
   const answer = normalizeGuess(rawAnswer);
   if (answer.length !== 5) {
-    throw new Error(`Answer must normalize to exactly 5 letters, got "${rawAnswer}" -> "${answer}"`);
+    throw new Error(
+      `Answer must normalize to exactly 5 letters, got "${rawAnswer}" -> "${answer}"`,
+    );
   }
 
-  const url = options.articleUrl ?? `https://seed.local/realitea/${dateKey}/${answer.toLowerCase()}`;
+  const url =
+    options.articleUrl ?? `https://seed.local/realitea/${dateKey}/${answer.toLowerCase()}`;
   const [article] = await db
     .insert(articles)
     .values({
@@ -52,7 +61,8 @@ export async function ensureSeedPuzzle(
     })
     .onConflictDoNothing({ target: articles.url })
     .returning();
-  const articleRow = article ?? (await db.query.articles.findFirst({ where: eq(articles.url, url) }));
+  const articleRow =
+    article ?? (await db.query.articles.findFirst({ where: eq(articles.url, url) }));
   if (!articleRow) throw new Error(`Failed to create or find seed article for ${dateKey}`);
 
   await db
@@ -89,7 +99,12 @@ export async function seedAttempt(
   if (existing) return;
 
   const attempt = await createAttempt(userId, gameId, dateKey);
-  const guessPlan = status === "solved" ? [...guesses.playing, answer] : status === "failed" ? guesses.failed : guesses.playing;
+  const guessPlan =
+    status === "solved"
+      ? [...guesses.playing, answer]
+      : status === "failed"
+        ? guesses.failed
+        : guesses.playing;
   let attemptStatus: "playing" | "solved" | "failed" = "playing";
 
   for (const [index, word] of guessPlan.entries()) {

@@ -10,7 +10,13 @@ describe("getGameBySlug", () => {
   it("returns the game row when one exists", async () => {
     const [game] = await db
       .insert(gamesTopics)
-      .values({ slug: "rhobh", name: "RHOBH", feedUrl: "https://example.com/feed", feedLabel: "Test Feed", systemPromptPath: "prompts/rhobh.txt" })
+      .values({
+        slug: "rhobh",
+        name: "RHOBH",
+        feedUrl: "https://example.com/feed",
+        feedLabel: "Test Feed",
+        systemPromptPath: "prompts/rhobh.txt",
+      })
       .returning();
     const { getGameBySlug } = await import("../server/repository.server");
     const result = await getGameBySlug("rhobh");
@@ -28,9 +34,15 @@ describe("loadPuzzleForDate", () => {
   it("joins the puzzle with its source article", async () => {
     const [game] = await db
       .insert(gamesTopics)
-      .values({ slug: "rhobh", name: "RHOBH", feedUrl: "https://example.com/feed", feedLabel: "Test Feed", systemPromptPath: "prompts/rhobh.txt" })
+      .values({
+        slug: "rhobh",
+        name: "RHOBH",
+        feedUrl: "https://example.com/feed",
+        feedLabel: "Test Feed",
+        systemPromptPath: "prompts/rhobh.txt",
+      })
       .returning();
-        const [article] = await db
+    const [article] = await db
       .insert(articles)
       .values({ gamesTopicId: game.id, url: "https://example.com/a", title: "Article A" })
       .returning();
@@ -69,9 +81,15 @@ describe("getStoredAnswers", () => {
   it("returns a Set of normalizedAnswer values scoped to the game", async () => {
     const [game] = await db
       .insert(gamesTopics)
-      .values({ slug: "rhobh", name: "RHOBH", feedUrl: "https://example.com/feed", feedLabel: "Test Feed", systemPromptPath: "prompts/rhobh.txt" })
+      .values({
+        slug: "rhobh",
+        name: "RHOBH",
+        feedUrl: "https://example.com/feed",
+        feedLabel: "Test Feed",
+        systemPromptPath: "prompts/rhobh.txt",
+      })
       .returning();
-        const [a1] = await db
+    const [a1] = await db
       .insert(articles)
       .values({ gamesTopicId: game.id, url: "https://example.com/1", title: "One" })
       .returning();
@@ -142,9 +160,15 @@ describe("getExistingDateKeys", () => {
   it("returns date strings from rows scoped to the game", async () => {
     const [game] = await db
       .insert(gamesTopics)
-      .values({ slug: "rhobh", name: "RHOBH", feedUrl: "https://example.com/feed", feedLabel: "Test Feed", systemPromptPath: "prompts/rhobh.txt" })
+      .values({
+        slug: "rhobh",
+        name: "RHOBH",
+        feedUrl: "https://example.com/feed",
+        feedLabel: "Test Feed",
+        systemPromptPath: "prompts/rhobh.txt",
+      })
       .returning();
-        const [a1] = await db
+    const [a1] = await db
       .insert(articles)
       .values({ gamesTopicId: game.id, url: "https://example.com/1", title: "One" })
       .returning();
@@ -183,7 +207,8 @@ describe("getExistingDateKeys", () => {
 describe("deletePuzzlesInRange", () => {
   it("does not delete a puzzle after the inclusive end of the window", async () => {
     const game = await seedGameWithPuzzles(["2026-08-13", "2026-08-14", "2026-08-15"]);
-    const { deletePuzzlesInRange, getExistingDateKeys } = await import("../server/repository.server");
+    const { deletePuzzlesInRange, getExistingDateKeys } =
+      await import("../server/repository.server");
     const deleted = await deletePuzzlesInRange(game.id, "2026-08-13", "2026-08-14");
     expect(deleted).toBe(2);
     expect(await getExistingDateKeys(game.id, "2026-08-13", "2026-08-15")).toEqual(["2026-08-15"]);
@@ -193,7 +218,13 @@ describe("deletePuzzlesInRange", () => {
 async function seedGameWithPuzzles(dateKeys: string[]) {
   const [game] = await db
     .insert(gamesTopics)
-    .values({ slug: "rhobh", name: "RHOBH", feedUrl: "https://example.com/feed", feedLabel: "Test Feed", systemPromptPath: "prompts/rhobh.txt" })
+    .values({
+      slug: "rhobh",
+      name: "RHOBH",
+      feedUrl: "https://example.com/feed",
+      feedLabel: "Test Feed",
+      systemPromptPath: "prompts/rhobh.txt",
+    })
     .returning();
 
   for (const dateKey of dateKeys) {
@@ -292,7 +323,13 @@ describe("getEarliestPuzzleDateKey", () => {
   it("returns null when the game has no puzzles", async () => {
     const [game] = await db
       .insert(gamesTopics)
-      .values({ slug: "rhobh", name: "RHOBH", feedUrl: "https://example.com/feed", feedLabel: "Test Feed", systemPromptPath: "prompts/rhobh.txt" })
+      .values({
+        slug: "rhobh",
+        name: "RHOBH",
+        feedUrl: "https://example.com/feed",
+        feedLabel: "Test Feed",
+        systemPromptPath: "prompts/rhobh.txt",
+      })
       .returning();
 
     const { getEarliestPuzzleDateKey } = await import("../server/repository.server");
@@ -326,4 +363,3 @@ describe("loadAllAttemptsForUser", () => {
     expect(result).toEqual([]);
   });
 });
-

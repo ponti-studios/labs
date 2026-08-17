@@ -1,11 +1,10 @@
 /**
  * Data-access layer for the RealiTea puzzle domain (`games_topics`,
- * `articles`, `games_puzzles` — physically still named
- * `rhobh_games_puzzles`, see packages/db/src/schema/realitea.ts).
+ * `articles`, `games_puzzles` — see app/lib/server/db/schema/realitea.ts).
  *
  * All exported functions are standalone — there is no class wrapper because
  * the module has zero instance state. Every function operates on the shared
- * `db` instance from `@pontistudios/db`, and functions are independently
+ * `db` instance from `~/lib/server/db`, and functions are independently
  * importable for tree-shaking and targeted test mocking.
  *
  * Puzzles are queried by (gameId, dateUtc) — the intended game and date they

@@ -95,8 +95,7 @@ export async function refreshTopicArticles(
   topic: GamesTopic,
   userId: string,
 ): Promise<
-  | { ok: true; inserted: number; scanned: number; expired: number }
-  | { ok: false; error: string }
+  { ok: true; inserted: number; scanned: number; expired: number } | { ok: false; error: string }
 > {
   try {
     const expired = await expireStaleArticles(topic, new Date());

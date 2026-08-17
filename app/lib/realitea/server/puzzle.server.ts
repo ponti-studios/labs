@@ -63,8 +63,9 @@ export function toPublicGamesPuzzle(record: PuzzleRecord, isFallback = false): P
 /**
  * Resolves the puzzle actually served for "today" — today's own puzzle, or
  * (grace-period fallback) the most recently created one if today's isn't
- * ready yet. Shared by loadActivePublicPuzzle and loadActivePuzzleAttempt so
- * both agree on exactly which puzzle "today" refers to; an attempt must be
+ * ready yet. Shared by loadActivePublicPuzzle and
+ * loadActivePublicPuzzleWithAttempt (and, through it, loadActivePuzzleAttempt)
+ * so all agree on exactly which puzzle "today" refers to; an attempt must be
  * looked up against the *served* date, not the nominal one, since that's
  * what evaluateGuessServer keys guesses by too.
  */
@@ -234,8 +235,7 @@ export async function loadPuzzleForSpecificDate(
  * secure, but nothing sensitive depends on it: the six-guess cap, the
  * duplicate-guess check, and the guesses-per-minute rate limit are all
  * authoritative only once a user is signed in and backed by
- * `games_attempts`, which is the actual gap this closes (see
- * docs/realitea-audit/01-no-server-side-attempt-tracking.md).
+ * `games_attempts`, which is the actual gap this closes.
  */
 export async function evaluateGuessServer(
   dateKey: string,
@@ -333,7 +333,7 @@ export async function evaluateGuessServer(
       attempt = await createAttempt(user.id, gameId, resolvedDateKey);
     } catch {
       // Concurrent request already created it (unique index on
-      // hominem_user_id/game_id/date_utc) — reload rather than fail.
+      // hominem_user_id/games_topic_id/date_utc) — reload rather than fail.
       attempt = await loadAttempt(user.id, gameId, resolvedDateKey);
       if (!attempt) throw new Error("Failed to create or load realitea attempt");
     }

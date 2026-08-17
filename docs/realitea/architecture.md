@@ -1,20 +1,12 @@
 ---
-title: RealiTea Architecture
-project: realitea
-type: spec
+title: Architecture
+summary: How RealiTea splits gameplay, validation, and publishing across the browser and server.
+type: architecture
 status: active
-client: null
-industry: null
 owner: charlesponti
-tags:
-  - architecture
-  - ai
-  - backend
-  - react-router
-related:
-  - ./index.md
-  - ./reliability-and-testing.md
-summary: The backend and domain architecture behind RealiTea, including daily puzzle loading, server-side validation, and AI-assisted publishing with deterministic fallback.
+tags: [architecture, backend, react-router]
+related: [./reliability-and-testing.md, ./candidate-generation.md]
+updated: 2026-08-16
 ---
 
 # RealiTea Architecture
@@ -59,9 +51,19 @@ This keeps generation policy out of the route and out of the scheduler.
 
 ### Server-only generation and loading
 
-The server layer owns publishing. It fetches RHOBH source material from a single RSS feed (realityblurb.com), generates candidates through TanStack AI with OpenRouter, and persists only approved puzzles. There is no curated-archive fallback at generation time: if every attempt fails, generation simply logs the failure and publishes nothing for that slot.
+The server layer owns publishing. Each game (`games_topics`) has its own RSS feed and system prompt, so generation is per-game rather than tied to a single show. The pipeline fetches that game's source material, generates candidates through OpenRouter, and persists only approved puzzles. There is no curated-archive fallback at generation time: if every attempt fails, generation simply logs the failure and publishes nothing for that slot. A shared circuit breaker (`app/lib/realitea/circuit-breaker.ts`) across dates and games stops a run early if the provider is degraded, instead of burning the full attempt budget — see `runGenerateWindow` in `app/lib/realitea/generation-runner.ts`.
 
 The same layer resolves the active daily puzzle for the route: it serves today's approved record if one exists, and otherwise falls back to the most recently published puzzle of any date. That is a serving-time continuity fallback, not a content fallback bank.
+
+## Admin console
+
+`/games/realitea/admin` (`app/routes/games/realitea/admin/`) is an authenticated operator surface, `noindex`, no public nav. Auth is layered: `requireRealiteaAdmin` (`app/lib/realitea/admin/auth.ts`) requires Basic Auth (`requireAdminAuth`, shared-secret) *and* a signed-in Hominem user on an email allowlist (`REALITEA_ADMIN_EMAILS`, required in production/Railway) — local dev only requires a Hominem session. Every operator write goes through `recordAdminAction` into `realitea_admin_actions`, an audit trail of who did what to which date.
+
+Generation is a persisted, non-publishing run before it's a puzzle. An operator triggers a run (`realitea_generation_runs`) against a chosen article source, prompt, and model; the model returns 3–5 scored candidates (`realitea_generation_candidates`), streamed to the UI over SSE (`app/lib/realitea/admin/generation-events.server.ts`). Nothing lands in `games_puzzles` until `publishCandidate` (`app/lib/realitea/admin/publish.ts`) is called explicitly on one candidate — it re-validates against the current excluded-answer set, then creates or replaces the row for that date. Replacing a date that already has player attempts snapshots the pre-image to `realitea_puzzle_revisions` (including the attempts) before overwriting, rather than allowing a silent rescore.
+
+Every published puzzle carries provenance — `games_puzzles.generation_run_id` links back to the run that produced it (`set null` on run deletion, so run retention can never delete or block a live puzzle). Article ownership is per-game (`articles.games_topic_id`), not global, so multiple games (e.g. `rhobh`, `page-six`, `sports`) draw from independent article pools rather than competing for one shared inventory.
+
+Player-facing date access is bounded the same way as generation: a date is "live" if it's today in UTC or `America/Los_Angeles`, and nothing before or after that window is playable or replaceable without going through the admin flow.
 
 ## Why fallback-first architecture mattered
 
@@ -75,23 +77,19 @@ The game relies on a small API surface rather than a large backend.
 - `POST /api/games/realitea/guess` submits a guess for validation against the active puzzle.
 - `GET /api/games/realitea/health` reports health/status for the daily puzzle pipeline.
 - The `/games/realitea` route loader resolves and serves the active puzzle server-side; there is no public date-parameterized daily-puzzle endpoint.
-- `pnpm --filter @pontistudios/labyrinth realitea:gen` runs `scripts/generate-realitea-scheduled-puzzle.ts`, which accepts `--date-key`, `--from`, `--to`, and `--days-ahead` flags (not `--date-utc`).
-- `pnpm --filter @pontistudios/labyrinth realitea:reconcile` runs `scripts/realitea.reconcile.ts`, which fills gaps in a forward inventory window (default 7 days) rather than generating a single day.
+- `pnpm realitea:generate` runs `scripts/realitea-generate.ts`, which accepts `--force`, `--days-ahead`, `--from`, and `--to` flags. It fills gaps in a forward inventory window (default 7 days) across every active game rather than generating a single day for a single game.
 
 The small API surface is deliberate. Each endpoint has one job and a clear owner.
 
 ## Scheduled publishing
 
-Two GitHub Actions workflows drive publishing:
+One GitHub Actions workflow drives publishing: `.github/workflows/realitea-generate.yml`. It runs on a `0 17 * * *` UTC cron (9am Pacific, chosen to be DST-safe) and calls `realitea:generate` in `gap_fill` mode to keep the forward inventory window filled across all active games; `workflow_dispatch` supports an on-demand `force` mode (delete-then-regenerate a window) for manual regeneration. `timeout-minutes: 30` and `concurrency.cancel-in-progress: false` bound one run; the circuit breaker (see above) is what actually stops a bad run early rather than letting it exhaust that budget.
 
-- `cron-realitea-generate.yml` runs on a `0 17 * * *` UTC cron (9am Pacific, chosen to be DST-safe) and calls `realitea:reconcile` to keep the forward inventory window filled.
-- `realitea-regenerate.yml` is manual (`workflow_dispatch`) for on-demand regeneration.
-
-Neither workflow runs at midnight UTC, and neither is exposed as an HTTP write surface — both run as direct script/build steps.
+Neither the scheduled nor manual path is exposed as an HTTP write surface — both run as direct script/build steps.
 
 This is the operational half of the system. A daily game does not just need content rules. It needs a publishing path that runs on time and fails safely.
 
 ## Read next
 
-- [Back to the overview](./index.md)
-- [Reliability and testing lessons](./reliability-and-testing.md)
+- [Candidate generation pipeline](./candidate-generation.md)
+- [Reliability and testing](./reliability-and-testing.md)

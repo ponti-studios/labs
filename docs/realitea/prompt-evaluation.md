@@ -1,4 +1,15 @@
-# RealiTea prompt evaluation
+---
+title: Prompt Evaluation
+summary: How to benchmark a generation prompt against fixed article fixtures before promoting it.
+type: guide
+status: active
+owner: charlesponti
+tags: [generation, llm, testing]
+related: [./candidate-generation.md, ./source-fixtures.md]
+updated: 2026-08-16
+---
+
+# Prompt Evaluation
 
 The prompt benchmark compares prompt files against the same fixed, cross-genre article fixtures. It is intentionally opt-in because it makes live OpenRouter calls.
 

@@ -58,7 +58,7 @@ function HeroHeadline() {
   );
 }
 
-// Spells "TEA" over "REAL" — the two halves of "Realitea".
+// Decorative tile-state showcase for the card preview — letters are illustrative, not a real word.
 const PREVIEW_ROWS = [
   [
     { letter: "B", state: "correct" as const },

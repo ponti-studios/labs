@@ -47,8 +47,8 @@ export const SCREEN_CAPACITY = 1_000;
 // because real theater operators don't know that number in advance, and
 // typing it in made the model feel more precise than it is. This constant
 // is the "lineup + season" model's baseline; a future per-title strength
-// signal (sourced from Hollywood, see screen-allocation-model.md) would
-// live here, not as a market-size guess.
+// signal (sourced from Hollywood) would live here, not as a market-size
+// guess.
 export const BASE_MARKET_DEMAND = 3_250;
 
 export const MONTHLY_RENT = 25_000;

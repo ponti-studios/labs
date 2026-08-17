@@ -24,7 +24,10 @@ export function decodeHtmlEntities(value: string): string {
   return value
     .replace(/&#x([0-9a-fA-F]+);/g, (_, hex: string) => fromCodePoint(Number.parseInt(hex, 16)))
     .replace(/&#(\d+);/g, (_, dec: string) => fromCodePoint(Number.parseInt(dec, 10)))
-    .replace(/&([a-zA-Z]+);/g, (match, name: string) => NAMED_ENTITIES[name.toLowerCase()] ?? match);
+    .replace(
+      /&([a-zA-Z]+);/g,
+      (match, name: string) => NAMED_ENTITIES[name.toLowerCase()] ?? match,
+    );
 }
 
 /** Normalize feed text before it becomes model input or puzzle copy. */

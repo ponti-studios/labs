@@ -26,9 +26,9 @@ export function getHominemApiUrl(): string {
  * required because Cloudflare's bot-challenge in front of api.ponti.io
  * intercepts server-to-server fetches (no real browser to solve the
  * challenge) and returns its "Just a moment..." interstitial instead of
- * proxying to the origin, which getServerAuth silently reads as "no session"
- * (see docs/hominem-auth-integration.md, Incident 10). Falls back to the
- * public URL when unset, so local dev and tests are unaffected.
+ * proxying to the origin, which getServerAuth silently reads as "no session".
+ * Falls back to the public URL when unset, so local dev and tests are
+ * unaffected.
  */
 export function getHominemInternalApiUrl(): string {
   return process.env.HOMINEM_INTERNAL_API_URL ?? getHominemApiUrl();

@@ -6,10 +6,11 @@ import { parseTzCookie } from "~/routes/games/realitea/tz-cookie.server";
 import { getHominemUser } from "~/lib/server/hominem-auth";
 
 /**
- * The signed-in player's server-authoritative progress on "today"'s puzzle —
- * polled by the client (React Query, refetch-on-window-focus) instead of
- * device-local storage, so a solve on one device shows up on another. See
- * docs/incidents/011-cross-device-progress-not-synced.md.
+ * The signed-in player's server-authoritative progress on "today"'s puzzle,
+ * stored server-side instead of device-local storage so a solve on one
+ * device shows up on another. The main game route now gets this from its
+ * own loader (revalidated on window focus) rather than polling this
+ * endpoint — see games/realitea/route.tsx.
  */
 export async function loader({ request }: LoaderFunctionArgs) {
   const timeZone = parseTzCookie(request.headers.get("Cookie") ?? "") ?? "UTC";
