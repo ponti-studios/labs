@@ -131,16 +131,16 @@ const hollywood: Project = {
   logo: "/experiments/logo.hollywood.500x500.webp",
 };
 
-const realitea: Project = {
-  ...t.projects.entries.realitea,
-  slug: "realitea",
+const what: Project = {
+  ...t.projects.entries.what,
+  slug: "what",
   category: "product",
   tech: ["TypeScript", "React", "React Router", "PostgreSQL", "Drizzle"],
   status: "published",
   github: "https://github.com/ponti-studios/labs",
-  url: "/games/realitea",
-  screenshots: ["/screenshots/realitea-gameplay.png", "/screenshots/realitea-solved.png"],
-  logo: "/experiments/logo.realitea.webp",
+  url: "/games/what",
+  screenshots: ["/screenshots/what-gameplay.png", "/screenshots/what-solved.png"],
+  logo: "/experiments/logo.what.webp",
 };
 
 const geo: Project = {
@@ -184,7 +184,7 @@ export const projects: Project[] = [
   earth,
   foundation,
   hollywood,
-  realitea,
+  what,
   covid,
   geo,
   toolbox,
@@ -195,7 +195,7 @@ export const projectSections: ProjectSection[] = [
   {
     category: "product",
     label: t.projects.categoryLabels.product,
-    projects: [omiro, career, realitea, finance, commune, health, earth],
+    projects: [omiro, career, what, finance, commune, health, earth],
   },
   {
     category: "infrastructure",

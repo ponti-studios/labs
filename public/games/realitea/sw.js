@@ -1,4 +1,4 @@
-const VERSION = "realitea-v1";
+const VERSION = "what-legacy-v1";
 const STATIC_CACHE = `${VERSION}-static`;
 
 self.addEventListener("install", (event) => {
@@ -12,7 +12,7 @@ self.addEventListener("activate", (event) => {
       .then((keys) =>
         Promise.all(
           keys
-            .filter((key) => key.startsWith("realitea-") && key !== STATIC_CACHE)
+            .filter((key) => key.startsWith("what-") && key !== STATIC_CACHE)
             .map((key) => caches.delete(key)),
         ),
       )
@@ -26,7 +26,10 @@ self.addEventListener("fetch", (event) => {
 
   if (request.method !== "GET" || url.origin !== self.location.origin) return;
 
-  if (url.pathname === "/api/games/realitea/games") {
+  if (
+    url.pathname === "/api/games/what/games" ||
+    url.pathname === "/api/games/realitea/games"
+  ) {
     event.respondWith(
       fetch(request)
         .then((response) => {
@@ -42,7 +45,9 @@ self.addEventListener("fetch", (event) => {
   }
 
   if (request.mode === "navigate") {
-    const isAdminPage = url.pathname.startsWith("/games/realitea/admin");
+    const isAdminPage =
+      url.pathname.startsWith("/games/what/admin") ||
+      url.pathname.startsWith("/games/realitea/admin");
     event.respondWith(
       fetch(request)
         .then((response) => {

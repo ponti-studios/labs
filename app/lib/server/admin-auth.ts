@@ -1,6 +1,6 @@
 import { timingSafeEqual } from "node:crypto";
 
-const REALM = "RealiTea Admin";
+const REALM = "WH?T Admin";
 
 function constantTimeEqual(a: string, b: string): boolean {
   const bufA = Buffer.from(a);

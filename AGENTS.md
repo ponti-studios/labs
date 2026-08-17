@@ -21,7 +21,7 @@ schema file → drizzle-kit generate → migration SQL → drizzle-kit migrate �
 
 **Required workflow for any schema change:**
 
-1. Edit a schema file in `app/lib/server/db/schema/` (e.g. `base.ts`, `realitea.ts`)
+1. Edit a schema file in `app/lib/server/db/schema/` (e.g. `base.ts`, `what.ts`)
 2. Run `pnpm db:generate` to create the migration SQL and snapshot
 3. Run `pnpm db:migrate` to apply locally and verify
 4. Commit the schema change, generated migration file, and snapshot together
@@ -57,13 +57,13 @@ All scripts (`scripts/*.ts`) must validate their environment using `LabyrinthSer
 
 This ensures every script validates the same set of required variables and produces consistent error messages.
 
-## RealiTea Puzzle Generation
+## What Puzzle Generation
 
-- The single entry point for all puzzle management is `scripts/realitea.generate.ts`
-- Normal mode: `pnpm realitea:generate` (gap-fill, daily cron)
-- Force-regenerate mode: `pnpm realitea:generate -- --force` (deletes and regenerates all future puzzles)
+- The single entry point for all puzzle management is `scripts/what-generate.ts`
+- Normal mode: `pnpm what:generate` (gap-fill, daily cron)
+- Force-regenerate mode: `pnpm what:generate -- --force` (deletes and regenerates all future puzzles)
 - Do not create separate "regenerate" scripts — the `--force` flag handles that
-- Both the daily cron and manual force-regenerate runs share one workflow: `.github/workflows/realitea-generate.yml` (schedule trigger runs gap-fill mode; `workflow_dispatch` trigger runs `--force --days-ahead=<input>`)
+- Both the daily cron and manual force-regenerate runs share one workflow: `.github/workflows/what-generate.yml` (schedule trigger runs gap-fill mode; `workflow_dispatch` trigger runs `--force --days-ahead=<input>`)
 
 ## Authentication (Hominem)
 

@@ -32,6 +32,12 @@ const apiRoutes = [
   ),
   route("/api/gen/image", "routes/api.gen.image.ts"),
   route("/api/gen/predict", "routes/api.gen.predict.ts"),
+  route("/api/games/what/attempt", "routes/api.games.what.attempt.ts"),
+  route("/api/games/what/guess", "routes/api.games.what.guess.ts"),
+  route("/api/games/what/games", "routes/api.games.what.games.ts"),
+  route("/api/games/what/health", "routes/api.games.what.health.ts"),
+  // Keep old API URLs working for installed clients and shared links. These
+  // point at the same handlers so POST semantics are preserved.
   route("/api/games/realitea/attempt", "routes/api.games.realitea.attempt.ts"),
   route("/api/games/realitea/guess", "routes/api.games.realitea.guess.ts"),
   route("/api/games/realitea/games", "routes/api.games.realitea.games.ts"),
@@ -54,25 +60,27 @@ const featureRoutes = [
   ]),
 
   // Games
-  ...prefix("/games/realitea", [
-    layout("routes/games/realitea/brand.tsx", [
-      index("routes/games/realitea/route.tsx"),
-      route("history", "routes/games/realitea/history.tsx"),
-      route("admin", "routes/games/realitea/admin/layout.tsx", [
-        index("routes/games/realitea/admin/route.tsx"),
-        route("inventory", "routes/games/realitea/admin/inventory.tsx"),
-        route("generate", "routes/games/realitea/admin/generate.tsx"),
-        route("generate/events", "routes/games/realitea/admin/generate.events.ts"),
-        route("generate/stream", "routes/games/realitea/admin/generate.stream.ts"),
-        route("preview", "routes/games/realitea/admin/preview-redirect.ts"),
-        route("preview/events", "routes/games/realitea/admin/preview.events.ts"),
-        route("topics", "routes/games/realitea/admin/topics.tsx"),
-        route("topics/:slug", "routes/games/realitea/admin/topics.$slug.tsx"),
-        route("generations/:id", "routes/games/realitea/admin/generations.$id.tsx"),
-        route("dates/:date", "routes/games/realitea/admin/dates.$date.tsx"),
-        route("costs", "routes/games/realitea/admin/costs.tsx"),
+  route("/games/realitea", "routes/redirects/what.ts"),
+  route("/games/realitea/*", "routes/redirects/what-splat.ts"),
+  ...prefix("/games/what", [
+    layout("routes/games/what/brand.tsx", [
+      index("routes/games/what/route.tsx"),
+      route("history", "routes/games/what/history.tsx"),
+      route("admin", "routes/games/what/admin/layout.tsx", [
+        index("routes/games/what/admin/route.tsx"),
+        route("inventory", "routes/games/what/admin/inventory.tsx"),
+        route("generate", "routes/games/what/admin/generate.tsx"),
+        route("generate/events", "routes/games/what/admin/generate.events.ts"),
+        route("generate/stream", "routes/games/what/admin/generate.stream.ts"),
+        route("preview", "routes/games/what/admin/preview-redirect.ts"),
+        route("preview/events", "routes/games/what/admin/preview.events.ts"),
+        route("topics", "routes/games/what/admin/topics.tsx"),
+        route("topics/:slug", "routes/games/what/admin/topics.$slug.tsx"),
+        route("generations/:id", "routes/games/what/admin/generations.$id.tsx"),
+        route("dates/:date", "routes/games/what/admin/dates.$date.tsx"),
+        route("costs", "routes/games/what/admin/costs.tsx"),
       ]),
-      route(":date", "routes/games/realitea/date.$date.tsx"),
+      route(":date", "routes/games/what/date.$date.tsx"),
     ]),
   ]),
   route("/games/cards", "routes/games/cards.tsx"),

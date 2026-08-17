@@ -20,7 +20,7 @@ always be `null` for this repo, it doesn't belong in the schema.
 
 ```yaml
 ---
-title: <short noun phrase, no "RealiTea" prefix redundancy unless disambiguating>
+title: <short noun phrase, no "What" prefix redundancy unless disambiguating>
 summary: <one sentence, what the doc is for, not what it contains>
 type: architecture | reference | guide | proposal
 status: active | draft | proposed

@@ -85,7 +85,7 @@ export default function App() {
   >(() => {
     if (isAuthenticated) {
       return [
-        { href: "/games/realitea", label: t.nav.realitea, logo: "/experiments/logo.realitea.png" },
+        { href: "/games/what", label: t.nav.what, logo: "/experiments/logo.what.png" },
         {
           href:
             import.meta.env.NODE_ENV === "development"
@@ -110,7 +110,7 @@ export default function App() {
     <QueryProvider>
       <ParticleBackground
         className="fixed"
-        enabled={!location.pathname.startsWith("/games/realitea")}
+        enabled={!location.pathname.startsWith("/games/what")}
       />
       <div
         aria-hidden="true"

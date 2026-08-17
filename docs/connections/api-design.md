@@ -15,7 +15,7 @@ The API exists to keep one rule airtight: the client never receives the solution
 
 ## Why server-authoritative
 
-RealiTea already settled this question for daily word games in this repo — dictionary/answer data lives on the server, never in a payload the browser can inspect. Connections needs it even more than RealiTea does: RealiTea's answer is one word behind a dictionary check, but a Connections puzzle's entire content is 16 words and 4 labels sitting in one response. Shipping the grouping up front would make the game trivially solvable from the network tab.
+What already settled this question for daily word games in this repo — dictionary/answer data lives on the server, never in a payload the browser can inspect. Connections needs it even more than What does: What's answer is one word behind a dictionary check, but a Connections puzzle's entire content is 16 words and 4 labels sitting in one response. Shipping the grouping up front would make the game trivially solvable from the network tab.
 
 So the server is the only place that knows which word belongs to which group until the game ends (win or loss).
 
@@ -30,7 +30,7 @@ POST /games/connections/:id/complete   (possibly unnecessary — the server alre
                                          knows when the last group is solved)
 ```
 
-This is a smaller surface than RealiTea's, which is expected: RealiTea also needs a standalone `/words/validate` endpoint because it accepts free-text dictionary guesses. Connections is a closed 16-word puzzle — there's no open-vocabulary validation to support.
+This is a smaller surface than What's, which is expected: What also needs a standalone `/words/validate` endpoint because it accepts free-text dictionary guesses. Connections is a closed 16-word puzzle — there's no open-vocabulary validation to support.
 
 ## Payload shapes
 
@@ -108,8 +108,8 @@ Full solution reveal, only now:
 
 Two ideas came up while designing this that are worth recording as *not now*, not as rejected:
 
-- **Polymorphic game envelope** (`type: "connections" | "wordle" | "trivia"`). This generalizes the wire format before there's a second game that would benefit from it. RealiTea doesn't live behind a shared game abstraction today — it's its own route, its own table, its own API surface — and Connections should follow the same precedent until a real second case justifies the abstraction. Introducing it now is designing for a hypothetical.
-- **CDN-cacheable payloads, signed anonymous game tokens, zero-DB-read serving.** All legitimate scaling techniques, none of them relevant to a game that doesn't have a puzzle-generation pipeline yet. RealiTea itself doesn't do any of this — it serves a single daily record from the DB with a continuity fallback. Revisit if and when Connections has real traffic to justify it.
+- **Polymorphic game envelope** (`type: "connections" | "wordle" | "trivia"`). This generalizes the wire format before there's a second game that would benefit from it. What doesn't live behind a shared game abstraction today — it's its own route, its own table, its own API surface — and Connections should follow the same precedent until a real second case justifies the abstraction. Introducing it now is designing for a hypothetical.
+- **CDN-cacheable payloads, signed anonymous game tokens, zero-DB-read serving.** All legitimate scaling techniques, none of them relevant to a game that doesn't have a puzzle-generation pipeline yet. What itself doesn't do any of this — it serves a single daily record from the DB with a continuity fallback. Revisit if and when Connections has real traffic to justify it.
 
 ## Read next
 
