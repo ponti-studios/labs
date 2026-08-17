@@ -1,6 +1,6 @@
 # RealiTea Generation Redesign: Freshness-First Puzzle Selection
 
-Status: **draft sketch for discussion, not a spec.** No code changes accompany this doc.
+Status: **draft sketch for discussion, not a spec.** This document proposes no implementation itself — it does not commit to or describe any code change on its own.
 
 Author's note: this is a from-first-principles rethink of *when and how RealiTea
 picks the article a puzzle is based on*. It intentionally does not try to

@@ -16,13 +16,13 @@ summary: A descriptive, code-grounded walkthrough of exactly how ingest, article
 
 # RealiTea Generation Pipeline — Current State
 
-This document describes **what the code actually does today**, as of the current
-HEAD of this branch (`claude/reality-game-article-freshness-dbn35j`, built on
-`main`, commit `6e6e315`). It is deliberately descriptive, not prescriptive — a
-separate effort is scoped to redesign the freshness behavior this document
-describes. Everything below is grounded in the source files cited inline;
-where reasoning is not explicit in the code or comments, it is labeled
-**Inference**.
+This document describes **what the code actually does today**. It is
+deliberately descriptive, not prescriptive — a separate effort is scoped to
+redesign the freshness behavior this document describes. Everything below is
+grounded in the source files cited inline; where reasoning is not explicit in
+the code or comments, it is labeled **Inference**. As with any snapshot doc,
+it can drift from the code over time — check file:line references against
+HEAD if something looks off, rather than assuming this doc is authoritative.
 
 RealiTea is a daily word-guessing game (Wordle-style, 5-letter answers) where
 each day's puzzle is derived from a real news article. There are five
