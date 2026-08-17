@@ -44,30 +44,52 @@ describe("getPendingArticlesForGame", () => {
 });
 
 describe("getPendingArticlesForTopics", () => {
-  it("returns pending articles across multiple topics, oldest published first", async () => {
+  it("returns pending articles across multiple topics, most recently published first", async () => {
     const game1 = await seedGame({ slug: "rhobh", feedUrl: "https://example.com/f1" });
     const game2 = await seedGame({ slug: "sports", feedUrl: "https://example.com/f2" });
     await db.insert(articles).values([
       {
         gamesTopicId: game1.id,
-        url: "https://example.com/newer",
-        title: "Newer",
-        status: "pending",
-        publishedAt: new Date("2026-06-02"),
-      },
-      {
-        gamesTopicId: game2.id,
         url: "https://example.com/older",
         title: "Older",
         status: "pending",
         publishedAt: new Date("2026-06-01"),
+      },
+      {
+        gamesTopicId: game2.id,
+        url: "https://example.com/newer",
+        title: "Newer",
+        status: "pending",
+        publishedAt: new Date("2026-06-02"),
       },
     ]);
 
     const { getPendingArticlesForTopics } = await import("../server/articles.server");
     const result = await getPendingArticlesForTopics([game1.id, game2.id], 10);
 
-    expect(result.map((a) => a.url)).toEqual(["https://example.com/older", "https://example.com/newer"]);
+    expect(result.map((a) => a.url)).toEqual(["https://example.com/newer", "https://example.com/older"]);
+  });
+
+  it("sorts undated articles last rather than first", async () => {
+    const game = await seedGame();
+    await db.insert(articles).values([
+      { gamesTopicId: game.id, url: "https://example.com/undated", title: "Undated", status: "pending" },
+      {
+        gamesTopicId: game.id,
+        url: "https://example.com/dated",
+        title: "Dated",
+        status: "pending",
+        publishedAt: new Date("2026-06-01"),
+      },
+    ]);
+
+    const { getPendingArticlesForTopics } = await import("../server/articles.server");
+    const result = await getPendingArticlesForTopics([game.id], 10);
+
+    expect(result.map((a) => a.url)).toEqual([
+      "https://example.com/dated",
+      "https://example.com/undated",
+    ]);
   });
 
   it("returns an empty array without querying when given no topic ids", async () => {
