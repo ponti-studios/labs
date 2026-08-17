@@ -67,13 +67,21 @@ describe("getPendingArticlesForTopics", () => {
     const { getPendingArticlesForTopics } = await import("../server/articles.server");
     const result = await getPendingArticlesForTopics([game1.id, game2.id], 10);
 
-    expect(result.map((a) => a.url)).toEqual(["https://example.com/newer", "https://example.com/older"]);
+    expect(result.map((a) => a.url)).toEqual([
+      "https://example.com/newer",
+      "https://example.com/older",
+    ]);
   });
 
   it("sorts undated articles last rather than first", async () => {
     const game = await seedGame();
     await db.insert(articles).values([
-      { gamesTopicId: game.id, url: "https://example.com/undated", title: "Undated", status: "pending" },
+      {
+        gamesTopicId: game.id,
+        url: "https://example.com/undated",
+        title: "Undated",
+        status: "pending",
+      },
       {
         gamesTopicId: game.id,
         url: "https://example.com/dated",
@@ -126,13 +134,20 @@ describe("markArticleUsed", () => {
     const game = await seedGame();
     const [article] = await db
       .insert(articles)
-      .values({ gamesTopicId: game.id, url: "https://example.com/a", title: "A", status: "pending" })
+      .values({
+        gamesTopicId: game.id,
+        url: "https://example.com/a",
+        title: "A",
+        status: "pending",
+      })
       .returning();
 
     const { markArticleUsed } = await import("../server/articles.server");
     await markArticleUsed(article.id);
 
-    const updated = (await db.query.articles.findFirst({ where: (t, { eq }) => eq(t.id, article.id) }))!;
+    const updated = (await db.query.articles.findFirst({
+      where: (t, { eq }) => eq(t.id, article.id),
+    }))!;
     expect(updated.status).toBe("used");
   });
 });
@@ -148,7 +163,9 @@ describe("recordArticleRejection", () => {
     const { recordArticleRejection } = await import("../server/articles.server");
     await recordArticleRejection(article.id, "no valid candidate", 3);
 
-    const updated = (await db.query.articles.findFirst({ where: (t, { eq }) => eq(t.id, article.id) }))!;
+    const updated = (await db.query.articles.findFirst({
+      where: (t, { eq }) => eq(t.id, article.id),
+    }))!;
     expect(updated.status).toBe("pending");
     expect(updated.rejectionCount).toBe(1);
     expect(updated.rejectionReason).toBe("no valid candidate");
@@ -158,13 +175,20 @@ describe("recordArticleRejection", () => {
     const game = await seedGame();
     const [article] = await db
       .insert(articles)
-      .values({ gamesTopicId: game.id, url: "https://example.com/a", title: "A", rejectionCount: 3 })
+      .values({
+        gamesTopicId: game.id,
+        url: "https://example.com/a",
+        title: "A",
+        rejectionCount: 3,
+      })
       .returning();
 
     const { recordArticleRejection } = await import("../server/articles.server");
     await recordArticleRejection(article.id, "no valid candidate", 3);
 
-    const updated = (await db.query.articles.findFirst({ where: (t, { eq }) => eq(t.id, article.id) }))!;
+    const updated = (await db.query.articles.findFirst({
+      where: (t, { eq }) => eq(t.id, article.id),
+    }))!;
     expect(updated.status).toBe("rejected");
     expect(updated.rejectionCount).toBe(4);
   });

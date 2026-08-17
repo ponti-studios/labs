@@ -38,15 +38,17 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: ${{ inputs.timeout-minutes }}
+    environment: Production
     env:
       RAILWAY_TOKEN: ${{ secrets.railway_token }}
+      RAILWAY_SERVICE: ${{ secrets.railway_service }}
 
     steps:
       - name: checkout-code
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.0.2
 
       - name: setup-node
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: ${{ inputs.node-version }}
 
@@ -61,4 +63,4 @@ jobs:
         run: cp "${{ inputs.config_path }}" railway.json
 
       - name: deploy-to-railway
-        run: railway up --service ${{ secrets.railway_service }} --detach --ci
+        run: railway up --service "$RAILWAY_SERVICE" --detach --ci

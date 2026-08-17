@@ -7,7 +7,10 @@ beforeEach(async () => {
   await cleanAll();
 });
 
-function baseRun(gameId: number | null, overrides: Partial<typeof generationRuns.$inferInsert> = {}) {
+function baseRun(
+  gameId: number | null,
+  overrides: Partial<typeof generationRuns.$inferInsert> = {},
+) {
   return {
     gamesTopicId: gameId,
     dateKey: "2026-06-25",
