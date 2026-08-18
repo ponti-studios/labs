@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from "framer-motion";
-import { LucideArrowUpRight } from "lucide-react";
+import { LucideArrowBigRight } from "lucide-react";
 import { Button } from "@ponti-studios/ui/primitives";
 import { Link } from "react-router";
 import { Kicker } from "~/components/Kicker";
@@ -47,6 +47,17 @@ function HeroHeadline() {
         ))}
       </motion.span>
     </h1>
+  );
+}
+
+function Teaser({ title, to }: { title: string; to: string }) {
+  return (
+    <section className="section section-compact underline-offset-4 hover:cursor-pointer hover:underline">
+      <Link to={to} prefetch="intent" className="flex justify-between text-sm">
+        <h2 className="text-foreground text-xl font-semibold tracking-tight">{title}</h2>
+        <LucideArrowBigRight className="text-accent" aria-hidden="true" />
+      </Link>
+    </section>
   );
 }
 
@@ -159,8 +170,6 @@ const streamyard = findSnapshot("streamyard");
 const prolog = findSnapshot("prolog");
 const PROOF_METRICS = [streamyard.outcomes[0], streamyard.outcomes[2], prolog.outcomes[0]];
 
-const FEATURED_WORK = caseSnapshots.slice(0, 6);
-
 export default function Home() {
   return (
     <div className="page-bleed">
@@ -241,43 +250,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Selected work */}
-      <section className="section">
-        <div className="mb-10 grid gap-8 md:grid-cols-2 md:items-end">
-          <h2 className="text-foreground text-4xl leading-[.98] font-semibold tracking-tighter sm:text-5xl md:text-6xl">
-            {t.catalog.proof.title}
-          </h2>
-          <p className="text-muted-foreground max-w-lg text-lg leading-relaxed">
-            {t.work.meta.description}
-          </p>
-        </div>
-        <div className="border-border border-t">
-          {FEATURED_WORK.map((snapshot, index) => (
-            <Link
-              key={snapshot.slug}
-              to={`/work/${snapshot.slug}`}
-              prefetch="intent"
-              className="group border-border grid grid-cols-[50px_1fr] items-start gap-4 border-b py-7 outline-none sm:grid-cols-[80px_1fr_1fr_40px] sm:gap-6"
-            >
-              <span className="text-muted-foreground text-sm font-black">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              <div>
-                <h3 className="text-foreground group-hover:text-accent text-2xl font-semibold tracking-tight transition-colors motion-reduce:transition-none">
-                  {snapshot.client}
-                </h3>
-                <div className="text-muted-foreground text-sm">{snapshot.description}</div>
-              </div>
-              <p className="text-foreground col-span-full text-base leading-relaxed sm:col-span-1">
-                {snapshot.whatWeDid}
-              </p>
-              <span className="text-accent hidden text-xl sm:block" aria-hidden="true">
-                <LucideArrowUpRight />
-              </span>
-            </Link>
-          ))}
-        </div>
-      </section>
+      {/* Teasers */}
+      <Teaser title={t.home.work.title} to="/work" />
+      <Teaser title={t.home.projects.title} to="/projects" />
+      <Teaser title={t.home.services.cta} to="/services" />
+      <Teaser title={t.home.principles.title} to="/manifesto" />
 
       {/* Proof */}
       <section className="section">
