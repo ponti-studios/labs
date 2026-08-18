@@ -368,6 +368,9 @@ export const STUDIO_TRANSLATIONS_EN = {
     hero: {
       title: "The Work.",
     },
+    caseStudyLabel: "Case study",
+    roleLabel: "Role",
+    timelineLabel: "Timeline",
     approachTitle: "Approach",
     backToWork: "All work",
     nextCta: {
@@ -967,10 +970,77 @@ export const STUDIO_TRANSLATIONS_EN = {
       description: "Premium product and engineering for teams who refuse to compromise on quality.",
     },
     hero: {
+      kicker: "Product + engineering studio",
       title: "Building what should exist.",
       wordBefore: "Building",
       wordAfter: "what should exist.",
       subtitle: "Beautiful things, for problems worth solving.",
+      secondaryCta: "See the work",
+    },
+    marquee: [
+      "Product design",
+      "AI systems",
+      "Automation",
+      "Data intelligence",
+      "Platform engineering",
+      "Search",
+      "Connectors",
+      "Governance",
+    ],
+    capabilities: {
+      title: "From “we should build this” to shipped.",
+      intro:
+        "I work in the messy middle where product strategy, interface design, models, APIs, data, and production infrastructure all have to become one coherent thing.",
+      items: [
+        {
+          index: "01 / PRODUCTS",
+          title: "Design + build the product.",
+          description:
+            "Turn an idea, internal workflow, or emerging AI capability into a product people can understand and use with confidence.",
+        },
+        {
+          index: "02 / INTELLIGENCE",
+          title: "Make your data useful.",
+          description:
+            "Search, ranking, recommendations, analytics, and systems that surface the signal your team is currently missing.",
+        },
+        {
+          index: "03 / AUTOMATION",
+          title: "Delete repetitive work.",
+          description:
+            "Replace brittle manual operations with reliable software workflows that save real hours, not theoretical ones.",
+        },
+        {
+          index: "04 / INFRASTRUCTURE",
+          title: "Build the part nobody sees.",
+          description:
+            "Connectors, APIs, model orchestration, deployment, observability, governance, and the unglamorous plumbing that keeps the clever part alive.",
+        },
+      ],
+    },
+    approach: {
+      items: [
+        {
+          title: "Find the leverage",
+          description: "Start with the business problem, not the model.",
+        },
+        {
+          title: "Prototype the truth",
+          description: "Get something real in front of people before polishing the mythology.",
+        },
+        {
+          title: "Engineer the edges",
+          description: "Handle the ugly data, failure modes, integrations, and human behavior.",
+        },
+        {
+          title: "Ship production",
+          description: "Measure the result and leave behind something your team can actually own.",
+        },
+      ],
+    },
+    proof: {
+      statement: "Software should earn its existence.",
+      body: "I care about the boring numbers after the demo: hours removed, costs cut, users converted, decisions improved, systems that stay alive.",
     },
     services: {
       title: "What I do",

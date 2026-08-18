@@ -1,8 +1,11 @@
 import { motion, useReducedMotion } from "framer-motion";
-import { LucideArrowBigRight } from "lucide-react";
+import { LucideArrowUpRight } from "lucide-react";
+import { Button } from "@ponti-studios/ui/primitives";
 import { Link } from "react-router";
+import { Kicker } from "~/components/Kicker";
 import { ProjectsWallet } from "~/components/projects-wallet/projects-wallet";
 import type { FeaturedProject } from "~/components/projects-wallet/project-card";
+import { BOOK_CALL_URL, caseSnapshots } from "~/data/studio";
 import { WhatTile } from "~/routes/games/what/what-tile";
 import { t } from "~/translations";
 
@@ -14,17 +17,6 @@ export function meta(): Array<{
   content?: string;
 }> {
   return [{ title: t.home.meta.title }, { name: "description", content: t.home.meta.description }];
-}
-
-function Teaser({ title, to }: { title: string; to: string }) {
-  return (
-    <section className="section section-compact underline-offset-4 hover:cursor-pointer hover:underline">
-      <Link to={to} prefetch="intent" className="flex justify-between text-sm">
-        <h2 className="text-foreground text-xl font-semibold tracking-tight">{title}</h2>
-        <LucideArrowBigRight className="text-accent" aria-hidden="true" />
-      </Link>
-    </section>
-  );
 }
 
 function HeroHeadline() {
@@ -55,6 +47,21 @@ function HeroHeadline() {
         ))}
       </motion.span>
     </h1>
+  );
+}
+
+function Marquee({ items }: { items: readonly string[] }) {
+  const looped = [...items, ...items];
+  return (
+    <div className="border-border overflow-hidden border-y py-4 whitespace-nowrap" aria-hidden="true">
+      <div className="marquee-track">
+        {looped.map((item, i) => (
+          <span key={i} className="text-foreground/80 mr-11 text-sm font-extrabold sm:mr-12">
+            {item}
+          </span>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -141,27 +148,183 @@ const FEATURED_PROJECTS: FeaturedProject[] = [
   },
 ];
 
+// Featured on the proof band — pulled from real case-study outcomes so the
+// numbers can never drift from what /work/$slug actually claims.
+function findSnapshot(slug: string) {
+  const snapshot = caseSnapshots.find((entry) => entry.slug === slug);
+  if (!snapshot) throw new Error(`Missing case snapshot: ${slug}`);
+  return snapshot;
+}
+const streamyard = findSnapshot("streamyard");
+const prolog = findSnapshot("prolog");
+const PROOF_METRICS = [streamyard.outcomes[0], streamyard.outcomes[2], prolog.outcomes[0]];
+
+const FEATURED_WORK = caseSnapshots.slice(0, 6);
+
 export default function Home() {
   return (
     <div className="page-bleed">
       {/* Hero */}
-      <section className="section flex items-center gap-6 py-28">
-        <HeroHeadline />
+      <section className="section grid gap-10 pt-16 pb-14 md:grid-cols-[1.35fr_.65fr] md:items-end md:pt-24 md:pb-20">
+        <div>
+          <Kicker>{t.home.hero.kicker}</Kicker>
+          <HeroHeadline />
+        </div>
+        <div className="flex flex-col gap-7">
+          <p className="text-muted-foreground max-w-md text-lg leading-relaxed sm:text-xl">
+            {t.home.hero.subtitle}
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <Button asChild size="lg" className="rounded-full px-6">
+              <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
+                {t.common.bookCall}
+              </a>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="rounded-full px-6">
+              <Link to="/work" prefetch="intent">
+                {t.home.hero.secondaryCta}
+              </Link>
+            </Button>
+          </div>
+        </div>
       </section>
 
-      {/* Teasers */}
+      <Marquee items={t.home.marquee} />
 
-      <Teaser title={t.home.work.title} to="/work" />
+      {/* Capabilities */}
+      <section className="section">
+        <div className="mb-10 grid gap-8 md:grid-cols-2 md:items-end">
+          <h2 className="text-foreground text-4xl leading-[.98] font-semibold tracking-tighter sm:text-5xl md:text-6xl">
+            {t.home.capabilities.title}
+          </h2>
+          <p className="text-muted-foreground max-w-lg text-lg leading-relaxed">
+            {t.home.capabilities.intro}
+          </p>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {t.home.capabilities.items.map((item, index) => (
+            <div
+              key={item.title}
+              className={
+                "bg-card border-border flex min-h-[260px] flex-col justify-between rounded-[22px] border p-7" +
+                (index === 0 || index === 3 ? " sm:col-span-2" : "")
+              }
+            >
+              <span className="text-muted-foreground text-xs font-black tracking-wider">
+                {item.index}
+              </span>
+              <div>
+                <h3 className="text-foreground mb-3 text-2xl font-semibold tracking-tight">
+                  {item.title}
+                </h3>
+                <p className="text-muted-foreground leading-relaxed">{item.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
 
-      <Teaser title={t.home.projects.title} to="/projects" />
+      {/* Approach — dark panel, always dark regardless of system theme */}
+      <section className="section">
+        <div className="rounded-[28px] bg-[#171714] px-6 py-14 text-white sm:px-12 md:py-20">
+          <p className="mb-14 max-w-4xl text-3xl leading-[1.1] font-semibold tracking-tight sm:text-4xl md:text-5xl">
+            “{t.manifesto.quote}”
+          </p>
+          <div className="grid gap-8 border-t border-[#383832] pt-8 sm:grid-cols-2 lg:grid-cols-4">
+            {t.home.approach.items.map((item) => (
+              <div key={item.title} className="flex flex-col gap-2">
+                <b className="text-lg">{item.title}</b>
+                <p className="text-sm leading-relaxed text-[#aaa79f]">{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-      <Teaser title={t.home.services.cta} to="/services" />
+      {/* Selected work */}
+      <section className="section">
+        <div className="mb-10 grid gap-8 md:grid-cols-2 md:items-end">
+          <h2 className="text-foreground text-4xl leading-[.98] font-semibold tracking-tighter sm:text-5xl md:text-6xl">
+            {t.catalog.proof.title}
+          </h2>
+          <p className="text-muted-foreground max-w-lg text-lg leading-relaxed">
+            {t.work.meta.description}
+          </p>
+        </div>
+        <div className="border-border border-t">
+          {FEATURED_WORK.map((snapshot, index) => (
+            <Link
+              key={snapshot.slug}
+              to={`/work/${snapshot.slug}`}
+              prefetch="intent"
+              className="group border-border grid grid-cols-[50px_1fr] items-start gap-4 border-b py-7 outline-none sm:grid-cols-[80px_1fr_1fr_40px] sm:gap-6"
+            >
+              <span className="text-muted-foreground text-sm font-black">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <div>
+                <h3 className="text-foreground group-hover:text-accent text-2xl font-semibold tracking-tight transition-colors motion-reduce:transition-none">
+                  {snapshot.client}
+                </h3>
+                <div className="text-muted-foreground text-sm">{snapshot.description}</div>
+              </div>
+              <p className="text-foreground col-span-full text-base leading-relaxed sm:col-span-1">
+                {snapshot.whatWeDid}
+              </p>
+              <span className="text-accent hidden text-xl sm:block" aria-hidden="true">
+                <LucideArrowUpRight />
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
 
-      <Teaser title={t.home.principles.title} to="/manifesto" />
+      {/* Proof */}
+      <section className="section">
+        <div className="bg-accent grid gap-7 rounded-[28px] p-8 text-[#15110f] sm:p-11 md:grid-cols-2 md:items-end">
+          <p className="text-4xl leading-[.9] font-black tracking-tighter sm:text-5xl md:text-6xl">
+            {t.home.proof.statement}
+          </p>
+          <div>
+            <p className="max-w-lg text-lg leading-relaxed">{t.home.proof.body}</p>
+            <div className="mt-4 grid grid-cols-3 gap-3">
+              {PROOF_METRICS.map((metric) => (
+                <div
+                  key={metric.label}
+                  className="rounded-2xl border border-[#11110f]/25 p-4"
+                >
+                  <b className="block text-2xl tracking-tight sm:text-3xl">{metric.value}</b>
+                  <span className="mt-1 block text-[11px] font-black tracking-wide uppercase">
+                    {metric.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
-      <section className="flex flex-col gap-6 px-6 py-8">
-        <h2 className="text-foreground text-xl font-semibold tracking-tight">Featured Projects</h2>
+      {/* Featured products */}
+      <section className="section">
+        <h2 className="text-foreground mb-6 text-xl font-semibold tracking-tight">
+          Featured Projects
+        </h2>
         <ProjectsWallet projects={FEATURED_PROJECTS} />
+      </section>
+
+      {/* Close CTA */}
+      <section className="section-compact border-border border-t border-b py-20 text-center md:py-28">
+        <h2 className="text-foreground mx-auto mb-5 max-w-3xl text-4xl leading-[.95] font-semibold tracking-tighter sm:text-5xl md:text-6xl">
+          {t.services.cta.title}
+        </h2>
+        <p className="text-muted-foreground mx-auto mb-7 max-w-xl text-lg leading-relaxed">
+          {t.services.cta.body}
+        </p>
+        <Button asChild size="lg" className="rounded-full px-6">
+          <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
+            {t.common.bookCall}
+          </a>
+        </Button>
       </section>
     </div>
   );

@@ -142,6 +142,17 @@
   animation: shimmer 1.6s ease-in-out infinite;
 }
 
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  display: inline-block;
+  animation: marquee 28s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .skeleton-shimmer {
     animation: none;
@@ -150,6 +161,10 @@
 
   .list-media-pulse,
   .list-media-pulse::before {
+    animation: none;
+  }
+
+  .marquee-track {
     animation: none;
   }
 }
