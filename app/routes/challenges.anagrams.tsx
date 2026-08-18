@@ -146,7 +146,7 @@ export default function Anagrams(): JSX.Element {
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <h2 className="text-xl font-semibold">Anagrams</h2>
+        <h2>Anagrams</h2>
         <p className="text-muted-foreground">Group anagrams together from a list of words.</p>
         <i className="text-muted-foreground text-xs">Courtesy of ChartHop</i>
       </header>

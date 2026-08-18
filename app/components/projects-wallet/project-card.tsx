@@ -24,7 +24,6 @@ export type FeaturedProject = {
   logo: string;
   logoAlt: string;
   title: string;
-  eyebrow: string;
   description: string;
   cta: string;
   theme: CardThemeName;
@@ -77,7 +76,6 @@ export function ProjectCard({
   logo,
   logoAlt,
   title,
-  eyebrow,
   description,
   cta,
   theme,
@@ -177,12 +175,6 @@ export function ProjectCard({
       </div>
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex flex-col gap-1 bg-gradient-to-t from-black via-black/85 to-transparent p-4 opacity-0 transition-opacity duration-200 ease-out group-hover:opacity-100 motion-safe:translate-y-2 motion-safe:transition-[opacity,transform] motion-safe:group-hover:translate-y-0 sm:p-5">
-        <span
-          className="text-[10px] font-semibold tracking-wide uppercase"
-          style={{ color: "var(--card-accent)" }}
-        >
-          {eyebrow}
-        </span>
         <span className="text-sm font-semibold text-white">{title}</span>
         <p className="text-xs text-white/70">{description}</p>
         <span
@@ -202,6 +194,7 @@ export function ProjectCard({
     onPointerLeave: reduceMotion ? undefined : handlePointerLeave,
     style: cardStyle,
     whileHover: reduceMotion ? undefined : { scale: 1.015, y: -6 },
+    whileTap: reduceMotion ? undefined : { scale: 0.98 },
     transition: { type: "spring" as const, stiffness: 300, damping: 24 },
     className: cardClassName,
   };

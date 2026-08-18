@@ -478,7 +478,7 @@ export default function SearchStudio() {
                 <LucideSearch className="text-muted-foreground/40 h-7 w-7" />
               </div>
               <div className="max-w-[22rem] space-y-1.5">
-                <h3 className="text-foreground text-[16px] font-semibold tracking-[-0.01em]">
+                <h3 className="text-foreground text-[16px] tracking-[-0.01em]">
                   No results on this page
                 </h3>
                 <p className="text-muted-foreground text-[14px] leading-[1.55]">

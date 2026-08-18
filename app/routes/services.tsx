@@ -2,6 +2,9 @@ import { Button } from "@ponti-studios/ui/primitives";
 import { motion, useReducedMotion } from "framer-motion";
 import { HelpCircle } from "lucide-react";
 import { Link } from "react-router";
+import { DeliverableList } from "~/components/DeliverableList";
+import { RevealGroup, RevealItem } from "~/components/Reveal";
+import { StepCard, StepGrid } from "~/components/StepGrid";
 import { BOOK_CALL_URL, servicePillars } from "~/data/studio";
 import { t } from "~/translations";
 
@@ -14,10 +17,10 @@ export function meta(): Array<{ title?: string; name?: string; content?: string 
 function ServicesHeroHeadline() {
   const reduceMotion = useReducedMotion();
   return (
-    <h1 className="display-1 text-foreground flex max-w-4xl flex-wrap items-baseline gap-x-3 gap-y-1">
-      <span>{copy.hero.title}</span>
+    <h1 className="heading-hero text-foreground max-w-4xl">
+      <span className="block">{copy.hero.title}</span>
       <motion.span
-        className="text-accent"
+        className="text-accent block font-serif italic"
         initial={reduceMotion ? false : { opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.2, delay: 0.35, ease: "easeOut" }}
@@ -31,11 +34,12 @@ function ServicesHeroHeadline() {
 export default function Services() {
   return (
     <div className="page-bleed">
-      <section className="section section-hero">
+      {/* Hero */}
+      <section className="section pt-16 pb-10 md:pt-24">
         <ServicesHeroHeadline />
 
-        <div className="flex flex-wrap items-center gap-6 pt-2">
-          <Button asChild>
+        <div className="mt-8 flex flex-wrap items-center gap-6">
+          <Button asChild size="lg" className="press rounded-full px-6">
             <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
               {t.common.bookCall}
             </a>
@@ -51,78 +55,61 @@ export default function Services() {
       </section>
 
       {/* Services — editorial catalog, same for every visitor */}
-      <section className="section gap-12">
-        <div className="flex flex-col gap-3">
-          <h2 className="text-foreground text-xl font-semibold tracking-tight">
-            {copy.services.title}
-          </h2>
-          <p className="text-muted-foreground max-w-2xl text-sm">{copy.services.intro}</p>
-        </div>
-
-        <div className="flex flex-col gap-16">
+      <section className="section gap-10">
+        <RevealGroup className="flex flex-col gap-12">
           {servicePillars.map((pillar) => (
-            <div key={pillar.name} className="flex flex-col gap-8">
-              <h3 className="text-accent text-lg font-semibold tracking-tight">{pillar.name}</h3>
-              <div className="flex flex-col gap-10">
-                {pillar.services.map((service) => (
-                  <article
+            <RevealItem key={pillar.name} className="border-border flex flex-col gap-6">
+              <h3 className="heading-display-sm text-accent">{pillar.name}</h3>
+              <StepGrid className="bg-border">
+                {pillar.services.map((service, index) => (
+                  <StepCard
                     key={service.slug}
                     id={service.slug}
-                    className="grid gap-4 sm:grid-cols-[minmax(0,14rem)_1fr] sm:gap-10"
+                    index={index + 1}
+                    title={service.name}
+                    className="bg-card"
                   >
-                    <h4 className="subtext-xl text-foreground font-semibold tracking-tight">
-                      {service.name}
-                    </h4>
-                    <ul className="flex flex-col gap-2">
-                      {service.deliverables.map((item) => (
-                        <li key={item.label} className="ui-dash-list-item">
-                          <span className="ui-dash-marker">—</span>
-                          <span className="text-muted-foreground text-sm">
-                            <span className="text-foreground font-medium">{item.label}:</span>{" "}
-                            {item.description}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </article>
+                    <DeliverableList items={service.deliverables} />
+                  </StepCard>
                 ))}
-              </div>
-            </div>
+              </StepGrid>
+            </RevealItem>
           ))}
-        </div>
+        </RevealGroup>
       </section>
 
-      {/* Process — quiet, linear, same for everyone */}
-      <section className="section gap-10">
-        <div className="flex flex-col gap-3">
-          <h2 className="text-foreground text-xl font-semibold tracking-tight">
-            {copy.process.title}
-          </h2>
-          <p className="text-muted-foreground max-w-2xl text-sm">{copy.process.intro}</p>
+      {/* Process — dark panel, always dark regardless of system theme */}
+      <section className="section">
+        <div className="rounded-[28px] bg-[#171714] px-6 py-14 text-white sm:px-12 md:py-20">
+          <div className="mb-10 grid gap-3 sm:grid-cols-2 sm:items-end">
+            <h2 className="text-3xl leading-[.98] tracking-tighter sm:text-4xl">
+              {copy.process.title}
+            </h2>
+          </div>
+          <StepGrid className="bg-[#373731]">
+            {t.common.contactSteps.map((step, index) => (
+              <StepCard
+                key={step.title}
+                index={index + 1}
+                title={step.title}
+                className="bg-[#1e1e1a]"
+                indexClassName="text-[#aaa79f]"
+              >
+                <span className="text-sm leading-relaxed text-[#d8d5cd]">{step.description}</span>
+              </StepCard>
+            ))}
+          </StepGrid>
         </div>
-        <ol className="flex flex-col gap-8">
-          {t.common.contactSteps.map((step, index) => (
-            <li key={step.title} className="grid gap-2 sm:grid-cols-[minmax(0,4rem)_1fr] sm:gap-8">
-              <span className="text-muted-foreground text-sm tabular-nums">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              <div className="flex flex-col gap-1">
-                <span className="subtext-lg text-foreground font-semibold tracking-tight">
-                  {step.title}
-                </span>
-                <span className="text-muted-foreground text-sm">{step.description}</span>
-              </div>
-            </li>
-          ))}
-        </ol>
       </section>
 
       {/* Closing CTA */}
-      <section className="section section-hero">
-        <h2 className="display-2 text-foreground max-w-3xl">{copy.cta.title}</h2>
-        <p className="text-muted-foreground max-w-xl text-base">{copy.cta.body}</p>
-        <div className="flex flex-wrap items-center gap-6 pt-2">
-          <Button asChild>
+      <section className="section-compact border-border border-t border-b px-4 py-20 text-center sm:px-6 md:py-28">
+        <h2 className="heading-cta text-foreground mx-auto mb-5 max-w-3xl">{copy.cta.title}</h2>
+        <p className="text-muted-foreground mx-auto mb-7 max-w-xl text-lg leading-relaxed">
+          {copy.cta.body}
+        </p>
+        <div className="flex flex-wrap items-center justify-center gap-6">
+          <Button asChild size="lg" className="press rounded-full px-6">
             <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
               {t.common.bookCall}
             </a>
@@ -131,7 +118,7 @@ export default function Services() {
         </div>
       </section>
 
-      <section className="flex items-center justify-between px-6 py-6 sm:px-10">
+      <section className="flex items-center justify-between px-4 py-6 sm:px-6">
         <Link
           to="/faq"
           prefetch="intent"
