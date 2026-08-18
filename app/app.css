@@ -3,6 +3,49 @@
 
 @source "../node_modules/@ponti-studios/ui/src";
 
+/*
+ * Warm palette override — replaces @ponti-studios/ui's default indigo/gray
+ * tokens with the cream/ink/flame-orange palette from the Backlog
+ * Mercenaries landing page. These are the same raw token names the package
+ * itself sets in light.css/dark.css (see @theme inline in its styles.css),
+ * so this cascades into every --color-* alias (background, card, primary,
+ * accent, border, ring, etc.) without introducing new custom tokens.
+ *
+ * --primary doubles as --color-accent in the package's token mapping, so
+ * overriding it here re-themes buttons, links, and focus rings too.
+ * --primary-foreground is dark ink (not white) in both modes to match how
+ * the mock actually pairs text with this accent.
+ */
+:root {
+  --background: #f4f0e8;
+  --card: #fbf8f2;
+  --popover: #f6f2ea;
+  --muted: #efe9dc;
+  --text-primary: #11110f;
+  --text-secondary: #6f6b62;
+  --tertiary: #8f8b80;
+  --primary: #ff5a36;
+  --primary-foreground: #15110f;
+  --border-default: #d9d2c6;
+  --focus-ring: #ff5a36;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #171714;
+    --card: #1d1d19;
+    --popover: #22221e;
+    --muted: #1d1d19;
+    --text-primary: #ffffff;
+    --text-secondary: #aaa79f;
+    --tertiary: #d0ccc2;
+    --primary: #ff896f;
+    --primary-foreground: #15110f;
+    --border-default: #363631;
+    --focus-ring: #ff896f;
+  }
+}
+
 @theme {
   --color-logo-artboard: #ffffff;
 }
