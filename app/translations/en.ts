@@ -1020,6 +1020,7 @@ export const STUDIO_TRANSLATIONS_EN = {
             { path: "/games/tetris", label: "Tetris" },
             { path: "/experiments/calendar", label: "Calendar" },
             { path: "/experiments/pixel-descent.html", label: "Pixel Descent" },
+            { path: "/experiments/backlog-mercenaries.html", label: "Backlog Mercenaries" },
             { path: "/experiments/theatre-management", label: "Theatre Management" },
             { path: "/experiments/llm-interface", label: "LLM Interface" },
             { path: "/experiments/glass", label: "Glass" },
