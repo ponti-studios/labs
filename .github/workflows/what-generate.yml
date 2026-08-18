@@ -44,7 +44,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    environment: what-production
+    environment: realitea-production
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
 
@@ -68,13 +68,13 @@ jobs:
       - name: ingest-feeds
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OR_WHAT_GAME_GENERATION }}
         run: pnpm what:ingest
 
       - name: generate
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OR_WHAT_GAME_GENERATION }}
           INPUT_EVENT_NAME: ${{ github.event_name }}
           INPUT_DAYS_AHEAD: ${{ inputs.daysAhead }}
           INPUT_FROM: ${{ inputs.from }}
@@ -115,5 +115,5 @@ jobs:
       - name: health-check
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OR_WHAT_GAME_GENERATION }}
         run: pnpm what:health-check
