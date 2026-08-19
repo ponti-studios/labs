@@ -1,6 +1,9 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { extractArticleText, fetchFeedItems } from "../generation/ingest.server";
+import { gamesTopics, db } from "~/lib/server/db";
+import { cleanAll } from "../../../data/test-db";
+import { WHAT_GAME_CATALOG } from "../generation/catalog";
+import { ensureWhatCatalog, extractArticleText, fetchFeedItems } from "../generation/ingest.server";
 
 describe("fetchFeedItems", () => {
   it("normalizes RSS markup and control content while preserving safe fields", async () => {
@@ -34,6 +37,46 @@ describe("fetchFeedItems", () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("<rss><channel /></rss>")));
 
     await expect(fetchFeedItems("https://realityblurb.com/feed")).resolves.toEqual([]);
+  });
+});
+
+describe("ensureWhatCatalog", () => {
+  beforeEach(async () => {
+    await cleanAll();
+  });
+
+  afterEach(async () => {
+    await cleanAll();
+  });
+
+  it("provisions every catalog entry from an empty table", async () => {
+    await ensureWhatCatalog();
+
+    const rows = await db.query.gamesTopics.findMany();
+    expect(rows.map((row) => row.slug).sort()).toEqual(
+      WHAT_GAME_CATALOG.map((entry) => entry.slug).sort(),
+    );
+  });
+
+  it("renames a stale row that already holds a catalog feed URL under a different slug", async () => {
+    const rhobh = WHAT_GAME_CATALOG[0];
+    await db.insert(gamesTopics).values({
+      slug: "realitea",
+      name: "Old Name",
+      feedUrl: rhobh.feedUrl,
+      feedLabel: "Old Label",
+      systemPromptPath: "old/prompt.md",
+      active: false,
+    });
+
+    await ensureWhatCatalog();
+
+    const rows = await db.query.gamesTopics.findMany();
+    expect(rows).toHaveLength(WHAT_GAME_CATALOG.length);
+    const updated = rows.find((row) => row.feedUrl === rhobh.feedUrl);
+    expect(updated?.slug).toBe(rhobh.slug);
+    expect(updated?.name).toBe(rhobh.name);
+    expect(updated?.active).toBe(true);
   });
 });
 
