@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from "framer-motion";
+import { RevealGroup, RevealItem } from "~/components/Reveal";
 import { t } from "~/translations";
 
 const copy = t.manifesto;
@@ -14,10 +15,10 @@ export function meta(): Array<{
 function ManifestoHeroHeadline() {
   const reduceMotion = useReducedMotion();
   return (
-    <h1 className="display-1 text-foreground flex max-w-4xl flex-wrap items-baseline gap-x-3 gap-y-1">
-      <span>{copy.hero.title}</span>
+    <h1 className="heading-hero text-foreground max-w-4xl">
+      <span className="block">{copy.hero.title}</span>
       <motion.span
-        className="text-accent"
+        className="text-accent block font-serif italic"
         initial={reduceMotion ? false : { opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.2, delay: 0.35, ease: "easeOut" }}
@@ -32,36 +33,37 @@ export default function Manifesto() {
   return (
     <div className="page-bleed">
       {/* Hero */}
-      <section className="section section-hero">
+      <section className="section pt-16 pb-10 md:pt-24">
         <ManifestoHeroHeadline />
-        <p className="text-muted-foreground max-w-2xl text-base">{copy.hero.body}</p>
+        <p className="text-muted-foreground mt-2 max-w-2xl text-lg leading-relaxed">
+          {copy.hero.body}
+        </p>
       </section>
 
       {/* Tenets — single-column editorial list, one idea at a time */}
-      <section className="section gap-12">
-        <ol className="flex flex-col gap-12">
+      <section className="section gap-10">
+        <RevealGroup as="ol" className="flex flex-col">
           {copy.tenets.items.map((tenet, index) => (
-            <li
+            <RevealItem
               key={tenet.title}
-              className="grid gap-3 sm:grid-cols-[minmax(0,4rem)_1fr] sm:gap-10"
+              as="li"
+              className="border-border grid gap-3 border-t py-8 first:pt-0 sm:grid-cols-[minmax(0,4rem)_1fr] sm:gap-10"
             >
-              <span className="text-muted-foreground text-sm tabular-nums">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              <div className="flex max-w-3xl flex-col gap-3">
-                <h2 className="text-foreground text-lg font-semibold tracking-tight">
-                  {tenet.title}
-                </h2>
-                <p className="text-muted-foreground text-base">{tenet.description}</p>
+              <span className="ref-tag pt-1">{String(index + 1).padStart(2, "0")}</span>
+              <div className="flex max-w-3xl flex-col gap-2.5">
+                <h2 className="text-foreground sm:text-2xl">{tenet.title}</h2>
+                <p className="text-muted-foreground text-base leading-relaxed">
+                  {tenet.description}
+                </p>
               </div>
-            </li>
+            </RevealItem>
           ))}
-        </ol>
+        </RevealGroup>
       </section>
 
       {/* Closing pull-quote */}
-      <section className="section section-hero border-b-0">
-        <blockquote className="display-2 text-accent max-w-3xl">
+      <section className="section-compact border-b-0 px-4 py-20 text-center sm:px-6 md:py-28">
+        <blockquote className="text-accent mx-auto max-w-3xl font-serif text-4xl leading-[1.05] italic sm:text-5xl md:text-6xl">
           &ldquo;{copy.quote}&rdquo;
         </blockquote>
       </section>

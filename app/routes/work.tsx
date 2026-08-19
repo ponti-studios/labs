@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { ListRowMedia } from "~/components/ListRowMedia";
+import { RevealGroup, RevealItem } from "~/components/Reveal";
 import { caseLogos, caseSnapshots } from "~/data/studio";
 import { t } from "~/translations";
 
@@ -18,17 +19,17 @@ export default function Work() {
   return (
     <div className="page-shell">
       <section className="layout-stack">
-        <h1 className="display-1 text-foreground max-w-4xl">{copy.hero.title}</h1>
+        <h1 className="heading-hero text-foreground max-w-4xl">{copy.hero.title}</h1>
       </section>
 
       <section className="layout-stack">
-        <div className="border-border divide-border-border divide-y border-b">
+        <RevealGroup className="border-border divide-border-border divide-y border-b">
           {caseSnapshots.map((snapshot) => (
-            <div key={snapshot.slug} className="list-row group">
+            <RevealItem key={snapshot.slug} className="list-row group">
               <Link
                 to={`/work/${snapshot.slug}`}
                 prefetch="intent"
-                className="hover:bg-muted/20 flex min-w-0 flex-1 flex-row items-start gap-4 transition-colors outline-none md:gap-6"
+                className="press hover:bg-muted/20 flex min-w-0 flex-1 flex-row items-start gap-4 transition-colors outline-none md:gap-6"
               >
                 {caseLogos[snapshot.slug] ? (
                   <ListRowMedia
@@ -41,15 +42,15 @@ export default function Work() {
                   <span className="text-muted-foreground text-xs tracking-wide uppercase">
                     {snapshot.industry}
                   </span>
-                  <h3 className="text-foreground group-hover:text-accent text-xl font-semibold tracking-tight transition-colors motion-reduce:transition-none">
+                  <h3 className="heading-list-title text-foreground group-hover:text-accent">
                     {snapshot.client}
                   </h3>
                   <p className="text-muted-foreground max-w-2xl text-sm">{snapshot.description}</p>
                 </div>
               </Link>
-            </div>
+            </RevealItem>
           ))}
-        </div>
+        </RevealGroup>
       </section>
     </div>
   );

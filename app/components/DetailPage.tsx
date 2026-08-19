@@ -17,7 +17,9 @@ export function DetailHeader({ back, media, metadata, summary, title }: DetailHe
         {media ? <div className="shrink-0">{media}</div> : null}
       </div>
       <div className="flex min-w-0 flex-col gap-4">
-        <h1 className="display-1 text-foreground max-w-4xl">{title}</h1>
+        <h1 className="text-foreground max-w-4xl text-5xl leading-[.92] tracking-tighter sm:text-6xl md:text-7xl">
+          {title}
+        </h1>
         {metadata ? (
           <div className="text-muted-foreground max-w-2xl text-sm">{metadata}</div>
         ) : null}
@@ -50,10 +52,13 @@ export function DetailNavigation({ ariaLabel, next, previous }: DetailNavigation
             to={previous.to}
             prefetch="intent"
             aria-label={`${previous.label}: ${previous.title}`}
-            className="detail-navigation-link group"
+            className="press detail-navigation-link group"
           >
             <span className="text-muted-foreground group-hover:text-accent text-xs transition-colors motion-reduce:transition-none">
-              ← {previous.label}
+              <span className="inline-block transition-transform duration-150 ease-out group-hover:-translate-x-1 motion-reduce:transition-none">
+                ←
+              </span>{" "}
+              {previous.label}
             </span>
             <span className="text-foreground group-hover:text-accent text-lg font-semibold tracking-tight transition-colors motion-reduce:transition-none">
               {previous.title}
@@ -65,10 +70,13 @@ export function DetailNavigation({ ariaLabel, next, previous }: DetailNavigation
             to={next.to}
             prefetch="intent"
             aria-label={`${next.label}: ${next.title}`}
-            className="detail-navigation-link group sm:ml-auto sm:text-right"
+            className="press detail-navigation-link group sm:ml-auto sm:text-right"
           >
             <span className="text-muted-foreground group-hover:text-accent text-xs transition-colors motion-reduce:transition-none">
-              {next.label} →
+              {next.label}{" "}
+              <span className="inline-block transition-transform duration-150 ease-out group-hover:translate-x-1 motion-reduce:transition-none">
+                →
+              </span>
             </span>
             <span className="text-foreground group-hover:text-accent text-lg font-semibold tracking-tight transition-colors motion-reduce:transition-none">
               {next.title}

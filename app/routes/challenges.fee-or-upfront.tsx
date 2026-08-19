@@ -61,7 +61,7 @@ export default function FeeOrUpfront(): JSX.Element {
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <h2 className="text-xl font-semibold">Fee or Upfront</h2>
+        <h2>Fee or Upfront</h2>
         <p className="text-muted-foreground text-sm">
           Two pricing models: pay once upfront, or{" "}
           <code className="bg-muted rounded px-1 py-0.5 text-xs">max(base, amount × rate%)</code>{" "}
@@ -81,7 +81,7 @@ export default function FeeOrUpfront(): JSX.Element {
               <p className="text-muted-foreground text-[10px] font-medium tracking-widest uppercase">
                 Option A
               </p>
-              <h3 className="text-base font-semibold">Upfront</h3>
+              <h3 className="text-base">Upfront</h3>
             </div>
             {winnerIsUpfront && (
               <span className="rounded-full bg-green-100 px-2 py-0.5 text-[11px] font-medium text-green-700">
@@ -129,7 +129,7 @@ export default function FeeOrUpfront(): JSX.Element {
               <p className="text-muted-foreground text-[10px] font-medium tracking-widest uppercase">
                 Option B
               </p>
-              <h3 className="text-base font-semibold">Per-transaction</h3>
+              <h3 className="text-base">Per-transaction</h3>
             </div>
             {!winnerIsUpfront && (
               <span className="rounded-full bg-green-100 px-2 py-0.5 text-[11px] font-medium text-green-700">

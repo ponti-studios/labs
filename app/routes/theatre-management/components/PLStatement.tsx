@@ -20,7 +20,7 @@ export function PLStatement({
   return (
     <Card>
       <CardHeader className="px-5 py-4">
-        <h2 className="text-foreground text-sm font-semibold">Monthly P&amp;L</h2>
+        <h2 className="text-foreground text-sm">Monthly P&amp;L</h2>
         <span className="text-muted-foreground font-mono text-[10px]">
           {new Date().toLocaleDateString("en-US", {
             month: "short",

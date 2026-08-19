@@ -3,6 +3,7 @@ import { ExternalLink, FolderGit2 } from "lucide-react";
 import { Link, useParams } from "react-router";
 import { DetailHeader, DetailNavigation } from "~/components/DetailPage";
 import { ListRowMedia } from "~/components/ListRowMedia";
+import { RevealGroup, RevealItem } from "~/components/Reveal";
 import { projects } from "~/data/projects";
 import { t } from "~/translations";
 
@@ -21,7 +22,7 @@ export default function ProjectDetail() {
     return (
       <div className="page-bleed">
         <section className="section section-hero">
-          <h1 className="display-1 text-foreground">{t.projects.page.notFound}</h1>
+          <h1 className="heading-hero text-foreground max-w-4xl">{t.projects.page.notFound}</h1>
           <Link
             to="/projects"
             prefetch="intent"
@@ -90,26 +91,20 @@ export default function ProjectDetail() {
       />
 
       <section className="section">
-        <h2 className="text-foreground text-xl font-semibold tracking-tight">
-          {t.projects.page.problem}
-        </h2>
+        <h2 className="text-foreground">{t.projects.page.problem}</h2>
         <p className="text-muted-foreground max-w-2xl text-base">{project.problem}</p>
       </section>
 
       {project.solution ? (
         <section className="section">
-          <h2 className="text-foreground text-xl font-semibold tracking-tight">
-            {t.projects.page.solution}
-          </h2>
+          <h2 className="text-foreground">{t.projects.page.solution}</h2>
           <p className="text-muted-foreground max-w-2xl text-base">{project.solution}</p>
         </section>
       ) : null}
 
       {project.screenshots && project.screenshots.length > 0 ? (
         <section className="section">
-          <h2 className="text-foreground text-xl font-semibold tracking-tight">
-            {t.projects.page.screenshots}
-          </h2>
+          <h2 className="text-foreground">{t.projects.page.screenshots}</h2>
           <ScrollArea className="-mx-4 gap-4 px-4 md:mx-0 md:px-0" snap="start">
             {project.screenshots.map((src, index) => (
               <a
@@ -137,19 +132,17 @@ export default function ProjectDetail() {
 
       {howItWorks.length > 0 ? (
         <section className="section gap-8">
-          <h2 className="text-foreground text-xl font-semibold tracking-tight">
-            {t.projects.page.howItWorks}
-          </h2>
-          <ul className="flex max-w-2xl flex-col gap-3">
+          <h2 className="text-foreground">{t.projects.page.howItWorks}</h2>
+          <RevealGroup as="ul" className="flex max-w-2xl flex-col gap-3">
             {howItWorks.map((point) => (
-              <li key={`${project.slug}-${point}`} className="flex gap-3">
+              <RevealItem key={`${project.slug}-${point}`} as="li" className="flex gap-3">
                 <span className="text-accent mt-1" aria-hidden="true">
                   •
                 </span>
                 <span className="text-muted-foreground text-base">{point}</span>
-              </li>
+              </RevealItem>
             ))}
-          </ul>
+          </RevealGroup>
         </section>
       ) : null}
 

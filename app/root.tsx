@@ -59,6 +59,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <Meta />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,340..900;1,9..144,340..900&display=swap"
+        />
         <Links />
         <PrefetchProvider />
       </head>
@@ -206,7 +212,7 @@ export default function App() {
             <Navigation.Action>
               <Button
                 asChild
-                className="border-nokia-ink bg-nokia-ink font-nokia text-nokia-screen hover:bg-nokia-ink/90 sm:bg-primary sm:text-primary-foreground sm:hover:bg-primary/90 rounded-none border-2 text-lg tracking-widest uppercase sm:rounded-md sm:border-0 sm:font-sans sm:text-sm sm:tracking-normal sm:normal-case"
+                className="press border-nokia-ink bg-nokia-ink font-nokia text-nokia-screen hover:bg-nokia-ink/90 sm:bg-primary sm:text-primary-foreground sm:hover:bg-primary/90 rounded-none border-2 text-lg tracking-widest uppercase sm:rounded-md sm:border-0 sm:font-sans sm:text-sm sm:tracking-normal sm:normal-case"
               >
                 <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
                   {t.nav.book}

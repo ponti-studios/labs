@@ -68,7 +68,6 @@ export const servicePillars: ServicePillar[] = [
       { slug: "technical-due-diligence", ...svc.technicalDueDiligence },
       { slug: "technical-consulting", ...svc.technicalConsulting },
       { slug: "product-strategy", ...svc.productStrategy },
-      { slug: "strategy-workshop", ...svc.strategyWorkshop },
     ],
   },
 ];

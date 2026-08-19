@@ -3,12 +3,192 @@
 
 @source "../node_modules/@ponti-studios/ui/src";
 
+/*
+ * Warm palette override — replaces @ponti-studios/ui's default indigo/gray
+ * tokens with the cream/ink/flame-orange palette from the Backlog
+ * Mercenaries landing page. These are the same raw token names the package
+ * itself sets in light.css/dark.css (see @theme inline in its styles.css),
+ * so this cascades into every --color-* alias (background, card, primary,
+ * accent, border, ring, etc.) without introducing new custom tokens.
+ *
+ * --primary doubles as --color-accent in the package's token mapping, so
+ * overriding it here re-themes buttons, links, and focus rings too.
+ * --primary-foreground is dark ink (not white) in both modes to match how
+ * the mock actually pairs text with this accent.
+ */
+:root {
+  --background: #f4f0e8;
+  --card: #fbf8f2;
+  --popover: #f6f2ea;
+  --muted: #efe9dc;
+  --text-primary: #11110f;
+  --text-secondary: #6f6b62;
+  --tertiary: #8f8b80;
+  --primary: #ff5a36;
+  --primary-foreground: #15110f;
+  --border-default: #d9d2c6;
+  --focus-ring: #ff5a36;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #171714;
+    --card: #1d1d19;
+    --popover: #22221e;
+    --muted: #1d1d19;
+    --text-primary: #ffffff;
+    --text-secondary: #aaa79f;
+    --tertiary: #d0ccc2;
+    --primary: #ff896f;
+    --primary-foreground: #15110f;
+    --border-default: #363631;
+    --focus-ring: #ff896f;
+  }
+}
+
 @theme {
   --color-logo-artboard: #ffffff;
 }
 
+/*
+ * Display serif override — the package's --font-serif token is a system-ui
+ * stack by default (identical to --font-sans, effectively unused). Loaded
+ * as an actual serif (Fraunces, see root.tsx head links) it becomes the
+ * site's signature mixed-type moment: sans for body and structure, this
+ * serif reserved for hero punch words, pull quotes, and big proof numbers.
+ * Using the token (font-serif utility) rather than a hardcoded local
+ * font-family keeps this compliant with the shared UI token system.
+ */
+:root {
+  --font-serif: "Fraunces", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+}
+
 .list-media-artboard {
   @apply bg-logo-artboard;
+}
+
+/*
+ * Global heading scale — @ponti-studios/ui's base layer already sets
+ * font-family, font-weight: 600, and letter-spacing: tracking-tight for
+ * h1-h6. This fills in the missing piece (size/line-height/margin) with
+ * defaults tuned to how headings are actually used across the app: h1 as
+ * a page title, h2 as a section header, h3/h4/h5 as nested subheads and
+ * card/list titles. Routes should rely on these instead of re-declaring
+ * text-size + font-weight + tracking on every heading; only add a
+ * `text-*` override when a heading is intentionally larger/smaller than
+ * its semantic default (e.g. a hero headline). This layer still loses to
+ * Tailwind's utility layer, so any explicit `text-*`/`font-*` class on a
+ * heading continues to win.
+ */
+@layer base {
+  h1 {
+    font-size: var(--text-3xl);
+    line-height: 1.2;
+  }
+  h2 {
+    font-size: var(--text-xl);
+    line-height: 1.3;
+  }
+  h3 {
+    font-size: var(--text-lg);
+    line-height: 1.35;
+  }
+  h4 {
+    font-size: var(--text-base);
+    line-height: 1.4;
+  }
+  h5 {
+    font-size: var(--text-sm);
+    line-height: 1.4;
+  }
+  h6 {
+    font-size: var(--text-xs);
+    line-height: 1.4;
+  }
+}
+
+/*
+ * Display heading presets — several marketing routes (home, work, work/$slug,
+ * projects, projects/$slug, services, manifesto, faq) were each re-typing the
+ * exact same hero/CTA text-size + leading + tracking chain by hand. Naming
+ * them once keeps every big display heading in sync and means a future
+ * tweak (e.g. adjusting the hero leading) happens in one place instead of
+ * eight. Color, max-width, and alignment are deliberately left out so
+ * call sites can still compose their own `text-foreground`/`text-accent`/
+ * `max-w-*`/`text-center` utilities alongside these.
+ */
+.heading-hero {
+  font-size: var(--text-6xl);
+  line-height: 0.9;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-tighter);
+}
+@media (min-width: 640px) {
+  .heading-hero {
+    font-size: var(--text-7xl);
+  }
+}
+@media (min-width: 768px) {
+  .heading-hero {
+    font-size: var(--text-8xl);
+  }
+}
+
+.heading-cta {
+  font-size: var(--text-4xl);
+  line-height: 0.95;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-tighter);
+}
+@media (min-width: 640px) {
+  .heading-cta {
+    font-size: var(--text-5xl);
+  }
+}
+@media (min-width: 768px) {
+  .heading-cta {
+    font-size: var(--text-6xl);
+  }
+}
+
+/* Card/list-row title — repeated identically across projects.tsx and
+ * work.tsx for each linked item's heading. */
+.heading-list-title {
+  @apply text-xl font-semibold tracking-tight transition-colors motion-reduce:transition-none;
+}
+
+/* Small italic display serif — category/pillar labels in projects.tsx and
+ * services.tsx (font-weight is left at the inherited 600, not re-applied). */
+.heading-display-sm {
+  @apply font-serif text-2xl tracking-tight italic sm:text-3xl;
+}
+
+/*
+ * Press feedback — the shared Button component (and the plain link/row
+ * patterns used for cards and list rows across the site) had no :active
+ * state at all. This is the one feedback cue dense enough to apply
+ * everywhere pressable, so it lives as a single utility rather than
+ * per-component motion. Uses the design system's own --ease-out /
+ * --duration-150 tokens, not an invented curve.
+ *
+ * Lists the same property set Tailwind's `transition-colors` utility uses,
+ * plus `transform` — this class is unlayered (see below), so it always
+ * wins the cascade over the utility-layer `transition-colors` several
+ * usages also carry. Naming the same properties here means it fully
+ * replaces that utility's job instead of silently dropping it.
+ */
+.press {
+  transition-property: transform, color, background-color, border-color, text-decoration-color;
+  transition-duration: var(--duration-150);
+  transition-timing-function: var(--ease-out);
+}
+.press:active {
+  transform: scale(0.97);
+}
+@media (prefers-reduced-motion: reduce) {
+  .press:active {
+    transform: none;
+  }
 }
 
 .list-media-pulse {
@@ -99,6 +279,17 @@
   animation: shimmer 1.6s ease-in-out infinite;
 }
 
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  display: inline-block;
+  animation: marquee 28s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .skeleton-shimmer {
     animation: none;
@@ -107,6 +298,10 @@
 
   .list-media-pulse,
   .list-media-pulse::before {
+    animation: none;
+  }
+
+  .marquee-track {
     animation: none;
   }
 }

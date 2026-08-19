@@ -132,7 +132,7 @@ export default function CloudPricingComparison(): JSX.Element {
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <h2 className="text-xl font-semibold">On-Demand vs. Reserved Instances</h2>
+        <h2>On-Demand vs. Reserved Instances</h2>
         <p className="text-muted-foreground">
           Reserved instances require an upfront commitment but cost less per hour. On-demand scales
           with actual usage at a higher rate. The table below shows which is cheaper across a range

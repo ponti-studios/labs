@@ -140,7 +140,7 @@ export default function Cards() {
   return (
     <div className="mx-auto flex flex-col gap-6 md:w-3xl">
       <header>
-        <h2 className="text-xl font-semibold">Luck of the Draw</h2>
+        <h2>Luck of the Draw</h2>
         <p className="text-muted-foreground">Beat the house. Challenge or fold.</p>
       </header>
 

@@ -324,7 +324,7 @@ export const STUDIO_TRANSLATIONS_EN = {
     contactSteps: [
       {
         title: "Schedule a call",
-        description: "No pressure conversation about your needs (30 mins)",
+        description: "A 20 min chat about your needs.",
       },
       { title: "Discovery session", description: "If it's a fit, I'll dig deeper (1–2 weeks)" },
       { title: "Proposal", description: "Detailed scope, timeline, and investment" },
@@ -348,15 +348,13 @@ export const STUDIO_TRANSLATIONS_EN = {
     },
     services: {
       title: "What I do",
-      intro: "No vague retainers. No hidden fees. Just clear outcomes.",
     },
     process: {
-      title: "How we start",
-      intro: "First conversation to signed scope. Nothing in between but the work.",
+      title: "The Process",
     },
     cta: {
       title: "Ready when you are.",
-      body: "Thirty minutes. No pitch deck. If it's a fit, you'll leave with a clear next step.",
+      body: "20 minutes. No pitch deck. Get answers.",
     },
   },
 
@@ -368,6 +366,9 @@ export const STUDIO_TRANSLATIONS_EN = {
     hero: {
       title: "The Work.",
     },
+    caseStudyLabel: "Case study",
+    roleLabel: "Role",
+    timelineLabel: "Timeline",
     approachTitle: "Approach",
     backToWork: "All work",
     nextCta: {
@@ -636,19 +637,19 @@ export const STUDIO_TRANSLATIONS_EN = {
         deliverables: [
           {
             label: "Production app",
-            description: "A full-stack web or mobile product ready to ship and scale",
+            description: "A full-stack product, ready to ship and scale",
           },
           {
             label: "Test suite",
-            description: "Automated coverage so regressions get caught before users do",
+            description: "Automated coverage so regressions get caught",
           },
           {
             label: "CI/CD",
-            description: "Deploy pipelines and environment config your team can run without me",
+            description: "Deploy pipelines your team can run without me",
           },
           {
             label: "Handoff",
-            description: "Documentation so the codebase stays maintainable after I leave",
+            description: "Docs so the codebase stays maintainable after",
           },
         ],
       },
@@ -657,23 +658,23 @@ export const STUDIO_TRANSLATIONS_EN = {
         deliverables: [
           {
             label: "Research",
-            description: "What users need, where they get stuck, and what to build next",
+            description: "What users need and where they get stuck",
           },
           {
             label: "Flows",
-            description: "Wireframes and interaction paths for the journeys that matter",
+            description: "Interaction paths for the journeys that matter",
           },
           {
             label: "Visual design",
-            description: "High-fidelity screens in Figma ready for engineering",
+            description: "High-fidelity screens in Figma, ready to build",
           },
           {
             label: "Design system",
-            description: "Components and patterns so the product stays coherent as it grows",
+            description: "Components so the product stays coherent",
           },
           {
             label: "Prototype",
-            description: "A clickable path stakeholders can try before you write code",
+            description: "A clickable path to try before you write code",
           },
         ],
       },
@@ -682,23 +683,23 @@ export const STUDIO_TRANSLATIONS_EN = {
         deliverables: [
           {
             label: "Roadmap",
-            description: "A prioritized plan tied to outcomes, not a feature wishlist",
+            description: "A prioritized plan tied to outcomes",
           },
           {
             label: "Sprints",
-            description: "Planning and backlog grooming so the team always knows what ships next",
+            description: "Planning so the team always knows what's next",
           },
           {
             label: "Specs",
-            description: "Clear requirements so engineering builds the right thing the first time",
+            description: "Clear requirements engineering can build from",
           },
           {
             label: "Alignment",
-            description: "Stakeholder communication that keeps decisions moving",
+            description: "Stakeholder comms that keep decisions moving",
           },
           {
             label: "Metrics",
-            description: "Find out what is working and what isn't",
+            description: "Find out what's working and what isn't",
           },
         ],
       },
@@ -707,23 +708,23 @@ export const STUDIO_TRANSLATIONS_EN = {
         deliverables: [
           {
             label: "Architecture review",
-            description: "Whether the system design will hold under real load and change",
+            description: "Whether the design holds under real load",
           },
           {
             label: "Codebase audit",
-            description: "Where debt is slowing you down — and what to fix first",
+            description: "Where debt is slowing you down, and the fix",
           },
           {
             label: "Security & performance",
-            description: "Risks and bottlenecks before they become incidents",
+            description: "Risks and bottlenecks before they hit",
           },
           {
             label: "Build vs buy",
-            description: "A clear recommendation when the choice is expensive either way",
+            description: "A clear call when the choice is expensive",
           },
           {
             label: "Action plan",
-            description: "Written next steps ranked by impact, not a vague slide deck",
+            description: "Next steps ranked by impact, not a slide deck",
           },
         ],
       },
@@ -732,44 +733,23 @@ export const STUDIO_TRANSLATIONS_EN = {
         deliverables: [
           {
             label: "Assessment",
-            description: "What to keep, what to replace, and the safest order to do it",
+            description: "What to keep, replace, and the safest order",
           },
           {
             label: "Rollout plan",
-            description: "Incremental delivery so the business keeps running during the change",
+            description: "Incremental delivery, business keeps running",
           },
           {
             label: "Data migration",
-            description: "Move the records that matter without silent loss or downtime surprises",
+            description: "Move what matters, no silent loss or downtime",
           },
           {
             label: "Internal tools",
-            description: "Dashboards and workflows rebuilt for how the team works now",
+            description: "Dashboards rebuilt for how the team works now",
           },
           {
             label: "Training",
-            description: "Your team understands the new system before I step away",
-          },
-        ],
-      },
-      strategyWorkshop: {
-        name: "Strategy Workshop",
-        deliverables: [
-          {
-            label: "Prep",
-            description: "Materials and framing so the session starts at full speed",
-          },
-          {
-            label: "Facilitation",
-            description: "A half-day or full-day working session built around your decision",
-          },
-          {
-            label: "Summary",
-            description: "Written findings and decisions the room actually agreed to",
-          },
-          {
-            label: "Action plan",
-            description: "Prioritized next steps you can run the week after",
+            description: "Your team owns the new system before I leave",
           },
         ],
       },
@@ -778,20 +758,19 @@ export const STUDIO_TRANSLATIONS_EN = {
         deliverables: [
           {
             label: "Technical leadership",
-            description:
-              "Senior judgment on architecture, hiring, and roadmap without a full-time hire",
+            description: "Senior judgment, no full-time hire needed",
           },
           {
             label: "Standing cadence",
-            description: "Weekly or biweekly touchpoints so decisions don't wait on availability",
+            description: "Weekly touchpoints so decisions don't wait",
           },
           {
             label: "Team review",
-            description: "An honest read on your engineering org — who's strong, what's missing",
+            description: "An honest read on who's strong, what's missing",
           },
           {
             label: "Board-ready updates",
-            description: "Technical narrative your investors and board actually understand",
+            description: "A technical story your board understands",
           },
         ],
       },
@@ -800,20 +779,19 @@ export const STUDIO_TRANSLATIONS_EN = {
         deliverables: [
           {
             label: "Codebase and architecture audit",
-            description: "What you're actually buying, not what the deck says",
+            description: "What you're actually buying, not the deck",
           },
           {
             label: "Team assessment",
-            description: "Who's load-bearing, who's a flight risk, what breaks if they leave",
+            description: "Who's load-bearing, who's a flight risk",
           },
           {
             label: "Risk report",
-            description:
-              "Ranked technical risks with real cost-to-fix estimates, not vague red flags",
+            description: "Ranked risks with real cost-to-fix estimates",
           },
           {
             label: "Go/no-go recommendation",
-            description: "A clear call you can act on before the deal closes",
+            description: "A clear call before the deal closes",
           },
         ],
       },
@@ -822,19 +800,23 @@ export const STUDIO_TRANSLATIONS_EN = {
         deliverables: [
           {
             label: "Market and product read",
-            description: "Where you actually have leverage, not where it's comfortable to play",
+            description: "Where you actually have leverage",
           },
           {
             label: "Bet selection",
-            description: "Which one or two bets are worth the company's limited attention",
+            description: "The one or two bets worth your attention",
           },
           {
             label: "Prioritization framework",
-            description: "A way to decide what's next that survives past this quarter",
+            description: "A way to decide what's next, past this quarter",
+          },
+          {
+            label: "Facilitation",
+            description: "A working session built around your decision",
           },
           {
             label: "Written recommendation",
-            description: "A decision memo, not a slide deck you present once and shelve",
+            description: "A decision memo, not a shelved slide deck",
           },
         ],
       },
@@ -967,10 +949,45 @@ export const STUDIO_TRANSLATIONS_EN = {
       description: "Premium product and engineering for teams who refuse to compromise on quality.",
     },
     hero: {
+      kicker: "Product + engineering studio",
       title: "Building what should exist.",
       wordBefore: "Building",
       wordAfter: "what should exist.",
       subtitle: "Beautiful things, for problems worth solving.",
+      secondaryCta: "See the work",
+    },
+    marquee: [
+      "Product design",
+      "AI systems",
+      "Automation",
+      "Data intelligence",
+      "Platform engineering",
+      "Search",
+      "Connectors",
+      "Governance",
+    ],
+    capabilities: {
+      title: "From should to shipped.",
+      groups: [
+        {
+          title: "Product",
+          services: [
+            { title: "Build + Design", slug: "engineering" },
+            { title: "Intelligence", slug: "product-design" },
+            { title: "Infrastructure", slug: "modernization" },
+            { title: "Automation", slug: "fractional-product-management" },
+          ],
+        },
+        {
+          title: "Advisory",
+          services: [
+            { title: "Due Diligence", slug: "technical-due-diligence" },
+            { title: "Product Strategy", slug: "product-strategy" },
+            { title: "Technical Consulting", slug: "technical-consulting" },
+            { title: "Fractional CTO", slug: "fractional-cto" },
+          ],
+        },
+      ],
     },
     services: {
       title: "What I do",
@@ -1020,6 +1037,7 @@ export const STUDIO_TRANSLATIONS_EN = {
             { path: "/games/tetris", label: "Tetris" },
             { path: "/experiments/calendar", label: "Calendar" },
             { path: "/experiments/pixel-descent.html", label: "Pixel Descent" },
+            { path: "/experiments/backlog-mercenaries.html", label: "Backlog Mercenaries" },
             { path: "/experiments/theatre-management", label: "Theatre Management" },
             { path: "/experiments/llm-interface", label: "LLM Interface" },
             { path: "/experiments/glass", label: "Glass" },

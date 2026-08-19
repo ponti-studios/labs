@@ -54,7 +54,7 @@ export default function PrimeCountdown(): JSX.Element {
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <h2 className="text-xl font-semibold">Prime Number Countdown</h2>
+        <h2>Prime Number Countdown</h2>
         <p className="text-muted-foreground">
           yields prime numbers in from <code className="bg-muted rounded px-1 py-0.5">n</code> down
           to <code className="bg-muted rounded px-1 py-0.5">1</code>. A number is prime if it has no
