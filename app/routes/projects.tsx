@@ -1,5 +1,7 @@
+import { cn } from "@ponti-studios/ui/utilities";
 import { Link } from "react-router";
 import { ListRowMedia } from "~/components/ListRowMedia";
+import styles from "~/components/list-row.module.css";
 import { RevealGroup, RevealItem } from "~/components/Reveal";
 import { playgroundItems } from "~/data/playground";
 import { projectSections } from "~/data/projects";
@@ -22,9 +24,9 @@ export function meta(): Array<{
 export default function Projects() {
   return (
     <div className="page-shell">
-      <h1 className="heading-hero text-foreground">
-        The <span className="font-serif italic">Lab</span>
-      </h1>
+      <section className="layout-stack">
+        <h1 className="heading-hero text-foreground max-w-4xl">The Lab</h1>
+      </section>
 
       {/* Projects by Category */}
       {projectSections.map((section) => {
@@ -49,7 +51,13 @@ export default function Projects() {
                       />
                     ) : null}
                     <div className="flex min-w-0 flex-1 flex-col gap-1">
-                      <h3 className="heading-list-title text-foreground group-hover:text-accent">
+                      <h3
+                        className={cn({
+                          [styles.title]: true,
+                          "text-foreground": true,
+                          "group-hover:text-accent": true,
+                        })}
+                      >
                         {project.name}
                       </h3>
                       <p className="text-muted-foreground max-w-2xl text-sm">
@@ -76,7 +84,13 @@ export default function Projects() {
                 className="press hover:bg-muted/20 flex min-w-0 flex-1 flex-row items-start gap-4 transition-colors outline-none md:gap-6"
               >
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
-                  <h3 className="heading-list-title text-foreground group-hover:text-accent">
+                  <h3
+                    className={cn({
+                      [styles.title]: true,
+                      "text-foreground": true,
+                      "group-hover:text-accent": true,
+                    })}
+                  >
                     {item.name}
                   </h3>
                   <p className="text-muted-foreground max-w-2xl text-sm">{item.shortDescription}</p>

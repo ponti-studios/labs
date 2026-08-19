@@ -63,10 +63,6 @@
   --font-serif: "Fraunces", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 }
 
-.list-media-artboard {
-  @apply bg-logo-artboard;
-}
-
 /*
  * Global heading scale — @ponti-studios/ui's base layer already sets
  * font-family, font-weight: 600, and letter-spacing: tracking-tight for
@@ -151,12 +147,6 @@
   }
 }
 
-/* Card/list-row title — repeated identically across projects.tsx and
- * work.tsx for each linked item's heading. */
-.heading-list-title {
-  @apply text-xl font-semibold tracking-tight transition-colors motion-reduce:transition-none;
-}
-
 /* Small italic display serif — category/pillar labels in projects.tsx and
  * services.tsx (font-weight is left at the inherited 600, not re-applied). */
 .heading-display-sm {
@@ -188,63 +178,6 @@
 @media (prefers-reduced-motion: reduce) {
   .press:active {
     transform: none;
-  }
-}
-
-.list-media-pulse {
-  position: relative;
-  display: block;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 9999px;
-  background: radial-gradient(circle, var(--color-accent) 0%, transparent 68%);
-  opacity: 0.3;
-  filter: blur(5px);
-  animation: list-media-pulse 2.4s ease-in-out infinite;
-}
-
-.list-media-pulse::before,
-.list-media-pulse::after {
-  position: absolute;
-  inset: 20%;
-  border: 1px solid var(--color-accent);
-  border-radius: 9999px;
-  content: "";
-}
-
-.list-media-pulse::before {
-  animation: list-media-orbit 2.4s ease-in-out infinite;
-}
-
-.list-media-pulse::after {
-  inset: 38%;
-  background: var(--color-accent);
-  border: 0;
-  filter: blur(1px);
-  opacity: 0.8;
-}
-
-@keyframes list-media-pulse {
-  0%,
-  100% {
-    opacity: 0.2;
-    transform: scale(0.78);
-  }
-  50% {
-    opacity: 0.55;
-    transform: scale(1);
-  }
-}
-
-@keyframes list-media-orbit {
-  0%,
-  100% {
-    transform: scale(0.72) rotate(0deg);
-    opacity: 0.25;
-  }
-  50% {
-    transform: scale(1.32) rotate(180deg);
-    opacity: 0.7;
   }
 }
 
@@ -294,11 +227,6 @@
   .skeleton-shimmer {
     animation: none;
     background: var(--color-muted);
-  }
-
-  .list-media-pulse,
-  .list-media-pulse::before {
-    animation: none;
   }
 
   .marquee-track {

@@ -31,9 +31,9 @@ export default function WorkSlug() {
   const [firstOutcome, secondOutcome] = snapshot.outcomes;
 
   return (
-    <div className="page-bleed">
+    <div className="page-shell">
       {/* Hero */}
-      <section className="section pt-14 pb-0 md:pt-20">
+      <section className="layout-stack">
         <Link
           to="/work"
           prefetch="intent"
@@ -41,7 +41,7 @@ export default function WorkSlug() {
         >
           ← {copy.backToWork}
         </Link>
-        <h1 className="heading-hero text-foreground max-w-3xl">{snapshot.client}</h1>
+        <h1 className="heading-hero text-foreground max-w-4xl">{snapshot.client}</h1>
 
         <div className="mt-12 grid gap-8 md:grid-cols-[1.25fr_.75fr] md:items-end">
           <p className="text-foreground max-w-2xl text-2xl leading-tight tracking-tight sm:text-3xl md:text-4xl">

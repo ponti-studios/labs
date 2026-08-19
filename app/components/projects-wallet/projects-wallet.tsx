@@ -1,7 +1,7 @@
 import { memo } from "react";
-import { ProjectCard, type FeaturedProject } from "./project-card";
 import { WhatTile } from "~/routes/games/what/what-tile";
 import { t } from "~/translations";
+import { ProjectCard, type FeaturedProject } from "./project-card";
 
 type ProjectsWalletProps = {
   projects: FeaturedProject[];
@@ -133,8 +133,10 @@ const FEATURED_PROJECTS: FeaturedProject[] = [
 
 export const FeaturedProjects = memo(function FeaturedProjects() {
   return (
-    <section className="bg-accent rounded-4xl px-6 py-14 sm:px-12 md:py-20">
-      <h2 className="text-foreground mb-6">Featured Projects</h2>
+    <section className="bg-accent flex flex-col gap-8 rounded-4xl px-6 py-12">
+      <h2 id="capabilities-title" className="heading-cta text-foreground max-w-3xl">
+        Featured Projects
+      </h2>
       <ProjectsWallet projects={FEATURED_PROJECTS} />
     </section>
   );

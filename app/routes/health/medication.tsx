@@ -89,7 +89,7 @@ export default function MedicationPen(): JSX.Element {
   return (
     <div className="flex flex-col items-center gap-8 p-8">
       <div className="text-center">
-        <h1 className="mb-2 text-2xl font-bold">Medication Pen Duration</h1>
+        <h1 className="heading-hero text-foreground max-w-4xl">Medication Pen Duration</h1>
         <p className="text-muted-foreground max-w-md">
           Calculate how many weeks a {schedule.penCapacity}mg medication pen will last based on
           weekly dosage amounts.

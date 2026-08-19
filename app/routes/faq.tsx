@@ -22,11 +22,11 @@ export function meta(): Array<{
 
 export default function Faq() {
   return (
-    <div className="page-bleed">
+    <div className="page-shell">
       {/* Hero */}
-      <section className="section pt-16 pb-10 md:pt-24">
+      <section className="layout-stack">
         <h1 className="heading-hero text-foreground max-w-4xl">{copy.title}</h1>
-        <p className="text-muted-foreground mt-2 max-w-2xl text-lg leading-relaxed">
+        <p className="text-muted-foreground max-w-2xl text-lg leading-relaxed">
           {copy.meta.description}
         </p>
       </section>

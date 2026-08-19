@@ -1,7 +1,7 @@
 import { ScrollArea } from "@ponti-studios/ui/layout";
 import { ExternalLink, FolderGit2 } from "lucide-react";
 import { Link, useParams } from "react-router";
-import { DetailHeader, DetailNavigation } from "~/components/DetailPage";
+import { DetailNavigation } from "~/components/DetailPage";
 import { ListRowMedia } from "~/components/ListRowMedia";
 import { RevealGroup, RevealItem } from "~/components/Reveal";
 import { projects } from "~/data/projects";
@@ -20,8 +20,8 @@ export default function ProjectDetail() {
 
   if (!project) {
     return (
-      <div className="page-bleed">
-        <section className="section section-hero">
+      <div className="page-shell">
+        <section className="layout-stack">
           <h1 className="heading-hero text-foreground max-w-4xl">{t.projects.page.notFound}</h1>
           <Link
             to="/projects"
@@ -42,68 +42,59 @@ export default function ProjectDetail() {
   const howItWorks = [...project.keyFeatures, ...project.technicalChallenges];
 
   return (
-    <div className="page-bleed">
-      <DetailHeader
-        back={
-          <Link
-            to="/projects"
-            prefetch="intent"
-            className="text-muted-foreground hover:text-foreground min-h-11 w-fit content-center text-sm outline-none"
-          >
-            ← {t.projects.page.title}
-          </Link>
-        }
-        media={
-          project.logo ? (
-            <ListRowMedia
-              fallback={project.name.slice(0, 2).toUpperCase()}
-              loading="eager"
-              src={project.logo}
-            />
-          ) : null
-        }
-        title={project.name}
-        metadata={
-          <span className="flex flex-wrap gap-x-4 gap-y-2">
-            <a
-              href={project.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-accent inline-flex min-h-11 items-center gap-2 underline-offset-4 outline-none hover:underline"
-            >
-              {t.projects.page.repository}
-              <FolderGit2 size={16} aria-hidden="true" />
-            </a>
-            {hasDistinctUrl && project.url ? (
+    <div className="page-shell">
+      <section className="section detail-hero">
+        <div className="flex min-w-0 flex-col gap-4">
+          {project.logo ? (
+            <div className="shrink-0">
+              <ListRowMedia
+                fallback={project.name.slice(0, 2).toUpperCase()}
+                loading="eager"
+                src={project.logo}
+              />
+            </div>
+          ) : null}
+          <h1 className="heading-hero text-foreground">{project.name}</h1>
+          <p className="text-foreground max-w-2xl text-base">{project.shortDescription}</p>
+          <div className="text-muted-foreground max-w-2xl text-sm">
+            <span className="flex flex-wrap gap-x-4 gap-y-2">
               <a
-                href={project.url}
-                target={project.url.startsWith("http") ? "_blank" : undefined}
-                rel={project.url.startsWith("http") ? "noopener noreferrer" : undefined}
-                className="hover:text-accent inline-flex min-h-11 items-center gap-2 underline-offset-4 outline-none hover:underline"
+                href={project.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-accent text-foreground hover:text-accent inline-flex min-h-11 items-center gap-2 rounded border px-4 font-extrabold underline-offset-4 outline-none hover:underline"
               >
-                {t.projects.page.liveProject}
-                <ExternalLink size={16} aria-hidden="true" />
+                <FolderGit2 size={16} aria-hidden="true" />
               </a>
-            ) : null}
-          </span>
-        }
-        summary={project.shortDescription}
-      />
+              {hasDistinctUrl && project.url ? (
+                <a
+                  href={project.url}
+                  target={project.url.startsWith("http") ? "_blank" : undefined}
+                  rel={project.url.startsWith("http") ? "noopener noreferrer" : undefined}
+                  className="bg-accent-foreground text-accent hover:text-accent inline-flex min-h-11 items-center gap-2 rounded border px-4 underline-offset-4 outline-none hover:underline"
+                >
+                  <ExternalLink size={16} aria-hidden="true" />
+                </a>
+              ) : null}
+            </span>
+          </div>
+        </div>
+      </section>
 
-      <section className="section">
+      <section className="px-4 py-0">
         <h2 className="text-foreground">{t.projects.page.problem}</h2>
         <p className="text-muted-foreground max-w-2xl text-base">{project.problem}</p>
       </section>
 
       {project.solution ? (
-        <section className="section">
+        <section className="px-4 py-0">
           <h2 className="text-foreground">{t.projects.page.solution}</h2>
           <p className="text-muted-foreground max-w-2xl text-base">{project.solution}</p>
         </section>
       ) : null}
 
       {project.screenshots && project.screenshots.length > 0 ? (
-        <section className="section">
+        <section className="px-4">
           <h2 className="text-foreground">{t.projects.page.screenshots}</h2>
           <ScrollArea className="-mx-4 gap-4 px-4 md:mx-0 md:px-0" snap="start">
             {project.screenshots.map((src, index) => (
@@ -131,7 +122,7 @@ export default function ProjectDetail() {
       ) : null}
 
       {howItWorks.length > 0 ? (
-        <section className="section gap-8">
+        <section className="gap-8 px-4">
           <h2 className="text-foreground">{t.projects.page.howItWorks}</h2>
           <RevealGroup as="ul" className="flex max-w-2xl flex-col gap-3">
             {howItWorks.map((point) => (

@@ -1,5 +1,7 @@
+import { cn } from "@ponti-studios/ui/utilities";
 import { Link } from "react-router";
 import { ListRowMedia } from "~/components/ListRowMedia";
+import styles from "~/components/list-row.module.css";
 import { RevealGroup, RevealItem } from "~/components/Reveal";
 import { caseLogos, caseSnapshots } from "~/data/studio";
 import { t } from "~/translations";
@@ -42,7 +44,13 @@ export default function Work() {
                   <span className="text-muted-foreground text-xs tracking-wide uppercase">
                     {snapshot.industry}
                   </span>
-                  <h3 className="heading-list-title text-foreground group-hover:text-accent">
+                  <h3
+                    className={cn({
+                      [styles.title]: true,
+                      "text-foreground": true,
+                      "group-hover:text-accent": true,
+                    })}
+                  >
                     {snapshot.client}
                   </h3>
                   <p className="text-muted-foreground max-w-2xl text-sm">{snapshot.description}</p>

@@ -1,4 +1,3 @@
-import { motion, useReducedMotion } from "framer-motion";
 import { RevealGroup, RevealItem } from "~/components/Reveal";
 import { t } from "~/translations";
 
@@ -12,32 +11,12 @@ export function meta(): Array<{
   return [{ title: copy.meta.title }, { name: "description", content: copy.meta.description }];
 }
 
-function ManifestoHeroHeadline() {
-  const reduceMotion = useReducedMotion();
-  return (
-    <h1 className="heading-hero text-foreground max-w-4xl">
-      <span className="block">{copy.hero.title}</span>
-      <motion.span
-        className="text-accent block font-serif italic"
-        initial={reduceMotion ? false : { opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.2, delay: 0.35, ease: "easeOut" }}
-      >
-        {copy.hero.punch}
-      </motion.span>
-    </h1>
-  );
-}
-
 export default function Manifesto() {
   return (
-    <div className="page-bleed">
+    <div className="page-shell">
       {/* Hero */}
-      <section className="section pt-16 pb-10 md:pt-24">
-        <ManifestoHeroHeadline />
-        <p className="text-muted-foreground mt-2 max-w-2xl text-lg leading-relaxed">
-          {copy.hero.body}
-        </p>
+      <section className="layout-stack">
+        <h1 className="heading-hero text-foreground max-w-4xl">{copy.hero.title}</h1>
       </section>
 
       {/* Tenets — single-column editorial list, one idea at a time */}

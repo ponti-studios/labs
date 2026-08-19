@@ -101,7 +101,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       career: {
         name: "Career",
         shortDescription:
-          "Your resume crushes a decade of work into two pages. Career keeps the whole story.",
+          "Resumes crush decades of work into snippets. Career keeps the whole story.",
         solution:
           "A web app pairing a career-long work journal — roles, achievements, skills gained, performance history — with a job-search pipeline for applications, interviews, follow-ups, and offers.",
         problem:
@@ -342,9 +342,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       description: "Product engineering, design, and advisory. Scoped clearly, shipped with proof.",
     },
     hero: {
-      title: "You have problems.",
-      punch: "I solve them.",
-      seeWork: "See the work",
+      title: "The Services",
     },
     services: {
       title: "What I do",
@@ -866,9 +864,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       description: "What I believe and how it shapes everything I build.",
     },
     hero: {
-      title: "How I",
-      punch: "think.",
-      body: "Nine tenets. No filler. The rules that shape every engagement before a line of code is written.",
+      title: "The Manifesto.",
     },
     tenets: {
       title: "Core tenets",
@@ -973,8 +969,7 @@ export const STUDIO_TRANSLATIONS_EN = {
     career: {
       eyebrow: "Featured product",
       title: "Career",
-      description:
-        "Your resume crushes a decade of work into two pages. Career keeps the whole story.",
+      description: "Resumes crush decades of work into snippets. Career keeps the whole story.",
       cta: "Visit site",
       live: "Live",
     },
