@@ -347,7 +347,7 @@ export default function ExperimentsLlmInterface(): JSX.Element {
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-6">
       <header>
         <div className="flex items-start justify-between">
-          <h1 className="text-2xl font-bold">Context Chemistry</h1>
+          <h1 className="heading-hero text-foreground max-w-4xl">Context Chemistry</h1>
           <div className="flex items-center gap-2">
             <Dialog>
               <DialogTrigger className="border-border text-foreground hover:bg-accent hover:text-accent-foreground focus-visible:border-foreground inline-flex min-h-6 min-w-6 cursor-pointer items-center justify-center gap-2 rounded-md border px-3 text-xs font-medium whitespace-nowrap transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0">

@@ -235,7 +235,7 @@ export default function WhatHistoryRoute() {
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex flex-col gap-1">
           <p className="ui-eyebrow">WH?T</p>
-          <h1 className="display-2">Your history</h1>
+          <h1 className="heading-hero text-foreground max-w-4xl">Your history</h1>
         </div>
         <UnplayedSheet dateKeys={history.playableUnplayedDateKeys} gameSlug={gameSlug} />
       </header>

@@ -46,7 +46,7 @@ function HeroHeadline() {
   const reduceMotion = useReducedMotion();
   const after = t.home.hero.wordAfter;
   return (
-    <h1 className="text-foreground text-[clamp(1.875rem,8vw,3.75rem)] tracking-tighter">
+    <h1 className="heading-hero text-foreground max-w-4xl">
       <span>{t.home.hero.wordBefore}</span>{" "}
       <motion.span
         className="text-accent font-serif italic"
@@ -75,13 +75,11 @@ function HeroHeadline() {
 
 export default function Home() {
   return (
-    <div className="page-bleed flex flex-col gap-10">
+    <div className="page-shell flex flex-col gap-10">
       {/* Thesis */}
-      <section className="flex flex-col gap-4 px-4 py-16 sm:px-6 md:py-24">
-        <div className="max-w-5xl">
-          <HeroHeadline />
-          <p className="text-muted-foreground">{t.home.hero.subtitle}</p>
-        </div>
+      <section className="layout-stack">
+        <HeroHeadline />
+        <p className="text-muted-foreground max-w-5xl">{t.home.hero.subtitle}</p>
 
         <div className="grid gap-7 md:grid-cols-[minmax(0,0.9fr)_minmax(16rem,0.5fr)] md:items-end">
           <div className="flex flex-wrap gap-3">

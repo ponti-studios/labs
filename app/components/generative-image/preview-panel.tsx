@@ -23,7 +23,7 @@ export function GenerativeImagePreviewPanel({
   return (
     <div className="flex h-[calc(100vh-220px)] flex-col lg:col-span-7">
       <header className="border-border mb-6 flex items-center justify-between border-b pb-6">
-        <h1 className="mt-1">Parametric Image Generation</h1>
+        <h1 className="heading-hero text-foreground max-w-4xl">Parametric Image Generation</h1>
         <button
           type="button"
           onClick={onTogglePrompt}

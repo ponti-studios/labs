@@ -104,7 +104,7 @@ export default function TarotRoute() {
           className="flex flex-col gap-4 pb-6 md:flex-row md:items-start md:justify-between"
         >
           <div className="max-w-2xl">
-            <h1>Daily Tarot</h1>
+            <h1 className="heading-hero text-foreground max-w-4xl">Daily Tarot</h1>
           </div>
 
           <div className="pt-1 text-sm md:text-right">

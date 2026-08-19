@@ -1,5 +1,4 @@
 import { Button } from "@ponti-studios/ui/primitives";
-import { motion, useReducedMotion } from "framer-motion";
 import { HelpCircle } from "lucide-react";
 import { Link } from "react-router";
 import { DeliverableList } from "~/components/DeliverableList";
@@ -14,44 +13,12 @@ export function meta(): Array<{ title?: string; name?: string; content?: string 
   return [{ title: copy.meta.title }, { name: "description", content: copy.meta.description }];
 }
 
-function ServicesHeroHeadline() {
-  const reduceMotion = useReducedMotion();
-  return (
-    <h1 className="heading-hero text-foreground max-w-4xl">
-      <span className="block">{copy.hero.title}</span>
-      <motion.span
-        className="text-accent block font-serif italic"
-        initial={reduceMotion ? false : { opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.2, delay: 0.35, ease: "easeOut" }}
-      >
-        {copy.hero.punch}
-      </motion.span>
-    </h1>
-  );
-}
-
 export default function Services() {
   return (
-    <div className="page-bleed">
+    <div className="page-shell">
       {/* Hero */}
-      <section className="section pt-16 pb-10 md:pt-24">
-        <ServicesHeroHeadline />
-
-        <div className="mt-8 flex flex-wrap items-center gap-6">
-          <Button asChild size="lg" className="press rounded-full px-6">
-            <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
-              {t.common.bookCall}
-            </a>
-          </Button>
-          <Link
-            to="/work"
-            prefetch="intent"
-            className="text-foreground text-sm underline-offset-4 hover:underline"
-          >
-            {copy.hero.seeWork}
-          </Link>
-        </div>
+      <section className="layout-stack">
+        <h1 className="heading-hero text-foreground max-w-4xl">{copy.hero.title}</h1>
       </section>
 
       {/* Services — editorial catalog, same for every visitor */}

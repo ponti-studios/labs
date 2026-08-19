@@ -1,4 +1,7 @@
+import { cn } from "@ponti-studios/ui/utilities";
 import { useEffect, useRef, useState } from "react";
+
+import styles from "./list-row.module.css";
 
 type ListRowMediaProps = {
   alt?: string;
@@ -28,18 +31,25 @@ export function ListRowMedia({
 
   return (
     <span
-      className={`list-media list-media-artboard list-media-${variant}`}
+      className={cn("list-media", {
+        [styles.mediaArtboard]: true,
+        "list-media-square": variant === "square",
+        "list-media-wide": variant === "wide",
+      })}
       aria-hidden={alt ? undefined : true}
     >
       <span
         aria-hidden="true"
-        className={`list-media-placeholder ${status === "loading" ? "opacity-100" : "opacity-0"}`}
+        className={cn(`list-media-placeholder`, {
+          "opacity-100": status === "loading",
+          "opacity-0": status !== "loading",
+        })}
       >
-        <span className="list-media-pulse" />
+        <span className={cn({ [styles.mediaPulse]: true })} />
       </span>
 
       {status === "error" ? (
-        <span className="text-muted-foreground subtext-lg relative font-semibold tracking-tight tracking-wide">
+        <span className="text-muted-foreground subtext-lg relative font-semibold tracking-tight">
           {fallback}
         </span>
       ) : (
@@ -53,7 +63,13 @@ export function ListRowMedia({
           decoding="async"
           onLoad={() => setStatus("loaded")}
           onError={() => setStatus("error")}
-          className={`relative max-h-10 max-w-full object-contain transition-opacity duration-150 ${status === "loaded" ? "opacity-100" : "opacity-0"}`}
+          className={cn(
+            `relative max-h-10 max-w-full object-contain transition-opacity duration-150`,
+            {
+              "opacity-100": status === "loaded",
+              "opacity-0": status !== "loaded",
+            },
+          )}
         />
       )}
     </span>

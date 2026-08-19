@@ -225,7 +225,7 @@ export default function MedicareRoute() {
       <div className="relative z-10 mx-auto max-w-6xl p-8">
         {/* Header */}
         <div className="mb-12 border-b border-white/10 pb-8">
-          <h1 className="mb-2">MEDICARE COMPARISON</h1>
+          <h1 className="heading-hero text-foreground max-w-4xl">MEDICARE COMPARISON</h1>
           <p className="text-sm text-white/70">
             ANALYZE COSTS AND BENEFITS FOR 2024. INCOME THRESHOLD ${income.toLocaleString()} / YEAR.
           </p>
