@@ -18,7 +18,6 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
-import { ParticleBackground } from "./components/particle-background";
 import { PrefetchProvider } from "./components/prefetch-provider";
 import QueryProvider from "./components/QueryProvider";
 import { BOOK_CALL_URL } from "./data/studio";
@@ -114,10 +113,6 @@ export default function App() {
 
   return (
     <QueryProvider>
-      <ParticleBackground
-        className="fixed"
-        enabled={!location.pathname.startsWith("/games/what")}
-      />
       <div
         aria-hidden="true"
         className={cn(
