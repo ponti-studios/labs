@@ -633,7 +633,7 @@ export const STUDIO_TRANSLATIONS_EN = {
     },
     entries: {
       engineering: {
-        name: "Engineering",
+        name: "Build",
         deliverables: [
           {
             label: "Production app",
@@ -654,7 +654,7 @@ export const STUDIO_TRANSLATIONS_EN = {
         ],
       },
       productDesign: {
-        name: "Product Design",
+        name: "Design",
         deliverables: [
           {
             label: "Research",
@@ -672,14 +672,10 @@ export const STUDIO_TRANSLATIONS_EN = {
             label: "Design system",
             description: "Components so the product stays coherent",
           },
-          {
-            label: "Prototype",
-            description: "A clickable path to try before you write code",
-          },
         ],
       },
       fractionalProductManagement: {
-        name: "Fractional Product Management",
+        name: "Delivery",
         deliverables: [
           {
             label: "Roadmap",
@@ -694,17 +690,13 @@ export const STUDIO_TRANSLATIONS_EN = {
             description: "Clear requirements engineering can build from",
           },
           {
-            label: "Alignment",
-            description: "Stakeholder comms that keep decisions moving",
-          },
-          {
             label: "Metrics",
             description: "Find out what's working and what isn't",
           },
         ],
       },
       technicalConsulting: {
-        name: "Technical Consulting",
+        name: "Diagnosis",
         deliverables: [
           {
             label: "Architecture review",
@@ -719,17 +711,13 @@ export const STUDIO_TRANSLATIONS_EN = {
             description: "Risks and bottlenecks before they hit",
           },
           {
-            label: "Build vs buy",
-            description: "A clear call when the choice is expensive",
-          },
-          {
             label: "Action plan",
             description: "Next steps ranked by impact, not a slide deck",
           },
         ],
       },
       modernization: {
-        name: "Modernization",
+        name: "Infrastructure",
         deliverables: [
           {
             label: "Assessment",
@@ -747,14 +735,10 @@ export const STUDIO_TRANSLATIONS_EN = {
             label: "Internal tools",
             description: "Dashboards rebuilt for how the team works now",
           },
-          {
-            label: "Training",
-            description: "Your team owns the new system before I leave",
-          },
         ],
       },
       fractionalCto: {
-        name: "Fractional CTO",
+        name: "Leadership",
         deliverables: [
           {
             label: "Technical leadership",
@@ -775,7 +759,7 @@ export const STUDIO_TRANSLATIONS_EN = {
         ],
       },
       technicalDueDiligence: {
-        name: "Technical Due Diligence",
+        name: "Due Diligence",
         deliverables: [
           {
             label: "Codebase and architecture audit",
@@ -796,23 +780,19 @@ export const STUDIO_TRANSLATIONS_EN = {
         ],
       },
       productStrategy: {
-        name: "Product Strategy",
+        name: "Strategy",
         deliverables: [
           {
-            label: "Market and product read",
+            label: "Market read",
             description: "Where you actually have leverage",
           },
           {
-            label: "Bet selection",
-            description: "The one or two bets worth your attention",
+            label: "Build vs buy",
+            description: "A clear call when the choice is expensive",
           },
           {
-            label: "Prioritization framework",
+            label: "Prioritization",
             description: "A way to decide what's next, past this quarter",
-          },
-          {
-            label: "Facilitation",
-            description: "A working session built around your decision",
           },
           {
             label: "Written recommendation",
@@ -968,26 +948,6 @@ export const STUDIO_TRANSLATIONS_EN = {
     ],
     capabilities: {
       title: "From should to shipped.",
-      groups: [
-        {
-          title: "Product",
-          services: [
-            { title: "Build + Design", slug: "engineering" },
-            { title: "Intelligence", slug: "product-design" },
-            { title: "Infrastructure", slug: "modernization" },
-            { title: "Automation", slug: "fractional-product-management" },
-          ],
-        },
-        {
-          title: "Advisory",
-          services: [
-            { title: "Due Diligence", slug: "technical-due-diligence" },
-            { title: "Product Strategy", slug: "product-strategy" },
-            { title: "Technical Consulting", slug: "technical-consulting" },
-            { title: "Fractional CTO", slug: "fractional-cto" },
-          ],
-        },
-      ],
     },
     services: {
       title: "What I do",

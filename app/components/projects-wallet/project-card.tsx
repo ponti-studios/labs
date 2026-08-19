@@ -1,21 +1,10 @@
-import {
-  motion,
-  useMotionTemplate,
-  useMotionValue,
-  useReducedMotion,
-  useSpring,
-  useTransform,
-} from "framer-motion";
 import { LucideArrowBigRight } from "lucide-react";
-import { type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
-import { Link } from "react-router";
+import { type CSSProperties, type ReactNode } from "react";
 
+import { TiltCard, type TiltCardGlow } from "~/components/TiltCard";
 import { cn } from "~/lib/utils";
 
 import { CARD_THEMES, type CardThemeName } from "./card-themes";
-
-const MotionLink = motion.create(Link);
-const MotionAnchor = motion.create("a");
 
 export type FeaturedProject = {
   id: string;
@@ -32,9 +21,6 @@ export type FeaturedProject = {
   /** Custom center-band content (e.g. a game preview). Falls back to a fake embossed card number. */
   preview?: ReactNode;
 };
-
-// Max tilt at the card's edges — subtle, not a gimbal.
-const CARD_TILT_DEGREES = 5;
 
 // Deterministic per-card "PAN" so the fallback preview reads like an
 // embossed card number instead of a placeholder — same seed always
@@ -83,64 +69,23 @@ export function ProjectCard({
   preview,
   ...rest
 }: FeaturedProject & { "data-testid"?: string }) {
-  const reduceMotion = useReducedMotion();
   const themeTokens = CARD_THEMES[theme];
-
-  const pointerX = useMotionValue(0.5);
-  const pointerY = useMotionValue(0.5);
-  const springConfig = { stiffness: 300, damping: 25, mass: 0.5 };
-  const rotateX = useSpring(
-    useTransform(pointerY, [0, 1], [CARD_TILT_DEGREES, -CARD_TILT_DEGREES]),
-    springConfig,
-  );
-  const rotateY = useSpring(
-    useTransform(pointerX, [0, 1], [-CARD_TILT_DEGREES, CARD_TILT_DEGREES]),
-    springConfig,
-  );
-  const glowX = useTransform(pointerX, [0, 1], ["0%", "100%"]);
-  const glowY = useTransform(pointerY, [0, 1], ["0%", "100%"]);
-  const glowBackground = useMotionTemplate`radial-gradient(320px circle at ${glowX} ${glowY}, color-mix(in oklab, ${themeTokens.accent} 25%, transparent), transparent 65%)`;
-
-  function handlePointerMove(event: ReactPointerEvent<HTMLAnchorElement>) {
-    if (event.pointerType !== "mouse") return;
-    const bounds = event.currentTarget.getBoundingClientRect();
-    pointerX.set((event.clientX - bounds.left) / bounds.width);
-    pointerY.set((event.clientY - bounds.top) / bounds.height);
-  }
-
-  function handlePointerLeave() {
-    pointerX.set(0.5);
-    pointerY.set(0.5);
-  }
 
   // `background` (not `background-color`) so gradient themes render — a
   // A Tailwind background-color utility would only ever set background-color.
   // Cast: CSS custom properties aren't in framer-motion's MotionStyle type.
   const cardStyle = {
-    ...(reduceMotion ? {} : { rotateX, rotateY, transformPerspective: 800 }),
     background: themeTokens.background,
     "--card-fg": themeTokens.foreground,
     "--card-accent": themeTokens.accent,
   } as CSSProperties;
   const cardClassName =
-    "group relative isolate flex aspect-[1.586/1] w-[300px] shrink-0 snap-start flex-col overflow-hidden rounded-2xl border border-white/10 p-4 text-[var(--card-fg)] shadow-lg shadow-black/20 transition-shadow duration-200 hover:shadow-black/40 sm:w-[340px] sm:p-5";
+    "flex aspect-[1.586/1] w-[300px] shrink-0 snap-start flex-col rounded-2xl border border-white/10 p-4 text-[var(--card-fg)] shadow-lg shadow-black/20 transition-shadow duration-200 hover:shadow-black/40 sm:w-[340px] sm:p-5";
 
   const cardContent = (
     <>
-      {!reduceMotion && (
-        <motion.span
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-          style={{ background: glowBackground }}
-        />
-      )}
-
       <div className="relative z-10 flex items-start justify-between">
-        <img
-          src={logo}
-          alt={logoAlt}
-          className="h-8 w-auto max-w-[40%] rounded-md object-contain ring-1 ring-white/15"
-        />
+        <img src={logo} alt={logoAlt} className="size-8 w-auto rounded-md object-contain" />
         {status && (
           <span
             className="inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-[10px] font-semibold tracking-wide uppercase"
@@ -174,7 +119,7 @@ export function ProjectCard({
         <LucideArrowBigRight className="size-4 opacity-50" aria-hidden="true" />
       </div>
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex flex-col gap-1 bg-gradient-to-t from-black via-black/85 to-transparent p-4 opacity-0 transition-opacity duration-200 ease-out group-hover:opacity-100 motion-safe:translate-y-2 motion-safe:transition-[opacity,transform] motion-safe:group-hover:translate-y-0 sm:p-5">
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex flex-col gap-1 bg-linear-to-t from-black via-black/85 to-transparent p-4 opacity-0 transition-opacity duration-200 ease-out group-hover:opacity-100 motion-safe:translate-y-2 motion-safe:transition-[opacity,transform] motion-safe:group-hover:translate-y-0 sm:p-5">
         <span className="text-sm font-semibold text-white">{title}</span>
         <p className="text-xs text-white/70">{description}</p>
         <span
@@ -188,28 +133,38 @@ export function ProjectCard({
     </>
   );
 
-  const sharedProps = {
-    ...rest,
-    onPointerMove: reduceMotion ? undefined : handlePointerMove,
-    onPointerLeave: reduceMotion ? undefined : handlePointerLeave,
-    style: cardStyle,
-    whileHover: reduceMotion ? undefined : { scale: 1.015, y: -6 },
-    whileTap: reduceMotion ? undefined : { scale: 0.98 },
-    transition: { type: "spring" as const, stiffness: 300, damping: 24 },
-    className: cardClassName,
+  const glow: TiltCardGlow = {
+    radiusPx: 320,
+    color: themeTokens.accent,
+    opacityPercent: 25,
+    fadeEndPercent: 65,
   };
 
   if (isExternal) {
     return (
-      <MotionAnchor href={href} target="_blank" rel="noreferrer" {...sharedProps}>
+      <TiltCard
+        href={href}
+        isExternal
+        glow={glow}
+        style={cardStyle}
+        className={cardClassName}
+        {...rest}
+      >
         {cardContent}
-      </MotionAnchor>
+      </TiltCard>
     );
   }
 
   return (
-    <MotionLink to={href} prefetch="intent" {...sharedProps}>
+    <TiltCard
+      to={href}
+      prefetch="intent"
+      glow={glow}
+      style={cardStyle}
+      className={cardClassName}
+      {...rest}
+    >
       {cardContent}
-    </MotionLink>
+    </TiltCard>
   );
 }
