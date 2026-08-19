@@ -1,19 +1,12 @@
-import {
-  motion,
-  useMotionTemplate,
-  useMotionValue,
-  useReducedMotion,
-  useSpring,
-  useTransform,
-} from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { memo } from "react";
-import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
 
 import { Button } from "@ponti-studios/ui/primitives";
 import { Link } from "react-router";
 import { RevealGroup, RevealItem } from "~/components/Reveal";
+import { TiltCard } from "~/components/TiltCard";
 import { FeaturedProjects } from "~/components/projects-wallet/projects-wallet";
-import { BOOK_CALL_URL } from "~/data/studio";
+import { BOOK_CALL_URL, servicePillars } from "~/data/studio";
 import { t } from "~/translations";
 
 import "~/routes/games/what/what.css";
@@ -26,73 +19,26 @@ export function meta(): Array<{
   return [{ title: t.home.meta.title }, { name: "description", content: t.home.meta.description }];
 }
 
-const MotionLink = motion.create(Link);
-const CHIP_TILT_DEGREES = 5;
-
 type ServiceChipProps = {
   name: string;
   slug: string;
 };
 
 const ServiceChip = memo(function ServiceChip({ name, slug }: ServiceChipProps) {
-  const reduceMotion = useReducedMotion();
-  const pointerX = useMotionValue(0.5);
-  const pointerY = useMotionValue(0.5);
-  const springConfig = { stiffness: 300, damping: 25, mass: 0.5 };
-  const rotateX = useSpring(
-    useTransform(pointerY, [0, 1], [CHIP_TILT_DEGREES, -CHIP_TILT_DEGREES]),
-    springConfig,
-  );
-  const rotateY = useSpring(
-    useTransform(pointerX, [0, 1], [-CHIP_TILT_DEGREES, CHIP_TILT_DEGREES]),
-    springConfig,
-  );
-  const glowX = useTransform(pointerX, [0, 1], ["0%", "100%"]);
-  const glowY = useTransform(pointerY, [0, 1], ["0%", "100%"]);
-  const glowBackground = useMotionTemplate`radial-gradient(220px circle at ${glowX} ${glowY}, color-mix(in oklab, var(--color-accent) 24%, transparent), transparent 68%)`;
-
-  function handlePointerMove(event: ReactPointerEvent<HTMLAnchorElement>) {
-    if (event.pointerType !== "mouse") return;
-    const bounds = event.currentTarget.getBoundingClientRect();
-    pointerX.set((event.clientX - bounds.left) / bounds.width);
-    pointerY.set((event.clientY - bounds.top) / bounds.height);
-  }
-
-  function handlePointerLeave() {
-    pointerX.set(0.5);
-    pointerY.set(0.5);
-  }
-
-  const motionStyle = (
-    reduceMotion ? {} : { rotateX, rotateY, transformPerspective: 800 }
-  ) as CSSProperties;
-
   return (
-    <MotionLink
+    <TiltCard
       to={`/services#${slug}`}
       prefetch="intent"
-      onPointerMove={reduceMotion ? undefined : handlePointerMove}
-      onPointerLeave={reduceMotion ? undefined : handlePointerLeave}
-      style={motionStyle}
-      whileHover={reduceMotion ? undefined : { scale: 1.015, y: -6 }}
-      whileTap={reduceMotion ? undefined : { scale: 0.98 }}
-      transition={{ type: "spring", stiffness: 300, damping: 24 }}
-      className="group bg-card text-foreground focus-visible:ring-accent relative isolate flex min-h-28 flex-col justify-between overflow-hidden rounded-2xl border border-white/10 p-4 shadow-lg shadow-black/10 transition-shadow duration-200 hover:shadow-black/25 focus-visible:ring-2 focus-visible:ring-offset-4 focus-visible:outline-none sm:min-h-32 sm:p-5"
+      glow={{ radiusPx: 220 }}
+      className="bg-card text-foreground focus-visible:ring-accent flex flex-col justify-between gap-2 rounded-2xl border border-white/10 p-4 shadow-lg shadow-black/10 transition-shadow duration-200 hover:shadow-black/25 focus-visible:ring-2 focus-visible:ring-offset-4 focus-visible:outline-none"
     >
-      {!reduceMotion && (
-        <motion.span
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-          style={{ background: glowBackground }}
-        />
-      )}
       <span className="relative z-10 flex items-center justify-between gap-3 text-lg font-semibold tracking-tight">
         {name}
         <span aria-hidden="true" className="text-accent text-2xl leading-none">
           ↗
         </span>
       </span>
-    </MotionLink>
+    </TiltCard>
   );
 });
 
@@ -162,15 +108,15 @@ export default function Home() {
           {t.home.capabilities.title}
         </h2>
         <div className="grid gap-8 md:grid-cols-2">
-          {t.home.capabilities.groups.map((group) => (
-            <div key={group.title} className="flex flex-col gap-3">
+          {servicePillars.map((pillar) => (
+            <div key={pillar.name} className="flex flex-col gap-3">
               <h3 className="text-muted-foreground text-xs font-black tracking-[0.18em] uppercase">
-                {group.title}
+                {pillar.name}
               </h3>
               <RevealGroup className="grid gap-3 sm:grid-cols-2">
-                {group.services.map((service) => (
+                {pillar.services.map((service) => (
                   <RevealItem key={service.slug}>
-                    <ServiceChip name={service.title} slug={service.slug} />
+                    <ServiceChip name={service.name} slug={service.slug} />
                   </RevealItem>
                 ))}
               </RevealGroup>

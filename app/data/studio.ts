@@ -8,6 +8,7 @@ export type ServiceDeliverable = {
 export type ServiceEntry = {
   slug: string;
   name: string;
+  tagline: string;
   deliverables: readonly ServiceDeliverable[];
 };
 

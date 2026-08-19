@@ -217,7 +217,7 @@ export default function App() {
           )}
         </Navigation.List>
       </Navigation>
-      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col">
+      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4">
         <Outlet />
       </main>
     </QueryProvider>
