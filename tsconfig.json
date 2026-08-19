@@ -26,7 +26,8 @@
     "rootDirs": [".", "./.react-router/types"],
     "baseUrl": ".",
     "paths": {
-      "~/*": ["./app/*"]
+      "~/*": ["./app/*"],
+      "@ponti-studios/auth/server": ["./node_modules/@ponti-studios/auth/build/server.d.ts"]
     },
     "noEmit": true
   },
