@@ -33,14 +33,6 @@ export default defineConfig((config) => ({
     tsconfigPaths: true,
     alias: {
       "~": path.resolve(import.meta.dirname, "./app"),
-      // @ponti-studios/auth@0.1.1 ships an `exports` map pointing at its
-      // unpublished `src/*.ts` sources instead of `build/*` (its
-      // publishConfig.exports override was not applied at publish time).
-      // Alias the one subpath we use until a fixed version is published.
-      "@ponti-studios/auth/server": path.resolve(
-        import.meta.dirname,
-        "./node_modules/@ponti-studios/auth/build/server.js",
-      ),
     },
   },
   server: {

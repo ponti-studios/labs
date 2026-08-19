@@ -26,3 +26,4 @@ minimumReleaseAgeExclude:
   - oxfmt@0.62.0
   - "@tanstack/ai-openrouter@0.16.1"
   - "@ponti-studios/ui@1.5.1"
+  - '@ponti-studios/auth@0.2.0'

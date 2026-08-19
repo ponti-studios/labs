@@ -36,7 +36,7 @@
     "@aws-sdk/client-s3": "^3.1110.0",
     "@mozilla/readability": "^0.6.0",
     "@openrouter/sdk": "^1.2.34",
-    "@ponti-studios/auth": "^0.1.1",
+    "@ponti-studios/auth": "^0.2.0",
     "@ponti-studios/ui": "1.5.1",
     "@react-router/node": "^8.2.0",
     "@react-router/serve": "^8.2.0",
