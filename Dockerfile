@@ -10,8 +10,10 @@ RUN corepack enable
 
 FROM base AS builder
 
+# Install dependencies based on the preferred package manager
 COPY .npmrc package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY patches ./patches
+
+# Install production dependencies first to leverage Docker layer caching
 RUN pnpm install --frozen-lockfile --prod --ignore-scripts
 
 COPY . .
