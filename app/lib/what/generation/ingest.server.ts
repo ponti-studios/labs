@@ -8,7 +8,7 @@
  * re-polling a feed that returns the same items is a no-op.
  */
 
-import { db, eq, gamesTopics } from "~/lib/server/db";
+import { db, eq, gamesTopics, or } from "~/lib/server/db";
 import type { GamesTopic } from "~/lib/server/db";
 import { Readability } from "@mozilla/readability";
 import { XMLParser } from "fast-xml-parser";
@@ -173,30 +173,39 @@ export async function ingestAllActiveFeeds(): Promise<number> {
   return results.reduce((sum, n) => sum + n, 0);
 }
 
-/** Ensure every production topic has its game and feed configuration before ingest runs. */
+/**
+ * Ensure every production topic has its game and feed configuration before
+ * ingest runs. Matches an existing row by slug *or* feed URL — `slug` and
+ * `feed_url` are both unique, so a plain `ON CONFLICT (slug) DO UPDATE`
+ * insert would throw on the `feed_url` constraint if a stale row already
+ * holds that URL under a different slug (e.g. left over from a rename).
+ * Updating that row in place (slug included) self-heals the drift instead.
+ */
 export async function ensureWhatCatalog(): Promise<void> {
   for (const entry of WHAT_GAME_CATALOG) {
-    const [feed] = await db
-      .insert(gamesTopics)
-      .values({
-        slug: entry.slug,
-        name: entry.name,
-        feedUrl: entry.feedUrl,
-        feedLabel: entry.feedLabel,
-        systemPromptPath: "app/lib/prompts/what-generation.md",
-        answerLength: 5,
-      })
-      .onConflictDoUpdate({
-        target: gamesTopics.slug,
-        set: {
-          name: entry.name,
-          feedUrl: entry.feedUrl,
-          feedLabel: entry.feedLabel,
-          systemPromptPath: "app/lib/prompts/what-generation.md",
-          active: true,
-        },
-      })
-      .returning({ id: gamesTopics.id });
+    const setValues = {
+      slug: entry.slug,
+      name: entry.name,
+      feedUrl: entry.feedUrl,
+      feedLabel: entry.feedLabel,
+      systemPromptPath: "app/lib/prompts/what-generation.md",
+      active: true,
+    };
+
+    const existing = await db.query.gamesTopics.findFirst({
+      where: or(eq(gamesTopics.slug, entry.slug), eq(gamesTopics.feedUrl, entry.feedUrl)),
+    });
+
+    const [feed] = existing
+      ? await db
+          .update(gamesTopics)
+          .set(setValues)
+          .where(eq(gamesTopics.id, existing.id))
+          .returning({ id: gamesTopics.id })
+      : await db
+          .insert(gamesTopics)
+          .values({ ...setValues, answerLength: 5 })
+          .returning({ id: gamesTopics.id });
     if (!feed) throw new Error(`Failed to provision What catalog entry: ${entry.slug}`);
   }
 }
