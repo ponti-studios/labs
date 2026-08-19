@@ -136,11 +136,7 @@ function TemporalMoment({ event, nowMinute }: { event: CalendarEvent; nowMinute:
             {isPresent && <span className="text-accent font-semibold uppercase">Here</span>}
           </div>
 
-          <h3
-            className={`${isPresent ? "text-xl font-semibold tracking-tight" : "text-base font-semibold"} mt-2`}
-          >
-            {event.title}
-          </h3>
+          <h3 className={`${isPresent ? "text-xl" : "text-base"} mt-2`}>{event.title}</h3>
           <p
             className={`${isPresent ? "text-sm" : "text-sm"} text-muted-foreground mt-1 max-w-2xl`}
           >
