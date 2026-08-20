@@ -507,7 +507,6 @@ export async function generatePuzzleForGame(
         status: "running",
         sourceMode: "inventory",
         articleIds: pendingArticles.map((article) => article.id),
-        feedUrl: game.feedUrl,
         promptSource: "file",
         promptPath: game.systemPromptPath,
         promptText: systemPrompt,

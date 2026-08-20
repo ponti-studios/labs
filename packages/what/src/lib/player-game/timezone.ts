@@ -18,6 +18,10 @@ export function readTimeZoneCookie(cookieHeader: string | null | undefined): str
     .find((part) => part.startsWith(`${TIME_ZONE_COOKIE}=`));
   if (!entry) return null;
 
-  const value = decodeURIComponent(entry.slice(TIME_ZONE_COOKIE.length + 1));
-  return isValidTimeZone(value) ? value : null;
+  try {
+    const value = decodeURIComponent(entry.slice(TIME_ZONE_COOKIE.length + 1));
+    return isValidTimeZone(value) ? value : null;
+  } catch {
+    return null;
+  }
 }

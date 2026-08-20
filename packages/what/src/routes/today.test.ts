@@ -150,4 +150,27 @@ describe("today route loader", () => {
       "reality",
     );
   });
+
+  it("defaults malformed timezone cookies to UTC", async () => {
+    getGameBySlugMock.mockResolvedValueOnce({ id: 1, slug: "reality", active: true });
+    getGameUserMock.mockResolvedValueOnce(null);
+    getActiveGamesMock.mockResolvedValueOnce([]);
+    loadActivePublicPuzzleWithAttemptMock.mockResolvedValueOnce({ puzzle: PUZZLE, attempt: null });
+
+    const loader = await importLoader();
+    await loader({
+      request: request("https://game.example.com/reality", {
+        Cookie: "what_timezone=%ZZ",
+      }),
+      params: { topic: "reality" },
+      context: {} as never,
+    } as never);
+
+    expect(loadActivePublicPuzzleWithAttemptMock).toHaveBeenCalledWith(
+      expect.any(Date),
+      "UTC",
+      null,
+      "reality",
+    );
+  });
 });

@@ -1,8 +1,15 @@
 import { describe, expect, it, vi } from "vitest";
 
-const { generatePuzzleForGameMock, getExistingDateKeysMock } = vi.hoisted(() => ({
+const {
+  generatePuzzleForGameMock,
+  getExistingDateKeysMock,
+  getPendingArticlesForGameMock,
+  recordAdminActionMock,
+} = vi.hoisted(() => ({
   generatePuzzleForGameMock: vi.fn(),
   getExistingDateKeysMock: vi.fn(),
+  getPendingArticlesForGameMock: vi.fn(),
+  recordAdminActionMock: vi.fn(),
 }));
 
 vi.mock("../generation/generate.server", () => ({
@@ -13,7 +20,15 @@ vi.mock("../server/puzzles.server", () => ({
   getExistingDateKeys: getExistingDateKeysMock,
 }));
 
-import { gapFillOne, planGapFill } from "../generation-runner";
+vi.mock("../server/articles.server", () => ({
+  getPendingArticlesForGame: getPendingArticlesForGameMock,
+}));
+
+vi.mock("../server/admin-actions.server", () => ({
+  recordAdminAction: recordAdminActionMock,
+}));
+
+import { gapFillOne, planGapFill, runGenerateRange } from "../generation-runner";
 
 describe("generation runner", () => {
   it("plans only requested dates that are missing from the inventory", async () => {
@@ -44,5 +59,26 @@ describe("generation runner", () => {
       maxAttempts: 1,
       actor: "system:generate",
     });
+  });
+
+  it("skips topics without pending articles without opening the circuit", async () => {
+    const game = { id: 42 } as Parameters<typeof runGenerateRange>[0];
+    const range = {
+      ok: true as const,
+      fromKey: "2026-08-13",
+      toKey: "2026-08-13",
+      dateKeys: ["2026-08-13"],
+      force: false,
+    };
+    getExistingDateKeysMock.mockResolvedValue([]);
+    getPendingArticlesForGameMock.mockResolvedValue([]);
+
+    await expect(runGenerateRange(game, range)).resolves.toMatchObject({
+      generatedCount: 0,
+      failedCount: 0,
+      skippedCount: 1,
+      circuitOpened: false,
+    });
+    expect(generatePuzzleForGameMock).not.toHaveBeenCalled();
   });
 });

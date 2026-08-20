@@ -1,10 +1,9 @@
-import { useEffect } from "react";
 import { useNavigate, useRevalidator } from "react-router";
 
 import { GameBoard } from "../game";
 import type { ActivePuzzleAttempt } from "../lib/game/server/puzzle.server";
 import type { PublicGamesPuzzle } from "../lib/player-game";
-import { TIME_ZONE_COOKIE } from "../lib/player-game/timezone";
+import { useTimeZone } from "../lib/player-game/use-timezone";
 
 export interface TodayPageProps {
   puzzle: PublicGamesPuzzle | null;
@@ -18,27 +17,7 @@ export function TodayPage({ puzzle, attempt, loginUrl, gameSlug, games }: TodayP
   const revalidator = useRevalidator();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const cookieValue = document.cookie
-      .split(";")
-      .map((part) => part.trim())
-      .find((part) => part.startsWith(`${TIME_ZONE_COOKIE}=`))
-      ?.slice(TIME_ZONE_COOKIE.length + 1);
-
-    if (cookieValue !== encodeURIComponent(tz)) {
-      document.cookie = `${TIME_ZONE_COOKIE}=${encodeURIComponent(tz)}; Max-Age=31536000; Path=/; SameSite=Lax`;
-      revalidator.revalidate();
-    }
-  }, [revalidator]);
-
-  // Cross-device progress can change while this tab is backgrounded — refresh
-  // when the player returns, same as the old focus-revalidate behavior.
-  useEffect(() => {
-    const onFocus = () => revalidator.revalidate();
-    window.addEventListener("focus", onFocus);
-    return () => window.removeEventListener("focus", onFocus);
-  }, [revalidator]);
+  useTimeZone(revalidator.revalidate);
 
   if (!puzzle) {
     return (
