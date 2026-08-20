@@ -24,7 +24,9 @@ COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/packages/what/package.json ./packages/what/package.json
 COPY --from=build /app/packages/what/node_modules ./packages/what/node_modules
 COPY --from=build /app/packages/what/build ./packages/what/build
-COPY --from=build /app/packages/what/src/data ./packages/what/src/data
+# The compiled server resolves this asset relative to build/server, which
+# points at /app/packages/data at runtime.
+COPY --from=build /app/packages/what/src/data ./packages/data
 
 WORKDIR /app/packages/what
 CMD ["./node_modules/.bin/react-router-serve", "build/server/index.js"]

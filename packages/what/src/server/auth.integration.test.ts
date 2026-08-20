@@ -94,7 +94,7 @@ describe("Game ↔ Hominem authentication boundary", () => {
     );
     expect(url.origin).toBe("https://api.ponti.io");
     expect(url.pathname).toBe("/login");
-    expect(url.searchParams.get("next")).toBe("https://game.ponti.io/games/game");
+    expect(url.searchParams.get("next")).toBe("https://what.ponti.io/games/game");
   });
 
   it("normalizes React Router data URLs and drops timezone query parameters", () => {
