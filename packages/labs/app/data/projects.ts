@@ -1,4 +1,5 @@
 import { t } from "~/translations";
+import { WHAT_APP_URL } from "~/data/game";
 
 export type ProjectTech = {
   name: string;
@@ -138,7 +139,7 @@ const game: Project = {
   tech: ["TypeScript", "React", "React Router", "PostgreSQL", "Drizzle"],
   status: "published",
   github: "https://github.com/ponti-studios/labs",
-  url: "/games/game",
+  url: WHAT_APP_URL,
   screenshots: ["/screenshots/game-gameplay.png", "/screenshots/game-solved.png"],
   logo: "/experiments/logo.webp",
 };

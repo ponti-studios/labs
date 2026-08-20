@@ -9,21 +9,11 @@ interface GameHeaderProps {
   onTopicChange?: (slug: string) => void;
 }
 
-export function GameHeader({
-  isFallback,
-  gameSlug,
-  topics = [],
-  onTopicChange,
-}: GameHeaderProps) {
+export function GameHeader({ isFallback, gameSlug, topics = [], onTopicChange }: GameHeaderProps) {
   return (
     <header className={styles.header}>
       <div className={styles.inner}>
-        <img
-          src="/logo.png"
-          alt={BRAND_NAME}
-          className={styles.logo}
-          data-testid="game-logo"
-        />
+        <img src="/logo.png" alt={BRAND_NAME} className={styles.logo} data-testid="game-logo" />
         {topics.length > 1 && (
           <div className={styles.topicControl} data-testid="game-topic" data-slug={gameSlug}>
             <Select

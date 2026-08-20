@@ -9,10 +9,13 @@ type SlotProps = Record<string, unknown> & {
 export function Slot({ children, className, ...props }: SlotProps) {
   if (!isValidElement(children)) return (children ?? null) as never;
   const child = children as ReactElement<{ className?: string }>;
-  return cloneElement(child as never, {
-    ...props,
-    ...child.props,
-    className:
-      [className, child.props.className].filter(Boolean).map(String).join(" ") || undefined,
-  } as never);
+  return cloneElement(
+    child as never,
+    {
+      ...props,
+      ...child.props,
+      className:
+        [className, child.props.className].filter(Boolean).map(String).join(" ") || undefined,
+    } as never,
+  );
 }

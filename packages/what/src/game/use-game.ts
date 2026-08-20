@@ -47,11 +47,7 @@ interface UseGameOptions {
   gameSlug: string;
 }
 
-export function useGame({
-  puzzle,
-  initialGuesses,
-  gameSlug,
-}: UseGameOptions): GameState {
+export function useGame({ puzzle, initialGuesses, gameSlug }: UseGameOptions): GameState {
   const [guesses, setGuesses] = useState<GameGuess[]>(() => [...initialGuesses]);
   const [authRequired, setAuthRequired] = useState(false);
   const fetcher = useFetcher<GameGuessResult>();

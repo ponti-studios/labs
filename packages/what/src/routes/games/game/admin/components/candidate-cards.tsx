@@ -5,7 +5,7 @@ import { useFetcher } from "react-router";
 
 import { explainGenerateReason } from "~/lib/game/admin/generate-copy";
 import type { AdminGenerationCandidate } from "~/lib/game/admin/inventory";
-import { GameTile } from "~/components/games/game-tile";
+import { GameTile } from "~/game/game-tile";
 
 import styles from "./candidate-cards.module.css";
 

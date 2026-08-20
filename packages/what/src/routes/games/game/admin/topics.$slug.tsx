@@ -32,7 +32,7 @@ import { assertSameOrigin } from "~/lib/server/origin";
 
 import { BRAND_NAME } from "~/config/brand";
 
-import "~/components/games/game.css";
+import "~/game/game.css";
 
 const ARTICLE_STATUS: Record<ArticleStatus, StatusBadgeConfig> = {
   pending: { label: "Pending", variant: "outline" },

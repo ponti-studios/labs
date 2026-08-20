@@ -21,7 +21,9 @@
   border-width: 1px;
   border-style: solid;
   font-weight: 500;
-  transition: background-color 120ms ease, border-color 120ms ease;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease;
 }
 
 .keyLetter {

@@ -17,7 +17,7 @@ import { assertSameOrigin } from "~/lib/server/origin";
 
 import { BRAND_NAME } from "~/config/brand";
 
-import "~/components/games/game.css";
+import "~/game/game.css";
 
 export function meta() {
   return [{ title: `${BRAND_NAME} topics` }, { name: "robots", content: "noindex" }];

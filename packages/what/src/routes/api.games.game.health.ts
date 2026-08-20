@@ -1,7 +1,7 @@
 import type { LoaderFunctionArgs } from "react-router";
 
-import { count, gamesPuzzles, db, desc, eq } from "~/lib/server/db";
-
+import { count, db, desc, eq, gamesPuzzles } from "~/lib/server/db";
+import { BRAND_NAME } from "~/config/brand";
 import { createLogger } from "~/lib/logger.server";
 import { requireAdminAuth } from "~/lib/server/admin-auth";
 import { getDateKey } from "~/lib/game/core/date";
@@ -23,14 +23,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
     timestamp: now.toISOString(),
     dateKey,
   });
-
   const game = await getGameBySlug(DEFAULT_GAME_SLUG);
   if (!game) {
     return Response.json(
       { health: "DEGRADED", error: `game not found: ${DEFAULT_GAME_SLUG}` },
-      {
-        status: 500,
-      },
+      { status: 500 },
     );
   }
 
@@ -51,27 +48,15 @@ export async function loader({ request }: LoaderFunctionArgs) {
       countPendingArticlesForGame(game.id),
     ]);
 
-  const isHealthy = !!puzzle && inventoryDepth >= 2 && totalPuzzles > 0;
-
   const health = {
-    health: isHealthy ? "OK" : "DEGRADED",
+    health: puzzle && inventoryDepth >= 2 && totalPuzzles > 0 ? "OK" : "DEGRADED",
     checkedAt: now.toISOString(),
     dateKey,
     puzzle: puzzle
-      ? {
-          id: puzzle.id,
-          dateKey: puzzle.dateUtc,
-          answerType: puzzle.answerType,
-          clue: puzzle.clue,
-        }
+      ? { id: puzzle.id, dateKey: puzzle.dateUtc, answerType: puzzle.answerType, clue: puzzle.clue }
       : null,
-    inventory: {
-      depth: inventoryDepth,
-      total: totalPuzzles,
-    },
-    articleBacklog: {
-      pending: pendingArticleDepth,
-    },
+    inventory: { depth: inventoryDepth, total: totalPuzzles },
+    articleBacklog: { pending: pendingArticleDepth },
     recent: recentPuzzles.map((p) => ({
       id: p.id,
       dateKey: p.dateUtc,
@@ -84,6 +69,5 @@ export async function loader({ request }: LoaderFunctionArgs) {
     { event: "[HEALTH_DASHBOARD_QUERIED]", status: health.health, inventoryDepth },
     "health dashboard queried",
   );
-
   return Response.json(health);
 }

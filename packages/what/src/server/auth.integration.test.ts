@@ -29,20 +29,22 @@ async function startAuthApi(response: { status?: number; body: unknown }): Promi
 }
 
 async function stopAuthApi(server: Server) {
-  await new Promise<void>((resolve, reject) => server.close((error) => (error ? reject(error) : resolve())));
+  await new Promise<void>((resolve, reject) =>
+    server.close((error) => (error ? reject(error) : resolve())),
+  );
 }
 
 const originalApiUrl = process.env.HOMINEM_API_URL;
 const originalInternalApiUrl = process.env.HOMINEM_INTERNAL_API_URL;
-const originalGameUrl = process.env.GAME_URL;
+const originalWhatAppUrl = process.env.WHAT_APP_URL;
 
 afterEach(() => {
   if (originalApiUrl === undefined) delete process.env.HOMINEM_API_URL;
   else process.env.HOMINEM_API_URL = originalApiUrl;
   if (originalInternalApiUrl === undefined) delete process.env.HOMINEM_INTERNAL_API_URL;
   else process.env.HOMINEM_INTERNAL_API_URL = originalInternalApiUrl;
-  if (originalGameUrl === undefined) delete process.env.GAME_URL;
-  else process.env.GAME_URL = originalGameUrl;
+  if (originalWhatAppUrl === undefined) delete process.env.WHAT_APP_URL;
+  else process.env.WHAT_APP_URL = originalWhatAppUrl;
 });
 
 describe("Game ↔ Hominem authentication boundary", () => {
@@ -58,7 +60,11 @@ describe("Game ↔ Hominem authentication boundary", () => {
 
     try {
       await expect(
-        getGameUser(new Request("https://game.ponti.io/", { headers: { cookie: "better-auth.session_token=test" } })),
+        getGameUser(
+          new Request("https://game.ponti.io/", {
+            headers: { cookie: "better-auth.session_token=test" },
+          }),
+        ),
       ).resolves.toEqual({ id: "user-1", email: "player@example.com" });
       expect(api.requests).toEqual([
         { path: "/api/auth/get-session", cookie: "better-auth.session_token=test" },
@@ -79,9 +85,9 @@ describe("Game ↔ Hominem authentication boundary", () => {
     }
   });
 
-  it("uses GAME_URL for the login return target while keeping the API public URL", async () => {
+  it("uses WHAT_APP_URL for the login return target while keeping the API public URL", async () => {
     process.env.HOMINEM_API_URL = "https://api.ponti.io";
-    process.env.GAME_URL = "https://game.ponti.io";
+    process.env.WHAT_APP_URL = "https://what.ponti.io";
 
     const url = new URL(
       loginUrl(new Request("http://internal:3000/games/game"), "https://internal:3000/games/game"),
@@ -89,5 +95,19 @@ describe("Game ↔ Hominem authentication boundary", () => {
     expect(url.origin).toBe("https://api.ponti.io");
     expect(url.pathname).toBe("/login");
     expect(url.searchParams.get("next")).toBe("https://game.ponti.io/games/game");
+  });
+
+  it("normalizes React Router data URLs and drops timezone query parameters", () => {
+    process.env.HOMINEM_API_URL = "https://api.ponti.io";
+    process.env.WHAT_APP_URL = "http://localhost:5173";
+
+    const url = new URL(
+      loginUrl(
+        new Request("http://localhost:5173/reality.data?tz=America%2FLos_Angeles"),
+        "http://localhost:5173/reality.data?tz=America%2FLos_Angeles",
+      ),
+    );
+
+    expect(url.searchParams.get("next")).toBe("http://localhost:5173/reality");
   });
 });

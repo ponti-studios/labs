@@ -11,16 +11,12 @@ export async function action({ request }: ActionFunctionArgs) {
 
   try {
     const { word } = (await request.json()) as { word?: unknown };
-
     if (typeof word !== "string") {
       return Response.json({ error: "Invalid word payload" }, { status: 400 });
     }
 
     const game = await getGameBySlug(DEFAULT_GAME_SLUG);
-    if (!game) {
-      return Response.json({ error: "Game not found" }, { status: 500 });
-    }
-
+    if (!game) return Response.json({ error: "Game not found" }, { status: 500 });
     return Response.json({ valid: await isValidWord(word, game.id) });
   } catch {
     return Response.json({ error: "Invalid JSON payload" }, { status: 400 });

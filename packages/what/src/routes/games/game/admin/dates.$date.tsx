@@ -21,7 +21,7 @@ import { GenerationsList } from "./inventory-list";
 
 import { BRAND_NAME } from "~/config/brand";
 
-import "~/components/games/game.css";
+import "~/game/game.css";
 
 const DATE_CLASS: Record<"live" | "scheduled", StatusBadgeConfig> = {
   live: { label: "Live", variant: "default" },
@@ -47,7 +47,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const slug = new URL(request.url).searchParams.get("game") ?? DEFAULT_GAME_SLUG;
   const detail = await loadAdminDate(slug, dateKey);
-  if (!detail) throw Response.json({ error: `No active ${BRAND_NAME} topic found` }, { status: 404 });
+  if (!detail)
+    throw Response.json({ error: `No active ${BRAND_NAME} topic found` }, { status: 404 });
   return detail;
 }
 
