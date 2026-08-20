@@ -29,7 +29,7 @@
 }
 
 .eyebrow {
-  color: var(--what-ink-muted);
+  color: var(--game-ink-muted);
   font-size: 0.75rem;
   font-weight: 500;
   text-transform: uppercase;
@@ -40,7 +40,7 @@
 .title {
   font-size: clamp(1.75rem, 5vw, 2.25rem);
   font-weight: 800;
-  color: var(--what-ink);
+  color: var(--game-ink);
   margin: 0.125rem 0 0;
 }
 
@@ -60,11 +60,11 @@
   font-size: 1.125rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
-  color: var(--what-ink);
+  color: var(--game-ink);
 }
 
 .statLabel {
-  color: var(--what-ink-muted);
+  color: var(--game-ink-muted);
   font-size: 0.75rem;
 }
 
@@ -77,7 +77,7 @@
 }
 
 .rowList > li {
-  border-bottom: 1px solid var(--what-paper-border);
+  border-bottom: 1px solid var(--game-paper-border);
 }
 .rowList > li:last-child {
   border-bottom: none;
@@ -95,13 +95,13 @@
 }
 
 .row:hover {
-  background: var(--what-paper);
+  background: var(--game-paper);
 }
 
 .rowMini {
   display: flex;
   flex-shrink: 0;
-  gap: var(--what-tile-gap);
+  gap: var(--game-tile-gap);
 }
 
 .rowBody {
@@ -116,7 +116,7 @@
 }
 
 .rowClue {
-  color: var(--what-ink-muted);
+  color: var(--game-ink-muted);
   font-size: 0.75rem;
   margin: 0;
   overflow: hidden;
@@ -131,7 +131,7 @@
 }
 
 .pageLabel {
-  color: var(--what-ink-muted);
+  color: var(--game-ink-muted);
   font-size: 0.75rem;
 }
 
@@ -145,7 +145,7 @@
 }
 
 .unplayedList > li {
-  border-bottom: 1px solid var(--what-paper-border);
+  border-bottom: 1px solid var(--game-paper-border);
 }
 .unplayedList > li:last-child {
   border-bottom: none;
@@ -164,7 +164,7 @@
 }
 
 .unplayedLink:hover {
-  background: var(--what-paper);
+  background: var(--game-paper);
 }
 
 .unplayedFooter {
@@ -175,7 +175,7 @@
 }
 
 .unplayedCount {
-  color: var(--what-ink-muted);
+  color: var(--game-ink-muted);
   font-size: 0.75rem;
 }
 

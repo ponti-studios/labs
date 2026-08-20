@@ -1,6 +1,8 @@
 import { timingSafeEqual } from "node:crypto";
 
-const REALM = "WH?T Admin";
+import { BRAND_NAME } from "../../config/brand";
+
+const REALM = `${BRAND_NAME} Admin`;
 function equal(a: string, b: string) {
   const left = Buffer.from(a);
   const right = Buffer.from(b);

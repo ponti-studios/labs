@@ -1,9 +1,10 @@
 import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 
-import { getWhatUser, loginUrl } from "../server/auth";
-import { getActiveGames, getGameBySlug } from "../lib/what/server/games.server";
-import { loadActivePublicPuzzleWithAttempt } from "../lib/what/server/puzzle.server";
+import { getActiveGames, getGameBySlug } from "../lib/game/server/games.server";
+import { loadActivePublicPuzzleWithAttempt } from "../lib/game/server/puzzle.server";
+import { readTimeZoneCookie } from "../lib/player-game/timezone";
 import { TodayPage } from "../pages/today-page";
+import { getGameUser, loginUrl } from "../server/auth";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const topic = params.topic!;
@@ -12,9 +13,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     throw new Response("Unknown game", { status: 404 });
   }
 
-  const url = new URL(request.url);
-  const timeZone = url.searchParams.get("tz") ?? "UTC";
-  const user = await getWhatUser(request);
+  const timeZone = readTimeZoneCookie(request.headers.get("Cookie")) ?? "UTC";
+  const user = await getGameUser(request);
 
   const [envelope, games] = await Promise.all([
     loadActivePublicPuzzleWithAttempt(new Date(), timeZone, user, topic),

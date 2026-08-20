@@ -131,16 +131,16 @@ const hollywood: Project = {
   logo: "/experiments/logo.hollywood.500x500.webp",
 };
 
-const what: Project = {
-  ...t.projects.entries.what,
-  slug: "what",
+const game: Project = {
+  ...t.projects.entries.game,
+  slug: "game",
   category: "product",
   tech: ["TypeScript", "React", "React Router", "PostgreSQL", "Drizzle"],
   status: "published",
   github: "https://github.com/ponti-studios/labs",
-  url: "/games/what",
-  screenshots: ["/screenshots/what-gameplay.png", "/screenshots/what-solved.png"],
-  logo: "/experiments/logo.what.webp",
+  url: "/games/game",
+  screenshots: ["/screenshots/game-gameplay.png", "/screenshots/game-solved.png"],
+  logo: "/experiments/logo.webp",
 };
 
 const geo: Project = {
@@ -184,7 +184,7 @@ export const projects: Project[] = [
   earth,
   foundation,
   hollywood,
-  what,
+  game,
   covid,
   geo,
   toolbox,
@@ -195,7 +195,7 @@ export const projectSections: ProjectSection[] = [
   {
     category: "product",
     label: t.projects.categoryLabels.product,
-    projects: [omiro, career, what, finance, commune, health, earth],
+    projects: [omiro, career, game, finance, commune, health, earth],
   },
   {
     category: "infrastructure",

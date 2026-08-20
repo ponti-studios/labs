@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { WhatTile } from "~/components/games/what-tile";
+import { GameTile } from "~/components/games/game-tile";
 import { t } from "~/translations";
 import { ProjectCard, type FeaturedProject } from "./project-card";
 
@@ -68,20 +68,20 @@ const PREVIEW_ROWS = [
 ];
 
 // Standalone so it can be passed as `ProjectCard`'s `preview` slot — the
-// masked-number band on What's card face. Relies on the card's `group`
+// masked-number band on the game's card face. Relies on the card's `group`
 // class (from project-card.tsx) for the hover stagger-lift.
-const WhatCardPreview = memo(function WhatCardPreview() {
+const GameCardPreview = memo(function GameCardPreview() {
   return (
-    <div className="what-hero-preview flex flex-col items-center gap-(--what-tile-gap)">
+    <div className="game-hero-preview flex flex-col items-center gap-(--game-tile-gap)">
       {PREVIEW_ROWS.map((row, rowIndex) => (
-        <div key={rowIndex} className="flex gap-(--what-tile-gap)">
+        <div key={rowIndex} className="flex gap-(--game-tile-gap)">
           {row.map((tile, tileIndex) => (
             <div
               key={tileIndex}
               className="motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-out motion-safe:group-hover:-translate-y-1"
               style={{ transitionDelay: `${(rowIndex * 4 + tileIndex) * 30}ms` }}
             >
-              <WhatTile state={tile.state} letter={tile.letter} />
+              <GameTile state={tile.state} letter={tile.letter} />
             </div>
           ))}
         </div>
@@ -92,16 +92,16 @@ const WhatCardPreview = memo(function WhatCardPreview() {
 
 const FEATURED_PROJECTS: FeaturedProject[] = [
   {
-    id: "what",
-    href: "/games/what",
-    logo: "/experiments/logo.what.webp",
-    logoAlt: t.nav.what,
-    title: t.home.what.title,
-    description: t.home.what.description,
-    cta: t.home.what.cta,
-    theme: "what",
-    status: t.home.what.live,
-    preview: <WhatCardPreview />,
+    id: "game",
+    href: "/games/game",
+    logo: "/experiments/logo.webp",
+    logoAlt: t.nav.game,
+    title: t.home.game.title,
+    description: t.home.game.description,
+    cta: t.home.game.cta,
+    theme: "game",
+    status: t.home.game.live,
+    preview: <GameCardPreview />,
   },
   {
     id: "career",

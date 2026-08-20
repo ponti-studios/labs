@@ -1,21 +1,21 @@
 import { Button, Card, CardContent } from "../primitives";
-import type { PublicGamesPuzzle } from "../lib/player-what";
+import type { PublicGamesPuzzle } from "../lib/player-game";
 
-import type { WhatGameState } from "./use-game";
+import type { GameState } from "./use-game";
 import styles from "./game-result.module.css";
 
-interface WhatGameResultProps {
-  game: WhatGameState;
+interface GameResultProps {
+  game: GameState;
   puzzle: PublicGamesPuzzle;
   loginUrl: string;
   onShare: () => void;
   onCopy: () => void;
 }
 
-export function WhatGameResult({ game, puzzle, loginUrl, onShare, onCopy }: WhatGameResultProps) {
+export function GameResult({ game, puzzle, loginUrl, onShare, onCopy }: GameResultProps) {
   if (game.authRequired) {
     return (
-      <Card className={styles.authCard} data-testid="what-auth-required">
+      <Card className={styles.authCard} data-testid="game-auth-required">
         <CardContent className={styles.authCardContent}>
           <div>
             <p className={styles.eyebrow}>Free guess used</p>
@@ -24,7 +24,7 @@ export function WhatGameResult({ game, puzzle, loginUrl, onShare, onCopy }: What
             </p>
           </div>
           <Button asChild variant="default">
-            <a href={loginUrl} data-testid="what-auth-signin">
+            <a href={loginUrl} data-testid="game-auth-signin">
               Sign in to keep playing
             </a>
           </Button>
@@ -36,14 +36,14 @@ export function WhatGameResult({ game, puzzle, loginUrl, onShare, onCopy }: What
   if (!game.isGameOver) return null;
 
   return (
-    <div className={styles.result} data-testid="what-result">
+    <div className={styles.result} data-testid="game-result">
       <div className={styles.solvedRow}>
         <span className={styles.squiggle} aria-hidden>
           〜
         </span>
         <span
           className={styles.badge}
-          data-testid="what-result-badge"
+          data-testid="game-result-badge"
           data-solved={game.isSolved ? "true" : "false"}
           data-guesses={game.guesses.length}
         >
@@ -55,7 +55,7 @@ export function WhatGameResult({ game, puzzle, loginUrl, onShare, onCopy }: What
       </div>
 
       <div>
-        <div className={styles.receipt} data-testid="what-receipt">
+        <div className={styles.receipt} data-testid="game-receipt">
           <div className={styles.receiptBody}>
             <p className={styles.receiptHeading}>The Receipt</p>
             <p>{puzzle.detail}</p>
@@ -76,7 +76,7 @@ export function WhatGameResult({ game, puzzle, loginUrl, onShare, onCopy }: What
         <button
           aria-label="Share result"
           className={styles.shareButton}
-          data-testid="what-share"
+          data-testid="game-share"
           onClick={onShare}
           type="button"
         >
@@ -84,7 +84,7 @@ export function WhatGameResult({ game, puzzle, loginUrl, onShare, onCopy }: What
         </button>
         <button
           className={styles.copyLink}
-          data-testid="what-copy-story"
+          data-testid="game-copy-story"
           onClick={onCopy}
           type="button"
         >

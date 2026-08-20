@@ -1,7 +1,7 @@
 import { getSql } from "./drizzle";
 
-/** Fixed int4 pair for `pg_try_advisory_lock`. Used by the what:generate CLI script (run locally and from GitHub Actions). */
-export const WHAT_GENERATE_LOCK_KEYS = [42, 17] as const;
+/** Fixed int4 pair for `pg_try_advisory_lock`. Used by the game:generate CLI script (run locally and from GitHub Actions). */
+export const GAME_GENERATE_LOCK_KEYS = [42, 17] as const;
 
 export type GenerateLockResult<T> = { ok: true; value: T } | { ok: false; code: "lock_busy" };
 
@@ -14,7 +14,7 @@ export async function withGenerateLock<T>(fn: () => Promise<T>): Promise<Generat
   const reserved = await getSql().reserve();
   try {
     const [row] = await reserved<[{ locked: boolean }]>`
-      SELECT pg_try_advisory_lock(${WHAT_GENERATE_LOCK_KEYS[0]}, ${WHAT_GENERATE_LOCK_KEYS[1]}) AS locked
+      SELECT pg_try_advisory_lock(${GAME_GENERATE_LOCK_KEYS[0]}, ${GAME_GENERATE_LOCK_KEYS[1]}) AS locked
     `;
     if (!row?.locked) return { ok: false, code: "lock_busy" };
 
@@ -22,7 +22,7 @@ export async function withGenerateLock<T>(fn: () => Promise<T>): Promise<Generat
       return { ok: true, value: await fn() };
     } finally {
       await reserved`
-        SELECT pg_advisory_unlock(${WHAT_GENERATE_LOCK_KEYS[0]}, ${WHAT_GENERATE_LOCK_KEYS[1]})
+        SELECT pg_advisory_unlock(${GAME_GENERATE_LOCK_KEYS[0]}, ${GAME_GENERATE_LOCK_KEYS[1]})
       `;
     }
   } finally {

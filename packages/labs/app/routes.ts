@@ -32,19 +32,13 @@ const apiRoutes = [
   ),
   route("/api/gen/image", "routes/api.gen.image.ts"),
   route("/api/gen/predict", "routes/api.gen.predict.ts"),
-  route("/api/games/what/attempt", "routes/api.games.what.attempt.ts"),
-  route("/api/games/what/guess", "routes/api.games.what.guess.ts"),
-  route("/api/games/what/games", "routes/api.games.what.games.ts"),
-  route("/api/games/what/health", "routes/api.games.what.health.ts"),
-  route("/api/games/what/puzzle", "routes/api.games.what.puzzle.ts"),
-  route("/api/games/what/puzzle/:date", "routes/api.games.what.puzzle.$date.ts"),
-  route("/api/games/what/history", "routes/api.games.what.history.ts"),
-  // Keep old API URLs working for installed clients and shared links. These
-  // point at the same handlers so POST semantics are preserved.
-  route("/api/games/realitea/attempt", "routes/api.games.realitea.attempt.ts"),
-  route("/api/games/realitea/guess", "routes/api.games.realitea.guess.ts"),
-  route("/api/games/realitea/games", "routes/api.games.realitea.games.ts"),
-  route("/api/games/realitea/health", "routes/api.games.realitea.health.ts"),
+  route("/api/games/game/attempt", "routes/api.games.game.attempt.ts"),
+  route("/api/games/game/guess", "routes/api.games.game.guess.ts"),
+  route("/api/games/game/games", "routes/api.games.game.games.ts"),
+  route("/api/games/game/health", "routes/api.games.game.health.ts"),
+  route("/api/games/game/puzzle", "routes/api.games.game.puzzle.ts"),
+  route("/api/games/game/puzzle/:date", "routes/api.games.game.puzzle.$date.ts"),
+  route("/api/games/game/history", "routes/api.games.game.history.ts"),
   route("/api/search", "routes/api.search.ts"),
   route("/api/tarot", "routes/api.tarot.ts"),
   route("/api/words/validate", "routes/api.words.validate.ts"),
@@ -63,30 +57,32 @@ const featureRoutes = [
   ]),
 
   // Games
-  // `/games/what` player-facing UI now lives in the standalone `what` app
+  // `/games/game` player-facing UI now lives in the standalone `game` app
   // (own repo, own deploy) — Labs keeps only the admin panel, generation
-  // pipeline, and the API surface `what` calls remotely. See WHAT_APP_ORIGIN.
-  route("/games/realitea", "routes/redirects/what.ts"),
-  route("/games/realitea/*", "routes/redirects/what-splat.ts"),
-  ...prefix("/games/what", [
+  // pipeline, and the API surface `game` calls remotely. See GAME_APP_ORIGIN.
+  // These two legacy `realitea`-named routes are kept so old bookmarked
+  // links still work; they now redirect to `/games/game`.
+  route("/games/realitea", "routes/redirects/game.ts"),
+  route("/games/realitea/*", "routes/redirects/game-splat.ts"),
+  ...prefix("/games/game", [
     // Keep bookmarks and shared links working while the player UI is served
     // by the standalone app. The admin branch below remains on Labs.
-    index("routes/redirects/what-player.ts"),
-    route("*", "routes/redirects/what-player-splat.ts"),
-    layout("routes/games/what/brand.tsx", [
-      route("admin", "routes/games/what/admin/layout.tsx", [
-        index("routes/games/what/admin/route.tsx"),
-        route("inventory", "routes/games/what/admin/inventory.tsx"),
-        route("generate", "routes/games/what/admin/generate.tsx"),
-        route("generate/events", "routes/games/what/admin/generate.events.ts"),
-        route("generate/stream", "routes/games/what/admin/generate.stream.ts"),
-        route("preview", "routes/games/what/admin/preview-redirect.ts"),
-        route("preview/events", "routes/games/what/admin/preview.events.ts"),
-        route("topics", "routes/games/what/admin/topics.tsx"),
-        route("topics/:slug", "routes/games/what/admin/topics.$slug.tsx"),
-        route("generations/:id", "routes/games/what/admin/generations.$id.tsx"),
-        route("dates/:date", "routes/games/what/admin/dates.$date.tsx"),
-        route("costs", "routes/games/what/admin/costs.tsx"),
+    index("routes/redirects/game-player.ts"),
+    route("*", "routes/redirects/game-player-splat.ts"),
+    layout("routes/games/game/brand.tsx", [
+      route("admin", "routes/games/game/admin/layout.tsx", [
+        index("routes/games/game/admin/route.tsx"),
+        route("inventory", "routes/games/game/admin/inventory.tsx"),
+        route("generate", "routes/games/game/admin/generate.tsx"),
+        route("generate/events", "routes/games/game/admin/generate.events.ts"),
+        route("generate/stream", "routes/games/game/admin/generate.stream.ts"),
+        route("preview", "routes/games/game/admin/preview-redirect.ts"),
+        route("preview/events", "routes/games/game/admin/preview.events.ts"),
+        route("topics", "routes/games/game/admin/topics.tsx"),
+        route("topics/:slug", "routes/games/game/admin/topics.$slug.tsx"),
+        route("generations/:id", "routes/games/game/admin/generations.$id.tsx"),
+        route("dates/:date", "routes/games/game/admin/dates.$date.tsx"),
+        route("costs", "routes/games/game/admin/costs.tsx"),
       ]),
     ]),
   ]),

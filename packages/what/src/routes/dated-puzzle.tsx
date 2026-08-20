@@ -1,9 +1,10 @@
 import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 
-import { getWhatUser, loginUrl } from "../server/auth";
-import { isDateKey } from "../lib/player-what/date";
-import { getGameBySlug } from "../lib/what/server/games.server";
-import { loadPuzzleForSpecificDate } from "../lib/what/server/puzzle.server";
+import { getGameUser, loginUrl } from "../server/auth";
+import { BRAND_NAME } from "../config/brand";
+import { isDateKey } from "../lib/player-game/date";
+import { getGameBySlug } from "../lib/game/server/games.server";
+import { loadPuzzleForSpecificDate } from "../lib/game/server/puzzle.server";
 import { DatePage } from "../pages/date-page";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -18,10 +19,10 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     throw new Response("Invalid puzzle date", { status: 400 });
   }
 
-  const user = await getWhatUser(request);
+  const user = await getGameUser(request);
   const envelope = await loadPuzzleForSpecificDate(dateKey, user, topic);
   if (!envelope) {
-    throw new Response("No WH?T puzzle found for that date", { status: 404 });
+    throw new Response(`No ${BRAND_NAME} puzzle found for that date`, { status: 404 });
   }
 
   return { ...envelope, signedIn: user !== null, loginUrl: loginUrl(request), gameSlug: topic };

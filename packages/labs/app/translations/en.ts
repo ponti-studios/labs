@@ -6,7 +6,7 @@ export const STUDIO_TRANSLATIONS_EN = {
     projects: "Lab",
     manifesto: "Manifesto",
     book: "Book",
-    what: "WH?T",
+    game: "WH?T",
     career: "Career",
   },
   projects: {
@@ -274,7 +274,7 @@ export const STUDIO_TRANSLATIONS_EN = {
           "Keep six toolchains coherent behind one command surface",
         ],
       },
-      what: {
+      game: {
         name: "WH?T",
         shortDescription: "A word game that reads the news, so it's never stale.",
         solution:
@@ -959,7 +959,7 @@ export const STUDIO_TRANSLATIONS_EN = {
     principles: {
       title: "Manifesto",
     },
-    what: {
+    game: {
       eyebrow: "Featured product",
       title: "WH?T",
       description: "Wordle for reality-TV fans.",
@@ -987,7 +987,7 @@ export const STUDIO_TRANSLATIONS_EN = {
         {
           name: "Experiments",
           entries: [
-            { path: "/games/what", label: "WH?T" },
+            { path: "/games/game", label: "WH?T" },
             { path: "/games/cards", label: "Cards" },
             { path: "/games/tetris", label: "Tetris" },
             { path: "/experiments/calendar", label: "Calendar" },

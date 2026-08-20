@@ -1,8 +1,8 @@
 import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 
-import { getWhatUser, loginUrl } from "../server/auth";
-import { getGameBySlug } from "../lib/what/server/games.server";
-import { loadPuzzleHistory } from "../lib/what/server/history.server";
+import { getGameUser, loginUrl } from "../server/auth";
+import { getGameBySlug } from "../lib/game/server/games.server";
+import { loadPuzzleHistory } from "../lib/game/server/history.server";
 import { HistoryPage } from "../pages/history-page";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -14,7 +14,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const url = new URL(request.url);
   const login = loginUrl(request);
-  const user = await getWhatUser(request);
+  const user = await getGameUser(request);
 
   if (!user) {
     return { signedIn: false as const, loginUrl: login, gameSlug: topic };

@@ -1,6 +1,6 @@
 export type CardThemeName =
   | "obsidian"
-  | "what"
+  | "game"
   | "platinum"
   | "roseGold"
   | "cobalt"
@@ -19,8 +19,8 @@ export type CardTheme = {
   accent: string;
 };
 
-// Ten swappable "card stock" skins. `what` is a fixed "black card"
-// finish in What's own brand colors (ink, paper, gossip pink) — static
+// Ten swappable "card stock" skins. `game` is a fixed "black card"
+// finish in the game's own brand colors (ink, paper, gossip pink) — static
 // on purpose, unlike the in-game surfaces, so the card doesn't flip
 // light/dark with the visitor's system theme. The rest are original
 // premium-card palettes for future featured projects.
@@ -30,7 +30,7 @@ export const CARD_THEMES: Record<CardThemeName, CardTheme> = {
     foreground: "#f5f5f5",
     accent: "#7dd3fc",
   },
-  what: {
+  game: {
     background: "linear-gradient(135deg, #3d3021 0%, #1c160f 45%, #0d0a06 100%)",
     foreground: "#fffdf7",
     accent: "#ec2166",

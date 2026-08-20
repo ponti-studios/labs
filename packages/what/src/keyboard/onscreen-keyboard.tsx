@@ -18,8 +18,8 @@ const ROWS = ["QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"] as const;
 
 function keyClass(kind: "letter" | "action", state: LetterState | "action" | "inactive") {
   return cn(
-    "what-key",
-    `what-key-${state}`,
+    "game-key",
+    `game-key-${state}`,
     styles.key,
     kind === "letter" ? styles.keyLetter : styles.keyAction,
   );
@@ -33,8 +33,8 @@ function keyLabel(letter: string, state: LetterState | "action" | "inactive") {
   return letter;
 }
 
-/** The "what" tabloid skin (colors) comes from the global `.what-key*` classes
- *  in what.css — this component only owns layout. */
+/** The tabloid skin (colors) comes from the global `.game-key*` classes
+ *  in game.css — this component only owns layout. */
 export function OnscreenKeyboard({
   letterStates = {},
   onLetter,
@@ -46,7 +46,7 @@ export function OnscreenKeyboard({
 }: OnscreenKeyboardProps) {
   return (
     <div
-      className={cn("what-keyboard", styles.keyboard, readOnly && styles.readOnly, className)}
+      className={cn("game-keyboard", styles.keyboard, readOnly && styles.readOnly, className)}
       data-testid="onscreen-keyboard"
     >
       {ROWS.map((row, i) => (

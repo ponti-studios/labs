@@ -9,6 +9,7 @@ import {
 } from "react-router";
 
 import type { Route } from "./+types/root";
+import { BRAND_NAME, BRAND_TAGLINE } from "./config/brand";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -16,11 +17,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-        <title>WH?T</title>
-        <meta
-          name="description"
-          content="Guess today's reality TV answer from a rotating daily word game."
-        />
+        <title>{BRAND_NAME}</title>
+        <meta name="description" content={BRAND_TAGLINE} />
         <meta name="theme-color" content="#f5b400" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />

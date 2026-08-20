@@ -1,30 +1,31 @@
 {
   "name": "@ponti-studios/labs-workspace",
   "private": true,
-  "packageManager": "pnpm@11.10.0",
   "scripts": {
-    "db:generate": "pnpm --filter @pontistudios/labyrinth db:generate",
-    "db:migrate": "pnpm --filter @pontistudios/labyrinth db:migrate",
+    "db:generate": "pnpm --filter @pontistudios/db db:generate",
+    "db:migrate": "pnpm --filter @pontistudios/db db:migrate",
     "build:labs": "pnpm --filter @pontistudios/labyrinth build",
-    "build:what": "pnpm --filter what build",
     "build:all": "pnpm run build:labs && pnpm run build:what",
     "build": "pnpm run build:labs",
     "lint:check": "pnpm --filter @pontistudios/labyrinth lint:check",
     "test": "pnpm --filter @pontistudios/labyrinth test",
     "test:shared": "pnpm --filter @pontistudios/ai test",
-    "test:labs-what": "pnpm --filter @pontistudios/labyrinth test:what",
-    "test:what": "pnpm --filter what test",
+    "test:labs-game": "pnpm --filter @pontistudios/labyrinth test:what",
     "typecheck:labs": "pnpm --filter @pontistudios/labyrinth typecheck",
-    "typecheck:what": "pnpm --filter what typecheck",
     "typecheck:shared": "pnpm --filter @pontistudios/ai typecheck && pnpm --filter @pontistudios/db typecheck && pnpm --filter @pontistudios/env typecheck",
     "typecheck": "pnpm run typecheck:labs",
-    "what:generate": "pnpm --filter what what:generate",
-    "what:health-check": "pnpm --filter what what:health-check",
-    "what:ingest": "pnpm --filter what what:ingest"
+    "build:what": "pnpm --filter what build",
+    "test:game": "pnpm --filter what test",
+    "typecheck:game": "pnpm --filter what typecheck",
+    "game:dev": "pnpm --filter what dev",
+    "game:generate": "pnpm --filter what game:generate",
+    "game:health-check": "pnpm --filter what game:health-check",
+    "game:ingest": "pnpm --filter what game:ingest"
   },
   "devDependencies": {
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "tailwindcss": "^4.3.3"
-  }
+  },
+  "packageManager": "pnpm@11.10.0"
 }

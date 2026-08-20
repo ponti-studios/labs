@@ -1,0 +1,265 @@
+/* The game's product expression: tabloid receipt — cream newsprint, ink
+   black, gossip-column pink, and a wink of gold for the near-misses. */
+
+:root {
+  /* Sizing */
+  --game-tile-size: clamp(42px, 12vw, 64px);
+  --game-tile-gap: clamp(6px, 2vw, 10px);
+  --game-radius: clamp(9px, 2.6vw, 15px);
+
+  /* Palette — page + paper */
+  --game-bg: rgba(247, 241, 226, 1);
+  --game-paper: rgba(255, 253, 247, 1);
+  --game-paper-border: rgba(23, 19, 13, 0.14);
+  --game-ink: rgba(23, 19, 13, 1);
+  --game-ink-muted: rgba(23, 19, 13, 0.62);
+
+  /* Palette — tile states (also used flat, unmodified, on keyboard keys) */
+  --game-absent-bg: rgba(20, 20, 20, 1);
+  --game-absent-text: rgba(245, 241, 230, 1);
+  --game-absent-border: transparent;
+
+  --game-present-bg: rgba(231, 167, 58, 1);
+  --game-present-text: rgba(32, 20, 4, 1);
+  --game-present-border: rgba(178, 122, 22, 0.55);
+  --game-present-accent: rgba(156, 102, 18, 1);
+
+  --game-correct-bg: rgba(236, 33, 102, 1);
+  --game-correct-text: rgba(255, 255, 255, 1);
+  --game-correct-border: rgba(168, 15, 66, 0.5);
+  --game-correct-accent: rgba(214, 17, 91, 1);
+
+  --game-error-border: rgba(217, 45, 32, 1);
+  --game-glow-error: rgba(217, 45, 32, 0.3);
+
+  --game-skeleton-bg: rgba(233, 225, 205, 1);
+
+  /* Accents */
+  --game-badge-bg: rgba(76, 95, 224, 1);
+  --game-badge-text: rgba(255, 255, 255, 1);
+  --game-share-bg: rgba(240, 28, 91, 1);
+  --game-share-bg-hover: rgba(199, 19, 80, 1);
+  --game-share-text: rgba(23, 4, 12, 1);
+  --game-link-text: rgba(52, 78, 217, 1);
+
+  /* Shadows */
+  --game-shadow-drop: rgba(23, 19, 13, 0.14);
+
+  /* Motion — stronger than the browser's built-in `ease`/`ease-out`, which
+     read as weak/linear-ish for UI. See the `animate` skill. */
+  --game-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --game-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+/* Keep the tabloid-paper treatment readable when the app is using its dark
+   system palette. The original tokens were light-only, which left the page,
+   paper surfaces, borders, and muted copy too bright or too low-contrast. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --game-bg: rgba(28, 25, 22, 1);
+    --game-paper: rgba(42, 38, 33, 1);
+    --game-paper-border: rgba(245, 241, 230, 0.18);
+    --game-ink: rgba(245, 241, 230, 1);
+    --game-ink-muted: rgba(245, 241, 230, 0.68);
+    --game-skeleton-bg: rgba(67, 59, 49, 1);
+    --game-shadow-drop: rgba(0, 0, 0, 0.35);
+    --game-present-accent: rgba(246, 190, 78, 1);
+    --game-link-text: rgba(143, 166, 255, 1);
+
+    /* The absent key's near-black fill sits too close to the dark page
+       background to read as its own key without a hairline border. */
+    --game-absent-border: rgba(245, 241, 230, 0.18);
+  }
+}
+
+/* Compact tile-grid preview used in history list rows — same palette, fixed
+   small size regardless of viewport since it's a thumbnail, not the board. */
+.game-history-mini {
+  --game-tile-size: 22px;
+  --game-tile-gap: 3px;
+  --game-radius: 5px;
+}
+
+.game-history-mini .game-tile {
+  font-size: 0.65rem;
+}
+
+/* Compact, non-interactive preview grid used as the "masked number" band on
+   the homepage's featured-project credit card — small and fixed-size since
+   it has to fit inside a fixed-aspect card face alongside the logo, status
+   pill, and title. */
+.game-hero-preview {
+  --game-tile-size: clamp(24px, 6vw, 30px);
+  --game-tile-gap: 4px;
+  --game-radius: 6px;
+}
+
+.game-tile {
+  --game-tile-letter: var(--game-ink);
+
+  position: relative;
+  display: grid;
+  width: var(--game-tile-size);
+  height: var(--game-tile-size);
+  place-items: center;
+  isolation: isolate;
+  overflow: visible;
+  border-radius: var(--game-radius);
+  background: var(--game-paper);
+  border: 2px solid var(--game-paper-border);
+  color: var(--game-tile-letter);
+  font-size: clamp(1.1rem, calc(var(--game-tile-size) * 0.42), 1.5rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  box-shadow: 0 1px 2px var(--game-shadow-drop);
+  transition: box-shadow 150ms var(--game-ease-out);
+}
+
+.game-tile-letter {
+  position: relative;
+  z-index: 2;
+  line-height: 1;
+}
+
+.game-tile[data-state="correct"] {
+  --game-tile-letter: var(--game-correct-text);
+  border-color: transparent;
+  background: var(--game-correct-bg);
+}
+
+.game-tile[data-state="present"] {
+  --game-tile-letter: var(--game-present-text);
+  border-color: transparent;
+  background: var(--game-present-bg);
+}
+
+.game-tile[data-state="absent"] {
+  --game-tile-letter: var(--game-absent-text);
+  border-color: transparent;
+  background: var(--game-absent-bg);
+}
+
+.game-tile[data-state="typed"] {
+  border-color: var(--game-ink);
+  animation: game-type-pop 160ms var(--game-ease-out);
+}
+
+.game-tile-reveal {
+  animation: game-marquee-reveal 420ms var(--game-ease-in-out) forwards;
+}
+
+/* Row shake (the transform) is driven imperatively via WAAPI in
+   game-board.tsx, not a CSS class — see the comment on SHAKE_KEYFRAMES
+   there for why. This is a plain state-driven transition instead of a
+   keyframe pulse, so it retargets correctly if a second wrong guess lands
+   before the first glow has faded. */
+.game-tile-error {
+  box-shadow:
+    0 0 0 2px var(--game-error-border),
+    0 0 12px var(--game-glow-error);
+}
+
+.game-keyboard .game-key {
+  height: 46px;
+  border: 2px solid var(--game-paper-border);
+  border-radius: 10px;
+  background: var(--game-paper);
+  color: var(--game-ink);
+  box-shadow: 0 1px 2px var(--game-shadow-drop);
+}
+
+.game-keyboard .game-key-inactive {
+  border-color: var(--game-paper-border);
+  background: var(--game-paper);
+  color: var(--game-ink);
+}
+
+.game-keyboard .game-key-action {
+  border-color: var(--game-paper-border);
+  background: var(--game-bg);
+  color: var(--game-ink);
+}
+
+.game-keyboard .game-key:hover:not(:disabled),
+.game-keyboard .game-key:focus-visible {
+  border-color: var(--game-ink);
+  background: var(--game-bg);
+}
+
+.game-keyboard .game-key-correct {
+  border-color: transparent;
+  background: var(--game-correct-bg);
+  color: var(--game-correct-text);
+}
+
+.game-keyboard .game-key-present {
+  border-color: transparent;
+  background: var(--game-present-bg);
+  color: var(--game-present-text);
+}
+
+.game-keyboard .game-key-absent {
+  border-color: var(--game-absent-border);
+  background: var(--game-absent-bg);
+  color: var(--game-absent-text);
+}
+
+@keyframes game-type-pop {
+  0% {
+    transform: scale(0.92);
+  }
+  65% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes game-marquee-reveal {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  35% {
+    transform: scale(0.96);
+    filter: brightness(0.7);
+  }
+  58% {
+    transform: scale(1.035);
+    filter: brightness(1.25);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-tile,
+  .game-tile-reveal,
+  .game-tile-error,
+  .game-tile-skeleton {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── HydrateFallback skeleton ──────────────────────────────────────────── */
+
+.game-tile-skeleton {
+  background: var(--game-skeleton-bg);
+  border: 2px solid var(--game-paper-border);
+  box-shadow: none;
+  animation: game-skeleton-fade 3s ease-in-out infinite both;
+}
+
+@keyframes game-skeleton-fade {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}

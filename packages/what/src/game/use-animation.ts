@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { WHAT_ANSWER_LENGTH } from "../lib/player-what";
+import { GAME_ANSWER_LENGTH } from "../lib/player-game";
 
 /** How long (ms) each tile takes to power on during the reveal animation.
- *  Must match the `what-tile-reveal` keyframe duration in what.css. */
+ *  Must match the `game-tile-reveal` keyframe duration in game.css. */
 export const TILE_REVEAL_STEP_MS = 420;
 
 export function useAnimation() {
@@ -63,7 +63,7 @@ export function useAnimation() {
     if (revealingGuessIndex === null) return;
 
     revealTimerRef.current = setTimeout(() => {
-      if (revealedTileCount >= WHAT_ANSWER_LENGTH) {
+      if (revealedTileCount >= GAME_ANSWER_LENGTH) {
         setRevealingGuessIndex(null);
         setRevealedTileCount(0);
       } else {

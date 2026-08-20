@@ -4,13 +4,13 @@
     {
       "name": "labyrinth",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["dev"],
+      "runtimeArgs": ["--filter", "@pontistudios/labyrinth", "dev"],
       "port": 3001
     },
     {
-      "name": "what",
+      "name": "game",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--dir", "what", "dev"],
+      "runtimeArgs": ["--dir", "packages/what", "dev"],
       "port": 5180
     },
     {

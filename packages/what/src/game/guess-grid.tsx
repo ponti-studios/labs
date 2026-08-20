@@ -1,24 +1,24 @@
 import { memo, useEffect, useRef } from "react";
 
-import { MAX_GUESSES, WHAT_ANSWER_LENGTH, type WhatGuess } from "../lib/player-what";
+import { MAX_GUESSES, GAME_ANSWER_LENGTH, type GameGuess } from "../lib/player-game";
 import { cn } from "../lib/cn";
 
-import { WhatTile, type WhatTileState } from "./what-tile";
-import type { WhatGameState } from "./use-game";
+import { GameTile, type GameTileState } from "./game-tile";
+import type { GameState } from "./use-game";
 
 import styles from "./guess-grid.module.css";
 
 const EmptyGuessRow = memo(function EmptyGuessRow() {
   return (
     <div className={styles.row}>
-      {Array.from({ length: WHAT_ANSWER_LENGTH }).map((_, cellIndex) => (
-        <WhatTile key={`empty-cell-${cellIndex}`} state="empty" />
+      {Array.from({ length: GAME_ANSWER_LENGTH }).map((_, cellIndex) => (
+        <GameTile key={`empty-cell-${cellIndex}`} state="empty" />
       ))}
     </div>
   );
 });
 
-function describeTileState(state: WhatTileState): string {
+function describeTileState(state: GameTileState): string {
   switch (state) {
     case "correct":
       return "correct, in the right position";
@@ -36,20 +36,20 @@ const RevealedGuessRow = memo(function RevealedGuessRow({
   isRevealingThisRow,
   revealedTileCount,
 }: {
-  guess: WhatGuess;
+  guess: GameGuess;
   isRevealingThisRow: boolean;
   revealedTileCount: number;
 }) {
   return (
     <div className={styles.row}>
-      {Array.from({ length: WHAT_ANSWER_LENGTH }).map((_, cellIndex) => {
+      {Array.from({ length: GAME_ANSWER_LENGTH }).map((_, cellIndex) => {
         const isTileRevealed = !isRevealingThisRow || cellIndex < revealedTileCount;
         const isAnimatingTile =
           isRevealingThisRow && revealedTileCount > 0 && cellIndex === revealedTileCount - 1;
-        const tileState: WhatTileState = isTileRevealed ? guess.states[cellIndex] : "empty";
+        const tileState: GameTileState = isTileRevealed ? guess.states[cellIndex] : "empty";
 
         return (
-          <WhatTile
+          <GameTile
             key={`revealed-cell-${cellIndex}`}
             state={tileState}
             letter={guess.word[cellIndex] ?? ""}
@@ -70,14 +70,14 @@ const SHAKE_KEYFRAMES: Keyframe[] = [
   { transform: "translateX(6px)", offset: 0.8 },
   { transform: "translateX(0)" },
 ];
-const WHAT_EASE_IN_OUT = "cubic-bezier(0.77, 0, 0.175, 1)";
+const GAME_EASE_IN_OUT = "cubic-bezier(0.77, 0, 0.175, 1)";
 
 const CurrentGuessRow = memo(function CurrentGuessRow({
   currentGuess,
   hasError,
   shakeToken,
   isValidationPending,
-}: Pick<WhatGameState, "currentGuess" | "hasError" | "shakeToken" | "isValidationPending">) {
+}: Pick<GameState, "currentGuess" | "hasError" | "shakeToken" | "isValidationPending">) {
   const rowRef = useRef<HTMLDivElement>(null);
   const shakeAnimationRef = useRef<Animation | null>(null);
 
@@ -89,7 +89,7 @@ const CurrentGuessRow = memo(function CurrentGuessRow({
     shakeAnimationRef.current?.cancel();
     shakeAnimationRef.current = row.animate(SHAKE_KEYFRAMES, {
       duration: 400,
-      easing: WHAT_EASE_IN_OUT,
+      easing: GAME_EASE_IN_OUT,
     });
   }, [shakeToken]);
 
@@ -98,8 +98,8 @@ const CurrentGuessRow = memo(function CurrentGuessRow({
       ref={rowRef}
       className={cn(styles.row, styles.currentRow, isValidationPending && styles.pending)}
     >
-      {Array.from({ length: WHAT_ANSWER_LENGTH }).map((_, cellIndex) => (
-        <WhatTile
+      {Array.from({ length: GAME_ANSWER_LENGTH }).map((_, cellIndex) => (
+        <GameTile
           key={`current-cell-${cellIndex}`}
           state={currentGuess[cellIndex] ? "typed" : "empty"}
           letter={currentGuess[cellIndex] ?? ""}
@@ -111,10 +111,10 @@ const CurrentGuessRow = memo(function CurrentGuessRow({
   );
 });
 
-export function WhatGuessGrid({ game }: { game: WhatGameState }) {
+export function GuessGrid({ game }: { game: GameState }) {
   return (
     <div className={styles.wrapper}>
-      <div className={styles.grid} data-testid="what-tile-grid">
+      <div className={styles.grid} data-testid="game-tile-grid">
         {Array.from({ length: game.isGameOver ? game.guesses.length : MAX_GUESSES }).map(
           (_, rowIndex) => {
             const isCurrentRow =
@@ -152,7 +152,7 @@ export function WhatGuessGrid({ game }: { game: WhatGameState }) {
         role="status"
         aria-live="polite"
         aria-atomic="true"
-        data-testid="what-status"
+        data-testid="game-status"
         data-error={game.errorCode ?? undefined}
       >
         {game.errorMessage}

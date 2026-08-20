@@ -1,0 +1,74 @@
+import { GenerateReasonType } from "../admin/generate-copy";
+import { normalizeGuess, GAME_ANSWER_LENGTH } from "../core/rules";
+import { isDictionaryWord } from "../server/word-list.server";
+import type { ValidationResult } from "./types";
+
+const DEFAULT_SOURCE_DOMAIN = "realityblurb.com";
+export const GAME_READY_INVENTORY_DAYS = 7;
+
+const PROMPT_CONTROL_MARKERS = [
+  /ignore\s+(?:all\s+)?previous\s+instructions/i,
+  /\bsystem\s*:/i,
+  /\bdeveloper\s*:/i,
+  /\bassistant\s*:/i,
+];
+
+function containsPromptControlText(value: string): boolean {
+  return PROMPT_CONTROL_MARKERS.some((marker) => marker.test(value));
+}
+
+export function validateCandidate(
+  candidate: {
+    answer: string;
+    answerType: string;
+    clue: string;
+    detail: string;
+    sources: { url: string; title?: string; publishedAt?: string }[];
+  },
+  previousAnswers: Set<string> = new Set(),
+  options: { sourceDomains?: string[] } = {},
+): ValidationResult {
+  const reasons: GenerateReasonType[] = [];
+  const normalizedAnswer = normalizeGuess(candidate.answer);
+
+  if (normalizedAnswer.length !== GAME_ANSWER_LENGTH) {
+    reasons.push(GenerateReasonType.NotFiveLetters);
+  }
+  if (!normalizedAnswer || /[^A-Z]/.test(normalizedAnswer)) {
+    reasons.push(GenerateReasonType.NotLetters);
+  }
+  if (normalizedAnswer.length === GAME_ANSWER_LENGTH && !isDictionaryWord(normalizedAnswer)) {
+    reasons.push(GenerateReasonType.NotDictionaryWord);
+  }
+  if (!candidate.answerType) {
+    reasons.push(GenerateReasonType.MissingAnswerType);
+  }
+  if (candidate.answerType === "person") {
+    reasons.push(GenerateReasonType.PersonAnswerType);
+  }
+  if (
+    candidate.clue.toUpperCase().includes(normalizedAnswer) ||
+    candidate.detail.toUpperCase().includes(normalizedAnswer)
+  ) {
+    reasons.push(GenerateReasonType.AnswerLeaked);
+  }
+  if (containsPromptControlText(candidate.clue) || containsPromptControlText(candidate.detail)) {
+    reasons.push(GenerateReasonType.PromptControlText);
+  }
+  if (previousAnswers.has(normalizedAnswer)) {
+    reasons.push(GenerateReasonType.RepeatInWindow);
+  }
+  const allowedSourceDomains = options.sourceDomains ?? [DEFAULT_SOURCE_DOMAIN];
+  const hasAllowedSource = candidate.sources.some((s) => {
+    try {
+      return allowedSourceDomains.includes(new URL(s.url).hostname.replace(/^www\./, ""));
+    } catch {
+      return false;
+    }
+  });
+  if (!hasAllowedSource) {
+    reasons.push(GenerateReasonType.MissingSource);
+  }
+
+  return { normalizedAnswer, reasons, valid: reasons.length === 0 };
+}

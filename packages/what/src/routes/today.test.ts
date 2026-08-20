@@ -1,24 +1,28 @@
 import { describe, expect, it, vi } from "vitest";
 
-const { getWhatUserMock, getGameBySlugMock, getActiveGamesMock, loadActivePublicPuzzleWithAttemptMock } =
-  vi.hoisted(() => ({
-    getWhatUserMock: vi.fn(),
-    getGameBySlugMock: vi.fn(),
-    getActiveGamesMock: vi.fn(),
-    loadActivePublicPuzzleWithAttemptMock: vi.fn(),
-  }));
-
-vi.mock("../server/auth", () => ({
-  getWhatUser: getWhatUserMock,
-  loginUrl: () => "https://api.ponti.io/login?next=https://what.example.com/",
+const {
+  getGameUserMock,
+  getGameBySlugMock,
+  getActiveGamesMock,
+  loadActivePublicPuzzleWithAttemptMock,
+} = vi.hoisted(() => ({
+  getGameUserMock: vi.fn(),
+  getGameBySlugMock: vi.fn(),
+  getActiveGamesMock: vi.fn(),
+  loadActivePublicPuzzleWithAttemptMock: vi.fn(),
 }));
 
-vi.mock("../lib/what/server/games.server", () => ({
+vi.mock("../server/auth", () => ({
+  getGameUser: getGameUserMock,
+  loginUrl: () => "https://api.ponti.io/login?next=https://game.example.com/",
+}));
+
+vi.mock("../lib/game/server/games.server", () => ({
   getGameBySlug: getGameBySlugMock,
   getActiveGames: getActiveGamesMock,
 }));
 
-vi.mock("../lib/what/server/puzzle.server", () => ({
+vi.mock("../lib/game/server/puzzle.server", () => ({
   loadActivePublicPuzzleWithAttempt: loadActivePublicPuzzleWithAttemptMock,
 }));
 
@@ -28,7 +32,9 @@ const PUZZLE = {
   dateKey: "2026-05-20",
   detail: "detail",
   isFallback: false,
-  sources: [{ url: "https://example.com", title: "Example", publishedAt: "2026-05-19T00:00:00.000Z" }],
+  sources: [
+    { url: "https://example.com", title: "Example", publishedAt: "2026-05-19T00:00:00.000Z" },
+  ],
 };
 
 async function importLoader() {
@@ -36,8 +42,8 @@ async function importLoader() {
   return mod.loader;
 }
 
-function request(url: string) {
-  return new Request(url);
+function request(url: string, headers?: HeadersInit) {
+  return new Request(url, { headers });
 }
 
 describe("today route loader", () => {
@@ -46,17 +52,17 @@ describe("today route loader", () => {
     const loader = await importLoader();
     await expect(
       loader({
-        request: request("https://what.example.com/rhobh"),
-        params: { topic: "rhobh" },
+        request: request("https://game.example.com/reality"),
+        params: { topic: "reality" },
         context: {} as never,
       } as never),
     ).rejects.toMatchObject({ status: 404 });
   });
 
   it("returns the active puzzle with attempt and topic list for a signed-in user", async () => {
-    getGameBySlugMock.mockResolvedValueOnce({ id: 1, slug: "rhobh", active: true });
-    getWhatUserMock.mockResolvedValueOnce({ id: "user-1", email: null });
-    getActiveGamesMock.mockResolvedValueOnce([{ slug: "rhobh", name: "Reality" }]);
+    getGameBySlugMock.mockResolvedValueOnce({ id: 1, slug: "reality", active: true });
+    getGameUserMock.mockResolvedValueOnce({ id: "user-1", email: null });
+    getActiveGamesMock.mockResolvedValueOnce([{ slug: "reality", name: "Reality" }]);
     loadActivePublicPuzzleWithAttemptMock.mockResolvedValueOnce({
       puzzle: PUZZLE,
       attempt: { guesses: [], status: "playing" },
@@ -64,8 +70,10 @@ describe("today route loader", () => {
 
     const loader = await importLoader();
     const result = await loader({
-      request: request("https://what.example.com/rhobh?tz=America/New_York"),
-      params: { topic: "rhobh" },
+      request: request("https://game.example.com/reality", {
+        Cookie: "what_timezone=America%2FNew_York",
+      }),
+      params: { topic: "reality" },
       context: {} as never,
     } as never);
 
@@ -73,42 +81,42 @@ describe("today route loader", () => {
       expect.any(Date),
       "America/New_York",
       { id: "user-1", email: null },
-      "rhobh",
+      "reality",
     );
     expect(result).toMatchObject({
       puzzle: PUZZLE,
       attempt: { guesses: [], status: "playing" },
-      gameSlug: "rhobh",
-      games: [{ slug: "rhobh", name: "Reality" }],
+      gameSlug: "reality",
+      games: [{ slug: "reality", name: "Reality" }],
     } as never);
   });
 
   it("returns a null-puzzle empty state (not a 404) when no puzzle is available", async () => {
-    getGameBySlugMock.mockResolvedValueOnce({ id: 1, slug: "rhobh", active: true });
-    getWhatUserMock.mockResolvedValueOnce(null);
+    getGameBySlugMock.mockResolvedValueOnce({ id: 1, slug: "reality", active: true });
+    getGameUserMock.mockResolvedValueOnce(null);
     getActiveGamesMock.mockResolvedValueOnce([]);
     loadActivePublicPuzzleWithAttemptMock.mockResolvedValueOnce(null);
 
     const loader = await importLoader();
     const result = await loader({
-      request: request("https://what.example.com/rhobh"),
-      params: { topic: "rhobh" },
+      request: request("https://game.example.com/reality"),
+      params: { topic: "reality" },
       context: {} as never,
     } as never);
 
-    expect(result).toMatchObject({ puzzle: null, gameSlug: "rhobh" });
+    expect(result).toMatchObject({ puzzle: null, gameSlug: "reality" });
   });
 
-  it("defaults the time zone to UTC when no ?tz= param is present", async () => {
-    getGameBySlugMock.mockResolvedValueOnce({ id: 1, slug: "rhobh", active: true });
-    getWhatUserMock.mockResolvedValueOnce(null);
+  it("defaults the time zone to UTC when no timezone cookie is present", async () => {
+    getGameBySlugMock.mockResolvedValueOnce({ id: 1, slug: "reality", active: true });
+    getGameUserMock.mockResolvedValueOnce(null);
     getActiveGamesMock.mockResolvedValueOnce([]);
     loadActivePublicPuzzleWithAttemptMock.mockResolvedValueOnce({ puzzle: PUZZLE, attempt: null });
 
     const loader = await importLoader();
     await loader({
-      request: request("https://what.example.com/rhobh"),
-      params: { topic: "rhobh" },
+      request: request("https://game.example.com/reality"),
+      params: { topic: "reality" },
       context: {} as never,
     } as never);
 
@@ -116,7 +124,30 @@ describe("today route loader", () => {
       expect.any(Date),
       "UTC",
       null,
-      "rhobh",
+      "reality",
+    );
+  });
+
+  it("defaults invalid timezone cookies to UTC", async () => {
+    getGameBySlugMock.mockResolvedValueOnce({ id: 1, slug: "reality", active: true });
+    getGameUserMock.mockResolvedValueOnce(null);
+    getActiveGamesMock.mockResolvedValueOnce([]);
+    loadActivePublicPuzzleWithAttemptMock.mockResolvedValueOnce({ puzzle: PUZZLE, attempt: null });
+
+    const loader = await importLoader();
+    await loader({
+      request: request("https://game.example.com/reality", {
+        Cookie: "what_timezone=Not%2FA%20Timezone",
+      }),
+      params: { topic: "reality" },
+      context: {} as never,
+    } as never);
+
+    expect(loadActivePublicPuzzleWithAttemptMock).toHaveBeenCalledWith(
+      expect.any(Date),
+      "UTC",
+      null,
+      "reality",
     );
   });
 });

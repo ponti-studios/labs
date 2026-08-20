@@ -1,34 +1,35 @@
+import { BRAND_NAME } from "../config/brand";
 import { Button, Popover, PopoverContent, PopoverTrigger, Select } from "../primitives";
 import styles from "./game-header.module.css";
 
-interface WhatGameHeaderProps {
+interface GameHeaderProps {
   isFallback: boolean;
   gameSlug: string;
   topics?: { slug: string; name: string }[];
   onTopicChange?: (slug: string) => void;
 }
 
-export function WhatGameHeader({
+export function GameHeader({
   isFallback,
   gameSlug,
   topics = [],
   onTopicChange,
-}: WhatGameHeaderProps) {
+}: GameHeaderProps) {
   return (
     <header className={styles.header}>
       <div className={styles.inner}>
         <img
-          src="/logo.what.png"
-          alt="WH?T"
+          src="/logo.png"
+          alt={BRAND_NAME}
           className={styles.logo}
-          data-testid="what-logo"
+          data-testid="game-logo"
         />
         {topics.length > 1 && (
-          <div className={styles.topicControl} data-testid="what-topic" data-slug={gameSlug}>
+          <div className={styles.topicControl} data-testid="game-topic" data-slug={gameSlug}>
             <Select
               aria-label="Topic"
               className={styles.topicSelect}
-              data-testid="what-topic-select"
+              data-testid="game-topic-select"
               value={gameSlug}
               onValueChange={(value) => value && onTopicChange?.(value)}
               options={topics.map((topic) => ({ value: topic.slug, label: topic.name }))}
@@ -43,7 +44,7 @@ export function WhatGameHeader({
                   aria-label="Why am I seeing this puzzle?"
                   variant="ghost"
                   size="icon"
-                  data-testid="what-fallback-notice"
+                  data-testid="game-fallback-notice"
                 >
                   <span aria-hidden="true">!</span>
                 </Button>
@@ -59,7 +60,7 @@ export function WhatGameHeader({
           <Button asChild aria-label="Your puzzle history" variant="ghost" size="icon">
             <a
               href={`/history?game=${encodeURIComponent(gameSlug)}`}
-              data-testid="what-history-link"
+              data-testid="game-history-link"
             >
               <span aria-hidden="true">↺</span>
             </a>

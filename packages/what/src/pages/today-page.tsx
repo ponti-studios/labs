@@ -1,9 +1,10 @@
 import { useEffect } from "react";
-import { useNavigate, useRevalidator, useSearchParams } from "react-router";
+import { useNavigate, useRevalidator } from "react-router";
 
-import { WhatGameBoard } from "../game";
-import type { ActivePuzzleAttempt } from "../lib/what/server/puzzle.server";
-import type { PublicGamesPuzzle } from "../lib/player-what";
+import { GameBoard } from "../game";
+import type { ActivePuzzleAttempt } from "../lib/game/server/puzzle.server";
+import type { PublicGamesPuzzle } from "../lib/player-game";
+import { TIME_ZONE_COOKIE } from "../lib/player-game/timezone";
 
 export interface TodayPageProps {
   puzzle: PublicGamesPuzzle | null;
@@ -14,25 +15,22 @@ export interface TodayPageProps {
 }
 
 export function TodayPage({ puzzle, attempt, loginUrl, gameSlug, games }: TodayPageProps) {
-  const [searchParams, setSearchParams] = useSearchParams();
   const revalidator = useRevalidator();
   const navigate = useNavigate();
 
-  // Correct "today" to the visitor's real time zone once we know it — the
-  // server defaults to UTC on first render since it has no way to know this.
   useEffect(() => {
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    if (searchParams.get("tz") !== tz) {
-      setSearchParams(
-        (prev) => {
-          prev.set("tz", tz);
-          return prev;
-        },
-        { replace: true },
-      );
+    const cookieValue = document.cookie
+      .split(";")
+      .map((part) => part.trim())
+      .find((part) => part.startsWith(`${TIME_ZONE_COOKIE}=`))
+      ?.slice(TIME_ZONE_COOKIE.length + 1);
+
+    if (cookieValue !== encodeURIComponent(tz)) {
+      document.cookie = `${TIME_ZONE_COOKIE}=${encodeURIComponent(tz)}; Max-Age=31536000; Path=/; SameSite=Lax`;
+      revalidator.revalidate();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [revalidator]);
 
   // Cross-device progress can change while this tab is backgrounded — refresh
   // when the player returns, same as the old focus-revalidate behavior.
@@ -53,7 +51,7 @@ export function TodayPage({ puzzle, attempt, loginUrl, gameSlug, games }: TodayP
   const boardKey = `${gameSlug}:${attempt ? `${attempt.status}:${attempt.guesses.length}` : "none"}`;
 
   return (
-    <WhatGameBoard
+    <GameBoard
       key={boardKey}
       puzzle={puzzle}
       initialGuesses={attempt?.guesses ?? []}
