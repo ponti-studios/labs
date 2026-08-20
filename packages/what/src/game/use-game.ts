@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useFetcher } from "react-router";
 
-import { submitGuess as submitGuessRequest } from "../lib/api";
 import {
   deriveGameStatus,
   hasGuessedWord,
@@ -9,6 +9,7 @@ import {
   type GameStatus,
   type PublicGamesPuzzle,
   type WhatGuess,
+  type WhatGuessResult,
 } from "../lib/player-what";
 
 import { useAnimation } from "./use-animation";
@@ -53,12 +54,13 @@ export function useWhatGame({
 }: UseWhatGameOptions): WhatGameState {
   const [guesses, setGuesses] = useState<WhatGuess[]>(() => [...initialGuesses]);
   const [authRequired, setAuthRequired] = useState(false);
-  const [isValidationPending, setIsValidationPending] = useState(false);
+  const fetcher = useFetcher<WhatGuessResult>();
+  const isValidationPending = fetcher.state !== "idle";
 
   // Guards against a response landing after the puzzle has already changed
-  // underneath it (midnight rollover mid-flight) — no reducer needed since
-  // submitGuess is disabled while a request is in flight, so there's never
-  // more than one in-flight request to disambiguate between.
+  // underneath it (midnight rollover mid-flight), and against re-processing
+  // the same fetcher.data object on a later, unrelated render — set back to
+  // null once a response has been consumed.
   const inFlightDateKeyRef = useRef<string | null>(null);
 
   const anim = useAnimation();
@@ -78,7 +80,6 @@ export function useWhatGame({
     prevDateKeyRef.current = puzzle.dateKey;
     setGuesses([]);
     setAuthRequired(false);
-    setIsValidationPending(false);
     inFlightDateKeyRef.current = null;
     typing.setCurrentGuess("");
     anim.resetAnimation();
@@ -132,54 +133,58 @@ export function useWhatGame({
     }
 
     const dateKey = puzzle.dateKey;
-    const guessIndex = guesses.length;
     inFlightDateKeyRef.current = dateKey;
-    setIsValidationPending(true);
 
-    void submitGuessRequest({
-      dateKey,
-      gameSlug,
-      previousGuesses: guesses.map((g) => ({ word: g.word })),
-      word: guess,
-    }).then((result) => {
-      // The puzzle rolled over while this request was in flight — the
-      // puzzle-change effect above already reset state, so drop it.
-      if (inFlightDateKeyRef.current !== dateKey) return;
-      inFlightDateKeyRef.current = null;
-      setIsValidationPending(false);
-
-      if (!result) {
-        anim.animateError("Network error — try again", false, "network");
-        return;
-      }
-
-      if (!result.valid) {
-        if (result.reason === "not-in-word-list")
-          anim.animateError("Not in word list", true, "not-in-word-list");
-        else if (result.reason === "wrong-length")
-          anim.animateError("Not enough letters", true, "wrong-length");
-        else if (result.reason === "already-guessed")
-          anim.animateError("Already guessed", true, "already-guessed");
-        else if (result.reason === "rate-limited")
-          anim.animateError("Too many guesses — slow down", true, "rate-limited");
-        else if (result.reason === "game-over")
-          anim.animateError("This puzzle is already over", true, "game-over");
-        if (result.reason === "auth-required") setAuthRequired(true);
-        return;
-      }
-
-      if (result.word && result.states) {
-        setGuesses((prev) => {
-          if (hasGuessedWord(prev, result.word!)) return prev;
-          return [...prev, { word: result.word!, states: result.states! }];
-        });
-        typing.setCurrentGuess("");
-        anim.startReveal(guessIndex);
-        if (result.authRequired) setAuthRequired(true);
-      }
-    });
-  }, [canMutateGuess, typing, guesses, puzzle.dateKey, gameSlug, anim]);
+    fetcher.submit(
+      {
+        dateKey,
+        gameSlug,
+        previousGuesses: guesses.map((g) => ({ word: g.word })),
+        word: guess,
+      },
+      { method: "POST", action: "/api/games/what/guess", encType: "application/json" },
+    );
+  }, [canMutateGuess, typing, guesses, puzzle.dateKey, gameSlug, fetcher, anim]);
   submitGuessRef.current = submitGuess;
+
+  useEffect(() => {
+    if (fetcher.state !== "idle" || !fetcher.data) return;
+    const dateKey = inFlightDateKeyRef.current;
+    // The puzzle rolled over while this request was in flight — the
+    // puzzle-change effect above already reset state, so drop it. Also
+    // guards against re-processing the same fetcher.data on a later render.
+    if (dateKey === null) return;
+    inFlightDateKeyRef.current = null;
+
+    const result = fetcher.data;
+    const guessIndex = guesses.length;
+
+    if (!result.valid) {
+      if (result.reason === "not-in-word-list")
+        anim.animateError("Not in word list", true, "not-in-word-list");
+      else if (result.reason === "wrong-length")
+        anim.animateError("Not enough letters", true, "wrong-length");
+      else if (result.reason === "already-guessed")
+        anim.animateError("Already guessed", true, "already-guessed");
+      else if (result.reason === "rate-limited")
+        anim.animateError("Too many guesses — slow down", true, "rate-limited");
+      else if (result.reason === "game-over")
+        anim.animateError("This puzzle is already over", true, "game-over");
+      if (result.reason === "auth-required") setAuthRequired(true);
+      return;
+    }
+
+    if (result.word && result.states) {
+      setGuesses((prev) => {
+        if (hasGuessedWord(prev, result.word!)) return prev;
+        return [...prev, { word: result.word!, states: result.states! }];
+      });
+      typing.setCurrentGuess("");
+      anim.startReveal(guessIndex);
+      if (result.authRequired) setAuthRequired(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetcher.data, fetcher.state]);
 
   return {
     guesses,

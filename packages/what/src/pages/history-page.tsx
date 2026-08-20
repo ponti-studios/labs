@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useSearchParams } from "react-router";
 
-import { fetchHistory, type HistoryResponse } from "../lib/api";
 import { Button, EmptyState, Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, StatusBadge, type StatusBadgeConfig } from "../primitives";
 import { WhatTile } from "../game";
 import type { GameStatus } from "../lib/player-what";
@@ -56,7 +56,7 @@ function UnplayedSheet({ dateKeys, gameSlug }: { dateKeys: readonly string[]; ga
           <ul className={styles.unplayedList}>
             {shown.map((dateKey) => (
               <li key={dateKey}>
-                <a className={styles.unplayedLink} href={`/${dateKey}?game=${encodeURIComponent(gameSlug)}`}>
+                <a className={styles.unplayedLink} href={`/${gameSlug}/${dateKey}`}>
                   {formatDate(dateKey)}
                 </a>
               </li>
@@ -131,29 +131,14 @@ function WeekPagination({
   );
 }
 
-export function HistoryPage() {
-  const [page, setPage] = useState(1);
-  const [data, setData] = useState<HistoryResponse | null>(null);
-  const [error, setError] = useState<string | null>(null);
+export type HistoryPageProps =
+  | { signedIn: false; loginUrl: string; gameSlug: string }
+  | { signedIn: true; loginUrl: string; gameSlug: string; history: PuzzleHistoryPage };
 
-  useEffect(() => {
-    fetchHistory(page)
-      .then(setData)
-      .catch(() => setError("Your puzzle history couldn't load."));
-  }, [page]);
+export function HistoryPage(props: HistoryPageProps) {
+  const [, setSearchParams] = useSearchParams();
 
-  if (error) {
-    return (
-      <div style={{ textAlign: "center", padding: "2rem" }}>
-        <p style={{ fontSize: "0.75rem", opacity: 0.7 }}>{error}</p>
-        <a href="/">Back to today's puzzle</a>
-      </div>
-    );
-  }
-
-  if (!data) return null;
-
-  if (!data.signedIn) {
+  if (!props.signedIn) {
     return (
       <div className={styles.guestWrap}>
         <EmptyState
@@ -161,7 +146,7 @@ export function HistoryPage() {
           description="Track every puzzle you've played, your win rate, and your streak."
           action={
             <Button asChild variant="default">
-              <a href={data.loginUrl}>Sign in</a>
+              <a href={props.loginUrl}>Sign in</a>
             </Button>
           }
         />
@@ -169,8 +154,15 @@ export function HistoryPage() {
     );
   }
 
-  const { history, gameSlug } = data;
+  const { history, gameSlug } = props;
   const hasPlayed = history.stats.gamesPlayed > 0;
+
+  const setPage = (page: number) => {
+    setSearchParams((prev) => {
+      prev.set("page", String(page));
+      return prev;
+    });
+  };
 
   return (
     <div className={styles.page}>
@@ -210,7 +202,7 @@ export function HistoryPage() {
           }
           action={
             <Button asChild variant="default">
-              <a href={`/?game=${encodeURIComponent(gameSlug)}`}>Play today&apos;s puzzle</a>
+              <a href={`/${gameSlug}`}>Play today&apos;s puzzle</a>
             </Button>
           }
         />
@@ -220,7 +212,7 @@ export function HistoryPage() {
             const lastGuess = row.guesses.at(-1);
             return (
               <li key={row.dateKey}>
-                <a className={styles.row} href={`/${row.dateKey}?game=${encodeURIComponent(gameSlug)}`}>
+                <a className={styles.row} href={`/${gameSlug}/${row.dateKey}`}>
                   {lastGuess && (
                     <div className={`what-history-mini ${styles.rowMini}`}>
                       {lastGuess.states.map((state, i) => (

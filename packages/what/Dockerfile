@@ -20,9 +20,11 @@ FROM node:24-alpine
 
 WORKDIR /app
 ENV NODE_ENV=production
-COPY --from=build /app/packages/what/package.json ./package.json
 COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/packages/what/dist ./dist
-COPY --from=build /app/packages/what/src ./src
+COPY --from=build /app/packages/what/package.json ./packages/what/package.json
+COPY --from=build /app/packages/what/node_modules ./packages/what/node_modules
+COPY --from=build /app/packages/what/build ./packages/what/build
+COPY --from=build /app/packages/what/src/data ./packages/what/src/data
 
-CMD ["./node_modules/.bin/tsx", "src/server/index.ts"]
+WORKDIR /app/packages/what
+CMD ["./node_modules/.bin/react-router-serve", "build/server/index.js"]
