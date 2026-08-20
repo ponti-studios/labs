@@ -139,7 +139,6 @@ async function main() {
         dateKey: opts.dateKey,
         status: "running",
         sourceMode: "rss",
-        feedUrl: opts.feedUrl ?? null,
         promptSource,
         promptPath,
         promptText,

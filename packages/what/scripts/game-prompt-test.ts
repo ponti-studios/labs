@@ -69,7 +69,6 @@ async function recordRun(input: {
         dateKey: input.dateKey,
         status: "running",
         sourceMode: "fixtures",
-        feedUrl: input.feedUrl,
         promptSource: "file",
         promptPath: input.promptPath,
         promptText: input.promptText,

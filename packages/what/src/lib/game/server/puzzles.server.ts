@@ -159,24 +159,57 @@ export async function listAllPuzzleDateKeys(gameId: number): Promise<string[]> {
 }
 
 /**
- * Delete puzzles for `gameId` whose `dateUtc` is in `[fromKey, toKey]`.
+ * Delete puzzles for `gameId` whose `dateUtc` is in `[fromKey, toKey]` and
+ * return their source articles to the pending inventory. Articles still
+ * referenced by another puzzle are left untouched.
  */
 export async function deletePuzzlesInRange(
   gameId: number,
   fromKey: string,
   toKey: string,
 ): Promise<number> {
-  const result = await db
-    .delete(gamesPuzzles)
-    .where(
-      and(
-        eq(gamesPuzzles.gamesTopicId, gameId),
-        gte(gamesPuzzles.dateUtc, fromKey),
-        lte(gamesPuzzles.dateUtc, toKey),
-      ),
-    )
-    .returning({ id: gamesPuzzles.id });
-  return result.length;
+  return db.transaction(async (tx) => {
+    const deleted = await tx
+      .select({ articleId: gamesPuzzles.articleId })
+      .from(gamesPuzzles)
+      .where(
+        and(
+          eq(gamesPuzzles.gamesTopicId, gameId),
+          gte(gamesPuzzles.dateUtc, fromKey),
+          lte(gamesPuzzles.dateUtc, toKey),
+        ),
+      );
+
+    if (deleted.length === 0) return 0;
+
+    const result = await tx
+      .delete(gamesPuzzles)
+      .where(
+        and(
+          eq(gamesPuzzles.gamesTopicId, gameId),
+          gte(gamesPuzzles.dateUtc, fromKey),
+          lte(gamesPuzzles.dateUtc, toKey),
+        ),
+      )
+      .returning({ id: gamesPuzzles.id });
+
+    const deletedArticleIds = [...new Set(deleted.map((puzzle) => puzzle.articleId))];
+    const remaining = await tx
+      .select({ articleId: gamesPuzzles.articleId })
+      .from(gamesPuzzles)
+      .where(inArray(gamesPuzzles.articleId, deletedArticleIds));
+    const remainingArticleIds = new Set(remaining.map((puzzle) => puzzle.articleId));
+    const reusableArticleIds = deletedArticleIds.filter((articleId) => !remainingArticleIds.has(articleId));
+
+    if (reusableArticleIds.length > 0) {
+      await tx
+        .update(articles)
+        .set({ status: "pending" })
+        .where(inArray(articles.id, reusableArticleIds));
+    }
+
+    return result.length;
+  });
 }
 
 /** Earliest `dateUtc` with a puzzle for `gameId`, or `null` if none exist yet. */

@@ -11,6 +11,7 @@ import { GAME_READY_INVENTORY_DAYS } from "./generation/candidate-validation";
 import { generatePuzzleForGame } from "./generation/generate.server";
 import { recordAdminAction } from "./server/admin-actions.server";
 import { countAttemptsByDate } from "./server/attempts.server";
+import { getPendingArticlesForGame } from "./server/articles.server";
 import { deletePuzzlesInRange, getExistingDateKeys } from "./server/puzzles.server";
 
 export const GENERATE_ACTOR = "system:generate";
@@ -68,6 +69,11 @@ async function generateDates(game: GamesTopic, dateKeys: string[], circuit: Circ
   let circuitOpened = false;
   for (const dateKey of dateKeys) {
     if (circuit.open) {
+      skippedCount++;
+      continue;
+    }
+    const pendingArticles = await getPendingArticlesForGame(game, 1);
+    if (pendingArticles.length === 0) {
       skippedCount++;
       continue;
     }

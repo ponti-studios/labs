@@ -1,9 +1,9 @@
 /**
  * Data access for `articles` — the per-game ingested article inventory that
- * puzzle generation draws from. Reuse is prevented structurally, not by
- * scanning history: once an article is consumed by a puzzle its `status`
- * flips to 'used' and it drops out of every future `status = 'pending'`
- * selection query.
+ * puzzle generation draws from. Normal reuse is prevented by status: once an
+ * article is consumed by a puzzle its `status` flips to 'used' and it drops
+ * out of future pending selection. Force regeneration explicitly returns
+ * source articles from deleted future puzzles to 'pending'.
  */
 
 import type { Article, GamesTopic } from "~/lib/server/db";

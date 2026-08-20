@@ -3,6 +3,40 @@
 This file defines hard constraints for AI agents working in this repository.
 Violating these rules will produce incorrect or unsafe work.
 
+## Development Infrastructure (Foundation Compose)
+
+Labs is the application codebase. Local infrastructure is owned by the sibling
+Foundation repository at `/Users/charlesponti/Developer/foundation`.
+
+- Do not add or duplicate PostgreSQL, Redis, or MinIO Compose services in Labs.
+- Keep the Labs application running on the host during normal development.
+- Start local infrastructure from Foundation, not from this repository:
+  - Dev stack: `docker compose -f compose/base.yml -f compose/dev.yml up -d`
+  - Test database: `docker compose -f compose/test.yml up -d db-test`
+- Foundation's canonical host connection endpoints are:
+
+  | Service | Host URL / port | Database |
+  | ------- | --------------- | -------- |
+  | Dev PostgreSQL | `localhost:5434` | `hominem` |
+  | Test PostgreSQL (`db-test`) | `localhost:4433` | `hominem-test` |
+  | Dev Redis | `localhost:6379` | — |
+  | Dev MinIO API | `localhost:9000` | — |
+  | Dev MinIO console | `localhost:9001` | — |
+
+- Labs tests must use `postgresql://postgres:postgres@localhost:4433/hominem-test`
+  regardless of local `.env` files or CI environment variables.
+- Do not point Labs at `labs-test`; that was a stale legacy database and has
+  been removed. Do not create it again.
+- The Foundation `db-test` service uses a named persistent volume. It is not
+  automatically ephemeral; only remove test data when explicitly requested.
+- Do not rebuild, reset, or drop a database to work around a migration failure.
+  Inspect the target database and fix the migration chain using the Drizzle
+  workflow below. Never use a local Homebrew PostgreSQL instance as a substitute
+  for Foundation's databases.
+- Before changing infrastructure definitions, inspect and edit the Compose
+  files in Foundation. Keep host-to-container ports and database names aligned
+  with the table above.
+
 ## Database Migrations (Drizzle Only)
 
 This project uses **Drizzle ORM** for all schema and migration management.

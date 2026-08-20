@@ -18,7 +18,7 @@ function getDatabaseUrl(): string {
   const url = process.env.DATABASE_URL;
   if (url) return url;
   if (process.env.NODE_ENV === "test") {
-    return "postgresql://postgres:postgres@localhost:4433/labs-test";
+    return "postgresql://postgres:postgres@localhost:4433/hominem-test";
   }
   throw new Error("DATABASE_URL environment variable is required");
 }

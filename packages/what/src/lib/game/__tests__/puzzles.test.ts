@@ -182,10 +182,13 @@ describe("listAllPuzzleDateKeys", () => {
 describe("deletePuzzlesInRange", () => {
   it("does not delete a puzzle after the inclusive end of the window", async () => {
     const game = await seedGameWithPuzzles(["2026-08-13", "2026-08-14", "2026-08-15"]);
+    await db.update(articles).set({ status: "used" });
     const { deletePuzzlesInRange, getExistingDateKeys } = await import("../server/puzzles.server");
     const deleted = await deletePuzzlesInRange(game.id, "2026-08-13", "2026-08-14");
     expect(deleted).toBe(2);
     expect(await getExistingDateKeys(game.id, "2026-08-13", "2026-08-15")).toEqual(["2026-08-15"]);
+    const remaining = await db.select().from(articles);
+    expect(remaining.filter((article) => article.status === "pending")).toHaveLength(2);
   });
 });
 

@@ -2,6 +2,11 @@
 
 Ponti Studios portfolio and playground — React Router app with puzzles, data visualization, tarot, and experiments.
 
+Local infrastructure is provided by the sibling [Foundation](https://github.com/ponti-studios/foundation)
+repository; Labs runs on the host and connects to Foundation's Docker services.
+See the [development infrastructure instructions](AGENTS.md#development-infrastructure-foundation-compose)
+for the canonical services, ports, and database URLs.
+
 ## Getting Started
 
 ```bash
@@ -17,7 +22,7 @@ pnpm dev
 Foundation provides:
 
 - PostgreSQL on `localhost:5434` (database: `hominem`)
-- PostgreSQL test on `localhost:4433` (database: `labs-test`)
+- PostgreSQL test on `localhost:4433` (database: `hominem-test`)
 - Redis on `localhost:6379`
 - MinIO on `localhost:9000`
 
