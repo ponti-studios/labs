@@ -1,15 +1,14 @@
-import { cloneElement, isValidElement } from "react";
-import type { ComponentChildren, VNode } from "preact";
+import { cloneElement, isValidElement, type ReactElement, type ReactNode } from "react";
 
 type SlotProps = Record<string, unknown> & {
   className?: unknown;
-  children?: ComponentChildren;
+  children?: ReactNode;
 };
 
 /** Merges `props` onto its single child instead of rendering a wrapper element. */
 export function Slot({ children, className, ...props }: SlotProps) {
   if (!isValidElement(children)) return (children ?? null) as never;
-  const child = children as VNode<{ className?: string }>;
+  const child = children as ReactElement<{ className?: string }>;
   return cloneElement(child as never, {
     ...props,
     ...child.props,

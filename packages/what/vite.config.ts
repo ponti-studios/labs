@@ -1,10 +1,13 @@
-import preact from "@preact/preset-vite";
+import { reactRouter } from "@react-router/dev/vite";
+import path from "node:path";
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  plugins: [preact()],
-  server: {
-    port: 5180,
+  plugins: [reactRouter()],
+  resolve: {
+    alias: {
+      "~": path.resolve(import.meta.dirname, "./src"),
+    },
   },
   build: {
     sourcemap: true,

@@ -9,8 +9,6 @@ describe("WH?T legacy route redirect", () => {
     });
 
     expect(response.status).toBe(308);
-    expect(response.headers.get("location")).toBe(
-      "https://labs.ponti.io/games/what/history?game=rhobh",
-    );
+    expect(response.headers.get("location")).toBe("https://what.ponti.io/history?game=rhobh");
   });
 });

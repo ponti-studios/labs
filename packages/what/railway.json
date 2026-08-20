@@ -6,7 +6,7 @@
     "watchPatterns": ["**"]
   },
   "deploy": {
-    "startCommand": "./node_modules/.bin/tsx src/server/index.ts",
+    "startCommand": "./node_modules/.bin/react-router-serve build/server/index.js",
     "healthcheckPath": "/",
     "healthcheckTimeout": 300,
     "restartPolicyType": "ON_FAILURE"

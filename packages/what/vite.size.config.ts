@@ -1,12 +1,12 @@
 import { resolve } from "node:path";
-import preact from "@preact/preset-vite";
+import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
 /** Lib-mode multi-entry build used only by `pnpm size` to track real,
  *  transitive gzip cost per primitive/module over time. Not the app build —
  *  see vite.config.ts for that. */
 export default defineConfig({
-  plugins: [preact()],
+  plugins: [react()],
   build: {
     manifest: "manifest.json",
     lib: {
@@ -27,15 +27,7 @@ export default defineConfig({
       formats: ["es"],
     },
     rollupOptions: {
-      external: [
-        "preact",
-        "preact/compat",
-        "preact/compat/client",
-        "preact/hooks",
-        "preact/jsx-runtime",
-        "react/jsx-runtime",
-        "lucide-react",
-      ],
+      external: ["react", "react-dom", "react/jsx-runtime", "react-router", "lucide-react"],
     },
   },
 });

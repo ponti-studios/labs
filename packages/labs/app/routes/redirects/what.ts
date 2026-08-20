@@ -8,17 +8,12 @@ import { redirect } from "react-router";
  */
 export function loader({ request }: { request: Request }) {
   const url = new URL(request.url);
-  const path = url.pathname.replace(/^\/games\/realitea(?=\/|$)/, "/games/what");
+  const whatOrigin = process.env.WHAT_APP_ORIGIN ?? "https://what.ponti.io";
+  const relativePath = url.pathname.replace(/^\/games\/realitea(?=\/|$)/, "") || "/";
 
-  const whatOrigin = process.env.WHAT_APP_ORIGIN;
-  if (whatOrigin) {
-    const target = new URL(path.replace(/^\/games\/what/, ""), whatOrigin);
-    target.search = url.search;
-    return redirect(target.toString(), 308);
-  }
-
-  url.pathname = path;
-  return redirect(url.toString(), 308);
+  const target = new URL(relativePath, whatOrigin);
+  target.search = url.search;
+  return redirect(target.toString(), 308);
 }
 
 export default function WhatLegacyRedirect() {

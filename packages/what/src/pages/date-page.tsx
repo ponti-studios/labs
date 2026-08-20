@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
-
-import { fetchPuzzleForDate, type DatedPuzzleResponse } from "../lib/api";
+import { WhatGameBoard } from "../game";
 import { Button, Card, CardContent } from "../primitives";
-import { WhatGameBoard, WhatGameBoardSkeleton } from "../game";
+import type { PublicGamesPuzzle } from "../lib/player-what";
+import type { WhatGuess, GameStatus } from "../lib/player-what";
 import styles from "./date-page.module.css";
 
 /**
@@ -51,41 +50,25 @@ function SignedOutTeaser({
   );
 }
 
-export function DatePage({ dateKey }: { dateKey: string }) {
-  const [data, setData] = useState<DatedPuzzleResponse | null>(null);
-  const [error, setError] = useState<string | null>(null);
+export interface DatePageProps {
+  puzzle: PublicGamesPuzzle;
+  attempt: { guesses: WhatGuess[]; status: GameStatus } | null;
+  signedIn: boolean;
+  loginUrl: string;
+  gameSlug: string;
+}
 
-  useEffect(() => {
-    setData(null);
-    setError(null);
-    fetchPuzzleForDate(dateKey)
-      .then(setData)
-      .catch(() => setError("That puzzle couldn't load."));
-  }, [dateKey]);
-
-  if (error) {
-    return (
-      <div style={{ textAlign: "center", padding: "2rem" }}>
-        <p style={{ fontSize: "0.75rem", opacity: 0.7 }}>{error}</p>
-        <a href="/history">Back to history</a>
-      </div>
-    );
-  }
-
-  if (!data) return <WhatGameBoardSkeleton />;
-
-  if (!data.signedIn) {
-    return (
-      <SignedOutTeaser dateKey={data.puzzle.dateKey} clue={data.puzzle.clue} loginUrl={data.loginUrl} />
-    );
+export function DatePage({ puzzle, attempt, signedIn, loginUrl, gameSlug }: DatePageProps) {
+  if (!signedIn) {
+    return <SignedOutTeaser dateKey={puzzle.dateKey} clue={puzzle.clue} loginUrl={loginUrl} />;
   }
 
   return (
     <WhatGameBoard
-      puzzle={data.puzzle}
-      initialGuesses={data.attempt?.guesses ?? []}
-      loginUrl={data.loginUrl}
-      gameSlug={data.gameSlug}
+      puzzle={puzzle}
+      initialGuesses={attempt?.guesses ?? []}
+      loginUrl={loginUrl}
+      gameSlug={gameSlug}
     />
   );
 }

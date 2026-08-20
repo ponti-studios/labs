@@ -11,7 +11,7 @@ import {
 import styles from "./sheet.module.css";
 import { Slot } from "./slot";
 
-const SheetContext = createContext<RefObject<HTMLDialogElement> | null>(null);
+const SheetContext = createContext<RefObject<HTMLDialogElement | null> | null>(null);
 
 function useSheetContext(component: string) {
   const ctx = useContext(SheetContext);
