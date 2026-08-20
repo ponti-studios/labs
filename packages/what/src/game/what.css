@@ -1,6 +1,46 @@
 /* What's product expression: tabloid receipt — cream newsprint, ink
    black, gossip-column pink, and a wink of gold for the near-misses. */
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+html,
+body {
+  margin: 0;
+  overflow-x: clip;
+}
+
+body {
+  background: var(--what-bg);
+  color: var(--what-ink);
+  font-family: var(--font-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+  font-weight: 500;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+img,
+svg {
+  max-width: 100%;
+}
+
 :root {
   /* Sizing */
   --what-tile-size: clamp(42px, 12vw, 64px);

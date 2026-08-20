@@ -1,4 +1,4 @@
-import { createReadStream, readFileSync } from "node:fs";
+import { createReadStream } from "node:fs";
 import { stat } from "node:fs/promises";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { extname, join, normalize, resolve } from "node:path";
@@ -8,6 +8,7 @@ import sql from "./db";
 import { getWhatUser, loginUrl } from "./auth";
 import { addDaysToDateKey, getDateKey, isDateKey } from "../lib/player-what/date";
 import { evaluateGuess, hasGuessedWord, normalizeGuess, MAX_GUESSES, WHAT_ANSWER_LENGTH } from "../lib/player-what/rules";
+import { isValidWord } from "../lib/what/server/word-list.server";
 import type { GameStatus, WhatGuess } from "../lib/player-what/types";
 
 const root = resolve(fileURLToPath(new URL("../../dist", import.meta.url)));
@@ -15,13 +16,6 @@ const port = Number(process.env.PORT ?? 3000);
 const gameSlug = process.env.WHAT_DEFAULT_GAME_SLUG ?? "rhobh";
 const rateLimitWindowMs = 60_000;
 const rateLimitMaxGuesses = 10;
-const validWords = new Set(
-  readFileSync(fileURLToPath(new URL("./data/5.txt", import.meta.url)), "utf8")
-    .split(/\r?\n/)
-    .map((word) => word.trim().toLowerCase())
-    .filter(Boolean),
-);
-
 type Puzzle = {
   id: number;
   gameId: number;
@@ -125,8 +119,6 @@ async function submitGuess(request: Request, body: { dateKey: string; word: stri
   if (!game) return { status: 404, value: { valid: false, reason: "game-over" } };
   const word = normalizeGuess(body.word);
   if (word.length !== WHAT_ANSWER_LENGTH) return { status: 200, value: { valid: false, word, reason: "wrong-length" } };
-  if (!validWords.has(word)) return { status: 200, value: { valid: false, word, reason: "not-in-word-list" } };
-
   const requested = isDateKey(body.dateKey) ? body.dateKey : getDateKey(new Date(), "UTC");
   let resolved = await puzzleForDate(game.id, requested);
   if (!resolved) {
@@ -134,6 +126,9 @@ async function submitGuess(request: Request, body: { dateKey: string; word: stri
     resolved = previous ? await puzzleForDate(game.id, previous) : null;
   }
   if (!resolved) return { status: 200, value: { valid: false, word, reason: "not-in-word-list" } };
+  if (!(await isValidWord(word, game.id))) {
+    return { status: 200, value: { valid: false, word, reason: "not-in-word-list" } };
+  }
 
   let attempt = user ? await attemptFor(user.id, game.id, resolved.dateKey) : null;
   const prior = attempt?.guesses ?? body.previousGuesses ?? [];
