@@ -1,0 +1,5 @@
+packages: []
+allowBuilds:
+  esbuild: true
+minimumReleaseAgeExclude:
+  - "@ponti-studios/auth@0.2.0"

@@ -1,0 +1,26 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0.1875rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.2;
+  border: 1px solid transparent;
+}
+
+.default {
+  background: var(--wl-accent-soft, #eef2ff);
+  color: var(--wl-accent, #4338ca);
+}
+
+.destructive {
+  background: var(--wl-destructive-soft, #fee2e2);
+  color: var(--wl-destructive, #b91c1c);
+}
+
+.outline {
+  background: transparent;
+  border-color: var(--wl-border, #d4d4d8);
+  color: var(--wl-muted-fg, #52525b);
+}

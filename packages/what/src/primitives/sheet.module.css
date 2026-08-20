@@ -1,0 +1,45 @@
+.dialog {
+  margin: 0 0 0 auto;
+  height: 100dvh;
+  max-height: 100dvh;
+  width: min(24rem, 100vw);
+  max-width: 100vw;
+  border: none;
+  border-left: 1px solid var(--wl-border, #e4e4e7);
+  padding: 1.5rem;
+  background: var(--wl-surface, #fff);
+  color: var(--wl-fg, #18181b);
+  animation: wl-sheet-in 200ms ease;
+}
+
+.dialog::backdrop {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-weight: 600;
+  font-size: 1.0625rem;
+  margin: 0;
+}
+
+@keyframes wl-sheet-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog {
+    animation: none;
+  }
+}

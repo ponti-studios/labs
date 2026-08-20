@@ -1,0 +1,45 @@
+.wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.content {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  z-index: 50;
+  min-width: 12rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--wl-border, #e4e4e7);
+  background: var(--wl-surface, #fff);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  padding: 0.75rem;
+  animation: wl-popover-in 120ms ease;
+}
+
+.alignEnd {
+  right: 0;
+}
+.alignStart {
+  left: 0;
+}
+.alignCenter {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+@keyframes wl-popover-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .content {
+    animation: none;
+  }
+}

@@ -1,0 +1,9 @@
+.card {
+  border-radius: 0.75rem;
+  border: 1px solid var(--wl-border, #e4e4e7);
+  background: var(--wl-surface, #fff);
+}
+
+.content {
+  padding: 1.25rem;
+}

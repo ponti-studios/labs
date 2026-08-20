@@ -52,8 +52,11 @@ jobs:
       - name: Migrate test database
         run: pnpm db:migrate
       - run: pnpm lint:check
+      - run: pnpm typecheck:shared
       - run: pnpm typecheck
+      - run: pnpm typecheck:what
       - run: pnpm test
+      - run: pnpm test:shared
       - run: pnpm test:what
 
   build:
@@ -69,14 +72,14 @@ jobs:
           node-version: "24.14.1"
           cache: "pnpm"
       - run: pnpm install --frozen-lockfile
-      - run: pnpm build
+      - run: pnpm build:all
       - name: Verify What performance guardrails
         run: |
-          test -f public/games/what/manifest.webmanifest
-          test -f public/games/what/sw.js
-          test -f public/games/what/icons/icon-192.png
-          test -f public/games/what/icons/icon-512.png
-          if rg -n 'fonts\.googleapis\.com|fonts\.gstatic\.com|font-\[.Geist.|"Geist"|"Inter"' app; then
+          test -f packages/labs/public/games/what/manifest.webmanifest
+          test -f packages/labs/public/games/what/sw.js
+          test -f packages/labs/public/games/what/icons/icon-192.png
+          test -f packages/labs/public/games/what/icons/icon-512.png
+          if rg -n 'fonts\.googleapis\.com|fonts\.gstatic\.com|font-\[.Geist.|"Geist"|"Inter"' packages/labs/app; then
             echo "Custom font loading or references found in app source"
             exit 1
           fi
