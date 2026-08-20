@@ -90,7 +90,7 @@ export default function App() {
   >(() => {
     if (isAuthenticated) {
       return [
-        { href: "/games/what", label: t.nav.what, logo: "/experiments/logo.what.png" },
+        { href: "/games/game", label: t.nav.game, logo: "/experiments/logo.png" },
         {
           href:
             import.meta.env.NODE_ENV === "development"

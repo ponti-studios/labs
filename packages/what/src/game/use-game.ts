@@ -8,15 +8,15 @@ import {
   normalizeGuess,
   type GameStatus,
   type PublicGamesPuzzle,
-  type WhatGuess,
-  type WhatGuessResult,
-} from "../lib/player-what";
+  type GameGuess,
+  type GameGuessResult,
+} from "../lib/player-game";
 
 import { useAnimation } from "./use-animation";
 import { useTyping } from "./use-typing";
 
-export interface WhatGameState {
-  guesses: readonly WhatGuess[];
+export interface GameState {
+  guesses: readonly GameGuess[];
   status: GameStatus;
   isSolved: boolean;
   isGameOver: boolean;
@@ -41,20 +41,20 @@ export interface WhatGameState {
   clearError: () => void;
 }
 
-interface UseWhatGameOptions {
+interface UseGameOptions {
   puzzle: PublicGamesPuzzle;
-  initialGuesses: readonly WhatGuess[];
+  initialGuesses: readonly GameGuess[];
   gameSlug: string;
 }
 
-export function useWhatGame({
+export function useGame({
   puzzle,
   initialGuesses,
   gameSlug,
-}: UseWhatGameOptions): WhatGameState {
-  const [guesses, setGuesses] = useState<WhatGuess[]>(() => [...initialGuesses]);
+}: UseGameOptions): GameState {
+  const [guesses, setGuesses] = useState<GameGuess[]>(() => [...initialGuesses]);
   const [authRequired, setAuthRequired] = useState(false);
-  const fetcher = useFetcher<WhatGuessResult>();
+  const fetcher = useFetcher<GameGuessResult>();
   const isValidationPending = fetcher.state !== "idle";
 
   // Guards against a response landing after the puzzle has already changed
@@ -142,7 +142,7 @@ export function useWhatGame({
         previousGuesses: guesses.map((g) => ({ word: g.word })),
         word: guess,
       },
-      { method: "POST", action: "/api/games/what/guess", encType: "application/json" },
+      { method: "POST", action: "/api/games/game/guess", encType: "application/json" },
     );
   }, [canMutateGuess, typing, guesses, puzzle.dateKey, gameSlug, fetcher, anim]);
   submitGuessRef.current = submitGuess;

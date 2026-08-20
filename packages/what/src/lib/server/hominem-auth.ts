@@ -1,7 +1,7 @@
-import { getWhatUser, loginUrl, type WhatUser } from "../../server/auth";
+import { getGameUser, loginUrl, type GameUser } from "../../server/auth";
 
-export type HominemUser = WhatUser;
-export const getHominemUser = getWhatUser;
+export type HominemUser = GameUser;
+export const getHominemUser = getGameUser;
 export function buildHominemLoginUrl(returnTo: string) {
   return loginUrl(new Request(returnTo), returnTo);
 }

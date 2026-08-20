@@ -1,5 +1,5 @@
 .eyebrow {
-  color: var(--what-ink-muted);
+  color: var(--game-ink-muted);
   font-size: 0.75rem;
   font-weight: 500;
   text-transform: uppercase;
@@ -7,7 +7,7 @@
 }
 
 .authCard {
-  border-color: var(--what-present-border);
+  border-color: var(--game-present-border);
 }
 
 .authCardContent {
@@ -31,7 +31,7 @@
 }
 
 .squiggle {
-  color: var(--what-ink-muted);
+  color: var(--game-ink-muted);
   font-size: 0.9rem;
   letter-spacing: -0.1em;
 }
@@ -40,14 +40,14 @@
   display: inline-flex;
   align-items: center;
   border-radius: 999px;
-  background: var(--what-badge-bg);
+  background: var(--game-badge-bg);
   padding: 0.4rem 1.1rem;
   font-size: 0.8rem;
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--what-badge-text);
-  box-shadow: 0 3px 8px var(--what-shadow-drop);
+  color: var(--game-badge-text);
+  box-shadow: 0 3px 8px var(--game-shadow-drop);
 }
 
 .receipt {
@@ -56,33 +56,33 @@
   align-items: flex-start;
   gap: 1rem;
   border-radius: 14px 14px 0 0;
-  border: 1px solid var(--what-paper-border);
+  border: 1px solid var(--game-paper-border);
   border-bottom: none;
-  background: var(--what-paper);
+  background: var(--game-paper);
   padding: 1.5rem 1.5rem 1.75rem;
-  box-shadow: 0 6px 16px var(--what-shadow-drop);
+  box-shadow: 0 6px 16px var(--game-shadow-drop);
 }
 
 .receiptTorn {
   position: relative;
   height: 14px;
   margin-top: -1px;
-  background: var(--what-paper);
-  border-left: 1px solid var(--what-paper-border);
-  border-right: 1px solid var(--what-paper-border);
+  background: var(--game-paper);
+  border-left: 1px solid var(--game-paper-border);
+  border-right: 1px solid var(--game-paper-border);
   mask-image:
-    linear-gradient(-45deg, transparent 8.5px, var(--what-paper) 8.5px),
-    linear-gradient(45deg, transparent 8.5px, var(--what-paper) 8.5px);
+    linear-gradient(-45deg, transparent 8.5px, var(--game-paper) 8.5px),
+    linear-gradient(45deg, transparent 8.5px, var(--game-paper) 8.5px);
   mask-size: 17px 17px;
   mask-repeat: repeat-x;
   mask-position: bottom left;
   -webkit-mask-image:
-    linear-gradient(-45deg, transparent 8.5px, var(--what-paper) 8.5px),
-    linear-gradient(45deg, transparent 8.5px, var(--what-paper) 8.5px);
+    linear-gradient(-45deg, transparent 8.5px, var(--game-paper) 8.5px),
+    linear-gradient(45deg, transparent 8.5px, var(--game-paper) 8.5px);
   -webkit-mask-size: 17px 17px;
   -webkit-mask-repeat: repeat-x;
   -webkit-mask-position: bottom left;
-  filter: drop-shadow(0 3px 3px var(--what-shadow-drop));
+  filter: drop-shadow(0 3px 3px var(--game-shadow-drop));
 }
 
 .receiptHeading {
@@ -90,7 +90,7 @@
   font-weight: 900;
   letter-spacing: -0.02em;
   text-transform: uppercase;
-  color: var(--what-ink);
+  color: var(--game-ink);
 }
 
 .receiptBody {
@@ -98,7 +98,7 @@
   min-width: 0;
   font-size: 0.9rem;
   line-height: 1.5;
-  color: var(--what-ink);
+  color: var(--game-ink);
 }
 
 .receiptBody p {
@@ -112,7 +112,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: 2px solid var(--what-correct-accent);
+  border: 2px solid var(--game-correct-accent);
   border-radius: 6px;
   padding: 6px 4px;
   transform: rotate(3deg);
@@ -122,13 +122,13 @@
   line-height: 1.15;
   letter-spacing: 0.02em;
   text-transform: uppercase;
-  color: var(--what-correct-accent);
+  color: var(--game-correct-accent);
 }
 
 .receiptDivider {
   align-self: stretch;
   width: 0;
-  border-left: 1px dashed var(--what-paper-border);
+  border-left: 1px dashed var(--game-paper-border);
 }
 
 .actions {
@@ -141,19 +141,19 @@
   width: 100%;
   border: none;
   border-radius: 12px;
-  background: var(--what-share-bg);
+  background: var(--game-share-bg);
   padding: 0.9rem 1rem;
   font-size: 0.95rem;
   font-weight: 900;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--what-share-text);
-  box-shadow: 0 4px 12px var(--what-shadow-drop);
+  color: var(--game-share-text);
+  box-shadow: 0 4px 12px var(--game-shadow-drop);
   transition: background-color 150ms ease;
 }
 
 .shareButton:hover:not(:disabled) {
-  background: var(--what-share-bg-hover);
+  background: var(--game-share-bg-hover);
 }
 
 .copyLink,
@@ -166,12 +166,12 @@
 .copyLink {
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--what-link-text);
+  color: var(--game-link-text);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 
 .sourceLink {
   font-size: 0.75rem;
-  color: var(--what-ink-muted);
+  color: var(--game-ink-muted);
 }

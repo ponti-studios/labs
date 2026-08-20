@@ -1,27 +1,27 @@
 import { useCallback } from "react";
 
-import type { PublicGamesPuzzle, WhatGuess } from "../lib/player-what";
-import { shareWhatResult } from "../lib/player-what/share";
+import type { PublicGamesPuzzle, GameGuess } from "../lib/player-game";
+import { shareGameResult } from "../lib/player-game/share";
 
 export type ShareOutcome = "copied" | "prompt" | "error";
 
-export interface UseWhatShare {
+export interface UseShare {
   share: () => Promise<ShareOutcome>;
 }
 
-export function useWhatShare({
+export function useShare({
   guesses,
   isSolved,
   onResult,
 }: {
   puzzle: PublicGamesPuzzle;
-  guesses: readonly WhatGuess[];
+  guesses: readonly GameGuess[];
   isSolved: boolean;
   onResult: (outcome: ShareOutcome) => void;
-}): UseWhatShare {
+}): UseShare {
   const share = useCallback(async (): Promise<ShareOutcome> => {
     try {
-      const result = await shareWhatResult({
+      const result = await shareGameResult({
         guesses,
         isSolved,
         copyToClipboard: async (text) => {

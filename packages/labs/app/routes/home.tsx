@@ -9,7 +9,7 @@ import { FeaturedProjects } from "~/components/projects-wallet/projects-wallet";
 import { BOOK_CALL_URL, servicePillars } from "~/data/studio";
 import { t } from "~/translations";
 
-import "~/components/games/what.css";
+import "~/components/games/game.css";
 
 export function meta(): Array<{
   title?: string;

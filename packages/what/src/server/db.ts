@@ -10,7 +10,7 @@ const postgresSql = postgres(DATABASE_URL, {
   connect_timeout: 10,
 });
 
-/** WH?T owns this client instance while sharing the workspace schema package. */
+/** This game service owns this client instance while sharing the workspace schema package. */
 export const db = drizzle(postgresSql, { schema });
 
 export function getSql() {

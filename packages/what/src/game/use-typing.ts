@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { normalizeGuess, WHAT_ANSWER_LENGTH } from "../lib/player-what";
+import { normalizeGuess, GAME_ANSWER_LENGTH } from "../lib/player-game";
 
 export function useTyping(disabled: boolean) {
   const [currentGuess, setCurrentGuess] = useState("");
@@ -9,7 +9,7 @@ export function useTyping(disabled: boolean) {
       if (disabled) return;
       const letter = normalizeGuess(value).charAt(0);
       if (!letter) return;
-      setCurrentGuess((prev) => (prev.length >= WHAT_ANSWER_LENGTH ? prev : prev + letter));
+      setCurrentGuess((prev) => (prev.length >= GAME_ANSWER_LENGTH ? prev : prev + letter));
     },
     [disabled],
   );

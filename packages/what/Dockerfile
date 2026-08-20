@@ -1,5 +1,5 @@
-# WH?T is deployed as an application server, with its own runtime and database client.
-# The repository root is the build context so WH?T can consume shared workspace packages.
+# This service is deployed as an application server, with its own runtime and database client.
+# The repository root is the build context so this service can consume shared workspace packages.
 FROM node:24-alpine AS build
 
 WORKDIR /app

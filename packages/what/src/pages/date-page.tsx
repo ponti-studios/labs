@@ -1,7 +1,8 @@
-import { WhatGameBoard } from "../game";
+import { GameBoard } from "../game";
+import { BRAND_NAME } from "../config/brand";
 import { Button, Card, CardContent } from "../primitives";
-import type { PublicGamesPuzzle } from "../lib/player-what";
-import type { WhatGuess, GameStatus } from "../lib/player-what";
+import type { PublicGamesPuzzle } from "../lib/player-game";
+import type { GameGuess, GameStatus } from "../lib/player-game";
 import styles from "./date-page.module.css";
 
 /**
@@ -22,7 +23,7 @@ function SignedOutTeaser({
     <div className={styles.teaser}>
       <header className={styles.header}>
         <div className={styles.headerInner}>
-          <img src="/logo.what.webp" alt="WH?T" className={styles.logo} />
+          <img src="/logo.webp" alt={BRAND_NAME} className={styles.logo} />
         </div>
       </header>
 
@@ -52,7 +53,7 @@ function SignedOutTeaser({
 
 export interface DatePageProps {
   puzzle: PublicGamesPuzzle;
-  attempt: { guesses: WhatGuess[]; status: GameStatus } | null;
+  attempt: { guesses: GameGuess[]; status: GameStatus } | null;
   signedIn: boolean;
   loginUrl: string;
   gameSlug: string;
@@ -64,7 +65,7 @@ export function DatePage({ puzzle, attempt, signedIn, loginUrl, gameSlug }: Date
   }
 
   return (
-    <WhatGameBoard
+    <GameBoard
       puzzle={puzzle}
       initialGuesses={attempt?.guesses ?? []}
       loginUrl={loginUrl}

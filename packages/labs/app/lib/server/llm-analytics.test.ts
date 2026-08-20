@@ -26,7 +26,7 @@ describe("writeLlmAnalyticsRecord", () => {
 
     const filePath = await writeLlmAnalyticsRecord({
       createdAt: new Date("2026-06-17T12:34:56.000Z"),
-      feature: "what",
+      feature: "game",
       metadata: {
         dateKey: "2026-06-18",
       },
@@ -65,7 +65,7 @@ describe("writeLlmAnalyticsRecord", () => {
       };
     };
 
-    expect(payload.feature).toBe("what");
+    expect(payload.feature).toBe("game");
     expect(payload.request.apiKey).toBe("[redacted]");
     expect(payload.request.headers.Authorization).toBe("[redacted]");
     expect(payload.usage.totalTokens).toBe(123);

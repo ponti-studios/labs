@@ -1,0 +1,33 @@
+name: deploy-game-prod
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "packages/what/**"
+      - "packages/ai/**"
+      - "packages/db/**"
+      - "packages/env/**"
+      - ".github/workflows/deploy-game-prod.yml"
+      - ".github/workflows/reusable-railway-deploy.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-game-prod-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/reusable-railway-deploy.yml
+    with:
+      node-version: "24"
+      config_path: "packages/what/railway.json"
+      deploy_path: ""
+      railway-cli-version: "5.41.2"
+      timeout-minutes: 10
+    secrets:
+      railway_token: ${{ secrets.RAILWAY_TOKEN }}
+      railway_service: ${{ secrets.WHAT_RAILWAY_SERVICE }}

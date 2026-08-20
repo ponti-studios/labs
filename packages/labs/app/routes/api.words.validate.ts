@@ -1,8 +1,8 @@
 import type { ActionFunctionArgs } from "react-router";
 
-import { DEFAULT_WHAT_GAME_SLUG } from "~/lib/what/generation/catalog";
-import { getGameBySlug } from "~/lib/what/server/games.server";
-import { isValidWord } from "~/lib/what/server/word-list.server";
+import { DEFAULT_GAME_SLUG } from "~/lib/game/generation/catalog";
+import { getGameBySlug } from "~/lib/game/server/games.server";
+import { isValidWord } from "~/lib/game/server/word-list.server";
 
 export async function action({ request }: ActionFunctionArgs) {
   if (request.method !== "POST") {
@@ -16,7 +16,7 @@ export async function action({ request }: ActionFunctionArgs) {
       return Response.json({ error: "Invalid word payload" }, { status: 400 });
     }
 
-    const game = await getGameBySlug(DEFAULT_WHAT_GAME_SLUG);
+    const game = await getGameBySlug(DEFAULT_GAME_SLUG);
     if (!game) {
       return Response.json({ error: "Game not found" }, { status: 500 });
     }

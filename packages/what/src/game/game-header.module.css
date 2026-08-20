@@ -30,7 +30,7 @@
   border: 0;
   background: transparent;
   box-shadow: none;
-  color: var(--what-ink);
+  color: var(--game-ink);
   font-weight: 600;
   padding-left: 0.25rem;
 }
@@ -38,7 +38,7 @@
 .topicSelect:hover,
 .topicSelect:focus-visible {
   background: transparent;
-  box-shadow: 0 0 0 2px var(--what-present-border);
+  box-shadow: 0 0 0 2px var(--game-present-border);
 }
 
 .actions {
@@ -50,9 +50,9 @@
 
 .popover {
   position: relative;
-  border-color: var(--what-present-border);
+  border-color: var(--game-present-border);
   border-width: 2px;
-  background: var(--what-paper);
+  background: var(--game-paper);
 }
 
 @media (min-width: 640px) {

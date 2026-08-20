@@ -26,6 +26,7 @@
     "rootDirs": [".", "./.react-router/types"],
     "baseUrl": ".",
     "paths": {
+      "~/lib/game/*": ["../what/src/lib/game/*"],
       "~/*": ["./app/*"]
     },
     "noEmit": true

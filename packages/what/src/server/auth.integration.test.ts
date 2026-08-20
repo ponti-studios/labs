@@ -2,7 +2,7 @@ import { createServer, type Server } from "node:http";
 
 import { afterEach, describe, expect, it } from "vitest";
 
-import { getWhatUser, loginUrl } from "./auth";
+import { getGameUser, loginUrl } from "./auth";
 
 type TestApi = {
   server: Server;
@@ -34,18 +34,18 @@ async function stopAuthApi(server: Server) {
 
 const originalApiUrl = process.env.HOMINEM_API_URL;
 const originalInternalApiUrl = process.env.HOMINEM_INTERNAL_API_URL;
-const originalWhatUrl = process.env.WHAT_URL;
+const originalGameUrl = process.env.GAME_URL;
 
 afterEach(() => {
   if (originalApiUrl === undefined) delete process.env.HOMINEM_API_URL;
   else process.env.HOMINEM_API_URL = originalApiUrl;
   if (originalInternalApiUrl === undefined) delete process.env.HOMINEM_INTERNAL_API_URL;
   else process.env.HOMINEM_INTERNAL_API_URL = originalInternalApiUrl;
-  if (originalWhatUrl === undefined) delete process.env.WHAT_URL;
-  else process.env.WHAT_URL = originalWhatUrl;
+  if (originalGameUrl === undefined) delete process.env.GAME_URL;
+  else process.env.GAME_URL = originalGameUrl;
 });
 
-describe("What ↔ Hominem authentication boundary", () => {
+describe("Game ↔ Hominem authentication boundary", () => {
   it("forwards the browser session cookie to Hominem and returns the authenticated user", async () => {
     const api = await startAuthApi({
       body: {
@@ -58,7 +58,7 @@ describe("What ↔ Hominem authentication boundary", () => {
 
     try {
       await expect(
-        getWhatUser(new Request("https://what.ponti.io/", { headers: { cookie: "better-auth.session_token=test" } })),
+        getGameUser(new Request("https://game.ponti.io/", { headers: { cookie: "better-auth.session_token=test" } })),
       ).resolves.toEqual({ id: "user-1", email: "player@example.com" });
       expect(api.requests).toEqual([
         { path: "/api/auth/get-session", cookie: "better-auth.session_token=test" },
@@ -73,21 +73,21 @@ describe("What ↔ Hominem authentication boundary", () => {
     process.env.HOMINEM_INTERNAL_API_URL = api.url;
 
     try {
-      await expect(getWhatUser(new Request("https://what.ponti.io/"))).resolves.toBeNull();
+      await expect(getGameUser(new Request("https://game.ponti.io/"))).resolves.toBeNull();
     } finally {
       await stopAuthApi(api.server);
     }
   });
 
-  it("uses WHAT_URL for the login return target while keeping the API public URL", async () => {
+  it("uses GAME_URL for the login return target while keeping the API public URL", async () => {
     process.env.HOMINEM_API_URL = "https://api.ponti.io";
-    process.env.WHAT_URL = "https://what.ponti.io";
+    process.env.GAME_URL = "https://game.ponti.io";
 
     const url = new URL(
-      loginUrl(new Request("http://internal:3000/games/what"), "https://internal:3000/games/what"),
+      loginUrl(new Request("http://internal:3000/games/game"), "https://internal:3000/games/game"),
     );
     expect(url.origin).toBe("https://api.ponti.io");
     expect(url.pathname).toBe("/login");
-    expect(url.searchParams.get("next")).toBe("https://what.ponti.io/games/what");
+    expect(url.searchParams.get("next")).toBe("https://game.ponti.io/games/game");
   });
 });

@@ -2,9 +2,10 @@ import { useState } from "react";
 import { useSearchParams } from "react-router";
 
 import { Button, EmptyState, Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, StatusBadge, type StatusBadgeConfig } from "../primitives";
-import { WhatTile } from "../game";
-import type { GameStatus } from "../lib/player-what";
-import type { PuzzleHistoryPage } from "../lib/player-what/history-types";
+import { GameTile } from "../game";
+import { BRAND_NAME } from "../config/brand";
+import type { GameStatus } from "../lib/player-game";
+import type { PuzzleHistoryPage } from "../lib/player-game/history-types";
 import styles from "./history-page.module.css";
 
 const UNPLAYED_PAGE_SIZE = 10;
@@ -168,7 +169,7 @@ export function HistoryPage(props: HistoryPageProps) {
     <div className={styles.page}>
       <header className={styles.header}>
         <div>
-          <p className={styles.eyebrow}>WH?T</p>
+          <p className={styles.eyebrow}>{BRAND_NAME}</p>
           <h1 className={styles.title}>Your history</h1>
         </div>
         <UnplayedSheet dateKeys={history.playableUnplayedDateKeys} gameSlug={gameSlug} />
@@ -214,9 +215,9 @@ export function HistoryPage(props: HistoryPageProps) {
               <li key={row.dateKey}>
                 <a className={styles.row} href={`/${gameSlug}/${row.dateKey}`}>
                   {lastGuess && (
-                    <div className={`what-history-mini ${styles.rowMini}`}>
+                    <div className={`game-history-mini ${styles.rowMini}`}>
                       {lastGuess.states.map((state, i) => (
-                        <WhatTile key={i} state={state} letter={lastGuess.word[i] ?? ""} />
+                        <GameTile key={i} state={state} letter={lastGuess.word[i] ?? ""} />
                       ))}
                     </div>
                   )}

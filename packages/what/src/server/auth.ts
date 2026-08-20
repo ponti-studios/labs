@@ -1,8 +1,8 @@
 import { getServerAuth } from "@ponti-studios/auth/server";
 
-export type WhatUser = { id: string; email?: string | null };
+export type GameUser = { id: string; email?: string | null };
 
-export async function getWhatUser(request: Request): Promise<WhatUser | null> {
+export async function getGameUser(request: Request): Promise<GameUser | null> {
   try {
     const { user } = await getServerAuth(request, {
       apiBaseUrl:
@@ -15,7 +15,7 @@ export async function getWhatUser(request: Request): Promise<WhatUser | null> {
 }
 
 export function loginUrl(request: Request, requestedReturnTo?: string): string {
-  const appOrigin = new URL(process.env.WHAT_URL ?? new URL(request.url).origin);
+  const appOrigin = new URL(process.env.GAME_URL ?? new URL(request.url).origin);
   let returnTo = new URL(appOrigin);
   try {
     const candidate = new URL(requestedReturnTo ?? request.url);

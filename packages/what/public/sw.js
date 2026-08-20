@@ -1,4 +1,4 @@
-const VERSION = "what-v1";
+const VERSION = "game-v1";
 const STATIC_CACHE = `${VERSION}-static`;
 
 self.addEventListener("install", (event) => {
@@ -12,7 +12,7 @@ self.addEventListener("activate", (event) => {
       .then((keys) =>
         Promise.all(
           keys
-            .filter((key) => key.startsWith("what-") && key !== STATIC_CACHE)
+            .filter((key) => key.startsWith("game-") && key !== STATIC_CACHE)
             .map((key) => caches.delete(key)),
         ),
       )
