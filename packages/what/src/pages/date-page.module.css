@@ -1,0 +1,93 @@
+.teaser {
+  margin: 0 auto;
+  display: flex;
+  width: 100%;
+  max-width: 32rem;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-inline: 1rem;
+  padding-bottom: calc(env(safe-area-inset-bottom) + 88px);
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(8px);
+}
+
+.headerInner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 0.5rem;
+}
+
+.logo {
+  height: 3.5rem;
+  object-fit: contain;
+}
+
+.body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.clue {
+  border: 1px solid var(--what-present-border);
+  border-radius: 0.375rem;
+  background: var(--what-present-bg);
+  color: var(--what-present-text);
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.clueLabel {
+  color: inherit;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.075em;
+  opacity: 0.85;
+}
+
+.clueText {
+  margin-top: 0.25rem;
+}
+
+.card {
+  width: 100%;
+  border-color: var(--what-present-border);
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  text-align: center;
+}
+
+@media (min-width: 640px) {
+  .teaser {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 24px);
+  }
+  .headerInner {
+    padding-top: 1rem;
+  }
+  .logo {
+    height: 5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .header {
+    position: static;
+  }
+}

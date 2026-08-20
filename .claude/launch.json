@@ -8,6 +8,12 @@
       "port": 3001
     },
     {
+      "name": "what",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--dir", "what", "dev"],
+      "port": 5180
+    },
+    {
       "name": "storybook",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["storybook"],

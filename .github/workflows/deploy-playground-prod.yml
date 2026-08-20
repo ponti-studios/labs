@@ -4,18 +4,18 @@ on:
   push:
     branches: [main]
     paths:
-      - "app/**"
-      - "migrations/**"
-      - "scripts/**"
-      - "package.json"
+      - "packages/labs/app/**"
+      - "packages/labs/migrations/**"
+      - "packages/labs/scripts/**"
+      - "packages/labs/package.json"
       - "pnpm-lock.yaml"
-      - "Dockerfile"
-      - "railway.json"
-      - "public/**"
-      - "*.config.*"
-      - "drizzle.config.ts"
-      - "react-router.config.ts"
-      - "tsconfig.json"
+      - "packages/labs/Dockerfile"
+      - "packages/labs/railway.json"
+      - "packages/labs/public/**"
+      - "packages/labs/*.config.*"
+      - "packages/labs/drizzle.config.ts"
+      - "packages/labs/react-router.config.ts"
+      - "packages/labs/tsconfig.json"
       - ".oxlintrc.json"
       - ".oxfmtrc.json"
       - "vitest*.ts"
@@ -58,6 +58,8 @@ jobs:
     with:
       node-version: "24"
       railway-cli-version: "4.58.0"
+      config_path: "packages/labs/railway.json"
+      deploy_path: "packages/labs"
       timeout-minutes: 10
     secrets:
       railway_token: ${{ secrets.RAILWAY_TOKEN }}
