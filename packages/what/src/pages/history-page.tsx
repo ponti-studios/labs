@@ -1,7 +1,17 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router";
 
-import { Button, EmptyState, Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, StatusBadge, type StatusBadgeConfig } from "../primitives";
+import {
+  Button,
+  EmptyState,
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  StatusBadge,
+  type StatusBadgeConfig,
+} from "../primitives";
 import { GameTile } from "../game";
 import { BRAND_NAME } from "../config/brand";
 import type { GameStatus } from "../lib/player-game";

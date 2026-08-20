@@ -1,4 +1,7 @@
-export function formatCurrency(value: number, options: { minimumFractionDigits?: number; maximumFractionDigits?: number } = {}) {
+export function formatCurrency(
+  value: number,
+  options: { minimumFractionDigits?: number; maximumFractionDigits?: number } = {},
+) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",

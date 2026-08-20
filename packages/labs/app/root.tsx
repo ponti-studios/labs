@@ -21,6 +21,7 @@ import "./app.css";
 import { PrefetchProvider } from "./components/prefetch-provider";
 import QueryProvider from "./components/QueryProvider";
 import { BOOK_CALL_URL } from "./data/studio";
+import { WHAT_APP_URL } from "./data/game";
 import { getHominemUser } from "./lib/server/hominem-auth";
 import { cn } from "./lib/utils";
 import { t } from "./translations";
@@ -90,7 +91,12 @@ export default function App() {
   >(() => {
     if (isAuthenticated) {
       return [
-        { href: "/games/game", label: t.nav.game, logo: "/experiments/logo.png" },
+        {
+          href: WHAT_APP_URL,
+          label: t.nav.game,
+          isExternal: true,
+          logo: "/experiments/logo.png",
+        },
         {
           href:
             import.meta.env.NODE_ENV === "development"

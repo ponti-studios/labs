@@ -75,6 +75,10 @@ export function PopoverContent({
   const alignClass =
     align === "end" ? styles.alignEnd : align === "start" ? styles.alignStart : styles.alignCenter;
   return (
-    <div role="dialog" className={[styles.content, alignClass, className].filter(Boolean).join(" ")} {...props} />
+    <div
+      role="dialog"
+      className={[styles.content, alignClass, className].filter(Boolean).join(" ")}
+      {...props}
+    />
   );
 }

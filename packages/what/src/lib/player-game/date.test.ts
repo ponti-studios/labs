@@ -4,7 +4,9 @@ import { addDaysToDateKey, getDateKey, isDateKey } from "./date";
 
 describe("game date keys", () => {
   it("formats dates in a requested timezone", () => {
-    expect(getDateKey(new Date("2026-08-20T01:00:00.000Z"), "America/Los_Angeles")).toBe("2026-08-19");
+    expect(getDateKey(new Date("2026-08-20T01:00:00.000Z"), "America/Los_Angeles")).toBe(
+      "2026-08-19",
+    );
   });
 
   it("validates and shifts date keys", () => {

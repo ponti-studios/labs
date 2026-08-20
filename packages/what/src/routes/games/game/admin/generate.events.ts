@@ -23,7 +23,10 @@ export async function action({ request, context }: ActionFunctionArgs) {
   const slug = String(form.get("game") ?? DEFAULT_GAME_SLUG);
   const game = await resolveAdminGame(slug);
   if (!game) {
-    return Response.json({ ok: false, error: `No active ${BRAND_NAME} topic found` }, { status: 404 });
+    return Response.json(
+      { ok: false, error: `No active ${BRAND_NAME} topic found` },
+      { status: 404 },
+    );
   }
 
   const input = readGenerateForm(form);

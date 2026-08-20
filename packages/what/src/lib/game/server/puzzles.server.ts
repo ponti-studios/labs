@@ -199,7 +199,9 @@ export async function deletePuzzlesInRange(
       .from(gamesPuzzles)
       .where(inArray(gamesPuzzles.articleId, deletedArticleIds));
     const remainingArticleIds = new Set(remaining.map((puzzle) => puzzle.articleId));
-    const reusableArticleIds = deletedArticleIds.filter((articleId) => !remainingArticleIds.has(articleId));
+    const reusableArticleIds = deletedArticleIds.filter(
+      (articleId) => !remainingArticleIds.has(articleId),
+    );
 
     if (reusableArticleIds.length > 0) {
       await tx

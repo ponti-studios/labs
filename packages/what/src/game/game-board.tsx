@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { OnscreenKeyboard } from "../keyboard/onscreen-keyboard";
-import { getKeyboardState, MAX_GUESSES, GAME_ANSWER_LENGTH, type PublicGamesPuzzle, type GameGuess } from "../lib/player-game";
+import {
+  getKeyboardState,
+  MAX_GUESSES,
+  GAME_ANSWER_LENGTH,
+  type PublicGamesPuzzle,
+  type GameGuess,
+} from "../lib/player-game";
 import { buildGameShareText } from "../lib/player-game/share";
 
 import { GameHeader } from "./game-header";

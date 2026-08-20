@@ -1,4 +1,4 @@
-import { index, layout, prefix, route, type RouteConfig } from "@react-router/dev/routes";
+import { index, route, type RouteConfig } from "@react-router/dev/routes";
 
 const homeRoutes = [index("routes/home.tsx")] satisfies RouteConfig;
 
@@ -32,16 +32,8 @@ const apiRoutes = [
   ),
   route("/api/gen/image", "routes/api.gen.image.ts"),
   route("/api/gen/predict", "routes/api.gen.predict.ts"),
-  route("/api/games/game/attempt", "routes/api.games.game.attempt.ts"),
-  route("/api/games/game/guess", "routes/api.games.game.guess.ts"),
-  route("/api/games/game/games", "routes/api.games.game.games.ts"),
-  route("/api/games/game/health", "routes/api.games.game.health.ts"),
-  route("/api/games/game/puzzle", "routes/api.games.game.puzzle.ts"),
-  route("/api/games/game/puzzle/:date", "routes/api.games.game.puzzle.$date.ts"),
-  route("/api/games/game/history", "routes/api.games.game.history.ts"),
   route("/api/search", "routes/api.search.ts"),
   route("/api/tarot", "routes/api.tarot.ts"),
-  route("/api/words/validate", "routes/api.words.validate.ts"),
 ] satisfies RouteConfig;
 
 const featureRoutes = [
@@ -57,35 +49,9 @@ const featureRoutes = [
   ]),
 
   // Games
-  // `/games/game` player-facing UI now lives in the standalone `game` app
-  // (own repo, own deploy) — Labs keeps only the admin panel, generation
-  // pipeline, and the API surface `game` calls remotely. See GAME_APP_ORIGIN.
-  // These two legacy `realitea`-named routes are kept so old bookmarked
-  // links still work; they now redirect to `/games/game`.
+  // The player UI and game administration now live in the standalone `what`
+  // app. Keep only the original root bookmark redirect.
   route("/games/realitea", "routes/redirects/game.ts"),
-  route("/games/realitea/*", "routes/redirects/game-splat.ts"),
-  ...prefix("/games/game", [
-    // Keep bookmarks and shared links working while the player UI is served
-    // by the standalone app. The admin branch below remains on Labs.
-    index("routes/redirects/game-player.ts"),
-    route("*", "routes/redirects/game-player-splat.ts"),
-    layout("routes/games/game/brand.tsx", [
-      route("admin", "routes/games/game/admin/layout.tsx", [
-        index("routes/games/game/admin/route.tsx"),
-        route("inventory", "routes/games/game/admin/inventory.tsx"),
-        route("generate", "routes/games/game/admin/generate.tsx"),
-        route("generate/events", "routes/games/game/admin/generate.events.ts"),
-        route("generate/stream", "routes/games/game/admin/generate.stream.ts"),
-        route("preview", "routes/games/game/admin/preview-redirect.ts"),
-        route("preview/events", "routes/games/game/admin/preview.events.ts"),
-        route("topics", "routes/games/game/admin/topics.tsx"),
-        route("topics/:slug", "routes/games/game/admin/topics.$slug.tsx"),
-        route("generations/:id", "routes/games/game/admin/generations.$id.tsx"),
-        route("dates/:date", "routes/games/game/admin/dates.$date.tsx"),
-        route("costs", "routes/games/game/admin/costs.tsx"),
-      ]),
-    ]),
-  ]),
   route("/games/cards", "routes/games/cards.tsx"),
   route("/games/tetris", "routes/games/tetris.tsx"),
 ] satisfies RouteConfig;

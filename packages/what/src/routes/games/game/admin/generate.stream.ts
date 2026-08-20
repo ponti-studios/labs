@@ -38,7 +38,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 
   const game = await resolveAdminGame(slug);
-  if (!game) return Response.json({ error: `No active ${BRAND_NAME} topic found` }, { status: 404 });
+  if (!game)
+    return Response.json({ error: `No active ${BRAND_NAME} topic found` }, { status: 404 });
 
   const encoder = new TextEncoder();
   let closed = false;

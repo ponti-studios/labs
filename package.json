@@ -17,6 +17,7 @@
     "build:what": "pnpm --filter what build",
     "test:game": "pnpm --filter what test",
     "typecheck:game": "pnpm --filter what typecheck",
+    "labs:dev": "pnpm --filter @pontistudios/labyrinth dev",
     "game:dev": "pnpm --filter what dev",
     "game:generate": "pnpm --filter what game:generate",
     "game:health-check": "pnpm --filter what game:health-check",
