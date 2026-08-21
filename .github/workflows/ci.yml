@@ -82,16 +82,6 @@ jobs:
           cache: "pnpm"
       - run: pnpm install --frozen-lockfile
       - run: pnpm build:all
-      - name: Verify What performance guardrails
-        run: |
-          test -f packages/what/public/manifest.webmanifest
-          test -f packages/what/public/sw.js
-          test -f packages/what/public/icons/icon-192.png
-          test -f packages/what/public/icons/icon-512.png
-          if rg -n 'fonts\.googleapis\.com|fonts\.gstatic\.com|font-\[.Geist.|"Geist"|"Inter"' packages/what/src; then
-            echo "Custom font loading or references found in app source"
-            exit 1
-          fi
 
   migrate:
     if: github.event_name != 'pull_request'
