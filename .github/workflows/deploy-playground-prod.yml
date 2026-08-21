@@ -28,12 +28,14 @@ jobs:
 
       - name: Detect Labs changes
         id: changes
+        env:
+          TARGET_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
         shell: bash
         run: |
           set -euo pipefail
           if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
-          elif git diff-tree --no-commit-id --name-only -r "$GITHUB_SHA" | rg -q '^(packages/labs/|packages/(ai|db|env)/|pnpm-lock.yaml|\.oxl|\.oxf|vitest|\.github/workflows/(deploy-playground-prod|reusable-railway-deploy)\.yml)'; then
+          elif git diff-tree --no-commit-id --name-only -r "$TARGET_SHA" | grep -Eq '^(packages/labs/|packages/(ai|db|env)/|pnpm-lock.yaml|\.oxl|\.oxf|vitest|\.github/workflows/(deploy-playground-prod|reusable-railway-deploy)\.yml)'; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
           else
             echo "changed=false" >> "$GITHUB_OUTPUT"

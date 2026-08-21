@@ -7,7 +7,7 @@
   },
   "deploy": {
     "startCommand": "./node_modules/.bin/react-router-serve build/server/index.js",
-    "healthcheckPath": "/",
+    "healthcheckPath": "/healthz",
     "healthcheckTimeout": 300,
     "restartPolicyType": "ON_FAILURE"
   }
