@@ -18,6 +18,9 @@ classify the change
 
 ## Add or change an environment value
 
+Use the detailed [environment configuration contract](environment-configuration.md)
+for the required scan and delivery matrix.
+
 1. Add the variable to the owning server environment schema. For What, this is
    `packages/what/src/lib/server/env.ts`; do not create an ad-hoc validator.
 2. Add the variable name and a safe local value to the package `.env.example`.

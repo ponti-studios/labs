@@ -12,6 +12,12 @@ authentication, cross-service ownership, or deployment, read
 These documents define the required pre-merge provisioning, CI ordering, and
 post-deployment verification steps.
 
+For any environment-variable change, also read the
+[environment configuration contract](docs/operations/environment-configuration.md).
+It requires agents to classify runtime versus build-time values, declare Vite
+variables in Docker build stages, and scan Railway/GitHub configuration before
+merging.
+
 ## Development Infrastructure (Foundation Compose)
 
 Labs is the application codebase. Local infrastructure is owned by the sibling
