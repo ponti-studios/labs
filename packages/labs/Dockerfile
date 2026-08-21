@@ -33,8 +33,9 @@ RUN apt-get update && \
     useradd --system --uid 1001 --gid app --home-dir /app --shell /usr/sbin/nologin app
 
 COPY --from=builder --chown=app:app /app/node_modules ./node_modules
-COPY --from=builder --chown=app:app /app/package.json ./package.json
-COPY --from=builder --chown=app:app /app/build ./build
+COPY --from=builder --chown=app:app /app/packages/labs/package.json ./packages/labs/package.json
+COPY --from=builder --chown=app:app /app/packages/labs/node_modules ./packages/labs/node_modules
+COPY --from=builder --chown=app:app /app/packages/labs/build ./packages/labs/build
 
 USER app
 EXPOSE 3000
