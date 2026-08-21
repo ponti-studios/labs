@@ -8,8 +8,8 @@ import {
   generationCandidates,
   generationRuns,
   puzzleRevisions,
-} from "~/lib/server/db";
-import type { GamesTopic } from "~/lib/server/db";
+} from "@pontistudios/db";
+import type { GamesTopic } from "@pontistudios/db";
 import { explainGenerateReason } from "./generate-copy";
 import { parseDate } from "../core/date";
 import { normalizeGuess } from "../core/rules";

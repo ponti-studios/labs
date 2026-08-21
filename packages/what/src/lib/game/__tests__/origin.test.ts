@@ -4,7 +4,7 @@ import { assertSameOrigin } from "~/lib/server/origin";
 
 describe("assertSameOrigin", () => {
   it("allows a matching Origin", () => {
-    const request = new Request("https://labs.ponti.io/games/game/admin", {
+    const request = new Request("https://labs.ponti.io/admin", {
       method: "POST",
       headers: { Origin: "https://labs.ponti.io" },
     });
@@ -12,7 +12,7 @@ describe("assertSameOrigin", () => {
   });
 
   it("rejects a missing or sister-origin Origin", () => {
-    const url = "https://labs.ponti.io/games/game/admin";
+    const url = "https://labs.ponti.io/admin";
     expect(assertSameOrigin(new Request(url, { method: "POST" }))?.status).toBe(403);
     expect(
       assertSameOrigin(

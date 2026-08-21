@@ -1,7 +1,7 @@
 import { getTableConfig } from "drizzle-orm/pg-core";
 import { describe, expect, it } from "vitest";
 
-import { gamesPuzzles, generationCandidates, generationRuns } from "~/lib/server/db/schema/game";
+import { gamesPuzzles, generationCandidates, generationRuns } from "@pontistudios/db";
 
 function foreignKeyOnDelete(table: Parameters<typeof getTableConfig>[0], columnName: string) {
   return getTableConfig(table).foreignKeys.find((foreignKey) =>

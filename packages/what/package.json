@@ -24,6 +24,7 @@
     "game:gallery:solve": "tsx scripts/game-gallery.ts --mode solve",
     "game:tile-states": "tsx scripts/game-tile-states.ts",
     "game:e2e": "tsx scripts/game-e2e.ts",
+    "storybook": "storybook dev -p 6008",
     "typecheck": "react-router typegen && tsc --noEmit"
   },
   "dependencies": {
@@ -51,12 +52,18 @@
   },
   "devDependencies": {
     "@react-router/dev": "^8.2.0",
+    "@storybook/addon-a11y": "10.5.7",
+    "@storybook/addon-docs": "^10.5.7",
+    "@storybook/addon-links": "^10.5.7",
+    "@storybook/react-vite": "^10.5.3",
     "@types/jsdom": "^21.1.7",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",
+    "oxlint": "^1.77.0",
     "playwright": "^1.61.1",
+    "storybook": "^10.5.8",
     "typescript": "^5.9.3",
     "vite": "^8.2.1",
     "vitest": "^4.1.10"

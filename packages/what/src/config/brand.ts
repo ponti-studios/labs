@@ -3,4 +3,5 @@
  * instead of hunting down hardcoded strings across the codebase.
  */
 export const BRAND_NAME = "WH?T";
-export const BRAND_TAGLINE = "Guess today's reality TV answer from a rotating daily word game.";
+export const BRAND_TAGLINE =
+  "A daily word game with main-character energy and reunion-level drama.";

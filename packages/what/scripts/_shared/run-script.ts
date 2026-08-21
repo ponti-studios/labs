@@ -1,6 +1,6 @@
 import "dotenv/config";
 
-import { closeDb } from "~/lib/server/db";
+import { closeDb } from "@pontistudios/db";
 import { LabyrinthServerEnv } from "~/lib/server/env";
 
 export async function runScript(main: () => Promise<void>): Promise<void> {

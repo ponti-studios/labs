@@ -1,6 +1,6 @@
-import { chatCompletion, getConfiguredTextModel, type ChatReasoningEffort } from "~/lib/server/ai";
-import { and, eq, gamesPuzzles, generationRuns, db } from "~/lib/server/db";
-import type { Article, GamesTopic, GenerationEnvironment, ReasoningEffort } from "~/lib/server/db";
+import { chatCompletion, getConfiguredTextModel, type ChatReasoningEffort } from "@pontistudios/ai";
+import { and, eq, gamesPuzzles, generationRuns, db } from "@pontistudios/db";
+import type { Article, GamesTopic, GenerationEnvironment, ReasoningEffort } from "@pontistudios/db";
 import { randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";

@@ -2,7 +2,10 @@ import { describe, expect, it, vi } from "vitest";
 
 const { chatCompletionMock } = vi.hoisted(() => ({ chatCompletionMock: vi.fn() }));
 
-vi.mock("~/lib/server/ai", () => ({ chatCompletion: chatCompletionMock }));
+vi.mock("@pontistudios/ai", async () => {
+  const actual = await vi.importActual<typeof import("@pontistudios/ai")>("@pontistudios/ai");
+  return { ...actual, chatCompletion: chatCompletionMock };
+});
 
 import { GenerateReasonType } from "../admin/generate-copy";
 import { validateCandidate } from "../generation/candidate-validation";

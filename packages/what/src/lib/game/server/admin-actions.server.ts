@@ -3,8 +3,8 @@
  * writes (generate, publish, replace, etc) made through the admin console.
  */
 
-import type { GameAdminActionKind } from "~/lib/server/db";
-import { adminActions, and, count, db, eq, gte, inArray } from "~/lib/server/db";
+import type { GameAdminActionKind } from "@pontistudios/db";
+import { adminActions, and, count, db, eq, gte, inArray } from "@pontistudios/db";
 
 export async function countRecentGenerateActions(
   hominemUserId: string,

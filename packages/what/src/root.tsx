@@ -19,6 +19,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <title>{BRAND_NAME}</title>
         <meta name="description" content={BRAND_TAGLINE} />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={BRAND_NAME} />
+        <meta property="og:description" content={BRAND_TAGLINE} />
+        <meta property="og:image" content="/logo.png" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content={BRAND_NAME} />
+        <meta name="twitter:description" content={BRAND_TAGLINE} />
+        <meta name="twitter:image" content="/logo.png" />
         <meta name="theme-color" content="#f5b400" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />

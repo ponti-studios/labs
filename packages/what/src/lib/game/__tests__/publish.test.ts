@@ -8,7 +8,7 @@ import {
   gamesTopics,
   generationCandidates,
   generationRuns,
-} from "~/lib/server/db";
+} from "@pontistudios/db";
 import { cleanAll } from "../../../data/test-db";
 import { publishCandidate } from "../admin/publish";
 

@@ -1,6 +1,6 @@
-import { DEFAULT_TEXT_MODEL, getConfiguredTextModel } from "~/lib/server/ai";
-import { and, db, eq, generationCandidates, generationRuns, lt } from "~/lib/server/db";
-import type { Article, GamesTopic } from "~/lib/server/db";
+import { DEFAULT_TEXT_MODEL, getConfiguredTextModel } from "@pontistudios/ai";
+import { and, db, eq, generationCandidates, generationRuns, lt } from "@pontistudios/db";
+import type { Article, GamesTopic } from "@pontistudios/db";
 import { getErrorMessage } from "../../errors";
 import { GenerateReasonType } from "./generate-copy";
 import {

@@ -8,8 +8,8 @@
  * re-polling a feed that returns the same items is a no-op.
  */
 
-import { db, eq, gamesTopics, or } from "~/lib/server/db";
-import type { GamesTopic } from "~/lib/server/db";
+import { db, eq, gamesTopics, or } from "@pontistudios/db";
+import type { GamesTopic } from "@pontistudios/db";
 import { Readability } from "@mozilla/readability";
 import { XMLParser } from "fast-xml-parser";
 import { JSDOM } from "jsdom";

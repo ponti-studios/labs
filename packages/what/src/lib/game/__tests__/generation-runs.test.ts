@@ -1,4 +1,4 @@
-import { db, eq, generationCandidates, generationRuns, sql } from "~/lib/server/db";
+import { db, eq, generationCandidates, generationRuns, sql } from "@pontistudios/db";
 import { beforeEach, describe, expect, it } from "vitest";
 import { cleanAll } from "../../../data/test-db";
 import { seedGame } from "./test-helpers";

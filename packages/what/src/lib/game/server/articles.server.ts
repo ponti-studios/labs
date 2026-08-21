@@ -6,8 +6,8 @@
  * source articles from deleted future puzzles to 'pending'.
  */
 
-import type { Article, GamesTopic } from "~/lib/server/db";
-import { and, articles, count, db, desc, eq, inArray, lt, sql } from "~/lib/server/db";
+import type { Article, GamesTopic } from "@pontistudios/db";
+import { and, articles, count, db, desc, eq, inArray, lt, sql } from "@pontistudios/db";
 
 /**
  * Insert newly-seen articles for a feed, deduped globally on `url`.

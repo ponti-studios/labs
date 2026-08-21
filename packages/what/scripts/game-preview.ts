@@ -10,8 +10,8 @@ import {
   getSystemPromptForGame,
 } from "../src/lib/game/generation/generate.server";
 import type { GenerateCandidatesResult } from "../src/lib/game/generation/types";
-import { getConfiguredTextModel } from "../src/lib/server/ai";
-import { db, eq, generationRuns } from "../src/lib/server/db";
+import { getConfiguredTextModel } from "@pontistudios/ai";
+import { db, eq, generationRuns } from "@pontistudios/db";
 import { runScript } from "./_shared/run-script";
 
 const CLI_ACTOR = "cli:game-preview";

@@ -1,8 +1,8 @@
 import "dotenv/config";
 import { parseArgs } from "node:util";
 
-import { closeDb } from "~/lib/server/db";
-import { withGenerateLock } from "~/lib/server/db/advisory-lock";
+import { closeDb } from "@pontistudios/db";
+import { withGenerateLock } from "~/lib/game/server/advisory-lock";
 
 import { getErrorMessage } from "../src/lib/errors";
 import { createLogger } from "../src/lib/logger.server";

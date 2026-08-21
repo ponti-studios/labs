@@ -1,6 +1,6 @@
 import "dotenv/config";
 
-import { closeDb } from "~/lib/server/db";
+import { closeDb } from "@pontistudios/db";
 
 import { getDateKey } from "../src/lib/game/core/date";
 import { getErrorMessage } from "../src/lib/errors";
