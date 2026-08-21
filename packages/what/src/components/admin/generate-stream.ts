@@ -2,7 +2,7 @@ import type {
   GenerateErr,
   GenerateOk,
   GenerateProgressEvent,
-} from "~/lib/game/admin/generate-types";
+} from "~/lib/admin/generate-types";
 
 type GenerateStreamEvent =
   | GenerateProgressEvent

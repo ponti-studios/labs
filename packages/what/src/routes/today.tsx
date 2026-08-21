@@ -1,8 +1,8 @@
 import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 
-import { getActiveGames, getGameBySlug } from "../lib/game/server/games.server";
-import { loadActivePublicPuzzleWithAttempt } from "../lib/game/server/puzzle.server";
-import { readTimeZoneCookie } from "../lib/game/core/timezone";
+import { getActiveGames, getGameBySlug } from "../lib/data/games.server";
+import { loadActivePublicPuzzleWithAttempt } from "../lib/data/puzzle.server";
+import { readTimeZoneCookie } from "../lib/puzzle/timezone";
 import { TodayPage } from "../components/pages/today-page";
 import { getGameUser, loginUrl } from "../server/auth";
 

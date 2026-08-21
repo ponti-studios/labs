@@ -3,8 +3,8 @@ import { Button, Card, CardContent, CardHeader, CardTitle } from "@ponti-studios
 import { Link2, LucideCheck } from "lucide-react";
 import { useFetcher } from "react-router";
 
-import { explainGenerateReason } from "~/lib/game/admin/generate-copy";
-import type { AdminGenerationCandidate } from "~/lib/game/admin/inventory";
+import { explainGenerateReason } from "~/lib/admin/generate-copy";
+import type { AdminGenerationCandidate } from "~/lib/admin/inventory";
 import { GameTile } from "~/components/game/game-tile";
 
 import styles from "./candidate-cards.module.css";

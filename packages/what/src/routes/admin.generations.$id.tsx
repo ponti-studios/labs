@@ -8,12 +8,12 @@ import {
   type LoaderFunctionArgs,
 } from "react-router";
 
-import { getGameAdminActor } from "~/lib/game/admin/auth";
-import { formatTokenCount, formatUsd } from "~/lib/game/admin/format";
-import { loadAdminGeneration, resolveAdminGame } from "~/lib/game/admin/inventory";
-import { publishCandidate } from "~/lib/game/admin/publish";
-import { DEFAULT_GAME_SLUG } from "~/lib/game/generation/catalog";
-import { assertSameOrigin } from "~/lib/server/origin";
+import { getGameAdminActor } from "~/lib/admin/auth";
+import { formatTokenCount, formatUsd } from "~/lib/admin/format";
+import { loadAdminGeneration, resolveAdminGame } from "~/lib/admin/inventory";
+import { publishCandidate } from "~/lib/admin/publish";
+import { DEFAULT_GAME_SLUG } from "~/lib/generation/catalog";
+import { assertSameOrigin } from "~/lib/infrastructure/origin";
 
 import { CandidateCards } from "~/components/admin/candidate-cards";
 

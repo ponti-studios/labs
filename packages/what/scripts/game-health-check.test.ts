@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 // Mock heavy dependencies to prevent top-level side-effects when importing the script
-vi.mock("../src/lib/game/server/puzzles.server", () => ({
+vi.mock("../src/lib/data/puzzles.server", () => ({
   countInventoryForRange: vi.fn(),
   loadPuzzleForDate: vi.fn(),
 }));

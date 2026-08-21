@@ -5,9 +5,9 @@ import { parseArgs } from "node:util";
 
 import { chromium, type Page } from "playwright";
 
-import { getDateKey } from "../src/lib/game/core/date";
-import { getGameBySlug } from "../src/lib/game/server/games.server";
-import { loadMostRecentPuzzle, loadPuzzleForDate } from "../src/lib/game/server/puzzles.server";
+import { getDateKey } from "../src/lib/puzzle/date";
+import { getGameBySlug } from "../src/lib/data/games.server";
+import { loadMostRecentPuzzle, loadPuzzleForDate } from "../src/lib/data/puzzles.server";
 import { runScript } from "./_shared/run-script";
 
 /**

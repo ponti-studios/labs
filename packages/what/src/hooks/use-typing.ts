@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { normalizeGuess, GAME_ANSWER_LENGTH } from "../lib/player-game";
+import { normalizeGuess, GAME_ANSWER_LENGTH } from "../lib/puzzle";
 
 export function useTyping(disabled: boolean) {
   const [currentGuess, setCurrentGuess] = useState("");

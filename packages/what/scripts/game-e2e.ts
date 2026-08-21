@@ -5,10 +5,10 @@ import { parseArgs } from "node:util";
 
 import { chromium, type Page } from "playwright";
 
-import { getDateKey } from "../src/lib/game/core/date";
-import { DEFAULT_GAME_SLUG } from "../src/lib/game/generation/catalog";
-import { getGameBySlug } from "../src/lib/game/server/games.server";
-import { loadMostRecentPuzzle, loadPuzzleForDate } from "../src/lib/game/server/puzzles.server";
+import { getDateKey } from "../src/lib/puzzle/date";
+import { DEFAULT_GAME_SLUG } from "../src/lib/generation/catalog";
+import { getGameBySlug } from "../src/lib/data/games.server";
+import { loadMostRecentPuzzle, loadPuzzleForDate } from "../src/lib/data/puzzles.server";
 import { runScript } from "./_shared/run-script";
 
 const DEFAULT_BASE_URL = "http://localhost:3001";

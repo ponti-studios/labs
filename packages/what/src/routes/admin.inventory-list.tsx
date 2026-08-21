@@ -10,12 +10,12 @@ import {
 import { StatusBadge, type StatusBadgeConfig } from "@ponti-studios/ui/primitives";
 import { Link } from "react-router";
 
-import { formatTokenCount, formatUsd } from "~/lib/game/admin/format";
+import { formatTokenCount, formatUsd } from "~/lib/admin/format";
 import type {
   AdminGeneration,
   InventoryCell,
   InventoryCellState,
-} from "~/lib/game/admin/inventory";
+} from "~/lib/admin/inventory";
 
 export const CELL_STATUS: Record<InventoryCellState, StatusBadgeConfig> = {
   live: { label: "Live", variant: "default" },

@@ -2,7 +2,7 @@ import type { ActionFunctionArgs } from "react-router";
 import { z } from "zod";
 
 import { getGameUser } from "../server/auth";
-import { evaluateGuessServer } from "../lib/game/server/puzzle.server";
+import { evaluateGuessServer } from "../lib/data/puzzle.server";
 
 const payloadSchema = z.object({
   dateKey: z.string().min(1),

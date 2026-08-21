@@ -2,7 +2,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { parseArgs } from "node:util";
 
-import { fetchFeedItems } from "../src/lib/game/generation/ingest.server";
+import { fetchFeedItems } from "../src/lib/generation/ingest.server";
 import { runScript } from "./_shared/run-script";
 
 const DEFAULT_FEEDS = [
@@ -23,7 +23,7 @@ function parseOptions() {
     strict: true,
   });
   return {
-    outDir: path.resolve(values["out-dir"] ?? "app/lib/game/fixtures/sources"),
+    outDir: path.resolve(values["out-dir"] ?? "src/lib/values/sources"),
     limit: Math.max(1, Number.parseInt(values.limit ?? "20", 10)),
     feedIds: values.feed ?? [],
   };

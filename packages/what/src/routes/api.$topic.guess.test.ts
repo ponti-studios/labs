@@ -9,7 +9,7 @@ vi.mock("../server/auth", () => ({
   getGameUser: getGameUserMock,
 }));
 
-vi.mock("../lib/game/server/puzzle.server", () => ({
+vi.mock("../lib/data/puzzle.server", () => ({
   evaluateGuessServer: evaluateGuessServerMock,
 }));
 

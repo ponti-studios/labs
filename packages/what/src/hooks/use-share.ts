@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 
 import { BRAND_NAME } from "../config/brand";
-import type { GameGuess } from "../lib/player-game";
-import { buildGameShareText } from "../lib/player-game/share";
+import type { GameGuess } from "../lib/puzzle";
+import { buildGameShareText } from "../lib/player/share";
 
 export type ShareOutcome = "shared" | "prompt" | "cancelled" | "error";
 

@@ -3,12 +3,12 @@ import type { LoaderFunctionArgs } from "react-router";
 import { count, db, desc, eq, gamesPuzzles } from "@pontistudios/db";
 import { BRAND_NAME } from "~/config/brand";
 import { createLogger } from "~/lib/logger.server";
-import { requireAdminAuth } from "~/lib/server/admin-auth";
-import { getDateKey } from "~/lib/game/core/date";
-import { DEFAULT_GAME_SLUG } from "~/lib/game/generation/catalog";
-import { countPendingArticlesForGame } from "~/lib/game/server/articles.server";
-import { getGameBySlug } from "~/lib/game/server/games.server";
-import { countInventoryForRange, loadPuzzleForDate } from "~/lib/game/server/puzzles.server";
+import { requireAdminAuth } from "~/lib/infrastructure/admin-auth";
+import { getDateKey } from "~/lib/puzzle/date";
+import { DEFAULT_GAME_SLUG } from "~/lib/generation/catalog";
+import { countPendingArticlesForGame } from "~/lib/data/articles.server";
+import { getGameBySlug } from "~/lib/data/games.server";
+import { countInventoryForRange, loadPuzzleForDate } from "~/lib/data/puzzles.server";
 
 const logger = createLogger();
 

@@ -17,12 +17,12 @@ vi.mock("../server/auth", () => ({
   loginUrl: () => "https://api.ponti.io/login?next=https://game.example.com/",
 }));
 
-vi.mock("../lib/game/server/games.server", () => ({
+vi.mock("../lib/data/games.server", () => ({
   getGameBySlug: getGameBySlugMock,
   getActiveGames: getActiveGamesMock,
 }));
 
-vi.mock("../lib/game/server/puzzle.server", () => ({
+vi.mock("../lib/data/puzzle.server", () => ({
   loadActivePublicPuzzleWithAttempt: loadActivePublicPuzzleWithAttemptMock,
 }));
 

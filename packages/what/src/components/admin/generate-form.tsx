@@ -23,8 +23,8 @@ import {
   GENERATE_REASONING_EFFORTS,
   type GenerateReasoningEffort,
   type GenerateSourceMode,
-} from "~/lib/game/admin/generate-types";
-import { dateKeyToLocalDate, localDateToDateKey } from "~/lib/game/core/date";
+} from "~/lib/admin/generate-types";
+import { dateKeyToLocalDate, localDateToDateKey } from "~/lib/puzzle/date";
 
 import styles from "./generate-form.module.css";
 

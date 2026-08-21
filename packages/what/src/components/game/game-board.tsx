@@ -7,8 +7,8 @@ import {
   MAX_GUESSES,
   type GameGuess,
   type PublicGamesPuzzle,
-} from "../../lib/player-game";
-import { buildGameShareText } from "../../lib/player-game/share";
+} from "../../lib/puzzle";
+import { buildGameShareText } from "../../lib/player/share";
 
 import styles from "./game-board.module.css";
 import { GameHeader } from "./game-header";

@@ -1,10 +1,10 @@
 import type { LoaderFunctionArgs } from "react-router";
 
 import { BRAND_NAME } from "~/config/brand";
-import { loadPuzzleForSpecificDate } from "~/lib/game/server/puzzle.server";
-import { buildHominemLoginUrl, getHominemUser } from "~/lib/server/hominem-auth";
-import { resolveGameReturnTo } from "~/lib/server/game-request";
-import { isDateKey } from "~/lib/game/core/date";
+import { loadPuzzleForSpecificDate } from "~/lib/data/puzzle.server";
+import { buildHominemLoginUrl, getHominemUser } from "~/lib/infrastructure/hominem-auth";
+import { resolveGameReturnTo } from "~/lib/infrastructure/game-request";
+import { isDateKey } from "~/lib/puzzle/date";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const dateKey = params.date;

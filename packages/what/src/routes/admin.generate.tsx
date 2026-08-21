@@ -3,21 +3,21 @@ import { SectionIntro } from "@ponti-studios/ui/layout";
 import { useEffect, useRef, useState } from "react";
 import { Link, useLoaderData, type LoaderFunctionArgs } from "react-router";
 
-import { studioModelAllowlist } from "~/lib/game/admin/generate.server";
+import { studioModelAllowlist } from "~/lib/admin/generate.server";
 import {
   GENERATION_PROMPT_FILES,
   type GenerateErr,
   type GenerateOk,
   type GenerateProgressEvent,
-} from "~/lib/game/admin/generate-types";
-import { resolveAdminGame } from "~/lib/game/admin/inventory";
-import { getDateKey } from "~/lib/game/core/date";
-import { DEFAULT_GAME_SLUG } from "~/lib/game/generation/catalog";
-import { MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "~/lib/game/generation/feed-text";
-import { PROMPT_TEST_FIXTURES } from "~/lib/game/fixtures/prompt-test-fixtures";
-import { getPendingArticlesForGame } from "~/lib/game/server/articles.server";
-import { getActiveGames } from "~/lib/game/server/games.server";
-import { getActiveAdminGenerationRun } from "~/lib/game/server/generation-runs.server";
+} from "~/lib/admin/generate-types";
+import { resolveAdminGame } from "~/lib/admin/inventory";
+import { getDateKey } from "~/lib/puzzle/date";
+import { DEFAULT_GAME_SLUG } from "~/lib/generation/catalog";
+import { MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "~/lib/generation/feed-text";
+import { PROMPT_TEST_CASES } from "~/lib/values/prompt-test-cases";
+import { getPendingArticlesForGame } from "~/lib/data/articles.server";
+import { getActiveGames } from "~/lib/data/games.server";
+import { getActiveAdminGenerationRun } from "~/lib/data/generation-runs.server";
 
 import { GenerateForm } from "~/components/admin/generate-form";
 import { GenerateProgress } from "~/components/admin/generate-progress";
@@ -52,7 +52,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       id: article.id,
       title: sanitizeFeedText(article.title, MAX_FEED_TITLE_LENGTH),
     })),
-    fixtures: PROMPT_TEST_FIXTURES.map((fixture) => fixture.id),
+    fixtures: PROMPT_TEST_CASES.map((fixture) => fixture.id),
     activeRunId: activeRun?.id ?? null,
   };
 }

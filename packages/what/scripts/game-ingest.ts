@@ -1,4 +1,4 @@
-import { ensureGameCatalog, ingestAllActiveFeeds } from "../src/lib/game/generation/ingest.server";
+import { ensureGameCatalog, ingestAllActiveFeeds } from "../src/lib/generation/ingest.server";
 import { createLogger } from "../src/lib/logger.server";
 import { runScript } from "./_shared/run-script";
 

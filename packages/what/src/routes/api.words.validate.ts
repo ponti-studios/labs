@@ -1,8 +1,8 @@
 import type { ActionFunctionArgs } from "react-router";
 
-import { DEFAULT_GAME_SLUG } from "~/lib/game/generation/catalog";
-import { getGameBySlug } from "~/lib/game/server/games.server";
-import { isValidWord } from "~/lib/game/server/word-list.server";
+import { DEFAULT_GAME_SLUG } from "~/lib/generation/catalog";
+import { getGameBySlug } from "~/lib/data/games.server";
+import { isValidWord } from "~/lib/data/word-list.server";
 
 export async function action({ request }: ActionFunctionArgs) {
   if (request.method !== "POST") {

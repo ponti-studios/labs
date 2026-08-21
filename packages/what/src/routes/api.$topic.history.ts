@@ -1,8 +1,8 @@
 import type { LoaderFunctionArgs } from "react-router";
 
-import { buildHominemLoginUrl, getHominemUser } from "~/lib/server/hominem-auth";
-import { loadPuzzleHistory } from "~/lib/game/server/history.server";
-import { resolveGameReturnTo } from "~/lib/server/game-request";
+import { buildHominemLoginUrl, getHominemUser } from "~/lib/infrastructure/hominem-auth";
+import { loadPuzzleHistory } from "~/lib/data/history.server";
+import { resolveGameReturnTo } from "~/lib/infrastructure/game-request";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const url = new URL(request.url);

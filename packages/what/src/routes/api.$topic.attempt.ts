@@ -1,8 +1,8 @@
 import type { LoaderFunctionArgs } from "react-router";
 
-import { getHominemUser } from "~/lib/server/hominem-auth";
-import { loadActivePuzzleAttempt } from "~/lib/game/server/puzzle.server";
-import { resolveGameTimeZone } from "~/lib/server/game-request";
+import { getHominemUser } from "~/lib/infrastructure/hominem-auth";
+import { loadActivePuzzleAttempt } from "~/lib/data/puzzle.server";
+import { resolveGameTimeZone } from "~/lib/infrastructure/game-request";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const timeZone = resolveGameTimeZone(request);

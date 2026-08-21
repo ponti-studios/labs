@@ -1,6 +1,6 @@
 import type { GameState } from "../components/game";
-import type { PublicGamesPuzzle, GameGuess, GameStatus } from "../lib/player-game";
-import type { PuzzleHistoryPage } from "../lib/player-game/history-types";
+import type { PublicGamesPuzzle, GameGuess, GameStatus } from "../lib/puzzle";
+import type { PuzzleHistoryPage } from "../lib/player/history-types";
 
 export const puzzle: PublicGamesPuzzle = {
   answerType: "storyline",

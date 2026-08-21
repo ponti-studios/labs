@@ -2,13 +2,13 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { parseArgs } from "node:util";
 
-import { getDateKey } from "../src/lib/game/core/date";
+import { getDateKey } from "../src/lib/puzzle/date";
 import {
   detectRunEnvironment,
   generateCandidates,
-} from "../src/lib/game/generation/generate.server";
-import { PROMPT_TEST_FIXTURES } from "../src/lib/game/fixtures/prompt-test-fixtures";
-import { readSourceFixture, type SourceFixture } from "../src/lib/game/fixtures/source-fixtures";
+} from "../src/lib/generation/generate.server";
+import { PROMPT_TEST_CASES } from "../src/lib/values/prompt-test-cases";
+import { readSourceCapture, type SourceCapture } from "../src/lib/values/source-captures";
 import { getConfiguredTextModel } from "@pontistudios/ai";
 import { db, eq, generationRuns } from "@pontistudios/db";
 import { runScript } from "./_shared/run-script";
@@ -43,7 +43,7 @@ function parseOptions(): Options {
 }
 
 function fixturePasses(
-  fixture: (typeof PROMPT_TEST_FIXTURES)[number],
+  fixture: (typeof PROMPT_TEST_CASES)[number],
   result: Awaited<ReturnType<typeof generateCandidates>>,
 ) {
   const selected = result.selectedIndex === null ? null : result.candidates[result.selectedIndex];
@@ -121,10 +121,10 @@ async function main() {
       ? options.promptFiles
       : ["src/prompts/game-generation.md", "src/prompts/game-generation-v2.md"];
   const sourceFixtures = await Promise.all(
-    options.sourceFixtures.map((fixturePath) => readSourceFixture(path.resolve(fixturePath))),
+    options.sourceFixtures.map((fixturePath) => readSourceCapture(path.resolve(fixturePath))),
   );
-  const fixtures: Array<(typeof PROMPT_TEST_FIXTURES)[number] | SourceFixture> =
-    sourceFixtures.length > 0 ? sourceFixtures : PROMPT_TEST_FIXTURES;
+  const fixtures: Array<(typeof PROMPT_TEST_CASES)[number] | SourceCapture> =
+    sourceFixtures.length > 0 ? sourceFixtures : PROMPT_TEST_CASES;
 
   const model = options.model ?? getConfiguredTextModel();
 

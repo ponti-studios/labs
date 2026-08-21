@@ -2,9 +2,9 @@ import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 
 import { getGameUser, loginUrl } from "../server/auth";
 import { BRAND_NAME } from "../config/brand";
-import { isDateKey } from "../lib/game/core/date";
-import { getGameBySlug } from "../lib/game/server/games.server";
-import { loadPuzzleForSpecificDate } from "../lib/game/server/puzzle.server";
+import { isDateKey } from "../lib/puzzle/date";
+import { getGameBySlug } from "../lib/data/games.server";
+import { loadPuzzleForSpecificDate } from "../lib/data/puzzle.server";
 import { DatePage } from "../components/pages/date-page";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {

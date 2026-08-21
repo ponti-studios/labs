@@ -2,20 +2,20 @@ import "dotenv/config";
 import { parseArgs } from "node:util";
 
 import { closeDb } from "@pontistudios/db";
-import { withGenerateLock } from "~/lib/game/server/advisory-lock";
+import { withGenerateLock } from "~/lib/infrastructure/advisory-lock.server";
 
 import { getErrorMessage } from "../src/lib/errors";
 import { createLogger } from "../src/lib/logger.server";
-import { CIRCUIT_BREAKER_THRESHOLD, createCircuitBreaker } from "../src/lib/game/circuit-breaker";
-import { getDateKey } from "../src/lib/game/core/date";
-import { resolveGenerateRange } from "../src/lib/game/generate-range";
-import { GAME_READY_INVENTORY_DAYS, runGenerateRange } from "../src/lib/game/generation-runner";
-import { getActiveGames } from "../src/lib/game/server/games.server";
+import { CIRCUIT_BREAKER_THRESHOLD, createCircuitBreaker } from "../src/lib/generation/circuit-breaker";
+import { getDateKey } from "../src/lib/puzzle/date";
+import { resolveGenerateRange } from "../src/lib/generation/generate-range";
+import { GAME_READY_INVENTORY_DAYS, runGenerateRange } from "../src/lib/generation/generation-runner";
+import { getActiveGames } from "../src/lib/data/games.server";
 import {
   backfillPuzzlePublishedAt,
   countInventoryForRange,
-} from "../src/lib/game/server/puzzles.server";
-import { LabyrinthServerEnv } from "../src/lib/server/env";
+} from "../src/lib/data/puzzles.server";
+import { LabyrinthServerEnv } from "../src/lib/infrastructure/env";
 
 const logger = createLogger();
 
@@ -70,7 +70,7 @@ async function main() {
   generateLogger.info({ event: "[GENERATE_START]" }, "starting generate run");
   await backfillPuzzlePublishedAt();
   const { expireGenerations, reapStaleGenerations } =
-    await import("../src/lib/game/admin/generate.server");
+    await import("../src/lib/admin/generate.server");
   await reapStaleGenerations();
   await expireGenerations();
 

@@ -1,14 +1,14 @@
 /** Seed a deterministic game history scenario for local development. */
 import { parseArgs } from "node:util";
 
-import { addDaysToDateKey, getDateKey } from "../src/lib/game/core/date";
-import { ensureGameCatalog } from "../src/lib/game/generation/ingest.server";
+import { addDaysToDateKey, getDateKey } from "../src/lib/puzzle/date";
+import { ensureGameCatalog } from "../src/lib/generation/ingest.server";
 import {
   ensureSeedPuzzle,
   requireSeedGame,
   seedAttempt,
   type SeedAttemptStatus,
-} from "../src/lib/game/server/dev-seed.server";
+} from "../src/lib/data/dev-seed.server";
 import { runScript } from "./_shared/run-script";
 
 const DEFAULT_USER_ID = "8a3479d7-95ef-4dd5-b5ff-82d92a208933";

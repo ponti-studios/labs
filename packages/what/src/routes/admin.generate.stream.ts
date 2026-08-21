@@ -1,12 +1,12 @@
 import type { LoaderFunctionArgs } from "react-router";
 
 import { BRAND_NAME } from "~/config/brand";
-import { loadAdminGeneration, resolveAdminGame, toGenerateOk } from "~/lib/game/admin/inventory";
+import { loadAdminGeneration, resolveAdminGame, toGenerateOk } from "~/lib/admin/inventory";
 import {
   subscribeToGeneration,
   type GenerationStreamEvent,
-} from "~/lib/game/admin/generation-events.server";
-import { DEFAULT_GAME_SLUG } from "~/lib/game/generation/catalog";
+} from "~/lib/admin/generation-events.server";
+import { DEFAULT_GAME_SLUG } from "~/lib/generation/catalog";
 import { db, eq, generationRuns } from "@pontistudios/db";
 
 /**

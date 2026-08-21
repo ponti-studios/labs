@@ -1,6 +1,6 @@
 import { memo, useEffect, useRef } from "react";
 
-import { MAX_GUESSES, GAME_ANSWER_LENGTH, type GameGuess } from "../../lib/player-game";
+import { MAX_GUESSES, GAME_ANSWER_LENGTH, type GameGuess } from "../../lib/puzzle";
 import { cn } from "../../lib/cn";
 
 import { GameTile, type GameTileState } from "./game-tile";

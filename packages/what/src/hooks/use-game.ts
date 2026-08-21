@@ -10,7 +10,7 @@ import {
   type PublicGamesPuzzle,
   type GameGuess,
   type GameGuessResult,
-} from "../lib/player-game";
+} from "../lib/puzzle";
 
 import { useAnimation } from "./use-animation";
 import { useTyping } from "./use-typing";
