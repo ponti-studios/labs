@@ -10,6 +10,7 @@ import {
 
 import type { Route } from "./+types/root";
 import { BRAND_NAME, BRAND_TAGLINE } from "./config/brand";
+import { PwaUpdatePrompt } from "./components/pwa-update-prompt";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -50,12 +51,32 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      void navigator.serviceWorker.register("/sw.js", { scope: "/" });
-    }
+    if (!import.meta.env.DEV || !("serviceWorker" in navigator)) return;
+
+    // Remove the old handwritten worker once when a development page loads.
+    // It cached un-hashed Vite modules and could cause hydration mismatches.
+    void navigator.serviceWorker
+      .getRegistrations()
+      .then((registrations) =>
+        Promise.all(registrations.map((registration) => registration.unregister())),
+      );
+    void caches
+      .keys()
+      .then((keys) =>
+        Promise.all(
+          keys
+            .filter((key) => key.startsWith("game-"))
+            .map((key) => caches.delete(key)),
+        ),
+      );
   }, []);
 
-  return <Outlet />;
+  return (
+    <>
+      <Outlet />
+      <PwaUpdatePrompt />
+    </>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {

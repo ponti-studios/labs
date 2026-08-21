@@ -1,0 +1,47 @@
+@reference "../../styles/variables.css";
+.prompt {
+  position: fixed;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  z-index: 20;
+  width: min(22rem, calc(100vw - 2rem));
+  border: 1px solid var(--game-paper-border);
+  border-radius: 12px;
+  background: var(--game-paper);
+  padding: 0.9rem;
+  color: var(--game-ink);
+  box-shadow: 0 8px 24px var(--game-shadow-drop);
+}
+
+.message {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.update,
+.dismiss {
+  border: 1px solid var(--game-link-text);
+  border-radius: 7px;
+  padding: 0.45rem 0.75rem;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.update {
+  background: var(--game-link-text);
+  color: var(--game-paper);
+}
+
+.dismiss {
+  background: transparent;
+  color: var(--game-link-text);
+}

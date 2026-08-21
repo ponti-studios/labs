@@ -1,9 +1,10 @@
-import { useLoaderData, type LoaderFunctionArgs } from "react-router";
+import { useLoaderData, useNavigate, useRevalidator, type LoaderFunctionArgs } from "react-router";
 
+import { GameBoard } from "../components/game";
+import { useTimeZone } from "../hooks/use-timezone";
 import { getActiveGames, getGameBySlug } from "../lib/data/games.server";
 import { loadActivePublicPuzzleWithAttempt } from "../lib/data/puzzle.server";
 import { readTimeZoneCookie } from "../lib/puzzle/timezone";
-import { TodayPage } from "../components/pages/today-page";
 import { getGameUser, loginUrl } from "../server/auth";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -32,5 +33,31 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 }
 
 export default function TodayRoute() {
-  return <TodayPage {...useLoaderData<typeof loader>()} />;
+  const data = useLoaderData<typeof loader>();
+  const revalidator = useRevalidator();
+  const navigate = useNavigate();
+
+  useTimeZone(revalidator.revalidate);
+
+  if (!data.puzzle) {
+    return (
+      <div style={{ textAlign: "center", padding: "2rem" }}>
+        <p style={{ fontSize: "0.75rem", opacity: 0.7 }}>No puzzle available right now.</p>
+      </div>
+    );
+  }
+
+  const boardKey = `${data.gameSlug}:${data.attempt ? `${data.attempt.status}:${data.attempt.guesses.length}` : "none"}`;
+
+  return (
+    <GameBoard
+      key={boardKey}
+      puzzle={data.puzzle}
+      initialGuesses={data.attempt?.guesses ?? []}
+      loginUrl={data.loginUrl}
+      gameSlug={data.gameSlug}
+      topics={data.games}
+      onTopicChange={(slug) => navigate(`/${slug}`)}
+    />
+  );
 }
