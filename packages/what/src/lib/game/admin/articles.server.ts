@@ -1,4 +1,4 @@
-import type { Article, GamesTopic } from "~/lib/server/db";
+import type { Article, GamesTopic } from "@pontistudios/db";
 
 import { getErrorMessage } from "../../errors";
 import { MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "../generation/feed-text";

@@ -1,24 +1,24 @@
+import { createLogger } from "../../logger.server";
+import type { HominemUser } from "../../server/hominem-auth";
+import { addDaysToDateKey, getDateKey } from "../core/date";
 import {
   evaluateGuess,
+  GAME_ANSWER_LENGTH,
   hasGuessedWord,
   isGuessSolved,
   MAX_GUESSES,
   normalizeGuess,
-  GAME_ANSWER_LENGTH,
-  type GameStatus,
-  type PublicGamesPuzzle,
   type GameGuess,
   type GameGuessResult,
+  type GameStatus,
+  type PublicGamesPuzzle,
 } from "../core/rules";
-import { addDaysToDateKey, getDateKey } from "../core/date";
-import { createLogger } from "../../logger.server";
-import type { HominemUser } from "../../server/hominem-auth";
-import type { PuzzleRecord } from "./types";
+import { DEFAULT_GAME_SLUG } from "../generation/catalog";
 import { appendGuess, countRecentGuesses, createAttempt, loadAttempt } from "./attempts.server";
 import { getGameBySlug } from "./games.server";
 import { loadMostRecentPuzzle, loadPuzzleForDate } from "./puzzles.server";
+import type { PuzzleRecord } from "./types";
 import { isValidWord } from "./word-list.server";
-import { DEFAULT_GAME_SLUG } from "../generation/catalog";
 
 const logger = createLogger();
 
@@ -27,21 +27,26 @@ const logger = createLogger();
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX_GUESSES = 10;
 
-async function requireGameId(gameSlug = DEFAULT_GAME_SLUG): Promise<number> {
+async function requireGame(gameSlug = DEFAULT_GAME_SLUG) {
   const game = await getGameBySlug(gameSlug);
   if (!game) throw new Error(`Game not found: ${gameSlug}`);
-  return game.id;
+  return game;
 }
 
 // ── DTO mapping ──────────────────────────────────────────────────────────────
 
-export function toPublicGamesPuzzle(record: PuzzleRecord, isFallback = false): PublicGamesPuzzle {
+export function toPublicGamesPuzzle(
+  record: PuzzleRecord,
+  isFallback = false,
+  topic?: string,
+): PublicGamesPuzzle {
   return {
     answerType: record.answerType,
     clue: record.clue,
     dateKey: record.dateUtc,
     detail: record.detail,
     isFallback,
+    topic,
     sources: [
       {
         url: record.article.url,
@@ -67,7 +72,7 @@ async function resolveActivePuzzle(
   now: Date,
   timeZone: string,
   gameSlug = DEFAULT_GAME_SLUG,
-): Promise<{ gameId: number; puzzle: PuzzleRecord; isFallback: boolean } | null> {
+): Promise<{ gameId: number; puzzle: PuzzleRecord; isFallback: boolean; topic: string } | null> {
   const dateKey = getDateKey(now, timeZone);
   const childLogger = logger.child({
     operation: "resolveActivePuzzle",
@@ -75,7 +80,8 @@ async function resolveActivePuzzle(
     timestamp: now.toISOString(),
   });
 
-  const gameId = await requireGameId(gameSlug);
+  const game = await requireGame(gameSlug);
+  const gameId = game.id;
   let puzzle = await loadPuzzleForDate(gameId, dateKey);
 
   // Fallback: serve the most-recently created puzzle from today or earlier.
@@ -108,7 +114,7 @@ async function resolveActivePuzzle(
     },
     "puzzle loaded",
   );
-  return { gameId, puzzle, isFallback: puzzle.dateUtc !== dateKey };
+  return { gameId, puzzle, isFallback: puzzle.dateUtc !== dateKey, topic: game.name };
 }
 
 export async function loadActivePublicPuzzle(
@@ -118,7 +124,7 @@ export async function loadActivePublicPuzzle(
 ): Promise<{ puzzle: PublicGamesPuzzle } | null> {
   const resolved = await resolveActivePuzzle(now, timeZone, gameSlug);
   if (!resolved) return null;
-  return { puzzle: toPublicGamesPuzzle(resolved.puzzle, resolved.isFallback) };
+  return { puzzle: toPublicGamesPuzzle(resolved.puzzle, resolved.isFallback, resolved.topic) };
 }
 
 export interface ActivePuzzleAttempt {
@@ -154,7 +160,7 @@ export async function loadActivePublicPuzzleWithAttempt(
   }
 
   return {
-    puzzle: toPublicGamesPuzzle(resolved.puzzle, resolved.isFallback),
+    puzzle: toPublicGamesPuzzle(resolved.puzzle, resolved.isFallback, resolved.topic),
     attempt,
   };
 }
@@ -204,14 +210,15 @@ export async function loadPuzzleForSpecificDate(
   user: HominemUser | null,
   gameSlug = DEFAULT_GAME_SLUG,
 ): Promise<DatedPuzzleEnvelope | null> {
-  const gameId = await requireGameId(gameSlug);
+  const game = await requireGame(gameSlug);
+  const gameId = game.id;
   const puzzle = await loadPuzzleForDate(gameId, dateKey);
   if (!puzzle) return null;
 
   const attemptRow = user ? await loadAttempt(user.id, gameId, dateKey) : null;
 
   return {
-    puzzle: toPublicGamesPuzzle(puzzle, false),
+    puzzle: toPublicGamesPuzzle(puzzle, false, game.name),
     attempt: attemptRow
       ? { guesses: attemptRow.guesses as GameGuess[], status: attemptRow.status }
       : null,
@@ -250,7 +257,7 @@ export async function evaluateGuessServer(
   }
 
   // Try exact dateKey, then previous day as grace period for midnight-rollover games
-  const gameId = await requireGameId(gameSlug);
+  const gameId = (await requireGame(gameSlug)).id;
   let puzzle = await loadPuzzleForDate(gameId, dateKey);
   if (!puzzle) {
     const prevDateKey = addDaysToDateKey(dateKey, -1);

@@ -23,7 +23,7 @@ const ORIGINAL = {
 
 function adminRequest() {
   const credentials = Buffer.from("admin:secret").toString("base64");
-  return new Request("https://labs.ponti.io/games/game/admin", {
+  return new Request("https://labs.ponti.io/admin", {
     headers: { Authorization: `Basic ${credentials}` },
   });
 }
@@ -46,7 +46,7 @@ describe("requireGameAdmin", () => {
 
   it("throws 401 without Basic Auth", async () => {
     await expect(
-      requireGameAdmin(new Request("https://labs.ponti.io/games/game/admin"), "loader"),
+      requireGameAdmin(new Request("https://labs.ponti.io/admin"), "loader"),
     ).rejects.toMatchObject({ status: 401 });
   });
 
@@ -90,10 +90,7 @@ describe("requireGameAdmin", () => {
     process.env.NODE_ENV = "development";
     delete process.env.ADMIN_SECRET;
     getHominemUserMock.mockResolvedValue(null);
-    const result = await requireGameAdmin(
-      new Request("http://localhost:3001/games/game/admin"),
-      "loader",
-    );
+    const result = await requireGameAdmin(new Request("http://localhost:3001/admin"), "loader");
     expect(result.userId).toBe("local-dev");
   });
 });
@@ -134,7 +131,7 @@ describe("requireGameAdminMiddleware", () => {
   it("returns 401 JSON for a POST without a Hominem session", async () => {
     getHominemUserMock.mockResolvedValue(null);
     const credentials = Buffer.from("admin:secret").toString("base64");
-    const request = new Request("https://labs.ponti.io/games/game/admin", {
+    const request = new Request("https://labs.ponti.io/admin", {
       method: "POST",
       headers: { Authorization: `Basic ${credentials}` },
     });

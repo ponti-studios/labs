@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { db, gamesTopics } from "~/lib/server/db";
+import { db, gamesTopics } from "@pontistudios/db";
 import { cleanAll } from "../../../data/test-db";
 import { GAME_CATALOG } from "../generation/catalog";
 import { ensureGameCatalog, extractArticleText, fetchFeedItems } from "../generation/ingest.server";
@@ -61,7 +61,7 @@ describe("ensureGameCatalog", () => {
   it("renames a stale row that already holds a catalog feed URL under a different slug", async () => {
     const reality = GAME_CATALOG[0];
     await db.insert(gamesTopics).values({
-      slug: "realitea",
+      slug: "reality",
       name: "Old Name",
       feedUrl: reality.feedUrl,
       feedLabel: "Old Label",

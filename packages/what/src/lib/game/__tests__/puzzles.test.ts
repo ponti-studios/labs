@@ -1,4 +1,4 @@
-import { articles, gamesPuzzles, db } from "~/lib/server/db";
+import { articles, gamesPuzzles, db } from "@pontistudios/db";
 import { beforeEach, describe, expect, it } from "vitest";
 import { cleanAll } from "../../../data/test-db";
 import { seedGame, seedGameWithPuzzles } from "./test-helpers";

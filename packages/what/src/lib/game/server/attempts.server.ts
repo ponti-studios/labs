@@ -3,7 +3,7 @@
  * history/stats.
  */
 
-import type { GamesAttempt } from "~/lib/server/db";
+import type { GamesAttempt } from "@pontistudios/db";
 import {
   and,
   articles,
@@ -17,7 +17,7 @@ import {
   inArray,
   lte,
   sql,
-} from "~/lib/server/db";
+} from "@pontistudios/db";
 
 import type { PuzzleRecord } from "./types";
 

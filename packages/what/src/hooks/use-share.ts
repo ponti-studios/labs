@@ -1,0 +1,52 @@
+import { useCallback } from "react";
+
+import { BRAND_NAME } from "../config/brand";
+import type { GameGuess } from "../lib/player-game";
+import { buildGameShareText } from "../lib/player-game/share";
+
+export type ShareOutcome = "shared" | "prompt" | "cancelled" | "error";
+
+export interface UseShare {
+  share: () => Promise<ShareOutcome>;
+}
+
+export function useShare({
+  guesses,
+  isSolved,
+  topic,
+  onResult,
+}: {
+  guesses: readonly GameGuess[];
+  isSolved: boolean;
+  topic?: string;
+  onResult: (outcome: ShareOutcome) => void;
+}): UseShare {
+  const share = useCallback(async (): Promise<ShareOutcome> => {
+    const shareText = buildGameShareText(guesses, isSolved, topic);
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: BRAND_NAME,
+          text: shareText,
+        });
+        onResult("shared");
+        return "shared";
+      }
+
+      window.prompt(`Share your ${BRAND_NAME} result:`, shareText);
+      onResult("prompt");
+      return "prompt";
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        onResult("cancelled");
+        return "cancelled";
+      }
+
+      onResult("error");
+      return "error";
+    }
+  }, [guesses, isSolved, onResult, topic]);
+
+  return { share };
+}

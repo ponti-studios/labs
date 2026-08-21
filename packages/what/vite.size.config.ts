@@ -12,17 +12,17 @@ export default defineConfig({
     lib: {
       entry: {
         // primitives
-        button: resolve(__dirname, "src/primitives/button.tsx"),
-        card: resolve(__dirname, "src/primitives/card.tsx"),
-        popover: resolve(__dirname, "src/primitives/popover.tsx"),
-        select: resolve(__dirname, "src/primitives/select.tsx"),
-        "empty-state": resolve(__dirname, "src/primitives/empty-state.tsx"),
-        "status-badge": resolve(__dirname, "src/primitives/status-badge.tsx"),
-        sheet: resolve(__dirname, "src/primitives/sheet.tsx"),
-        "primitives-index": resolve(__dirname, "src/primitives/index.ts"),
+        button: resolve(__dirname, "src/components/primitives/button.tsx"),
+        card: resolve(__dirname, "src/components/primitives/card.tsx"),
+        popover: resolve(__dirname, "src/components/primitives/popover.tsx"),
+        select: resolve(__dirname, "src/components/primitives/select.tsx"),
+        "empty-state": resolve(__dirname, "src/components/primitives/empty-state.tsx"),
+        "status-badge": resolve(__dirname, "src/components/primitives/status-badge.tsx"),
+        sheet: resolve(__dirname, "src/components/primitives/sheet.tsx"),
+        "primitives-index": resolve(__dirname, "src/components/primitives/index.ts"),
         // game
-        "game-board": resolve(__dirname, "src/game/game-board.tsx"),
-        "game-index": resolve(__dirname, "src/game/index.ts"),
+        "game-board": resolve(__dirname, "src/components/game/game-board.tsx"),
+        "game-index": resolve(__dirname, "src/components/game/index.ts"),
       },
       formats: ["es"],
     },

@@ -21,6 +21,7 @@ interface GamesPuzzleDto {
   clue: string;
   dateKey: string;
   detail: string;
+  topic?: string;
   sources: PuzzleSource[];
 }
 

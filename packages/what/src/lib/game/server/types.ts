@@ -1,4 +1,4 @@
-import type { Article, GamesPuzzle as GamesPuzzleRow } from "~/lib/server/db";
+import type { Article, GamesPuzzle as GamesPuzzleRow } from "@pontistudios/db";
 
 export interface PuzzleRecord extends GamesPuzzleRow {
   article: Article;

@@ -3,7 +3,7 @@ import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 import { getGameUser, loginUrl } from "../server/auth";
 import { getGameBySlug } from "../lib/game/server/games.server";
 import { loadPuzzleHistory } from "../lib/game/server/history.server";
-import { HistoryPage } from "../pages/history-page";
+import { HistoryPage } from "../components/pages/history-page";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const topic = params.topic!;
