@@ -1,6 +1,6 @@
 import { GenerateReasonType } from "../admin/generate-copy";
-import { normalizeGuess, GAME_ANSWER_LENGTH } from "../puzzle/rules";
 import { isDictionaryWord } from "../data/word-list.server";
+import { GAME_ANSWER_LENGTH, normalizeGuess } from "../puzzle/rules";
 import type { ValidationResult } from "./types";
 
 const DEFAULT_SOURCE_DOMAIN = "realityblurb.com";
@@ -50,10 +50,7 @@ export function validateCandidate(
   if (candidate.answerType === "person") {
     reasons.push(GenerateReasonType.PersonAnswerType);
   }
-  if (
-    candidate.clue.toUpperCase().includes(normalizedAnswer) ||
-    candidate.detail.toUpperCase().includes(normalizedAnswer)
-  ) {
+  if (normalizeGuess(candidate.clue).includes(normalizedAnswer)) {
     reasons.push(GenerateReasonType.AnswerLeaked);
   }
   if (containsPromptControlText(candidate.clue) || containsPromptControlText(candidate.detail)) {
