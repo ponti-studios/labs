@@ -51,7 +51,7 @@ classify the change
    affected tests.
 4. Commit the schema, generated migration, snapshot, and journal together.
 5. CI must pass before production migration begins.
-6. The `migrate` job in `deploy-prod.yml` is the only production migration job.
+6. The `migrate` job in `ci.yml` is the only production migration job.
    It runs on every production deployment and is a no-op when there are no
    pending migrations. Application deploys and game-generation workflows must
    not run migrations.
