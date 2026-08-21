@@ -1,7 +1,11 @@
-import { index, prefix, route, type RouteConfig } from "@react-router/dev/routes";
+import { index, route, type RouteConfig } from "@react-router/dev/routes";
 
 export default [
   index("routes/topic-redirect.tsx"),
+  route(
+    "/.well-known/appspecific/com.chrome.devtools.json",
+    "routes/well-known.chrome-devtools.ts",
+  ),
   route("/healthz", "routes/healthz.ts"),
   route("/api/games", "routes/api.games.ts"),
   route("/api/health", "routes/api.health.ts"),
@@ -27,6 +31,6 @@ export default [
     route("costs", "routes/admin.costs.tsx"),
   ]),
   route("/:topic/history", "routes/history.tsx"),
-  route("/:topic", "routes/today.tsx"),
-  route("/:topic/:dateKey", "routes/dated-puzzle.tsx"),
+  route("/:topic", "routes/topic.tsx"),
+  route("/:topic/:dateKey", "routes/topic.$dateKey.tsx"),
 ] satisfies RouteConfig;
