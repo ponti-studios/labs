@@ -38,7 +38,7 @@ const PUZZLE = {
 };
 
 async function importLoader() {
-  const mod = await import("./today");
+  const mod = await import("./topic");
   return mod.loader;
 }
 

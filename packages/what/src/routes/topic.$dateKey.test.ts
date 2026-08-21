@@ -31,7 +31,7 @@ const PUZZLE = {
 };
 
 async function importLoader() {
-  const mod = await import("./dated-puzzle");
+  const mod = await import("./topic.$dateKey");
   return mod.loader;
 }
 
