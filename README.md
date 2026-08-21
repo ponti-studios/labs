@@ -54,3 +54,4 @@ to `main`.
 Before changing environment values, routes, databases, authentication, or
 deployment workflows, read the [core development flows](docs/operations/core-development-flows.md)
 and the [deployment and routing lessons](docs/operations/deployment-and-routing.md).
+For environment-variable changes, use the [environment configuration contract](docs/operations/environment-configuration.md).
