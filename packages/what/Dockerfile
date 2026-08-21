@@ -38,9 +38,8 @@ COPY --from=build --chown=app:app /app/node_modules ./node_modules
 COPY --from=build --chown=app:app /app/packages/what/package.json ./packages/what/package.json
 COPY --from=build --chown=app:app /app/packages/what/node_modules ./packages/what/node_modules
 COPY --from=build --chown=app:app /app/packages/what/build ./packages/what/build
-# The compiled server resolves this asset relative to build/server, which
-# points at /app/packages/data at runtime.
-COPY --from=build --chown=app:app /app/packages/what/src/data ./packages/data
+# The compiled server resolves this asset under the package working directory.
+COPY --from=build --chown=app:app /app/packages/what/src/data ./packages/what/data
 
 WORKDIR /app/packages/what
 USER app
