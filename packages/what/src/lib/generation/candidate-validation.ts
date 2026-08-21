@@ -34,7 +34,11 @@ export function validateCandidate(
   if (normalizedAnswer.length !== GAME_ANSWER_LENGTH) {
     reasons.push(GenerateReasonType.NotFiveLetters);
   }
-  if (!normalizedAnswer || /[^A-Z]/.test(normalizedAnswer)) {
+  // `normalizeGuess` is intentionally forgiving for player input, but answer
+  // generation must be strict. Otherwise values such as "S P L I T" or
+  // "SPL-IT" normalize to a valid five-letter word and are then stored/displayed
+  // in their non-five-letter raw form.
+  if (!/^[A-Za-z]{5}$/.test(candidate.answer)) {
     reasons.push(GenerateReasonType.NotLetters);
   }
   if (normalizedAnswer.length === GAME_ANSWER_LENGTH && !isDictionaryWord(normalizedAnswer)) {
