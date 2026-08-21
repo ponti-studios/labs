@@ -2,6 +2,7 @@ import { index, prefix, route, type RouteConfig } from "@react-router/dev/routes
 
 export default [
   index("routes/topic-redirect.tsx"),
+  route("/healthz", "routes/healthz.ts"),
   route("/api/games/game/attempt", "routes/api.games.game.attempt.ts"),
   route("/api/games/game/games", "routes/api.games.game.games.ts"),
   route("/api/games/game/guess", "routes/api.games.game.guess.ts"),
