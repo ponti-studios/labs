@@ -5,7 +5,8 @@ ARG NODE_VERSION=24-bookworm-slim
 FROM node:${NODE_VERSION} AS base
 WORKDIR /app
 ENV PNPM_HOME=/pnpm \
-    PATH=/pnpm:$PATH
+    PATH=/pnpm:$PATH \
+    CI=true
 RUN corepack enable
 
 FROM base AS builder
