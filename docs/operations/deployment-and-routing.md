@@ -80,19 +80,21 @@ root workspace files.
 The required production sequence is:
 
 ```text
-CI succeeds
-  -> deploy-db-prod succeeds when packages/db changes
-    -> application deploy workflows may run
+GitHub native `paths` filter matches
+  -> CI succeeds
+    -> production migration check succeeds
+      -> Labs and What deploy
 ```
 
 - CI uses the Foundation test database and runs the normal Drizzle migration
   command against that disposable test target.
-- Production migrations run only in `deploy-db-prod`, never in an application
-  deploy or game-generation workflow.
-- Application deploy workflows must be triggered from the successful database
-  workflow and must check the source SHA from that workflow.
-- A database change must not be hidden by a no-op deploy. The change detector,
-  workflow trigger, and migration command must be tested together.
+- Production migrations run only in the `migrate` job of `deploy-prod.yml`,
+  never in an application deploy or game-generation workflow. The migration
+  command runs on every production deployment and is a no-op when there are no
+  pending migrations.
+- Labs and What deploy jobs both require the successful migration job.
+- Production scope is selected by GitHub's native `on.push.paths` filter. There
+  is no repository-specific changed-file script.
 - Never repair production by dropping or resetting the database. Inspect
   Drizzle's migration tracker and follow the repository migration rules.
 
@@ -113,8 +115,7 @@ CI succeeds
 Check the complete chain, in order:
 
 1. CI is green for the intended commit SHA.
-2. `deploy-db-prod` is green or correctly reports that no database changes are
-   required.
+2. The production migration job is green.
 3. The expected Labs/What Railway deployment exists for that same SHA and is
    actually `SUCCESS`, not merely submitted or detached.
 4. Public smoke tests follow redirects and inspect the final URL:

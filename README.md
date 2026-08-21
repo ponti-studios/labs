@@ -48,7 +48,8 @@ Credentials: `postgres` / `postgres` | `minioadmin` / `minioadmin`
 
 ### Deployment
 
-Deployed to Railway via `.github/workflows/deploy-playground-prod.yml` on push to `main`.
+Deployed to Railway via `.github/workflows/deploy-prod.yml` on production-relevant
+pushes to `main`.
 
 Before changing environment values, routes, databases, authentication, or
 deployment workflows, read the [core development flows](docs/operations/core-development-flows.md)

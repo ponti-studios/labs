@@ -51,9 +51,11 @@ classify the change
    affected tests.
 4. Commit the schema, generated migration, snapshot, and journal together.
 5. CI must pass before production migration begins.
-6. `deploy-db-prod` is the only production migration job. Application deploys
-   and game-generation workflows must not run migrations.
-7. Application deployment may proceed only after the database workflow succeeds.
+6. The `migrate` job in `deploy-prod.yml` is the only production migration job.
+   It runs on every production deployment and is a no-op when there are no
+   pending migrations. Application deploys and game-generation workflows must
+   not run migrations.
+7. Labs and What deployment may proceed only after the migration job succeeds.
 8. If production is inconsistent, inspect Drizzle's migration tracker and
    follow the migration recovery rules in `AGENTS.md`. Never reset or drop the
    database to make a migration pass.
@@ -147,4 +149,3 @@ curl -sS -D - -o /dev/null https://labs.ponti.io/games/realitea
 
 For failures, diagnose outside-in: public response, deployed variables,
 Railway deployment/build logs, workflow build context, then application code.
-
