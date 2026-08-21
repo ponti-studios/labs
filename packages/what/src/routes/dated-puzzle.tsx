@@ -1,11 +1,13 @@
 import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 
-import { getGameUser, loginUrl } from "../server/auth";
+import { GameBoard } from "../components/game";
+import styles from "../components/pages/date-page.module.css";
+import { Button, Card, CardContent } from "../components/primitives";
 import { BRAND_NAME } from "../config/brand";
-import { isDateKey } from "../lib/puzzle/date";
 import { getGameBySlug } from "../lib/data/games.server";
 import { loadPuzzleForSpecificDate } from "../lib/data/puzzle.server";
-import { DatePage } from "../components/pages/date-page";
+import { isDateKey } from "../lib/puzzle/date";
+import { getGameUser, loginUrl } from "../server/auth";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const topic = params.topic!;
@@ -29,5 +31,58 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 }
 
 export default function DatedPuzzleRoute() {
-  return <DatePage {...useLoaderData<typeof loader>()} />;
+  const { puzzle, attempt, signedIn, loginUrl, gameSlug } = useLoaderData<typeof loader>();
+  if (!signedIn) {
+    return <SignedOutTeaser dateKey={puzzle.dateKey} clue={puzzle.clue} loginUrl={loginUrl} />;
+  }
+
+  return (
+    <GameBoard
+      puzzle={puzzle}
+      initialGuesses={attempt?.guesses ?? []}
+      loginUrl={loginUrl}
+      gameSlug={gameSlug}
+    />
+  );
+}
+
+function SignedOutTeaser({
+  dateKey,
+  clue,
+  loginUrl,
+}: {
+  dateKey: string;
+  clue: string;
+  loginUrl: string;
+}) {
+  return (
+    <div className={styles.teaser}>
+      <header className={styles.header}>
+        <div className={styles.headerInner}>
+          <img src="/logo.webp" alt={BRAND_NAME} className={styles.logo} />
+        </div>
+      </header>
+
+      <div className={styles.body}>
+        <div className={styles.clue}>
+          <p className={styles.clueLabel}>{dateKey}</p>
+          <p className={styles.clueText}>{clue}</p>
+        </div>
+
+        <Card className={styles.card}>
+          <CardContent className={styles.cardContent}>
+            <div>
+              <p className={styles.clueLabel}>Sign in to play</p>
+              <p style={{ marginTop: "0.25rem", fontSize: "0.875rem" }}>
+                Six guesses a day, saved automatically — sign in to play this puzzle.
+              </p>
+            </div>
+            <Button asChild variant="default">
+              <a href={loginUrl}>Sign in to play</a>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
 }

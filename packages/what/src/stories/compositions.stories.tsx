@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { GameBoard, GameBoardSkeleton } from "../components/game";
-import { DatePage } from "../components/pages/date-page";
 import { fallbackPuzzle, guesses, puzzle } from "./fixtures";
 
 const meta = { title: "Game/Compositions", parameters: { layout: "padded" } } satisfies Meta;
@@ -33,11 +32,3 @@ export const BoardWithTopics: Story = {
   ),
 };
 export const BoardSkeleton: Story = { render: () => <GameBoardSkeleton /> };
-export const SignedOutDatePage: Story = {
-  render: () => <DatePage {...common} puzzle={puzzle} attempt={null} signedIn={false} />,
-};
-export const SignedInDatePage: Story = {
-  render: () => (
-    <DatePage {...common} puzzle={puzzle} attempt={{ guesses, status: "playing" }} signedIn />
-  ),
-};
