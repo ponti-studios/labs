@@ -52,6 +52,7 @@ const featureRoutes = [
   // The player UI and game administration now live in the standalone `what`
   // app. Keep only the original root bookmark redirect.
   route("/games/realitea", "routes/redirects/game.ts"),
+  route("/games/what", "routes/redirects/game.ts"),
   route("/games/cards", "routes/games/cards.tsx"),
   route("/games/tetris", "routes/games/tetris.tsx"),
 ] satisfies RouteConfig;

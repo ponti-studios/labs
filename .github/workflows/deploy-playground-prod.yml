@@ -47,7 +47,7 @@ jobs:
       node-version: "24"
       railway-cli-version: "4.58.0"
       config_path: "packages/labs/railway.json"
-      deploy_path: "packages/labs"
+      deploy_path: ""
       timeout-minutes: 10
     secrets:
       railway_token: ${{ secrets.RAILWAY_TOKEN }}
