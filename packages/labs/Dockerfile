@@ -35,7 +35,6 @@ RUN apt-get update && \
 COPY --from=builder --chown=app:app /app/node_modules ./node_modules
 COPY --from=builder --chown=app:app /app/package.json ./package.json
 COPY --from=builder --chown=app:app /app/build ./build
-COPY --from=builder --chown=app:app /app/app/lib/prompts ./build/server/prompts
 
 USER app
 EXPOSE 3000
