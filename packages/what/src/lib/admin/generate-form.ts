@@ -1,45 +1,57 @@
+import { z } from "zod";
 import {
   GENERATE_REASONING_EFFORTS,
-  type GenerateReasoningEffort,
+  GENERATE_SOURCE_MODES,
   type GenerateRequest,
-  type GenerateSourceMode,
 } from "./generate-types";
 
-export function readGenerateForm(form: FormData): GenerateRequest {
-  const feedIds = String(form.get("feedIds") ?? "")
-    .split(",")
-    .map((value) => Number.parseInt(value.trim(), 10))
-    .filter((value) => Number.isInteger(value));
-  const articleIds = String(form.get("articleIds") ?? "")
-    .split(",")
-    .map((value) => Number.parseInt(value.trim(), 10))
-    .filter((value) => Number.isInteger(value));
-  const maxTokensRaw = Number.parseInt(String(form.get("maxTokens") ?? ""), 10);
-  const reasoningEffortRaw = String(form.get("reasoningEffort") ?? "");
-  const reasoningEffort = GENERATE_REASONING_EFFORTS.includes(
-    reasoningEffortRaw as GenerateReasoningEffort,
-  )
-    ? (reasoningEffortRaw as GenerateReasoningEffort)
-    : undefined;
+const optionalFormString = z.preprocess(
+  (value) => (value === "" ? undefined : value),
+  z.string().optional(),
+);
 
-  return {
-    dateKey: String(form.get("dateKey") ?? ""),
-    sourceMode: String(form.get("sourceMode") ?? "inventory") as GenerateSourceMode,
-    promptSource:
-      form.get("promptSource") === "paste" || form.get("promptChoice") === "custom"
-        ? "paste"
-        : "file",
-    ...(form.get("promptPath") ? { promptPath: String(form.get("promptPath")) } : {}),
-    ...(form.get("promptText") ? { promptText: String(form.get("promptText")) } : {}),
-    ...(form.get("model") ? { model: String(form.get("model")) } : {}),
-    ...(form.get("feedUrl") ? { feedUrl: String(form.get("feedUrl")) } : {}),
-    ...(form.get("fixtureId") && form.get("fixtureId") !== "none"
-      ? { fixtureId: String(form.get("fixtureId")) }
-      : {}),
-    ...(form.get("compareGroupId") ? { compareGroupId: String(form.get("compareGroupId")) } : {}),
-    ...(feedIds.length > 0 ? { feedIds } : {}),
-    ...(articleIds.length > 0 ? { articleIds } : {}),
-    ...(Number.isInteger(maxTokensRaw) && maxTokensRaw > 0 ? { maxTokens: maxTokensRaw } : {}),
-    ...(reasoningEffort ? { reasoningEffort } : {}),
-  };
+const formIdList = z.preprocess((value) => {
+  if (typeof value !== "string") return undefined;
+  const ids = value
+    .split(",")
+    .map((entry) => Number.parseInt(entry.trim(), 10))
+    .filter((entry) => Number.isInteger(entry));
+  return ids.length > 0 ? ids : undefined;
+}, z.array(z.number().int()).optional());
+
+const formMaxTokens = z.preprocess((value) => {
+  if (typeof value !== "string") return undefined;
+  const parsed = Number.parseInt(value, 10);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : undefined;
+}, z.number().int().positive().optional());
+
+const generateFormSchema = z
+  .object({
+    dateKey: z.string().default(""),
+    sourceMode: z.enum(GENERATE_SOURCE_MODES).default("inventory"),
+    promptSource: z.enum(["file", "paste"]).optional(),
+    promptChoice: z.string().optional(),
+    promptPath: optionalFormString,
+    promptText: optionalFormString,
+    model: optionalFormString,
+    feedUrl: optionalFormString,
+    fixtureId: optionalFormString,
+    compareGroupId: optionalFormString,
+    feedIds: formIdList,
+    articleIds: formIdList,
+    maxTokens: formMaxTokens,
+    reasoningEffort: z.enum(GENERATE_REASONING_EFFORTS).optional(),
+  })
+  .transform(({ promptChoice, promptSource, fixtureId, ...form }) => {
+    const parsedPromptSource: "file" | "paste" =
+      promptSource === "paste" || promptChoice === "custom" ? "paste" : "file";
+    return {
+      ...form,
+      promptSource: parsedPromptSource,
+      ...(fixtureId && fixtureId !== "none" ? { fixtureId } : {}),
+    };
+  });
+
+export function readGenerateForm(form: FormData): GenerateRequest {
+  return generateFormSchema.parse(Object.fromEntries(form.entries()));
 }

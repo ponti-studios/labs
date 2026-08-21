@@ -5,18 +5,20 @@ export const GENERATION_PROMPT_FILES = [
   "src/prompts/game-generation-v2.md",
 ] as const;
 
-export type GenerateSourceMode = "inventory" | "feeds" | "articles" | "rss" | "fixtures";
+export const GENERATE_SOURCE_MODES = ["inventory", "feeds", "articles", "rss", "fixtures"] as const;
 
-export type GenerateReasoningEffort = "default" | "none" | "minimal" | "low" | "medium" | "high";
+export type GenerateSourceMode = (typeof GENERATE_SOURCE_MODES)[number];
 
-export const GENERATE_REASONING_EFFORTS: GenerateReasoningEffort[] = [
+export const GENERATE_REASONING_EFFORTS = [
   "default",
   "none",
   "minimal",
   "low",
   "medium",
   "high",
-];
+] as const;
+
+export type GenerateReasoningEffort = (typeof GENERATE_REASONING_EFFORTS)[number];
 
 export type GenerateRequest = {
   dateKey: string;
