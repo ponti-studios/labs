@@ -23,11 +23,6 @@ on:
         required: false
         type: number
         default: 10
-      deploy_path:
-        description: Optional subdirectory to deploy as the source root
-        required: false
-        type: string
-        default: ""
     secrets:
       railway_token:
         description: Railway API token
@@ -68,11 +63,4 @@ jobs:
         run: cp "${{ inputs.config_path }}" railway.json
 
       - name: deploy-to-railway
-        env:
-          DEPLOY_PATH: ${{ inputs.deploy_path }}
-        run: |
-          if [ -n "$DEPLOY_PATH" ]; then
-            railway up "$DEPLOY_PATH" --path-as-root --service "$RAILWAY_SERVICE" --detach --ci
-          else
-            railway up --service "$RAILWAY_SERVICE" --detach --ci
-          fi
+        run: railway up --service "$RAILWAY_SERVICE" --detach --ci
