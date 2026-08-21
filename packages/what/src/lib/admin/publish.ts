@@ -114,10 +114,12 @@ export async function publishCandidate(input: {
   const now = new Date();
   const puzzleValues = {
     articleId: article.id,
-    answer: payload.answer,
     answerType,
     clue: payload.clue,
     detail: payload.detail,
+    // Store the same canonical answer that validation checked. This keeps
+    // admin-published puzzles consistent with cron-generated puzzles.
+    answer: validation.normalizedAnswer || normalizeGuess(payload.answer),
     normalizedAnswer: validation.normalizedAnswer || normalizeGuess(payload.answer),
     promptPath: generation.promptPath,
     model: generation.model,

@@ -39,6 +39,23 @@ describe("game daily puzzle helpers", () => {
     expect(result.valid).toBe(true);
   });
 
+  it.each(["S P L I T", "SPL-IT", "SPL!IT"])(
+    "rejects non-letter formatting even when it normalizes to five letters (%s)",
+    (answer) => {
+      const result = validateCandidate({
+        answer,
+        answerType: "moment",
+        clue: "A division that changed the group dynamic.",
+        detail: "The group separated after the reported disagreement.",
+        sources: [BRAVO_SOURCE],
+      });
+
+      expect(result.normalizedAnswer).toBe("SPLIT");
+      expect(result.valid).toBe(false);
+      expect(result.reasons).toContain(GenerateReasonType.NotLetters);
+    },
+  );
+
   it("rejects invented five-letter words", () => {
     const result = validateCandidate({
       answer: "Cuted",
