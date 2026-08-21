@@ -11,9 +11,9 @@ import { SectionIntro } from "@ponti-studios/ui/layout";
 import { Button } from "@ponti-studios/ui/primitives";
 import { Link, useFetcher, useLoaderData, type ActionFunctionArgs } from "react-router";
 
-import { loadAdminTopics, refreshTopicArticlesBySlug } from "~/lib/game/admin/articles.server";
-import { getGameAdminActor } from "~/lib/game/admin/auth";
-import { assertSameOrigin } from "~/lib/server/origin";
+import { loadAdminTopics, refreshTopicArticlesBySlug } from "~/lib/admin/articles.server";
+import { getGameAdminActor } from "~/lib/admin/auth";
+import { assertSameOrigin } from "~/lib/infrastructure/origin";
 
 import { BRAND_NAME } from "~/config/brand";
 

@@ -1,6 +1,6 @@
 import { Copy, ExternalLink, Share2 } from "lucide-react";
 
-import type { PublicGamesPuzzle } from "../../lib/player-game";
+import type { PublicGamesPuzzle } from "../../lib/puzzle";
 import { Button, Card, CardContent } from "../primitives";
 
 import styles from "./game-result.module.css";

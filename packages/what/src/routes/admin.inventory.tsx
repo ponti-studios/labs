@@ -2,8 +2,8 @@ import { SectionIntro } from "@ponti-studios/ui/layout";
 import { Button } from "@ponti-studios/ui/primitives";
 import { Link, useLoaderData, type LoaderFunctionArgs } from "react-router";
 
-import { loadAdminInventory } from "~/lib/game/admin/inventory";
-import { DEFAULT_GAME_SLUG } from "~/lib/game/generation/catalog";
+import { loadAdminInventory } from "~/lib/admin/inventory";
+import { DEFAULT_GAME_SLUG } from "~/lib/generation/catalog";
 
 import { InventoryList } from "./admin.inventory-list";
 

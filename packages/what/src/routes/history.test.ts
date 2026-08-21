@@ -11,11 +11,11 @@ vi.mock("../server/auth", () => ({
   loginUrl: () => "https://api.ponti.io/login?next=https://game.example.com/reality/history",
 }));
 
-vi.mock("../lib/game/server/games.server", () => ({
+vi.mock("../lib/data/games.server", () => ({
   getGameBySlug: getGameBySlugMock,
 }));
 
-vi.mock("../lib/game/server/history.server", () => ({
+vi.mock("../lib/data/history.server", () => ({
   loadPuzzleHistory: loadPuzzleHistoryMock,
 }));
 

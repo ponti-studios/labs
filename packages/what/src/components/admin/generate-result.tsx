@@ -1,7 +1,7 @@
 import { Alert, AlertDescription, AlertTitle } from "@ponti-studios/ui/feedback";
 
-import { formatTokenCount, formatUsd } from "~/lib/game/admin/format";
-import type { GenerateErr, GenerateOk } from "~/lib/game/admin/generate-types";
+import { formatTokenCount, formatUsd } from "~/lib/admin/format";
+import type { GenerateErr, GenerateOk } from "~/lib/admin/generate-types";
 
 import { CandidateCards } from "./candidate-cards";
 import styles from "./generate-result.module.css";

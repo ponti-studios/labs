@@ -8,8 +8,8 @@ import {
 } from "@ponti-studios/ui/primitives";
 import { Check } from "lucide-react";
 
-import { generateStagePercent } from "~/lib/game/admin/generate-copy";
-import type { GenerateProgressEvent } from "~/lib/game/admin/generate-types";
+import { generateStagePercent } from "~/lib/admin/generate-copy";
+import type { GenerateProgressEvent } from "~/lib/admin/generate-types";
 
 import styles from "./generate-progress.module.css";
 

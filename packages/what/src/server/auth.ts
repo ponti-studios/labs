@@ -1,6 +1,6 @@
 import { getServerAuth } from "@ponti-studios/auth/server";
 
-import { WhatServerEnv } from "../lib/server/env";
+import { WhatServerEnv } from "../lib/infrastructure/env";
 
 export type GameUser = { id: string; email?: string | null };
 

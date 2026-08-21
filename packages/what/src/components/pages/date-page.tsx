@@ -1,8 +1,8 @@
 import { GameBoard } from "../game";
 import { BRAND_NAME } from "../../config/brand";
 import { Button, Card, CardContent } from "../primitives";
-import type { PublicGamesPuzzle } from "../../lib/player-game";
-import type { GameGuess, GameStatus } from "../../lib/player-game";
+import type { PublicGamesPuzzle } from "../../lib/puzzle";
+import type { GameGuess, GameStatus } from "../../lib/puzzle";
 import styles from "./date-page.module.css";
 
 /**

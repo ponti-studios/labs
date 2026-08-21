@@ -2,13 +2,13 @@ import "dotenv/config";
 
 import { closeDb } from "@pontistudios/db";
 
-import { getDateKey } from "../src/lib/game/core/date";
+import { getDateKey } from "../src/lib/puzzle/date";
 import { getErrorMessage } from "../src/lib/errors";
-import { getActiveGames } from "../src/lib/game/server/games.server";
-import { countInventoryForRange, loadPuzzleForDate } from "../src/lib/game/server/puzzles.server";
+import { getActiveGames } from "../src/lib/data/games.server";
+import { countInventoryForRange, loadPuzzleForDate } from "../src/lib/data/puzzles.server";
 import { createLogger } from "../src/lib/logger.server";
-import { GAME_READY_INVENTORY_DAYS } from "../src/lib/game/generation/candidate-validation";
-import { LabyrinthServerEnv } from "../src/lib/server/env";
+import { GAME_READY_INVENTORY_DAYS } from "../src/lib/generation/candidate-validation";
+import { LabyrinthServerEnv } from "../src/lib/infrastructure/env";
 
 const logger = createLogger();
 

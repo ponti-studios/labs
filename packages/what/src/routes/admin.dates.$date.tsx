@@ -13,9 +13,9 @@ import {
 } from "@ponti-studios/ui/primitives";
 import { Link, useLoaderData, type LoaderFunctionArgs } from "react-router";
 
-import { loadAdminDate } from "~/lib/game/admin/inventory";
-import { isDateKey } from "~/lib/game/core/date";
-import { DEFAULT_GAME_SLUG } from "~/lib/game/generation/catalog";
+import { loadAdminDate } from "~/lib/admin/inventory";
+import { isDateKey } from "~/lib/puzzle/date";
+import { DEFAULT_GAME_SLUG } from "~/lib/generation/catalog";
 
 import { GenerationsList } from "./admin.inventory-list";
 

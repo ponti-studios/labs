@@ -1,6 +1,6 @@
 import { Outlet } from "react-router";
 
-import { requireGameAdminMiddleware } from "~/lib/game/admin/auth";
+import { requireGameAdminMiddleware } from "~/lib/admin/auth";
 
 export const middleware = [requireGameAdminMiddleware];
 

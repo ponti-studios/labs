@@ -14,8 +14,8 @@ import {
 } from "../primitives";
 import { GameTile } from "../game";
 import { BRAND_NAME } from "../../config/brand";
-import type { GameStatus } from "../../lib/player-game";
-import type { PuzzleHistoryPage } from "../../lib/player-game/history-types";
+import type { GameStatus } from "../../lib/puzzle";
+import type { PuzzleHistoryPage } from "../../lib/player/history-types";
 import styles from "./history-page.module.css";
 
 const UNPLAYED_PAGE_SIZE = 10;

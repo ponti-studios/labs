@@ -1,8 +1,8 @@
 import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 
 import { getGameUser, loginUrl } from "../server/auth";
-import { getGameBySlug } from "../lib/game/server/games.server";
-import { loadPuzzleHistory } from "../lib/game/server/history.server";
+import { getGameBySlug } from "../lib/data/games.server";
+import { loadPuzzleHistory } from "../lib/data/history.server";
 import { HistoryPage } from "../components/pages/history-page";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {

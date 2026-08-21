@@ -12,11 +12,11 @@ import { EmptyState } from "@ponti-studios/ui/feedback";
 import { Button } from "@ponti-studios/ui/primitives";
 import { Link, useLoaderData } from "react-router";
 
-import { formatTokenCount, formatUsd } from "~/lib/game/admin/format";
+import { formatTokenCount, formatUsd } from "~/lib/admin/format";
 import {
   getGenerationCostReport,
   type GenerationCostBreakdownRow,
-} from "~/lib/game/server/generation-runs.server";
+} from "~/lib/data/generation-runs.server";
 
 import { BRAND_NAME } from "~/config/brand";
 

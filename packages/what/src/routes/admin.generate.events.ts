@@ -1,12 +1,12 @@
 import type { ActionFunctionArgs } from "react-router";
 
 import { BRAND_NAME } from "~/config/brand";
-import { getGameAdminActor } from "~/lib/game/admin/auth";
-import { resolveAdminGame } from "~/lib/game/admin/inventory";
-import { readGenerateForm } from "~/lib/game/admin/generate-form";
-import { startGeneration } from "~/lib/game/admin/generate.server";
-import { DEFAULT_GAME_SLUG } from "~/lib/game/generation/catalog";
-import { assertSameOrigin } from "~/lib/server/origin";
+import { getGameAdminActor } from "~/lib/admin/auth";
+import { resolveAdminGame } from "~/lib/admin/inventory";
+import { readGenerateForm } from "~/lib/admin/generate-form";
+import { startGeneration } from "~/lib/admin/generate.server";
+import { DEFAULT_GAME_SLUG } from "~/lib/generation/catalog";
+import { assertSameOrigin } from "~/lib/infrastructure/origin";
 
 /**
  * Starts a generation and returns immediately with its run id — the actual

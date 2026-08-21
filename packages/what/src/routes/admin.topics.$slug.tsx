@@ -21,14 +21,14 @@ import {
 import {
   loadAdminTopicArticles,
   refreshTopicArticlesBySlug,
-} from "~/lib/game/admin/articles.server";
-import { getGameAdminActor } from "~/lib/game/admin/auth";
+} from "~/lib/admin/articles.server";
+import { getGameAdminActor } from "~/lib/admin/auth";
 import {
   articleStatusValues,
   isArticleStatus,
   type ArticleStatus,
-} from "~/lib/game/article-status";
-import { assertSameOrigin } from "~/lib/server/origin";
+} from "~/lib/generation/article-status";
+import { assertSameOrigin } from "~/lib/infrastructure/origin";
 
 import { BRAND_NAME } from "~/config/brand";
 

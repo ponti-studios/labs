@@ -1,6 +1,6 @@
 import type { LoaderFunctionArgs } from "react-router";
 
-import { getActiveGames } from "~/lib/game/server/games.server";
+import { getActiveGames } from "~/lib/data/games.server";
 
 export async function loader({}: LoaderFunctionArgs) {
   const games = await getActiveGames();

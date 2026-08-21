@@ -1,10 +1,10 @@
 import type { LoaderFunctionArgs } from "react-router";
 
 import { BRAND_NAME } from "~/config/brand";
-import { loadActivePublicPuzzleWithAttempt } from "~/lib/game/server/puzzle.server";
-import { getActiveGames } from "~/lib/game/server/games.server";
-import { buildHominemLoginUrl, getHominemUser } from "~/lib/server/hominem-auth";
-import { resolveGameReturnTo, resolveGameTimeZone } from "~/lib/server/game-request";
+import { loadActivePublicPuzzleWithAttempt } from "~/lib/data/puzzle.server";
+import { getActiveGames } from "~/lib/data/games.server";
+import { buildHominemLoginUrl, getHominemUser } from "~/lib/infrastructure/hominem-auth";
+import { resolveGameReturnTo, resolveGameTimeZone } from "~/lib/infrastructure/game-request";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const url = new URL(request.url);

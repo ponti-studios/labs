@@ -1,8 +1,8 @@
 import { useNavigate, useRevalidator } from "react-router";
 
 import { GameBoard } from "../game";
-import type { ActivePuzzleAttempt } from "../../lib/game/server/puzzle.server";
-import type { PublicGamesPuzzle } from "../../lib/player-game";
+import type { ActivePuzzleAttempt } from "../../lib/data/puzzle.server";
+import type { PublicGamesPuzzle } from "../../lib/puzzle";
 import { useTimeZone } from "../../hooks/use-timezone";
 
 export interface TodayPageProps {

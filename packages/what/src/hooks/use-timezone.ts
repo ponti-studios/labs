@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { readTimeZoneCookie, TIME_ZONE_COOKIE } from "../lib/game/core/timezone";
+import { readTimeZoneCookie, TIME_ZONE_COOKIE } from "../lib/puzzle/timezone";
 
 const COOKIE_MAX_AGE_SECONDS = 31536000;
 

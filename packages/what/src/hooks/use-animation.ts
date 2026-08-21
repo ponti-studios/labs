@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { GAME_ANSWER_LENGTH } from "../lib/player-game";
+import { GAME_ANSWER_LENGTH } from "../lib/puzzle";
 
 /** How long (ms) each tile takes to power on during the reveal animation.
  *  Must match the `game-tile-reveal` keyframe duration in game.css. */

@@ -2,14 +2,14 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { parseArgs } from "node:util";
 
-import { getDateKey } from "../src/lib/game/core/date";
+import { getDateKey } from "../src/lib/puzzle/date";
 import {
   DEFAULT_GENERATION_PROMPT_PATH,
   detectRunEnvironment,
   generateCandidates,
   getSystemPromptForGame,
-} from "../src/lib/game/generation/generate.server";
-import type { GenerateCandidatesResult } from "../src/lib/game/generation/types";
+} from "../src/lib/generation/generate.server";
+import type { GenerateCandidatesResult } from "../src/lib/generation/types";
 import { getConfiguredTextModel } from "@pontistudios/ai";
 import { db, eq, generationRuns } from "@pontistudios/db";
 import { runScript } from "./_shared/run-script";
