@@ -82,13 +82,13 @@ The required production sequence is:
 ```text
 GitHub native `paths` filter matches
   -> CI succeeds
-    -> production migration check succeeds
+  -> production migration check in `ci.yml` succeeds
       -> Labs and What deploy
 ```
 
 - CI uses the Foundation test database and runs the normal Drizzle migration
   command against that disposable test target.
-- Production migrations run only in the `migrate` job of `deploy-prod.yml`,
+- Production migrations run only in the `migrate` job of `ci.yml`,
   never in an application deploy or game-generation workflow. The migration
   command runs on every production deployment and is a no-op when there are no
   pending migrations.
