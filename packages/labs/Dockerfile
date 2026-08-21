@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1
-
 ARG NODE_VERSION=24-bookworm-slim
 
 FROM node:${NODE_VERSION} AS base
@@ -11,15 +9,17 @@ RUN corepack enable
 
 FROM base AS builder
 
-# Install dependencies based on the preferred package manager
 COPY .npmrc package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-
-# Install production dependencies first to leverage Docker layer caching
-RUN pnpm install --frozen-lockfile --prod --ignore-scripts
-
-COPY . .
-RUN pnpm install --frozen-lockfile
-RUN pnpm build
+COPY packages/ai/package.json packages/ai/package.json
+COPY packages/db/package.json packages/db/package.json
+COPY packages/env/package.json packages/env/package.json
+COPY packages/labs/package.json packages/labs/package.json
+RUN pnpm install --frozen-lockfile --filter @pontistudios/labyrinth...
+COPY packages/ai packages/ai
+COPY packages/db packages/db
+COPY packages/env packages/env
+COPY packages/labs packages/labs
+RUN pnpm --filter @pontistudios/labyrinth build
 
 FROM node:${NODE_VERSION} AS runner
 WORKDIR /app
@@ -37,10 +37,12 @@ COPY --from=builder --chown=app:app /app/packages/labs/package.json ./packages/l
 COPY --from=builder --chown=app:app /app/packages/labs/node_modules ./packages/labs/node_modules
 COPY --from=builder --chown=app:app /app/packages/labs/build ./packages/labs/build
 
+WORKDIR /app/packages/labs
+
 USER app
 EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD curl -f -s -m 2 http://localhost:${PORT}/ || exit 1
 
-CMD ["node_modules/.bin/react-router-serve", "./build/server/index.js"]
+CMD ["./node_modules/.bin/react-router-serve", "./build/server/index.js"]
