@@ -3,6 +3,15 @@
 This file defines hard constraints for AI agents working in this repository.
 Violating these rules will produce incorrect or unsafe work.
 
+## Required operational guide
+
+Before making changes that affect environment variables, routes, databases,
+authentication, cross-service ownership, or deployment, read
+[Core development flows](docs/operations/core-development-flows.md) and
+[Deployment and routing lessons](docs/operations/deployment-and-routing.md).
+These documents define the required pre-merge provisioning, CI ordering, and
+post-deployment verification steps.
+
 ## Development Infrastructure (Foundation Compose)
 
 Labs is the application codebase. Local infrastructure is owned by the sibling
