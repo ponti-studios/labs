@@ -30,7 +30,7 @@ The score measures whether the first selected valid answer is in the fixture's a
 Override the OpenRouter model for a run without mutating env:
 
 ```bash
-pnpm what:prompt-test --model=deepseek/deepseek-v4-flash
+pnpm what:prompt-test --model=openai/gpt-4o
 ```
 
 Fixtures cover technology, celebrity, sports, and food. Add a fixture when a production failure reveals a new genre or failure mode, and keep acceptable answers deliberately broad only when multiple words are genuinely fair.
