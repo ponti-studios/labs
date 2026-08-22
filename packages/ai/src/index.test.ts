@@ -7,8 +7,8 @@ describe("text model resolution", () => {
     vi.unstubAllEnvs();
   });
 
-  it("defaults to DeepSeek V4 Flash", () => {
-    expect(DEFAULT_TEXT_MODEL).toBe("deepseek/deepseek-v4-flash");
+  it("defaults to GPT-4o mini", () => {
+    expect(DEFAULT_TEXT_MODEL).toBe("openai/gpt-4o-mini");
   });
 
   it("uses WHAT_AI_MODEL when set", () => {
