@@ -1,6 +1,6 @@
 import { OpenRouter } from "@openrouter/sdk";
 
-export const DEFAULT_TEXT_MODEL = "openai/gpt-4o";
+export const DEFAULT_TEXT_MODEL = "openai/gpt-4o-mini";
 const DEFAULT_IMAGE_MODEL = "x-ai/grok-imagine-image-quality";
 const DEFAULT_EMBEDDING_MODEL = "google/gemini-embedding-2";
 const DEFAULT_EMBEDDING_DIMENSIONS = 3072;
