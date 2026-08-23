@@ -13,7 +13,7 @@ describe("fetchFeedItems", () => {
         .fn()
         .mockResolvedValueOnce(
           new Response(
-            `<rss><channel><item><title>Tea &amp; Drama</title><link>https://realityblurb.com/story</link><pubDate>not-a-date</pubDate><description><![CDATA[<p>Line one</p>\u000BLine two</b>]]></description></item></channel></rss>`,
+            `<rss><channel><item><title>Tea &amp; Drama</title><link>https://realityblurred.com/story</link><pubDate>not-a-date</pubDate><description><![CDATA[<p>Line one</p>\u000BLine two</b>]]></description></item></channel></rss>`,
             { status: 200 },
           ),
         )
@@ -22,10 +22,10 @@ describe("fetchFeedItems", () => {
         ),
     );
 
-    await expect(fetchFeedItems("https://realityblurb.com/feed")).resolves.toEqual([
+    await expect(fetchFeedItems("https://realityblurred.com/feed")).resolves.toEqual([
       {
         title: "Tea & Drama",
-        link: "https://realityblurb.com/story",
+        link: "https://realityblurred.com/story",
         pubDate: "not-a-date",
         description: "Line one Line two",
         articleText: "The full story text.",
@@ -36,7 +36,7 @@ describe("fetchFeedItems", () => {
   it("returns an empty list when an RSS channel has no items", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("<rss><channel /></rss>")));
 
-    await expect(fetchFeedItems("https://realityblurb.com/feed")).resolves.toEqual([]);
+    await expect(fetchFeedItems("https://realityblurred.com/feed")).resolves.toEqual([]);
   });
 });
 
@@ -99,6 +99,46 @@ describe("extractArticleText", () => {
     expect(text).toContain("The decision followed months of private planning.");
     expect(text).not.toContain("Subscribe");
     expect(text).not.toContain("Terms Privacy");
+  });
+
+  it("drops padding lines interspersed within the article body", () => {
+    const text = extractArticleText(
+      `<!doctype html><html><head><title>Story</title></head><body>
+        <main><article>
+          <p>The cast member confirmed the split during a live interview.</p>
+          <p>RELATED: See every look from the reunion</p>
+          <p>Sign up for our newsletter to get the latest updates.</p>
+          <p>Follow us on Instagram for more.</p>
+          <p>Sources say the announcement caught co-stars off guard.</p>
+          <p>View this post on Instagram</p>
+          <p>Advertisement</p>
+        </article></main>
+      </body></html>`,
+      "https://example.com/story",
+    );
+
+    expect(text).toContain("The cast member confirmed the split during a live interview.");
+    expect(text).toContain("Sources say the announcement caught co-stars off guard.");
+    expect(text).not.toContain("RELATED");
+    expect(text).not.toContain("newsletter");
+    expect(text).not.toContain("Follow us");
+    expect(text).not.toContain("Instagram");
+    expect(text).not.toContain("Advertisement");
+  });
+
+  it("does not strip a real sentence that merely starts with sign up or subscribe", () => {
+    const text = extractArticleText(
+      `<!doctype html><html><head><title>Story</title></head><body>
+        <main><article>
+          <p>Sign up sheets for the charity event sold out within an hour.</p>
+          <p>Subscribe numbers for the show's spinoff have already doubled.</p>
+        </article></main>
+      </body></html>`,
+      "https://example.com/story",
+    );
+
+    expect(text).toContain("Sign up sheets for the charity event sold out within an hour.");
+    expect(text).toContain("Subscribe numbers for the show's spinoff have already doubled.");
   });
 
   it("returns empty text when no readable article is present", () => {

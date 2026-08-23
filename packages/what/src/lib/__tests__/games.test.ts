@@ -44,9 +44,9 @@ describe("listTopicFeedHosts", () => {
     await seedGame({
       slug: "reality",
       name: "Reality",
-      feedUrl: "https://www.realityblurb.com/feed",
+      feedUrl: "https://www.realityblurred.com/feed",
     });
-    await seedGame({ slug: "sports", name: "Sports", feedUrl: "https://realityblurb.com/sports" });
+    await seedGame({ slug: "sports", name: "Sports", feedUrl: "https://realityblurred.com/sports" });
     await seedGame({
       slug: "retired",
       name: "Retired",
@@ -57,7 +57,7 @@ describe("listTopicFeedHosts", () => {
     const { listTopicFeedHosts } = await import("../data/games.server");
     const result = await listTopicFeedHosts();
 
-    expect(result).toEqual(["realityblurb.com", "realityblurb.com"]);
+    expect(result).toEqual(["realityblurred.com", "realityblurred.com"]);
   });
 
   it("skips a feed URL that fails to parse instead of throwing", async () => {

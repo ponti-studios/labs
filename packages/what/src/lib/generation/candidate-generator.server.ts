@@ -24,7 +24,7 @@ import {
   sanitizeFeedText,
 } from "./feed-text";
 
-const REALITY_BLURB_FEED_URL = "https://realityblurb.com/feed";
+const REALITY_FEED_URL = "https://realityblurred.com/realitytv/feed";
 const logger = createLogger();
 const promptCache = new Map<string, string>();
 
@@ -95,7 +95,7 @@ export function buildMessages(
   feedItems: FeedItem[],
   systemPrompt: string,
   answerLength: number,
-  sourceDomains: string[] = ["realityblurb.com"],
+  sourceDomains: string[] = ["realityblurred.com"],
 ) {
   return [
     {
@@ -248,7 +248,7 @@ export async function generateCandidates(
   dateKey: string,
   options: GenerateCandidatesOptions = {},
 ): Promise<GenerateCandidatesResult> {
-  const feedUrl = options.feedUrl ?? REALITY_BLURB_FEED_URL;
+  const feedUrl = options.feedUrl ?? REALITY_FEED_URL;
   let feedItems: FeedItem[] = [];
   let feedError: string | null = null;
 

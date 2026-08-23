@@ -108,6 +108,33 @@ async function fetchArticleText(url: string): Promise<string> {
   }
 }
 
+/**
+ * Lines matching these patterns are padding, not story content, even though
+ * they commonly survive inside Readability's main-content region: related-post
+ * links, subscribe/follow CTAs, share prompts, ad/sponsor markers, and social
+ * embed captions. Stripping them keeps the LLM focused on the real story
+ * instead of getting distracted by the fluff that sites pad articles with.
+ */
+const BOILERPLATE_LINE_PATTERNS: RegExp[] = [
+  /^(related|read more|also read|see also|up next|more from)\b\s*[:\-]?/i,
+  /^(sign up|subscribe)\b.*(newsletter|updates|alerts)/i,
+  /^follow (us|@\w+|reality ?blurred)\b/i,
+  /^(share this|click here|tap here|watch|listen)\s*[:\-]/i,
+  /^(photo|image|credit)s?\s*:/i,
+  /^view this post on instagram/i,
+  /^advertisement$/i,
+  /^sponsored\b/i,
+];
+
+/** Drop padding lines (related-post links, CTAs, ad markers) that survive main-content extraction. */
+function stripBoilerplateLines(textContent: string): string {
+  return textContent
+    .split(/\n+/)
+    .map((line) => line.trim())
+    .filter((line) => line && !BOILERPLATE_LINE_PATTERNS.some((pattern) => pattern.test(line)))
+    .join("\n");
+}
+
 /** Pure HTML-to-text boundary so extraction behavior can be tested without HTTP. */
 export function extractArticleText(html: string, url: string): string {
   const dom = new JSDOM(html, { url });
@@ -119,7 +146,8 @@ export function extractArticleText(html: string, url: string): string {
       .querySelectorAll("nav, aside, footer, form, script, style, noscript")
       .forEach((element) => element.remove());
     const parsed = new Readability(dom.window.document).parse();
-    return sanitizeFeedText(parsed?.textContent ?? "", MAX_ARTICLE_TEXT_LENGTH);
+    const storyText = stripBoilerplateLines(parsed?.textContent ?? "");
+    return sanitizeFeedText(storyText, MAX_ARTICLE_TEXT_LENGTH);
   } finally {
     dom.window.close();
   }

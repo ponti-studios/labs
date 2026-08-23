@@ -3,7 +3,7 @@ import { isDictionaryWord } from "../data/word-list.server";
 import { GAME_ANSWER_LENGTH, normalizeGuess } from "../puzzle/rules";
 import type { ValidationResult } from "./types";
 
-const DEFAULT_SOURCE_DOMAIN = "realityblurb.com";
+const DEFAULT_SOURCE_DOMAIN = "realityblurred.com";
 export const GAME_READY_INVENTORY_DAYS = 7;
 
 const PROMPT_CONTROL_MARKERS = [

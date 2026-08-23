@@ -5,7 +5,7 @@ import { validateCandidate } from "../generation/candidate-validation";
 import { getDateKey } from "../puzzle/date";
 
 const BRAVO_SOURCE = {
-  url: "https://realityblurb.com/2026/06/25/test-story",
+  url: "https://realityblurred.com/2026/06/25/test-story",
   title: "Test Story",
   publishedAt: "2026-06-25T00:00:00Z",
 };
@@ -182,7 +182,7 @@ describe("game daily puzzle helpers", () => {
     expect(result.reasons).toContain(GenerateReasonType.RepeatInWindow);
   });
 
-  it("rejects candidates missing a realityblurb.com source URL", () => {
+  it("rejects candidates missing a realityblurred.com source URL", () => {
     const result = validateCandidate({
       answer: "Rumor",
       answerType: "storyline",
@@ -205,7 +205,7 @@ describe("game daily puzzle helpers", () => {
   it.each([
     "not a url",
     "https://example.com/story",
-    "https://realityblurb.com.evil.example/story",
+    "https://realityblurred.com.evil.example/story",
   ])("rejects an invalid or non-matching source URL (%s)", (url) => {
     const result = validateCandidate({
       answer: "Rumor",
@@ -224,7 +224,7 @@ describe("game daily puzzle helpers", () => {
       answerType: "moment",
       clue: "A clash that keeps the whole cast spinning.",
       detail: "A single conflict can dominate the full episode.",
-      sources: [{ url: "https://www.realityblurb.com/story" }],
+      sources: [{ url: "https://www.realityblurred.com/story" }],
     });
 
     expect(result.valid).toBe(true);
@@ -311,7 +311,7 @@ describe("game daily puzzle helpers", () => {
     expect(result.reasons).toContain(GenerateReasonType.MissingSource);
   });
 
-  it("accepts valid candidates with a realityblurb.com source URL", () => {
+  it("accepts valid candidates with a realityblurred.com source URL", () => {
     const result = validateCandidate({
       answer: "Drama",
       answerType: "moment",
