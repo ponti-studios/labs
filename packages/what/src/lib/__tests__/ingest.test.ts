@@ -126,6 +126,21 @@ describe("extractArticleText", () => {
     expect(text).not.toContain("Advertisement");
   });
 
+  it("does not strip a real sentence that merely starts with sign up or subscribe", () => {
+    const text = extractArticleText(
+      `<!doctype html><html><head><title>Story</title></head><body>
+        <main><article>
+          <p>Sign up sheets for the charity event sold out within an hour.</p>
+          <p>Subscribe numbers for the show's spinoff have already doubled.</p>
+        </article></main>
+      </body></html>`,
+      "https://example.com/story",
+    );
+
+    expect(text).toContain("Sign up sheets for the charity event sold out within an hour.");
+    expect(text).toContain("Subscribe numbers for the show's spinoff have already doubled.");
+  });
+
   it("returns empty text when no readable article is present", () => {
     expect(
       extractArticleText(

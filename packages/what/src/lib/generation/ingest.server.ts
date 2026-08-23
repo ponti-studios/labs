@@ -113,12 +113,12 @@ async function fetchArticleText(url: string): Promise<string> {
  * they commonly survive inside Readability's main-content region: related-post
  * links, subscribe/follow CTAs, share prompts, ad/sponsor markers, and social
  * embed captions. Stripping them keeps the LLM focused on the real story
- * instead of getting distracted by the fluff sites pad articles with.
+ * instead of getting distracted by the fluff that sites pad articles with.
  */
 const BOILERPLATE_LINE_PATTERNS: RegExp[] = [
   /^(related|read more|also read|see also|up next|more from)\b\s*[:\-]?/i,
-  /^(sign up|subscribe)\b.*(newsletter|updates|alerts)?/i,
-  /^follow (us|@\w+|reality ?blurb)\b/i,
+  /^(sign up|subscribe)\b.*(newsletter|updates|alerts)/i,
+  /^follow (us|@\w+|reality ?blurred)\b/i,
   /^(share this|click here|tap here|watch|listen)\s*[:\-]/i,
   /^(photo|image|credit)s?\s*:/i,
   /^view this post on instagram/i,
