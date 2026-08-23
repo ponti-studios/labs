@@ -24,7 +24,7 @@ import {
   sanitizeFeedText,
 } from "./feed-text";
 
-const REALITY_FEED_URL = "https://realityblurred.com/feed";
+const REALITY_FEED_URL = "https://realityblurred.com/realitytv/feed";
 const logger = createLogger();
 const promptCache = new Map<string, string>();
 
