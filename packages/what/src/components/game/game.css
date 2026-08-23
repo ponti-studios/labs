@@ -8,18 +8,16 @@
 }
 
 html,
-body,
-#root {
-  min-height: 100%;
-}
-
-html,
 body {
   margin: 0;
   overflow-x: clip;
 }
 
 body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
   background: var(--game-bg);
   color: var(--game-ink);
   font-family: var(
@@ -34,6 +32,10 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+body > * {
+  min-height: 0;
 }
 
 button,
