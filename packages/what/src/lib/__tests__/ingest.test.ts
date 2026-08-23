@@ -101,6 +101,31 @@ describe("extractArticleText", () => {
     expect(text).not.toContain("Terms Privacy");
   });
 
+  it("drops padding lines interspersed within the article body", () => {
+    const text = extractArticleText(
+      `<!doctype html><html><head><title>Story</title></head><body>
+        <main><article>
+          <p>The cast member confirmed the split during a live interview.</p>
+          <p>RELATED: See every look from the reunion</p>
+          <p>Sign up for our newsletter to get the latest updates.</p>
+          <p>Follow us on Instagram for more.</p>
+          <p>Sources say the announcement caught co-stars off guard.</p>
+          <p>View this post on Instagram</p>
+          <p>Advertisement</p>
+        </article></main>
+      </body></html>`,
+      "https://example.com/story",
+    );
+
+    expect(text).toContain("The cast member confirmed the split during a live interview.");
+    expect(text).toContain("Sources say the announcement caught co-stars off guard.");
+    expect(text).not.toContain("RELATED");
+    expect(text).not.toContain("newsletter");
+    expect(text).not.toContain("Follow us");
+    expect(text).not.toContain("Instagram");
+    expect(text).not.toContain("Advertisement");
+  });
+
   it("returns empty text when no readable article is present", () => {
     expect(
       extractArticleText(
