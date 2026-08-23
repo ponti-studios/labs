@@ -78,7 +78,7 @@ describe("matchArticle", () => {
     const pending = [
       {
         id: 9,
-        url: "https://realityblurb.com/story",
+        url: "https://realityblurred.com/story",
       },
     ] as Array<{ id: number; url: string }>;
     const matched = matchArticle(
@@ -87,7 +87,7 @@ describe("matchArticle", () => {
         answerType: "place",
         clue: "A snowy destination tied to a chaotic cast trip.",
         detail: "The trip became shorthand for off-camera accusations and fallout.",
-        sources: [{ url: "https://realityblurb.com/story", title: "Tea", publishedAt: "" }],
+        sources: [{ url: "https://realityblurred.com/story", title: "Tea", publishedAt: "" }],
       },
       pending as never,
     );
