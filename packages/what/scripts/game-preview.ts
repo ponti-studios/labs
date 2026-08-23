@@ -119,7 +119,7 @@ async function main() {
   }
 
   console.log(`\nGame generation — ${opts.dateKey}`);
-  console.log(`Feed: ${opts.feedUrl ?? "https://realityblurb.com/feed"}`);
+  console.log(`Feed: ${opts.feedUrl ?? "https://realityblurred.com/feed"}`);
   console.log(DIVIDER);
 
   const model = getConfiguredTextModel();

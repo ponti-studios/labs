@@ -5,8 +5,8 @@ export const GAME_CATALOG = [
     slug: "reality",
     name: "Reality",
     genre: "celebrity",
-    feedUrl: "https://realityblurb.com/feed",
-    feedLabel: "Reality Blurb",
+    feedUrl: "https://realityblurred.com/feed",
+    feedLabel: "Reality Blurred",
   },
   {
     slug: "technology",

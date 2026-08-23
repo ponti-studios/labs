@@ -29,7 +29,7 @@ describe("admin article views", () => {
       .values({
         slug: "reality",
         name: "Reality",
-        feedUrl: "https://realityblurb.com/feed",
+        feedUrl: "https://realityblurred.com/feed",
         feedLabel: "Blurb",
         systemPromptPath: "src/prompts/game-generation.md",
       })
@@ -51,7 +51,7 @@ describe("admin article views", () => {
       .values({
         slug: "reality",
         name: "Reality",
-        feedUrl: "https://realityblurb.com/feed",
+        feedUrl: "https://realityblurred.com/feed",
         feedLabel: "Blurb",
         systemPromptPath: "src/prompts/game-generation.md",
       })
@@ -59,7 +59,7 @@ describe("admin article views", () => {
     fetchFeedItemsMock.mockResolvedValue([
       {
         title: "New story",
-        link: "https://realityblurb.com/new",
+        link: "https://realityblurred.com/new",
         pubDate: "Wed, 12 Aug 2026 00:00:00 GMT",
         description: "A new item",
         articleText: "Body",
@@ -69,7 +69,7 @@ describe("admin article views", () => {
     const result = await refreshTopicArticles(topic, ACTOR);
     expect(result).toEqual({ ok: true, inserted: 1, scanned: 1, expired: 0 });
     const stored = await db.query.articles.findFirst({
-      where: (table, { eq }) => eq(table.url, "https://realityblurb.com/new"),
+      where: (table, { eq }) => eq(table.url, "https://realityblurred.com/new"),
     });
     expect(stored?.title).toBe("New story");
   });
@@ -80,7 +80,7 @@ describe("admin article views", () => {
       .values({
         slug: "reality",
         name: "Reality",
-        feedUrl: "https://realityblurb.com/feed",
+        feedUrl: "https://realityblurred.com/feed",
         feedLabel: "Blurb",
         systemPromptPath: "src/prompts/game-generation.md",
       })

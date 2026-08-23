@@ -20,7 +20,7 @@ async function seedPublishable() {
     .values({
       slug: "reality",
       name: "Reality",
-      feedUrl: "https://realityblurb.com/feed",
+      feedUrl: "https://realityblurred.com/feed",
       feedLabel: "Test Feed",
       systemPromptPath: "src/prompts/game-generation.md",
     })
@@ -29,7 +29,7 @@ async function seedPublishable() {
     .insert(articles)
     .values({
       gamesTopicId: game.id,
-      url: "https://realityblurb.com/story",
+      url: "https://realityblurred.com/story",
       title: "A clash",
       status: "pending",
     })
@@ -54,7 +54,7 @@ async function seedPublishable() {
     answerType: "moment",
     clue: "A clash that keeps the whole cast spinning.",
     detail: "A single conflict can dominate the full episode.",
-    sources: [{ url: "https://realityblurb.com/story", title: "A clash", publishedAt: "" }],
+    sources: [{ url: "https://realityblurred.com/story", title: "A clash", publishedAt: "" }],
   };
   const [candidate] = await db
     .insert(generationCandidates)
@@ -108,7 +108,7 @@ describe("publishCandidate", () => {
       .insert(articles)
       .values({
         gamesTopicId: game.id,
-        url: "https://realityblurb.com/old",
+        url: "https://realityblurred.com/old",
         title: "Old",
         status: "used",
       })
