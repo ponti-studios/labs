@@ -1,7 +1,9 @@
 .header {
   position: sticky;
   top: 0;
-  z-index: 0;
+  z-index: 10;
+  padding-top: env(safe-area-inset-top);
+  background: var(--game-bg);
   backdrop-filter: blur(8px);
 }
 
