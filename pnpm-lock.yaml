@@ -87,8 +87,8 @@ importers:
         specifier: ^0.2.0
         version: 0.2.0
       '@ponti-studios/ui':
-        specifier: 1.5.1
-        version: 1.5.1(@date-fns/tz@1.5.0)(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: 1.7.0
+        version: 1.7.0(@date-fns/tz@1.5.0)(@types/react@19.2.18)(date-fns@4.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@pontistudios/ai':
         specifier: workspace:*
         version: link:../ai
@@ -265,8 +265,8 @@ importers:
         specifier: ^0.2.0
         version: 0.2.0
       '@ponti-studios/ui':
-        specifier: 1.5.1
-        version: 1.5.1(@date-fns/tz@1.5.0)(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: 1.7.0
+        version: 1.7.0(@date-fns/tz@1.5.0)(@types/react@19.2.18)(date-fns@4.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@pontistudios/ai':
         specifier: workspace:*
         version: link:../ai
@@ -1012,8 +1012,8 @@ packages:
     resolution: {integrity: sha512-Vj1jF3cPfxg7OAfoI7QnVKLoILlm2JF9pnVHrX8qx7AHMiYWT+NDAA7jChlNgRS4WTLc/fD1lXLmPixluj+3Gg==}
     engines: {node: '>=6.9.0'}
 
-  '@base-ui/react@1.6.0':
-    resolution: {integrity: sha512-/jzjTWJYXhRFO45Bev9lc3cHbmjzCMpUqbMZ2AgKy/z25mY9B6shGSNcXcjQar9n5doM0KYW1W8fcFv2jZBuMw==}
+  '@base-ui/react@1.7.0':
+    resolution: {integrity: sha512-j+8QjX44C32jrXD/qyEAGpFr70FRpGL2CY61mQd9nBPWN737CK0xxD1ceJ055rW4RtdvFDT1e7otzdlfxvsYug==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       '@date-fns/tz': ^1.2.0
@@ -1029,8 +1029,8 @@ packages:
       date-fns:
         optional: true
 
-  '@base-ui/utils@0.3.1':
-    resolution: {integrity: sha512-gFFiltORVmW/N6IILTGxizP3PBpVpysqML1ALY5Vk0mH+7faVkCknOU31goYHN5Aoek2dkjxva1XOD2Ce9WuIg==}
+  '@base-ui/utils@0.3.2':
+    resolution: {integrity: sha512-oWy1aq/I2GmYjpl4PhEAhzflF8VPGKgZeq0xAWTbfD5KBWyxcN0ZP2+WHSUm/5Z6lVMBDLReLcoXwSYoRc/zNQ==}
     peerDependencies:
       '@types/react': ^17 || ^18 || ^19
       react: ^17 || ^18 || ^19
@@ -2183,19 +2183,13 @@ packages:
   '@ponti-studios/auth@0.2.0':
     resolution: {integrity: sha512-7Jn2HoFUAhfCgc2RlR3aqBOjlVFelgGNuCuJ3BFdS7DkgTMT1HvlhJMrBN+njzWODG+brZR3gYVxGTBENs7pyg==}
 
-  '@ponti-studios/ui@1.5.1':
-    resolution: {integrity: sha512-wRj3ZTB5oiUfV/EVUpK/Di+ymr6RBlmDxREM7pi574V/gbf33Y4KJcjXIj1TToauoGIw95ezqZ8g5zXgGjnszQ==}
+  '@ponti-studios/ui@1.7.0':
+    resolution: {integrity: sha512-CyYkup/QB6T6SYGUyazubl7xYMd0UCdVJsC6ZlpC3oJ5Fa2eVBkmHUHKv9Az95142+eAa+ccqcHBEpAe542Jtg==}
     peerDependencies:
       react: ^18.2.0 || ^19.0.0
       react-dom: ^18.2.0 || ^19.0.0
-      react-native: '>=0.74'
-      uniwind: '>=1.10.0'
     peerDependenciesMeta:
       react-dom:
-        optional: true
-      react-native:
-        optional: true
-      uniwind:
         optional: true
 
   '@radix-ui/colors@3.0.0':
@@ -4850,16 +4844,6 @@ packages:
     resolution: {integrity: sha512-K5zQjDllxWkf7Z5xJdV0/B0WTNqx6vxG70zJE4N0kBs4LovmEYWJzQGxC9bS9RAKu3bgM40lrd5zoLJ12MQ5BA==}
     engines: {node: '>= 0.10'}
 
-  react-day-picker@10.0.1:
-    resolution: {integrity: sha512-eNh6BlwcYInWaJtRv18mXQ06Ys/H6rdTZAnTaSdOYJuTpwP1JMCHNd1FDRadA+gbeinq+psdULN5Xnowy9mV8w==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      '@types/react': '>=16.8.0'
-      react: '>=16.8.0'
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-
   react-docgen-typescript@2.4.0:
     resolution: {integrity: sha512-ZtAp5XTO5HRzQctjPU0ybY0RRCQO19X/8fxn3w7y2VVTUbGHDKULPTL4ky3vB05euSgG5NpALhEhDPvQ56wvXg==}
     peerDependencies:
@@ -6596,10 +6580,10 @@ snapshots:
       '@babel/helper-string-parser': 7.29.7
       '@babel/helper-validator-identifier': 7.29.7
 
-  '@base-ui/react@1.6.0(@date-fns/tz@1.5.0)(@types/react@19.2.18)(date-fns@4.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@base-ui/react@1.7.0(@date-fns/tz@1.5.0)(@types/react@19.2.18)(date-fns@4.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@babel/runtime': 7.29.7
-      '@base-ui/utils': 0.3.1(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@base-ui/utils': 0.3.2(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@floating-ui/react-dom': 2.1.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@floating-ui/utils': 0.2.12
       react: 19.2.8
@@ -6610,7 +6594,7 @@ snapshots:
       '@types/react': 19.2.18
       date-fns: 4.4.0
 
-  '@base-ui/utils@0.3.1(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@base-ui/utils@0.3.2(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@babel/runtime': 7.29.7
       '@floating-ui/utils': 0.2.12
@@ -6651,7 +6635,8 @@ snapshots:
 
   '@csstools/css-tokenizer@4.0.0': {}
 
-  '@date-fns/tz@1.5.0': {}
+  '@date-fns/tz@1.5.0':
+    optional: true
 
   '@dimforge/rapier3d-compat@0.12.0': {}
 
@@ -7312,22 +7297,21 @@ snapshots:
 
   '@ponti-studios/auth@0.2.0': {}
 
-  '@ponti-studios/ui@1.5.1(@date-fns/tz@1.5.0)(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@ponti-studios/ui@1.7.0(@date-fns/tz@1.5.0)(@types/react@19.2.18)(date-fns@4.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@base-ui/react': 1.6.0(@date-fns/tz@1.5.0)(@types/react@19.2.18)(date-fns@4.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@base-ui/react': 1.7.0(@date-fns/tz@1.5.0)(@types/react@19.2.18)(date-fns@4.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@radix-ui/colors': 3.0.0
       class-variance-authority: 0.7.1
       clsx: 2.1.1
-      date-fns: 4.4.0
-      lucide-react: 1.31.0(react@19.2.8)
+      lucide-react: 1.33.0(react@19.2.8)
       react: 19.2.8
-      react-day-picker: 10.0.1(@types/react@19.2.18)(react@19.2.8)
       tailwind-merge: 3.6.0
     optionalDependencies:
       react-dom: 19.2.8(react@19.2.8)
     transitivePeerDependencies:
       - '@date-fns/tz'
       - '@types/react'
+      - date-fns
 
   '@radix-ui/colors@3.0.0': {}
 
@@ -8768,7 +8752,8 @@ snapshots:
       es-errors: 1.3.0
       is-data-view: 1.0.2
 
-  date-fns@4.4.0: {}
+  date-fns@4.4.0:
+    optional: true
 
   dateformat@4.6.3: {}
 
@@ -10095,14 +10080,6 @@ snapshots:
       http-errors: 2.0.1
       iconv-lite: 0.7.3
       unpipe: 1.0.0
-
-  react-day-picker@10.0.1(@types/react@19.2.18)(react@19.2.8):
-    dependencies:
-      '@date-fns/tz': 1.5.0
-      date-fns: 4.4.0
-      react: 19.2.8
-    optionalDependencies:
-      '@types/react': 19.2.18
 
   react-docgen-typescript@2.4.0(typescript@5.9.3):
     dependencies:
