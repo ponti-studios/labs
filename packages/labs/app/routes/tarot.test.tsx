@@ -2,7 +2,6 @@ import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { createMemoryStorage } from "@ponti-studios/ui/utilities";
 import { DAILY_TAROT_CARDS } from "../lib/tarot-cards";
 import {
   buildFallbackDailyReading,
@@ -14,6 +13,20 @@ import type { DailyTarotResult } from "../lib/tarot-types";
 import TarotRoute from "./tarot";
 
 const sampleCard = DAILY_TAROT_CARDS[0];
+
+function createMemoryStorage(): Storage {
+  const values = new Map<string, string>();
+  return {
+    get length() {
+      return values.size;
+    },
+    clear: () => values.clear(),
+    getItem: (key) => values.get(key) ?? null,
+    key: (index) => [...values.keys()][index] ?? null,
+    removeItem: (key) => values.delete(key),
+    setItem: (key, value) => values.set(key, String(value)),
+  };
+}
 
 function createResult(date: string): DailyTarotResult {
   return {

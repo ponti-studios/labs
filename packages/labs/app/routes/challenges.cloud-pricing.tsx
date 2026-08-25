@@ -1,4 +1,5 @@
-import { CardContent, CardHeader, CardTitle, Label } from "@ponti-studios/ui/primitives";
+import { CardContent, CardHeader, CardTitle } from "@ponti-studios/ui/primitives";
+import { FieldLabel as Label } from "../components/FieldLabel";
 import { Input } from "@ponti-studios/ui/forms";
 import { useState, type JSX, type ChangeEvent } from "react";
 import { Card } from "@ponti-studios/ui/primitives";

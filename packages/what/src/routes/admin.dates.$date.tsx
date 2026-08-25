@@ -8,9 +8,8 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  StatusBadge,
-  type StatusBadgeConfig,
 } from "@ponti-studios/ui/primitives";
+import { StatusBadge, type StatusBadgeConfig } from "~/components/primitives";
 import { Link, useLoaderData, type LoaderFunctionArgs } from "react-router";
 
 import { loadAdminDate } from "~/lib/admin/inventory";

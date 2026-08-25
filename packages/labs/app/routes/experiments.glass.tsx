@@ -4,7 +4,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@ponti-studios/ui/data-display";
-import { Button, Label } from "@ponti-studios/ui/primitives";
+import { Button } from "@ponti-studios/ui/primitives";
+import { FieldLabel as Label } from "../components/FieldLabel";
 import { cn } from "@ponti-studios/ui/utilities";
 import { Input, Slider } from "@ponti-studios/ui/forms";
 import { useState } from "react";
@@ -222,4 +223,3 @@ export default function ExperimentsGlass() {
     </div>
   );
 }
-

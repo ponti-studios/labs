@@ -24,3 +24,8 @@
   border-color: var(--wl-border, #d4d4d8);
   color: var(--wl-muted-fg, #52525b);
 }
+
+.secondary {
+  background: var(--wl-muted, #f4f4f5);
+  color: var(--wl-muted-fg, #52525b);
+}
