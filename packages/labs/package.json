@@ -22,7 +22,7 @@
     "@mozilla/readability": "^0.6.0",
     "@openrouter/sdk": "^1.2.34",
     "@ponti-studios/auth": "^0.2.0",
-    "@ponti-studios/ui": "1.5.1",
+    "@ponti-studios/ui": "1.7.0",
     "@pontistudios/ai": "workspace:*",
     "@pontistudios/db": "workspace:*",
     "@pontistudios/env": "workspace:*",

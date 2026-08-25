@@ -16,6 +16,7 @@ export default defineConfig(({ isSsrBuild }) => ({
             manifest: false,
             outDir: "build/client",
             registerType: "prompt",
+            workbox: { globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"] },
           }),
         ]
       : []),

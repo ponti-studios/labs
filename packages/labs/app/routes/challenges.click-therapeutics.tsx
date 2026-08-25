@@ -1,5 +1,5 @@
 import { Input } from "@ponti-studios/ui/forms";
-import { Label } from "@ponti-studios/ui/primitives";
+import { FieldLabel as Label } from "../components/FieldLabel";
 import {
   Table,
   TableBody,

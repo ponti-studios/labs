@@ -1,5 +1,4 @@
 import {
-  DatePicker,
   Input,
   Select,
   SelectContent,
@@ -15,7 +14,6 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  Label,
 } from "@ponti-studios/ui/primitives";
 import { useState } from "react";
 
@@ -24,7 +22,8 @@ import {
   type GenerateReasoningEffort,
   type GenerateSourceMode,
 } from "~/lib/admin/generate-types";
-import { dateKeyToLocalDate, localDateToDateKey } from "~/lib/puzzle/date";
+import { localDateToDateKey } from "~/lib/puzzle/date";
+import { FieldLabel as Label } from "~/components/field-label";
 
 import styles from "./generate-form.module.css";
 
@@ -82,13 +81,13 @@ export function GenerateForm({
           <input type="hidden" name="game" value={data.gameSlug} />
           <input type="hidden" name="dateKey" value={dateKey} />
           <div className={styles.field}>
-            <DatePicker
+            <input
+              type="date"
               id="dateKey"
-              label="Puzzle date"
               placeholder="Pick a date"
-              value={dateKeyToLocalDate(dateKey) ?? undefined}
-              onSelect={(date) => {
-                const nextDateKey = localDateToDateKey(date);
+              value={dateKey}
+              onChange={(event) => {
+                const nextDateKey = localDateToDateKey(new Date(`${event.target.value}T00:00:00`));
                 if (nextDateKey) setDateKey(nextDateKey);
               }}
             />

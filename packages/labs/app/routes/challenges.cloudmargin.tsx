@@ -1,4 +1,5 @@
-import { Button, Label } from "@ponti-studios/ui/primitives";
+import { Button } from "@ponti-studios/ui/primitives";
+import { FieldLabel as Label } from "../components/FieldLabel";
 import { Input } from "@ponti-studios/ui/forms";
 import {
   Table,

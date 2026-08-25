@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@ponti-studios/ui/data-display";
-import { StatusBadge, type StatusBadgeConfig } from "@ponti-studios/ui/primitives";
+import { StatusBadge, type StatusBadgeConfig } from "~/components/primitives";
 import { Link } from "react-router";
 
 import { formatTokenCount, formatUsd } from "~/lib/admin/format";
