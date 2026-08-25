@@ -1,5 +1,6 @@
 import { SectionIntro } from "@ponti-studios/ui/layout";
-import { Button, StatusBadge, type StatusBadgeConfig } from "@ponti-studios/ui/primitives";
+import { Button } from "@ponti-studios/ui/primitives";
+import { StatusBadge, type StatusBadgeConfig } from "~/components/primitives";
 import {
   Link,
   redirect,

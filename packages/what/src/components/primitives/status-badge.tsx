@@ -1,6 +1,6 @@
 import styles from "./status-badge.module.css";
 
-export type StatusBadgeVariant = "default" | "destructive" | "outline";
+export type StatusBadgeVariant = "default" | "destructive" | "outline" | "secondary";
 
 /** One status's display config — a config map is `Record<TStatus, StatusBadgeConfig>`. */
 export type StatusBadgeConfig = { label: string; variant: StatusBadgeVariant };
