@@ -51,6 +51,13 @@ export const ActiveGrid: Story = {
 export const ErrorGrid: Story = { render: () => <GuessGrid game={errorGame} /> };
 export const SolvedGrid: Story = { render: () => <GuessGrid game={solvedGame} /> };
 export const FailedGrid: Story = { render: () => <GuessGrid game={failedGame} /> };
+export const ValidatingGrid: Story = {
+  render: () => (
+    <GuessGrid
+      game={gameState({ guesses, currentGuess: "DRAMA", isValidationPending: true })}
+    />
+  ),
+};
 export const RevealingGrid: Story = {
   render: () => (
     <GuessGrid

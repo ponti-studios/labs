@@ -16,8 +16,8 @@
     {
       "name": "storybook",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["storybook"],
-      "port": 6007,
+      "runtimeArgs": ["--dir", "packages/what", "storybook"],
+      "port": 6008,
       "autoPort": true
     }
   ]

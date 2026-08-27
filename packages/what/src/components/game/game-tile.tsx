@@ -11,6 +11,9 @@ type GameTileProps = {
   isRevealing?: boolean;
   hasError?: boolean;
   loading?: boolean;
+  isPending?: boolean;
+  isSolved?: boolean;
+  tileIndex?: number;
   style?: CSSProperties;
 };
 
@@ -21,20 +24,31 @@ export function GameTile({
   isRevealing = false,
   hasError = false,
   loading = false,
+  isPending = false,
+  isSolved = false,
+  tileIndex = 0,
   style,
 }: GameTileProps) {
   if (loading) {
     return <div className="game-tile game-tile-skeleton" aria-hidden style={style} />;
   }
 
+  const hasStagger = isPending || isSolved;
+
   return (
     <div
       aria-label={ariaLabel}
       role={ariaLabel ? "img" : undefined}
       data-testid="game-tile"
-      className={cn("game-tile", isRevealing && "game-tile-reveal", hasError && "game-tile-error")}
+      className={cn(
+        "game-tile",
+        isRevealing && "game-tile-reveal",
+        hasError && "game-tile-error",
+        isPending && "game-tile-pending",
+        isSolved && "game-tile-solved",
+      )}
       data-state={state}
-      style={style}
+      style={hasStagger ? ({ ...style, "--game-tile-i": tileIndex } as CSSProperties) : style}
     >
       <span className="game-tile-letter">{letter}</span>
     </div>
