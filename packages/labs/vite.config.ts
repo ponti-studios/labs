@@ -30,7 +30,6 @@ export default defineConfig((config) => ({
     chunkSizeWarningLimit: 1500,
   },
   resolve: {
-    tsconfigPaths: true,
     alias: {
       "~": path.resolve(import.meta.dirname, "./app"),
     },

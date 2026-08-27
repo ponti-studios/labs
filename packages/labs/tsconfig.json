@@ -1,35 +1,30 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "composite": false,
-    "declaration": true,
-    "declarationMap": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "inlineSources": false,
-    "isolatedModules": true,
-    "ignoreDeprecations": "6.0",
+    "incremental": true,
     "jsx": "react-jsx",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "preserveWatchOutput": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "strictNullChecks": true,
-    "target": "ES2022",
-    "allowJs": false,
     "types": ["node", "vite/client"],
     "rootDirs": [".", "./.react-router/types"],
     "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
     "paths": {
       "~/*": ["./app/*"]
     },
-    "noEmit": true
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "preserveWatchOutput": true,
+    "declaration": true,
+    "declarationMap": true,
+    "inlineSources": false
   },
+  "references": [
+    { "path": "../ai" },
+    { "path": "../db" },
+    { "path": "../env" }
+  ],
   "include": ["**/*", "**/.server/**/*", "**/.client/**/*", ".react-router/types/**/*"],
   "exclude": [
     "../what/**/*",
