@@ -13,7 +13,7 @@
     "test:labs-game": "pnpm --filter @pontistudios/labyrinth test:what",
     "typecheck:labs": "pnpm --filter @pontistudios/labyrinth typecheck",
     "typecheck:shared": "pnpm --filter @pontistudios/ai typecheck && pnpm --filter @pontistudios/db typecheck && pnpm --filter @pontistudios/env typecheck",
-    "typecheck": "tsc -b tsconfig.json",
+    "typecheck": "pnpm --filter @pontistudios/labyrinth exec react-router typegen && pnpm --filter what exec react-router typegen && tsc -b tsconfig.json",
     "build:what": "pnpm --filter what build",
     "test:game": "pnpm --filter what test",
     "typecheck:game": "pnpm --filter what typecheck",
