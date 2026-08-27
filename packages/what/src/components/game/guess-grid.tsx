@@ -59,6 +59,7 @@ const RevealedGuessRow = memo(function RevealedGuessRow({
             letter={guess.word[cellIndex] ?? ""}
             ariaLabel={`${guess.word[cellIndex] ?? "Blank"}: ${describeTileState(tileState)}`}
             isRevealing={isAnimatingTile}
+            isIncorrectGuess={!isWinningRow}
             isSolved={isSolved}
             tileIndex={cellIndex}
           />

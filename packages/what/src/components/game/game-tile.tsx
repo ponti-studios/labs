@@ -9,6 +9,7 @@ type GameTileProps = {
   letter?: string;
   ariaLabel?: string;
   isRevealing?: boolean;
+  isIncorrectGuess?: boolean;
   hasError?: boolean;
   loading?: boolean;
   isPending?: boolean;
@@ -22,6 +23,7 @@ export function GameTile({
   letter = "",
   ariaLabel,
   isRevealing = false,
+  isIncorrectGuess = false,
   hasError = false,
   loading = false,
   isPending = false,
@@ -42,7 +44,7 @@ export function GameTile({
       data-testid="game-tile"
       className={cn(
         "game-tile",
-        isRevealing && "game-tile-reveal",
+        isRevealing && (isIncorrectGuess ? "game-tile-reveal-incorrect" : "game-tile-reveal"),
         hasError && "game-tile-error",
         isPending && "game-tile-pending",
         isSolved && "game-tile-solved",
