@@ -82,6 +82,9 @@ svg {
   --game-glow-error: rgba(217, 45, 32, 0.3);
 
   --game-skeleton-bg: rgba(233, 225, 205, 1);
+  --game-pending-bg: color-mix(in srgb, var(--game-correct-bg) 5%, transparent);
+  --game-pending-border: color-mix(in srgb, var(--game-correct-accent) 25%, transparent);
+  --game-pending-text: color-mix(in srgb, var(--game-correct-accent) 50%, transparent);
 
   /* Accents */
   --game-badge-bg: rgba(76, 95, 224, 1);
@@ -108,6 +111,9 @@ svg {
     --game-ink: rgba(245, 241, 230, 1);
     --game-ink-muted: rgba(245, 241, 230, 0.68);
     --game-skeleton-bg: rgba(67, 59, 49, 1);
+    --game-pending-bg: color-mix(in srgb, var(--game-correct-bg) 30%, transparent);
+    --game-pending-border: color-mix(in srgb, var(--game-correct-accent) 30%, transparent);
+    --game-pending-text: color-mix(in srgb, var(--game-correct-text) 30%, transparent);
     --game-shadow-drop: rgba(0, 0, 0, 0.35);
     --game-present-accent: rgba(246, 190, 78, 1);
     --game-link-text: rgba(143, 166, 255, 1);
@@ -191,6 +197,20 @@ svg {
     0 0 12px var(--game-glow-error);
 }
 
+.game-tile.game-tile-pending {
+  background-color: var(--game-paper);
+  border-color: var(--game-paper-border);
+  opacity: 0.75;
+  animation: game-tile-flash 1000ms var(--game-ease-in-out) infinite;
+  animation-delay: calc(var(--game-tile-i, 0) * 150ms);
+}
+
+.game-tile.game-tile-solved {
+  --game-tile-i: 0;
+  animation: game-tile-solved-wave 650ms var(--game-ease-in-out) both;
+  animation-delay: calc(var(--game-tile-i) * 90ms);
+}
+
 .game-keyboard .game-key {
   height: 46px;
   border: 2px solid var(--game-paper-border);
@@ -267,10 +287,35 @@ svg {
   }
 }
 
+@keyframes game-tile-flash {
+  0%,
+  100% {
+    background-color: var(--game-paper);
+    border-color: var(--game-paper-border);
+  }
+  50% {
+    background-color: var(--game-pending-bg);
+    border-color: var(--game-pending-border);
+    color: var(--game-pending-text);
+  }
+}
+
+@keyframes game-tile-solved-wave {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  40% {
+    transform: translateY(-8px) scale(1.06);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .game-tile,
   .game-tile-reveal,
   .game-tile-error,
+  .game-tile-pending,
+  .game-tile-solved,
   .game-tile-skeleton {
     animation: none !important;
     transition-duration: 0.01ms !important;

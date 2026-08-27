@@ -35,11 +35,15 @@ const RevealedGuessRow = memo(function RevealedGuessRow({
   guess,
   isRevealingThisRow,
   revealedTileCount,
+  isWinningRow,
 }: {
   guess: GameGuess;
   isRevealingThisRow: boolean;
   revealedTileCount: number;
+  isWinningRow: boolean;
 }) {
+  const isSolved = isWinningRow && !isRevealingThisRow;
+
   return (
     <div className={styles.row}>
       {Array.from({ length: GAME_ANSWER_LENGTH }).map((_, cellIndex) => {
@@ -55,6 +59,8 @@ const RevealedGuessRow = memo(function RevealedGuessRow({
             letter={guess.word[cellIndex] ?? ""}
             ariaLabel={`${guess.word[cellIndex] ?? "Blank"}: ${describeTileState(tileState)}`}
             isRevealing={isAnimatingTile}
+            isSolved={isSolved}
+            tileIndex={cellIndex}
           />
         );
       })}
@@ -105,6 +111,8 @@ const CurrentGuessRow = memo(function CurrentGuessRow({
           letter={currentGuess[cellIndex] ?? ""}
           ariaLabel={`Letter ${cellIndex + 1}`}
           hasError={hasError}
+          isPending={isValidationPending}
+          tileIndex={cellIndex}
         />
       ))}
     </div>
@@ -121,6 +129,7 @@ export function GuessGrid({ game }: { game: GameState }) {
               rowIndex === game.guesses.length && !game.isGameOver && !game.isRevealingRow;
             const guess = game.guesses[rowIndex];
             const isRevealingThisRow = rowIndex === game.revealingGuessIndex;
+            const isWinningRow = game.isSolved && rowIndex === game.guesses.length - 1;
 
             if (guess) {
               return (
@@ -129,6 +138,7 @@ export function GuessGrid({ game }: { game: GameState }) {
                   guess={guess}
                   isRevealingThisRow={isRevealingThisRow}
                   revealedTileCount={game.revealedTileCount}
+                  isWinningRow={isWinningRow}
                 />
               );
             }
