@@ -79,7 +79,6 @@ svg {
   --game-correct-accent: rgba(214, 17, 91, 1);
 
   --game-error-border: rgba(217, 45, 32, 1);
-  --game-glow-error: rgba(217, 45, 32, 0.3);
 
   --game-skeleton-bg: rgba(233, 225, 205, 1);
   --game-pending-bg: color-mix(in srgb, var(--game-correct-bg) 5%, transparent);
@@ -191,10 +190,16 @@ svg {
   animation: game-marquee-reveal 420ms var(--game-ease-in-out) forwards;
 }
 
-.game-tile-error {
-  box-shadow:
-    0 0 0 2px var(--game-error-border),
-    0 0 12px var(--game-glow-error);
+.game-tile-reveal-incorrect {
+  transition:
+    background-color 420ms var(--game-ease-in-out),
+    border-color 420ms var(--game-ease-in-out),
+    color 420ms var(--game-ease-in-out);
+}
+
+.game-tile.game-tile-error {
+  --game-tile-letter: var(--game-error-border);
+  border-color: var(--game-error-border);
 }
 
 .game-tile.game-tile-pending {
@@ -313,6 +318,7 @@ svg {
 @media (prefers-reduced-motion: reduce) {
   .game-tile,
   .game-tile-reveal,
+  .game-tile-reveal-incorrect,
   .game-tile-error,
   .game-tile-pending,
   .game-tile-solved,
