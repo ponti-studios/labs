@@ -62,7 +62,6 @@ svg {
   --game-paper-border: rgba(23, 19, 13, 0.14);
   --game-ink: rgba(23, 19, 13, 1);
   --game-ink-muted: rgba(23, 19, 13, 0.62);
-
   /* Palette — tile states (also used flat, unmodified, on keyboard keys) */
   --game-absent-bg: rgba(20, 20, 20, 1);
   --game-absent-text: rgba(245, 241, 230, 1);
@@ -77,6 +76,7 @@ svg {
   --game-correct-text: rgba(255, 255, 255, 1);
   --game-correct-border: rgba(168, 15, 66, 0.5);
   --game-correct-accent: rgba(214, 17, 91, 1);
+  --game-correct-shadow: rgba(23, 19, 13, 0.4);
 
   --game-error-border: rgba(217, 45, 32, 1);
 
@@ -169,6 +169,16 @@ svg {
   background: var(--game-correct-bg);
 }
 
+.game-tile[data-state="correct"] .game-tile-letter {
+  font-size: 1.08em;
+  font-weight: 900;
+  text-shadow:
+    -0.5px -0.5px 0 var(--game-correct-shadow),
+    0.5px -0.5px 0 var(--game-correct-shadow),
+    -0.5px 0.5px 0 var(--game-correct-shadow),
+    0.5px 0.5px 0 var(--game-correct-shadow);
+}
+
 .game-tile[data-state="present"] {
   --game-tile-letter: var(--game-present-text);
   border-color: transparent;
@@ -176,9 +186,9 @@ svg {
 }
 
 .game-tile[data-state="absent"] {
-  --game-tile-letter: var(--game-absent-text);
-  border-color: transparent;
-  background: var(--game-absent-bg);
+  --game-tile-letter: var(--game-ink-muted);
+  border-color: var(--game-ink-muted);
+  background: var(--game-paper);
 }
 
 .game-tile[data-state="typed"] {
