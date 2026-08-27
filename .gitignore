@@ -41,6 +41,8 @@ npm-debug.log*
 !packages/env/
 !packages/env/**
 packages/env/node_modules/
+packages/env/dist/
+packages/env/tsconfig.tsbuildinfo
 
 # NX Workspaces
 .nx/cache
