@@ -1,7 +1,7 @@
 import type { GameStatus, PuzzleAnswerType, GameGuess } from "../puzzle/types";
-import type { PuzzleHistoryStats } from "../puzzle/stats";
+import type { MosaicCell, PuzzleHistoryStats } from "../puzzle/stats";
 
-export type { PuzzleHistoryStats } from "../puzzle/stats";
+export type { MosaicCell, MosaicCellStatus, PuzzleHistoryStats } from "../puzzle/stats";
 
 export interface PuzzleHistoryRow {
   dateKey: string;
@@ -22,4 +22,5 @@ export interface PuzzleHistoryPage {
   weekEndKey: string;
   stats: PuzzleHistoryStats;
   playableUnplayedDateKeys: string[];
+  mosaic: MosaicCell[];
 }

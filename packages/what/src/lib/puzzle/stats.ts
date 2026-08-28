@@ -4,7 +4,7 @@
  * history.server.ts) are responsible for fetching the full, unpaginated
  * attempt list this operates on.
  */
-import { addDaysToDateKey } from "./date";
+import { addDaysToDateKey, buildDateRange } from "./date";
 
 export interface PuzzleHistoryStats {
   gamesPlayed: number;
@@ -78,4 +78,38 @@ export function computeHistoryStats(attempts: readonly StatsAttempt[]): PuzzleHi
   }
 
   return { gamesPlayed, gamesSolved, winRate, currentStreak, maxStreak, guessDistribution };
+}
+
+export type MosaicCellStatus = "solved" | "failed" | "playing" | "unplayed";
+
+export interface MosaicCell {
+  /** YYYY-MM-DD */
+  dateKey: string;
+  status: MosaicCellStatus;
+  /** Guess count at solve (1-6). Only meaningful when status is "solved". */
+  guessCount: number | null;
+}
+
+/**
+ * One cell per calendar day in `[fromKey, toKey]` (inclusive), oldest
+ * first — a day with no attempt row is "unplayed", not a gap in the array,
+ * so the caller can render a fixed-shape grid straight off this output.
+ */
+export function buildStreakMosaic(
+  attempts: readonly StatsAttempt[],
+  { fromKey, toKey }: { fromKey: string; toKey: string },
+): MosaicCell[] {
+  const byDate = new Map(attempts.map((attempt) => [attempt.dateUtc, attempt]));
+
+  return buildDateRange(fromKey, { endKey: toKey }).map((dateKey) => {
+    const attempt = byDate.get(dateKey);
+    if (!attempt) return { dateKey, status: "unplayed", guessCount: null };
+    if (attempt.status === "solved") {
+      return { dateKey, status: "solved", guessCount: attempt.guesses.length };
+    }
+    if (attempt.status === "failed") {
+      return { dateKey, status: "failed", guessCount: null };
+    }
+    return { dateKey, status: "playing", guessCount: null };
+  });
 }

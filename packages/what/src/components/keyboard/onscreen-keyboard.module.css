@@ -17,6 +17,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  height: var(--game-key-height, 2.75rem);
   border-radius: 0.25rem;
   border-width: 1px;
   border-style: solid;
@@ -27,17 +28,15 @@
 }
 
 .keyLetter {
-  min-height: 2.75rem;
-  min-width: 1.5rem;
+  min-width: clamp(1.5rem, 8.5vw, 2.5rem);
   flex: 1;
   padding: 0;
   font-size: 1rem;
 }
 
 .keyAction {
-  min-height: 2.75rem;
   flex-shrink: 0;
-  padding: 0 0.75rem;
+  padding: 0 0.5rem;
   font-size: 0.875rem;
 }
 

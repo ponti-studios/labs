@@ -57,7 +57,7 @@
   border-radius: 0.75rem 0.75rem 0 0;
   background: var(--game-bg);
   opacity: 0.97;
-  padding: 0.5rem 0.75rem calc(env(safe-area-inset-bottom) + 0.5rem);
+  padding: 0.5rem 0.5rem calc(env(safe-area-inset-bottom) + 0.5rem);
 }
 
 .keyboardDock :global(.game-keyboard) {
@@ -102,13 +102,10 @@
   }
 
   .keyboardDock {
+    --game-key-height: 38px;
     bottom: 0;
     padding-top: 0.25rem;
     padding-bottom: calc(env(safe-area-inset-bottom) + 0.25rem);
-  }
-
-  .keyboardDock :global(.game-key) {
-    height: 38px;
   }
 }
 

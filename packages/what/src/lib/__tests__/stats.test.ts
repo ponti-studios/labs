@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { computeHistoryStats } from "../puzzle/stats";
+import { buildStreakMosaic, computeHistoryStats } from "../puzzle/stats";
 
 type StoredGuess = { word: string; states: ("absent" | "correct" | "present")[] };
 type Fixture = { dateUtc: string; status: "playing" | "solved" | "failed"; guesses: StoredGuess[] };
@@ -109,5 +109,39 @@ describe("computeHistoryStats", () => {
     expect(stats.gamesPlayed).toBe(4);
     expect(stats.gamesSolved).toBe(2);
     expect(stats.winRate).toBe(0.5);
+  });
+});
+
+describe("buildStreakMosaic", () => {
+  it("fills a day with no attempt row as unplayed", () => {
+    const cells = buildStreakMosaic([], { fromKey: "2026-07-27", toKey: "2026-07-29" });
+
+    expect(cells).toEqual([
+      { dateKey: "2026-07-27", status: "unplayed", guessCount: null },
+      { dateKey: "2026-07-28", status: "unplayed", guessCount: null },
+      { dateKey: "2026-07-29", status: "unplayed", guessCount: null },
+    ]);
+  });
+
+  it("returns one cell per day in range, oldest first, regardless of attempt order", () => {
+    const cells = buildStreakMosaic(
+      [attempt("2026-07-29", "solved", 2), attempt("2026-07-27", "failed", 6)],
+      { fromKey: "2026-07-27", toKey: "2026-07-29" },
+    );
+
+    expect(cells.map((c) => c.dateKey)).toEqual(["2026-07-27", "2026-07-28", "2026-07-29"]);
+    expect(cells[0].status).toBe("failed");
+    expect(cells[1].status).toBe("unplayed");
+    expect(cells[2]).toEqual({ dateKey: "2026-07-29", status: "solved", guessCount: 2 });
+  });
+
+  it("carries guess count only for solved days", () => {
+    const cells = buildStreakMosaic(
+      [attempt("2026-07-27", "solved", 4), attempt("2026-07-28", "playing", 1)],
+      { fromKey: "2026-07-27", toKey: "2026-07-28" },
+    );
+
+    expect(cells[0].guessCount).toBe(4);
+    expect(cells[1]).toEqual({ dateKey: "2026-07-28", status: "playing", guessCount: null });
   });
 });
