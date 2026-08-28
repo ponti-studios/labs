@@ -66,8 +66,10 @@ jobs:
           path: |
             packages/*/tsconfig.tsbuildinfo
             tsconfig.tsbuildinfo
-          key: tsbuildinfo-${{ runner.os }}-${{ hashFiles('packages/*/tsconfig.json', 'tsconfig.base.json', 'tsconfig.json', 'pnpm-lock.yaml') }}
-          restore-keys: tsbuildinfo-${{ runner.os }}-
+            packages/ai/dist
+            packages/db/dist
+            packages/env/dist
+          key: tsbuildinfo-${{ runner.os }}-${{ hashFiles('packages/*/tsconfig.json', 'tsconfig.base.json', 'tsconfig.json', 'pnpm-lock.yaml', 'packages/ai/src/**', 'packages/db/src/**', 'packages/env/src/**') }}
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm test:shared
