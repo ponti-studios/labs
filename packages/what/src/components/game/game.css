@@ -80,14 +80,21 @@ svg {
 
   --game-error-border: rgba(217, 45, 32, 1);
 
+  --game-silver-solid: rgba(78, 78, 81, 1);
+  --game-silver-gradient: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(150, 150, 153, 1) 14%,
+    var(--game-silver-solid) 28%,
+    var(--game-silver-solid) 100%
+  );
+
   --game-skeleton-bg: rgba(233, 225, 205, 1);
   --game-pending-bg: color-mix(in srgb, var(--game-correct-bg) 5%, transparent);
   --game-pending-border: color-mix(in srgb, var(--game-correct-accent) 25%, transparent);
   --game-pending-text: color-mix(in srgb, var(--game-correct-accent) 50%, transparent);
 
   /* Accents */
-  --game-badge-bg: rgba(76, 95, 224, 1);
-  --game-badge-text: rgba(255, 255, 255, 1);
   --game-share-bg: rgba(240, 28, 91, 1);
   --game-share-bg-hover: rgba(199, 19, 80, 1);
   --game-share-text: rgba(23, 4, 12, 1);
@@ -186,9 +193,25 @@ svg {
 }
 
 .game-tile[data-state="absent"] {
-  --game-tile-letter: var(--game-ink-muted);
-  border-color: var(--game-ink-muted);
-  background: var(--game-paper);
+  --game-tile-letter: var(--game-silver-solid);
+  border-color: var(--game-silver-solid);
+}
+
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .game-tile[data-state="absent"] {
+    border-color: transparent;
+    background:
+      linear-gradient(var(--game-paper), var(--game-paper)) padding-box,
+      var(--game-silver-gradient) border-box;
+  }
+
+  .game-tile[data-state="absent"] .game-tile-letter {
+    background-image: var(--game-silver-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
 }
 
 .game-tile[data-state="typed"] {

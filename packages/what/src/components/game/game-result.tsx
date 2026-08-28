@@ -1,4 +1,5 @@
 import { Copy, ExternalLink, Share2 } from "lucide-react";
+import type { CSSProperties } from "react";
 
 import type { PublicGamesPuzzle } from "../../lib/puzzle";
 import { Button, Card, CardContent } from "../primitives";
@@ -39,10 +40,7 @@ export function GameResult({ game, puzzle, loginUrl, onShare, onCopy }: GameResu
 
   return (
     <div className={styles.result} data-testid="game-result">
-      <div className={styles.solvedRow}>
-        <span className={styles.squiggle} aria-hidden>
-          〜
-        </span>
+      <div className={styles.resultCard} data-testid="game-receipt">
         <span
           className={styles.badge}
           data-testid="game-result-badge"
@@ -51,63 +49,47 @@ export function GameResult({ game, puzzle, loginUrl, onShare, onCopy }: GameResu
         >
           {game.isSolved ? `Solved in ${game.guesses.length}` : "Out of guesses"}
         </span>
-        <span className={styles.squiggle} aria-hidden>
-          〜
-        </span>
-      </div>
-
-      <div>
-        <div className={styles.receipt} data-testid="game-receipt">
-          <div className={styles.receiptContent}>
-            <div className={styles.receiptBody}>
-              <p className={styles.receiptHeading}>The Receipt</p>
-              <p>{puzzle.detail}</p>
-            </div>
-            <div className={styles.receiptDivider} aria-hidden />
-            <div className={styles.receiptStamp} aria-hidden>
-              Real
-              <br />
-              Tea
-              <br />
-              Daily.
-            </div>
-          </div>
-          <div className={styles.receiptActions}>
-            <button
-              aria-label="Share the drama"
-              className={styles.receiptAction}
-              data-testid="game-share"
-              onClick={onShare}
-              title="Share the drama"
-              type="button"
-            >
-              <Share2 aria-hidden="true" size={18} strokeWidth={2.25} />
-            </button>
-            <button
-              aria-label="Copy story"
-              className={styles.receiptAction}
-              data-testid="game-copy-story"
-              onClick={onCopy}
-              title="Copy story"
-              type="button"
-            >
-              <Copy aria-hidden="true" size={18} strokeWidth={2.25} />
-            </button>
-            {puzzle.sources.length > 0 && (
-              <a
-                aria-label="Read the source article"
-                className={styles.receiptAction}
-                href={puzzle.sources[0].url}
-                rel="noopener noreferrer"
-                target="_blank"
-                title={puzzle.sources[0].title ?? "Read the source article"}
-              >
-                <ExternalLink aria-hidden="true" size={18} strokeWidth={2.25} />
-              </a>
-            )}
-          </div>
+        <div className={styles.resultBody}>
+          <p className={styles.resultHeading}>The Receipt</p>
+          <p>{puzzle.detail}</p>
         </div>
-        <div className={styles.receiptTorn} aria-hidden />
+        <div className={styles.resultActions}>
+          <button
+            aria-label="Share the drama"
+            className={styles.resultAction}
+            data-testid="game-share"
+            onClick={onShare}
+            style={{ "--action-i": 0 } as CSSProperties}
+            title="Share the drama"
+            type="button"
+          >
+            <Share2 aria-hidden="true" size={18} strokeWidth={2.25} />
+          </button>
+          <button
+            aria-label="Copy story"
+            className={styles.resultAction}
+            data-testid="game-copy-story"
+            onClick={onCopy}
+            style={{ "--action-i": 1 } as CSSProperties}
+            title="Copy story"
+            type="button"
+          >
+            <Copy aria-hidden="true" size={18} strokeWidth={2.25} />
+          </button>
+          {puzzle.sources.length > 0 && (
+            <a
+              aria-label="Read the source article"
+              className={styles.resultAction}
+              href={puzzle.sources[0].url}
+              rel="noopener noreferrer"
+              style={{ "--action-i": 2 } as CSSProperties}
+              target="_blank"
+              title={puzzle.sources[0].title ?? "Read the source article"}
+            >
+              <ExternalLink aria-hidden="true" size={18} strokeWidth={2.25} />
+            </a>
+          )}
+        </div>
       </div>
     </div>
   );
