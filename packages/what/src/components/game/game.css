@@ -250,7 +250,6 @@ svg {
 }
 
 .game-keyboard .game-key {
-  height: 46px;
   border: 2px solid var(--game-paper-border);
   border-radius: 10px;
   background: var(--game-paper);

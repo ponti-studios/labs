@@ -3,7 +3,12 @@ import { addDaysToDateKey, daysBetweenDateKeys, getDateKey } from "../puzzle/dat
 import { listAttemptsForUserInRange, loadAllAttemptsForUser } from "./attempts.server";
 import { getGameBySlug } from "./games.server";
 import { getEarliestPuzzleDateKey, getExistingDateKeys } from "./puzzles.server";
-import { computeHistoryStats, type PuzzleHistoryStats } from "../puzzle/stats";
+import {
+  buildStreakMosaic,
+  computeHistoryStats,
+  type MosaicCell,
+  type PuzzleHistoryStats,
+} from "../puzzle/stats";
 import { DEFAULT_GAME_SLUG } from "../generation/catalog";
 
 async function requireGameId(gameSlug = DEFAULT_GAME_SLUG): Promise<number> {
@@ -21,6 +26,11 @@ const PLAYABLE_LOOKBACK_DAYS = 90;
 // anchored to today), not by row count — The game is a one-puzzle-per-day
 // game, so a "week" is a more meaningful unit than an arbitrary row count.
 const WEEK_DAYS = 7;
+
+// The streak mosaic always shows a full 52-week grid (7 rows x 52 columns),
+// same fixed window no matter how long the player has been playing — days
+// before the game existed just render as unplayed, same as any other gap.
+const MOSAIC_LOOKBACK_DAYS = 364;
 
 export interface PuzzleHistoryRow {
   dateKey: string;
@@ -46,6 +56,9 @@ export interface PuzzleHistoryPage {
   /** Puzzle dates within the lookback window with no attempt row at all,
    *  oldest first. */
   playableUnplayedDateKeys: string[];
+  /** Fixed 52-week day-by-day grid for the streak mosaic, oldest first —
+   *  same window regardless of how long the game has existed. */
+  mosaic: MosaicCell[];
 }
 
 export async function loadPuzzleHistory(
@@ -66,6 +79,9 @@ export async function loadPuzzleHistory(
   ]);
 
   const stats = computeHistoryStats(allAttempts);
+
+  const mosaicFromKey = addDaysToDateKey(todayKey, -MOSAIC_LOOKBACK_DAYS) ?? todayKey;
+  const mosaic = buildStreakMosaic(allAttempts, { fromKey: mosaicFromKey, toKey: todayKey });
 
   const fromKey = addDaysToDateKey(todayKey, -PLAYABLE_LOOKBACK_DAYS) ?? todayKey;
   const existingDateKeys = await getExistingDateKeys(gameId, fromKey, todayKey);
@@ -96,5 +112,6 @@ export async function loadPuzzleHistory(
     weekEndKey,
     stats,
     playableUnplayedDateKeys,
+    mosaic,
   };
 }
