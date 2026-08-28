@@ -11,7 +11,7 @@
       "name": "game",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--dir", "packages/what", "dev"],
-      "port": 5180
+      "port": 5173
     },
     {
       "name": "storybook",
