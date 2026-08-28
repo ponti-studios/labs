@@ -10,7 +10,7 @@ RUN corepack enable
 
 FROM base AS build
 
-COPY .npmrc package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY .npmrc package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
 COPY packages/ai/package.json packages/ai/package.json
 COPY packages/db/package.json packages/db/package.json
 COPY packages/env/package.json packages/env/package.json
