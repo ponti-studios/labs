@@ -27,30 +27,51 @@
   gap: 0.75rem;
 }
 
-.badge {
-  position: absolute;
-  top: 1.25rem;
-  right: 1.25rem;
-  display: inline-flex;
+.verdict {
+  display: flex;
   align-items: center;
-  border-radius: 999px;
-  padding: 0.4rem 1.1rem;
-  font-size: 0.8rem;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  animation: game-result-verdict-in 360ms var(--game-ease-out) 420ms both;
+}
+
+.verdict[data-solved="true"] {
+  color: var(--game-correct-accent);
+}
+
+.verdict[data-solved="false"] {
+  color: var(--game-ink);
+}
+
+.verdictLabel {
+  font-size: 0.85rem;
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  box-shadow: 0 3px 8px var(--game-shadow-drop);
-  animation: game-result-badge-in 320ms var(--game-ease-out) 420ms both;
+  padding-bottom: 0.15rem;
+  border-bottom: 2px solid currentColor;
 }
 
-.badge[data-solved="true"] {
-  background: var(--game-correct-bg);
-  color: var(--game-correct-text);
+.verdictDots {
+  display: flex;
+  gap: 0.3rem;
+  margin-left: auto;
 }
 
-.badge[data-solved="false"] {
-  background: var(--game-ink);
-  color: var(--game-paper);
+.verdictDot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  background: transparent;
+}
+
+.verdictDot[data-filled="true"] {
+  background: currentColor;
+}
+
+.verdictDot[data-filled="false"] {
+  opacity: 0.35;
 }
 
 .resultCard {
@@ -133,18 +154,14 @@
   }
 }
 
-@keyframes game-result-badge-in {
-  0% {
+@keyframes game-result-verdict-in {
+  from {
     opacity: 0;
-    transform: scale(0.5);
+    transform: translateY(8px);
   }
-  60% {
+  to {
     opacity: 1;
-    transform: scale(1.08);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
+    transform: translateY(0);
   }
 }
 
@@ -171,7 +188,7 @@
 @media (prefers-reduced-motion: reduce) {
   .authCard,
   .resultCard,
-  .badge,
+  .verdict,
   .resultBody,
   .resultAction {
     animation: none !important;
