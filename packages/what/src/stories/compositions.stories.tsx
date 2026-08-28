@@ -1,7 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { fn } from "storybook/test";
 
-import { GameBoard, GameBoardSkeleton } from "../components/game";
-import { fallbackPuzzle, guesses, puzzle } from "./fixtures";
+import { GameBoard, GameBoardSkeleton, GameHeader, GameResult, GuessGrid } from "../components/game";
+import boardStyles from "../components/game/game-board.module.css";
+import { fallbackPuzzle, gameState, guesses, puzzle } from "./fixtures";
 
 const meta = { title: "Game/Compositions", parameters: { layout: "padded" } } satisfies Meta;
 export default meta;
@@ -32,3 +34,22 @@ export const BoardWithTopics: Story = {
   ),
 };
 export const BoardSkeleton: Story = { render: () => <GameBoardSkeleton /> };
+
+export const FirstGuessAuthWall: Story = {
+  render: () => {
+    const game = gameState({
+      guesses: [guesses[0]],
+      status: "playing",
+      authRequired: true,
+      isGameOver: true,
+    });
+
+    return (
+      <div className={boardStyles.shell}>
+        <GameHeader isFallback={puzzle.isFallback} gameSlug={common.gameSlug} />
+        <GuessGrid game={game} />
+        <GameResult game={game} puzzle={puzzle} loginUrl={common.loginUrl} onShare={fn()} onCopy={fn()} />
+      </div>
+    );
+  },
+};

@@ -7,7 +7,11 @@
 }
 
 .authCard {
-  border-color: var(--game-present-border);
+  border: 1px solid var(--game-paper-border);
+  border-radius: var(--game-radius);
+  background-color: var(--game-paper);
+  box-shadow: 0 8px 20px var(--game-shadow-drop);
+  animation: game-result-card-in 420ms var(--game-ease-out) both;
 }
 
 .authCardContent {
@@ -23,74 +27,45 @@
   gap: 0.75rem;
 }
 
-.solvedRow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
-.squiggle {
-  color: var(--game-ink-muted);
-  font-size: 0.9rem;
-  letter-spacing: -0.1em;
-}
-
 .badge {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
   display: inline-flex;
   align-items: center;
   border-radius: 999px;
-  background: var(--game-badge-bg);
   padding: 0.4rem 1.1rem;
   font-size: 0.8rem;
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--game-badge-text);
   box-shadow: 0 3px 8px var(--game-shadow-drop);
+  animation: game-result-badge-in 320ms var(--game-ease-out) 420ms both;
 }
 
-.receipt {
+.badge[data-solved="true"] {
+  background: var(--game-correct-bg);
+  color: var(--game-correct-text);
+}
+
+.badge[data-solved="false"] {
+  background: var(--game-ink);
+  color: var(--game-paper);
+}
+
+.resultCard {
   position: relative;
   display: flex;
   flex-direction: column;
-  border-radius: 14px 14px 0 0;
   border: 1px solid var(--game-paper-border);
-  border-bottom: none;
-  background: var(--game-paper);
-  padding: 1.5rem 1.5rem 1.75rem;
-  box-shadow: 0 6px 16px var(--game-shadow-drop);
+  border-radius: var(--game-radius);
+  background-color: var(--game-paper);
+  padding: 1.5rem;
+  box-shadow: 0 8px 20px var(--game-shadow-drop);
+  animation: game-result-card-in 420ms var(--game-ease-out) both;
 }
 
-.receiptContent {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-}
-
-.receiptTorn {
-  position: relative;
-  height: 14px;
-  margin-top: -1px;
-  background: var(--game-paper);
-  border-left: 1px solid var(--game-paper-border);
-  border-right: 1px solid var(--game-paper-border);
-  mask-image:
-    linear-gradient(-45deg, transparent 8.5px, var(--game-paper) 8.5px),
-    linear-gradient(45deg, transparent 8.5px, var(--game-paper) 8.5px);
-  mask-size: 17px 17px;
-  mask-repeat: repeat-x;
-  mask-position: bottom left;
-  -webkit-mask-image:
-    linear-gradient(-45deg, transparent 8.5px, var(--game-paper) 8.5px),
-    linear-gradient(45deg, transparent 8.5px, var(--game-paper) 8.5px);
-  -webkit-mask-size: 17px 17px;
-  -webkit-mask-repeat: repeat-x;
-  -webkit-mask-position: bottom left;
-  filter: drop-shadow(0 3px 3px var(--game-shadow-drop));
-}
-
-.receiptHeading {
+.resultHeading {
   font-size: clamp(1.5rem, 5vw, 1.9rem);
   font-weight: 900;
   letter-spacing: -0.02em;
@@ -98,54 +73,27 @@
   color: var(--game-ink);
 }
 
-.receiptBody {
-  flex: 1;
-  min-width: 0;
+.resultBody {
   font-size: 0.9rem;
   line-height: 1.5;
   color: var(--game-ink);
+  animation: game-result-fade-in 350ms ease 600ms both;
 }
 
-.receiptBody p {
+.resultBody p {
   margin-top: 0.5rem;
 }
 
-.receiptStamp {
-  display: flex;
-  width: 64px;
-  flex-shrink: 0;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid var(--game-correct-accent);
-  border-radius: 6px;
-  padding: 6px 4px;
-  transform: rotate(3deg);
-  text-align: center;
-  font-size: 0.62rem;
-  font-weight: 800;
-  line-height: 1.15;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: var(--game-correct-accent);
-}
-
-.receiptDivider {
-  align-self: stretch;
-  width: 0;
-  border-left: 1px dashed var(--game-paper-border);
-}
-
-.receiptActions {
+.resultActions {
   display: flex;
   justify-content: flex-end;
   gap: 0.35rem;
-  margin-top: 1.25rem;
-  padding-top: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 0.6rem;
   border-top: 1px dashed var(--game-paper-border);
 }
 
-.receiptAction {
+.resultAction {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -155,19 +103,77 @@
   border-radius: 8px;
   background: transparent;
   color: var(--game-ink-muted);
+  animation: game-result-action-in 280ms var(--game-ease-out) calc(850ms + var(--action-i, 0) * 90ms)
+    both;
   transition:
     background-color 150ms ease,
     color 150ms ease,
     border-color 150ms ease;
 }
 
-.receiptAction:hover {
+.resultAction:hover {
   border-color: var(--game-link-text);
   background: color-mix(in srgb, var(--game-link-text) 8%, transparent);
   color: var(--game-link-text);
 }
 
-.receiptAction:focus-visible {
+.resultAction:focus-visible {
   outline: 2px solid var(--game-link-text);
   outline-offset: 2px;
+}
+
+@keyframes game-result-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes game-result-badge-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes game-result-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes game-result-action-in {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .authCard,
+  .resultCard,
+  .badge,
+  .resultBody,
+  .resultAction {
+    animation: none !important;
+  }
 }
