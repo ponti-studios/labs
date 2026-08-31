@@ -55,7 +55,7 @@
     "@storybook/addon-a11y": "10.5.7",
     "@storybook/addon-docs": "^10.5.10",
     "@storybook/addon-links": "^10.5.7",
-    "@storybook/react-vite": "^10.5.3",
+    "@storybook/react-vite": "^10.5.10",
     "@types/jsdom": "^21.1.7",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.17",
