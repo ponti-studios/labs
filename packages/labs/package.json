@@ -39,7 +39,7 @@
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
     "fast-xml-parser": "^5.10.1",
-    "framer-motion": "13.1.0",
+    "framer-motion": "13.1.1",
     "isbot": "^5",
     "iso-3166-1": "^2.1.1",
     "jsdom": "^30.0.1",
