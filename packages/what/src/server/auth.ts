@@ -19,7 +19,8 @@ export async function getGameUser(request: Request): Promise<GameUser | null> {
 }
 
 export function loginUrl(request: Request, requestedReturnTo?: string): string {
-  const appOrigin = new URL(WhatServerEnv.parse(process.env).WHAT_APP_URL);
+  const { PORTLESS_URL, WHAT_APP_URL } = WhatServerEnv.parse(process.env);
+  const appOrigin = new URL(PORTLESS_URL ?? WHAT_APP_URL);
   let returnTo = new URL(appOrigin);
   try {
     const candidate = new URL(requestedReturnTo ?? request.url);

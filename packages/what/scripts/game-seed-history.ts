@@ -81,7 +81,7 @@ async function main() {
   console.log(
     `\nDone. Seeded ${LOOKBACK_DAYS} days (through ${addDaysToDateKey(today, -LOOKBACK_DAYS)}).`,
   );
-  console.log("View: http://localhost:3001/games/game/history");
+  console.log("View: https://labyrinth.lvh.me:4200/games/game/history");
 }
 
 if (!process.env.VITEST) await runScript(main);

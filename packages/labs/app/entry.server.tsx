@@ -3,13 +3,29 @@ import * as Sentry from "@sentry/react-router";
 import { createReadableStreamFromReadable } from "@react-router/node";
 import { PassThrough } from "node:stream";
 import { renderToPipeableStream } from "react-dom/server";
-import { ServerRouter, type EntryContext, type HandleErrorFunction } from "react-router";
+import {
+  isRouteErrorResponse,
+  ServerRouter,
+  type EntryContext,
+  type HandleErrorFunction,
+} from "react-router";
 
 export const instrumentations = [Sentry.createSentryServerInstrumentation()];
 
-export const handleError: HandleErrorFunction = Sentry.createSentryHandleError({
+const sentryHandleError = Sentry.createSentryHandleError({
   logErrors: true,
 });
+
+export const handleError: HandleErrorFunction = (error, context) => {
+  if (
+    context.request.signal.aborted ||
+    (isRouteErrorResponse(error) && (error.status === 404 || error.status === 405))
+  ) {
+    return;
+  }
+
+  return sentryHandleError(error, context);
+};
 
 export default function handleRequest(
   request: Request,
