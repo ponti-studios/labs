@@ -45,7 +45,7 @@ export default defineConfig((config) => ({
     // (react-router-serve, no Vite dev middleware) always uses that route
     // handler logic directly.
     cors: {
-      origin: ["http://localhost:5180"],
+      origin: ["https://what.lvh.me:4200"],
       credentials: true,
     },
   },
