@@ -92,6 +92,7 @@
   letter-spacing: -0.02em;
   text-transform: uppercase;
   color: var(--game-ink);
+  margin: 0;
 }
 
 .resultBody {
@@ -124,8 +125,8 @@
   border-radius: 8px;
   background: transparent;
   color: var(--game-ink-muted);
-  animation: game-result-action-in 280ms var(--game-ease-out) calc(850ms + var(--action-i, 0) * 90ms)
-    both;
+  animation: game-result-action-in 280ms var(--game-ease-out)
+    calc(850ms + var(--action-i, 0) * 90ms) both;
   transition:
     background-color 150ms ease,
     color 150ms ease,

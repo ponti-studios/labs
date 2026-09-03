@@ -4,8 +4,8 @@ import type { CSSProperties } from "react";
 import { MAX_GUESSES, type PublicGamesPuzzle } from "../../lib/puzzle";
 import { Button, Card, CardContent } from "../primitives";
 
-import styles from "./game-result.module.css";
 import type { GameState } from "../../hooks/use-game";
+import styles from "./game-result.module.css";
 
 interface GameResultProps {
   game: GameState;
@@ -66,7 +66,7 @@ export function GameResult({ game, puzzle, loginUrl, onShare, onCopy }: GameResu
           </div>
         </div>
         <div className={styles.resultBody}>
-          <p className={styles.resultHeading}>The Receipt</p>
+          <h2 className={styles.resultHeading}>The Receipt</h2>
           <p>{puzzle.detail}</p>
         </div>
         <div className={styles.resultActions}>
