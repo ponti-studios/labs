@@ -11,7 +11,7 @@ import { getGameBySlug } from "../src/lib/data/games.server";
 import { loadMostRecentPuzzle, loadPuzzleForDate } from "../src/lib/data/puzzles.server";
 import { runScript } from "./_shared/run-script";
 
-const DEFAULT_BASE_URL = "http://localhost:3001";
+const DEFAULT_BASE_URL = "https://labyrinth.lvh.me:4200";
 const DEFAULT_OUT_DIR = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   "../tmp/game-e2e",

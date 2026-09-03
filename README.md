@@ -16,8 +16,21 @@ cd ../foundation && just up
 
 # 2. Install and run
 pnpm install
+
+# 3. Start the portless proxy once (unprivileged port, lvh.me so cross-subdomain
+#    auth cookies actually work)
+pnpm exec portless proxy start --port 4200 --tld lvh.me
+
+# 4. Run the dev servers
 pnpm dev
 ```
+
+Each web app gets a stable `https://<name>.lvh.me:4200` URL instead of a fixed
+port — `labyrinth.lvh.me` (Labs) and `what.lvh.me` (WH?T) — configured via the
+`"portless"` key in each package's `package.json` (`dev` delegates to
+`portless`, the real command is `dev:app`). This is what lets multiple git
+worktrees run `pnpm dev` concurrently without port collisions (portless
+prefixes each worktree's branch onto the hostname).
 
 Foundation provides:
 
@@ -32,7 +45,7 @@ Credentials: `postgres` / `postgres` | `minioadmin` / `minioadmin`
 
 | Command              | Purpose                      |
 | -------------------- | ---------------------------- |
-| `pnpm dev`           | Start dev server (port 3001) |
+| `pnpm dev`           | Start dev servers at `https://labyrinth.lvh.me:4200` / `https://what.lvh.me:4200` (via portless) |
 | `pnpm build`         | Production build             |
 | `pnpm start`         | Start production server      |
 | `pnpm test`          | Run unit tests               |

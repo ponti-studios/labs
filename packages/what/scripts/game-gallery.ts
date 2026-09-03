@@ -26,7 +26,7 @@ import { runScript } from "./_shared/run-script";
  */
 
 const GAME_SLUG = "reality";
-const DEFAULT_BASE_URL = "http://localhost:3001";
+const DEFAULT_BASE_URL = "https://labyrinth.lvh.me:4200";
 // Matches the `screenshots: ["/screenshots/..."]` paths in app/data/projects.ts,
 // which are served from this app's own /public directory.
 const DEFAULT_OUT_DIR = path.resolve(

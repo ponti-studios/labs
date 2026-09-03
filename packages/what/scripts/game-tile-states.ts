@@ -21,7 +21,7 @@ type ColorScheme = "light" | "dark";
  * depends on today's actual puzzle/answer.
  */
 
-const DEFAULT_BASE_URL = "http://localhost:3001";
+const DEFAULT_BASE_URL = "https://labyrinth.lvh.me:4200";
 const DEFAULT_OUT_DIR = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   "../public/screenshots/tile-states",

@@ -41,7 +41,8 @@ The failures were distributed across several boundaries:
 - Labs redirects use `WHAT_APP_URL`; browser-facing Labs links use
   `VITE_WHAT_APP_URL`.
 - Production values for both are `https://what.ponti.io`.
-- Local values for both are `http://localhost:5173`.
+- Local examples use `https://what.lvh.me:4200`; portless overrides the What
+  runtime return origin with its worktree-specific `PORTLESS_URL`.
 - Do not derive these URLs from `NODE_ENV`, hard-code a Railway hostname, or
   introduce a second similarly named variable without updating the owning env
   schema and this document.

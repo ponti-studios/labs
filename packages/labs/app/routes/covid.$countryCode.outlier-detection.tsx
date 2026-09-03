@@ -59,10 +59,10 @@ export const meta: MetaFunction<typeof loader> = ({ params }) => {
   ];
 };
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params, request }: LoaderFunctionArgs) {
   const { countryCode } = params;
   if (!countryCode) throw new Response("Country code is required", { status: 400 });
-  return { countryCode };
+  return { countryCode, origin: new URL(request.url).origin };
 }
 
 const metrics = [
@@ -90,20 +90,27 @@ function qualityScoreColor(score: number) {
   return "text-red-500";
 }
 
+export function buildOutlierDetectionUrl(origin: string, countryCode: string, metric: string) {
+  const endpoint = new URL("/api/covid/analytics/outlier-detection", origin);
+  endpoint.search = new URLSearchParams({ country: countryCode, metric }).toString();
+  return endpoint;
+}
+
 function OutlierContent({
   countryCode,
+  origin,
   selectedMetric,
 }: {
   countryCode: string;
+  origin: string;
   selectedMetric: string;
 }) {
   const { data } = useSuspenseQuery<OutlierResponse>({
     queryKey: ["outlier-detection", countryCode, selectedMetric],
     queryFn: () => {
-      const params = new URLSearchParams();
-      params.append("country", countryCode);
-      params.append("metric", selectedMetric);
-      return fetch(`/api/covid/analytics/outlier-detection?${params}`).then((res) => res.json());
+      return fetch(buildOutlierDetectionUrl(origin, countryCode, selectedMetric)).then((res) =>
+        res.json(),
+      );
     },
     staleTime: 1000 * 60 * 60,
   });
@@ -232,7 +239,7 @@ function OutlierContent({
 }
 
 export default function OutlierDetectionPage() {
-  const { countryCode } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
+  const { countryCode, origin } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
   const [selectedMetric, setSelectedMetric] = useState("new_cases_smoothed");
 
   return (
@@ -257,7 +264,11 @@ export default function OutlierDetectionPage() {
 
       <TabErrorBoundary>
         <Suspense fallback={<CovidLoading />}>
-          <OutlierContent countryCode={countryCode} selectedMetric={selectedMetric} />
+          <OutlierContent
+            countryCode={countryCode}
+            origin={origin}
+            selectedMetric={selectedMetric}
+          />
         </Suspense>
       </TabErrorBoundary>
     </div>

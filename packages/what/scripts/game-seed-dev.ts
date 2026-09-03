@@ -43,7 +43,7 @@ async function main() {
     });
     console.log(`  ${dateKey}: seeded (${puzzle.answer})`);
   }
-  console.log("\nDone. View: http://localhost:3001/games/game");
+  console.log("\nDone. View: https://labyrinth.lvh.me:4200/games/game");
 }
 
 if (!process.env.VITEST) await runScript(main);
