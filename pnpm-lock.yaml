@@ -27,8 +27,8 @@ importers:
   packages/ai:
     dependencies:
       '@openrouter/sdk':
-        specifier: ^1.2.34
-        version: 1.2.34
+        specifier: ^1.2.80
+        version: 1.2.80
     devDependencies:
       '@types/node':
         specifier: ^24.13.3
@@ -87,8 +87,8 @@ importers:
         specifier: ^0.6.0
         version: 0.6.0
       '@openrouter/sdk':
-        specifier: ^1.2.34
-        version: 1.2.34
+        specifier: ^1.2.80
+        version: 1.2.80
       '@ponti-studios/auth':
         specifier: ^0.2.0
         version: 0.2.0
@@ -1658,8 +1658,8 @@ packages:
   '@openrouter/sdk@0.13.20':
     resolution: {integrity: sha512-fx4o19FHgadEldfrSOgSbXAi32hCE3O708q1nxcoxYrW6fP6/WggX3o5PmnlnObzmxrqLMkZpqg188K+Twguhg==}
 
-  '@openrouter/sdk@1.2.34':
-    resolution: {integrity: sha512-KdbGP/emkkdl+UG7GXJyMsImSlirCsDe2V2zdoOBAV/FS+omDwIbhWdO6N5nxGTtz6bESgE9fi3MsbMCHaSxYw==}
+  '@openrouter/sdk@1.2.80':
+    resolution: {integrity: sha512-anSNV33p+8hWOgm/m+ACymgawY0aVQ+mpuAB3BZ4xhd174us7nZJrtMpBrW0X0PNzcCmJlrEFl4FTR2E5+/Gpg==}
 
   '@opentelemetry/api-logs@0.220.0':
     resolution: {integrity: sha512-CmVa4ImJ+ynfrPMNaAXHET6Bhb44SwzmfyVJFq9ni2jgXJR/l7C6gfVFddNmHP+ZOkP9cf4f9DBe68qVLTHc9w==}
@@ -7014,7 +7014,7 @@ snapshots:
     dependencies:
       zod: 4.4.3
 
-  '@openrouter/sdk@1.2.34':
+  '@openrouter/sdk@1.2.80':
     dependencies:
       zod: 4.4.3
 
