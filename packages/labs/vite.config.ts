@@ -41,7 +41,7 @@ export default defineConfig((config) => ({
     // ever reach the app's route handlers — its boolean default reflects
     // Origin but omits Access-Control-Allow-Credentials, which the `what`
     // app's credentialed cross-origin fetches need. This mirrors the same
-    // allowlist as app/lib/server/what-cors.ts for local dev; production
+    // allowlist as the What portless origin for local dev; production
     // (react-router-serve, no Vite dev middleware) always uses that route
     // handler logic directly.
     cors: {

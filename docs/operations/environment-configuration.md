@@ -101,10 +101,12 @@ secrets.
 | Labs | `WHAT_APP_URL` | Runtime | `https://what.ponti.io` |
 | Labs | `VITE_WHAT_APP_URL` | Docker/Vite build and browser | `https://what.ponti.io` |
 | What | `WHAT_APP_URL` | Runtime | `https://what.ponti.io` |
+| What | `PORTLESS_URL` | Local runtime only | Per-worktree `https://<name>.lvh.me:4200` |
 
-Local values use `http://localhost:5173` for the What app. If a different
-service consumes one of these values, update the table and the owning package
-example together.
+Local examples use `https://what.lvh.me:4200` for the What app under portless.
+Portless injects `PORTLESS_URL` for each worktree, and What uses it for
+worktree-specific auth return URLs at runtime. If a different service consumes
+one of these values, update the table and the owning package example together.
 
 ## Verification sequence
 
@@ -120,4 +122,3 @@ After provisioning or changing a variable:
 5. For a server value, verify startup and the endpoint that consumes it.
 6. If a service crashes with a missing `VITE_*` value, inspect the Dockerfile
    build stage first, then the Railway variable configuration, then the source.
-
