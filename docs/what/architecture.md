@@ -57,7 +57,7 @@ The same layer resolves the active daily puzzle for the route: it serves today's
 
 ## Admin console
 
-`/games/what/admin` (`app/routes/games/what/admin/`) is an authenticated operator surface, `noindex`, no public nav. Auth is layered: `requireWhatAdmin` (`app/lib/what/admin/auth.ts`) requires Basic Auth (`requireAdminAuth`, shared-secret) *and* a signed-in Hominem user on an email allowlist (`WHAT_ADMIN_EMAILS`, required in production/Railway) — local dev only requires a Hominem session. Every operator write goes through `recordAdminAction` into `what_admin_actions`, an audit trail of who did what to which date.
+`/admin` (`packages/what/src/routes/admin/`) is an authenticated operator surface, `noindex`, no public nav. Access requires a signed-in Hominem user whose email is on the `GAME_ADMIN_EMAILS` allowlist (required in production/Railway). Every operator write goes through `recordAdminAction` into `game_admin_actions`, an audit trail of who did what to which date.
 
 Generation is a persisted, non-publishing run before it's a puzzle. An operator triggers a run (`what_generation_runs`) against a chosen article source, prompt, and model; the model returns 3–5 scored candidates (`what_generation_candidates`), streamed to the UI over SSE (`app/lib/what/admin/generation-events.server.ts`). Nothing lands in `games_puzzles` until `publishCandidate` (`app/lib/what/admin/publish.ts`) is called explicitly on one candidate — it re-validates against the current excluded-answer set, then creates or replaces the row for that date. Replacing a date that already has player attempts snapshots the pre-image to `what_puzzle_revisions` (including the attempts) before overwriting, rather than allowing a silent rescore.
 
@@ -75,7 +75,7 @@ The game relies on a small API surface rather than a large backend.
 
 - `POST /api/words/validate` checks whether a guess is playable.
 - `POST /api/games/what/guess` submits a guess for validation against the active puzzle.
-- `GET /api/games/what/health` reports health/status for the daily puzzle pipeline.
+- The admin interface reports health/status for the daily puzzle pipeline.
 - The `/games/what` route loader resolves and serves the active puzzle server-side; there is no public date-parameterized daily-puzzle endpoint.
 - `pnpm what:generate` runs `scripts/what-generate.ts`, which accepts `--force`, `--days-ahead`, `--from`, and `--to` flags. It fills gaps in a forward inventory window (default 7 days) across every active game rather than generating a single day for a single game.
 

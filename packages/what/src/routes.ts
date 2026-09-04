@@ -8,7 +8,6 @@ export default [
   ),
   route("/healthz", "routes/healthz.ts"),
   route("/api/games", "routes/api.games.ts"),
-  route("/api/health", "routes/api.health.ts"),
   route("/api/:topic/attempt", "routes/api.$topic.attempt.ts"),
   route("/api/:topic/guess", "routes/api.$topic.guess.ts"),
   route("/api/:topic/history", "routes/api.$topic.history.ts"),
