@@ -102,6 +102,7 @@ secrets.
 | Labs | `VITE_WHAT_APP_URL` | Docker/Vite build and browser | `https://what.ponti.io` |
 | What | `WHAT_APP_URL` | Runtime | `https://what.ponti.io` |
 | What | `PORTLESS_URL` | Local runtime only | Per-worktree `https://<name>.lvh.me:4200` |
+| What | `GAME_ADMIN_EMAILS` | Runtime admin access | Comma-separated Hominem admin email addresses; required in production |
 
 Local examples use `https://what.lvh.me:4200` for the What app under portless.
 Portless injects `PORTLESS_URL` for each worktree, and What uses it for
