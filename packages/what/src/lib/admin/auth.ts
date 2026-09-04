@@ -5,7 +5,6 @@ import {
   type RouterContextProvider,
 } from "react-router";
 
-import { requireAdminAuth } from "~/lib/infrastructure/admin-auth";
 import { buildHominemLoginUrl, getHominemUser } from "~/lib/infrastructure/hominem-auth";
 
 export type GameAdminActor = {
@@ -21,28 +20,17 @@ function allowlistRequired() {
 function parseAllowlist(): string[] | null {
   const raw = process.env.GAME_ADMIN_EMAILS;
   if (raw === undefined || raw.trim() === "") return null;
-  return raw
+  const emails = raw
     .split(",")
     .map((entry) => entry.trim().toLowerCase())
     .filter((entry) => entry.length > 0);
-}
-
-function isLocalDev() {
-  return process.env.NODE_ENV === "development" && !process.env.RAILWAY_ENVIRONMENT;
+  return emails.length > 0 ? emails : null;
 }
 
 export async function requireGameAdmin(
   request: Request,
   kind: "loader" | "action",
 ): Promise<GameAdminActor> {
-  if (isLocalDev()) {
-    const user = await getHominemUser(request);
-    return { userId: user?.id ?? "local-dev" };
-  }
-
-  const denied = requireAdminAuth(request);
-  if (denied) throw denied;
-
   const user = await getHominemUser(request);
   const loginUrl = buildHominemLoginUrl(request.url);
   if (!user) {
