@@ -53,7 +53,7 @@
   },
   "devDependencies": {
     "@react-router/dev": "catalog:",
-    "@storybook/addon-a11y": "10.5.10",
+    "@storybook/addon-a11y": "10.6.0",
     "@storybook/addon-docs": "catalog:",
     "@storybook/addon-links": "catalog:",
     "@storybook/react-vite": "catalog:",
