@@ -17,13 +17,13 @@
     "typecheck": "tsc -b"
   },
   "dependencies": {
-    "drizzle-orm": "^0.45.2",
-    "postgres": "^3.4.9",
-    "zod": "^4.4.3"
+    "drizzle-orm": "catalog:",
+    "postgres": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
-    "@types/node": "^24.13.3",
+    "@types/node": "catalog:",
     "drizzle-kit": "^0.31.10",
-    "typescript": "^6.0.3"
+    "typescript": "catalog:"
   }
 }
