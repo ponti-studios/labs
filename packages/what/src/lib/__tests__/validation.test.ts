@@ -36,7 +36,7 @@ describe("game daily puzzle helpers", () => {
       sources: [BRAVO_SOURCE],
     });
 
-    expect(result).toEqual({ normalizedAnswer: "DRAMA", reasons: [], valid: true });
+    expect(result).toEqual({ answer: "DRAMA", reasons: [], valid: true });
   });
 
   it("rejects multi-word answers that normalize to more than five letters", () => {
@@ -49,7 +49,7 @@ describe("game daily puzzle helpers", () => {
       sources: [BRAVO_SOURCE],
     });
 
-    expect(result.normalizedAnswer).toBe("TEASET");
+    expect(result.answer).toBe("TEASET");
     expect(result.valid).toBe(false);
     expect(result.reasons).toContain(GenerateReasonType.NotFiveLetters);
   });
@@ -78,7 +78,7 @@ describe("game daily puzzle helpers", () => {
         sources: [BRAVO_SOURCE],
       });
 
-      expect(result.normalizedAnswer).toBe("SPLIT");
+      expect(result.answer).toBe("SPLIT");
       expect(result.valid).toBe(false);
       expect(result.reasons).toContain(GenerateReasonType.NotLetters);
     },
@@ -178,7 +178,7 @@ describe("game daily puzzle helpers", () => {
       new Set(["ASPEN"]),
     );
 
-    expect(result.normalizedAnswer).toBe("ASPEN");
+    expect(result.answer).toBe("ASPEN");
     expect(result.reasons).toContain(GenerateReasonType.RepeatInWindow);
   });
 
@@ -285,7 +285,7 @@ describe("game daily puzzle helpers", () => {
       sources: [],
     });
 
-    expect(result.normalizedAnswer).toBe("QZXQZ");
+    expect(result.answer).toBe("QZXQZ");
     expect(result.valid).toBe(false);
     expect(result.reasons).toEqual([
       GenerateReasonType.NotLetters,

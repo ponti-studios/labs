@@ -86,6 +86,8 @@ describe("generation input boundaries", () => {
 
     expect(prompt).toContain("articleText");
     expect(prompt).toContain("If articleText is empty");
+    expect(prompt).toContain("article-level concept");
+    expect(prompt).toContain("coffee mug does not justify MUGGY");
     expect(userMessage.content).toContain("The full article body is the richer source.");
   });
 
@@ -135,6 +137,10 @@ describe("generation input boundaries", () => {
                 {
                   answer: "Aspen",
                   answerType: "place",
+                  articleAbout: "a chaotic cast trip",
+                  concept: "the trip's setting",
+                  answerMeaning: "a town in Colorado",
+                  relationship: "direct-subject",
                   clue: "A snowy destination tied to a chaotic cast trip.",
                   detail: "The trip became shorthand for off-camera accusations and fallout.",
                   sources: [
@@ -148,6 +154,10 @@ describe("generation input boundaries", () => {
                 {
                   answer: "Drama",
                   answerType: "moment",
+                  articleAbout: "a cast conflict",
+                  concept: "the conflict",
+                  answerMeaning: "an exciting or emotional situation",
+                  relationship: "direct-summary",
                   clue: "A clash that keeps the whole cast spinning.",
                   detail: "A single conflict can dominate the full episode.",
                   sources: [
@@ -161,6 +171,10 @@ describe("generation input boundaries", () => {
                 {
                   answer: "Smile",
                   answerType: "storyline",
+                  articleAbout: "a cast scandal",
+                  concept: "the public reaction",
+                  answerMeaning: "a pleased facial expression",
+                  relationship: "incidental-association",
                   clue: "A grin that became a scandal.",
                   detail: "The fallout split the cast.",
                   sources: [

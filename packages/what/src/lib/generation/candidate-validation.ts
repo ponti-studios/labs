@@ -21,6 +21,7 @@ export function validateCandidate(
   candidate: {
     answer: string;
     answerType: string;
+    relationship?: string;
     clue: string;
     detail: string;
     sources: { url: string; title?: string; publishedAt?: string }[];
@@ -29,9 +30,9 @@ export function validateCandidate(
   options: { sourceDomains?: string[] } = {},
 ): ValidationResult {
   const reasons: GenerateReasonType[] = [];
-  const normalizedAnswer = normalizeGuess(candidate.answer);
+  const answer = normalizeGuess(candidate.answer);
 
-  if (normalizedAnswer.length !== GAME_ANSWER_LENGTH) {
+  if (answer.length !== GAME_ANSWER_LENGTH) {
     reasons.push(GenerateReasonType.NotFiveLetters);
   }
   // `normalizeGuess` is intentionally forgiving for player input, but answer
@@ -41,7 +42,7 @@ export function validateCandidate(
   if (!/^[A-Za-z]{5}$/.test(candidate.answer)) {
     reasons.push(GenerateReasonType.NotLetters);
   }
-  if (normalizedAnswer.length === GAME_ANSWER_LENGTH && !isDictionaryWord(normalizedAnswer)) {
+  if (answer.length === GAME_ANSWER_LENGTH && !isDictionaryWord(answer)) {
     reasons.push(GenerateReasonType.NotDictionaryWord);
   }
   if (!candidate.answerType) {
@@ -50,13 +51,21 @@ export function validateCandidate(
   if (candidate.answerType === "person") {
     reasons.push(GenerateReasonType.PersonAnswerType);
   }
-  if (normalizeGuess(candidate.clue).includes(normalizedAnswer)) {
+  if (
+    candidate.relationship &&
+    !["direct-summary", "direct-subject", "direct-action", "direct-consequence"].includes(
+      candidate.relationship,
+    )
+  ) {
+    reasons.push(GenerateReasonType.SemanticMismatch);
+  }
+  if (normalizeGuess(candidate.clue).includes(answer)) {
     reasons.push(GenerateReasonType.AnswerLeaked);
   }
   if (containsPromptControlText(candidate.clue) || containsPromptControlText(candidate.detail)) {
     reasons.push(GenerateReasonType.PromptControlText);
   }
-  if (previousAnswers.has(normalizedAnswer)) {
+  if (previousAnswers.has(answer)) {
     reasons.push(GenerateReasonType.RepeatInWindow);
   }
   const allowedSourceDomains = options.sourceDomains ?? [DEFAULT_SOURCE_DOMAIN];
@@ -71,5 +80,5 @@ export function validateCandidate(
     reasons.push(GenerateReasonType.MissingSource);
   }
 
-  return { normalizedAnswer, reasons, valid: reasons.length === 0 };
+  return { answer, reasons, valid: reasons.length === 0 };
 }

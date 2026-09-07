@@ -94,7 +94,7 @@ describe("publishCandidate", () => {
     const puzzle = await db.query.gamesPuzzles.findFirst({
       where: (table, { eq }) => eq(table.id, result.puzzleId),
     });
-    expect(puzzle?.normalizedAnswer).toBe("DRAMA");
+    expect(puzzle?.answer).toBe("DRAMA");
     expect(puzzle?.generationRunId).toBe(generation.id);
     const used = await db.query.articles.findFirst({
       where: (table, { eq }) => eq(table.id, article.id),
@@ -137,7 +137,7 @@ describe("publishCandidate", () => {
       where: (table, { and, eq }) =>
         and(eq(table.gamesTopicId, game.id), eq(table.dateUtc, "2026-06-25")),
     });
-    expect(puzzle?.normalizedAnswer).toBe("DRAMA");
+    expect(puzzle?.answer).toBe("DRAMA");
     expect(puzzle?.articleId).toBe(article.id);
   });
 

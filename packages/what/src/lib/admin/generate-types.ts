@@ -60,6 +60,10 @@ export type GenerateCandidateView = {
   candidate: {
     answer: string;
     answerType: string;
+    articleAbout?: string;
+    concept?: string;
+    answerMeaning?: string;
+    relationship?: string;
     clue: string;
     detail: string;
     sources: Array<{ url: string; title: string; publishedAt: string }>;
