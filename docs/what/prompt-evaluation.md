@@ -25,7 +25,7 @@ Run one prompt or compare custom prompts:
 pnpm what:prompt-test --prompt-file=./app/lib/prompts/what-generation.md --prompt-file=./app/lib/prompts/what-generation-v2.md
 ```
 
-The score measures whether the first selected valid answer is in the fixture's acceptable answer set. The `valid` count is a secondary signal: it shows how many candidates survive dictionary, length, leakage, safety, and source checks. A higher score is not enough by itself; inspect candidate wording and source grounding before promoting a prompt.
+The score measures whether the first selected valid answer is in the fixture's acceptable answer set and is not in any fixture-specific forbidden-answer list. The `valid` count is a secondary signal: it shows how many candidates survive dictionary, length, leakage, safety, and source checks. A higher score is not enough by itself; inspect candidate wording and source grounding before promoting a prompt.
 
 Override the OpenRouter model for a run without mutating env:
 
@@ -33,4 +33,4 @@ Override the OpenRouter model for a run without mutating env:
 pnpm what:prompt-test --model=openai/gpt-4o-mini
 ```
 
-Fixtures cover technology, celebrity, sports, and food. Add a fixture when a production failure reveals a new genre or failure mode, and keep acceptable answers deliberately broad only when multiple words are genuinely fair.
+Fixtures cover technology, celebrity, sports, and food. Add a fixture when a production failure reveals a new genre or failure mode, and keep acceptable answers deliberately broad only when multiple words are genuinely fair. Use `forbiddenAnswers` for attractive-but-wrong answers that a regression must not select (for example, an incidental-object association such as `MUGGY`).

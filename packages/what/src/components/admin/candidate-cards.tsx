@@ -94,6 +94,28 @@ function CandidateCard({
         </CardTitle>
       </CardHeader>
       <CardContent className="grid gap-4 pt-0 text-sm">
+        {(candidate.candidate.articleAbout || candidate.candidate.concept || candidate.candidate.answerMeaning) && (
+          <div className="grid gap-2 rounded-md border p-3">
+            {candidate.candidate.articleAbout ? (
+              <div>
+                <p className="text-lg tracking-[0.12em]">Article about</p>
+                <p>{candidate.candidate.articleAbout}</p>
+              </div>
+            ) : null}
+            {candidate.candidate.concept ? (
+              <div>
+                <p className="text-lg tracking-[0.12em]">Concept</p>
+                <p>{candidate.candidate.concept}</p>
+              </div>
+            ) : null}
+            {candidate.candidate.answerMeaning ? (
+              <div>
+                <p className="text-lg tracking-[0.12em]">Answer meaning</p>
+                <p>{candidate.candidate.answerMeaning}</p>
+              </div>
+            ) : null}
+          </div>
+        )}
         <div>
           <p className="text-lg tracking-[0.12em]">Clue</p>
           <p>{candidate.candidate.clue}</p>

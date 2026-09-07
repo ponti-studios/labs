@@ -1,10 +1,12 @@
 import { reactRouter } from "@react-router/dev/vite";
+import tailwindcss from "@tailwindcss/vite";
 import path from "node:path";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig(({ isSsrBuild }) => ({
   plugins: [
+    tailwindcss(),
     reactRouter(),
     ...(!isSsrBuild
       ? [
@@ -27,6 +29,7 @@ export default defineConfig(({ isSsrBuild }) => ({
     },
   },
   build: {
+    cssMinify: "esbuild",
     sourcemap: true,
   },
 }));

@@ -38,6 +38,12 @@ Foundation repository at `/Users/charlesponti/Developer/foundation`.
   | Dev MinIO API | `localhost:9000` | — |
   | Dev MinIO console | `localhost:9001` | — |
 
+- The local development database URL is:
+  `postgresql://postgres:postgres@localhost:5434/hominem`
+- The local test database URL remains:
+  `postgresql://postgres:postgres@localhost:4433/hominem-test`
+  regardless of local `.env` files or CI environment variables.
+
 - Labs tests must use `postgresql://postgres:postgres@localhost:4433/hominem-test`
   regardless of local `.env` files or CI environment variables.
 - Do not point Labs at `labs-test`; that was a stale legacy database and has

@@ -5,6 +5,8 @@ export interface PromptTestFixture {
   genre: string;
   sourceDomains: string[];
   expectedAnswers: string[];
+  /** Known attractive-but-wrong answers the generator must not select. */
+  forbiddenAnswers?: string[];
   feedItems: FeedItem[];
 }
 
@@ -59,7 +61,8 @@ export const PROMPT_TEST_CASES: PromptTestFixture[] = [
     id: "cbs-sports-penalty-save",
     genre: "sports",
     sourceDomains: ["cbssports.com"],
-    expectedAnswers: ["BLOCK"],
+    expectedAnswers: ["BLOCK", "TRADE"],
+    forbiddenAnswers: ["PENAL", "DEPTH"],
     feedItems: [
       {
         title: "Rookie goalkeeper preserves club's lead with final-minute penalty save",
@@ -82,6 +85,34 @@ export const PROMPT_TEST_CASES: PromptTestFixture[] = [
         "eater.com",
         "Beloved neighborhood restaurant will close after 18 years",
         "The owners cited rising rent and thanked regulars; the chef plans to announce a new project later this year.",
+      ),
+    ],
+  },
+  {
+    id: "shopping-guide-vs-incidental-object",
+    genre: "commerce",
+    sourceDomains: ["tmz.com"],
+    expectedAnswers: ["GIFTS"],
+    forbiddenAnswers: ["MUGGY"],
+    feedItems: [
+      item(
+        "tmz.com",
+        "Workstation essentials inspired by Steve Carell and The Office",
+        "A curated shopping guide rounds up office products that would make fun gifts for fans of The Office, including a World's Best Boss mug, desk accessories, chargers, and a Dundie trophy.",
+      ),
+    ],
+  },
+  {
+    id: "incidental-object-vs-central-event",
+    genre: "celebrity",
+    sourceDomains: ["pagesix.com"],
+    expectedAnswers: ["FIRED"],
+    forbiddenAnswers: ["FIRER", "CHAOS"],
+    feedItems: [
+      item(
+        "pagesix.com",
+        "TV host fired after a backstage dispute with producers",
+        "The host lost the job after the confrontation. A source said the argument began when a coffee mug was thrown across the room, but the employment decision was the main development.",
       ),
     ],
   },

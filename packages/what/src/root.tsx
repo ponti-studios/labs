@@ -9,6 +9,7 @@ import {
 } from "react-router";
 
 import type { Route } from "./+types/root";
+import "./app.css";
 import { BRAND_NAME, BRAND_TAGLINE } from "./config/brand";
 import { PwaUpdatePrompt } from "./components/pwa-update-prompt";
 

@@ -2,15 +2,12 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { parseArgs } from "node:util";
 
-import { getDateKey } from "../src/lib/puzzle/date";
-import {
-  detectRunEnvironment,
-  generateCandidates,
-} from "../src/lib/generation/generate.server";
-import { PROMPT_TEST_CASES } from "../src/lib/values/prompt-test-cases";
-import { readSourceCapture, type SourceCapture } from "../src/lib/values/source-captures";
 import { getConfiguredTextModel } from "@pontistudios/ai";
 import { db, eq, generationRuns } from "@pontistudios/db";
+import { detectRunEnvironment, generateCandidates } from "../src/lib/generation/generate.server";
+import { getDateKey } from "../src/lib/puzzle/date";
+import { PROMPT_TEST_CASES } from "../src/lib/values/prompt-test-cases";
+import { readSourceCapture, type SourceCapture } from "../src/lib/values/source-captures";
 import { runScript } from "./_shared/run-script";
 
 const CLI_ACTOR = "cli:game-prompt-test";
@@ -47,10 +44,13 @@ function fixturePasses(
   result: Awaited<ReturnType<typeof generateCandidates>>,
 ) {
   const selected = result.selectedIndex === null ? null : result.candidates[result.selectedIndex];
+  const selectedAnswer = selected?.validation.answer;
+  if (selectedAnswer && fixture.forbiddenAnswers?.includes(selectedAnswer)) return false;
   return (
     selected !== null &&
     selected !== undefined &&
-    fixture.expectedAnswers.includes(selected.validation.normalizedAnswer)
+    selectedAnswer !== undefined &&
+    fixture.expectedAnswers.includes(selectedAnswer)
   );
 }
 
@@ -169,12 +169,15 @@ async function main() {
           ? "NONE"
           : (result.candidates[result.selectedIndex]?.candidate.answer ?? "NONE");
       console.log(
-        `${pass ? "PASS" : "FAIL"} ${fixture.id.padEnd(26)} selected=${selected} valid=${result.candidates.filter((c) => c.validation.valid).length}/${result.candidates.length}`,
+        `${pass ? "PASS" : "FAIL"} ${fixture.id.padEnd(38)} selected=${selected} valid=${result.candidates.filter((c) => c.validation.valid).length}/${result.candidates.length}`,
       );
       if (result.llmError) console.log(`  error=${result.llmError}`);
       for (const candidate of result.candidates) {
         console.log(
           `  ${candidate.candidate.answer}: ${candidate.validation.valid ? "valid" : candidate.validation.reasons.join("; ")}`,
+        );
+        console.log(
+          `    about=${candidate.candidate.articleAbout ?? "—"} | concept=${candidate.candidate.concept ?? "—"} | meaning=${candidate.candidate.answerMeaning ?? "—"} | relationship=${candidate.candidate.relationship ?? "—"}`,
         );
       }
     }
