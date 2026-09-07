@@ -50,7 +50,8 @@ describe("AI provider error formatting", () => {
     });
 
     expect(formatAiError(error)).toBe(
-      'Error | Provider returned error | body={"error":"unexpected provider payload"}',
+      "Error | Provider returned error | body=[unrecognized provider response body]",
     );
+    expect(formatAiError(error)).not.toContain("unexpected provider payload");
   });
 });

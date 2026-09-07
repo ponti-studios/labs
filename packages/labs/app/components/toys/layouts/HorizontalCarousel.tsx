@@ -137,7 +137,7 @@ export function HorizontalCarousel() {
         >
           <motion.div ref={trackRef} className="layouts-carousel-track" style={{ x }}>
             {Array.from({ length: COPIES }).map((_, copy) => (
-              <div key={copy} className="flex gap-4" aria-hidden={copy > 0}>
+              <div key={copy} className="flex gap-4" aria-hidden="true">
                 {MOVIE_TILES.map((tile) => (
                   <div key={`${copy}-${tile.id}`} className="layouts-carousel-card">
                     <CarouselCard tile={tile} />
@@ -150,7 +150,7 @@ export function HorizontalCarousel() {
       </div>
 
       <div className="sr-only" aria-live="polite">
-        Item {active + 1} of {total}
+        {MOVIE_TILES[active]?.name ?? "Current item"}, item {active + 1} of {total}
       </div>
 
       <div className="layouts-carousel-dots">
