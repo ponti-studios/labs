@@ -1,4 +1,4 @@
-import { chatCompletion, type ChatReasoningEffort } from "@pontistudios/ai";
+import { chatCompletion, formatAiError, type ChatReasoningEffort } from "@pontistudios/ai";
 import type { Article, GamesTopic, GenerationEnvironment } from "@pontistudios/db";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -41,13 +41,12 @@ const relationshipSchema = z.enum([
 const candidateSchema = z.object({
   answer: z.string().min(1),
   answerType: z.string().min(1),
-  // Optional for backwards compatibility with pasted/admin prompts. The
-  // production prompts request all four fields; when present, validation
-  // uses relationship to reject explicitly non-semantic candidates.
-  articleAbout: z.string().min(1).optional(),
-  concept: z.string().min(1).optional(),
-  answerMeaning: z.string().min(1).optional(),
-  relationship: relationshipSchema.optional(),
+  // Required because OpenRouter strict structured outputs require every
+  // declared property to appear in the JSON schema's required list.
+  articleAbout: z.string().min(1),
+  concept: z.string().min(1),
+  answerMeaning: z.string().min(1),
+  relationship: relationshipSchema,
   clue: z.string().min(1),
   detail: z.string().min(1),
   sources: z
@@ -64,6 +63,17 @@ const generationResponseSchema = z.object({
 
 export type Candidate = z.infer<typeof candidateSchema>;
 export type CandidateRelationship = z.infer<typeof relationshipSchema>;
+type ArticleMatchCandidate = {
+  answer: string;
+  answerType: string;
+  articleAbout?: string;
+  concept?: string;
+  answerMeaning?: string;
+  relationship?: CandidateRelationship;
+  clue: string;
+  detail: string;
+  sources: { url: string; title?: string; publishedAt?: string }[];
+};
 
 function readSystemPrompt(promptPath: string): string {
   const cached = promptCache.get(promptPath);
@@ -141,7 +151,10 @@ export function buildMessages(
   ];
 }
 
-export function matchArticle(candidate: Candidate, pendingArticles: Article[]): Article | null {
+export function matchArticle(
+  candidate: ArticleMatchCandidate,
+  pendingArticles: Article[],
+): Article | null {
   const candidateUrls = new Set(candidate.sources.map((source) => source.url));
   return pendingArticles.find((article) => candidateUrls.has(article.url)) ?? null;
 }
@@ -201,6 +214,22 @@ const EMPTY_USAGE: GenerationUsage = {
   costUsd: null,
 };
 
+function sumNullable(first: number | null, second: number | null): number | null {
+  return first !== null && second !== null ? first + second : null;
+}
+
+function combineUsage(first: GenerationUsage, second: GenerationUsage): GenerationUsage {
+  return {
+    requestedMaxTokens: sumNullable(first.requestedMaxTokens, second.requestedMaxTokens),
+    reasoningEffort: second.reasoningEffort ?? first.reasoningEffort,
+    promptTokens: sumNullable(first.promptTokens, second.promptTokens),
+    completionTokens: sumNullable(first.completionTokens, second.completionTokens),
+    reasoningTokens: sumNullable(first.reasoningTokens, second.reasoningTokens),
+    totalTokens: sumNullable(first.totalTokens, second.totalTokens),
+    costUsd: sumNullable(first.costUsd, second.costUsd),
+  };
+}
+
 export async function callGenerationApiForCandidates(
   dateKey: string,
   excludedAnswers: string[],
@@ -255,7 +284,7 @@ export async function callGenerationApiForCandidates(
   } catch (err) {
     return {
       candidates: [],
-      llmError: getErrorMessage(err),
+      llmError: formatAiError(err),
       usage: {
         ...EMPTY_USAGE,
         requestedMaxTokens: maxTokens,
@@ -283,7 +312,7 @@ export async function generateCandidates(
     }
   }
 
-  const { candidates, llmError, usage } = await callGenerationApiForCandidates(
+  let generation = await callGenerationApiForCandidates(
     dateKey,
     options.excludedAnswers ?? [],
     feedItems,
@@ -296,16 +325,48 @@ export async function generateCandidates(
     options.reasoningEffort,
   );
 
-  const selectedIndex = candidates.findIndex((candidate) => candidate.validation.valid);
+  // A model can spend its first batch on attractive but unusable answers
+  // (wrong length, non-words, or semantic mismatches). Give it one bounded
+  // recovery attempt rather than publishing no puzzle for an otherwise good
+  // article batch. Successful first attempts do not incur another provider
+  // request.
+  if (generation.llmError === null && !generation.candidates.some((item) => item.validation.valid)) {
+    const retryExcludedAnswers = [
+      ...(options.excludedAnswers ?? []),
+      ...generation.candidates.map((item) => item.validation.answer),
+    ];
+    const retryGeneration = await callGenerationApiForCandidates(
+      dateKey,
+      retryExcludedAnswers,
+      feedItems,
+      `${
+        options.systemPrompt ??
+        getSystemPromptForGame({ systemPromptPath: DEFAULT_GENERATION_PROMPT_PATH })
+      }
+
+RETRY: The previous candidate batch had no publishable answer. Discard those answers, re-audit the article's central concept, and return a fresh ranked batch. Every answer must be an exact five-letter common English word whose ordinary meaning directly describes the article.`,
+      GAME_ANSWER_LENGTH,
+      getSourceDomains(feedItems.map((item) => item.link)),
+      options.model,
+      options.maxTokens,
+      options.reasoningEffort,
+    );
+    generation = {
+      ...retryGeneration,
+      usage: combineUsage(generation.usage, retryGeneration.usage),
+    };
+  }
+
+  const selectedIndex = generation.candidates.findIndex((candidate) => candidate.validation.valid);
   return {
     dateKey,
     feedUrl,
     feedItemCount: feedItems.length,
     feedItems,
-    candidates,
+    candidates: generation.candidates,
     selectedIndex: selectedIndex === -1 ? null : selectedIndex,
     feedError,
-    llmError,
-    usage,
+    llmError: generation.llmError,
+    usage: generation.usage,
   };
 }

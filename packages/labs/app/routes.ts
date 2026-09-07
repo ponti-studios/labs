@@ -63,7 +63,6 @@ const experimentRoutes = [
 
   // TODO Experiments
   route("/experiments/glass", "routes/experiments.glass.tsx"),
-  route("/experiments/infinite-scroll", "routes/infinite-scroll/route.tsx"),
   route("/experiments/threegl-ai-explainer", "routes/experiments.threegl-ai-explainer.tsx"),
   route("/experiments/llm-interface", "routes/experiments.llm-interface.tsx"),
 
@@ -75,10 +74,13 @@ const experimentRoutes = [
   route("/challenges/cloud-pricing", "routes/challenges.cloud-pricing.tsx"),
   route("/challenges/prime-countdown", "routes/challenges.prime-countdown.tsx"),
   route("/challenges/search-studio", "routes/challenges.search-studio.tsx"),
-  route("/challenges/peterson-academy", "routes/challenges.peterson-academy.tsx"),
   route("/challenges/red-badger", "routes/challenges.red-badger.tsx"),
   route("/health/medication", "routes/health/medication.tsx"),
   route("/health/api/medication-schedule", "routes/health/api.medication-schedule.ts"),
+] satisfies RouteConfig;
+
+const toyRoutes = [
+  route("/toys/layouts/:layout", "routes/toys.layouts.$layout.tsx"),
 ] satisfies RouteConfig;
 
 export default [
@@ -87,4 +89,5 @@ export default [
   ...apiRoutes,
   ...featureRoutes,
   ...experimentRoutes,
+  ...toyRoutes,
 ] satisfies RouteConfig;

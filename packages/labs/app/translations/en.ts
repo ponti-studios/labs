@@ -926,9 +926,9 @@ export const STUDIO_TRANSLATIONS_EN = {
     },
     hero: {
       kicker: "Product + engineering studio",
-      title: "Building what should exist.",
+      title: "Building what's next.",
       wordBefore: "Building",
-      wordAfter: "what should exist.",
+      wordAfter: "what's next.",
       subtitle: "Beautiful things, for problems worth solving.",
       secondaryCta: "See the work",
     },
