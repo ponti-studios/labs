@@ -40,7 +40,6 @@ export function HorizontalCarousel() {
   const trackRef = useRef<HTMLDivElement>(null);
   const stepRef = useRef(0);
   const globalRef = useRef(total);
-  const pausedRef = useRef(false);
 
   useLayoutEffect(() => {
     const measure = () => {
@@ -100,9 +99,7 @@ export function HorizontalCarousel() {
     const tick = () => {
       timer = setTimeout(() => {
         if (cancelled) return;
-        if (!pausedRef.current) {
-          autoplayRef.current(direction === "forward" ? 1 : -1);
-        }
+        autoplayRef.current(direction === "forward" ? 1 : -1);
         tick();
       }, beat * 1000);
     };
@@ -112,34 +109,6 @@ export function HorizontalCarousel() {
       clearTimeout(timer);
     };
   }, [autoplay, beat, direction, reduceMotion]);
-
-  const dragState = useRef<{ startX: number; startPointer: number } | null>(null);
-
-  function handlePointerDown(event: React.PointerEvent<HTMLDivElement>) {
-    if (reduceMotion) return;
-    pausedRef.current = true;
-    dragState.current = { startX: x.get(), startPointer: event.clientX };
-    event.currentTarget.setPointerCapture(event.pointerId);
-  }
-
-  function handlePointerMove(event: React.PointerEvent<HTMLDivElement>) {
-    if (!dragState.current) return;
-    x.set(dragState.current.startX - (event.clientX - dragState.current.startPointer));
-  }
-
-  function handlePointerUp() {
-    if (!dragState.current) return;
-    dragState.current = null;
-    const s = stepRef.current;
-    const snapped = Math.round(-x.get() / s);
-    const clamped = Math.min(Math.max(snapped, total), 3 * total - 1);
-    globalRef.current = clamped;
-    setActive(clamped % total);
-    animate(x, -clamped * s, { duration: 0.35, ease: EASE_OUT });
-    window.setTimeout(() => {
-      pausedRef.current = false;
-    }, 800);
-  }
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLElement>) {
     if (event.key === "ArrowRight") {
@@ -165,12 +134,6 @@ export function HorizontalCarousel() {
           tabIndex={0}
           className="layouts-carousel-viewport focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
           onKeyDown={handleKeyDown}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onPointerLeave={() => {
-            if (dragState.current) handlePointerUp();
-          }}
         >
           <motion.div ref={trackRef} className="layouts-carousel-track" style={{ x }}>
             {Array.from({ length: COPIES }).map((_, copy) => (

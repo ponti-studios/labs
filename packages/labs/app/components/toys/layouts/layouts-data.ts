@@ -161,11 +161,11 @@ export const LAYOUTS: Record<LayoutId, LayoutMeta> = {
     id: "horizontal",
     label: "Horizontal",
     title: "Horizontal carousel",
-    lede: "A draggable, keyboard-ready rail that loops forever. Drag it, arrow it, or let it autoplay through the slate.",
+    lede: "A keyboard-ready rail that loops forever. Arrow through it, or let it autoplay through the slate.",
     whenToUse:
       "Streaming rows, browse rails, continue-watching strips — anywhere the viewer is shopping and should stay in control.",
     metaTitle: "Horizontal Carousel | Toys",
     metaDescription:
-      "A seamless infinite horizontal carousel of 2026's biggest films with drag, keyboard, and autoplay support.",
+      "A seamless infinite horizontal carousel of 2026's biggest films with keyboard and autoplay support.",
   },
 };
