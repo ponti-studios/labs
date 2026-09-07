@@ -2,7 +2,6 @@ import type { GenerationUsage } from "../generation/types";
 
 export const GENERATION_PROMPT_FILES = [
   "src/prompts/game-generation.md",
-  "src/prompts/game-generation-v2.md",
 ] as const;
 
 export const GENERATE_SOURCE_MODES = ["inventory", "feeds", "articles", "rss", "fixtures"] as const;

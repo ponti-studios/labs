@@ -165,7 +165,7 @@ export async function chatCompletion(options: ChatCompletionOptions = { messages
   // `stream: false` guarantees a completion response at runtime, but the SDK
   // exposes the stream union at the type level. Keep that boundary narrow so
   // callers do not have to repeat an impossible stream branch.
-  return response;
+  return response as ChatCompletionResponse;
 }
 
 export async function generateEmbedding(content: string, options: EmbeddingOptions = {}) {

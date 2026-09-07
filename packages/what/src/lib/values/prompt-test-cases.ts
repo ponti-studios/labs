@@ -61,7 +61,9 @@ export const PROMPT_TEST_CASES: PromptTestFixture[] = [
     id: "cbs-sports-penalty-save",
     genre: "sports",
     sourceDomains: ["cbssports.com"],
-    expectedAnswers: ["BLOCK", "TRADE"],
+    // BLOCK and SAVED both directly name the goalkeeper's decisive action;
+    // the benchmark should accept either rather than require one synonym.
+    expectedAnswers: ["BLOCK", "SAVED", "TRADE"],
     forbiddenAnswers: ["PENAL", "DEPTH"],
     feedItems: [
       {
