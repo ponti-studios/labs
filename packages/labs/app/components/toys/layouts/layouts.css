@@ -151,12 +151,6 @@
   display: flex;
   gap: 1rem;
   align-items: stretch;
-  cursor: grab;
-  touch-action: pan-y;
-}
-
-.layouts-carousel-track:active {
-  cursor: grabbing;
 }
 
 .layouts-carousel-card {

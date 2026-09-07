@@ -15,8 +15,8 @@ export function LayoutShell({ layoutId, children }: { layoutId: LayoutId; childr
           </p>
           <h1 className="heading-hero text-foreground mt-3 max-w-3xl">A slate that never ends.</h1>
           <p className="text-muted-foreground mt-4 max-w-2xl text-lg">
-            2026's biggest films, two temperaments — ambient drift for the hero, a draggable rail
-            for browsing.
+            2026's biggest films, two temperaments — ambient drift for the hero, a keyboard-friendly
+            rail for browsing.
           </p>
         </div>
         <nav
