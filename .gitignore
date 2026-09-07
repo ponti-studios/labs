@@ -51,3 +51,6 @@ packages/env/tsconfig.tsbuildinfo
 # Generated demo/reference screenshots (scripts/what-tile-states.ts)
 public/screenshots/tile-states/
 **/.claude/settings.local.json
+
+# Playwright MCP session artifacts (page snapshots, console logs)
+.playwright-mcp/
