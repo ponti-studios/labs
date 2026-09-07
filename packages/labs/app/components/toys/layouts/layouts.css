@@ -1,0 +1,191 @@
+/*
+ * Toy: Layouts — shared scoped styles for the vertical marquee and the
+ * horizontal carousel. Every selector is prefixed `.layouts-*`; nothing here
+ * touches global `body` or generic element styles (the old marquee route set
+ * a `body` font-family that leaked app-wide).
+ */
+
+/* ── Stage ───────────────────────────────────────────────────────────────── */
+
+.layouts-stage {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 1.25rem;
+  background: color-mix(in oklab, var(--color-muted) 22%, transparent);
+}
+
+/* ── Shared card ─────────────────────────────────────────────────────────── */
+
+.layouts-card {
+  margin: 0;
+}
+
+.layouts-card-face {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.layouts-card-face img {
+  object-fit: contain;
+  border-radius: 0.9rem;
+}
+
+.layouts-card figcaption {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.layouts-card-name {
+  color: var(--color-foreground);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.layouts-card-category {
+  color: var(--color-muted-foreground);
+  font-size: 0.7rem;
+}
+
+/* ── Vertical marquee ────────────────────────────────────────────────────── */
+
+.layouts-marquee-columns {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .layouts-marquee-columns {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.layouts-marquee {
+  position: relative;
+  overflow: hidden;
+  height: clamp(24rem, 60vh, 34rem);
+  padding: 0 1rem;
+  mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 12%,
+    black 88%,
+    transparent 100%
+  );
+}
+
+.layouts-marquee-track {
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+  animation: layouts-marquee-up 22s linear infinite;
+}
+
+.layouts-marquee-track[data-direction="down"] {
+  animation-name: layouts-marquee-down;
+}
+
+.layouts-marquee:hover .layouts-marquee-track,
+.layouts-marquee:focus-within .layouts-marquee-track {
+  animation-play-state: paused;
+}
+
+.layouts-marquee-group {
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes layouts-marquee-up {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes layouts-marquee-down {
+  from {
+    transform: translateY(-50%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Reduced motion: freeze the wall into a calm static grid. */
+
+@media (prefers-reduced-motion: reduce) {
+  .layouts-marquee-track,
+  .layouts-marquee-track[data-direction="down"] {
+    animation: none;
+  }
+}
+
+/* ── Horizontal carousel ─────────────────────────────────────────────────── */
+
+.layouts-carousel-viewport {
+  position: relative;
+  overflow: hidden;
+  padding: 1rem 0;
+  mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 6%,
+    black 94%,
+    transparent 100%
+  );
+}
+
+.layouts-carousel-track {
+  display: flex;
+  gap: 1rem;
+  align-items: stretch;
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+.layouts-carousel-track:active {
+  cursor: grabbing;
+}
+
+.layouts-carousel-card {
+  flex: 0 0 clamp(13rem, 26vw, 18rem);
+}
+
+.layouts-carousel-card .layouts-card-face {
+  aspect-ratio: 2 / 3;
+}
+
+.layouts-carousel-dots {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.layouts-carousel-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: var(--color-muted-foreground);
+  opacity: 0.4;
+  transition:
+    opacity 150ms,
+    transform 150ms;
+}
+
+.layouts-carousel-dot[data-active="true"] {
+  opacity: 1;
+  transform: scale(1.25);
+}
