@@ -4,14 +4,16 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./image": "./src/image.ts"
   },
   "scripts": {
     "typecheck": "tsc -b",
     "test": "vitest run"
   },
   "dependencies": {
-    "@openrouter/sdk": "^1.2.80"
+    "@openrouter/sdk": "^1.2.80",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/node": "^24.13.3",

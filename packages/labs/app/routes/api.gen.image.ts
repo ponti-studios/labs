@@ -1,11 +1,11 @@
-import { generateImageFromPrompt } from "~/lib/server/ai";
+import { generateImageFromPrompt } from "@pontistudios/ai/image";
 import type { ActionFunctionArgs } from "react-router";
 import { z } from "zod";
 
+import { buildGenerativeImagePrompt } from "~/components/generative-image/state";
 import { LabyrinthServerEnv } from "~/lib/server/env";
 import { assertSameOrigin } from "~/lib/server/origin";
 import { uploadImage } from "~/lib/server/storage";
-import { buildGenerativeImagePrompt } from "~/components/generative-image/state";
 
 const generativeImageConfigSchema = z.object({
   image_specifications: z.object({
