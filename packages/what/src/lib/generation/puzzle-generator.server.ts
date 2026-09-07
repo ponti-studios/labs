@@ -1,12 +1,8 @@
 import { getConfiguredTextModel } from "@pontistudios/ai";
-import { and, db, eq, gamesPuzzles, generationRuns } from "@pontistudios/db";
 import type { Article, GamesTopic, ReasoningEffort } from "@pontistudios/db";
+import { and, db, eq, gamesPuzzles, generationRuns } from "@pontistudios/db";
 import { randomUUID } from "node:crypto";
 
-import { getErrorMessage } from "../errors";
-import { createLogger } from "../logger.server";
-import { normalizeGuess, GAME_ANSWER_LENGTH } from "../puzzle/rules";
-import { getDateKey, parseDate } from "../puzzle/date";
 import { recordAdminAction } from "../data/admin-actions.server";
 import {
   expireStaleArticles,
@@ -15,9 +11,12 @@ import {
   recordArticleRejection,
 } from "../data/articles.server";
 import { getRecentAnswers, getStoredAnswers, loadPuzzleForDate } from "../data/puzzles.server";
-import type { PuzzleAnswerType } from "../puzzle/types";
 import type { PuzzleRecord } from "../data/types";
-import type { GenerationUsage } from "./types";
+import { getErrorMessage } from "../errors";
+import { createLogger } from "../logger.server";
+import { getDateKey, parseDate } from "../puzzle/date";
+import { GAME_ANSWER_LENGTH, normalizeGuess } from "../puzzle/rules";
+import type { PuzzleAnswerType } from "../puzzle/types";
 import {
   articleToFeedItem,
   callGenerationApiForCandidates,
@@ -28,6 +27,7 @@ import {
   getSystemPromptForGame,
   matchArticle,
 } from "./candidate-generator.server";
+import type { GenerationUsage } from "./types";
 
 const GENERATION_BATCH_SIZE = 8;
 const MAX_ARTICLE_REJECTIONS = 3;

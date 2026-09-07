@@ -7,6 +7,7 @@ export enum GenerateReasonType {
   PersonAnswerType = "person-answer-type",
   AnswerLeaked = "answer-leaked",
   PromptControlText = "prompt-control-text",
+  SemanticMismatch = "semantic-mismatch",
   RepeatInWindow = "repeat-in-window",
   MissingSource = "missing-source",
 }
@@ -23,6 +24,8 @@ const REASON_COPY: Record<GenerateReasonType, string> = {
   [GenerateReasonType.AnswerLeaked]: "The clue or detail gives the word away.",
   [GenerateReasonType.PromptControlText]:
     "The clue looks like it was talking to the model, not to a player.",
+  [GenerateReasonType.SemanticMismatch]:
+    "The word’s actual meaning does not describe the article concept.",
   [GenerateReasonType.RepeatInWindow]: "We used this word too recently.",
   [GenerateReasonType.MissingSource]: "The source URL doesn’t match the stories we offered.",
 };

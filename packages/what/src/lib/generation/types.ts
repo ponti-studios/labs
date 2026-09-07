@@ -1,8 +1,9 @@
 import type { GenerateReasonType } from "../admin/generate-copy";
 import type { PuzzleSource } from "../puzzle/types";
+import type { CandidateRelationship } from "./candidate-generator.server";
 
 export interface ValidationResult {
-  normalizedAnswer: string;
+  answer: string;
   reasons: GenerateReasonType[];
   valid: boolean;
 }
@@ -20,6 +21,10 @@ export interface ScoredCandidate {
   candidate: {
     answer: string;
     answerType: string;
+    articleAbout?: string;
+    concept?: string;
+    answerMeaning?: string;
+    relationship?: CandidateRelationship;
     clue: string;
     detail: string;
     sources: PuzzleSource[];

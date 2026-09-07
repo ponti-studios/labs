@@ -70,6 +70,10 @@ export type AdminGenerationCandidate = {
   candidate: {
     answer: string;
     answerType: string;
+    articleAbout?: string;
+    concept?: string;
+    answerMeaning?: string;
+    relationship?: string;
     clue: string;
     detail: string;
     sources: Array<{ url: string; title: string; publishedAt: string }>;
@@ -175,6 +179,10 @@ export function parseCandidatePayload(value: unknown): AdminGenerationCandidate[
   return {
     answer: typeof row.answer === "string" ? row.answer : "",
     answerType: typeof row.answerType === "string" ? row.answerType : "",
+    ...(typeof row.articleAbout === "string" ? { articleAbout: row.articleAbout } : {}),
+    ...(typeof row.concept === "string" ? { concept: row.concept } : {}),
+    ...(typeof row.answerMeaning === "string" ? { answerMeaning: row.answerMeaning } : {}),
+    ...(typeof row.relationship === "string" ? { relationship: row.relationship } : {}),
     clue: typeof row.clue === "string" ? row.clue : "",
     detail: typeof row.detail === "string" ? row.detail : "",
     sources,

@@ -35,10 +35,10 @@ export async function getRecentAnswers(game: GamesTopic, date: Date): Promise<Se
   cutoff.setUTCDate(cutoff.getUTCDate() - game.repeatWindowDays);
   const cutoffDateValue = getDateKey(cutoff);
   const rows = await db
-    .select({ normalizedAnswer: gamesPuzzles.normalizedAnswer })
+    .select({ answer: gamesPuzzles.answer })
     .from(gamesPuzzles)
     .where(and(eq(gamesPuzzles.gamesTopicId, game.id), gte(gamesPuzzles.dateUtc, cutoffDateValue)));
-  return new Set(rows.map((r) => r.normalizedAnswer));
+  return new Set(rows.map((r) => r.answer));
 }
 
 /**
@@ -49,10 +49,10 @@ export async function getRecentAnswers(game: GamesTopic, date: Date): Promise<Se
  */
 export async function getStoredAnswers(gameId: number): Promise<Set<string>> {
   const rows = await db
-    .select({ normalizedAnswer: gamesPuzzles.normalizedAnswer })
+    .select({ answer: gamesPuzzles.answer })
     .from(gamesPuzzles)
     .where(eq(gamesPuzzles.gamesTopicId, gameId));
-  return new Set(rows.map((r) => r.normalizedAnswer));
+  return new Set(rows.map((r) => r.answer));
 }
 
 /**

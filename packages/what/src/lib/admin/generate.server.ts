@@ -1,7 +1,28 @@
 import { DEFAULT_TEXT_MODEL, getConfiguredTextModel } from "@pontistudios/ai";
-import { and, db, eq, generationCandidates, generationRuns, lt } from "@pontistudios/db";
 import type { Article, GamesTopic } from "@pontistudios/db";
+import { and, db, eq, generationCandidates, generationRuns, lt } from "@pontistudios/db";
+import { countRecentGenerateActions, recordAdminAction } from "../data/admin-actions.server";
+import {
+  getPendingArticlesByIds,
+  getPendingArticlesForGame,
+  getPendingArticlesForTopics,
+} from "../data/articles.server";
+import { listTopicFeedHosts } from "../data/games.server";
+import { getRecentAnswers, getStoredAnswers } from "../data/puzzles.server";
 import { getErrorMessage } from "../errors";
+import { MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "../generation/feed-text";
+import {
+  articleToFeedItem,
+  DEFAULT_GENERATION_MAX_TOKENS,
+  detectRunEnvironment,
+  generateCandidates,
+  getSystemPromptForGame,
+  matchArticle,
+} from "../generation/generate.server";
+import { fetchFeedItems } from "../generation/ingest.server";
+import type { FeedItem } from "../generation/types";
+import { isDateKey, parseDate } from "../puzzle/date";
+import { PROMPT_TEST_CASES } from "../values/prompt-test-cases";
 import { GenerateReasonType } from "./generate-copy";
 import {
   GENERATION_PROMPT_FILES,
@@ -11,27 +32,6 @@ import {
   type GenerateRequest,
 } from "./generate-types";
 import { publishGenerationEvent } from "./generation-events.server";
-import { isDateKey, parseDate } from "../puzzle/date";
-import { MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "../generation/feed-text";
-import { PROMPT_TEST_CASES } from "../values/prompt-test-cases";
-import {
-  articleToFeedItem,
-  getSystemPromptForGame,
-  matchArticle,
-  generateCandidates,
-  DEFAULT_GENERATION_MAX_TOKENS,
-  detectRunEnvironment,
-} from "../generation/generate.server";
-import { fetchFeedItems } from "../generation/ingest.server";
-import type { FeedItem } from "../generation/types";
-import { countRecentGenerateActions, recordAdminAction } from "../data/admin-actions.server";
-import {
-  getPendingArticlesByIds,
-  getPendingArticlesForGame,
-  getPendingArticlesForTopics,
-} from "../data/articles.server";
-import { listTopicFeedHosts } from "../data/games.server";
-import { getRecentAnswers, getStoredAnswers } from "../data/puzzles.server";
 
 const GENERATION_RATE_LIMIT = 20;
 const GENERATION_ARTICLE_CAP = 12;
@@ -269,7 +269,7 @@ async function runGenerationInBackground(
       return {
         ordinal,
         payload: entry.candidate,
-        normalizedAnswer: entry.validation.normalizedAnswer,
+        answer: entry.validation.answer,
         valid,
         reasons,
         articleId: article?.id ?? null,
@@ -289,7 +289,7 @@ async function runGenerationInBackground(
           runId,
           ordinal: candidate.ordinal,
           payload: candidate.payload,
-          normalizedAnswer: candidate.normalizedAnswer,
+          normalizedAnswer: candidate.answer,
           valid: candidate.valid,
           reasons: candidate.reasons,
           articleId: candidate.articleId,

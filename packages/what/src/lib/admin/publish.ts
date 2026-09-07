@@ -1,3 +1,4 @@
+import type { GamesTopic } from "@pontistudios/db";
 import {
   and,
   articles,
@@ -9,15 +10,14 @@ import {
   generationRuns,
   puzzleRevisions,
 } from "@pontistudios/db";
-import type { GamesTopic } from "@pontistudios/db";
-import { explainGenerateReason } from "./generate-copy";
-import { parseDate } from "../puzzle/date";
-import { normalizeGuess } from "../puzzle/rules";
-import type { PuzzleAnswerType } from "../puzzle/types";
-import { validateCandidate } from "../generation/candidate-validation";
 import { recordAdminAction } from "../data/admin-actions.server";
 import { markArticleUsed } from "../data/articles.server";
 import { getRecentAnswers, getStoredAnswers, loadPuzzleForDate } from "../data/puzzles.server";
+import { validateCandidate } from "../generation/candidate-validation";
+import { parseDate } from "../puzzle/date";
+import { normalizeGuess } from "../puzzle/rules";
+import type { PuzzleAnswerType } from "../puzzle/types";
+import { explainGenerateReason } from "./generate-copy";
 
 import { parseCandidatePayload } from "./inventory";
 
@@ -97,7 +97,7 @@ export async function publishCandidate(input: {
     : [new Set<string>(), await getStoredAnswers(input.game.id)];
   const existing = await loadPuzzleForDate(input.game.id, dateKey);
   const excluded = new Set([...recentAnswers, ...storedAnswers]);
-  if (existing) excluded.delete(existing.normalizedAnswer);
+  if (existing) excluded.delete(existing.answer);
 
   const host = topicHost(input.game);
   const validation = validateCandidate(payload, excluded, host ? { sourceDomains: [host] } : {});
@@ -119,8 +119,8 @@ export async function publishCandidate(input: {
     detail: payload.detail,
     // Store the same canonical answer that validation checked. This keeps
     // admin-published puzzles consistent with cron-generated puzzles.
-    answer: validation.normalizedAnswer || normalizeGuess(payload.answer),
-    normalizedAnswer: validation.normalizedAnswer || normalizeGuess(payload.answer),
+    answer: validation.answer || normalizeGuess(payload.answer),
+    normalizedAnswer: validation.answer || normalizeGuess(payload.answer),
     promptPath: generation.promptPath,
     model: generation.model,
     generationRunId: generation.id,

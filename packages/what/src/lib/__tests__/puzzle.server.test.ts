@@ -46,8 +46,8 @@ const USER = { id: "user-1", email: "user@example.com" };
 function makePuzzle(
   overrides: Partial<{
     dateUtc: string;
-    answer: string;
     normalizedAnswer: string;
+    answer: string;
     answerType: string;
     clue: string;
     detail: string;
@@ -60,9 +60,9 @@ function makePuzzle(
     gameId: 1,
     articleId: 100,
     dateUtc: overrides.dateUtc ?? "2026-05-20",
-    answer: overrides.answer ?? "ERIKA",
-    answerType: overrides.answerType ?? "storyline",
     normalizedAnswer: overrides.normalizedAnswer ?? "ERIKA",
+    answerType: overrides.answerType ?? "storyline",
+    answer: overrides.answer ?? "ERIKA",
     clue: overrides.clue ?? "The Pretty Mess performer never misses a sharp confessional.",
     detail:
       overrides.detail ?? "Erika Jayne keeps the glam and pop-star energy turned all the way up.",
