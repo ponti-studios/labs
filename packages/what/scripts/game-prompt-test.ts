@@ -119,7 +119,7 @@ async function main() {
   const promptFiles =
     options.promptFiles.length > 0
       ? options.promptFiles
-      : ["src/prompts/game-generation.md", "src/prompts/game-generation-v2.md"];
+      : ["src/prompts/game-generation.md"];
   const sourceFixtures = await Promise.all(
     options.sourceFixtures.map((fixturePath) => readSourceCapture(path.resolve(fixturePath))),
   );

@@ -85,6 +85,10 @@ describe("matchArticle", () => {
       {
         answer: "Aspen",
         answerType: "place",
+        articleAbout: "a chaotic cast trip",
+        concept: "the trip's setting",
+        answerMeaning: "a town in Colorado",
+        relationship: "direct-subject",
         clue: "A snowy destination tied to a chaotic cast trip.",
         detail: "The trip became shorthand for off-camera accusations and fallout.",
         sources: [{ url: "https://realityblurred.com/story", title: "Tea", publishedAt: "" }],
@@ -95,6 +99,10 @@ describe("matchArticle", () => {
       {
         answer: "Aspen",
         answerType: "place",
+        articleAbout: "a chaotic cast trip",
+        concept: "the trip's setting",
+        answerMeaning: "a town in Colorado",
+        relationship: "direct-subject",
         clue: "A snowy destination tied to a chaotic cast trip.",
         detail: "The trip became shorthand for off-camera accusations and fallout.",
         sources: [{ url: "https://other.test/story", title: "Tea", publishedAt: "" }],
