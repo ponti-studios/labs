@@ -72,7 +72,7 @@
     "@vitejs/plugin-react": "^6.0.3",
     "@vitest/coverage-v8": "^4.1.11",
     "jiti": "^2.7.0",
-    "oxfmt": "0.63.0",
+    "oxfmt": "0.66.0",
     "oxlint": "^1.79.0",
     "pg": "^8.23.0",
     "playwright": "^1.61.1",
@@ -85,9 +85,9 @@
   "engines": {
     "node": ">=24.0.0"
   },
+  "packageManager": "pnpm@11.10.0",
   "portless": {
     "name": "labyrinth",
     "script": "dev:app"
-  },
-  "packageManager": "pnpm@11.10.0"
+  }
 }

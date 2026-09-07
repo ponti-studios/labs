@@ -1,4 +1,4 @@
-import { articles, gamesPuzzles, db } from "@pontistudios/db";
+import { articles, db, gamesPuzzles } from "@pontistudios/db";
 import { beforeEach, describe, expect, it } from "vitest";
 import { cleanAll } from "../../data/test-db";
 import { seedGame, seedGameWithPuzzles } from "./test-helpers";
@@ -66,7 +66,7 @@ describe("loadMostRecentPuzzle", () => {
 });
 
 describe("getStoredAnswers", () => {
-  it("returns a Set of normalizedAnswer values scoped to the game", async () => {
+  it("returns a Set of answer values scoped to the game", async () => {
     const game = await seedGame();
     const [a1] = await db
       .insert(articles)

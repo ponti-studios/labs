@@ -28,9 +28,26 @@ const REALITY_FEED_URL = "https://realityblurred.com/realitytv/feed";
 const logger = createLogger();
 const promptCache = new Map<string, string>();
 
+const relationshipSchema = z.enum([
+  "direct-summary",
+  "direct-subject",
+  "direct-action",
+  "direct-consequence",
+  "incidental-association",
+  "false-morphological-association",
+  "unrelated",
+]);
+
 const candidateSchema = z.object({
   answer: z.string().min(1),
   answerType: z.string().min(1),
+  // Optional for backwards compatibility with pasted/admin prompts. The
+  // production prompts request all four fields; when present, validation
+  // uses relationship to reject explicitly non-semantic candidates.
+  articleAbout: z.string().min(1).optional(),
+  concept: z.string().min(1).optional(),
+  answerMeaning: z.string().min(1).optional(),
+  relationship: relationshipSchema.optional(),
   clue: z.string().min(1),
   detail: z.string().min(1),
   sources: z
@@ -39,10 +56,14 @@ const candidateSchema = z.object({
 });
 
 const generationResponseSchema = z.object({
-  candidates: z.array(candidateSchema).min(3).max(5),
+  // Strong articles may only produce one or two fair answers. Requiring a
+  // padded batch encourages exactly the incidental-word behavior the editor
+  // prompt is designed to prevent.
+  candidates: z.array(candidateSchema).min(1).max(5),
 });
 
 export type Candidate = z.infer<typeof candidateSchema>;
+export type CandidateRelationship = z.infer<typeof relationshipSchema>;
 
 function readSystemPrompt(promptPath: string): string {
   const cached = promptCache.get(promptPath);

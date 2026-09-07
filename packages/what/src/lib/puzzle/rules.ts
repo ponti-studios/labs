@@ -1,11 +1,11 @@
-import type { GameStatus, LetterState, GameGuess } from "./types";
+import type { GameGuess, GameStatus, LetterState } from "./types";
 
 export type {
+  GameGuess,
+  GameGuessResult,
   GameStatus,
   LetterState,
   PublicGamesPuzzle,
-  GameGuess,
-  GameGuessResult,
 } from "./types";
 
 export const MAX_GUESSES = 6;
