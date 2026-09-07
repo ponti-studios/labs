@@ -1,8 +1,8 @@
 import { useReducedMotion } from "framer-motion";
-import { useState } from "react";
-import { MOVIE_TILES, type MovieTile } from "./layouts-data";
-import { ControlSection, SegmentedControl, SliderControl } from "./controls";
+import { useState, type CSSProperties } from "react";
 import { cn } from "~/lib/utils";
+import { ControlSection, SegmentedControl, SliderControl } from "./controls";
+import { MOVIE_TILES, type MovieTile } from "./layouts-data";
 
 const RATIO_CYCLE = ["aspect-[2/3]"] as const;
 
@@ -69,7 +69,7 @@ export function VerticalMarquee() {
               <div
                 key={columnIndex}
                 className="layouts-marquee"
-                style={{ "--layouts-gap": `${gap}rem` } as React.CSSProperties}
+                style={{ "--layouts-gap": `${gap}rem` } as CSSProperties}
               >
                 <div
                   className="layouts-marquee-track"

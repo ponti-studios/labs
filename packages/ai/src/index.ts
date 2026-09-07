@@ -81,12 +81,14 @@ function safeProviderBody(value: unknown): string | null {
   if (typeof value !== "string" || value.length === 0) return null;
 
   const providerError = parseProviderBody(value);
-  if (!providerError) return value.slice(0, 2_000);
+  if (!providerError) return "[unrecognized provider response body]";
 
   const details = Object.fromEntries(
     Object.entries(providerError).filter(([, detail]) => detail !== undefined),
   );
-  return Object.keys(details).length > 0 ? JSON.stringify(details) : value.slice(0, 2_000);
+  return Object.keys(details).length > 0
+    ? JSON.stringify(details)
+    : "[empty provider response details]";
 }
 
 /**

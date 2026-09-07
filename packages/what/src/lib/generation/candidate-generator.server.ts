@@ -214,6 +214,22 @@ const EMPTY_USAGE: GenerationUsage = {
   costUsd: null,
 };
 
+function sumNullable(first: number | null, second: number | null): number | null {
+  return first !== null && second !== null ? first + second : null;
+}
+
+function combineUsage(first: GenerationUsage, second: GenerationUsage): GenerationUsage {
+  return {
+    requestedMaxTokens: sumNullable(first.requestedMaxTokens, second.requestedMaxTokens),
+    reasoningEffort: second.reasoningEffort ?? first.reasoningEffort,
+    promptTokens: sumNullable(first.promptTokens, second.promptTokens),
+    completionTokens: sumNullable(first.completionTokens, second.completionTokens),
+    reasoningTokens: sumNullable(first.reasoningTokens, second.reasoningTokens),
+    totalTokens: sumNullable(first.totalTokens, second.totalTokens),
+    costUsd: sumNullable(first.costUsd, second.costUsd),
+  };
+}
+
 export async function callGenerationApiForCandidates(
   dateKey: string,
   excludedAnswers: string[],
@@ -319,7 +335,7 @@ export async function generateCandidates(
       ...(options.excludedAnswers ?? []),
       ...generation.candidates.map((item) => item.validation.answer),
     ];
-    generation = await callGenerationApiForCandidates(
+    const retryGeneration = await callGenerationApiForCandidates(
       dateKey,
       retryExcludedAnswers,
       feedItems,
@@ -335,6 +351,10 @@ RETRY: The previous candidate batch had no publishable answer. Discard those ans
       options.maxTokens,
       options.reasoningEffort,
     );
+    generation = {
+      ...retryGeneration,
+      usage: combineUsage(generation.usage, retryGeneration.usage),
+    };
   }
 
   const selectedIndex = generation.candidates.findIndex((candidate) => candidate.validation.valid);
