@@ -11,7 +11,7 @@ catalogs:
       version: 0.6.0
     '@openrouter/sdk':
       specifier: ^1.2.80
-      version: 1.2.107
+      version: 1.2.106
     '@ponti-studios/auth':
       specifier: ^0.2.0
       version: 0.2.0
@@ -130,7 +130,7 @@ importers:
     dependencies:
       '@openrouter/sdk':
         specifier: 'catalog:'
-        version: 1.2.107
+        version: 1.2.106
       zod:
         specifier: 'catalog:'
         version: 4.4.3
@@ -193,7 +193,7 @@ importers:
         version: 0.6.0
       '@openrouter/sdk':
         specifier: 'catalog:'
-        version: 1.2.107
+        version: 1.2.106
       '@ponti-studios/auth':
         specifier: 'catalog:'
         version: 0.2.0
@@ -431,8 +431,8 @@ importers:
         specifier: 'catalog:'
         version: 8.3.0(@react-router/serve@8.3.0(react-router@8.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(typescript@6.0.3))(react-router@8.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(typescript@6.0.3)(vite@8.2.2(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12))
       '@storybook/addon-a11y':
-        specifier: 10.5.10
-        version: 10.5.10(storybook@10.6.0(@types/react@19.2.18)(prettier@3.9.6)(react@19.2.8))
+        specifier: 10.6.0
+        version: 10.6.0(storybook@10.6.0(@types/react@19.2.18)(prettier@3.9.6)(react@19.2.8))
       '@storybook/addon-docs':
         specifier: 'catalog:'
         version: 10.5.10(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(esbuild@0.28.2)(rollup@4.62.4)(storybook@10.6.0(@types/react@19.2.18)(prettier@3.9.6)(react@19.2.8))(vite@8.2.2(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12))
@@ -1752,8 +1752,8 @@ packages:
   '@nodable/entities@3.0.0':
     resolution: {integrity: sha512-8L9xFeTYKhm49xfIypoe2W5wV1m/3Z58kT+7kR9A8OyFxcPduI4VmxaUMQyKYrRjUoLLSXv6EKKID5Tvj9cUVw==}
 
-  '@openrouter/sdk@1.2.107':
-    resolution: {integrity: sha512-y3bFctUufE+juGXKc4NEWm5htdMwoNvrHr/6s2h0cv/eZN1JO833qKa+Dcr1crJGYbG+PIjm34nYYVdXtfCehA==}
+  '@openrouter/sdk@1.2.106':
+    resolution: {integrity: sha512-PONsHVMN1HPocwgfbf0PxWUD0XokjEGvwF7SSyM+0b/8bZK7AFx456Tf9K7bur7UCf8Ex6LtLQa1vaJfyFkAvA==}
 
   '@opentelemetry/api-logs@0.220.0':
     resolution: {integrity: sha512-CmVa4ImJ+ynfrPMNaAXHET6Bhb44SwzmfyVJFq9ni2jgXJR/l7C6gfVFddNmHP+ZOkP9cf4f9DBe68qVLTHc9w==}
@@ -2858,11 +2858,6 @@ packages:
 
   '@standard-schema/utils@0.3.0':
     resolution: {integrity: sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==}
-
-  '@storybook/addon-a11y@10.5.10':
-    resolution: {integrity: sha512-RpRQV5xUbrl6hCiNrd5FSMIo6pnRZ0VZxWvEW/ASLcreGkKUW5jl2AeLCe5YROE2i80s/dU+6VPzOYKrwWNFbQ==}
-    peerDependencies:
-      storybook: ^10.5.10
 
   '@storybook/addon-a11y@10.6.0':
     resolution: {integrity: sha512-Z/CZor/F8H74/+IoeLroEQXQoVxvmjVtUgATJ95KPBolHxMaHLXLsYU0wosIiiORxmfRCnpen5pQl1n4+pBWQw==}
@@ -7081,7 +7076,7 @@ snapshots:
 
   '@nodable/entities@3.0.0': {}
 
-  '@openrouter/sdk@1.2.107':
+  '@openrouter/sdk@1.2.106':
     dependencies:
       zod: 4.4.3
 
@@ -7895,12 +7890,6 @@ snapshots:
   '@standard-schema/spec@1.1.0': {}
 
   '@standard-schema/utils@0.3.0': {}
-
-  '@storybook/addon-a11y@10.5.10(storybook@10.6.0(@types/react@19.2.18)(prettier@3.9.6)(react@19.2.8))':
-    dependencies:
-      '@storybook/global': 5.0.0
-      axe-core: 4.13.0
-      storybook: 10.6.0(@types/react@19.2.18)(prettier@3.9.6)(react@19.2.8)
 
   '@storybook/addon-a11y@10.6.0(storybook@10.6.0(@types/react@19.2.18)(prettier@3.9.6)(react@19.2.8))':
     dependencies:
