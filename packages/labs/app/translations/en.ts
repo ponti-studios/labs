@@ -42,13 +42,13 @@ export const STUDIO_TRANSLATIONS_EN = {
       kernel: {
         name: "Kernel",
         shortDescription:
-          "Engineering judgment shouldn't die in someone's head. Kernel turns it into 32 skills an AI can run.",
+          "Engineering judgment shouldn't die in someone's head. Kernel turns it into 31 skills an AI can run.",
         solution:
-          "32 specialized skills for software development and content production, published to NPM and installable through skills.sh.",
+          "31 specialized skills for software development and content production, published to NPM and installable through skills.sh.",
         problem:
           "Good engineering judgment usually lives in someone's head, not in a doc anyone reads. Kernel turns that judgment into skills an AI assistant can actually invoke — for migrations, security reviews, content, the recurring stuff.",
         keyFeatures: [
-          "32 skills across writing, music, image, development, UI, audit, and operations",
+          "31 skills across writing, music, image, development, UI, audit, and operations",
           "Install one skill or the full set with npx skills add",
           "Turn recurring engineering and content work into callable actions",
         ],
@@ -63,12 +63,12 @@ export const STUDIO_TRANSLATIONS_EN = {
         shortDescription:
           "Every team was rebuilding the same Postgres image. Foundation means nobody has to again.",
         solution:
-          "Shared infrastructure for PostgreSQL, Redis, Docker Compose environments, and CI/CD across the organization.",
+          "Shared infrastructure for PostgreSQL, Redis, MinIO object storage, and Docker Compose environments across the organization.",
         problem:
-          "Every team needing vector search or geospatial queries was rebuilding its own Postgres image. Foundation gives everyone one tested image and repeatable environments, so dev and prod stop quietly drifting apart.",
+          "Every team needing vector search, geospatial queries, or object storage was rebuilding its own stack. Foundation gives everyone one tested image and repeatable environments, so dev and prod stop quietly drifting apart.",
         keyFeatures: [
-          "One PostgreSQL 18 image with pgvector, PostGIS, and pgRouting",
-          "Docker Compose environments for development, test, and production",
+          "One PostgreSQL 18 image with pgvector, PostGIS, and pgRouting compiled in",
+          "Redis and MinIO object storage running alongside Postgres in one Compose stack",
           "Automated releases through GitHub Actions and semantic versioning",
           "Digest-pinned images with a machine-readable service catalog",
         ],
@@ -81,36 +81,36 @@ export const STUDIO_TRANSLATIONS_EN = {
       omiro: {
         name: "Omiro",
         shortDescription:
-          "Your notes, tasks, and calendar don't talk to each other. Omiro makes them one connected app.",
+          "Most productivity apps make you decide what a thought is before they'll save it. Omiro just captures it.",
         solution:
-          "An iOS app that captures everything you want to remember — tasks, notes, events, and ideas — into one searchable, connected personal knowledge graph.",
+          "A capture-first iOS app built for ADHD and neurodivergent knowledge workers — every thought starts as a note, then becomes a task, a chat, or connected context, without slowing down to classify it first.",
         problem:
-          "Your notes, reminders, calendar, and messages don't talk to each other. Omiro puts it all in one app where a task links to a note, a note links to an event, and search actually finds it.",
+          "Most productivity tools force you to choose a structure — task, note, event — before you know what you're trying to say. That friction is especially costly for ADHD and neurodivergent minds, where a slow capture flow means the thought is gone before it's saved. Omiro's one hard rule: capture can never be slower than the native Notes app.",
         keyFeatures: [
-          "Capture tasks, notes, events, and ideas in one place",
-          "Connect everything through typed knowledge-graph relationships",
+          "Capture a thought in one tap — notes, tasks, and chats all start from the same composer",
+          "Turn a note into a task or a reasoned conversation without losing the original capture",
           "Keep working offline with a local-first architecture",
-          "Share one product foundation across the iOS experience",
+          "Built for ADHD and neurodivergent knowledge workers first, everyone else second",
         ],
         technicalChallenges: [
           "Reconciling offline writes without losing user changes",
-          "Modeling open-ended relationships without an unbounded schema",
-          "Keeping business logic reusable across the app and shared packages",
+          "Keeping capture faster than iOS Notes while still classifying content in the background",
+          "Modeling open-ended note-to-task-to-chat relationships without an unbounded schema",
         ],
       },
       career: {
         name: "Career",
         shortDescription:
-          "Resumes crush decades of work into snippets. Career keeps the whole story.",
+          "Every strong application asks for a slightly different version of your story. Career keeps the reusable parts — proof, tailoring, memory — in one place.",
         solution:
-          "A web app pairing a career-long work journal — roles, achievements, skills gained, performance history — with a job-search pipeline for applications, interviews, follow-ups, and offers.",
+          "A private job-search workspace: import your resume, derive AI-backed proof of your skills, publish a shareable portfolio, and track every application from first tailor to final offer.",
         problem:
-          "A resume flattens years of real work into two pages a manager skims in six seconds. No wonder they can't tell what you've actually done — nobody kept the record as they went. Career logs the work itself, from your first job to your last, and runs the job-search pipeline on top of it.",
+          "A resume gets rebuilt from scratch for every role, the strongest proof of your work is scattered across old portfolios and dead links, and after enough applications the search blurs into noise. Career isn't a job board or an ATS — it's the private workspace for the parts of the search you actually control.",
         keyFeatures: [
-          "Log roles, achievements, and skills gained as a running career timeline",
-          "Track applications through stages, notes, and follow-ups",
-          "Schedule interviews and keep feedback beside each application",
-          "Keep recruiters and referrals connected to the search",
+          "Import a resume and let AI parse it into structured, reusable career data",
+          "Derive skills from real work history — every skill traces to the role or project that proves it, no self-reported endorsements",
+          "Publish a shareable portfolio page with SEO and OG cards",
+          "Tailor a resume to a specific role from your existing career records, not a blank page",
         ],
         technicalChallenges: [
           "Modeling a career as a timeline of roles and events without losing the narrative",
@@ -120,20 +120,22 @@ export const STUDIO_TRANSLATIONS_EN = {
       },
       finance: {
         name: "Finance",
-        shortDescription: "Money stuff is stressful. Finance makes it just numbers.",
+        shortDescription:
+          "Mint shut down and took years of financial history with it. Finance is built so that can't happen to you.",
         solution:
-          "A web app for tracking personal finances — accounts, transactions, budgets, and net worth trends — with a clean dashboard.",
+          "A local-first personal finance app — your accounts, transactions, and net worth live in a database on your own machine, not a vendor's cloud.",
         problem:
-          "Most finance tools are either toy-simple or spreadsheet-complex. Finance sits in the middle: enough structure to see real trends and budgets, simple enough you'll actually open it every week.",
+          "Every finance app — Mint, Monarch, Copilot — makes your financial history a tenant of their business model. When Mint shut down, years of categorized history disappeared overnight for millions of users. Finance is built the other way: delete the app, and your data is still there.",
         keyFeatures: [
-          "Bring accounts together and categorize transactions",
-          "Set budgets around real spending categories",
-          "See net-worth trends and monthly summaries",
+          "Store accounts, transactions, and categories in a local database you own and can export",
+          "See net-worth trends and spending by category without a server round-trip",
+          "Query your own financial history through an MCP server built for AI agents",
           "Share the same personal data foundation as sibling products",
         ],
         technicalChallenges: [
-          "Modeling account aggregation without relying on third-party dependencies",
-          "Keeping budget calculations fast and correct as data grows",
+          "Building a genuinely local-first sync model without standing up new cloud infrastructure",
+          "Extending an MCP server designed for calendar data to a second domain without duplicating patterns",
+          "Keeping budget and net-worth calculations fast and correct as local data grows",
         ],
       },
       "hominem-api": {
@@ -141,14 +143,14 @@ export const STUDIO_TRANSLATIONS_EN = {
         shortDescription:
           "Three apps, same personal data. One API instead of three duct-taped together.",
         solution:
-          "A centralized Hono API that serves Omiro, Career, and Finance with shared auth, typed RPC contracts, and an MCP server for AI agent access to personal data.",
+          "A centralized Hono API that owns identity, data access, background workers, and storage for Omiro, Career, and Finance — plus an MCP server for AI agent access to personal data.",
         problem:
-          "Three products sharing the same personal data don't need three separate APIs. Hominem is one server with typed contracts, shared auth, and MCP support — so AI agents can reach personal data without breaking permission boundaries.",
+          "Three products sharing the same personal data don't need three separate APIs, three auth systems, or three job queues. Hominem is one server with typed contracts, shared auth, and MCP support — so AI agents can reach personal data without breaking permission boundaries.",
         keyFeatures: [
           "Serve web, mobile, and agents from typed Hono contracts",
+          "Own identity, background workers, queues, and storage policy in one place",
           "Expose personal data through an MCP server with permission checks",
-          "Share Better Auth with passkeys and OTP support",
-          "Generate database types once for every consuming product",
+          "Share Better Auth with passkeys and OTP support across every surface",
         ],
         technicalChallenges: [
           "Keeping one contract coherent across web, mobile, and MCP clients",
@@ -158,21 +160,22 @@ export const STUDIO_TRANSLATIONS_EN = {
       },
       hollywood: {
         name: "Hollywood",
-        shortDescription: "Entertainment research, minus the twenty scattered sources.",
+        shortDescription:
+          "Entertainment has no Bloomberg — just IMDb, WGA, and a thousand spreadsheets that don't talk to each other. Hollywood is the entity graph that resolves them into one.",
         solution:
-          "A local-first platform that combines entertainment data ingestion with Claude-powered extraction from unstructured submissions.",
+          "A local-first entity graph — a Hono API that ingests trade press, WGA credits, TMDB, and Wikidata into one queryable SQLite database of people, titles, companies, and credits.",
         problem:
-          "Entertainment research is scattered everywhere, and the best material shows up as unstructured submissions nobody can search. Hollywood pulls it all into one system and extracts the useful fields automatically.",
+          "Every question about who represents whom, what stage a project is at, or who's worked with whom gets answered by manually cross-referencing IMDb, WGA, TMDB, and trade press. Assistants build the same spreadsheet by hand, every project, and it's stale before the next one starts. Hollywood pulls those sources into one entity graph instead.",
         keyFeatures: [
-          "Ingest trade publications, directories, and public databases",
-          "Extract structure from query letters, decks, and submissions",
-          "Connect people, companies, projects, and submissions in one graph",
-          "Archive raw payloads and export clean JSONL through a documented API",
+          "Ingest trade press, WGA credits, TMDB, and Wikidata through dedicated source adapters",
+          "Archive every raw payload by content hash before normalizing it into the graph",
+          "Connect people, titles, companies, and credits in one queryable database",
+          "Track ingest runs, timing, and record counts for every source",
         ],
         technicalChallenges: [
-          "Normalize eight-plus source types without losing provenance",
-          "Preserve raw inputs so extraction can improve over time",
-          "Model evolving relationships without creating an unmaintainable schema",
+          "Resolving the same real-world person across sources that each assign their own ID",
+          "Normalizing four different source formats — RSS feeds, a directory crawl, a REST API, and SPARQL — into one schema",
+          "Preserving raw payloads and provenance so extraction quality can improve after the fact",
         ],
       },
       commune: {
@@ -182,12 +185,12 @@ export const STUDIO_TRANSLATIONS_EN = {
         solution:
           "A social decision-making app that turns a personal situation into a neutral case for a small anonymous jury.",
         problem:
-          "Advice from friends is shaped by how you tell the story and by the relationship underneath it. Commune strips that out: an AI writes the neutral version, then a jury votes independently and explains why.",
+          "Group chats give you bad signal, not because your friends are bad advisors, but because group dynamics structurally prevent honest answers — the first response anchors everyone else, and no one wants to be the friend who was wrong. Commune strips that out: an AI neutralizes the framing, then an anonymous jury votes independently before anyone sees the room.",
         keyFeatures: [
-          "Turn a personal story into a neutral decision brief",
-          "Collect independent agree-or-disagree votes from an anonymous jury",
-          "Reveal comments and verdicts once the quorum is reached",
-          "Track and share cases from a personal decision docket",
+          "Turn a personal story into a neutral, fact-based case before anyone votes",
+          "Collect blind votes — no juror sees a result until they've cast their own",
+          "Require a reason before a verdict, so no one just follows the room",
+          "Reveal comments and verdicts only once a minimum quorum is reached",
         ],
         technicalChallenges: [
           "Remove persuasive framing without losing the underlying facts",
@@ -216,21 +219,22 @@ export const STUDIO_TRANSLATIONS_EN = {
       },
       health: {
         name: "Health",
-        shortDescription: "Symptoms, appointments, meds — one place, not five apps.",
+        shortDescription:
+          "You either google your symptoms and spiral, or call a doctor and wait. Health gives you a third option.",
         solution:
-          "A personal health workspace for understanding symptoms, tracking progress, and organizing care.",
+          "A personal health workspace built in three layers — triage a symptom right now, track it over time, and manage the appointments and history that come after.",
         problem:
-          "Health decisions get scattered across symptoms, appointments, medication, insurance, and finding care nearby. Health puts those recurring tasks in one workspace instead of a separate lookup every time.",
+          "When you feel unwell, you either google your symptoms and spiral, or call a doctor and wait — neither gives you a clear answer to what to do right now. And nothing remembers: you can't look back and see when the headaches started, or whether the medication helped. Health data lives in a paper prescription here, a GP portal there, and none of it talks to each other.",
         keyFeatures: [
-          "Track symptoms with guidance, monitoring, and follow-up",
-          "Manage appointments from one upcoming-care view",
-          "Calculate medication-pen duration before the next dose",
-          "Compare hospitals and Medicare options in context",
+          "Check a symptom and get a severity score with a clear next step — monitor, schedule, or go now",
+          "Track an active symptom over time: pain level, onset, resolution",
+          "See live counts of active symptoms, resolved symptoms, and upcoming appointments at a glance",
+          "Find the nearest hospital with directions and a call button when it's urgent",
         ],
         technicalChallenges: [
           "Give useful symptom guidance without implying a diagnosis",
-          "Keep symptoms, resolutions, and appointments coherent over time",
-          "Combine medication, hospital, and Medicare tools without fragmenting care",
+          "Fuzzy-match natural-language symptom input against a structured severity database",
+          "Keep symptoms, appointments, and resolutions coherent as a longitudinal record",
         ],
       },
       geo: {
@@ -257,21 +261,21 @@ export const STUDIO_TRANSLATIONS_EN = {
         name: "Toolbox",
         shortDescription: "Eight CLI tools, built because the throwaway script always comes back.",
         solution:
-          "A monorepo of eight focused CLI tools: file processing (filekit), image optimization (iconkit), video transcription (mediakit), photo metadata (photokit), content pipeline (monotone), AI agent analytics (agentkit), X post management (xkit), and Internet Archive crawling (datpiff).",
+          "A monorepo of eight focused CLI tools for file processing (filekit), image and photo metadata (imagekit), video transcription (mediakit), AI agent usage analytics (agentkit), and more — distributed through Homebrew behind one command surface.",
         problem:
-          "Personal automation starts as a script you'll delete later. It never gets deleted. Toolbox turns those recurring jobs — content, media, personal data — into tested commands with real safeguards.",
+          "Personal automation starts as a script you'll delete later. It never gets deleted. Toolbox turns those recurring jobs — files, media, agent usage, personal data — into tested commands with real safeguards.",
         keyFeatures: [
-          "Turn raw notes into scheduled social posts through Typefully",
-          "Transcribe video, optimize images, and manage photo metadata",
-          "Track agent usage and cost across Claude Code, Copilot, and OpenRouter",
-          "Delete X posts safely with OAuth 2.0 PKCE and rate-limit checks",
-          "Crawl Internet Archive collections for downstream processing",
+          "Process and rename files, photos, and frontmatter through filekit",
+          "Transcribe video and audio to Markdown with mediakit, and clean up image metadata with imagekit",
+          "Track agent usage and cost across Claude Code, Codex, Copilot, and OpenRouter with agentkit",
+          "Delete X posts safely with OAuth 2.0 PKCE and rate-limit checks via xkit",
+          "Crawl Internet Archive collections for downstream processing with datpiff",
           "Run every tool through one command surface with dry-run safeguards",
         ],
         technicalChallenges: [
           "Match each tool to the limits of its runtime and data source",
           "Require dry-run and verification before destructive operations",
-          "Keep six toolchains coherent behind one command surface",
+          "Keep eight toolchains coherent behind one command surface",
         ],
       },
       game: {
@@ -363,18 +367,14 @@ export const STUDIO_TRANSLATIONS_EN = {
     },
     hero: {
       title: "The Work.",
-      subtitle: "Real clients, real constraints, real numbers. Filter by industry to see the fit.",
+      subtitle: "Real clients, constraints, & numbers.",
     },
-    filterAllLabel: "All work",
     caseStudyLabel: "Case study",
     roleLabel: "Role",
     timelineLabel: "Timeline",
+    problemTitle: "Problem",
     approachTitle: "Approach",
     backToWork: "All work",
-    nextCta: {
-      title: "Need something similar solved?",
-      body: "If the problem looks familiar, let's talk about yours.",
-    },
   },
 
   catalog: {
@@ -402,10 +402,9 @@ export const STUDIO_TRANSLATIONS_EN = {
             "Fixed grading disputes by moving from floating-point to integer arithmetic with write serialization",
           ],
           outcomes: [
-            { value: "+43%", label: "Feed engagement" },
             { value: "2 days", label: "Course return time, down from 1–2 weeks" },
             { value: "~40%", label: "Higher second-course enrollment" },
-            { value: "32%", label: "Faster time-to-interactive" },
+            { value: "+43%", label: "Feed engagement" },
           ],
         },
         {
@@ -426,7 +425,7 @@ export const STUDIO_TRANSLATIONS_EN = {
             "Surfaced estimated revenue and viability during planning, not after the tour ended",
           ],
           outcomes: [
-            { value: "Hours", label: "Tour planning time, down from weeks" },
+            { value: "3 weeks", label: "MVP delivered, down from a 12–18 month vision" },
             { value: "20–35%", label: "Higher estimated revenue vs. manual tours" },
           ],
         },
@@ -536,8 +535,8 @@ export const STUDIO_TRANSLATIONS_EN = {
           ],
           outcomes: [
             { value: "<30s", label: "Claims data lag, down from hours" },
-            { value: "3 modes", label: "Care platform live — voice, mobile, chat" },
-            { value: "BIPA", label: "Biometric consent across IL, TX, WA, NY" },
+            { value: "3 modes", label: "Fragmented access unified into one care platform" },
+            { value: "0", label: "HIPAA exposures — PHI moved off Alexa infrastructure before an incident" },
           ],
         },
         {
@@ -558,7 +557,6 @@ export const STUDIO_TRANSLATIONS_EN = {
           outcomes: [
             { value: "2 weeks", label: "Ahead of original deadline (was 4 behind)" },
             { value: "−80%", label: "Merge conflicts" },
-            { value: "+40%", label: "Team productivity" },
             { value: "4 hrs", label: "Code review, down from 2 days" },
           ],
         },
@@ -580,9 +578,9 @@ export const STUDIO_TRANSLATIONS_EN = {
             "Scoped ruthlessly: only what was essential to retire the Google Sheet",
           ],
           outcomes: [
-            { value: "UK-wide", label: "Volunteer network on the new platform" },
-            { value: "1 system", label: "Replaced the shared Google Sheet" },
-            { value: "Full", label: "Audit trail on every submission" },
+            { value: "0", label: "Malformed submissions reaching ops, down from routine" },
+            { value: "100%", label: "Submissions with a full audit trail, up from none" },
+            { value: "UK-wide", label: "Volunteer network run on the new platform" },
           ],
         },
         {
@@ -605,7 +603,6 @@ export const STUDIO_TRANSLATIONS_EN = {
             { value: "97%", label: "Faster primary API (13.8s → 0.5s)" },
             { value: "−72%", label: "Data transfer volume" },
             { value: "−30%", label: "Cloud infrastructure cost" },
-            { value: "−65%", label: "Critical technical debt" },
           ],
         },
         {

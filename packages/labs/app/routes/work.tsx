@@ -44,7 +44,6 @@ function FilterChip({
   );
 }
 
-/** Full client roster as the same credit-card grid used on the home page — every case study is one click away. */
 export default function Work() {
   const [industry, setIndustry] = useState<string | null>(null);
   const visibleCards = useMemo(
@@ -62,21 +61,6 @@ export default function Work() {
       </section>
 
       <section className="layout-stack">
-        <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0">
-          <FilterChip active={industry === null} onClick={() => setIndustry(null)}>
-            {copy.filterAllLabel}
-          </FilterChip>
-          {INDUSTRIES.map((entry) => (
-            <FilterChip
-              key={entry}
-              active={industry === entry}
-              onClick={() => setIndustry((current) => (current === entry ? null : entry))}
-            >
-              {entry}
-            </FilterChip>
-          ))}
-        </div>
-
         <RevealGroup className="grid grid-cols-1 place-items-center gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {visibleCards.map((card) => (
             <RevealItem key={card.id}>
