@@ -1,57 +1,58 @@
 import type { ReactNode } from "react";
 import { NavLink } from "react-router";
-import { LAYOUTS, LAYOUT_IDS, type LayoutId } from "./layouts-data";
+import { LAYOUTS, LAYOUT_IDS, MOVIE_TILES, type LayoutId } from "./layouts-data";
 import { cn } from "~/lib/utils";
 
 export function LayoutShell({ layoutId, children }: { layoutId: LayoutId; children: ReactNode }) {
   const meta = LAYOUTS[layoutId];
+  const featured = layoutId === "vertical" ? MOVIE_TILES[8] : MOVIE_TILES[0];
+  const featuredIndex = MOVIE_TILES.findIndex((tile) => tile.id === featured.id);
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-10 md:px-6">
-      <header className="flex flex-col gap-6">
-        <div>
-          <p className="text-accent text-sm font-medium tracking-widest uppercase">
-            Toy &middot; Streaming
-          </p>
-          <h1 className="heading-hero text-foreground mt-3 max-w-3xl">A slate that never ends.</h1>
-          <p className="text-muted-foreground mt-4 max-w-2xl text-lg">
-            2026's biggest films, two temperaments — ambient drift for the hero, a keyboard-friendly
-            rail for browsing.
+    <div className="layouts-streaming-shell">
+      <section className="layouts-featured" aria-labelledby="layouts-featured-title">
+        <div className="layouts-featured-content">
+          <h1 id="layouts-featured-title">Slates should never end.</h1>
+          <p className="layouts-featured-copy">
+            A streaming interface study in motion, discovery, and the small thrill of finding what
+            to watch next.
           </p>
         </div>
-        <nav
-          aria-label="Layout variants"
-          className="border-border bg-muted/30 inline-flex w-fit gap-1 rounded-full border p-1"
-        >
-          {LAYOUT_IDS.map((id) => (
-            <NavLink
-              key={id}
-              to={`/toys/layouts/${id}`}
-              className={cn(
-                "rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
-                id === layoutId
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              {LAYOUTS[id].label}
-            </NavLink>
-          ))}
-        </nav>
-      </header>
+      </section>
 
-      <section className="flex flex-col gap-6">
-        <div className="flex flex-col gap-1">
-          <h2 className="text-foreground text-xl font-semibold">{meta.title}</h2>
-          <p className="text-muted-foreground max-w-2xl text-sm">{meta.lede}</p>
+      <section id="browse" className="layouts-streaming-content">
+        <div className="layouts-catalog-heading">
+          <div>
+            <p className="layouts-eyebrow">Browse experiments</p>
+            <h2>{meta.title}</h2>
+          </div>
+          <nav aria-label="Layout variants" className="layouts-layout-switcher">
+            {LAYOUT_IDS.map((id) => (
+              <NavLink
+                key={id}
+                to={`/toys/layouts/${id}`}
+                className={cn("layouts-layout-link", id === layoutId && "is-active")}
+              >
+                {LAYOUTS[id].label}
+              </NavLink>
+            ))}
+          </nav>
         </div>
+        <p className="layouts-streaming-lede">{meta.lede}</p>
         {children}
-        <aside className="border-border rounded-xl border px-4 py-3">
-          <p className="text-muted-foreground text-sm">
-            <span className="text-accent font-medium">When to use.</span> {meta.whenToUse}
+        <aside className="layouts-usage-note">
+          <p>
+            <span>Design note</span> {meta.whenToUse}
           </p>
         </aside>
       </section>
+
+      <footer className="layouts-streaming-footer">
+        <span>LABYRINTH / TOYS</span>
+        <span>
+          {String(featuredIndex + 1).padStart(2, "0")} of {MOVIE_TILES.length} titles in this slate
+        </span>
+      </footer>
     </div>
   );
 }
