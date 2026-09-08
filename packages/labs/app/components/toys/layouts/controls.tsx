@@ -1,4 +1,5 @@
 import { Slider } from "@ponti-studios/ui/forms";
+import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 import { cn } from "~/lib/utils";
 
@@ -75,7 +76,7 @@ export function ToggleControl({
       >
         <span
           className={cn(
-            "block h-5 w-5 rounded-full bg-white shadow transition-transform",
+            "bg-background block h-5 w-5 rounded-full shadow transition-transform",
             checked && "translate-x-5",
           )}
         />
@@ -90,11 +91,13 @@ export function SegmentedControl<T extends string>({
   value,
   options,
   onChange,
+  layoutId,
 }: {
   label: string;
   value: T;
   options: ReadonlyArray<{ value: T; label: string }>;
   onChange: (value: T) => void;
+  layoutId?: string;
 }) {
   return (
     <div className="flex items-center gap-3">
@@ -102,7 +105,7 @@ export function SegmentedControl<T extends string>({
       <div
         role="radiogroup"
         aria-label={label}
-        className="border-border bg-muted/40 inline-flex gap-1 rounded-full border p-1"
+        className="border-border bg-background/60 inline-flex gap-1 rounded-full border p-1 shadow-sm backdrop-blur-md"
       >
         {options.map((option) => (
           <button
@@ -112,13 +115,20 @@ export function SegmentedControl<T extends string>({
             aria-checked={option.value === value}
             onClick={() => onChange(option.value)}
             className={cn(
-              "rounded-full px-3 py-1 text-xs font-medium transition-colors",
+              "relative rounded-full px-3 py-1 text-xs font-medium transition-colors",
               option.value === value
-                ? "bg-primary text-primary-foreground"
+                ? "text-primary-foreground"
                 : "text-muted-foreground hover:text-foreground",
             )}
           >
-            {option.label}
+            {option.value === value && (
+              <motion.span
+                layoutId={layoutId ?? `segmented-${label}`}
+                className="bg-primary absolute inset-0 -z-0 rounded-full shadow-sm"
+                transition={{ type: "spring", stiffness: 500, damping: 35 }}
+              />
+            )}
+            <span className="relative z-10">{option.label}</span>
           </button>
         ))}
       </div>

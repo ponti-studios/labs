@@ -1,57 +1,49 @@
 import type { ReactNode } from "react";
-import { NavLink } from "react-router";
+import { useNavigate } from "react-router";
 import { LAYOUTS, LAYOUT_IDS, MOVIE_TILES, type LayoutId } from "./layouts-data";
-import { cn } from "~/lib/utils";
+import { SegmentedControl } from "./controls";
 
 export function LayoutShell({ layoutId, children }: { layoutId: LayoutId; children: ReactNode }) {
-  const meta = LAYOUTS[layoutId];
-  const featured = layoutId === "vertical" ? MOVIE_TILES[8] : MOVIE_TILES[0];
-  const featuredIndex = MOVIE_TILES.findIndex((tile) => tile.id === featured.id);
+  const navigate = useNavigate();
 
   return (
-    <div className="layouts-streaming-shell">
-      <section className="layouts-featured" aria-labelledby="layouts-featured-title">
-        <div className="layouts-featured-content">
-          <h1 id="layouts-featured-title">Slates should never end.</h1>
-          <p className="layouts-featured-copy">
-            A streaming interface study in motion, discovery, and the small thrill of finding what
-            to watch next.
+    <div className="bg-background text-foreground min-h-screen">
+      <section
+        className="mx-auto mt-4 flex w-full max-w-6xl items-start rounded-none px-4 py-10 sm:px-8"
+        aria-labelledby="layouts-featured-title"
+      >
+        <div className="max-w-3xl">
+          <h1
+            id="layouts-featured-title"
+            className="text-foreground m-0 max-w-3xl font-serif text-5xl leading-[0.9] font-semibold tracking-[-0.06em] sm:text-7xl"
+          >
+            Slates should never end.
+          </h1>
+          <p className="text-muted-foreground mt-5 max-w-xl text-xs leading-relaxed">
+            A study into finding what to watch.
           </p>
         </div>
       </section>
 
-      <section id="browse" className="layouts-streaming-content">
-        <div className="layouts-catalog-heading">
-          <div>
-            <p className="layouts-eyebrow">Browse experiments</p>
-            <h2>{meta.title}</h2>
-          </div>
-          <nav aria-label="Layout variants" className="layouts-layout-switcher">
-            {LAYOUT_IDS.map((id) => (
-              <NavLink
-                key={id}
-                to={`/toys/layouts/${id}`}
-                className={cn("layouts-layout-link", id === layoutId && "is-active")}
-              >
-                {LAYOUTS[id].label}
-              </NavLink>
-            ))}
-          </nav>
+      <section
+        id="browse"
+        className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 py-10 sm:px-8 sm:py-14"
+      >
+        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
+          <SegmentedControl
+            label="Layout"
+            value={layoutId}
+            options={LAYOUT_IDS.map((id) => ({ value: id, label: LAYOUTS[id].label }))}
+            onChange={(id) => navigate(`/toys/layouts/${id}`)}
+            layoutId="layout-variant-pill"
+          />
         </div>
-        <p className="layouts-streaming-lede">{meta.lede}</p>
         {children}
-        <aside className="layouts-usage-note">
-          <p>
-            <span>Design note</span> {meta.whenToUse}
-          </p>
-        </aside>
       </section>
 
-      <footer className="layouts-streaming-footer">
+      <footer className="text-muted-foreground mx-auto flex w-full max-w-6xl justify-between gap-4 px-4 py-4 text-[10px] tracking-[0.12em] uppercase sm:px-8 sm:pb-8">
         <span>LABYRINTH / TOYS</span>
-        <span>
-          {String(featuredIndex + 1).padStart(2, "0")} of {MOVIE_TILES.length} titles in this slate
-        </span>
+        <span>{MOVIE_TILES.length} titles in this slate</span>
       </footer>
     </div>
   );

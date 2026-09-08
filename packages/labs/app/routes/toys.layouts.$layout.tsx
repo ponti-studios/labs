@@ -1,6 +1,5 @@
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
-import "~/components/toys/layouts/layouts.css";
 import { HorizontalCarousel } from "~/components/toys/layouts/HorizontalCarousel";
 import { LayoutShell } from "~/components/toys/layouts/LayoutShell";
 import { VerticalMarquee } from "~/components/toys/layouts/VerticalMarquee";
