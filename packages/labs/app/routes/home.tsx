@@ -5,7 +5,8 @@ import { Button } from "@ponti-studios/ui/primitives";
 import { Link } from "react-router";
 import { RevealGroup, RevealItem } from "~/components/Reveal";
 import { TiltCard } from "~/components/TiltCard";
-import { FeaturedProjects } from "~/components/projects-wallet/projects-wallet";
+import { FeaturedClients } from "~/components/clients";
+import { FeaturedProjects } from "~/components/projects";
 import { BOOK_CALL_URL, servicePillars } from "~/data/studio";
 import { t } from "~/translations";
 
@@ -123,7 +124,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Selected work */}
+      {/* Clients */}
+      <FeaturedClients />
+
+      {/* Projects */}
       <FeaturedProjects />
 
       {/* Point of view */}
@@ -134,14 +138,12 @@ export default function Home() {
       </section>
 
       {/* Close CTA */}
-      <section className="bg-accent-foreground text-background flex flex-col items-center rounded-4xl px-4 py-14 sm:px-6 md:py-20">
-        <h2 className="heading-cta text-accent mx-auto mb-5 max-w-3xl text-center">
-          {t.services.cta.title}
+      <section className="border-accent-foreground bg-accent/75 text-background flex flex-col items-center gap-4 rounded-4xl border px-4 py-14 sm:px-6">
+        <h2 className="heading-cta mx-auto mb-5 flex max-w-3xl gap-4 text-center">
+          <span>{t.services.cta.title.split(" ")[0]}</span>
+          <span className="font-serif lowercase italic">{t.services.cta.title.split(" ")[1]}</span>
         </h2>
-        <p className="text-background/75 mx-auto mb-7 max-w-xl text-center text-lg leading-relaxed">
-          {t.services.cta.body}
-        </p>
-        <Button asChild size="lg" className="press rounded-full px-6">
+        <Button asChild size="lg">
           <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
             {t.common.bookCall}
           </a>

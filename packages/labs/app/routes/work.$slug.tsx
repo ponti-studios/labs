@@ -1,9 +1,10 @@
 import { Button } from "@ponti-studios/ui/primitives";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { Link, useLoaderData } from "react-router";
-import { DetailNavigation } from "~/components/DetailPage";
+import { CARD_THEMES } from "~/components/projects/card-themes";
 import { RevealGroup, RevealItem } from "~/components/Reveal";
-import { BOOK_CALL_URL, caseSnapshots, type CaseStat } from "~/data/studio";
+import { BOOK_CALL_URL, caseLogos, caseSnapshots } from "~/data/studio";
+import { clientThemeBySlug } from "~/lib/client-cards";
 import { t } from "~/translations";
 
 const copy = t.work;
@@ -25,10 +26,8 @@ export const meta: MetaFunction = ({ params }) => {
 
 export default function WorkSlug() {
   const { snapshot } = useLoaderData<typeof loader>();
-  const currentIndex = caseSnapshots.findIndex((entry) => entry.slug === snapshot.slug);
-  const previous = currentIndex > 0 ? caseSnapshots[currentIndex - 1] : null;
-  const next = currentIndex < caseSnapshots.length - 1 ? caseSnapshots[currentIndex + 1] : null;
-  const [firstOutcome, secondOutcome] = snapshot.outcomes;
+  const themeTokens = CARD_THEMES[clientThemeBySlug(snapshot.slug)];
+  const logo = caseLogos[snapshot.slug];
 
   return (
     <div className="page-shell">
@@ -41,85 +40,86 @@ export default function WorkSlug() {
         >
           ← {copy.backToWork}
         </Link>
-        <h1 className="heading-hero text-foreground max-w-4xl">{snapshot.client}</h1>
 
-        <div className="mt-12 grid gap-8 md:grid-cols-[1.25fr_.75fr] md:items-end">
-          <p className="text-foreground max-w-2xl text-2xl leading-tight tracking-tight sm:text-3xl md:text-4xl">
+        <div
+          className="relative overflow-hidden rounded-[32px] border border-white/10 p-8 sm:p-12"
+          style={{ background: themeTokens.background }}
+        >
+          <div className="relative z-10 flex flex-col gap-4">
+            <span
+              className="inline-flex w-fit items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold tracking-wide uppercase"
+              style={{
+                backgroundColor: `color-mix(in oklab, ${themeTokens.accent} 18%, transparent)`,
+                color: themeTokens.accent,
+              }}
+            >
+              {snapshot.industry}
+            </span>
+            <div className="flex flex-wrap items-center gap-5">
+              {logo ? (
+                <img
+                  src={logo}
+                  alt={`${snapshot.client} logo`}
+                  className="size-14 shrink-0 rounded-2xl bg-white/90 object-contain p-2 sm:size-16"
+                />
+              ) : null}
+              <h1
+                className="text-4xl font-black tracking-tight sm:text-6xl md:text-7xl"
+                style={{ color: themeTokens.foreground }}
+              >
+                {snapshot.client}
+              </h1>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-border mt-12 flex flex-col gap-6 border-t pt-8">
+          <div className="text-muted-foreground flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs tracking-wide">
+            <span>
+              <span className="uppercase">{copy.roleLabel}</span>{" "}
+              <span className="text-foreground">{snapshot.role}</span>
+            </span>
+            <span aria-hidden="true">·</span>
+            <span>
+              <span className="uppercase">{copy.timelineLabel}</span>{" "}
+              <span className="text-foreground">{snapshot.timeline}</span>
+            </span>
+          </div>
+          <p className="text-foreground max-w-3xl text-3xl leading-[1.15] font-semibold tracking-tight sm:text-4xl md:text-5xl">
             {snapshot.problem}
           </p>
-          <div className="border-border grid grid-cols-2 gap-5 border-t pt-4">
-            <div>
-              <small className="text-muted-foreground mb-1.5 block text-[11px] font-black tracking-wide uppercase">
-                {copy.roleLabel}
-              </small>
-              <div className="text-sm leading-relaxed">{snapshot.role}</div>
-            </div>
-            <div>
-              <small className="text-muted-foreground mb-1.5 block text-[11px] font-black tracking-wide uppercase">
-                {copy.timelineLabel}
-              </small>
-              <div className="text-sm leading-relaxed">{snapshot.timeline}</div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-accent mt-10 grid gap-6 rounded-[28px] p-7 text-[#15110f] sm:p-10 md:grid-cols-[1.2fr_.8fr] md:items-end">
-          <div className="text-3xl leading-[.98] font-black tracking-tight sm:text-4xl md:text-5xl">
+          <p className="text-muted-foreground max-w-2xl text-lg leading-relaxed">
             {snapshot.description}
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            {[firstOutcome, secondOutcome]
-              .filter((o): o is CaseStat => Boolean(o))
-              .map((outcome) => (
-                <div
-                  key={outcome.label}
-                  className="min-h-[110px] rounded-2xl border border-[#11110f]/28 p-4"
-                >
-                  <b className="block text-3xl tracking-tight">{outcome.value}</b>
-                  <span className="mt-2 block text-[11px] font-black tracking-wide uppercase">
-                    {outcome.label}
-                  </span>
-                </div>
-              ))}
-          </div>
+          </p>
         </div>
       </section>
 
-      {/* What we did */}
+      {/* Approach */}
       <section className="section">
-        <p className="text-foreground max-w-3xl text-2xl leading-snug tracking-tight sm:text-3xl">
+        <p className="text-foreground mb-8 max-w-3xl text-2xl leading-snug tracking-tight sm:text-3xl">
           {snapshot.whatWeDid}
         </p>
+        <RevealGroup className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-px overflow-hidden rounded-lg bg-[#171714] text-white">
+          {snapshot.approach.map((step, index) => (
+            <RevealItem key={step} className="min-h-[220px] bg-[#1e1e1a] p-6">
+              <div className="mb-14 text-xs font-black text-[#aaa79f]">
+                {String(index + 1).padStart(2, "0")}
+              </div>
+              <p className="text-sm leading-relaxed text-[#d8d5cd]">{step}</p>
+            </RevealItem>
+          ))}
+        </RevealGroup>
       </section>
 
-      {/* Approach — dark panel, always dark regardless of system theme */}
-      <section className="section">
-        <div className="rounded-[28px] bg-[#171714] px-6 py-12 text-white sm:px-10 md:py-16">
-          <RevealGroup className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-px overflow-hidden rounded-[22px] bg-[#373731]">
-            {snapshot.approach.map((step, index) => (
-              <RevealItem key={step} className="min-h-[220px] bg-[#1e1e1a] p-6">
-                <div className="mb-14 text-xs font-black text-[#aaa79f]">
-                  {String(index + 1).padStart(2, "0")}
-                </div>
-                <p className="text-sm leading-relaxed text-[#d8d5cd]">{step}</p>
-              </RevealItem>
-            ))}
-          </RevealGroup>
-        </div>
-      </section>
-
-      {/* Pullquote */}
-      <section className="section-compact py-20 text-center md:py-28">
-        <p className="text-accent mx-auto max-w-4xl text-4xl leading-[.98] font-black tracking-tighter sm:text-5xl md:text-6xl">
-          “{t.manifesto.quote}”
-        </p>
-      </section>
-
-      {/* Outcome */}
+      {/* Outcomes */}
       <section className="section">
         <RevealGroup className="grid gap-3 sm:grid-cols-3">
           {snapshot.outcomes.map((outcome) => (
-            <RevealItem key={outcome.label} className="border-foreground border-t-[3px] pt-5">
+            <RevealItem
+              key={outcome.label}
+              className="border-t-[3px] pt-5"
+              style={{ borderColor: themeTokens.accent }}
+            >
               <b className="text-foreground mb-1.5 block text-4xl tracking-tight sm:text-5xl">
                 {outcome.value}
               </b>
@@ -129,20 +129,8 @@ export default function WorkSlug() {
         </RevealGroup>
       </section>
 
-      <DetailNavigation
-        ariaLabel="Case study navigation"
-        previous={
-          previous
-            ? { label: "Previous case study", title: previous.client, to: `/work/${previous.slug}` }
-            : null
-        }
-        next={
-          next ? { label: "Next case study", title: next.client, to: `/work/${next.slug}` } : null
-        }
-      />
-
       {/* Close CTA */}
-      <section className="section-compact border-border border-t border-b py-20 text-center md:py-28">
+      <section className="section-compact py-20 text-center md:py-28">
         <h2 className="heading-cta text-foreground mx-auto mb-5 max-w-3xl">{copy.nextCta.title}</h2>
         <p className="text-muted-foreground mx-auto mb-7 max-w-xl text-lg leading-relaxed">
           {copy.nextCta.body}

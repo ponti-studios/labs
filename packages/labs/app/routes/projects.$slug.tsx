@@ -1,7 +1,6 @@
 import { ScrollArea } from "@ponti-studios/ui/layout";
 import { ExternalLink, FolderGit2 } from "lucide-react";
 import { Link, useParams } from "react-router";
-import { DetailNavigation } from "~/components/DetailPage";
 import { ListRowMedia } from "~/components/ListRowMedia";
 import { RevealGroup, RevealItem } from "~/components/Reveal";
 import { projects } from "~/data/projects";
@@ -34,10 +33,6 @@ export default function ProjectDetail() {
       </div>
     );
   }
-
-  const currentIndex = projects.findIndex((candidate) => candidate.slug === project.slug);
-  const previous = currentIndex > 0 ? projects[currentIndex - 1] : null;
-  const next = currentIndex < projects.length - 1 ? projects[currentIndex + 1] : null;
   const hasDistinctUrl = Boolean(project.url && project.url !== project.github);
   const howItWorks = [...project.keyFeatures, ...project.technicalChallenges];
 
@@ -136,24 +131,6 @@ export default function ProjectDetail() {
           </RevealGroup>
         </section>
       ) : null}
-
-      <DetailNavigation
-        ariaLabel="Project navigation"
-        previous={
-          previous
-            ? {
-                label: t.projects.page.previous,
-                title: previous.name,
-                to: `/projects/${previous.slug}`,
-              }
-            : null
-        }
-        next={
-          next
-            ? { label: t.projects.page.next, title: next.name, to: `/projects/${next.slug}` }
-            : null
-        }
-      />
     </div>
   );
 }

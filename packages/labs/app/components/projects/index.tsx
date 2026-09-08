@@ -1,57 +1,11 @@
+import { LucideArrowRightCircle } from "lucide-react";
 import { memo } from "react";
+import { Link } from "react-router";
+import { CardCarousel } from "~/components/CardCarousel";
 import { GameTile } from "~/components/games/game-tile";
 import { WHAT_APP_URL } from "~/data/game";
 import { t } from "~/translations";
 import { ProjectCard, type FeaturedProject } from "./project-card";
-
-type ProjectsWalletProps = {
-  projects: FeaturedProject[];
-  ariaLabel?: string;
-};
-
-/** Horizontally scrollable row of credit-card-styled featured projects. */
-export const ProjectsWallet = memo(function ProjectsWallet({
-  projects,
-  ariaLabel = "Featured projects",
-}: ProjectsWalletProps) {
-  return (
-    <ul
-      aria-label={ariaLabel}
-      // Cards grow on hover (whileHover: scale 1.015, y: -6 in ProjectCard) and
-      // always carry a shadow-lg drop shadow, both of which paint outside the
-      // card's own layout box. Since this list clips on both axes (overflow-x-auto
-      // forces overflow-y to auto per the CSS spec), anything painted past the box
-      // gets cropped unless the list has room to paint into.
-      //
-      // Worst case is the largest card (sm+: 340x214px):
-      //   - shadow-lg is two layers; the dominant one is `0 10px 15px -3px black/20`
-      //     (offset 10, blur 15, spread -3), which alone paints ~22px below the box
-      //     (10 offset - 3 spread + 15 blur) and ~2px above it. This is present at
-      //     rest, not just on hover.
-      //   - hover adds translateY -6 (shifts everything, including the shadow, up
-      //     6px) and scale 1.015 (grows the box ~1.6px per side vertically, ~2.6px
-      //     per side horizontally) plus the shadow's own ~12px horizontal bleed
-      //     (10 - 3 spread + 15 blur... offset-x is 0, so symmetric).
-      //   - top: max(rest shadow ~2px, hover 6 translate + 1.6 scale + 2 shadow) ≈ 10px
-      //   - bottom: max(rest shadow ~22px, hover 22 - 6 + ~1.6) ≈ 22px — the rest
-      //     case dominates because translateY only offsets the shadow while hovering
-      //   - left/right: ~12px shadow bleed + ~3px scale growth ≈ 15px
-      //
-      // pt-3/px-4 supply that room with margin to spare; pb-6 covers the bottom
-      // shadow. Negative top/horizontal margins keep the row's visible position
-      // unchanged so surrounding layout (heading gap, page margins) doesn't shift;
-      // the bottom padding is left uncompensated since a little extra breathing
-      // room before the next section's border is fine.
-      className="-mx-4 -mt-3 flex snap-x snap-mandatory scrollbar-thin gap-6 overflow-x-auto px-4 pt-3 pb-6"
-    >
-      {projects.map((project) => (
-        <li key={project.id} className="shrink-0">
-          <ProjectCard {...project} data-testid={`featured-project-${project.id}`} />
-        </li>
-      ))}
-    </ul>
-  );
-});
 
 const PREVIEW_ROWS = [
   [
@@ -136,10 +90,22 @@ const FEATURED_PROJECTS: FeaturedProject[] = [
 export const FeaturedProjects = memo(function FeaturedProjects() {
   return (
     <section className="bg-accent flex flex-col gap-8 rounded-4xl px-6 py-12">
-      <h2 id="capabilities-title" className="heading-cta text-foreground max-w-3xl">
-        Featured Projects
-      </h2>
-      <ProjectsWallet projects={FEATURED_PROJECTS} />
+      <div className="flex items-center gap-12">
+        <h2 id="capabilities-title" className="heading-cta text-foreground max-w-3xl">
+          Projects
+        </h2>
+        <Link to="/projects" prefetch="intent">
+          <LucideArrowRightCircle size={48} />
+        </Link>
+      </div>
+      <CardCarousel
+        ariaLabel="Featured projects"
+        items={FEATURED_PROJECTS}
+        getKey={(project) => project.id}
+        renderItem={(project) => (
+          <ProjectCard {...project} data-testid={`featured-project-${project.id}`} />
+        )}
+      />
     </section>
   );
 });

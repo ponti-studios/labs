@@ -351,7 +351,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       title: "The Process",
     },
     cta: {
-      title: "Ready when you are.",
+      title: "Let's goooooo.",
       body: "20 minutes. No pitch deck. Get answers.",
     },
   },
@@ -363,7 +363,9 @@ export const STUDIO_TRANSLATIONS_EN = {
     },
     hero: {
       title: "The Work.",
+      subtitle: "Real clients, real constraints, real numbers. Filter by industry to see the fit.",
     },
+    filterAllLabel: "All work",
     caseStudyLabel: "Case study",
     roleLabel: "Role",
     timelineLabel: "Timeline",
@@ -562,7 +564,7 @@ export const STUDIO_TRANSLATIONS_EN = {
         },
         {
           slug: "help-refugees",
-          client: "Help Refugees",
+          client: "Choose Love",
           industry: "Nonprofit",
           description: "Volunteer coordination platform for UK-wide operations.",
           timeline: "2016",
@@ -952,6 +954,9 @@ export const STUDIO_TRANSLATIONS_EN = {
     },
     work: {
       title: "Work",
+    },
+    clients: {
+      title: "Clients",
     },
     projects: {
       title: "Lab",
