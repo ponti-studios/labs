@@ -62,8 +62,8 @@ export function ProjectCard({
   logo,
   logoAlt,
   title,
-  description,
-  cta,
+  description: _description,
+  cta: _cta,
   theme,
   status,
   preview,
@@ -112,24 +112,14 @@ export function ProjectCard({
         {preview ?? <DefaultPreview foreground={themeTokens.foreground} seed={title} />}
       </div>
 
-      <div className="relative z-10 mt-auto flex items-end justify-between transition-opacity duration-200 group-hover:opacity-0">
+      <div className="relative z-10 mt-auto flex items-end justify-between">
         <span className="text-xs font-semibold tracking-[0.15em] uppercase opacity-90">
           {title}
         </span>
         <LucideArrowBigRight className="size-4 opacity-50" aria-hidden="true" />
       </div>
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex flex-col gap-1 bg-linear-to-t from-black via-black/85 to-transparent p-4 opacity-0 transition-opacity duration-200 ease-out group-hover:opacity-100 motion-safe:translate-y-2 motion-safe:transition-[opacity,transform] motion-safe:group-hover:translate-y-0 sm:p-5">
-        <span className="text-sm font-semibold text-white">{title}</span>
-        <p className="text-xs text-white/70">{description}</p>
-        <span
-          className="mt-1 inline-flex items-center gap-1 text-xs font-semibold"
-          style={{ color: "var(--card-accent)" }}
-        >
-          {cta}
-          <LucideArrowBigRight className="size-3.5" aria-hidden="true" />
-        </span>
-      </div>
+      <span aria-hidden="true" className="card-shine" />
     </>
   );
 

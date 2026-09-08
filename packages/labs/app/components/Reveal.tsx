@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from "framer-motion";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 // Mirrors @ponti-studios/ui's --ease-out token (cubic-bezier(0, 0, 0.2, 1)) —
 // Motion needs the literal curve here, it can't consume a CSS custom
@@ -45,17 +45,20 @@ export function RevealItem({
   className,
   id,
   as = "div",
+  style,
 }: {
   children: ReactNode;
   className?: string;
   id?: string;
   as?: "div" | "li";
+  style?: CSSProperties;
 }) {
   const MotionTag = as === "li" ? motion.li : motion.div;
   return (
     <MotionTag
       id={id}
       className={className}
+      style={style}
       variants={{
         hidden: { opacity: 0, transform: "translateY(14px)" },
         visible: {
