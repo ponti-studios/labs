@@ -13,17 +13,13 @@ function CarouselCard({ tile }: { tile: MovieTile }) {
       <div className="layouts-card-face">
         <img
           src={tile.logo}
-          alt={`${tile.name} poster`}
+          alt="Poster artwork"
           width={260}
           height={385}
           loading="lazy"
           decoding="async"
         />
       </div>
-      <figcaption>
-        <span className="layouts-card-name">{tile.name}</span>
-        <span className="layouts-card-category">{tile.category}</span>
-      </figcaption>
     </figure>
   );
 }

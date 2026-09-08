@@ -12,17 +12,13 @@ function MarqueeCard({ tile, index }: { tile: MovieTile; index: number }) {
       <div className={cn("layouts-card-face", RATIO_CYCLE[index % RATIO_CYCLE.length])}>
         <img
           src={tile.logo}
-          alt={`${tile.name} poster`}
+          alt="Poster artwork"
           width={260}
           height={385}
           loading="lazy"
           decoding="async"
         />
       </div>
-      <figcaption>
-        <span className="layouts-card-name">{tile.name}</span>
-        <span className="layouts-card-category">{tile.category}</span>
-      </figcaption>
     </figure>
   );
 }

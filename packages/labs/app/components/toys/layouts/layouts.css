@@ -5,14 +5,233 @@
  * a `body` font-family that leaked app-wide).
  */
 
+/* ── Streaming shell ─────────────────────────────────────────────────────── */
+
+.layouts-streaming-shell {
+  --layouts-ink: #f4f2ee;
+  --layouts-dim: rgba(244, 242, 238, 0.56);
+  --layouts-line: rgba(255, 255, 255, 0.13);
+  --layouts-panel: #171719;
+  min-height: 100vh;
+  overflow: hidden;
+  color: var(--layouts-ink);
+  background: #0d0d0f;
+}
+
+.layouts-streaming-nav,
+.layouts-streaming-content,
+.layouts-streaming-footer {
+  width: min(100% - 2rem, 76rem);
+  margin-inline: auto;
+}
+
+.layouts-streaming-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 5.5rem;
+}
+
+.layouts-wordmark {
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.19em;
+}
+
+.layouts-wordmark span {
+  color: #ef6b53;
+}
+
+.layouts-profile {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 999px;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.layouts-featured {
+  position: relative;
+  display: flex;
+  align-items: end;
+  min-height: clamp(27rem, 58vw, 38rem);
+  background-color: #171719;
+  background-position: center 28%;
+  background-size: cover;
+}
+
+.layouts-featured::before,
+.layouts-featured::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+}
+
+.layouts-featured::before {
+  background:
+    linear-gradient(90deg, #0d0d0f 0%, rgba(13, 13, 15, 0.82) 24%, transparent 75%),
+    linear-gradient(0deg, #0d0d0f 0%, transparent 45%);
+}
+
+.layouts-featured::after {
+  background: linear-gradient(180deg, rgba(13, 13, 15, 0.5), transparent 28%);
+}
+
+.layouts-featured-content {
+  position: relative;
+  z-index: 1;
+  width: min(100% - 2rem);
+  border: 1px solid var(--color-muted-foreground);
+  border-radius: var(--radius-xl);
+  margin: 0 auto;
+  padding: 4rem 1rem;
+}
+
+.layouts-featured h1 {
+  margin: 0;
+  color: #fff;
+  font-family: var(--font-serif);
+  font-size: clamp(2.8rem, 7vw, 6.8rem);
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  line-height: 0.88;
+}
+
+.layouts-featured-title {
+  margin: 1.35rem 0 0;
+  color: #fff;
+  font-size: clamp(1rem, 2vw, 1.35rem);
+  font-weight: 650;
+}
+
+.layouts-featured-copy {
+  max-width: 29rem;
+  margin: 0.6rem 0 1.3rem;
+  color: var(--layouts-dim);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.layouts-meta-pill {
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  border-radius: 999px;
+  padding: 0.38rem 0.7rem;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.68rem;
+  font-weight: 650;
+}
+
+.layouts-streaming-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  padding-block: 3rem 4rem;
+}
+
+.layouts-catalog-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.layouts-catalog-heading h2 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(1.55rem, 3vw, 2.3rem);
+  letter-spacing: -0.045em;
+}
+
+.layouts-layout-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  border: 1px solid var(--layouts-line);
+  border-radius: 999px;
+  padding: 0.25rem;
+}
+
+.layouts-layout-link {
+  border-radius: 999px;
+  padding: 0.45rem 0.75rem;
+  color: var(--layouts-dim);
+  font-size: 0.72rem;
+  font-weight: 650;
+  transition:
+    background 150ms,
+    color 150ms;
+}
+
+.layouts-layout-link:hover {
+  color: #fff;
+}
+.layouts-layout-link.is-active {
+  background: #fff;
+  color: #111;
+}
+
+.layouts-streaming-lede {
+  max-width: 42rem;
+  margin: 0;
+  color: var(--layouts-dim);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.layouts-usage-note {
+  border-top: 1px solid var(--layouts-line);
+  padding-top: 1rem;
+  color: var(--layouts-dim);
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
+.layouts-usage-note p {
+  margin: 0;
+}
+.layouts-usage-note span {
+  margin-right: 0.4rem;
+  color: #ef6b53;
+  font-weight: 700;
+}
+
+.layouts-streaming-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 1rem 2.5rem;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.64rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 640px) {
+  .layouts-catalog-heading {
+    align-items: start;
+    flex-direction: column;
+  }
+  .layouts-featured-content {
+    padding-bottom: 3.5rem;
+  }
+  .layouts-streaming-footer {
+    flex-direction: column;
+  }
+}
+
 /* ── Stage ───────────────────────────────────────────────────────────────── */
 
 .layouts-stage {
   position: relative;
   overflow: hidden;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--layouts-line, var(--color-border));
   border-radius: 1.25rem;
-  background: color-mix(in oklab, var(--color-muted) 22%, transparent);
+  background: var(--layouts-panel, color-mix(in oklab, var(--color-muted) 22%, transparent));
 }
 
 /* ── Shared card ─────────────────────────────────────────────────────────── */
@@ -32,6 +251,14 @@
 .layouts-card-face img {
   object-fit: contain;
   border-radius: 0.9rem;
+  transition:
+    transform 350ms ease,
+    filter 350ms ease;
+}
+
+.layouts-card:hover .layouts-card-face img {
+  transform: scale(1.045);
+  filter: brightness(1.08);
 }
 
 .layouts-card figcaption {
@@ -44,13 +271,13 @@
 }
 
 .layouts-card-name {
-  color: var(--color-foreground);
+  color: var(--layouts-ink, var(--color-foreground));
   font-size: 0.8rem;
   font-weight: 600;
 }
 
 .layouts-card-category {
-  color: var(--color-muted-foreground);
+  color: var(--layouts-dim, var(--color-muted-foreground));
   font-size: 0.7rem;
 }
 
@@ -154,7 +381,7 @@
 }
 
 .layouts-carousel-card {
-  flex: 0 0 clamp(13rem, 26vw, 18rem);
+  flex: 0 0 clamp(11rem, 20vw, 15rem);
 }
 
 .layouts-carousel-card .layouts-card-face {
