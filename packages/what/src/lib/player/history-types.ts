@@ -5,11 +5,19 @@ export type { MosaicCell, MosaicCellStatus, PuzzleHistoryStats } from "../puzzle
 
 export interface PuzzleHistoryRow {
   dateKey: string;
+  gameSlug: string;
+  gameName: string;
   status: GameStatus;
   guesses: GameGuess[];
   answerType: PuzzleAnswerType;
   clue: string;
   detail: string | null;
+}
+
+export interface PlayableUnplayedPuzzle {
+  dateKey: string;
+  gameSlug: string;
+  gameName: string;
 }
 
 export interface PuzzleHistoryPage {
@@ -21,6 +29,6 @@ export interface PuzzleHistoryPage {
   weekStartKey: string;
   weekEndKey: string;
   stats: PuzzleHistoryStats;
-  playableUnplayedDateKeys: string[];
+  playableUnplayed: PlayableUnplayedPuzzle[];
   mosaic: MosaicCell[];
 }

@@ -13,6 +13,7 @@ import {
   eq,
   gamesAttempts,
   gamesPuzzles,
+  gamesTopics,
   gte,
   inArray,
   lte,
@@ -99,29 +100,38 @@ export async function countAttemptsByDate(
   return counts;
 }
 
+export interface AttemptTopic {
+  slug: string;
+  name: string;
+}
+
 export interface AttemptWithPuzzle {
   attempt: GamesAttempt;
   puzzle: PuzzleRecord;
+  topic: AttemptTopic;
 }
 
 /**
- * A user's attempts for `gameId` within `[fromKey, toKey]` (inclusive),
- * newest date first, joined with the puzzle each attempt belongs to.
- * There's no FK between `gamesAttempts` and `gamesPuzzles` (see the
- * schema's design note), so the join matches on `gameId` + `dateUtc`
- * instead — the same key `loadAttempt`/`createAttempt` already use to
- * correlate the two tables.
+ * A user's attempts across `gameIds` within `[fromKey, toKey]` (inclusive),
+ * newest date first (ties broken by topic name so a day with several topics
+ * renders in a stable order), joined with the puzzle each attempt belongs to
+ * and the topic it was played under. There's no FK between `gamesAttempts`
+ * and `gamesPuzzles` (see the schema's design note), so the join matches on
+ * `gameId` + `dateUtc` instead — the same key `loadAttempt`/`createAttempt`
+ * already use to correlate the two tables.
  *
  * The history page paginates by calendar week rather than row count, so the
  * caller supplies a 7-day window instead of a page/pageSize offset.
  */
 export async function listAttemptsForUserInRange(
   userId: string,
-  gameId: number,
+  gameIds: number[],
   { fromKey, toKey }: { fromKey: string; toKey: string },
 ): Promise<AttemptWithPuzzle[]> {
+  if (gameIds.length === 0) return [];
+
   const rows = await db
-    .select({ attempt: gamesAttempts, puzzle: gamesPuzzles, article: articles })
+    .select({ attempt: gamesAttempts, puzzle: gamesPuzzles, article: articles, topic: gamesTopics })
     .from(gamesAttempts)
     .innerJoin(
       gamesPuzzles,
@@ -131,34 +141,38 @@ export async function listAttemptsForUserInRange(
       ),
     )
     .innerJoin(articles, eq(gamesPuzzles.articleId, articles.id))
+    .innerJoin(gamesTopics, eq(gamesTopics.id, gamesAttempts.gamesTopicId))
     .where(
       and(
         eq(gamesAttempts.hominemUserId, userId),
-        eq(gamesAttempts.gamesTopicId, gameId),
+        inArray(gamesAttempts.gamesTopicId, gameIds),
         gte(gamesAttempts.dateUtc, fromKey),
         lte(gamesAttempts.dateUtc, toKey),
       ),
     )
-    .orderBy(desc(gamesAttempts.dateUtc));
+    .orderBy(desc(gamesAttempts.dateUtc), gamesTopics.name);
 
   return rows.map((row) => ({
     attempt: row.attempt,
     puzzle: { ...row.puzzle, article: row.article },
+    topic: { slug: row.topic.slug, name: row.topic.name },
   }));
 }
 
 /**
- * ALL of a user's attempts for `gameId`, unpaginated, newest date first —
- * used only as input to stats/streak computation (see stats.ts), never
- * rendered directly. Row count is bounded by days-since-launch per user, so
- * a full fetch here is cheap even for a long-lived player.
+ * ALL of a user's attempts across `gameIds`, unpaginated, newest date
+ * first — used only as input to stats/streak computation (see stats.ts),
+ * never rendered directly. Row count is bounded by days-since-launch times
+ * topic count for a given user, so a full fetch here is cheap even for a
+ * long-lived player.
  */
 export async function loadAllAttemptsForUser(
   userId: string,
-  gameId: number,
+  gameIds: number[],
 ): Promise<GamesAttempt[]> {
+  if (gameIds.length === 0) return [];
   return db.query.gamesAttempts.findMany({
-    where: and(eq(gamesAttempts.hominemUserId, userId), eq(gamesAttempts.gamesTopicId, gameId)),
+    where: and(eq(gamesAttempts.hominemUserId, userId), inArray(gamesAttempts.gamesTopicId, gameIds)),
     orderBy: desc(gamesAttempts.dateUtc),
   });
 }

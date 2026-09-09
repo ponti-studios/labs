@@ -16,28 +16,14 @@ export const SignedOut: Story = {
 
 export const WithHistory: Story = {
   render: () => (
-    <HistoryPageView
-      history={history}
-      gameSlug="reality"
-      mosaicCells={mosaicCells}
-      onPageChange={fn()}
-    />
+    <HistoryPageView history={history} mosaicCells={mosaicCells} onPageChange={fn()} />
   ),
 };
 
 export const NoMosaicYet: Story = {
-  render: () => (
-    <HistoryPageView history={history} gameSlug="reality" mosaicCells={[]} onPageChange={fn()} />
-  ),
+  render: () => <HistoryPageView history={history} mosaicCells={[]} onPageChange={fn()} />,
 };
 
 export const EmptyHistory: Story = {
-  render: () => (
-    <HistoryPageView
-      history={emptyHistory}
-      gameSlug="reality"
-      mosaicCells={[]}
-      onPageChange={fn()}
-    />
-  ),
+  render: () => <HistoryPageView history={emptyHistory} mosaicCells={[]} onPageChange={fn()} />,
 };

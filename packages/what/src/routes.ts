@@ -10,7 +10,7 @@ export default [
   route("/api/games", "routes/api.games.ts"),
   route("/api/:topic/attempt", "routes/api.$topic.attempt.ts"),
   route("/api/:topic/guess", "routes/api.$topic.guess.ts"),
-  route("/api/:topic/history", "routes/api.$topic.history.ts"),
+  route("/api/history", "routes/api.history.ts"),
   route("/api/:topic/puzzle", "routes/api.$topic.puzzle.ts"),
   route("/api/:topic/puzzle/:date", "routes/api.$topic.puzzle.$date.ts"),
   route("/api/words/validate", "routes/api.words.validate.ts"),
@@ -29,7 +29,7 @@ export default [
     route("dates/:date", "routes/admin.dates.$date.tsx"),
     route("costs", "routes/admin.costs.tsx"),
   ]),
-  route("/:topic/history", "routes/history.tsx"),
+  route("/history", "routes/history.tsx"),
   route("/:topic", "routes/topic.tsx"),
   route("/:topic/:dateKey", "routes/topic.$dateKey.tsx"),
 ] satisfies RouteConfig;

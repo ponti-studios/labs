@@ -14,7 +14,7 @@ import {
   type StatusBadgeConfig,
 } from "../primitives";
 import { BRAND_NAME } from "../../config/brand";
-import type { PuzzleHistoryPage } from "../../lib/player/history-types";
+import type { PlayableUnplayedPuzzle, PuzzleHistoryPage } from "../../lib/player/history-types";
 import type { GameStatus } from "../../lib/puzzle";
 
 const UNPLAYED_PAGE_SIZE = 10;
@@ -58,17 +58,11 @@ export function HistoryGuestView({ loginUrl }: { loginUrl: string }) {
 
 export interface HistoryPageViewProps {
   history: PuzzleHistoryPage;
-  gameSlug: string;
   mosaicCells: readonly MosaicCell[];
   onPageChange: (page: number) => void;
 }
 
-export function HistoryPageView({
-  history,
-  gameSlug,
-  mosaicCells,
-  onPageChange,
-}: HistoryPageViewProps) {
+export function HistoryPageView({ history, mosaicCells, onPageChange }: HistoryPageViewProps) {
   const hasPlayed = history.stats.gamesPlayed > 0;
 
   return (
@@ -78,7 +72,7 @@ export function HistoryPageView({
           <p className={styles.eyebrow}>{BRAND_NAME}</p>
           <h1 className={styles.title}>Your history</h1>
         </div>
-        <UnplayedSheet dateKeys={history.playableUnplayedDateKeys} gameSlug={gameSlug} />
+        <UnplayedSheet puzzles={history.playableUnplayed} />
       </header>
 
       {mosaicCells.length > 0 && <StreakMosaic cells={mosaicCells} />}
@@ -93,7 +87,7 @@ export function HistoryPageView({
           }
           action={
             <Button asChild variant="default">
-              <a href={`/${gameSlug}`}>Play today&apos;s puzzle</a>
+              <a href="/">Play today&apos;s puzzle</a>
             </Button>
           }
         />
@@ -102,8 +96,8 @@ export function HistoryPageView({
           {history.rows.map((row) => {
             const lastGuess = row.guesses.at(-1);
             return (
-              <li key={row.dateKey}>
-                <a className={styles.row} href={`/${gameSlug}/${row.dateKey}`}>
+              <li key={`${row.gameSlug}:${row.dateKey}`}>
+                <a className={styles.row} href={`/${row.gameSlug}/${row.dateKey}`}>
                   {lastGuess && (
                     <div className={`game-history-mini ${styles.rowMini}`}>
                       {lastGuess.states.map((state, i) => (
@@ -112,7 +106,10 @@ export function HistoryPageView({
                     </div>
                   )}
                   <div className={styles.rowBody}>
-                    <p className={styles.rowDate}>{formatDate(row.dateKey)}</p>
+                    <p className={styles.rowDate}>
+                      {formatDate(row.dateKey)}
+                      <span className={styles.rowGame}>{row.gameName}</span>
+                    </p>
                     {row.status === "playing" && <p className={styles.rowClue}>{row.clue}</p>}
                   </div>
                   <StatusBadge status={row.status} config={STATUS_CONFIG} />
@@ -128,9 +125,9 @@ export function HistoryPageView({
   );
 }
 
-function UnplayedSheet({ dateKeys, gameSlug }: { dateKeys: readonly string[]; gameSlug: string }) {
+function UnplayedSheet({ puzzles }: { puzzles: readonly PlayableUnplayedPuzzle[] }) {
   const [page, setPage] = useState(0);
-  const newestFirst = [...dateKeys].reverse();
+  const newestFirst = [...puzzles].reverse();
   const totalPages = Math.max(1, Math.ceil(newestFirst.length / UNPLAYED_PAGE_SIZE));
   const shown = newestFirst.slice(page * UNPLAYED_PAGE_SIZE, (page + 1) * UNPLAYED_PAGE_SIZE);
 
@@ -140,7 +137,7 @@ function UnplayedSheet({ dateKeys, gameSlug }: { dateKeys: readonly string[]; ga
         <Button variant="outline" size="sm">
           <span className={styles.triggerLabel}>
             Unplayed
-            {dateKeys.length > 0 && <span className={styles.unplayedCount}>{dateKeys.length}</span>}
+            {puzzles.length > 0 && <span className={styles.unplayedCount}>{puzzles.length}</span>}
           </span>
         </Button>
       </SheetTrigger>
@@ -152,10 +149,14 @@ function UnplayedSheet({ dateKeys, gameSlug }: { dateKeys: readonly string[]; ga
           <p className={styles.unplayedCount}>You&apos;re all caught up.</p>
         ) : (
           <ul className={styles.unplayedList}>
-            {shown.map((dateKey) => (
-              <li key={dateKey}>
-                <a className={styles.unplayedLink} href={`/${gameSlug}/${dateKey}`}>
-                  {formatDate(dateKey)}
+            {shown.map((puzzle) => (
+              <li key={`${puzzle.gameSlug}:${puzzle.dateKey}`}>
+                <a
+                  className={styles.unplayedLink}
+                  href={`/${puzzle.gameSlug}/${puzzle.dateKey}`}
+                >
+                  {formatDate(puzzle.dateKey)}
+                  <span className={styles.rowGame}>{puzzle.gameName}</span>
                 </a>
               </li>
             ))}

@@ -148,6 +148,32 @@ export async function getExistingDateKeys(
   return rows.map((r) => r.dateUtc);
 }
 
+/**
+ * Return the `(gamesTopicId, dateUtc)` pairs that have a puzzle across
+ * `gameIds` in [fromKey, toKey] — the cross-topic counterpart of
+ * `getExistingDateKeys`, used by the unified history page to find playable,
+ * unplayed puzzles across every topic at once (a date key alone isn't
+ * enough once more than one topic can publish on the same day).
+ */
+export async function getExistingPuzzlesAcrossTopics(
+  gameIds: number[],
+  fromKey: string,
+  toKey: string,
+): Promise<{ gameId: number; dateUtc: string }[]> {
+  if (gameIds.length === 0) return [];
+  const rows = await db
+    .select({ gameId: gamesPuzzles.gamesTopicId, dateUtc: gamesPuzzles.dateUtc })
+    .from(gamesPuzzles)
+    .where(
+      and(
+        inArray(gamesPuzzles.gamesTopicId, gameIds),
+        gte(gamesPuzzles.dateUtc, fromKey),
+        lte(gamesPuzzles.dateUtc, toKey),
+      ),
+    );
+  return rows;
+}
+
 /** Every published puzzle date for a topic, oldest first. */
 export async function listAllPuzzleDateKeys(gameId: number): Promise<string[]> {
   const rows = await db
@@ -220,6 +246,18 @@ export async function getEarliestPuzzleDateKey(gameId: number): Promise<string |
     .select({ dateUtc: gamesPuzzles.dateUtc })
     .from(gamesPuzzles)
     .where(eq(gamesPuzzles.gamesTopicId, gameId))
+    .orderBy(gamesPuzzles.dateUtc)
+    .limit(1);
+  return rows[0]?.dateUtc ?? null;
+}
+
+/** Earliest `dateUtc` with a puzzle across `gameIds`, or `null` if none exist yet. */
+export async function getEarliestPuzzleDateKeyAcrossTopics(gameIds: number[]): Promise<string | null> {
+  if (gameIds.length === 0) return null;
+  const rows = await db
+    .select({ dateUtc: gamesPuzzles.dateUtc })
+    .from(gamesPuzzles)
+    .where(inArray(gamesPuzzles.gamesTopicId, gameIds))
     .orderBy(gamesPuzzles.dateUtc)
     .limit(1);
   return rows[0]?.dateUtc ?? null;

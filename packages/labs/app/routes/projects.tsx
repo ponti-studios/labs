@@ -1,9 +1,8 @@
-import { cn } from "@ponti-studios/ui/utilities";
 import { Link } from "react-router";
-import styles from "~/components/list-row.module.css";
-import { ListRowMedia } from "~/components/ListRowMedia";
 import { RevealGroup, RevealItem } from "~/components/Reveal";
+import { SpecimenCard } from "~/components/projects/specimen-card";
 import { projectSections } from "~/data/projects";
+import { toSpecimenCard } from "~/lib/specimen-cards";
 import { t } from "~/translations";
 
 export function meta(): Array<{
@@ -34,36 +33,13 @@ export default function Projects() {
             <h2 className="heading-display-sm text-accent border-border border-b pb-3">
               {section.label}
             </h2>
-            <RevealGroup className="border-border divide-border-border divide-y border-b">
+            <RevealGroup className="grid grid-cols-1 place-items-center gap-6 py-8 sm:grid-cols-2 lg:grid-cols-3">
               {section.projects.map((project) => (
-                <RevealItem key={project.slug} className="list-row group">
-                  <Link
-                    to={`/projects/${project.slug}`}
-                    prefetch="intent"
-                    className="press hover:bg-muted/20 flex min-w-0 flex-1 flex-row items-start gap-4 transition-colors outline-none md:gap-6"
-                  >
-                    {project.logo ? (
-                      <ListRowMedia
-                        fallback={project.name.slice(0, 2).toUpperCase()}
-                        src={project.logo}
-                        variant="square"
-                      />
-                    ) : null}
-                    <div className="flex min-w-0 flex-1 flex-col gap-1">
-                      <h3
-                        className={cn({
-                          [styles.title]: true,
-                          "text-foreground": true,
-                          "group-hover:text-accent": true,
-                        })}
-                      >
-                        {project.name}
-                      </h3>
-                      <p className="text-muted-foreground max-w-2xl text-sm">
-                        {project.shortDescription}
-                      </p>
-                    </div>
-                  </Link>
+                <RevealItem key={project.slug}>
+                  <SpecimenCard
+                    {...toSpecimenCard(project)}
+                    data-testid={`lab-project-${project.slug}`}
+                  />
                 </RevealItem>
               ))}
             </RevealGroup>
@@ -73,28 +49,29 @@ export default function Projects() {
 
       {/* Playground */}
       <section className="layout-stack">
-        <h2 className="heading-display-sm text-accent border-border border-b pb-3">Playground</h2>
-        <RevealGroup className="border-border divide-border-border divide-y border-b">
+        <div className="border-border flex items-baseline justify-between gap-4 border-b pb-3">
+          <h2 className="heading-display-sm text-accent">Playground</h2>
+          <Link
+            to="/playground/essays"
+            prefetch="intent"
+            className="text-muted-foreground hover:text-accent press shrink-0 text-sm underline underline-offset-4"
+          >
+            Read the essays
+          </Link>
+        </div>
+        <RevealGroup className="grid grid-cols-1 place-items-center gap-6 py-8 sm:grid-cols-2 lg:grid-cols-3">
           {playgroundItems.map((item) => (
-            <RevealItem key={item.slug} className="list-row group">
-              <Link
-                to={item.href}
-                prefetch="intent"
-                className="press hover:bg-muted/20 flex min-w-0 flex-1 flex-row items-start gap-4 transition-colors outline-none md:gap-6"
-              >
-                <div className="flex min-w-0 flex-1 flex-col gap-1">
-                  <h3
-                    className={cn({
-                      [styles.title]: true,
-                      "text-foreground": true,
-                      "group-hover:text-accent": true,
-                    })}
-                  >
-                    {item.name}
-                  </h3>
-                  <p className="text-muted-foreground max-w-2xl text-sm">{item.shortDescription}</p>
-                </div>
-              </Link>
+            <RevealItem key={item.slug}>
+              <SpecimenCard
+                id={item.slug}
+                href={item.href}
+                logoAlt={`${item.name} icon`}
+                title={item.name}
+                category="experiment"
+                label={item.category}
+                status="Playground"
+                data-testid={`lab-playground-${item.slug}`}
+              />
             </RevealItem>
           ))}
         </RevealGroup>
@@ -108,6 +85,8 @@ export type PlaygroundItem = {
   name: string;
   shortDescription: string;
   href: string;
+  /** Displayed on the specimen card's badge — each experiment gets its own, unlike the shared "experiment" finish. */
+  category: string;
 };
 
 // Unpolished, in-progress explorations — kept separate from `projects.ts` (the
@@ -119,12 +98,14 @@ export const playgroundItems: PlaygroundItem[] = [
     name: "Calendar",
     shortDescription: "A single continuous stream for the day's events, instead of a grid.",
     href: "/experiments/calendar",
+    category: "Interaction",
   },
   {
     slug: "theatre-management",
     name: "Theater P&L",
     shortDescription: "Screen allocation and profit-and-loss modeling for a theater chain.",
     href: "/experiments/theatre-management",
+    category: "Economics",
   },
   {
     slug: "glass",
@@ -132,6 +113,7 @@ export const playgroundItems: PlaygroundItem[] = [
     shortDescription:
       "How SVG filters recreate the refraction, dispersion, and light behavior of real glass.",
     href: "/experiments/glass",
+    category: "Material",
   },
   {
     slug: "layouts",
@@ -139,17 +121,20 @@ export const playgroundItems: PlaygroundItem[] = [
     shortDescription:
       "Reusable motion layouts — an ambient vertical marquee and an infinite horizontal carousel.",
     href: "/toys/layouts/vertical",
+    category: "Motion",
   },
   {
     slug: "threegl-ai-explainer",
     name: "Particle Field",
     shortDescription: "A tunable three.js particle simulation with live controls.",
     href: "/experiments/threegl-ai-explainer",
+    category: "Simulation",
   },
   {
     slug: "llm-interface",
     name: "Context Chemistry",
     shortDescription: "An interactive look at how an LLM's context window is assembled from turns.",
     href: "/experiments/llm-interface",
+    category: "Cognition",
   },
 ];

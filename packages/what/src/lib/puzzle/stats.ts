@@ -23,6 +23,36 @@ export type StatsAttempt = {
   guesses: readonly unknown[];
 };
 
+/**
+ * Collapse possibly-multiple attempts on the same date (one per topic, once
+ * a user can play several topics per day) into a single day-status entry,
+ * for streak/mosaic logic that's inherently one-cell-per-day. A day only
+ * counts as "solved" once every topic played that day is solved; a topic
+ * still `"playing"` keeps the whole day open; otherwise the day reads as
+ * "failed" — the same all-or-nothing rule a single-topic streak already
+ * applied to guesses within one puzzle, just lifted to the day level.
+ */
+function aggregateByDate(attempts: readonly StatsAttempt[]): StatsAttempt[] {
+  const byDate = new Map<string, StatsAttempt[]>();
+  for (const attempt of attempts) {
+    const dayAttempts = byDate.get(attempt.dateUtc) ?? [];
+    dayAttempts.push(attempt);
+    byDate.set(attempt.dateUtc, dayAttempts);
+  }
+
+  return [...byDate.entries()].map(([dateUtc, dayAttempts]) => {
+    const status = dayAttempts.some((a) => a.status === "playing")
+      ? "playing"
+      : dayAttempts.every((a) => a.status === "solved")
+        ? "solved"
+        : "failed";
+    const guesses = dayAttempts.reduce((longest, a) =>
+      a.guesses.length > longest.guesses.length ? a : longest,
+    ).guesses;
+    return { dateUtc, status, guesses };
+  });
+}
+
 function emptyDistribution(): PuzzleHistoryStats["guessDistribution"] {
   return { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
 }
@@ -50,7 +80,7 @@ export function computeHistoryStats(attempts: readonly StatsAttempt[]): PuzzleHi
 
   const winRate = gamesPlayed === 0 ? 0 : gamesSolved / gamesPlayed;
 
-  const sorted = [...attempts].sort((a, b) =>
+  const sorted = aggregateByDate(attempts).sort((a, b) =>
     a.dateUtc < b.dateUtc ? 1 : a.dateUtc > b.dateUtc ? -1 : 0,
   );
 
@@ -99,7 +129,7 @@ export function buildStreakMosaic(
   attempts: readonly StatsAttempt[],
   { fromKey, toKey }: { fromKey: string; toKey: string },
 ): MosaicCell[] {
-  const byDate = new Map(attempts.map((attempt) => [attempt.dateUtc, attempt]));
+  const byDate = new Map(aggregateByDate(attempts).map((attempt) => [attempt.dateUtc, attempt]));
 
   return buildDateRange(fromKey, { endKey: toKey }).map((dateKey) => {
     const attempt = byDate.get(dateKey);
