@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { GameTile, StreakMosaic, type MosaicCell } from "../game";
+import { GameHeader, GameTile, StreakMosaic, type MosaicCell } from "../game";
 import styles from "./history-page.module.css";
 import {
   Button,
@@ -13,7 +13,6 @@ import {
   StatusBadge,
   type StatusBadgeConfig,
 } from "../primitives";
-import { BRAND_NAME } from "../../config/brand";
 import type { PlayableUnplayedPuzzle, PuzzleHistoryPage } from "../../lib/player/history-types";
 import type { GameStatus } from "../../lib/puzzle";
 
@@ -67,11 +66,9 @@ export function HistoryPageView({ history, mosaicCells, onPageChange }: HistoryP
 
   return (
     <div className={styles.page}>
+      <GameHeader isFallback={false} showHistoryLink={false} />
       <header className={styles.header}>
-        <div>
-          <p className={styles.eyebrow}>{BRAND_NAME}</p>
-          <h1 className={styles.title}>Your history</h1>
-        </div>
+        <h1 className={styles.title}>Your history</h1>
         <UnplayedSheet puzzles={history.playableUnplayed} />
       </header>
 
@@ -142,6 +139,7 @@ function UnplayedSheet({ puzzles }: { puzzles: readonly PlayableUnplayedPuzzle[]
       <SheetContent>
         <SheetHeader>
           <SheetTitle>Puzzles you haven&apos;t played</SheetTitle>
+          <small className={styles.triggerLabelSub}>past 90 days</small>
         </SheetHeader>
         {shown.length === 0 ? (
           <p className={styles.unplayedCount}>You&apos;re all caught up.</p>

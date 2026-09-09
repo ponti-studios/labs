@@ -4,12 +4,21 @@ import styles from "./game-header.module.css";
 
 interface GameHeaderProps {
   isFallback: boolean;
-  gameSlug: string;
+  gameSlug?: string;
   topics?: { slug: string; name: string }[];
   onTopicChange?: (slug: string) => void;
+  /** Hide the history icon-button — the page linking to itself is pointless
+   *  while already on /history. Defaults to true for every other page. */
+  showHistoryLink?: boolean;
 }
 
-export function GameHeader({ isFallback, gameSlug, topics = [], onTopicChange }: GameHeaderProps) {
+export function GameHeader({
+  isFallback,
+  gameSlug = "",
+  topics = [],
+  onTopicChange,
+  showHistoryLink = true,
+}: GameHeaderProps) {
   return (
     <header className={styles.header}>
       <div className={styles.inner}>
@@ -47,11 +56,13 @@ export function GameHeader({ isFallback, gameSlug, topics = [], onTopicChange }:
               </PopoverContent>
             </Popover>
           )}
-          <Button asChild aria-label="Your puzzle history" variant="ghost" size="icon">
-            <a href="/history" data-testid="game-history-link">
-              <span aria-hidden="true">↺</span>
-            </a>
-          </Button>
+          {showHistoryLink && (
+            <Button asChild aria-label="Your puzzle history" variant="ghost" size="icon">
+              <a href="/history" data-testid="game-history-link">
+                <span aria-hidden="true">↺</span>
+              </a>
+            </Button>
+          )}
         </div>
       </div>
     </header>

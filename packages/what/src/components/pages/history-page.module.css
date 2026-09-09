@@ -184,6 +184,12 @@
   gap: 0.5rem;
 }
 
+.triggerLabelSub {
+  color: var(--game-ink-muted);
+  font-size: 0.6875rem;
+  font-weight: 400;
+}
+
 /* Narrow phones: the guess-tile preview and status badge are fixed-size, so
    shrink the tiles and tighten padding to leave the date/badge/clue column
    enough room instead of squeezing it to near-zero. */
