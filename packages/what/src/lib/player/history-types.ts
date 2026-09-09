@@ -10,7 +10,7 @@ export interface PuzzleHistoryRow {
   status: GameStatus;
   guesses: GameGuess[];
   answerType: PuzzleAnswerType;
-  clue: string;
+  clue: string | null;
   detail: string | null;
 }
 
