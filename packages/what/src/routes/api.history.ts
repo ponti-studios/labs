@@ -4,7 +4,7 @@ import { buildHominemLoginUrl, getHominemUser } from "~/lib/infrastructure/homin
 import { loadPuzzleHistory } from "~/lib/data/history.server";
 import { resolveGameReturnTo } from "~/lib/infrastructure/game-request";
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const loginUrl = buildHominemLoginUrl(resolveGameReturnTo(url));
   const user = await getHominemUser(request);
@@ -13,8 +13,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const pageParam = Number.parseInt(url.searchParams.get("page") ?? "1", 10);
   const page = Number.isFinite(pageParam) && pageParam >= 1 ? pageParam : 1;
-  const gameSlug = params.topic!;
-  const history = await loadPuzzleHistory(user.id, { page }, gameSlug);
+  const history = await loadPuzzleHistory(user.id, { page });
 
-  return Response.json({ signedIn: true as const, loginUrl, history, gameSlug });
+  return Response.json({ signedIn: true as const, loginUrl, history });
 }

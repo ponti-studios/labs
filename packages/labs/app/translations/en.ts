@@ -82,7 +82,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       omiro: {
         name: "Omiro",
         shortDescription:
-          "Most productivity apps make you decide what a thought is before they'll save it. Omiro just captures it.",
+          "Most apps make you decide what a thought is before saving it. Omiro just captures it.",
         solution:
           "A capture-first iOS app built for ADHD and neurodivergent knowledge workers — every thought starts as a note, then becomes a task, a chat, or connected context, without slowing down to classify it first.",
         problem:
@@ -102,7 +102,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       career: {
         name: "Career",
         shortDescription:
-          "Every strong application asks for a slightly different version of your story. Career keeps the reusable parts — proof, tailoring, memory — in one place.",
+          "Every application wants a different version of your story. Career keeps the reusable parts.",
         solution:
           "A private job-search workspace: import your resume, derive AI-backed proof of your skills, publish a shareable portfolio, and track every application from first tailor to final offer.",
         problem:
@@ -122,7 +122,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       finance: {
         name: "Finance",
         shortDescription:
-          "Mint shut down and took years of financial history with it. Finance is built so that can't happen to you.",
+          "Mint shut down and took years of history with it. Finance keeps your data on your machine.",
         solution:
           "A local-first personal finance app — your accounts, transactions, and net worth live in a database on your own machine, not a vendor's cloud.",
         problem:
@@ -162,7 +162,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       hollywood: {
         name: "Hollywood",
         shortDescription:
-          "Entertainment has no Bloomberg — just IMDb, WGA, and a thousand spreadsheets that don't talk to each other. Hollywood is the entity graph that resolves them into one.",
+          "Entertainment has no Bloomberg — just IMDb, WGA, and spreadsheets. Hollywood resolves them.",
         solution:
           "A local-first entity graph — a Hono API that ingests trade press, WGA credits, TMDB, and Wikidata into one queryable SQLite database of people, titles, companies, and credits.",
         problem:
@@ -221,7 +221,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       health: {
         name: "Health",
         shortDescription:
-          "You either google your symptoms and spiral, or call a doctor and wait. Health gives you a third option.",
+          "Google your symptoms and spiral, or call a doctor and wait. Health gives a third option.",
         solution:
           "A personal health workspace built in three layers — triage a symptom right now, track it over time, and manage the appointments and history that come after.",
         problem:
@@ -920,6 +920,93 @@ export const STUDIO_TRANSLATIONS_EN = {
       ],
     },
     quote: "Eliminate the unnecessary so that the necessary may speak.",
+  },
+
+  playgroundEssays: {
+    meta: {
+      title: "Cabinet of Small Machines | Ponti Studios",
+      description:
+        "Six essays on the Lab's playground experiments — what each one quietly claims about time, money, light, attention, mind, or memory.",
+    },
+    hero: {
+      eyebrow: "Field notes — the Lab, playground shelf",
+      title: "Cabinet of Small Machines",
+      dek: "Six unfinished experiments, read again as arguments instead of demos. Not what each one does — what it's quietly claiming.",
+    },
+    entries: [
+      {
+        slug: "calendar",
+        specimen: "/experiments/calendar",
+        medium: "React, continuous scroll, no grid",
+        title: "Your Day Is Not a Grid",
+        paragraphs: [
+          "Every calendar you have ever used is a piece of quiet Newtonian propaganda. It carves the day into identical boxes — nine o'clock, ten o'clock, eleven — and asks you to believe that an hour in a dentist's waiting room and an hour falling in love occupy the same amount of time. The grid is administratively convenient and phenomenologically false.",
+          "Henri Bergson had a word for what the grid erases: durée, the lived, unequal thickness of experienced time, as opposed to the interchangeable units a clock hands out. A grid calendar is clock-time with a UI. It lets you schedule a life but not describe one.",
+          "This experiment replaces the boxes with a single vertical stream — one line the day moves down, events surfacing and receding as you scroll instead of sitting bolted into hour-wide cells. Nothing here solves scheduling. It asks a smaller, stranger question: if the interface didn't insist on uniform units, what would a day actually look like laid out honestly? Would deep work get to be as long, visually, as it feels? Would the gap after lunch — the underrated, undecorated openness of open time — get to look like relief instead of a blank cell waiting to be filled?",
+          "A stream can't be subdivided the way a grid can, and that's the point: it resists the grid's implicit argument that all hours are fungible and any of them can be moved or double-booked without loss. Durée doesn't optimize. It accumulates — and most people meet that argument daily, at nine a.m., without ever suspecting it's philosophy.",
+        ],
+      },
+      {
+        slug: "theatre-management",
+        specimen: "/experiments/theatre-management",
+        medium: "React, screen-allocation & P&L model",
+        title: "The Ledger Behind the Curtain",
+        paragraphs: [
+          "André Bazin called cinema “the myth of total cinema” — the dream of an image so complete it becomes indistinguishable from reality, watched together, in the dark, by strangers who agree for two hours to want the same thing. It's one of the more sincere claims art has made for itself.",
+          "None of that survives contact with a P&L statement, and this experiment doesn't pretend it does. It's a screen-allocation and profit model for a theater chain: sliders for ticket price, concession attach rate, staffing, screen count per title — the unglamorous arithmetic that decides whether Tuesday's 7:40 slot goes to the awards contender or the fourth showing of a marketable sequel. Move enough sliders and you feel a manager's actual week: the myth of total cinema, reallocated hourly, one auditorium at a time.",
+          "It would be easy to read this as cynicism — art demoted to inventory. The more interesting reading is that the ledger was always there, underneath the myth, and pretending otherwise doesn't make theaters more sacred, it just makes their operators less visible. A screening survives because someone did the allocation math correctly enough times in a row. The total-cinema experience an audience gets to feel unbothered by economics is a product of someone else being thoroughly bothered by economics on their behalf.",
+          "The model doesn't resolve the tension between the theater as ritual space and the theater as square footage generating yield per showtime. It just puts both in the same interface, so you can't hold one thought without the other sitting right next to it on the same screen.",
+        ],
+      },
+      {
+        slug: "glass",
+        specimen: "/experiments/glass",
+        medium: "SVG filter graph, no photons",
+        title: "A Substance Made of What's Behind It",
+        paragraphs: [
+          "Glass is a strange thing to render because glass, visually, has almost no properties of its own. You cannot describe what glass looks like without describing what's behind it, bent. Its whole identity is deference — refraction, dispersion, the way it takes an image of the world and quietly lies about where things are.",
+          "This experiment fakes that lie with SVG filter primitives — displacement maps, chromatic offsets, blur stacked on blur, no photons anywhere in the pipeline. It runs a reproduction of The School of Athens behind a pane of nothing and asks a feed of matrices to convince you there's a physical object there, distorting light the way physical objects do. It usually works, which should feel a little uncanny once you notice it: you're not looking at glass, or even a picture of glass. You're looking at an argument about glass, written entirely in mathematics that has never met a lens.",
+          "Gaston Bachelard wrote about the “material imagination” — the way certain substances carry a poetics prior to, and independent of, any actual sample of the substance in front of you. Glass has one too: clarity, fragility, the promise and the threat of seeing straight through something. What's interesting about faking it in code is that the fake only succeeds by honoring that poetics rather than the physics. Real refraction follows Snell's law precisely. This filter graph follows nothing but does it read as glass, tuned by eye, a displacement map dragged until it looks less like a bug and more like a window.",
+          "That's the quiet confession inside most convincing digital materials: they aren't simulations of physics, they're simulations of what physics feels like to an eye that already knows what glass is supposed to do. The realism is borrowed entirely from the viewer.",
+        ],
+      },
+      {
+        slug: "layouts",
+        specimen: "/toys/layouts/vertical",
+        medium: "CSS transforms, requestAnimationFrame, no seam",
+        title: "Made to Never Finish",
+        paragraphs: [
+          "An infinite carousel is an odd artifact to build on purpose, because it has no ending built into its geometry — the marquee loops, the row wraps, the next tile always exists before you ask for it. Nothing here resolves. Nothing here is meant to.",
+          "Nietzsche's eternal recurrence was a thought experiment about whether you could bear to live a moment again, exactly, forever. Streaming interfaces answer a smaller, less dignified version of that question dozens of times a scroll: could you bear to see one more title tile, forever, without deciding on any of them? The infinite shelf isn't a bug of abundance, it's a design decision that abundance itself can be the product — an ambient carousel doesn't ask to be read, only glanced at, the way a fish tank or a fireplace doesn't ask to be read.",
+          "This experiment is two ambient motion patterns stripped down to their mechanics: a vertical marquee drifting at a constant, indifferent speed, and a horizontal carousel that loops without a seam. Neither one has content worth stopping for — that's deliberate. Removed from a real streaming slate's thumbnails, what's left is the motion itself, and motion alone turns out to be doing more psychological work than it gets credit for. A slow, continuous drift reads as calm, populated, alive, without a single decision being asked of you. That's the actual trick behind the endless shelf: not that it offers infinite choice, but infinite non-choice, dressed as choice, moving just enough to feel inhabited.",
+          "Build the loop with nothing in it and the mechanism is finally visible on its own — ambience as a technique, independent of whatever it's eventually asked to sell.",
+        ],
+      },
+      {
+        slug: "threegl-ai-explainer",
+        specimen: "/experiments/threegl-ai-explainer",
+        medium: "three.js, WebGL, live parameters",
+        title: "No Particle Understands the Field",
+        paragraphs: [
+          "Take a single particle in this simulation and ask it what it's part of. It can't tell you. It has a velocity, a layer, a size that pulses, a color that shifts slightly as it crosses depth planes, a glow it briefly wears when it passes a boundary and hands a connection line to its neighbor. None of that adds up, from the particle's point of view, to a network, or a field, or an explanation of anything. It's doing one local, dumb, complete job.",
+          "The field only exists at a scale no particle occupies. That's the oldest trick in complexity theory, and it's also, not coincidentally, the closest thing to a working metaphor for how a large model produces something that reads as understanding without any single weight or token embedding containing an understanding of its own. Nothing in the mechanism is smart. The aggregate, tuned and layered and connected densely enough, behaves as if it were.",
+          "This particle field was built as a piece of visual pedagogy for exactly that idea — a live, adjustable stand-in for how AI explainers work, letting you turn the dials (density, connection distance, layer glow, drift) and watch legibility emerge and collapse in real time. Too sparse and it's just dust. Too dense and it's noise. Somewhere in the middle, structure appears that no individual particle authored and no line of code explicitly drew — the connection lines aren't scripted paths, they're a byproduct of proximity, recalculated every frame by particles that have no idea they're forming anything at all.",
+          "Sit with the discomfort in that before reaching for the sliders. If a field of particles that understand nothing can look, from a few feet back, exactly like a mind at work, the interesting question was never whether there's a mind in there. It's how much scale it takes before the distinction stops being visible.",
+        ],
+      },
+      {
+        slug: "llm-interface",
+        specimen: "/experiments/llm-interface",
+        medium: "React, reorderable context blocks",
+        title: "There Is No Ship, Only the Planks",
+        paragraphs: [
+          "Ask a model who it's talking to and it will answer as if a self were sitting behind the reply, continuous, holding together, remembering the last thing it said because it is the same entity that said it. It isn't. Every turn, the whole context is reassembled from scratch — system instructions, prior turns, retrieved documents, tool outputs — concatenated fresh, sent whole, and discarded the moment the model returns something. There is no persistent thread underneath. There is only ever this one compound, built once, used once.",
+          "This experiment lets you build that compound by hand: enable a block, disable one, drag one above another, and watch two configurations diverge from the same raw materials into two different conversations. Nothing in any single block changed. Only the arrangement did. That's closer to chemistry than to memory — the same atoms of carbon rearrange into graphite or diamond, and nothing about carbon itself decides which one you get.",
+          "It's also the Ship of Theseus with the sentimentality removed. The classic version asks whether a ship that's had every plank replaced is still the same ship, and lets you feel conflicted either way. A context window skips the slow replacement and the attachment along with it: there was never a ship, only ever this arrangement of planks, assembled on demand — the ship was a story the deck kept telling because it looked the same from where you stood on it.",
+          "What the interface makes visible, block by draggable block, is that a model's apparent continuity — its sense of “as we discussed” — is entirely reconstructed from what's present in front of it right now, not retrieved from anywhere it has been. Move the block that says who it's supposed to be, and the rest of the conversation reads it as fact, unbothered, the way water takes the shape of whatever it's poured into without remembering the last container.",
+        ],
+      },
+    ],
   },
 
   home: {

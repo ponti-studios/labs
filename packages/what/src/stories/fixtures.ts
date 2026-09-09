@@ -94,11 +94,17 @@ export const history: PuzzleHistoryPage = {
   weekStartKey: "2026-08-16",
   weekEndKey: "2026-08-22",
   stats,
-  playableUnplayedDateKeys: ["2026-08-18", "2026-08-19", "2026-08-20"],
+  playableUnplayed: [
+    { dateKey: "2026-08-18", gameSlug: "reality", gameName: "Reality" },
+    { dateKey: "2026-08-19", gameSlug: "reality", gameName: "Reality" },
+    { dateKey: "2026-08-20", gameSlug: "markets", gameName: "Markets" },
+  ],
   mosaic: [],
   rows: [
     {
       dateKey: "2026-08-20",
+      gameSlug: "reality",
+      gameName: "Reality",
       status: "solved",
       guesses,
       answerType: "storyline",
@@ -107,6 +113,8 @@ export const history: PuzzleHistoryPage = {
     },
     {
       dateKey: "2026-08-19",
+      gameSlug: "markets",
+      gameName: "Markets",
       status: "failed",
       guesses: guesses.slice(0, 1),
       answerType: "moment",
@@ -115,6 +123,8 @@ export const history: PuzzleHistoryPage = {
     },
     {
       dateKey: "2026-08-18",
+      gameSlug: "reality",
+      gameName: "Reality",
       status: "playing",
       guesses: [],
       answerType: "object",
@@ -129,7 +139,7 @@ export const emptyHistory: PuzzleHistoryPage = {
   rows: [],
   totalPages: 1,
   hasNext: false,
-  playableUnplayedDateKeys: [],
+  playableUnplayed: [],
   stats: { ...stats, gamesPlayed: 0, gamesSolved: 0, winRate: 0, currentStreak: 0, maxStreak: 0 },
 };
 

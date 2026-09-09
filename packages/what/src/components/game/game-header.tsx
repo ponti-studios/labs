@@ -48,10 +48,7 @@ export function GameHeader({ isFallback, gameSlug, topics = [], onTopicChange }:
             </Popover>
           )}
           <Button asChild aria-label="Your puzzle history" variant="ghost" size="icon">
-            <a
-              href={`/${encodeURIComponent(gameSlug)}/history`}
-              data-testid="game-history-link"
-            >
+            <a href="/history" data-testid="game-history-link">
               <span aria-hidden="true">↺</span>
             </a>
           </Button>

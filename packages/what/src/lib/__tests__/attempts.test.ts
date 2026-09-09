@@ -90,7 +90,7 @@ describe("listAttemptsForUserInRange", () => {
     ]);
 
     const { listAttemptsForUserInRange } = await import("../data/attempts.server");
-    const result = await listAttemptsForUserInRange("user-1", game.id, {
+    const result = await listAttemptsForUserInRange("user-1", [game.id], {
       fromKey: "2026-06-25",
       toKey: "2026-06-27",
     });
@@ -112,11 +112,11 @@ describe("listAttemptsForUserInRange", () => {
     ]);
 
     const { listAttemptsForUserInRange } = await import("../data/attempts.server");
-    const week1 = await listAttemptsForUserInRange("user-1", game.id, {
+    const week1 = await listAttemptsForUserInRange("user-1", [game.id], {
       fromKey: "2026-06-27",
       toKey: "2026-06-27",
     });
-    const week2 = await listAttemptsForUserInRange("user-1", game.id, {
+    const week2 = await listAttemptsForUserInRange("user-1", [game.id], {
       fromKey: "2026-06-25",
       toKey: "2026-06-26",
     });
@@ -133,7 +133,7 @@ describe("listAttemptsForUserInRange", () => {
     ]);
 
     const { listAttemptsForUserInRange } = await import("../data/attempts.server");
-    const result = await listAttemptsForUserInRange("user-1", game.id, {
+    const result = await listAttemptsForUserInRange("user-1", [game.id], {
       fromKey: "2026-06-25",
       toKey: "2026-06-25",
     });
@@ -153,7 +153,7 @@ describe("loadAllAttemptsForUser", () => {
     ]);
 
     const { loadAllAttemptsForUser } = await import("../data/attempts.server");
-    const result = await loadAllAttemptsForUser("user-1", game.id);
+    const result = await loadAllAttemptsForUser("user-1", [game.id]);
 
     expect(result.map((r) => r.dateUtc)).toEqual(["2026-06-27", "2026-06-26", "2026-06-25"]);
   });
@@ -162,7 +162,7 @@ describe("loadAllAttemptsForUser", () => {
     const game = await seedGameWithPuzzles([]);
 
     const { loadAllAttemptsForUser } = await import("../data/attempts.server");
-    const result = await loadAllAttemptsForUser("user-1", game.id);
+    const result = await loadAllAttemptsForUser("user-1", [game.id]);
 
     expect(result).toEqual([]);
   });

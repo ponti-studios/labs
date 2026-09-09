@@ -116,10 +116,10 @@ async function fetchArticleText(url: string): Promise<string> {
  * instead of getting distracted by the fluff that sites pad articles with.
  */
 const BOILERPLATE_LINE_PATTERNS: RegExp[] = [
-  /^(related|read more|also read|see also|up next|more from)\b\s*[:\-]?/i,
+  /^(related|read more|also read|see also|up next|more from)\b\s*[:-]?/i,
   /^(sign up|subscribe)\b.*(newsletter|updates|alerts)/i,
   /^follow (us|@\w+|reality ?blurred)\b/i,
-  /^(share this|click here|tap here|watch|listen)\s*[:\-]/i,
+  /^(share this|click here|tap here|watch|listen)\s*[:-]/i,
   /^(photo|image|credit)s?\s*:/i,
   /^view this post on instagram/i,
   /^advertisement$/i,
