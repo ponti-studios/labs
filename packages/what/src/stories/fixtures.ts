@@ -25,6 +25,22 @@ export const guesses: GameGuess[] = [
   { word: "RIVAL", states: ["present", "absent", "correct", "absent", "absent"] },
 ];
 
+// A guess history that actually ends in a solve — the last guess must be
+// all "correct" states, since that's what "solved" means.
+export const solvedGuesses: GameGuess[] = [
+  ...guesses,
+  { word: "DRAMA", states: ["correct", "correct", "correct", "correct", "correct"] },
+];
+
+// Five non-solving guesses — a "playing" attempt on its last guess, which is
+// also the only case where history reveals the clue (see history.server.ts).
+export const inProgressGuesses: GameGuess[] = [
+  ...guesses,
+  { word: "SNEAK", states: ["absent", "absent", "present", "absent", "absent"] },
+  { word: "TOAST", states: ["absent", "correct", "absent", "absent", "present"] },
+  { word: "GLARE", states: ["absent", "absent", "absent", "correct", "absent"] },
+];
+
 const noop = () => undefined;
 
 export function gameState(overrides: Partial<GameState> = {}): GameState {
@@ -106,7 +122,7 @@ export const history: PuzzleHistoryPage = {
       gameSlug: "reality",
       gameName: "Reality",
       status: "solved",
-      guesses,
+      guesses: solvedGuesses,
       answerType: "storyline",
       clue: puzzle.clue,
       detail: puzzle.detail,
@@ -126,7 +142,7 @@ export const history: PuzzleHistoryPage = {
       gameSlug: "reality",
       gameName: "Reality",
       status: "playing",
-      guesses: [],
+      guesses: inProgressGuesses,
       answerType: "object",
       clue: "What is everyone suddenly discussing?",
       detail: null,
