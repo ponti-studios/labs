@@ -26,7 +26,6 @@ import { subscribeToGenerateStream } from "~/components/admin/generate-stream";
 
 import { BRAND_NAME } from "~/config/brand";
 
-import "~/components/game/game.css";
 
 export function meta() {
   return [{ title: `${BRAND_NAME} generate` }, { name: "robots", content: "noindex" }];

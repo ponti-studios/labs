@@ -17,7 +17,6 @@ import { assertSameOrigin } from "~/lib/infrastructure/origin";
 
 import { BRAND_NAME } from "~/config/brand";
 
-import "~/components/game/game.css";
 
 export function meta() {
   return [{ title: `${BRAND_NAME} topics` }, { name: "robots", content: "noindex" }];
@@ -115,7 +114,7 @@ export default function GameAdminTopics() {
                 </TableCell>
                 <TableCell className="text-muted-foreground">{topic.counts.pending}</TableCell>
                 <TableCell className="text-muted-foreground">{topic.counts.used}</TableCell>
-                <TableCell className="text-muted-foreground max-w-[12rem] truncate">
+                <TableCell className="text-muted-foreground max-w-48 truncate">
                   {topic.feedLabel}
                 </TableCell>
                 <TableCell>

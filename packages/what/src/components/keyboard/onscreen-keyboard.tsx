@@ -17,12 +17,15 @@ export interface OnscreenKeyboardProps {
 const ROWS = ["QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"] as const;
 
 function keyClass(kind: "letter" | "action", state: LetterState | "action" | "inactive") {
-  return cn(
-    "game-key",
-    `game-key-${state}`,
-    styles.key,
-    kind === "letter" ? styles.keyLetter : styles.keyAction,
-  );
+  const stateClass =
+    state === "correct"
+      ? styles.keyCorrect
+      : state === "present"
+        ? styles.keyPresent
+        : state === "absent"
+          ? styles.keyAbsent
+          : undefined;
+  return cn(styles.key, stateClass, kind === "letter" ? styles.keyLetter : styles.keyAction);
 }
 
 function keyLabel(letter: string, state: LetterState | "action" | "inactive") {
@@ -33,8 +36,7 @@ function keyLabel(letter: string, state: LetterState | "action" | "inactive") {
   return letter;
 }
 
-/** The tabloid skin (colors) comes from the global `.game-key*` classes
- *  in game.css — this component only owns layout. */
+/** The tabloid skin (colors) lives in this component's CSS module. */
 export function OnscreenKeyboard({
   letterStates = {},
   onLetter,
@@ -46,7 +48,8 @@ export function OnscreenKeyboard({
 }: OnscreenKeyboardProps) {
   return (
     <div
-      className={cn("game-keyboard", styles.keyboard, readOnly && styles.readOnly, className)}
+      data-game-keyboard
+      className={cn(styles.keyboard, readOnly && styles.readOnly, className)}
       data-testid="onscreen-keyboard"
     >
       {ROWS.map((row, i) => (

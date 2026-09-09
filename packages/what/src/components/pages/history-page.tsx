@@ -96,7 +96,7 @@ export function HistoryPageView({ history, mosaicCells, onPageChange }: HistoryP
               <li key={`${row.gameSlug}:${row.dateKey}`}>
                 <a className={styles.row} href={`/${row.gameSlug}/${row.dateKey}`}>
                   <div className={styles.rowTop}>
-                    <div className={`game-history-mini ${styles.rowMini}`}>
+                    <div className={styles.rowMini}>
                       {lastGuess?.states.map((state, i) => (
                         <GameTile key={i} state={state} letter={lastGuess.word[i] ?? ""} />
                       ))}

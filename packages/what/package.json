@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "portless",
-    "dev:app": "react-router dev",
-    "build": "react-router build",
+    "dev:app": "tsx scripts/generate-manifest.ts && react-router dev",
+    "build": "tsx scripts/generate-manifest.ts && react-router build",
     "start": "react-router-serve build/server/index.js",
     "lint": "oxlint src --fix",
     "lint:check": "oxlint src",
@@ -37,6 +37,7 @@
     "@pontistudios/env": "workspace:*",
     "@react-router/node": "catalog:",
     "@react-router/serve": "catalog:",
+    "cn": "^0.2.6",
     "dotenv": "catalog:",
     "drizzle-orm": "catalog:",
     "fast-xml-parser": "catalog:",

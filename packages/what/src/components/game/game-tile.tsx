@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 
 import { cn } from "../../lib/cn";
+import tileStyles from "./tile.module.css";
 
 export type GameTileState = "empty" | "typed" | "absent" | "present" | "correct";
 
@@ -32,7 +33,7 @@ export function GameTile({
   style,
 }: GameTileProps) {
   if (loading) {
-    return <div className="game-tile game-tile-skeleton" aria-hidden style={style} />;
+    return <div className={cn(tileStyles.tile, tileStyles.skeleton)} aria-hidden style={style} />;
   }
 
   const hasStagger = isPending || isSolved;
@@ -43,16 +44,16 @@ export function GameTile({
       role={ariaLabel ? "img" : undefined}
       data-testid="game-tile"
       className={cn(
-        "game-tile",
-        isRevealing && (isIncorrectGuess ? "game-tile-reveal-incorrect" : "game-tile-reveal"),
-        hasError && "game-tile-error",
-        isPending && "game-tile-pending",
-        isSolved && "game-tile-solved",
+        tileStyles.tile,
+        isRevealing && (isIncorrectGuess ? tileStyles.revealIncorrect : tileStyles.reveal),
+        hasError && tileStyles.error,
+        isPending && tileStyles.pending,
+        isSolved && tileStyles.solved,
       )}
       data-state={state}
       style={hasStagger ? ({ ...style, "--game-tile-i": tileIndex } as CSSProperties) : style}
     >
-      <span className="game-tile-letter">{letter}</span>
+      <span className={tileStyles.tileLetter}>{letter}</span>
     </div>
   );
 }

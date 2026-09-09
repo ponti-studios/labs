@@ -20,7 +20,6 @@ import { CandidateCards } from "~/components/admin/candidate-cards";
 
 import { BRAND_NAME } from "~/config/brand";
 
-import "~/components/game/game.css";
 
 const GENERATION_STATUS: Record<"running" | "succeeded" | "failed", StatusBadgeConfig> = {
   running: { label: "Running", variant: "outline" },

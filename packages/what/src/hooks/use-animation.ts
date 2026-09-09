@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { GAME_ANSWER_LENGTH } from "../lib/puzzle";
 
 /** How long (ms) each tile takes to power on during the reveal animation.
- *  Must match the `game-tile-reveal` keyframe duration in game.css. */
+ *  Must match the `reveal` keyframe duration in game/tile.module.css. */
 export const TILE_REVEAL_STEP_MS = 420;
 
 export function useAnimation() {
