@@ -11,7 +11,6 @@ import { GenerationsList, InventoryList } from "./admin.inventory-list";
 
 import { BRAND_NAME } from "~/config/brand";
 
-import "~/components/game/game.css";
 
 export function meta() {
   return [{ title: `${BRAND_NAME} admin` }, { name: "robots", content: "noindex" }];

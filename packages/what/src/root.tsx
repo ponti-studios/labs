@@ -10,7 +10,7 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
-import { BRAND_NAME, BRAND_TAGLINE } from "./config/brand";
+import { BRAND_NAME, BRAND_TAGLINE, BRAND_THEME_COLOR } from "./config/brand";
 import { PwaUpdatePrompt } from "./components/pwa-update-prompt";
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -29,7 +29,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="twitter:title" content={BRAND_NAME} />
         <meta name="twitter:description" content={BRAND_TAGLINE} />
         <meta name="twitter:image" content="/logo.png" />
-        <meta name="theme-color" content="#f5b400" />
+        <meta name="theme-color" content={BRAND_THEME_COLOR} />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />

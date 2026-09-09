@@ -1,7 +1,7 @@
 import type { Decorator, Preview } from "@storybook/react-vite";
 import { MemoryRouter } from "react-router";
 
-import "../src/components/game/game.css";
+import "../src/app.css";
 
 const withRouter: Decorator = (Story) => (
   <MemoryRouter initialEntries={["/"]}>

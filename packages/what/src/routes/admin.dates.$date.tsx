@@ -20,7 +20,6 @@ import { GenerationsList } from "./admin.inventory-list";
 
 import { BRAND_NAME } from "~/config/brand";
 
-import "~/components/game/game.css";
 
 const DATE_CLASS: Record<"live" | "scheduled", StatusBadgeConfig> = {
   live: { label: "Live", variant: "default" },
@@ -91,11 +90,11 @@ export default function GameAdminDate() {
           </CardHeader>
           <CardContent className="flex flex-col gap-3 text-sm">
             <div>
-              <p className="text-muted-foreground text-xs tracking-[0.12em] uppercase">Clue</p>
+              <p className="text-muted-foreground text-xs tracking-widest uppercase">Clue</p>
               <p>{detail.puzzle.clue}</p>
             </div>
             <div>
-              <p className="text-muted-foreground text-xs tracking-[0.12em] uppercase">Detail</p>
+              <p className="text-muted-foreground text-xs tracking-widest uppercase">Detail</p>
               <p>{detail.puzzle.detail}</p>
             </div>
             <div className="flex flex-wrap items-center gap-2">

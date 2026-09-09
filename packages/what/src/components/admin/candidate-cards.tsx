@@ -98,30 +98,30 @@ function CandidateCard({
           <div className="grid gap-2 rounded-md border p-3">
             {candidate.candidate.articleAbout ? (
               <div>
-                <p className="text-lg tracking-[0.12em]">Article about</p>
+                <p className="text-lg tracking-widest">Article about</p>
                 <p>{candidate.candidate.articleAbout}</p>
               </div>
             ) : null}
             {candidate.candidate.concept ? (
               <div>
-                <p className="text-lg tracking-[0.12em]">Concept</p>
+                <p className="text-lg tracking-widest">Concept</p>
                 <p>{candidate.candidate.concept}</p>
               </div>
             ) : null}
             {candidate.candidate.answerMeaning ? (
               <div>
-                <p className="text-lg tracking-[0.12em]">Answer meaning</p>
+                <p className="text-lg tracking-widest">Answer meaning</p>
                 <p>{candidate.candidate.answerMeaning}</p>
               </div>
             ) : null}
           </div>
         )}
         <div>
-          <p className="text-lg tracking-[0.12em]">Clue</p>
+          <p className="text-lg tracking-widest">Clue</p>
           <p>{candidate.candidate.clue}</p>
         </div>
         <div>
-          <p className="text-lg tracking-[0.12em]">Detail</p>
+          <p className="text-lg tracking-widest">Detail</p>
           <p>{candidate.candidate.detail}</p>
         </div>
         <div className="flex items-center justify-end gap-2">

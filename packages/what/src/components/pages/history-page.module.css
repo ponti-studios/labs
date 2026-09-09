@@ -86,6 +86,12 @@
 }
 
 .rowMini {
+  /* Compact context for GameTile (was the `.game-history-mini` override). */
+  --game-tile-size: 22px;
+  --game-tile-gap: 3px;
+  --game-radius: 5px;
+  --game-tile-font-size: 0.65rem;
+
   display: flex;
   flex-shrink: 0;
   min-height: var(--game-tile-size);
