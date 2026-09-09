@@ -108,9 +108,10 @@ describe("loadActivePublicPuzzle", () => {
     expect(envelope!.puzzle.dateKey).toBe("2026-05-20");
     expect(envelope!.puzzle.isFallback).toBe(false);
     expect(envelope!.puzzle.answerType).toBe("storyline");
-    expect(envelope!.puzzle.clue).toBe(
-      "The Pretty Mess performer never misses a sharp confessional.",
-    );
+    // No attempt context here (this path has no user), so clue and detail —
+    // both spoiler content — are redacted regardless of puzzle state.
+    expect(envelope!.puzzle.clue).toBe("");
+    expect(envelope!.puzzle.detail).toBe("");
     expect(loadPuzzleForDateMock).toHaveBeenCalledWith(1, "2026-05-20");
     expect(loadMostRecentPuzzleMock).not.toHaveBeenCalled();
   });
@@ -366,6 +367,106 @@ describe("evaluateGuessServer", () => {
   });
 });
 
+describe("loadActivePublicPuzzleWithAttempt — clue/detail redaction", () => {
+  it("redacts both clue and detail when the player hasn't attempted yet", async () => {
+    getGameBySlugMock.mockResolvedValue(GAME);
+    loadPuzzleForDateMock.mockResolvedValue(makePuzzle());
+    loadAttemptMock.mockResolvedValue(null);
+
+    const { loadActivePublicPuzzleWithAttempt } = await import("../data/puzzle.server");
+    const envelope = await loadActivePublicPuzzleWithAttempt(
+      new Date("2026-05-20T12:00:00.000Z"),
+      "UTC",
+      USER,
+    );
+
+    expect(envelope!.puzzle.clue).toBe("");
+    expect(envelope!.puzzle.detail).toBe("");
+  });
+
+  it("redacts clue before the player's last guess", async () => {
+    getGameBySlugMock.mockResolvedValue(GAME);
+    loadPuzzleForDateMock.mockResolvedValue(makePuzzle());
+    loadAttemptMock.mockResolvedValue(
+      makeAttempt({ status: "playing", guesses: [{ word: "DORIT", states: ["absent"] as never }] }),
+    );
+
+    const { loadActivePublicPuzzleWithAttempt } = await import("../data/puzzle.server");
+    const envelope = await loadActivePublicPuzzleWithAttempt(
+      new Date("2026-05-20T12:00:00.000Z"),
+      "UTC",
+      USER,
+    );
+
+    expect(envelope!.puzzle.clue).toBe("");
+    expect(envelope!.puzzle.detail).toBe("");
+  });
+
+  it("reveals clue only once the player is on their last guess", async () => {
+    getGameBySlugMock.mockResolvedValue(GAME);
+    loadPuzzleForDateMock.mockResolvedValue(makePuzzle());
+    const fiveGuesses = ["DORIT", "SUTTON", "KATHY", "SHEREE", "TILLY"].map((word) => ({
+      word,
+      states: ["absent", "absent", "absent", "absent", "absent"] as never,
+    }));
+    loadAttemptMock.mockResolvedValue(makeAttempt({ status: "playing", guesses: fiveGuesses }));
+
+    const { loadActivePublicPuzzleWithAttempt } = await import("../data/puzzle.server");
+    const envelope = await loadActivePublicPuzzleWithAttempt(
+      new Date("2026-05-20T12:00:00.000Z"),
+      "UTC",
+      USER,
+    );
+
+    expect(envelope!.puzzle.clue).toBe(
+      "The Pretty Mess performer never misses a sharp confessional.",
+    );
+    expect(envelope!.puzzle.detail).toBe("");
+  });
+
+  it("reveals detail (never clue) once the puzzle is solved", async () => {
+    getGameBySlugMock.mockResolvedValue(GAME);
+    loadPuzzleForDateMock.mockResolvedValue(makePuzzle());
+    loadAttemptMock.mockResolvedValue(
+      makeAttempt({ status: "solved", guesses: [{ word: "ERIKA", states: ["correct"] as never }] }),
+    );
+
+    const { loadActivePublicPuzzleWithAttempt } = await import("../data/puzzle.server");
+    const envelope = await loadActivePublicPuzzleWithAttempt(
+      new Date("2026-05-20T12:00:00.000Z"),
+      "UTC",
+      USER,
+    );
+
+    expect(envelope!.puzzle.clue).toBe("");
+    expect(envelope!.puzzle.detail).toBe(
+      "Erika Jayne keeps the glam and pop-star energy turned all the way up.",
+    );
+  });
+
+  it("reveals detail (never clue) once the puzzle is failed", async () => {
+    getGameBySlugMock.mockResolvedValue(GAME);
+    loadPuzzleForDateMock.mockResolvedValue(makePuzzle());
+    const sixGuesses = ["DORIT", "SUTTON", "KATHY", "SHEREE", "TILLY", "KYLEE"].map((word) => ({
+      word,
+      states: ["absent", "absent", "absent", "absent", "absent"] as never,
+    }));
+    loadAttemptMock.mockResolvedValue(makeAttempt({ status: "failed", guesses: sixGuesses }));
+
+    const { loadActivePublicPuzzleWithAttempt } = await import("../data/puzzle.server");
+    const envelope = await loadActivePublicPuzzleWithAttempt(
+      new Date("2026-05-20T12:00:00.000Z"),
+      "UTC",
+      USER,
+    );
+
+    expect(envelope!.puzzle.clue).toBe("");
+    expect(envelope!.puzzle.detail).toBe(
+      "Erika Jayne keeps the glam and pop-star energy turned all the way up.",
+    );
+  });
+});
+
 describe("loadPuzzleForSpecificDate", () => {
   it("returns null when no puzzle exists for that exact date (no grace period)", async () => {
     getGameBySlugMock.mockResolvedValue(GAME);
@@ -389,6 +490,10 @@ describe("loadPuzzleForSpecificDate", () => {
 
     expect(result?.attempt).toBeNull();
     expect(loadAttemptMock).not.toHaveBeenCalled();
+    // Anonymous visitors get no attempt context, so clue/detail are redacted —
+    // no clue teaser for signed-out visitors on a historical date.
+    expect(result?.puzzle.clue).toBe("");
+    expect(result?.puzzle.detail).toBe("");
   });
 
   it("returns attempt: null for a signed-in user who hasn't played that date", async () => {
@@ -419,5 +524,10 @@ describe("loadPuzzleForSpecificDate", () => {
     });
     // Never leaks the raw answer to the caller.
     expect((result!.puzzle as { answer?: string }).answer).toBeUndefined();
+    // Solved, so the story reveal is safe to send; clue has no purpose once over.
+    expect(result!.puzzle.clue).toBe("");
+    expect(result!.puzzle.detail).toBe(
+      "Erika Jayne keeps the glam and pop-star energy turned all the way up.",
+    );
   });
 });

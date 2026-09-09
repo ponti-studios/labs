@@ -110,7 +110,7 @@ export function HistoryPageView({ history, mosaicCells, onPageChange }: HistoryP
                       {formatDate(row.dateKey)}
                       <span className={styles.rowGame}>{row.gameName}</span>
                     </p>
-                    {row.status === "playing" && <p className={styles.rowClue}>{row.clue}</p>}
+                    {row.clue && <p className={styles.rowClue}>{row.clue}</p>}
                   </div>
                   <StatusBadge status={row.status} config={STATUS_CONFIG} />
                 </a>

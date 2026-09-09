@@ -33,7 +33,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 export default function DatedPuzzleRoute() {
   const { puzzle, attempt, signedIn, loginUrl, gameSlug } = useLoaderData<typeof loader>();
   if (!signedIn) {
-    return <SignedOutTeaser dateKey={puzzle.dateKey} clue={puzzle.clue} loginUrl={loginUrl} />;
+    return <SignedOutTeaser dateKey={puzzle.dateKey} loginUrl={loginUrl} />;
   }
 
   return (
@@ -46,15 +46,7 @@ export default function DatedPuzzleRoute() {
   );
 }
 
-function SignedOutTeaser({
-  dateKey,
-  clue,
-  loginUrl,
-}: {
-  dateKey: string;
-  clue: string;
-  loginUrl: string;
-}) {
+function SignedOutTeaser({ dateKey, loginUrl }: { dateKey: string; loginUrl: string }) {
   return (
     <div className={styles.teaser}>
       <header className={styles.header}>
@@ -66,7 +58,6 @@ function SignedOutTeaser({
       <div className={styles.body}>
         <div className={styles.clue}>
           <p className={styles.clueLabel}>{dateKey}</p>
-          <p className={styles.clueText}>{clue}</p>
         </div>
 
         <Card className={styles.card}>

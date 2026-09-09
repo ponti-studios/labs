@@ -1,14 +1,18 @@
-import type { GameStatus, GameGuess, PuzzleAnswerType } from "../puzzle/types";
 import { addDaysToDateKey, daysBetweenDateKeys, getDateKey } from "../puzzle/date";
-import { listAttemptsForUserInRange, loadAllAttemptsForUser } from "./attempts.server";
-import { getActiveGames } from "./games.server";
-import { getEarliestPuzzleDateKeyAcrossTopics, getExistingPuzzlesAcrossTopics } from "./puzzles.server";
+import { MAX_GUESSES } from "../puzzle/rules";
 import {
   buildStreakMosaic,
   computeHistoryStats,
   type MosaicCell,
   type PuzzleHistoryStats,
 } from "../puzzle/stats";
+import type { GameGuess, GameStatus, PuzzleAnswerType } from "../puzzle/types";
+import { listAttemptsForUserInRange, loadAllAttemptsForUser } from "./attempts.server";
+import { getActiveGames } from "./games.server";
+import {
+  getEarliestPuzzleDateKeyAcrossTopics,
+  getExistingPuzzlesAcrossTopics,
+} from "./puzzles.server";
 
 // How far back to look for playable-but-unplayed puzzle dates. Bounds an
 // otherwise-unbounded getExistingPuzzlesAcrossTopics scan; 90 days is
@@ -32,7 +36,10 @@ export interface PuzzleHistoryRow {
   status: GameStatus;
   guesses: GameGuess[];
   answerType: PuzzleAnswerType;
-  clue: string;
+  /** Only populated when the attempt is still "playing" and on its last
+   *  guess — the same last-resort-hint gate the live board applies, never
+   *  leaked earlier just because the row is being viewed from history. */
+  clue: string | null;
   /** Only populated once the attempt is no longer "playing" — never leak the
    *  story reveal for a puzzle the player hasn't actually finished. */
   detail: string | null;
@@ -103,12 +110,20 @@ export async function loadPuzzleHistory(
       return { dateKey: dateUtc, gameSlug: game?.slug ?? "", gameName: game?.name ?? "" };
     })
     .filter((puzzle) => puzzle.gameSlug !== "")
-    .sort((a, b) => (a.dateKey === b.dateKey ? a.gameName.localeCompare(b.gameName) : a.dateKey < b.dateKey ? -1 : 1));
+    .sort((a, b) =>
+      a.dateKey === b.dateKey
+        ? a.gameName.localeCompare(b.gameName)
+        : a.dateKey < b.dateKey
+          ? -1
+          : 1,
+    );
 
   const totalDays = earliestPuzzleKey
     ? (daysBetweenDateKeys(earliestPuzzleKey, todayKey) ?? 0) + 1
     : 1;
   const totalPages = Math.max(1, Math.ceil(totalDays / WEEK_DAYS));
+  const isLastGuess = (attempt: (typeof rows)[number]["attempt"]) =>
+    attempt.status === "playing" && attempt.guesses.length === MAX_GUESSES - 1;
 
   return {
     rows: rows.map(({ attempt, puzzle, topic }) => ({
@@ -116,9 +131,9 @@ export async function loadPuzzleHistory(
       gameSlug: topic.slug,
       gameName: topic.name,
       status: attempt.status,
-      guesses: attempt.guesses as GameGuess[],
+      guesses: attempt.guesses,
       answerType: puzzle.answerType,
-      clue: puzzle.clue,
+      clue: isLastGuess(attempt) ? puzzle.clue : null,
       detail: attempt.status === "playing" ? null : puzzle.detail,
     })),
     page,

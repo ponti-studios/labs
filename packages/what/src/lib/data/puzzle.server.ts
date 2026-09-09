@@ -35,16 +35,36 @@ async function requireGame(gameSlug = DEFAULT_GAME_SLUG) {
 
 // ── DTO mapping ──────────────────────────────────────────────────────────────
 
+/**
+ * The clue and detail are spoiler content — `clue` is only meant to appear
+ * as the last-resort hint on a player's final guess, and `detail` is the
+ * story reveal shown only once a puzzle is over. Gating them client-side
+ * isn't enough (the full DTO still round-trips through the loader JSON), so
+ * this strips both down to "" server-side unless the attempt actually
+ * qualifies — no attempt (anonymous/unstarted) never qualifies for either.
+ */
+function redactSpoilers(
+  record: PuzzleRecord,
+  attempt: { status: GameStatus; guesses: GameGuess[] } | null,
+): Pick<PuzzleRecord, "clue" | "detail"> {
+  const isFinished = attempt?.status === "solved" || attempt?.status === "failed";
+  const isFinalGuess = attempt?.status === "playing" && attempt.guesses.length === MAX_GUESSES - 1;
+  return {
+    clue: isFinalGuess ? record.clue : "",
+    detail: isFinished ? record.detail : "",
+  };
+}
+
 export function toPublicGamesPuzzle(
   record: PuzzleRecord,
   isFallback = false,
   topic?: string,
+  attempt: { status: GameStatus; guesses: GameGuess[] } | null = null,
 ): PublicGamesPuzzle {
   return {
     answerType: record.answerType,
-    clue: record.clue,
     dateKey: record.dateUtc,
-    detail: record.detail,
+    ...redactSpoilers(record, attempt),
     isFallback,
     topic,
     sources: [
@@ -160,7 +180,7 @@ export async function loadActivePublicPuzzleWithAttempt(
   }
 
   return {
-    puzzle: toPublicGamesPuzzle(resolved.puzzle, resolved.isFallback, resolved.topic),
+    puzzle: toPublicGamesPuzzle(resolved.puzzle, resolved.isFallback, resolved.topic, attempt),
     attempt,
   };
 }
@@ -201,9 +221,11 @@ export interface DatedPuzzleEnvelope {
  *
  * Only loads the signed-in user's attempt for this date; anonymous callers
  * always get `attempt: null` — the route decides what to do with that (see
- * date.$date.tsx: anonymous visitors get a read-only clue teaser, not a
- * playable board, since the per-date anonymous free-guess design in
+ * topic.$dateKey.tsx: anonymous visitors get a read-only sign-in prompt, not
+ * a playable board, since the per-date anonymous free-guess design in
  * evaluateGuessServer isn't meant to be exercised against arbitrary dates).
+ * A `null` attempt also means `toPublicGamesPuzzle` redacts clue and detail,
+ * so the teaser never leaks either.
  */
 export async function loadPuzzleForSpecificDate(
   dateKey: string,
@@ -216,12 +238,13 @@ export async function loadPuzzleForSpecificDate(
   if (!puzzle) return null;
 
   const attemptRow = user ? await loadAttempt(user.id, gameId, dateKey) : null;
+  const attempt = attemptRow
+    ? { guesses: attemptRow.guesses as GameGuess[], status: attemptRow.status }
+    : null;
 
   return {
-    puzzle: toPublicGamesPuzzle(puzzle, false, game.name),
-    attempt: attemptRow
-      ? { guesses: attemptRow.guesses as GameGuess[], status: attemptRow.status }
-      : null,
+    puzzle: toPublicGamesPuzzle(puzzle, false, game.name, attempt),
+    attempt,
   };
 }
 
