@@ -59,10 +59,12 @@
   border-bottom: none;
 }
 
+/* Two stacked rows so nothing has to compete for horizontal space on a
+   narrow screen: guesses + result on top, date + category below. */
 .row {
   display: flex;
-  align-items: center;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.375rem;
   border-radius: 0.375rem;
   padding: 1rem 0.5rem;
   text-decoration: none;
@@ -74,27 +76,33 @@
   background: var(--game-paper);
 }
 
+.rowTop,
+.rowBottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
 .rowMini {
   display: flex;
   flex-shrink: 0;
+  min-height: var(--game-tile-size);
   gap: var(--game-tile-gap);
 }
 
-.rowBody {
+.rowDateText {
   min-width: 0;
-  flex: 1;
-}
-
-.rowDate {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: 0.875rem;
   font-weight: 500;
-  margin: 0;
 }
 
 .rowGame {
+  flex-shrink: 0;
   color: var(--game-ink-muted);
   font-size: 0.6875rem;
   font-weight: 600;
@@ -106,6 +114,7 @@
 }
 
 .rowClue {
+  min-width: 0;
   color: var(--game-ink-muted);
   font-size: 0.75rem;
   margin: 0;
@@ -173,4 +182,23 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+/* Narrow phones: the guess-tile preview and status badge are fixed-size, so
+   shrink the tiles and tighten padding to leave the date/badge/clue column
+   enough room instead of squeezing it to near-zero. */
+@media (max-width: 420px) {
+  .page {
+    padding-inline: 0.75rem;
+  }
+
+  .row {
+    gap: 0.5rem;
+    padding-inline: 0.25rem;
+  }
+
+  .rowMini {
+    --game-tile-size: 18px;
+    --game-tile-gap: 2px;
+  }
 }

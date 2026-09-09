@@ -98,21 +98,19 @@ export function HistoryPageView({ history, mosaicCells, onPageChange }: HistoryP
             return (
               <li key={`${row.gameSlug}:${row.dateKey}`}>
                 <a className={styles.row} href={`/${row.gameSlug}/${row.dateKey}`}>
-                  {lastGuess && (
+                  <div className={styles.rowTop}>
                     <div className={`game-history-mini ${styles.rowMini}`}>
-                      {lastGuess.states.map((state, i) => (
+                      {lastGuess?.states.map((state, i) => (
                         <GameTile key={i} state={state} letter={lastGuess.word[i] ?? ""} />
                       ))}
                     </div>
-                  )}
-                  <div className={styles.rowBody}>
-                    <p className={styles.rowDate}>
-                      {formatDate(row.dateKey)}
-                      <span className={styles.rowGame}>{row.gameName}</span>
-                    </p>
-                    {row.clue && <p className={styles.rowClue}>{row.clue}</p>}
+                    <StatusBadge status={row.status} config={STATUS_CONFIG} />
                   </div>
-                  <StatusBadge status={row.status} config={STATUS_CONFIG} />
+                  <div className={styles.rowBottom}>
+                    <span className={styles.rowDateText}>{formatDate(row.dateKey)}</span>
+                    <span className={styles.rowGame}>{row.gameName}</span>
+                  </div>
+                  {row.clue && <p className={styles.rowClue}>{row.clue}</p>}
                 </a>
               </li>
             );
@@ -155,7 +153,7 @@ function UnplayedSheet({ puzzles }: { puzzles: readonly PlayableUnplayedPuzzle[]
                   className={styles.unplayedLink}
                   href={`/${puzzle.gameSlug}/${puzzle.dateKey}`}
                 >
-                  {formatDate(puzzle.dateKey)}
+                  <span className={styles.rowDateText}>{formatDate(puzzle.dateKey)}</span>
                   <span className={styles.rowGame}>{puzzle.gameName}</span>
                 </a>
               </li>
