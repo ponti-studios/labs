@@ -1,15 +1,32 @@
+/* A floating action sheet, not a flush-to-edge drawer — it hovers off every
+   edge and rises from the bottom, on phone and desktop alike. */
 .dialog {
-  margin: 0 0 0 auto;
-  height: 100dvh;
-  max-height: 100dvh;
-  width: min(24rem, 100vw);
-  max-width: 100vw;
-  border: none;
-  border-left: 1px solid var(--wl-border, #e4e4e7);
+  position: fixed;
+  top: auto;
+  right: auto;
+  bottom: max(0.75rem, env(safe-area-inset-bottom));
+  left: 50%;
+  margin: 0;
+  transform: translate(-50%, 0);
+  display: flex;
+  flex-direction: column;
+  width: calc(100vw - 1.5rem);
+  max-width: 26rem;
+  max-height: min(75dvh, 34rem);
+  border: 1px solid var(--game-paper-border);
+  border-radius: 1rem;
   padding: 1.5rem;
-  background: var(--wl-surface, #fff);
-  color: var(--wl-fg, #18181b);
-  animation: wl-sheet-in 200ms ease;
+  background: var(--game-paper);
+  color: var(--game-ink);
+  box-shadow: 0 12px 32px var(--game-shadow-drop);
+  animation: wl-sheet-in 220ms var(--game-ease-out, ease);
+}
+
+/* <dialog> is only ever shown via showModal(), which sets [open] — but our
+   own `display: flex` above is author-origin CSS, so it beats the browser's
+   UA rule that hides a dialog without [open]. Restore that explicitly. */
+.dialog:not([open]) {
+  display: none;
 }
 
 .dialog::backdrop {
@@ -31,10 +48,10 @@
 
 @keyframes wl-sheet-in {
   from {
-    transform: translateX(100%);
+    transform: translate(-50%, 100%);
   }
   to {
-    transform: translateX(0);
+    transform: translate(-50%, 0);
   }
 }
 

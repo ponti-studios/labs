@@ -18,7 +18,7 @@
 }
 
 .button:focus-visible {
-  outline: 2px solid var(--wl-ring, #6366f1);
+  outline: 2px solid var(--game-correct-accent);
   outline-offset: 2px;
 }
 
@@ -28,36 +28,36 @@
 }
 
 .default {
-  background: var(--wl-accent, #18181b);
-  color: var(--wl-accent-fg, #fff);
+  background: var(--game-ink);
+  color: var(--game-paper);
 }
 .default:hover {
-  background: var(--wl-accent-hover, #27272a);
+  background: color-mix(in srgb, var(--game-ink) 85%, var(--game-paper));
 }
 
 .outline {
   background: transparent;
-  border-color: var(--wl-border, #d4d4d8);
-  color: var(--wl-fg, #18181b);
+  border-color: var(--game-paper-border);
+  color: var(--game-ink);
 }
 .outline:hover {
-  background: var(--wl-muted, #f4f4f5);
+  background: var(--game-bg);
 }
 
 .ghost {
   background: transparent;
-  color: var(--wl-fg, #18181b);
+  color: var(--game-ink);
 }
 .ghost:hover {
-  background: var(--wl-muted, #f4f4f5);
+  background: var(--game-bg);
 }
 
 .destructive {
-  background: var(--wl-destructive, #dc2626);
-  color: #fff;
+  background: var(--game-error-border);
+  color: var(--game-paper);
 }
 .destructive:hover {
-  background: var(--wl-destructive-hover, #b91c1c);
+  background: color-mix(in srgb, var(--game-error-border) 85%, var(--game-ink));
 }
 
 .sizeDefault {

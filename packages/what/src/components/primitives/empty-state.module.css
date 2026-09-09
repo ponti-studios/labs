@@ -10,12 +10,12 @@
 .title {
   font-weight: 600;
   font-size: 1.0625rem;
-  color: var(--wl-fg, #18181b);
+  color: var(--game-ink);
   margin: 0;
 }
 
 .description {
-  color: var(--wl-muted-fg, #71717a);
+  color: var(--game-ink-muted);
   font-size: 0.9375rem;
   margin: 0;
   max-width: 32ch;

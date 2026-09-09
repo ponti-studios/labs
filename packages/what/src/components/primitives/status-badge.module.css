@@ -10,22 +10,22 @@
 }
 
 .default {
-  background: var(--wl-accent-soft, #eef2ff);
-  color: var(--wl-accent, #4338ca);
+  background: color-mix(in srgb, var(--game-correct-bg) 16%, var(--game-paper));
+  color: var(--game-correct-accent);
 }
 
 .destructive {
-  background: var(--wl-destructive-soft, #fee2e2);
-  color: var(--wl-destructive, #b91c1c);
+  background: color-mix(in srgb, var(--game-error-border) 16%, var(--game-paper));
+  color: var(--game-error-border);
 }
 
 .outline {
   background: transparent;
-  border-color: var(--wl-border, #d4d4d8);
-  color: var(--wl-muted-fg, #52525b);
+  border-color: var(--game-paper-border);
+  color: var(--game-ink-muted);
 }
 
 .secondary {
-  background: var(--wl-muted, #f4f4f5);
-  color: var(--wl-muted-fg, #52525b);
+  background: var(--game-bg);
+  color: var(--game-ink-muted);
 }
