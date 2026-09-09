@@ -181,6 +181,32 @@
   }
 }
 
+/*
+ * Book-call keycap — retro mechanical-keyboard press effect for the shared
+ * BookCallButton (see app/components/BookCallButton.tsx), used by every
+ * "Book a call" CTA across the site. The bottom box-shadow stands in for
+ * the switch stem the cap floats above; pressing it collapses that offset
+ * to zero while the cap itself moves down by the same distance, so it
+ * reads as the key bottoming out rather than a generic scale/opacity tap.
+ */
+.btn-keycap {
+  box-shadow:
+    inset 0 1px 0 0 rgb(255 255 255 / 0.25),
+    0 4px 0 0 color-mix(in srgb, var(--primary) 60%, black);
+  transition-property: transform, box-shadow;
+  transition-duration: var(--duration-150);
+  transition-timing-function: var(--ease-out);
+}
+.btn-keycap:active {
+  transform: translateY(4px);
+  box-shadow: inset 0 1px 0 0 rgb(255 255 255 / 0.15);
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn-keycap:active {
+    transform: none;
+  }
+}
+
 @keyframes fade-slide-in {
   from {
     opacity: 0;

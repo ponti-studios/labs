@@ -1,10 +1,10 @@
-import { Button } from "@ponti-studios/ui/primitives";
 import { HelpCircle } from "lucide-react";
 import { Link } from "react-router";
+import { BookCallButton } from "~/components/BookCallButton";
 import { DeliverableList } from "~/components/DeliverableList";
 import { RevealGroup, RevealItem } from "~/components/Reveal";
 import { StepCard, StepGrid } from "~/components/StepGrid";
-import { BOOK_CALL_URL, servicePillars } from "~/data/studio";
+import { servicePillars } from "~/data/studio";
 import { t } from "~/translations";
 
 const copy = t.services;
@@ -76,11 +76,7 @@ export default function Services() {
           {copy.cta.body}
         </p>
         <div className="flex flex-wrap items-center justify-center gap-6">
-          <Button asChild size="lg" className="press rounded-full px-6">
-            <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
-              {t.common.bookCall}
-            </a>
-          </Button>
+          <BookCallButton>{t.common.bookCall}</BookCallButton>
           <p className="text-muted-foreground text-sm">{t.common.replyWithin}</p>
         </div>
       </section>

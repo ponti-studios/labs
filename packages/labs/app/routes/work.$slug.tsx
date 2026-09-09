@@ -1,8 +1,8 @@
-import { Button } from "@ponti-studios/ui/primitives";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { Link, useLoaderData } from "react-router";
+import { BookCallButton } from "~/components/BookCallButton";
 import { RevealGroup, RevealItem } from "~/components/Reveal";
-import { BOOK_CALL_URL, caseLogos, caseSnapshots } from "~/data/studio";
+import { caseLogos, caseSnapshots } from "~/data/studio";
 import { t } from "~/translations";
 
 const copy = t.work;
@@ -115,11 +115,7 @@ export default function WorkSlug() {
       {/* Close CTA */}
       <section className="pb-24 text-center">
         <div className="flex flex-wrap items-center justify-center gap-6">
-          <Button asChild size="lg" className="press rounded-full px-6">
-            <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
-              {t.common.bookCall}
-            </a>
-          </Button>
+          <BookCallButton>{t.common.bookCall}</BookCallButton>
           <Link
             to="/services"
             prefetch="intent"

@@ -4,10 +4,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@ponti-studios/ui/data-display";
-import { Button } from "@ponti-studios/ui/primitives";
 import { Link } from "react-router";
+import { BookCallButton } from "~/components/BookCallButton";
 import { RevealGroup, RevealItem } from "~/components/Reveal";
-import { BOOK_CALL_URL } from "~/data/studio";
 import { t } from "~/translations";
 
 const copy = t.faq;
@@ -65,11 +64,7 @@ export default function Faq() {
           {t.services.cta.body}
         </p>
         <div className="flex flex-wrap items-center justify-center gap-6">
-          <Button asChild size="lg" className="press rounded-full px-6">
-            <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
-              {t.common.bookCall}
-            </a>
-          </Button>
+          <BookCallButton>{t.common.bookCall}</BookCallButton>
           <Link
             to="/services"
             prefetch="intent"
