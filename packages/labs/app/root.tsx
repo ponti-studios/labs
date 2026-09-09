@@ -1,7 +1,13 @@
 import { Briefcase, FlaskConical, ScrollText, Wrench } from "lucide-react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { Navigation } from "@ponti-studios/ui/navigation";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@ponti-studios/ui/overlays";
 import { Button } from "@ponti-studios/ui/primitives";
 import {
   isRouteErrorResponse,
@@ -20,8 +26,8 @@ import type { Route } from "./+types/root";
 import "./app.css";
 import { PrefetchProvider } from "./components/prefetch-provider";
 import QueryProvider from "./components/QueryProvider";
-import { BOOK_CALL_URL } from "./data/studio";
 import { WHAT_APP_URL } from "./data/game";
+import { BOOK_CALL_URL } from "./data/studio";
 import { getHominemUser } from "./lib/server/hominem-auth";
 import { cn } from "./lib/utils";
 import { t } from "./translations";
@@ -83,39 +89,48 @@ export default function App() {
   const navigation = useNavigation();
   const isNavigating = navigation.state !== "idle";
   const isAuthenticated = user !== null;
-  const navLinks = useMemo<
-    Array<
-      | { href: string; label: string; isExternal?: false; logo?: string }
-      | { href: string; label: string; isExternal: true; logo: string }
-    >
-  >(() => {
-    if (isAuthenticated) {
-      return [
-        {
-          href: WHAT_APP_URL,
-          label: t.nav.game,
-          isExternal: true,
-          logo: "/experiments/logo.png",
-        },
-        {
-          href:
-            import.meta.env.NODE_ENV === "development"
-              ? "https://localhost:4451"
-              : "https://career.ponti.io",
-          label: t.nav.career,
-          isExternal: true,
-          logo: "/experiments/logo.career.500x500.webp",
-        },
-      ];
+  const [showAppMenu, setShowAppMenu] = useState(false);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setShowAppMenu(false);
+      return;
     }
 
-    return [
+    const timer = setTimeout(() => setShowAppMenu(true), 1500);
+    return () => clearTimeout(timer);
+  }, [isAuthenticated]);
+
+  const navLinks = useMemo<
+    Array<{ href: string; label: string; isExternal?: false; logo?: string }>
+  >(
+    () => [
       { href: "/services", label: t.nav.services },
       { href: "/work", label: t.nav.work },
       { href: "/projects", label: t.nav.projects },
       { href: "/manifesto", label: t.nav.manifesto },
-    ];
-  }, [isAuthenticated]);
+    ],
+    [],
+  );
+
+  const appLinks = useMemo<Array<{ href: string; label: string; logo: string }>>(
+    () => [
+      {
+        href: WHAT_APP_URL,
+        label: t.nav.game,
+        logo: "/experiments/logo.png",
+      },
+      {
+        href:
+          import.meta.env.NODE_ENV === "development"
+            ? "https://localhost:4451"
+            : "https://career.ponti.io",
+        label: t.nav.career,
+        logo: "/experiments/logo.career.500x500.webp",
+      },
+    ],
+    [],
+  );
 
   return (
     <QueryProvider>
@@ -138,12 +153,10 @@ export default function App() {
 
         <Navigation.List className="grid! grid-cols-3 gap-3 sm:flex! sm:grid-cols-none sm:gap-1">
           {navLinks.map((link) => {
-            const isExternalLink = "isExternal" in link && link.isExternal;
-            const logo = "logo" in link ? link.logo : undefined;
+            const logo = link.logo;
             const isActive =
-              !isExternalLink &&
-              (link.href === location.pathname ||
-                (link.href !== "/" && location.pathname.startsWith(`${link.href}/`)));
+              link.href === location.pathname ||
+              (link.href !== "/" && location.pathname.startsWith(`${link.href}/`));
 
             const content = logo ? (
               <>
@@ -181,21 +194,6 @@ export default function App() {
                 : "border-nokia-ink/40 sm:border-transparent",
             );
 
-            if (isExternalLink) {
-              return (
-                <Navigation.Item key={link.href} asChild active={false} className={tileClassName}>
-                  <a
-                    href={link.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex w-full flex-col items-center sm:flex-row"
-                  >
-                    {content}
-                  </a>
-                </Navigation.Item>
-              );
-            }
-
             return (
               <Navigation.Item key={link.href} asChild active={isActive} className={tileClassName}>
                 <Link
@@ -208,6 +206,36 @@ export default function App() {
               </Navigation.Item>
             );
           })}
+
+          {isAuthenticated && showAppMenu && (
+            <Navigation.Action className="animate-in fade-in duration-500">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="press border-nokia-ink font-nokia rounded-none border-2 text-lg tracking-widest uppercase sm:rounded-md sm:border sm:font-sans sm:text-sm sm:tracking-normal sm:normal-case"
+                  >
+                    {t.nav.apps}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent sideOffset={12}>
+                  {appLinks.map((link) => (
+                    <DropdownMenuItem key={link.href} className="p-0">
+                      <a
+                        href={link.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex w-full items-center gap-2 px-2 py-1.5"
+                      >
+                        <img src={link.logo} alt="" className="size-4" />
+                        {link.label}
+                      </a>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </Navigation.Action>
+          )}
 
           {!isAuthenticated && (
             <Navigation.Action>

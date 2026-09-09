@@ -3,11 +3,12 @@ import { memo } from "react";
 
 import { Button } from "@ponti-studios/ui/primitives";
 import { Link } from "react-router";
+import { BookCallButton } from "~/components/BookCallButton";
 import { RevealGroup, RevealItem } from "~/components/Reveal";
 import { TiltCard } from "~/components/TiltCard";
 import { FeaturedClients } from "~/components/clients";
 import { FeaturedProjects } from "~/components/projects";
-import { BOOK_CALL_URL, servicePillars } from "~/data/studio";
+import { servicePillars } from "~/data/studio";
 import { t } from "~/translations";
 
 import "~/components/games/game.css";
@@ -80,15 +81,10 @@ export default function Home() {
       {/* Thesis */}
       <section className="layout-stack">
         <HeroHeadline />
-        <p className="text-muted-foreground max-w-5xl">{t.home.hero.subtitle}</p>
 
         <div className="grid gap-7 md:grid-cols-[minmax(0,0.9fr)_minmax(16rem,0.5fr)] md:items-end">
           <div className="flex flex-wrap gap-3">
-            <Button asChild size="lg" className="press rounded-full px-6">
-              <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
-                {t.common.bookCall}
-              </a>
-            </Button>
+            <BookCallButton>{t.common.bookCall}</BookCallButton>
             <Button asChild size="lg" variant="outline" className="press rounded-full px-6">
               <Link to="/work" prefetch="intent">
                 {t.home.hero.secondaryCta}
@@ -143,11 +139,7 @@ export default function Home() {
           <span>{t.services.cta.title.split(" ")[0]}</span>
           <span className="font-serif lowercase italic">{t.services.cta.title.split(" ")[1]}</span>
         </h2>
-        <Button asChild size="lg">
-          <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
-            {t.common.bookCall}
-          </a>
-        </Button>
+        <BookCallButton>{t.common.bookCall}</BookCallButton>
       </section>
     </div>
   );

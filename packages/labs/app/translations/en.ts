@@ -8,6 +8,7 @@ export const STUDIO_TRANSLATIONS_EN = {
     book: "Book",
     game: "WH?T",
     career: "Career",
+    apps: "Apps",
   },
   projects: {
     categoryLabels: {
@@ -536,7 +537,10 @@ export const STUDIO_TRANSLATIONS_EN = {
           outcomes: [
             { value: "<30s", label: "Claims data lag, down from hours" },
             { value: "3 modes", label: "Fragmented access unified into one care platform" },
-            { value: "0", label: "HIPAA exposures — PHI moved off Alexa infrastructure before an incident" },
+            {
+              value: "0",
+              label: "HIPAA exposures — PHI moved off Alexa infrastructure before an incident",
+            },
           ],
         },
         {
@@ -928,7 +932,6 @@ export const STUDIO_TRANSLATIONS_EN = {
       title: "Building what's next.",
       wordBefore: "Building",
       wordAfter: "what's next.",
-      subtitle: "Beautiful things, for problems worth solving.",
       secondaryCta: "See the work",
     },
     marquee: [
