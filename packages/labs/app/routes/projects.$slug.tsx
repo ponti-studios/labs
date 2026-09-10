@@ -1,136 +1,185 @@
-import { ScrollArea } from "@ponti-studios/ui/layout";
-import { ExternalLink, FolderGit2 } from "lucide-react";
-import { Link, useParams } from "react-router";
-import { ListRowMedia } from "~/components/ListRowMedia";
+import type { LoaderFunctionArgs, MetaFunction } from "react-router";
+import { Link, useLoaderData } from "react-router";
+import { BookCallButton } from "~/components/BookCallButton";
 import { RevealGroup, RevealItem } from "~/components/Reveal";
 import { projects } from "~/data/projects";
 import { t } from "~/translations";
 
-export function meta() {
-  return [
-    { title: "Lab — Ponti Studios" },
-    { name: "description", content: t.projects.page.detailMetaDescription },
-  ];
+const copy = t.projects;
+
+export async function loader({ params }: LoaderFunctionArgs) {
+  const project = projects.find((candidate) => candidate.slug === params.slug);
+  if (!project) throw new Response("Not Found", { status: 404 });
+  return { project };
 }
 
-export default function ProjectDetail() {
-  const { slug } = useParams();
-  const project = slug ? projects.find((candidate) => candidate.slug === slug) : null;
+export const meta: MetaFunction = ({ params }) => {
+  const project = projects.find((candidate) => candidate.slug === params.slug);
+  if (!project) return [{ title: "Lab | Ponti Studios" }];
+  return [
+    { title: `${project.name} | Ponti Studios` },
+    { name: "description", content: project.shortDescription },
+  ];
+};
 
-  if (!project) {
-    return (
-      <div className="page-shell">
-        <section className="layout-stack">
-          <h1 className="heading-hero text-foreground max-w-4xl">{t.projects.page.notFound}</h1>
-          <Link
-            to="/projects"
-            prefetch="intent"
-            className="text-accent min-h-11 w-fit content-center text-sm underline underline-offset-4 outline-none"
-          >
-            ← {t.projects.page.back}
-          </Link>
-        </section>
-      </div>
-    );
-  }
+export default function ProjectDetail() {
+  const { project } = useLoaderData<typeof loader>();
   const hasDistinctUrl = Boolean(project.url && project.url !== project.github);
   const howItWorks = [...project.keyFeatures, ...project.technicalChallenges];
 
   return (
-    <div className="page-shell">
-      <section className="section detail-hero">
-        <div className="flex min-w-0 flex-col gap-4">
+    <div className="mx-auto flex max-w-3xl flex-col gap-16">
+      {/* Hero */}
+      <section>
+        <Link
+          to="/projects"
+          prefetch="intent"
+          className="text-muted-foreground hover:text-foreground mb-10 inline-block min-h-11 w-fit content-center text-sm outline-none"
+        >
+          ← {copy.page.back}
+        </Link>
+
+        <div className="flex items-center gap-4">
           {project.logo ? (
-            <div className="shrink-0">
-              <ListRowMedia
-                fallback={project.name.slice(0, 2).toUpperCase()}
-                loading="eager"
+            <div className="rounded-lg bg-white p-2">
+              <img
                 src={project.logo}
+                alt={`${project.name} logo`}
+                className="size-10 shrink-0 object-contain grayscale"
               />
             </div>
           ) : null}
-          <h1 className="heading-hero text-foreground">{project.name}</h1>
-          <p className="text-foreground max-w-2xl text-base">{project.shortDescription}</p>
-          <div className="text-muted-foreground max-w-2xl text-sm">
-            <span className="flex flex-wrap gap-x-4 gap-y-2">
-              <a
-                href={project.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-accent text-foreground hover:text-accent inline-flex min-h-11 items-center gap-2 rounded border px-4 font-extrabold underline-offset-4 outline-none hover:underline"
-              >
-                <FolderGit2 size={16} aria-hidden="true" />
-              </a>
-              {hasDistinctUrl && project.url ? (
-                <a
-                  href={project.url}
-                  target={project.url.startsWith("http") ? "_blank" : undefined}
-                  rel={project.url.startsWith("http") ? "noopener noreferrer" : undefined}
-                  className="bg-accent-foreground text-accent hover:text-accent inline-flex min-h-11 items-center gap-2 rounded border px-4 underline-offset-4 outline-none hover:underline"
-                >
-                  <ExternalLink size={16} aria-hidden="true" />
-                </a>
-              ) : null}
-            </span>
+          <h1 className="text-4xl font-medium tracking-tight sm:text-5xl">{project.name}</h1>
+        </div>
+
+        <p className="text-muted-foreground mt-2 max-w-fit rounded-full px-4 py-1 text-sm shadow">
+          {copy.categoryLabels[project.category]}
+        </p>
+
+        <dl className="border-border text-muted-foreground mt-10 flex flex-wrap gap-x-10 gap-y-2 border-t border-b py-4 text-sm">
+          <div className="flex gap-2">
+            <dt className="uppercase">{copy.page.status}</dt>
+            <dd className="text-foreground">{copy.statusLabels[project.status]}</dd>
           </div>
+          <div className="flex gap-2">
+            <dt className="uppercase">{copy.page.stack}</dt>
+            <dd className="text-foreground">{project.tech.join(", ")}</dd>
+          </div>
+        </dl>
+
+        <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+          <a
+            href={project.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-muted-foreground hover:text-foreground underline underline-offset-4 outline-none"
+          >
+            {copy.page.repository}
+          </a>
+          {hasDistinctUrl && project.url ? (
+            <a
+              href={project.url}
+              target={project.url.startsWith("http") ? "_blank" : undefined}
+              rel={project.url.startsWith("http") ? "noopener noreferrer" : undefined}
+              className="text-muted-foreground hover:text-foreground underline underline-offset-4 outline-none"
+            >
+              {copy.page.liveProject}
+            </a>
+          ) : null}
         </div>
       </section>
 
-      <section className="px-4 py-0">
-        <h2 className="text-foreground">{t.projects.page.problem}</h2>
-        <p className="text-muted-foreground max-w-2xl text-base">{project.problem}</p>
+      {/* Problem */}
+      <section>
+        <h2 className="text-muted-foreground mb-3 text-xs font-medium tracking-wide uppercase">
+          {copy.page.problem}
+        </h2>
+        <p className="text-foreground text-2xl leading-snug font-normal tracking-tight sm:text-3xl">
+          {project.problem}
+        </p>
       </section>
 
+      {/* Solution */}
       {project.solution ? (
-        <section className="px-4 py-0">
-          <h2 className="text-foreground">{t.projects.page.solution}</h2>
-          <p className="text-muted-foreground max-w-2xl text-base">{project.solution}</p>
+        <section>
+          <h2 className="text-muted-foreground mb-3 text-xs font-medium tracking-wide uppercase">
+            {copy.page.solution}
+          </h2>
+          <p className="text-muted-foreground mb-8 text-lg leading-relaxed">{project.solution}</p>
         </section>
       ) : null}
 
-      {project.screenshots && project.screenshots.length > 0 ? (
-        <section className="px-4">
-          <h2 className="text-foreground">{t.projects.page.screenshots}</h2>
-          <ScrollArea className="-mx-4 gap-4 px-4 md:mx-0 md:px-0" snap="start">
-            {project.screenshots.map((src, index) => (
-              <a
-                key={src}
-                href={src}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="border-border hover:border-accent/40 aspect-video w-72 shrink-0 overflow-hidden rounded-lg border outline-none sm:w-80"
-              >
-                <img
-                  src={src}
-                  alt={`${project.name} screenshot ${index + 1}`}
-                  width={1280}
-                  height={720}
-                  loading="lazy"
-                  decoding="async"
-                  sizes="(min-width: 640px) 20rem, 18rem"
-                  className="h-full w-full object-cover"
-                />
-              </a>
-            ))}
-          </ScrollArea>
-        </section>
-      ) : null}
-
+      {/* How It Works */}
       {howItWorks.length > 0 ? (
-        <section className="gap-8 px-4">
-          <h2 className="text-foreground">{t.projects.page.howItWorks}</h2>
-          <RevealGroup as="ul" className="flex max-w-2xl flex-col gap-3">
-            {howItWorks.map((point) => (
-              <RevealItem key={`${project.slug}-${point}`} as="li" className="flex gap-3">
-                <span className="text-accent mt-1" aria-hidden="true">
-                  •
+        <section>
+          <h2 className="text-muted-foreground mb-8 text-xs font-medium tracking-wide uppercase">
+            {copy.page.howItWorks}
+          </h2>
+          <RevealGroup as="ol" className="border-border divide-border divide-y border-t">
+            {howItWorks.map((point, index) => (
+              <RevealItem
+                key={`${project.slug}-${point}`}
+                as="li"
+                className="flex items-baseline gap-6 py-5 first:pt-0"
+              >
+                <span className="text-muted-foreground font-mono text-xs">
+                  {String(index + 1).padStart(2, "0")}
                 </span>
-                <span className="text-muted-foreground text-base">{point}</span>
+                <p className="text-foreground leading-relaxed">{point}</p>
               </RevealItem>
             ))}
           </RevealGroup>
         </section>
       ) : null}
+
+      {/* Screenshots */}
+      {project.screenshots && project.screenshots.length > 0 ? (
+        <section className="border-border border-t pt-10">
+          <h2 className="text-muted-foreground mb-6 text-xs font-medium tracking-wide uppercase">
+            {copy.page.screenshots}
+          </h2>
+          <RevealGroup as="ul" className="border-border divide-border divide-y border-b">
+            {project.screenshots.map((src, index) => (
+              <RevealItem key={src} as="li" className="flex items-center gap-6 py-5 first:pt-0">
+                <span className="text-muted-foreground w-10 shrink-0 font-mono text-xs">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <a
+                  href={src}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="border-border hover:border-accent/40 aspect-video w-48 shrink-0 overflow-hidden rounded-md border outline-none"
+                >
+                  <img
+                    src={src}
+                    alt={`${project.name} screenshot ${index + 1}`}
+                    width={1280}
+                    height={720}
+                    loading="lazy"
+                    decoding="async"
+                    sizes="12rem"
+                    className="h-full w-full object-cover"
+                  />
+                </a>
+              </RevealItem>
+            ))}
+          </RevealGroup>
+        </section>
+      ) : null}
+
+      {/* Close CTA */}
+      <section className="pb-24 text-center">
+        <div className="flex flex-wrap items-center justify-center gap-6">
+          <BookCallButton>{t.common.bookCall}</BookCallButton>
+          <Link
+            to="/services"
+            prefetch="intent"
+            className="text-foreground text-sm underline-offset-4 hover:underline"
+          >
+            {t.home.services.cta}
+          </Link>
+        </div>
+      </section>
     </div>
   );
 }

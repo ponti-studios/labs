@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "portless",
-    "dev:app": "tsx scripts/generate-manifest.ts && react-router dev",
+    "predev": "tsx scripts/generate-manifest.ts",
+    "dev:app": "react-router dev",
     "build": "tsx scripts/generate-manifest.ts && react-router build",
     "start": "react-router-serve build/server/index.js",
     "lint": "oxlint src --fix",

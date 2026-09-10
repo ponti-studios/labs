@@ -38,6 +38,8 @@ export const STUDIO_TRANSLATIONS_EN = {
       repository: "Repository",
       liveProject: "Live project",
       screenshots: "Screenshots",
+      status: "Status",
+      stack: "Stack",
     },
     entries: {
       kernel: {

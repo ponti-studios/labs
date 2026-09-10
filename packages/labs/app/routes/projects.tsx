@@ -24,13 +24,16 @@ export default function Projects() {
     <div className="page-shell">
       <section className="layout-stack">
         <h1 className="heading-hero text-foreground max-w-4xl">The Lab</h1>
+        <p className="text-muted-foreground max-w-2xl text-lg leading-relaxed">
+          {t.projects.page.metaDescription}
+        </p>
       </section>
 
       {/* Projects by Category */}
       {projectSections.map((section) => {
         return (
           <section key={section.category} className="layout-stack">
-            <h2 className="heading-display-sm text-accent border-border border-b pb-3">
+            <h2 className="border-border text-muted-foreground border-b pb-3 text-xs font-medium tracking-wide uppercase">
               {section.label}
             </h2>
             <RevealGroup className="grid grid-cols-1 place-items-center gap-6 py-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -50,7 +53,9 @@ export default function Projects() {
       {/* Playground */}
       <section className="layout-stack">
         <div className="border-border flex items-baseline justify-between gap-4 border-b pb-3">
-          <h2 className="heading-display-sm text-accent">Playground</h2>
+          <h2 className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+            Playground
+          </h2>
           <Link
             to="/playground/essays"
             prefetch="intent"
