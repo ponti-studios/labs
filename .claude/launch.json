@@ -5,8 +5,8 @@
       "name": "labyrinth",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@pontistudios/labyrinth", "dev"],
-      "port": 4200,
-      "url": "https://labyrinth.lvh.me:4200"
+      "port": 443,
+      "url": "https://labyrinth.lvh.me"
     },
     {
       "name": "game",

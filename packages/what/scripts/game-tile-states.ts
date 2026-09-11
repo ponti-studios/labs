@@ -4,6 +4,8 @@ import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 
 import { chromium, type Page } from "playwright";
+
+import { DEFAULT_GAME_SLUG } from "../src/lib/generation/catalog";
 import { runScript } from "./_shared/run-script";
 
 type ColorScheme = "light" | "dark";
@@ -21,7 +23,7 @@ type ColorScheme = "light" | "dark";
  * depends on today's actual puzzle/answer.
  */
 
-const DEFAULT_BASE_URL = "https://labyrinth.lvh.me:4200";
+const DEFAULT_BASE_URL = "https://what.lvh.me";
 const DEFAULT_OUT_DIR = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   "../public/screenshots/tile-states",
@@ -113,7 +115,7 @@ async function captureDevice(
   });
   const page = await context.newPage();
 
-  await page.goto(`${opts.baseUrl}/games/game`, { waitUntil: "networkidle" });
+  await page.goto(`${opts.baseUrl}/${DEFAULT_GAME_SLUG}`, { waitUntil: "networkidle" });
   const demoRow = await injectDemoRow(page);
 
   const rowOut = path.join(opts.outDir, `tile-states-${device.name}-${colorScheme}.png`);

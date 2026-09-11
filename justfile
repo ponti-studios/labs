@@ -10,15 +10,15 @@ default:
 up:
     #!/usr/bin/env bash
     set -euo pipefail
-    # Check if the portless proxy is running on localhost:4200
-    if [ "$(curl -k -s -o /dev/null -w '%{http_code}' -m 3 https://localhost:4200/)" = "000" ]; then
+    # Check if the portless proxy is running on localhost:443
+    if [ "$(curl -k -s -o /dev/null -w '%{http_code}' -m 3 https://localhost:443/)" = "000" ]; then
       echo "starting portless proxy..."
-      pnpm exec portless proxy start -p 4200 --tld lvh.me
+      pnpm exec portless proxy start -p 443 --tld lvh.me
     else
-      echo "proxy already up on :4200"
+      echo "proxy already up on :443"
     fi
-    echo "labyrinth: https://labyrinth.lvh.me:4200"
-    echo "what:      https://what.lvh.me:4200"
+    echo "labyrinth: https://labyrinth.lvh.me"
+    echo "what:      https://what.lvh.me"
 
 # Boot labyrinth + what through the portless proxy.
 dev:

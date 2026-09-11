@@ -14,7 +14,6 @@ export default [
   route("/api/:topic/puzzle", "routes/api.$topic.puzzle.ts"),
   route("/api/:topic/puzzle/:date", "routes/api.$topic.puzzle.$date.ts"),
   route("/api/words/validate", "routes/api.words.validate.ts"),
-  route("/games/game", "routes/games-game-redirect.tsx"),
   route("/admin", "routes/admin.tsx", [
     index("routes/admin._index.tsx"),
     route("inventory", "routes/admin.inventory.tsx"),

@@ -11,8 +11,8 @@ for the canonical services, ports, and database URLs.
 
 | Package | App | Root commands |
 | --- | --- | --- |
-| `packages/labs` (`@pontistudios/labyrinth`) | Portfolio at `https://labyrinth.lvh.me:4200` | `pnpm labs:dev`, `pnpm build:labs` |
-| `packages/what` (`what`) | WH?T daily game at `https://what.lvh.me:4200` | `pnpm game:dev`, `pnpm build:what`, `pnpm game:generate` |
+| `packages/labs` (`@pontistudios/labyrinth`) | Portfolio at `https://labyrinth.lvh.me` | `pnpm labs:dev`, `pnpm build:labs` |
+| `packages/what` (`what`) | WH?T daily game at `https://what.lvh.me` | `pnpm game:dev`, `pnpm build:what`, `pnpm game:generate` |
 | `packages/db` (`@pontistudios/db`) | Drizzle schema + migrations (shared) | `pnpm db:generate`, `pnpm db:migrate` |
 | `packages/ai`, `packages/env` | Shared AI/env helpers | — |
 
@@ -27,16 +27,16 @@ cd ../foundation && just up
 cd ../labs
 pnpm install
 
-# 3. Start the portless proxy once (unprivileged port, lvh.me so cross-subdomain
-#    auth cookies actually work)
-pnpm exec portless proxy start --port 4200 --tld lvh.me
+# 3. Start the portless proxy once (HTTPS on port 443, lvh.me so cross-subdomain
+#    auth cookies actually work; elevates with sudo to bind 443)
+pnpm exec portless proxy start --port 443 --tld lvh.me
 
 # 4. Run the dev servers (or `just dev` for both through portless)
-pnpm labs:dev      # Labs on https://labyrinth.lvh.me:4200
-pnpm game:dev      # What on https://what.lvh.me:4200
+pnpm labs:dev      # Labs on https://labyrinth.lvh.me
+pnpm game:dev      # What on https://what.lvh.me
 ```
 
-Each web app gets a stable `https://<name>.lvh.me:4200` URL instead of a fixed
+Each web app gets a stable `https://<name>.lvh.me` URL instead of a fixed
 port — `labyrinth.lvh.me` (Labs) and `what.lvh.me` (What) — configured via the
 `"portless"` key in each package's `package.json` (`dev` delegates to
 `portless`, the real command is `dev:app`). This is what lets multiple git
@@ -57,8 +57,8 @@ Credentials: `postgres` / `postgres` | `minioadmin` / `minioadmin`
 | Command | Purpose |
 | --- | --- |
 | `just up` / `just dev` | Portless proxy + both dev servers (see `justfile`) |
-| `pnpm labs:dev` | Start Labs dev server at `https://labyrinth.lvh.me:4200` |
-| `pnpm game:dev` | Start What dev server at `https://what.lvh.me:4200` |
+| `pnpm labs:dev` | Start Labs dev server at `https://labyrinth.lvh.me` |
+| `pnpm game:dev` | Start What dev server at `https://what.lvh.me` |
 | `pnpm build` / `pnpm build:labs` | Production build of Labs |
 | `pnpm build:what` / `pnpm build:all` | Production build of What / everything |
 | `pnpm check` | `lint:check` + full typecheck |

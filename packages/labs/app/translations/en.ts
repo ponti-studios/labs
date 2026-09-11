@@ -1081,7 +1081,6 @@ export const STUDIO_TRANSLATIONS_EN = {
         {
           name: "Experiments",
           entries: [
-            { path: "/games/game", label: "WH?T" },
             { path: "/games/cards", label: "Cards" },
             { path: "/games/tetris", label: "Tetris" },
             { path: "/experiments/calendar", label: "Calendar" },

@@ -1,3 +1,4 @@
+import { LucideUserCog2 } from "lucide-react";
 import { BRAND_NAME } from "../../config/brand";
 import { Button, Popover, PopoverContent, PopoverTrigger, Select } from "../primitives";
 import styles from "./game-header.module.css";
@@ -10,6 +11,8 @@ interface GameHeaderProps {
   /** Hide the history icon-button — the page linking to itself is pointless
    *  while already on /history. Defaults to true for every other page. */
   showHistoryLink?: boolean;
+  /** The date key (YYYY-MM-DD) of the puzzle this page is showing. */
+  dateKey?: string;
 }
 
 export function GameHeader({
@@ -18,6 +21,7 @@ export function GameHeader({
   topics = [],
   onTopicChange,
   showHistoryLink = true,
+  dateKey,
 }: GameHeaderProps) {
   return (
     <header className={styles.header}>
@@ -36,6 +40,11 @@ export function GameHeader({
           </div>
         )}
         <div className={styles.actions}>
+          {dateKey && (
+            <span className={styles.dateKey} data-testid="game-date-key">
+              {dateKey}
+            </span>
+          )}
           {isFallback && (
             <Popover>
               <PopoverTrigger asChild>
@@ -57,9 +66,15 @@ export function GameHeader({
             </Popover>
           )}
           {showHistoryLink && (
-            <Button asChild aria-label="Your puzzle history" variant="ghost" size="icon">
+            <Button
+              asChild
+              aria-label="Your puzzle history"
+              variant="outline"
+              size="icon"
+              className="border-primary! flex max-h-8 items-center justify-center rounded-full! border-2!"
+            >
               <a href="/history" data-testid="game-history-link">
-                <span aria-hidden="true">↺</span>
+                <LucideUserCog2 aria-hidden="true" className="text-primary size-4" />
               </a>
             </Button>
           )}
