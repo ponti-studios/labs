@@ -33,8 +33,8 @@ describe("getHominemApiUrl", () => {
     else process.env.HOMINEM_API_URL = ORIGINAL_API_URL;
   });
 
-  it("falls back to the local API port when unset", () => {
-    expect(getHominemApiUrl()).toBe("http://localhost:4040");
+  it("falls back to the lvh.me API URL when unset", () => {
+    expect(getHominemApiUrl()).toBe("https://api.lvh.me");
   });
 
   it("uses HOMINEM_API_URL when set", () => {
