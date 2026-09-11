@@ -100,8 +100,10 @@ svg {
 }
 
 :root {
-  /* Sizing */
-  --game-tile-size: clamp(42px, 12vw, 64px);
+  /* Sizing — the board fills the shell width (viewport minus the 1rem inline
+     padding) with a small margin: 5 tiles + 4 gaps must fit the content box.
+     Capped at 64px so tablet/desktop boards keep their fixed size. */
+  --game-tile-size: clamp(42px, calc(17.5vw - 6px), 64px);
   --game-tile-gap: clamp(6px, 2vw, 10px);
   --game-radius: clamp(9px, 2.6vw, 15px);
 
@@ -126,8 +128,10 @@ svg {
   --game-correct-border: rgba(168, 15, 66, 0.5);
   --game-correct-accent: rgba(214, 17, 91, 1);
   --game-correct-shadow: rgba(23, 19, 13, 0.4);
+  --game-correct-key-text: var(--game-ink);
 
   --game-error-border: rgba(217, 45, 32, 1);
+  --game-error-text: rgba(181, 32, 22, 1);
 
   --game-silver-solid: rgba(78, 78, 81, 1);
   --game-silver-gradient: linear-gradient(
@@ -141,7 +145,7 @@ svg {
   --game-skeleton-bg: rgba(233, 225, 205, 1);
   --game-pending-bg: color-mix(in srgb, var(--game-correct-bg) 5%, transparent);
   --game-pending-border: color-mix(in srgb, var(--game-correct-accent) 25%, transparent);
-  --game-pending-text: color-mix(in srgb, var(--game-correct-accent) 50%, transparent);
+  --game-pending-text: var(--game-correct-accent);
 
   /* Accents */
   --game-share-bg: rgba(240, 28, 91, 1);
@@ -194,7 +198,8 @@ svg {
     --game-skeleton-bg: rgba(67, 59, 49, 1);
     --game-pending-bg: color-mix(in srgb, var(--game-correct-bg) 30%, transparent);
     --game-pending-border: color-mix(in srgb, var(--game-correct-accent) 30%, transparent);
-    --game-pending-text: color-mix(in srgb, var(--game-correct-text) 30%, transparent);
+    --game-pending-text: var(--game-correct-text);
+    --game-error-text: rgba(255, 112, 96, 1);
     --game-shadow-drop: rgba(0, 0, 0, 0.35);
     --game-present-accent: rgba(246, 190, 78, 1);
     --game-link-text: rgba(143, 166, 255, 1);

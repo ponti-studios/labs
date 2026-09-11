@@ -115,9 +115,3 @@
     padding-top: 1rem;
   }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .skeleton {
-    animation: none;
-  }
-}

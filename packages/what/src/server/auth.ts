@@ -22,6 +22,7 @@ export function loginUrl(request: Request, requestedReturnTo?: string): string {
   const { PORTLESS_URL, WHAT_APP_URL } = WhatServerEnv.parse(process.env);
   const appOrigin = new URL(PORTLESS_URL ?? WHAT_APP_URL);
   let returnTo = new URL(appOrigin);
+
   try {
     const candidate = new URL(requestedReturnTo ?? request.url);
     returnTo.pathname = candidate.pathname.replace(/\.data$/, "") || "/";
@@ -32,6 +33,7 @@ export function loginUrl(request: Request, requestedReturnTo?: string): string {
   } catch {
     returnTo.pathname = "/";
   }
+
   const url = new URL("/login", process.env.HOMINEM_API_URL ?? "https://api.ponti.io");
   url.searchParams.set("next", returnTo.toString());
   return url.toString();

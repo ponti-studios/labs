@@ -12,7 +12,7 @@ import { getServerAuth } from "@ponti-studios/auth/server";
  * README/AGENTS notes on local auth for the workaround.
  */
 
-const DEFAULT_HOMINEM_API_URL = "http://localhost:4040";
+const DEFAULT_HOMINEM_API_URL = "https://api.lvh.me";
 
 export function getHominemApiUrl(): string {
   return process.env.HOMINEM_API_URL ?? DEFAULT_HOMINEM_API_URL;
