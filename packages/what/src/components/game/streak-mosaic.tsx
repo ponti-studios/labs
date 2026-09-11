@@ -65,7 +65,7 @@ export function StreakMosaic({ cells }: StreakMosaicProps) {
   return (
     <div className={styles.mosaic} data-testid="streak-mosaic">
       <div ref={scrollRef} className={styles.scroll}>
-        <div className={styles.grid} role="img" aria-label="Your solve history, day by day">
+        <div className={styles.grid} role="list" aria-label="Your solve history, day by day">
           {leadingPad.map((_, i) => (
             <span key={`pad-${i}`} className={styles.pad} aria-hidden="true" />
           ))}
@@ -74,15 +74,21 @@ export function StreakMosaic({ cells }: StreakMosaicProps) {
               key={cell.dateKey}
               className={styles.cell}
               data-status={cell.status}
+              role="listitem"
               style={cellStyle(cell)}
               title={cellLabel(cell)}
+              aria-label={cellLabel(cell)}
             />
           ))}
         </div>
       </div>
       <div className={styles.legend} aria-hidden="true">
         <span className={styles.legendLabel}>Fewer guesses</span>
-        <span className={styles.cell} data-status="solved" style={{ "--mosaic-shade": 1 } as CSSProperties} />
+        <span
+          className={styles.cell}
+          data-status="solved"
+          style={{ "--mosaic-shade": 1 } as CSSProperties}
+        />
         <span
           className={styles.cell}
           data-status="solved"

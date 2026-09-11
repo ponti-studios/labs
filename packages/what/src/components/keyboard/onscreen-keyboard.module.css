@@ -54,7 +54,7 @@
 .keyCorrect {
   border-color: transparent;
   background: var(--game-correct-bg);
-  color: var(--game-correct-text);
+  color: var(--game-correct-key-text);
 }
 
 .keyPresent {

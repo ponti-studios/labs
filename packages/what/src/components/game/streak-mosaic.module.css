@@ -39,17 +39,23 @@
 
 .cell[data-status="solved"] {
   border-color: color-mix(in srgb, var(--game-correct-bg) 45%, transparent);
-  background: color-mix(in srgb, var(--game-correct-bg) calc(var(--mosaic-shade, 1) * 100%), var(--game-paper));
+  background: color-mix(
+    in srgb,
+    var(--game-correct-bg) calc(var(--mosaic-shade, 1) * 100%),
+    var(--game-paper)
+  );
 }
 
 .cell[data-status="failed"] {
-  border-color: transparent;
+  border-color: var(--game-ink);
   background: var(--game-ink);
+  border-style: dashed;
 }
 
 .cell[data-status="playing"] {
   border-color: var(--game-correct-bg);
   background: var(--game-paper);
+  border-style: dotted;
 }
 
 .legend {

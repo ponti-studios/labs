@@ -85,15 +85,24 @@ async function injectDemoRow(page: Page) {
     // real game renders.
     const firstRow = grid.firstElementChild;
     if (!firstRow) throw new Error("game-tile-grid has no rows");
+
+    // The tile skin is a CSS module with hashed class names, so copy the
+    // class names from a live tile (and its letter span) instead of
+    // hardcoding them; `data-state` drives the per-state colors.
+    const protoTile = firstRow.querySelector('[data-testid="game-tile"]');
+    if (!protoTile) throw new Error("game-tile-grid has no live tiles to copy styling from");
+    const tileClass = protoTile.className;
+    const letterClass = protoTile.firstElementChild?.className ?? "";
+
     firstRow.setAttribute("data-testid", "tile-state-demo");
     firstRow.innerHTML = "";
 
     for (const [letter, state] of tiles) {
       const tile = document.createElement("div");
-      tile.className = "game-tile";
+      tile.className = tileClass;
       tile.dataset.state = state;
       const span = document.createElement("span");
-      span.className = "game-tile-letter";
+      span.className = letterClass;
       span.textContent = letter;
       tile.appendChild(span);
       firstRow.appendChild(tile);

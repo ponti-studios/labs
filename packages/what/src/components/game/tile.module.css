@@ -16,14 +16,10 @@
   background: var(--game-paper);
   border: 2px solid var(--game-paper-border);
   color: var(--game-tile-letter);
-  font-size: var(
-    --game-tile-font-size,
-    clamp(1.1rem, calc(var(--game-tile-size) * 0.42), 1.5rem)
-  );
+  font-size: var(--game-tile-font-size, clamp(1.1rem, calc(var(--game-tile-size) * 0.42), 1.5rem));
   font-weight: 800;
   text-transform: uppercase;
   box-shadow: 0 1px 2px var(--game-shadow-drop);
-  transition: box-shadow 150ms var(--game-ease-out);
 }
 
 .tileLetter {
@@ -93,7 +89,7 @@
 }
 
 .error {
-  --game-tile-letter: var(--game-error-border);
+  --game-tile-letter: var(--game-error-text);
   border-color: var(--game-error-border);
 }
 
