@@ -115,10 +115,10 @@ This ensures every script validates the same set of required variables and produ
 ## What Puzzle Generation
 
 - The single entry point for all puzzle management is `packages/what/scripts/game-generate.ts`
-- Normal mode: `pnpm game:generate` (gap-fill, daily cron)
+- Normal mode: `pnpm game:generate` (gap-fill, nightly cron) — generates exactly *tomorrow* from that same day's articles (1-day window, `GAME_READY_INVENTORY_DAYS` in `packages/what/src/lib/generation/candidate-validation.ts`)
 - Force-regenerate mode: `pnpm game:generate -- --force` (deletes and regenerates the window)
 - Do not create separate "regenerate" scripts — the `--force` flag handles that
-- Both the daily cron and manual force-regenerate runs share one workflow: `.github/workflows/game-generate.yml`. The schedule trigger runs gap-fill mode (bare `pnpm game:generate`); the `workflow_dispatch` trigger takes `mode` (`force` default / `gap_fill`), `days-ahead`, and optional `from`/`to`, and runs `pnpm game:generate` with the corresponding flags
+- Both the daily cron and manual force-regenerate runs share one workflow: `.github/workflows/game-generate.yml`. Two schedule entries run nightly: `0 22 * * *` UTC (primary generation) and `0 23 * * *` UTC (retry pass — a gap-fill no-op when the primary succeeded, self-healing when it didn't); both run bare `pnpm game:generate`. The `workflow_dispatch` trigger takes `mode` (`force` default / `gap_fill`), `days-ahead` (default `1`), and optional `from`/`to`, and runs `pnpm game:generate` with the corresponding flags. Run failures surface via GitHub's native workflow-notification email (no custom alerting in the workflow)
 - Live dates (today in UTC or America/Los_Angeles) are protected from force regeneration unless the target `DATABASE_URL` is a loopback host (`isDisposableDatabase` in `packages/what/src/lib/generation/generate-range.ts`) — the dev escape hatch; see `docs/what/generation-current-architecture.md`
 
 ## Authentication (Hominem)
