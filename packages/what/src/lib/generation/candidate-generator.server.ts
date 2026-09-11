@@ -189,7 +189,7 @@ function usageFromResponse(
   const usage = response.usage;
   if (usage && (usage.promptTokens || usage.completionTokens) && usage.cost == null) {
     logger.warn(
-      { event: "[GENERATION_USAGE_MISSING_COST]", usage },
+      { event: "generate.usage.missingCost", usage },
       "OpenRouter response included token usage but no cost",
     );
   }

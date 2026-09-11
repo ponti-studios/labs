@@ -17,6 +17,7 @@ import { createLogger } from "../logger.server";
 import { getDateKey, parseDate } from "../puzzle/date";
 import { GAME_ANSWER_LENGTH, normalizeGuess } from "../puzzle/rules";
 import type { PuzzleAnswerType } from "../puzzle/types";
+import type { GenerateReasonType } from "../admin/generate-copy";
 import {
   articleToFeedItem,
   callGenerationApiForCandidates,
@@ -54,6 +55,10 @@ type GenerationAttempt = {
   article: Article | null;
   llmError: string | null;
   usage: GenerationUsage;
+  /** Answers the model proposed that failed validation, with their reasons. */
+  rejected: { answer: string; reasons: GenerateReasonType[] }[];
+  /** Answers the model proposed that cited no article from the offered batch. */
+  unmatched: string[];
 };
 
 async function requestPuzzleCandidate(
@@ -65,11 +70,13 @@ async function requestPuzzleCandidate(
   systemPrompt: string,
   maxTokens: number,
   reasoningEffort: string | undefined,
+  attempt: number,
 ): Promise<GenerationAttempt> {
   const childLogger = logger.child({
     operation: "requestPuzzleCandidate",
     game: game.slug,
     dateKey,
+    attempt,
   });
   const sourceDomains = getSourceDomains(pendingArticles.map((article) => article.url));
   const { candidates, llmError, usage } = await callGenerationApiForCandidates(
@@ -86,35 +93,55 @@ async function requestPuzzleCandidate(
 
   if (llmError) {
     childLogger.error(
-      { event: "[GENERATION_API_ERROR]", error: llmError },
+      { event: "generate.api.error", error: llmError },
       "generation API call failed",
     );
     await recordGenerateFailure(game.id, dateKey, actor, "GENERATION_API_ERROR", {
       error: llmError,
     });
-    return { candidate: null, article: null, llmError, usage };
+    return {
+      candidate: null,
+      article: null,
+      llmError,
+      usage,
+      rejected: [],
+      unmatched: [],
+    };
   }
 
+  const rejected: GenerationAttempt["rejected"] = [];
+  const unmatched: string[] = [];
   try {
     for (const { candidate, validation } of candidates) {
       const article = matchArticle(candidate, pendingArticles);
       if (!article) {
-        childLogger.warn(
-          { event: "[GENERATION_CANDIDATE_UNMATCHED]", answer: candidate.answer },
+        unmatched.push(candidate.answer);
+        childLogger.debug(
+          { event: "generate.candidate.unmatched", answer: candidate.answer },
           "candidate cited a source outside the offered article batch; skipping",
         );
         continue;
       }
-      if (validation.valid) return { candidate, article, llmError: null, usage };
+      if (validation.valid) {
+        return {
+          candidate,
+          article,
+          llmError: null,
+          usage,
+          rejected,
+          unmatched,
+        };
+      }
 
-      childLogger.warn(
+      rejected.push({ answer: candidate.answer, reasons: validation.reasons });
+      childLogger.debug(
         {
-          event: "[GENERATION_CANDIDATE_REJECTED]",
+          event: "generate.candidate.rejected",
           answer: candidate.answer,
           articleId: article.id,
           reasons: validation.reasons,
         },
-        "candidate rejected",
+        `candidate rejected: ${candidate.answer}`,
       );
       await recordArticleRejection(
         article.id,
@@ -125,16 +152,23 @@ async function requestPuzzleCandidate(
   } catch (err) {
     const matchError = getErrorMessage(err);
     childLogger.error(
-      { event: "[GENERATION_MATCH_ERROR]", error: matchError },
+      { event: "generate.api.matchError", error: matchError },
       "candidate matching/scoring failed",
     );
     await recordGenerateFailure(game.id, dateKey, actor, "GENERATION_MATCH_ERROR", {
       error: matchError,
     });
-    return { candidate: null, article: null, llmError: matchError, usage };
+    return {
+      candidate: null,
+      article: null,
+      llmError: matchError,
+      usage,
+      rejected,
+      unmatched,
+    };
   }
 
-  return { candidate: null, article: null, llmError: null, usage };
+  return { candidate: null, article: null, llmError: null, usage, rejected, unmatched };
 }
 
 export type GeneratePuzzleForGameOptions = {
@@ -149,10 +183,12 @@ export async function generatePuzzleForGame(
   dateKey: string,
   options: GeneratePuzzleForGameOptions = {},
 ): Promise<PuzzleRecord | null> {
+  const startedAt = Date.now();
   const maxAttempts = options.maxAttempts ?? 3;
   const actor = options.actor ?? "system:generate";
   const maxTokens = options.maxTokens ?? getConfiguredMaxTokens();
   const reasoningEffort = options.reasoningEffort ?? getConfiguredReasoningEffort();
+  const model = getConfiguredTextModel();
   const compareGroupId = randomUUID();
   const runEnvironment = detectRunEnvironment();
   const childLogger = logger.child({
@@ -164,7 +200,7 @@ export async function generatePuzzleForGame(
   const existing = await loadPuzzleForDate(game.id, dateKey);
   if (existing) {
     childLogger.debug(
-      { event: "[SKIP_GENERATION_EXISTS]", puzzle_id: existing.id },
+      { event: "generate.puzzle.skipped", puzzleId: existing.id, reason: "already-exists" },
       "puzzle already exists for date",
     );
     return existing;
@@ -172,7 +208,10 @@ export async function generatePuzzleForGame(
 
   const date = parseDate(dateKey);
   if (!date) {
-    childLogger.error({ event: "[ERROR_INVALID_DATEKEY]", input: dateKey }, "invalid date key");
+    childLogger.error(
+      { event: "generate.pipeline.invalidDateKey", input: dateKey },
+      "invalid date key",
+    );
     await recordGenerateFailure(game.id, dateKey, actor, "ERROR_INVALID_DATEKEY");
     throw new Error(`Invalid date key: ${dateKey}`);
   }
@@ -187,7 +226,7 @@ export async function generatePuzzleForGame(
 
   if (pendingArticles.length === 0) {
     childLogger.error(
-      { event: "[ARTICLE_BACKLOG_EMPTY]" },
+      { event: "generate.pipeline.backlogEmpty" },
       "no pending articles available, cannot generate puzzle",
     );
     await recordGenerateFailure(game.id, dateKey, actor, "ARTICLE_BACKLOG_EMPTY");
@@ -195,20 +234,37 @@ export async function generatePuzzleForGame(
   }
 
   const systemPrompt = getSystemPromptForGame(game);
+  const articleTextCount = pendingArticles.filter((article) => Boolean(article.articleText)).length;
   childLogger.info(
     {
-      event: "[GENERATION_CONFIG]",
-      model: getConfiguredTextModel(),
+      event: "generate.config",
+      model,
+      reasoningEffort: reasoningEffort ?? "default",
       promptPath: game.systemPromptPath,
-      articleTextCount: pendingArticles.filter((article) => Boolean(article.articleText)).length,
+      maxAttempts,
+      excludedCount: excludedAnswers.length,
+      articleTextCount,
     },
-    "using game generation configuration",
+    `${game.slug} ${dateKey}: configured with ${articleTextCount}/${pendingArticles.length} article(s) with full text`,
   );
 
   let result: { candidate: NonNullable<GenerationAttempt["candidate"]>; article: Article } | null =
     null;
   let winningRunId: number | null = null;
+  let lastRejected: GenerationAttempt["rejected"] = [];
+  const attemptExclusions = new Set(excludedAnswers);
   for (let attempt = 0; attempt < maxAttempts && !result; attempt++) {
+    const attemptStartedAt = Date.now();
+    childLogger.debug(
+      {
+        event: "generate.attempt.started",
+        attempt: attempt + 1,
+        maxAttempts,
+        excludedCount: attemptExclusions.size,
+      },
+      `attempt ${attempt + 1}/${maxAttempts}`,
+    );
+
     const [run] = await db
       .insert(generationRuns)
       .values({
@@ -220,8 +276,8 @@ export async function generatePuzzleForGame(
         promptSource: "file",
         promptPath: game.systemPromptPath,
         promptText: systemPrompt,
-        model: getConfiguredTextModel(),
-        excludedAnswerCount: excludedAnswers.length,
+        model,
+        excludedAnswerCount: attemptExclusions.size,
         feedItemCount: pendingArticles.length,
         publishable: true,
         compareGroupId,
@@ -237,12 +293,15 @@ export async function generatePuzzleForGame(
       game,
       dateKey,
       actor,
-      excludedAnswers,
+      [...attemptExclusions],
       pendingArticles,
       systemPrompt,
       maxTokens,
       reasoningEffort,
+      attempt + 1,
     );
+    lastRejected = attemptResult.rejected;
+    for (const { answer } of attemptResult.rejected) attemptExclusions.add(answer);
 
     if (run) {
       await db
@@ -265,16 +324,43 @@ export async function generatePuzzleForGame(
       winningRunId = run?.id ?? null;
       break;
     }
+
+    // No usable candidate this attempt (API error, all candidates rejected, or
+    // none matched an offered article). Rejected answers are now excluded, so
+    // the next attempt can only improve.
+    childLogger.warn(
+      {
+        event: "generate.attempt.failed",
+        attempt: attempt + 1,
+        maxAttempts,
+        durationMs: Date.now() - attemptStartedAt,
+        apiError: attemptResult.llmError ?? undefined,
+        rejectedCount: attemptResult.rejected.length,
+        rejectedReasons: [...new Set(attemptResult.rejected.flatMap((item) => item.reasons))],
+        unmatchedCount: attemptResult.unmatched.length,
+      },
+      `attempt ${attempt + 1}/${maxAttempts} produced no usable candidate`,
+    );
+
     if (attempt < maxAttempts - 1)
       await new Promise((resolve) => setTimeout(resolve, 2 ** attempt * 1000));
   }
 
   if (!result) {
     childLogger.error(
-      { event: "[GENERATION_EXHAUSTED]" },
+      {
+        event: "generate.puzzle.failed",
+        maxAttempts,
+        rejectedCount: lastRejected.length,
+        rejectedReasons: [...new Set(lastRejected.flatMap((item) => item.reasons))],
+        durationMs: Date.now() - startedAt,
+      },
       "puzzle generation failed after all attempts",
     );
-    await recordGenerateFailure(game.id, dateKey, actor, "GENERATION_EXHAUSTED", { maxAttempts });
+    await recordGenerateFailure(game.id, dateKey, actor, "GENERATION_EXHAUSTED", {
+      maxAttempts,
+      rejected: lastRejected,
+    });
     return null;
   }
 
@@ -293,7 +379,7 @@ export async function generatePuzzleForGame(
       detail: candidate.detail,
       normalizedAnswer: normalizeGuess(candidate.answer),
       promptPath: game.systemPromptPath,
-      model: getConfiguredTextModel(),
+      model,
       generationRunId: winningRunId,
       publishedAt: now,
       updatedAt: now,
@@ -302,8 +388,15 @@ export async function generatePuzzleForGame(
 
   await markArticleUsed(article.id);
   childLogger.info(
-    { event: "[PUZZLE_GENERATED]", puzzle_id: inserted.id, answer: candidate.answer },
-    "puzzle generated",
+    {
+      event: "generate.puzzle.created",
+      puzzleId: inserted.id,
+      answer: candidate.answer,
+      articleId: article.id,
+      model,
+      durationMs: Date.now() - startedAt,
+    },
+    `puzzle #${inserted.id} created: ${candidate.answer}`,
   );
   return { ...inserted, article } as PuzzleRecord;
 }

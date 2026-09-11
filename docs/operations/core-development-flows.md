@@ -22,7 +22,7 @@ Use the detailed [environment configuration contract](environment-configuration.
 for the required scan and delivery matrix.
 
 1. Add the variable to the owning server environment schema. For What, this is
-   `packages/what/src/lib/server/env.ts`; do not create an ad-hoc validator.
+   `packages/what/src/lib/infrastructure/env.ts`; do not create an ad-hoc validator.
 2. Add the variable name and a safe local value to the package `.env.example`.
 3. Search the repository for existing names and consumers. Reuse the canonical
    name instead of adding aliases such as `WHAT_APP_URL` and `WHAT_APP_ORIGIN`.
@@ -105,7 +105,8 @@ together. Confirm:
 - the deploy context contains every file copied by the Dockerfile;
 - the staged Railway config points to the intended package Dockerfile;
 - the start command exists in the built image;
-- `deploy_path` matches the Dockerfile's required context;
+- the staged `config_path` (`packages/<pkg>/railway.json`) matches the
+  package Dockerfile the Railway service is configured to use;
 - CI runs before database deployment;
 - database deployment runs before application deployment;
 - workflow-run jobs use the source SHA that was tested;

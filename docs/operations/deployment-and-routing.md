@@ -37,7 +37,7 @@ The failures were distributed across several boundaries:
 
 ### URL and environment contract
 
-- `packages/what/src/lib/server/env.ts` owns What's server environment schema.
+- `packages/what/src/lib/infrastructure/env.ts` owns What's server environment schema.
 - Labs redirects use `WHAT_APP_URL`; browser-facing Labs links use
   `VITE_WHAT_APP_URL`.
 - Production values for both are `https://what.ponti.io`.
@@ -68,13 +68,17 @@ Before changing a deploy workflow, inspect all three together:
 - the service Dockerfile;
 - the service's `railway.json`;
 - `.github/workflows/reusable-railway-deploy.yml` and the caller's
-  `deploy_path`.
+  `config_path`.
 
 For this workspace, the Labs and What Dockerfiles require the monorepo root as
-their build context. Their workflows therefore deploy with an empty
-`deploy_path`; `railway.json` selects the package Dockerfile. A package
-subdirectory is only a valid deploy root if the Dockerfile can build without
-root workspace files.
+their build context (they copy root workspace files such as
+`pnpm-workspace.yaml`). The reusable workflow stages the caller's `config_path`
+(`packages/labs/railway.json` or `packages/what/railway.json`) over
+`railway.json`, then runs `railway up --service <service> --detach --ci` with
+`RAILWAY_TOKEN`, targeting the `RAILWAY_SERVICE` secret (`RAILWAY_SERVICE` for
+Labs, `WHAT_RAILWAY_SERVICE` for What in `ci.yml`). A package subdirectory is
+only a valid deploy root if the Dockerfile can build without root workspace
+files.
 
 ### CI and migration ordering contract
 
@@ -141,7 +145,7 @@ When a public game link fails, diagnose from the outside inward:
 2. Inspect the deployed service's environment variables without printing
    secrets.
 3. Check the Railway deployment status and build logs for the exact commit.
-4. Compare the workflow's `deploy_path` with the Dockerfile's required context.
+4. Compare the workflow's `config_path` with the Dockerfile's required context.
 5. Only then debug route code, loaders, or database behavior.
 
 This order prevents spending time changing application code when the request is

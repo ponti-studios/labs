@@ -11,7 +11,6 @@
     "lint:check": "pnpm --filter @pontistudios/labyrinth lint:check",
     "test": "pnpm --filter @pontistudios/labyrinth test",
     "test:shared": "pnpm --filter @pontistudios/ai test",
-    "test:labs-game": "pnpm --filter @pontistudios/labyrinth test:what",
     "typecheck:labs": "pnpm --filter @pontistudios/labyrinth typecheck",
     "typecheck:shared": "pnpm --filter @pontistudios/ai typecheck && pnpm --filter @pontistudios/db typecheck && pnpm --filter @pontistudios/env typecheck",
     "typecheck": "pnpm --filter @pontistudios/labyrinth exec react-router typegen && pnpm --filter what exec react-router typegen && tsc -b tsconfig.json",

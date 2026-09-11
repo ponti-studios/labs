@@ -39,6 +39,7 @@ describe("generation runner", () => {
       toKey: "2026-08-15",
       dateKeys: ["2026-08-13", "2026-08-14", "2026-08-15"],
       force: false,
+      allowLiveDates: false,
     };
     getExistingDateKeysMock.mockResolvedValue(["2026-08-14", "2026-08-20"]);
 
@@ -69,6 +70,7 @@ describe("generation runner", () => {
       toKey: "2026-08-13",
       dateKeys: ["2026-08-13"],
       force: false,
+      allowLiveDates: false,
     };
     getExistingDateKeysMock.mockResolvedValue([]);
     getPendingArticlesForGameMock.mockResolvedValue([]);

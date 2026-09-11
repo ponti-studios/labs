@@ -86,14 +86,14 @@ export const STUDIO_TRANSLATIONS_EN = {
         shortDescription:
           "Most apps make you decide what a thought is before saving it. Omiro just captures it.",
         solution:
-          "A capture-first iOS app built for ADHD and neurodivergent knowledge workers — every thought starts as a note, then becomes a task, a chat, or connected context, without slowing down to classify it first.",
+          "A capture-first iOS app built for neurodivergent knowledge workers — every thought starts as a note, then becomes a task, a chat, or connected context, without slowing down to classify it first.",
         problem:
-          "Most productivity tools force you to choose a structure — task, note, event — before you know what you're trying to say. That friction is especially costly for ADHD and neurodivergent minds, where a slow capture flow means the thought is gone before it's saved. Omiro's one hard rule: capture can never be slower than the native Notes app.",
+          "Most productivity tools force you to choose a structure — task, note, event — before you know what you're trying to say. That friction is especially costly for neurodivergent minds, where a slow capture flow means the thought is gone before it's saved. Omiro's one hard rule: capture can never be slower than the native Notes app.",
         keyFeatures: [
           "Capture a thought in one tap — notes, tasks, and chats all start from the same composer",
           "Turn a note into a task or a reasoned conversation without losing the original capture",
           "Keep working offline with a local-first architecture",
-          "Built for ADHD and neurodivergent knowledge workers first, everyone else second",
+          "Built for neurodivergent minds",
         ],
         technicalChallenges: [
           "Reconciling offline writes without losing user changes",

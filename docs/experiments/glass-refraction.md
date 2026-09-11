@@ -7,7 +7,7 @@ light passes through it, the atoms bend and refract the light rays, creating the
 see: distortion, color separation, and the illusion of depth. This doc explains how the
 [`/experiments/glass`](https://ponti.studio/experiments/glass) demo simulates those phenomena
 using SVG filters, a Canvas-generated displacement map, and a little mathematics — see
-[`LiquidGlass.tsx`](../../app/components/LiquidGlass.tsx) for the implementation.
+[`LiquidGlass.tsx`](../../packages/labs/app/components/LiquidGlass.tsx) for the implementation.
 
 ## Part 1: Refraction & Snell's Law
 

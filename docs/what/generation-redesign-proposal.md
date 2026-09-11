@@ -1,6 +1,21 @@
+---
+title: What Generation Redesign: Freshness-First Puzzle Selection
+summary: Proposal to replace the 7-day-ahead gap-fill buffer with same-day, per-game generation and a bounded freshness ladder.
+type: proposal
+status: proposed
+owner: charlesponti
+tags: [generation, llm, product-engineering, freshness]
+related: [./generation-current-architecture.md, ./candidate-generation.md]
+updated: 2026-09-10
+---
+
 # What Generation Redesign: Freshness-First Puzzle Selection
 
-Status: **draft sketch for discussion, not a spec.** This document proposes no implementation itself — it does not commit to or describe any code change on its own.
+Status: **proposal — not implemented.** The shipped pipeline still uses the
+7-day-ahead gap-fill buffer this document critiques; see
+[generation-current-architecture.md](./generation-current-architecture.md) for
+the system as it exists today. This document proposes no implementation
+itself — it does not commit to or describe any code change on its own.
 
 Author's note: this is a from-first-principles rethink of *when and how What
 picks the article a puzzle is based on*. It intentionally does not try to

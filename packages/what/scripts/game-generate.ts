@@ -1,14 +1,16 @@
 import "dotenv/config";
 import { parseArgs } from "node:util";
 
+import { getConfiguredTextModel } from "@pontistudios/ai";
 import { closeDb } from "@pontistudios/db";
 import { withGenerateLock } from "~/lib/infrastructure/advisory-lock.server";
 
 import { getErrorMessage } from "../src/lib/errors";
 import { createLogger } from "../src/lib/logger.server";
 import { CIRCUIT_BREAKER_THRESHOLD, createCircuitBreaker } from "../src/lib/generation/circuit-breaker";
+import { detectRunEnvironment } from "../src/lib/generation/generate.server";
 import { getDateKey } from "../src/lib/puzzle/date";
-import { resolveGenerateRange } from "../src/lib/generation/generate-range";
+import { resolveGenerateRange, isDisposableDatabase } from "../src/lib/generation/generate-range";
 import { GAME_READY_INVENTORY_DAYS, runGenerateRange } from "../src/lib/generation/generation-runner";
 import { getActiveGames } from "../src/lib/data/games.server";
 import {
@@ -50,10 +52,12 @@ async function main() {
 
   const args = parseGenerateArgs();
   const runDateKey = getDateKey(new Date());
+  const allowLiveDates = isDisposableDatabase();
   const range = resolveGenerateRange({
     force: args.force,
     daysAhead: args.daysAhead,
     todayKey: runDateKey,
+    allowLiveDates,
     ...(args.from !== undefined ? { from: args.from } : {}),
     ...(args.to !== undefined ? { to: args.to } : {}),
   });
@@ -62,12 +66,28 @@ async function main() {
   const generateLogger = logger.child({
     operation: "generate",
     runDateKey,
-    force: range.force,
-    from: range.fromKey,
-    to: range.toKey,
   });
 
-  generateLogger.info({ event: "[GENERATE_START]" }, "starting generate run");
+  if (allowLiveDates) {
+    generateLogger.warn(
+      { event: "generate.run.liveGuardDisabled", reason: "local database" },
+      "local database detected — live-date protection is OFF; this run may delete or regenerate today's live dates",
+    );
+  }
+  const runStartedAt = Date.now();
+  generateLogger.info(
+    {
+      event: "generate.run.started",
+      force: range.force,
+      mode: range.force ? "force" : "gap_fill",
+      from: range.fromKey,
+      to: range.toKey,
+      environment: detectRunEnvironment(),
+      model: getConfiguredTextModel(),
+      allowLive: range.allowLiveDates,
+    },
+    `starting generate run (${range.dateKeys.length} date[s] from ${range.fromKey} to ${range.toKey})`,
+  );
   await backfillPuzzlePublishedAt();
   const { expireGenerations, reapStaleGenerations } =
     await import("../src/lib/admin/generate.server");
@@ -84,10 +104,11 @@ async function main() {
     let totalSkipped = 0;
     const circuit = createCircuitBreaker();
     for (const game of games) {
+      const gameStartedAt = Date.now();
       const result = await runGenerateRange(game, range, circuit);
       if (result.aborted) {
         generateLogger.error(
-          { event: "[GENERATE_ABORTED]", game: game.slug, aborted: result.aborted },
+          { event: "generate.game.aborted", game: game.slug, aborted: result.aborted },
           `${game.slug}: regenerate aborted`,
         );
         throw new Error(`${game.slug}: regenerate aborted (${result.aborted.code})`);
@@ -103,21 +124,22 @@ async function main() {
       totalSkipped += result.skippedCount;
       generateLogger.info(
         {
-          event: "[GENERATE_GAME_COMPLETE]",
+          event: "generate.game.completed",
           game: game.slug,
           force: range.force,
+          durationMs: Date.now() - gameStartedAt,
           deletedCount: result.deletedCount,
           generatedCount: result.generatedCount,
           failedCount: result.failedCount,
           skippedCount: result.skippedCount,
           inventoryDepth,
         },
-        `${game.slug}: ${result.generatedCount} generated`,
+        `${game.slug}: ${result.generatedCount} generated, ${result.failedCount} failed, ${result.skippedCount} skipped`,
       );
       if (result.circuitOpened) {
         generateLogger.error(
           {
-            event: "[GENERATE_CIRCUIT_OPEN]",
+            event: "generate.circuit.opened",
             game: game.slug,
             consecutiveFailures: circuit.consecutiveFailures,
           },
@@ -137,7 +159,10 @@ async function main() {
   });
 
   if (!locked.ok) {
-    generateLogger.error({ event: "[LOCK_BUSY]" }, "another generate run holds the lock");
+    generateLogger.error(
+      { event: "generate.run.lockBusy" },
+      "another generate run holds the lock; skipping",
+    );
     throw new Error("lock_busy");
   }
 
@@ -145,8 +170,10 @@ async function main() {
     locked.value;
   generateLogger.info(
     {
-      event: "[GENERATE_COMPLETE]",
+      event: "generate.run.completed",
       force: range.force,
+      mode: range.force ? "force" : "gap_fill",
+      durationMs: Date.now() - runStartedAt,
       games,
       deleted: totalDeleted,
       generated: totalGenerated,
@@ -154,7 +181,7 @@ async function main() {
       skipped: totalSkipped,
       circuitOpened,
     },
-    `generate complete across ${games.length} game(s): ${totalGenerated} generated`,
+    `generate complete across ${games.length} game(s): ${totalGenerated} generated, ${totalFailed} failed, ${totalSkipped} skipped`,
   );
 
   if (circuitOpened) {
@@ -166,11 +193,12 @@ async function main() {
 }
 
 if (!process.env.VITEST) {
+  const errorStartedAt = Date.now();
   try {
     await main();
   } catch (err) {
     logger.error(
-      { event: "[GENERATE_FAILED]", error: getErrorMessage(err) },
+      { event: "generate.run.failed", error: getErrorMessage(err), durationMs: Date.now() - errorStartedAt },
       "generate run failed",
     );
     process.exit(1);
