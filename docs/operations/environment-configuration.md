@@ -15,10 +15,9 @@ the corresponding value is available at the phase where that code executes.
 | Public browser configuration | Build and browser execution | Treat as public; never put credentials or private URLs in it |
 
 The same logical value may need two names and two delivery paths. For example,
-Labs uses:
-
-- `WHAT_APP_URL` for server-side redirects at runtime;
-- `VITE_WHAT_APP_URL` for browser-facing links embedded by Vite at build time.
+What reads `WHAT_APP_URL` server-side at runtime for auth return URLs, while
+Labs links to the What app through `VITE_WHAT_APP_URL`, which Vite embeds in
+the browser bundle at build time.
 
 Do not assume that configuring the runtime variable makes the Vite variable
 available to the compiled bundle.
@@ -98,13 +97,12 @@ secrets.
 
 | Service | Variable | Phase | Expected production value |
 | --- | --- | --- | --- |
-| Labs | `WHAT_APP_URL` | Runtime | `https://what.ponti.io` |
 | Labs | `VITE_WHAT_APP_URL` | Docker/Vite build and browser | `https://what.ponti.io` |
 | What | `WHAT_APP_URL` | Runtime | `https://what.ponti.io` |
-| What | `PORTLESS_URL` | Local runtime only | Per-worktree `https://<name>.lvh.me:4200` |
+| What | `PORTLESS_URL` | Local runtime only | Per-worktree `https://<name>.lvh.me` |
 | What | `GAME_ADMIN_EMAILS` | Runtime admin access | Comma-separated Hominem admin email addresses; required in production |
 
-Local examples use `https://what.lvh.me:4200` for the What app under portless.
+Local examples use `https://what.lvh.me` for the What app under portless.
 Portless injects `PORTLESS_URL` for each worktree, and What uses it for
 worktree-specific auth return URLs at runtime. If a different service consumes
 one of these values, update the table and the owning package example together.

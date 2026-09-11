@@ -26,7 +26,7 @@ import { runScript } from "./_shared/run-script";
  */
 
 const GAME_SLUG = "reality";
-const DEFAULT_BASE_URL = "https://labyrinth.lvh.me:4200";
+const DEFAULT_BASE_URL = "https://what.lvh.me";
 // Matches the `screenshots: ["/screenshots/..."]` paths in app/data/projects.ts,
 // which are served from this app's own /public directory.
 const DEFAULT_OUT_DIR = path.resolve(
@@ -111,7 +111,7 @@ async function captureScreenshots(opts: Options) {
   try {
     const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 
-    await resetBoard(page, `${opts.baseUrl}/games/game`);
+    await resetBoard(page, `${opts.baseUrl}/${GAME_SLUG}`);
 
     // Play every guess except the last (the answer) first, so the board shows
     // real yellow/gray feedback without being solved yet.
@@ -146,7 +146,7 @@ async function captureSolveVideo(opts: Options) {
   });
   const page = await context.newPage();
 
-  await resetBoard(page, `${opts.baseUrl}/games/game`);
+  await resetBoard(page, `${opts.baseUrl}/${GAME_SLUG}`);
   for (const guess of guesses) await typeWord(page, guess);
   await page.waitForTimeout(2500); // hold on the solved state
 

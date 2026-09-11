@@ -1,9 +1,8 @@
 # Deployment and routing lessons
 
 This document records the deployment lessons from moving What out of Labs and
-making Labs' legacy game URLs redirect to the standalone What app. Future
-agents should treat these rules as part of the deployment contract, not as
-optional troubleshooting advice.
+removing Labs' legacy game URLs. Future agents should treat these rules as part
+of the deployment contract, not as optional troubleshooting advice.
 
 ## What we missed
 
@@ -38,10 +37,9 @@ The failures were distributed across several boundaries:
 ### URL and environment contract
 
 - `packages/what/src/lib/infrastructure/env.ts` owns What's server environment schema.
-- Labs redirects use `WHAT_APP_URL`; browser-facing Labs links use
-  `VITE_WHAT_APP_URL`.
-- Production values for both are `https://what.ponti.io`.
-- Local examples use `https://what.lvh.me:4200`; portless overrides the What
+- Labs' browser-facing links to the standalone What app use `VITE_WHAT_APP_URL`.
+- Production value is `https://what.ponti.io`.
+- Local examples use `https://what.lvh.me`; portless overrides the What
   runtime return origin with its worktree-specific `PORTLESS_URL`.
 - Do not derive these URLs from `NODE_ENV`, hard-code a Railway hostname, or
   introduce a second similarly named variable without updating the owning env
@@ -53,10 +51,9 @@ The failures were distributed across several boundaries:
 ### Routing contract
 
 - What owns the game UI, game API, auth return handling, and game persistence.
-- Labs does not proxy or recreate What routes.
-- Any intentionally retained Labs game entry point must be an explicit redirect
-  route, preserve only the supported query parameters, and be tested with both
-  local and production origins.
+- Labs does not proxy or recreate What routes and registers no legacy game
+  entry points; the `/games/realitea` and `/games/what` redirects were removed.
+  Links to the game go to `VITE_WHAT_APP_URL`.
 - A route module reused by multiple React Router paths needs distinct route IDs.
 - `tz` is not a supported query parameter. Timezone state is transported in the
   `what_timezone` cookie and invalid or missing values resolve to `UTC`.
@@ -123,16 +120,15 @@ Check the complete chain, in order:
 2. The production migration job is green.
 3. The expected Labs/What Railway deployment exists for that same SHA and is
    actually `SUCCESS`, not merely submitted or detached.
-4. Public smoke tests follow redirects and inspect the final URL:
+4. Public smoke tests hit the standalone game directly:
 
    ```sh
-   curl -sS -D - -o /dev/null https://labs.ponti.io/games/realitea
-   curl -sS -D - -o /dev/null https://labs.ponti.io/games/what
    curl -sS -D - -o /dev/null https://what.ponti.io/
    ```
 
-   The retained Labs redirect should point to `https://what.ponti.io/` in
-   production. It must not point to a `*.up.railway.app` hostname.
+   Labs registers no legacy game redirects; `/games/realitea` and `/games/what`
+   return 404 (the remaining `/games/*` routes — Cards, Tetris — are
+   Labs-owned experiments).
 5. Verify the auth flow's return target and confirm no `tz` query parameter is
    added by the game API. Verify timezone behavior with a valid,
    missing/malformed, and invalid `what_timezone` cookie.

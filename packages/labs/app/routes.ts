@@ -50,10 +50,9 @@ const featureRoutes = [
   ]),
 
   // Games
-  // The player UI and game administration now live in the standalone `what`
-  // app. Keep the legacy entry points as redirects to the standalone app.
-  route("/games/realitea", "routes/redirects/game.ts"),
-  route("/games/what", "routes/redirects/game.ts", { id: "games-what-redirect" }),
+  // The player UI and game administration live in the standalone `what` app;
+  // Labs links to it externally via VITE_WHAT_APP_URL and no longer registers
+  // legacy game entry points.
   route("/games/cards", "routes/games/cards.tsx"),
   route("/games/tetris", "routes/games/tetris.tsx"),
 ] satisfies RouteConfig;

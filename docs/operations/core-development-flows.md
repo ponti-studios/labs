@@ -145,10 +145,10 @@ For every production-affecting change, verify in order:
 5. The primary user flow works from the public entry point through auth, API,
    cookies, and persistence.
 
-For a redirect, the minimum check is:
+For the standalone game, the minimum check is:
 
 ```sh
-curl -sS -D - -o /dev/null https://labs.ponti.io/games/realitea
+curl -sS -D - -o /dev/null https://what.ponti.io/
 ```
 
 For failures, diagnose outside-in: public response, deployed variables,

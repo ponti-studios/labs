@@ -11,7 +11,7 @@ import { getGameBySlug } from "../src/lib/data/games.server";
 import { loadMostRecentPuzzle, loadPuzzleForDate } from "../src/lib/data/puzzles.server";
 import { runScript } from "./_shared/run-script";
 
-const DEFAULT_BASE_URL = "https://labyrinth.lvh.me:4200";
+const DEFAULT_BASE_URL = "https://what.lvh.me";
 const DEFAULT_OUT_DIR = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   "../tmp/game-e2e",
@@ -136,7 +136,7 @@ async function run(opts: Options) {
 
   const { answer } = await resolveTodaysAnswer();
   const probeWord = answer === "ARISE" ? "STARE" : "ARISE";
-  const gameUrl = `${opts.baseUrl}/games/game`;
+  const gameUrl = `${opts.baseUrl}/${DEFAULT_GAME_SLUG}`;
 
   const browser = await chromium.launch({ headless: opts.headless });
   try {

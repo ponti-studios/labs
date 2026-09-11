@@ -93,20 +93,20 @@ describe("Game ↔ Hominem authentication boundary", () => {
     process.env.WHAT_APP_URL = "https://what.ponti.io";
 
     const url = new URL(
-      loginUrl(new Request("http://internal:3000/games/game"), "https://internal:3000/games/game"),
+      loginUrl(new Request("http://internal:3000/reality"), "https://internal:3000/reality"),
     );
     expect(url.origin).toBe("https://api.ponti.io");
     expect(url.pathname).toBe("/login");
-    expect(url.searchParams.get("next")).toBe("https://what.ponti.io/games/game");
+    expect(url.searchParams.get("next")).toBe("https://what.ponti.io/reality");
   });
 
   it("uses the portless worktree URL for the login return target", async () => {
     process.env.HOMINEM_API_URL = "https://api.ponti.io";
-    process.env.WHAT_APP_URL = "https://what.lvh.me:4200";
-    process.env.PORTLESS_URL = "https://feature-fix.lvh.me:4200";
+    process.env.WHAT_APP_URL = "https://what.lvh.me";
+    process.env.PORTLESS_URL = "https://feature-fix.lvh.me";
 
-    const url = new URL(loginUrl(new Request("https://feature-fix.lvh.me:4200/reality")));
-    expect(url.searchParams.get("next")).toBe("https://feature-fix.lvh.me:4200/reality");
+    const url = new URL(loginUrl(new Request("https://feature-fix.lvh.me/reality")));
+    expect(url.searchParams.get("next")).toBe("https://feature-fix.lvh.me/reality");
   });
 
   it("normalizes React Router data URLs and drops timezone query parameters", () => {

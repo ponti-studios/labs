@@ -80,6 +80,7 @@ export function GameBoard({
         gameSlug={gameSlug}
         topics={topics}
         onTopicChange={onTopicChange}
+        dateKey={puzzle.dateKey}
       />
 
       {isOffline && (
