@@ -5,14 +5,19 @@ import { runScript } from "./_shared/run-script";
 const logger = createLogger();
 
 async function main() {
+  const startedAt = Date.now();
   const ingestLogger = logger.child({ operation: "gameIngest" });
-  ingestLogger.info({ event: "[INGEST_START]" }, "starting feed ingest run");
+  ingestLogger.info({ event: "ingest.run.started" }, "starting feed ingest run");
 
   await ensureGameCatalog();
   const insertedCount = await ingestAllActiveFeeds();
 
   ingestLogger.info(
-    { event: "[INGEST_COMPLETE]", insertedCount },
+    {
+      event: "ingest.run.completed",
+      insertedCount,
+      durationMs: Date.now() - startedAt,
+    },
     `ingest complete: ${insertedCount} new article(s)`,
   );
 }

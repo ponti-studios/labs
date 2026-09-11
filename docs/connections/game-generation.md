@@ -15,7 +15,7 @@ Generation here is two separable problems: assembling a *daily puzzle* out of ex
 
 ## Problem 1: daily assembly — solved
 
-Prototyped in `scripts/connections/` (merged in [PR #236](https://github.com/ponti-studios/labs/pull/236)), pure JS/TS, no database.
+Prototyped in `packages/labs/scripts/connections/` (merged in [PR #236](https://github.com/ponti-studios/labs/pull/236)), pure JS/TS, no database.
 
 **Model:** a category group (4 words, a label, a difficulty tier, and `riskWords` — words not in the group that a solver could plausibly mistake for members) is generated independently of any specific day. A daily puzzle is one group picked per difficulty tier (yellow/green/blue/purple), assembled at serve time, such that:
 
@@ -23,9 +23,9 @@ Prototyped in `scripts/connections/` (merged in [PR #236](https://github.com/pon
 - no word in one group is a risk word of another chosen group,
 - no group was used within a reuse cooldown window.
 
-**Picker:** randomized backtracking search over shuffled per-tier candidate lists (`scripts/connections/picker.ts`). Collision-free by construction, not by post-hoc filtering.
+**Picker:** randomized backtracking search over shuffled per-tier candidate lists (`packages/labs/scripts/connections/picker.ts`). Collision-free by construction, not by post-hoc filtering.
 
-**Bank sizing math:** with 4 groups used per day, a clean non-repeating rotation needs `groups per day × cooldown days` = `4 × 180 = 720` groups as the floor — one full pass through the bank *is* the cooldown period. Measured via simulation (`scripts/connections/simulate.ts`) at that exact floor: zero cooldown violations and zero failures across two full simulated years. Below that floor, the failure mode is running out of eligible groups for a tier, not backtracking cost — performance was never the bottleneck; at realistic scale it's ~4 attempts and <1ms per pick.
+**Bank sizing math:** with 4 groups used per day, a clean non-repeating rotation needs `groups per day × cooldown days` = `4 × 180 = 720` groups as the floor — one full pass through the bank *is* the cooldown period. Measured via simulation (`packages/labs/scripts/connections/simulate.ts`) at that exact floor: zero cooldown violations and zero failures across two full simulated years. Below that floor, the failure mode is running out of eligible groups for a tier, not backtracking cost — performance was never the bottleneck; at realistic scale it's ~4 attempts and <1ms per pick.
 
 This part of the system doesn't change based on where the groups came from. It consumes `CategoryGroup[]`, full stop.
 

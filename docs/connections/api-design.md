@@ -51,7 +51,7 @@ Boring on purpose. No group labels, no grouping, no difficulty-to-word mapping �
 }
 ```
 
-This is exactly the shape `toGrid()` in `scripts/connections/picker.ts` already produces (4 groups flattened and shuffled into 16 words) — the picker's output maps directly onto this payload with no translation layer needed beyond assigning stable indexes.
+This is exactly the shape `toGrid()` in `packages/labs/scripts/connections/picker.ts` already produces (4 groups flattened and shuffled into 16 words) — the picker's output maps directly onto this payload with no translation layer needed beyond assigning stable indexes.
 
 ### Guess — `POST /games/connections/:id/guess`
 

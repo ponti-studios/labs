@@ -13,8 +13,11 @@ import { recordAdminAction } from "../data/admin-actions.server";
 import { countAttemptsByDate } from "../data/attempts.server";
 import { getPendingArticlesForGame } from "../data/articles.server";
 import { deletePuzzlesInRange, getExistingDateKeys } from "../data/puzzles.server";
+import { createLogger } from "../logger.server";
 
 export const GENERATE_ACTOR = "system:generate";
+
+const logger = createLogger();
 
 export async function planGapFill(game: GamesTopic, range: Extract<GenerateRange, { ok: true }>) {
   const existingKeys = await getExistingDateKeys(game.id, range.fromKey, range.toKey);
@@ -32,7 +35,7 @@ export async function planScopedRegenerate(
   now = new Date(),
 ) {
   const liveInRange = range.dateKeys.filter((dateKey) => isLiveDate(dateKey, now));
-  if (liveInRange.length > 0)
+  if (!range.allowLiveDates && liveInRange.length > 0)
     return { ok: false as const, code: "LIVE_DATE" as const, liveInRange };
   const attemptCounts = await countAttemptsByDate(game.id, range.dateKeys);
   const datesWithAttempts = [...attemptCounts.entries()].filter(([, count]) => count > 0);
@@ -63,6 +66,7 @@ async function recordCircuitOpen(
 }
 
 async function generateDates(game: GamesTopic, dateKeys: string[], circuit: CircuitBreaker) {
+  const childLogger = logger.child({ operation: "generateDates", game: game.slug });
   let generatedCount = 0;
   let failedCount = 0;
   let skippedCount = 0;
@@ -70,11 +74,19 @@ async function generateDates(game: GamesTopic, dateKeys: string[], circuit: Circ
   for (const dateKey of dateKeys) {
     if (circuit.open) {
       skippedCount++;
+      childLogger.debug(
+        { event: "generate.puzzle.skipped", dateKey, reason: "circuit-open" },
+        `${game.slug} ${dateKey}: skipped (circuit open)`,
+      );
       continue;
     }
     const pendingArticles = await getPendingArticlesForGame(game, 1);
     if (pendingArticles.length === 0) {
       skippedCount++;
+      childLogger.debug(
+        { event: "generate.puzzle.skipped", dateKey, reason: "no-articles" },
+        `${game.slug} ${dateKey}: skipped (no pending articles)`,
+      );
       continue;
     }
     const puzzle = await generatePuzzleForGame(game, dateKey, { actor: GENERATE_ACTOR });
@@ -93,6 +105,7 @@ export async function runGenerateRange(
   range: Extract<GenerateRange, { ok: true }>,
   circuit: CircuitBreaker = createCircuitBreaker(),
 ) {
+  const childLogger = logger.child({ operation: "generateRange", game: game.slug });
   if (range.force) {
     const plan = await planScopedRegenerate(game, range);
     if (!plan.ok) {
@@ -102,6 +115,10 @@ export async function runGenerateRange(
         payload: { from: range.fromKey, to: range.toKey, code: plan.code },
         result: plan,
       });
+      childLogger.error(
+        { event: "generate.game.aborted", code: plan.code },
+        `${game.slug}: force regenerate denied (${plan.code})`,
+      );
       return {
         deletedCount: 0,
         generatedCount: 0,
@@ -112,6 +129,16 @@ export async function runGenerateRange(
       };
     }
     const deletedCount = await deletePuzzlesInRange(game.id, range.fromKey, range.toKey);
+    childLogger.info(
+      {
+        event: "generate.game.planned",
+        mode: "force",
+        from: range.fromKey,
+        to: range.toKey,
+        dateCount: plan.dateKeys.length,
+      },
+      `${game.slug}: force regenerate ${plan.dateKeys.length} date(s)`,
+    );
     const result = await generateDates(game, range.dateKeys, circuit);
     await recordAdminAction({
       kind: "gap_fill",
@@ -123,6 +150,17 @@ export async function runGenerateRange(
   }
 
   const plan = await planGapFill(game, range);
+  childLogger.info(
+    {
+      event: "generate.game.planned",
+      mode: "gap_fill",
+      from: range.fromKey,
+      to: range.toKey,
+      dateCount: plan.dateKeys.length,
+      missingCount: plan.missingKeys.length,
+    },
+    `${game.slug}: gap fill ${plan.missingKeys.length} of ${plan.dateKeys.length} date(s)`,
+  );
   const result = await generateDates(game, plan.missingKeys, circuit);
   await recordAdminAction({
     kind: "gap_fill",

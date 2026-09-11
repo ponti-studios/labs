@@ -44,6 +44,7 @@ export function computeHealthStatus(
 async function main() {
   LabyrinthServerEnv.parse(process.env);
 
+  const startedAt = Date.now();
   const now = new Date();
   const dateKey = getDateKey(now);
   const healthLogger = logger.child({
@@ -67,11 +68,11 @@ async function main() {
     );
     if (result.status !== "OK") degraded = true;
     for (const issue of result.issues) {
-      healthLogger.warn({ event: "[HEALTH_ISSUE]", game: game.slug }, issue);
+      healthLogger.warn({ event: "health.issue", game: game.slug }, issue);
     }
     healthLogger.info(
       {
-        event: "[HEALTH_GAME_COMPLETE]",
+        event: "health.game.completed",
         game: game.slug,
         status: result.status,
         hasTodaysPuzzle: !!todaysPuzzle,
@@ -80,6 +81,15 @@ async function main() {
       `${game.slug} health: ${result.status}`,
     );
   }
+  healthLogger.info(
+    {
+      event: "health.run.completed",
+      gameCount: games.length,
+      status: degraded ? "DEGRADED" : "OK",
+      durationMs: Date.now() - startedAt,
+    },
+    `health check complete: ${degraded ? "DEGRADED" : "OK"}`,
+  );
   if (degraded) process.exit(1);
 }
 
@@ -88,7 +98,7 @@ if (!process.env.VITEST) {
     await main();
   } catch (err) {
     logger.error(
-      { event: "[HEALTH_CHECK_FAILED]", error: getErrorMessage(err) },
+      { event: "health.run.failed", error: getErrorMessage(err) },
       "health check failed",
     );
     process.exit(1);

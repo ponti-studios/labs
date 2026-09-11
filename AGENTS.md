@@ -76,7 +76,7 @@ schema file → drizzle-kit generate → migration SQL → drizzle-kit migrate �
 
 **Required workflow for any schema change:**
 
-1. Edit a schema file in `app/lib/server/db/schema/` (e.g. `base.ts`, `what.ts`)
+1. Edit a schema file in `packages/db/src/schema/` (e.g. `base.ts`, `game.ts`, `search.ts`)
 2. Run `pnpm db:generate` to create the migration SQL and snapshot
 3. Run `pnpm db:migrate` to apply locally and verify
 4. Commit the schema change, generated migration file, and snapshot together
@@ -91,7 +91,7 @@ If a column or table is missing, the appropriate migration was never applied —
 | `pnpm db:generate`   | Generate a migration from schema changes    |
 | `pnpm db:migrate`    | Apply pending migrations to the target DB   |
 | `drizzle.config.ts`  | Drizzle configuration (schema glob, output) |
-| `app/lib/server/db/schema/` | All table schema files live here     |
+| `packages/db/src/schema/` | All table schema files live here     |
 
 ### What to do when a migration was skipped in production
 
@@ -105,7 +105,7 @@ The purpose of this rule is to keep `_journal.json`, the snapshot files, and the
 
 ## Script Environment Validation
 
-All scripts (`scripts/*.ts`) must validate their environment using `LabyrinthServerEnv.parse(process.env)` from `app/lib/server/env.ts`.
+All scripts (`packages/what/scripts/*.ts`) must validate their environment using `LabyrinthServerEnv.parse(process.env)`, imported from `packages/what/src/lib/infrastructure/env.ts` (which re-exports the shared `@pontistudios/env` schema; Labs uses the same schema from `packages/labs/app/lib/server/env.ts`).
 
 - ❌ Do not define ad-hoc `requireEnvironment()` functions
 - ❌ Do not inline `if (!process.env.X)` checks
@@ -114,21 +114,22 @@ This ensures every script validates the same set of required variables and produ
 
 ## What Puzzle Generation
 
-- The single entry point for all puzzle management is `scripts/what-generate.ts`
-- Normal mode: `pnpm what:generate` (gap-fill, daily cron)
-- Force-regenerate mode: `pnpm what:generate -- --force` (deletes and regenerates all future puzzles)
+- The single entry point for all puzzle management is `packages/what/scripts/game-generate.ts`
+- Normal mode: `pnpm game:generate` (gap-fill, daily cron)
+- Force-regenerate mode: `pnpm game:generate -- --force` (deletes and regenerates the window)
 - Do not create separate "regenerate" scripts — the `--force` flag handles that
-- Both the daily cron and manual force-regenerate runs share one workflow: `.github/workflows/what-generate.yml` (schedule trigger runs gap-fill mode; `workflow_dispatch` trigger runs `--force --days-ahead=<input>`)
+- Both the daily cron and manual force-regenerate runs share one workflow: `.github/workflows/game-generate.yml`. The schedule trigger runs gap-fill mode (bare `pnpm game:generate`); the `workflow_dispatch` trigger takes `mode` (`force` default / `gap_fill`), `days-ahead`, and optional `from`/`to`, and runs `pnpm game:generate` with the corresponding flags
+- Live dates (today in UTC or America/Los_Angeles) are protected from force regeneration unless the target `DATABASE_URL` is a loopback host (`isDisposableDatabase` in `packages/what/src/lib/generation/generate-range.ts`) — the dev escape hatch; see `docs/what/generation-current-architecture.md`
 
 ## Authentication (Hominem)
 
 Hominem's Better Auth deployment is the sole auth authority for this repo. Labs
 never issues or validates its own sessions, and never hosts a login form.
 
-- Session checks go through `getHominemUser()` in `app/lib/server/hominem-auth.ts`
+- Session checks go through `getHominemUser()` — `packages/labs/app/lib/server/hominem-auth.ts` for Labs, `packages/what/src/lib/infrastructure/hominem-auth.ts` for What
   (server-only — it forwards the request's `Cookie` header to the Hominem API).
 - To send a player to sign in, use `buildHominemLoginUrl(returnTo)`. `returnTo`
-  must be an absolute labs URL; the Hominem API only honors origins it trusts as
+  must be an absolute Labs URL; the Hominem API only honors origins it trusts as
   `LABS_URL`.
 - ❌ Do not add a login/OTP form, session table, or token issuance to this repo.
 
@@ -142,5 +143,5 @@ them locally or in CI.
 
 - Storybook is development-only in this repository.
 - Never run `storybook build`, `build-storybook`, or any equivalent production Storybook export.
-- Use the `storybook` script (`storybook dev -p 6007`) for local validation.
+- Use the `storybook` script for local validation — Labs runs `storybook dev -p 6007` (`packages/labs`), What runs `storybook dev -p 6008` (`packages/what`).
 - Do not add CI, package scripts, or deployment steps that build Storybook statically.

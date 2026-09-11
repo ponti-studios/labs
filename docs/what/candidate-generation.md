@@ -1,32 +1,72 @@
 ---
 title: Candidate Generation
-summary: How one date's puzzle gets from an RSS feed to an approved, published record.
+summary: How one date's puzzle gets from the article inventory to an approved, published record — the per-date, per-game generate-validate-retry loop.
 type: reference
 status: active
 owner: charlesponti
 tags: [generation, llm, pipeline]
-related: [./architecture.md, ./prompt-evaluation.md, ./source-fixtures.md]
-updated: 2026-08-16
+related: [./architecture.md, ./generation-current-architecture.md, ./prompt-evaluation.md]
+updated: 2026-09-10
 ---
 
 # Candidate Generation
 
-This is the per-date, per-game loop `generatePuzzleForGame` (`app/lib/what/generation/generate.server.ts`) runs. `runGenerateWindow` (`app/lib/what/ops.ts`) calls it once per missing date, per active game, inside a window — see [Architecture](./architecture.md) for how those calls are scheduled and circuit-broken.
+This is the per-date, per-game loop `generatePuzzleForGame`
+(`packages/what/src/lib/generation/puzzle-generator.server.ts`) runs.
+`runGenerateRange` (`generation-runner.ts`) calls it once per missing date,
+per active game — see [Generation pipeline](./generation-current-architecture.md)
+for scheduling and circuit-breaking.
 
-## 1. Ingestion
+## 1. Inputs
 
-The game's own RSS feed (`games_topics.feed_url`) is fetched and prepared as the context payload for the LLM prompt.
+- The game's newest 8 pending articles (`GENERATION_BATCH_SIZE`,
+  `getPendingArticlesForGame`, ordered newest-`publishedAt` first).
+- Excluded answers: every answer the game used within `repeatWindowDays` (90)
+  plus every answer it has ever published (`getRecentAnswers` /
+  `getStoredAnswers`) — the LLM must not land on a duplicate.
 
 ## 2. Generation and validation loop — 3 attempts max
 
-- **Request:** the worker sends the feed data to OpenRouter. The LLM returns a batch of 3–5 candidates (schema-enforced `min(3).max(5)`), not a fixed count.
-- **Sequential validation:** candidates are checked in order. The first valid one wins — it's written to `games_puzzles` (Drizzle export `gamesPuzzles`), the rest of the batch is discarded, and generation exits successfully for that date.
-- **All invalid:** if attempt count is under 3, the worker backs off exponentially (`2^attempt` seconds) and requests a fresh batch. Each failed attempt logs `[GENERATION_RETRY]` ("generation attempt yielded no valid candidate").
+- **Request:** one OpenRouter chat completion per attempt via
+  `callGenerationApiForCandidates` (`candidate-generator.server.ts`) with a
+  strict JSON-schema response (`generationResponseSchema`, `min(1).max(5)`
+  candidates). The prompt marks the article payload as untrusted data and
+  instructs the model to ignore any commands or role claims inside it
+  (`buildMessages`).
+- **Sequential validation:** candidates are scored in the order returned by
+  `validateCandidate` (`candidate-validation.ts`): exactly 5 letters,
+  dictionary word, no `answerType: "person"`, answer not leaked into
+  clue/detail, no prompt-control markers, not a repeat answer, and at least
+  one cited source URL inside the offered article domains. The **first**
+  candidate that both passes validation and matches an offered article
+  (`matchArticle`, source URL ∈ batch) wins — it is written to
+  `games_puzzles`, the rest of the batch is discarded, and generation exits
+  successfully for that date.
+- **Rejections:** a rejected candidate whose source matched a real article
+  calls `recordArticleRejection` (cap 3 before the article is permanently
+  `'rejected'`). Logged individually at `debug`
+  (`generate.candidate.rejected`). **Rejected answers are added to the
+  exclusion set for the next attempt**, so a later attempt is never re-asked
+  for the same invalid answer.
+- **Batch failure:** if a full attempt produces no usable candidate, one
+  `generate.attempt.failed` `warn` is logged with the attempt index
+  (`attempt n/maxAttempts`), rejection reasons, and duration, then the worker
+  backs off exponentially (`2^attempt * 1000` ms) and requests a fresh batch.
+  Each attempt inserts and updates a `generation_runs` row (status, prompt
+  tokens, completion tokens, cost) for the admin cost surface.
 
 ## 3. Exhaustion
 
-If attempt 3/3 also fails validation entirely, generation logs `[GENERATION_EXHAUSTED]` ("puzzle generation failed after all attempts") and returns without publishing for that slot. There is no curated-archive fallback at generation time — the route-level serving fallback (most recent approved puzzle) is what covers this, not a second content source.
+If all `maxAttempts` (default 3) fail validation, generation logs
+`generate.puzzle.failed` ("puzzle generation failed after all attempts"),
+records `GENERATION_EXHAUSTED` via `recordAdminAction`, and returns `null` for
+that slot. There is no curated-archive fallback at generation time — the
+route-level serving fallback (most recent prior puzzle, `isFallback`) covers
+the day, not a second content source.
 
 ## Above this loop
 
-A single degraded-provider day (every attempt failing the same way) doesn't get retried indefinitely — the circuit breaker in `runGenerateWindow` stops the run after `CIRCUIT_BREAKER_THRESHOLD` consecutive failures across dates and games. See [Architecture § Server-only generation and loading](./architecture.md).
+A single degraded-provider day isn't retried indefinitely — the circuit
+breaker (`circuit-breaker.ts`, `CIRCUIT_BREAKER_THRESHOLD = 6` consecutive
+failures) stops the run across dates and games. See [Generation pipeline —
+Scheduling](./generation-current-architecture.md#4-scheduling--orchestration).

@@ -6,29 +6,42 @@ status: active
 owner: charlesponti
 tags: [generation, testing, fixtures]
 related: [./prompt-evaluation.md, ./candidate-generation.md]
-updated: 2026-08-16
+updated: 2026-09-10
 ---
 
 # Source Fixtures
 
-Use the real RSS feeds to create reusable, offline prompt inputs:
+Capture real feed snapshots once, offline, and reuse them for prompt
+benchmarking. Commands run from `packages/what` (they are not exposed at the
+repo root):
 
 ```bash
-pnpm what:capture-fixtures
+cd packages/what
+
+# Capture all four fixture feeds (20 items each by default)
+pnpm game:capture-fixtures
+
+# Refresh a single feed with a different cap
+pnpm game:capture-fixtures --feed=tech-news --limit=50
 ```
 
-The capture command stores bounded RSS metadata plus bounded readable article text in `app/lib/what/fixtures/sources/`. It does not write to the database. Refresh one source with:
-
-```bash
-pnpm what:capture-fixtures --feed=tmz --limit=50
-```
+`game:capture-fixtures` (`scripts/game-capture-fixtures.ts`) stores bounded RSS
+metadata plus Readability-extracted article text in
+`src/lib/values/sources/<id>.json`. Feed ids are `tech-news`, `page-six`,
+`tmz`, `sports-news`; `--limit` defaults to 20; `--out-dir` defaults to
+`src/lib/values/sources`. It never writes to the database.
 
 Run the prompt benchmark against snapshots instead of live feeds:
 
 ```bash
-pnpm what:prompt-test \
-  --source-fixture=app/lib/what/fixtures/sources/tech-news.json \
-  --source-fixture=app/lib/what/fixtures/sources/page-six.json
+pnpm game:prompt-test \
+  --source-fixture=src/lib/values/sources/tech-news.json \
+  --source-fixture=src/lib/values/sources/page-six.json
 ```
 
-The article body is extracted from the linked page when available; RSS metadata remains the fallback for blocked or paywalled pages. Fixtures are bounded snapshots, not permanent full article archives. They are useful for testing source grounding, answer validity, leakage, prompt injection handling, and candidate ranking. Curated fixtures with `expectedAnswers` remain the correctness benchmark because real snapshots need editorial labeling before they can assert a specific answer.
+Fixtures are bounded snapshots, not permanent archives. They are useful for
+testing source grounding, answer validity, leakage, prompt-injection handling,
+and candidate ranking. The curated cases in `src/lib/values/prompt-test-cases.ts`
+(with `expectedAnswers`/`forbiddenAnswers`) remain the correctness benchmark —
+real snapshots need editorial labeling before they can assert a specific
+answer.

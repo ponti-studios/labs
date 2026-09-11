@@ -37,7 +37,7 @@ A spellcheck dictionary with sub-lists for tools (`software-tools.txt`, 592 entr
 
 ### Hand-curated enumerable lists
 
-For category types WordNet fundamentally can't produce — "JS Frameworks," "HTTP Methods," "Git Commands" — because these are proper-noun set membership, not polysemy. WordNet has no entry for "React" the framework. These need either hand-authoring (fast, high-quality, what `fixtures.ts` already does for the picker prototype) or LLM-assisted drafting reviewed by a human once, since these lists get reused under the cooldown window rather than regenerated per puzzle.
+For category types WordNet fundamentally can't produce — "JS Frameworks," "HTTP Methods," "Git Commands" — because these are proper-noun set membership, not polysemy. WordNet has no entry for "React" the framework. These need either hand-authoring (fast, high-quality, what `packages/labs/scripts/connections/fixtures.ts` already does for the picker prototype) or LLM-assisted drafting reviewed by a human once, since these lists get reused under the cooldown window rather than regenerated per puzzle.
 
 ### The hybrid case — the best category type this game has access to
 
