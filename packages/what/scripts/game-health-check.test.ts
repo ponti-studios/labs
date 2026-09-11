@@ -9,7 +9,7 @@ vi.mock("@pontistudios/db", () => ({
   closeDb: vi.fn(),
 }));
 
-const READY_DAYS = 7; // mirrors GAME_READY_INVENTORY_DAYS
+const READY_DAYS = 1; // mirrors GAME_READY_INVENTORY_DAYS
 
 describe("computeHealthStatus", () => {
   it("returns OK when everything is healthy", async () => {
@@ -24,13 +24,6 @@ describe("computeHealthStatus", () => {
     const result = computeHealthStatus(0, true, true);
     expect(result.status).toBe("DEGRADED");
     expect(result.issues.some((i) => i.includes("no puzzles scheduled"))).toBe(true);
-  });
-
-  it("returns DEGRADED when inventory is below threshold", async () => {
-    const { computeHealthStatus } = await import("./game-health-check");
-    const result = computeHealthStatus(2, true, true);
-    expect(result.status).toBe("DEGRADED");
-    expect(result.issues.some((i) => i.includes("low inventory"))).toBe(true);
   });
 
   it("returns OK when inventory is exactly at threshold", async () => {

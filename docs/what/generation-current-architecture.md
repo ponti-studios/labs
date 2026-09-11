@@ -5,7 +5,7 @@ type: reference
 status: active
 owner: charlesponti
 tags: [architecture, generation, ops]
-related: [./architecture.md, ./candidate-generation.md, ./generation-redesign-proposal.md]
+related: [./architecture.md, ./candidate-generation.md]
 summary: Code-grounded walkthrough of What's ingest, article selection, puzzle generation, scheduling, storage, and serving as implemented today.
 updated: 2026-09-10
 ---
@@ -13,11 +13,10 @@ updated: 2026-09-10
 # What Generation Pipeline — Current State
 
 This is the map of the generation system as it actually exists. Every claim is
-grounded in the files cited inline. Where a behavior is only explainable by
-inference, it is labeled **Inference**. A freshness-first redesign is
-proposed but **not implemented** — see
-[generation-redesign-proposal.md](./generation-redesign-proposal.md); this doc
-describes the shipped system, not the proposal.
+ grounded in the files cited inline. Where a behavior is only explainable by
+inference, it is labeled **Inference**. The freshness tradeoffs this pipeline
+makes are documented in [Known design tradeoffs](#known-design-tradeoffs)
+at the end of this document.
 
 What is a daily word game: one 5-letter answer per game per day, derived from
 an RSS article. Five games share one pipeline, each pointed at a different
@@ -166,16 +165,21 @@ one topic's backlog across days, never across topics.
 **`packages/what/src/lib/generation/generate-range.ts`**,
 **`generation-runner.ts`**, workflow **`.github/workflows/game-generate.yml`**.
 
-- Workflow triggers: `cron: "0 17 * * *"` UTC daily, plus on-demand
-  `workflow_dispatch` with `mode` (`force` default / `gap_fill`), `days-ahead`
-  (default `7`), optional `from`/`to`, all `if: github.ref == 'refs/heads/main'`.
+- Workflow triggers: two scheduled cron entries — `0 22 * * *` and
+  `0 23 * * *` UTC daily (22:00 primary generation of *tomorrow* from that
+  same UTC day's articles; 23:00 retry pass that is a $0 no-op when the
+  primary succeeded and self-healing when it didn't) — plus on-demand
+  `workflow_dispatch` with `mode` (`force` default / `gap_fill`),
+  `days-ahead` (default `1`), optional `from`/`to`, all
+  `if: github.ref == 'refs/heads/main'`.
   `concurrency: { group: game-generate, cancel-in-progress: false }` and
   `timeout-minutes: 30` bound one run; the circuit breaker is what actually
   stops a bad run early.
 - Steps in order: ingest-feeds (`pnpm game:ingest`) → generate
   (`pnpm game:generate`, with flags derived from the dispatch inputs) →
   health-check (`pnpm game:health-check`), all against the same `DATABASE_URL`
-  secret in the `realitea-production` environment.
+  secret in the `realitea-production` environment. Run failures surface via
+  GitHub's own workflow-run email notifications (native, per-repo).
 - `game-generate.ts`: parses `--force --days-ahead --from --to`, validates env
   via `LabyrinthServerEnv.parse` (see below), then `resolveGenerateRange`:
   - Explicit `--from/--to`: `YYYY-MM-DD`, span ≤ `MAX_GENERATE_SPAN_DAYS` (14),
@@ -270,8 +274,7 @@ The step exits 1 on any issue, failing the workflow run visibly in GitHub
   `FALLBACK_ACTIVATED_ANY_PUZZLE`, flags `isFallback = served.dateUtc !=
   dateKey`). The fallback is bounded by `dateUtc <= dateKey` (never serves
   future inventory across a timezone boundary) but has no lower age bound —
-  **Inference:** a deliberate availability-over-freshness trade, which is
-  exactly what the freshness redesign proposal targets.
+  **Inference:** a deliberate availability-over-freshness trade.
 - Uses the [logging taxonomy](#logging) below; the request-time fallback is
   visible via `isFallback` on the served payload and the log event.
 - The guess path applies a one-day grace period: on a miss it tries
@@ -297,11 +300,11 @@ The step exits 1 on any issue, failing the workflow run visibly in GitHub
 
 | Parameter | Value | Source |
 | --- | --- | --- |
-| Cron schedule | `0 17 * * *` UTC daily | `.github/workflows/game-generate.yml` |
+| Cron schedule | `0 22 * * *` + `0 23 * * *` UTC daily (primary + retry) | `.github/workflows/game-generate.yml` |
 | Generation batch size (articles offered) | 8 | `GENERATION_BATCH_SIZE`, `puzzle-generator.server.ts` |
 | Article expiry | 45 days (per-game `articleExpiryDays`) | `packages/db/src/schema/game.ts` |
 | Answer repeat window | 90 days (per-game `repeatWindowDays`) | `packages/db/src/schema/game.ts` |
-| Forward generation/gap-fill window | 7 days ahead | `GAME_READY_INVENTORY_DAYS`, `candidate-validation.ts` |
+| Forward generation/gap-fill window | 1 day (tomorrow only) | `GAME_READY_INVENTORY_DAYS`, `candidate-validation.ts` |
 | Max attempts per date | 3 | `generatePuzzleForGame` default `maxAttempts` |
 | Max article rejections before `'rejected'` | 3 | `MAX_ARTICLE_REJECTIONS` |
 | Retry backoff | `2^attempt * 1000` ms | `puzzle-generator.server.ts` |
@@ -332,11 +335,14 @@ Every structured log line carries a scoped dot-separated `event`
 
 ## Known design tradeoffs
 
-- **Gap-fill means "generated once, up to 7 days before serving."** A date is
-  normally generated the first time it enters the window and never revisited;
-  the article behind it can be days old by the time players see it. This is
-  the core freshness issue the [redesign proposal](./generation-redesign-proposal.md)
-  targets.
+- **Freshness ceiling is the previous calendar day.** Each 22:00 UTC run
+  generates exactly tomorrow (1-day window) from that same UTC day's
+  articles — the old 7-day window left a served puzzle built from articles
+  up to a week old. Now the article behind day D is always published on day
+  D-1 (UTC), any time up to the 22:00 UTC run (14:00/15:00 PST). Same-day
+  at *serving time* is still unreachable while the game unlocks at local
+  midnight — the freshest possible puzzle is built from an article published
+  before that day began (see [Serving / fallback](#8-serving--fallback)).
 - **Serving fallback has no lower age bound** — a multi-day outage serves the
   most recent prior puzzle, labeled `isFallback` but unbounded in staleness.
 - **Live-date protection is a hard gate in production** by design, and a soft

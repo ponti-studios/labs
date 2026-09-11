@@ -3,7 +3,14 @@ run-name: game-${{ inputs.mode || 'schedule' }}-${{ inputs.requestId || github.r
 
 on:
   schedule:
-    - cron: "0 17 * * *"
+    # Primary: 22:00 UTC daily — generates exactly tomorrow from that same
+    # UTC day's articles (~14:00/15:00 PST cutoff). Runs before UTC midnight
+    # so tomorrow is not yet live under either guard anchor, for every market.
+    - cron: "0 22 * * *"
+    # Retry pass: 23:00 UTC — gap-fill no-op when the primary succeeded
+    # (exists = skipped, so ~$0 when healthy); self-heals the window when
+    # the primary failed before any market's morning play.
+    - cron: "0 23 * * *"
   workflow_dispatch:
     inputs:
       mode:
@@ -17,7 +24,7 @@ on:
       daysAhead:
         description: "Days ahead from tomorrow when from/to are omitted"
         required: false
-        default: "7"
+        default: "1"
         type: string
       from:
         description: "Inclusive YYYY-MM-DD start (optional; requires to)"

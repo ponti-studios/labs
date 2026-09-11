@@ -4,7 +4,12 @@ import { GAME_ANSWER_LENGTH, normalizeGuess } from "../puzzle/rules";
 import type { ValidationResult } from "./types";
 
 const DEFAULT_SOURCE_DOMAIN = "realityblurred.com";
-export const GAME_READY_INVENTORY_DAYS = 7;
+// How many days of forward inventory the pipeline maintains. Deliberately 1:
+// each nightly 22:00 UTC run generates exactly tomorrow from that same day's
+// articles (the same-day freshness contract). Wider windows generate far-end
+// dates early from older articles. The nightly 23:00 UTC retry pass plus the
+// bounded serving fallback cover a failed run, so no spare day is kept.
+export const GAME_READY_INVENTORY_DAYS = 1;
 
 const PROMPT_CONTROL_MARKERS = [
   /ignore\s+(?:all\s+)?previous\s+instructions/i,

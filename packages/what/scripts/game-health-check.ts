@@ -34,8 +34,6 @@ export function computeHealthStatus(
   }
   if (inventoryDepth < 1) {
     issues.push("no puzzles scheduled for upcoming days");
-  } else if (inventoryDepth < GAME_READY_INVENTORY_DAYS) {
-    issues.push(`low inventory: ${inventoryDepth}/${GAME_READY_INVENTORY_DAYS} days covered`);
   }
 
   return { status: issues.length === 0 ? "OK" : "DEGRADED", issues };

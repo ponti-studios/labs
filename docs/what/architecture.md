@@ -85,11 +85,17 @@ Generation is a persisted run before it is a puzzle. An operator triggers a run 
 
 One workflow drives generation: `.github/workflows/game-generate.yml`.
 
-- **Schedule:** `cron: "0 17 * * *"` UTC daily — 9am PST / 10am PDT, chosen to be DST-safe (the hour drifts across daylight saving rather than the job moving near local midnight). Runs gap-fill mode: `pnpm game:generate` with no flags.
+- **Schedule:** two cron entries, `0 22 * * *` and `0 23 * * *` UTC daily. The
+  22:00 UTC run is the primary generation — it generates exactly *tomorrow*
+  from that same UTC day's articles (~14:00/15:00 PST cutoff), before UTC
+  midnight so tomorrow is live under no guard anchor for any market. The
+  23:00 UTC run is the retry pass: gap-fill skips what already exists (a
+  ~free no-op when healthy), self-healing the window when the primary failed.
+  Both run `pnpm game:generate` with no flags (bare gap-fill mode).
 - **Manual:** `workflow_dispatch` with inputs `mode` (`force` default / `gap_fill`), `days-ahead`, and optional `from`/`to` — delete-then-regenerate or gap-fill a window.
 - **Steps:** ingest (`pnpm game:ingest`) → generate (`pnpm game:generate`) → health check (`pnpm game:health-check`), all `if: github.ref == 'refs/heads/main'`, `concurrency: { group: game-generate, cancel-in-progress: false }`, `timeout-minutes: 30`.
 
-Neither the scheduled nor manual path is exposed as an HTTP write surface. The health-check step exits 1 on `DEGRADED` (no puzzle for today, or forward inventory below 7 days), failing the run visibly in GitHub. See [generation current architecture](./generation-current-architecture.md) for the full pipeline walkthrough.
+Neither the scheduled nor manual path is exposed as an HTTP write surface. The health-check step exits 1 on `DEGRADED` (no puzzle for today, or no puzzle scheduled for tomorrow), failing the run visibly in GitHub; run failures surface via GitHub's native workflow-notification email. See [generation current architecture](./generation-current-architecture.md) for the full pipeline walkthrough.
 
 ## Read next
 
