@@ -13,6 +13,20 @@ interface WeekStreakGridProps {
 
 const WEEKDAY_FORMATTER = new Intl.DateTimeFormat(undefined, { weekday: "short" });
 
+const TOPIC_EMOJI: Readonly<Record<string, string>> = {
+  reality: "📺",
+  technology: "💻",
+  "page-six": "🗞️",
+  tmz: "📸",
+  sports: "🏆",
+  markets: "📈",
+  culture: "🎭",
+};
+
+function topicEmoji(topicSlug: string): string {
+  return TOPIC_EMOJI[topicSlug] ?? "📰";
+}
+
 // Solved-in-1 is the boldest fill; solved-in-6 is the palest. The floor is
 // kept well above 0 so even the palest solved cell stays visually distinct
 // from an unplayed cell instead of fading into the paper background.
@@ -78,7 +92,9 @@ export function WeekStreakGrid({ rows }: WeekStreakGridProps) {
           role="list"
           aria-label={`${row.topicName} history`}
         >
-          <span className={styles.rowLabel}>{row.topicName}</span>
+          <span className={styles.rowLabel} aria-hidden="true" title={row.topicName}>
+            {topicEmoji(row.topicSlug)}
+          </span>
           {row.cells.map((cell) => (
             <span
               key={cell.dateKey}

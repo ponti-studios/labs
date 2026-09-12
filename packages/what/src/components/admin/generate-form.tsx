@@ -45,7 +45,7 @@ export type GenerateFormValues = {
   models: string[];
   promptFiles: readonly string[];
   topics: { id: number; slug: string; name: string }[];
-  articles: { id: number; title: string }[];
+  articles: { id: number; topicId: number; title: string }[];
   fixtures: string[];
 };
 
@@ -58,10 +58,15 @@ export function GenerateForm({
   running: boolean;
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
 }) {
-  const [sourceMode, setSourceMode] = useState<GenerateSourceMode>("inventory");
+  const [sourceMode, setSourceMode] = useState<GenerateSourceMode>("articles");
   const [dateKey, setDateKey] = useState(data.dateKey);
-  const [feedId, setFeedId] = useState(String(data.topics[0]?.id ?? ""));
-  const [articleId, setArticleId] = useState(String(data.articles[0]?.id ?? ""));
+  const initialTopicId = String(
+    data.topics.find((topic) => topic.slug === data.gameSlug)?.id ?? data.topics[0]?.id ?? "",
+  );
+  const [topicId, setTopicId] = useState(initialTopicId);
+  const [feedId, setFeedId] = useState(initialTopicId);
+  const topicArticles = data.articles.filter((article) => String(article.topicId) === topicId);
+  const [articleId, setArticleId] = useState(String(topicArticles[0]?.id ?? ""));
   const [fixtureId, setFixtureId] = useState("none");
   const [promptChoice, setPromptChoice] = useState(data.promptFiles[0] ?? CUSTOM_PROMPT);
   const [model, setModel] = useState(data.models[0] ?? "");
@@ -139,31 +144,65 @@ export function GenerateForm({
             )
           ) : null}
           {sourceMode === "articles" ? (
-            data.articles.length === 0 ? (
-              <p className="text-muted-foreground text-sm">No unused articles in inventory.</p>
-            ) : (
-              <div className={styles.articleField}>
-                <Label htmlFor="articleIds">Article</Label>
-                <input type="hidden" name="articleIds" value={articleId} />
-                <Select value={articleId} onValueChange={(value) => value && setArticleId(value)}>
-                  <SelectTrigger id="articleIds" className={styles.articleTrigger}>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className={styles.articleMenu}>
-                    {data.articles.map((article) => (
-                      <SelectItem
-                        key={article.id}
-                        value={String(article.id)}
-                        title={article.title}
-                        className={styles.articleItem}
-                      >
-                        {article.title}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )
+            <>
+              {data.topics.length === 0 ? (
+                <p className="text-muted-foreground text-sm">No topics available.</p>
+              ) : (
+                <div className={styles.field}>
+                  <Label htmlFor="topicId">Topic</Label>
+                  <input type="hidden" name="topicId" value={topicId} />
+                  <Select
+                    value={topicId}
+                    onValueChange={(value) => {
+                      if (!value) return;
+                      setTopicId(value);
+                      setArticleId(
+                        String(
+                          data.articles.find((article) => String(article.topicId) === value)?.id ??
+                            "",
+                        ),
+                      );
+                    }}
+                  >
+                    <SelectTrigger id="topicId" className={styles.trigger}>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {data.topics.map((topic) => (
+                        <SelectItem key={topic.id} value={String(topic.id)}>
+                          {topic.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+              {topicArticles.length === 0 ? (
+                <p className="text-muted-foreground text-sm">No unused articles for this topic.</p>
+              ) : (
+                <div className={styles.articleField}>
+                  <Label htmlFor="articleIds">Article</Label>
+                  <input type="hidden" name="articleIds" value={articleId} />
+                  <Select value={articleId} onValueChange={(value) => value && setArticleId(value)}>
+                    <SelectTrigger id="articleIds" className={styles.articleTrigger}>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className={styles.articleMenu}>
+                      {topicArticles.map((article) => (
+                        <SelectItem
+                          key={article.id}
+                          value={String(article.id)}
+                          title={article.title}
+                          className={styles.articleItem}
+                        >
+                          {article.title}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </>
           ) : null}
           {sourceMode === "rss" ? (
             <div className={styles.field}>

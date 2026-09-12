@@ -122,4 +122,19 @@ describe("Game ↔ Hominem authentication boundary", () => {
 
     expect(url.searchParams.get("next")).toBe("http://localhost:5173/reality");
   });
+
+  it("keeps localhost requests on their local origin for the login return target", () => {
+    process.env.HOMINEM_API_URL = "http://localhost:4040";
+    process.env.WHAT_APP_URL = "https://what.lvh.me";
+    process.env.PORTLESS_URL = "https://feature-fix.lvh.me";
+
+    const url = new URL(
+      loginUrl(new Request("http://localhost:4944/admin/generate?game=reality")),
+    );
+
+    expect(url.origin).toBe("http://localhost:4040");
+    expect(url.searchParams.get("next")).toBe(
+      "http://localhost:4944/admin/generate?game=reality",
+    );
+  });
 });

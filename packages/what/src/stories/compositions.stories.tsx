@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { fn } from "storybook/test";
 
-import { GameBoard, GameBoardSkeleton, GameHeader, GameResult, GuessGrid } from "../components/game";
+import { GameBoard, GameBoardSkeleton, GameResult, GuessGrid } from "../components/game";
 import boardStyles from "../components/game/game-board.module.css";
 import { fallbackPuzzle, gameState, guesses, puzzle } from "./fixtures";
 
@@ -20,19 +20,6 @@ export const BoardWithGuesses: Story = {
 export const FallbackBoard: Story = {
   render: () => <GameBoard {...common} puzzle={fallbackPuzzle} initialGuesses={[]} />,
 };
-export const BoardWithTopics: Story = {
-  render: () => (
-    <GameBoard
-      {...common}
-      puzzle={puzzle}
-      initialGuesses={[]}
-      topics={[
-        { slug: "reality", name: "Reality" },
-        { slug: "culture", name: "Culture" },
-      ]}
-    />
-  ),
-};
 export const BoardSkeleton: Story = { render: () => <GameBoardSkeleton /> };
 
 export const FirstGuessAuthWall: Story = {
@@ -46,8 +33,7 @@ export const FirstGuessAuthWall: Story = {
 
     return (
       <div className={boardStyles.shell}>
-        <GameHeader isFallback={puzzle.isFallback} gameSlug={common.gameSlug} />
-        <GuessGrid game={game} />
+        <GuessGrid game={game} dateKey={puzzle.dateKey} />
         <GameResult game={game} puzzle={puzzle} loginUrl={common.loginUrl} onShare={fn()} onCopy={fn()} />
       </div>
     );

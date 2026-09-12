@@ -12,7 +12,12 @@ vi.mock("~/lib/infrastructure/hominem-auth", () => ({
 
 import { RouterContextProvider } from "react-router";
 
-import { getGameAdminActor, requireGameAdmin, requireGameAdminMiddleware } from "../admin/auth";
+import {
+  canAccessGameAdmin,
+  getGameAdminActor,
+  requireGameAdmin,
+  requireGameAdminMiddleware,
+} from "../admin/auth";
 
 const ORIGINAL = {
   GAME_ADMIN_EMAILS: process.env.GAME_ADMIN_EMAILS,
@@ -90,6 +95,41 @@ describe("requireGameAdmin", () => {
     await expect(requireGameAdmin(new Request("http://localhost:3001/admin"), "loader")).rejects.toMatchObject({
       status: 302,
     });
+  });
+});
+
+describe("canAccessGameAdmin", () => {
+  beforeEach(() => {
+    delete process.env.GAME_ADMIN_EMAILS;
+    delete process.env.RAILWAY_ENVIRONMENT;
+    process.env.NODE_ENV = "test";
+  });
+
+  afterEach(() => {
+    for (const [key, value] of Object.entries(ORIGINAL)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  });
+
+  it("denies signed-out visitors", () => {
+    expect(canAccessGameAdmin(null)).toBe(false);
+  });
+
+  it("permits signed-in local users when no allowlist is required", () => {
+    expect(canAccessGameAdmin({ email: null })).toBe(true);
+  });
+
+  it("matches allowlisted emails without case or surrounding-space sensitivity", () => {
+    process.env.GAME_ADMIN_EMAILS = "ops@ponti.io";
+    expect(canAccessGameAdmin({ email: " OPS@PONTI.IO " })).toBe(true);
+    expect(canAccessGameAdmin({ email: "player@ponti.io" })).toBe(false);
+    expect(canAccessGameAdmin({ email: null })).toBe(false);
+  });
+
+  it("denies everyone when production requires a missing allowlist", () => {
+    process.env.NODE_ENV = "production";
+    expect(canAccessGameAdmin({ email: "ops@ponti.io" })).toBe(false);
   });
 });
 

@@ -5,6 +5,182 @@
 @source "./routes";
 @source "./components";
 
+/* The game shell uses the shared navigation chrome without a divider. Keep
+   this scoped to What's navbar so other shared headers retain their border. */
+header:has(> nav[aria-label="WH?T navigation"]) {
+  border-bottom: 0;
+  background: transparent;
+  padding: 0.75rem 1rem;
+}
+
+nav[aria-label="WH?T navigation"].what-navigation {
+  min-height: 3.75rem;
+  max-width: 64rem;
+  gap: 0.75rem;
+  align-items: center;
+  border-radius: 1.125rem;
+  background: var(--game-ink);
+  padding: 0.625rem 0.875rem;
+  color: var(--game-paper);
+  box-shadow: 0 0.875rem 1.875rem color-mix(in srgb, var(--game-ink) 22%, transparent);
+}
+
+nav[aria-label="WH?T navigation"].what-navigation > div:first-child {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+}
+
+nav[aria-label="WH?T navigation"].what-navigation > div:nth-child(2) {
+  align-items: center;
+  gap: 0.5rem;
+}
+
+nav[aria-label="WH?T navigation"].what-navigation ul a {
+  color: color-mix(in srgb, var(--game-paper) 64%, transparent);
+}
+
+nav[aria-label="WH?T navigation"].what-navigation ul a:hover,
+nav[aria-label="WH?T navigation"].what-navigation ul a[data-active] {
+  background: color-mix(in srgb, var(--game-paper) 12%, transparent);
+  color: var(--game-paper);
+}
+
+nav[aria-label="WH?T navigation"].what-navigation > div:last-child button {
+  border-color: color-mix(in srgb, var(--game-paper) 18%, transparent);
+  background: color-mix(in srgb, var(--game-paper) 10%, transparent);
+  color: var(--game-paper);
+}
+
+nav[aria-label="WH?T navigation"].what-navigation > div:last-child button:hover {
+  background: color-mix(in srgb, var(--game-paper) 18%, transparent);
+}
+
+.what-navigation__game-trigger {
+  display: inline-flex;
+  min-height: 2.25rem;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--game-paper) 18%, transparent);
+  border-radius: 0.7rem;
+  background: color-mix(in srgb, var(--game-paper) 10%, transparent);
+  padding: 0.5rem 0.7rem;
+  color: var(--game-paper);
+  font-size: 0.875rem;
+  font-weight: 650;
+  line-height: 1;
+}
+
+.what-navigation__game-trigger:hover {
+  background: color-mix(in srgb, var(--game-paper) 18%, transparent);
+}
+
+.what-navigation__game-popover {
+  width: 18rem;
+  border-radius: 0.9rem;
+  padding: 0.5rem;
+}
+
+.what-navigation__game-label {
+  margin: 0;
+  padding: 0.45rem 0.6rem 0.35rem;
+  color: var(--text-secondary);
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.what-navigation__game-options {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.what-navigation__game-options button {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  border: 0;
+  border-radius: 0.55rem;
+  background: transparent;
+  padding: 0.6rem;
+  color: var(--text-primary);
+  text-align: left;
+}
+
+.what-navigation__game-options button:hover,
+.what-navigation__game-options button[aria-current="page"] {
+  background: var(--muted);
+}
+
+.what-navigation__game-description {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
+
+/* Sign in belongs in the Dock; the hamburger is for secondary navigation. */
+[data-slot="sheet-content"] .what-navigation__auth,
+[data-slot="sheet-content"] .what-navigation__game-trigger {
+  display: none;
+}
+
+/* The mobile sheet is the Dock expanded, not a separate light-themed panel. */
+body:has(nav[aria-label="WH?T navigation"]) [data-slot="sheet-content"] {
+  border: 1px solid color-mix(in srgb, var(--game-paper) 14%, transparent);
+  border-radius: 1.125rem;
+  background: var(--game-ink);
+  color: var(--game-paper);
+  box-shadow: 0 0.875rem 1.875rem color-mix(in srgb, var(--game-ink) 30%, transparent);
+}
+
+body:has(nav[aria-label="WH?T navigation"]) [data-slot="sheet-content"] > button:first-child {
+  color: color-mix(in srgb, var(--game-paper) 72%, transparent);
+}
+
+body:has(nav[aria-label="WH?T navigation"]) [data-slot="sheet-content"] > button:first-child:hover {
+  background: color-mix(in srgb, var(--game-paper) 12%, transparent);
+  color: var(--game-paper);
+}
+
+body:has(nav[aria-label="WH?T navigation"]) [data-slot="sheet-content"] ul a {
+  color: color-mix(in srgb, var(--game-paper) 72%, transparent);
+}
+
+body:has(nav[aria-label="WH?T navigation"]) [data-slot="sheet-content"] ul a:hover,
+body:has(nav[aria-label="WH?T navigation"]) [data-slot="sheet-content"] ul a[data-active] {
+  background: color-mix(in srgb, var(--game-paper) 12%, transparent);
+  color: var(--game-paper);
+}
+
+@media (max-width: 639px) {
+  header:has(> nav[aria-label="WH?T navigation"]) {
+    padding: 0.625rem 0.75rem;
+  }
+
+  nav[aria-label="WH?T navigation"].what-navigation {
+    min-height: 3.5rem;
+    border-radius: 1rem;
+  }
+
+  /* Keep the game switcher in the Dock on phones; secondary links remain in
+     the shared hamburger sheet. */
+  nav[aria-label="WH?T navigation"].what-navigation > div:nth-child(2) {
+    display: flex;
+    flex: 1 1 auto;
+    justify-content: flex-end;
+  }
+
+  nav[aria-label="WH?T navigation"].what-navigation > div:nth-child(2) > ul {
+    display: none;
+  }
+
+  nav[aria-label="WH?T navigation"].what-navigation > div:last-child {
+    margin-left: 0;
+  }
+}
+
 /* Game palette as Tailwind colors. `@theme inline` keeps the `var(--game-*)`
    indirection into game.css, which is the single source of truth and owns the
    dark-mode overrides — utilities like `bg-game-glass` resolve correctly in

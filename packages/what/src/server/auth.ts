@@ -20,7 +20,10 @@ export async function getGameUser(request: Request): Promise<GameUser | null> {
 
 export function loginUrl(request: Request, requestedReturnTo?: string): string {
   const { PORTLESS_URL, WHAT_APP_URL } = WhatServerEnv.parse(process.env);
-  const appOrigin = new URL(PORTLESS_URL ?? WHAT_APP_URL);
+  const requestOrigin = new URL(request.url);
+  const appOrigin = isLoopbackHostname(requestOrigin.hostname)
+    ? requestOrigin
+    : new URL(PORTLESS_URL ?? WHAT_APP_URL);
   let returnTo = new URL(appOrigin);
 
   try {
@@ -37,4 +40,9 @@ export function loginUrl(request: Request, requestedReturnTo?: string): string {
   const url = new URL("/login", process.env.HOMINEM_API_URL ?? "https://api.ponti.io");
   url.searchParams.set("next", returnTo.toString());
   return url.toString();
+}
+
+function isLoopbackHostname(hostname: string): boolean {
+  const normalized = hostname.toLowerCase().replace(/^\[|\]$/g, "");
+  return normalized === "localhost" || normalized === "127.0.0.1" || normalized === "::1";
 }

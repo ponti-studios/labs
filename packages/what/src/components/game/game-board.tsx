@@ -11,7 +11,6 @@ import {
 import { buildGameShareText } from "../../lib/player/share";
 
 import styles from "./game-board.module.css";
-import { GameHeader } from "./game-header";
 import { GameResult } from "./game-result";
 import { GameTile } from "./game-tile";
 import { GuessGrid } from "./guess-grid";
@@ -23,22 +22,13 @@ export interface GameBoardProps {
   initialGuesses: readonly GameGuess[];
   loginUrl: string;
   gameSlug: string;
-  topics?: { slug: string; name: string }[];
-  onTopicChange?: (slug: string) => void;
 }
 
 /**
  * The interactive game board — feature sections live in focused components
  * so this file owns only game orchestration and composition.
  */
-export function GameBoard({
-  puzzle,
-  initialGuesses,
-  loginUrl,
-  gameSlug,
-  topics,
-  onTopicChange,
-}: GameBoardProps) {
+export function GameBoard({ puzzle, initialGuesses, loginUrl, gameSlug }: GameBoardProps) {
   const [isOffline, setIsOffline] = useState(false);
   const game = useGame({ puzzle, initialGuesses, gameSlug });
   const keyboardState = useMemo(() => getKeyboardState(game.guesses), [game.guesses]);
@@ -75,14 +65,6 @@ export function GameBoard({
 
   return (
     <div className={styles.shell}>
-      <GameHeader
-        isFallback={puzzle.isFallback}
-        gameSlug={gameSlug}
-        topics={topics}
-        onTopicChange={onTopicChange}
-        dateKey={puzzle.dateKey}
-      />
-
       {isOffline && (
         <div role="status" className={styles.offlineBanner}>
           You&apos;re offline. Guesses will be available when your connection returns.
@@ -96,7 +78,7 @@ export function GameBoard({
         </div>
       )}
 
-      <GuessGrid game={game} />
+      <GuessGrid game={game} dateKey={puzzle.dateKey} />
 
       <GameResult
         game={game}

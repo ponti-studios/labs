@@ -3,12 +3,10 @@ import { describe, expect, it, vi } from "vitest";
 const {
   getGameUserMock,
   getGameBySlugMock,
-  getActiveGamesMock,
   loadActivePublicPuzzleWithAttemptMock,
 } = vi.hoisted(() => ({
   getGameUserMock: vi.fn(),
   getGameBySlugMock: vi.fn(),
-  getActiveGamesMock: vi.fn(),
   loadActivePublicPuzzleWithAttemptMock: vi.fn(),
 }));
 
@@ -19,7 +17,6 @@ vi.mock("../server/auth", () => ({
 
 vi.mock("../lib/data/games.server", () => ({
   getGameBySlug: getGameBySlugMock,
-  getActiveGames: getActiveGamesMock,
 }));
 
 vi.mock("../lib/data/puzzle.server", () => ({
@@ -59,10 +56,9 @@ describe("today route loader", () => {
     ).rejects.toMatchObject({ status: 404 });
   });
 
-  it("returns the active puzzle with attempt and topic list for a signed-in user", async () => {
+  it("returns the active puzzle with an attempt for a signed-in user", async () => {
     getGameBySlugMock.mockResolvedValueOnce({ id: 1, slug: "reality", active: true });
     getGameUserMock.mockResolvedValueOnce({ id: "user-1", email: null });
-    getActiveGamesMock.mockResolvedValueOnce([{ slug: "reality", name: "Reality" }]);
     loadActivePublicPuzzleWithAttemptMock.mockResolvedValueOnce({
       puzzle: PUZZLE,
       attempt: { guesses: [], status: "playing" },
@@ -87,14 +83,12 @@ describe("today route loader", () => {
       puzzle: PUZZLE,
       attempt: { guesses: [], status: "playing" },
       gameSlug: "reality",
-      games: [{ slug: "reality", name: "Reality" }],
     } as never);
   });
 
   it("returns a null-puzzle empty state (not a 404) when no puzzle is available", async () => {
     getGameBySlugMock.mockResolvedValueOnce({ id: 1, slug: "reality", active: true });
     getGameUserMock.mockResolvedValueOnce(null);
-    getActiveGamesMock.mockResolvedValueOnce([]);
     loadActivePublicPuzzleWithAttemptMock.mockResolvedValueOnce(null);
 
     const loader = await importLoader();
@@ -110,7 +104,6 @@ describe("today route loader", () => {
   it("defaults the time zone to UTC when no timezone cookie is present", async () => {
     getGameBySlugMock.mockResolvedValueOnce({ id: 1, slug: "reality", active: true });
     getGameUserMock.mockResolvedValueOnce(null);
-    getActiveGamesMock.mockResolvedValueOnce([]);
     loadActivePublicPuzzleWithAttemptMock.mockResolvedValueOnce({ puzzle: PUZZLE, attempt: null });
 
     const loader = await importLoader();
@@ -131,7 +124,6 @@ describe("today route loader", () => {
   it("defaults invalid timezone cookies to UTC", async () => {
     getGameBySlugMock.mockResolvedValueOnce({ id: 1, slug: "reality", active: true });
     getGameUserMock.mockResolvedValueOnce(null);
-    getActiveGamesMock.mockResolvedValueOnce([]);
     loadActivePublicPuzzleWithAttemptMock.mockResolvedValueOnce({ puzzle: PUZZLE, attempt: null });
 
     const loader = await importLoader();
@@ -154,7 +146,6 @@ describe("today route loader", () => {
   it("defaults malformed timezone cookies to UTC", async () => {
     getGameBySlugMock.mockResolvedValueOnce({ id: 1, slug: "reality", active: true });
     getGameUserMock.mockResolvedValueOnce(null);
-    getActiveGamesMock.mockResolvedValueOnce([]);
     loadActivePublicPuzzleWithAttemptMock.mockResolvedValueOnce({ puzzle: PUZZLE, attempt: null });
 
     const loader = await importLoader();
