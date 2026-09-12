@@ -1,7 +1,7 @@
-import type { GameState, MosaicCell, MosaicCellStatus } from "../components/game";
+import type { GameState, WeekGridCellStatus, WeekGridRow } from "../components/game";
 import type { PublicGamesPuzzle, GameGuess, GameStatus } from "../lib/puzzle";
 import type { PuzzleHistoryPage } from "../lib/player/history-types";
-import { addDaysToDateKey, buildDateRange } from "../lib/puzzle/date";
+import { buildDateRange } from "../lib/puzzle/date";
 
 export const puzzle: PublicGamesPuzzle = {
   answerType: "storyline",
@@ -115,7 +115,15 @@ export const history: PuzzleHistoryPage = {
     { dateKey: "2026-08-19", gameSlug: "reality", gameName: "Reality" },
     { dateKey: "2026-08-20", gameSlug: "markets", gameName: "Markets" },
   ],
-  mosaic: [],
+  weekGrid: buildWeekGridFixture(
+    [
+      { slug: "reality", name: "Reality" },
+      { slug: "markets", name: "Markets" },
+    ],
+    "2026-08-16",
+    "2026-08-22",
+    7,
+  ),
   rows: [
     {
       dateKey: "2026-08-20",
@@ -159,7 +167,7 @@ export const emptyHistory: PuzzleHistoryPage = {
   stats: { ...stats, gamesPlayed: 0, gamesSolved: 0, winRate: 0, currentStreak: 0, maxStreak: 0 },
 };
 
-// Small seeded PRNG so mosaic fixtures are identical on every render/CI run
+// Small seeded PRNG so grid fixtures are identical on every render/CI run
 // instead of drifting with Math.random().
 function mulberry32(seed: number) {
   let a = seed;
@@ -172,36 +180,28 @@ function mulberry32(seed: number) {
   };
 }
 
-export function buildMosaicFixture(
-  todayKey: string,
-  days: number,
+export function buildWeekGridFixture(
+  topics: { slug: string; name: string }[],
+  weekStartKey: string,
+  weekEndKey: string,
   seed: number,
-  /** Days before today with real rolls; anything earlier renders unplayed —
-   *  simulates a game that hasn't existed for the full window yet. */
-  activeDays = days,
-): MosaicCell[] {
-  const startKey = addDaysToDateKey(todayKey, -days) ?? todayKey;
-  const dateKeys = buildDateRange(startKey, { endKey: todayKey });
-  const activeFromKey = addDaysToDateKey(todayKey, -activeDays) ?? todayKey;
+): WeekGridRow[] {
+  const dateKeys = buildDateRange(weekStartKey, { endKey: weekEndKey });
   const rand = mulberry32(seed);
 
-  return dateKeys.map((dateKey) => {
-    if (dateKey === todayKey) {
-      return { dateKey, status: "playing" as MosaicCellStatus, guessCount: null };
-    }
-    if (dateKey < activeFromKey) {
-      return { dateKey, status: "unplayed" as MosaicCellStatus, guessCount: null };
-    }
-    const roll = rand();
-    if (roll < 0.18) {
-      return { dateKey, status: "unplayed" as MosaicCellStatus, guessCount: null };
-    }
-    if (roll < 0.28) {
-      return { dateKey, status: "failed" as MosaicCellStatus, guessCount: null };
-    }
-    const guessCount = 1 + Math.floor(rand() * 6);
-    return { dateKey, status: "solved" as MosaicCellStatus, guessCount };
-  });
+  return topics.map((topic) => ({
+    topicSlug: topic.slug,
+    topicName: topic.name,
+    cells: dateKeys.map((dateKey) => {
+      const roll = rand();
+      if (roll < 0.12) return { dateKey, status: "no-puzzle" as WeekGridCellStatus, guessCount: null };
+      if (roll < 0.28) return { dateKey, status: "unplayed" as WeekGridCellStatus, guessCount: null };
+      if (roll < 0.4) return { dateKey, status: "failed" as WeekGridCellStatus, guessCount: null };
+      if (roll < 0.48) return { dateKey, status: "playing" as WeekGridCellStatus, guessCount: null };
+      const guessCount = 1 + Math.floor(rand() * 6);
+      return { dateKey, status: "solved" as WeekGridCellStatus, guessCount };
+    }),
+  }));
 }
 
 export const statusConfig: Record<

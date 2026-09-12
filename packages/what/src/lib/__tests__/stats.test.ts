@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { buildStreakMosaic, computeHistoryStats } from "../puzzle/stats";
+import { buildWeekGrid, computeHistoryStats } from "../puzzle/stats";
 
 type StoredGuess = { word: string; states: ("absent" | "correct" | "present")[] };
 type Fixture = { dateUtc: string; status: "playing" | "solved" | "failed"; guesses: StoredGuess[] };
@@ -112,36 +112,68 @@ describe("computeHistoryStats", () => {
   });
 });
 
-describe("buildStreakMosaic", () => {
-  it("fills a day with no attempt row as unplayed", () => {
-    const cells = buildStreakMosaic([], { fromKey: "2026-07-27", toKey: "2026-07-29" });
+describe("buildWeekGrid", () => {
+  const topics = [
+    { id: 1, slug: "reality", name: "Reality" },
+    { id: 2, slug: "markets", name: "Markets" },
+  ];
+  const range = { fromKey: "2026-07-27", toKey: "2026-07-29" };
 
-    expect(cells).toEqual([
-      { dateKey: "2026-07-27", status: "unplayed", guessCount: null },
-      { dateKey: "2026-07-28", status: "unplayed", guessCount: null },
-      { dateKey: "2026-07-29", status: "unplayed", guessCount: null },
+  it("marks a day with no puzzle at all as no-puzzle", () => {
+    const rows = buildWeekGrid(topics, [], [], range);
+
+    expect(rows).toEqual([
+      {
+        topicSlug: "reality",
+        topicName: "Reality",
+        cells: [
+          { dateKey: "2026-07-27", status: "no-puzzle", guessCount: null },
+          { dateKey: "2026-07-28", status: "no-puzzle", guessCount: null },
+          { dateKey: "2026-07-29", status: "no-puzzle", guessCount: null },
+        ],
+      },
+      {
+        topicSlug: "markets",
+        topicName: "Markets",
+        cells: [
+          { dateKey: "2026-07-27", status: "no-puzzle", guessCount: null },
+          { dateKey: "2026-07-28", status: "no-puzzle", guessCount: null },
+          { dateKey: "2026-07-29", status: "no-puzzle", guessCount: null },
+        ],
+      },
     ]);
   });
 
-  it("returns one cell per day in range, oldest first, regardless of attempt order", () => {
-    const cells = buildStreakMosaic(
-      [attempt("2026-07-29", "solved", 2), attempt("2026-07-27", "failed", 6)],
-      { fromKey: "2026-07-27", toKey: "2026-07-29" },
-    );
+  it("marks a day with a puzzle but no attempt as unplayed", () => {
+    const existingPuzzles = [{ topicId: 1, dateUtc: "2026-07-28" }];
+    const rows = buildWeekGrid(topics, [], existingPuzzles, range);
 
-    expect(cells.map((c) => c.dateKey)).toEqual(["2026-07-27", "2026-07-28", "2026-07-29"]);
-    expect(cells[0].status).toBe("failed");
-    expect(cells[1].status).toBe("unplayed");
-    expect(cells[2]).toEqual({ dateKey: "2026-07-29", status: "solved", guessCount: 2 });
+    const realityCells = rows.find((r) => r.topicSlug === "reality")?.cells;
+    expect(realityCells?.[1]).toEqual({ dateKey: "2026-07-28", status: "unplayed", guessCount: null });
   });
 
-  it("carries guess count only for solved days", () => {
-    const cells = buildStreakMosaic(
-      [attempt("2026-07-27", "solved", 4), attempt("2026-07-28", "playing", 1)],
-      { fromKey: "2026-07-27", toKey: "2026-07-28" },
-    );
+  it("reflects each topic's own attempt independently, one row per topic", () => {
+    const existingPuzzles = [
+      { topicId: 1, dateUtc: "2026-07-27" },
+      { topicId: 2, dateUtc: "2026-07-27" },
+    ];
+    const attempts = [
+      { topicId: 1, dateUtc: "2026-07-27", status: "solved" as const, guesses: [1, 2] },
+      { topicId: 2, dateUtc: "2026-07-27", status: "failed" as const, guesses: [1, 2, 3, 4, 5, 6] },
+    ];
+    const rows = buildWeekGrid(topics, attempts, existingPuzzles, range);
 
-    expect(cells[0].guessCount).toBe(4);
-    expect(cells[1]).toEqual({ dateKey: "2026-07-28", status: "playing", guessCount: null });
+    expect(rows[0].topicSlug).toBe("reality");
+    expect(rows[0].cells[0]).toEqual({ dateKey: "2026-07-27", status: "solved", guessCount: 2 });
+    expect(rows[1].topicSlug).toBe("markets");
+    expect(rows[1].cells[0]).toEqual({ dateKey: "2026-07-27", status: "failed", guessCount: null });
+  });
+
+  it("marks an in-progress attempt as playing with no guess count", () => {
+    const existingPuzzles = [{ topicId: 1, dateUtc: "2026-07-27" }];
+    const attempts = [{ topicId: 1, dateUtc: "2026-07-27", status: "playing" as const, guesses: [1] }];
+    const rows = buildWeekGrid(topics, attempts, existingPuzzles, range);
+
+    expect(rows[0].cells[0]).toEqual({ dateKey: "2026-07-27", status: "playing", guessCount: null });
   });
 });

@@ -1,7 +1,8 @@
 import { useState } from "react";
 
-import { GameHeader, GameTile, StreakMosaic, type MosaicCell } from "../game";
-import styles from "./history-page.module.css";
+import type { PlayableUnplayedPuzzle, PuzzleHistoryPage } from "../../lib/player/history-types";
+import type { GameStatus } from "../../lib/puzzle";
+import { GameHeader, GameTile, WeekStreakGrid } from "../game";
 import {
   Button,
   EmptyState,
@@ -13,8 +14,7 @@ import {
   StatusBadge,
   type StatusBadgeConfig,
 } from "../primitives";
-import type { PlayableUnplayedPuzzle, PuzzleHistoryPage } from "../../lib/player/history-types";
-import type { GameStatus } from "../../lib/puzzle";
+import styles from "./history-page.module.css";
 
 const UNPLAYED_PAGE_SIZE = 10;
 
@@ -57,11 +57,10 @@ export function HistoryGuestView({ loginUrl }: { loginUrl: string }) {
 
 export interface HistoryPageViewProps {
   history: PuzzleHistoryPage;
-  mosaicCells: readonly MosaicCell[];
   onPageChange: (page: number) => void;
 }
 
-export function HistoryPageView({ history, mosaicCells, onPageChange }: HistoryPageViewProps) {
+export function HistoryPageView({ history, onPageChange }: HistoryPageViewProps) {
   const hasPlayed = history.stats.gamesPlayed > 0;
 
   return (
@@ -72,7 +71,7 @@ export function HistoryPageView({ history, mosaicCells, onPageChange }: HistoryP
         <UnplayedSheet puzzles={history.playableUnplayed} />
       </header>
 
-      {mosaicCells.length > 0 && <StreakMosaic cells={mosaicCells} />}
+      {history.weekGrid.length > 0 && <WeekStreakGrid rows={history.weekGrid} />}
 
       {history.rows.length === 0 ? (
         <EmptyState
@@ -147,10 +146,7 @@ function UnplayedSheet({ puzzles }: { puzzles: readonly PlayableUnplayedPuzzle[]
           <ul className={styles.unplayedList}>
             {shown.map((puzzle) => (
               <li key={`${puzzle.gameSlug}:${puzzle.dateKey}`}>
-                <a
-                  className={styles.unplayedLink}
-                  href={`/${puzzle.gameSlug}/${puzzle.dateKey}`}
-                >
+                <a className={styles.unplayedLink} href={`/${puzzle.gameSlug}/${puzzle.dateKey}`}>
                   <span className={styles.rowDateText}>{formatDate(puzzle.dateKey)}</span>
                   <span className={styles.rowGame}>{puzzle.gameName}</span>
                 </a>
@@ -206,8 +202,8 @@ function WeekPagination({
         variant="outline"
         size="icon"
         aria-label="Previous week"
-        disabled={!history.hasPrev}
-        onClick={() => onPageChange(history.page - 1)}
+        disabled={!history.hasNext}
+        onClick={() => onPageChange(history.page + 1)}
       >
         <span aria-hidden>‹</span>
       </Button>
@@ -217,8 +213,8 @@ function WeekPagination({
         variant="outline"
         size="icon"
         aria-label="Next week"
-        disabled={!history.hasNext}
-        onClick={() => onPageChange(history.page + 1)}
+        disabled={!history.hasPrev}
+        onClick={() => onPageChange(history.page - 1)}
       >
         <span aria-hidden>›</span>
       </Button>
