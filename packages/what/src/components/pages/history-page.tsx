@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import type { PlayableUnplayedPuzzle, PuzzleHistoryPage } from "../../lib/player/history-types";
 import type { GameStatus } from "../../lib/puzzle";
-import { GameHeader, GameTile, WeekStreakGrid } from "../game";
+import { GameTile, WeekStreakGrid } from "../game";
 import {
   Button,
   EmptyState,
@@ -65,7 +65,6 @@ export function HistoryPageView({ history, onPageChange }: HistoryPageViewProps)
 
   return (
     <div className={styles.page}>
-      <GameHeader isFallback={false} showHistoryLink={false} />
       <header className={styles.header}>
         <h1 className={styles.title}>Your history</h1>
         <UnplayedSheet puzzles={history.playableUnplayed} />

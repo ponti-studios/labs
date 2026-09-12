@@ -1,8 +1,8 @@
-import { useLoaderData, useNavigate, useRevalidator, type LoaderFunctionArgs } from "react-router";
+import { useLoaderData, useRevalidator, type LoaderFunctionArgs } from "react-router";
 
 import { GameBoard } from "../components/game";
 import { useTimeZone } from "../hooks/use-timezone";
-import { getActiveGames, getGameBySlug } from "../lib/data/games.server";
+import { getGameBySlug } from "../lib/data/games.server";
 import { loadActivePublicPuzzleWithAttempt } from "../lib/data/puzzle.server";
 import { readTimeZoneCookie } from "../lib/puzzle/timezone";
 import { getGameUser, loginUrl } from "../server/auth";
@@ -17,25 +17,19 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const timeZone = readTimeZoneCookie(request.headers.get("Cookie")) ?? "UTC";
   const user = await getGameUser(request);
 
-  const [envelope, games] = await Promise.all([
-    loadActivePublicPuzzleWithAttempt(new Date(), timeZone, user, topic),
-    getActiveGames().catch(() => []),
-  ]);
+  const envelope = await loadActivePublicPuzzleWithAttempt(new Date(), timeZone, user, topic);
 
   const login = loginUrl(request);
-  const topicList = games.map((g) => ({ slug: g.slug, name: g.name }));
-
   if (!envelope) {
-    return { puzzle: null, loginUrl: login, gameSlug: topic, games: topicList };
+    return { puzzle: null, loginUrl: login, gameSlug: topic };
   }
 
-  return { ...envelope, loginUrl: login, gameSlug: topic, games: topicList };
+  return { ...envelope, loginUrl: login, gameSlug: topic };
 }
 
 export default function TodayRoute() {
   const data = useLoaderData<typeof loader>();
   const revalidator = useRevalidator();
-  const navigate = useNavigate();
 
   useTimeZone(revalidator.revalidate);
 
@@ -56,8 +50,6 @@ export default function TodayRoute() {
       initialGuesses={data.attempt?.guesses ?? []}
       loginUrl={data.loginUrl}
       gameSlug={data.gameSlug}
-      topics={data.games}
-      onTopicChange={(slug) => navigate(`/${slug}`)}
     />
   );
 }

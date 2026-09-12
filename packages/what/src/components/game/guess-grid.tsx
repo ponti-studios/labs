@@ -7,6 +7,7 @@ import { GameTile, type GameTileState } from "./game-tile";
 import type { GameState } from "../../hooks/use-game";
 
 import styles from "./guess-grid.module.css";
+import { GameHeader } from "./game-header";
 
 const EmptyGuessRow = memo(function EmptyGuessRow() {
   return (
@@ -120,7 +121,7 @@ const CurrentGuessRow = memo(function CurrentGuessRow({
   );
 });
 
-export function GuessGrid({ game }: { game: GameState }) {
+export function GuessGrid({ game, dateKey }: { game: GameState; dateKey?: string }) {
   return (
     <div className={styles.wrapper}>
       <div className={styles.grid} data-testid="game-tile-grid">
@@ -158,6 +159,7 @@ export function GuessGrid({ game }: { game: GameState }) {
           },
         )}
       </div>
+      {dateKey && <GameHeader dateKey={dateKey} />}
       <p
         className={cn(styles.errorMessage, game.errorMessage ? styles.visible : styles.hidden)}
         role="status"

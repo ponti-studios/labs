@@ -49,12 +49,6 @@ export default function DatedPuzzleRoute() {
 function SignedOutTeaser({ dateKey, loginUrl }: { dateKey: string; loginUrl: string }) {
   return (
     <div className={styles.teaser}>
-      <header className={styles.header}>
-        <div className={styles.headerInner}>
-          <img src="/logo.webp" alt={BRAND_NAME} className={styles.logo} />
-        </div>
-      </header>
-
       <div className={styles.body}>
         <div className={styles.clue}>
           <p className={styles.clueLabel}>{dateKey}</p>

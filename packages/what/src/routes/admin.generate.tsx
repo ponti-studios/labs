@@ -15,7 +15,7 @@ import { getDateKey } from "~/lib/puzzle/date";
 import { DEFAULT_GAME_SLUG } from "~/lib/generation/catalog";
 import { MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "~/lib/generation/feed-text";
 import { PROMPT_TEST_CASES } from "~/lib/values/prompt-test-cases";
-import { getPendingArticlesForGame } from "~/lib/data/articles.server";
+import { getPendingArticlesForTopics } from "~/lib/data/articles.server";
 import { getActiveGames } from "~/lib/data/games.server";
 import { getActiveAdminGenerationRun } from "~/lib/data/generation-runs.server";
 
@@ -35,9 +35,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const slug = new URL(request.url).searchParams.get("game") ?? DEFAULT_GAME_SLUG;
   const game = await resolveAdminGame(slug);
   if (!game) throw Response.json({ error: `No active ${BRAND_NAME} topic found` }, { status: 404 });
-  const [topics, pendingArticles, activeRun] = await Promise.all([
-    getActiveGames(),
-    getPendingArticlesForGame(game, 50),
+  const topics = await getActiveGames();
+  const [pendingArticles, activeRun] = await Promise.all([
+    getPendingArticlesForTopics(topics.map((topic) => topic.id), 200),
     getActiveAdminGenerationRun(game.id),
   ]);
 
@@ -49,6 +49,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     topics: topics.map((topic) => ({ id: topic.id, slug: topic.slug, name: topic.name })),
     articles: pendingArticles.map((article) => ({
       id: article.id,
+      topicId: article.gamesTopicId,
       title: sanitizeFeedText(article.title, MAX_FEED_TITLE_LENGTH),
     })),
     fixtures: PROMPT_TEST_CASES.map((fixture) => fixture.id),

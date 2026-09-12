@@ -27,6 +27,17 @@ function parseAllowlist(): string[] | null {
   return emails.length > 0 ? emails : null;
 }
 
+export function canAccessGameAdmin(user: { email?: string | null } | null): boolean {
+  if (!user) return false;
+
+  const allowlist = parseAllowlist();
+  if (allowlistRequired() && allowlist === null) return false;
+  if (allowlist === null) return true;
+
+  const email = user.email?.trim().toLowerCase();
+  return Boolean(email && allowlist.includes(email));
+}
+
 export async function requireGameAdmin(
   request: Request,
   kind: "loader" | "action",
@@ -44,11 +55,8 @@ export async function requireGameAdmin(
       status: 503,
     });
   }
-  if (allowlist) {
-    const email = user.email?.trim().toLowerCase();
-    if (!email || !allowlist.includes(email)) {
-      throw new Response("Forbidden", { status: 403 });
-    }
+  if (!canAccessGameAdmin(user)) {
+    throw new Response("Forbidden", { status: 403 });
   }
 
   return { userId: user.id };

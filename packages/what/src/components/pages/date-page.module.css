@@ -10,26 +10,6 @@
   padding-bottom: calc(var(--game-safe-bottom) + 88px);
 }
 
-.header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  backdrop-filter: blur(8px);
-}
-
-.headerInner {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-top: 0.5rem;
-}
-
-.logo {
-  height: 3.5rem;
-  object-fit: contain;
-}
-
 .body {
   display: flex;
   flex: 1;
@@ -77,17 +57,5 @@
 @media (min-width: 640px) {
   .teaser {
     padding-bottom: calc(var(--game-safe-bottom) + 24px);
-  }
-  .headerInner {
-    padding-top: 1rem;
-  }
-  .logo {
-    height: 5rem;
-  }
-}
-
-@media (min-width: 768px) {
-  .header {
-    position: static;
   }
 }

@@ -244,21 +244,9 @@ export const TypingError: Story = {
   render: () => <TypingErrorDemo />,
 };
 
-export const Header: Story = { render: () => <GameHeader isFallback={false} gameSlug="reality" /> };
-export const HeaderWithTopics: Story = {
-  render: () => (
-    <GameHeader
-      isFallback={false}
-      gameSlug="reality"
-      topics={[
-        { slug: "reality", name: "Reality" },
-        { slug: "culture", name: "Culture" },
-      ]}
-      onTopicChange={fn()}
-    />
-  ),
+export const Header: Story = {
+  render: () => <GameHeader dateKey="2026-08-12" />,
 };
-export const HeaderFallback: Story = { render: () => <GameHeader isFallback gameSlug="reality" /> };
 
 function ResultStory({ game }: { game: typeof solvedGame }) {
   return (

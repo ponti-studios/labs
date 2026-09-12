@@ -10,7 +10,7 @@
 .headerRow,
 .row {
   display: grid;
-  grid-template-columns: minmax(3.5rem, 5.5rem) repeat(7, 1fr);
+  grid-template-columns: 2rem repeat(7, 1fr);
   align-items: center;
   gap: var(--week-gap);
 }
@@ -77,7 +77,7 @@
 @media (max-width: 420px) {
   .headerRow,
   .row {
-    grid-template-columns: minmax(2.75rem, 4rem) repeat(7, 1fr);
+    grid-template-columns: 1.75rem repeat(7, 1fr);
     gap: 0.25rem;
   }
 
