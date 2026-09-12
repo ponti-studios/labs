@@ -1,10 +1,10 @@
 import { addDaysToDateKey, daysBetweenDateKeys, getDateKey } from "../puzzle/date";
 import { MAX_GUESSES } from "../puzzle/rules";
 import {
-  buildStreakMosaic,
+  buildWeekGrid,
   computeHistoryStats,
-  type MosaicCell,
   type PuzzleHistoryStats,
+  type WeekGridRow,
 } from "../puzzle/stats";
 import type { GameGuess, GameStatus, PuzzleAnswerType } from "../puzzle/types";
 import { listAttemptsForUserInRange, loadAllAttemptsForUser } from "./attempts.server";
@@ -23,11 +23,6 @@ const PLAYABLE_LOOKBACK_DAYS = 90;
 // anchored to today), not by row count — The game is a one-puzzle-per-day
 // game, so a "week" is a more meaningful unit than an arbitrary row count.
 const WEEK_DAYS = 7;
-
-// The streak mosaic always shows a full 52-week grid (7 rows x 52 columns),
-// same fixed window no matter how long the player has been playing — days
-// before the game existed just render as unplayed, same as any other gap.
-const MOSAIC_LOOKBACK_DAYS = 364;
 
 export interface PuzzleHistoryRow {
   dateKey: string;
@@ -64,11 +59,9 @@ export interface PuzzleHistoryPage {
   /** Puzzles within the lookback window, across every active topic, with no
    *  attempt row at all — oldest first. */
   playableUnplayed: PlayableUnplayedPuzzle[];
-  /** Fixed 52-week day-by-day grid for the streak mosaic, oldest first —
-   *  same window regardless of how long the game has existed. A day with
-   *  puzzles across several topics collapses to one cell (see
-   *  `aggregateByDate` in stats.ts). */
-  mosaic: MosaicCell[];
+  /** One row per active topic, one cell per day of this page's 7-day
+   *  window — the streak grid always covers the same window as `rows`. */
+  weekGrid: WeekGridRow[];
 }
 
 /**
@@ -89,16 +82,26 @@ export async function loadPuzzleHistory(
   const weekEndKey = addDaysToDateKey(todayKey, -(page - 1) * WEEK_DAYS) ?? todayKey;
   const weekStartKey = addDaysToDateKey(weekEndKey, -(WEEK_DAYS - 1)) ?? weekEndKey;
 
-  const [rows, allAttempts, earliestPuzzleKey] = await Promise.all([
+  const [rows, allAttempts, earliestPuzzleKey, weekExistingPuzzles] = await Promise.all([
     listAttemptsForUserInRange(userId, gameIds, { fromKey: weekStartKey, toKey: weekEndKey }),
     loadAllAttemptsForUser(userId, gameIds),
     getEarliestPuzzleDateKeyAcrossTopics(gameIds),
+    getExistingPuzzlesAcrossTopics(gameIds, weekStartKey, weekEndKey),
   ]);
 
   const stats = computeHistoryStats(allAttempts);
 
-  const mosaicFromKey = addDaysToDateKey(todayKey, -MOSAIC_LOOKBACK_DAYS) ?? todayKey;
-  const mosaic = buildStreakMosaic(allAttempts, { fromKey: mosaicFromKey, toKey: todayKey });
+  const weekGrid = buildWeekGrid(
+    games.map((game) => ({ id: game.id, slug: game.slug, name: game.name })),
+    rows.map(({ attempt }) => ({
+      topicId: attempt.gamesTopicId,
+      dateUtc: attempt.dateUtc,
+      status: attempt.status,
+      guesses: attempt.guesses,
+    })),
+    weekExistingPuzzles.map(({ gameId, dateUtc }) => ({ topicId: gameId, dateUtc })),
+    { fromKey: weekStartKey, toKey: weekEndKey },
+  );
 
   const fromKey = addDaysToDateKey(todayKey, -PLAYABLE_LOOKBACK_DAYS) ?? todayKey;
   const existingPuzzles = await getExistingPuzzlesAcrossTopics(gameIds, fromKey, todayKey);
@@ -144,6 +147,6 @@ export async function loadPuzzleHistory(
     weekEndKey,
     stats,
     playableUnplayed,
-    mosaic,
+    weekGrid,
   };
 }

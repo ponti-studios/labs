@@ -110,36 +110,80 @@ export function computeHistoryStats(attempts: readonly StatsAttempt[]): PuzzleHi
   return { gamesPlayed, gamesSolved, winRate, currentStreak, maxStreak, guessDistribution };
 }
 
-export type MosaicCellStatus = "solved" | "failed" | "playing" | "unplayed";
+export type WeekGridCellStatus = "solved" | "failed" | "playing" | "unplayed" | "no-puzzle";
 
-export interface MosaicCell {
+export interface WeekGridCell {
   /** YYYY-MM-DD */
   dateKey: string;
-  status: MosaicCellStatus;
+  status: WeekGridCellStatus;
   /** Guess count at solve (1-6). Only meaningful when status is "solved". */
   guessCount: number | null;
 }
 
-/**
- * One cell per calendar day in `[fromKey, toKey]` (inclusive), oldest
- * first — a day with no attempt row is "unplayed", not a gap in the array,
- * so the caller can render a fixed-shape grid straight off this output.
- */
-export function buildStreakMosaic(
-  attempts: readonly StatsAttempt[],
-  { fromKey, toKey }: { fromKey: string; toKey: string },
-): MosaicCell[] {
-  const byDate = new Map(aggregateByDate(attempts).map((attempt) => [attempt.dateUtc, attempt]));
+export interface WeekGridRow {
+  topicSlug: string;
+  topicName: string;
+  /** One cell per calendar day in the requested range, oldest first. */
+  cells: WeekGridCell[];
+}
 
-  return buildDateRange(fromKey, { endKey: toKey }).map((dateKey) => {
-    const attempt = byDate.get(dateKey);
-    if (!attempt) return { dateKey, status: "unplayed", guessCount: null };
-    if (attempt.status === "solved") {
-      return { dateKey, status: "solved", guessCount: attempt.guesses.length };
-    }
-    if (attempt.status === "failed") {
-      return { dateKey, status: "failed", guessCount: null };
-    }
-    return { dateKey, status: "playing", guessCount: null };
-  });
+export interface WeekGridTopic {
+  id: number;
+  slug: string;
+  name: string;
+}
+
+export interface WeekGridAttempt {
+  topicId: number;
+  /** YYYY-MM-DD */
+  dateUtc: string;
+  status: "playing" | "solved" | "failed";
+  guesses: readonly unknown[];
+}
+
+export interface WeekGridPuzzleExistence {
+  topicId: number;
+  /** YYYY-MM-DD */
+  dateUtc: string;
+}
+
+/**
+ * One row per topic, one cell per calendar day in `[fromKey, toKey]`
+ * (inclusive) — the per-topic counterpart of the old single-track mosaic,
+ * sized to line up with the weekly puzzle list rather than a full year. A
+ * cell reads "no-puzzle" when the topic simply didn't publish that day (vs.
+ * "unplayed", where a puzzle existed but the player skipped it), so a
+ * caller can render both states distinctly instead of conflating them.
+ */
+export function buildWeekGrid(
+  topics: readonly WeekGridTopic[],
+  attempts: readonly WeekGridAttempt[],
+  existingPuzzles: readonly WeekGridPuzzleExistence[],
+  { fromKey, toKey }: { fromKey: string; toKey: string },
+): WeekGridRow[] {
+  const dateKeys = buildDateRange(fromKey, { endKey: toKey });
+  const attemptByKey = new Map(attempts.map((a) => [`${a.topicId}:${a.dateUtc}`, a]));
+  const existingKeys = new Set(existingPuzzles.map((p) => `${p.topicId}:${p.dateUtc}`));
+
+  return topics.map((topic) => ({
+    topicSlug: topic.slug,
+    topicName: topic.name,
+    cells: dateKeys.map((dateKey) => {
+      const key = `${topic.id}:${dateKey}`;
+      const attempt = attemptByKey.get(key);
+      if (attempt) {
+        if (attempt.status === "solved") {
+          return { dateKey, status: "solved" as const, guessCount: attempt.guesses.length };
+        }
+        if (attempt.status === "failed") {
+          return { dateKey, status: "failed" as const, guessCount: null };
+        }
+        return { dateKey, status: "playing" as const, guessCount: null };
+      }
+      if (!existingKeys.has(key)) {
+        return { dateKey, status: "no-puzzle" as const, guessCount: null };
+      }
+      return { dateKey, status: "unplayed" as const, guessCount: null };
+    }),
+  }));
 }

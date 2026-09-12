@@ -36,7 +36,5 @@ export default function HistoryRoute() {
     });
   };
 
-  return (
-    <HistoryPageView history={props.history} mosaicCells={props.history.mosaic} onPageChange={setPage} />
-  );
+  return <HistoryPageView history={props.history} onPageChange={setPage} />;
 }
