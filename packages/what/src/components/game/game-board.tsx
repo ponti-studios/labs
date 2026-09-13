@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { OnscreenKeyboard } from "../keyboard/onscreen-keyboard";
+import keyboardStyles from "../keyboard/onscreen-keyboard.module.css";
 import {
   GAME_ANSWER_LENGTH,
   getKeyboardState,
@@ -89,7 +90,7 @@ export function GameBoard({ puzzle, initialGuesses, loginUrl, gameSlug }: GameBo
       />
 
       {!game.authRequired && !game.isGameOver && (
-        <div className={styles.keyboardDock}>
+        <div className={keyboardStyles.keyboardDock}>
           <OnscreenKeyboard
             letterStates={keyboardState}
             onLetter={game.addLetter}

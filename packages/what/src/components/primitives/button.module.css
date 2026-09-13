@@ -2,12 +2,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  border-radius: 0.5rem;
+  gap: calc(var(--spacing) * 2);
+  border-radius: var(--radius-lg);
   border: 1px solid transparent;
   font: inherit;
   font-weight: 500;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   line-height: 1;
   padding: 0.5rem 1rem;
   cursor: pointer;
@@ -18,7 +18,7 @@
 }
 
 .button:focus-visible {
-  outline: 2px solid var(--game-correct-accent);
+  outline: 2px solid var(--color-game-correct-accent);
   outline-offset: 2px;
 }
 
@@ -28,36 +28,36 @@
 }
 
 .default {
-  background: var(--game-ink);
-  color: var(--game-paper);
+  background: var(--color-game-ink);
+  color: var(--color-game-paper);
 }
 .default:hover {
-  background: color-mix(in srgb, var(--game-ink) 85%, var(--game-paper));
+  background: color-mix(in srgb, var(--color-game-ink) 85%, var(--color-game-paper));
 }
 
 .outline {
   background: transparent;
-  border-color: var(--game-paper-border);
-  color: var(--game-ink);
+  border-color: var(--color-game-paper-border);
+  color: var(--color-game-ink);
 }
 .outline:hover {
-  background: var(--game-bg);
+  background: var(--color-game-bg);
 }
 
 .ghost {
   background: transparent;
-  color: var(--game-ink);
+  color: var(--color-game-ink);
 }
 .ghost:hover {
-  background: var(--game-bg);
+  background: var(--color-game-bg);
 }
 
 .destructive {
-  background: var(--game-error-border);
-  color: var(--game-paper);
+  background: var(--color-game-error-border);
+  color: var(--color-game-paper);
 }
 .destructive:hover {
-  background: color-mix(in srgb, var(--game-error-border) 85%, var(--game-ink));
+  background: color-mix(in srgb, var(--color-game-error-border) 85%, var(--color-game-ink));
 }
 
 .sizeDefault {

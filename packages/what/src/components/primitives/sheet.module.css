@@ -13,12 +13,12 @@
   width: calc(100vw - 1.5rem);
   max-width: 26rem;
   max-height: min(75dvh, 34rem);
-  border: 1px solid var(--game-paper-border);
-  border-radius: 1rem;
+  border: 1px solid var(--color-game-paper-border);
+  border-radius: var(--radius-2xl);
   padding: 1.5rem;
-  background: var(--game-paper);
-  color: var(--game-ink);
-  box-shadow: 0 12px 32px var(--game-shadow-drop);
+  background: var(--color-game-paper);
+  color: var(--color-game-ink);
+  box-shadow: var(--shadow-lg);
   animation: wl-sheet-in 220ms var(--game-ease-out, ease);
 }
 
@@ -30,19 +30,19 @@
 }
 
 .dialog::backdrop {
-  background: var(--game-scrim);
+  background: var(--color-game-scrim);
 }
 
 .header {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: var(--spacing);
   margin-bottom: 1rem;
 }
 
 .title {
   font-weight: 600;
-  font-size: 1.0625rem;
+  font-size: var(--text-lg);
   margin: 0;
 }
 

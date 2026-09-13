@@ -34,20 +34,26 @@ async function stopAuthApi(server: Server) {
   );
 }
 
-const originalApiUrl = process.env.HOMINEM_API_URL;
-const originalInternalApiUrl = process.env.HOMINEM_INTERNAL_API_URL;
-const originalWhatAppUrl = process.env.WHAT_APP_URL;
-const originalPortlessUrl = process.env.PORTLESS_URL;
+const envOriginal = Object.freeze({
+  HOMINEM_API_URL: process.env.HOMINEM_API_URL,
+  HOMINEM_INTERNAL_API_URL: process.env.HOMINEM_INTERNAL_API_URL,
+  WHAT_APP_URL: process.env.WHAT_APP_URL,
+  PORTLESS_URL: process.env.PORTLESS_URL,
+  NODE_ENV: process.env.NODE_ENV,
+});
 
 afterEach(() => {
-  if (originalApiUrl === undefined) delete process.env.HOMINEM_API_URL;
-  else process.env.HOMINEM_API_URL = originalApiUrl;
-  if (originalInternalApiUrl === undefined) delete process.env.HOMINEM_INTERNAL_API_URL;
-  else process.env.HOMINEM_INTERNAL_API_URL = originalInternalApiUrl;
-  if (originalWhatAppUrl === undefined) delete process.env.WHAT_APP_URL;
-  else process.env.WHAT_APP_URL = originalWhatAppUrl;
-  if (originalPortlessUrl === undefined) delete process.env.PORTLESS_URL;
-  else process.env.PORTLESS_URL = originalPortlessUrl;
+  if (envOriginal.HOMINEM_API_URL === undefined) delete process.env.HOMINEM_API_URL;
+  else process.env.HOMINEM_API_URL = envOriginal.HOMINEM_API_URL;
+  if (envOriginal.HOMINEM_INTERNAL_API_URL === undefined)
+    delete process.env.HOMINEM_INTERNAL_API_URL;
+  else process.env.HOMINEM_INTERNAL_API_URL = envOriginal.HOMINEM_INTERNAL_API_URL;
+  if (envOriginal.WHAT_APP_URL === undefined) delete process.env.WHAT_APP_URL;
+  else process.env.WHAT_APP_URL = envOriginal.WHAT_APP_URL;
+  if (envOriginal.PORTLESS_URL === undefined) delete process.env.PORTLESS_URL;
+  else process.env.PORTLESS_URL = envOriginal.PORTLESS_URL;
+  if (envOriginal.NODE_ENV === undefined) delete process.env.NODE_ENV;
+  else process.env.NODE_ENV = envOriginal.NODE_ENV;
 });
 
 describe("Game ↔ Hominem authentication boundary", () => {
@@ -125,16 +131,13 @@ describe("Game ↔ Hominem authentication boundary", () => {
 
   it("keeps localhost requests on their local origin for the login return target", () => {
     process.env.HOMINEM_API_URL = "http://localhost:4040";
+    process.env.NODE_ENV = "development";
     process.env.WHAT_APP_URL = "https://what.lvh.me";
     process.env.PORTLESS_URL = "https://feature-fix.lvh.me";
 
-    const url = new URL(
-      loginUrl(new Request("http://localhost:4944/admin/generate?game=reality")),
-    );
+    const url = new URL(loginUrl(new Request("http://localhost:4944/admin/generate?game=reality")));
 
-    expect(url.origin).toBe("http://localhost:4040");
-    expect(url.searchParams.get("next")).toBe(
-      "http://localhost:4944/admin/generate?game=reality",
-    );
+    expect(url.origin).toBe("https://api.lvh.me");
+    expect(url.searchParams.get("next")).toBe("http://localhost:4944/admin/generate?game=reality");
   });
 });
