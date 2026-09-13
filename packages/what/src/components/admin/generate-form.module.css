@@ -1,12 +1,12 @@
 .field {
   display: grid;
-  gap: 0.5rem;
+  gap: calc(var(--spacing) * 2);
 }
 
 .articleField {
   display: grid;
   min-width: 0;
-  gap: 0.5rem;
+  gap: calc(var(--spacing) * 2);
 }
 
 .trigger {

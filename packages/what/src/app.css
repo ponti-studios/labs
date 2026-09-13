@@ -10,19 +10,19 @@
 header:has(> nav[aria-label="WH?T navigation"]) {
   border-bottom: 0;
   background: transparent;
-  padding: 0.75rem 1rem;
+  padding: calc(var(--spacing) * 3) calc(var(--spacing) * 4);
 }
 
 nav[aria-label="WH?T navigation"].what-navigation {
-  min-height: 3.75rem;
-  max-width: 64rem;
-  gap: 0.75rem;
+  min-height: calc(var(--spacing) * 15);
+  max-width: var(--container-5xl);
+  gap: calc(var(--spacing) * 3);
   align-items: center;
-  border-radius: 1.125rem;
-  background: var(--game-ink);
-  padding: 0.625rem 0.875rem;
-  color: var(--game-paper);
-  box-shadow: 0 0.875rem 1.875rem color-mix(in srgb, var(--game-ink) 22%, transparent);
+  border-radius: var(--radius-2xl);
+  background: var(--color-game-ink);
+  padding: calc(var(--spacing) * 2.5) calc(var(--spacing) * 3.5);
+  color: var(--color-game-paper);
+  box-shadow: var(--shadow-lg);
 }
 
 nav[aria-label="WH?T navigation"].what-navigation > div:first-child {
@@ -33,52 +33,52 @@ nav[aria-label="WH?T navigation"].what-navigation > div:first-child {
 
 nav[aria-label="WH?T navigation"].what-navigation > div:nth-child(2) {
   align-items: center;
-  gap: 0.5rem;
+  gap: calc(var(--spacing) * 2);
 }
 
 nav[aria-label="WH?T navigation"].what-navigation ul a {
-  color: color-mix(in srgb, var(--game-paper) 64%, transparent);
+  color: color-mix(in srgb, var(--color-game-paper) 64%, transparent);
 }
 
 nav[aria-label="WH?T navigation"].what-navigation ul a:hover,
 nav[aria-label="WH?T navigation"].what-navigation ul a[data-active] {
-  background: color-mix(in srgb, var(--game-paper) 12%, transparent);
-  color: var(--game-paper);
+  background: color-mix(in srgb, var(--color-game-paper) 12%, transparent);
+  color: var(--color-game-paper);
 }
 
 nav[aria-label="WH?T navigation"].what-navigation > div:last-child button {
-  border-color: color-mix(in srgb, var(--game-paper) 18%, transparent);
-  background: color-mix(in srgb, var(--game-paper) 10%, transparent);
-  color: var(--game-paper);
+  border-color: color-mix(in srgb, var(--color-game-paper) 18%, transparent);
+  background: color-mix(in srgb, var(--color-game-paper) 10%, transparent);
+  color: var(--color-game-paper);
 }
 
 nav[aria-label="WH?T navigation"].what-navigation > div:last-child button:hover {
-  background: color-mix(in srgb, var(--game-paper) 18%, transparent);
+  background: color-mix(in srgb, var(--color-game-paper) 18%, transparent);
 }
 
 .what-navigation__game-trigger {
   display: inline-flex;
   min-height: 2.25rem;
   align-items: center;
-  gap: 0.5rem;
-  border: 1px solid color-mix(in srgb, var(--game-paper) 18%, transparent);
-  border-radius: 0.7rem;
-  background: color-mix(in srgb, var(--game-paper) 10%, transparent);
-  padding: 0.5rem 0.7rem;
-  color: var(--game-paper);
-  font-size: 0.875rem;
+  gap: calc(var(--spacing) * 2);
+  border: 1px solid color-mix(in srgb, var(--color-game-paper) 18%, transparent);
+  border-radius: var(--radius-xl);
+  background: color-mix(in srgb, var(--color-game-paper) 10%, transparent);
+  padding: calc(var(--spacing) * 2) calc(var(--spacing) * 2.5);
+  color: var(--color-game-paper);
+  font-size: var(--text-sm);
   font-weight: 650;
   line-height: 1;
 }
 
 .what-navigation__game-trigger:hover {
-  background: color-mix(in srgb, var(--game-paper) 18%, transparent);
+  background: color-mix(in srgb, var(--color-game-paper) 18%, transparent);
 }
 
 .what-navigation__game-popover {
-  width: 18rem;
-  border-radius: 0.9rem;
-  padding: 0.5rem;
+  width: var(--container-2xs);
+  border-radius: var(--radius-xl);
+  padding: calc(var(--spacing) * 2);
 }
 
 .what-navigation__game-label {
@@ -93,7 +93,7 @@ nav[aria-label="WH?T navigation"].what-navigation > div:last-child button:hover 
 
 .what-navigation__game-options {
   display: grid;
-  gap: 0.15rem;
+  gap: calc(var(--spacing) * 0.6);
 }
 
 .what-navigation__game-options button {
@@ -101,11 +101,11 @@ nav[aria-label="WH?T navigation"].what-navigation > div:last-child button:hover 
   width: 100%;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.1rem;
+  gap: calc(var(--spacing) * 0.4);
   border: 0;
-  border-radius: 0.55rem;
+  border-radius: var(--radius-lg);
   background: transparent;
-  padding: 0.6rem;
+  padding: calc(var(--spacing) * 2.5);
   color: var(--text-primary);
   text-align: left;
 }
@@ -117,7 +117,7 @@ nav[aria-label="WH?T navigation"].what-navigation > div:last-child button:hover 
 
 .what-navigation__game-description {
   color: var(--text-secondary);
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
 }
 
 /* Sign in belongs in the Dock; the hamburger is for secondary navigation. */
@@ -128,40 +128,40 @@ nav[aria-label="WH?T navigation"].what-navigation > div:last-child button:hover 
 
 /* The mobile sheet is the Dock expanded, not a separate light-themed panel. */
 body:has(nav[aria-label="WH?T navigation"]) [data-slot="sheet-content"] {
-  border: 1px solid color-mix(in srgb, var(--game-paper) 14%, transparent);
-  border-radius: 1.125rem;
-  background: var(--game-ink);
-  color: var(--game-paper);
-  box-shadow: 0 0.875rem 1.875rem color-mix(in srgb, var(--game-ink) 30%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-game-paper) 14%, transparent);
+  border-radius: var(--radius-2xl);
+  background: var(--color-game-ink);
+  color: var(--color-game-paper);
+  box-shadow: var(--shadow-lg);
 }
 
 body:has(nav[aria-label="WH?T navigation"]) [data-slot="sheet-content"] > button:first-child {
-  color: color-mix(in srgb, var(--game-paper) 72%, transparent);
+  color: color-mix(in srgb, var(--color-game-paper) 72%, transparent);
 }
 
 body:has(nav[aria-label="WH?T navigation"]) [data-slot="sheet-content"] > button:first-child:hover {
-  background: color-mix(in srgb, var(--game-paper) 12%, transparent);
-  color: var(--game-paper);
+  background: color-mix(in srgb, var(--color-game-paper) 12%, transparent);
+  color: var(--color-game-paper);
 }
 
 body:has(nav[aria-label="WH?T navigation"]) [data-slot="sheet-content"] ul a {
-  color: color-mix(in srgb, var(--game-paper) 72%, transparent);
+  color: color-mix(in srgb, var(--color-game-paper) 72%, transparent);
 }
 
 body:has(nav[aria-label="WH?T navigation"]) [data-slot="sheet-content"] ul a:hover,
 body:has(nav[aria-label="WH?T navigation"]) [data-slot="sheet-content"] ul a[data-active] {
-  background: color-mix(in srgb, var(--game-paper) 12%, transparent);
-  color: var(--game-paper);
+  background: color-mix(in srgb, var(--color-game-paper) 12%, transparent);
+  color: var(--color-game-paper);
 }
 
 @media (max-width: 639px) {
   header:has(> nav[aria-label="WH?T navigation"]) {
-    padding: 0.625rem 0.75rem;
+    padding: calc(var(--spacing) * 2.5) calc(var(--spacing) * 3);
   }
 
   nav[aria-label="WH?T navigation"].what-navigation {
-    min-height: 3.5rem;
-    border-radius: 1rem;
+    min-height: calc(var(--spacing) * 14);
+    border-radius: var(--radius-2xl);
   }
 
   /* Keep the game switcher in the Dock on phones; secondary links remain in
@@ -182,7 +182,7 @@ body:has(nav[aria-label="WH?T navigation"]) [data-slot="sheet-content"] ul a[dat
 }
 
 /* Game palette as Tailwind colors. `@theme inline` keeps the `var(--game-*)`
-   indirection into game.css, which is the single source of truth and owns the
+   indirection into this app's palette, which is the single source of truth and owns the
    dark-mode overrides — utilities like `bg-game-glass` resolve correctly in
    both themes, and the Tailwind LSP picks every token up for autocomplete. */
 @theme inline {
@@ -193,8 +193,27 @@ body:has(nav[aria-label="WH?T navigation"]) [data-slot="sheet-content"] ul a[dat
   --color-game-ink-muted: var(--game-ink-muted);
   --color-game-correct-bg: var(--game-correct-bg);
   --color-game-correct-text: var(--game-correct-text);
+  --color-game-correct-border: var(--game-correct-border);
+  --color-game-correct-accent: var(--game-correct-accent);
+  --color-game-correct-shadow: var(--game-correct-shadow);
+  --color-game-correct-key-text: var(--game-correct-key-text);
   --color-game-present-bg: var(--game-present-bg);
   --color-game-present-text: var(--game-present-text);
+  --color-game-present-border: var(--game-present-border);
+  --color-game-present-accent: var(--game-present-accent);
+  --color-game-absent-bg: var(--game-absent-bg);
+  --color-game-absent-text: var(--game-absent-text);
+  --color-game-absent-border: var(--game-absent-border);
+  --color-game-error-border: var(--game-error-border);
+  --color-game-error-text: var(--game-error-text);
+  --color-game-skeleton-bg: var(--game-skeleton-bg);
+  --color-game-pending-bg: var(--game-pending-bg);
+  --color-game-pending-border: var(--game-pending-border);
+  --color-game-pending-text: var(--game-pending-text);
+  --color-game-silver-solid: var(--game-silver-solid);
+  --color-game-share-bg: var(--game-share-bg);
+  --color-game-share-bg-hover: var(--game-share-bg-hover);
+  --color-game-share-text: var(--game-share-text);
   --color-game-link-text: var(--game-link-text);
   --color-game-blush: var(--game-blush);
   --color-game-glass: var(--game-glass);
@@ -212,13 +231,13 @@ body:has(nav[aria-label="WH?T navigation"]) [data-slot="sheet-content"] ul a[dat
   align-items: center;
   justify-content: center;
   flex: none;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 11px;
+  width: calc(var(--spacing) * 9);
+  height: calc(var(--spacing) * 9);
+  border-radius: var(--radius-xl);
   cursor: pointer;
 
   &:focus-visible {
-    outline: 2px solid var(--game-link-text);
+    outline: 2px solid var(--color-game-link-text);
     outline-offset: 2px;
   }
 }
@@ -243,8 +262,8 @@ body {
   flex-direction: column;
   min-height: 100vh;
   min-height: 100dvh;
-  background: var(--game-bg);
-  color: var(--game-ink);
+  background: var(--color-game-bg);
+  color: var(--color-game-ink);
   font-family: var(
     --font-sans,
     system-ui,
@@ -304,7 +323,7 @@ svg {
   --game-correct-border: rgba(168, 15, 66, 0.5);
   --game-correct-accent: rgba(214, 17, 91, 1);
   --game-correct-shadow: rgba(23, 19, 13, 0.4);
-  --game-correct-key-text: var(--game-ink);
+  --game-correct-key-text: var(--color-game-ink);
 
   --game-error-border: rgba(217, 45, 32, 1);
   --game-error-text: rgba(181, 32, 22, 1);
@@ -314,14 +333,14 @@ svg {
     135deg,
     rgba(255, 255, 255, 1) 0%,
     rgba(150, 150, 153, 1) 14%,
-    var(--game-silver-solid) 28%,
-    var(--game-silver-solid) 100%
+    var(--color-game-silver-solid) 28%,
+    var(--color-game-silver-solid) 100%
   );
 
   --game-skeleton-bg: rgba(233, 225, 205, 1);
-  --game-pending-bg: color-mix(in srgb, var(--game-correct-bg) 5%, transparent);
-  --game-pending-border: color-mix(in srgb, var(--game-correct-accent) 25%, transparent);
-  --game-pending-text: var(--game-correct-accent);
+  --game-pending-bg: color-mix(in srgb, var(--color-game-correct-bg) 5%, transparent);
+  --game-pending-border: color-mix(in srgb, var(--color-game-correct-accent) 25%, transparent);
+  --game-pending-text: var(--color-game-correct-accent);
 
   /* Accents */
   --game-share-bg: rgba(240, 28, 91, 1);
@@ -329,18 +348,15 @@ svg {
   --game-share-text: rgba(23, 4, 12, 1);
   --game-link-text: rgba(52, 78, 217, 1);
 
-  /* Shadows */
-  --game-shadow-drop: rgba(23, 19, 13, 0.14);
-
   /* Glass tints — translucency resolved from the palette at computed-value
      time, so the values flip automatically with the dark theme. */
-  --game-glass: color-mix(in srgb, var(--game-paper) 42%, transparent);
-  --game-glass-border: color-mix(in srgb, var(--game-paper-border) 60%, transparent);
-  --game-glass-ghost: color-mix(in srgb, var(--game-paper) 34%, transparent);
-  --game-glass-ghost-hover: color-mix(in srgb, var(--game-paper) 72%, transparent);
-  --game-glass-ghost-border: color-mix(in srgb, var(--game-ink) 26%, transparent);
-  --game-glass-ghost-border-hover: color-mix(in srgb, var(--game-ink) 45%, transparent);
-  --game-blush: color-mix(in srgb, var(--game-correct-bg) 52%, var(--game-present-bg));
+  --game-glass: color-mix(in srgb, var(--color-game-paper) 42%, transparent);
+  --game-glass-border: color-mix(in srgb, var(--color-game-paper-border) 60%, transparent);
+  --game-glass-ghost: color-mix(in srgb, var(--color-game-paper) 34%, transparent);
+  --game-glass-ghost-hover: color-mix(in srgb, var(--color-game-paper) 72%, transparent);
+  --game-glass-ghost-border: color-mix(in srgb, var(--color-game-ink) 26%, transparent);
+  --game-glass-ghost-border-hover: color-mix(in srgb, var(--color-game-ink) 45%, transparent);
+  --game-blush: color-mix(in srgb, var(--color-game-correct-bg) 52%, var(--color-game-present-bg));
 
   /* Modal backdrop scrim. */
   --game-scrim: rgba(0, 0, 0, 0.4);
@@ -352,11 +368,11 @@ svg {
   --game-safe-left: env(safe-area-inset-left);
 
   /* Safe-area gutters — minimums so content never hugs the bezel. */
-  --game-gutter-top: max(1rem, var(--game-safe-top));
-  --game-gutter-right: max(1rem, var(--game-safe-right));
-  --game-gutter-bottom: max(1rem, var(--game-safe-bottom));
-  --game-gutter-left: max(1rem, var(--game-safe-left));
-  --game-gutter-bottom-sm: max(0.75rem, var(--game-safe-bottom));
+  --game-gutter-top: max(calc(var(--spacing) * 4), var(--game-safe-top));
+  --game-gutter-right: max(calc(var(--spacing) * 4), var(--game-safe-right));
+  --game-gutter-bottom: max(calc(var(--spacing) * 4), var(--game-safe-bottom));
+  --game-gutter-left: max(calc(var(--spacing) * 4), var(--game-safe-left));
+  --game-gutter-bottom-sm: max(calc(var(--spacing) * 3), var(--game-safe-bottom));
 
   /* Motion — stronger than the browser's built-in `ease`/`ease-out`, which
      read as weak/linear-ish for UI. */
@@ -372,21 +388,20 @@ svg {
     --game-ink: rgba(245, 241, 230, 1);
     --game-ink-muted: rgba(245, 241, 230, 0.68);
     --game-skeleton-bg: rgba(67, 59, 49, 1);
-    --game-pending-bg: color-mix(in srgb, var(--game-correct-bg) 30%, transparent);
-    --game-pending-border: color-mix(in srgb, var(--game-correct-accent) 30%, transparent);
-    --game-pending-text: var(--game-correct-text);
+    --game-pending-bg: color-mix(in srgb, var(--color-game-correct-bg) 30%, transparent);
+    --game-pending-border: color-mix(in srgb, var(--color-game-correct-accent) 30%, transparent);
+    --game-pending-text: var(--color-game-correct-text);
     --game-error-text: rgba(255, 112, 96, 1);
-    --game-shadow-drop: rgba(0, 0, 0, 0.35);
     --game-present-accent: rgba(246, 190, 78, 1);
     --game-link-text: rgba(143, 166, 255, 1);
     --game-absent-border: rgba(245, 241, 230, 0.18);
 
     /* Glass tints — dark theme: dark pane, lighter ghost surfaces. */
-    --game-glass: color-mix(in srgb, var(--game-bg) 38%, transparent);
-    --game-glass-border: color-mix(in srgb, var(--game-paper) 20%, transparent);
-    --game-glass-ghost: color-mix(in srgb, var(--game-paper) 8%, transparent);
-    --game-glass-ghost-hover: color-mix(in srgb, var(--game-paper) 18%, transparent);
-    --game-glass-ghost-border: color-mix(in srgb, var(--game-paper) 26%, transparent);
-    --game-glass-ghost-border-hover: color-mix(in srgb, var(--game-paper) 45%, transparent);
+    --game-glass: color-mix(in srgb, var(--color-game-bg) 38%, transparent);
+    --game-glass-border: color-mix(in srgb, var(--color-game-paper) 20%, transparent);
+    --game-glass-ghost: color-mix(in srgb, var(--color-game-paper) 8%, transparent);
+    --game-glass-ghost-hover: color-mix(in srgb, var(--color-game-paper) 18%, transparent);
+    --game-glass-ghost-border: color-mix(in srgb, var(--color-game-paper) 26%, transparent);
+    --game-glass-ghost-border-hover: color-mix(in srgb, var(--color-game-paper) 45%, transparent);
   }
 }

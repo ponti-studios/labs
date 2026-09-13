@@ -1,50 +1,50 @@
 .eyebrow {
-  color: var(--game-ink-muted);
-  font-size: 0.75rem;
+  color: var(--color-game-ink-muted);
+  font-size: var(--text-xs);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.075em;
 }
 
 .authCard {
-  border: 1px solid var(--game-paper-border);
+  border: 1px solid var(--color-game-paper-border);
   border-radius: var(--game-radius);
-  background-color: var(--game-paper);
-  box-shadow: 0 8px 20px var(--game-shadow-drop);
+  background-color: var(--color-game-paper);
+  box-shadow: var(--shadow-lg);
   animation: game-result-card-in 420ms var(--game-ease-out) both;
 }
 
 .authCardContent {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: calc(var(--spacing) * 3);
   text-align: center;
 }
 
 .result {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: calc(var(--spacing) * 3);
 }
 
 .verdict {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: calc(var(--spacing) * 2);
   margin-bottom: 1rem;
   animation: game-result-verdict-in 360ms var(--game-ease-out) 420ms both;
 }
 
 .verdict[data-solved="true"] {
-  color: var(--game-correct-accent);
+  color: var(--color-game-correct-accent);
 }
 
 .verdict[data-solved="false"] {
-  color: var(--game-ink);
+  color: var(--color-game-ink);
 }
 
 .verdictLabel {
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -54,7 +54,7 @@
 
 .verdictDots {
   display: flex;
-  gap: 0.3rem;
+  gap: calc(var(--spacing) * 1.2);
   margin-left: auto;
 }
 
@@ -78,11 +78,11 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--game-paper-border);
+  border: 1px solid var(--color-game-paper-border);
   border-radius: var(--game-radius);
-  background-color: var(--game-paper);
-  padding: 1.5rem;
-  box-shadow: 0 8px 20px var(--game-shadow-drop);
+  background-color: var(--color-game-paper);
+  padding: calc(var(--spacing) * 6);
+  box-shadow: var(--shadow-lg);
   animation: game-result-card-in 420ms var(--game-ease-out) both;
 }
 
@@ -91,28 +91,28 @@
   font-weight: 900;
   letter-spacing: 0;
   text-transform: uppercase;
-  color: var(--game-ink);
+  color: var(--color-game-ink);
   margin: 0;
 }
 
 .resultBody {
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   line-height: 1.5;
-  color: var(--game-ink);
+  color: var(--color-game-ink);
   animation: game-result-fade-in 350ms ease 600ms both;
 }
 
 .resultBody p {
-  margin-top: 0.5rem;
+  margin-top: calc(var(--spacing) * 2);
 }
 
 .resultActions {
   display: flex;
   justify-content: flex-end;
-  gap: 0.35rem;
+  gap: calc(var(--spacing) * 1.5);
   margin-top: 1rem;
   padding-top: 0.6rem;
-  border-top: 1px dashed var(--game-paper-border);
+  border-top: 1px dashed var(--color-game-paper-border);
 }
 
 .resultAction {
@@ -121,10 +121,10 @@
   justify-content: center;
   width: 2.25rem;
   height: 2.25rem;
-  border: 1px solid var(--game-paper-border);
-  border-radius: 8px;
+  border: 1px solid var(--color-game-paper-border);
+  border-radius: var(--radius-lg);
   background: transparent;
-  color: var(--game-ink-muted);
+  color: var(--color-game-ink-muted);
   animation: game-result-action-in 280ms var(--game-ease-out)
     calc(850ms + var(--action-i, 0) * 90ms) both;
   transition:
@@ -134,13 +134,13 @@
 }
 
 .resultAction:hover {
-  border-color: var(--game-link-text);
-  background: color-mix(in srgb, var(--game-link-text) 8%, transparent);
-  color: var(--game-link-text);
+  border-color: var(--color-game-link-text);
+  background: color-mix(in srgb, var(--color-game-link-text) 8%, transparent);
+  color: var(--color-game-link-text);
 }
 
 .resultAction:focus-visible {
-  outline: 2px solid var(--game-link-text);
+  outline: 2px solid var(--color-game-link-text);
   outline-offset: 2px;
 }
 

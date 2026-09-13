@@ -4,13 +4,12 @@ import { WhatServerEnv } from "../lib/infrastructure/env";
 
 export type GameUser = { id: string; email?: string | null };
 
+const DEFAULT_HOMINEM_API_URL = "https://api.lvh.me";
+
 export async function getGameUser(request: Request): Promise<GameUser | null> {
   try {
     const { user } = await getServerAuth(request, {
-      apiBaseUrl:
-        process.env.HOMINEM_INTERNAL_API_URL ??
-        process.env.HOMINEM_API_URL ??
-        "https://api.ponti.io",
+      apiBaseUrl: getHominemApiUrl({ allowInternal: true }),
     });
     return user?.id ? { id: user.id, email: user.email ?? null } : null;
   } catch {
@@ -37,9 +36,25 @@ export function loginUrl(request: Request, requestedReturnTo?: string): string {
     returnTo.pathname = "/";
   }
 
-  const url = new URL("/login", process.env.HOMINEM_API_URL ?? "https://api.ponti.io");
+  const url = new URL("/login", getHominemApiUrl());
   url.searchParams.set("next", returnTo.toString());
   return url.toString();
+}
+
+function getHominemApiUrl(options: { allowInternal?: boolean } = {}): string {
+  const configured = options.allowInternal
+    ? (process.env.HOMINEM_INTERNAL_API_URL ?? process.env.HOMINEM_API_URL)
+    : process.env.HOMINEM_API_URL;
+
+  if (
+    process.env.NODE_ENV === "development" &&
+    configured &&
+    isLoopbackHostname(new URL(configured).hostname)
+  ) {
+    return DEFAULT_HOMINEM_API_URL;
+  }
+
+  return configured ?? DEFAULT_HOMINEM_API_URL;
 }
 
 function isLoopbackHostname(hostname: string): boolean {

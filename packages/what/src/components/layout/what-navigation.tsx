@@ -45,7 +45,7 @@ export function WhatNavigation({ games, signedIn, canAccessAdmin, loginUrl }: Wh
             <Link to={`/${games[0].slug}`}>Play</Link>
           </Navigation.Item>
         </Navigation.List>
-      ) : games.length > 1 ? (
+      ) : signedIn && games.length > 1 ? (
         <Popover>
           <PopoverTrigger
             className="what-navigation__game-trigger"

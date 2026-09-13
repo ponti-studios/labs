@@ -6,35 +6,35 @@
   max-width: 32rem;
   flex: 1;
   flex-direction: column;
-  gap: 0.75rem;
-  padding-inline: 1rem;
-  padding-top: 0.5rem;
-  padding-bottom: calc(var(--game-safe-bottom) + 184px);
+  gap: calc(var(--spacing) * 3);
+  padding-inline: calc(var(--spacing) * 4);
+  padding-top: calc(var(--spacing) * 2);
+  padding-bottom: calc(var(--game-safe-bottom) + calc(var(--spacing) * 46));
 }
 
 .offlineBanner {
-  border-radius: 0.375rem;
-  border: 1px solid var(--game-error-border);
-  background: var(--game-paper);
-  color: var(--game-ink);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-game-error-border);
+  background: var(--color-game-paper);
+  color: var(--color-game-ink);
   padding: 0.5rem 0.75rem;
   text-align: center;
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
 }
 
 .clue {
-  border: 1px solid var(--game-present-border);
-  border-radius: 0.375rem;
-  background: var(--game-present-bg);
-  padding: 0.75rem;
-  font-size: 0.875rem;
+  border: 1px solid var(--color-game-present-border);
+  border-radius: var(--radius-md);
+  background: var(--color-game-present-bg);
+  padding: calc(var(--spacing) * 3);
+  font-size: var(--text-sm);
   line-height: 1.25rem;
-  color: var(--game-present-text);
+  color: var(--color-game-present-text);
 }
 
 .clueLabel {
   color: inherit;
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.075em;
@@ -42,27 +42,7 @@
 }
 
 .clueText {
-  margin-top: 0.25rem;
-}
-
-.keyboardDock {
-  position: fixed;
-  inset-inline: 0;
-  bottom: 0;
-  z-index: 10;
-  display: flex;
-  justify-content: center;
-  max-width: 32rem;
-  margin: 0 auto;
-  border-radius: 0.75rem 0.75rem 0 0;
-  background: var(--game-bg);
-  opacity: 0.97;
-  padding: 0.5rem 0.5rem calc(var(--game-safe-bottom) + 0.5rem);
-}
-
-.keyboardDock :global([data-game-keyboard]) {
-  width: 100%;
-  max-width: 32rem;
+  margin-top: var(--spacing);
 }
 
 .skeletonWrap {
@@ -75,7 +55,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding-inline: 1rem;
+  padding-inline: calc(var(--spacing) * 4);
 }
 
 .skeleton {
@@ -97,21 +77,14 @@
   }
 
   .shell {
-    gap: 0.5rem;
-    padding-top: 0.25rem;
-  }
-
-  .keyboardDock {
-    --game-key-height: 38px;
-    bottom: 0;
-    padding-top: 0.25rem;
-    padding-bottom: calc(var(--game-safe-bottom) + 0.25rem);
+    gap: calc(var(--spacing) * 2);
+    padding-top: var(--spacing);
   }
 }
 
 @media (min-width: 640px) {
   .shell {
-    gap: 1.5rem;
+    gap: calc(var(--spacing) * 6);
     padding-top: 1rem;
   }
 }

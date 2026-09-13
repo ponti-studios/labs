@@ -10,8 +10,8 @@
 .step {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.875rem;
+  gap: calc(var(--spacing) * 2);
+  font-size: var(--text-sm);
   opacity: 0.4;
   transform: translateX(-4px);
   transition:

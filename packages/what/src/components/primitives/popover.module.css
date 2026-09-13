@@ -8,12 +8,12 @@
   top: calc(100% + 0.5rem);
   z-index: 50;
   min-width: 12rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--game-paper-border);
-  background: var(--game-paper);
-  color: var(--game-ink);
-  box-shadow: 0 4px 16px var(--game-shadow-drop);
-  padding: 0.75rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-game-paper-border);
+  background: var(--color-game-paper);
+  color: var(--color-game-ink);
+  box-shadow: var(--shadow-md);
+  padding: calc(var(--spacing) * 3);
   animation: wl-popover-in 120ms ease;
 }
 
