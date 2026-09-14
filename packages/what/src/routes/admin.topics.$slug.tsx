@@ -26,7 +26,6 @@ import {
   isArticleStatus,
   type ArticleStatus,
 } from "~/lib/generation/article-status";
-import { assertSameOrigin } from "~/lib/infrastructure/origin";
 
 import { BRAND_NAME } from "~/config/brand";
 
@@ -52,10 +51,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   return { ...detail, status: status ?? "all" };
 }
 
-export async function action({ request, params, context }: ActionFunctionArgs) {
-  const originDenied = assertSameOrigin(request);
-  if (originDenied) return originDenied;
-
+export async function action({ params, context }: ActionFunctionArgs) {
   const auth = getGameAdminActor(context);
   const slug = params.slug ?? "";
   const result = await refreshTopicArticlesBySlug(slug, auth.userId);

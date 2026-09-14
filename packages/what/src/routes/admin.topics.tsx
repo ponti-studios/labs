@@ -13,7 +13,6 @@ import { Link, useFetcher, useLoaderData, type ActionFunctionArgs } from "react-
 
 import { loadAdminTopics, refreshTopicArticlesBySlug } from "~/lib/admin/articles.server";
 import { getGameAdminActor } from "~/lib/admin/auth";
-import { assertSameOrigin } from "~/lib/infrastructure/origin";
 
 import { BRAND_NAME } from "~/config/brand";
 
@@ -26,9 +25,6 @@ export async function loader() {
 }
 
 export async function action({ request, context }: ActionFunctionArgs) {
-  const originDenied = assertSameOrigin(request);
-  if (originDenied) return originDenied;
-
   const auth = getGameAdminActor(context);
   const form = await request.formData();
   const slug = String(form.get("slug") ?? "");
