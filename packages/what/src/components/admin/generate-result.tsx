@@ -13,7 +13,7 @@ export function GenerateResult({
   result: GenerateOk | GenerateErr;
   gameSlug: string;
 }) {
-  if (result.ok === false) {
+  if (!result.ok) {
     return (
       <Alert variant="destructive">
         <AlertTitle>Couldn’t finish this generation</AlertTitle>
