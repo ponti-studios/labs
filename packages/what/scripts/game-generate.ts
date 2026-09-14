@@ -17,7 +17,7 @@ import {
   backfillPuzzlePublishedAt,
   countInventoryForRange,
 } from "../src/lib/data/puzzles.server";
-import { LabyrinthServerEnv } from "../src/lib/infrastructure/env";
+import { LabsServerEnv } from "../src/lib/infrastructure/env";
 
 const logger = createLogger();
 
@@ -48,7 +48,7 @@ function parseGenerateArgs(): {
 }
 
 async function main() {
-  LabyrinthServerEnv.parse(process.env);
+  LabsServerEnv.parse(process.env);
 
   const args = parseGenerateArgs();
   const runDateKey = getDateKey(new Date());

@@ -30,7 +30,7 @@ The puzzle pipeline lives in `packages/what/src/lib/`:
 | Data access | `lib/data/*.server.ts` |
 | Serving + fallback | `lib/data/puzzle.server.ts`, routes under `src/routes/` |
 | Admin console | `src/routes/admin.*`, `lib/admin/*` |
-| Env schema | `lib/infrastructure/env.ts` (`WhatServerEnv`, re-export of `LabyrinthServerEnv` from `@pontistudios/env`) |
+| Env schema | `lib/infrastructure/env.ts` (`WhatServerEnv`, re-export of `LabsServerEnv` from `@pontistudios/env`) |
 
 Entry-point scripts live in `packages/what/scripts/` (`game-ingest.ts`, `game-generate.ts`, `game-health-check.ts`) and run as `pnpm game:ingest`, `pnpm game:generate`, `pnpm game:health-check` from the repo root.
 

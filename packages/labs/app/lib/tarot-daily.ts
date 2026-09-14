@@ -1,7 +1,10 @@
 import type { DailyTarotCard, DailyTarotReading, DailyTarotResult } from "./tarot-types";
 
 const DATE_KEY_FORMAT = /^\d{4}-\d{2}-\d{2}$/;
-const STORAGE_PREFIX = "labyrinth:tarot:daily";
+const STORAGE_PREFIX = "labs:tarot:daily";
+
+/** Pre-rebrand prefix. Read once for migration, then dropped. */
+const LEGACY_STORAGE_PREFIX = "labyrinth:tarot:daily";
 
 export function getLocalDateKey(date = new Date()): string {
   const year = date.getFullYear();
@@ -17,6 +20,10 @@ export function isDateKey(value: string): boolean {
 
 export function getDailyTarotStorageKey(dateKey: string): string {
   return `${STORAGE_PREFIX}:${dateKey}`;
+}
+
+export function getLegacyDailyTarotStorageKey(dateKey: string): string {
+  return `${LEGACY_STORAGE_PREFIX}:${dateKey}`;
 }
 
 export function buildFallbackDailyReading(
