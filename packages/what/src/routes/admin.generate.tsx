@@ -30,6 +30,35 @@ export function meta() {
   return [{ title: `${BRAND_NAME} generate` }, { name: "robots", content: "noindex" }];
 }
 
+function isGenerateErr(value: unknown): value is GenerateErr {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    (value as { ok?: unknown }).ok === false &&
+    typeof (value as { error?: unknown }).error === "string"
+  );
+}
+
+function isStartedResponse(value: unknown): value is { ok: true; runId: number } {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    (value as { ok?: unknown }).ok === true &&
+    Number.isInteger((value as { runId?: unknown }).runId)
+  );
+}
+
+function unexpectedResponseError(body: unknown, status: number): string {
+  if (
+    typeof body === "object" &&
+    body !== null &&
+    typeof (body as { error?: unknown }).error === "string"
+  ) {
+    return `The server rejected the request (HTTP ${status}): ${(body as { error: string }).error}`;
+  }
+  return `The server rejected the request (HTTP ${status}).`;
+}
+
 export async function loader({ request }: LoaderFunctionArgs) {
   const slug = new URL(request.url).searchParams.get("game") ?? DEFAULT_GAME_SLUG;
   const game = await resolveAdminGame(slug);
@@ -115,7 +144,20 @@ export default function GameAdminGenerate() {
         body: form,
         credentials: "same-origin",
       });
-      const started: { ok: true; runId: number } | GenerateErr = await response.json();
+      // The action only ever returns `{ ok: true, runId }` or a `GenerateErr`,
+      // but proxies and auth layers can interpose other shapes (403 JSON, an
+      // error page, …). Validate before handing anything to the UI.
+      const body: unknown = await response.json().catch(() => null);
+      if (!isGenerateErr(body) && !isStartedResponse(body)) {
+        setResult({
+          ok: false,
+          code: "INVALID_SOURCE",
+          error: unexpectedResponseError(body, response.status),
+        });
+        setRunning(false);
+        return;
+      }
+      const started = body;
       if (!started.ok) {
         setResult(started);
         setRunning(false);
