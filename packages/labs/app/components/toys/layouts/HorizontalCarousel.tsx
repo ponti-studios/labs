@@ -12,7 +12,7 @@ const EASE_OUT = [0, 0, 0.2, 1] as const;
 function CarouselCard({ tile, progress = 0 }: { tile: MovieTile; progress?: number }) {
   return (
     <figure className="m-0">
-      <div className="relative flex aspect-[2/3] items-center justify-center overflow-hidden rounded-[0.9rem] bg-muted/20">
+      <div className="bg-muted/20 relative flex aspect-[2/3] items-center justify-center overflow-hidden rounded-[0.9rem]">
         <img
           className="h-full w-full rounded-[0.9rem] object-contain transition-[transform,filter] duration-300 group-hover:scale-[1.045] group-hover:brightness-110"
           src={tile.logo}
@@ -22,7 +22,10 @@ function CarouselCard({ tile, progress = 0 }: { tile: MovieTile; progress?: numb
           loading="lazy"
           decoding="async"
         />
-        <div className="bg-foreground/20 absolute right-2 bottom-2 left-2 h-0.5 overflow-hidden rounded-full" aria-hidden="true">
+        <div
+          className="bg-foreground/20 absolute right-2 bottom-2 left-2 h-0.5 overflow-hidden rounded-full"
+          aria-hidden="true"
+        >
           <span
             className="bg-foreground/80 block h-full w-full origin-left rounded-full transition-transform duration-100"
             style={{ transform: `scaleX(${progress})` }}
@@ -71,7 +74,10 @@ export function HorizontalCarousel() {
       if (!card || !viewport) return;
       const cardWidth = card.offsetWidth;
       stepRef.current = cardWidth + 16;
-      centerOffsetRef.current = Math.max(0, (viewport.getBoundingClientRect().width - cardWidth) / 2);
+      centerOffsetRef.current = Math.max(
+        0,
+        (viewport.getBoundingClientRect().width - cardWidth) / 2,
+      );
       x.set(centerOffsetRef.current - globalRef.current * stepRef.current);
     };
     measure();
@@ -152,14 +158,14 @@ export function HorizontalCarousel() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="relative overflow-hidden rounded-2xl border border-border bg-muted/20">
+      <div className="border-border bg-muted/20 relative overflow-hidden rounded-2xl border">
         <div
           role="group"
           aria-roledescription="carousel"
           aria-label="2026 movie slate"
           tabIndex={0}
           ref={viewportRef}
-          className="relative overflow-hidden py-4 [mask-image:linear-gradient(to_right,transparent_0%,black_6%,black_94%,transparent_100%)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+          className="focus-visible:outline-accent relative overflow-hidden [mask-image:linear-gradient(to_right,transparent_0%,black_6%,black_94%,transparent_100%)] py-4 focus-visible:outline-2 focus-visible:outline-offset-4"
           onKeyDown={handleKeyDown}
         >
           <motion.div ref={trackRef} className="flex items-stretch gap-4" style={{ x }}>
@@ -169,9 +175,9 @@ export function HorizontalCarousel() {
                   <div
                     key={`${copy}-${tile.id}`}
                     className={cn(
-                      "layouts-carousel-card group relative flex-[0_0_clamp(11rem,20vw,15rem)] opacity-60 saturate-[0.72] brightness-[0.76] transition-[opacity,filter,transform] duration-300",
+                      "layouts-carousel-card group relative flex-[0_0_clamp(11rem,20vw,15rem)] opacity-60 brightness-[0.76] saturate-[0.72] transition-[opacity,filter,transform] duration-300",
                       copy * total + tileIndex === globalRef.current &&
-                        "z-10 scale-[1.04] opacity-100 saturate-100 brightness-100",
+                        "z-10 scale-[1.04] opacity-100 brightness-100 saturate-100",
                     )}
                     data-active={copy * total + tileIndex === globalRef.current}
                   >
@@ -189,7 +195,7 @@ export function HorizontalCarousel() {
           type="button"
           variant="outline"
           aria-label="Previous poster"
-          className="bg-background/75 text-foreground hover:bg-background absolute top-1/2 left-3 z-20 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border-border/70 p-0 shadow-lg backdrop-blur-md"
+          className="bg-background/75 text-foreground hover:bg-background border-border/70 absolute top-1/2 left-3 z-20 flex size-10 -translate-y-1/2 items-center justify-center rounded-full p-0 shadow-lg backdrop-blur-md"
           onClick={() => stepBy(-1)}
         >
           <ChevronLeft aria-hidden="true" className="size-5" />
@@ -198,7 +204,7 @@ export function HorizontalCarousel() {
           type="button"
           variant="outline"
           aria-label="Next poster"
-          className="bg-background/75 text-foreground hover:bg-background absolute top-1/2 right-3 z-20 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border-border/70 p-0 shadow-lg backdrop-blur-md"
+          className="bg-background/75 text-foreground hover:bg-background border-border/70 absolute top-1/2 right-3 z-20 flex size-10 -translate-y-1/2 items-center justify-center rounded-full p-0 shadow-lg backdrop-blur-md"
           onClick={() => stepBy(1)}
         >
           <ChevronRight aria-hidden="true" className="size-5" />
@@ -211,7 +217,7 @@ export function HorizontalCarousel() {
               aria-label={`Go to item ${index + 1}`}
               onClick={() => goToSlide(index)}
               className={cn(
-                "h-2 w-2 shrink-0 rounded-full bg-muted-foreground/40 transition-[opacity,transform]",
+                "bg-muted-foreground/40 h-2 w-2 shrink-0 rounded-full transition-[opacity,transform]",
                 index === active && "scale-125 opacity-100",
               )}
             />

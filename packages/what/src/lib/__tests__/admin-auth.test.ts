@@ -92,7 +92,9 @@ describe("requireGameAdmin", () => {
   it("still requires a Hominem session in local development", async () => {
     process.env.NODE_ENV = "development";
     getHominemUserMock.mockResolvedValue(null);
-    await expect(requireGameAdmin(new Request("http://localhost:3001/admin"), "loader")).rejects.toMatchObject({
+    await expect(
+      requireGameAdmin(new Request("http://localhost:3001/admin"), "loader"),
+    ).rejects.toMatchObject({
       status: 302,
     });
   });

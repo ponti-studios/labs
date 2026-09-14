@@ -76,8 +76,7 @@ function prettyStream(): pinoPretty.PrettyStream {
 }
 
 export function createLogger(context?: Record<string, unknown>): pino.Logger {
-  const base = shouldPretty() && !isTestRun()
-    ? pino(pinoOptions(), prettyStream())
-    : pino(pinoOptions());
+  const base =
+    shouldPretty() && !isTestRun() ? pino(pinoOptions(), prettyStream()) : pino(pinoOptions());
   return context ? base.child(context) : base;
 }

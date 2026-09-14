@@ -94,7 +94,9 @@ function CandidateCard({
         </CardTitle>
       </CardHeader>
       <CardContent className="grid gap-4 pt-0 text-sm">
-        {(candidate.candidate.articleAbout || candidate.candidate.concept || candidate.candidate.answerMeaning) && (
+        {(candidate.candidate.articleAbout ||
+          candidate.candidate.concept ||
+          candidate.candidate.answerMeaning) && (
           <div className="grid gap-2 rounded-md border p-3">
             {candidate.candidate.articleAbout ? (
               <div>

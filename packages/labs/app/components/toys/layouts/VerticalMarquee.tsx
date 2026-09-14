@@ -38,7 +38,7 @@ function MarqueeCard({
     >
       <div
         className={cn(
-          "relative flex aspect-[2/3] items-center justify-center overflow-hidden rounded-[0.9rem] bg-muted/20",
+          "bg-muted/20 relative flex aspect-[2/3] items-center justify-center overflow-hidden rounded-[0.9rem]",
           RATIO_CYCLE[index % RATIO_CYCLE.length],
         )}
       >
@@ -89,7 +89,7 @@ function MarqueeColumn({
   onClick?: MouseEventHandler<HTMLElement>;
 }) {
   return (
-    <div className="relative h-[min(72svh,34rem)] overflow-hidden px-4 [mask-image:linear-gradient(to_bottom,transparent_0%,black_10%,black_90%,transparent_100%)] md:h-[clamp(24rem,60vh,34rem)]">
+    <div className="relative h-[min(72svh,34rem)] overflow-hidden [mask-image:linear-gradient(to_bottom,transparent_0%,black_10%,black_90%,transparent_100%)] px-4 md:h-[clamp(24rem,60vh,34rem)]">
       <div
         className="layouts-marquee-track flex flex-col will-change-transform"
         data-direction={column.direction}
@@ -97,7 +97,10 @@ function MarqueeColumn({
         style={{ "--layouts-speed-mod": column.speedMod } as CSSProperties}
       >
         {[0, 1].map((copy) => (
-          <div key={copy} className="flex flex-col gap-[var(--layouts-gap)] pb-[var(--layouts-gap)]">
+          <div
+            key={copy}
+            className="flex flex-col gap-[var(--layouts-gap)] pb-[var(--layouts-gap)]"
+          >
             {column.tiles.map((tile, index) => (
               <MarqueeCard
                 key={`${copy}-${tile.id}`}
@@ -124,12 +127,12 @@ export function VerticalMarquee() {
   return (
     <div className="flex flex-col gap-6">
       {reduceMotion ? (
-        <div className="relative overflow-hidden rounded-2xl border border-border bg-muted/20">
+        <div className="border-border bg-muted/20 relative overflow-hidden rounded-2xl border">
           <StaticWall />
         </div>
       ) : (
         <div
-          className="relative overflow-hidden rounded-2xl border border-border bg-muted/20"
+          className="border-border bg-muted/20 relative overflow-hidden rounded-2xl border"
           style={{ "--layouts-gap": `${gap}rem` } as CSSProperties}
         >
           <MarqueeStage direction={direction} speed={speed} />
@@ -230,7 +233,8 @@ const MarqueeStage = memo(function MarqueeStage({
 
   useLayoutEffect(() => {
     animationsRef.current.forEach((animation, index) => {
-      const track = stageRef.current?.querySelectorAll<HTMLElement>(".layouts-marquee-track")[index];
+      const track =
+        stageRef.current?.querySelectorAll<HTMLElement>(".layouts-marquee-track")[index];
       const speedMod = Number(track?.dataset.speedMod ?? 1);
       animation.effect?.updateTiming({ duration: speed * speedMod * 1000 });
     });

@@ -20,7 +20,6 @@ import {
 
 import { BRAND_NAME } from "~/config/brand";
 
-
 export function meta() {
   return [{ title: `${BRAND_NAME} generation cost` }, { name: "robots", content: "noindex" }];
 }

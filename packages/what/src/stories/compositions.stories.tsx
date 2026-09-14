@@ -34,7 +34,13 @@ export const FirstGuessAuthWall: Story = {
     return (
       <div className={boardStyles.shell}>
         <GuessGrid game={game} dateKey={puzzle.dateKey} />
-        <GameResult game={game} puzzle={puzzle} loginUrl={common.loginUrl} onShare={fn()} onCopy={fn()} />
+        <GameResult
+          game={game}
+          puzzle={puzzle}
+          loginUrl={common.loginUrl}
+          onShare={fn()}
+          onCopy={fn()}
+        />
       </div>
     );
   },

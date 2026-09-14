@@ -20,7 +20,6 @@ import { GenerationsList } from "./admin.inventory-list";
 
 import { BRAND_NAME } from "~/config/brand";
 
-
 const DATE_CLASS: Record<"live" | "scheduled", StatusBadgeConfig> = {
   live: { label: "Live", variant: "default" },
   scheduled: { label: "Not live", variant: "outline" },

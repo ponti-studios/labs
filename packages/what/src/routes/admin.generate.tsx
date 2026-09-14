@@ -26,7 +26,6 @@ import { subscribeToGenerateStream } from "~/components/admin/generate-stream";
 
 import { BRAND_NAME } from "~/config/brand";
 
-
 export function meta() {
   return [{ title: `${BRAND_NAME} generate` }, { name: "robots", content: "noindex" }];
 }
@@ -37,7 +36,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
   if (!game) throw Response.json({ error: `No active ${BRAND_NAME} topic found` }, { status: 404 });
   const topics = await getActiveGames();
   const [pendingArticles, activeRun] = await Promise.all([
-    getPendingArticlesForTopics(topics.map((topic) => topic.id), 200),
+    getPendingArticlesForTopics(
+      topics.map((topic) => topic.id),
+      200,
+    ),
     getActiveAdminGenerationRun(game.id),
   ]);
 

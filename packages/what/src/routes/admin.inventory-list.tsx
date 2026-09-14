@@ -11,11 +11,7 @@ import { StatusBadge, type StatusBadgeConfig } from "~/components/primitives";
 import { Link } from "react-router";
 
 import { formatTokenCount, formatUsd } from "~/lib/admin/format";
-import type {
-  AdminGeneration,
-  InventoryCell,
-  InventoryCellState,
-} from "~/lib/admin/inventory";
+import type { AdminGeneration, InventoryCell, InventoryCellState } from "~/lib/admin/inventory";
 
 export const CELL_STATUS: Record<InventoryCellState, StatusBadgeConfig> = {
   live: { label: "Live", variant: "default" },

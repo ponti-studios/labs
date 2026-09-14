@@ -31,7 +31,7 @@ export function PwaUpdatePrompt() {
       role="status"
       aria-live="polite"
       className={cn(
-        "fixed z-20 isolate overflow-hidden right-(--game-gutter-right) bottom-(--game-gutter-bottom) w-[min(22rem,calc(100vw-2rem))] rounded-2xl border border-game-glass-border bg-game-glass px-4.5 py-4 text-game-ink backdrop-blur-[26px] backdrop-saturate-[1.75] dark:backdrop-blur-[28px] dark:backdrop-saturate-[1.8]",
+        "border-game-glass-border bg-game-glass text-game-ink fixed right-(--game-gutter-right) bottom-(--game-gutter-bottom) isolate z-20 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border px-4.5 py-4 backdrop-blur-[26px] backdrop-saturate-[1.75] dark:backdrop-blur-[28px] dark:backdrop-saturate-[1.8]",
         styles.promptSolid,
         styles.animatePrompt,
       )}
@@ -40,7 +40,7 @@ export function PwaUpdatePrompt() {
         <span
           aria-hidden="true"
           className={cn(
-            "relative h-2 w-2 flex-none rounded-full bg-game-correct-bg",
+            "bg-game-correct-bg relative h-2 w-2 flex-none rounded-full",
             styles.animateBeacon,
           )}
         />
@@ -52,7 +52,7 @@ export function PwaUpdatePrompt() {
           aria-label="Later"
           onClick={() => setNeedRefresh(false)}
           className={cn(
-            "icon-button border border-game-glass-ghost-border bg-game-glass-ghost text-game-ink [backdrop-filter:blur(4px)] [-webkit-backdrop-filter:blur(4px)] transition-[background-color,border-color] duration-200 hover:border-game-glass-ghost-border-hover hover:bg-game-glass-ghost-hover",
+            "icon-button border-game-glass-ghost-border bg-game-glass-ghost text-game-ink hover:border-game-glass-ghost-border-hover hover:bg-game-glass-ghost-hover border [backdrop-filter:blur(4px)] transition-[background-color,border-color] duration-200 [-webkit-backdrop-filter:blur(4px)]",
           )}
         >
           <X className="size-4" aria-hidden="true" />
@@ -62,7 +62,7 @@ export function PwaUpdatePrompt() {
           aria-label="Update"
           onClick={() => void updateServiceWorker(true)}
           className={cn(
-            "icon-button border border-transparent bg-linear-135 from-game-correct-bg via-game-blush to-game-correct-bg bg-[length:180%_180%] text-game-correct-text transition-[translate,scale] duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]",
+            "icon-button from-game-correct-bg via-game-blush to-game-correct-bg text-game-correct-text border border-transparent bg-linear-135 bg-[length:180%_180%] transition-[translate,scale] duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]",
             styles.animateLiquid,
           )}
         >

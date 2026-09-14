@@ -9,7 +9,6 @@ import { InventoryList } from "./admin.inventory-list";
 
 import { BRAND_NAME } from "~/config/brand";
 
-
 export function meta() {
   return [{ title: `${BRAND_NAME} inventory` }, { name: "robots", content: "noindex" }];
 }

@@ -252,7 +252,9 @@ export async function getEarliestPuzzleDateKey(gameId: number): Promise<string |
 }
 
 /** Earliest `dateUtc` with a puzzle across `gameIds`, or `null` if none exist yet. */
-export async function getEarliestPuzzleDateKeyAcrossTopics(gameIds: number[]): Promise<string | null> {
+export async function getEarliestPuzzleDateKeyAcrossTopics(
+  gameIds: number[],
+): Promise<string | null> {
   if (gameIds.length === 0) return null;
   const rows = await db
     .select({ dateUtc: gamesPuzzles.dateUtc })
