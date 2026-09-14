@@ -11,7 +11,7 @@ for the canonical services, ports, and database URLs.
 
 | Package | App | Root commands |
 | --- | --- | --- |
-| `packages/labs` (`@pontistudios/labyrinth`) | Portfolio at `https://labyrinth.lvh.me` | `pnpm labs:dev`, `pnpm build:labs` |
+| `packages/labs` (`labs`) | Portfolio at `https://labyrinth.lvh.me` | `pnpm labs:dev`, `pnpm build:labs` |
 | `packages/what` (`what`) | WH?T daily game at `https://what.lvh.me` | `pnpm game:dev`, `pnpm build:what`, `pnpm game:generate` |
 | `packages/db` (`@pontistudios/db`) | Drizzle schema + migrations (shared) | `pnpm db:generate`, `pnpm db:migrate` |
 | `packages/ai`, `packages/env` | Shared AI/env helpers | — |
