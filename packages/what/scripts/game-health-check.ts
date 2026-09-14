@@ -8,7 +8,7 @@ import { getActiveGames } from "../src/lib/data/games.server";
 import { countInventoryForRange, loadPuzzleForDate } from "../src/lib/data/puzzles.server";
 import { createLogger } from "../src/lib/logger.server";
 import { GAME_READY_INVENTORY_DAYS } from "../src/lib/generation/candidate-validation";
-import { LabyrinthServerEnv } from "../src/lib/infrastructure/env";
+import { LabsServerEnv } from "../src/lib/infrastructure/env";
 
 const logger = createLogger();
 
@@ -40,7 +40,7 @@ export function computeHealthStatus(
 }
 
 async function main() {
-  LabyrinthServerEnv.parse(process.env);
+  LabsServerEnv.parse(process.env);
 
   const startedAt = Date.now();
   const now = new Date();

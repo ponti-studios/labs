@@ -1,4 +1,4 @@
-# Agent Rules — Labyrinth
+# Agent Rules — Labs
 
 This file defines hard constraints for AI agents working in this repository.
 Violating these rules will produce incorrect or unsafe work.
@@ -105,7 +105,7 @@ The purpose of this rule is to keep `_journal.json`, the snapshot files, and the
 
 ## Script Environment Validation
 
-All scripts (`packages/what/scripts/*.ts`) must validate their environment using `LabyrinthServerEnv.parse(process.env)`, imported from `packages/what/src/lib/infrastructure/env.ts` (which re-exports the shared `@pontistudios/env` schema; Labs uses the same schema from `packages/labs/app/lib/server/env.ts`).
+All scripts (`packages/what/scripts/*.ts`) must validate their environment using `LabsServerEnv.parse(process.env)`, imported from `packages/what/src/lib/infrastructure/env.ts` (which re-exports the shared `@pontistudios/env` schema; Labs uses the same schema from `packages/labs/app/lib/server/env.ts`).
 
 - ❌ Do not define ad-hoc `requireEnvironment()` functions
 - ❌ Do not inline `if (!process.env.X)` checks

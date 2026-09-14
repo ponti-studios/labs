@@ -1,2 +1,2 @@
-export { LabyrinthServerEnv } from "@pontistudios/env";
-export type { LabyrinthServerEnv as LabyrinthServerEnvType } from "@pontistudios/env";
+export { LabsServerEnv } from "@pontistudios/env";
+export type { LabsServerEnv as LabsServerEnvType } from "@pontistudios/env";

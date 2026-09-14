@@ -42,7 +42,7 @@ export function LayoutShell({ layoutId, children }: { layoutId: LayoutId; childr
       </section>
 
       <footer className="text-muted-foreground mx-auto flex w-full max-w-6xl justify-between gap-4 px-4 py-4 text-[10px] tracking-[0.12em] uppercase sm:px-8 sm:pb-8">
-        <span>LABYRINTH / TOYS</span>
+        <span>LABS / TOYS</span>
         <span>{MOVIE_TILES.length} titles in this slate</span>
       </footer>
     </div>

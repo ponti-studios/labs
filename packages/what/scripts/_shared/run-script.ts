@@ -1,10 +1,10 @@
 import "dotenv/config";
 
 import { closeDb } from "@pontistudios/db";
-import { LabyrinthServerEnv } from "~/lib/infrastructure/env";
+import { LabsServerEnv } from "~/lib/infrastructure/env";
 
 export async function runScript(main: () => Promise<void>): Promise<void> {
-  LabyrinthServerEnv.parse(process.env);
+  LabsServerEnv.parse(process.env);
 
   try {
     await main();

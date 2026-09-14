@@ -1,5 +1,5 @@
 export function meta() {
-  return [{ title: "Pixel Descent | Labyrinth" }];
+  return [{ title: "Pixel Descent | Labs" }];
 }
 
 export default function PixelDescentRoute() {
@@ -9,7 +9,7 @@ export default function PixelDescentRoute() {
         <div>
           <h1 className="heading-hero text-foreground max-w-4xl">Pixel Descent</h1>
           <p className="text-muted-foreground text-sm">
-            A static p5 sketch running inside the labyrinth shell.
+            A static p5 sketch running inside the labs shell.
           </p>
         </div>
       </div>

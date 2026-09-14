@@ -16,7 +16,7 @@ import {
 } from "~/lib/server/db";
 
 import { getErrorMessage } from "../app/lib/errors";
-import { LabyrinthServerEnv } from "../app/lib/server/env";
+import { LabsServerEnv } from "../app/lib/server/env";
 
 type RssItem = {
   title: string;
@@ -455,7 +455,7 @@ async function scrapeVarietyCorpus(pageLimit: number): Promise<NewSearchDocument
 }
 
 async function main() {
-  LabyrinthServerEnv.parse(process.env);
+  LabsServerEnv.parse(process.env);
   DbEnv.parse(process.env);
 
   const { mode, pages } = parseLoadArgs();

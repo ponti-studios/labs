@@ -1,7 +1,7 @@
 import { Calendar, type CalendarEvent } from "../components/calendar/Calendar";
 
 export function meta() {
-  return [{ title: "Calendar | Labyrinth" }];
+  return [{ title: "Calendar | Labs" }];
 }
 
 function clampMinute(value: number) {
