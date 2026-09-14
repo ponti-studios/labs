@@ -85,7 +85,7 @@
   },
   "packageManager": "pnpm@11.10.0",
   "portless": {
-    "name": "labyrinth",
+    "name": "labs",
     "script": "dev:app"
   }
 }

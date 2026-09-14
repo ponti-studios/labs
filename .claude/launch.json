@@ -2,11 +2,11 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "labyrinth",
+      "name": "labs",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@pontistudios/labyrinth", "dev"],
+      "runtimeArgs": ["--filter", "labs", "dev"],
       "port": 443,
-      "url": "https://labyrinth.lvh.me"
+      "url": "https://labs.lvh.me"
     },
     {
       "name": "game",
