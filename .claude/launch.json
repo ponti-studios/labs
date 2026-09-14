@@ -4,7 +4,7 @@
     {
       "name": "labyrinth",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@pontistudios/labyrinth", "dev"],
+      "runtimeArgs": ["--filter", "labs", "dev"],
       "port": 443,
       "url": "https://labyrinth.lvh.me"
     },
