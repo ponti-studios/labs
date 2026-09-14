@@ -17,10 +17,10 @@ up:
     else
       echo "proxy already up on :443"
     fi
-    echo "labyrinth: https://labyrinth.lvh.me"
+    echo "labs: https://labs.lvh.me"
     echo "what:      https://what.lvh.me"
 
-# Boot labyrinth + what through the portless proxy.
+# Boot labs + what through the portless proxy.
 dev:
     pnpm exec portless run
 

@@ -22,8 +22,8 @@ export const PontiServerEnv = z
   }));
 
 export type PontiServerEnv = z.infer<typeof PontiServerEnv>;
-export const LabyrinthServerEnv = PontiServerEnv;
-export type LabyrinthServerEnv = PontiServerEnv;
+export const LabsServerEnv = PontiServerEnv;
+export type LabsServerEnv = PontiServerEnv;
 
 export const DatabaseEnv = z.object({
   DATABASE_URL: z.string().min(1),

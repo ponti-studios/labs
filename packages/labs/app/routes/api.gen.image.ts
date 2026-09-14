@@ -3,7 +3,7 @@ import type { ActionFunctionArgs } from "react-router";
 import { z } from "zod";
 
 import { buildGenerativeImagePrompt } from "~/components/generative-image/state";
-import { LabyrinthServerEnv } from "~/lib/server/env";
+import { LabsServerEnv } from "~/lib/server/env";
 import { assertSameOrigin } from "~/lib/server/origin";
 import { uploadImage } from "~/lib/server/storage";
 
@@ -55,7 +55,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const originDenied = assertSameOrigin(request);
   if (originDenied) return originDenied;
 
-  const env = LabyrinthServerEnv.parse(process.env);
+  const env = LabsServerEnv.parse(process.env);
 
   try {
     const body = requestSchema.parse(await request.json());

@@ -181,7 +181,7 @@ one topic's backlog across days, never across topics.
   secret in the `realitea-production` environment. Run failures surface via
   GitHub's own workflow-run email notifications (native, per-repo).
 - `game-generate.ts`: parses `--force --days-ahead --from --to`, validates env
-  via `LabyrinthServerEnv.parse` (see below), then `resolveGenerateRange`:
+  via `LabsServerEnv.parse` (see below), then `resolveGenerateRange`:
   - Explicit `--from/--to`: `YYYY-MM-DD`, span ≤ `MAX_GENERATE_SPAN_DAYS` (14),
     and `from` must be strictly after the live dates — today in UTC *and*
     `America/Los_Angeles`. On rejection the error names the live dates and the

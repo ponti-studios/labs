@@ -1,4 +1,4 @@
-# Labyrinth
+# Labs
 
 Ponti Studios portfolio and playground — a pnpm monorepo with two React Router apps: Labs (the portfolio) and What (the daily word game). Puzzles, data visualization, tarot, and experiments.
 
@@ -11,7 +11,7 @@ for the canonical services, ports, and database URLs.
 
 | Package | App | Root commands |
 | --- | --- | --- |
-| `packages/labs` (`@pontistudios/labyrinth`) | Portfolio at `https://labyrinth.lvh.me` | `pnpm labs:dev`, `pnpm build:labs` |
+| `packages/labs` (`labs`) | Portfolio at `https://labs.lvh.me` | `pnpm labs:dev`, `pnpm build:labs` |
 | `packages/what` (`what`) | WH?T daily game at `https://what.lvh.me` | `pnpm game:dev`, `pnpm build:what`, `pnpm game:generate` |
 | `packages/db` (`@pontistudios/db`) | Drizzle schema + migrations (shared) | `pnpm db:generate`, `pnpm db:migrate` |
 | `packages/ai`, `packages/env` | Shared AI/env helpers | — |
@@ -32,12 +32,12 @@ pnpm install
 pnpm exec portless proxy start --port 443 --tld lvh.me
 
 # 4. Run the dev servers (or `just dev` for both through portless)
-pnpm labs:dev      # Labs on https://labyrinth.lvh.me
+pnpm labs:dev      # Labs on https://labs.lvh.me
 pnpm game:dev      # What on https://what.lvh.me
 ```
 
 Each web app gets a stable `https://<name>.lvh.me` URL instead of a fixed
-port — `labyrinth.lvh.me` (Labs) and `what.lvh.me` (What) — configured via the
+port — `labs.lvh.me` (Labs) and `what.lvh.me` (What) — configured via the
 `"portless"` key in each package's `package.json` (`dev` delegates to
 `portless`, the real command is `dev:app`). This is what lets multiple git
 worktrees run the dev servers concurrently without port collisions (portless
@@ -57,7 +57,7 @@ Credentials: `postgres` / `postgres` | `minioadmin` / `minioadmin`
 | Command | Purpose |
 | --- | --- |
 | `just up` / `just dev` | Portless proxy + both dev servers (see `justfile`) |
-| `pnpm labs:dev` | Start Labs dev server at `https://labyrinth.lvh.me` |
+| `pnpm labs:dev` | Start Labs dev server at `https://labs.lvh.me` |
 | `pnpm game:dev` | Start What dev server at `https://what.lvh.me` |
 | `pnpm build` / `pnpm build:labs` | Production build of Labs |
 | `pnpm build:what` / `pnpm build:all` | Production build of What / everything |
