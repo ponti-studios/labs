@@ -40,6 +40,8 @@ COPY --from=build --chown=app:app /app/packages/what/node_modules ./packages/wha
 COPY --from=build --chown=app:app /app/packages/what/build ./packages/what/build
 # The compiled server resolves this asset under the package working directory.
 COPY --from=build --chown=app:app /app/packages/what/src/data ./packages/what/data
+# Generation prompts are read at runtime via src/prompts/<name>.md.
+COPY --from=build --chown=app:app /app/packages/what/src/prompts ./packages/what/src/prompts
 
 WORKDIR /app/packages/what
 USER app
