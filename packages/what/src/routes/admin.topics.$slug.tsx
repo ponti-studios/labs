@@ -19,10 +19,7 @@ import {
   type LoaderFunctionArgs,
 } from "react-router";
 
-import {
-  loadAdminTopicArticles,
-  refreshTopicArticlesBySlug,
-} from "~/lib/admin/articles.server";
+import { loadAdminTopicArticles, refreshTopicArticlesBySlug } from "~/lib/admin/articles.server";
 import { getGameAdminActor } from "~/lib/admin/auth";
 import {
   articleStatusValues,
@@ -32,7 +29,6 @@ import {
 import { assertSameOrigin } from "~/lib/infrastructure/origin";
 
 import { BRAND_NAME } from "~/config/brand";
-
 
 const ARTICLE_STATUS: Record<ArticleStatus, StatusBadgeConfig> = {
   pending: { label: "Pending", variant: "outline" },

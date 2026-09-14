@@ -39,9 +39,7 @@ type StepCardProps = {
 export function StepCard({ id, index, title, children, className, indexClassName }: StepCardProps) {
   return (
     <RevealItem id={id} as="li" className={cn("flex min-h-[190px] flex-col p-6", className)}>
-      <span className={cn("ref-tag mb-10", indexClassName)}>
-        {String(index).padStart(2, "0")}
-      </span>
+      <span className={cn("ref-tag mb-10", indexClassName)}>{String(index).padStart(2, "0")}</span>
       <div className="flex flex-col gap-1.5">
         <span className="text-lg font-semibold tracking-tight">{title}</span>
         {children}

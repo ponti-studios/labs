@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { isDisposableDatabase, isLiveDate, liveDateKeys, resolveGenerateRange } from "../generation/generate-range";
+import {
+  isDisposableDatabase,
+  isLiveDate,
+  liveDateKeys,
+  resolveGenerateRange,
+} from "../generation/generate-range";
 
 describe("generate range", () => {
   it("identifies the UTC and Pacific live dates", () => {
@@ -40,7 +45,8 @@ describe("generate range", () => {
 
     expect(result).toEqual({
       ok: false,
-      error: "range must start after the live dates (today: 2026-08-12); --from=2026-08-12 is too early — use --from=2026-08-13 or later",
+      error:
+        "range must start after the live dates (today: 2026-08-12); --from=2026-08-12 is too early — use --from=2026-08-13 or later",
     });
   });
 
@@ -66,8 +72,12 @@ describe("generate range", () => {
   });
 
   it("treats only loopback databases as disposable", () => {
-    expect(isDisposableDatabase("postgresql://postgres:postgres@localhost:5434/hominem")).toBe(true);
-    expect(isDisposableDatabase("postgresql://postgres:postgres@127.0.0.1:4433/hominem-test")).toBe(true);
+    expect(isDisposableDatabase("postgresql://postgres:postgres@localhost:5434/hominem")).toBe(
+      true,
+    );
+    expect(isDisposableDatabase("postgresql://postgres:postgres@127.0.0.1:4433/hominem-test")).toBe(
+      true,
+    );
     expect(
       isDisposableDatabase("postgresql://postgres:postgres@railway.proxy.rlwy.net:59328/railway"),
     ).toBe(false);

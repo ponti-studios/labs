@@ -149,7 +149,11 @@ describe("buildWeekGrid", () => {
     const rows = buildWeekGrid(topics, [], existingPuzzles, range);
 
     const realityCells = rows.find((r) => r.topicSlug === "reality")?.cells;
-    expect(realityCells?.[1]).toEqual({ dateKey: "2026-07-28", status: "unplayed", guessCount: null });
+    expect(realityCells?.[1]).toEqual({
+      dateKey: "2026-07-28",
+      status: "unplayed",
+      guessCount: null,
+    });
   });
 
   it("reflects each topic's own attempt independently, one row per topic", () => {
@@ -171,9 +175,15 @@ describe("buildWeekGrid", () => {
 
   it("marks an in-progress attempt as playing with no guess count", () => {
     const existingPuzzles = [{ topicId: 1, dateUtc: "2026-07-27" }];
-    const attempts = [{ topicId: 1, dateUtc: "2026-07-27", status: "playing" as const, guesses: [1] }];
+    const attempts = [
+      { topicId: 1, dateUtc: "2026-07-27", status: "playing" as const, guesses: [1] },
+    ];
     const rows = buildWeekGrid(topics, attempts, existingPuzzles, range);
 
-    expect(rows[0].cells[0]).toEqual({ dateKey: "2026-07-27", status: "playing", guessCount: null });
+    expect(rows[0].cells[0]).toEqual({
+      dateKey: "2026-07-27",
+      status: "playing",
+      guessCount: null,
+    });
   });
 });

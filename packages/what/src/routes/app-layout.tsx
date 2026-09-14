@@ -1,12 +1,7 @@
-import {
-  isRouteErrorResponse,
-  Link,
-  Outlet,
-  useLoaderData,
-  type LoaderFunctionArgs,
-} from "react-router";
+import { isRouteErrorResponse, Outlet, useLoaderData, type LoaderFunctionArgs } from "react-router";
 
 import { WhatNavigation } from "~/components/layout/what-navigation";
+import { ErrorPage } from "~/components/pages/error-page";
 import { canAccessGameAdmin } from "~/lib/admin/auth";
 import { getActiveGames } from "~/lib/data/games.server";
 import { getGameUser, loginUrl } from "~/server/auth";
@@ -50,13 +45,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   return (
     <>
       <WhatNavigation {...navigation} />
-      <main className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center gap-3 p-8 text-center">
-        <p className="text-2xl font-semibold">{status}</p>
-        <p className="text-muted-foreground text-sm">{message}</p>
-        <Link className="text-accent-text text-sm underline underline-offset-4" to="/">
-          Back home
-        </Link>
-      </main>
+      <ErrorPage status={status} message={status === 404 ? undefined : message} />
     </>
   );
 }

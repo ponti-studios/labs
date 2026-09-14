@@ -11,6 +11,7 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 import { BRAND_NAME, BRAND_TAGLINE, BRAND_THEME_COLOR } from "./config/brand";
+import { ErrorPage } from "./components/pages/error-page";
 import { PwaUpdatePrompt } from "./components/pwa-update-prompt";
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -64,11 +65,7 @@ export default function App() {
     void caches
       .keys()
       .then((keys) =>
-        Promise.all(
-          keys
-            .filter((key) => key.startsWith("game-"))
-            .map((key) => caches.delete(key)),
-        ),
+        Promise.all(keys.filter((key) => key.startsWith("game-")).map((key) => caches.delete(key))),
       );
   }, []);
 
@@ -98,16 +95,5 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     stack = error.stack;
   }
 
-  return (
-    <main style={{ textAlign: "center", padding: "2rem" }}>
-      <p style={{ fontSize: "1.5rem", fontWeight: 700 }}>{status}</p>
-      <p style={{ opacity: 0.7 }}>{details}</p>
-      <a href="/">Back home</a>
-      {stack && import.meta.env.DEV && (
-        <pre style={{ textAlign: "left", overflowX: "auto" }}>
-          <code>{stack}</code>
-        </pre>
-      )}
-    </main>
-  );
+  return <ErrorPage status={status} message={details} details={stack} />;
 }

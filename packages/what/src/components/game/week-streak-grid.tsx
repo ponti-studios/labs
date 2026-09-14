@@ -35,7 +35,10 @@ function guessShade(guessCount: number): number {
   return 1 - (clamped - 1) * 0.11;
 }
 
-function cellStyle(status: WeekGridCellStatus, guessCount: number | null): CSSProperties | undefined {
+function cellStyle(
+  status: WeekGridCellStatus,
+  guessCount: number | null,
+): CSSProperties | undefined {
   if (status === "solved" && guessCount) {
     return { "--mosaic-shade": guessShade(guessCount) } as CSSProperties;
   }

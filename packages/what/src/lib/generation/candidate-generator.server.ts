@@ -330,7 +330,10 @@ export async function generateCandidates(
   // recovery attempt rather than publishing no puzzle for an otherwise good
   // article batch. Successful first attempts do not incur another provider
   // request.
-  if (generation.llmError === null && !generation.candidates.some((item) => item.validation.valid)) {
+  if (
+    generation.llmError === null &&
+    !generation.candidates.some((item) => item.validation.valid)
+  ) {
     const retryExcludedAnswers = [
       ...(options.excludedAnswers ?? []),
       ...generation.candidates.map((item) => item.validation.answer),

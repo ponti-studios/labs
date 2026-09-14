@@ -41,32 +41,25 @@ export function GameResult({ game, puzzle, loginUrl, onShare, onCopy }: GameResu
   return (
     <div className={styles.result} data-testid="game-result">
       <div className={styles.resultCard} data-testid="game-receipt">
-        <div
-          className={styles.verdict}
-          data-testid="game-result-badge"
-          data-solved={game.isSolved ? "true" : "false"}
-          data-guesses={game.guesses.length}
-        >
-          {game.isSolved ? (
-            <CheckCircle2 aria-hidden="true" size={18} strokeWidth={2.5} />
-          ) : (
-            <XCircle aria-hidden="true" size={18} strokeWidth={2.5} />
-          )}
-          <span className={styles.verdictLabel}>
-            {game.isSolved ? `Solved in ${game.guesses.length}` : "Out of guesses"}
-          </span>
-          <div className={styles.verdictDots} aria-hidden="true">
-            {Array.from({ length: MAX_GUESSES }, (_, i) => (
-              <span
-                key={i}
-                className={styles.verdictDot}
-                data-filled={i < game.guesses.length ? "true" : "false"}
-              />
-            ))}
-          </div>
-        </div>
         <div className={styles.resultBody}>
-          <h2 className={styles.resultHeading}>The Receipt</h2>
+          <div className="flex items-center justify-between">
+            <h2 className={styles.resultHeading}>Story</h2>
+            <div
+              className={styles.verdict}
+              data-testid="game-result-badge"
+              data-solved={game.isSolved ? "true" : "false"}
+              data-guesses={game.guesses.length}
+            >
+              {game.isSolved ? (
+                <CheckCircle2 aria-hidden="true" size={18} strokeWidth={2.5} />
+              ) : (
+                <XCircle aria-hidden="true" size={18} strokeWidth={2.5} />
+              )}
+              <span className={styles.verdictLabel}>
+                {game.isSolved ? `Solved in ${game.guesses.length}` : "Out of guesses"}
+              </span>
+            </div>
+          </div>
           <p>{puzzle.detail}</p>
         </div>
         <div className={styles.resultActions}>

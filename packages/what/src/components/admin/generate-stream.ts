@@ -1,8 +1,4 @@
-import type {
-  GenerateErr,
-  GenerateOk,
-  GenerateProgressEvent,
-} from "~/lib/admin/generate-types";
+import type { GenerateErr, GenerateOk, GenerateProgressEvent } from "~/lib/admin/generate-types";
 
 type GenerateStreamEvent =
   | GenerateProgressEvent

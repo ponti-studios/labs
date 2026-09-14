@@ -194,10 +194,13 @@ export function buildWeekGridFixture(
     topicName: topic.name,
     cells: dateKeys.map((dateKey) => {
       const roll = rand();
-      if (roll < 0.12) return { dateKey, status: "no-puzzle" as WeekGridCellStatus, guessCount: null };
-      if (roll < 0.28) return { dateKey, status: "unplayed" as WeekGridCellStatus, guessCount: null };
+      if (roll < 0.12)
+        return { dateKey, status: "no-puzzle" as WeekGridCellStatus, guessCount: null };
+      if (roll < 0.28)
+        return { dateKey, status: "unplayed" as WeekGridCellStatus, guessCount: null };
       if (roll < 0.4) return { dateKey, status: "failed" as WeekGridCellStatus, guessCount: null };
-      if (roll < 0.48) return { dateKey, status: "playing" as WeekGridCellStatus, guessCount: null };
+      if (roll < 0.48)
+        return { dateKey, status: "playing" as WeekGridCellStatus, guessCount: null };
       const guessCount = 1 + Math.floor(rand() * 6);
       return { dateKey, status: "solved" as WeekGridCellStatus, guessCount };
     }),

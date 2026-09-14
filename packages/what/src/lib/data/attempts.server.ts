@@ -172,7 +172,10 @@ export async function loadAllAttemptsForUser(
 ): Promise<GamesAttempt[]> {
   if (gameIds.length === 0) return [];
   return db.query.gamesAttempts.findMany({
-    where: and(eq(gamesAttempts.hominemUserId, userId), inArray(gamesAttempts.gamesTopicId, gameIds)),
+    where: and(
+      eq(gamesAttempts.hominemUserId, userId),
+      inArray(gamesAttempts.gamesTopicId, gameIds),
+    ),
     orderBy: desc(gamesAttempts.dateUtc),
   });
 }

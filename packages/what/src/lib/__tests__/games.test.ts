@@ -46,7 +46,11 @@ describe("listTopicFeedHosts", () => {
       name: "Reality",
       feedUrl: "https://www.realityblurred.com/feed",
     });
-    await seedGame({ slug: "sports", name: "Sports", feedUrl: "https://realityblurred.com/sports" });
+    await seedGame({
+      slug: "sports",
+      name: "Sports",
+      feedUrl: "https://realityblurred.com/sports",
+    });
     await seedGame({
       slug: "retired",
       name: "Retired",

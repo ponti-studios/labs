@@ -354,8 +354,7 @@ export function LiquidGlass({
           borderRadius: radius,
           border: "1.5px solid rgba(255, 255, 255, 0.35)",
           background: "rgba(255, 255, 255, 0.06)",
-          boxShadow:
-            "0 8px 32px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.4)",
+          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.4)",
           backdropFilter,
           WebkitBackdropFilter: backdropFilter,
           willChange: isDragging ? "transform" : "auto",

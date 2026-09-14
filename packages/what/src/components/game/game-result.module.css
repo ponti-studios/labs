@@ -31,7 +31,6 @@
   display: flex;
   align-items: center;
   gap: calc(var(--spacing) * 2);
-  margin-bottom: 1rem;
   animation: game-result-verdict-in 360ms var(--game-ease-out) 420ms both;
 }
 
@@ -100,6 +99,9 @@
   line-height: 1.5;
   color: var(--color-game-ink);
   animation: game-result-fade-in 350ms ease 600ms both;
+  > :not(:first-child) {
+    margin-block-start: calc(var(--spacing) * 5);
+  }
 }
 
 .resultBody p {

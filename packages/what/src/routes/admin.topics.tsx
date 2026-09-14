@@ -17,7 +17,6 @@ import { assertSameOrigin } from "~/lib/infrastructure/origin";
 
 import { BRAND_NAME } from "~/config/brand";
 
-
 export function meta() {
   return [{ title: `${BRAND_NAME} topics` }, { name: "robots", content: "noindex" }];
 }
