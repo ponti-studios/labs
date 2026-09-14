@@ -14,7 +14,6 @@ import { formatTokenCount, formatUsd } from "~/lib/admin/format";
 import { loadAdminGeneration, resolveAdminGame } from "~/lib/admin/inventory";
 import { publishCandidate } from "~/lib/admin/publish";
 import { DEFAULT_GAME_SLUG } from "~/lib/generation/catalog";
-import { assertSameOrigin } from "~/lib/infrastructure/origin";
 
 import { CandidateCards } from "~/components/admin/candidate-cards";
 
@@ -43,9 +42,6 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 }
 
 export async function action({ request, params, context }: ActionFunctionArgs) {
-  const originDenied = assertSameOrigin(request);
-  if (originDenied) return originDenied;
-
   const auth = getGameAdminActor(context);
   const generationId = Number.parseInt(params.id ?? "", 10);
   const form = await request.formData();
