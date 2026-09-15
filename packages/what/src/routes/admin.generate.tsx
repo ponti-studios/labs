@@ -1,23 +1,21 @@
-import { Button } from "@ponti-studios/ui/primitives";
-import { SectionIntro } from "@ponti-studios/ui/layout";
 import { useEffect, useRef, useState } from "react";
-import { Link, useLoaderData, type LoaderFunctionArgs } from "react-router";
+import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 
-import { studioModelAllowlist } from "~/lib/admin/generate.server";
 import {
   GENERATION_PROMPT_FILES,
   type GenerateErr,
   type GenerateOk,
   type GenerateProgressEvent,
 } from "~/lib/admin/generate-types";
+import { studioModelAllowlist } from "~/lib/admin/generate.server";
 import { resolveAdminGame } from "~/lib/admin/inventory";
-import { getDateKey } from "~/lib/puzzle/date";
-import { DEFAULT_GAME_SLUG } from "~/lib/generation/catalog";
-import { MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "~/lib/generation/feed-text";
-import { PROMPT_TEST_CASES } from "~/lib/values/prompt-test-cases";
 import { getPendingArticlesForTopics } from "~/lib/data/articles.server";
 import { getActiveGames } from "~/lib/data/games.server";
 import { getActiveAdminGenerationRun } from "~/lib/data/generation-runs.server";
+import { DEFAULT_GAME_SLUG } from "~/lib/generation/catalog";
+import { MAX_FEED_TITLE_LENGTH, sanitizeFeedText } from "~/lib/generation/feed-text";
+import { getDateKey } from "~/lib/puzzle/date";
+import { PROMPT_TEST_CASES } from "~/lib/values/prompt-test-cases";
 
 import { GenerateForm } from "~/components/admin/generate-form";
 import { GenerateProgress } from "~/components/admin/generate-progress";
@@ -176,33 +174,24 @@ export default function GameAdminGenerate() {
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-col gap-8 p-6">
-      <Button asChild variant="ghost" size="sm" className="w-fit">
-        <Link to={`/admin?game=${data.game.slug}`}>← Inventory</Link>
-      </Button>
-
-      <SectionIntro
-        eyebrow={data.game.name}
-        title="Generate"
-        description="Ask the model for candidate words for one date. This does not publish a puzzle."
-      />
-
-      <GenerateForm
-        data={{
-          gameSlug: data.game.slug,
-          dateKey: data.dateKey,
-          models: data.models,
-          promptFiles: data.promptFiles,
-          topics: data.topics,
-          articles: data.articles,
-          fixtures: data.fixtures,
-        }}
-        running={running}
-        onSubmit={onSubmit}
-      />
-
-      <GenerateProgress running={running} failed={result?.ok === false} stage={stage} />
-
-      {result ? <GenerateResult result={result} gameSlug={data.game.slug} /> : null}
+      {running ? (
+        <GenerateProgress running failed={false} stage={stage} />
+      ) : result ? (
+        <GenerateResult result={result} gameSlug={data.game.slug} />
+      ) : (
+        <GenerateForm
+          data={{
+            gameSlug: data.game.slug,
+            dateKey: data.dateKey,
+            models: data.models,
+            promptFiles: data.promptFiles,
+            topics: data.topics,
+            articles: data.articles,
+            fixtures: data.fixtures,
+          }}
+          onSubmit={onSubmit}
+        />
+      )}
     </main>
   );
 }
