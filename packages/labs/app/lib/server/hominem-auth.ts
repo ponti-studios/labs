@@ -1,5 +1,7 @@
 import { getServerAuth } from "@ponti-studios/auth/server";
 
+import { HominemAuthEnv } from "./env";
+
 /**
  * Session verification against Hominem's Better Auth deployment, which is the
  * sole auth authority for this app — labs never issues or validates its own
@@ -15,10 +17,10 @@ import { getServerAuth } from "@ponti-studios/auth/server";
 const DEFAULT_HOMINEM_API_URL = "https://api.lvh.me";
 
 export function getHominemApiUrl(): string {
-  const configured = process.env.HOMINEM_API_URL;
-  if (configured) return configured;
+  const env = HominemAuthEnv.parse(process.env);
+  if (env.HOMINEM_API_URL) return env.HOMINEM_API_URL;
 
-  if (process.env.NODE_ENV === "development") return DEFAULT_HOMINEM_API_URL;
+  if (env.NODE_ENV === "development") return DEFAULT_HOMINEM_API_URL;
 
   throw new Error(
     "HOMINEM_API_URL is not set. Refusing to fall back to the local-only " +
@@ -39,7 +41,8 @@ export function getHominemApiUrl(): string {
  * unaffected.
  */
 export function getHominemInternalApiUrl(): string {
-  return process.env.HOMINEM_INTERNAL_API_URL ?? getHominemApiUrl();
+  const env = HominemAuthEnv.parse(process.env);
+  return env.HOMINEM_INTERNAL_API_URL ?? getHominemApiUrl();
 }
 
 export type HominemUser = {
