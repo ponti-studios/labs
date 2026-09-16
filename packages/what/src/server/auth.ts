@@ -1,15 +1,14 @@
 import { getServerAuth } from "@ponti-studios/auth/server";
 
-import { WhatServerEnv } from "../lib/infrastructure/env";
+import { isLoopbackHostname, WhatServerEnv } from "../lib/infrastructure/env";
 
 export type GameUser = { id: string; email?: string | null };
 
-const DEFAULT_HOMINEM_API_URL = "https://api.lvh.me";
-
 export async function getGameUser(request: Request): Promise<GameUser | null> {
   try {
+    const { HOMINEM_INTERNAL_API_URL } = WhatServerEnv.parse(process.env);
     const { user } = await getServerAuth(request, {
-      apiBaseUrl: getHominemApiUrl({ allowInternal: true }),
+      apiBaseUrl: HOMINEM_INTERNAL_API_URL,
     });
     return user?.id ? { id: user.id, email: user.email ?? null } : null;
   } catch {
@@ -18,7 +17,7 @@ export async function getGameUser(request: Request): Promise<GameUser | null> {
 }
 
 export function loginUrl(request: Request, requestedReturnTo?: string): string {
-  const { PORTLESS_URL, WHAT_APP_URL } = parseEnv();
+  const { PORTLESS_URL, WHAT_APP_URL, HOMINEM_API_URL } = WhatServerEnv.parse(process.env);
   const requestOrigin = new URL(request.url);
   const appOrigin = isLoopbackHostname(requestOrigin.hostname)
     ? requestOrigin
@@ -36,39 +35,7 @@ export function loginUrl(request: Request, requestedReturnTo?: string): string {
     returnTo.pathname = "/";
   }
 
-  const url = new URL("/login", getHominemApiUrl());
+  const url = new URL("/login", HOMINEM_API_URL);
   url.searchParams.set("next", returnTo.toString());
   return url.toString();
-}
-
-function parseEnv() {
-  return WhatServerEnv.parse(process.env);
-}
-
-function getHominemApiUrl(options: { allowInternal?: boolean } = {}): string {
-  const env = parseEnv();
-  const configured = options.allowInternal
-    ? (env.HOMINEM_INTERNAL_API_URL ?? env.HOMINEM_API_URL)
-    : env.HOMINEM_API_URL;
-
-  if (env.NODE_ENV === "development") {
-    if (!configured || isLoopbackHostname(new URL(configured).hostname)) {
-      return DEFAULT_HOMINEM_API_URL;
-    }
-    return configured;
-  }
-
-  if (!configured) {
-    throw new Error(
-      "HOMINEM_API_URL (or HOMINEM_INTERNAL_API_URL) is not set. Refusing to fall back to " +
-        `the local-only ${DEFAULT_HOMINEM_API_URL} default outside development.`,
-    );
-  }
-
-  return configured;
-}
-
-function isLoopbackHostname(hostname: string): boolean {
-  const normalized = hostname.toLowerCase().replace(/^\[|\]$/g, "");
-  return normalized === "localhost" || normalized === "127.0.0.1" || normalized === "::1";
 }
