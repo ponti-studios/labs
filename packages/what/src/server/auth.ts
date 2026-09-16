@@ -46,15 +46,21 @@ function getHominemApiUrl(options: { allowInternal?: boolean } = {}): string {
     ? (process.env.HOMINEM_INTERNAL_API_URL ?? process.env.HOMINEM_API_URL)
     : process.env.HOMINEM_API_URL;
 
-  if (
-    process.env.NODE_ENV === "development" &&
-    configured &&
-    isLoopbackHostname(new URL(configured).hostname)
-  ) {
-    return DEFAULT_HOMINEM_API_URL;
+  if (process.env.NODE_ENV === "development") {
+    if (!configured || isLoopbackHostname(new URL(configured).hostname)) {
+      return DEFAULT_HOMINEM_API_URL;
+    }
+    return configured;
   }
 
-  return configured ?? DEFAULT_HOMINEM_API_URL;
+  if (!configured) {
+    throw new Error(
+      "HOMINEM_API_URL (or HOMINEM_INTERNAL_API_URL) is not set. Refusing to fall back to " +
+        `the local-only ${DEFAULT_HOMINEM_API_URL} default outside development.`,
+    );
+  }
+
+  return configured;
 }
 
 function isLoopbackHostname(hostname: string): boolean {
