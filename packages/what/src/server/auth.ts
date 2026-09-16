@@ -18,7 +18,7 @@ export async function getGameUser(request: Request): Promise<GameUser | null> {
 }
 
 export function loginUrl(request: Request, requestedReturnTo?: string): string {
-  const { PORTLESS_URL, WHAT_APP_URL } = WhatServerEnv.parse(process.env);
+  const { PORTLESS_URL, WHAT_APP_URL } = parseEnv();
   const requestOrigin = new URL(request.url);
   const appOrigin = isLoopbackHostname(requestOrigin.hostname)
     ? requestOrigin
@@ -41,12 +41,17 @@ export function loginUrl(request: Request, requestedReturnTo?: string): string {
   return url.toString();
 }
 
-function getHominemApiUrl(options: { allowInternal?: boolean } = {}): string {
-  const configured = options.allowInternal
-    ? (process.env.HOMINEM_INTERNAL_API_URL ?? process.env.HOMINEM_API_URL)
-    : process.env.HOMINEM_API_URL;
+function parseEnv() {
+  return WhatServerEnv.parse(process.env);
+}
 
-  if (process.env.NODE_ENV === "development") {
+function getHominemApiUrl(options: { allowInternal?: boolean } = {}): string {
+  const env = parseEnv();
+  const configured = options.allowInternal
+    ? (env.HOMINEM_INTERNAL_API_URL ?? env.HOMINEM_API_URL)
+    : env.HOMINEM_API_URL;
+
+  if (env.NODE_ENV === "development") {
     if (!configured || isLoopbackHostname(new URL(configured).hostname)) {
       return DEFAULT_HOMINEM_API_URL;
     }
