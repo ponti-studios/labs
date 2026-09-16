@@ -14,37 +14,6 @@ import { HominemAuthEnv } from "./env";
  * README/AGENTS notes on local auth for the workaround.
  */
 
-const DEFAULT_HOMINEM_API_URL = "https://api.lvh.me";
-
-export function getHominemApiUrl(): string {
-  const env = HominemAuthEnv.parse(process.env);
-  if (env.HOMINEM_API_URL) return env.HOMINEM_API_URL;
-
-  if (env.NODE_ENV === "development") return DEFAULT_HOMINEM_API_URL;
-
-  throw new Error(
-    "HOMINEM_API_URL is not set. Refusing to fall back to the local-only " +
-      `${DEFAULT_HOMINEM_API_URL} default outside development.`,
-  );
-}
-
-/**
- * Base URL for the server-to-server session check only — never expose this to
- * the browser. In production this is Hominem's Railway-private address
- * (HOMINEM_INTERNAL_API_URL), which reaches the API directly over Railway's
- * internal network instead of the public api.ponti.io hostname. That's
- * required because Cloudflare's bot-challenge in front of api.ponti.io
- * intercepts server-to-server fetches (no real browser to solve the
- * challenge) and returns its "Just a moment..." interstitial instead of
- * proxying to the origin, which getServerAuth silently reads as "no session".
- * Falls back to the public URL when unset, so local dev and tests are
- * unaffected.
- */
-export function getHominemInternalApiUrl(): string {
-  const env = HominemAuthEnv.parse(process.env);
-  return env.HOMINEM_INTERNAL_API_URL ?? getHominemApiUrl();
-}
-
 export type HominemUser = {
   id: string;
   email?: string | null;
@@ -57,11 +26,22 @@ export type HominemUser = {
  *
  * Fails closed: any transport error, non-2xx, or unparseable payload from the
  * Hominem API yields null (treated as "not signed in") rather than throwing,
- * so an API outage degrades the game to anonymous play instead of a 500.
+ * so an API outage — or a misconfigured HOMINEM_API_URL — degrades the game
+ * to anonymous play instead of a 500.
+ *
+ * Uses HOMINEM_INTERNAL_API_URL for this server-to-server check — in
+ * production that's Hominem's Railway-private address, reaching the API
+ * directly over Railway's internal network instead of the public
+ * api.ponti.io hostname. That's required because Cloudflare's bot-challenge
+ * in front of api.ponti.io intercepts server-to-server fetches (no real
+ * browser to solve the challenge) and returns its "Just a moment..."
+ * interstitial instead of proxying to the origin, which getServerAuth
+ * silently reads as "no session". Falls back to HOMINEM_API_URL when unset.
  */
 export async function getHominemUser(request: Request): Promise<HominemUser | null> {
   try {
-    const { user } = await getServerAuth(request, { apiBaseUrl: getHominemInternalApiUrl() });
+    const { HOMINEM_INTERNAL_API_URL } = HominemAuthEnv.parse(process.env);
+    const { user } = await getServerAuth(request, { apiBaseUrl: HOMINEM_INTERNAL_API_URL });
     if (!user?.id) return null;
     return { id: user.id, email: user.email ?? null };
   } catch {
@@ -76,7 +56,8 @@ export async function getHominemUser(request: Request): Promise<HominemUser | nu
  * resolveAppRedirectUrl in @ponti-studios/auth/shared/redirect-policy).
  */
 export function buildHominemLoginUrl(returnTo: string): string {
-  const url = new URL("/login", getHominemApiUrl());
+  const { HOMINEM_API_URL } = HominemAuthEnv.parse(process.env);
+  const url = new URL("/login", HOMINEM_API_URL);
   url.searchParams.set("next", returnTo);
   return url.toString();
 }
