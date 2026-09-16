@@ -24,6 +24,8 @@ function makeRequest(cookie?: string): Request {
 }
 
 describe("getHominemApiUrl", () => {
+  const ORIGINAL_NODE_ENV = process.env.NODE_ENV;
+
   beforeEach(() => {
     delete process.env.HOMINEM_API_URL;
   });
@@ -31,10 +33,18 @@ describe("getHominemApiUrl", () => {
   afterEach(() => {
     if (ORIGINAL_API_URL === undefined) delete process.env.HOMINEM_API_URL;
     else process.env.HOMINEM_API_URL = ORIGINAL_API_URL;
+    if (ORIGINAL_NODE_ENV === undefined) delete process.env.NODE_ENV;
+    else process.env.NODE_ENV = ORIGINAL_NODE_ENV;
   });
 
-  it("falls back to the lvh.me API URL when unset", () => {
+  it("falls back to the lvh.me API URL when unset in development", () => {
+    process.env.NODE_ENV = "development";
     expect(getHominemApiUrl()).toBe("https://api.lvh.me");
+  });
+
+  it("throws instead of silently falling back to lvh.me outside development", () => {
+    process.env.NODE_ENV = "production";
+    expect(() => getHominemApiUrl()).toThrow(/HOMINEM_API_URL is not set/);
   });
 
   it("uses HOMINEM_API_URL when set", () => {
@@ -69,6 +79,12 @@ describe("getHominemInternalApiUrl", () => {
 describe("getHominemUser", () => {
   beforeEach(() => {
     mocks.getServerAuth.mockReset();
+    process.env.HOMINEM_API_URL = "https://api.ponti.io";
+  });
+
+  afterEach(() => {
+    if (ORIGINAL_API_URL === undefined) delete process.env.HOMINEM_API_URL;
+    else process.env.HOMINEM_API_URL = ORIGINAL_API_URL;
   });
 
   it("returns the user when a session resolves", async () => {

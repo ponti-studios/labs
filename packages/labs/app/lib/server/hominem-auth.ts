@@ -15,7 +15,15 @@ import { getServerAuth } from "@ponti-studios/auth/server";
 const DEFAULT_HOMINEM_API_URL = "https://api.lvh.me";
 
 export function getHominemApiUrl(): string {
-  return process.env.HOMINEM_API_URL ?? DEFAULT_HOMINEM_API_URL;
+  const configured = process.env.HOMINEM_API_URL;
+  if (configured) return configured;
+
+  if (process.env.NODE_ENV === "development") return DEFAULT_HOMINEM_API_URL;
+
+  throw new Error(
+    "HOMINEM_API_URL is not set. Refusing to fall back to the local-only " +
+      `${DEFAULT_HOMINEM_API_URL} default outside development.`,
+  );
 }
 
 /**
