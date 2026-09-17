@@ -58,5 +58,8 @@ export const TOPIC_EMOJI: Readonly<Record<string, string>> = {
 export const DEFAULT_TOPIC_EMOJI = "📰";
 
 export function getTopicEmoji(slug: string | undefined): string {
-  return (slug && TOPIC_EMOJI[slug]) ?? DEFAULT_TOPIC_EMOJI;
+  if (slug && Object.hasOwn(TOPIC_EMOJI, slug)) {
+    return TOPIC_EMOJI[slug];
+  }
+  return DEFAULT_TOPIC_EMOJI;
 }
