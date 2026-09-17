@@ -45,7 +45,7 @@ export const GAME_CATALOG = [
  * "markets", "culture") that are no longer in the active catalog.
  */
 export const TOPIC_EMOJI: Readonly<Record<string, string>> = {
-  reality: "📺",
+  reality: "💕",
   technology: "💻",
   "page-six": "🗞️",
   tmz: "📸",
