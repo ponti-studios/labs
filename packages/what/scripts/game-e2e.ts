@@ -260,7 +260,7 @@ async function run(opts: Options) {
     );
 
     const correctTile = getTopicEmoji(DEFAULT_GAME_SLUG);
-    const shareTilePattern = new RegExp(`[⬜🟨${correctTile}]`, "u");
+    const shareTilePattern = new RegExp(`[⚪🟠${correctTile}]`, "u");
 
     await solve.context().grantPermissions(["clipboard-read", "clipboard-write"]);
     await testId(solve, "game-share").click();

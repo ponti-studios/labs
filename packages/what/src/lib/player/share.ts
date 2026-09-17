@@ -4,8 +4,8 @@ import type { GameGuess, LetterState } from "../puzzle/types";
 
 function shareTiles(topicSlug: string | undefined): Record<LetterState, string> {
   return {
-    absent: "⬜",
-    present: "🟨",
+    absent: "⚪",
+    present: "🟠",
     correct: getTopicEmoji(topicSlug),
   };
 }
