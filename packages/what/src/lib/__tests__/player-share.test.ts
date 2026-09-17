@@ -24,7 +24,7 @@ describe("game sharing", () => {
       new Date("2026-08-20T00:00:00Z"),
     );
 
-    expect(text).toContain("WH?T · 💕 Realitea · 20 Aug 2026");
+    expect(text).toContain("WH?T · 🩷 Realitea · 20 Aug 2026");
     expect(text).toContain("🟨");
     expect(text).not.toContain("FLANK");
     expect(text).not.toContain("BACKS");
