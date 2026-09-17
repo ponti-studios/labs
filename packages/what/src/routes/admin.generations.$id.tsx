@@ -1,13 +1,11 @@
 import { SectionIntro } from "@ponti-studios/ui/layout";
-import { Button } from "@ponti-studios/ui/primitives";
-import { StatusBadge, type StatusBadgeConfig } from "~/components/primitives";
 import {
-  Link,
   redirect,
   useLoaderData,
   type ActionFunctionArgs,
   type LoaderFunctionArgs,
 } from "react-router";
+import { StatusBadge, type StatusBadgeConfig } from "~/components/primitives";
 
 import { getGameAdminActor } from "~/lib/admin/auth";
 import { formatTokenCount, formatUsd } from "~/lib/admin/format";
@@ -71,38 +69,47 @@ export default function GameAdminGeneration() {
   const { game, generation } = useLoaderData<typeof loader>();
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-col gap-8 p-6">
-      <Button asChild variant="ghost" size="sm" className="w-fit">
-        <Link to={`/admin?game=${game.slug}`}>← Admin</Link>
-      </Button>
+    <main className="mx-auto flex w-full max-w-3xl flex-col gap-2 p-6">
+      <SectionIntro title={`Generation ${generation.id}`} />
 
-      <SectionIntro
-        eyebrow={game.name}
-        title={`Generation ${generation.id}`}
-        description={`${generation.dateKey} · ${generation.sourceMode} · ${generation.model}`}
-        actions={<StatusBadge status={generation.status} config={GENERATION_STATUS} />}
-      />
-
-      <dl className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm sm:grid-cols-4">
-        <div>
-          <dt className="text-muted-foreground">Max tokens</dt>
-          <dd>{generation.requestedMaxTokens ?? "—"}</dd>
-        </div>
-        <div>
-          <dt className="text-muted-foreground">Reasoning effort</dt>
-          <dd>{generation.reasoningEffort ?? "default"}</dd>
-        </div>
-        <div>
-          <dt className="text-muted-foreground">Tokens (prompt / completion / reasoning)</dt>
-          <dd>
-            {formatTokenCount(generation.promptTokens)} /{" "}
-            {formatTokenCount(generation.completionTokens)} /{" "}
-            {formatTokenCount(generation.reasoningTokens)}
+      <dl className="border-muted-foreground bg-card space-y-2 rounded-md border p-2 text-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+          <dt className="font-semibold">Status</dt>
+          <dd className="font-light">
+            <StatusBadge status={generation.status} config={GENERATION_STATUS} />
           </dd>
         </div>
-        <div>
-          <dt className="text-muted-foreground">Cost</dt>
-          <dd>{formatUsd(generation.costUsd)}</dd>
+        <div className="flex items-center justify-between gap-6">
+          <dt className="font-semibold">Date</dt>
+          <dd className="font-light">{generation.dateKey}</dd>
+        </div>
+        <div className="flex items-center justify-between gap-6">
+          <dt className="font-semibold">Source mode</dt>
+          <dd className="font-light">{generation.sourceMode}</dd>
+        </div>
+        <div className="flex items-center justify-between gap-6">
+          <dt className="font-semibold">Model</dt>
+          <dd className="font-light">{generation.model}</dd>
+        </div>
+        <div className="flex items-center justify-between gap-6">
+          <dt className="font-semibold">Max tokens</dt>
+          <dd className="font-light">{generation.requestedMaxTokens ?? "—"}</dd>
+        </div>
+        <div className="flex items-center justify-between gap-6">
+          <dt className="font-semibold">Reasoning effort</dt>
+          <dd className="font-light">{generation.reasoningEffort ?? "default"}</dd>
+        </div>
+        <div className="flex items-center justify-between gap-6">
+          <dt className="font-semibold">Tokens (prompt / reasoning / output)</dt>
+          <dd className="text-right font-light">
+            {formatTokenCount(generation.promptTokens)} /{" "}
+            {formatTokenCount(generation.reasoningTokens)} /{" "}
+            {formatTokenCount(generation.completionTokens)}
+          </dd>
+        </div>
+        <div className="flex items-center justify-between gap-6">
+          <dt className="font-semibold">Cost</dt>
+          <dd className="font-light">{formatUsd(generation.costUsd)}</dd>
         </div>
       </dl>
 

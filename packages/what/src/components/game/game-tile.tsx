@@ -16,6 +16,7 @@ type GameTileProps = {
   isPending?: boolean;
   isSolved?: boolean;
   tileIndex?: number;
+  mini?: boolean;
   style?: CSSProperties;
 };
 
@@ -30,6 +31,7 @@ export function GameTile({
   isPending = false,
   isSolved = false,
   tileIndex = 0,
+  mini = false,
   style,
 }: GameTileProps) {
   if (loading) {
@@ -45,6 +47,7 @@ export function GameTile({
       data-testid="game-tile"
       className={cn(
         tileStyles.tile,
+        mini && tileStyles.mini,
         isRevealing && (isIncorrectGuess ? tileStyles.revealIncorrect : tileStyles.reveal),
         hasError && tileStyles.error,
         isPending && tileStyles.pending,

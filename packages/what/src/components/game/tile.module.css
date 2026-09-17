@@ -22,6 +22,12 @@
   box-shadow: var(--shadow-xs);
 }
 
+.tile.mini {
+  --game-tile-size: 42px;
+  --game-tile-font-size: 1.05rem;
+  --game-radius: 10px;
+}
+
 .tileLetter {
   position: relative;
   z-index: 2;

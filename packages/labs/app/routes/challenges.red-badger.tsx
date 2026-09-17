@@ -502,7 +502,7 @@ function CommandBuilder({
           ✕
         </button>
       </div>
-      <div className="text-foreground/80 min-h-[1.5rem] font-mono text-sm tracking-widest">
+      <div className="text-foreground/80 min-h-[1.5rem] font-mono text-sm">
         {cmdInput || (
           <span className="text-muted-foreground/40 text-xs tracking-normal">
             Click F / L / R to build a sequence
