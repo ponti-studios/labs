@@ -1,4 +1,5 @@
 import { BRAND_NAME } from "../../config/brand";
+import { getTopicEmoji } from "../generation/catalog";
 import type { GameGuess, LetterState } from "../puzzle/types";
 
 const SHARE_TILES: Record<LetterState, string> = {
@@ -20,11 +21,12 @@ export function buildGameShareText(
   guesses: readonly GameGuess[],
   isSolved: boolean,
   topic?: string,
+  topicSlug?: string,
   date = new Date(),
 ): string {
   const score = isSolved ? `${guesses.length}/6` : "X/6";
   const rows = guesses.map((guess) => guess.states.map((state) => SHARE_TILES[state]).join(""));
-  const topicLabel = topic ? ` · ${topic}` : "";
+  const topicLabel = topic ? ` · ${getTopicEmoji(topicSlug)} ${topic}` : "";
 
   return [`${BRAND_NAME}${topicLabel} · ${formatShareDate(date)}`, score, "", ...rows].join("\n");
 }
