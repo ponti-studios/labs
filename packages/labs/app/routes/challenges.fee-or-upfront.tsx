@@ -1,5 +1,3 @@
-import { Input } from "@ponti-studios/ui/forms";
-import { FieldLabel as Label } from "../components/FieldLabel";
 import {
   Table,
   TableBody,
@@ -8,8 +6,10 @@ import {
   TableHeader,
   TableRow,
 } from "@ponti-studios/ui/data-display";
-import { useMemo, useState, type JSX, type ChangeEvent } from "react";
+import { Input } from "@ponti-studios/ui/forms";
 import { Badge } from "@ponti-studios/ui/primitives";
+import { useMemo, useState, type ChangeEvent, type JSX } from "react";
+import { FieldLabel as Label } from "../components/FieldLabel";
 
 type Choice = "upfront" | "per-transaction";
 
@@ -78,9 +78,7 @@ export default function FeeOrUpfront(): JSX.Element {
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-muted-foreground text-[10px] font-medium tracking-widest uppercase">
-                Option A
-              </p>
+              <p className="text-muted-foreground text-[10px] font-medium uppercase">Option A</p>
               <h3 className="text-base">Upfront</h3>
             </div>
             {winnerIsUpfront && (
@@ -126,9 +124,7 @@ export default function FeeOrUpfront(): JSX.Element {
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-muted-foreground text-[10px] font-medium tracking-widest uppercase">
-                Option B
-              </p>
+              <p className="text-muted-foreground text-[10px] font-medium uppercase">Option B</p>
               <h3 className="text-base">Per-transaction</h3>
             </div>
             {!winnerIsUpfront && (

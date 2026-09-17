@@ -1,11 +1,11 @@
 import { EmptyState } from "@ponti-studios/ui/feedback";
 import { Button, Card, CardContent, CardHeader, CardTitle } from "@ponti-studios/ui/primitives";
-import { Link2, LucideCheck } from "lucide-react";
+import { Link2, LucideCheckCircle } from "lucide-react";
 import { useFetcher } from "react-router";
 
+import { GameTile } from "~/components/game/game-tile";
 import { explainGenerateReason } from "~/lib/admin/generate-copy";
 import type { AdminGenerationCandidate } from "~/lib/admin/inventory";
-import { GameTile } from "~/components/game/game-tile";
 
 import styles from "./candidate-cards.module.css";
 
@@ -67,7 +67,7 @@ function CandidateCard({
       <CardHeader>
         <CardTitle className={styles.header}>
           <div
-            className={styles.answer}
+            className={styles.answerMini}
             aria-label={`Proposed answer ${candidate.candidate.answer.toUpperCase()}`}
             role="img"
           >
@@ -75,7 +75,7 @@ function CandidateCard({
               .toUpperCase()
               .split("")
               .map((letter, index) => (
-                <GameTile key={`${letter}-${index}`} state="correct" letter={letter} />
+                <GameTile key={`${letter}-${index}`} state="correct" letter={letter} mini />
               ))}
           </div>
 
@@ -94,50 +94,50 @@ function CandidateCard({
         </CardTitle>
       </CardHeader>
       <CardContent className="grid gap-4 pt-0 text-sm">
-        {(candidate.candidate.articleAbout ||
-          candidate.candidate.concept ||
-          candidate.candidate.answerMeaning) && (
-          <div className="grid gap-2 rounded-md border p-3">
-            {candidate.candidate.articleAbout ? (
-              <div>
-                <p className="text-lg tracking-widest">Article about</p>
-                <p>{candidate.candidate.articleAbout}</p>
-              </div>
-            ) : null}
-            {candidate.candidate.concept ? (
-              <div>
-                <p className="text-lg tracking-widest">Concept</p>
-                <p>{candidate.candidate.concept}</p>
-              </div>
-            ) : null}
-            {candidate.candidate.answerMeaning ? (
-              <div>
-                <p className="text-lg tracking-widest">Answer meaning</p>
-                <p>{candidate.candidate.answerMeaning}</p>
-              </div>
-            ) : null}
+        {candidate.candidate.articleAbout ? (
+          <div>
+            <p className="text-lg font-bold">About</p>
+            <p>{candidate.candidate.articleAbout}</p>
           </div>
-        )}
+        ) : null}
+        {candidate.candidate.concept ? (
+          <div>
+            <p className="text-lg font-bold">Concept</p>
+            <p>{candidate.candidate.concept}</p>
+          </div>
+        ) : null}
+        {candidate.candidate.answerMeaning ? (
+          <div>
+            <p className="text-lg font-bold">Answer meaning</p>
+            <p>{candidate.candidate.answerMeaning}</p>
+          </div>
+        ) : null}
         <div>
-          <p className="text-lg tracking-widest">Clue</p>
+          <p className="text-lg font-bold">Clue</p>
           <p>{candidate.candidate.clue}</p>
         </div>
         <div>
-          <p className="text-lg tracking-widest">Detail</p>
+          <p className="text-lg font-bold">Detail</p>
           <p>{candidate.candidate.detail}</p>
         </div>
-        <div className="flex items-center justify-end gap-2">
-          <div>
+        <div>
+          <p className="text-lg font-bold">Explanation</p>
+          <p>
             {candidate.reasons.length > 0 ? (
-              <ul className="text-muted-foreground list-disc pl-4">
+              <ul className="ml-4 list-disc">
                 {candidate.reasons.map((reason) => (
                   <li key={reason}>{explainGenerateReason(reason)}</li>
                 ))}
               </ul>
-            ) : (
+            ) : null}
+          </p>
+        </div>
+        <div className="flex items-center justify-end gap-2">
+          <div>
+            {candidate.reasons.length === 0 && (
               <p className="text-muted-foreground flex items-center gap-2">
-                <LucideCheck className="text-success size-4" />
                 Passed checks.
+                <LucideCheckCircle className="text-success size-4" />
               </p>
             )}
             {!canPublish ? (

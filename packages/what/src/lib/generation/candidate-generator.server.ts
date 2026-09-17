@@ -8,21 +8,21 @@ import { z } from "zod";
 import { getErrorMessage } from "../errors";
 import { createLogger } from "../logger.server";
 import { GAME_ANSWER_LENGTH } from "../puzzle/rules";
-import { fetchFeedItems } from "./ingest.server";
 import { validateCandidate } from "./candidate-validation";
-import type {
-  ScoredCandidate,
-  FeedItem,
-  GenerateCandidatesResult,
-  GenerateCandidatesOptions,
-  GenerationUsage,
-} from "./types";
 import {
   MAX_ARTICLE_TEXT_LENGTH,
   MAX_FEED_DESCRIPTION_LENGTH,
   MAX_FEED_TITLE_LENGTH,
   sanitizeFeedText,
 } from "./feed-text";
+import { fetchFeedItems } from "./ingest.server";
+import type {
+  FeedItem,
+  GenerateCandidatesOptions,
+  GenerateCandidatesResult,
+  GenerationUsage,
+  ScoredCandidate,
+} from "./types";
 
 const REALITY_FEED_URL = "https://realityblurred.com/realitytv/feed";
 const logger = createLogger();
@@ -39,7 +39,7 @@ const relationshipSchema = z.enum([
 ]);
 
 const candidateSchema = z.object({
-  answer: z.string().min(1),
+  answer: z.string().min(1).max(GAME_ANSWER_LENGTH),
   answerType: z.string().min(1),
   // Required because OpenRouter strict structured outputs require every
   // declared property to appear in the JSON schema's required list.

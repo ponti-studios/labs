@@ -9,12 +9,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@ponti-studios/ui/primitives";
-import { StatusBadge, type StatusBadgeConfig } from "~/components/primitives";
 import { Link, useLoaderData, type LoaderFunctionArgs } from "react-router";
+import { StatusBadge, type StatusBadgeConfig } from "~/components/primitives";
 
 import { loadAdminDate } from "~/lib/admin/inventory";
-import { isDateKey } from "~/lib/puzzle/date";
 import { DEFAULT_GAME_SLUG } from "~/lib/generation/catalog";
+import { isDateKey } from "~/lib/puzzle/date";
 
 import { GenerationsList } from "./admin.inventory-list";
 
@@ -89,11 +89,11 @@ export default function GameAdminDate() {
           </CardHeader>
           <CardContent className="flex flex-col gap-3 text-sm">
             <div>
-              <p className="text-muted-foreground text-xs tracking-widest uppercase">Clue</p>
+              <p className="text-muted-foreground text-xs uppercase">Clue</p>
               <p>{detail.puzzle.clue}</p>
             </div>
             <div>
-              <p className="text-muted-foreground text-xs tracking-widest uppercase">Detail</p>
+              <p className="text-muted-foreground text-xs uppercase">Detail</p>
               <p>{detail.puzzle.detail}</p>
             </div>
             <div className="flex flex-wrap items-center gap-2">

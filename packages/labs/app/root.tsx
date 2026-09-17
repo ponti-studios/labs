@@ -165,7 +165,7 @@ export default function App() {
                   alt={link.label}
                   className="border-nokia-ink size-6 contrast-125 grayscale sm:border-0 sm:contrast-100 sm:grayscale-0"
                 />
-                <span className="font-nokia mt-1 block text-base tracking-widest uppercase sm:sr-only">
+                <span className="font-nokia mt-1 block text-base uppercase sm:sr-only">
                   {link.label}
                 </span>
               </>
@@ -177,7 +177,7 @@ export default function App() {
                     <span className="border-nokia-ink flex size-10 items-center justify-center border-2 sm:hidden">
                       {Icon && <Icon className="size-5" strokeWidth={2} aria-hidden="true" />}
                     </span>
-                    <span className="font-nokia mt-1 block text-base tracking-widest uppercase sm:hidden">
+                    <span className="font-nokia mt-1 block text-base uppercase sm:hidden">
                       {link.label}
                     </span>
                     <span className="hidden sm:inline">{link.label}</span>
@@ -213,7 +213,7 @@ export default function App() {
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="outline"
-                    className="press border-nokia-ink font-nokia rounded-none border-2 text-lg tracking-widest uppercase sm:rounded-md sm:border sm:font-sans sm:text-sm sm:tracking-normal sm:normal-case"
+                    className="press border-nokia-ink font-nokia rounded-none border-2 text-lg uppercase sm:rounded-md sm:border sm:font-sans sm:text-sm sm:tracking-normal sm:normal-case"
                   >
                     {t.nav.apps}
                   </Button>
@@ -241,7 +241,7 @@ export default function App() {
             <Navigation.Action>
               <Button
                 asChild
-                className="press border-nokia-ink bg-nokia-ink font-nokia text-nokia-screen hover:bg-nokia-ink/90 sm:bg-primary sm:text-primary-foreground sm:hover:bg-primary/90 rounded-none border-2 text-lg tracking-widest uppercase sm:rounded-md sm:border-0 sm:font-sans sm:text-sm sm:tracking-normal sm:normal-case"
+                className="press border-nokia-ink bg-nokia-ink font-nokia text-nokia-screen hover:bg-nokia-ink/90 sm:bg-primary sm:text-primary-foreground sm:hover:bg-primary/90 rounded-none border-2 text-lg uppercase sm:rounded-md sm:border-0 sm:font-sans sm:text-sm sm:tracking-normal sm:normal-case"
               >
                 <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
                   {t.nav.book}

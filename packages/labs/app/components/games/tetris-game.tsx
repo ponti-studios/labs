@@ -475,9 +475,7 @@ const TetrisGame: FC = () => {
 
         {/* Board column */}
         <div className="flex flex-col items-center gap-3">
-          <h3 className="text-foreground text-sm font-semibold tracking-widest uppercase">
-            Tetris
-          </h3>
+          <h3 className="text-foreground text-sm font-semibold uppercase">Tetris</h3>
 
           <div className="border-border relative overflow-hidden rounded-xl border bg-zinc-950 p-1">
             <div className="grid" style={{ gridTemplateColumns: `repeat(${COLS}, 1.5rem)` }}>
@@ -511,7 +509,7 @@ const TetrisGame: FC = () => {
             {/* Paused overlay */}
             {state.paused && (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-zinc-950/90">
-                <p className="text-sm font-semibold tracking-widest text-white uppercase">Paused</p>
+                <p className="text-sm font-semibold text-white uppercase">Paused</p>
                 <Button variant="secondary" onClick={() => dispatch({ type: "PAUSE" })}>
                   Resume
                 </Button>
@@ -521,9 +519,7 @@ const TetrisGame: FC = () => {
             {/* Game over overlay */}
             {state.gameOver && (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-zinc-950/90">
-                <p className="text-sm font-semibold tracking-widest text-white uppercase">
-                  Game Over
-                </p>
+                <p className="text-sm font-semibold text-white uppercase">Game Over</p>
                 <p className="text-xs text-zinc-400 tabular-nums">Score: {state.score}</p>
                 <Button variant="secondary" onClick={() => dispatch({ type: "START" })}>
                   Play again
