@@ -39,19 +39,20 @@ export function GameBoard({ puzzle, initialGuesses, loginUrl, gameSlug }: GameBo
     guesses: game.guesses,
     isSolved: game.isSolved,
     topic: puzzle.topic,
+    topicSlug: gameSlug,
     onResult: game.clearError,
   });
 
   const copyStory = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(
-        buildGameShareText(game.guesses, game.isSolved, puzzle.topic),
+        buildGameShareText(game.guesses, game.isSolved, puzzle.topic, gameSlug),
       );
       game.clearError();
     } catch {
       // Clipboard permission denied or unavailable; the share fallback remains available.
     }
-  }, [game.guesses, game.isSolved, game.clearError, puzzle.topic]);
+  }, [game.guesses, game.isSolved, game.clearError, puzzle.topic, gameSlug]);
 
   useEffect(() => {
     const updateOnlineState = () => setIsOffline(!navigator.onLine);

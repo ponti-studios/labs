@@ -6,7 +6,7 @@ import { parseArgs } from "node:util";
 import { chromium, type Page } from "playwright";
 
 import { getDateKey } from "../src/lib/puzzle/date";
-import { DEFAULT_GAME_SLUG } from "../src/lib/generation/catalog";
+import { DEFAULT_GAME_SLUG, getTopicEmoji } from "../src/lib/generation/catalog";
 import { getGameBySlug } from "../src/lib/data/games.server";
 import { loadMostRecentPuzzle, loadPuzzleForDate } from "../src/lib/data/puzzles.server";
 import { runScript } from "./_shared/run-script";
@@ -259,13 +259,19 @@ async function run(opts: Options) {
       !(await testId(solve, "onscreen-keyboard").isVisible()),
     );
 
+    // First-guess solve marks every tile correct, so the emoji grid is a
+    // single line of five copies of the topic's tile — match that whole
+    // line rather than a single character, which the header text also contains.
+    const correctTile = getTopicEmoji(DEFAULT_GAME_SLUG);
+    const shareRowPattern = new RegExp(`^(?:${correctTile}){5}$`, "mu");
+
     await solve.context().grantPermissions(["clipboard-read", "clipboard-write"]);
     await testId(solve, "game-share").click();
     const shared = await solve.evaluate(async () => navigator.clipboard.readText());
-    probe.check("share copies an emoji grid", /[⬜🟨🟩]/.test(shared), JSON.stringify(shared));
+    probe.check("share copies an emoji grid", shareRowPattern.test(shared), JSON.stringify(shared));
     await testId(solve, "game-copy-story").click();
     const story = await solve.evaluate(async () => navigator.clipboard.readText());
-    probe.check("copy story writes share text", /[⬜🟨🟩]/.test(story), story.slice(0, 80));
+    probe.check("copy story writes share text", shareRowPattern.test(story), story.slice(0, 80));
     await probe.shot(solve, opts.outDir, "06b-after-share");
     await solve.close();
 

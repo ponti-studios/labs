@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 
+import { getTopicEmoji } from "../../lib/generation/catalog";
 import type { WeekGridCellStatus, WeekGridRow } from "../../lib/puzzle/stats";
 import styles from "./week-streak-grid.module.css";
 
@@ -12,20 +13,6 @@ interface WeekStreakGridProps {
 }
 
 const WEEKDAY_FORMATTER = new Intl.DateTimeFormat(undefined, { weekday: "short" });
-
-const TOPIC_EMOJI: Readonly<Record<string, string>> = {
-  reality: "📺",
-  technology: "💻",
-  "page-six": "🗞️",
-  tmz: "📸",
-  sports: "🏆",
-  markets: "📈",
-  culture: "🎭",
-};
-
-function topicEmoji(topicSlug: string): string {
-  return TOPIC_EMOJI[topicSlug] ?? "📰";
-}
 
 // Solved-in-1 is the boldest fill; solved-in-6 is the palest. The floor is
 // kept well above 0 so even the palest solved cell stays visually distinct
@@ -96,7 +83,7 @@ export function WeekStreakGrid({ rows }: WeekStreakGridProps) {
           aria-label={`${row.topicName} history`}
         >
           <span className={styles.rowLabel} aria-hidden="true" title={row.topicName}>
-            {topicEmoji(row.topicSlug)}
+            {getTopicEmoji(row.topicSlug)}
           </span>
           {row.cells.map((cell) => (
             <span
