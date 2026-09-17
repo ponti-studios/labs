@@ -37,3 +37,29 @@ export const GAME_CATALOG = [
     feedLabel: "CBS Sports",
   },
 ] as const;
+
+/**
+ * One emoji per topic, shared by the share text and the week-streak grid so
+ * a topic reads the same everywhere. Keyed by slug rather than derived from
+ * GAME_CATALOG because history rows can reference retired topics (e.g.
+ * "markets", "culture") that are no longer in the active catalog.
+ */
+export const TOPIC_EMOJI: Readonly<Record<string, string>> = {
+  reality: "🩷",
+  technology: "💻",
+  "page-six": "🗞️",
+  tmz: "📸",
+  sports: "🏆",
+  markets: "📈",
+  culture: "🎭",
+};
+
+/** Shown when a topic slug isn't in the map (e.g. a topic created ad hoc). */
+export const DEFAULT_TOPIC_EMOJI = "📰";
+
+export function getTopicEmoji(slug: string | undefined): string {
+  if (slug && Object.hasOwn(TOPIC_EMOJI, slug)) {
+    return TOPIC_EMOJI[slug];
+  }
+  return DEFAULT_TOPIC_EMOJI;
+}
