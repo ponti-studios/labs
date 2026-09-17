@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { getTopicEmoji } from "../generation/catalog";
 import { buildGameShareText } from "../player/share";
 import type { GameGuess } from "../puzzle/types";
 
@@ -66,5 +67,13 @@ describe("game sharing", () => {
     );
 
     expect(text).toContain("📰🟠📰📰📰");
+  });
+});
+
+describe("getTopicEmoji", () => {
+  it("falls back to the default for inherited Object properties instead of leaking them", () => {
+    expect(getTopicEmoji("toString")).toBe("📰");
+    expect(getTopicEmoji("__proto__")).toBe("📰");
+    expect(getTopicEmoji("constructor")).toBe("📰");
   });
 });
