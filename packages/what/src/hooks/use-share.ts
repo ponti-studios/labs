@@ -14,15 +14,17 @@ export function useShare({
   guesses,
   isSolved,
   topic,
+  topicSlug,
   onResult,
 }: {
   guesses: readonly GameGuess[];
   isSolved: boolean;
   topic?: string;
+  topicSlug?: string;
   onResult: (outcome: ShareOutcome) => void;
 }): UseShare {
   const share = useCallback(async (): Promise<ShareOutcome> => {
-    const shareText = buildGameShareText(guesses, isSolved, topic);
+    const shareText = buildGameShareText(guesses, isSolved, topic, topicSlug);
 
     try {
       if (navigator.share) {
@@ -46,7 +48,7 @@ export function useShare({
       onResult("error");
       return "error";
     }
-  }, [guesses, isSolved, onResult, topic]);
+  }, [guesses, isSolved, onResult, topic, topicSlug]);
 
   return { share };
 }
