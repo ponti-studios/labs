@@ -41,4 +41,30 @@ describe("game sharing", () => {
 
     expect(text).toContain("WH?T · 📰 Mystery · 20 Aug 2026");
   });
+
+  it("uses the topic's emoji for correct tiles instead of the generic green square", () => {
+    const text = buildGameShareText(
+      guesses,
+      true,
+      "Realitea",
+      "reality",
+      new Date("2026-08-20T00:00:00Z"),
+    );
+
+    expect(text).not.toContain("🟩");
+    expect(text).toContain("⬜⬜🟨⬜🟨");
+    expect(text).toContain("🩷🟨🩷🩷🩷");
+  });
+
+  it("falls back to the default correct tile for an unrecognized topic slug", () => {
+    const text = buildGameShareText(
+      guesses,
+      true,
+      "Mystery",
+      "unknown-topic",
+      new Date("2026-08-20T00:00:00Z"),
+    );
+
+    expect(text).toContain("📰🟨📰📰📰");
+  });
 });
