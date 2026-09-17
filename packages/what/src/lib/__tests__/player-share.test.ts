@@ -25,7 +25,7 @@ describe("game sharing", () => {
     );
 
     expect(text).toContain("WH?T · 🩷 Realitea · 20 Aug 2026");
-    expect(text).toContain("🟨");
+    expect(text).toContain("🟠");
     expect(text).not.toContain("FLANK");
     expect(text).not.toContain("BACKS");
   });
@@ -52,8 +52,8 @@ describe("game sharing", () => {
     );
 
     expect(text).not.toContain("🟩");
-    expect(text).toContain("⬜⬜🟨⬜🟨");
-    expect(text).toContain("🩷🟨🩷🩷🩷");
+    expect(text).toContain("⚪⚪🟠⚪🟠");
+    expect(text).toContain("🩷🟠🩷🩷🩷");
   });
 
   it("falls back to the default correct tile for an unrecognized topic slug", () => {
@@ -65,6 +65,6 @@ describe("game sharing", () => {
       new Date("2026-08-20T00:00:00Z"),
     );
 
-    expect(text).toContain("📰🟨📰📰📰");
+    expect(text).toContain("📰🟠📰📰📰");
   });
 });
