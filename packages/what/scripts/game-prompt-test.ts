@@ -17,6 +17,7 @@ type Options = {
   dateKey: string;
   sourceFixtures: string[];
   model?: string;
+  requireLiteralMatch: boolean;
 };
 
 function parseOptions(): Options {
@@ -27,6 +28,7 @@ function parseOptions(): Options {
       "date-key": { type: "string" },
       "source-fixture": { type: "string", multiple: true },
       model: { type: "string" },
+      literal: { type: "boolean", default: false },
     },
     strict: true,
   });
@@ -36,6 +38,7 @@ function parseOptions(): Options {
     dateKey: values["date-key"] ?? getDateKey(new Date()),
     sourceFixtures: values["source-fixture"] ?? [],
     model: values.model,
+    requireLiteralMatch: values.literal ?? false,
   };
 }
 
@@ -155,6 +158,7 @@ async function main() {
         feedUrl,
         systemPrompt: prompt,
         model,
+        requireLiteralMatch: options.requireLiteralMatch,
       });
 
       await finishRun(runId, result);

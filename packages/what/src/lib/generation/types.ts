@@ -63,4 +63,6 @@ export interface GenerateCandidatesOptions {
   model?: string;
   maxTokens?: number;
   reasoningEffort?: string;
+  /** Deterministic backstop: reject candidates whose answer doesn't appear as a whole word in the cited article's text. */
+  requireLiteralMatch?: boolean;
 }
