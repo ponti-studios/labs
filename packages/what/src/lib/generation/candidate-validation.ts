@@ -22,6 +22,11 @@ function containsPromptControlText(value: string): boolean {
   return PROMPT_CONTROL_MARKERS.some((marker) => marker.test(value));
 }
 
+/** Whole-word, case-insensitive match, so "SPLIT" doesn't match inside "SPLITTING". */
+function containsWholeWordToken(text: string, word: string): boolean {
+  return new RegExp(`\\b${word}\\b`, "i").test(text);
+}
+
 export function validateCandidate(
   candidate: {
     answer: string;
@@ -32,7 +37,7 @@ export function validateCandidate(
     sources: { url: string; title?: string; publishedAt?: string }[];
   },
   previousAnswers: Set<string> = new Set(),
-  options: { sourceDomains?: string[] } = {},
+  options: { sourceDomains?: string[]; requireLiteralMatch?: boolean; articleText?: string } = {},
 ): ValidationResult {
   const reasons: GenerateReasonType[] = [];
   const answer = normalizeGuess(candidate.answer);
@@ -72,6 +77,9 @@ export function validateCandidate(
   }
   if (previousAnswers.has(answer)) {
     reasons.push(GenerateReasonType.RepeatInWindow);
+  }
+  if (options.requireLiteralMatch && !containsWholeWordToken(options.articleText ?? "", answer)) {
+    reasons.push(GenerateReasonType.AnswerNotInArticle);
   }
   const allowedSourceDomains = options.sourceDomains ?? [DEFAULT_SOURCE_DOMAIN];
   const hasAllowedSource = candidate.sources.some((s) => {
