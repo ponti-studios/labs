@@ -338,6 +338,78 @@ describe("game daily puzzle helpers", () => {
     expect(result.reasons).toContain(GenerateReasonType.PersonAnswerType);
   });
 
+  it("accepts a literal-match answer that appears as a whole word in the article", () => {
+    const result = validateCandidate(
+      {
+        answer: "Split",
+        answerType: "moment",
+        clue: "The pair called it quits after two decades together.",
+        detail: "The couple confirmed the split in a joint statement.",
+        sources: [BRAVO_SOURCE],
+      },
+      new Set(),
+      { requireLiteralMatch: true, articleText: "The couple confirmed the split in a joint statement." },
+    );
+
+    expect(result.valid).toBe(true);
+  });
+
+  it("rejects a literal-match answer whose word never appears in the article text", () => {
+    const result = validateCandidate(
+      {
+        answer: "Split",
+        answerType: "moment",
+        clue: "The pair called it quits after two decades together.",
+        detail: "A representative confirmed the couple's separation.",
+        sources: [BRAVO_SOURCE],
+      },
+      new Set(),
+      {
+        requireLiteralMatch: true,
+        articleText: "A representative confirmed the couple's separation.",
+      },
+    );
+
+    expect(result.valid).toBe(false);
+    expect(result.reasons).toContain(GenerateReasonType.AnswerNotInArticle);
+  });
+
+  it("rejects a literal-match answer that only appears as part of a longer word", () => {
+    const result = validateCandidate(
+      {
+        answer: "Split",
+        answerType: "moment",
+        clue: "The pair called it quits after two decades together.",
+        detail: "Fans debated the timeline of the couple splitting up.",
+        sources: [BRAVO_SOURCE],
+      },
+      new Set(),
+      {
+        requireLiteralMatch: true,
+        articleText: "Fans debated the timeline of the couple splitting up.",
+      },
+    );
+
+    expect(result.valid).toBe(false);
+    expect(result.reasons).toContain(GenerateReasonType.AnswerNotInArticle);
+  });
+
+  it("does not apply the literal-match check when the option is disabled", () => {
+    const result = validateCandidate(
+      {
+        answer: "Split",
+        answerType: "moment",
+        clue: "The pair called it quits after two decades together.",
+        detail: "A representative confirmed the couple's separation.",
+        sources: [BRAVO_SOURCE],
+      },
+      new Set(),
+      { articleText: "A representative confirmed the couple's separation." },
+    );
+
+    expect(result.valid).toBe(true);
+  });
+
   it("uses the canonical UTC day boundary", () => {
     const justBeforeMidnight = new Date("2026-06-16T23:59:59.999Z");
     const justAfterMidnight = new Date("2026-06-17T00:00:00.000Z");

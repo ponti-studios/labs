@@ -10,6 +10,7 @@ export enum GenerateReasonType {
   SemanticMismatch = "semantic-mismatch",
   RepeatInWindow = "repeat-in-window",
   MissingSource = "missing-source",
+  AnswerNotInArticle = "answer-not-in-article",
 }
 
 const REASON_COPY: Record<GenerateReasonType, string> = {
@@ -28,6 +29,7 @@ const REASON_COPY: Record<GenerateReasonType, string> = {
     "The word’s actual meaning does not describe the article concept.",
   [GenerateReasonType.RepeatInWindow]: "We used this word too recently.",
   [GenerateReasonType.MissingSource]: "The source URL doesn’t match the stories we offered.",
+  [GenerateReasonType.AnswerNotInArticle]: "The word doesn’t actually appear in the article.",
 };
 
 const LEGACY_REASON_TYPES: Array<{ match: string; type: GenerateReasonType }> = [
