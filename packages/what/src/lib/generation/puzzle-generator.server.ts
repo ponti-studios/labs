@@ -239,7 +239,6 @@ export async function generatePuzzleForGame(
     null;
   let winningRunId: number | null = null;
   let lastRejected: GenerationAttempt["rejected"] = [];
-  let lastUnmatched: GenerationAttempt["unmatched"] = [];
   let pendingArticles: Article[] = initialPendingArticles;
   const attemptExclusions = new Set(excludedAnswers);
   for (let attempt = 0; attempt < maxAttempts && !result; attempt++) {
@@ -315,7 +314,6 @@ export async function generatePuzzleForGame(
       attempt + 1,
     );
     lastRejected = attemptResult.rejected;
-    lastUnmatched = attemptResult.unmatched;
     for (const { answer } of attemptResult.rejected) attemptExclusions.add(answer);
 
     if (run) {
