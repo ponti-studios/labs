@@ -217,14 +217,14 @@ export async function generatePuzzleForGame(
   }
 
   await expireStaleArticles(game, date);
-  const [recentAnswers, inventoryAnswers, pendingArticles] = await Promise.all([
+  const [recentAnswers, inventoryAnswers, initialPendingArticles] = await Promise.all([
     getRecentAnswers(game, date),
     getStoredAnswers(game.id),
     getPendingArticlesForGame(game, GENERATION_BATCH_SIZE),
   ]);
   const excludedAnswers = [...new Set([...recentAnswers, ...inventoryAnswers])];
 
-  if (pendingArticles.length === 0) {
+  if (initialPendingArticles.length === 0) {
     childLogger.error(
       { event: "generate.pipeline.backlogEmpty" },
       "no pending articles available, cannot generate puzzle",
@@ -234,27 +234,41 @@ export async function generatePuzzleForGame(
   }
 
   const systemPrompt = getSystemPromptForGame(game);
-  const articleTextCount = pendingArticles.filter((article) => Boolean(article.articleText)).length;
-  childLogger.info(
-    {
-      event: "generate.config",
-      model,
-      reasoningEffort: reasoningEffort ?? "default",
-      promptPath: game.systemPromptPath,
-      maxAttempts,
-      excludedCount: excludedAnswers.length,
-      articleTextCount,
-    },
-    `${game.slug} ${dateKey}: configured with ${articleTextCount}/${pendingArticles.length} article(s) with full text`,
-  );
 
   let result: { candidate: NonNullable<GenerationAttempt["candidate"]>; article: Article } | null =
     null;
   let winningRunId: number | null = null;
   let lastRejected: GenerationAttempt["rejected"] = [];
+  let lastUnmatched: GenerationAttempt["unmatched"] = [];
+  let pendingArticles: Article[] = initialPendingArticles;
   const attemptExclusions = new Set(excludedAnswers);
   for (let attempt = 0; attempt < maxAttempts && !result; attempt++) {
     const attemptStartedAt = Date.now();
+
+    // Refresh the article batch on retries so the model isn't repeatedly
+    // asked to solve the same stale set. This matters when the freshest
+    // articles happen to produce no valid candidate (bad fit, exhausted
+    // answers, etc.) and older pending articles can still fill the day.
+    if (attempt > 0) {
+      const refreshed = await getPendingArticlesForGame(game, GENERATION_BATCH_SIZE);
+      if (refreshed.length > 0) pendingArticles = refreshed;
+    }
+
+    const articleTextCount = pendingArticles.filter((article) => Boolean(article.articleText)).length;
+    childLogger.info(
+      {
+        event: "generate.config",
+        model,
+        reasoningEffort: reasoningEffort ?? "default",
+        promptPath: game.systemPromptPath,
+        attempt: attempt + 1,
+        maxAttempts,
+        excludedCount: attemptExclusions.size,
+        articleTextCount,
+      },
+      `${game.slug} ${dateKey}: configured with ${articleTextCount}/${pendingArticles.length} article(s) with full text`,
+    );
+
     childLogger.debug(
       {
         event: "generate.attempt.started",
@@ -301,6 +315,7 @@ export async function generatePuzzleForGame(
       attempt + 1,
     );
     lastRejected = attemptResult.rejected;
+    lastUnmatched = attemptResult.unmatched;
     for (const { answer } of attemptResult.rejected) attemptExclusions.add(answer);
 
     if (run) {
