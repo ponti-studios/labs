@@ -21,7 +21,8 @@
     "game:dev": "pnpm --filter what dev",
     "game:generate": "pnpm --filter what game:generate",
     "game:health-check": "pnpm --filter what game:health-check",
-    "game:ingest": "pnpm --filter what game:ingest"
+    "game:ingest": "pnpm --filter what game:ingest",
+    "game:prompt-test": "pnpm --filter what game:prompt-test"
   },
   "devDependencies": {
     "@types/react": "^19.2.18",
