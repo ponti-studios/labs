@@ -251,7 +251,7 @@ export async function generatePuzzleForGame(
     // answers, etc.) and older pending articles can still fill the day.
     if (attempt > 0) {
       const refreshed = await getPendingArticlesForGame(game, GENERATION_BATCH_SIZE);
-      if (refreshed.length > 0) pendingArticles = refreshed;
+      if (refreshed && refreshed.length > 0) pendingArticles = refreshed;
     }
 
     const articleTextCount = pendingArticles.filter((article) => Boolean(article.articleText)).length;
