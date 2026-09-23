@@ -25,7 +25,7 @@ for scheduling and circuit-breaking.
   plus every answer it has ever published (`getRecentAnswers` /
   `getStoredAnswers`) — the LLM must not land on a duplicate.
 
-## 2. Generation and validation loop — 3 attempts max
+## 2. Generation and validation loop — 5 attempts max
 
 - **Request:** one OpenRouter chat completion per attempt via
   `callGenerationApiForCandidates` (`candidate-generator.server.ts`) with a
@@ -57,7 +57,7 @@ for scheduling and circuit-breaking.
 
 ## 3. Exhaustion
 
-If all `maxAttempts` (default 3) fail validation, generation logs
+If all `maxAttempts` (default 5) fail validation, generation logs
 `generate.puzzle.failed` ("puzzle generation failed after all attempts"),
 records `GENERATION_EXHAUSTED` via `recordAdminAction`, and returns `null` for
 that slot. There is no curated-archive fallback at generation time — the
