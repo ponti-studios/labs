@@ -89,7 +89,9 @@ export function GenerateProgress({
             return (
               <li key={step.stage} className={styles.step} data-state={state}>
                 <StageMark state={state} running={running} failed={failed} />
-                <span className="font-medium">{step.label}</span>
+                <span className="font-medium">
+                  {state === "current" && stage ? stage.label : step.label}
+                </span>
                 {state === "current" && stage ? (
                   <span className="text-muted-foreground"> — {stage.detail}</span>
                 ) : null}
