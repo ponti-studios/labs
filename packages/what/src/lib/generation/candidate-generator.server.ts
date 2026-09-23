@@ -21,12 +21,25 @@ import type {
   GenerateCandidatesOptions,
   GenerateCandidatesResult,
   GenerationUsage,
+  GenerationProgressUpdate,
   ScoredCandidate,
 } from "./types";
 
 const REALITY_FEED_URL = "https://realityblurred.com/realitytv/feed";
 const logger = createLogger();
 const promptCache = new Map<string, string>();
+
+function reportProgress(
+  callback: GenerateCandidatesOptions["onProgress"],
+  update: GenerationProgressUpdate,
+): void {
+  try {
+    callback?.(update);
+  } catch {
+    // Progress reporting must never turn a successful model response into a
+    // failed generation.
+  }
+}
 
 const relationshipSchema = z.enum([
   "direct-summary",
@@ -231,10 +244,7 @@ function combineUsage(first: GenerationUsage, second: GenerationUsage): Generati
 }
 
 /** Combined text of every feed item a candidate cites, for the literal-match check. */
-function articleTextForSources(
-  sources: { url: string }[],
-  feedItems: FeedItem[],
-): string {
+function articleTextForSources(sources: { url: string }[], feedItems: FeedItem[]): string {
   const citedUrls = new Set(sources.map((source) => source.url));
   return feedItems
     .filter((item) => citedUrls.has(item.link))
@@ -317,6 +327,7 @@ export async function generateCandidates(
   dateKey: string,
   options: GenerateCandidatesOptions = {},
 ): Promise<GenerateCandidatesResult> {
+  const modelAttempts = 2;
   const feedUrl = options.feedUrl ?? REALITY_FEED_URL;
   let feedItems: FeedItem[] = [];
   let feedError: string | null = null;
@@ -331,6 +342,12 @@ export async function generateCandidates(
     }
   }
 
+  reportProgress(options.onProgress, {
+    phase: "requesting",
+    attempt: 1,
+    maxAttempts: modelAttempts,
+    articleCount: feedItems.length,
+  });
   let generation = await callGenerationApiForCandidates(
     dateKey,
     options.excludedAnswers ?? [],
@@ -344,6 +361,14 @@ export async function generateCandidates(
     options.reasoningEffort,
     options.requireLiteralMatch,
   );
+  reportProgress(options.onProgress, {
+    phase: "received",
+    attempt: 1,
+    maxAttempts: modelAttempts,
+    candidateCount: generation.candidates.length,
+    validCount: generation.candidates.filter((item) => item.validation.valid).length,
+    llmError: generation.llmError,
+  });
 
   // A model can spend its first batch on attractive but unusable answers
   // (wrong length, non-words, or semantic mismatches). Give it one bounded
@@ -354,10 +379,22 @@ export async function generateCandidates(
     generation.llmError === null &&
     !generation.candidates.some((item) => item.validation.valid)
   ) {
+    reportProgress(options.onProgress, {
+      phase: "retrying",
+      attempt: 1,
+      maxAttempts: modelAttempts,
+      candidateCount: generation.candidates.length,
+    });
     const retryExcludedAnswers = [
       ...(options.excludedAnswers ?? []),
       ...generation.candidates.map((item) => item.validation.answer),
     ];
+    reportProgress(options.onProgress, {
+      phase: "requesting",
+      attempt: 2,
+      maxAttempts: modelAttempts,
+      articleCount: feedItems.length,
+    });
     const retryGeneration = await callGenerationApiForCandidates(
       dateKey,
       retryExcludedAnswers,
@@ -375,6 +412,14 @@ RETRY: The previous candidate batch had no publishable answer. Discard those ans
       options.reasoningEffort,
       options.requireLiteralMatch,
     );
+    reportProgress(options.onProgress, {
+      phase: "received",
+      attempt: 2,
+      maxAttempts: modelAttempts,
+      candidateCount: retryGeneration.candidates.length,
+      validCount: retryGeneration.candidates.filter((item) => item.validation.valid).length,
+      llmError: retryGeneration.llmError,
+    });
     generation = {
       ...retryGeneration,
       usage: combineUsage(generation.usage, retryGeneration.usage),

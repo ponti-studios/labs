@@ -8,6 +8,10 @@ vi.mock("@pontistudios/ai", async () => {
 });
 
 import { GenerateReasonType } from "../admin/generate-copy";
+import {
+  DEFAULT_GENERATION_MAX_ATTEMPTS,
+  resolveGenerationMaxAttempts,
+} from "../generation/puzzle-generator.server";
 import { validateCandidate } from "../generation/candidate-validation";
 import {
   MAX_FEED_DESCRIPTION_LENGTH,
@@ -21,6 +25,12 @@ import {
 } from "../generation/generate.server";
 
 describe("generation input boundaries", () => {
+  it("uses five attempts by default while preserving explicit overrides", () => {
+    expect(DEFAULT_GENERATION_MAX_ATTEMPTS).toBe(5);
+    expect(resolveGenerationMaxAttempts()).toBe(5);
+    expect(resolveGenerationMaxAttempts(2)).toBe(2);
+  });
+
   it("bounds and sanitizes untrusted feed text", () => {
     const title = sanitizeFeedText("<b>Headline</b>\u0007", MAX_FEED_TITLE_LENGTH);
     const description = sanitizeFeedText(
@@ -122,6 +132,7 @@ describe("generation input boundaries", () => {
   });
 
   it("accepts a valid mocked LLM response while preserving feed boundaries", async () => {
+    const progress: string[] = [];
     vi.stubGlobal(
       "fetch",
       vi
@@ -200,10 +211,12 @@ describe("generation input boundaries", () => {
       feedUrl: "https://realityblurred.com/feed",
       systemPrompt: "Generate a five-letter answer.",
       model: "deepseek/deepseek-v4-flash",
+      onProgress: (update) => progress.push(update.phase),
     });
 
     expect(result.feedItemCount).toBe(1);
     expect(result.selectedIndex).toBe(0);
+    expect(progress).toEqual(["requesting", "received"]);
     expect(result.candidates[0]?.validation.valid).toBe(true);
     expect(chatCompletionMock).toHaveBeenCalledOnce();
     expect(chatCompletionMock).toHaveBeenCalledWith(
