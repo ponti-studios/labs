@@ -88,6 +88,8 @@ describe("generation input boundaries", () => {
     expect(prompt).toContain("If articleText is empty");
     expect(prompt).toContain("article-level concept");
     expect(prompt).toContain("coffee mug does not justify MUGGY");
+    expect(prompt).toContain("Discard incidental, false-morphological, and unrelated ideas");
+    expect(prompt).toContain("Never return any of them");
     expect(userMessage.content).toContain("The full article body is the richer source.");
   });
 
