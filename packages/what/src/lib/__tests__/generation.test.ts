@@ -19,8 +19,13 @@ import {
   getSystemPromptForGame,
   generateCandidates,
 } from "../generation/generate.server";
+import { DEFAULT_GENERATION_MAX_ATTEMPTS } from "../generation/puzzle-generator.server";
 
 describe("generation input boundaries", () => {
+  it("allows five candidate batches before exhausting generation", () => {
+    expect(DEFAULT_GENERATION_MAX_ATTEMPTS).toBe(5);
+  });
+
   it("bounds and sanitizes untrusted feed text", () => {
     const title = sanitizeFeedText("<b>Headline</b>\u0007", MAX_FEED_TITLE_LENGTH);
     const description = sanitizeFeedText(
