@@ -41,7 +41,7 @@ Return only JSON in this shape:
 {
 "candidates": [
 {
-"answer": "Split",
+"answer": "SPLIT",
 "answerType": "moment|object|phrase|place|storyline",
 "articleAbout": "What the article is fundamentally about in one neutral sentence.",
 "concept": "The free-form article-level concept this answer labels.",
