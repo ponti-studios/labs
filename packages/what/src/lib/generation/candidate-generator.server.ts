@@ -43,7 +43,7 @@ const candidateSchema = z.object({
   answer: z
     .string()
     .length(GAME_ANSWER_LENGTH)
-    .regex(/^[A-Za-z]{5}$/, "answer must be five letters"),
+    .regex(/^[A-Za-z]+$/, "answer must be letters only"),
   answerType: z.enum(["moment", "object", "phrase", "place", "storyline"]),
   // Required because OpenRouter strict structured outputs require every
   // declared property to appear in the JSON schema's required list.
