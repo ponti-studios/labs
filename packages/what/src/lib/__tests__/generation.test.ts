@@ -135,7 +135,7 @@ describe("generation input boundaries", () => {
             content: JSON.stringify({
               candidates: [
                 {
-                  answer: "Aspen",
+                  answer: "ASPEN",
                   answerType: "place",
                   articleAbout: "a chaotic cast trip",
                   concept: "the trip's setting",
@@ -152,7 +152,7 @@ describe("generation input boundaries", () => {
                   ],
                 },
                 {
-                  answer: "Drama",
+                  answer: "DRAMA",
                   answerType: "moment",
                   articleAbout: "a cast conflict",
                   concept: "the conflict",
@@ -169,7 +169,7 @@ describe("generation input boundaries", () => {
                   ],
                 },
                 {
-                  answer: "Smile",
+                  answer: "SMILE",
                   answerType: "storyline",
                   articleAbout: "a cast scandal",
                   concept: "the public reaction",
