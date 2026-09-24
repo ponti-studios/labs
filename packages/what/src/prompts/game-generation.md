@@ -38,6 +38,8 @@ Before returning a candidate, ask all six questions:
 
 Return only JSON in this shape:
 
+The `relationship` field must be one of direct-summary, direct-subject, direct-action, or direct-consequence. Never emit incidental-association, false-morphological-association, or unrelated.
+
 {
 "candidates": [
 {
