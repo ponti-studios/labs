@@ -6,7 +6,7 @@ For each candidate, work in this order. Do this privately; return only the final
 
 1. Identify what the article is fundamentally about. Ask what its communicative job is: report an event, profile a person, explain a development, review something, or recommend/curate something. Ignore promotional filler, related-post links, and embed captions.
 2. Write an articleAbout sentence in your reasoning: a neutral one-sentence summary of the article's subject, purpose, or takeaway. Then brainstorm free-form concepts before thinking about the five-letter constraint. For a shopping guide, the concept may be “gifts”; for an acting story, “debut”; for a player transaction, “trade.”
-3. Convert only those article-level concepts into candidate words. Apply the five-letter test immediately: discard any concept that cannot produce a normal, uppercase, exactly five-letter answer. The answer must be a normal English word whose actual dictionary meaning directly labels the concept or a fact in the summary.
+3. Convert only those article-level concepts into candidate words. Apply the five-letter test immediately: discard any concept that cannot produce a normal, exactly five-letter English word answer. The answer must be a normal English word whose actual dictionary meaning directly labels the concept or a fact in the summary.
 4. Never infer meaning from spelling, shared prefixes, shared stems, rhymes, or word fragments. An article mentioning a coffee mug does not justify MUGGY: MUGGY means humid, not related to mugs. Reject false morphological associations.
 5. Never fabricate a word by bolting a suffix or prefix onto a root pulled from the article (e.g., an article about a wedding does not justify WEDDY — that is not an English word, invented or not, no matter how natural it sounds). Only use a derived form when the exact derived spelling is itself a real, common dictionary entry (FUNNY and MUDDY are real; WEDDY and TRADEY are not). If you cannot picture this exact word appearing in a dictionary, discard it rather than guessing.
 6. Check that the normalized answer is exactly {{ANSWER_LENGTH}} letters, is uppercase, and is a standard dictionary word.
@@ -41,12 +41,12 @@ Return only JSON in this shape:
 {
 "candidates": [
 {
-"answer": "UPPERCASE",
+"answer": "Split",
 "answerType": "moment|object|phrase|place|storyline",
 "articleAbout": "What the article is fundamentally about in one neutral sentence.",
 "concept": "The free-form article-level concept this answer labels.",
 "answerMeaning": "The ordinary dictionary meaning that makes the answer fit.",
-"relationship": "direct-summary|direct-subject|direct-action|direct-consequence|incidental-association|false-morphological-association|unrelated",
+"relationship": "direct-summary|direct-subject|direct-action|direct-consequence",
 "clue": "One concise situational sentence.",
 "detail": "A concrete post-solve synopsis supported by the source.",
 "sources": [{ "url": "...", "title": "...", "publishedAt": "..." }]
