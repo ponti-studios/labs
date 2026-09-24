@@ -37,9 +37,9 @@ const relationshipSchema = z.enum([
 
 const candidateSchema = z.object({
   // Enforce the answer format at the schema level so strict structured output
-  // refuses anything other than an exactly five-letter English word. Casing is
-  // normalized later in code, so the model can return mixed- or lower-case
-  // answers without failing validation.
+  // refuses anything other than an exact `GAME_ANSWER_LENGTH`-letter English
+  // word. Casing is normalized later in code, so the model can return mixed-
+  // or lower-case answers without failing validation.
   answer: z
     .string()
     .length(GAME_ANSWER_LENGTH)
