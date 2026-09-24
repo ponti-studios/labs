@@ -91,12 +91,14 @@ describe("getGenerationCostReport", () => {
       baseRun(game.id, {
         trigger: "admin_ui",
         environment: "railway",
+        status: "succeeded",
         costUsd: 0.5,
         totalTokens: 100,
       }),
       baseRun(null, {
         trigger: "cli",
         environment: "local",
+        status: "failed",
         costUsd: 0.25,
         totalTokens: 50,
       }),
@@ -109,6 +111,16 @@ describe("getGenerationCostReport", () => {
     expect(report.totalCostUsd).toBeCloseTo(0.75);
     expect(report.totalTokens).toBe(150);
     expect(report.byTrigger.map((r) => r.key).sort()).toEqual(["admin_ui", "cli"]);
+    expect(report.byModel).toMatchObject([
+      {
+        key: "test-model",
+        count: 2,
+        succeededCount: 1,
+        failedCount: 1,
+        successRate: 0.5,
+        failureRate: 0.5,
+      },
+    ]);
   });
 
   it("excludes runs created before the sinceDays cutoff", async () => {
