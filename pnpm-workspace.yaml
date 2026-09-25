@@ -10,7 +10,7 @@ catalog:
   "@openrouter/sdk": ^1.2.117
   "@ponti-studios/auth": ^0.2.0
   "@ponti-studios/ui": 1.7.0
-  "@react-router/dev": ^8.2.0
+  "@react-router/dev": ^8.3.1
   "@react-router/node": ^8.2.0
   "@react-router/serve": ^8.2.0
   "@storybook/addon-docs": ^10.5.10
