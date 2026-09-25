@@ -99,7 +99,7 @@ secrets.
 | --- | --- | --- | --- |
 | Labs | `VITE_WHAT_APP_URL` | Docker/Vite build and browser | `https://what.ponti.io` |
 | What | `WHAT_APP_URL` | Runtime | `https://what.ponti.io` |
-| What | `WHAT_AI_MODEL` | Runtime/workflow | `meta/muse-spark-1.3-contributor` |
+| What | `WHAT_AI_MODEL` | Runtime/workflow | `openai/gpt-4o-mini` |
 | What | `PORTLESS_URL` | Local runtime only | Per-worktree `https://<name>.lvh.me` |
 | What | `GAME_ADMIN_EMAILS` | Runtime admin access | Comma-separated Hominem admin email addresses; required in production |
 
