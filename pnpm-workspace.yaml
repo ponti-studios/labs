@@ -11,7 +11,7 @@ catalog:
   "@ponti-studios/auth": ^0.2.0
   "@ponti-studios/ui": 1.7.0
   "@react-router/dev": ^8.3.1
-  "@react-router/node": ^8.2.0
+  "@react-router/node": ^8.4.0
   "@react-router/serve": ^8.2.0
   "@storybook/addon-docs": ^10.6.0
   "@storybook/addon-links": ^10.5.7
@@ -36,7 +36,7 @@ catalog:
   "storybook": ^10.6.0
   "tailwindcss": ^4.3.3
   "typescript": ^6.0.3
-  "vite": ^8.2.2
+  "vite": ^8.3.0
   "vitest": ^4.1.11
   "zod": ^4.4.3
 

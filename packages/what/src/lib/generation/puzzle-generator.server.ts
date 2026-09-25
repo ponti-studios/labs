@@ -178,13 +178,19 @@ export type GeneratePuzzleForGameOptions = {
   reasoningEffort?: string;
 };
 
+export const DEFAULT_GENERATION_MAX_ATTEMPTS = 5;
+
+export function resolveGenerationMaxAttempts(maxAttempts?: number): number {
+  return maxAttempts ?? DEFAULT_GENERATION_MAX_ATTEMPTS;
+}
+
 export async function generatePuzzleForGame(
   game: GamesTopic,
   dateKey: string,
   options: GeneratePuzzleForGameOptions = {},
 ): Promise<PuzzleRecord | null> {
   const startedAt = Date.now();
-  const maxAttempts = options.maxAttempts ?? 3;
+  const maxAttempts = resolveGenerationMaxAttempts(options.maxAttempts);
   const actor = options.actor ?? "system:generate";
   const maxTokens = options.maxTokens ?? getConfiguredMaxTokens();
   const reasoningEffort = options.reasoningEffort ?? getConfiguredReasoningEffort();
