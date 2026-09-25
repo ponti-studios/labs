@@ -33,20 +33,17 @@ const relationshipSchema = z.enum([
   "direct-subject",
   "direct-action",
   "direct-consequence",
-  "incidental-association",
-  "false-morphological-association",
-  "unrelated",
 ]);
 
 const candidateSchema = z.object({
   // Enforce the answer format at the schema level so strict structured output
-  // refuses anything other than an exactly five-letter English word. Casing is
-  // normalized later in code, so the model can return mixed- or lower-case
-  // answers without failing validation.
+  // refuses anything other than an exact `GAME_ANSWER_LENGTH`-letter English
+  // word. Casing is normalized later in code, so the model can return mixed-
+  // or lower-case answers without failing validation.
   answer: z
     .string()
     .length(GAME_ANSWER_LENGTH)
-    .regex(/^[A-Za-z]{5}$/, "answer must be five letters"),
+    .regex(/^[A-Za-z]+$/, "answer must be letters only"),
   answerType: z.enum(["moment", "object", "phrase", "place", "storyline"]),
   // Required because OpenRouter strict structured outputs require every
   // declared property to appear in the JSON schema's required list.
