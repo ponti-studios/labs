@@ -7,7 +7,7 @@ packages:
 
 catalog:
   "@mozilla/readability": ^0.6.0
-  "@openrouter/sdk": ^1.2.80
+  "@openrouter/sdk": ^1.2.117
   "@ponti-studios/auth": ^0.2.0
   "@ponti-studios/ui": 1.7.0
   "@react-router/dev": ^8.2.0
