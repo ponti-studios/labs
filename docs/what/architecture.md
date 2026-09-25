@@ -1,36 +1,35 @@
----
 title: What Architecture
-summary: How What splits gameplay, validation, generation, and publishing across the browser, server, and scheduled workflows.
+summary: How gameplay, article ingest, puzzle generation, publishing, and serving fit together in What.
 type: architecture
 status: active
 owner: charlesponti
 tags: [architecture, backend, react-router, generation]
-related: [./generation-current-architecture.md, ./reliability-and-testing.md, ./candidate-generation.md]
-updated: 2026-09-10
+related: [./reliability-and-testing.md, ./candidate-generation.md]
+updated: 2026-09-23
 ---
 
 # What Architecture
 
-What works because the architecture draws a clean line: the browser owns responsiveness, the server owns validation and publishing, and a scheduled GitHub Actions workflow owns generation. Everything else exists to keep that arrangement intact.
+What keeps a clean split: the browser handles the responsive game, the server
+owns validation and publishing, and one scheduled GitHub Actions workflow keeps
+tomorrow's puzzles ready. This page is the map for that whole setup.
 
 ## Package layout
 
 What lives in `packages/what` (`what`) on the [labs monorepo](../../README.md) alongside Labs (`packages/labs`). Shared code is in workspace packages: `@pontistudios/db` (Drizzle schema + migrations in `packages/db/src/schema/`), `@pontistudios/ai` (OpenRouter client), `@pontistudios/env` (shared env schemas). The database schema is a fixed Postgres schema named `labs`; generation tables are defined in `packages/db/src/schema/game.ts`.
 
-The puzzle pipeline lives in `packages/what/src/lib/`:
+The pipeline lives in `packages/what/src/lib/`:
 
-| Concern | Files |
-| --- | --- |
-| Feed catalog | `lib/generation/catalog.ts` |
-| Ingest (RSS + Readability) | `lib/generation/ingest.server.ts` |
-| Generation core | `lib/generation/puzzle-generator.server.ts`, `generate.server.ts` (public boundary) |
-| Candidate LLM + validation | `lib/generation/candidate-generator.server.ts`, `candidate-validation.ts` |
-| Circuit breaker | `lib/generation/circuit-breaker.ts` |
-| Window / gap-fill / force orchestration | `lib/generation/generate-range.ts`, `generation-runner.ts` |
-| Data access | `lib/data/*.server.ts` |
-| Serving + fallback | `lib/data/puzzle.server.ts`, routes under `src/routes/` |
-| Admin console | `src/routes/admin.*`, `lib/admin/*` |
-| Env schema | `lib/infrastructure/env.ts` (`WhatServerEnv`, re-export of `LabsServerEnv` from `@pontistudios/env`) |
+- The feed catalog is in `lib/generation/catalog.ts`; ingest is in
+  `lib/generation/ingest.server.ts`.
+- The generation core is `lib/generation/puzzle-generator.server.ts`, with
+  `generate.server.ts` as its public boundary. Candidate requests and checks
+  live in `candidate-generator.server.ts` and `candidate-validation.ts`.
+- Range planning, gap-fill, force regeneration, and the circuit breaker live
+  in `generate-range.ts`, `generation-runner.ts`, and `circuit-breaker.ts`.
+- Database access is under `lib/data/`; serving resolves through
+  `lib/data/puzzle.server.ts`; the operator UI lives in `src/routes/admin.*`
+  and `lib/admin/*`.
 
 Entry-point scripts live in `packages/what/scripts/` (`game-ingest.ts`, `game-generate.ts`, `game-health-check.ts`) and run as `pnpm game:ingest`, `pnpm game:generate`, `pnpm game:health-check` from the repo root.
 
@@ -46,29 +45,134 @@ Dictionary validation lives on the server (`lib/data/word-list.server.ts`). Answ
 
 ### Server-only generation and publishing
 
-Each game (`games_topics`) has its own RSS feed and system prompt, so generation is per-game. The pipeline draws from that game's pending `articles` inventory, generates candidates through OpenRouter, validates each against the game's rules, and persists only approved puzzles to `games_puzzles`. There is no curated-archive fallback at generation time: failed dates stay empty until the next run, and a shared circuit breaker (`lib/generation/circuit-breaker.ts`, threshold 6) stops a run early when the provider is degraded instead of burning the attempt budget.
-
-Serving resolves the active puzzle by the player's local date; if nothing exists for that date it falls back to the most recently created puzzle with `dateUtc <= that date` (`FALLBACK_ACTIVATED_ANY_PUZZLE`, flagged as `isFallback`). There is also a public date-parameterized endpoint (`/api/:topic/puzzle/:date`) that returns just a specific day's puzzle for signed-in history views.
+Each game has its own RSS feed, pending-article inventory, and system prompt.
+The generator only publishes a puzzle after an OpenRouter candidate passes the
+game's checks. A failed date stays empty for the next gap-fill run; it does not
+quietly pull in an archive puzzle. If the provider is having a rough day, a
+shared circuit breaker stops the run after six consecutive failures rather than
+spending through the remaining attempt budget.
 
 ## The five games
 
-`lib/generation/catalog.ts` defines the catalog; `ensureGameCatalog` (ingest) upserts it into `games_topics` on every run. Default game slug is `reality`:
+`lib/generation/catalog.ts` defines the catalog. `ensureGameCatalog` upserts it
+into `games_topics` whenever ingest runs, so adding a catalog entry provisions
+the game. The default slug is `reality`.
 
-| slug | feed | label |
-| --- | --- | --- |
-| `reality` | `https://realityblurred.com/realitytv/feed` | Reality Blurred |
-| `technology` | `https://techcrunch.com/feed/` | TechCrunch |
-| `page-six` | `https://pagesix.com/feed/` | Page Six |
-| `tmz` | `https://www.tmz.com/rss.xml` | TMZ |
-| `sports` | `https://www.cbssports.com/rss/headlines/` | CBS Sports |
+- `reality` uses Reality Blurred: `https://realityblurred.com/realitytv/feed`
+- `technology` uses TechCrunch: `https://techcrunch.com/feed/`
+- `page-six` uses Page Six: `https://pagesix.com/feed/`
+- `tmz` uses TMZ: `https://www.tmz.com/rss.xml`
+- `sports` uses CBS Sports: `https://www.cbssports.com/rss/headlines/`
 
-Per-game tunables live on `games_topics`: `answerLength` (5), `repeatWindowDays` (90), `articleExpiryDays` (45), `systemPromptPath` (all currently `src/prompts/game-generation.md`).
+Per-game tunables live on `games_topics`: answers are five letters, repeats are
+blocked for 90 days, articles expire after 45 days, and every current game
+uses `src/prompts/game-generation.md`.
+
+## How a puzzle gets made
+
+### Ingest builds the article inventory
+
+`pnpm game:ingest` runs `packages/what/scripts/game-ingest.ts`. It polls every
+active feed in parallel, parses RSS with `fast-xml-parser`, fetches each item,
+and tries Mozilla Readability to pull out article text. When extraction cannot
+help, the title and description are still useful fallback material.
+
+Articles are inserted through `upsertArticles`. URLs are unique, so polling a
+feed again is harmless: only newly seen entries become pending inventory.
+Ingest is deliberately not trying to make puzzles. Its job is just to catch
+stories before they disappear from a short RSS feed window.
+
+### Selection stays fresh without crossing games
+
+Before generating for a date, `generatePuzzleForGame` expires that game's
+pending articles older than its 45-day limit. It then offers the newest eight
+pending articles, ordered by published date. Newest first matters: there are
+usually more incoming articles than daily puzzles, so oldest first would make
+the game drift toward stale news.
+
+Everything is scoped to one `games_topics` row. Reality never borrows a
+TechCrunch story, for example. The generator also excludes answers used in the
+last 90 days and every answer ever published for that game.
+
+### Generate, check, and retry
+
+`generatePuzzleForGame` is idempotent. If the game already has a puzzle for
+the requested date, it returns that record untouched.
+
+For a missing date, it makes up to five OpenRouter requests. Each request asks
+for one to five JSON candidates and carries the date, excluded answers, and
+the eight articles as explicitly untrusted data. The prompt tells the model to
+ignore commands or role claims that happen to appear in an article.
+
+Candidates are checked in the order they arrive. A winner must be a five-letter
+dictionary word, not a person, not leaked in its clue or detail, free of prompt
+control markers, not a repeated answer, and cited from a URL in the offered
+batch. The first candidate that passes and matches an offered article wins.
+
+Rejected answers are added to the exclusions for the next attempt. Rejections
+tied to a real article are tracked; after three, that article becomes
+`rejected`, otherwise it can come back in a later batch. Failed attempts back
+off for $2^n$ seconds and write one `generation_runs` audit record with status,
+token use, and cost. If all five attempts fail, the date stays missing and a
+`GENERATION_EXHAUSTED` admin action records what happened.
+
+Publishing writes a `games_puzzles` row and marks only the source article for
+the winning candidate as `used`. The other seven articles remain pending.
+
+## Scheduling and guardrails
+
+`.github/workflows/game-generate.yml` runs the same three-step sequence every
+day: ingest, generate, then health check. It runs at 22:00 UTC to prepare
+tomorrow from that day's articles, then again at 23:00 UTC as a cheap gap-fill
+retry. Both runs serialize through the `game-generate` concurrency group and
+time out after 30 minutes.
+
+`pnpm game:generate` defaults to gap-fill mode. It plans tomorrow's missing
+puzzles only, so an existing future puzzle is left alone. Manual dispatches
+can request either gap fill or force regeneration, with a bounded date range.
+Force mode is the only path that deletes future puzzles before replacing them;
+it also refuses dates that have recorded attempts.
+
+Live puzzles are protected for both UTC and `America/Los_Angeles`, because
+those dates can differ during part of a day. A local, loopback database can
+opt into regenerating a live date for rehearsal, and logs that clearly.
+Production cannot bypass this check.
+
+The generator takes a Postgres advisory lock before it starts. It also cleans
+up stale generation runs, expires retained runs after 30 days, and opens the
+circuit after six consecutive failures. This keeps a manual run and the cron
+from racing each other and avoids turning a provider outage into a pile of
+expensive retries.
+
+## Storage and serving
+
+The database lives in the `labs` Postgres schema. `games_topics` holds the game
+settings and feeds; `articles` holds `pending`, `used`, `rejected`, or
+`expired` source material; `generation_runs` keeps the per-attempt audit and
+cost data; and `games_puzzles` is the published puzzle itself. A puzzle always
+keeps a source article, while deleting old generation-run records only clears
+their optional link from a puzzle.
+
+`resolveActivePuzzle` is the shared serving chokepoint for the game and guess
+routes. It gets the player's local date from the `what_timezone` cookie and
+loads that date's puzzle.
+
+When that date has no puzzle, serving falls back to the latest puzzle whose
+date is not in the player's future. The response is marked `isFallback` and
+logs `FALLBACK_ACTIVATED_ANY_PUZZLE`. That trade-off prioritizes a playable
+game during an outage, though the fallback has no maximum age. The guess path
+also gives yesterday's puzzle a one-day grace period.
 
 ## Admin console
 
 `/admin` (`src/routes/admin.*`) is an authenticated operator surface, `noindex`, no public nav. Access requires a signed-in Hominem user whose email is on the `GAME_ADMIN_EMAILS` allowlist, enforced when `NODE_ENV === "production"` or on Railway (`lib/admin/auth.ts`). Every operator write goes through `recordAdminAction` into `admin_actions` — an audit trail.
 
-Generation is a persisted run before it is a puzzle. An operator triggers a run (`generation_runs`) against a source mode (inventory, feeds, explicit articles, rss, fixtures), prompt, and model; candidates stream to the UI over SSE (`lib/admin/generation-events.server.ts`). Publishing from the admin console goes through `lib/admin/publish.ts`; the cron path publishes through `generatePuzzleForGame` instead. Each `games_puzzles` row carries `generationRunId` back to the run that produced it (`set null` on run deletion so retention can never delete a live puzzle). Puzzle attempts live in `games_attempts`; replacing a date that already has attempts snapshots the pre-image `game_puzzle_revisions`.
+Generation is a persisted run before it is a puzzle. An operator can use
+inventory, feeds, selected articles, RSS previews, or fixtures; candidates
+stream to the UI over SSE. RSS and fixture sources are preview-only, while
+publishing goes through `lib/admin/publish.ts`. Every operator write lands in
+`admin_actions`. Player attempts are in `games_attempts`; replacing a played
+puzzle snapshots its earlier version in `game_puzzle_revisions`.
 
 ## API surface
 
@@ -81,24 +185,29 @@ Generation is a persisted run before it is a puzzle. An operator triggers a run 
 - `GET /api/history` — player history.
 - `GET /healthz` — service health.
 
-## Scheduled publishing
+## Health and observability
 
-One workflow drives generation: `.github/workflows/game-generate.yml`.
+`pnpm game:health-check` marks the workflow `DEGRADED` when today's puzzle is
+missing or there is no scheduled puzzle for tomorrow. That fails the GitHub
+run, which gives the normal workflow notification path a clear signal.
 
-- **Schedule:** two cron entries, `0 22 * * *` and `0 23 * * *` UTC daily. The
-  22:00 UTC run is the primary generation — it generates exactly *tomorrow*
-  from that same UTC day's articles (~14:00/15:00 PST cutoff), before UTC
-  midnight so tomorrow is live under no guard anchor for any market. The
-  23:00 UTC run is the retry pass: gap-fill skips what already exists (a
-  ~free no-op when healthy), self-healing the window when the primary failed.
-  Both run `pnpm game:generate` with no flags (bare gap-fill mode).
-- **Manual:** `workflow_dispatch` with inputs `mode` (`force` default / `gap_fill`), `days-ahead`, and optional `from`/`to` — delete-then-regenerate or gap-fill a window.
-- **Steps:** ingest (`pnpm game:ingest`) → generate (`pnpm game:generate`) → health check (`pnpm game:health-check`), all `if: github.ref == 'refs/heads/main'`, `concurrency: { group: game-generate, cancel-in-progress: false }`, `timeout-minutes: 30`.
+Structured logs use scoped event names such as `ingest.*`,
+`generate.puzzle.created`, `generate.attempt.failed`, and `health.*`. Local
+TTY output is readable and pretty; CI and Railway receive lean JSON logs with
+durations where they matter. `LOG_LEVEL=debug` enables candidate detail.
 
-Neither the scheduled nor manual path is exposed as an HTTP write surface. The health-check step exits 1 on `DEGRADED` (no puzzle for today, or no puzzle scheduled for tomorrow), failing the run visibly in GitHub; run failures surface via GitHub's native workflow-notification email. See [generation current architecture](./generation-current-architecture.md) for the full pipeline walkthrough.
+## A few useful limits
+
+- One run offers eight articles, makes up to five LLM attempts, and accepts
+  one to five candidates per attempt.
+- Articles expire after 45 days; an article reaches permanent rejection after
+  three candidate rejections.
+- The generation range spans at most 14 days. Normal scheduling fills only
+  tomorrow, and retained run records expire after 30 days.
+- The serving fallback never serves a future puzzle, but it has no lower age
+  bound. Availability wins during a prolonged generation outage.
 
 ## Read next
 
-- [Generation pipeline (current state)](./generation-current-architecture.md)
 - [Candidate generation](./candidate-generation.md)
 - [Reliability and testing](./reliability-and-testing.md)

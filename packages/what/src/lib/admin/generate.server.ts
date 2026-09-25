@@ -20,7 +20,7 @@ import {
   matchArticle,
 } from "../generation/generate.server";
 import { fetchFeedItems } from "../generation/ingest.server";
-import type { FeedItem } from "../generation/types";
+import type { FeedItem, GenerationProgressUpdate } from "../generation/types";
 import { isDateKey, parseDate } from "../puzzle/date";
 import { PROMPT_TEST_CASES } from "../values/prompt-test-cases";
 import { GenerateReasonType } from "./generate-copy";
@@ -40,6 +40,43 @@ const RUN_TTL_DAYS = 30;
 const REAP_AFTER_MS = 10 * 60 * 1000;
 const MIN_GENERATION_MAX_TOKENS = 200;
 const MAX_GENERATION_MAX_TOKENS = 16_000;
+
+type GenerationProgressUiMap = {
+  [Phase in GenerationProgressUpdate["phase"]]: (
+    update: Extract<GenerationProgressUpdate, { phase: Phase }>,
+  ) => GenerateProgressEvent;
+};
+
+const GENERATION_PROGRESS_UI: GenerationProgressUiMap = {
+  requesting: (update) => ({
+    type: "stage",
+    stage: "model",
+    label: "Asking the model",
+    detail: `Attempt ${update.attempt}/${update.maxAttempts}: sending ${update.articleCount} stories for a ranked answer batch.`,
+  }),
+  received: (update) => ({
+    type: "stage",
+    stage: "model",
+    label: "Reading the model response",
+    detail: update.llmError
+      ? `Attempt ${update.attempt}/${update.maxAttempts}: the provider returned an error.`
+      : `Attempt ${update.attempt}/${update.maxAttempts}: received ${update.candidateCount} candidates; checking them for publishability.`,
+  }),
+  retrying: (update) => ({
+    type: "stage",
+    stage: "model",
+    label: "Trying a fresh batch",
+    detail: `Attempt ${update.attempt}/${update.maxAttempts} produced no publishable word; asking again with those answers excluded.`,
+  }),
+};
+
+function toGenerateProgressEvent(update: GenerationProgressUpdate): GenerateProgressEvent {
+  return (
+    GENERATION_PROGRESS_UI[update.phase] as (
+      value: GenerationProgressUpdate,
+    ) => GenerateProgressEvent
+  )(update);
+}
 
 export function studioModelAllowlist(): string[] {
   return [...new Set([DEFAULT_TEXT_MODEL, getConfiguredTextModel()])];
@@ -248,6 +285,7 @@ async function runGenerationInBackground(
       model: ctx.model,
       maxTokens: ctx.maxTokens,
       reasoningEffort: ctx.reasoningEffort,
+      onProgress: (update) => publish(toGenerateProgressEvent(update)),
     });
 
     publish({

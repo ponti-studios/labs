@@ -16,6 +16,7 @@ import { formatTokenCount, formatUsd } from "~/lib/admin/format";
 import {
   getGenerationCostReport,
   type GenerationCostBreakdownRow,
+  type GenerationModelBreakdownRow,
 } from "~/lib/data/generation-runs.server";
 
 import { BRAND_NAME } from "~/config/brand";
@@ -33,14 +34,23 @@ function BreakdownTable({
   title,
   rows,
   emptyLabel,
+  showOutcomeRates = false,
 }: {
   title: string;
-  rows: GenerationCostBreakdownRow[];
+  rows: GenerationCostBreakdownRow[] | GenerationModelBreakdownRow[];
   emptyLabel: string;
+  showOutcomeRates?: boolean;
 }) {
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-lg font-medium">{title}</h2>
+      <div>
+        <h2 className="text-lg font-medium">{title}</h2>
+        {showOutcomeRates ? (
+          <p className="text-muted-foreground mt-1 text-sm">
+            Success and failure rates exclude runs that are still in progress.
+          </p>
+        ) : null}
+      </div>
       {rows.length === 0 ? (
         <EmptyState title={emptyLabel} description="No generation runs in this window." />
       ) : (
@@ -49,6 +59,12 @@ function BreakdownTable({
             <TableRow>
               <TableHead>{title}</TableHead>
               <TableHead>Runs</TableHead>
+              {showOutcomeRates ? (
+                <>
+                  <TableHead>Success %</TableHead>
+                  <TableHead>Failure %</TableHead>
+                </>
+              ) : null}
               <TableHead>Tokens</TableHead>
               <TableHead>Cost</TableHead>
             </TableRow>
@@ -58,6 +74,16 @@ function BreakdownTable({
               <TableRow key={row.key ?? "unknown"}>
                 <TableCell className="font-medium">{row.key ?? "unknown"}</TableCell>
                 <TableCell className="text-muted-foreground">{row.count}</TableCell>
+                {showOutcomeRates ? (
+                  <>
+                    <TableCell className="text-muted-foreground">
+                      {formatOutcomeRate((row as GenerationModelBreakdownRow).successRate)}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {formatOutcomeRate((row as GenerationModelBreakdownRow).failureRate)}
+                    </TableCell>
+                  </>
+                ) : null}
                 <TableCell className="text-muted-foreground">
                   {formatTokenCount(row.totalTokens)}
                 </TableCell>
@@ -69,6 +95,11 @@ function BreakdownTable({
       )}
     </section>
   );
+}
+
+function formatOutcomeRate(rate: number | null): string {
+  if (rate === null) return "—";
+  return `${Math.round(rate * 100)}%`;
 }
 
 export default function GameAdminCosts() {
@@ -97,7 +128,7 @@ export default function GameAdminCosts() {
         rows={report.byEnvironment}
         emptyLabel="No environments"
       />
-      <BreakdownTable title="Model" rows={report.byModel} emptyLabel="No models" />
+      <BreakdownTable title="Model" rows={report.byModel} emptyLabel="No models" showOutcomeRates />
     </main>
   );
 }

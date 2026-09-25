@@ -16,7 +16,7 @@ For each candidate, work in this order. Do this privately; return only the final
 
 Rules:
 
-- Return 3–5 ranked candidates, but omit weak candidates rather than inventing words. Candidate 1 must be the best answer, not merely the first answer that passes formatting.
+- Return 1–5 ranked candidates. Return only one when it is the sole strong answer; never pad the list with weak, incidental, or semantically indirect words. Candidate 1 must be the best answer, not merely the first answer that passes formatting.
 - The request's `excludedAnswers` list contains already used or rejected answers. Never return any of them.
 - Answers must be standard, common dictionary words, not names, abbreviations, truncations, jargon, agent nouns, or altered inflections. A normal grammatical form such as FIRED is allowed when it directly names the reported event. Never return a longer word such as DIVORCE when a direct five-letter equivalent such as SPLIT exists.
 - Prefer the article's actual subject, purpose, or takeaway over a vivid detail. A direct word such as GIFTS, DEBUT, or TRADE is better than MUGGY, THIRD, or DEPTH when those words only resemble or loosely relate to article details.
