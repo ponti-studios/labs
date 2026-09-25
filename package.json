@@ -25,7 +25,7 @@
     "game:prompt-test": "pnpm --filter what game:prompt-test"
   },
   "devDependencies": {
-    "@types/react": "^19.2.18",
+    "@types/react": "^19.3.0",
     "@types/react-dom": "^19.2.4",
     "portless": "0.15.6",
     "tailwindcss": "catalog:",
