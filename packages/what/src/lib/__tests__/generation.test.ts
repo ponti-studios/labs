@@ -20,6 +20,7 @@ import {
 } from "../generation/feed-text";
 import {
   buildMessages,
+  callGenerationApiForCandidates,
   getSystemPromptForGame,
   generateCandidates,
 } from "../generation/generate.server";
@@ -100,8 +101,15 @@ describe("generation input boundaries", () => {
     expect(prompt).toContain("If articleText is empty");
     expect(prompt).toContain("article-level concept");
     expect(prompt).toContain("Return 1–5 ranked candidates");
-    expect(prompt).toContain("Never return a word listed in the user's `excludedAnswers`");
+    expect(prompt).toContain(
+      "The request's `excludedAnswers` list contains already used or rejected answers.",
+    );
     expect(prompt).toContain("coffee mug does not justify MUGGY");
+    expect(prompt).toContain("Discard incidental, false-morphological, and unrelated ideas");
+    expect(prompt).toContain("Never return any of them");
+    expect(prompt).toContain(
+      '"relationship": "direct-summary|direct-subject|direct-action|direct-consequence"',
+    );
     expect(userMessage.content).toContain("The full article body is the richer source.");
   });
 
@@ -150,7 +158,7 @@ describe("generation input boundaries", () => {
             content: JSON.stringify({
               candidates: [
                 {
-                  answer: "Aspen",
+                  answer: "ASPEN",
                   answerType: "place",
                   articleAbout: "a chaotic cast trip",
                   concept: "the trip's setting",
@@ -167,7 +175,7 @@ describe("generation input boundaries", () => {
                   ],
                 },
                 {
-                  answer: "Drama",
+                  answer: "DRAMA",
                   answerType: "moment",
                   articleAbout: "a cast conflict",
                   concept: "the conflict",
@@ -184,12 +192,12 @@ describe("generation input boundaries", () => {
                   ],
                 },
                 {
-                  answer: "Smile",
+                  answer: "SMILE",
                   answerType: "storyline",
                   articleAbout: "a cast scandal",
                   concept: "the public reaction",
                   answerMeaning: "a pleased facial expression",
-                  relationship: "incidental-association",
+                  relationship: "direct-consequence",
                   clue: "A grin that became a scandal.",
                   detail: "The fallout split the cast.",
                   sources: [
@@ -222,5 +230,63 @@ describe("generation input boundaries", () => {
     expect(chatCompletionMock).toHaveBeenCalledWith(
       expect.objectContaining({ model: "deepseek/deepseek-v4-flash" }),
     );
+  });
+
+  it("rejects non-publishable relationship values in structured output", async () => {
+    for (const relationship of [
+      "incidental-association",
+      "false-morphological-association",
+      "unrelated",
+    ] as const) {
+      chatCompletionMock.mockResolvedValue({
+        choices: [
+          {
+            message: {
+              content: JSON.stringify({
+                candidates: [
+                  {
+                    answer: "SMILE",
+                    answerType: "storyline",
+                    articleAbout: "a cast scandal",
+                    concept: "the public reaction",
+                    answerMeaning: "a pleased facial expression",
+                    relationship,
+                    clue: "A grin that became a scandal.",
+                    detail: "The fallout split the cast.",
+                    sources: [
+                      {
+                        url: "https://realityblurred.com/story",
+                        title: "Tea drama",
+                        publishedAt: "",
+                      },
+                    ],
+                  },
+                ],
+              }),
+            },
+          },
+        ],
+      });
+
+      const result = await callGenerationApiForCandidates(
+        "2026-06-25",
+        [],
+        [
+          {
+            title: "Tea drama",
+            link: "https://realityblurred.com/story",
+            pubDate: "",
+            description: "Source copy",
+          },
+        ],
+        "Generate a five-letter answer.",
+        5,
+        ["realityblurred.com"],
+        "deepseek/deepseek-v4-flash",
+      );
+
+      expect(result.candidates).toHaveLength(0);
+      expect(result.llmError).toBeTruthy();
+    }
   });
 });
