@@ -7,19 +7,19 @@ packages:
 
 catalog:
   "@mozilla/readability": ^0.6.0
-  "@openrouter/sdk": ^1.2.80
+  "@openrouter/sdk": ^1.2.117
   "@ponti-studios/auth": ^0.2.0
   "@ponti-studios/ui": 1.7.0
-  "@react-router/dev": ^8.2.0
+  "@react-router/dev": ^8.3.1
   "@react-router/node": ^8.2.0
   "@react-router/serve": ^8.2.0
-  "@storybook/addon-docs": ^10.5.10
+  "@storybook/addon-docs": ^10.6.0
   "@storybook/addon-links": ^10.5.7
   "@storybook/react-vite": ^10.6.0
   "@tailwindcss/vite": ^4.3.3
   "@types/jsdom": ^30.0.0
   "@types/node": ^24.13.3
-  "@vitejs/plugin-react": ^6.0.3
+  "@vitejs/plugin-react": ^6.1.1
   "dotenv": ^17.4.2
   "drizzle-orm": ^0.45.2
   "fast-xml-parser": ^5.11.1

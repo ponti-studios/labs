@@ -33,14 +33,18 @@ const relationshipSchema = z.enum([
   "direct-subject",
   "direct-action",
   "direct-consequence",
-  "incidental-association",
-  "false-morphological-association",
-  "unrelated",
 ]);
 
 const candidateSchema = z.object({
-  answer: z.string().min(1).max(GAME_ANSWER_LENGTH),
-  answerType: z.string().min(1),
+  // Enforce the answer format at the schema level so strict structured output
+  // refuses anything other than an exact `GAME_ANSWER_LENGTH`-letter English
+  // word. Casing is normalized later in code, so the model can return mixed-
+  // or lower-case answers without failing validation.
+  answer: z
+    .string()
+    .length(GAME_ANSWER_LENGTH)
+    .regex(/^[A-Za-z]+$/, "answer must be letters only"),
+  answerType: z.enum(["moment", "object", "phrase", "place", "storyline"]),
   // Required because OpenRouter strict structured outputs require every
   // declared property to appear in the JSON schema's required list.
   articleAbout: z.string().min(1),
@@ -230,6 +234,18 @@ function combineUsage(first: GenerationUsage, second: GenerationUsage): Generati
   };
 }
 
+/** Combined text of every feed item a candidate cites, for the literal-match check. */
+function articleTextForSources(
+  sources: { url: string }[],
+  feedItems: FeedItem[],
+): string {
+  const citedUrls = new Set(sources.map((source) => source.url));
+  return feedItems
+    .filter((item) => citedUrls.has(item.link))
+    .map((item) => [item.title, item.description, item.articleText].filter(Boolean).join(" "))
+    .join(" ");
+}
+
 export async function callGenerationApiForCandidates(
   dateKey: string,
   excludedAnswers: string[],
@@ -240,6 +256,7 @@ export async function callGenerationApiForCandidates(
   model?: string,
   maxTokens: number = DEFAULT_GENERATION_MAX_TOKENS,
   reasoningEffort?: string,
+  requireLiteralMatch?: boolean,
 ): Promise<{ candidates: ScoredCandidate[]; llmError: string | null; usage: GenerationUsage }> {
   try {
     const response = await chatCompletion({
@@ -277,7 +294,13 @@ export async function callGenerationApiForCandidates(
     const previousAnswers = new Set(excludedAnswers);
     const candidates = parsed.candidates.map((candidate) => ({
       candidate,
-      validation: validateCandidate(candidate, previousAnswers, { sourceDomains }),
+      validation: validateCandidate(candidate, previousAnswers, {
+        sourceDomains,
+        requireLiteralMatch,
+        articleText: requireLiteralMatch
+          ? articleTextForSources(candidate.sources, feedItems)
+          : undefined,
+      }),
     }));
 
     return { candidates, llmError: null, usage };
@@ -323,6 +346,7 @@ export async function generateCandidates(
     options.model,
     options.maxTokens,
     options.reasoningEffort,
+    options.requireLiteralMatch,
   );
 
   // A model can spend its first batch on attractive but unusable answers
@@ -353,6 +377,7 @@ RETRY: The previous candidate batch had no publishable answer. Discard those ans
       options.model,
       options.maxTokens,
       options.reasoningEffort,
+      options.requireLiteralMatch,
     );
     generation = {
       ...retryGeneration,
