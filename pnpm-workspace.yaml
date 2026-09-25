@@ -11,7 +11,7 @@ catalog:
   "@ponti-studios/auth": ^0.2.0
   "@ponti-studios/ui": 1.7.0
   "@react-router/dev": ^8.3.1
-  "@react-router/node": ^8.2.0
+  "@react-router/node": ^8.4.0
   "@react-router/serve": ^8.2.0
   "@storybook/addon-docs": ^10.6.0
   "@storybook/addon-links": ^10.5.7
