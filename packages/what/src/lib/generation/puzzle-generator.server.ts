@@ -240,6 +240,12 @@ export async function generatePuzzleForGame(
   }
 
   const systemPrompt = getSystemPromptForGame(game);
+
+  let result: { candidate: NonNullable<GenerationAttempt["candidate"]>; article: Article } | null =
+    null;
+  let winningRunId: number | null = null;
+  let lastRejected: GenerationAttempt["rejected"] = [];
+  const attemptExclusions = new Set(excludedAnswers);
   const articleTextCount = pendingArticles.filter((article) => Boolean(article.articleText)).length;
   childLogger.info(
     {
@@ -248,17 +254,12 @@ export async function generatePuzzleForGame(
       reasoningEffort: reasoningEffort ?? "default",
       promptPath: game.systemPromptPath,
       maxAttempts,
-      excludedCount: excludedAnswers.length,
+      excludedCount: attemptExclusions.size,
       articleTextCount,
     },
     `${game.slug} ${dateKey}: configured with ${articleTextCount}/${pendingArticles.length} article(s) with full text`,
   );
 
-  let result: { candidate: NonNullable<GenerationAttempt["candidate"]>; article: Article } | null =
-    null;
-  let winningRunId: number | null = null;
-  let lastRejected: GenerationAttempt["rejected"] = [];
-  const attemptExclusions = new Set(excludedAnswers);
   for (let attempt = 0; attempt < maxAttempts && !result; attempt++) {
     const attemptStartedAt = Date.now();
     childLogger.debug(
