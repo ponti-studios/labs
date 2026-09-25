@@ -75,6 +75,13 @@ export type GenerationCostBreakdownRow = {
   totalTokens: number;
 };
 
+export type GenerationModelBreakdownRow = GenerationCostBreakdownRow & {
+  succeededCount: number;
+  failedCount: number;
+  successRate: number | null;
+  failureRate: number | null;
+};
+
 export type GenerationCostReport = {
   sinceDays: number;
   totalRuns: number;
@@ -82,7 +89,7 @@ export type GenerationCostReport = {
   totalTokens: number;
   byTrigger: GenerationCostBreakdownRow[];
   byEnvironment: GenerationCostBreakdownRow[];
-  byModel: GenerationCostBreakdownRow[];
+  byModel: GenerationModelBreakdownRow[];
 };
 
 /**
@@ -135,6 +142,8 @@ export async function getGenerationCostReport(
         count: count(),
         costUsd: sql<number>`coalesce(sum(${generationRuns.costUsd}), 0)`,
         totalTokens: sql<number>`coalesce(sum(${generationRuns.totalTokens}), 0)`,
+        succeededCount: sql<number>`count(*) filter (where ${generationRuns.status} = 'succeeded')`,
+        failedCount: sql<number>`count(*) filter (where ${generationRuns.status} = 'failed')`,
       })
       .from(generationRuns)
       .where(scope)
@@ -159,12 +168,21 @@ export async function getGenerationCostReport(
       costUsd: Number(row.costUsd),
       totalTokens: Number(row.totalTokens),
     })),
-    byModel: byModel.map((row) => ({
-      key: row.key,
-      count: row.count,
-      costUsd: Number(row.costUsd),
-      totalTokens: Number(row.totalTokens),
-    })),
+    byModel: byModel.map((row) => {
+      const succeededCount = Number(row.succeededCount);
+      const failedCount = Number(row.failedCount);
+      const completedCount = succeededCount + failedCount;
+      return {
+        key: row.key,
+        count: row.count,
+        costUsd: Number(row.costUsd),
+        totalTokens: Number(row.totalTokens),
+        succeededCount,
+        failedCount,
+        successRate: completedCount > 0 ? succeededCount / completedCount : null,
+        failureRate: completedCount > 0 ? failedCount / completedCount : null,
+      };
+    }),
   };
 }
 

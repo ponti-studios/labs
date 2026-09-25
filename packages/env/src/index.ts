@@ -4,6 +4,7 @@ import { z } from "zod";
 export const PontiServerEnv = z
   .object({
     OPENROUTER_API_KEY: z.string(),
+    WHAT_AI_MODEL: z.string().trim().min(1).optional(),
     PUBLIC_DATA_URL: z.string().default("https://public-data-production.up.railway.app"),
     R2_ENDPOINT: z.string().default("http://localhost:9000"),
     R2_BUCKET_NAME: z.string().default("labyrinth"),
@@ -13,6 +14,7 @@ export const PontiServerEnv = z
   })
   .transform((env) => ({
     openRouterApiKey: env.OPENROUTER_API_KEY,
+    whatAiModel: env.WHAT_AI_MODEL,
     publicDataUrl: env.PUBLIC_DATA_URL,
     r2Endpoint: env.R2_ENDPOINT,
     r2Bucket: env.R2_BUCKET_NAME,

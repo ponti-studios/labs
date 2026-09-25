@@ -55,6 +55,28 @@ export interface GenerateCandidatesResult {
   usage: GenerationUsage;
 }
 
+export type GenerationProgressUpdate =
+  | {
+      phase: "requesting";
+      attempt: number;
+      maxAttempts: number;
+      articleCount: number;
+    }
+  | {
+      phase: "received";
+      attempt: number;
+      maxAttempts: number;
+      candidateCount: number;
+      validCount: number;
+      llmError: string | null;
+    }
+  | {
+      phase: "retrying";
+      attempt: number;
+      maxAttempts: number;
+      candidateCount: number;
+    };
+
 export interface GenerateCandidatesOptions {
   feedUrl?: string;
   feedItems?: FeedItem[];
@@ -65,4 +87,6 @@ export interface GenerateCandidatesOptions {
   reasoningEffort?: string;
   /** Deterministic backstop: reject candidates whose answer doesn't appear as a whole word in the cited article's text. */
   requireLiteralMatch?: boolean;
+  /** Receives fine-grained model request/retry updates for live admin progress. */
+  onProgress?: (update: GenerationProgressUpdate) => void;
 }

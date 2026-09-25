@@ -5,8 +5,8 @@ type: reference
 status: active
 owner: charlesponti
 tags: [generation, llm, pipeline]
-related: [./architecture.md, ./generation-current-architecture.md, ./prompt-evaluation.md]
-updated: 2026-09-10
+related: [./architecture.md, ./prompt-evaluation.md]
+updated: 2026-09-23
 ---
 
 # Candidate Generation
@@ -14,8 +14,8 @@ updated: 2026-09-10
 This is the per-date, per-game loop `generatePuzzleForGame`
 (`packages/what/src/lib/generation/puzzle-generator.server.ts`) runs.
 `runGenerateRange` (`generation-runner.ts`) calls it once per missing date,
-per active game — see [Generation pipeline](./generation-current-architecture.md)
-for scheduling and circuit-breaking.
+per active game — see [What Architecture](./architecture.md) for scheduling
+and circuit-breaking.
 
 ## 1. Inputs
 
@@ -25,7 +25,7 @@ for scheduling and circuit-breaking.
   plus every answer it has ever published (`getRecentAnswers` /
   `getStoredAnswers`) — the LLM must not land on a duplicate.
 
-## 2. Generation and validation loop — 3 attempts max
+## 2. Generation and validation loop — 5 attempts max
 
 - **Request:** one OpenRouter chat completion per attempt via
   `callGenerationApiForCandidates` (`candidate-generator.server.ts`) with a
@@ -57,7 +57,7 @@ for scheduling and circuit-breaking.
 
 ## 3. Exhaustion
 
-If all `maxAttempts` (default 3) fail validation, generation logs
+If all `maxAttempts` (default 5) fail validation, generation logs
 `generate.puzzle.failed` ("puzzle generation failed after all attempts"),
 records `GENERATION_EXHAUSTED` via `recordAdminAction`, and returns `null` for
 that slot. There is no curated-archive fallback at generation time — the
@@ -66,7 +66,6 @@ the day, not a second content source.
 
 ## Above this loop
 
-A single degraded-provider day isn't retried indefinitely — the circuit
-breaker (`circuit-breaker.ts`, `CIRCUIT_BREAKER_THRESHOLD = 6` consecutive
-failures) stops the run across dates and games. See [Generation pipeline —
-Scheduling](./generation-current-architecture.md#4-scheduling--orchestration).
+A single degraded-provider day is not retried indefinitely. The circuit breaker
+(`circuit-breaker.ts`, `CIRCUIT_BREAKER_THRESHOLD = 6` consecutive failures)
+stops the run across dates and games. See [Scheduling and guardrails](./architecture.md#scheduling-and-guardrails).
