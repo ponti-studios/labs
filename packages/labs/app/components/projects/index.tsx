@@ -3,7 +3,7 @@ import { memo } from "react";
 import { Link } from "react-router";
 import { CardCarousel } from "~/components/CardCarousel";
 import { GameTile } from "~/components/games/game-tile";
-import { WHAT_APP_URL } from "~/data/game";
+import { NEWSBOY_APP_URL } from "~/data/game";
 import { t } from "~/translations";
 import { ProjectCard, type FeaturedProject } from "./project-card";
 
@@ -48,9 +48,9 @@ const GameCardPreview = memo(function GameCardPreview() {
 const FEATURED_PROJECTS: FeaturedProject[] = [
   {
     id: "game",
-    href: WHAT_APP_URL,
+    href: NEWSBOY_APP_URL,
     isExternal: true,
-    logo: "/experiments/logo.webp",
+    logo: "/experiments/newsboy-logo.webp",
     logoAlt: t.nav.game,
     title: t.home.game.title,
     description: t.home.game.description,

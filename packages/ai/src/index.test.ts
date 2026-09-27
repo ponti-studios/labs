@@ -11,8 +11,8 @@ describe("text model resolution", () => {
     expect(DEFAULT_TEXT_MODEL).toBe("google/gemma-3-27b-it");
   });
 
-  it("uses WHAT_AI_MODEL when set", () => {
-    vi.stubEnv("WHAT_AI_MODEL", "google/gemini-3.1-flash-lite");
+  it("uses NEWSBOY_AI_MODEL when set", () => {
+    vi.stubEnv("NEWSBOY_AI_MODEL", "google/gemini-3.1-flash-lite");
     expect(getConfiguredTextModel()).toBe("google/gemini-3.1-flash-lite");
   });
 });

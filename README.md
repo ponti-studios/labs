@@ -1,6 +1,6 @@
 # Labs
 
-Ponti Studios portfolio and playground — a pnpm monorepo with two React Router apps: Labs (the portfolio) and What (the daily word game). Puzzles, data visualization, tarot, and experiments.
+Ponti Studios portfolio and playground — a pnpm monorepo with two React Router apps: Labs (the portfolio) and Newsboy (the daily word game). Puzzles, data visualization, tarot, and experiments.
 
 Local infrastructure is provided by the sibling [Foundation](https://github.com/ponti-studios/foundation)
 repository; Labs runs on the host and connects to Foundation's Docker services.
@@ -12,7 +12,7 @@ for the canonical services, ports, and database URLs.
 | Package | App | Root commands |
 | --- | --- | --- |
 | `packages/labs` (`labs`) | Portfolio at `https://labs.lvh.me` | `pnpm labs:dev`, `pnpm build:labs` |
-| `packages/what` (`what`) | WH?T daily game at `https://what.lvh.me` | `pnpm game:dev`, `pnpm build:what`, `pnpm game:generate` |
+| `packages/newsboy` (`newsboy`) | Newsboy daily game at `https://newsboy.lvh.me` | `pnpm newsboy:dev`, `pnpm build:newsboy`, `pnpm newsboy:generate` |
 | `packages/db` (`@pontistudios/db`) | Drizzle schema + migrations (shared) | `pnpm db:generate`, `pnpm db:migrate` |
 | `packages/ai`, `packages/env` | Shared AI/env helpers | — |
 
@@ -33,11 +33,11 @@ pnpm exec portless proxy start --port 443 --tld lvh.me
 
 # 4. Run the dev servers (or `just dev` for both through portless)
 pnpm labs:dev      # Labs on https://labs.lvh.me
-pnpm game:dev      # What on https://what.lvh.me
+pnpm newsboy:dev      # Newsboy on https://newsboy.lvh.me
 ```
 
 Each web app gets a stable `https://<name>.lvh.me` URL instead of a fixed
-port — `labs.lvh.me` (Labs) and `what.lvh.me` (What) — configured via the
+port — `labs.lvh.me` (Labs) and `newsboy.lvh.me` (Newsboy) — configured via the
 `"portless"` key in each package's `package.json` (`dev` delegates to
 `portless`, the real command is `dev:app`). This is what lets multiple git
 worktrees run the dev servers concurrently without port collisions (portless
@@ -58,30 +58,30 @@ Credentials: `postgres` / `postgres` | `minioadmin` / `minioadmin`
 | --- | --- |
 | `just up` / `just dev` | Portless proxy + both dev servers (see `justfile`) |
 | `pnpm labs:dev` | Start Labs dev server at `https://labs.lvh.me` |
-| `pnpm game:dev` | Start What dev server at `https://what.lvh.me` |
+| `pnpm newsboy:dev` | Start Newsboy dev server at `https://newsboy.lvh.me` |
 | `pnpm build` / `pnpm build:labs` | Production build of Labs |
-| `pnpm build:what` / `pnpm build:all` | Production build of What / everything |
+| `pnpm build:newsboy` / `pnpm build:all` | Production build of Newsboy / everything |
 | `pnpm check` | `lint:check` + full typecheck |
 | `pnpm test` | Labs unit tests |
-| `pnpm test:game` | What unit tests |
+| `pnpm test:newsboy` | Newsboy unit tests |
 | `pnpm test:shared` | Shared package (`ai`, `db`, `env`) tests |
 | `pnpm typecheck` | React Router typegen + `tsc -b` across packages |
 | `pnpm db:generate` | Generate Drizzle migration (edit `packages/db/src/schema/` first) |
 | `pnpm db:migrate` | Apply Drizzle migrations to `DATABASE_URL` |
-| `pnpm game:generate` | Generate What puzzles (gap-fill or `--force`, see docs/what) |
-| `pnpm game:ingest` | Poll RSS feeds into the article inventory |
-| `pnpm game:health-check` | Verify today's puzzle + forward inventory |
-| `pnpm storybook` | Labs Storybook (port 6007; What's is 6008, run inside `packages/what`) |
+| `pnpm newsboy:generate` | Generate Newsboy puzzles (gap-fill or `--force`, see docs/newsboy) |
+| `pnpm newsboy:ingest` | Poll RSS feeds into the article inventory |
+| `pnpm newsboy:health-check` | Verify today's puzzle + forward inventory |
+| `pnpm storybook` | Labs Storybook (port 6007; Newsboy's is 6008, run inside `packages/newsboy`) |
 
 Package-local scripts (not exposed at the root) run from inside the package,
-e.g. `cd packages/what && pnpm game:capture-fixtures`.
+e.g. `cd packages/newsboy && pnpm game:capture-fixtures`.
 
 ## Deployment
 
 Deployed to Railway via `.github/workflows/ci.yml` on production-relevant pushes
 to `main`: CI → production migration (`migrate` job) → `deploy-labs` /
-`deploy-what` (reusable `reusable-railway-deploy.yml`). Game generation runs
-separately from `.github/workflows/game-generate.yml` (daily cron +
+`deploy-newsboy` (reusable `reusable-railway-deploy.yml`). Game generation runs
+separately from `.github/workflows/newsboy-generate.yml` (daily cron +
 `workflow_dispatch`).
 
 Before changing environment values, routes, databases, authentication, or
