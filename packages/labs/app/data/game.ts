@@ -1,7 +1,7 @@
-const whatAppUrl = import.meta.env.VITE_WHAT_APP_URL;
+const newsboyAppUrl = import.meta.env.VITE_NEWSBOY_APP_URL;
 
-if (!whatAppUrl) {
-  throw new Error("VITE_WHAT_APP_URL must be configured for Labs");
+if (!newsboyAppUrl) {
+  throw new Error("VITE_NEWSBOY_APP_URL must be configured for Labs");
 }
 
-export const WHAT_APP_URL = whatAppUrl;
+export const NEWSBOY_APP_URL = newsboyAppUrl;

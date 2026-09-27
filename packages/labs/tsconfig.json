@@ -27,7 +27,7 @@
   ],
   "include": ["**/*", "**/.server/**/*", "**/.client/**/*", ".react-router/types/**/*"],
   "exclude": [
-    "../what/**/*",
+    "../newsboy/**/*",
     "app/routes/svelte/**/*",
     "app/routes/api.search.ts",
     "app/components/VectorSearch.tsx",

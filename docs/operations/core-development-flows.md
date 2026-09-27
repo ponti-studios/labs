@@ -21,11 +21,11 @@ classify the change
 Use the detailed [environment configuration contract](environment-configuration.md)
 for the required scan and delivery matrix.
 
-1. Add the variable to the owning server environment schema. For What, this is
-   `packages/what/src/lib/infrastructure/env.ts`; do not create an ad-hoc validator.
+1. Add the variable to the owning server environment schema. For Newsboy, this is
+   `packages/newsboy/src/lib/infrastructure/env.ts`; do not create an ad-hoc validator.
 2. Add the variable name and a safe local value to the package `.env.example`.
 3. Search the repository for existing names and consumers. Reuse the canonical
-   name instead of adding aliases such as `WHAT_APP_URL` and `WHAT_APP_ORIGIN`.
+   name instead of adding aliases such as `NEWSBOY_APP_URL` and `NEWSBOY_APP_ORIGIN`.
 4. Classify the value:
 
    - **Secret:** provision the real value in Railway and, if a workflow needs
@@ -58,7 +58,7 @@ for the required scan and delivery matrix.
    It runs on every production deployment and is a no-op when there are no
    pending migrations. Application deploys and game-generation workflows must
    not run migrations.
-7. Labs and What deployment may proceed only after the migration job succeeds.
+7. Labs and Newsboy deployment may proceed only after the migration job succeeds.
 8. If production is inconsistent, inspect Drizzle's migration tracker and
    follow the migration recovery rules in `AGENTS.md`. Never reset or drop the
    database to make a migration pass.
@@ -74,7 +74,7 @@ for the required scan and delivery matrix.
    package typecheck. Reused route modules need unique route IDs.
 4. Test local and production-like origins, including query-string preservation
    and removal of unsupported parameters.
-5. For What, timezone travels in the `what_timezone` cookie. `tz` query
+5. For Newsboy, timezone travels in the `newsboy_timezone` cookie. `tz` query
    parameters are ignored; missing, malformed, or invalid cookie values fall
    back to `UTC`.
 6. After deployment, test the public URL with headers and follow the complete
@@ -148,7 +148,7 @@ For every production-affecting change, verify in order:
 For the standalone game, the minimum check is:
 
 ```sh
-curl -sS -D - -o /dev/null https://what.ponti.io/
+curl -sS -D - -o /dev/null https://newsboy.ponti.io/
 ```
 
 For failures, diagnose outside-in: public response, deployed variables,

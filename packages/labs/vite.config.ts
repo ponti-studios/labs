@@ -38,13 +38,13 @@ export default defineConfig((config) => ({
     strictPort: true,
     // Vite's dev middleware answers OPTIONS preflights itself before they
     // ever reach the app's route handlers — its boolean default reflects
-    // Origin but omits Access-Control-Allow-Credentials, which the `what`
+    // Origin but omits Access-Control-Allow-Credentials, which Newsboy's
     // app's credentialed cross-origin fetches need. This mirrors the same
-    // allowlist as the What portless origin for local dev; production
+    // allowlist as the Newsboy portless origin for local dev; production
     // (react-router-serve, no Vite dev middleware) always uses that route
     // handler logic directly.
     cors: {
-      origin: ["https://what.lvh.me"],
+      origin: ["https://newsboy.lvh.me"],
       credentials: true,
     },
   },

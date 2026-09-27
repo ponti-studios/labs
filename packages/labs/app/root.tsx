@@ -26,7 +26,7 @@ import type { Route } from "./+types/root";
 import "./app.css";
 import { PrefetchProvider } from "./components/prefetch-provider";
 import QueryProvider from "./components/QueryProvider";
-import { WHAT_APP_URL } from "./data/game";
+import { NEWSBOY_APP_URL } from "./data/game";
 import { BOOK_CALL_URL } from "./data/studio";
 import { getHominemUser } from "./lib/server/hominem-auth";
 import { cn } from "./lib/utils";
@@ -116,9 +116,9 @@ export default function App() {
   const appLinks = useMemo<Array<{ href: string; label: string; logo: string }>>(
     () => [
       {
-        href: WHAT_APP_URL,
+        href: NEWSBOY_APP_URL,
         label: t.nav.game,
-        logo: "/experiments/logo.png",
+        logo: "/experiments/newsboy-logo.png",
       },
       {
         href:
