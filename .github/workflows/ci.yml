@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - "packages/labs/**"
-      - "packages/what/**"
+      - "packages/newsboy/**"
       - "packages/ai/**"
       - "packages/db/**"
       - "packages/env/**"
@@ -73,7 +73,7 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm test:shared
-      - run: pnpm test:game
+      - run: pnpm test:newsboy
 
   build:
     runs-on: ubuntu-latest
@@ -124,18 +124,18 @@ jobs:
       railway_token: ${{ secrets.RAILWAY_TOKEN }}
       railway_service: ${{ secrets.RAILWAY_SERVICE }}
 
-  deploy-what:
+  deploy-newsboy:
     if: github.event_name != 'pull_request'
     needs: migrate
     uses: ./.github/workflows/reusable-railway-deploy.yml
     with:
       node-version: "24"
       railway-cli-version: "5.41.2"
-      config_path: "packages/what/railway.json"
+      config_path: "packages/newsboy/railway.json"
       timeout-minutes: 10
     secrets:
       railway_token: ${{ secrets.RAILWAY_TOKEN }}
-      railway_service: ${{ secrets.WHAT_RAILWAY_SERVICE }}
+      railway_service: ${{ secrets.NEWSBOY_RAILWAY_SERVICE }}
 
   analyze:
     name: CodeQL Analysis

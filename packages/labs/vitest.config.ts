@@ -9,7 +9,7 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["vitest.setup.ts"],
     include: ["**/*.test.{ts,tsx,js,jsx}"],
-    exclude: ["**/node_modules/**", "app/lib/what/__tests__/**", "../what/**"],
+    exclude: ["**/node_modules/**", "app/lib/newsboy/__tests__/**", "../newsboy/**"],
 
     clearMocks: true,
     coverage: {

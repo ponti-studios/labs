@@ -105,28 +105,28 @@ The purpose of this rule is to keep `_journal.json`, the snapshot files, and the
 
 ## Script Environment Validation
 
-All scripts (`packages/what/scripts/*.ts`) must validate their environment using `LabsServerEnv.parse(process.env)`, imported from `packages/what/src/lib/infrastructure/env.ts` (which re-exports the shared `@pontistudios/env` schema; Labs uses the same schema from `packages/labs/app/lib/server/env.ts`).
+All scripts (`packages/newsboy/scripts/*.ts`) must validate their environment using `LabsServerEnv.parse(process.env)`, imported from `packages/newsboy/src/lib/infrastructure/env.ts` (which re-exports the shared `@pontistudios/env` schema; Labs uses the same schema from `packages/labs/app/lib/server/env.ts`).
 
 - ❌ Do not define ad-hoc `requireEnvironment()` functions
 - ❌ Do not inline `if (!process.env.X)` checks
 
 This ensures every script validates the same set of required variables and produces consistent error messages.
 
-## What Puzzle Generation
+## Newsboy Puzzle Generation
 
-- The single entry point for all puzzle management is `packages/what/scripts/game-generate.ts`
-- Normal mode: `pnpm game:generate` (gap-fill, nightly cron) — generates exactly *tomorrow* from that same day's articles (1-day window, `GAME_READY_INVENTORY_DAYS` in `packages/what/src/lib/generation/candidate-validation.ts`)
-- Force-regenerate mode: `pnpm game:generate -- --force` (deletes and regenerates the window)
+- The single entry point for all puzzle management is `packages/newsboy/scripts/game-generate.ts`
+- Normal mode: `pnpm newsboy:generate` (gap-fill, nightly cron) — generates exactly *tomorrow* from that same day's articles (1-day window, `GAME_READY_INVENTORY_DAYS` in `packages/newsboy/src/lib/generation/candidate-validation.ts`)
+- Force-regenerate mode: `pnpm newsboy:generate -- --force` (deletes and regenerates the window)
 - Do not create separate "regenerate" scripts — the `--force` flag handles that
-- Both the daily cron and manual force-regenerate runs share one workflow: `.github/workflows/game-generate.yml`. Two schedule entries run nightly: `0 22 * * *` UTC (primary generation) and `0 23 * * *` UTC (retry pass — a gap-fill no-op when the primary succeeded, self-healing when it didn't); both run bare `pnpm game:generate`. The `workflow_dispatch` trigger takes `mode` (`force` default / `gap_fill`), `days-ahead` (default `1`), and optional `from`/`to`, and runs `pnpm game:generate` with the corresponding flags. Run failures surface via GitHub's native workflow-notification email (no custom alerting in the workflow)
-- Live dates (today in UTC or America/Los_Angeles) are protected from force regeneration unless the target `DATABASE_URL` is a loopback host (`isDisposableDatabase` in `packages/what/src/lib/generation/generate-range.ts`) — the dev escape hatch; see `docs/what/generation-current-architecture.md`
+- Both the daily cron and manual force-regenerate runs share one workflow: `.github/workflows/newsboy-generate.yml`. Two schedule entries run nightly: `0 22 * * *` UTC (primary generation) and `0 23 * * *` UTC (retry pass — a gap-fill no-op when the primary succeeded, self-healing when it didn't); both run bare `pnpm newsboy:generate`. The `workflow_dispatch` trigger takes `mode` (`force` default / `gap_fill`), `days-ahead` (default `1`), and optional `from`/`to`, and runs `pnpm newsboy:generate` with the corresponding flags. Run failures surface via GitHub's native workflow-notification email (no custom alerting in the workflow)
+- Live dates (today in UTC or America/Los_Angeles) are protected from force regeneration unless the target `DATABASE_URL` is a loopback host (`isDisposableDatabase` in `packages/newsboy/src/lib/generation/generate-range.ts`) — the dev escape hatch; see `docs/newsboy/generation-current-architecture.md`
 
 ## Authentication (Hominem)
 
 Hominem's Better Auth deployment is the sole auth authority for this repo. Labs
 never issues or validates its own sessions, and never hosts a login form.
 
-- Session checks go through `getHominemUser()` — `packages/labs/app/lib/server/hominem-auth.ts` for Labs, `packages/what/src/lib/infrastructure/hominem-auth.ts` for What
+- Session checks go through `getHominemUser()` — `packages/labs/app/lib/server/hominem-auth.ts` for Labs, `packages/newsboy/src/lib/infrastructure/hominem-auth.ts` for Newsboy
   (server-only — it forwards the request's `Cookie` header to the Hominem API).
 - To send a player to sign in, use `buildHominemLoginUrl(returnTo)`. `returnTo`
   must be an absolute Labs URL; the Hominem API only honors origins it trusts as
@@ -143,5 +143,5 @@ them locally or in CI.
 
 - Storybook is development-only in this repository.
 - Never run `storybook build`, `build-storybook`, or any equivalent production Storybook export.
-- Use the `storybook` script for local validation — Labs runs `storybook dev -p 6007` (`packages/labs`), What runs `storybook dev -p 6008` (`packages/what`).
+- Use the `storybook` script for local validation — Labs runs `storybook dev -p 6007` (`packages/labs`), Newsboy runs `storybook dev -p 6008` (`packages/newsboy`).
 - Do not add CI, package scripts, or deployment steps that build Storybook statically.
