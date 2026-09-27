@@ -1,15 +1,15 @@
 # Deployment and routing lessons
 
-This document records the deployment lessons from moving What out of Labs and
+This document records the deployment lessons from moving Newsboy out of Labs and
 removing Labs' legacy game URLs. Future agents should treat these rules as part
 of the deployment contract, not as optional troubleshooting advice.
 
-## What we missed
+## Newsboy we missed
 
 The failures were distributed across several boundaries:
 
 1. **Application tests passed, but the public route was not verified.** The
-   redirect loader had unit coverage, but the test supplied `WHAT_APP_URL`
+   redirect loader had unit coverage, but the test supplied `NEWSBOY_APP_URL`
    directly. It did not prove that the production Labs service had the right
    variable, that the deployed build contained the route, or that
    `labs.ponti.io` returned the expected `Location` header.
@@ -18,8 +18,8 @@ The failures were distributed across several boundaries:
    deployed `packages/labs` as the source root. Railway therefore could not
    build the service. A successful workflow submission was mistaken for a
    successful application deployment.
-3. **Environment variables drifted.** The code used `WHAT_APP_URL`, while
-   Railway also contained the stale `WHAT_APP_ORIGIN` pointing at an old
+3. **Environment variables drifted.** The code used `NEWSBOY_APP_URL`, while
+   Railway also contained the stale `NEWSBOY_APP_ORIGIN` pointing at an old
    Railway hostname. There was no checked-in inventory saying which variable
    each runtime actually consumes, which made the stale value difficult to
    identify.
@@ -36,10 +36,10 @@ The failures were distributed across several boundaries:
 
 ### URL and environment contract
 
-- `packages/what/src/lib/infrastructure/env.ts` owns What's server environment schema.
-- Labs' browser-facing links to the standalone What app use `VITE_WHAT_APP_URL`.
-- Production value is `https://what.ponti.io`.
-- Local examples use `https://what.lvh.me`; portless overrides the What
+- `packages/newsboy/src/lib/infrastructure/env.ts` owns Newsboy's server environment schema.
+- Labs' browser-facing links to the standalone Newsboy app use `VITE_NEWSBOY_APP_URL`.
+- Production value is `https://newsboy.ponti.io`.
+- Local examples use `https://newsboy.lvh.me`; portless overrides the Newsboy
   runtime return origin with its worktree-specific `PORTLESS_URL`.
 - Do not derive these URLs from `NODE_ENV`, hard-code a Railway hostname, or
   introduce a second similarly named variable without updating the owning env
@@ -50,13 +50,13 @@ The failures were distributed across several boundaries:
 
 ### Routing contract
 
-- What owns the game UI, game API, auth return handling, and game persistence.
-- Labs does not proxy or recreate What routes and registers no legacy game
-  entry points; the `/games/realitea` and `/games/what` redirects were removed.
-  Links to the game go to `VITE_WHAT_APP_URL`.
+- Newsboy owns the game UI, game API, auth return handling, and game persistence.
+- Labs does not proxy or recreate Newsboy routes and registers no legacy game
+  entry points; the `/games/realitea` and `/games/newsboy` redirects were removed.
+  Links to the game go to `VITE_NEWSBOY_APP_URL`.
 - A route module reused by multiple React Router paths needs distinct route IDs.
 - `tz` is not a supported query parameter. Timezone state is transported in the
-  `what_timezone` cookie and invalid or missing values resolve to `UTC`.
+  `newsboy_timezone` cookie and invalid or missing values resolve to `UTC`.
 
 ### Railway build contract
 
@@ -67,13 +67,13 @@ Before changing a deploy workflow, inspect all three together:
 - `.github/workflows/reusable-railway-deploy.yml` and the caller's
   `config_path`.
 
-For this workspace, the Labs and What Dockerfiles require the monorepo root as
+For this workspace, the Labs and Newsboy Dockerfiles require the monorepo root as
 their build context (they copy root workspace files such as
 `pnpm-workspace.yaml`). The reusable workflow stages the caller's `config_path`
-(`packages/labs/railway.json` or `packages/what/railway.json`) over
+(`packages/labs/railway.json` or `packages/newsboy/railway.json`) over
 `railway.json`, then runs `railway up --service <service> --detach --ci` with
 `RAILWAY_TOKEN`, targeting the `RAILWAY_SERVICE` secret (`RAILWAY_SERVICE` for
-Labs, `WHAT_RAILWAY_SERVICE` for What in `ci.yml`). A package subdirectory is
+Labs, `NEWSBOY_RAILWAY_SERVICE` for Newsboy in `ci.yml`). A package subdirectory is
 only a valid deploy root if the Dockerfile can build without root workspace
 files.
 
@@ -85,7 +85,7 @@ The required production sequence is:
 GitHub native `paths` filter matches
   -> CI succeeds
   -> production migration check in `ci.yml` succeeds
-      -> Labs and What deploy
+      -> Labs and Newsboy deploy
 ```
 
 - CI uses the Foundation test database and runs the normal Drizzle migration
@@ -94,7 +94,7 @@ GitHub native `paths` filter matches
   never in an application deploy or game-generation workflow. The migration
   command runs on every production deployment and is a no-op when there are no
   pending migrations.
-- Labs and What deploy jobs both require the successful migration job.
+- Labs and Newsboy deploy jobs both require the successful migration job.
 - Production scope is selected by GitHub's native `on.push.paths` filter. There
   is no repository-specific changed-file script.
 - Never repair production by dropping or resetting the database. Inspect
@@ -118,20 +118,20 @@ Check the complete chain, in order:
 
 1. CI is green for the intended commit SHA.
 2. The production migration job is green.
-3. The expected Labs/What Railway deployment exists for that same SHA and is
+3. The expected Labs/Newsboy Railway deployment exists for that same SHA and is
    actually `SUCCESS`, not merely submitted or detached.
 4. Public smoke tests hit the standalone game directly:
 
    ```sh
-   curl -sS -D - -o /dev/null https://what.ponti.io/
+   curl -sS -D - -o /dev/null https://newsboy.ponti.io/
    ```
 
-   Labs registers no legacy game redirects; `/games/realitea` and `/games/what`
+   Labs registers no legacy game redirects; `/games/realitea` and `/games/newsboy`
    return 404 (the remaining `/games/*` routes — Cards, Tetris — are
    Labs-owned experiments).
 5. Verify the auth flow's return target and confirm no `tz` query parameter is
    added by the game API. Verify timezone behavior with a valid,
-   missing/malformed, and invalid `what_timezone` cookie.
+   missing/malformed, and invalid `newsboy_timezone` cookie.
 
 ## Diagnostic order
 

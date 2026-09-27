@@ -3,7 +3,7 @@ import type { FeaturedProject } from "~/components/projects/project-card";
 import { caseLogos, caseSnapshots } from "~/data/studio";
 import { t } from "~/translations";
 
-// `game` is excluded — it's a fixed brand skin for the WH?T card, not a
+// `game` is excluded — it's a fixed brand skin for the Newsboy card, not a
 // general-purpose "card stock" for client work.
 const CLIENT_CARD_THEMES: readonly CardThemeName[] = [
   "obsidian",

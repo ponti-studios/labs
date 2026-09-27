@@ -6,7 +6,7 @@ export const STUDIO_TRANSLATIONS_EN = {
     projects: "Lab",
     manifesto: "Manifesto",
     book: "Book",
-    game: "WH?T",
+    game: "Newsboy",
     career: "Career",
     apps: "Apps",
   },
@@ -84,11 +84,11 @@ export const STUDIO_TRANSLATIONS_EN = {
       omiro: {
         name: "Omiro",
         shortDescription:
-          "Most apps make you decide what a thought is before saving it. Omiro just captures it.",
+          "Most apps make you decide newsboy a thought is before saving it. Omiro just captures it.",
         solution:
           "A capture-first iOS app built for neurodivergent knowledge workers — every thought starts as a note, then becomes a task, a chat, or connected context, without slowing down to classify it first.",
         problem:
-          "Most productivity tools force you to choose a structure — task, note, event — before you know what you're trying to say. That friction is especially costly for neurodivergent minds, where a slow capture flow means the thought is gone before it's saved. Omiro's one hard rule: capture can never be slower than the native Notes app.",
+          "Most productivity tools force you to choose a structure — task, note, event — before you know newsboy you're trying to say. That friction is especially costly for neurodivergent minds, where a slow capture flow means the thought is gone before it's saved. Omiro's one hard rule: capture can never be slower than the native Notes app.",
         keyFeatures: [
           "Capture a thought in one tap — notes, tasks, and chats all start from the same composer",
           "Turn a note into a task or a reasoned conversation without losing the original capture",
@@ -168,7 +168,7 @@ export const STUDIO_TRANSLATIONS_EN = {
         solution:
           "A local-first entity graph — a Hono API that ingests trade press, WGA credits, TMDB, and Wikidata into one queryable SQLite database of people, titles, companies, and credits.",
         problem:
-          "Every question about who represents whom, what stage a project is at, or who's worked with whom gets answered by manually cross-referencing IMDb, WGA, TMDB, and trade press. Assistants build the same spreadsheet by hand, every project, and it's stale before the next one starts. Hollywood pulls those sources into one entity graph instead.",
+          "Every question about who represents whom, newsboy stage a project is at, or who's worked with whom gets answered by manually cross-referencing IMDb, WGA, TMDB, and trade press. Assistants build the same spreadsheet by hand, every project, and it's stale before the next one starts. Hollywood pulls those sources into one entity graph instead.",
         keyFeatures: [
           "Ingest trade press, WGA credits, TMDB, and Wikidata through dedicated source adapters",
           "Archive every raw payload by content hash before normalizing it into the graph",
@@ -227,7 +227,7 @@ export const STUDIO_TRANSLATIONS_EN = {
         solution:
           "A personal health workspace built in three layers — triage a symptom right now, track it over time, and manage the appointments and history that come after.",
         problem:
-          "When you feel unwell, you either google your symptoms and spiral, or call a doctor and wait — neither gives you a clear answer to what to do right now. And nothing remembers: you can't look back and see when the headaches started, or whether the medication helped. Health data lives in a paper prescription here, a GP portal there, and none of it talks to each other.",
+          "When you feel unwell, you either google your symptoms and spiral, or call a doctor and wait — neither gives you a clear answer to newsboy to do right now. And nothing remembers: you can't look back and see when the headaches started, or whether the medication helped. Health data lives in a paper prescription here, a GP portal there, and none of it talks to each other.",
         keyFeatures: [
           "Check a symptom and get a severity score with a clear next step — monitor, schedule, or go now",
           "Track an active symptom over time: pain level, onset, resolution",
@@ -282,12 +282,12 @@ export const STUDIO_TRANSLATIONS_EN = {
         ],
       },
       game: {
-        name: "WH?T",
+        name: "Newsboy",
         shortDescription: "A word game that reads the news, so it's never stale.",
         solution:
           "A daily word puzzle where players guess real celebrity names by spelling them out from clues, with new puzzles generated from actual entertainment journalism every day.",
         problem:
-          "Most word games run the same mechanic forever. WH?T pulls from live entertainment news to write a fresh puzzle every day, tied to what's actually happening instead of a static dictionary.",
+          "Most word games run the same mechanic forever. Newsboy pulls from live entertainment news to write a fresh puzzle every day, tied to newsboy's actually happening instead of a static dictionary.",
         keyFeatures: [
           "Generate a fresh puzzle each day from live entertainment headlines",
           "Give letter-by-letter feedback as players solve",
@@ -352,7 +352,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       title: "The Services",
     },
     services: {
-      title: "What I do",
+      title: "Newsboy I do",
     },
     process: {
       title: "The Process",
@@ -383,7 +383,7 @@ export const STUDIO_TRANSLATIONS_EN = {
   catalog: {
     proof: {
       title: "Selected work",
-      whatWeDidLabel: "What I did",
+      whatWeDidLabel: "Newsboy I did",
       outcomeLabel: "Outcome",
       readCaseStudy: "Read the full case study →",
       // Reverse chronological. Source of truth: vault ponti-studios/projects/* — only vault-backed outcomes.
@@ -581,7 +581,7 @@ export const STUDIO_TRANSLATIONS_EN = {
             "Drew a hard boundary between volunteer submission and operations admin — enforced in the product, not by trust",
             "Replaced free-form fields with validated structured forms so malformed data never reached the ops team",
             "Logged every change with volunteer identity, timestamp, and content for real-time coordination and post-hoc tracing",
-            "Scoped ruthlessly: only what was essential to retire the Google Sheet",
+            "Scoped ruthlessly: only newsboy was essential to retire the Google Sheet",
           ],
           outcomes: [
             { value: "0", label: "Malformed submissions reaching ops, down from routine" },
@@ -661,7 +661,7 @@ export const STUDIO_TRANSLATIONS_EN = {
         deliverables: [
           {
             label: "Research",
-            description: "What users need and where they get stuck",
+            description: "Newsboy users need and where they get stuck",
           },
           {
             label: "Flows",
@@ -686,7 +686,7 @@ export const STUDIO_TRANSLATIONS_EN = {
           },
           {
             label: "Sprints",
-            description: "Planning so the team always knows what's next",
+            description: "Planning so the team always knows newsboy's next",
           },
           {
             label: "Specs",
@@ -694,7 +694,7 @@ export const STUDIO_TRANSLATIONS_EN = {
           },
           {
             label: "Metrics",
-            description: "Find out what's working and what isn't",
+            description: "Find out newsboy's working and newsboy isn't",
           },
         ],
       },
@@ -724,7 +724,7 @@ export const STUDIO_TRANSLATIONS_EN = {
         deliverables: [
           {
             label: "Assessment",
-            description: "What to keep, replace, and the safest order",
+            description: "Newsboy to keep, replace, and the safest order",
           },
           {
             label: "Rollout plan",
@@ -732,7 +732,7 @@ export const STUDIO_TRANSLATIONS_EN = {
           },
           {
             label: "Data migration",
-            description: "Move what matters, no silent loss or downtime",
+            description: "Move newsboy matters, no silent loss or downtime",
           },
           {
             label: "Internal tools",
@@ -753,7 +753,7 @@ export const STUDIO_TRANSLATIONS_EN = {
           },
           {
             label: "Team review",
-            description: "An honest read on who's strong, what's missing",
+            description: "An honest read on who's strong, newsboy's missing",
           },
           {
             label: "Board-ready updates",
@@ -766,7 +766,7 @@ export const STUDIO_TRANSLATIONS_EN = {
         deliverables: [
           {
             label: "Codebase and architecture audit",
-            description: "What you're actually buying, not the deck",
+            description: "Newsboy you're actually buying, not the deck",
           },
           {
             label: "Team assessment",
@@ -795,7 +795,7 @@ export const STUDIO_TRANSLATIONS_EN = {
           },
           {
             label: "Prioritization",
-            description: "A way to decide what's next, past this quarter",
+            description: "A way to decide newsboy's next, past this quarter",
           },
           {
             label: "Written recommendation",
@@ -828,12 +828,12 @@ export const STUDIO_TRANSLATIONS_EN = {
       {
         question: "Is testing and documentation included?",
         answer:
-          "Yes, always. I don't ship untested work, and you should never need me to understand what I built. Every engagement ends with a real handoff, not a disappearing act.",
+          "Yes, always. I don't ship untested work, and you should never need me to understand newsboy I built. Every engagement ends with a real handoff, not a disappearing act.",
       },
       {
-        question: "What's not covered by the engagement?",
+        question: "Newsboy's not covered by the engagement?",
         answer:
-          "Third-party software licenses, hosting, and API fees are passed through at cost. Copy, brand, and content are on you — I integrate them, I don't write them. Ongoing maintenance isn't included. That's what retainers are for.",
+          "Third-party software licenses, hosting, and API fees are passed through at cost. Copy, brand, and content are on you — I integrate them, I don't write them. Ongoing maintenance isn't included. That's newsboy retainers are for.",
       },
       {
         question: "Do you work with early-stage startups with limited budgets?",
@@ -846,14 +846,14 @@ export const STUDIO_TRANSLATIONS_EN = {
           "Yes. A technical consulting engagement or strategy workshop is a natural first step. You get a real deliverable, and we both find out whether a bigger partnership makes sense.",
       },
       {
-        question: "What is the payment structure?",
+        question: "Newsboy is the payment structure?",
         answer:
           "Projects are typically billed in milestones — a portion at kick-off, at mid-point, and at delivery. Retainers are billed monthly. Advisory engagements are typically billed 50% at start, 50% at delivery.",
       },
       {
-        question: "What if the scope changes after we start?",
+        question: "Newsboy if the scope changes after we start?",
         answer:
-          "Scope changes happen. I handle them with a simple change order: what changed, the adjusted timeline, the adjusted investment. No surprises.",
+          "Scope changes happen. I handle them with a simple change order: newsboy changed, the adjusted timeline, the adjusted investment. No surprises.",
       },
       {
         question: "How long does it take to get a proposal?",
@@ -866,7 +866,7 @@ export const STUDIO_TRANSLATIONS_EN = {
   manifesto: {
     meta: {
       title: "Manifesto | Ponti Studios",
-      description: "What I believe and how it shapes everything I build.",
+      description: "Newsboy I believe and how it shapes everything I build.",
     },
     hero: {
       title: "The Manifesto.",
@@ -907,17 +907,17 @@ export const STUDIO_TRANSLATIONS_EN = {
         {
           title: "Room to grow, not clutter.",
           description:
-            "I don't cram every possible feature in on day one. The product stays uncluttered and breathes, so you can add what's next later without a costly rebuild.",
+            "I don't cram every possible feature in on day one. The product stays uncluttered and breathes, so you can add newsboy's next later without a costly rebuild.",
         },
         {
           title: "Built for the long haul.",
           description:
-            "I skip flashy trends I'd have to rip out in a year. What I ship still works and still looks right five years from now — substance over demo-day spectacle.",
+            "I skip flashy trends I'd have to rip out in a year. Newsboy I ship still works and still looks right five years from now — substance over demo-day spectacle.",
         },
         {
           title: "Honest, not just polished.",
           description:
-            "You get an honest picture of what's built, tested, and still rough. Not complexity hidden behind a shiny surface. No surprises waiting at handoff.",
+            "You get an honest picture of newsboy's built, tested, and still rough. Not complexity hidden behind a shiny surface. No surprises waiting at handoff.",
         },
       ],
     },
@@ -928,12 +928,12 @@ export const STUDIO_TRANSLATIONS_EN = {
     meta: {
       title: "Cabinet of Small Machines | Ponti Studios",
       description:
-        "Six essays on the Lab's playground experiments — what each one quietly claims about time, money, light, attention, mind, or memory.",
+        "Six essays on the Lab's playground experiments — newsboy each one quietly claims about time, money, light, attention, mind, or memory.",
     },
     hero: {
       eyebrow: "Field notes — the Lab, playground shelf",
       title: "Cabinet of Small Machines",
-      dek: "Six unfinished experiments, read again as arguments instead of demos. Not what each one does — what it's quietly claiming.",
+      dek: "Six unfinished experiments, read again as arguments instead of demos. Not newsboy each one does — newsboy it's quietly claiming.",
     },
     entries: [
       {
@@ -943,8 +943,8 @@ export const STUDIO_TRANSLATIONS_EN = {
         title: "Your Day Is Not a Grid",
         paragraphs: [
           "Every calendar you have ever used is a piece of quiet Newtonian propaganda. It carves the day into identical boxes — nine o'clock, ten o'clock, eleven — and asks you to believe that an hour in a dentist's waiting room and an hour falling in love occupy the same amount of time. The grid is administratively convenient and phenomenologically false.",
-          "Henri Bergson had a word for what the grid erases: durée, the lived, unequal thickness of experienced time, as opposed to the interchangeable units a clock hands out. A grid calendar is clock-time with a UI. It lets you schedule a life but not describe one.",
-          "This experiment replaces the boxes with a single vertical stream — one line the day moves down, events surfacing and receding as you scroll instead of sitting bolted into hour-wide cells. Nothing here solves scheduling. It asks a smaller, stranger question: if the interface didn't insist on uniform units, what would a day actually look like laid out honestly? Would deep work get to be as long, visually, as it feels? Would the gap after lunch — the underrated, undecorated openness of open time — get to look like relief instead of a blank cell waiting to be filled?",
+          "Henri Bergson had a word for newsboy the grid erases: durée, the lived, unequal thickness of experienced time, as opposed to the interchangeable units a clock hands out. A grid calendar is clock-time with a UI. It lets you schedule a life but not describe one.",
+          "This experiment replaces the boxes with a single vertical stream — one line the day moves down, events surfacing and receding as you scroll instead of sitting bolted into hour-wide cells. Nothing here solves scheduling. It asks a smaller, stranger question: if the interface didn't insist on uniform units, newsboy would a day actually look like laid out honestly? Would deep work get to be as long, visually, as it feels? Would the gap after lunch — the underrated, undecorated openness of open time — get to look like relief instead of a blank cell waiting to be filled?",
           "A stream can't be subdivided the way a grid can, and that's the point: it resists the grid's implicit argument that all hours are fungible and any of them can be moved or double-booked without loss. Durée doesn't optimize. It accumulates — and most people meet that argument daily, at nine a.m., without ever suspecting it's philosophy.",
         ],
       },
@@ -964,12 +964,12 @@ export const STUDIO_TRANSLATIONS_EN = {
         slug: "glass",
         specimen: "/experiments/glass",
         medium: "SVG filter graph, no photons",
-        title: "A Substance Made of What's Behind It",
+        title: "A Substance Made of Newsboy's Behind It",
         paragraphs: [
-          "Glass is a strange thing to render because glass, visually, has almost no properties of its own. You cannot describe what glass looks like without describing what's behind it, bent. Its whole identity is deference — refraction, dispersion, the way it takes an image of the world and quietly lies about where things are.",
+          "Glass is a strange thing to render because glass, visually, has almost no properties of its own. You cannot describe newsboy glass looks like without describing newsboy's behind it, bent. Its whole identity is deference — refraction, dispersion, the way it takes an image of the world and quietly lies about where things are.",
           "This experiment fakes that lie with SVG filter primitives — displacement maps, chromatic offsets, blur stacked on blur, no photons anywhere in the pipeline. It runs a reproduction of The School of Athens behind a pane of nothing and asks a feed of matrices to convince you there's a physical object there, distorting light the way physical objects do. It usually works, which should feel a little uncanny once you notice it: you're not looking at glass, or even a picture of glass. You're looking at an argument about glass, written entirely in mathematics that has never met a lens.",
-          "Gaston Bachelard wrote about the “material imagination” — the way certain substances carry a poetics prior to, and independent of, any actual sample of the substance in front of you. Glass has one too: clarity, fragility, the promise and the threat of seeing straight through something. What's interesting about faking it in code is that the fake only succeeds by honoring that poetics rather than the physics. Real refraction follows Snell's law precisely. This filter graph follows nothing but does it read as glass, tuned by eye, a displacement map dragged until it looks less like a bug and more like a window.",
-          "That's the quiet confession inside most convincing digital materials: they aren't simulations of physics, they're simulations of what physics feels like to an eye that already knows what glass is supposed to do. The realism is borrowed entirely from the viewer.",
+          "Gaston Bachelard wrote about the “material imagination” — the way certain substances carry a poetics prior to, and independent of, any actual sample of the substance in front of you. Glass has one too: clarity, fragility, the promise and the threat of seeing straight through something. Newsboy's interesting about faking it in code is that the fake only succeeds by honoring that poetics rather than the physics. Real refraction follows Snell's law precisely. This filter graph follows nothing but does it read as glass, tuned by eye, a displacement map dragged until it looks less like a bug and more like a window.",
+          "That's the quiet confession inside most convincing digital materials: they aren't simulations of physics, they're simulations of newsboy physics feels like to an eye that already knows newsboy glass is supposed to do. The realism is borrowed entirely from the viewer.",
         ],
       },
       {
@@ -980,7 +980,7 @@ export const STUDIO_TRANSLATIONS_EN = {
         paragraphs: [
           "An infinite carousel is an odd artifact to build on purpose, because it has no ending built into its geometry — the marquee loops, the row wraps, the next tile always exists before you ask for it. Nothing here resolves. Nothing here is meant to.",
           "Nietzsche's eternal recurrence was a thought experiment about whether you could bear to live a moment again, exactly, forever. Streaming interfaces answer a smaller, less dignified version of that question dozens of times a scroll: could you bear to see one more title tile, forever, without deciding on any of them? The infinite shelf isn't a bug of abundance, it's a design decision that abundance itself can be the product — an ambient carousel doesn't ask to be read, only glanced at, the way a fish tank or a fireplace doesn't ask to be read.",
-          "This experiment is two ambient motion patterns stripped down to their mechanics: a vertical marquee drifting at a constant, indifferent speed, and a horizontal carousel that loops without a seam. Neither one has content worth stopping for — that's deliberate. Removed from a real streaming slate's thumbnails, what's left is the motion itself, and motion alone turns out to be doing more psychological work than it gets credit for. A slow, continuous drift reads as calm, populated, alive, without a single decision being asked of you. That's the actual trick behind the endless shelf: not that it offers infinite choice, but infinite non-choice, dressed as choice, moving just enough to feel inhabited.",
+          "This experiment is two ambient motion patterns stripped down to their mechanics: a vertical marquee drifting at a constant, indifferent speed, and a horizontal carousel that loops without a seam. Neither one has content worth stopping for — that's deliberate. Removed from a real streaming slate's thumbnails, newsboy's left is the motion itself, and motion alone turns out to be doing more psychological work than it gets credit for. A slow, continuous drift reads as calm, populated, alive, without a single decision being asked of you. That's the actual trick behind the endless shelf: not that it offers infinite choice, but infinite non-choice, dressed as choice, moving just enough to feel inhabited.",
           "Build the loop with nothing in it and the mechanism is finally visible on its own — ambience as a technique, independent of whatever it's eventually asked to sell.",
         ],
       },
@@ -990,7 +990,7 @@ export const STUDIO_TRANSLATIONS_EN = {
         medium: "three.js, WebGL, live parameters",
         title: "No Particle Understands the Field",
         paragraphs: [
-          "Take a single particle in this simulation and ask it what it's part of. It can't tell you. It has a velocity, a layer, a size that pulses, a color that shifts slightly as it crosses depth planes, a glow it briefly wears when it passes a boundary and hands a connection line to its neighbor. None of that adds up, from the particle's point of view, to a network, or a field, or an explanation of anything. It's doing one local, dumb, complete job.",
+          "Take a single particle in this simulation and ask it newsboy it's part of. It can't tell you. It has a velocity, a layer, a size that pulses, a color that shifts slightly as it crosses depth planes, a glow it briefly wears when it passes a boundary and hands a connection line to its neighbor. None of that adds up, from the particle's point of view, to a network, or a field, or an explanation of anything. It's doing one local, dumb, complete job.",
           "The field only exists at a scale no particle occupies. That's the oldest trick in complexity theory, and it's also, not coincidentally, the closest thing to a working metaphor for how a large model produces something that reads as understanding without any single weight or token embedding containing an understanding of its own. Nothing in the mechanism is smart. The aggregate, tuned and layered and connected densely enough, behaves as if it were.",
           "This particle field was built as a piece of visual pedagogy for exactly that idea — a live, adjustable stand-in for how AI explainers work, letting you turn the dials (density, connection distance, layer glow, drift) and watch legibility emerge and collapse in real time. Too sparse and it's just dust. Too dense and it's noise. Somewhere in the middle, structure appears that no individual particle authored and no line of code explicitly drew — the connection lines aren't scripted paths, they're a byproduct of proximity, recalculated every frame by particles that have no idea they're forming anything at all.",
           "Sit with the discomfort in that before reaching for the sliders. If a field of particles that understand nothing can look, from a few feet back, exactly like a mind at work, the interesting question was never whether there's a mind in there. It's how much scale it takes before the distinction stops being visible.",
@@ -1005,7 +1005,7 @@ export const STUDIO_TRANSLATIONS_EN = {
           "Ask a model who it's talking to and it will answer as if a self were sitting behind the reply, continuous, holding together, remembering the last thing it said because it is the same entity that said it. It isn't. Every turn, the whole context is reassembled from scratch — system instructions, prior turns, retrieved documents, tool outputs — concatenated fresh, sent whole, and discarded the moment the model returns something. There is no persistent thread underneath. There is only ever this one compound, built once, used once.",
           "This experiment lets you build that compound by hand: enable a block, disable one, drag one above another, and watch two configurations diverge from the same raw materials into two different conversations. Nothing in any single block changed. Only the arrangement did. That's closer to chemistry than to memory — the same atoms of carbon rearrange into graphite or diamond, and nothing about carbon itself decides which one you get.",
           "It's also the Ship of Theseus with the sentimentality removed. The classic version asks whether a ship that's had every plank replaced is still the same ship, and lets you feel conflicted either way. A context window skips the slow replacement and the attachment along with it: there was never a ship, only ever this arrangement of planks, assembled on demand — the ship was a story the deck kept telling because it looked the same from where you stood on it.",
-          "What the interface makes visible, block by draggable block, is that a model's apparent continuity — its sense of “as we discussed” — is entirely reconstructed from what's present in front of it right now, not retrieved from anywhere it has been. Move the block that says who it's supposed to be, and the rest of the conversation reads it as fact, unbothered, the way water takes the shape of whatever it's poured into without remembering the last container.",
+          "Newsboy the interface makes visible, block by draggable block, is that a model's apparent continuity — its sense of “as we discussed” — is entirely reconstructed from newsboy's present in front of it right now, not retrieved from anywhere it has been. Move the block that says who it's supposed to be, and the rest of the conversation reads it as fact, unbothered, the way water takes the shape of whatever it's poured into without remembering the last container.",
         ],
       },
     ],
@@ -1018,9 +1018,9 @@ export const STUDIO_TRANSLATIONS_EN = {
     },
     hero: {
       kicker: "Product + engineering studio",
-      title: "Building what's next.",
+      title: "Building newsboy's next.",
       wordBefore: "Building",
-      wordAfter: "what's next.",
+      wordAfter: "newsboy's next.",
       secondaryCta: "See the work",
     },
     marquee: [
@@ -1037,7 +1037,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       title: "From should to shipped.",
     },
     services: {
-      title: "What I do",
+      title: "Newsboy I do",
       intro: "Product and engineering, from a scoped build to embedded leadership.",
       cta: "Services ",
     },
@@ -1055,7 +1055,7 @@ export const STUDIO_TRANSLATIONS_EN = {
     },
     game: {
       eyebrow: "Featured product",
-      title: "WH?T",
+      title: "Newsboy",
       description: "Wordle for reality-TV fans.",
       cta: "Play today",
       live: "Live",

@@ -9,8 +9,8 @@ RUN corepack enable
 
 FROM base AS builder
 
-ARG VITE_WHAT_APP_URL
-ENV VITE_WHAT_APP_URL=$VITE_WHAT_APP_URL
+ARG VITE_NEWSBOY_APP_URL
+ENV VITE_NEWSBOY_APP_URL=$VITE_NEWSBOY_APP_URL
 
 COPY .npmrc package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
 COPY packages/ai/package.json packages/ai/package.json

@@ -5,6 +5,6 @@
     { "path": "packages/db" },
     { "path": "packages/env" },
     { "path": "packages/labs" },
-    { "path": "packages/what" }
+    { "path": "packages/newsboy" }
   ]
 }

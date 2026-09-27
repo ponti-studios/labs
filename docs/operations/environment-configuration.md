@@ -15,8 +15,8 @@ the corresponding value is available at the phase where that code executes.
 | Public browser configuration | Build and browser execution | Treat as public; never put credentials or private URLs in it |
 
 The same logical value may need two names and two delivery paths. For example,
-What reads `WHAT_APP_URL` server-side at runtime for auth return URLs, while
-Labs links to the What app through `VITE_WHAT_APP_URL`, which Vite embeds in
+Newsboy reads `NEWSBOY_APP_URL` server-side at runtime for auth return URLs, while
+Labs links to the Newsboy app through `VITE_NEWSBOY_APP_URL`, which Vite embeds in
 the browser bundle at build time.
 
 Do not assume that configuring the runtime variable makes the Vite variable
@@ -34,8 +34,8 @@ When adding or changing a variable:
    build stage:
 
    ```dockerfile
-   ARG VITE_WHAT_APP_URL
-   ENV VITE_WHAT_APP_URL=$VITE_WHAT_APP_URL
+   ARG VITE_NEWSBOY_APP_URL
+   ENV VITE_NEWSBOY_APP_URL=$VITE_NEWSBOY_APP_URL
    ```
 
    The declaration must appear in the stage that runs the Vite build, before
@@ -93,18 +93,18 @@ Never use `--kv` for a diagnostic log. Compare names only, then verify values
 through the Railway dashboard or a deploy/startup check that does not print
 secrets.
 
-## Current Labs and What boundary
+## Current Labs and Newsboy boundary
 
 | Service | Variable | Phase | Expected production value |
 | --- | --- | --- | --- |
-| Labs | `VITE_WHAT_APP_URL` | Docker/Vite build and browser | `https://what.ponti.io` |
-| What | `WHAT_APP_URL` | Runtime | `https://what.ponti.io` |
-| What | `WHAT_AI_MODEL` | Runtime/workflow | `openai/gpt-4o-mini` |
-| What | `PORTLESS_URL` | Local runtime only | Per-worktree `https://<name>.lvh.me` |
-| What | `GAME_ADMIN_EMAILS` | Runtime admin access | Comma-separated Hominem admin email addresses; required in production |
+| Labs | `VITE_NEWSBOY_APP_URL` | Docker/Vite build and browser | `https://newsboy.ponti.io` |
+| Newsboy | `NEWSBOY_APP_URL` | Runtime | `https://newsboy.ponti.io` |
+| Newsboy | `NEWSBOY_AI_MODEL` | Runtime/workflow | `openai/gpt-4o-mini` |
+| Newsboy | `PORTLESS_URL` | Local runtime only | Per-worktree `https://<name>.lvh.me` |
+| Newsboy | `GAME_ADMIN_EMAILS` | Runtime admin access | Comma-separated Hominem admin email addresses; required in production |
 
-Local examples use `https://what.lvh.me` for the What app under portless.
-Portless injects `PORTLESS_URL` for each worktree, and What uses it for
+Local examples use `https://newsboy.lvh.me` for the Newsboy app under portless.
+Portless injects `PORTLESS_URL` for each worktree, and Newsboy uses it for
 worktree-specific auth return URLs at runtime. If a different service consumes
 one of these values, update the table and the owning package example together.
 
