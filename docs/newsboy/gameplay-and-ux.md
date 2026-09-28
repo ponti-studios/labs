@@ -43,13 +43,20 @@ The reveal is not decoration. It is part of the game loop.
 
 ## Clues were hidden until they became useful
 
-The game includes `clue` data for each puzzle, but surfacing it too early would flatten the challenge. The final design reveals the clue only when the player has one guess left and the game is still active.
+The game includes `clue` data for each puzzle, but surfacing it too early would flatten the challenge. The clue appears after five guesses, before the sixth and final guess, while the game is still active.
 
 That makes the clue feel earned and gives the final turn a sharper shape.
 
+## Anonymous play is complete and device-local
+
+Visitors can make all six guesses without signing in. The server validates each
+guess but does not persist anonymous attempts; the browser stores scored guesses
+by topic and puzzle date so a refresh resumes the same game. Signed-in attempts
+continue to use `games_attempts` for cross-device history.
+
 ## Sharing stayed faithful to the genre
 
-The share flow copies a spoiler-free emoji grid rather than exposing the answer. That keeps the social ritual intact while fitting the Newsboy setting.
+The share flow copies a spoiler-free emoji grid and attributed topic link rather than exposing the answer. That keeps the social ritual intact while fitting the Newsboy setting.
 
 It also takes a pragmatic fallback path: clipboard first, `window.prompt` second, with the same result-handling callback wired up for both outcomes (and for errors).
 

@@ -177,6 +177,10 @@ puzzle snapshots its earlier version in `game_puzzle_revisions`.
 ## API surface
 
 - `GET /api/games` — active game list.
+- `POST /api/events` — privacy-limited first-party game funnel events; answers,
+  guesses, and clue text are never accepted.
+- `/admin/analytics` — 45-day topic/source funnel, solve, share, and next-day
+  return summary for operators.
 - `GET /api/:topic/puzzle` — today's puzzle for the player's timezone.
 - `GET /api/:topic/puzzle/:date` — a specific date's puzzle (history/dated views).
 - `POST /api/:topic/guess` — submit a guess.
