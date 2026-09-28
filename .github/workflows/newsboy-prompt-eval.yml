@@ -63,7 +63,7 @@ jobs:
       - name: Run baseline prompt (conceptual match)
         working-directory: packages/newsboy
         env:
-          OPENROUTER_API_KEY: ${{ secrets.OR_NEWSBOY_GAME_GENERATION }}
+          OPENROUTER_API_KEY: ${{ secrets.OR_WHAT_GAME_GENERATION }}
           BASELINE_PROMPT_FILE: ${{ inputs.baseline_prompt_file }}
           EVAL_MODEL: ${{ inputs.model }}
         run: |
@@ -77,7 +77,7 @@ jobs:
       - name: Run literal-match prompt
         working-directory: packages/newsboy
         env:
-          OPENROUTER_API_KEY: ${{ secrets.OR_NEWSBOY_GAME_GENERATION }}
+          OPENROUTER_API_KEY: ${{ secrets.OR_WHAT_GAME_GENERATION }}
           LITERAL_PROMPT_FILE: ${{ inputs.literal_prompt_file }}
           EVAL_MODEL: ${{ inputs.model }}
         run: |

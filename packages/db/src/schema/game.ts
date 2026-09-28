@@ -297,6 +297,27 @@ export const gamesAttempts = labs.table(
   ],
 );
 
+export const gameEvents = labs.table(
+  "game_events",
+  {
+    id: serial("id").primaryKey(),
+    event: text("event", {
+      enum: ["game_started", "guess_made", "game_won", "game_lost", "shared", "clue_used"],
+    }).notNull(),
+    sessionId: text("session_id").notNull(),
+    topicSlug: text("topic_slug").notNull(),
+    puzzleDate: date("puzzle_date").notNull(),
+    attemptCount: integer("attempt_count").notNull().default(0),
+    clueCount: integer("clue_count").notNull().default(0),
+    acquisitionSource: text("acquisition_source"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("game_events_created_at_idx").on(table.createdAt),
+    index("game_events_session_puzzle_idx").on(table.sessionId, table.topicSlug, table.puzzleDate),
+  ],
+);
+
 // ── game_puzzle_revisions ────────────────────────────────────────────────
 // Snapshot of a published row (and deleted attempts) before an in-place replace.
 // puzzle_id stays the live games_puzzles.id; replace does not insert a new puzzle.

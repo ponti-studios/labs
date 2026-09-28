@@ -70,13 +70,13 @@ jobs:
       - name: ingest-feeds
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          OPENROUTER_API_KEY: ${{ secrets.OR_NEWSBOY_GAME_GENERATION }}
+          OPENROUTER_API_KEY: ${{ secrets.OR_WHAT_GAME_GENERATION }}
         run: pnpm newsboy:ingest
 
       - name: generate
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          OPENROUTER_API_KEY: ${{ secrets.OR_NEWSBOY_GAME_GENERATION }}
+          OPENROUTER_API_KEY: ${{ secrets.OR_WHAT_GAME_GENERATION }}
           NEWSBOY_AI_MODEL: openai/gpt-4o-mini
           INPUT_EVENT_NAME: ${{ github.event_name }}
           INPUT_DAYS_AHEAD: ${{ inputs.daysAhead }}
@@ -118,5 +118,5 @@ jobs:
       - name: health-check
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          OPENROUTER_API_KEY: ${{ secrets.OR_NEWSBOY_GAME_GENERATION }}
+          OPENROUTER_API_KEY: ${{ secrets.OR_WHAT_GAME_GENERATION }}
         run: pnpm newsboy:health-check
