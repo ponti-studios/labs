@@ -19,7 +19,7 @@
     "typecheck": "react-router typegen && tsc -b"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.1115.0",
+    "@aws-sdk/client-s3": "^3.1140.0",
     "@mozilla/readability": "catalog:",
     "@openrouter/sdk": "catalog:",
     "@ponti-studios/auth": "catalog:",
@@ -70,7 +70,7 @@
     "@vitejs/plugin-react": "catalog:",
     "@vitest/coverage-v8": "^5.0.1",
     "jiti": "^2.7.0",
-    "oxfmt": "0.67.0",
+    "oxfmt": "0.70.0",
     "oxlint": "catalog:",
     "pg": "^8.23.0",
     "playwright": "catalog:",
