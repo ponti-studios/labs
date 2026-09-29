@@ -31,7 +31,12 @@ The pipeline lives in `packages/newsboy/src/lib/`:
   `lib/data/puzzle.server.ts`; the operator UI lives in `src/routes/admin.*`
   and `lib/admin/*`.
 
-Entry-point scripts live in `packages/newsboy/scripts/` (`game-ingest.ts`, `game-generate.ts`, `game-health-check.ts`) and run as `pnpm newsboy:ingest`, `pnpm newsboy:generate`, `pnpm newsboy:health-check` from the repo root.
+Entry-point scripts live in `packages/newsboy/scripts/` (`game-ingest.ts`,
+`game-generate.ts`, `game-health-check.ts`) and run as `pnpm newsboy:ingest`,
+`pnpm newsboy:generate`, `pnpm newsboy:health-check` from the repo root.
+Generation accepts repeated `--topic <slug>` options to target active or
+launch-pending topics; scheduled runs omit the option and process all eligible
+topics.
 
 ## Core layers
 

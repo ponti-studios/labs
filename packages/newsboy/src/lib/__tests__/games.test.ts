@@ -58,6 +58,10 @@ describe("getGamesForGeneration", () => {
 
     const { getGamesForGeneration } = await import("../data/games.server");
     expect((await getGamesForGeneration()).map((game) => game.slug)).toEqual(["active", "pending"]);
+    expect((await getGamesForGeneration(["pending"])).map((game) => game.slug)).toEqual([
+      "pending",
+    ]);
+    expect(await getGamesForGeneration(["retired"])).toEqual([]);
   });
 });
 

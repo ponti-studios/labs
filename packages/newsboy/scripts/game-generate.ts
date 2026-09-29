@@ -27,6 +27,7 @@ const logger = createLogger();
 function parseGenerateArgs(): {
   force: boolean;
   daysAhead: number;
+  topics: string[];
   from?: string;
   to?: string;
 } {
@@ -35,6 +36,7 @@ function parseGenerateArgs(): {
     options: {
       force: { type: "boolean" },
       "days-ahead": { type: "string" },
+      topic: { type: "string", multiple: true },
       from: { type: "string" },
       to: { type: "string" },
     },
@@ -45,6 +47,7 @@ function parseGenerateArgs(): {
     daysAhead: values["days-ahead"]
       ? Number.parseInt(values["days-ahead"], 10)
       : GAME_READY_INVENTORY_DAYS,
+    topics: values.topic ?? [],
     ...(values.from !== undefined ? { from: values.from } : {}),
     ...(values.to !== undefined ? { to: values.to } : {}),
   };
@@ -98,8 +101,8 @@ async function main() {
   await expireGenerations();
 
   const locked = await withGenerateLock(async () => {
-    const games = await getGamesForGeneration();
-    if (games.length === 0) throw new Error("No active games found");
+    const games = await getGamesForGeneration(args.topics);
+    if (games.length === 0) throw new Error("No eligible games found for generation");
 
     let totalDeleted = 0;
     let totalGenerated = 0;
