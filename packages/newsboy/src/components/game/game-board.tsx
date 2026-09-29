@@ -10,12 +10,15 @@ import {
   type PublicGamesPuzzle,
 } from "../../lib/puzzle";
 import { buildGameShareText } from "../../lib/player/share";
+import type { PuzzleHistoryStats } from "../../lib/puzzle/stats";
 
 import styles from "./game-board.module.css";
 import { GameResult } from "./game-result";
 import { GameTile } from "./game-tile";
 import { GuessGrid } from "./guess-grid";
+import { HowToPlaySheet } from "./how-to-play-sheet";
 import { useGame } from "../../hooks/use-game";
+import { usePlayerStats } from "../../hooks/use-player-stats";
 import { useShare } from "../../hooks/use-share";
 import { useGameAnalytics } from "../../hooks/use-game-analytics";
 
@@ -24,13 +27,22 @@ export interface GameBoardProps {
   initialGuesses: readonly GameGuess[];
   gameSlug: string;
   isSignedIn: boolean;
+  /** Signed-in players' streak/win-rate/distribution stats, from the route
+   *  loader. `null` for anonymous players — resolved client-side instead. */
+  serverStats?: PuzzleHistoryStats | null;
 }
 
 /**
  * The interactive game board — feature sections live in focused components
  * so this file owns only game orchestration and composition.
  */
-export function GameBoard({ puzzle, initialGuesses, gameSlug, isSignedIn }: GameBoardProps) {
+export function GameBoard({
+  puzzle,
+  initialGuesses,
+  gameSlug,
+  isSignedIn,
+  serverStats = null,
+}: GameBoardProps) {
   const [isOffline, setIsOffline] = useState(false);
   const analytics = useGameAnalytics(gameSlug, puzzle.dateKey);
   const { track } = analytics;
@@ -41,6 +53,7 @@ export function GameBoard({ puzzle, initialGuesses, gameSlug, isSignedIn }: Game
     else if (over) track("game_lost", count, clueCount, true);
   }, [track]);
   const game = useGame({ puzzle, initialGuesses, gameSlug, isSignedIn, onAcceptedGuess });
+  const stats = usePlayerStats(serverStats, isSignedIn, game.isGameOver);
   const keyboardState = useMemo(() => getKeyboardState(game.guesses), [game.guesses]);
   const shouldShowClue = !game.isGameOver && game.guesses.length === MAX_GUESSES - 1;
 
@@ -94,20 +107,7 @@ export function GameBoard({ puzzle, initialGuesses, gameSlug, isSignedIn }: Game
         </div>
       )}
 
-      <details className={styles.howToPlay}>
-        <summary>How to play</summary>
-        <p>
-          Guess the five-letter answer from today&apos;s news story in six tries.
-          Each guess shows which letters match and where they belong. Your final
-          clue appears before your last guess.
-        </p>
-        <p>
-          There&apos;s one shared puzzle per topic each day. You can play without
-          an account; this device saves your progress. Newsboy uses AI to draft
-          puzzles from current stories and runs automated checks before
-          publication.
-        </p>
-      </details>
+      <HowToPlaySheet />
 
       {shouldShowClue && (
         <div className={styles.clue}>
@@ -124,6 +124,7 @@ export function GameBoard({ puzzle, initialGuesses, gameSlug, isSignedIn }: Game
         detail={game.detail}
         onShare={share}
         onCopy={copyStory}
+        stats={stats}
       />
 
       {!game.isGameOver && (
