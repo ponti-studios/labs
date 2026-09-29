@@ -7,16 +7,19 @@ import { withGenerateLock } from "~/lib/infrastructure/advisory-lock.server";
 
 import { getErrorMessage } from "../src/lib/errors";
 import { createLogger } from "../src/lib/logger.server";
-import { CIRCUIT_BREAKER_THRESHOLD, createCircuitBreaker } from "../src/lib/generation/circuit-breaker";
+import {
+  CIRCUIT_BREAKER_THRESHOLD,
+  createCircuitBreaker,
+} from "../src/lib/generation/circuit-breaker";
 import { detectRunEnvironment } from "../src/lib/generation/generate.server";
 import { getDateKey } from "../src/lib/puzzle/date";
 import { resolveGenerateRange, isDisposableDatabase } from "../src/lib/generation/generate-range";
-import { GAME_READY_INVENTORY_DAYS, runGenerateRange } from "../src/lib/generation/generation-runner";
-import { getActiveGames } from "../src/lib/data/games.server";
 import {
-  backfillPuzzlePublishedAt,
-  countInventoryForRange,
-} from "../src/lib/data/puzzles.server";
+  GAME_READY_INVENTORY_DAYS,
+  runGenerateRange,
+} from "../src/lib/generation/generation-runner";
+import { getGamesForGeneration } from "../src/lib/data/games.server";
+import { backfillPuzzlePublishedAt, countInventoryForRange } from "../src/lib/data/puzzles.server";
 import { LabsServerEnv } from "../src/lib/infrastructure/env";
 
 const logger = createLogger();
@@ -95,7 +98,7 @@ async function main() {
   await expireGenerations();
 
   const locked = await withGenerateLock(async () => {
-    const games = await getActiveGames();
+    const games = await getGamesForGeneration();
     if (games.length === 0) throw new Error("No active games found");
 
     let totalDeleted = 0;
@@ -198,7 +201,11 @@ if (!process.env.VITEST) {
     await main();
   } catch (err) {
     logger.error(
-      { event: "generate.run.failed", error: getErrorMessage(err), durationMs: Date.now() - errorStartedAt },
+      {
+        event: "generate.run.failed",
+        error: getErrorMessage(err),
+        durationMs: Date.now() - errorStartedAt,
+      },
       "generate run failed",
     );
     process.exit(1);

@@ -4,7 +4,7 @@
  */
 
 import type { GamesTopic } from "@pontistudios/db";
-import { db, eq, gamesTopics } from "@pontistudios/db";
+import { db, eq, gamesTopics, or } from "@pontistudios/db";
 
 export async function getGameBySlug(slug: string): Promise<GamesTopic | null> {
   const row = await db.query.gamesTopics.findFirst({ where: eq(gamesTopics.slug, slug) });
@@ -14,6 +14,14 @@ export async function getGameBySlug(slug: string): Promise<GamesTopic | null> {
 export async function getActiveGames(): Promise<GamesTopic[]> {
   return db.query.gamesTopics.findMany({
     where: eq(gamesTopics.active, true),
+    orderBy: gamesTopics.name,
+  });
+}
+
+/** Active topics plus launch-pending topics that need puzzles before activation. */
+export async function getGamesForGeneration(): Promise<GamesTopic[]> {
+  return db.query.gamesTopics.findMany({
+    where: or(eq(gamesTopics.active, true), eq(gamesTopics.activationPending, true)),
     orderBy: gamesTopics.name,
   });
 }

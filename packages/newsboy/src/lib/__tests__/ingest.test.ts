@@ -1,9 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { db, gamesTopics } from "@pontistudios/db";
+import { articles, db, gamesPuzzles, gamesTopics } from "@pontistudios/db";
 import { cleanAll } from "../../data/test-db";
 import { GAME_CATALOG } from "../generation/catalog";
 import { ensureGameCatalog, extractArticleText, fetchFeedItems } from "../generation/ingest.server";
+import { getDateKey } from "../puzzle/date";
 
 describe("fetchFeedItems", () => {
   it("normalizes RSS markup and control content while preserving safe fields", async () => {
@@ -97,6 +98,36 @@ describe("ensureGameCatalog", () => {
         feedLabel: "BBC Health",
       },
     ]);
+  });
+
+  it("keeps new BBC topics pending until a puzzle exists for the current UTC date", async () => {
+    await ensureGameCatalog();
+    const politics = await db.query.gamesTopics.findFirst({
+      where: (table, { eq }) => eq(table.slug, "politics"),
+    });
+    expect(politics).toMatchObject({ active: false, activationPending: true });
+
+    const [article] = await db
+      .insert(articles)
+      .values({ gamesTopicId: politics!.id, url: "https://example.com/today", title: "Today" })
+      .returning();
+    await db.insert(gamesPuzzles).values({
+      gamesTopicId: politics!.id,
+      articleId: article!.id,
+      dateUtc: getDateKey(new Date()),
+      answer: "BRAVO",
+      answerType: "storyline",
+      normalizedAnswer: "BRAVO",
+      clue: "A current puzzle",
+      detail: "Ready to play",
+    });
+
+    await ensureGameCatalog();
+
+    const activated = await db.query.gamesTopics.findFirst({
+      where: (table, { eq }) => eq(table.slug, "politics"),
+    });
+    expect(activated).toMatchObject({ active: true, activationPending: false });
   });
 
   it("renames a stale row that already holds a catalog feed URL under a different slug", async () => {
