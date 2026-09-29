@@ -28,7 +28,7 @@ pnpm newsboy:prompt-test \
   --prompt-file=./my-prompt-v2.md
 
 # Override the model for a run without mutating env
-pnpm newsboy:prompt-test --model=openai/gpt-4o-mini
+pnpm newsboy:prompt-test --model=openai/gpt-5-mini
 ```
 
 Flags (`scripts/game-prompt-test.ts`): `--prompt-file` (repeatable),

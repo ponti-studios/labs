@@ -8,7 +8,7 @@ describe("text model resolution", () => {
   });
 
   it("defaults to Gemma 3 27B", () => {
-    expect(DEFAULT_TEXT_MODEL).toBe("google/gemma-3-27b-it");
+    expect(DEFAULT_TEXT_MODEL).toBe("openai/gpt-5-mini");
   });
 
   it("uses NEWSBOY_AI_MODEL when set", () => {
