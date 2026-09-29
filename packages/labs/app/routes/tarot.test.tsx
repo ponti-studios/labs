@@ -120,10 +120,7 @@ describe("TarotRoute", () => {
   it("migrates a legacy labyrinth-prefixed entry to the labs key", () => {
     const dateKey = getLocalDateKey();
     const result = createResult(dateKey);
-    window.localStorage.setItem(
-      getLegacyDailyTarotStorageKey(dateKey),
-      JSON.stringify(result),
-    );
+    window.localStorage.setItem(getLegacyDailyTarotStorageKey(dateKey), JSON.stringify(result));
 
     expect(readDailyTarotResult(dateKey)).toMatchObject({ date: dateKey });
     expect(window.localStorage.getItem(getLegacyDailyTarotStorageKey(dateKey))).toBeNull();
