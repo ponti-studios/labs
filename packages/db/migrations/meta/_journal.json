@@ -190,6 +190,13 @@
       "when": 1790528351109,
       "tag": "0026_easy_maria_hill",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1790667778323,
+      "tag": "0027_plain_mad_thinker",
+      "breakpoints": true
     }
   ]
 }

@@ -34,13 +34,14 @@ export const gamesTopics = labs.table("games_topics", {
   repeatWindowDays: integer("repeat_window_days").notNull().default(90),
   articleExpiryDays: integer("article_expiry_days").notNull().default(45),
   active: boolean("active").notNull().default(true),
+  activationPending: boolean("activation_pending").notNull().default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 // ── articles ─────────────────────────────────────────────────────────────────
-// Entity: an ingested article, deduped globally on url, owned by exactly one
-// games_topic. Status/lifecycle is scoped to that topic, not global.
+// Entity: an ingested article, unique by URL within a games_topic. A story may
+// appear in more than one topic feed, and its status/lifecycle is topic-scoped.
 
 export const articleStatusValues = ["pending", "used", "rejected", "expired"] as const;
 export type ArticleStatus = (typeof articleStatusValues)[number];
@@ -52,7 +53,7 @@ export const articles = labs.table(
     gamesTopicId: integer("games_topic_id")
       .notNull()
       .references(() => gamesTopics.id, { onDelete: "restrict" }),
-    url: text("url").notNull().unique(),
+    url: text("url").notNull(),
     title: text("title").notNull(),
     description: text("description"),
     articleText: text("article_text"),
@@ -64,6 +65,7 @@ export const articles = labs.table(
     rejectionReason: text("rejection_reason"),
   },
   (table) => [
+    uniqueIndex("articles_games_topic_url_idx").on(table.gamesTopicId, table.url),
     index("articles_status_idx").on(table.status),
     index("articles_published_at_idx").on(table.publishedAt),
   ],
