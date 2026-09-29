@@ -42,6 +42,7 @@ export const GAME_CATALOG = [
     genre: "politics",
     feedUrl: "https://feeds.bbci.co.uk/news/politics/rss.xml",
     feedLabel: "BBC Politics",
+    deferActivationUntilCurrentPuzzle: true,
   },
   {
     slug: "business",
@@ -49,6 +50,7 @@ export const GAME_CATALOG = [
     genre: "business",
     feedUrl: "https://feeds.bbci.co.uk/news/business/rss.xml",
     feedLabel: "BBC Business",
+    deferActivationUntilCurrentPuzzle: true,
   },
   {
     slug: "science",
@@ -56,6 +58,7 @@ export const GAME_CATALOG = [
     genre: "science",
     feedUrl: "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
     feedLabel: "BBC Science & Environment",
+    deferActivationUntilCurrentPuzzle: true,
   },
   {
     slug: "world",
@@ -63,6 +66,7 @@ export const GAME_CATALOG = [
     genre: "world",
     feedUrl: "https://feeds.bbci.co.uk/news/world/rss.xml",
     feedLabel: "BBC World",
+    deferActivationUntilCurrentPuzzle: true,
   },
   {
     slug: "health",
@@ -70,6 +74,7 @@ export const GAME_CATALOG = [
     genre: "health",
     feedUrl: "https://feeds.bbci.co.uk/news/health/rss.xml",
     feedLabel: "BBC Health",
+    deferActivationUntilCurrentPuzzle: true,
   },
 ] as const;
 
