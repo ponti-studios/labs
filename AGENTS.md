@@ -123,6 +123,10 @@ This ensures every script validates the same set of required variables and produ
 
 ## Authenticated Testing
 
+- For every UI change, verify the result in a browser before considering the
+  work complete. Use the local app and its dedicated test account when the UI
+  requires authentication; capture a screenshot when it helps document the
+  result or the user asks for one.
 - Browser, manual, and end-to-end tests that need an authenticated Newsboy player use the local test account `test@lvh.me`. Never use a personal account for testing.
 - Keep authenticated testing on local or explicitly disposable test services; never submit test-account credentials or OTPs to production.
 - For local Newsboy sign-in, trigger the OTP from the app, then retrieve it with Hominem's `just otp test@lvh.me` helper. Do not read the mailbox file directly.
