@@ -121,6 +121,13 @@ This ensures every script validates the same set of required variables and produ
 - Both the daily cron and manual force-regenerate runs share one workflow: `.github/workflows/newsboy-generate.yml`. Two schedule entries run nightly: `0 22 * * *` UTC (primary generation) and `0 23 * * *` UTC (retry pass — a gap-fill no-op when the primary succeeded, self-healing when it didn't); both run bare `pnpm newsboy:generate`. The `workflow_dispatch` trigger takes `mode` (`force` default / `gap_fill`), `days-ahead` (default `1`), and optional `from`/`to`, and runs `pnpm newsboy:generate` with the corresponding flags. Run failures surface via GitHub's native workflow-notification email (no custom alerting in the workflow)
 - Live dates (today in UTC or America/Los_Angeles) are protected from force regeneration unless the target `DATABASE_URL` is a loopback host (`isDisposableDatabase` in `packages/newsboy/src/lib/generation/generate-range.ts`) — the dev escape hatch; see `docs/newsboy/generation-current-architecture.md`
 
+## Authenticated Testing
+
+- Browser, manual, and end-to-end tests that need an authenticated Newsboy player use the local test account `test@lvh.me`. Never use a personal account for testing.
+- Keep authenticated testing on local or explicitly disposable test services; never submit test-account credentials or OTPs to production.
+- For local Newsboy sign-in, trigger the OTP from the app, then retrieve it with Hominem's `just otp test@lvh.me` helper. Do not read the mailbox file directly.
+- Unit tests that mock authentication can keep using isolated fixture identities. Multi-user tests may use additional synthetic test accounts when distinct identities are required.
+
 ## Authentication (Hominem)
 
 Hominem's Better Auth deployment is the sole auth authority for this repo. Labs
