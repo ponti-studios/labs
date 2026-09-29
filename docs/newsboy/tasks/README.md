@@ -15,8 +15,9 @@ Each file here is one proposed feature, scoped against the current
 implementation (`packages/newsboy`) and checked against
 [launch-plan.md](../launch-plan.md)'s guardrail against building public
 custom feeds, embeds, subscriptions, or white-label tooling before partner
-demand is shown. None of these are started; `status: proposed` on each file
-reflects that.
+demand is shown. Each file's own `status` frontmatter is the source of
+truth — most are `proposed` and not yet started; [Daily
+streaks](./streaks.md) and [Stats modal](./stats-modal.md) are `done`.
 
 ## Highest priority
 
@@ -25,8 +26,8 @@ reflects that.
 
 ## Gameplay / retention
 
-- [Daily streaks](./streaks.md)
-- [Stats modal](./stats-modal.md) (builds on streaks)
+- [Daily streaks](./streaks.md) — done
+- [Stats modal](./stats-modal.md) (builds on streaks) — done
 - [Article reveal after solve](./article-reveal.md)
 - [Multi-topic same-day badge](./multi-topic-badge.md)
 - [Hard mode](./hard-mode.md)

@@ -15,31 +15,46 @@ updated: 2026-09-29
 
 Every Newsboy answer is sourced from a real article
 (`games_puzzles.articleId` → `articles`, per
-[architecture.md](../architecture.md#storage-and-serving)). That provenance
-is currently invisible to the player. Surfacing it after the game ends is
-the most Newsboy-specific differentiator available (vs. a generic Wordle
-clone) and needs no new data — it's already on the puzzle record.
+[architecture.md](../architecture.md#storage-and-serving)). `GameResult`
+(`components/game/game-result.tsx`) already links to it: a bare
+`ExternalLink` icon button in the post-game action row, pointing at
+`puzzle.sources[0].url`. The article's title already reaches the client too
+(`PuzzleSource.title`, `lib/puzzle/types.ts`) but only as the icon's hover
+`title` attribute — nothing about the source is ever visually shown, and
+there's no publication/source name or image at all. Turning that icon into
+a real, visibly attributed article card is the most Newsboy-specific
+differentiator available (vs. a generic Wordle clone) and needs little new
+data — the title and link are already on the client-safe puzzle payload.
 
 ## Scope
 
-- After a game ends (win or loss), show a card with the source article: at
-  minimum title, publication/source name, and an outbound link. Consider the
-  existing `imageUrl` on `articles` for a richer card.
+- After a game ends (win or loss), replace the existing bare icon-only
+  source link with a card showing at minimum the article's title and
+  publication/source name, alongside the outbound link it already provides.
+  Consider the existing `imageUrl` on `articles` for a richer card.
 - Only reveal after the game is over — never before, and never in a way that
   spoils the answer for an in-progress guesser (e.g. no reveal in page
   metadata/OG tags, which the launch plan already treats as spoiler-free).
+  The existing icon link already respects this (only rendered once
+  `GameResult` itself is showing), so the replacement card should keep that
+  same gating.
 
 ## Implementation notes
 
-- The puzzle-serving path already resolves through
-  `resolveActivePuzzle` (`lib/data/puzzle.server.ts`); the article join is
-  a straightforward extension there, or a light join added to whatever
-  already returns the puzzle payload to the client.
-- Decide whether the article's full text/description is sent to the client
-  post-solve, or just title + link + source. Sending the article text at all
-  only after solve keeps risk low and avoids growing the pre-solve payload
-  (which must stay spoiler-free, per gameplay-and-ux.md's clue-timing
-  design).
+- Title and URL need no new plumbing — `PuzzleSource` (`lib/puzzle/types.ts`)
+  already carries both to the client via `puzzle.sources[0]`, consumed today
+  in `GameResult`'s icon link. Just render them instead of only using title
+  as a tooltip.
+- Source name and image are the actual gap: `articles.imageUrl` exists in
+  the schema but `PuzzleSource` doesn't include it or a source/publication
+  name. Decide whether to add `imageUrl` (and a source-name field, likely
+  derived from the per-topic `feedLabel` on `games_topics`) to
+  `PuzzleSource`, threaded through wherever it's currently built (the
+  puzzle-serving path resolving through `resolveActivePuzzle` in
+  `lib/data/puzzle.server.ts`).
+- Sending the article's full text/description at all remains a separate,
+  larger decision — keep this task to title + link + source name + image,
+  which is enough for a card, without growing the payload further.
 - Respect `articles.status` — a puzzle's source article is always the one
   marked `used` for that puzzle, so there's no ambiguity about which article
   to show.
