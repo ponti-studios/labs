@@ -99,7 +99,7 @@ secrets.
 | --- | --- | --- | --- |
 | Labs | `VITE_NEWSBOY_APP_URL` | Docker/Vite build and browser | `https://newsboy.ponti.io` |
 | Newsboy | `NEWSBOY_APP_URL` | Runtime | `https://newsboy.ponti.io` |
-| Newsboy | `NEWSBOY_AI_MODEL` | Runtime/workflow | `openai/gpt-4o-mini` |
+| Newsboy | `NEWSBOY_AI_MODEL` | Runtime/workflow | `openai/gpt-5-mini` |
 | Newsboy | `PORTLESS_URL` | Local runtime only | Per-worktree `https://<name>.lvh.me` |
 | Newsboy | `GAME_ADMIN_EMAILS` | Runtime admin access | Comma-separated Hominem admin email addresses; required in production |
 

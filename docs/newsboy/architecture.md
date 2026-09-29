@@ -5,7 +5,7 @@ status: active
 owner: charlesponti
 tags: [architecture, backend, react-router, generation]
 related: [./reliability-and-testing.md, ./candidate-generation.md]
-updated: 2026-09-23
+updated: 2026-09-29
 ---
 
 # Newsboy Architecture
@@ -31,7 +31,12 @@ The pipeline lives in `packages/newsboy/src/lib/`:
   `lib/data/puzzle.server.ts`; the operator UI lives in `src/routes/admin.*`
   and `lib/admin/*`.
 
-Entry-point scripts live in `packages/newsboy/scripts/` (`game-ingest.ts`, `game-generate.ts`, `game-health-check.ts`) and run as `pnpm newsboy:ingest`, `pnpm newsboy:generate`, `pnpm newsboy:health-check` from the repo root.
+Entry-point scripts live in `packages/newsboy/scripts/` (`game-ingest.ts`,
+`game-generate.ts`, `game-health-check.ts`) and run as `pnpm newsboy:ingest`,
+`pnpm newsboy:generate`, `pnpm newsboy:health-check` from the repo root.
+Generation accepts repeated `--topic <slug>` options to target active or
+launch-pending topics; scheduled runs omit the option and process all eligible
+topics.
 
 ## Core layers
 
@@ -52,17 +57,26 @@ quietly pull in an archive puzzle. If the provider is having a rough day, a
 shared circuit breaker stops the run after six consecutive failures rather than
 spending through the remaining attempt budget.
 
-## The five games
+## The topic catalog
 
 `lib/generation/catalog.ts` defines the catalog. `ensureGameCatalog` upserts it
 into `games_topics` whenever ingest runs, so adding a catalog entry provisions
-the game. The default slug is `reality`.
+the topic. The default slug is `reality`.
 
 - `reality` uses Reality Blurred: `https://realityblurred.com/realitytv/feed`
 - `technology` uses TechCrunch: `https://techcrunch.com/feed/`
 - `page-six` uses Page Six: `https://pagesix.com/feed/`
 - `tmz` uses TMZ: `https://www.tmz.com/rss.xml`
 - `sports` uses CBS Sports: `https://www.cbssports.com/rss/headlines/`
+- `politics` uses BBC Politics: `https://feeds.bbci.co.uk/news/politics/rss.xml`
+- `business` uses BBC Business: `https://feeds.bbci.co.uk/news/business/rss.xml`
+- `science` uses BBC Science & Environment: `https://feeds.bbci.co.uk/news/science_and_environment/rss.xml`
+- `world` uses BBC World: `https://feeds.bbci.co.uk/news/world/rss.xml`
+- `health` uses BBC Health: `https://feeds.bbci.co.uk/news/health/rss.xml`
+
+BBC topics remain launch-pending until a puzzle exists for the current UTC
+date. Ingest and scheduled generation include pending topics so they can build
+that puzzle; navigation and health checks include only active topics.
 
 Per-game tunables live on `games_topics`: answers are five letters, repeats are
 blocked for 90 days, articles expire after 45 days, and every current game
@@ -77,8 +91,9 @@ active feed in parallel, parses RSS with `fast-xml-parser`, fetches each item,
 and tries Mozilla Readability to pull out article text. When extraction cannot
 help, the title and description are still useful fallback material.
 
-Articles are inserted through `upsertArticles`. URLs are unique, so polling a
-feed again is harmless: only newly seen entries become pending inventory.
+Articles are inserted through `upsertArticles`. URLs are unique within a topic,
+so polling a feed again is harmless while stories that appear in multiple feeds
+remain available in each topic's pending inventory.
 Ingest is deliberately not trying to make puzzles. Its job is just to catch
 stories before they disappear from a short RSS feed window.
 

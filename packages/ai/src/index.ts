@@ -7,7 +7,7 @@ import {
   type OpenRouterClientOptions,
 } from "./client";
 
-export const DEFAULT_TEXT_MODEL = "google/gemma-3-27b-it";
+export const DEFAULT_TEXT_MODEL = "openai/gpt-5-mini";
 const DEFAULT_EMBEDDING_MODEL = "google/gemini-embedding-2";
 const DEFAULT_EMBEDDING_DIMENSIONS = 3072;
 
