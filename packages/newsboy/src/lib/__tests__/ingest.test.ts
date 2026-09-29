@@ -58,6 +58,47 @@ describe("ensureGameCatalog", () => {
     );
   });
 
+  it("includes the BBC topics with their requested names and feeds", () => {
+    const bbcTopics = GAME_CATALOG.filter(
+      (entry) => entry.slug !== "reality" && entry.feedLabel.startsWith("BBC"),
+    );
+
+    expect(
+      bbcTopics.map(({ slug, name, feedUrl, feedLabel }) => ({ slug, name, feedUrl, feedLabel })),
+    ).toEqual([
+      {
+        slug: "politics",
+        name: "Politics",
+        feedUrl: "https://feeds.bbci.co.uk/news/politics/rss.xml",
+        feedLabel: "BBC Politics",
+      },
+      {
+        slug: "business",
+        name: "Business",
+        feedUrl: "https://feeds.bbci.co.uk/news/business/rss.xml",
+        feedLabel: "BBC Business",
+      },
+      {
+        slug: "science",
+        name: "Science",
+        feedUrl: "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
+        feedLabel: "BBC Science & Environment",
+      },
+      {
+        slug: "world",
+        name: "World News",
+        feedUrl: "https://feeds.bbci.co.uk/news/world/rss.xml",
+        feedLabel: "BBC World",
+      },
+      {
+        slug: "health",
+        name: "Health",
+        feedUrl: "https://feeds.bbci.co.uk/news/health/rss.xml",
+        feedLabel: "BBC Health",
+      },
+    ]);
+  });
+
   it("renames a stale row that already holds a catalog feed URL under a different slug", async () => {
     const reality = GAME_CATALOG[0];
     await db.insert(gamesTopics).values({

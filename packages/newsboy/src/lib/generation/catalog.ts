@@ -36,6 +36,41 @@ export const GAME_CATALOG = [
     feedUrl: "https://www.cbssports.com/rss/headlines/",
     feedLabel: "CBS Sports",
   },
+  {
+    slug: "politics",
+    name: "Politics",
+    genre: "politics",
+    feedUrl: "https://feeds.bbci.co.uk/news/politics/rss.xml",
+    feedLabel: "BBC Politics",
+  },
+  {
+    slug: "business",
+    name: "Business",
+    genre: "business",
+    feedUrl: "https://feeds.bbci.co.uk/news/business/rss.xml",
+    feedLabel: "BBC Business",
+  },
+  {
+    slug: "science",
+    name: "Science",
+    genre: "science",
+    feedUrl: "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
+    feedLabel: "BBC Science & Environment",
+  },
+  {
+    slug: "world",
+    name: "World News",
+    genre: "world",
+    feedUrl: "https://feeds.bbci.co.uk/news/world/rss.xml",
+    feedLabel: "BBC World",
+  },
+  {
+    slug: "health",
+    name: "Health",
+    genre: "health",
+    feedUrl: "https://feeds.bbci.co.uk/news/health/rss.xml",
+    feedLabel: "BBC Health",
+  },
 ] as const;
 
 /**
@@ -50,6 +85,11 @@ export const TOPIC_EMOJI: Readonly<Record<string, string>> = {
   "page-six": "🗞️",
   tmz: "📸",
   sports: "🏆",
+  politics: "🏛️",
+  business: "💼",
+  science: "🔬",
+  world: "🌍",
+  health: "🩺",
   markets: "📈",
   culture: "🎭",
 };
