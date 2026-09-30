@@ -57,6 +57,13 @@ export const articles = labs.table(
     title: text("title").notNull(),
     description: text("description"),
     articleText: text("article_text"),
+    articleTextStatus: text("article_text_status", { enum: ["pending", "succeeded", "failed"] })
+      .notNull()
+      .default("pending"),
+    articleTextAttempts: integer("article_text_attempts").notNull().default(0),
+    articleTextAttemptedAt: timestamp("article_text_attempted_at"),
+    articleTextNextAttemptAt: timestamp("article_text_next_attempt_at"),
+    articleTextError: text("article_text_error"),
     imageUrl: text("image_url"),
     publishedAt: timestamp("published_at"),
     fetchedAt: timestamp("fetched_at").defaultNow().notNull(),
