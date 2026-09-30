@@ -78,6 +78,11 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           OPENROUTER_API_KEY: ${{ secrets.OR_WHAT_GAME_GENERATION }}
           NEWSBOY_AI_MODEL: openai/gpt-5-mini
+          # gpt-5-mini reasoning tokens count against the completion cap; at the
+          # default effort and 4000 tokens they starve the JSON answer (empty or
+          # truncated responses).
+          GAME_REASONING_EFFORT: low
+          GAME_MAX_TOKENS: "8000"
           INPUT_EVENT_NAME: ${{ github.event_name }}
           INPUT_DAYS_AHEAD: ${{ inputs.daysAhead }}
           INPUT_FROM: ${{ inputs.from }}
