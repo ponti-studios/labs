@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { z } from "zod";
 
-// Keep in sync with the admin generate form bounds (packages/newsboy src/lib/admin/generate.server.ts).
+// Keep in sync with the admin generate form bounds (packages/newsboy/src/lib/admin/generate.server.ts).
 const MIN_GAME_MAX_TOKENS = 200;
 const MAX_GAME_MAX_TOKENS = 16_000;
 
@@ -12,11 +12,13 @@ export const PontiServerEnv = z
     GAME_REASONING_EFFORT: z
       .enum(["default", "none", "minimal", "low", "medium", "high"])
       .optional(),
-    GAME_MAX_TOKENS: z.coerce
-      .number()
-      .int()
-      .min(MIN_GAME_MAX_TOKENS)
-      .max(MAX_GAME_MAX_TOKENS)
+    // Decimal digits only: the consumer reads this with Number.parseInt, which
+    // would misread forms like "2e2" that z.coerce.number() accepts.
+    GAME_MAX_TOKENS: z
+      .string()
+      .regex(/^\d+$/, "GAME_MAX_TOKENS must be a decimal integer")
+      .transform(Number)
+      .pipe(z.number().int().min(MIN_GAME_MAX_TOKENS).max(MAX_GAME_MAX_TOKENS))
       .optional(),
     PUBLIC_DATA_URL: z.string().default("https://public-data-production.up.railway.app"),
     R2_ENDPOINT: z.string().default("http://localhost:9000"),
