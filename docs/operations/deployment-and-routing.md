@@ -36,7 +36,7 @@ The failures were distributed across several boundaries:
 
 ### URL and environment contract
 
-- `packages/newsboy/src/lib/infrastructure/env.ts` owns Newsboy's server environment schema.
+- Newsboy's standalone repository owns its server environment schema.
 - Labs' browser-facing links to the standalone Newsboy app use `VITE_NEWSBOY_APP_URL`.
 - Production value is `https://newsboy.ponti.io`.
 - Local examples use `https://newsboy.lvh.me`; portless overrides the Newsboy
@@ -60,22 +60,21 @@ The failures were distributed across several boundaries:
 
 ### Railway build contract
 
-Before changing a deploy workflow, inspect all three together:
+Before changing the Labs deploy workflow, inspect these together:
 
-- the service Dockerfile;
-- the service's `railway.json`;
+- the Labs service Dockerfile;
+- the Labs service's `railway.json`;
 - `.github/workflows/reusable-railway-deploy.yml` and the caller's
   `config_path`.
 
-For this workspace, the Labs and Newsboy Dockerfiles require the monorepo root as
-their build context (they copy root workspace files such as
-`pnpm-workspace.yaml`). The reusable workflow stages the caller's `config_path`
-(`packages/labs/railway.json` or `packages/newsboy/railway.json`) over
-`railway.json`, then runs `railway up --service <service> --detach --ci` with
-`RAILWAY_TOKEN`, targeting the `RAILWAY_SERVICE` secret (`RAILWAY_SERVICE` for
-Labs, `NEWSBOY_RAILWAY_SERVICE` for Newsboy in `ci.yml`). A package subdirectory is
-only a valid deploy root if the Dockerfile can build without root workspace
-files.
+The Labs Dockerfile requires the monorepo root as its build context. The Labs
+reusable workflow stages `packages/labs/railway.json` over `railway.json`, then
+runs `railway up --service <service> --detach --ci` with `RAILWAY_TOKEN`,
+targeting the `RAILWAY_SERVICE` secret. Newsboy builds from its standalone root
+repository, connects directly to Railway's GitHub source integration, and keeps
+its service configuration in `.railway/railway.ts`. Its pre-deploy check reads
+the pinned Drizzle migration set but never applies migrations; Labs CI remains
+the sole production migration owner.
 
 ### CI and migration ordering contract
 
@@ -85,7 +84,7 @@ The required production sequence is:
 GitHub native `paths` filter matches
   -> CI succeeds
   -> production migration check in `ci.yml` succeeds
-      -> Labs and Newsboy deploy
+      -> Labs deploy; Newsboy verifies the pinned migration before app activation
 ```
 
 - CI uses the Foundation test database and runs the normal Drizzle migration
@@ -94,7 +93,9 @@ GitHub native `paths` filter matches
   never in an application deploy or game-generation workflow. The migration
   command runs on every production deployment and is a no-op when there are no
   pending migrations.
-- Labs and Newsboy deploy jobs both require the successful migration job.
+- The Labs deploy job requires the successful migration job. The Newsboy
+  Railway pre-deploy check verifies that the migration required by the pinned
+  DB package is recorded before activating the Newsboy image.
 - Production scope is selected by GitHub's native `on.push.paths` filter. There
   is no repository-specific changed-file script.
 - Never repair production by dropping or resetting the database. Inspect
@@ -118,8 +119,9 @@ Check the complete chain, in order:
 
 1. CI is green for the intended commit SHA.
 2. The production migration job is green.
-3. The expected Labs/Newsboy Railway deployment exists for that same SHA and is
-   actually `SUCCESS`, not merely submitted or detached.
+3. The expected Labs Railway deployment exists for that same SHA and is actually
+   `SUCCESS`, not merely submitted or detached. Newsboy deployments are verified
+   in its standalone repository and Railway service.
 4. Public smoke tests hit the standalone game directly:
 
    ```sh

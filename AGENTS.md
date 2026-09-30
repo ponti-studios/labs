@@ -103,24 +103,12 @@ Do **not** hand-write a workaround migration. Instead:
 
 The purpose of this rule is to keep `_journal.json`, the snapshot files, and the database's tracking table in agreement at all times.
 
-## Script Environment Validation
+## Newsboy Ownership
 
-All scripts (`packages/newsboy/scripts/*.ts`) must validate their environment using `LabsServerEnv.parse(process.env)`, imported from `packages/newsboy/src/lib/infrastructure/env.ts` (which re-exports the shared `@pontistudios/env` schema; Labs uses the same schema from `packages/labs/app/lib/server/env.ts`).
-
-- ❌ Do not define ad-hoc `requireEnvironment()` functions
-- ❌ Do not inline `if (!process.env.X)` checks
-
-This ensures every script validates the same set of required variables and produces consistent error messages.
-
-## Newsboy Puzzle Generation
-
-- The single entry point for all puzzle management is `packages/newsboy/scripts/game-generate.ts`
-- Normal mode: `pnpm newsboy:generate` (gap-fill, nightly cron) — generates exactly *tomorrow* from that same day's articles (1-day window, `GAME_READY_INVENTORY_DAYS` in `packages/newsboy/src/lib/generation/candidate-validation.ts`)
-- Force-regenerate mode: `pnpm newsboy:generate -- --force` (deletes and regenerates the window)
-- Do not create separate "regenerate" scripts — the `--force` flag handles that
-- Both the daily cron and manual force-regenerate runs share one workflow: `.github/workflows/newsboy-generate.yml`. Two schedule entries run nightly: `0 22 * * *` UTC (primary generation) and `0 23 * * *` UTC (retry pass — a gap-fill no-op when the primary succeeded, self-healing when it didn't); both run bare `pnpm newsboy:generate`. The `workflow_dispatch` trigger takes `mode` (`force` default / `gap_fill`), `days-ahead` (default `1`), and optional `from`/`to`, and runs `pnpm newsboy:generate` with the corresponding flags. Run failures surface via GitHub's native workflow-notification email (no custom alerting in the workflow)
-- Live dates (today in UTC or America/Los_Angeles) are protected from force regeneration unless the target `DATABASE_URL` is a loopback host (`isDisposableDatabase` in `packages/newsboy/src/lib/generation/generate-range.ts`) — the dev escape hatch; see `docs/newsboy/generation-current-architecture.md`
-- Explicit gap-fill ranges (`--from/--to`, no `--force`) may include live dates but not dates before the earliest live date. Filling a live date changes the fallback puzzle players are served while it is missing, so the default run never does it
+- Newsboy application code, Railway settings, generation scripts, and GitHub workflows live in `https://github.com/ponti-studios/newsboy`.
+- Labs remains the owner of `@pontistudios/db`, the Drizzle schema, and production migrations. Newsboy pins `@pontistudios/ai`, `@pontistudios/db`, and `@pontistudios/env` to one immutable Labs commit.
+- A Newsboy package-pin update must wait until Labs production migrations succeed for that commit. The Newsboy Railway pre-deploy check verifies the pinned migration is recorded before activating the app.
+- Newsboy owns its gap-fill and force generation entry point and nightly/manual workflow. Follow its repository's README and AGENTS instructions when changing puzzle generation.
 
 ## Authenticated Testing
 
@@ -138,7 +126,7 @@ This ensures every script validates the same set of required variables and produ
 Hominem's Better Auth deployment is the sole auth authority for this repo. Labs
 never issues or validates its own sessions, and never hosts a login form.
 
-- Session checks go through `getHominemUser()` — `packages/labs/app/lib/server/hominem-auth.ts` for Labs, `packages/newsboy/src/lib/infrastructure/hominem-auth.ts` for Newsboy
+- Session checks go through `getHominemUser()` — `packages/labs/app/lib/server/hominem-auth.ts` for Labs. Newsboy's implementation lives in its standalone repository.
   (server-only — it forwards the request's `Cookie` header to the Hominem API).
 - To send a player to sign in, use `buildHominemLoginUrl(returnTo)`. `returnTo`
   must be an absolute Labs URL; the Hominem API only honors origins it trusts as
@@ -155,5 +143,5 @@ them locally or in CI.
 
 - Storybook is development-only in this repository.
 - Never run `storybook build`, `build-storybook`, or any equivalent production Storybook export.
-- Use the `storybook` script for local validation — Labs runs `storybook dev -p 6007` (`packages/labs`), Newsboy runs `storybook dev -p 6008` (`packages/newsboy`).
+- Use the `storybook` script for local validation — Labs runs `storybook dev -p 6007` (`packages/labs`). Newsboy Storybook is managed in its standalone repository.
 - Do not add CI, package scripts, or deployment steps that build Storybook statically.

@@ -3,7 +3,6 @@ packages:
   - "packages/db"
   - "packages/env"
   - "packages/labs"
-  - "packages/newsboy"
 
 catalog:
   "@mozilla/readability": ^0.6.0
