@@ -1,19 +1,14 @@
 {
-  "name": "@ponti-studios/labs-workspace",
+  "name": "@ponti-studios/labs",
   "private": true,
   "scripts": {
-    "db:generate": "pnpm --filter @pontistudios/db db:generate",
-    "db:migrate": "pnpm --filter @pontistudios/db db:migrate",
-    "build:labs": "pnpm --filter labs build",
-    "build:all": "pnpm run build:labs",
-    "build": "pnpm run build:labs",
+    "db:generate": "pnpm --filter labs db:generate",
+    "db:migrate": "pnpm --filter labs db:migrate",
+    "build": "pnpm --filter labs build",
     "check": "pnpm run lint:check && pnpm run typecheck",
     "lint:check": "pnpm --filter labs lint:check",
     "test": "pnpm --filter labs test",
-    "test:shared": "pnpm --filter @pontistudios/ai test",
-    "typecheck:labs": "pnpm --filter labs typecheck",
-    "typecheck:shared": "pnpm --filter @pontistudios/ai typecheck && pnpm --filter @pontistudios/db typecheck && pnpm --filter @pontistudios/env typecheck",
-    "typecheck": "pnpm --filter labs exec react-router typegen && tsc -b tsconfig.json",
+    "typecheck": "pnpm --filter labs typecheck",
     "labs:dev": "pnpm --filter labs dev"
   },
   "devDependencies": {

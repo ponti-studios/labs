@@ -1,6 +1,6 @@
 # Labs
 
-Ponti Studios portfolio and playground — a pnpm monorepo for Labs (the portfolio), shared packages, and experiments. Newsboy is maintained in its [own repository](https://github.com/ponti-studios/newsboy).
+Ponti Studios portfolio and playground — a single React Router app with data visualization, tarot, and experiments. Newsboy is maintained in its own repository and deployed separately.
 
 Local infrastructure is provided by the sibling [Foundation](https://github.com/ponti-studios/foundation)
 repository; Labs runs on the host and connects to Foundation's Docker services.
@@ -11,10 +11,7 @@ for the canonical services, ports, and database URLs.
 
 | Package | App | Root commands |
 | --- | --- | --- |
-| `packages/labs` (`labs`) | Portfolio at `https://labs.lvh.me` | `pnpm labs:dev`, `pnpm build:labs` |
-| [Newsboy](https://github.com/ponti-studios/newsboy) | Daily game at `https://newsboy.ponti.io` | Follow its repository README |
-| `packages/db` (`@pontistudios/db`) | Drizzle schema + migrations (shared) | `pnpm db:generate`, `pnpm db:migrate` |
-| `packages/ai`, `packages/env` | Shared AI/env helpers | — |
+| `packages/labs` (`labs`) | Labs app at `https://labs.lvh.me`; owns its AI client, env schemas, database schema, and migrations | `pnpm labs:dev`, `pnpm build`, `pnpm db:generate`, `pnpm db:migrate` |
 
 ## Getting Started
 
@@ -31,14 +28,13 @@ pnpm install
 #    auth cookies actually work; elevates with sudo to bind 443)
 pnpm exec portless proxy start --port 443 --tld lvh.me
 
-# 4. Run the Labs dev server (or `just dev` through portless)
+# 4. Run the dev servers (or `just dev` for both through portless)
 pnpm labs:dev      # Labs on https://labs.lvh.me
 ```
 
 Labs gets a stable `https://labs.lvh.me` URL instead of a fixed port, configured
-via the `"portless"` key in `packages/labs/package.json` (`dev` delegates to
-`portless`, the real command is `dev:app`). Newsboy's local development setup is
-documented in its own repository.
+via the `"portless"` key in the app package's `package.json` (`dev` delegates to
+`portless`, the real command is `dev:app`).
 
 Foundation provides:
 
@@ -55,24 +51,19 @@ Credentials: `postgres` / `postgres` | `minioadmin` / `minioadmin`
 | --- | --- |
 | `just up` / `just dev` | Portless proxy + Labs dev server (see `justfile`) |
 | `pnpm labs:dev` | Start Labs dev server at `https://labs.lvh.me` |
-| `pnpm build` / `pnpm build:labs` | Production build of Labs |
-| `pnpm build:all` | Production build of all Labs-owned apps |
+| `pnpm build` | Production build of Labs |
 | `pnpm check` | `lint:check` + full typecheck |
 | `pnpm test` | Labs unit tests |
-| `pnpm test:shared` | Shared package (`ai`, `db`, `env`) tests |
-| `pnpm typecheck` | Labs React Router typegen + `tsc -b` across Labs-owned packages |
-| `pnpm db:generate` | Generate Drizzle migration (edit `packages/db/src/schema/` first) |
+| `pnpm typecheck` | Labs React Router typegen + TypeScript check |
+| `pnpm db:generate` | Generate Drizzle migration (edit `packages/labs/app/lib/server/db/schema/` first) |
 | `pnpm db:migrate` | Apply Drizzle migrations to `DATABASE_URL` |
 | `pnpm storybook` | Labs Storybook (port 6007) |
 
 ## Deployment
 
-Labs deploys to Railway via `.github/workflows/ci.yml` on production-relevant
-pushes to `main`: CI → production migration (`migrate` job) → `deploy-labs`.
-Newsboy app deployments and generation workflows are owned by the standalone
-Newsboy repository. The database schema and migration chain remain in Labs;
-Newsboy pins shared package code to a Labs commit and its Railway pre-deploy
-check blocks app activation until that commit's migrations are recorded.
+Deployed to Railway via `.github/workflows/ci.yml` on production-relevant pushes
+to `main`: CI → production migration (`migrate` job) → `deploy-labs` (reusable
+`reusable-railway-deploy.yml`). Newsboy deploys and generates from its own repo.
 
 Before changing environment values, routes, databases, authentication, or
 deployment workflows, read the [core development flows](docs/operations/core-development-flows.md)

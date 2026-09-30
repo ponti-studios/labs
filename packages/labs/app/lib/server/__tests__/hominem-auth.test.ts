@@ -122,6 +122,9 @@ describe("getHominemUser", () => {
   });
 
   it("forwards the request so the auth package can read its cookies", async () => {
+    process.env.HOMINEM_API_URL = "https://api.ponti.io";
+    delete process.env.HOMINEM_INTERNAL_API_URL;
+    process.env.NODE_ENV = "production";
     mocks.getServerAuth.mockResolvedValue({ user: null, headers: new Headers() });
     const request = makeRequest("session=abc");
 
