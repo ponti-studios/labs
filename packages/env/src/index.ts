@@ -1,10 +1,23 @@
 import "dotenv/config";
 import { z } from "zod";
 
+// Keep in sync with the admin generate form bounds (packages/newsboy src/lib/admin/generate.server.ts).
+const MIN_GAME_MAX_TOKENS = 200;
+const MAX_GAME_MAX_TOKENS = 16_000;
+
 export const PontiServerEnv = z
   .object({
     OPENROUTER_API_KEY: z.string(),
     NEWSBOY_AI_MODEL: z.string().trim().min(1).optional(),
+    GAME_REASONING_EFFORT: z
+      .enum(["default", "none", "minimal", "low", "medium", "high"])
+      .optional(),
+    GAME_MAX_TOKENS: z.coerce
+      .number()
+      .int()
+      .min(MIN_GAME_MAX_TOKENS)
+      .max(MAX_GAME_MAX_TOKENS)
+      .optional(),
     PUBLIC_DATA_URL: z.string().default("https://public-data-production.up.railway.app"),
     R2_ENDPOINT: z.string().default("http://localhost:9000"),
     R2_BUCKET_NAME: z.string().default("labyrinth"),
@@ -15,6 +28,8 @@ export const PontiServerEnv = z
   .transform((env) => ({
     openRouterApiKey: env.OPENROUTER_API_KEY,
     newsboyAiModel: env.NEWSBOY_AI_MODEL,
+    gameReasoningEffort: env.GAME_REASONING_EFFORT,
+    gameMaxTokens: env.GAME_MAX_TOKENS,
     publicDataUrl: env.PUBLIC_DATA_URL,
     r2Endpoint: env.R2_ENDPOINT,
     r2Bucket: env.R2_BUCKET_NAME,
