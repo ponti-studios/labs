@@ -4,8 +4,31 @@ on:
   push:
     branches: [main]
     paths:
-      - "packages/labs/**"
+      - ".dockerignore"
+      - ".gitignore"
+      - ".mise.toml"
+      - ".nvmrc"
+      - ".npmrc"
+      - ".oxfmtrc.json"
+      - ".oxlintrc.json"
+      - "app/**"
+      - "public/**"
+      - "scripts/**"
+      - "migrations/**"
+      - ".storybook/**"
+      - "Dockerfile"
+      - "components.json"
+      - "drizzle.config.ts"
+      - "instrument.server.mjs"
+      - "package.json"
       - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "railway.json"
+      - "react-router.config.ts"
+      - "tsconfig.json"
+      - "vite.config.ts"
+      - "vitest.config.ts"
+      - "vitest.setup.ts"
       - ".github/workflows/ci.yml"
       - ".github/workflows/reusable-railway-deploy.yml"
   pull_request:
@@ -60,9 +83,8 @@ jobs:
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: |
-            packages/*/tsconfig.tsbuildinfo
             tsconfig.tsbuildinfo
-          key: tsbuildinfo-${{ runner.os }}-${{ hashFiles('packages/labs/tsconfig.json', 'tsconfig.base.json', 'tsconfig.json', 'pnpm-lock.yaml', 'packages/labs/app/**') }}
+          key: tsbuildinfo-${{ runner.os }}-${{ hashFiles('tsconfig.json', 'pnpm-lock.yaml', 'app/**') }}
       - run: pnpm typecheck
       - run: pnpm test
 
@@ -109,7 +131,7 @@ jobs:
     with:
       node-version: "24"
       railway-cli-version: "4.58.0"
-      config_path: "packages/labs/railway.json"
+      config_path: "railway.json"
       timeout-minutes: 10
     secrets:
       railway_token: ${{ secrets.RAILWAY_TOKEN }}
