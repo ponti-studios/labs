@@ -1,6 +1,6 @@
 # Labs
 
-Ponti Studios portfolio and playground — a pnpm monorepo with two React Router apps: Labs (the portfolio) and Newsboy (the daily word game). Puzzles, data visualization, tarot, and experiments.
+Ponti Studios portfolio and playground — a pnpm monorepo for Labs (the portfolio), shared packages, and experiments. Newsboy is maintained in its [own repository](https://github.com/ponti-studios/newsboy).
 
 Local infrastructure is provided by the sibling [Foundation](https://github.com/ponti-studios/foundation)
 repository; Labs runs on the host and connects to Foundation's Docker services.
@@ -12,7 +12,7 @@ for the canonical services, ports, and database URLs.
 | Package | App | Root commands |
 | --- | --- | --- |
 | `packages/labs` (`labs`) | Portfolio at `https://labs.lvh.me` | `pnpm labs:dev`, `pnpm build:labs` |
-| `packages/newsboy` (`newsboy`) | Newsboy daily game at `https://newsboy.lvh.me` | `pnpm newsboy:dev`, `pnpm build:newsboy`, `pnpm newsboy:generate` |
+| [Newsboy](https://github.com/ponti-studios/newsboy) | Daily game at `https://newsboy.ponti.io` | Follow its repository README |
 | `packages/db` (`@pontistudios/db`) | Drizzle schema + migrations (shared) | `pnpm db:generate`, `pnpm db:migrate` |
 | `packages/ai`, `packages/env` | Shared AI/env helpers | — |
 
@@ -31,17 +31,14 @@ pnpm install
 #    auth cookies actually work; elevates with sudo to bind 443)
 pnpm exec portless proxy start --port 443 --tld lvh.me
 
-# 4. Run the dev servers (or `just dev` for both through portless)
+# 4. Run the Labs dev server (or `just dev` through portless)
 pnpm labs:dev      # Labs on https://labs.lvh.me
-pnpm newsboy:dev      # Newsboy on https://newsboy.lvh.me
 ```
 
-Each web app gets a stable `https://<name>.lvh.me` URL instead of a fixed
-port — `labs.lvh.me` (Labs) and `newsboy.lvh.me` (Newsboy) — configured via the
-`"portless"` key in each package's `package.json` (`dev` delegates to
-`portless`, the real command is `dev:app`). This is what lets multiple git
-worktrees run the dev servers concurrently without port collisions (portless
-prefixes each worktree's branch onto the hostname).
+Labs gets a stable `https://labs.lvh.me` URL instead of a fixed port, configured
+via the `"portless"` key in `packages/labs/package.json` (`dev` delegates to
+`portless`, the real command is `dev:app`). Newsboy's local development setup is
+documented in its own repository.
 
 Foundation provides:
 
@@ -56,33 +53,26 @@ Credentials: `postgres` / `postgres` | `minioadmin` / `minioadmin`
 
 | Command | Purpose |
 | --- | --- |
-| `just up` / `just dev` | Portless proxy + both dev servers (see `justfile`) |
+| `just up` / `just dev` | Portless proxy + Labs dev server (see `justfile`) |
 | `pnpm labs:dev` | Start Labs dev server at `https://labs.lvh.me` |
-| `pnpm newsboy:dev` | Start Newsboy dev server at `https://newsboy.lvh.me` |
 | `pnpm build` / `pnpm build:labs` | Production build of Labs |
-| `pnpm build:newsboy` / `pnpm build:all` | Production build of Newsboy / everything |
+| `pnpm build:all` | Production build of all Labs-owned apps |
 | `pnpm check` | `lint:check` + full typecheck |
 | `pnpm test` | Labs unit tests |
-| `pnpm test:newsboy` | Newsboy unit tests |
 | `pnpm test:shared` | Shared package (`ai`, `db`, `env`) tests |
-| `pnpm typecheck` | React Router typegen + `tsc -b` across packages |
+| `pnpm typecheck` | Labs React Router typegen + `tsc -b` across Labs-owned packages |
 | `pnpm db:generate` | Generate Drizzle migration (edit `packages/db/src/schema/` first) |
 | `pnpm db:migrate` | Apply Drizzle migrations to `DATABASE_URL` |
-| `pnpm newsboy:generate` | Generate Newsboy puzzles (gap-fill or `--force`, see docs/newsboy) |
-| `pnpm newsboy:ingest` | Poll RSS feeds into the article inventory |
-| `pnpm newsboy:health-check` | Verify today's puzzle + forward inventory |
-| `pnpm storybook` | Labs Storybook (port 6007; Newsboy's is 6008, run inside `packages/newsboy`) |
-
-Package-local scripts (not exposed at the root) run from inside the package,
-e.g. `cd packages/newsboy && pnpm game:capture-fixtures`.
+| `pnpm storybook` | Labs Storybook (port 6007) |
 
 ## Deployment
 
-Deployed to Railway via `.github/workflows/ci.yml` on production-relevant pushes
-to `main`: CI → production migration (`migrate` job) → `deploy-labs` /
-`deploy-newsboy` (reusable `reusable-railway-deploy.yml`). Game generation runs
-separately from `.github/workflows/newsboy-generate.yml` (daily cron +
-`workflow_dispatch`).
+Labs deploys to Railway via `.github/workflows/ci.yml` on production-relevant
+pushes to `main`: CI → production migration (`migrate` job) → `deploy-labs`.
+Newsboy app deployments and generation workflows are owned by the standalone
+Newsboy repository. The database schema and migration chain remain in Labs;
+Newsboy pins shared package code to a Labs commit and its Railway pre-deploy
+check blocks app activation until that commit's migrations are recorded.
 
 Before changing environment values, routes, databases, authentication, or
 deployment workflows, read the [core development flows](docs/operations/core-development-flows.md)
