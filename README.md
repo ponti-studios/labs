@@ -7,11 +7,9 @@ repository; Labs runs on the host and connects to Foundation's Docker services.
 See the [development infrastructure instructions](AGENTS.md#development-infrastructure-foundation-compose)
 for the canonical services, ports, and database URLs.
 
-## Layout
-
-| Package | App | Root commands |
-| --- | --- | --- |
-| `packages/labs` (`labs`) | Labs app at `https://labs.lvh.me`; owns its AI client, env schemas, database schema, and migrations | `pnpm labs:dev`, `pnpm build`, `pnpm db:generate`, `pnpm db:migrate` |
+Labs is a single pnpm app at the repository root. It owns its AI client,
+environment schemas, database schema, and migrations. Newsboy is maintained in
+its own repository and deployed separately.
 
 ## Getting Started
 
@@ -28,13 +26,13 @@ pnpm install
 #    auth cookies actually work; elevates with sudo to bind 443)
 pnpm exec portless proxy start --port 443 --tld lvh.me
 
-# 4. Run the dev servers (or `just dev` for both through portless)
-pnpm labs:dev      # Labs on https://labs.lvh.me
+# 4. Run Labs through portless (or `just dev`)
+pnpm dev           # Labs on https://labs.lvh.me
 ```
 
 Labs gets a stable `https://labs.lvh.me` URL instead of a fixed port, configured
-via the `"portless"` key in the app package's `package.json` (`dev` delegates to
-`portless`, the real command is `dev:app`).
+via the `"portless"` key in the root `package.json` (`dev` delegates to
+`portless`, the app server command is `dev:app`).
 
 Foundation provides:
 
@@ -50,12 +48,12 @@ Credentials: `postgres` / `postgres` | `minioadmin` / `minioadmin`
 | Command | Purpose |
 | --- | --- |
 | `just up` / `just dev` | Portless proxy + Labs dev server (see `justfile`) |
-| `pnpm labs:dev` | Start Labs dev server at `https://labs.lvh.me` |
+| `pnpm dev` | Start Labs dev server at `https://labs.lvh.me` |
 | `pnpm build` | Production build of Labs |
 | `pnpm check` | `lint:check` + full typecheck |
 | `pnpm test` | Labs unit tests |
 | `pnpm typecheck` | Labs React Router typegen + TypeScript check |
-| `pnpm db:generate` | Generate Drizzle migration (edit `packages/labs/app/lib/server/db/schema/` first) |
+| `pnpm db:generate` | Generate Drizzle migration (edit `app/lib/server/db/schema/` first) |
 | `pnpm db:migrate` | Apply Drizzle migrations to `DATABASE_URL` |
 | `pnpm storybook` | Labs Storybook (port 6007) |
 
