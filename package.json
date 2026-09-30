@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "react-router build",
+    "check": "pnpm run lint:check && pnpm run typecheck",
     "dev": "portless",
     "dev:app": "react-router dev",
     "lint": "oxlint app --fix",
@@ -54,6 +55,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "portless": "0.15.6",
     "@react-router/dev": "^8.4.0",
     "@storybook/addon-a11y": "10.6.0",
     "@storybook/addon-docs": "^10.6.0",
