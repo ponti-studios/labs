@@ -4,7 +4,6 @@
     { "path": "packages/ai" },
     { "path": "packages/db" },
     { "path": "packages/env" },
-    { "path": "packages/labs" },
-    { "path": "packages/newsboy" }
+    { "path": "packages/labs" }
   ]
 }

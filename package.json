@@ -5,7 +5,7 @@
     "db:generate": "pnpm --filter @pontistudios/db db:generate",
     "db:migrate": "pnpm --filter @pontistudios/db db:migrate",
     "build:labs": "pnpm --filter labs build",
-    "build:all": "pnpm run build:labs && pnpm run build:newsboy",
+    "build:all": "pnpm run build:labs",
     "build": "pnpm run build:labs",
     "check": "pnpm run lint:check && pnpm run typecheck",
     "lint:check": "pnpm --filter labs lint:check",
@@ -13,16 +13,8 @@
     "test:shared": "pnpm --filter @pontistudios/ai test",
     "typecheck:labs": "pnpm --filter labs typecheck",
     "typecheck:shared": "pnpm --filter @pontistudios/ai typecheck && pnpm --filter @pontistudios/db typecheck && pnpm --filter @pontistudios/env typecheck",
-    "typecheck": "pnpm --filter labs exec react-router typegen && pnpm --filter newsboy exec react-router typegen && tsc -b tsconfig.json",
-    "build:newsboy": "pnpm --filter newsboy build",
-    "test:newsboy": "pnpm --filter newsboy test",
-    "typecheck:newsboy": "pnpm --filter newsboy typecheck",
-    "labs:dev": "pnpm --filter labs dev",
-    "newsboy:dev": "pnpm --filter newsboy dev",
-    "newsboy:generate": "pnpm --filter newsboy newsboy:generate",
-    "newsboy:health-check": "pnpm --filter newsboy newsboy:health-check",
-    "newsboy:ingest": "pnpm --filter newsboy newsboy:ingest",
-    "newsboy:prompt-test": "pnpm --filter newsboy newsboy:prompt-test"
+    "typecheck": "pnpm --filter labs exec react-router typegen && tsc -b tsconfig.json",
+    "labs:dev": "pnpm --filter labs dev"
   },
   "devDependencies": {
     "@types/react": "^19.3.0",

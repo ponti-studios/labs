@@ -18,9 +18,9 @@ up:
       echo "proxy already up on :443"
     fi
     echo "labs: https://labs.lvh.me"
-    echo "newsboy:  https://newsboy.lvh.me"
+    echo "Newsboy: see https://github.com/ponti-studios/newsboy"
 
-# Boot Labs + Newsboy through the portless proxy.
+# Boot Labs through the portless proxy.
 dev:
     pnpm exec portless run
 
