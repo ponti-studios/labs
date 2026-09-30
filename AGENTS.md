@@ -120,6 +120,7 @@ This ensures every script validates the same set of required variables and produ
 - Do not create separate "regenerate" scripts — the `--force` flag handles that
 - Both the daily cron and manual force-regenerate runs share one workflow: `.github/workflows/newsboy-generate.yml`. Two schedule entries run nightly: `0 22 * * *` UTC (primary generation) and `0 23 * * *` UTC (retry pass — a gap-fill no-op when the primary succeeded, self-healing when it didn't); both run bare `pnpm newsboy:generate`. The `workflow_dispatch` trigger takes `mode` (`force` default / `gap_fill`), `days-ahead` (default `1`), and optional `from`/`to`, and runs `pnpm newsboy:generate` with the corresponding flags. Run failures surface via GitHub's native workflow-notification email (no custom alerting in the workflow)
 - Live dates (today in UTC or America/Los_Angeles) are protected from force regeneration unless the target `DATABASE_URL` is a loopback host (`isDisposableDatabase` in `packages/newsboy/src/lib/generation/generate-range.ts`) — the dev escape hatch; see `docs/newsboy/generation-current-architecture.md`
+- Explicit gap-fill ranges (`--from/--to`, no `--force`) may include live dates but not dates before the earliest live date. Filling a live date changes the fallback puzzle players are served while it is missing, so the default run never does it
 
 ## Authenticated Testing
 
