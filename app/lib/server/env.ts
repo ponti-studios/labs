@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export const LabsServerEnv = z
   .object({
-    OPENROUTER_API_KEY: z.string(),
+    OPENROUTER_API_KEY: z.string().trim().min(1),
     NEWSBOY_AI_MODEL: z.string().trim().min(1).optional(),
     PUBLIC_DATA_URL: z.string().default("https://public-data-production.up.railway.app"),
     R2_ENDPOINT: z.string().default("http://localhost:9000"),

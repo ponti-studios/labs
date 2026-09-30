@@ -4,22 +4,9 @@
     {
       "name": "labs",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "labs", "dev"],
+      "runtimeArgs": ["dev"],
       "port": 443,
       "url": "https://labs.lvh.me"
-    },
-    {
-      "name": "game",
-      "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--dir", "packages/what", "dev"],
-      "port": 5173
-    },
-    {
-      "name": "storybook",
-      "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--dir", "packages/what", "storybook"],
-      "port": 6008,
-      "autoPort": true
     }
   ]
 }

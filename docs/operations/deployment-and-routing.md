@@ -13,11 +13,9 @@ The failures were distributed across several boundaries:
    directly. It did not prove that the production Labs service had the right
    variable, that the deployed build contained the route, or that
    `labs.ponti.io` returned the expected `Location` header.
-2. **The deploy context was assumed rather than checked.** The Labs Dockerfile
-   uses root workspace files such as `pnpm-workspace.yaml`, while the workflow
-   deployed `packages/labs` as the source root. Railway therefore could not
-   build the service. A successful workflow submission was mistaken for a
-   successful application deployment.
+2. **The deploy context was assumed rather than checked.** The app now builds
+   from the repository root as a standalone package. A successful workflow
+   submission is not evidence that Railway completed the application deploy.
 3. **Environment variables drifted.** The code used `NEWSBOY_APP_URL`, while
    Railway also contained the stale `NEWSBOY_APP_ORIGIN` pointing at an old
    Railway hostname. There was no checked-in inventory saying which variable
@@ -67,12 +65,11 @@ Before changing a deploy workflow, inspect all three together:
 - `.github/workflows/reusable-railway-deploy.yml` and the caller's
   `config_path`.
 
-The Labs Dockerfile requires the repository root as its build context because
-it copies root workspace files such as `pnpm-workspace.yaml`. The reusable
-workflow stages `packages/labs/railway.json` over `railway.json`, then runs
-`railway up --service <service> --detach --ci` with `RAILWAY_TOKEN`, targeting
-the `RAILWAY_SERVICE` secret. Newsboy's independent repository owns its own
-Docker build and deployment configuration.
+The Labs Dockerfile and `railway.json` live at the repository root. The reusable
+workflow uses this root build context and runs `railway up --service <service>
+--detach --ci` with `RAILWAY_TOKEN`, targeting the `RAILWAY_SERVICE` secret.
+Newsboy's independent repository owns its own Docker build and deployment
+configuration.
 
 ### CI and migration ordering contract
 
@@ -102,7 +99,7 @@ GitHub native `paths` filter matches
 
 ### Before commit
 
-- Run the relevant package typecheck and tests.
+- Run the root app typecheck and relevant tests.
 - Run the generated route/typecheck command when editing React Router routes.
 - Run `actionlint` and inspect workflow `workflow_run` SHA handling when editing
   Actions.

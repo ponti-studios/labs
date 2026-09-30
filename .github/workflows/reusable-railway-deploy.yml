@@ -59,7 +59,7 @@ jobs:
         run: test -n "$RAILWAY_TOKEN"
 
       - name: stage-railway-config
-        if: inputs.config_path != ''
+        if: inputs.config_path != '' && inputs.config_path != 'railway.json'
         run: cp "${{ inputs.config_path }}" railway.json
 
       - name: deploy-to-railway
