@@ -16,7 +16,9 @@
     "start": "react-router-serve ./build/server/index.js --port=${PORT:-3000}",
     "test": "DEBUG_PRINT_LIMIT=500 vitest run --environment jsdom --coverage --reporter verbose --passWithNoTests",
     "storybook": "storybook dev -p 6007",
-    "typecheck": "react-router typegen && tsc -b"
+    "typecheck": "react-router typegen && tsc -b",
+    "db:generate": "drizzle-kit generate --config drizzle.config.ts",
+    "db:migrate": "drizzle-kit migrate --config drizzle.config.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1140.0",
@@ -24,9 +26,6 @@
     "@openrouter/sdk": "catalog:",
     "@ponti-studios/auth": "catalog:",
     "@ponti-studios/ui": "catalog:",
-    "@pontistudios/ai": "workspace:*",
-    "@pontistudios/db": "workspace:*",
-    "@pontistudios/env": "workspace:*",
     "@react-router/node": "catalog:",
     "@react-router/serve": "catalog:",
     "@sentry/node": "^10.71.0",
@@ -69,6 +68,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "catalog:",
     "@vitest/coverage-v8": "^5.0.1",
+    "drizzle-kit": "^0.31.10",
     "jiti": "^2.7.0",
     "oxfmt": "0.70.0",
     "oxlint": "catalog:",

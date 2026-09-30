@@ -1,7 +1,4 @@
 packages:
-  - "packages/ai"
-  - "packages/db"
-  - "packages/env"
   - "packages/labs"
 
 catalog:

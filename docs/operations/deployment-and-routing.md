@@ -36,7 +36,7 @@ The failures were distributed across several boundaries:
 
 ### URL and environment contract
 
-- Newsboy's standalone repository owns its server environment schema.
+- Newsboy's own repository owns its server environment schema.
 - Labs' browser-facing links to the standalone Newsboy app use `VITE_NEWSBOY_APP_URL`.
 - Production value is `https://newsboy.ponti.io`.
 - Local examples use `https://newsboy.lvh.me`; portless overrides the Newsboy
@@ -60,21 +60,19 @@ The failures were distributed across several boundaries:
 
 ### Railway build contract
 
-Before changing the Labs deploy workflow, inspect these together:
+Before changing a deploy workflow, inspect all three together:
 
-- the Labs service Dockerfile;
-- the Labs service's `railway.json`;
+- the service Dockerfile;
+- the service's `railway.json`;
 - `.github/workflows/reusable-railway-deploy.yml` and the caller's
   `config_path`.
 
-The Labs Dockerfile requires the monorepo root as its build context. The Labs
-reusable workflow stages `packages/labs/railway.json` over `railway.json`, then
-runs `railway up --service <service> --detach --ci` with `RAILWAY_TOKEN`,
-targeting the `RAILWAY_SERVICE` secret. Newsboy builds from its standalone root
-repository, connects directly to Railway's GitHub source integration, and keeps
-its service configuration in `.railway/railway.ts`. Its pre-deploy check reads
-the pinned Drizzle migration set but never applies migrations; Labs CI remains
-the sole production migration owner.
+The Labs Dockerfile requires the repository root as its build context because
+it copies root workspace files such as `pnpm-workspace.yaml`. The reusable
+workflow stages `packages/labs/railway.json` over `railway.json`, then runs
+`railway up --service <service> --detach --ci` with `RAILWAY_TOKEN`, targeting
+the `RAILWAY_SERVICE` secret. Newsboy's independent repository owns its own
+Docker build and deployment configuration.
 
 ### CI and migration ordering contract
 
@@ -84,7 +82,7 @@ The required production sequence is:
 GitHub native `paths` filter matches
   -> CI succeeds
   -> production migration check in `ci.yml` succeeds
-      -> Labs deploy; Newsboy verifies the pinned migration before app activation
+      -> Labs deploy
 ```
 
 - CI uses the Foundation test database and runs the normal Drizzle migration
@@ -93,9 +91,8 @@ GitHub native `paths` filter matches
   never in an application deploy or game-generation workflow. The migration
   command runs on every production deployment and is a no-op when there are no
   pending migrations.
-- The Labs deploy job requires the successful migration job. The Newsboy
-  Railway pre-deploy check verifies that the migration required by the pinned
-  DB package is recorded before activating the Newsboy image.
+- The Labs deploy job requires the successful migration job. Newsboy's
+  independent deployment workflow is maintained in its own repository.
 - Production scope is selected by GitHub's native `on.push.paths` filter. There
   is no repository-specific changed-file script.
 - Never repair production by dropping or resetting the database. Inspect
@@ -119,21 +116,13 @@ Check the complete chain, in order:
 
 1. CI is green for the intended commit SHA.
 2. The production migration job is green.
-3. The expected Labs Railway deployment exists for that same SHA and is actually
-   `SUCCESS`, not merely submitted or detached. Newsboy deployments are verified
-   in its standalone repository and Railway service.
-4. Public smoke tests hit the standalone game directly:
-
-   ```sh
-   curl -sS -D - -o /dev/null https://newsboy.ponti.io/
-   ```
-
-   Labs registers no legacy game redirects; `/games/realitea` and `/games/newsboy`
-   return 404 (the remaining `/games/*` routes — Cards, Tetris — are
-   Labs-owned experiments).
-5. Verify the auth flow's return target and confirm no `tz` query parameter is
-   added by the game API. Verify timezone behavior with a valid,
-   missing/malformed, and invalid `newsboy_timezone` cookie.
+3. The expected Labs Railway deployment exists for that same SHA and is
+   actually `SUCCESS`, not merely submitted or detached.
+4. Labs registers no legacy game redirects; `/games/realitea` and
+   `/games/newsboy` return 404 (the remaining `/games/*` routes — Cards,
+   Tetris — are Labs-owned experiments).
+5. When changing Newsboy links, verify the configured destination points to
+   `https://newsboy.ponti.io` and responds successfully.
 
 ## Diagnostic order
 
