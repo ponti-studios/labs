@@ -18,7 +18,6 @@ up:
       echo "proxy already up on :443"
     fi
     echo "labs: https://labs.lvh.me"
-    echo "Newsboy: see https://github.com/ponti-studios/newsboy"
 
 # Boot Labs through the portless proxy.
 dev:
