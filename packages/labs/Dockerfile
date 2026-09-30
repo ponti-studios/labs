@@ -13,14 +13,8 @@ ARG VITE_NEWSBOY_APP_URL
 ENV VITE_NEWSBOY_APP_URL=$VITE_NEWSBOY_APP_URL
 
 COPY .npmrc package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
-COPY packages/ai/package.json packages/ai/package.json
-COPY packages/db/package.json packages/db/package.json
-COPY packages/env/package.json packages/env/package.json
 COPY packages/labs/package.json packages/labs/package.json
 RUN pnpm install --frozen-lockfile --filter labs...
-COPY packages/ai packages/ai
-COPY packages/db packages/db
-COPY packages/env packages/env
 COPY packages/labs packages/labs
 RUN pnpm --filter labs build
 

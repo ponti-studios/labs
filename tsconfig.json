@@ -1,9 +1,4 @@
 {
   "files": [],
-  "references": [
-    { "path": "packages/ai" },
-    { "path": "packages/db" },
-    { "path": "packages/env" },
-    { "path": "packages/labs" }
-  ]
+  "references": [{ "path": "packages/labs" }]
 }

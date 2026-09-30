@@ -21,9 +21,8 @@ classify the change
 Use the detailed [environment configuration contract](environment-configuration.md)
 for the required scan and delivery matrix.
 
-1. Add the variable to the owning server environment schema. Labs schemas live in
-   `packages/labs/app/lib/server/env.ts` and `packages/env`; Newsboy schemas live
-   in its standalone repository.
+1. Add the variable to the owning server environment schema. Newsboy owns its
+   schema in its separate repository; do not duplicate it in Labs.
 2. Add the variable name and a safe local value to the package `.env.example`.
 3. Search the repository for existing names and consumers. Reuse the canonical
    name instead of adding aliases such as `NEWSBOY_APP_URL` and `NEWSBOY_APP_ORIGIN`.
@@ -59,8 +58,8 @@ for the required scan and delivery matrix.
    It runs on every production deployment and is a no-op when there are no
    pending migrations. Application deploys and game-generation workflows must
    not run migrations.
-7. Labs deployment follows the migration job. Newsboy's Railway pre-deploy gate
-   verifies that its pinned migration set is present before activating the app.
+7. Labs deployment may proceed only after the migration job succeeds. Newsboy
+   deploys through its separate repository's workflow.
 8. If production is inconsistent, inspect Drizzle's migration tracker and
    follow the migration recovery rules in `AGENTS.md`. Never reset or drop the
    database to make a migration pass.
@@ -101,18 +100,16 @@ enough for a cross-service move.
 
 ## Change Railway or GitHub Actions deployment
 
-For Labs, inspect the Dockerfile, `railway.json`, reusable workflow, and calling
-workflow together. Newsboy deployment is managed in its standalone repository.
-Confirm:
+Inspect the Dockerfile, `railway.json`, reusable workflow, and calling workflow
+together. Confirm:
 
 - the deploy context contains every file copied by the Dockerfile;
-- the Railway config points to the intended Dockerfile;
+- the staged Railway config points to the intended package Dockerfile;
 - the start command exists in the built image;
-- the Labs staged `config_path` (`packages/labs/railway.json`) matches the Labs
-  Dockerfile the Railway service is configured to use;
+- the staged `config_path` (`packages/<pkg>/railway.json`) matches the
+  package Dockerfile the Railway service is configured to use;
 - CI runs before database deployment;
-- Labs production migration runs before Labs app deployment; Newsboy verifies
-  that its pinned migration is already present before its app deployment;
+- database deployment runs before application deployment;
 - workflow-run jobs use the source SHA that was tested;
 - the job observes the actual Railway deployment result, not just a detached
   submission.

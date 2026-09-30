@@ -1,1 +1,3 @@
-export * from "@pontistudios/db/schema/base";
+import { pgSchema } from "drizzle-orm/pg-core";
+
+export const labs = pgSchema("labs");

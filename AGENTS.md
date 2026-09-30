@@ -76,7 +76,7 @@ schema file → drizzle-kit generate → migration SQL → drizzle-kit migrate �
 
 **Required workflow for any schema change:**
 
-1. Edit a schema file in `packages/db/src/schema/` (e.g. `base.ts`, `game.ts`, `search.ts`)
+1. Edit a schema file in `packages/labs/app/lib/server/db/schema/` (e.g. `base.ts`, `game.ts`, `search.ts`)
 2. Run `pnpm db:generate` to create the migration SQL and snapshot
 3. Run `pnpm db:migrate` to apply locally and verify
 4. Commit the schema change, generated migration file, and snapshot together
@@ -90,8 +90,8 @@ If a column or table is missing, the appropriate migration was never applied —
 | -------------------- | ------------------------------------------- |
 | `pnpm db:generate`   | Generate a migration from schema changes    |
 | `pnpm db:migrate`    | Apply pending migrations to the target DB   |
-| `drizzle.config.ts`  | Drizzle configuration (schema glob, output) |
-| `packages/db/src/schema/` | All table schema files live here     |
+| `packages/labs/drizzle.config.ts` | Drizzle configuration (schema glob, output) |
+| `packages/labs/app/lib/server/db/schema/` | All table schema files live here |
 
 ### What to do when a migration was skipped in production
 
@@ -103,12 +103,14 @@ Do **not** hand-write a workaround migration. Instead:
 
 The purpose of this rule is to keep `_journal.json`, the snapshot files, and the database's tracking table in agreement at all times.
 
-## Newsboy Ownership
+## Script Environment Validation
 
-- Newsboy application code, Railway settings, generation scripts, and GitHub workflows live in `https://github.com/ponti-studios/newsboy`.
-- Labs remains the owner of `@pontistudios/db`, the Drizzle schema, and production migrations. Newsboy pins `@pontistudios/ai`, `@pontistudios/db`, and `@pontistudios/env` to one immutable Labs commit.
-- A Newsboy package-pin update must wait until Labs production migrations succeed for that commit. The Newsboy Railway pre-deploy check verifies the pinned migration is recorded before activating the app.
-- Newsboy owns its gap-fill and force generation entry point and nightly/manual workflow. Follow its repository's README and AGENTS instructions when changing puzzle generation.
+Labs scripts must validate required environment values through the schemas in
+`packages/labs/app/lib/server/env.ts` and
+`packages/labs/app/lib/server/db/env.ts`.
+
+- ❌ Do not define ad-hoc `requireEnvironment()` functions
+- ❌ Do not inline `if (!process.env.X)` checks for required configuration
 
 ## Authenticated Testing
 
@@ -116,9 +118,9 @@ The purpose of this rule is to keep `_journal.json`, the snapshot files, and the
   work complete. Use the local app and its dedicated test account when the UI
   requires authentication; capture a screenshot when it helps document the
   result or the user asks for one.
-- Browser, manual, and end-to-end tests that need an authenticated Newsboy player use the local test account `test@lvh.me`. Never use a personal account for testing.
+- Browser, manual, and end-to-end tests that need an authenticated Labs user use the local test account `test@lvh.me`. Never use a personal account for testing.
 - Keep authenticated testing on local or explicitly disposable test services; never submit test-account credentials or OTPs to production.
-- For local Newsboy sign-in, trigger the OTP from the app, then retrieve it with Hominem's `just otp test@lvh.me` helper. Do not read the mailbox file directly.
+- For local sign-in, trigger the OTP from the app, then retrieve it with Hominem's `just otp test@lvh.me` helper. Do not read the mailbox file directly.
 - Unit tests that mock authentication can keep using isolated fixture identities. Multi-user tests may use additional synthetic test accounts when distinct identities are required.
 
 ## Authentication (Hominem)
@@ -126,7 +128,7 @@ The purpose of this rule is to keep `_journal.json`, the snapshot files, and the
 Hominem's Better Auth deployment is the sole auth authority for this repo. Labs
 never issues or validates its own sessions, and never hosts a login form.
 
-- Session checks go through `getHominemUser()` — `packages/labs/app/lib/server/hominem-auth.ts` for Labs. Newsboy's implementation lives in its standalone repository.
+- Session checks go through `getHominemUser()` in `packages/labs/app/lib/server/hominem-auth.ts`
   (server-only — it forwards the request's `Cookie` header to the Hominem API).
 - To send a player to sign in, use `buildHominemLoginUrl(returnTo)`. `returnTo`
   must be an absolute Labs URL; the Hominem API only honors origins it trusts as
@@ -143,5 +145,5 @@ them locally or in CI.
 
 - Storybook is development-only in this repository.
 - Never run `storybook build`, `build-storybook`, or any equivalent production Storybook export.
-- Use the `storybook` script for local validation — Labs runs `storybook dev -p 6007` (`packages/labs`). Newsboy Storybook is managed in its standalone repository.
+- Use the `storybook` script for local validation — Labs runs `storybook dev -p 6007` (`packages/labs`).
 - Do not add CI, package scripts, or deployment steps that build Storybook statically.

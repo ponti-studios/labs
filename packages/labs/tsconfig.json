@@ -20,19 +20,12 @@
     "declarationMap": true,
     "inlineSources": false
   },
-  "references": [
-    { "path": "../ai" },
-    { "path": "../db" },
-    { "path": "../env" }
-  ],
   "include": ["**/*", "**/.server/**/*", "**/.client/**/*", ".react-router/types/**/*"],
   "exclude": [
-    "../newsboy/**/*",
     "app/routes/svelte/**/*",
     "app/routes/api.search.ts",
     "app/components/VectorSearch.tsx",
     "app/lib/semantic-search.ts",
-    "app/lib/server/**/*",
     "coverage/**/*"
   ]
 }
