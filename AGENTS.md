@@ -23,6 +23,9 @@ merging.
 Labs is the application codebase. Local infrastructure is owned by the sibling
 Foundation repository at `/Users/charlesponti/Developer/foundation`.
 
+Labs is a single pnpm application rooted at this repository. Do not reintroduce
+pnpm workspaces or app code under a nested `packages/` directory.
+
 - Do not add or duplicate PostgreSQL, Redis, or MinIO Compose services in Labs.
 - Keep the Labs application running on the host during normal development.
 - Start local infrastructure from Foundation, not from this repository:
@@ -76,7 +79,7 @@ schema file → drizzle-kit generate → migration SQL → drizzle-kit migrate �
 
 **Required workflow for any schema change:**
 
-1. Edit a schema file in `packages/labs/app/lib/server/db/schema/` (e.g. `base.ts`, `game.ts`, `search.ts`)
+1. Edit a schema file in `app/lib/server/db/schema/` (e.g. `base.ts`, `game.ts`, `search.ts`)
 2. Run `pnpm db:generate` to create the migration SQL and snapshot
 3. Run `pnpm db:migrate` to apply locally and verify
 4. Commit the schema change, generated migration file, and snapshot together
@@ -90,8 +93,8 @@ If a column or table is missing, the appropriate migration was never applied —
 | -------------------- | ------------------------------------------- |
 | `pnpm db:generate`   | Generate a migration from schema changes    |
 | `pnpm db:migrate`    | Apply pending migrations to the target DB   |
-| `packages/labs/drizzle.config.ts` | Drizzle configuration (schema glob, output) |
-| `packages/labs/app/lib/server/db/schema/` | All table schema files live here |
+| `drizzle.config.ts` | Drizzle configuration (schema glob, output) |
+| `app/lib/server/db/schema/` | All table schema files live here |
 
 ### What to do when a migration was skipped in production
 
@@ -106,8 +109,7 @@ The purpose of this rule is to keep `_journal.json`, the snapshot files, and the
 ## Script Environment Validation
 
 Labs scripts must validate required environment values through the schemas in
-`packages/labs/app/lib/server/env.ts` and
-`packages/labs/app/lib/server/db/env.ts`.
+`app/lib/server/env.ts` and `app/lib/server/db/env.ts`.
 
 - ❌ Do not define ad-hoc `requireEnvironment()` functions
 - ❌ Do not inline `if (!process.env.X)` checks for required configuration
@@ -128,7 +130,7 @@ Labs scripts must validate required environment values through the schemas in
 Hominem's Better Auth deployment is the sole auth authority for this repo. Labs
 never issues or validates its own sessions, and never hosts a login form.
 
-- Session checks go through `getHominemUser()` in `packages/labs/app/lib/server/hominem-auth.ts`
+- Session checks go through `getHominemUser()` in `app/lib/server/hominem-auth.ts`
   (server-only — it forwards the request's `Cookie` header to the Hominem API).
 - To send a player to sign in, use `buildHominemLoginUrl(returnTo)`. `returnTo`
   must be an absolute Labs URL; the Hominem API only honors origins it trusts as
@@ -145,5 +147,5 @@ them locally or in CI.
 
 - Storybook is development-only in this repository.
 - Never run `storybook build`, `build-storybook`, or any equivalent production Storybook export.
-- Use the `storybook` script for local validation — Labs runs `storybook dev -p 6007` (`packages/labs`).
+- Use the `storybook` script for local validation — Labs runs `storybook dev -p 6007` from the repository root.
 - Do not add CI, package scripts, or deployment steps that build Storybook statically.

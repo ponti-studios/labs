@@ -23,7 +23,7 @@ for the required scan and delivery matrix.
 
 1. Add the variable to the owning server environment schema. Newsboy owns its
    schema in its separate repository; do not duplicate it in Labs.
-2. Add the variable name and a safe local value to the package `.env.example`.
+2. Add the variable name and a safe local value to the root `.env.example`.
 3. Search the repository for existing names and consumers. Reuse the canonical
    name instead of adding aliases such as `NEWSBOY_APP_URL` and `NEWSBOY_APP_ORIGIN`.
 4. Classify the value:
@@ -72,7 +72,7 @@ for the required scan and delivery matrix.
 2. Use configured origins. Do not derive production URLs from `NODE_ENV` or
    hard-code a Railway hostname.
 3. Test the loader/component and run React Router route generation plus the
-   package typecheck. Reused route modules need unique route IDs.
+   root app typecheck. Reused route modules need unique route IDs.
 4. Test local and production-like origins, including query-string preservation
    and removal of unsupported parameters.
 5. For Newsboy, timezone travels in the `newsboy_timezone` cookie. `tz` query
@@ -104,18 +104,17 @@ Inspect the Dockerfile, `railway.json`, reusable workflow, and calling workflow
 together. Confirm:
 
 - the deploy context contains every file copied by the Dockerfile;
-- the staged Railway config points to the intended package Dockerfile;
+- the root Railway config points to the root Dockerfile;
 - the start command exists in the built image;
-- the staged `config_path` (`packages/<pkg>/railway.json`) matches the
-  package Dockerfile the Railway service is configured to use;
+- the deploy workflow uses the checked-in root `railway.json`;
 - CI runs before database deployment;
 - database deployment runs before application deployment;
 - workflow-run jobs use the source SHA that was tested;
 - the job observes the actual Railway deployment result, not just a detached
   submission.
 
-Run `actionlint` and test changed-file detection for application-only,
-database-only, shared-package, and workflow-only changes.
+Run `actionlint` and check changed-file detection for app, database, and
+workflow changes.
 
 ## Change authentication or return URLs
 

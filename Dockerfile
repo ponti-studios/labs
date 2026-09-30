@@ -12,11 +12,10 @@ FROM base AS builder
 ARG VITE_NEWSBOY_APP_URL
 ENV VITE_NEWSBOY_APP_URL=$VITE_NEWSBOY_APP_URL
 
-COPY .npmrc package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
-COPY packages/labs/package.json packages/labs/package.json
-RUN pnpm install --frozen-lockfile --filter labs...
-COPY packages/labs packages/labs
-RUN pnpm --filter labs build
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN pnpm install --frozen-lockfile
+COPY . .
+RUN pnpm build
 
 FROM node:${NODE_VERSION} AS runner
 WORKDIR /app
@@ -30,11 +29,8 @@ RUN apt-get update && \
     useradd --system --uid 1001 --gid app --home-dir /app --shell /usr/sbin/nologin app
 
 COPY --from=builder --chown=app:app /app/node_modules ./node_modules
-COPY --from=builder --chown=app:app /app/packages/labs/package.json ./packages/labs/package.json
-COPY --from=builder --chown=app:app /app/packages/labs/node_modules ./packages/labs/node_modules
-COPY --from=builder --chown=app:app /app/packages/labs/build ./packages/labs/build
-
-WORKDIR /app/packages/labs
+COPY --from=builder --chown=app:app /app/package.json ./package.json
+COPY --from=builder --chown=app:app /app/build ./build
 
 USER app
 EXPOSE 3000
