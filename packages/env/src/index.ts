@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { z } from "zod";
 
-// Keep in sync with the admin generate form bounds (packages/newsboy/src/lib/admin/generate.server.ts).
+// Keep in sync with the Newsboy admin generate form bounds in ponti-studios/newsboy.
 const MIN_GAME_MAX_TOKENS = 200;
 const MAX_GAME_MAX_TOKENS = 16_000;
 
