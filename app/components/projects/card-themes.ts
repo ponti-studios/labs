@@ -1,14 +1,12 @@
 export type CardThemeName =
   | "obsidian"
   | "game"
+  | "graphite"
   | "platinum"
-  | "roseGold"
-  | "cobalt"
-  | "emerald"
-  | "sunset"
   | "slate"
   | "frost"
-  | "midnight";
+  | "midnight"
+  | "paper";
 
 export type CardTheme = {
   /** Card face — solid color or gradient. */
@@ -19,60 +17,49 @@ export type CardTheme = {
   accent: string;
 };
 
-// Ten swappable "card stock" skins. `game` is a fixed "black card"
-// finish in the game's own brand colors (ink, paper, gossip pink) — static
-// on purpose, unlike the in-game surfaces, so the card doesn't flip
-// light/dark with the visitor's system theme. The rest are original
-// premium-card palettes for future featured projects.
+// Grayscale "card stock" skins — the studio identity is black, white, and gray,
+// so every card differs by value (light to dark) and finish, never by hue.
+// `game` is the Newsboy card's fixed black finish; it stays static on purpose so
+// the card doesn't flip light/dark with the visitor's system theme.
 export const CARD_THEMES: Record<CardThemeName, CardTheme> = {
   obsidian: {
-    background: "linear-gradient(135deg, #1a1a1d 0%, #000000 100%)",
+    background: "linear-gradient(135deg, #1a1a1a 0%, #000000 100%)",
     foreground: "#f5f5f5",
-    accent: "#7dd3fc",
+    accent: "#ffffff",
   },
   game: {
-    background: "linear-gradient(135deg, #3d3021 0%, #1c160f 45%, #0d0a06 100%)",
-    foreground: "#fffdf7",
-    accent: "#ec2166",
+    background: "linear-gradient(135deg, #262626 0%, #0f0f0f 50%, #000000 100%)",
+    foreground: "#fafafa",
+    accent: "#ffffff",
+  },
+  graphite: {
+    background: "linear-gradient(135deg, #3a3a3a 0%, #141414 100%)",
+    foreground: "#f0f0f0",
+    accent: "#d4d4d4",
   },
   platinum: {
-    background: "linear-gradient(135deg, #d8dbe0 0%, #9aa1ac 100%)",
-    foreground: "#1c1f24",
-    accent: "#0f766e",
-  },
-  roseGold: {
-    background: "linear-gradient(135deg, #f4c9c0 0%, #d9a066 100%)",
-    foreground: "#3b2417",
-    accent: "#9d174d",
-  },
-  cobalt: {
-    background: "linear-gradient(135deg, #1e3a8a 0%, #0c1e4a 100%)",
-    foreground: "#eff6ff",
-    accent: "#38bdf8",
-  },
-  emerald: {
-    background: "linear-gradient(135deg, #064e3b 0%, #022c22 100%)",
-    foreground: "#ecfdf5",
-    accent: "#34d399",
-  },
-  sunset: {
-    background: "linear-gradient(135deg, #f97316 0%, #db2777 60%, #7c3aed 100%)",
-    foreground: "#fff7ed",
-    accent: "#facc15",
+    background: "linear-gradient(135deg, #d9d9d9 0%, #9a9a9a 100%)",
+    foreground: "#0a0a0a",
+    accent: "#262626",
   },
   slate: {
-    background: "linear-gradient(135deg, #334155 0%, #0f172a 100%)",
-    foreground: "#f1f5f9",
-    accent: "#60a5fa",
+    background: "linear-gradient(135deg, #525252 0%, #1c1c1c 100%)",
+    foreground: "#f5f5f5",
+    accent: "#e5e5e5",
   },
   frost: {
-    background: "linear-gradient(135deg, #f8fafc 0%, #dbeafe 100%)",
-    foreground: "#0f172a",
-    accent: "#0284c7",
+    background: "linear-gradient(135deg, #fafafa 0%, #d4d4d4 100%)",
+    foreground: "#0a0a0a",
+    accent: "#404040",
   },
   midnight: {
-    background: "linear-gradient(135deg, #312e81 0%, #0b0b1f 100%)",
-    foreground: "#eef2ff",
-    accent: "#a78bfa",
+    background: "linear-gradient(135deg, #1f1f1f 0%, #050505 100%)",
+    foreground: "#ededed",
+    accent: "#a3a3a3",
+  },
+  paper: {
+    background: "linear-gradient(135deg, #ffffff 0%, #ececec 100%)",
+    foreground: "#0a0a0a",
+    accent: "#525252",
   },
 };

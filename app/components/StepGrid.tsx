@@ -17,10 +17,7 @@ export function StepGrid({ children, className }: StepGridProps) {
   return (
     <RevealGroup
       as="ol"
-      className={cn(
-        "grid grid-cols-1 gap-px overflow-hidden rounded-[22px] sm:grid-cols-2",
-        className,
-      )}
+      className={cn("grid grid-cols-1 gap-px overflow-hidden rounded-sm sm:grid-cols-2", className)}
     >
       {children}
     </RevealGroup>

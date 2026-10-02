@@ -3,6 +3,7 @@ import { memo } from "react";
 
 import { Button } from "@ponti-studios/ui/primitives";
 import { Link } from "react-router";
+import { AsciiField } from "~/components/AsciiField";
 import { BookCallButton } from "~/components/BookCallButton";
 import { RevealGroup, RevealItem } from "~/components/Reveal";
 import { TiltCard } from "~/components/TiltCard";
@@ -31,12 +32,12 @@ const ServiceChip = memo(function ServiceChip({ name, slug }: ServiceChipProps) 
     <TiltCard
       to={`/services#${slug}`}
       prefetch="intent"
-      glow={{ radiusPx: 220 }}
-      className="bg-card text-foreground focus-visible:ring-accent flex flex-col justify-between gap-2 rounded-2xl border border-white/10 p-4 shadow-lg shadow-black/10 transition-shadow duration-200 hover:shadow-black/25 focus-visible:ring-2 focus-visible:ring-offset-4 focus-visible:outline-none"
+      glow={{ radiusPx: 220, color: "var(--color-background)" }}
+      className="text-background border-background/20 hover:border-background/60 focus-visible:ring-background focus-visible:ring-offset-foreground flex flex-col justify-between gap-2 rounded-sm border p-4 transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
     >
       <span className="relative z-10 flex items-center justify-between gap-3 text-lg font-semibold tracking-tight">
         {name}
-        <span aria-hidden="true" className="text-accent text-2xl leading-none">
+        <span aria-hidden="true" className="text-background/60 font-mono text-xl leading-none">
           ↗
         </span>
       </span>
@@ -49,9 +50,9 @@ function HeroHeadline() {
   const after = t.home.hero.wordAfter;
   return (
     <h1 className="heading-hero text-foreground max-w-4xl">
-      <span>{t.home.hero.wordBefore}</span>{" "}
+      <span className="block">{t.home.hero.wordBefore}</span>
       <motion.span
-        className="text-accent font-serif italic"
+        className="block"
         initial={reduceMotion ? false : "hidden"}
         animate="visible"
         variants={{
@@ -70,6 +71,7 @@ function HeroHeadline() {
             {char}
           </motion.span>
         ))}
+        <span aria-hidden="true" className="cursor-block" />
       </motion.span>
     </h1>
   );
@@ -79,13 +81,14 @@ export default function Home() {
   return (
     <div className="page-shell flex flex-col gap-10">
       {/* Thesis */}
-      <section className="layout-stack">
+      <section className="layout-stack relative isolate py-16 sm:py-24">
+        <AsciiField className="opacity-25 lg:opacity-100" />
         <HeroHeadline />
 
         <div className="grid gap-7 md:grid-cols-[minmax(0,0.9fr)_minmax(16rem,0.5fr)] md:items-end">
           <div className="flex flex-wrap gap-3">
             <BookCallButton>{t.common.bookCall}</BookCallButton>
-            <Button asChild size="lg" variant="outline" className="press rounded-full px-6">
+            <Button asChild size="lg" variant="outline" className="press rounded-sm px-6">
               <Link to="/work" prefetch="intent">
                 {t.home.hero.secondaryCta}
               </Link>
@@ -97,17 +100,19 @@ export default function Home() {
       {/* Offer */}
       <section
         aria-labelledby="capabilities-title"
-        className="bg-accent-foreground flex flex-col gap-8 rounded-4xl px-4 py-10 sm:px-6 md:py-14"
+        className="bg-foreground text-background flex flex-col gap-8 rounded-sm px-4 py-10 sm:px-6 md:py-14"
       >
-        <h2 id="capabilities-title" className="heading-cta text-accent max-w-3xl">
+        <h2 id="capabilities-title" className="heading-cta text-background max-w-3xl">
           {t.home.capabilities.title}
         </h2>
         <div className="grid gap-8 md:grid-cols-2">
           {servicePillars.map((pillar) => (
-            <div key={pillar.name} className="flex flex-col gap-3">
-              <h3 className="text-muted-foreground text-xs font-black tracking-[0.18em] uppercase">
-                {pillar.name}
-              </h3>
+            <div
+              key={pillar.name}
+              role="group"
+              aria-label={pillar.name}
+              className="flex flex-col gap-3"
+            >
               <RevealGroup className="grid gap-3 sm:grid-cols-2">
                 {pillar.services.map((service) => (
                   <RevealItem key={service.slug}>
@@ -127,17 +132,19 @@ export default function Home() {
       <FeaturedProjects />
 
       {/* Point of view */}
-      <section className="bg-accent-foreground rounded-4xl px-6 py-14 sm:px-12 md:py-20">
+      <section className="bg-foreground rounded-sm px-6 py-14 sm:px-12 md:py-20">
         <p className="text-background max-w-4xl text-3xl leading-[1.1] font-semibold tracking-tight sm:text-4xl md:text-5xl">
           “{t.manifesto.quote}”
         </p>
       </section>
 
       {/* Close CTA */}
-      <section className="border-accent-foreground bg-accent/75 text-background flex flex-col items-center gap-4 rounded-4xl border px-4 py-14 sm:px-6">
+      <section className="border-border bg-muted text-foreground flex flex-col items-center gap-4 rounded-sm border px-4 py-14 sm:px-6">
         <h2 className="heading-cta mx-auto mb-5 flex max-w-3xl gap-4 text-center">
           <span>{t.services.cta.title.split(" ")[0]}</span>
-          <span className="font-serif lowercase italic">{t.services.cta.title.split(" ")[1]}</span>
+          <span className="text-muted-foreground font-mono lowercase">
+            {t.services.cta.title.split(" ")[1]}
+          </span>
         </h2>
         <BookCallButton>{t.common.bookCall}</BookCallButton>
       </section>

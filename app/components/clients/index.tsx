@@ -9,7 +9,7 @@ import { t } from "~/translations";
 /** Same credit-card carousel as FeaturedProjects, populated from past client work. */
 export const FeaturedClients = memo(function FeaturedClients() {
   return (
-    <section className="bg-accent flex flex-col gap-8 rounded-4xl px-6 py-12">
+    <section className="bg-muted border-border flex flex-col gap-8 rounded-sm border px-6 py-12">
       <div className="flex items-center gap-12">
         <h2 id="clients-title" className="heading-cta text-foreground max-w-3xl">
           {t.home.clients.title}
