@@ -69,7 +69,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,340..900;1,9..144,340..900&display=swap"
+          href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap"
         />
         <Links />
         <PrefetchProvider />
@@ -137,7 +137,7 @@ export default function App() {
       <div
         aria-hidden="true"
         className={cn(
-          "bg-accent fixed inset-x-0 top-0 z-60 h-0.5 origin-left transition-transform duration-200",
+          "bg-foreground fixed inset-x-0 top-0 z-60 h-0.5 origin-left transition-transform duration-200",
           isNavigating ? "scale-x-100" : "scale-x-0",
         )}
       />

@@ -8,16 +8,14 @@ import { t } from "~/translations";
 const CLIENT_CARD_THEMES: readonly CardThemeName[] = [
   "obsidian",
   "platinum",
-  "roseGold",
-  "cobalt",
-  "emerald",
-  "sunset",
-  "slate",
+  "graphite",
   "frost",
+  "slate",
+  "paper",
   "midnight",
 ];
 
-/** Deterministic per-client "card stock" — same client always gets the same color identity. */
+/** Deterministic per-client "card stock" — same client always gets the same grayscale finish. */
 export function clientTheme(index: number): CardThemeName {
   return CLIENT_CARD_THEMES[index % CLIENT_CARD_THEMES.length];
 }

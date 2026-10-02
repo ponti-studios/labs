@@ -89,7 +89,7 @@ const FEATURED_PROJECTS: FeaturedProject[] = [
 
 export const FeaturedProjects = memo(function FeaturedProjects() {
   return (
-    <section className="bg-accent flex flex-col gap-8 rounded-4xl px-6 py-12">
+    <section className="bg-muted border-border flex flex-col gap-8 rounded-sm border px-6 py-12">
       <div className="flex items-center gap-12">
         <h2 id="capabilities-title" className="heading-cta text-foreground max-w-3xl">
           Projects

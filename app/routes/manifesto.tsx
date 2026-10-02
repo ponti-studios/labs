@@ -42,7 +42,7 @@ export default function Manifesto() {
 
       {/* Closing pull-quote */}
       <section className="section-compact border-b-0 px-4 py-20 text-center sm:px-6 md:py-28">
-        <blockquote className="text-accent mx-auto max-w-3xl font-serif text-4xl leading-[1.05] italic sm:text-5xl md:text-6xl">
+        <blockquote className="text-foreground mx-auto max-w-3xl text-4xl leading-[1.05] font-semibold tracking-tight sm:text-5xl md:text-6xl">
           &ldquo;{copy.quote}&rdquo;
         </blockquote>
       </section>

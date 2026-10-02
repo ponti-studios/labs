@@ -4,45 +4,48 @@
 @source "../node_modules/@ponti-studios/ui/src";
 
 /*
- * Warm palette override — replaces @ponti-studios/ui's default indigo/gray
- * tokens with the cream/ink/flame-orange palette from the Backlog
- * Mercenaries landing page. These are the same raw token names the package
- * itself sets in light.css/dark.css (see @theme inline in its styles.css),
- * so this cascades into every --color-* alias (background, card, primary,
- * accent, border, ring, etc.) without introducing new custom tokens.
+ * Monochrome identity — black, white, and gray only. Overrides the raw token
+ * names @ponti-studios/ui sets in light.css/dark.css, so every --color-* alias
+ * (background, card, border, ring, primary, accent, ...) follows.
  *
- * --primary doubles as --color-accent in the package's token mapping, so
- * overriding it here re-themes buttons, links, and focus rings too.
- * --primary-foreground is dark ink (not white) in both modes to match how
- * the mock actually pairs text with this accent.
+ * Hierarchy comes from value and structure (hairlines, mono labels, inverted
+ * blocks), never hue. --primary and --accent are both "ink": black on white in
+ * light mode, white on black in dark mode, and their *-foreground tokens are
+ * the inverse. Use `bg-foreground text-background` for inverted panels.
  */
 :root {
-  --background: #f4f0e8;
-  --card: #fbf8f2;
-  --popover: #f6f2ea;
-  --muted: #efe9dc;
-  --text-primary: #11110f;
-  --text-secondary: #6f6b62;
-  --tertiary: #8f8b80;
-  --primary: #ff5a36;
-  --primary-foreground: #15110f;
-  --border-default: #d9d2c6;
-  --focus-ring: #ff5a36;
+  --background: #ffffff;
+  --card: #fafafa;
+  --popover: #ffffff;
+  --muted: #f4f4f4;
+  --text-primary: #0a0a0a;
+  --text-secondary: #5c5c5c;
+  --tertiary: #8a8a8a;
+  --primary: #0a0a0a;
+  --primary-foreground: #ffffff;
+  --accent: #0a0a0a;
+  --accent-foreground: #ffffff;
+  --text-accent: #0a0a0a;
+  --border-default: #e0e0e0;
+  --focus-ring: #0a0a0a;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #171714;
-    --card: #1d1d19;
-    --popover: #22221e;
-    --muted: #1d1d19;
-    --text-primary: #ffffff;
-    --text-secondary: #aaa79f;
-    --tertiary: #d0ccc2;
-    --primary: #ff896f;
-    --primary-foreground: #15110f;
-    --border-default: #363631;
-    --focus-ring: #ff896f;
+    --background: #000000;
+    --card: #0a0a0a;
+    --popover: #0f0f0f;
+    --muted: #111111;
+    --text-primary: #fafafa;
+    --text-secondary: #a3a3a3;
+    --tertiary: #737373;
+    --primary: #fafafa;
+    --primary-foreground: #0a0a0a;
+    --accent: #fafafa;
+    --accent-foreground: #0a0a0a;
+    --text-accent: #fafafa;
+    --border-default: #262626;
+    --focus-ring: #fafafa;
   }
 }
 
@@ -51,16 +54,68 @@
 }
 
 /*
- * Display serif override — the package's --font-serif token is a system-ui
- * stack by default (identical to --font-sans, effectively unused). Loaded
- * as an actual serif (Fraunces, see root.tsx head links) it becomes the
- * site's signature mixed-type moment: sans for body and structure, this
- * serif reserved for hero punch words, pull quotes, and big proof numbers.
- * Using the token (font-serif utility) rather than a hardcoded local
- * font-family keeps this compliant with the shared UI token system.
+ * The Nokia navigation variant ships a green LCD palette. Remap it to the
+ * monochrome system so the nav reads as a terminal, not a handheld: screen is
+ * the page background, ink is the foreground, and both flip with the theme.
  */
 :root {
-  --font-serif: "Fraunces", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --color-nokia-screen: #ffffff;
+  --color-nokia-screen-deep: #f4f4f4;
+  --color-nokia-ink: #0a0a0a;
+  --color-nokia-bezel: #0a0a0a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-nokia-screen: #000000;
+    --color-nokia-screen-deep: #111111;
+    --color-nokia-ink: #fafafa;
+    --color-nokia-bezel: #fafafa;
+  }
+}
+
+/*
+ * Mono type is the signature of the identity: labels, indices, and
+ * the hero's typed word are set in JetBrains Mono (loaded in root.tsx), with
+ * the neutral system sans carrying body and headlines. --font-nokia is aliased
+ * so the nav follows.
+ */
+:root {
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-nokia: var(--font-mono);
+}
+
+/* Square the radius scale — instrument panels, not pills. `full` stays for dots. */
+:root {
+  --radius-xs: 0;
+  --radius-sm: 0.125rem;
+  --radius-md: 0.125rem;
+  --radius-lg: 0.1875rem;
+  --radius-xl: 0.25rem;
+  --radius-2xl: 0.25rem;
+  --radius-3xl: 0.25rem;
+  --radius-4xl: 0.25rem;
+}
+
+/* Terminal cursor — blinks in steps, still when motion is reduced. */
+@keyframes cursor-blink {
+  50% {
+    opacity: 0;
+  }
+}
+.cursor-block {
+  display: inline-block;
+  width: 0.5em;
+  height: 0.85em;
+  margin-left: 0.12em;
+  background: currentColor;
+  vertical-align: baseline;
+  animation: cursor-blink 1.1s steps(1) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cursor-block {
+    animation: none;
+  }
 }
 
 /*
@@ -147,10 +202,10 @@
   }
 }
 
-/* Small italic display serif — category/pillar labels in projects.tsx and
+/* Small mono display label — category/pillar labels in projects.tsx and
  * services.tsx (font-weight is left at the inherited 600, not re-applied). */
 .heading-display-sm {
-  @apply font-serif text-2xl tracking-tight italic sm:text-3xl;
+  @apply font-mono text-lg tracking-[0.14em] uppercase sm:text-xl;
 }
 
 /*

@@ -26,7 +26,7 @@ export default function Services() {
         <RevealGroup className="flex flex-col gap-12">
           {servicePillars.map((pillar) => (
             <RevealItem key={pillar.name} className="border-border flex flex-col gap-6">
-              <h3 className="heading-display-sm text-accent">{pillar.name}</h3>
+              <h3 className="heading-display-sm text-foreground">{pillar.name}</h3>
               <StepGrid className="bg-border">
                 {pillar.services.map((service, index) => (
                   <StepCard
@@ -45,24 +45,26 @@ export default function Services() {
         </RevealGroup>
       </section>
 
-      {/* Process — dark panel, always dark regardless of system theme */}
+      {/* Process — inverted panel (black on light, white on dark) */}
       <section className="section">
-        <div className="rounded-[28px] bg-[#171714] px-6 py-14 text-white sm:px-12 md:py-20">
+        <div className="bg-foreground text-background rounded-sm px-6 py-14 sm:px-12 md:py-20">
           <div className="mb-10 grid gap-3 sm:grid-cols-2 sm:items-end">
             <h2 className="text-3xl leading-[.98] tracking-tighter sm:text-4xl">
               {copy.process.title}
             </h2>
           </div>
-          <StepGrid className="bg-[#373731]">
+          <StepGrid className="bg-background/20">
             {t.common.contactSteps.map((step, index) => (
               <StepCard
                 key={step.title}
                 index={index + 1}
                 title={step.title}
-                className="bg-[#1e1e1a]"
-                indexClassName="text-[#aaa79f]"
+                className="bg-foreground"
+                indexClassName="text-background/50"
               >
-                <span className="text-sm leading-relaxed text-[#d8d5cd]">{step.description}</span>
+                <span className="text-background/80 text-sm leading-relaxed">
+                  {step.description}
+                </span>
               </StepCard>
             ))}
           </StepGrid>

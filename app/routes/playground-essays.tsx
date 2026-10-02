@@ -17,7 +17,6 @@ export default function PlaygroundEssays() {
     <div className="page-shell">
       {/* Hero */}
       <section className="layout-stack">
-        <p className="ui-eyebrow">{copy.hero.eyebrow}</p>
         <h1 className="heading-hero text-foreground max-w-4xl">{copy.hero.title}</h1>
         <p className="text-muted-foreground max-w-2xl text-lg leading-relaxed">{copy.hero.dek}</p>
       </section>

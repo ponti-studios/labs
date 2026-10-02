@@ -92,7 +92,7 @@ export function SpecimenCard({
           {label ?? category}
         </span>
         <span
-          className="font-serif text-sm tracking-tight italic opacity-70"
+          className="font-mono text-xs tracking-tight opacity-70"
           style={{ color: "var(--card-fg)" }}
         >
           # {serial}
