@@ -101,6 +101,26 @@ export const STUDIO_TRANSLATIONS_EN = {
           "Modeling open-ended note-to-task-to-chat relationships without an unbounded schema",
         ],
       },
+      thames: {
+        name: "Thames",
+        shortDescription:
+          "Walks are for thinking out loud. Thames listens, thinks, and answers out loud, from your iPhone or your wrist.",
+        solution:
+          "A voice companion for iPhone and Apple Watch. Tap the orb, say what's on your mind, and Thames transcribes it, answers with the whole conversation in mind, and speaks the reply in a voice you choose.",
+        problem:
+          "Typing a question on a walk breaks the walk, and most voice assistants give one-line answers and forget what you just said. Thames keeps the conversation going while your hands and eyes stay free.",
+        keyFeatures: [
+          "One orb on the iPhone and the Apple Watch: tap to talk, tap to send, tap to interrupt",
+          "Conversations stay on your device, and you can switch between them from your wrist",
+          "Pick the reply voice from the roughly 100 voices of Microsoft's MAI Voice, in dozens of languages",
+          "Replies start speaking as soon as the first sentence is ready",
+        ],
+        technicalChallenges: [
+          "Keeping the Watch and the iPhone in agreement over WatchConnectivity, where messages arrive late or out of order",
+          "Cutting the wait for spoken audio by synthesizing a reply in sentence-sized chunks while it plays",
+          "Sharing one status model between the React Native app and the SwiftUI Watch app",
+        ],
+      },
       career: {
         name: "Career",
         shortDescription:
