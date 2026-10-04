@@ -10,6 +10,7 @@ const studioRoutes = [
   route("/manifesto", "routes/manifesto.tsx"),
   route("/playground/essays", "routes/playground-essays.tsx"),
   route("/faq", "routes/faq.tsx"),
+  route("/privacy/thames", "routes/privacy.thames.tsx"),
   route("/work/:slug", "routes/work.$slug.tsx"),
 ] satisfies RouteConfig;
 

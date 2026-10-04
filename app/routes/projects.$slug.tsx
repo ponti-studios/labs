@@ -26,6 +26,7 @@ export default function ProjectDetail() {
   const { project } = useLoaderData<typeof loader>();
   const hasDistinctUrl = Boolean(project.url && project.url !== project.github);
   const howItWorks = [...project.keyFeatures, ...project.technicalChallenges];
+  const portrait = project.screenshotShape === "portrait";
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-16">
@@ -148,16 +149,18 @@ export default function ProjectDetail() {
                   href={src}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="border-border hover:border-accent/40 aspect-video w-48 shrink-0 overflow-hidden rounded-md border outline-none"
+                  className={`border-border hover:border-accent/40 shrink-0 overflow-hidden rounded-md border outline-none ${
+                    portrait ? "aspect-[1320/2868] w-28" : "aspect-video w-48"
+                  }`}
                 >
                   <img
                     src={src}
                     alt={`${project.name} screenshot ${index + 1}`}
-                    width={1280}
-                    height={720}
+                    width={portrait ? 660 : 1280}
+                    height={portrait ? 1434 : 720}
                     loading="lazy"
                     decoding="async"
-                    sizes="12rem"
+                    sizes={portrait ? "7rem" : "12rem"}
                     className="h-full w-full object-cover"
                   />
                 </a>

@@ -19,6 +19,8 @@ export type ProjectMetadata = {
   url?: string;
   logo?: string;
   screenshots?: string[];
+  /** Portrait phone screenshots are shown at their own aspect ratio instead of 16:9. */
+  screenshotShape?: "portrait";
 };
 
 export type Project = ProjectMetadata & (typeof t.projects.entries)[ProjectSlug];
@@ -48,6 +50,23 @@ const omiro: Project = {
   status: "active",
   github: "https://github.com/ponti-studios/hominem",
   logo: "/experiments/logo.omiro.500x500.webp",
+};
+
+const thames: Project = {
+  ...t.projects.entries.thames,
+  slug: "thames",
+  category: "product",
+  tech: ["TypeScript", "React Native", "SwiftUI", "iOS", "watchOS"],
+  status: "development",
+  github: "https://github.com/charlesponti/Thames",
+  logo: "/experiments/logo.thames.500x500.webp",
+  screenshots: [
+    "/screenshots/thames-talk.webp",
+    "/screenshots/thames-conversation.webp",
+    "/screenshots/thames-history.webp",
+    "/screenshots/thames-voice.webp",
+  ],
+  screenshotShape: "portrait",
 };
 
 const career: Project = {
@@ -177,6 +196,7 @@ const covid: Project = {
 export const projects: Project[] = [
   kernel,
   omiro,
+  thames,
   career,
   finance,
   hominemApi,
@@ -196,7 +216,7 @@ export const projectSections: ProjectSection[] = [
   {
     category: "product",
     label: t.projects.categoryLabels.product,
-    projects: [omiro, career, game, finance, commune, health, earth],
+    projects: [omiro, thames, career, game, finance, commune, health, earth],
   },
   {
     category: "infrastructure",
