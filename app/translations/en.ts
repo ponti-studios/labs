@@ -30,6 +30,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       detailMetaDescription: "Project details and information",
       notFound: "Project not found",
       back: "Back to Lab",
+      nextProject: "Next project",
       previous: "Previous",
       next: "Next",
       problem: "The Problem",
@@ -347,6 +348,7 @@ export const STUDIO_TRANSLATIONS_EN = {
 
   common: {
     bookCall: "Book a call",
+    seeServices: "See services",
     replyWithin: "I reply within 24 hours.",
     contactSteps: [
       {
@@ -392,11 +394,9 @@ export const STUDIO_TRANSLATIONS_EN = {
       title: "The Work.",
       subtitle: "Real clients, constraints, & numbers.",
     },
-    caseStudyLabel: "Case study",
-    roleLabel: "Role",
-    timelineLabel: "Timeline",
     problemTitle: "Problem",
     approachTitle: "Approach",
+    nextCase: "Next case",
     backToWork: "All work",
   },
 
@@ -905,7 +905,7 @@ export const STUDIO_TRANSLATIONS_EN = {
         {
           title: "Users first, always.",
           description:
-            "Every decision starts with the customer and works backward. Data lives on-device; access is a right, not a feature I grant. User needs beat profit, always — I never sell data or use it for ads. Teams are systems, not heroic individuals.",
+            "Every decision starts with the customer and works backward. Data lives on-device; access is a right, not a feature I grant. User needs beat profit, always — I never sell data or use it for ads.",
         },
         {
           title: "Judgment over theater.",
@@ -918,16 +918,6 @@ export const STUDIO_TRANSLATIONS_EN = {
             "I'm not here to become your team. I solve the specific thing you couldn't solve, hand it off clean, and get out of the way — no retainer you don't need, no relationship to manage.",
         },
         {
-          title: "Simple, permanent, built to last.",
-          description:
-            "Most software ships fast and dies young, built by people learning on someone else's budget. I refuse that. Every codebase I deliver is clean, tested, and maintainable. Simple beats complex, and I fix problems at the root, not the surface.",
-        },
-        {
-          title: "Wider impact, on purpose.",
-          description:
-            "Mentorship and business education help marginalized entrepreneurs build sustainable businesses. Content earns attention through research, not spray-and-pray. Mission and profit reinforce each other — I invest that impact in education, healthcare, and finance.",
-        },
-        {
           title: "Function over decoration.",
           description:
             "If a feature, screen, or line of code doesn't serve your product's function, I cut it. You don't pay for decoration. Every dollar buys something that actually works for your users.",
@@ -938,14 +928,19 @@ export const STUDIO_TRANSLATIONS_EN = {
             "I don't cram every possible feature in on day one. The product stays uncluttered and breathes, so you can add what's next later without a costly rebuild.",
         },
         {
-          title: "Built for the long haul.",
+          title: "Simple, permanent, built to last.",
           description:
-            "I skip flashy trends I'd have to rip out in a year. What I ship still works and still looks right five years from now — substance over demo-day spectacle.",
+            "Most software ships fast and dies young, built by people learning on someone else's budget. I refuse that. Every codebase I deliver is clean, tested, and maintainable. Simple beats complex, and I fix problems at the root, not the surface. I skip flashy trends I'd have to rip out in a year, so what I ship still works and still looks right five years from now.",
         },
         {
           title: "Honest, not just polished.",
           description:
             "You get an honest picture of what's built, tested, and still rough. Not complexity hidden behind a shiny surface. No surprises waiting at handoff.",
+        },
+        {
+          title: "Wider impact, on purpose.",
+          description:
+            "Mentorship and business education help marginalized entrepreneurs build sustainable businesses. Content earns attention through research, not spray-and-pray. Mission and profit reinforce each other — I invest that impact in education, healthcare, and finance.",
         },
       ],
     },

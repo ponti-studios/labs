@@ -2,9 +2,20 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "labs-vite",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "VITE_NEWSBOY_APP_URL=https://localhost:4451 pnpm dev:app"
+      ],
+      "port": 3001
+    },
+    {
       "name": "labs",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["dev"],
+      "runtimeArgs": [
+        "dev"
+      ],
       "port": 443,
       "url": "https://labs.lvh.me"
     }

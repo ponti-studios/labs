@@ -1,14 +1,15 @@
 import { RevealGroup, RevealItem } from "~/components/Reveal";
+import { pageMeta } from "~/lib/seo";
 import { t } from "~/translations";
 
 const copy = t.manifesto;
 
-export function meta(): Array<{
-  title?: string;
-  name?: string;
-  content?: string;
-}> {
-  return [{ title: copy.meta.title }, { name: "description", content: copy.meta.description }];
+export function meta() {
+  return pageMeta({
+    title: copy.meta.title,
+    description: copy.meta.description,
+    path: "/manifesto",
+  });
 }
 
 export default function Manifesto() {
@@ -19,30 +20,29 @@ export default function Manifesto() {
         <h1 className="heading-hero text-foreground max-w-4xl">{copy.hero.title}</h1>
       </section>
 
-      {/* Tenets — single-column editorial list, one idea at a time */}
-      <section className="section gap-10">
+      {/* Tenets: title left, argument right, one idea per row */}
+      <section>
         <RevealGroup as="ol" className="flex flex-col">
-          {copy.tenets.items.map((tenet, index) => (
+          {copy.tenets.items.map((tenet) => (
             <RevealItem
               key={tenet.title}
               as="li"
-              className="border-border grid gap-3 border-t py-8 first:pt-0 sm:grid-cols-[minmax(0,4rem)_1fr] sm:gap-10"
+              className="border-border grid gap-3 border-t py-7 last:pb-0 sm:gap-4 sm:py-10 lg:grid-cols-[14rem_1fr] lg:gap-16"
             >
-              <span className="ref-tag pt-1">{String(index + 1).padStart(2, "0")}</span>
-              <div className="flex max-w-3xl flex-col gap-2.5">
-                <h2 className="text-foreground sm:text-2xl">{tenet.title}</h2>
-                <p className="text-muted-foreground text-base leading-relaxed">
-                  {tenet.description}
-                </p>
-              </div>
+              <h2 className="text-foreground text-2xl font-semibold tracking-tight">
+                {tenet.title}
+              </h2>
+              <p className="text-foreground max-w-2xl text-base leading-relaxed sm:text-xl">
+                {tenet.description}
+              </p>
             </RevealItem>
           ))}
         </RevealGroup>
       </section>
 
-      {/* Closing pull-quote */}
-      <section className="section-compact border-b-0 px-4 py-20 text-center sm:px-6 md:py-28">
-        <blockquote className="text-foreground mx-auto max-w-3xl text-4xl leading-[1.05] font-semibold tracking-tight sm:text-5xl md:text-6xl">
+      {/* Closing pull-quote: same inverted panel as the home page */}
+      <section className="bg-foreground rounded-sm px-6 py-14 sm:px-12 md:py-20">
+        <blockquote className="text-background max-w-4xl text-3xl leading-[1.1] font-semibold tracking-tight sm:text-4xl md:text-5xl">
           &ldquo;{copy.quote}&rdquo;
         </blockquote>
       </section>

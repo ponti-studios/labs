@@ -1,22 +1,16 @@
 import { Link } from "react-router";
 import { RevealGroup, RevealItem } from "~/components/Reveal";
-import { SpecimenCard } from "~/components/projects/specimen-card";
+import { ProjectTile } from "~/components/projects/project-tile";
 import { projectSections } from "~/data/projects";
-import { toSpecimenCard } from "~/lib/specimen-cards";
+import { pageMeta } from "~/lib/seo";
 import { t } from "~/translations";
 
-export function meta(): Array<{
-  title?: string;
-  name?: string;
-  content?: string;
-}> {
-  return [
-    { title: "Lab — Ponti Studios" },
-    {
-      name: "description",
-      content: t.projects.page.metaDescription,
-    },
-  ];
+export function meta() {
+  return pageMeta({
+    title: "Lab — Ponti Studios",
+    description: t.projects.page.metaDescription,
+    path: "/projects",
+  });
 }
 
 export default function Projects() {
@@ -33,14 +27,19 @@ export default function Projects() {
       {projectSections.map((section) => {
         return (
           <section key={section.category} className="layout-stack">
-            <h2 className="border-border text-muted-foreground border-b pb-3 text-xs font-medium tracking-wide uppercase">
+            <h2 className="border-border text-foreground border-b pb-3 text-2xl font-semibold tracking-tight">
               {section.label}
             </h2>
-            <RevealGroup className="grid grid-cols-1 place-items-center gap-6 py-8 sm:grid-cols-2 lg:grid-cols-3">
+            <RevealGroup className="grid grid-cols-1 gap-4 py-8 sm:grid-cols-2 lg:grid-cols-3">
               {section.projects.map((project) => (
-                <RevealItem key={project.slug}>
-                  <SpecimenCard
-                    {...toSpecimenCard(project)}
+                <RevealItem key={project.slug} className="h-full">
+                  <ProjectTile
+                    href={`/projects/${project.slug}`}
+                    name={project.name}
+                    description={project.shortDescription}
+                    status={t.projects.statusLabels[project.status]}
+                    meta={project.tech.slice(0, 3).join(" · ")}
+                    logo={project.logo}
                     data-testid={`lab-project-${project.slug}`}
                   />
                 </RevealItem>
@@ -53,28 +52,24 @@ export default function Projects() {
       {/* Playground */}
       <section className="layout-stack">
         <div className="border-border flex items-baseline justify-between gap-4 border-b pb-3">
-          <h2 className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
-            Playground
-          </h2>
+          <h2 className="text-foreground text-2xl font-semibold tracking-tight">Playground</h2>
           <Link
             to="/playground/essays"
             prefetch="intent"
-            className="text-muted-foreground hover:text-accent press shrink-0 text-sm underline underline-offset-4"
+            className="text-muted-foreground hover:text-foreground press shrink-0 text-sm underline underline-offset-4"
           >
             Read the essays
           </Link>
         </div>
-        <RevealGroup className="grid grid-cols-1 place-items-center gap-6 py-8 sm:grid-cols-2 lg:grid-cols-3">
+        <RevealGroup className="grid grid-cols-1 gap-4 py-8 sm:grid-cols-2 lg:grid-cols-3">
           {playgroundItems.map((item) => (
-            <RevealItem key={item.slug}>
-              <SpecimenCard
-                id={item.slug}
+            <RevealItem key={item.slug} className="h-full">
+              <ProjectTile
                 href={item.href}
-                logoAlt={`${item.name} icon`}
-                title={item.name}
-                category="experiment"
-                label={item.category}
+                name={item.name}
+                description={item.shortDescription}
                 status="Playground"
+                meta={item.category}
                 data-testid={`lab-playground-${item.slug}`}
               />
             </RevealItem>
