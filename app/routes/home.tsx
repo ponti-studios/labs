@@ -4,6 +4,7 @@ import { memo } from "react";
 import { Button } from "@ponti-studios/ui/primitives";
 import { Link } from "react-router";
 import { AsciiField } from "~/components/AsciiField";
+import { GlyphText } from "~/components/GlyphText";
 import { BookCallButton } from "~/components/BookCallButton";
 import { RevealGroup, RevealItem } from "~/components/Reveal";
 import { TiltCard } from "~/components/TiltCard";
@@ -33,12 +34,16 @@ const ServiceChip = memo(function ServiceChip({ name, slug }: ServiceChipProps) 
       to={`/services#${slug}`}
       prefetch="intent"
       glow={{ radiusPx: 220, color: "var(--color-background)" }}
-      className="text-background border-background/20 hover:border-background/60 focus-visible:ring-background focus-visible:ring-offset-foreground flex flex-col justify-between gap-2 rounded-sm border p-4 transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+      className="group/chip text-background border-background/20 hover:border-background focus-visible:ring-background focus-visible:ring-offset-foreground flex flex-col justify-between gap-2 rounded-sm border p-4 transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
     >
       <span className="relative z-10 flex items-center justify-between gap-3 text-lg font-semibold tracking-tight">
         {name}
-        <span aria-hidden="true" className="text-background/60 font-mono text-xl leading-none">
-          ↗
+        <span
+          aria-hidden="true"
+          className="text-background/60 group-hover/chip:text-background group-focus-visible/chip:text-background font-mono text-xl leading-none"
+        >
+          <span className="group-hover/chip:hidden group-focus-visible/chip:hidden">↗</span>
+          <span className="hidden group-hover/chip:inline group-focus-visible/chip:inline">→</span>
         </span>
       </span>
     </TiltCard>
@@ -79,11 +84,14 @@ function HeroHeadline() {
 
 export default function Home() {
   return (
-    <div className="page-shell flex flex-col gap-10">
+    <div className="page-shell flex flex-col gap-16 sm:gap-24">
       {/* Thesis */}
       <section className="layout-stack relative isolate py-16 sm:py-24">
         <AsciiField className="opacity-25 lg:opacity-100" />
         <HeroHeadline />
+        <p className="text-muted-foreground max-w-md text-lg leading-relaxed">
+          {t.home.hero.subhead}
+        </p>
 
         <div className="grid gap-7 md:grid-cols-[minmax(0,0.9fr)_minmax(16rem,0.5fr)] md:items-end">
           <div className="flex flex-wrap gap-3">
@@ -103,7 +111,7 @@ export default function Home() {
         className="bg-foreground text-background flex flex-col gap-8 rounded-sm px-4 py-10 sm:px-6 md:py-14"
       >
         <h2 id="capabilities-title" className="heading-cta text-background max-w-3xl">
-          {t.home.capabilities.title}
+          <GlyphText text={t.home.capabilities.title} />
         </h2>
         <div className="grid gap-8 md:grid-cols-2">
           {servicePillars.map((pillar) => (
@@ -139,12 +147,10 @@ export default function Home() {
       </section>
 
       {/* Close CTA */}
-      <section className="border-border bg-muted text-foreground flex flex-col items-center gap-4 rounded-sm border px-4 py-14 sm:px-6">
-        <h2 className="heading-cta mx-auto mb-5 flex max-w-3xl gap-4 text-center">
-          <span>{t.services.cta.title.split(" ")[0]}</span>
-          <span className="text-muted-foreground font-mono lowercase">
-            {t.services.cta.title.split(" ")[1]}
-          </span>
+      <section className="border-border relative isolate flex flex-col items-center gap-4 overflow-hidden border-t px-4 py-20 sm:px-6 sm:py-28">
+        <AsciiField className="[mask-image:radial-gradient(ellipse_55%_70%_at_50%_50%,transparent_15%,black_80%)]" />
+        <h2 className="heading-cta text-foreground mx-auto mb-5 max-w-3xl text-center">
+          <GlyphText text={t.services.cta.title} />
         </h2>
         <BookCallButton>{t.common.bookCall}</BookCallButton>
       </section>

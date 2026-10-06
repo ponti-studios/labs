@@ -53,7 +53,8 @@ export function AsciiField({ className }: { className?: string }) {
     };
 
     const draw = (now: number) => {
-      const t = reduceMotion.matches ? 0 : now / 1000;
+      // Waves drift with time and, slightly, with scroll position.
+      const t = reduceMotion.matches ? 0 : now / 1000 + window.scrollY * 0.004;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.font = `${FONT_SIZE}px ${fontFamily}`;
       ctx.textAlign = "center";

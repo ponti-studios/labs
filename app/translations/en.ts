@@ -1039,6 +1039,8 @@ export const STUDIO_TRANSLATIONS_EN = {
       title: "Building what's next",
       wordBefore: "Building",
       wordAfter: "what's next",
+      subhead:
+        "A studio for computational intelligence: AI systems, automation, and the software around them.",
       secondaryCta: "See the work",
     },
     marquee: [
@@ -1090,6 +1092,11 @@ export const STUDIO_TRANSLATIONS_EN = {
       title: "Omiro",
       description:
         "Your notes, tasks, and calendar don't talk to each other. Omiro makes them one connected app.",
+      cta: "Learn more",
+    },
+    thames: {
+      title: "Thames",
+      description: "Walks are for thinking out loud. Thames listens, thinks, and answers out loud.",
       cta: "Learn more",
     },
     lab: {
