@@ -477,22 +477,30 @@ export const STUDIO_TRANSLATIONS_EN = {
           slug: "streamyard",
           client: "StreamYard",
           industry: "Creator",
-          description: "Live streaming tools for creators, teams, and media companies.",
+          description: "Collab: guest matching that keeps new streamers going.",
           timeline: "2020–2024",
           role: "Lead Product Engineer & Product Manager",
-          problem: "A creator product needed workspaces, roles, and a path into B2B.",
+          problem:
+            "Streaming alone is hard, and it's easy to skip a day. With a guest it's easy to fill an hour, but 34% of collaboration attempts never became a conversation.",
           whatWeDid:
-            "Led product and engineering for Teams/Business tier and the creator marketplace, from architecture through launch.",
+            "Led a small squad building Collab, a two-sided marketplace where creators find guests for their streams and guest spots on other streams. Also led product and engineering for the Teams/Business tier.",
           approach: [
-            "Introduced a workspace abstraction so assets and permissions could be shared instead of tied to a single userId",
-            "Replaced the boolean isHost flag with numeric RBAC (role values as integers) so future roles slot in without schema changes",
-            "Migrated to the new model in four independently-deployable phases — zero downtime, no phase depended on the next having shipped",
-            "Built vector-based creator recommendations and AI conversation starters to fix a 34% collaboration-to-conversation drop-off",
+            "Replaced category-based discovery with vector similarity, then rebalanced scoring toward content similarity over raw follower count: recommendation acceptance up 25%",
+            "Paired newer creators with slightly larger ones: motivating, and good for their growth",
+            "Built an Opportunities board where hosts post guest requests, like a job posting, and creators apply: 58% of new conversations",
+            "Cut first contact to one click and added AI conversation starters: conversation initiation up 32%",
+            "Launched invite-only in cohorts to balance supply and demand per niche, hand-curating the first 200 profiles",
+            "Ran human moderation alongside automated screening, plus blocking and reporting: 40% fewer policy violations, 60% faster approvals",
+            "For the Business tier, introduced a workspace abstraction and numeric RBAC, migrated in four independently-deployable phases with zero downtime",
           ],
           outcomes: [
+            {
+              value: "64%",
+              label: "More likely to keep streaming after 90 days, for new creators on Collab",
+            },
+            { value: "3×", label: "Growth in user collaborations, year over year" },
+            { value: "58%", label: "Of new conversations started from the Opportunities board" },
             { value: "$15M+", label: "Enterprise ARR unlocked" },
-            { value: "13%", label: "Consumer growth within 3 months of Business launch" },
-            { value: "300%", label: "YoY creator collaborations" },
           ],
         },
         {
@@ -1065,7 +1073,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       title: "Work",
     },
     clients: {
-      title: "Clients",
+      title: "Results",
     },
     projects: {
       title: "Lab",

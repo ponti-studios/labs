@@ -2,12 +2,20 @@ import { LucideArrowRightCircle } from "lucide-react";
 import { memo } from "react";
 import { Link } from "react-router";
 import { GlyphText } from "~/components/GlyphText";
-import { CardCarousel } from "~/components/CardCarousel";
-import { ProjectCard } from "~/components/projects/project-card";
-import { CLIENT_CARDS } from "~/lib/client-cards";
+import { RevealGroup, RevealItem } from "~/components/Reveal";
+import { CaseTile } from "~/components/work/case-tile";
+import { caseSnapshots } from "~/data/studio";
 import { t } from "~/translations";
 
-/** Same credit-card carousel as FeaturedProjects, populated from past client work. */
+// Editorial pick: the six outcomes that read strongest at a glance.
+const FEATURED_SLUGS = ["streamyard", "thomson-reuters", "kensho", "lumina", "glow", "prolog"];
+
+const FEATURED_CASES = FEATURED_SLUGS.flatMap((slug) => {
+  const snapshot = caseSnapshots.find((entry) => entry.slug === slug);
+  return snapshot ? [snapshot] : [];
+});
+
+/** Home-page proof: outcome-led case-study tiles, linking through to /work. */
 export const FeaturedClients = memo(function FeaturedClients() {
   return (
     <section
@@ -18,18 +26,17 @@ export const FeaturedClients = memo(function FeaturedClients() {
         <h2 id="clients-title" className="heading-cta text-foreground max-w-3xl">
           <GlyphText text={t.home.clients.title} />
         </h2>
-        <Link to="/work" prefetch="intent">
-          <LucideArrowRightCircle size={48} />
+        <Link to="/work" prefetch="intent" aria-label={t.nav.work}>
+          <LucideArrowRightCircle size={48} aria-hidden="true" />
         </Link>
       </div>
-      <CardCarousel
-        ariaLabel={t.home.clients.title}
-        items={CLIENT_CARDS}
-        getKey={(client) => client.id}
-        renderItem={(client) => (
-          <ProjectCard {...client} data-testid={`featured-client-${client.id}`} />
-        )}
-      />
+      <RevealGroup className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {FEATURED_CASES.map((snapshot) => (
+          <RevealItem key={snapshot.slug} className="h-full">
+            <CaseTile snapshot={snapshot} />
+          </RevealItem>
+        ))}
+      </RevealGroup>
     </section>
   );
 });
