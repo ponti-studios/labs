@@ -1,16 +1,17 @@
 import { RevealGroup, RevealItem } from "~/components/Reveal";
 import { CaseTile } from "~/components/work/case-tile";
 import { caseSnapshots } from "~/data/studio";
+import { pageMeta } from "~/lib/seo";
 import { t } from "~/translations";
 
 const copy = t.work;
 
-export function meta(): Array<{
-  title?: string;
-  name?: string;
-  content?: string;
-}> {
-  return [{ title: copy.meta.title }, { name: "description", content: copy.meta.description }];
+export function meta() {
+  return pageMeta({
+    title: copy.meta.title,
+    description: copy.meta.description,
+    path: "/work",
+  });
 }
 
 export default function Work() {

@@ -11,16 +11,17 @@ import { TiltCard } from "~/components/TiltCard";
 import { FeaturedClients } from "~/components/clients";
 import { FeaturedProjects } from "~/components/projects";
 import { servicePillars } from "~/data/studio";
+import { pageMeta } from "~/lib/seo";
 import { t } from "~/translations";
 
 import "~/components/games/game.css";
 
-export function meta(): Array<{
-  title?: string;
-  name?: string;
-  content?: string;
-}> {
-  return [{ title: t.home.meta.title }, { name: "description", content: t.home.meta.description }];
+export function meta() {
+  return pageMeta({
+    title: t.home.meta.title,
+    description: t.home.meta.description,
+    path: "/",
+  });
 }
 
 type ServiceChipProps = {

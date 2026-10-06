@@ -1,15 +1,16 @@
 import { Link } from "react-router";
 import { RevealGroup, RevealItem } from "~/components/Reveal";
+import { pageMeta } from "~/lib/seo";
 import { t } from "~/translations";
 
 const copy = t.playgroundEssays;
 
-export function meta(): Array<{
-  title?: string;
-  name?: string;
-  content?: string;
-}> {
-  return [{ title: copy.meta.title }, { name: "description", content: copy.meta.description }];
+export function meta() {
+  return pageMeta({
+    title: copy.meta.title,
+    description: copy.meta.description,
+    path: "/playground/essays",
+  });
 }
 
 export default function PlaygroundEssays() {

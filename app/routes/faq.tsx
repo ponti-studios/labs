@@ -7,16 +7,17 @@ import {
 import { Link } from "react-router";
 import { BookCallButton } from "~/components/BookCallButton";
 import { RevealGroup, RevealItem } from "~/components/Reveal";
+import { pageMeta } from "~/lib/seo";
 import { t } from "~/translations";
 
 const copy = t.faq;
 
-export function meta(): Array<{
-  title?: string;
-  name?: string;
-  content?: string;
-}> {
-  return [{ title: copy.meta.title }, { name: "description", content: copy.meta.description }];
+export function meta() {
+  return pageMeta({
+    title: copy.meta.title,
+    description: copy.meta.description,
+    path: "/faq",
+  });
 }
 
 export default function Faq() {
@@ -70,7 +71,7 @@ export default function Faq() {
             prefetch="intent"
             className="text-foreground text-sm underline-offset-4 hover:underline"
           >
-            {t.home.services.cta}
+            {t.common.seeServices}
           </Link>
         </div>
       </section>

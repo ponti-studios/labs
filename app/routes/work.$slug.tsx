@@ -2,109 +2,91 @@ import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { Link, useLoaderData } from "react-router";
 import { BookCallButton } from "~/components/BookCallButton";
 import { RevealGroup, RevealItem } from "~/components/Reveal";
+import { CaseTile } from "~/components/work/case-tile";
+import { pageMeta } from "~/lib/seo";
 import { caseLogos, caseSnapshots } from "~/data/studio";
 import { t } from "~/translations";
 
 const copy = t.work;
 
+// Static class names so Tailwind can see them.
+const OUTCOME_COLUMNS: Record<number, string> = {
+  1: "lg:grid-cols-1",
+  2: "lg:grid-cols-2",
+  3: "lg:grid-cols-3",
+  4: "lg:grid-cols-4",
+};
+
 export async function loader({ params }: LoaderFunctionArgs) {
-  const snapshot = caseSnapshots.find((entry) => entry.slug === params.slug);
-  if (!snapshot) throw new Response("Not Found", { status: 404 });
-  return { snapshot };
+  const index = caseSnapshots.findIndex((entry) => entry.slug === params.slug);
+  if (index < 0) throw new Response("Not Found", { status: 404 });
+  const snapshot = caseSnapshots[index];
+  const next = caseSnapshots[(index + 1) % caseSnapshots.length];
+  return { snapshot, next };
 }
 
 export const meta: MetaFunction = ({ params }) => {
   const snapshot = caseSnapshots.find((entry) => entry.slug === params.slug);
   if (!snapshot) return [{ title: "Case study | Ponti Studios" }];
-  return [
-    { title: `${snapshot.client} | Ponti Studios` },
-    { name: "description", content: snapshot.problem },
-  ];
+  return pageMeta({
+    title: `${snapshot.client} | Ponti Studios`,
+    description: snapshot.problem,
+    path: `/work/${snapshot.slug}`,
+  });
 };
 
 export default function WorkSlug() {
-  const { snapshot } = useLoaderData<typeof loader>();
+  const { snapshot, next } = useLoaderData<typeof loader>();
   const logo = caseLogos[snapshot.slug];
+  const columns = OUTCOME_COLUMNS[Math.min(snapshot.outcomes.length, 4)] ?? "lg:grid-cols-3";
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-16">
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-20 pt-8 pb-24 sm:gap-28">
       {/* Hero */}
       <section>
         <Link
           to="/work"
           prefetch="intent"
-          className="text-muted-foreground hover:text-foreground mb-10 inline-block min-h-11 w-fit content-center text-sm outline-none"
+          aria-label={copy.backToWork}
+          className="text-muted-foreground hover:text-foreground inline-flex min-h-11 w-fit items-center font-mono text-xl outline-none"
         >
-          ← {copy.backToWork}
+          ←
         </Link>
 
-        <div className="flex items-center gap-4">
+        <div className="mt-8 flex flex-wrap items-center gap-5">
           {logo ? (
-            <div className="rounded-lg bg-white p-2">
+            <span className="border-border rounded-sm border bg-white p-2">
               <img
                 src={logo}
                 alt={`${snapshot.client} logo`}
-                className="size-10 shrink-0 object-contain grayscale"
+                className="size-12 shrink-0 object-contain grayscale"
               />
-            </div>
+            </span>
           ) : null}
-          <h1 className="text-4xl font-medium tracking-tight sm:text-5xl">{snapshot.client}</h1>
+          <h1 className="text-foreground text-5xl font-semibold tracking-tight sm:text-7xl">
+            {snapshot.client}
+          </h1>
         </div>
 
-        <p className="text-muted-foreground mt-2 max-w-fit rounded-full px-4 py-1 text-sm shadow">
-          {snapshot.industry}
-        </p>
-
-        <dl className="border-border text-muted-foreground mt-10 flex flex-wrap gap-x-10 gap-y-2 border-t border-b py-4 text-sm">
-          <div className="flex gap-2">
-            <dt className="uppercase">{copy.roleLabel}</dt>
-            <dd className="text-foreground">{snapshot.role}</dd>
-          </div>
-          <div className="flex gap-2">
-            <dt className="uppercase">{copy.timelineLabel}</dt>
-            <dd className="text-foreground">{snapshot.timeline}</dd>
-          </div>
-        </dl>
-      </section>
-
-      {/* Problem */}
-      <section>
-        <h2 className="text-muted-foreground mb-3 text-xs font-medium tracking-wide uppercase">
-          {copy.problemTitle}
-        </h2>
-        <p className="text-foreground text-2xl leading-snug font-normal tracking-tight sm:text-3xl">
-          {snapshot.problem}
+        <p className="text-muted-foreground mt-5 text-lg">
+          {snapshot.industry} · {snapshot.role} · {snapshot.timeline}
         </p>
       </section>
 
-      {/* Approach */}
-      <section>
-        <h2 className="text-muted-foreground mb-3 text-xs font-medium tracking-wide uppercase">
-          {copy.approachTitle}
-        </h2>
-        <p className="text-muted-foreground mb-8 text-lg leading-relaxed">{snapshot.whatWeDid}</p>
-        <RevealGroup as="ol" className="border-border divide-border divide-y border-t">
-          {snapshot.approach.map((step, index) => (
-            <RevealItem key={step} as="li" className="flex items-baseline gap-6 py-5 first:pt-0">
-              <span className="text-muted-foreground font-mono text-xs">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              <p className="text-foreground leading-relaxed">{step}</p>
-            </RevealItem>
-          ))}
-        </RevealGroup>
-      </section>
-
-      {/* Outcomes */}
-      <section className="border-border border-t pt-10">
-        <RevealGroup className="border-border divide-border divide-y border-b">
+      {/* Outcomes lead: proof before story */}
+      <section aria-label={snapshot.client}>
+        <RevealGroup
+          className={`border-border divide-border grid divide-y border-y lg:divide-x lg:divide-y-0 ${columns}`}
+        >
           {snapshot.outcomes.map((outcome) => (
             <RevealItem
               key={outcome.label}
-              className="flex items-baseline justify-between gap-6 py-5 first:pt-0"
+              className="flex items-baseline justify-between gap-6 py-6 lg:flex-col lg:items-start lg:justify-start lg:gap-3 lg:px-8 lg:py-10 lg:first:pl-0"
             >
-              <b className="text-foreground text-3xl tracking-tight sm:text-4xl">{outcome.value}</b>
-              <p className="text-muted-foreground text-right text-sm leading-relaxed">
+              <b className="text-foreground text-4xl font-semibold tracking-tight tabular-nums sm:text-5xl lg:text-6xl">
+                {outcome.value}
+              </b>
+              <p className="text-muted-foreground max-w-[28ch] text-right text-sm leading-snug lg:text-left">
                 {outcome.label}
               </p>
             </RevealItem>
@@ -112,8 +94,42 @@ export default function WorkSlug() {
         </RevealGroup>
       </section>
 
+      {/* Problem */}
+      <section className="grid gap-6 lg:grid-cols-[14rem_1fr] lg:gap-16">
+        <h2 className="text-foreground self-start lg:sticky lg:top-24">{copy.problemTitle}</h2>
+        <p className="text-foreground text-2xl leading-snug font-medium tracking-tight sm:text-3xl">
+          {snapshot.problem}
+        </p>
+      </section>
+
+      {/* Approach */}
+      <section className="grid gap-6 lg:grid-cols-[14rem_1fr] lg:gap-16">
+        <h2 className="text-foreground self-start lg:sticky lg:top-24">{copy.approachTitle}</h2>
+        <div>
+          <p className="text-muted-foreground mb-10 text-lg leading-relaxed">
+            {snapshot.whatWeDid}
+          </p>
+          <RevealGroup as="ol" className="border-border divide-border divide-y border-t">
+            {snapshot.approach.map((step, index) => (
+              <RevealItem key={step} as="li" className="flex items-baseline gap-6 py-5">
+                <span className="text-muted-foreground font-mono text-xs">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <p className="text-foreground text-lg leading-relaxed">{step}</p>
+              </RevealItem>
+            ))}
+          </RevealGroup>
+        </div>
+      </section>
+
+      {/* Next case */}
+      <section className="border-border grid gap-6 border-t pt-12 lg:grid-cols-[14rem_1fr] lg:gap-16">
+        <h2 className="text-foreground self-start">{copy.nextCase}</h2>
+        <CaseTile snapshot={next} className="max-w-md" />
+      </section>
+
       {/* Close CTA */}
-      <section className="pb-24 text-center">
+      <section className="text-center">
         <div className="flex flex-wrap items-center justify-center gap-6">
           <BookCallButton>{t.common.bookCall}</BookCallButton>
           <Link
@@ -121,7 +137,7 @@ export default function WorkSlug() {
             prefetch="intent"
             className="text-foreground text-sm underline-offset-4 hover:underline"
           >
-            {t.home.services.cta}
+            {t.common.seeServices}
           </Link>
         </div>
       </section>

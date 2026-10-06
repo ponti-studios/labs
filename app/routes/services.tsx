@@ -5,12 +5,17 @@ import { DeliverableList } from "~/components/DeliverableList";
 import { RevealGroup, RevealItem } from "~/components/Reveal";
 import { StepCard, StepGrid } from "~/components/StepGrid";
 import { servicePillars } from "~/data/studio";
+import { pageMeta } from "~/lib/seo";
 import { t } from "~/translations";
 
 const copy = t.services;
 
-export function meta(): Array<{ title?: string; name?: string; content?: string }> {
-  return [{ title: copy.meta.title }, { name: "description", content: copy.meta.description }];
+export function meta() {
+  return pageMeta({
+    title: copy.meta.title,
+    description: copy.meta.description,
+    path: "/services",
+  });
 }
 
 export default function Services() {
