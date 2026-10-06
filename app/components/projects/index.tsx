@@ -1,6 +1,7 @@
 import { LucideArrowRightCircle } from "lucide-react";
 import { memo } from "react";
 import { Link } from "react-router";
+import { GlyphText } from "~/components/GlyphText";
 import { CardCarousel } from "~/components/CardCarousel";
 import { GameTile } from "~/components/games/game-tile";
 import { NEWSBOY_APP_URL } from "~/data/game";
@@ -45,7 +46,33 @@ const GameCardPreview = memo(function GameCardPreview() {
   );
 });
 
+/** Apple Watch "Ready" state, shown in the center band of the Thames card. */
+function ThamesWatchPreview() {
+  return (
+    <img
+      src="/screenshots/thames-watch.webp"
+      alt="Thames on Apple Watch: a microphone orb with the prompt Tap to talk"
+      width={498}
+      height={606}
+      loading="lazy"
+      className="h-28 w-auto object-contain"
+    />
+  );
+}
+
 const FEATURED_PROJECTS: FeaturedProject[] = [
+  {
+    id: "thames",
+    href: "/projects/thames",
+    logo: "/experiments/logo.thames.500x500.webp",
+    logoAlt: t.projects.entries.thames.name,
+    title: t.home.thames.title,
+    description: t.home.thames.description,
+    cta: t.home.thames.cta,
+    theme: "graphite",
+    status: t.projects.statusLabels.development,
+    preview: <ThamesWatchPreview />,
+  },
   {
     id: "game",
     href: NEWSBOY_APP_URL,
@@ -89,10 +116,13 @@ const FEATURED_PROJECTS: FeaturedProject[] = [
 
 export const FeaturedProjects = memo(function FeaturedProjects() {
   return (
-    <section className="bg-muted border-border flex flex-col gap-8 rounded-sm border px-6 py-12">
+    <section
+      aria-labelledby="projects-title"
+      className="border-border flex flex-col gap-8 border-t pt-12"
+    >
       <div className="flex items-center gap-12">
-        <h2 id="capabilities-title" className="heading-cta text-foreground max-w-3xl">
-          Projects
+        <h2 id="projects-title" className="heading-cta text-foreground max-w-3xl">
+          <GlyphText text="Projects" />
         </h2>
         <Link to="/projects" prefetch="intent">
           <LucideArrowRightCircle size={48} />
