@@ -37,7 +37,7 @@
     "class-variance-authority": "^0.7.1",
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
-    "fast-xml-parser": "^5.11.1",
+    "fast-xml-parser": "^5.11.2",
     "framer-motion": "13.2.0",
     "isbot": "^5.2.2",
     "iso-3166-1": "^2.1.1",
