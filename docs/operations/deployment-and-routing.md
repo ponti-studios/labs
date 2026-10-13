@@ -35,7 +35,8 @@ The failures were distributed across several boundaries:
 ### URL and environment contract
 
 - Newsboy's own repository owns its server environment schema.
-- Labs' browser-facing links to the standalone Newsboy app use `VITE_NEWSBOY_APP_URL`.
+- Labs' browser-facing links to the standalone Newsboy app use the fixed public
+  URL `https://newsboy.ponti.io` in `app/data/game.ts`.
 - Production value is `https://newsboy.ponti.io`.
 - Local examples use `https://newsboy.lvh.me`; portless overrides the Newsboy
   runtime return origin with its worktree-specific `PORTLESS_URL`.
@@ -51,7 +52,7 @@ The failures were distributed across several boundaries:
 - Newsboy owns the game UI, game API, auth return handling, and game persistence.
 - Labs does not proxy or recreate Newsboy routes and registers no legacy game
   entry points; the `/games/realitea` and `/games/newsboy` redirects were removed.
-  Links to the game go to `VITE_NEWSBOY_APP_URL`.
+  Links to the game go to `https://newsboy.ponti.io`.
 - A route module reused by multiple React Router paths needs distinct route IDs.
 - `tz` is not a supported query parameter. Timezone state is transported in the
   `newsboy_timezone` cookie and invalid or missing values resolve to `UTC`.

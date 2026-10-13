@@ -9,13 +9,14 @@ import { FieldLabel as Label } from "../components/FieldLabel";
 import { cn } from "@ponti-studios/ui/utilities";
 import { Input, Slider } from "@ponti-studios/ui/forms";
 import { useState } from "react";
+import { Link } from "react-router";
 import { computeDisplacements, LiquidGlass } from "~/components/LiquidGlass";
 
 const HOW_IT_WORKS_URL =
   "https://github.com/ponti-studios/labs/blob/main/docs/experiments/glass-refraction.md";
 
 export function meta() {
-  return [{ title: "Glassmorphism | Experiments" }];
+  return [{ title: "Glass | Ponti Studios" }];
 }
 
 function HowItWorksLink({ className }: { className?: string }) {
@@ -50,15 +51,18 @@ export default function ExperimentsGlass() {
   const [controlsOpen, setControlsOpen] = useState(false);
 
   return (
-    <div className="w-full bg-slate-950 text-white">
+    <div className="sf-glass-page w-full bg-slate-950 text-white">
       {/* Interactive Glass Section */}
-      <div className="relative min-h-screen w-full overflow-hidden">
+      <div className="sf-glass-stage relative w-full overflow-hidden">
+        <Link to="/playground/essays#glass" className="sf-glass-back">
+          ← Essays
+        </Link>
         {/* Controls panel — Mobile: bottom sheet, Desktop: sidebar */}
         <div
           className={cn(
-            "bg-card z-50 rounded-lg transition-all duration-300",
+            "z-50 rounded-lg border border-white/20 bg-slate-950/85 text-white shadow-xl backdrop-blur-xl transition-all duration-300",
             // Mobile: bottom sheet
-            "fixed right-0 bottom-0 left-0 md:absolute md:top-4 md:right-4 md:bottom-auto",
+            "fixed right-0 bottom-0 left-0 md:absolute md:top-4 md:right-4 md:bottom-auto md:left-auto",
             "w-full md:w-auto md:max-w-72",
             "max-h-[60vh] overflow-y-auto md:max-h-none md:overflow-visible",
             "rounded-t-lg rounded-b-none md:rounded-lg md:rounded-b-lg",

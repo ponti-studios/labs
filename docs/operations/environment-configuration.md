@@ -15,9 +15,9 @@ the corresponding value is available at the phase where that code executes.
 | Public browser configuration | Build and browser execution | Treat as public; never put credentials or private URLs in it |
 
 The same logical value may need two names and two delivery paths. For example,
-Newsboy reads `NEWSBOY_APP_URL` server-side at runtime for auth return URLs, while
-Labs links to the Newsboy app through `VITE_NEWSBOY_APP_URL`, which Vite embeds in
-the browser bundle at build time.
+Newsboy reads `NEWSBOY_APP_URL` server-side at runtime for auth return URLs.
+Labs links to Newsboy at the fixed public URL `https://newsboy.ponti.io`, defined
+in `app/data/game.ts`.
 
 Do not assume that configuring the runtime variable makes the Vite variable
 available to the compiled bundle.
@@ -34,8 +34,8 @@ When adding or changing a variable:
    build stage:
 
    ```dockerfile
-   ARG VITE_NEWSBOY_APP_URL
-   ENV VITE_NEWSBOY_APP_URL=$VITE_NEWSBOY_APP_URL
+   ARG VITE_PUBLIC_VALUE
+   ENV VITE_PUBLIC_VALUE=$VITE_PUBLIC_VALUE
    ```
 
    The declaration must appear in the stage that runs the Vite build, before
@@ -97,7 +97,6 @@ secrets.
 
 | Service | Variable | Phase | Expected production value |
 | --- | --- | --- | --- |
-| Labs | `VITE_NEWSBOY_APP_URL` | Docker/Vite build and browser | `https://newsboy.ponti.io` |
 | Newsboy | `NEWSBOY_APP_URL` | Runtime | `https://newsboy.ponti.io` |
 | Newsboy | `NEWSBOY_AI_MODEL` | Runtime/workflow | `openai/gpt-5-mini` |
 | Newsboy | `PORTLESS_URL` | Local runtime only | Per-worktree `https://<name>.lvh.me` |

@@ -1,5 +1,5 @@
-import { Badge, Button, Card, CardContent, CardHeader } from "@ponti-studios/ui/primitives";
-import { ArrowLeft, DollarSign } from "lucide-react";
+import { Card, CardContent, CardHeader } from "@ponti-studios/ui/primitives";
+import { DollarSign } from "lucide-react";
 import { useReducer } from "react";
 import { Link } from "react-router";
 
@@ -32,27 +32,18 @@ export default function TheaterEconomics() {
   const lineupMetrics = d.lineupMetrics;
 
   return (
-    <div className="mx-auto w-full max-w-6xl pb-16">
-      <header className="mb-8 flex items-center gap-3">
-        <Button asChild variant="ghost" className="text-muted-foreground hover:text-foreground">
-          <Link to="/" prefetch="intent">
-            <ArrowLeft className="size-4" />
-          </Link>
-        </Button>
-        <div className="bg-border h-4 w-px" />
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="heading-hero text-foreground max-w-4xl">Theater P&amp;L</h1>
-            <Badge variant="secondary" className="text-[10px]">
-              Beta
-            </Badge>
-          </div>
-          <p className="text-muted-foreground text-xs">
-            Exhibition economics for theatrical distribution analysis
-          </p>
-        </div>
+    <main className="storefront-main sf-theatre-page">
+      <header className="sf-wrap sf-theatre-intro">
+        <Link to="/playground/essays#theatre-management" className="sf-calendar-back">
+          ← Essays
+        </Link>
+        <h1 className="sf-h1">The Ledger Behind the Curtain.</h1>
+        <p className="sf-copy">
+          See how ticket prices, concessions and screen allocation shape a theatre’s monthly P&amp;L.
+        </p>
       </header>
 
+      <div className="sf-wrap sf-theatre-dashboard">
       <div className="mb-6 grid gap-3 md:grid-cols-3">
         <ProfitRevenueCard
           d={d}
@@ -130,6 +121,7 @@ export default function TheaterEconomics() {
           />
         </div>
       </div>
-    </div>
+      </div>
+    </main>
   );
 }

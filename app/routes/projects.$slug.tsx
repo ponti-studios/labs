@@ -1,9 +1,10 @@
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { Link, useLoaderData } from "react-router";
-import { BookCallButton } from "~/components/BookCallButton";
-import { ProjectTile } from "~/components/projects/project-tile";
-import { RevealGroup, RevealItem } from "~/components/Reveal";
+import { useRef } from "react";
+import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { BOOK_CALL_URL } from "~/data/studio";
 import { pageMeta } from "~/lib/seo";
+import { FinanceMcpDetails, FinanceMcpHero } from "~/components/projects/finance-mcp";
 import { projects } from "~/data/projects";
 import { t } from "~/translations";
 
@@ -27,172 +28,183 @@ export const meta: MetaFunction = ({ params }) => {
   });
 };
 
-const linkClassName =
-  "text-muted-foreground hover:text-foreground underline underline-offset-4 outline-none";
-
 export default function ProjectDetail() {
   const { project, next } = useLoaderData<typeof loader>();
   const hasDistinctUrl = Boolean(project.url && project.url !== project.github);
-  const howItWorks = [...project.keyFeatures, ...project.technicalChallenges];
   const portrait = project.screenshotShape === "portrait";
   const screenshots = project.screenshots ?? [];
+  const screenshotRailRef = useRef<HTMLDivElement>(null);
+
+  const moveScreenshotRail = (direction: -1 | 1) => {
+    const rail = screenshotRailRef.current;
+    if (!rail) return;
+    const firstSlide = rail.querySelector<HTMLElement>(".sf-project-screenshot");
+    const step = firstSlide ? firstSlide.offsetWidth + 20 : rail.clientWidth * 0.8;
+    rail.scrollBy({ left: direction * step, behavior: "smooth" });
+  };
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col gap-20 pt-8 pb-24 sm:gap-28">
-      {/* Hero */}
-      <section>
-        <Link
-          to="/projects"
-          prefetch="intent"
-          aria-label={copy.page.back}
-          className="text-muted-foreground hover:text-foreground inline-flex min-h-11 w-fit items-center font-mono text-xl outline-none"
-        >
-          ←
+    <div className="sf-project-detail">
+      <section className="sf-wrap sf-project-detail-hero">
+        <Link to="/projects" prefetch="intent" className="sf-project-back">
+          <ArrowLeft aria-hidden="true" className="size-4" />
+          {copy.page.back}
         </Link>
 
-        <div className="mt-8 flex flex-wrap items-center gap-5">
-          {project.logo ? (
-            <span className="border-border rounded-sm border bg-white p-2">
-              <img
-                src={project.logo}
-                alt={`${project.name} logo`}
-                className="size-12 shrink-0 object-contain grayscale"
-              />
-            </span>
-          ) : null}
-          <h1 className="text-foreground text-5xl font-semibold tracking-tight sm:text-7xl">
-            {project.name}
-          </h1>
+        <div className="sf-project-detail-heading">
+          {project.logo ? <img src={project.logo} alt="" className="sf-project-detail-logo" /> : null}
+          <h1 className="sf-h1">{project.name}</h1>
         </div>
+        <p className="sf-project-detail-summary">{project.shortDescription}</p>
 
-        <p className="text-muted-foreground mt-5 max-w-3xl text-xl leading-snug">
-          {project.shortDescription}
-        </p>
-
-        <p className="text-muted-foreground mt-6 text-sm">
-          {copy.categoryLabels[project.category]} · {copy.statusLabels[project.status]} ·{" "}
-          {project.tech.join(", ")}
-        </p>
-
-        <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm">
-          <a
-            href={project.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={linkClassName}
-          >
-            {copy.page.repository}
+        <div className="sf-project-detail-links">
+          <span className="sf-project-detail-category">{copy.categoryLabels[project.category]}</span>
+          <a href={project.github} target="_blank" rel="noopener noreferrer">
+            {copy.page.repository} <ArrowRight aria-hidden="true" className="size-4" />
           </a>
           {hasDistinctUrl && project.url ? (
             <a
               href={project.url}
               target={project.url.startsWith("http") ? "_blank" : undefined}
               rel={project.url.startsWith("http") ? "noopener noreferrer" : undefined}
-              className={linkClassName}
             >
-              {copy.page.liveProject}
+              {copy.page.liveProject} <ArrowRight aria-hidden="true" className="size-4" />
             </a>
           ) : null}
         </div>
+
+        {project.heroImage ? (
+          <img
+            src={project.heroImage.src}
+            alt={project.heroImage.alt}
+            width={project.heroImage.width}
+            height={project.heroImage.height}
+            className="sf-project-detail-hero-image"
+            loading="eager"
+            decoding="async"
+          />
+        ) : null}
+        {project.showcase === "finance-mcp" ? <FinanceMcpHero /> : null}
       </section>
 
-      {/* Screenshots lead: for a product, the product is the proof */}
+      {project.showcase === "finance-mcp" ? <FinanceMcpDetails /> : null}
+
       {screenshots.length > 0 ? (
-        <section aria-label={copy.page.screenshots}>
-          <RevealGroup
-            as="ul"
-            className={
-              portrait
-                ? "grid grid-cols-2 gap-4 sm:grid-cols-4"
-                : "grid grid-cols-1 gap-4 sm:grid-cols-2"
-            }
+        <section className="sf-wrap sf-project-screenshots" aria-label={copy.page.screenshots}>
+          <div className="sf-project-screenshot-controls">
+            <button
+              type="button"
+              aria-label="Previous screenshot"
+              onClick={() => moveScreenshotRail(-1)}
+            >
+              <ChevronLeft aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              aria-label="Next screenshot"
+              onClick={() => moveScreenshotRail(1)}
+            >
+              <ChevronRight aria-hidden="true" />
+            </button>
+          </div>
+          <div
+            ref={screenshotRailRef}
+            className={[
+              "sf-project-screenshot-rail",
+              portrait && "portrait",
+              project.screenshotFrame === "iphone" && "iphone",
+            ]
+              .filter(Boolean)
+              .join(" ")}
           >
             {screenshots.map((src, index) => (
-              <RevealItem key={src} as="li">
-                <a
-                  href={src}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="border-border hover:border-foreground block overflow-hidden rounded-sm border transition-colors duration-200 outline-none focus-visible:ring-2"
-                >
-                  <img
-                    src={src}
-                    alt={`${project.name} screenshot ${index + 1}`}
-                    width={portrait ? 660 : 1280}
-                    height={portrait ? 1434 : 720}
-                    loading="lazy"
-                    decoding="async"
-                    className="h-auto w-full"
-                  />
-                </a>
-              </RevealItem>
-            ))}
-          </RevealGroup>
-        </section>
-      ) : null}
-
-      {/* Problem */}
-      <section className="grid gap-6 lg:grid-cols-[14rem_1fr] lg:gap-16">
-        <h2 className="text-foreground self-start lg:sticky lg:top-24">{copy.page.problem}</h2>
-        <p className="text-foreground text-2xl leading-snug font-medium tracking-tight sm:text-3xl">
-          {project.problem}
-        </p>
-      </section>
-
-      {/* Solution */}
-      {project.solution ? (
-        <section className="grid gap-6 lg:grid-cols-[14rem_1fr] lg:gap-16">
-          <h2 className="text-foreground self-start lg:sticky lg:top-24">{copy.page.solution}</h2>
-          <p className="text-muted-foreground text-lg leading-relaxed">{project.solution}</p>
-        </section>
-      ) : null}
-
-      {/* How It Works */}
-      {howItWorks.length > 0 ? (
-        <section className="grid gap-6 lg:grid-cols-[14rem_1fr] lg:gap-16">
-          <h2 className="text-foreground self-start lg:sticky lg:top-24">{copy.page.howItWorks}</h2>
-          <RevealGroup as="ol" className="border-border divide-border divide-y border-t">
-            {howItWorks.map((point, index) => (
-              <RevealItem
-                key={`${project.slug}-${point}`}
-                as="li"
-                className="flex items-baseline gap-6 py-5"
+              <a
+                key={src}
+                href={src}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={
+                  project.screenshotFrame === "iphone"
+                    ? "sf-project-screenshot iphone-frame"
+                    : "sf-project-screenshot"
+                }
               >
-                <span className="text-muted-foreground font-mono text-xs">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <p className="text-foreground text-lg leading-relaxed">{point}</p>
-              </RevealItem>
+                <img
+                  src={src}
+                  alt={`${project.name} screenshot ${index + 1}`}
+                  width={portrait ? 660 : 1280}
+                  height={portrait ? 1434 : 720}
+                  loading={project.screenshotFrame === "iphone" ? "eager" : "lazy"}
+                  decoding="async"
+                />
+              </a>
             ))}
-          </RevealGroup>
+          </div>
         </section>
       ) : null}
 
-      {/* Next project */}
-      <section className="border-border grid gap-6 border-t pt-12 lg:grid-cols-[14rem_1fr] lg:gap-16">
-        <h2 className="text-foreground self-start">{copy.page.nextProject}</h2>
-        <ProjectTile
-          className="max-w-md"
-          href={`/projects/${next.slug}`}
-          name={next.name}
-          description={next.shortDescription}
-          status={copy.statusLabels[next.status]}
-          meta={next.tech.slice(0, 3).join(" · ")}
-          logo={next.logo}
-        />
+      <div className="sf-wrap sf-project-story">
+        <section className="sf-project-story-row">
+          <h2>{copy.page.problem}</h2>
+          <p className="sf-project-problem">{project.problem}</p>
+        </section>
+
+        {project.solution ? (
+          <section className="sf-project-story-row">
+            <h2>{copy.page.solution}</h2>
+            <p>{project.solution}</p>
+          </section>
+        ) : null}
+      </div>
+
+      {project.keyFeatures.length > 0 || project.technicalChallenges.length > 0 ? (
+        <section className="sf-project-detail-list-section">
+          <div className="sf-wrap">
+            {project.keyFeatures.length > 0 ? (
+              <section className="sf-project-points-group">
+                <h2 className="sf-h2">{copy.page.whatItDoes}</h2>
+                <ul className="sf-project-points">
+                  {project.keyFeatures.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
+
+            {project.technicalChallenges.length > 0 ? (
+              <section className="sf-project-points-group">
+                <h2 className="sf-h2">{copy.page.technicalChallenges}</h2>
+                <ul className="sf-project-points">
+                  {project.technicalChallenges.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
+          </div>
+        </section>
+      ) : null}
+
+      <section className="sf-wrap sf-project-next">
+        <h2 className="sf-h2">{copy.page.nextProject}</h2>
+        <Link to={`/projects/${next.slug}`} prefetch="intent" className="sf-project-next-row">
+          <span className="sf-project-next-name">{next.name}</span>
+          <span className="sf-project-next-summary">{next.shortDescription}</span>
+          <ArrowRight aria-hidden="true" className="sf-project-row-arrow" />
+        </Link>
       </section>
 
-      {/* Close CTA */}
-      <section className="text-center">
-        <div className="flex flex-wrap items-center justify-center gap-6">
-          <BookCallButton>{t.common.bookCall}</BookCallButton>
-          <Link
-            to="/services"
-            prefetch="intent"
-            className="text-foreground text-sm underline-offset-4 hover:underline"
-          >
-            {t.common.seeServices}
-          </Link>
+      <section className="sf-dark sf-project-detail-cta">
+        <div className="sf-wrap sf-project-detail-cta-inner">
+          <h2 className="sf-h2">Have a problem worth solving?</h2>
+          <div className="sf-project-detail-actions">
+            <a href={BOOK_CALL_URL} className="sf-button">
+              {t.common.bookCall}
+            </a>
+            <Link to="/services" prefetch="intent" className="sf-project-services-link">
+              {t.common.seeServices}
+            </Link>
+          </div>
         </div>
       </section>
     </div>

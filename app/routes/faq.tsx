@@ -5,8 +5,7 @@ import {
   AccordionTrigger,
 } from "@ponti-studios/ui/data-display";
 import { Link } from "react-router";
-import { BookCallButton } from "~/components/BookCallButton";
-import { RevealGroup, RevealItem } from "~/components/Reveal";
+import { BOOK_CALL_URL } from "~/data/studio";
 import { pageMeta } from "~/lib/seo";
 import { t } from "~/translations";
 
@@ -22,57 +21,39 @@ export function meta() {
 
 export default function Faq() {
   return (
-    <div className="page-shell">
-      {/* Hero */}
-      <section className="layout-stack">
-        <h1 className="heading-hero text-foreground max-w-4xl">{copy.title}</h1>
-        <p className="text-muted-foreground max-w-2xl text-lg leading-relaxed">
-          {copy.meta.description}
-        </p>
+    <div className="sf-faq-page">
+      <section className="sf-wrap sf-faq-hero">
+        <h1 className="sf-h1">{copy.title}</h1>
+        <p className="sf-copy">{copy.meta.description}</p>
       </section>
 
-      {/* Q&A — editorial disclosure list */}
-      <section className="section">
-        <RevealGroup as="div" className="max-w-3xl">
-          <Accordion type="single" collapsible>
-            {copy.items.map((faq) => (
-              <RevealItem key={faq.question}>
-                <AccordionItem
-                  value={faq.question}
-                  className="border-border mb-0 overflow-hidden rounded-none border-0 border-t last:border-b"
-                >
-                  <AccordionTrigger className="press text-foreground [&_svg]:text-accent gap-6 px-0 py-6 text-left text-lg font-semibold tracking-tight sm:text-xl">
-                    {faq.question}
-                  </AccordionTrigger>
-                  <AccordionContent className="px-0">
-                    <p className="text-muted-foreground max-w-2xl pb-6 text-base leading-relaxed">
-                      {faq.answer}
-                    </p>
-                  </AccordionContent>
-                </AccordionItem>
-              </RevealItem>
-            ))}
-          </Accordion>
-        </RevealGroup>
+      <section className="sf-wrap sf-faq-list" aria-label="Frequently asked questions">
+        <Accordion type="single" collapsible>
+          {copy.items.map((faq) => (
+            <AccordionItem key={faq.question} value={faq.question} className="sf-faq-item">
+              <AccordionTrigger className="sf-faq-trigger">{faq.question}</AccordionTrigger>
+              <AccordionContent className="sf-faq-content">
+                <p>{faq.answer}</p>
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
       </section>
 
-      {/* Close */}
-      <section className="section-compact border-b-0 px-4 py-20 text-center sm:px-6 md:py-28">
-        <h2 className="heading-cta text-foreground mx-auto mb-5 max-w-3xl">
-          {t.services.cta.title}
-        </h2>
-        <p className="text-muted-foreground mx-auto mb-7 max-w-xl text-lg leading-relaxed">
-          {t.services.cta.body}
-        </p>
-        <div className="flex flex-wrap items-center justify-center gap-6">
-          <BookCallButton>{t.common.bookCall}</BookCallButton>
-          <Link
-            to="/services"
-            prefetch="intent"
-            className="text-foreground text-sm underline-offset-4 hover:underline"
-          >
-            {t.common.seeServices}
-          </Link>
+      <section className="sf-dark sf-faq-cta">
+        <div className="sf-wrap sf-faq-cta-inner">
+          <div>
+            <h2 className="sf-h2">{t.services.cta.title}</h2>
+            <p>{t.services.cta.body}</p>
+          </div>
+          <div className="sf-faq-actions">
+            <a className="sf-button" href={BOOK_CALL_URL}>
+              {t.common.bookCall}
+            </a>
+            <Link to="/services" prefetch="intent" className="sf-faq-services-link">
+              {t.common.seeServices}
+            </Link>
+          </div>
         </div>
       </section>
     </div>
