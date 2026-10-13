@@ -136,6 +136,17 @@ body:has(.storefront-header) {
   padding-top: 72px;
   padding-bottom: 96px;
 }
+.sf-hero-galaxy {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.sf-hero-galaxy .sf-h1 {
+  color: var(--sf-paper);
+}
+.sf-hero-galaxy .sf-copy {
+  color: var(--sf-warm);
+}
 .sf-label {
   color: var(--sf-brass);
   margin: 0 0 20px;

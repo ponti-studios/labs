@@ -7,6 +7,7 @@ import {
 import { ArrowRight, Coffee, PawPrint, Scissors, Store, Utensils, Wrench } from "lucide-react";
 import { Link } from "react-router";
 
+import { AsciiField } from "~/components/AsciiField";
 import { localBusinessExamples } from "~/data/local-business-examples";
 import { BOOK_CALL_URL } from "~/data/studio";
 import { pageMeta } from "~/lib/seo";
@@ -33,7 +34,8 @@ const businessIcons = {
 
 export default function Home() {
   return <>
-    <section className="sf-wrap sf-hero">
+    <section className="sf-wrap sf-hero sf-dark sf-hero-galaxy">
+      <AsciiField className="text-background opacity-25 sm:opacity-35" />
       <h1 className="sf-h1">Computational intelligence for real-world problems.</h1>
       <p className="sf-copy">From S&amp;P 500s to Bodegas</p>
     </section>
