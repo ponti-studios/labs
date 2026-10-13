@@ -412,8 +412,20 @@ body:has(.storefront-header) {
   text-align: center;
   padding-block: 104px;
 }
+.sf-cta-galaxy {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.sf-cta-galaxy > .sf-wrap {
+  position: relative;
+  z-index: 1;
+}
 .sf-cta .sf-copy {
   margin-inline: auto;
+}
+.sf-cta-galaxy .sf-copy {
+  color: var(--sf-warm);
 }
 .sf-footer {
   border-top: 1px solid var(--sf-line);
