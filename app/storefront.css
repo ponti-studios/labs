@@ -1681,6 +1681,35 @@ body:has(.storefront-header) {
   height: auto;
   margin: 40px auto 0;
 }
+.sf-waveform-showcase {
+  margin-block: 40px 64px;
+}
+.sf-waveform-demo.rvo {
+  overflow: hidden;
+  padding: 0 clamp(14px, 3vw, 32px) 18px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.sf-waveform-demo.rvo .sf-waveform-controls {
+  position: relative;
+  inset: auto;
+  z-index: auto;
+  margin: 0;
+  padding: 16px 0;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  backdrop-filter: none;
+}
+.sf-waveform-orb {
+  width: min(100%, 560px);
+  margin: 12px auto 0;
+}
+.sf-waveform-demo.rvo .sf-waveform-note {
+  max-width: none;
+  margin: 0 auto 8px;
+  text-align: center;
+}
 /* Finance MCP showcase */
 .sf-mcp-hero { margin: 44px auto 0; max-width: 1040px; }
 .sf-mcp-stage { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: 20px; }

@@ -64,6 +64,26 @@ export const STUDIO_TRANSLATIONS_EN = {
           "Testing each skill against real work before publishing it",
         ],
       },
+      waveform: {
+        name: "Waveform",
+        shortDescription:
+          "An accurate audio visualizer that turns pitch, timing, and loudness into an orb of dots.",
+        solution:
+          "A Swift audio engine and React visualizer for turning live audio or prepared signals into clear, time-aligned waveforms, spectra, and an orb.",
+        problem:
+          "A flat meter tells you how loud sound is, while a spectrogram can be hard to read at a glance. Waveform makes pitch, timing, and loudness visible together, so you can see what a voice or sound is doing.",
+        keyFeatures: [
+          "Visualize pitch, time, and loudness in an animated field of dots",
+          "Capture live microphone audio on iPhone and Mac with Swift",
+          "Explore the same visual language in React with an interactive explainer",
+          "Switch between an orb, a scrolling waveform, and a flat spectrum map",
+        ],
+        technicalChallenges: [
+          "Keep each visual frame aligned to the audio clock",
+          "Measure exact sample windows and log-spaced frequency bands",
+          "Move audio through the capture and render pipeline without allocating on the audio thread",
+        ],
+      },
       foundation: {
         name: "Foundation",
         shortDescription:
