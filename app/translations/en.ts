@@ -26,7 +26,7 @@ export const STUDIO_TRANSLATIONS_EN = {
     },
     page: {
       title: "Lab",
-      metaDescription: "Products, infrastructure, tools, and research I build for myself.",
+      metaDescription: "Products, infrastructure, libraries, and research I build for myself.",
       detailMetaDescription: "Project details and information",
       notFound: "Project not found",
       back: "Back to Lab",
@@ -36,6 +36,8 @@ export const STUDIO_TRANSLATIONS_EN = {
       problem: "The Problem",
       solution: "The Solution",
       howItWorks: "How It Works",
+      whatItDoes: "What it does",
+      technicalChallenges: "What took work",
       repository: "Repository",
       liveProject: "Live project",
       screenshots: "Screenshots",
@@ -122,6 +124,26 @@ export const STUDIO_TRANSLATIONS_EN = {
           "Sharing one status model between the React Native app and the SwiftUI Watch app",
         ],
       },
+      still: {
+        name: "Still",
+        shortDescription:
+          "A clear view of what you own, want, and everything in between.",
+        solution:
+          "An iOS app for possessions and shopping: items move from wanted to planned to ordered to owned to archived, live in containers, and gather in collections. Sign-in is an email code, and the session stays in the Keychain.",
+        problem:
+          "Possessions live in spreadsheet rows, order emails, and memory — so rebuying, losing, and forgetting what you own is normal. Still replaces the inventory spreadsheet with an app that follows an item through its whole life.",
+        keyFeatures: [
+          "Follow every item from wanted to planned to ordered to owned to archived",
+          "See what you own, its estimated value, and what's on the way from one Overview",
+          "Keep items in containers and gather them into collections",
+          "Sign in with an email code; sessions stay in the app-private Keychain",
+        ],
+        technicalChallenges: [
+          "Replacing a Vite web app with a bare React Native app without losing the store and mapping logic",
+          "Sharing one email-OTP auth client between Thames and Still while keeping each app's Keychain private",
+          "Shipping to TestFlight with a hand-rolled archive and deploy pipeline instead of a hosted build service",
+        ],
+      },
       career: {
         name: "Career",
         shortDescription:
@@ -143,23 +165,24 @@ export const STUDIO_TRANSLATIONS_EN = {
         ],
       },
       finance: {
-        name: "Finance",
+        name: "Finance MCP",
         shortDescription:
-          "Mint shut down and took years of history with it. Finance keeps your data on your machine.",
+          "Your money, queryable by the AI you already use. No dashboard to log into, no vendor holding the history.",
         solution:
-          "A local-first personal finance app — your accounts, transactions, and net worth live in a database on your own machine, not a vendor's cloud.",
+          "Retire the interface. Finance is now an MCP server on the Hominem API, so the assistant you already talk to is the front end, and the ledger stays in a database you control.",
         problem:
-          "Every finance app — Mint, Monarch, Copilot — makes your financial history a tenant of their business model. When Mint shut down, years of categorized history disappeared overnight for millions of users. Finance is built the other way: delete the app, and your data is still there.",
+          "Finance apps keep your history inside their interface and their business. When Mint shut down, years of categorized spending went with it. A web app I built myself had the same flaw in a smaller form: the data was only reachable through screens I had to maintain.",
         keyFeatures: [
-          "Store accounts, transactions, and categories in a local database you own and can export",
-          "See net-worth trends and spending by category without a server round-trip",
-          "Query your own financial history through an MCP server built for AI agents",
-          "Share the same personal data foundation as sibling products",
+          "Answers net worth, runway and spending questions in plain language",
+          "Imports years of history safely, with a dry run before every write",
+          "Matches accounts, tags and categories without caring about case",
+          "Returns a named reason for every rejected row",
         ],
         technicalChallenges: [
-          "Building a genuinely local-first sync model without standing up new cloud infrastructure",
-          "Extending an MCP server designed for calendar data to a second domain without duplicating patterns",
-          "Keeping budget and net-worth calculations fast and correct as local data grows",
+          "Making every write repeatable, so a retry never doubles a transaction",
+          "Turning service failures into named errors instead of opaque 500s",
+          "Keeping closed accounts visible to every tool that reads the same data",
+          "Reconciling 16,426 messy rows against 14,486 clean ones",
         ],
       },
       "hominem-api": {
@@ -261,24 +284,23 @@ export const STUDIO_TRANSLATIONS_EN = {
           "Keep symptoms, appointments, and resolutions coherent as a longitudinal record",
         ],
       },
-      geo: {
-        name: "Geo (geokit)",
-        shortDescription:
-          "Automated geocoding is fast and wrong. Geo adds the review step that makes it right.",
+      walksgpx: {
+        name: "WalksGPX",
+        shortDescription: "Your walks live in Health. WalksGPX gives their routes back to you.",
         solution:
-          "A Swift geocoding CLI and native macOS app for curating place data with Apple Maps.",
+          "A personal iPhone and Mac archive for browsing walking routes, viewing them on a map, and exporting them as portable GPX files.",
         problem:
-          "Automated geocoding is fast but wrong sometimes. Manual review is right but slow. Geo does the batch pass, then gives you a native app to check and fix results before they hit your dataset.",
+          "Health records your walks, but its routes are difficult to browse as an archive or use elsewhere. WalksGPX makes them searchable by month, puts each route on a map, and exports ordinary GPX files you can keep and use in other tools.",
         keyFeatures: [
-          "Run individual queries or SQLite-backed batch processing",
-          "Review and correct results in a native SwiftUI macOS app",
-          "Enrich geocoding results with Apple Maps and SQLite",
-          "Search, filter, edit in bulk, and pace requests safely",
+          "Browse walking workouts by month, date, and duration",
+          "See a selected GPS route on an interactive map",
+          "Export GPX files to share or save outside the app",
+          "Keep an iPhone and Mac library in sync through private iCloud storage",
         ],
         technicalChallenges: [
-          "Adapt MapKit and CoreLocation for headless batch work",
-          "Respect Apple's usage limits with configurable request pacing",
-          "Keep CLI output and native corrections aligned through one schema",
+          "Read HealthKit workouts and routes without writing to Health",
+          "Import long walk histories while handling missing or unavailable GPS routes",
+          "Keep CloudKit library sync separate from portable iCloud Drive exports",
         ],
       },
       toolbox: {
@@ -304,22 +326,22 @@ export const STUDIO_TRANSLATIONS_EN = {
       },
       game: {
         name: "Newsboy",
-        shortDescription: "A word game that reads the news, so it's never stale.",
+        shortDescription: "A daily word puzzle built around the news you're reading.",
         solution:
-          "A daily word puzzle where players guess real celebrity names by spelling them out from clues, with new puzzles generated from actual entertainment journalism every day.",
+          "A daily five-letter puzzle tied to a current news story, with a new shared answer for each topic every day.",
         problem:
-          "Most word games run the same mechanic forever. Newsboy pulls from live entertainment news to write a fresh puzzle every day, tied to what's actually happening instead of a static dictionary.",
+          "Word games can feel disconnected from the world outside the grid. Newsboy ties each daily puzzle to a current story, turning the headlines into a quick test of what you've been reading.",
         keyFeatures: [
-          "Generate a fresh puzzle each day from live entertainment headlines",
-          "Give letter-by-letter feedback as players solve",
-          "Generate scheduled puzzles through Drizzle and PostgreSQL",
-          "Check puzzle quality and freshness before publication",
-          "Generate and manage puzzles from an admin panel",
+          "Play a shared five-letter puzzle for each news topic every day",
+          "Get letter and position feedback across six guesses",
+          "Receive a final clue before the last guess",
+          "Play without an account and save progress on your device",
+          "Sign in to unlock the full puzzle archive and track stats",
         ],
         technicalChallenges: [
-          "Turn raw, unstructured news into playable puzzles",
-          "Fill schedule gaps without generating duplicates",
-          "Keep difficulty consistent across changing source material",
+          "Turn current news stories into concise, fair puzzle clues",
+          "Check generated puzzles before they reach the daily schedule",
+          "Keep daily answers and player progress consistent across topics",
         ],
       },
       covid: {
@@ -368,33 +390,37 @@ export const STUDIO_TRANSLATIONS_EN = {
   services: {
     meta: {
       title: "Services | Ponti Studios",
-      description: "Product engineering, design, and advisory. Scoped clearly, shipped with proof.",
+      description: "Build a product, fix what's slowing it down, or get clear on what to do next.",
     },
     hero: {
-      title: "The Services",
+      title: "Get unstuck. Get it shipped.",
+      subtitle: "Build a product, fix what's slowing it down, or get clear on what to do next.",
     },
     services: {
       title: "What I do",
     },
     process: {
-      title: "The Process",
+      title: "A clear way to start.",
     },
     cta: {
-      title: "Let's goooooo.",
-      body: "20 minutes. No pitch deck. Get answers.",
+      title: "Have something to build or fix?",
+      body: "Book 20 minutes. No pitch deck. We'll work out the next useful step.",
     },
   },
 
   work: {
     meta: {
       title: "Selected Work | Ponti Studios",
-      description: "Products and platforms made clearer, faster, and harder to break.",
+      description:
+        "Products, platforms, and systems built to solve real problems, with outcomes you can see.",
     },
     hero: {
-      title: "The Work.",
-      subtitle: "Real clients, constraints, & numbers.",
+      title: "Selected work.",
+      subtitle: "Products, platforms, and systems built to solve real problems.",
     },
+    moreTitle: "More work",
     problemTitle: "Problem",
+    solutionTitle: "The solution",
     approachTitle: "Approach",
     nextCase: "Next case",
     backToWork: "All work",
@@ -412,7 +438,7 @@ export const STUDIO_TRANSLATIONS_EN = {
           slug: "lumina",
           client: "Lumina",
           industry: "EdTech",
-          description: "Learning platform for professional development.",
+          description: "Learning platform for professionals.",
           timeline: "2025",
           role: "Senior Product & Platform Engineer",
           problem: "Checkout leakage and broken course discovery were killing retention.",
@@ -425,16 +451,16 @@ export const STUDIO_TRANSLATIONS_EN = {
             "Fixed grading disputes by moving from floating-point to integer arithmetic with write serialization",
           ],
           outcomes: [
-            { value: "2 days", label: "Course return time, down from 1–2 weeks" },
-            { value: "~40%", label: "Higher second-course enrollment" },
-            { value: "+43%", label: "Feed engagement" },
+            { value: "2 days", label: "to return a course, from 1–⁠2 weeks" },
+            { value: "~40%", label: "more learners enrolling in a second course" },
+            { value: "+43%", label: "engagement with the learning feed" },
           ],
         },
         {
           slug: "revrock",
           client: "Revrock",
           industry: "Music",
-          description: "Tour planning and routing for independent musicians.",
+          description: "Tour planning for independent musicians.",
           timeline: "2024–2025",
           role: "Product Lead",
           problem:
@@ -448,15 +474,15 @@ export const STUDIO_TRANSLATIONS_EN = {
             "Surfaced estimated revenue and viability during planning, not after the tour ended",
           ],
           outcomes: [
-            { value: "3 weeks", label: "MVP delivered, down from a 12–18 month vision" },
-            { value: "20–35%", label: "Higher estimated revenue vs. manual tours" },
+            { value: "3 weeks", label: "to MVP, from a 12–⁠18 month plan" },
+            { value: "20–35%", label: "more estimated revenue than hand-planned tours" },
           ],
         },
         {
           slug: "prolog",
           client: "Prolog",
           industry: "Entertainment",
-          description: "AI-assisted submission review for showrunner teams.",
+          description: "AI submission review for showrunners.",
           timeline: "2024",
           role: "Product Lead",
           problem: "Showrunner teams were drowning in submission triage during peak staffing.",
@@ -468,16 +494,16 @@ export const STUDIO_TRANSLATIONS_EN = {
             "Designed the review UI around peak-staffing-season volume, not steady-state usage",
           ],
           outcomes: [
-            { value: "~95%", label: "Extraction accuracy" },
-            { value: "~70%", label: "Reduction in review time" },
-            { value: "3×", label: "Reviewer throughput" },
+            { value: "~70%", label: "less review time" },
+            { value: "~95%", label: "extraction accuracy" },
+            { value: "3×", label: "submissions reviewed per person" },
           ],
         },
         {
           slug: "streamyard",
           client: "StreamYard",
           industry: "Creator",
-          description: "Collab: guest matching that keeps new streamers going.",
+          description: "Guest matching for new streamers.",
           timeline: "2020–2024",
           role: "Lead Product Engineer & Product Manager",
           problem:
@@ -496,18 +522,18 @@ export const STUDIO_TRANSLATIONS_EN = {
           outcomes: [
             {
               value: "64%",
-              label: "More likely to keep streaming after 90 days, for new creators on Collab",
+              label: "higher 90-day creator retention",
             },
-            { value: "3×", label: "Growth in user collaborations, year over year" },
-            { value: "58%", label: "Of new conversations started from the Opportunities board" },
-            { value: "$15M+", label: "Enterprise ARR unlocked" },
+            { value: "3×", label: "collaborations between users, year over year" },
+            { value: "58%", label: "of new conversations started on the Opportunities board" },
+            { value: "$15M+", label: "in enterprise annual revenue unlocked" },
           ],
         },
         {
           slug: "whistle",
           client: "Whistle",
           industry: "Education",
-          description: "Live instruction platform for dance, yoga, and fitness.",
+          description: "Live classes for dance, yoga, and fitness.",
           timeline: "2020–2021",
           role: "Platform Engineer",
           problem:
@@ -521,16 +547,16 @@ export const STUDIO_TRANSLATIONS_EN = {
             "Shipped a self-hosted deployment path so data never left the organization's infrastructure",
           ],
           outcomes: [
-            { value: "100%", label: "Curriculum continuity in NYC ballet pilot" },
-            { value: "−35%", label: "Bandwidth vs. generic platforms" },
-            { value: "<100ms", label: "Latency at 720p+ across variable networks" },
+            { value: "100%", label: "curriculum continuity in a ballet pilot" },
+            { value: "−35%", label: "bandwidth compared with generic video tools" },
+            { value: "<100ms", label: "latency at 720p or better, on uneven networks" },
           ],
         },
         {
           slug: "kensho",
           client: "Kensho",
           industry: "Finance",
-          description: "Streaming data infrastructure for financial research.",
+          description: "Streaming data for financial research.",
           timeline: "2019–2020",
           role: "Head of Data Engineering",
           problem: "A multimodal data pipeline broke under load and ran on tribal knowledge.",
@@ -543,16 +569,19 @@ export const STUDIO_TRANSLATIONS_EN = {
             "Led the 15-person engineering org through the S&P Global acquisition integration",
           ],
           outcomes: [
-            { value: "24×", label: "Data throughput" },
-            { value: "<50ms", label: "Market-data latency, down from ~10 min" },
-            { value: "3 hrs", label: "Time-to-first-PR, down from 1 week" },
+            { value: "24×", label: "data throughput" },
+            { value: "<50ms", label: "market-data latency, down from about 10 minutes" },
+            {
+              value: "3 hrs",
+              label: "for a new engineer to ship a first change, down from a week",
+            },
           ],
         },
         {
           slug: "humana",
           client: "Humana",
           industry: "Healthcare",
-          description: "Whole-person care tools across voice, mobile, and chat.",
+          description: "Care tools across voice, mobile, and chat.",
           timeline: "2018–2019",
           role: "Product Lead / Architecture Lead",
           problem: "Senior care was held back by unsafe UX, stale data, and fragmented access.",
@@ -565,11 +594,11 @@ export const STUDIO_TRANSLATIONS_EN = {
             "Added Android health integration via FHIR R4 and BIPA-compliant biometric consent across IL, TX, WA, and NY",
           ],
           outcomes: [
-            { value: "<30s", label: "Claims data lag, down from hours" },
-            { value: "3 modes", label: "Fragmented access unified into one care platform" },
+            { value: "<30s", label: "claims-data lag, from hours" },
+            { value: "3 channels", label: "voice, mobile, and chat, unified in one care platform" },
             {
               value: "0",
-              label: "HIPAA exposures — PHI moved off Alexa infrastructure before an incident",
+              label: "HIPAA exposures, after moving health data off Alexa infrastructure",
             },
           ],
         },
@@ -577,7 +606,7 @@ export const STUDIO_TRANSLATIONS_EN = {
           slug: "mimecast",
           client: "Mimecast",
           industry: "Security",
-          description: "Enterprise identity platform for white-label and global markets.",
+          description: "Identity platform for white-label markets.",
           timeline: "2018",
           role: "Senior Software Engineer / Engineering Lead",
           problem: "An enterprise console blocked white-label expansion while delivery stalled.",
@@ -589,16 +618,16 @@ export const STUDIO_TRANSLATIONS_EN = {
             "Cut code review from multi-day cycles by making ownership boundaries and interface contracts explicit",
           ],
           outcomes: [
-            { value: "2 weeks", label: "Ahead of original deadline (was 4 behind)" },
-            { value: "−80%", label: "Merge conflicts" },
-            { value: "4 hrs", label: "Code review, down from 2 days" },
+            { value: "2 weeks", label: "ahead of schedule, from 4 weeks behind" },
+            { value: "−80%", label: "merge conflicts" },
+            { value: "4 hrs", label: "to complete a code review, down from 2 days" },
           ],
         },
         {
           slug: "help-refugees",
           client: "Choose Love",
           industry: "Nonprofit",
-          description: "Volunteer coordination platform for UK-wide operations.",
+          description: "Volunteer coordination, UK-wide.",
           timeline: "2016",
           role: "Product Engineer",
           problem:
@@ -612,16 +641,16 @@ export const STUDIO_TRANSLATIONS_EN = {
             "Scoped ruthlessly: only what was essential to retire the Google Sheet",
           ],
           outcomes: [
-            { value: "0", label: "Malformed submissions reaching ops, down from routine" },
-            { value: "100%", label: "Submissions with a full audit trail, up from none" },
-            { value: "UK-wide", label: "Volunteer network run on the new platform" },
+            { value: "0", label: "bad submissions reaching ops" },
+            { value: "100%", label: "of submissions with a full audit trail, up from none" },
+            { value: "UK-wide", label: "volunteer network running on the new platform" },
           ],
         },
         {
           slug: "thomson-reuters",
           client: "Thomson Reuters",
           industry: "Enterprise",
-          description: "Unified deployment and monitoring tools for global teams.",
+          description: "Deployment and monitoring tools.",
           timeline: "2015–2018",
           role: "Senior Software Engineer",
           problem: "Siloed tooling, a slow API, and a monolith were choking global operations.",
@@ -634,16 +663,16 @@ export const STUDIO_TRANSLATIONS_EN = {
             "Tagged technical debt with user-impact scores and ran a standing monthly review to keep it visible to stakeholders",
           ],
           outcomes: [
-            { value: "97%", label: "Faster primary API (13.8s → 0.5s)" },
-            { value: "−72%", label: "Data transfer volume" },
-            { value: "−30%", label: "Cloud infrastructure cost" },
+            { value: "97%", label: "faster API, 13.8s to 0.5s" },
+            { value: "−72%", label: "data transferred" },
+            { value: "−30%", label: "cloud infrastructure cost" },
           ],
         },
         {
           slug: "glow",
           client: "Glow Digital",
           industry: "AdTech",
-          description: "Campaign optimization and automation for digital advertising teams.",
+          description: "Ad campaign automation.",
           timeline: "2013–2015",
           role: "Software Developer",
           problem: "Ad managers were burning hours on rate limits and repetitive campaign work.",
@@ -655,9 +684,9 @@ export const STUDIO_TRANSLATIONS_EN = {
             "Generated campaign variation sets (headlines × images × audiences) so A/B tests no longer required 60+ manual entries",
           ],
           outcomes: [
-            { value: "−90%", label: "Facebook Ads API requests" },
-            { value: "0", label: "Rate-limiting incidents after launch" },
-            { value: "2–5 hrs", label: "Returned per manager per week" },
+            { value: "−90%", label: "Facebook Ads API calls" },
+            { value: "0", label: "rate-limiting incidents after launch" },
+            { value: "2–5 hrs", label: "saved per manager each week" },
           ],
         },
       ],
@@ -837,56 +866,55 @@ export const STUDIO_TRANSLATIONS_EN = {
   faq: {
     meta: {
       title: "FAQ | Ponti Studios",
-      description:
-        "Answers to common questions about pricing, scope, fit, and how engagements work.",
+      description: "Pricing, scope, timing, and what to expect when we work together.",
     },
     eyebrow: "Questions",
-    title: "Frequently asked questions",
+    title: "Straight answers.",
     items: [
       {
         question: "How do you price engagements?",
         answer:
-          "By scope, complexity, and engagement type. Not by the hour. A discovery call, then a written proposal with deliverables, timeline, and investment. No rate card — no two engagements are the same.",
+          "Each proposal sets the scope, deliverables, timeline, and price. I price the work, not the hours.",
       },
       {
         question: "Who is this a good fit for?",
         answer:
-          "Pre-seed to Series A founders who move fast, and teams modernizing a system that's outgrown itself — especially if a cut-rate shop already burned you once. Not a fit: lowest-bid procurement, or scope built assuming corners get cut.",
+          "Founders moving fast and teams whose systems have outgrown them. I’m not a fit for lowest-bid work or plans that depend on cutting corners.",
       },
       {
         question: "Is testing and documentation included?",
         answer:
-          "Yes, always. I don't ship untested work, and you should never need me to understand what I built. Every engagement ends with a real handoff, not a disappearing act.",
+          "Yes. Work is tested, documented, and handed over so your team can maintain it.",
       },
       {
         question: "What's not covered by the engagement?",
         answer:
-          "Third-party software licenses, hosting, and API fees are passed through at cost. Copy, brand, and content are on you — I integrate them, I don't write them. Ongoing maintenance isn't included. That's what retainers are for.",
+          "Software licenses, hosting, and API fees are billed at cost. You provide copy, brand, and content. Ongoing maintenance is a separate agreement.",
       },
       {
         question: "Do you work with early-stage startups with limited budgets?",
         answer:
-          "Yes, with the right engagement. Early-stage founders are a strong fit for fractional product management, advisory, or a focused MVP build. Not a fit if the budget means cutting quality.",
+          "Yes. A focused MVP, product management, or advisory engagement can fit an early-stage team without cutting quality.",
       },
       {
         question: "Can I start with a smaller engagement before committing to a larger one?",
         answer:
-          "Yes. A technical consulting engagement or strategy workshop is a natural first step. You get a real deliverable, and we both find out whether a bigger partnership makes sense.",
+          "Yes. Start with technical consulting or a strategy workshop. You get a useful deliverable before deciding on a larger project.",
       },
       {
         question: "What is the payment structure?",
         answer:
-          "Projects are typically billed in milestones — a portion at kick-off, at mid-point, and at delivery. Retainers are billed monthly. Advisory engagements are typically billed 50% at start, 50% at delivery.",
+          "Projects are billed at agreed milestones. Retainers are monthly. Advisory work is usually 50% at the start and 50% at delivery.",
       },
       {
         question: "What if the scope changes after we start?",
         answer:
-          "Scope changes happen. I handle them with a simple change order: what changed, the adjusted timeline, the adjusted investment. No surprises.",
+          "I’ll write up what changed, along with the new timeline and price, before the extra work begins.",
       },
       {
         question: "How long does it take to get a proposal?",
         answer:
-          "After a 30-minute discovery call, I typically deliver a written proposal within five business days.",
+          "Usually within five business days after a 30-minute discovery call.",
       },
     ],
   },
@@ -951,11 +979,11 @@ export const STUDIO_TRANSLATIONS_EN = {
     meta: {
       title: "Cabinet of Small Machines | Ponti Studios",
       description:
-        "Six essays on the Lab's playground experiments — what each one quietly claims about time, money, light, attention, mind, or memory.",
+        "Three essays on the Lab's playground experiments — what each one quietly claims about time, money, or light.",
     },
     hero: {
       title: "Cabinet of Small Machines",
-      dek: "Six unfinished experiments, read again as arguments instead of demos. Not what each one does — what it's quietly claiming.",
+      dek: "Three unfinished experiments, read again as arguments instead of demos. Not what each one does — what it's quietly claiming.",
     },
     entries: [
       {
@@ -994,56 +1022,21 @@ export const STUDIO_TRANSLATIONS_EN = {
           "That's the quiet confession inside most convincing digital materials: they aren't simulations of physics, they're simulations of what physics feels like to an eye that already knows what glass is supposed to do. The realism is borrowed entirely from the viewer.",
         ],
       },
-      {
-        slug: "layouts",
-        specimen: "/toys/layouts/vertical",
-        medium: "CSS transforms, requestAnimationFrame, no seam",
-        title: "Made to Never Finish",
-        paragraphs: [
-          "An infinite carousel is an odd artifact to build on purpose, because it has no ending built into its geometry — the marquee loops, the row wraps, the next tile always exists before you ask for it. Nothing here resolves. Nothing here is meant to.",
-          "Nietzsche's eternal recurrence was a thought experiment about whether you could bear to live a moment again, exactly, forever. Streaming interfaces answer a smaller, less dignified version of that question dozens of times a scroll: could you bear to see one more title tile, forever, without deciding on any of them? The infinite shelf isn't a bug of abundance, it's a design decision that abundance itself can be the product — an ambient carousel doesn't ask to be read, only glanced at, the way a fish tank or a fireplace doesn't ask to be read.",
-          "This experiment is two ambient motion patterns stripped down to their mechanics: a vertical marquee drifting at a constant, indifferent speed, and a horizontal carousel that loops without a seam. Neither one has content worth stopping for — that's deliberate. Removed from a real streaming slate's thumbnails, what's left is the motion itself, and motion alone turns out to be doing more psychological work than it gets credit for. A slow, continuous drift reads as calm, populated, alive, without a single decision being asked of you. That's the actual trick behind the endless shelf: not that it offers infinite choice, but infinite non-choice, dressed as choice, moving just enough to feel inhabited.",
-          "Build the loop with nothing in it and the mechanism is finally visible on its own — ambience as a technique, independent of whatever it's eventually asked to sell.",
-        ],
-      },
-      {
-        slug: "threegl-ai-explainer",
-        specimen: "/experiments/threegl-ai-explainer",
-        medium: "three.js, WebGL, live parameters",
-        title: "No Particle Understands the Field",
-        paragraphs: [
-          "Take a single particle in this simulation and ask it what it's part of. It can't tell you. It has a velocity, a layer, a size that pulses, a color that shifts slightly as it crosses depth planes, a glow it briefly wears when it passes a boundary and hands a connection line to its neighbor. None of that adds up, from the particle's point of view, to a network, or a field, or an explanation of anything. It's doing one local, dumb, complete job.",
-          "The field only exists at a scale no particle occupies. That's the oldest trick in complexity theory, and it's also, not coincidentally, the closest thing to a working metaphor for how a large model produces something that reads as understanding without any single weight or token embedding containing an understanding of its own. Nothing in the mechanism is smart. The aggregate, tuned and layered and connected densely enough, behaves as if it were.",
-          "This particle field was built as a piece of visual pedagogy for exactly that idea — a live, adjustable stand-in for how AI explainers work, letting you turn the dials (density, connection distance, layer glow, drift) and watch legibility emerge and collapse in real time. Too sparse and it's just dust. Too dense and it's noise. Somewhere in the middle, structure appears that no individual particle authored and no line of code explicitly drew — the connection lines aren't scripted paths, they're a byproduct of proximity, recalculated every frame by particles that have no idea they're forming anything at all.",
-          "Sit with the discomfort in that before reaching for the sliders. If a field of particles that understand nothing can look, from a few feet back, exactly like a mind at work, the interesting question was never whether there's a mind in there. It's how much scale it takes before the distinction stops being visible.",
-        ],
-      },
-      {
-        slug: "llm-interface",
-        specimen: "/experiments/llm-interface",
-        medium: "React, reorderable context blocks",
-        title: "There Is No Ship, Only the Planks",
-        paragraphs: [
-          "Ask a model who it's talking to and it will answer as if a self were sitting behind the reply, continuous, holding together, remembering the last thing it said because it is the same entity that said it. It isn't. Every turn, the whole context is reassembled from scratch — system instructions, prior turns, retrieved documents, tool outputs — concatenated fresh, sent whole, and discarded the moment the model returns something. There is no persistent thread underneath. There is only ever this one compound, built once, used once.",
-          "This experiment lets you build that compound by hand: enable a block, disable one, drag one above another, and watch two configurations diverge from the same raw materials into two different conversations. Nothing in any single block changed. Only the arrangement did. That's closer to chemistry than to memory — the same atoms of carbon rearrange into graphite or diamond, and nothing about carbon itself decides which one you get.",
-          "It's also the Ship of Theseus with the sentimentality removed. The classic version asks whether a ship that's had every plank replaced is still the same ship, and lets you feel conflicted either way. A context window skips the slow replacement and the attachment along with it: there was never a ship, only ever this arrangement of planks, assembled on demand — the ship was a story the deck kept telling because it looked the same from where you stood on it.",
-          "What the interface makes visible, block by draggable block, is that a model's apparent continuity — its sense of “as we discussed” — is entirely reconstructed from what's present in front of it right now, not retrieved from anywhere it has been. Move the block that says who it's supposed to be, and the rest of the conversation reads it as fact, unbothered, the way water takes the shape of whatever it's poured into without remembering the last container.",
-        ],
-      },
     ],
   },
 
   home: {
     meta: {
       title: "Ponti Studios",
-      description: "Premium product and engineering for teams who refuse to compromise on quality.",
+      description:
+        "A studio for AI systems, automation, and the software around them. For startups, enterprises, and local businesses.",
     },
     hero: {
-      title: "Building what's next",
-      wordBefore: "Building",
-      wordAfter: "what's next",
+      title: "Computational intelligence for real-world problems.",
+      wordBefore: "Computational intelligence for",
+      wordAfter: "real-world problems.",
       subhead:
-        "A studio for computational intelligence: AI systems, automation, and the software around them.",
+        "A studio for AI systems, automation, and the software around them. For startups, for enterprises, and for the business down the road.",
       secondaryCta: "See the work",
     },
     marquee: [
@@ -1065,7 +1058,28 @@ export const STUDIO_TRANSLATIONS_EN = {
       cta: "Services ",
     },
     work: {
-      title: "Work",
+      title: "Recent work",
+      cta: "All work",
+    },
+    together: {
+      title: "Work together",
+      items: [
+        {
+          name: "Build",
+          description: "A scoped product, shipped and handed off.",
+          to: "/services#engineering",
+        },
+        {
+          name: "Embed",
+          description: "Fractional CTO or product lead, inside your team.",
+          to: "/services#fractional-cto",
+        },
+        {
+          name: "Advise",
+          description: "Diligence, strategy, and second opinions.",
+          to: "/services#technical-consulting",
+        },
+      ],
     },
     clients: {
       title: "Results",
@@ -1115,9 +1129,7 @@ export const STUDIO_TRANSLATIONS_EN = {
             { path: "/experiments/pixel-descent.html", label: "Pixel Descent" },
             { path: "/experiments/backlog-mercenaries.html", label: "Backlog Mercenaries" },
             { path: "/experiments/theatre-management", label: "Theatre Management" },
-            { path: "/experiments/llm-interface", label: "LLM Interface" },
             { path: "/experiments/glass", label: "Glass" },
-            { path: "/experiments/threegl-ai-explainer", label: "ThreeGL AI Explainer" },
             { path: "/experiments/infinite-scroll", label: "Infinite Scroll" },
             { path: "/gen/image", label: "Image Generation" },
             { path: "/tarot", label: "Tarot" },

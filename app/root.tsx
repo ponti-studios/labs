@@ -24,6 +24,7 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import "./storefront.css";
 import { PrefetchProvider } from "./components/prefetch-provider";
 import QueryProvider from "./components/QueryProvider";
 import { NEWSBOY_APP_URL } from "./data/game";
@@ -31,6 +32,7 @@ import { BOOK_CALL_URL } from "./data/studio";
 import { getHominemUser } from "./lib/server/hominem-auth";
 import { cn } from "./lib/utils";
 import { t } from "./translations";
+import { StorefrontHeader } from "./components/storefront-header";
 
 export async function loader({ request }: Route.LoaderArgs) {
   return { user: await getHominemUser(request) };
@@ -69,7 +71,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=Instrument+Serif&family=JetBrains+Mono:wght@400;500;700&display=swap"
         />
         <Links />
         <PrefetchProvider />
@@ -89,7 +91,40 @@ export default function App() {
   const navigation = useNavigation();
   const isNavigating = navigation.state !== "idle";
   const isAuthenticated = user !== null;
+  const isLocalBusiness = location.pathname.startsWith("/local-business/");
+  const isWork = location.pathname === "/work" || location.pathname.startsWith("/work/");
+  const isServices = location.pathname === "/services";
+  const isFaq = location.pathname === "/faq";
+  const isManifesto = location.pathname === "/manifesto";
+  const isEssays = location.pathname === "/playground/essays";
+  const isCalendarExperiment = location.pathname === "/experiments/calendar";
+  const isTheatreExperiment = location.pathname === "/experiments/theatre-management";
+  const isGlassExperiment = location.pathname === "/experiments/glass";
+  const isProjects = location.pathname === "/projects";
+  const isProjectDetail = location.pathname.startsWith("/projects/");
+  const isStorefront =
+    location.pathname === "/" ||
+    isLocalBusiness ||
+    isWork ||
+    isServices ||
+    isFaq ||
+    isManifesto ||
+    isEssays ||
+    isCalendarExperiment ||
+    isTheatreExperiment ||
+    isGlassExperiment ||
+    isProjects ||
+    isProjectDetail;
   const [showAppMenu, setShowAppMenu] = useState(false);
+  const storefrontNavItems = [
+    {
+      href: "/services",
+      label: "Services",
+      active: isServices || isFaq || isLocalBusiness,
+    },
+    { href: "/work", label: t.nav.work, active: isWork },
+    { href: "/projects", label: "Lab", active: isProjects || isProjectDetail },
+  ];
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -107,6 +142,7 @@ export default function App() {
     () => [
       { href: "/services", label: t.nav.services },
       { href: "/work", label: t.nav.work },
+      { href: "/local-business/restaurants", label: "Local business" },
       { href: "/projects", label: t.nav.projects },
       { href: "/manifesto", label: t.nav.manifesto },
     ],
@@ -144,114 +180,138 @@ export default function App() {
       <div className="sr-only" aria-live="polite" aria-atomic="true">
         {isNavigating ? "Loading page" : ""}
       </div>
-      <Navigation ariaLabel="Primary navigation" variant="nokia">
-        <Navigation.Brand>
-          <Link to="/" className="flex items-center">
-            <img src="/logo.ponti.png" alt={t.nav.brandAlt} className="size-6" />
-          </Link>
-        </Navigation.Brand>
+      {isStorefront ? (
+        <StorefrontHeader
+          brandHref="/"
+          navItems={storefrontNavItems}
+          ctaHref={
+            isWork || isServices || isFaq || isProjects || isProjectDetail || isManifesto || isEssays || isCalendarExperiment || isTheatreExperiment || isGlassExperiment
+              ? BOOK_CALL_URL
+              : "#book"
+          }
+          ctaLabel={isLocalBusiness ? "Book a free check" : "Book a call"}
+        />
+      ) : (
+        <Navigation ariaLabel="Primary navigation" variant="nokia">
+          <Navigation.Brand>
+            <Link to="/" className="flex items-center">
+              <img src="/logo.ponti.png" alt={t.nav.brandAlt} className="size-6" />
+            </Link>
+          </Navigation.Brand>
 
-        <Navigation.List className="grid! grid-cols-3 gap-3 sm:flex! sm:grid-cols-none sm:gap-1">
-          {navLinks.map((link) => {
-            const logo = link.logo;
-            const isActive =
-              link.href === location.pathname ||
-              (link.href !== "/" && location.pathname.startsWith(`${link.href}/`));
+          <Navigation.List className="grid! grid-cols-3 gap-3 sm:flex! sm:grid-cols-none sm:gap-1">
+            {navLinks.map((link) => {
+              const logo = link.logo;
+              const isActive =
+                link.href === location.pathname ||
+                (link.href === "/local-business/restaurants" &&
+                  location.pathname.startsWith("/local-business/")) ||
+                (link.href !== "/" && location.pathname.startsWith(`${link.href}/`));
 
-            const content = logo ? (
-              <>
-                <img
-                  src={logo}
-                  alt={link.label}
-                  className="border-nokia-ink size-6 contrast-125 grayscale sm:border-0 sm:contrast-100 sm:grayscale-0"
-                />
-                <span className="font-nokia mt-1 block text-base uppercase sm:sr-only">
-                  {link.label}
-                </span>
-              </>
-            ) : (
-              (() => {
-                const Icon = NAV_ICONS[link.href];
-                return (
-                  <>
-                    <span className="border-nokia-ink flex size-10 items-center justify-center border-2 sm:hidden">
-                      {Icon && <Icon className="size-5" strokeWidth={2} aria-hidden="true" />}
-                    </span>
-                    <span className="font-nokia mt-1 block text-base uppercase sm:hidden">
-                      {link.label}
-                    </span>
-                    <span className="hidden sm:inline">{link.label}</span>
-                  </>
-                );
-              })()
-            );
-
-            const tileClassName = cn(
-              "group flex !h-auto !max-h-none w-full flex-col items-center justify-center gap-0.5 rounded-none border-2 border-transparent px-2 py-3 text-center transition-colors duration-100 sm:!h-9 sm:!max-h-9 sm:flex-row sm:justify-center sm:gap-1.5 sm:rounded-md sm:px-2 sm:py-1.5",
-              "active:bg-nokia-ink active:text-nokia-screen sm:active:bg-transparent sm:active:text-inherit",
-              isActive
-                ? "border-nokia-ink bg-nokia-ink text-nokia-screen sm:bg-muted sm:ring-border sm:border-transparent sm:text-inherit sm:ring-1"
-                : "border-nokia-ink/40 sm:border-transparent",
-            );
-
-            return (
-              <Navigation.Item key={link.href} asChild active={isActive} className={tileClassName}>
-                <Link
-                  to={link.href}
-                  prefetch="intent"
-                  className="flex w-full flex-col items-center sm:flex-row"
-                >
-                  {content}
-                </Link>
-              </Navigation.Item>
-            );
-          })}
-
-          {isAuthenticated && showAppMenu && (
-            <Navigation.Action className="animate-in fade-in duration-500">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="press border-nokia-ink font-nokia rounded-none border-2 text-lg uppercase sm:rounded-md sm:border sm:font-sans sm:text-sm sm:tracking-normal sm:normal-case"
-                  >
-                    {t.nav.apps}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent sideOffset={12}>
-                  {appLinks.map((link) => (
-                    <DropdownMenuItem key={link.href} className="p-0">
-                      <a
-                        href={link.href}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="flex w-full items-center gap-2 px-2 py-1.5"
-                      >
-                        <img src={link.logo} alt="" className="size-4" />
+              const content = logo ? (
+                <>
+                  <img
+                    src={logo}
+                    alt={link.label}
+                    className="border-nokia-ink size-6 contrast-125 grayscale sm:border-0 sm:contrast-100 sm:grayscale-0"
+                  />
+                  <span className="font-nokia mt-1 block text-base uppercase sm:sr-only">
+                    {link.label}
+                  </span>
+                </>
+              ) : (
+                (() => {
+                  const Icon = NAV_ICONS[link.href];
+                  return (
+                    <>
+                      <span className="border-nokia-ink flex size-10 items-center justify-center border-2 sm:hidden">
+                        {Icon && <Icon className="size-5" strokeWidth={2} aria-hidden="true" />}
+                      </span>
+                      <span className="font-nokia mt-1 block text-base uppercase sm:hidden">
                         {link.label}
-                      </a>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </Navigation.Action>
-          )}
+                      </span>
+                      <span className="hidden sm:inline">{link.label}</span>
+                    </>
+                  );
+                })()
+              );
 
-          {!isAuthenticated && (
-            <Navigation.Action>
-              <Button
-                asChild
-                className="press border-nokia-ink bg-nokia-ink font-nokia text-nokia-screen hover:bg-nokia-ink/90 sm:bg-primary sm:text-primary-foreground sm:hover:bg-primary/90 rounded-none border-2 text-lg uppercase sm:rounded-md sm:border-0 sm:font-sans sm:text-sm sm:tracking-normal sm:normal-case"
-              >
-                <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
-                  {t.nav.book}
-                </a>
-              </Button>
-            </Navigation.Action>
-          )}
-        </Navigation.List>
-      </Navigation>
-      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4">
+              const tileClassName = cn(
+                "group flex !h-auto !max-h-none w-full flex-col items-center justify-center gap-0.5 rounded-none border-2 border-transparent px-2 py-3 text-center transition-colors duration-100 sm:!h-9 sm:!max-h-9 sm:flex-row sm:justify-center sm:gap-1.5 sm:rounded-md sm:px-2 sm:py-1.5",
+                "active:bg-nokia-ink active:text-nokia-screen sm:active:bg-transparent sm:active:text-inherit",
+                isActive
+                  ? "border-nokia-ink bg-nokia-ink text-nokia-screen sm:bg-muted sm:ring-border sm:border-transparent sm:text-inherit sm:ring-1"
+                  : "border-nokia-ink/40 sm:border-transparent",
+              );
+
+              return (
+                <Navigation.Item
+                  key={link.href}
+                  asChild
+                  active={isActive}
+                  className={tileClassName}
+                >
+                  <Link
+                    to={link.href}
+                    prefetch="intent"
+                    className="flex w-full flex-col items-center sm:flex-row"
+                  >
+                    {content}
+                  </Link>
+                </Navigation.Item>
+              );
+            })}
+
+            {isAuthenticated && showAppMenu && (
+              <Navigation.Action className="animate-in fade-in duration-500">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="press border-nokia-ink font-nokia rounded-none border-2 text-lg uppercase sm:rounded-md sm:border sm:font-sans sm:text-sm sm:tracking-normal sm:normal-case"
+                    >
+                      {t.nav.apps}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent sideOffset={12}>
+                    {appLinks.map((link) => (
+                      <DropdownMenuItem key={link.href} className="p-0">
+                        <a
+                          href={link.href}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex w-full items-center gap-2 px-2 py-1.5"
+                        >
+                          <img src={link.logo} alt="" className="size-4" />
+                          {link.label}
+                        </a>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </Navigation.Action>
+            )}
+
+            {!isAuthenticated && (
+              <Navigation.Action>
+                <Button
+                  asChild
+                  className="press border-nokia-ink bg-nokia-ink font-nokia text-nokia-screen hover:bg-nokia-ink/90 sm:bg-primary sm:text-primary-foreground sm:hover:bg-primary/90 rounded-none border-2 text-lg uppercase sm:rounded-md sm:border-0 sm:font-sans sm:text-sm sm:tracking-normal sm:normal-case"
+                >
+                  <a href={BOOK_CALL_URL} target="_blank" rel="noreferrer">
+                    {t.nav.book}
+                  </a>
+                </Button>
+              </Navigation.Action>
+            )}
+          </Navigation.List>
+        </Navigation>
+      )}
+      <main
+        className={cn(
+          isStorefront ? "storefront-main" : "mx-auto flex w-full max-w-7xl flex-1 flex-col px-4",
+        )}
+      >
         <Outlet />
       </main>
     </QueryProvider>

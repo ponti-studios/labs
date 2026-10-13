@@ -1,5 +1,6 @@
 import { Link } from "react-router";
-import { RevealGroup, RevealItem } from "~/components/Reveal";
+
+import { BOOK_CALL_URL } from "~/data/studio";
 import { pageMeta } from "~/lib/seo";
 import { t } from "~/translations";
 
@@ -15,65 +16,47 @@ export function meta() {
 
 export default function PlaygroundEssays() {
   return (
-    <div className="page-shell">
-      {/* Hero */}
-      <section className="layout-stack">
-        <h1 className="heading-hero text-foreground max-w-4xl">{copy.hero.title}</h1>
-        <p className="text-muted-foreground max-w-2xl text-lg leading-relaxed">{copy.hero.dek}</p>
-      </section>
-
-      {/* Table of contents */}
-      <nav className="flex flex-wrap gap-2 px-4 md:px-6" aria-label="Jump to an essay">
-        {copy.entries.map((entry) => (
-          <a
-            key={entry.slug}
-            href={`#${entry.slug}`}
-            className="border-border text-muted-foreground hover:text-accent hover:border-accent/50 rounded-md border px-3 py-1.5 font-mono text-xs tracking-wide uppercase transition-colors"
-          >
-            {entry.title.split(" ").slice(0, 2).join(" ")}
-          </a>
-        ))}
-      </nav>
-
-      {/* Essays */}
-      <section className="section gap-10">
-        <RevealGroup as="ol" className="flex flex-col">
-          {copy.entries.map((entry) => (
-            <RevealItem
-              key={entry.slug}
-              as="li"
-              id={entry.slug}
-              className="border-border scroll-mt-24 border-t py-10 first:border-t-0 first:pt-0"
-            >
-              <div className="flex max-w-3xl flex-col gap-3">
-                <p className="ref-tag">
-                  Specimen — {entry.specimen}
-                  <br />
-                  Medium — {entry.medium}
-                </p>
-                <h2 className="font-serif text-2xl italic sm:text-3xl">{entry.title}</h2>
-                <div className="flex flex-col gap-4">
-                  {entry.paragraphs.map((paragraph) => (
-                    <p
-                      key={paragraph.slice(0, 32)}
-                      className="text-muted-foreground text-base leading-relaxed"
-                    >
-                      {paragraph}
-                    </p>
-                  ))}
-                </div>
-                <Link
-                  to={entry.specimen}
-                  prefetch="intent"
-                  className="text-accent press w-fit text-sm underline underline-offset-4"
-                >
-                  Open the experiment →
-                </Link>
-              </div>
-            </RevealItem>
+    <main className="storefront-main sf-essays">
+      <section className="sf-wrap sf-essays-hero">
+        <h1 className="sf-h1">{copy.hero.title}</h1>
+        <p className="sf-copy">{copy.hero.dek}</p>
+        <nav className="sf-essays-index" aria-label="Jump to an essay">
+          {copy.entries.map((entry, index) => (
+            <a key={entry.slug} href={`#${entry.slug}`}>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              {entry.title}
+            </a>
           ))}
-        </RevealGroup>
+        </nav>
       </section>
-    </div>
+
+      <section className="sf-wrap sf-essays-list" aria-label="Essays">
+        {copy.entries.map((entry, index) => (
+          <article className="sf-essay-row" id={entry.slug} key={entry.slug}>
+            <div className="sf-essay-heading">
+              <span className="sf-meta">{String(index + 1).padStart(2, "0")}</span>
+              <h2>{entry.title}</h2>
+              <p className="sf-essay-meta">{entry.medium}</p>
+            </div>
+            <div className="sf-essay-body">
+              {entry.paragraphs.map((paragraph) => (
+                <p key={paragraph.slice(0, 40)}>{paragraph}</p>
+              ))}
+              <Link to={entry.specimen} prefetch="intent" className="sf-essay-link">
+                Open the experiment <span aria-hidden="true">↗</span>
+              </Link>
+            </div>
+          </article>
+        ))}
+      </section>
+
+      <section className="sf-wrap sf-essays-footer">
+        <h2 className="sf-h2">Ideas are better when they move.</h2>
+        <div>
+          <Link to="/projects" className="sf-essay-link">Explore the Lab <span aria-hidden="true">↗</span></Link>
+          <a href={BOOK_CALL_URL} className="sf-button btn-keycap">Book a call</a>
+        </div>
+      </section>
+    </main>
   );
 }

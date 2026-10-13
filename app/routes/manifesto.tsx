@@ -1,4 +1,6 @@
-import { RevealGroup, RevealItem } from "~/components/Reveal";
+import { Link } from "react-router";
+
+import { BOOK_CALL_URL } from "~/data/studio";
 import { pageMeta } from "~/lib/seo";
 import { t } from "~/translations";
 
@@ -14,38 +16,32 @@ export function meta() {
 
 export default function Manifesto() {
   return (
-    <div className="page-shell">
-      {/* Hero */}
-      <section className="layout-stack">
-        <h1 className="heading-hero text-foreground max-w-4xl">{copy.hero.title}</h1>
+    <main className="storefront-main sf-manifesto">
+      <section className="sf-wrap sf-manifesto-hero">
+        <h1 className="sf-h1">{copy.hero.title}</h1>
       </section>
 
-      {/* Tenets: title left, argument right, one idea per row */}
-      <section>
-        <RevealGroup as="ol" className="flex flex-col">
-          {copy.tenets.items.map((tenet) => (
-            <RevealItem
-              key={tenet.title}
-              as="li"
-              className="border-border grid gap-3 border-t py-7 last:pb-0 sm:gap-4 sm:py-10 lg:grid-cols-[14rem_1fr] lg:gap-16"
-            >
-              <h2 className="text-foreground text-2xl font-semibold tracking-tight">
-                {tenet.title}
-              </h2>
-              <p className="text-foreground max-w-2xl text-base leading-relaxed sm:text-xl">
-                {tenet.description}
-              </p>
-            </RevealItem>
-          ))}
-        </RevealGroup>
+      <section className="sf-wrap sf-manifesto-principles" aria-label="Principles">
+        {copy.tenets.items.map((tenet) => (
+          <article className="sf-manifesto-row" key={tenet.title}>
+            <h2>{tenet.title}</h2>
+            <p>{tenet.description}</p>
+          </article>
+        ))}
       </section>
 
-      {/* Closing pull-quote: same inverted panel as the home page */}
-      <section className="bg-foreground rounded-sm px-6 py-14 sm:px-12 md:py-20">
-        <blockquote className="text-background max-w-4xl text-3xl leading-[1.1] font-semibold tracking-tight sm:text-4xl md:text-5xl">
-          &ldquo;{copy.quote}&rdquo;
+      <section className="sf-manifesto-quote-wrap">
+        <blockquote className="sf-wrap sf-manifesto-quote">
+          <span aria-hidden="true">“</span>
+          <p>{copy.quote}</p>
         </blockquote>
       </section>
-    </div>
+
+      <section className="sf-wrap sf-manifesto-cta">
+        <h2 className="sf-h2">Have a problem worth solving?</h2>
+        <a className="sf-button btn-keycap" href={BOOK_CALL_URL}>Book a call</a>
+        <Link className="sf-manifesto-services" to="/services">See what I can help with</Link>
+      </section>
+    </main>
   );
 }

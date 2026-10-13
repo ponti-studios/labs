@@ -18,9 +18,15 @@ export type ProjectMetadata = {
   github: string;
   url?: string;
   logo?: string;
+  /** Bespoke showcase blocks rendered by the project page for products without screenshots. */
+  showcase?: "finance-mcp";
+  /** Transparent composite shown below the project heading. */
+  heroImage?: { src: string; alt: string; width: number; height: number };
   screenshots?: string[];
   /** Portrait phone screenshots are shown at their own aspect ratio instead of 16:9. */
   screenshotShape?: "portrait";
+  /** Wrap native phone screenshots in the reusable CSS iPhone frame. */
+  screenshotFrame?: "iphone";
 };
 
 export type Project = ProjectMetadata & (typeof t.projects.entries)[ProjectSlug];
@@ -50,6 +56,22 @@ const omiro: Project = {
   status: "active",
   github: "https://github.com/ponti-studios/hominem",
   logo: "/experiments/logo.omiro.500x500.webp",
+  heroImage: {
+    src: "/screenshots/omiro-hero.webp",
+    alt: "Omiro on iPhone: a chat conversation, a note being edited, and the Tasks tab.",
+    width: 2000,
+    height: 1508,
+  },
+  screenshots: [
+    "/screenshots/omiro-chat.webp",
+    "/screenshots/omiro-thinking.webp",
+    "/screenshots/omiro-recording.webp",
+    "/screenshots/omiro-notes.webp",
+    "/screenshots/omiro-enhance.webp",
+    "/screenshots/omiro-tasks.webp",
+  ],
+  screenshotShape: "portrait",
+  screenshotFrame: "iphone",
 };
 
 const thames: Project = {
@@ -65,6 +87,25 @@ const thames: Project = {
     "/screenshots/thames-conversation.webp",
     "/screenshots/thames-history.webp",
     "/screenshots/thames-voice.webp",
+  ],
+  screenshotShape: "portrait",
+  screenshotFrame: "iphone",
+};
+
+const still: Project = {
+  ...t.projects.entries.still,
+  slug: "still",
+  category: "product",
+  tech: ["TypeScript", "React Native", "Swift", "iOS"],
+  status: "development",
+  github: "https://github.com/ponti-studios/still",
+  logo: "/experiments/logo.still.500x500.webp",
+  screenshots: [
+    "/screenshots/still-overview.webp",
+    "/screenshots/still-possessions.webp",
+    "/screenshots/still-shopping.webp",
+    "/screenshots/still-containers.webp",
+    "/screenshots/still-signin.webp",
   ],
   screenshotShape: "portrait",
 };
@@ -84,11 +125,12 @@ const career: Project = {
 const finance: Project = {
   ...t.projects.entries.finance,
   slug: "finance",
-  category: "product",
-  tech: ["TypeScript", "React", "Hono", "PostgreSQL"],
-  status: "development",
+  category: "infrastructure",
+  tech: ["TypeScript", "MCP", "Hono", "PostgreSQL"],
+  status: "active",
   github: "https://github.com/ponti-studios/hominem",
   logo: "/experiments/logo.finance.500x500.webp",
+  showcase: "finance-mcp",
 };
 
 const hominemApi: Project = {
@@ -159,23 +201,36 @@ const game: Project = {
   status: "published",
   github: "https://github.com/ponti-studios/labs",
   url: NEWSBOY_APP_URL,
-  screenshots: ["/screenshots/game-gameplay.png", "/screenshots/game-solved.png"],
+  screenshots: [
+    "/screenshots/newsboy-mobile-gameplay.png",
+    "/screenshots/newsboy-mobile-how-to-play.png",
+  ],
+  screenshotShape: "portrait",
+  screenshotFrame: "iphone",
   logo: "/experiments/newsboy-logo.webp",
 };
 
-const geo: Project = {
-  ...t.projects.entries.geo,
-  slug: "geo",
-  category: "tool",
-  tech: ["Swift", "Apple Maps", "macOS"],
-  status: "development",
-  github: "https://github.com/ponti-studios/geo",
+const walksgpx: Project = {
+  ...t.projects.entries.walksgpx,
+  slug: "walksgpx",
+  category: "product",
+  tech: ["Swift", "SwiftUI", "HealthKit", "MapKit", "CloudKit"],
+  status: "active",
+  github: "https://github.com/charlesponti/WalksGPX",
+  logo: "/experiments/logo.walksgpx.500x500.png",
+  screenshots: [
+    "/screenshots/walksgpx-iphone-library.png",
+    "/screenshots/walksgpx-iphone-detail.png",
+    "/screenshots/walksgpx-iphone-library-empty.png",
+  ],
+  screenshotShape: "portrait",
+  screenshotFrame: "iphone",
 };
 
 const toolbox: Project = {
   ...t.projects.entries.toolbox,
   slug: "toolbox",
-  category: "tool",
+  category: "library",
   tech: ["Rust", "Go", "Swift", "Python", "TypeScript", "Bash"],
   status: "development",
   github: "https://github.com/ponti-studios/toolbox",
@@ -197,6 +252,7 @@ export const projects: Project[] = [
   kernel,
   omiro,
   thames,
+  still,
   career,
   finance,
   hominemApi,
@@ -207,7 +263,7 @@ export const projects: Project[] = [
   hollywood,
   game,
   covid,
-  geo,
+  walksgpx,
   toolbox,
 ];
 
@@ -216,12 +272,12 @@ export const projectSections: ProjectSection[] = [
   {
     category: "product",
     label: t.projects.categoryLabels.product,
-    projects: [omiro, thames, career, game, finance, commune, health, earth],
+    projects: [game, omiro, thames, still, walksgpx, career, commune, health, earth],
   },
   {
     category: "infrastructure",
     label: t.projects.categoryLabels.infrastructure,
-    projects: [hominemApi, foundation, hollywood],
+    projects: [finance, hominemApi, foundation, hollywood],
   },
   {
     category: "research",
@@ -231,11 +287,6 @@ export const projectSections: ProjectSection[] = [
   {
     category: "library",
     label: t.projects.categoryLabels.library,
-    projects: [kernel],
-  },
-  {
-    category: "tool",
-    label: t.projects.categoryLabels.tool,
-    projects: [geo, toolbox],
+    projects: [kernel, toolbox],
   },
 ];

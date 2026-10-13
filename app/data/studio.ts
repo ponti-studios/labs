@@ -75,6 +75,15 @@ export const servicePillars: ServicePillar[] = [
 
 export const caseSnapshots: readonly CaseSnapshot[] = t.catalog.proof.snapshots;
 
+/** Cases that best answer "can this person ship product and AI?", in reading order. */
+export const FEATURED_CASE_SLUGS = ["prolog", "streamyard", "lumina", "revrock"] as const;
+
+/** Featured cases where AI is part of what shipped. */
+export const AI_CASE_SLUGS: ReadonlySet<string> = new Set(["prolog", "streamyard", "lumina"]);
+
+/** Where a case's screenshot lives. Missing files fall back to a placeholder. */
+export const caseShot = (slug: string) => `/work/shots/${slug}.webp`;
+
 export const CONTACT_EMAIL = "hello@ponti.io";
 const SUBJECT = encodeURIComponent("PROJECT INQUIRY - PONTI STUDIOS");
 const BODY = encodeURIComponent(

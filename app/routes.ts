@@ -4,6 +4,7 @@ const homeRoutes = [index("routes/home.tsx")] satisfies RouteConfig;
 
 const studioRoutes = [
   route("/services", "routes/services.tsx"),
+  route("/local-business/:industry", "routes/local-business.$industry.tsx"),
   route("/work", "routes/work.tsx"),
   route("/projects", "routes/projects.tsx"),
   route("/projects/:slug", "routes/projects.$slug.tsx"),
@@ -52,7 +53,7 @@ const featureRoutes = [
 
   // Games
   // The player UI and game administration live in the standalone `newsboy` app;
-  // Labs links to it externally via VITE_NEWSBOY_APP_URL and no longer registers
+  // Labs links to Newsboy at its public custom domain and no longer registers
   // legacy game entry points.
   route("/games/cards", "routes/games/cards.tsx"),
   route("/games/tetris", "routes/games/tetris.tsx"),
@@ -64,8 +65,6 @@ const experimentRoutes = [
 
   // TODO Experiments
   route("/experiments/glass", "routes/experiments.glass.tsx"),
-  route("/experiments/threegl-ai-explainer", "routes/experiments.threegl-ai-explainer.tsx"),
-  route("/experiments/llm-interface", "routes/experiments.llm-interface.tsx"),
 
   // TODO Challenges
   route("/challenges/anagrams", "routes/challenges.anagrams.tsx"),
@@ -80,15 +79,10 @@ const experimentRoutes = [
   route("/health/api/medication-schedule", "routes/health/api.medication-schedule.ts"),
 ] satisfies RouteConfig;
 
-const toyRoutes = [
-  route("/toys/layouts/:layout", "routes/toys.layouts.$layout.tsx"),
-] satisfies RouteConfig;
-
 export default [
   ...homeRoutes,
   ...studioRoutes,
   ...apiRoutes,
   ...featureRoutes,
   ...experimentRoutes,
-  ...toyRoutes,
 ] satisfies RouteConfig;

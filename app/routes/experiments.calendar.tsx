@@ -1,4 +1,5 @@
 import { Calendar, type CalendarEvent } from "../components/calendar/Calendar";
+import { Link } from "react-router";
 
 export function meta() {
   return [{ title: "Calendar | Labs" }];
@@ -165,20 +166,15 @@ export function createShowcaseEvents(nowMinute: number): CalendarEvent[] {
 
 export default function CalendarExperiment() {
   return (
-    <main className="bg-background text-foreground min-h-screen px-4 pt-4 pb-24 md:px-6 md:pt-6">
-      <div className="mx-auto max-w-3xl">
-        <header className="border-border mb-4 flex items-start justify-between gap-4 border-b pb-4">
-          <div>
-            <p className="ui-data-label mb-1">Time, as it is lived</p>
-            <h1 className="heading-hero text-foreground max-w-4xl">Your day in one stream.</h1>
-          </div>
-          <p className="text-muted-foreground hidden pt-1 text-right text-xs sm:block">
-            Calendar experiment
-          </p>
-        </header>
-
+    <main className="storefront-main sf-calendar-page">
+      <section className="sf-wrap sf-calendar-intro">
+        <Link to="/playground/essays#calendar" className="sf-calendar-back">← Essays</Link>
+        <h1 className="sf-h1">Your day in one stream.</h1>
+        <p className="sf-copy">A calendar shaped by lived time, not identical boxes.</p>
+      </section>
+      <section className="sf-wrap sf-calendar-demo" aria-label="Interactive calendar experiment">
         <Calendar getEvents={createShowcaseEvents} />
-      </div>
+      </section>
     </main>
   );
 }
