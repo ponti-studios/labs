@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { BOOK_CALL_URL } from "~/data/studio";
 import { pageMeta } from "~/lib/seo";
 import { FinanceMcpDetails, FinanceMcpHero } from "~/components/projects/finance-mcp";
+import { WaveformPreview } from "~/components/projects/waveform-preview";
 import { projects } from "~/data/projects";
 import { t } from "~/translations";
 
@@ -68,9 +69,14 @@ export default function ProjectDetail() {
               target={project.url.startsWith("http") ? "_blank" : undefined}
               rel={project.url.startsWith("http") ? "noopener noreferrer" : undefined}
             >
-              {copy.page.liveProject} <ArrowRight aria-hidden="true" className="size-4" />
+              {project.showcase === "waveform" ? "Full explainer" : copy.page.liveProject} <ArrowRight aria-hidden="true" className="size-4" />
             </a>
           ) : null}
+          {project.relatedLinks?.map((link) => (
+            <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer">
+              {link.label} <ArrowRight aria-hidden="true" className="size-4" />
+            </a>
+          ))}
         </div>
 
         {project.heroImage ? (
@@ -88,6 +94,7 @@ export default function ProjectDetail() {
       </section>
 
       {project.showcase === "finance-mcp" ? <FinanceMcpDetails /> : null}
+      {project.showcase === "waveform" ? <WaveformPreview /> : null}
 
       {screenshots.length > 0 ? (
         <section className="sf-wrap sf-project-screenshots" aria-label={copy.page.screenshots}>

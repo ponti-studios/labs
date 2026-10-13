@@ -17,9 +17,10 @@ export type ProjectMetadata = {
   status: ProjectStatus;
   github: string;
   url?: string;
+  relatedLinks?: { label: string; url: string }[];
   logo?: string;
   /** Bespoke showcase blocks rendered by the project page for products without screenshots. */
-  showcase?: "finance-mcp";
+  showcase?: "finance-mcp" | "waveform";
   /** Transparent composite shown below the project heading. */
   heroImage?: { src: string; alt: string; width: number; height: number };
   screenshots?: string[];
@@ -46,6 +47,21 @@ const kernel: Project = {
   github: "https://github.com/ponti-studios/kernel",
   url: "https://github.com/ponti-studios/kernel",
   logo: "/experiments/logo.kernel.500x500.webp",
+};
+
+const waveform: Project = {
+  ...t.projects.entries.waveform,
+  slug: "waveform",
+  category: "library",
+  tech: ["Swift", "SwiftUI", "TypeScript", "React", "Audio"],
+  status: "published",
+  github: "https://github.com/charlesponti/waveform-ios",
+  relatedLinks: [
+    { label: "React package", url: "https://github.com/charlesponti/waveform-react" },
+    { label: "npm package", url: "https://www.npmjs.com/package/@thecharlesponti/waveform-react" },
+  ],
+  url: "https://charlesponti.github.io/voice-orb/",
+  showcase: "waveform",
 };
 
 const omiro: Project = {
@@ -250,6 +266,7 @@ const covid: Project = {
 // Detail navigation order is explicit and independent from the category presentation order.
 export const projects: Project[] = [
   kernel,
+  waveform,
   omiro,
   thames,
   still,
@@ -287,6 +304,6 @@ export const projectSections: ProjectSection[] = [
   {
     category: "library",
     label: t.projects.categoryLabels.library,
-    projects: [kernel, toolbox],
+    projects: [kernel, waveform, toolbox],
   },
 ];

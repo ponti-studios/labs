@@ -41,6 +41,9 @@ importers:
       '@testing-library/jest-dom':
         specifier: ^7.0.1
         version: 7.0.1(@testing-library/dom@10.4.1)(vitest@5.0.1)
+      '@thecharlesponti/waveform-react':
+        specifier: 0.1.1
+        version: 0.1.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@types/three':
         specifier: ^0.185.4
         version: 0.185.4
@@ -2083,6 +2086,13 @@ packages:
     engines: {node: '>=12', npm: '>=6'}
     peerDependencies:
       '@testing-library/dom': '>=7.21.4'
+
+  '@thecharlesponti/waveform-react@0.1.1':
+    resolution: {integrity: sha512-sS6MwktrHls6Yu9sXytrploi5Pi/WWWxD9kkvfNWe4OQiSoCTWJXTyCj+zt18nl4M0jTSkIEP8czmEdgVlCBpg==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      react: '>=18'
+      react-dom: '>=18'
 
   '@tweenjs/tween.js@23.1.3':
     resolution: {integrity: sha512-vJmvvwFxYuGnF2axRtPYocag6Clbb5YS7kLL+SO/TeVFzHqDIWrNKYtcsPMibjDx9O+bu+psAy9NKfWklassUA==}
@@ -5579,6 +5589,11 @@ snapshots:
   '@testing-library/user-event@14.6.7(@testing-library/dom@10.4.1)':
     dependencies:
       '@testing-library/dom': 10.4.1
+
+  '@thecharlesponti/waveform-react@0.1.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0)':
+    dependencies:
+      react: 19.3.0
+      react-dom: 19.3.0(react@19.3.0)
 
   '@tweenjs/tween.js@23.1.3': {}
 
