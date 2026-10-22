@@ -185,7 +185,16 @@ export default function App() {
           brandHref="/"
           navItems={storefrontNavItems}
           ctaHref={
-            isWork || isServices || isFaq || isProjects || isProjectDetail || isManifesto || isEssays || isCalendarExperiment || isTheatreExperiment || isGlassExperiment
+            isWork ||
+            isServices ||
+            isFaq ||
+            isProjects ||
+            isProjectDetail ||
+            isManifesto ||
+            isEssays ||
+            isCalendarExperiment ||
+            isTheatreExperiment ||
+            isGlassExperiment
               ? BOOK_CALL_URL
               : "#book"
           }

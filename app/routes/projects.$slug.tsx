@@ -53,13 +53,17 @@ export default function ProjectDetail() {
         </Link>
 
         <div className="sf-project-detail-heading">
-          {project.logo ? <img src={project.logo} alt="" className="sf-project-detail-logo" /> : null}
+          {project.logo ? (
+            <img src={project.logo} alt="" className="sf-project-detail-logo" />
+          ) : null}
           <h1 className="sf-h1">{project.name}</h1>
         </div>
         <p className="sf-project-detail-summary">{project.shortDescription}</p>
 
         <div className="sf-project-detail-links">
-          <span className="sf-project-detail-category">{copy.categoryLabels[project.category]}</span>
+          <span className="sf-project-detail-category">
+            {copy.categoryLabels[project.category]}
+          </span>
           <a href={project.github} target="_blank" rel="noopener noreferrer">
             {copy.page.repository} <ArrowRight aria-hidden="true" className="size-4" />
           </a>
@@ -69,7 +73,8 @@ export default function ProjectDetail() {
               target={project.url.startsWith("http") ? "_blank" : undefined}
               rel={project.url.startsWith("http") ? "noopener noreferrer" : undefined}
             >
-              {project.showcase === "waveform" ? "Full explainer" : copy.page.liveProject} <ArrowRight aria-hidden="true" className="size-4" />
+              {project.showcase === "waveform" ? "Full explainer" : copy.page.liveProject}{" "}
+              <ArrowRight aria-hidden="true" className="size-4" />
             </a>
           ) : null}
           {project.relatedLinks?.map((link) => (

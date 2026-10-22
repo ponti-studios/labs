@@ -164,8 +164,8 @@ export function FinanceMcpDetails() {
           Thirteen tools, one ledger.
         </h2>
         <p className="sf-mcp-lede">
-          Reads answer questions about your money. Writes are idempotent, so an import you run
-          twice does the same thing as one you run once.
+          Reads answer questions about your money. Writes are idempotent, so an import you run twice
+          does the same thing as one you run once.
         </p>
         <div className="sf-mcp-catalog">
           {TOOL_GROUPS.map((group) => (

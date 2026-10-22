@@ -53,8 +53,12 @@ export default function PlaygroundEssays() {
       <section className="sf-wrap sf-essays-footer">
         <h2 className="sf-h2">Ideas are better when they move.</h2>
         <div>
-          <Link to="/projects" className="sf-essay-link">Explore the Lab <span aria-hidden="true">↗</span></Link>
-          <a href={BOOK_CALL_URL} className="sf-button btn-keycap">Book a call</a>
+          <Link to="/projects" className="sf-essay-link">
+            Explore the Lab <span aria-hidden="true">↗</span>
+          </Link>
+          <a href={BOOK_CALL_URL} className="sf-button btn-keycap">
+            Book a call
+          </a>
         </div>
       </section>
     </main>

@@ -146,8 +146,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       },
       still: {
         name: "Still",
-        shortDescription:
-          "A clear view of what you own, want, and everything in between.",
+        shortDescription: "A clear view of what you own, want, and everything in between.",
         solution:
           "An iOS app for possessions and shopping: items move from wanted to planned to ordered to owned to archived, live in containers, and gather in collections. Sign-in is an email code, and the session stays in the Keychain.",
         problem:
@@ -903,8 +902,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       },
       {
         question: "Is testing and documentation included?",
-        answer:
-          "Yes. Work is tested, documented, and handed over so your team can maintain it.",
+        answer: "Yes. Work is tested, documented, and handed over so your team can maintain it.",
       },
       {
         question: "What's not covered by the engagement?",
@@ -933,8 +931,7 @@ export const STUDIO_TRANSLATIONS_EN = {
       },
       {
         question: "How long does it take to get a proposal?",
-        answer:
-          "Usually within five business days after a 30-minute discovery call.",
+        answer: "Usually within five business days after a 30-minute discovery call.",
       },
     ],
   },

@@ -1,17 +1,16 @@
 import { useEffect, useMemo } from "react";
-import {
-  SignalPicker,
-  Transport,
-  VoiceOrb,
-} from "@thecharlesponti/waveform-react";
+import { SignalPicker, Transport, VoiceOrb } from "@thecharlesponti/waveform-react";
 import "@thecharlesponti/waveform-react/style.css";
 
 export function WaveformPreview() {
   const transport = useMemo(() => new Transport(), []);
 
-  useEffect(() => () => {
-    transport.setSound(false);
-  }, [transport]);
+  useEffect(
+    () => () => {
+      transport.setSound(false);
+    },
+    [transport],
+  );
 
   return (
     <section className="sf-wrap sf-waveform-showcase" aria-label="Interactive Waveform demo">
@@ -25,7 +24,8 @@ export function WaveformPreview() {
           />
         </div>
         <p className="sf-waveform-note">
-          Choose a sound to see its pitch, timing, and loudness move through the orb. Turn sound on to hear it.
+          Choose a sound to see its pitch, timing, and loudness move through the orb. Turn sound on
+          to hear it.
         </p>
       </div>
     </section>

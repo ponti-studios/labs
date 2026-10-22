@@ -168,7 +168,9 @@ export default function CalendarExperiment() {
   return (
     <main className="storefront-main sf-calendar-page">
       <section className="sf-wrap sf-calendar-intro">
-        <Link to="/playground/essays#calendar" className="sf-calendar-back">← Essays</Link>
+        <Link to="/playground/essays#calendar" className="sf-calendar-back">
+          ← Essays
+        </Link>
         <h1 className="sf-h1">Your day in one stream.</h1>
         <p className="sf-copy">A calendar shaped by lived time, not identical boxes.</p>
       </section>

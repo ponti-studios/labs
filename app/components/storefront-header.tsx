@@ -15,13 +15,7 @@ type StorefrontHeaderProps = {
   ctaLabel: string;
 };
 
-function NavLink({
-  item,
-  onNavigate,
-}: {
-  item: StorefrontNavItem;
-  onNavigate?: () => void;
-}) {
+function NavLink({ item, onNavigate }: { item: StorefrontNavItem; onNavigate?: () => void }) {
   const sharedProps = {
     "aria-current": item.active ? ("page" as const) : undefined,
     onClick: onNavigate,
@@ -70,7 +64,7 @@ export function StorefrontHeader({
 
       if (event.key !== "Tab" || !mobilePanelRef.current) return;
       const focusable = mobilePanelRef.current.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled])',
+        "a[href], button:not([disabled])",
       );
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
@@ -140,7 +134,12 @@ export function StorefrontHeader({
       >
         <div className="storefront-mobile-panel-head">
           <Link to={brandHref} className="storefront-brand" onClick={closeMobileNav}>
-            <img src="/logo.ponti.png" alt="" aria-hidden="true" className="storefront-brand-mark" />
+            <img
+              src="/logo.ponti.png"
+              alt=""
+              aria-hidden="true"
+              className="storefront-brand-mark"
+            />
             <span>Ponti Studios</span>
           </Link>
           <button

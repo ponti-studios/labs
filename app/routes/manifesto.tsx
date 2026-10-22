@@ -39,8 +39,12 @@ export default function Manifesto() {
 
       <section className="sf-wrap sf-manifesto-cta">
         <h2 className="sf-h2">Have a problem worth solving?</h2>
-        <a className="sf-button btn-keycap" href={BOOK_CALL_URL}>Book a call</a>
-        <Link className="sf-manifesto-services" to="/services">See what I can help with</Link>
+        <a className="sf-button btn-keycap" href={BOOK_CALL_URL}>
+          Book a call
+        </a>
+        <Link className="sf-manifesto-services" to="/services">
+          See what I can help with
+        </Link>
       </section>
     </main>
   );
