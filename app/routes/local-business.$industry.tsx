@@ -1,7 +1,14 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router";
-import { LucideArrowDown, LucideArrowRight, LucideCheck } from "lucide-react";
+import { ArrowRight, Check, Plus } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@ponti-studios/ui/data-display";
 import { Button } from "@ponti-studios/ui/primitives";
+import { AsciiField } from "~/components/AsciiField";
 import { currency, localBusinesses } from "~/data/local-automations";
 import { pageMeta } from "~/lib/seo";
 
@@ -9,7 +16,8 @@ export function meta({ params }: { params: { industry?: string } }) {
   const business = localBusinesses.find((entry) => entry.slug === params.industry);
   return pageMeta({
     title: business ? `${business.name} · Ponti Studios` : "Local business · Ponti Studios",
-    description: business?.intro ?? "Fixed-price AI automations for local businesses in Bermondsey, London.",
+    description:
+      business?.intro ?? "Fixed-price AI automations for local businesses in Bermondsey, London.",
     path: `/local-business/${params.industry ?? "restaurants"}`,
   });
 }
@@ -22,7 +30,9 @@ export default function LocalBusinessPage() {
   const subtotal = chosen.reduce((total, automation) => total + automation.price, 0);
   const discount = chosen.length >= 3 ? Math.round(subtotal * 0.15) : 0;
   const total = subtotal - discount;
-  const selectedNames = chosen.map((automation) => `${automation.name} (${currency(automation.price)})`).join(", ");
+  const selectedNames = chosen
+    .map((automation) => `${automation.name} (${currency(automation.price)})`)
+    .join(", ");
   const subject = encodeURIComponent(`Local automation enquiry — ${business.name}`);
   const body = encodeURIComponent(
     `Hi Charles,\n\nI'd like to talk about automations for my business.${selectedNames ? `\n\nI'm interested in: ${selectedNames}.\nEstimated build: ${currency(total)}${chosen.length >= 3 ? " (includes 15% bundle discount)" : ""}.\nOngoing service: from £79/month per automation.` : ""}\n\nBusiness name:\nWhat I'd like to improve:\n`,
@@ -39,124 +49,201 @@ export default function LocalBusinessPage() {
   }
 
   return (
-    <div className="page-shell flex flex-col gap-16 sm:gap-24">
-      <section className="layout-stack grid gap-10 py-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(18rem,0.8fr)] lg:items-end lg:py-16">
-        <div className="flex flex-col items-start gap-6">
-          <p className="heading-display-sm text-muted-foreground">{business.eyebrow}</p>
-          <h1 className="heading-hero text-foreground max-w-5xl">{business.headline}</h1>
-          <p className="text-muted-foreground max-w-2xl text-lg leading-relaxed">{business.intro}</p>
-          <div className="flex flex-wrap items-center gap-3">
-            <a href={enquiryHref} className="btn-keycap bg-primary text-primary-foreground inline-flex min-h-12 items-center justify-center px-6 font-mono text-sm font-bold tracking-wide uppercase">Book a free check</a>
-            <a href="#automations" className="text-foreground inline-flex min-h-12 items-center gap-2 px-3 text-sm underline underline-offset-4">See the five <LucideArrowDown className="size-4" aria-hidden="true" /></a>
+    <main className="storefront-main">
+      <section className="sf-hero sf-dark sf-hero-galaxy">
+        <AsciiField className="text-background opacity-25 sm:opacity-35" />
+        <div className="sf-wrap relative z-10">
+          <p className="mb-6 font-studio-display text-studio-large text-[var(--studio-gold)] sm:text-3xl">
+            {business.name}
+          </p>
+          <h1 className="sf-h1">{business.headline}</h1>
+          <p className="sf-copy mt-5 text-[var(--studio-warm)]">{business.intro}</p>
+          <div className="sf-actions items-center max-sm:flex-col max-sm:items-stretch">
+            <a
+              className="sf-button !gap-2 !bg-[var(--studio-paper)] !text-[var(--studio-ink)] hover:!bg-[var(--studio-warm)]"
+              href={enquiryHref}
+            >
+              Book a free check <ArrowRight aria-hidden="true" className="size-4" />
+            </a>
+            <a
+              className="inline-flex min-h-12 items-center gap-2 px-2 text-sm text-[var(--studio-paper)] underline-offset-4 hover:text-[var(--studio-gold)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--studio-gold)] max-sm:justify-center"
+              href="#automations"
+            >
+              See what can be automated <ArrowRight aria-hidden="true" className="size-4" />
+            </a>
           </div>
-        </div>
-        <div className="border-border bg-card flex flex-col gap-5 border p-5 sm:p-7" aria-label="Example customer conversation">
-          <div className="flex items-center justify-between gap-4">
-            <p className="font-mono text-xs tracking-wider text-muted-foreground uppercase">Example · WhatsApp · 21:47</p>
-            <span className="size-2 rounded-full bg-foreground" aria-label="Conversation handled" />
-          </div>
-          <div className="max-w-[90%] self-start border border-border bg-background px-4 py-3">Hi, any chance of a table for six on Saturday?</div>
-          <div className="max-w-[90%] self-end bg-foreground px-4 py-3 text-background">Yes, we have 7:30 or 8:15. Which suits you? I can hold one now.</div>
-          <div className="max-w-[90%] self-start border border-border bg-background px-4 py-3">7:30 please. Name's Priya.</div>
-          <div className="max-w-[90%] self-end bg-foreground px-4 py-3 text-background">Held for Priya: six at 7:30, Saturday. See you then.</div>
-          <p className="border-t border-border pt-4 font-mono text-xs tracking-wider text-muted-foreground uppercase">Answered while the team was busy</p>
         </div>
       </section>
 
-      <section className="layout-stack grid gap-8 lg:grid-cols-[minmax(0,0.7fr)_minmax(0,1.3fr)]">
-        <div>
-          <p className="heading-display-sm text-muted-foreground">What's slipping through</p>
-          <h2 className="heading-cta text-foreground mt-4 max-w-2xl">{business.problemHeadline}</h2>
+      <section
+        className="bg-[var(--studio-warm)] py-12 md:py-[72px]"
+        aria-labelledby="local-business-problems-title"
+      >
+        <div className="sf-wrap grid items-start gap-6 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] md:gap-[clamp(32px,6vw,88px)]">
+          <h2 id="local-business-problems-title" className="sf-h2">
+            {business.problemHeadline}
+          </h2>
+          <ul className="m-0 list-none p-0">
+            {business.problems.map((problem, index) => (
+              <li
+                key={problem}
+                className={`border-t border-[var(--studio-line)] py-[18px] text-studio-lead leading-[1.4] ${index === business.problems.length - 1 ? "border-b" : ""}`}
+              >
+                {problem}
+              </li>
+            ))}
+          </ul>
         </div>
-        <ol className="border-border flex flex-col border-b">
-          {business.problems.map((problem, index) => (
-            <li key={problem} className="border-border grid grid-cols-[3rem_1fr] gap-4 border-t py-5 sm:grid-cols-[4rem_1fr] sm:py-6">
-              <span className="font-mono text-sm text-muted-foreground">{String(index + 1).padStart(2, "0")}</span>
-              <span className="text-foreground text-lg leading-snug sm:text-xl">{problem}</span>
-            </li>
-          ))}
-        </ol>
       </section>
 
-      <section id="automations" className="layout-stack scroll-mt-8">
-        <div className="mb-8 flex flex-wrap items-end justify-between gap-5">
-          <div>
-            <p className="heading-display-sm text-muted-foreground">Five automations · fixed prices</p>
-            <h2 className="heading-cta text-foreground mt-3">Pick what would help.</h2>
-          </div>
-          <p className="text-muted-foreground max-w-sm text-sm">Build price is agreed before work starts. Ongoing service starts at £79 a month for each automation.</p>
+      <section id="automations" className="sf-wrap scroll-mt-6 py-14 md:py-[88px]">
+        <div className="mb-5 flex flex-col gap-3 md:mb-7 md:flex-row md:items-end md:justify-between md:gap-8">
+          <h2 className="sf-h2">Pick what would help.</h2>
+          <p className="mb-1 max-w-[34ch] leading-snug text-[var(--studio-muted)]">
+            Build prices are fixed before work starts. Choose three and save 15%.
+          </p>
         </div>
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {business.automations.map((automation, index) => {
+
+        <Accordion type="single" collapsible className="border-t border-[var(--studio-line)]">
+          {business.automations.map((automation) => {
             const isSelected = selected.has(automation.name);
             return (
-              <article key={automation.name} className={`border-border flex min-h-72 flex-col border p-5 sm:p-6 ${isSelected ? "bg-muted" : "bg-card"}`}>
-                <div className="flex items-center justify-between gap-3 font-mono text-xs tracking-wider text-muted-foreground uppercase">
-                  <span>{String(index + 1).padStart(2, "0")} · Fixed price</span>
-                  {isSelected && <span className="flex items-center gap-1 text-foreground"><LucideCheck aria-hidden="true" className="size-4" /> In your list</span>}
-                </div>
-                <h3 className="mt-6 text-2xl">{automation.name}</h3>
-                <p className="text-muted-foreground mt-3 leading-relaxed">{automation.description}</p>
-                <div className="mt-auto pt-8">
-                  <p className="text-foreground text-3xl font-semibold">{currency(automation.price)}</p>
-                  <p className="text-muted-foreground mt-1 text-sm">Then from £79 a month to keep it running</p>
-                  <Button type="button" variant={isSelected ? "outline" : "default"} className="press mt-5 min-h-11 w-full rounded-sm" aria-pressed={isSelected} onClick={() => toggle(automation.name)}>
-                    {isSelected ? "Remove from my list" : "Add to my list"}
-                  </Button>
-                </div>
-              </article>
+              <AccordionItem
+                key={automation.name}
+                value={automation.name}
+                className="sf-service-item"
+              >
+                <AccordionTrigger className="sf-service-trigger">
+                  <span className="sf-service-name">{automation.name}</span>
+                  <span className="ml-auto flex-none px-2 font-studio-mono text-studio-small tracking-wide whitespace-nowrap max-sm:px-1 max-sm:text-studio-micro">
+                    {currency(automation.price)}
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="!pb-[22px]">
+                  <p className="mb-[22px] max-w-[66ch] text-base leading-snug text-[var(--studio-muted)] sm:ml-12">
+                    {automation.description}
+                  </p>
+                  <div className="flex flex-col gap-4 border-t border-[var(--studio-line)] pt-4 sm:ml-12 sm:flex-row sm:items-center sm:justify-between sm:gap-5">
+                    <span className="text-studio-tiny text-[var(--studio-muted)]">
+                      One-time build · then from £79/month to keep it running
+                    </span>
+                    <Button
+                      type="button"
+                      variant={isSelected ? "outline" : "default"}
+                      className="!min-h-11 !gap-2 !rounded-none !border !border-[var(--studio-line)] !bg-transparent !px-4 !font-studio-mono !text-studio-tiny-label !tracking-wider !text-[var(--studio-ink)] !uppercase hover:!border-[var(--studio-ink)] hover:!bg-[var(--studio-ink)] hover:!text-[var(--studio-paper)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--studio-brass)]"
+                      aria-pressed={isSelected}
+                      onClick={() => toggle(automation.name)}
+                    >
+                      {isSelected ? (
+                        <Check aria-hidden="true" className="size-4" />
+                      ) : (
+                        <Plus aria-hidden="true" className="size-4" />
+                      )}
+                      {isSelected ? "Added" : "Add to my list"}
+                    </Button>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
             );
           })}
-          <article className="bg-foreground text-background flex min-h-72 flex-col p-5 sm:p-6">
-            <p className="font-mono text-xs tracking-wider text-background/70 uppercase">Best value · Bundle</p>
-            <h3 className="mt-6 text-2xl">Any three</h3>
-            <p className="text-background/80 mt-3 leading-relaxed">Pick any three automations and I'll build them together, with 15% off the total.</p>
-            <div className="mt-auto flex items-end justify-between gap-3 pt-8">
-              <div><p className="text-3xl font-semibold">15% off</p><p className="text-background/70 mt-1 text-sm">Monthly fee stays per automation</p></div>
-              <a href={chosen.length >= 3 ? enquiryHref : "#automations"} aria-label={chosen.length >= 3 ? "Ask about the selected bundle" : "Choose three automations to build a bundle"} className="inline-flex min-h-11 items-center gap-2 border border-background/40 px-4 font-mono text-xs tracking-wide uppercase hover:bg-background hover:text-foreground">{chosen.length >= 3 ? "Build my bundle" : "Choose three first"} <LucideArrowRight className="size-4" aria-hidden="true" /></a>
-            </div>
-          </article>
-        </div>
+        </Accordion>
 
-        {chosen.length > 0 && (
-          <aside className="border-border bg-muted mt-2 grid gap-4 border p-5 sm:grid-cols-[1fr_auto] sm:items-center sm:p-6" aria-live="polite">
+        {chosen.length > 0 ? (
+          <aside
+            className="mt-7 grid gap-5 bg-[var(--studio-warm)] p-[18px] sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-6 sm:p-6"
+            aria-live="polite"
+          >
             <div>
-              <h3 className="text-lg">Your list · {chosen.length} {chosen.length === 1 ? "automation" : "automations"}</h3>
-              <p className="text-muted-foreground mt-1">{chosen.map((item) => item.name).join(" · ")}</p>
-              <p className="text-muted-foreground mt-2 text-sm">{chosen.length >= 3 ? `15% bundle discount · ${currency(discount)} saved` : "Choose three or more for 15% off the build price."} Ongoing service is from £79/month per automation.</p>
+              <h3 className="font-studio-display text-studio-title leading-[1.15]">
+                Your list · {chosen.length} {chosen.length === 1 ? "automation" : "automations"}
+              </h3>
+              <p className="mt-2 text-sm">{chosen.map((item) => item.name).join(" · ")}</p>
+              <small className="mt-2 block text-xs leading-snug text-[var(--studio-muted)]">
+                {chosen.length >= 3
+                  ? `15% bundle discount · ${currency(discount)} saved.`
+                  : "Choose three or more for 15% off the build price."}{" "}
+                Ongoing service is from £79/month per automation.
+              </small>
             </div>
-            <div className="flex flex-wrap items-center gap-4 sm:justify-end">
-              <span className="text-foreground text-xl font-semibold">{currency(total)}</span>
-              <a href={enquiryHref} className="btn-keycap bg-primary text-primary-foreground inline-flex min-h-11 items-center justify-center px-5 font-mono text-xs font-bold tracking-wide uppercase">Ask about this list</a>
+            <div className="flex items-center justify-between gap-5 sm:justify-end">
+              <strong className="font-studio-display text-studio-display-small leading-none font-normal whitespace-nowrap">
+                {currency(total)}
+              </strong>
+              <a className="sf-button" href={enquiryHref}>
+                Ask about this list
+              </a>
             </div>
           </aside>
-        )}
+        ) : null}
       </section>
 
-      <section className="border-border bg-muted layout-stack grid gap-6 border p-6 sm:p-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-center">
-        <div><p className="heading-display-sm text-muted-foreground">A practical starting point</p><h2 className="text-foreground mt-3 text-3xl">One good result can cover the cost.</h2></div>
-        <p className="text-foreground text-lg leading-relaxed">{business.payback}</p>
+      <section className="border-y border-[var(--studio-line)] py-10 md:py-12">
+        <div className="sf-wrap grid items-center gap-6 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] md:gap-[clamp(32px,6vw,88px)]">
+          <h2 className="sf-h2">One good result can cover the cost.</h2>
+          <p className="m-0 max-w-[52ch] text-studio-lead leading-snug text-[var(--studio-muted)]">
+            {business.payback}
+          </p>
+        </div>
       </section>
 
-      <section className="layout-stack grid gap-8 lg:grid-cols-[minmax(0,0.7fr)_minmax(0,1.3fr)]">
-        <div><p className="heading-display-sm text-muted-foreground">What "done" looks like</p><h2 className="text-foreground mt-3 text-3xl">Clear before we start.</h2><p className="text-muted-foreground mt-3">{business.doneTitle}</p></div>
-        <ul className="border-border flex flex-col border-b">
-          {business.done.map((item) => <li key={item} className="border-border flex gap-4 border-t py-4"><LucideCheck className="mt-0.5 size-5 shrink-0" aria-hidden="true" /><span>{item}</span></li>)}
+      <section className="sf-wrap grid gap-6 py-14 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] md:gap-[clamp(32px,6vw,88px)] md:py-20">
+        <div>
+          <h2 className="sf-h2">Clear before we start.</h2>
+          <p className="leading-snug text-[var(--studio-muted)]">{business.doneTitle}</p>
+        </div>
+        <ul className="m-0 list-none p-0">
+          {business.done.map((item) => (
+            <li
+              key={item}
+              className="flex gap-3.5 border-t border-[var(--studio-line)] py-[15px] leading-snug last:border-b"
+            >
+              <Check aria-hidden="true" className="mt-1 size-4 flex-none text-[var(--studio-brass)]" />
+              {item}
+            </li>
+          ))}
         </ul>
       </section>
 
-      <section id="book" className="bg-foreground text-background layout-stack flex flex-col items-start gap-5 px-6 py-12 sm:px-10 sm:py-16">
-        <p className="font-mono text-xs tracking-wider text-background/70 uppercase">Not sure which one fits?</p>
-        <h2 className="heading-cta max-w-3xl">Book a free missed-enquiries check.</h2>
-        <p className="text-background/80 max-w-2xl text-lg leading-relaxed">{business.checkCopy}</p>
-        <a href={enquiryHref} className="btn-keycap bg-background text-foreground inline-flex min-h-12 items-center justify-center px-6 font-mono text-sm font-bold tracking-wide uppercase">Book a free check</a>
+      <section id="book" className="sf-dark sf-hero-galaxy relative py-14 md:py-20">
+        <AsciiField className="text-background opacity-25 sm:opacity-35" />
+        <div className="sf-wrap relative z-10">
+          <h2 className="sf-h2 max-w-[860px] text-[clamp(42px,6vw,76px)]">
+            Not sure which one fits?
+          </h2>
+          <p className="my-[18px] mb-[26px] max-w-[60ch] text-lg leading-snug text-[var(--studio-warm)]">
+            {business.checkCopy}
+          </p>
+          <a
+            className="sf-button !gap-2 !bg-[var(--studio-paper)] !text-[var(--studio-ink)] hover:!bg-[var(--studio-warm)]"
+            href={enquiryHref}
+          >
+            Book a free check <ArrowRight aria-hidden="true" className="size-4" />
+          </a>
+        </div>
       </section>
 
-      <footer className="border-border text-muted-foreground layout-stack flex flex-wrap justify-between gap-3 border-t py-6 font-mono text-xs tracking-wider uppercase">
+      <footer className="sf-wrap sf-footer flex flex-col gap-4 py-5 sm:flex-row sm:items-center sm:justify-between">
         <span>Ponti Studios · Bermondsey, London SE1</span>
-        <a href="mailto:hello@ponti.io" className="underline underline-offset-4">hello@ponti.io</a>
-        <div className="flex gap-4">{localBusinesses.filter((entry) => entry.slug !== business.slug).map((entry) => <Link key={entry.slug} to={`/local-business/${entry.slug}`} className="hover:text-foreground">{entry.shortName}</Link>)}</div>
+        <a
+          className="text-inherit no-underline hover:text-[var(--studio-ink)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--studio-brass)]"
+          href="mailto:cj@ponti.io"
+        >
+          cj@ponti.io
+        </a>
+        <nav className="flex flex-wrap gap-4" aria-label="Other business types">
+          {localBusinesses
+            .filter((entry) => entry.slug !== business.slug)
+            .map((entry) => (
+              <Link
+                className="text-inherit no-underline hover:text-[var(--studio-ink)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--studio-brass)]"
+                key={entry.slug}
+                to={`/local-business/${entry.slug}`}
+              >
+                {entry.shortName}
+              </Link>
+            ))}
+        </nav>
       </footer>
-    </div>
+    </main>
   );
 }

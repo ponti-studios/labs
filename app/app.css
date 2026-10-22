@@ -30,6 +30,80 @@
   --focus-ring: #0a0a0a;
 }
 
+/*
+ * Ponti Studios editorial theme. Public pages consume these through shared
+ * storefront components and Tailwind tokens; app surfaces keep the semantic
+ * monochrome tokens above.
+ */
+:root {
+  --studio-paper: #f5f0e6;
+  --studio-paper-rgb: 245 240 230;
+  --studio-card: #fbf8f1;
+  --studio-card-hover: #fffdf8;
+  --studio-white: #ffffff;
+  --studio-warm: #ece5d5;
+  --studio-ink: #1b1a18;
+  --studio-ink-hover: #37342f;
+  --studio-muted: #5c574e;
+  --studio-on-dark-muted: #c9c3b7;
+  --studio-console-muted: #a39c8d;
+  --studio-console-line: #3a3730;
+  --studio-console-success: #8fbf9a;
+  --studio-console-danger: #d98e75;
+  --studio-glass-night: #080b12;
+  --studio-glass-panel: rgb(12 15 22 / 74%);
+  --studio-glass-panel-hover: rgb(12 15 22 / 92%);
+  --studio-glass-edge: rgb(255 255 255 / 24%);
+  --studio-status-success: #3f6b4a;
+  --studio-shadow-card: 0 30px 60px -34px rgb(60 40 10 / 35%);
+  --studio-line: #d9d1bf;
+  --studio-brass: #7d5f2b;
+  --studio-gold: #c9a66b;
+  --studio-content-width: 77.5rem;
+  --studio-page-gutter: clamp(1rem, 4vw, 3rem);
+  --studio-space-1: 0.25rem;
+  --studio-space-2: 0.5rem;
+  --studio-space-3: 0.75rem;
+  --studio-space-4: 1rem;
+  --studio-space-5: 1.25rem;
+  --studio-space-6: 1.5rem;
+  --studio-space-8: 2rem;
+  --studio-space-10: 2.5rem;
+  --studio-space-12: 3rem;
+  --studio-space-16: 4rem;
+  --studio-space-18: 4.5rem;
+  --studio-space-24: 6rem;
+  --studio-space-section: clamp(4rem, 7vw, 6rem);
+  --studio-space-section-mobile: 4rem;
+  --studio-space-section-compact: clamp(3rem, 6vw, 5rem);
+  --studio-space-hero-top: 4.5rem;
+  --studio-space-hero-bottom: 6rem;
+  --studio-space-hero-top-mobile: 3.5rem;
+  --studio-space-hero-bottom-mobile: 4.5rem;
+  --studio-type-display: clamp(3rem, 8vw, 7.25rem);
+  --studio-type-page: clamp(3rem, 7.5vw, 6.25rem);
+  --studio-type-case: clamp(3.25rem, 8vw, 6.5rem);
+  --studio-type-section: clamp(2.25rem, 5vw, 4rem);
+  --studio-type-copy: 1.25rem;
+  --studio-type-lead: clamp(1.125rem, 2.2vw, 1.375rem);
+  --studio-type-large: 1.75rem;
+  --studio-type-title: 2rem;
+  --studio-type-display-small: 2.125rem;
+  --studio-type-ui: 0.9375rem;
+  --studio-type-small: 0.875rem;
+  --studio-type-tiny: 0.8125rem;
+  --studio-type-micro: 0.625rem;
+  --studio-type-tiny-label: 0.6875rem;
+  --studio-type-body: 1rem;
+  --studio-type-body-large: 1.125rem;
+  --studio-type-body-small: 1.0625rem;
+  --studio-type-caption: 0.8125rem;
+  --studio-type-label: 0.75rem;
+  --studio-font-body: "Hanken Grotesk";
+  --studio-font-display: "Instrument Serif";
+  --studio-font-mono: "JetBrains Mono";
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #000000;
@@ -51,6 +125,65 @@
 
 @theme {
   --color-logo-artboard: #ffffff;
+}
+
+@theme inline {
+  --color-studio-paper: var(--studio-paper);
+  --color-studio-card: var(--studio-card);
+  --color-studio-card-hover: var(--studio-card-hover);
+  --color-studio-white: var(--studio-white);
+  --color-studio-warm: var(--studio-warm);
+  --color-studio-ink: var(--studio-ink);
+  --color-studio-ink-hover: var(--studio-ink-hover);
+  --color-studio-muted: var(--studio-muted);
+  --color-studio-on-dark-muted: var(--studio-on-dark-muted);
+  --color-studio-line: var(--studio-line);
+  --color-studio-brass: var(--studio-brass);
+  --color-studio-gold: var(--studio-gold);
+  --color-studio-status-success: var(--studio-status-success);
+  --color-studio-console-muted: var(--studio-console-muted);
+  --color-studio-console-line: var(--studio-console-line);
+  --color-studio-console-success: var(--studio-console-success);
+  --color-studio-console-danger: var(--studio-console-danger);
+  --color-studio-glass-night: var(--studio-glass-night);
+  --font-studio-body: var(--studio-font-body), sans-serif;
+  --font-studio-display: var(--studio-font-display), serif;
+  --font-studio-mono: var(--studio-font-mono), monospace;
+  --text-studio-display: var(--studio-type-display);
+  --text-studio-page: var(--studio-type-page);
+  --text-studio-case: var(--studio-type-case);
+  --text-studio-section: var(--studio-type-section);
+  --text-studio-copy: var(--studio-type-copy);
+  --text-studio-lead: var(--studio-type-lead);
+  --text-studio-large: var(--studio-type-large);
+  --text-studio-title: var(--studio-type-title);
+  --text-studio-display-small: var(--studio-type-display-small);
+  --text-studio-body: var(--studio-type-body);
+  --text-studio-body-large: var(--studio-type-body-large);
+  --text-studio-body-small: var(--studio-type-body-small);
+  --text-studio-caption: var(--studio-type-caption);
+  --text-studio-label: var(--studio-type-label);
+  --text-studio-ui: var(--studio-type-ui);
+  --text-studio-small: var(--studio-type-small);
+  --text-studio-tiny: var(--studio-type-tiny);
+  --text-studio-micro: var(--studio-type-micro);
+  --text-studio-tiny-label: var(--studio-type-tiny-label);
+  --spacing-studio-section: var(--studio-space-section);
+  --spacing-studio-section-mobile: var(--studio-space-section-mobile);
+  --spacing-studio-section-compact: var(--studio-space-section-compact);
+  --spacing-studio-gutter: var(--studio-page-gutter);
+  --spacing-studio-1: var(--studio-space-1);
+  --spacing-studio-2: var(--studio-space-2);
+  --spacing-studio-3: var(--studio-space-3);
+  --spacing-studio-4: var(--studio-space-4);
+  --spacing-studio-5: var(--studio-space-5);
+  --spacing-studio-6: var(--studio-space-6);
+  --spacing-studio-8: var(--studio-space-8);
+  --spacing-studio-10: var(--studio-space-10);
+  --spacing-studio-12: var(--studio-space-12);
+  --spacing-studio-16: var(--studio-space-16);
+  --spacing-studio-18: var(--studio-space-18);
+  --spacing-studio-24: var(--studio-space-24);
 }
 
 /*
@@ -81,7 +214,7 @@
  * so the nav follows.
  */
 :root {
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-mono: var(--studio-font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --font-nokia: var(--font-mono);
 }
 

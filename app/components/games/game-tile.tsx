@@ -1,5 +1,7 @@
 import { type CSSProperties } from "react";
 
+import "./game.css";
+
 import { cn } from "~/lib/utils";
 
 export type GameTileState = "empty" | "typed" | "absent" | "present" | "correct";

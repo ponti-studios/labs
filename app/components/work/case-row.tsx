@@ -35,7 +35,7 @@ export function CaseRow({ snapshot }: { snapshot: CaseSnapshot }) {
       to={`/work/${snapshot.slug}`}
       prefetch="intent"
       data-testid={`case-row-${snapshot.slug}`}
-      className="sf-case-row group focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--sf-brass)]"
+      className="sf-case-row group focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--studio-brass)]"
     >
       {logo && (
         <span className="sf-case-logo">
