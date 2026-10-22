@@ -16,7 +16,7 @@ export function CaseTile({ snapshot, className }: { snapshot: CaseSnapshot; clas
       prefetch="intent"
       data-testid={`case-tile-${snapshot.slug}`}
       className={cn(
-        "sf-case-card group focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--sf-brass)]",
+        "sf-case-card group focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--sf-brass)",
         className,
       )}
     >
