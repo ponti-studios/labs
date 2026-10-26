@@ -47,3 +47,6 @@ public/screenshots/tile-states/
 
 # Playwright MCP session artifacts (page snapshots, console logs)
 .playwright-mcp/
+
+# Canonical in ponti-studios/kernel — recreated by kernel/scripts/link-skills.sh
+.agents/skills/dependabot-batch
