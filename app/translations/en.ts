@@ -125,6 +125,27 @@ export const STUDIO_TRANSLATIONS_EN = {
           "Running TypeScript source directly with a V8 compile cache so the daemons start fast with no build step",
         ],
       },
+      seme: {
+        name: "Seme",
+        shortDescription:
+          "AI companions forget. Seme remembers what you told them, links it up, and fixes it when it changes.",
+        solution:
+          "A local-first memory system for AI companions. It extracts facts, preferences, routines and boundaries from conversation, stores them with their source turn in a single SQLite file, compiles them into wiki pages, and retrieves with vector and graph search.",
+        problem:
+          "Most companions either stuff the whole chat history into the prompt or quietly drift: stale facts linger, contradictions pile up, and nobody can say where a memory came from. Seme keeps every memory traceable and retires what is no longer true.",
+        keyFeatures: [
+          "Extraction into typed memories: facts, preferences, routines, interests, relationships and boundaries",
+          "Entity and relationship graph built alongside the memories",
+          "Wiki pages compiled from memories, with draft, stable and canonical maturity",
+          "Hybrid vector and graph retrieval for each question",
+          "Dashboard for browsing memories, entities, the graph, wiki and tasks",
+        ],
+        technicalChallenges: [
+          "Superseding contradicted memories without losing the history of what was said",
+          "Keeping vector search, graph and full-text in one SQLite file with sqlite-vec",
+          "Swapping embedding providers (Ollama, OpenRouter, none) without re-architecting storage",
+        ],
+      },
       omiro: {
         name: "Omiro",
         shortDescription:

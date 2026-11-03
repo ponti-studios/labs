@@ -214,6 +214,21 @@ const switchyard: Project = {
   ],
 };
 
+const seme: Project = {
+  ...t.projects.entries.seme,
+  slug: "seme",
+  category: "infrastructure",
+  tech: ["TypeScript", "Hono", "SQLite", "sqlite-vec", "React"],
+  status: "active",
+  github: "https://github.com/charlesponti/seme",
+  screenshots: [
+    "/screenshots/seme-search.webp",
+    "/screenshots/seme-memories.webp",
+    "/screenshots/seme-graph.webp",
+    "/screenshots/seme-flow.webp",
+  ],
+};
+
 const hollywood: Project = {
   ...t.projects.entries.hollywood,
   slug: "hollywood",
@@ -293,6 +308,7 @@ export const projects: Project[] = [
   earth,
   foundation,
   switchyard,
+  seme,
   hollywood,
   game,
   covid,
@@ -310,7 +326,7 @@ export const projectSections: ProjectSection[] = [
   {
     category: "infrastructure",
     label: t.projects.categoryLabels.infrastructure,
-    projects: [finance, hominemApi, foundation, switchyard, hollywood],
+    projects: [finance, hominemApi, foundation, switchyard, seme, hollywood],
   },
   {
     category: "research",
