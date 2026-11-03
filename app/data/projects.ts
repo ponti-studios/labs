@@ -199,6 +199,21 @@ const foundation: Project = {
   logo: "/experiments/logo.foundation.500x500.webp",
 };
 
+const switchyard: Project = {
+  ...t.projects.entries.switchyard,
+  slug: "switchyard",
+  category: "infrastructure",
+  tech: ["TypeScript", "Node.js", "SQLite", "React", "Playwright"],
+  status: "active",
+  github: "https://github.com/ponti-studios/switchyard",
+  screenshots: [
+    "/screenshots/switchyard-mission-control.webp",
+    "/screenshots/switchyard-running.webp",
+    "/screenshots/switchyard-crew.webp",
+    "/screenshots/switchyard-learning.webp",
+  ],
+};
+
 const hollywood: Project = {
   ...t.projects.entries.hollywood,
   slug: "hollywood",
@@ -277,6 +292,7 @@ export const projects: Project[] = [
   health,
   earth,
   foundation,
+  switchyard,
   hollywood,
   game,
   covid,
@@ -294,7 +310,7 @@ export const projectSections: ProjectSection[] = [
   {
     category: "infrastructure",
     label: t.projects.categoryLabels.infrastructure,
-    projects: [finance, hominemApi, foundation, hollywood],
+    projects: [finance, hominemApi, foundation, switchyard, hollywood],
   },
   {
     category: "research",
