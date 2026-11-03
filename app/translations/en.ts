@@ -104,6 +104,27 @@ export const STUDIO_TRANSLATIONS_EN = {
           "Shipping infrastructure updates without a manual release ritual",
         ],
       },
+      switchyard: {
+        name: "Switchyard",
+        shortDescription:
+          "Coding agents are fast. Trusting what they ship is the slow part. Switchyard makes them prove it.",
+        solution:
+          "A local control plane for coding agents. It claims tickets, runs workers in isolated worktrees, opens pull requests, and holds every change behind eight evidence-backed gates, so a person only has to press merge.",
+        problem:
+          "Running several agents at once turns into babysitting: which one is stuck, what is it costing, and did the tests actually run? Switchyard puts the whole fleet on one dashboard, caps spend, and refuses to call a task done until the proof is attached.",
+        keyFeatures: [
+          "Dispatcher claims tickets within worker and daily spend limits, one isolated worktree per agent",
+          "Eight gates from implemented to verified in production, each carrying its own evidence",
+          "Live crew view with every worker's in-flight tool calls",
+          "Reviewer edits become rules the next worker reads before it starts",
+          "Slack push the moment a task needs a human",
+        ],
+        technicalChallenges: [
+          "Keeping a live dashboard honest from an append-only event journal instead of agent self-reports",
+          "Enforcing a hard spend cap across concurrent workers that cannot see each other",
+          "Running TypeScript source directly with a V8 compile cache so the daemons start fast with no build step",
+        ],
+      },
       omiro: {
         name: "Omiro",
         shortDescription:
