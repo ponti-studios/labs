@@ -15,10 +15,10 @@ The failures were distributed across several boundaries:
    `labs.ponti.io` returned the expected `Location` header.
 2. **The deploy context was assumed rather than checked.** The app now builds
    from the repository root as a standalone package. A successful workflow
-   submission is not evidence that Railway completed the application deploy.
+   submission is not evidence that Fly completed the application deploy.
 3. **Environment variables drifted.** The code used `NEWSBOY_APP_URL`, while
-   Railway also contained the stale `NEWSBOY_APP_ORIGIN` pointing at an old
-   Railway hostname. There was no checked-in inventory saying which variable
+   the hosting provider also contained the stale `NEWSBOY_APP_ORIGIN` pointing
+   at an old provider hostname. There was no checked-in inventory saying which variable
    each runtime actually consumes, which made the stale value difficult to
    identify.
 4. **Hominem owns database migrations.** Labs must not migrate Hominem's
@@ -39,12 +39,12 @@ The failures were distributed across several boundaries:
 - Production value is `https://newsboy.ponti.io`.
 - Local examples use `https://newsboy.lvh.me`; portless overrides the Newsboy
   runtime return origin with its worktree-specific `PORTLESS_URL`.
-- Do not derive these URLs from `NODE_ENV`, hard-code a Railway hostname, or
+- Do not derive these URLs from `NODE_ENV`, hard-code a provider hostname, or
   introduce a second similarly named variable without updating the owning env
   schema and this document.
 - After changing a URL variable, inspect the deployed service's variables and
   make a request to the public domain. A local `.env.example` is not evidence
-  that Railway is configured.
+  that the production service is configured.
 
 ### Routing contract
 
@@ -56,20 +56,19 @@ The failures were distributed across several boundaries:
 - `tz` is not a supported query parameter. Timezone state is transported in the
   `newsboy_timezone` cookie and invalid or missing values resolve to `UTC`.
 
-### Railway build contract
+### Fly build contract
 
 Before changing a deploy workflow, inspect all three together:
 
 - the service Dockerfile;
-- the service's `railway.json`;
-- `.github/workflows/reusable-railway-deploy.yml` and the caller's
-  `config_path`.
+- the service's `fly.toml`;
+- `.github/workflows/reusable-fly-deploy.yml` and its caller.
 
-The Labs Dockerfile and `railway.json` live at the repository root. The reusable
-workflow uses this root build context and runs `railway up --service <service>
---detach --ci` with `RAILWAY_TOKEN`, targeting the `RAILWAY_SERVICE` secret.
-Newsboy's independent repository owns its own Docker build and deployment
-configuration.
+The Labs Dockerfile and `fly.toml` live at the repository root. The reusable
+workflow uses this root build context and runs `flyctl deploy --remote-only`
+with an app-scoped `FLY_API_TOKEN`. `fly.toml` selects the existing
+`hominem-labs` Fly app. Newsboy's independent repository owns its own Docker
+build and deployment configuration.
 
 ### CI and deployment ordering contract
 
@@ -105,8 +104,8 @@ GitHub native `paths` filter matches
 Check the complete chain, in order:
 
 1. CI is green for the intended commit SHA.
-2. The expected Labs Railway deployment exists for that same SHA and is
-   actually `SUCCESS`, not merely submitted or detached.
+2. The expected Labs Fly deployment exists for that same SHA and the deployed
+   machines pass their health checks.
 3. Labs registers no legacy game redirects; `/games/realitea` and
    `/games/newsboy` return 404 (the remaining `/games/*` routes — Cards,
    Tetris — are Labs-owned experiments).
@@ -120,7 +119,7 @@ When a public game link fails, diagnose from the outside inward:
 1. Inspect the public response's status and `Location` header.
 2. Inspect the deployed service's environment variables without printing
    secrets.
-3. Check the Railway deployment status and build logs for the exact commit.
+3. Check the Fly deployment status and build logs for the exact commit.
 4. Compare the workflow's `config_path` with the Dockerfile's required context.
 5. Only then debug route code, loaders, or database behavior.
 

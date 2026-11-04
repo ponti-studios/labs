@@ -15,8 +15,9 @@ post-deployment verification steps.
 For any environment-variable change, also read the
 [environment configuration contract](docs/operations/environment-configuration.md).
 It requires agents to classify runtime versus build-time values, declare Vite
-variables in Docker build stages, and scan Railway/GitHub configuration before
-merging.
+variables in Docker build stages, and scan production/GitHub configuration before
+merging. Labs is deployed to Fly; inspect `fly.toml`, the Fly deploy workflow,
+and GitHub Actions secrets together.
 
 ## Data ownership
 

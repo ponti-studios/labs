@@ -21,14 +21,14 @@ on:
       - "package.json"
       - "pnpm-lock.yaml"
       - "pnpm-workspace.yaml"
-      - "railway.json"
+      - "fly.toml"
       - "react-router.config.ts"
       - "tsconfig.json"
       - "vite.config.ts"
       - "vitest.config.ts"
       - "vitest.setup.ts"
       - ".github/workflows/ci.yml"
-      - ".github/workflows/reusable-railway-deploy.yml"
+      - ".github/workflows/reusable-fly-deploy.yml"
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -84,15 +84,11 @@ jobs:
   deploy-labs:
     if: github.event_name != 'pull_request'
     needs: [lint-and-test, build]
-    uses: ./.github/workflows/reusable-railway-deploy.yml
+    uses: ./.github/workflows/reusable-fly-deploy.yml
     with:
-      node-version: "24"
-      railway-cli-version: "4.58.0"
-      config_path: "railway.json"
       timeout-minutes: 10
     secrets:
-      railway_token: ${{ secrets.RAILWAY_TOKEN }}
-      railway_service: ${{ secrets.RAILWAY_SERVICE }}
+      fly_api_token: ${{ secrets.FLY_API_TOKEN }}
 
   analyze:
     name: CodeQL Analysis
