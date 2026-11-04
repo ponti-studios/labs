@@ -49,10 +49,12 @@ Foundation provides Redis on `localhost:6379` and MinIO on `localhost:9000`
 
 ## Deployment
 
-Deployed to Railway via `.github/workflows/ci.yml` on production-relevant pushes
+Deployed to Fly via `.github/workflows/ci.yml` on production-relevant pushes
 to `main`: CI and build → `deploy-labs` (reusable
-`reusable-railway-deploy.yml`). Labs Actions do not run database migrations;
-Hominem owns that pipeline. Newsboy deploys and generates from its own repo.
+`reusable-fly-deploy.yml`). The checked-in `fly.toml` targets the existing
+`hominem-labs` app. GitHub Actions needs the app-scoped `FLY_API_TOKEN` secret.
+Labs Actions do not run database migrations; Hominem owns that pipeline.
+Newsboy deploys and generates from its own repo.
 
 Before changing environment values, routes, databases, authentication, or
 deployment workflows, read the [core development flows](docs/operations/core-development-flows.md)

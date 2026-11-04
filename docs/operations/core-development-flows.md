@@ -28,18 +28,19 @@ for the required scan and delivery matrix.
    name instead of adding aliases such as `NEWSBOY_APP_URL` and `NEWSBOY_APP_ORIGIN`.
 4. Classify the value:
 
-   - **Secret:** provision the real value in Railway and, if a workflow needs
-     it, as a GitHub Actions secret before merging. Never commit it, put it in
-     an example file, or print it in logs.
-   - **Server-only non-secret:** configure it in Railway before merging and
-     document the local and production values. Validate it at startup.
+   - **Secret:** provision the real value in the owning production service
+     and, if a workflow needs it, as a GitHub Actions secret before merging.
+     Never commit it, put it in an example file, or print it in logs.
+   - **Server-only non-secret:** configure it in the owning production service
+     before merging and document the local and production values. Validate it
+     at startup.
    - **Browser/build-time (`VITE_*`):** treat it as public. Configure it in the
-     relevant Railway build environment and document that it must not contain
-     credentials.
+     relevant production build environment and document that it must not
+     contain credentials.
    - **Derived value:** compute it from the owning configured value rather than
      duplicating it in multiple variables.
 
-5. Before merging, inspect the target Railway service variables without
+5. Before merging, inspect the target production service variables without
    exposing secret values. A required production variable must already exist;
    the merge must not be the first time production discovers the omission.
 6. Add or update a test for missing, malformed, and representative valid values
@@ -60,7 +61,7 @@ not part of its CI or deploy sequence.
    and persistence. Do not duplicate a route in a legacy service after moving
    ownership.
 2. Use configured origins. Do not derive production URLs from `NODE_ENV` or
-   hard-code a Railway hostname.
+   hard-code a hosting-provider hostname.
 3. Test the loader/component and run React Router route generation plus the
    root app typecheck. Reused route modules need unique route IDs.
 4. Test local and production-like origins, including query-string preservation
@@ -69,7 +70,7 @@ not part of its CI or deploy sequence.
    parameters are ignored; missing, malformed, or invalid cookie values fall
    back to `UTC`.
 6. After deployment, test the public URL with headers and follow the complete
-   redirect chain. Confirm custom domains, not `*.up.railway.app` URLs.
+   redirect chain. Confirm custom domains, not provider hostnames.
 
 ## Move functionality between services
 
@@ -88,20 +89,21 @@ Then update links, auth return URLs, cookies, CORS, environment configuration,
 deployment paths, and smoke tests as one change. A package-level test is not
 enough for a cross-service move.
 
-## Change Railway or GitHub Actions deployment
+## Change Fly or GitHub Actions deployment
 
-Inspect the Dockerfile, `railway.json`, reusable workflow, and calling workflow
+Inspect the Dockerfile, `fly.toml`, reusable Fly workflow, and calling workflow
 together. Confirm:
 
 - the deploy context contains every file copied by the Dockerfile;
-- the root Railway config points to the root Dockerfile;
+- the root Fly config points to the root Dockerfile and matches the production
+  app's port, health check, region, and machine sizing;
 - the start command exists in the built image;
-- the deploy workflow uses the checked-in root `railway.json`;
+- the deploy workflow uses the checked-in root `fly.toml` and an app-scoped
+  `FLY_API_TOKEN` GitHub secret;
 - CI and build finish before Labs deployment; Hominem manages database
   migrations separately;
 - workflow-run jobs use the source SHA that was tested;
-- the job observes the actual Railway deployment result, not just a detached
-  submission.
+- the job waits for the Fly deployment and machine health checks to finish.
 
 Run `actionlint` and check changed-file detection for app, database, and
 workflow changes.
@@ -129,7 +131,8 @@ workflow changes.
 For every production-affecting change, verify in order:
 
 1. CI is green for the intended commit SHA.
-2. The expected Railway deployment exists for that SHA and is `SUCCESS`.
+2. The expected Fly deployment exists for that SHA and its machines pass
+   health checks.
 3. The public endpoint returns the expected status, headers, and content.
 4. The primary user flow works from the public entry point through auth, API,
    cookies, and persistence.
@@ -140,5 +143,5 @@ For the standalone game, the minimum check is:
 curl -sS -D - -o /dev/null https://newsboy.ponti.io/
 ```
 
-For failures, diagnose outside-in: public response, deployed variables,
-Railway deployment/build logs, workflow build context, then application code.
+For failures, diagnose outside-in: public response, deployed variables, Fly
+deployment/build logs, workflow build context, then application code.
