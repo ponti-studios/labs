@@ -12,7 +12,7 @@ The failures were distributed across several boundaries:
    redirect loader had unit coverage, but the test supplied `NEWSBOY_APP_URL`
    directly. It did not prove that the production Labs service had the right
    variable, that the deployed build contained the route, or that
-   `labs.ponti.io` returned the expected `Location` header.
+   `ponti.io` returned the expected `Location` header.
 2. **The deploy context was assumed rather than checked.** The app now builds
    from the repository root as a standalone package. A successful workflow
    submission is not evidence that Fly completed the application deploy.
@@ -70,6 +70,16 @@ with an app-scoped `FLY_API_TOKEN`. `fly.toml` selects the existing
 `hominem-labs` Fly app. Newsboy's independent repository owns its own Docker
 build and deployment configuration.
 
+### Labs production origin
+
+Labs is served at `https://ponti.io` by the `hominem-labs` Fly app. The Fly
+certificate and Cloudflare-routed public origin must both resolve to this app.
+Verify the public entry point after deployment with:
+
+```sh
+curl -sS -D - -o /dev/null https://ponti.io/
+```
+
 ### CI and deployment ordering contract
 
 The production sequence is:
@@ -106,10 +116,11 @@ Check the complete chain, in order:
 1. CI is green for the intended commit SHA.
 2. The expected Labs Fly deployment exists for that same SHA and the deployed
    machines pass their health checks.
-3. Labs registers no legacy game redirects; `/games/realitea` and
+3. `https://ponti.io/` returns the expected status, headers, and content.
+4. Labs registers no legacy game redirects; `/games/realitea` and
    `/games/newsboy` return 404 (the remaining `/games/*` routes — Cards,
    Tetris — are Labs-owned experiments).
-4. When changing Newsboy links, verify the configured destination points to
+5. When changing Newsboy links, verify the configured destination points to
    `https://newsboy.ponti.io` and responds successfully.
 
 ## Diagnostic order
@@ -120,7 +131,8 @@ When a public game link fails, diagnose from the outside inward:
 2. Inspect the deployed service's environment variables without printing
    secrets.
 3. Check the Fly deployment status and build logs for the exact commit.
-4. Compare the workflow's `config_path` with the Dockerfile's required context.
+4. Compare `fly.toml` and the workflow's deploy context with the Dockerfile's
+   required files.
 5. Only then debug route code, loaders, or database behavior.
 
 This order prevents spending time changing application code when the request is

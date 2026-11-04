@@ -9,7 +9,7 @@ import { HominemAuthEnv } from "./env";
  * hosted /login page; we only read the resulting cross-subdomain cookie.
  *
  * In production the cookie is set on api.ponti.io for the shared .ponti.io
- * domain, so labs.ponti.io sends it automatically. Locally the two run on
+ * domain, so ponti.io sends it automatically. Locally the two run on
  * different localhost ports, which cannot share a cookie domain — see
  * README/AGENTS notes on local auth for the workaround.
  */
