@@ -1207,11 +1207,6 @@ export const STUDIO_TRANSLATIONS_EN = {
             { path: "/challenges/cloud-pricing", label: "Cloud Cost Calculator" },
             { path: "/challenges/fee-or-upfront", label: "Payment Fee Calculator" },
             {
-              path: "/challenges/search-studio",
-              label: "Search Studio",
-              source: "Vendigo + Kensho",
-            },
-            {
               path: "/challenges/peterson-academy",
               label: "Infinite Image Carousel",
               source: "Peterson Academy",

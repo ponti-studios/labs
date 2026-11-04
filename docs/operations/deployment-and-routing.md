@@ -21,10 +21,9 @@ The failures were distributed across several boundaries:
    Railway hostname. There was no checked-in inventory saying which variable
    each runtime actually consumes, which made the stale value difficult to
    identify.
-4. **The migration was validated at the wrong layer.** CI migrated a test
-   database, but production migration status and application deployment order
-   were separate concerns. The database workflow now needs to be a successful
-   gate before application deploy workflows run.
+4. **Hominem owns database migrations.** Labs must not migrate Hominem's
+   production database. Hominem owns schema validation and production
+   migrations; Labs CI validates and deploys the application only.
 5. **Route configuration errors appeared only in CI.** React Router assigns IDs
    from route definitions. Reusing the same route module for two routes created
    a duplicate route ID, even though the TypeScript source looked reasonable.
@@ -72,29 +71,22 @@ workflow uses this root build context and runs `railway up --service <service>
 Newsboy's independent repository owns its own Docker build and deployment
 configuration.
 
-### CI and migration ordering contract
+### CI and deployment ordering contract
 
-The required production sequence is:
+The production sequence is:
 
 ```text
 GitHub native `paths` filter matches
-  -> CI succeeds
-  -> production migration check in `ci.yml` succeeds
-      -> Labs deploy
+  -> Labs CI and build succeed
+  -> Labs deploy
 ```
 
-- CI uses the Foundation test database and runs the normal Drizzle migration
-  command against that disposable test target.
-- Production migrations run only in the `migrate` job of `ci.yml`,
-  never in an application deploy or game-generation workflow. The migration
-  command runs on every production deployment and is a no-op when there are no
-  pending migrations.
-- The Labs deploy job requires the successful migration job. Newsboy's
+- Labs Actions do not run database migrations. Hominem owns database migration
+  validation and deployment.
+- The Labs deploy job requires successful app CI and build. Newsboy's
   independent deployment workflow is maintained in its own repository.
 - Production scope is selected by GitHub's native `on.push.paths` filter. There
   is no repository-specific changed-file script.
-- Never repair production by dropping or resetting the database. Inspect
-  Drizzle's migration tracker and follow the repository migration rules.
 
 ## Required verification for future changes
 
@@ -113,13 +105,12 @@ GitHub native `paths` filter matches
 Check the complete chain, in order:
 
 1. CI is green for the intended commit SHA.
-2. The production migration job is green.
-3. The expected Labs Railway deployment exists for that same SHA and is
+2. The expected Labs Railway deployment exists for that same SHA and is
    actually `SUCCESS`, not merely submitted or detached.
-4. Labs registers no legacy game redirects; `/games/realitea` and
+3. Labs registers no legacy game redirects; `/games/realitea` and
    `/games/newsboy` return 404 (the remaining `/games/*` routes — Cards,
    Tetris — are Labs-owned experiments).
-5. When changing Newsboy links, verify the configured destination points to
+4. When changing Newsboy links, verify the configured destination points to
    `https://newsboy.ponti.io` and responds successfully.
 
 ## Diagnostic order

@@ -46,23 +46,13 @@ for the required scan and delivery matrix.
    where the variable affects behavior.
 7. After deployment, verify startup and the public path that consumes it.
 
-## Change a database schema
+## Change persistent data
 
-1. Edit the Drizzle schema, never a generated migration or tracker by hand.
-2. Run `pnpm db:generate`.
-3. Run `pnpm db:migrate` against the Foundation test database and run the
-   affected tests.
-4. Commit the schema, generated migration, snapshot, and journal together.
-5. CI must pass before production migration begins.
-6. The `migrate` job in `ci.yml` is the only production migration job.
-   It runs on every production deployment and is a no-op when there are no
-   pending migrations. Application deploys and game-generation workflows must
-   not run migrations.
-7. Labs deployment may proceed only after the migration job succeeds. Newsboy
-   deploys through its separate repository's workflow.
-8. If production is inconsistent, inspect Drizzle's migration tracker and
-   follow the migration recovery rules in `AGENTS.md`. Never reset or drop the
-   database to make a migration pass.
+Hominem owns PostgreSQL data, schema changes, and production migrations. Labs
+must not add or run database migrations from GitHub Actions. Persistent Labs
+features use an owning Hominem API; make schema or API changes in the Hominem
+repository. Historical SQL migrations in Labs are retained for history and are
+not part of its CI or deploy sequence.
 
 ## Change a route, redirect, or cross-service link
 
@@ -85,14 +75,14 @@ for the required scan and delivery matrix.
 
 Before merging, record the new owner for each boundary:
 
-| Boundary | Required decision |
-| --- | --- |
-| UI | Which service renders the page? |
-| API | Which service handles data loaders and mutations? |
-| Auth | Which service builds and receives the auth return URL? |
-| Persistence | Which database schema and migration owns the data? |
-| Environment | Which service receives each variable? |
-| Legacy URL | Is it removed or an explicit redirect? |
+| Boundary    | Required decision                                      |
+| ----------- | ------------------------------------------------------ |
+| UI          | Which service renders the page?                        |
+| API         | Which service handles data loaders and mutations?      |
+| Auth        | Which service builds and receives the auth return URL? |
+| Persistence | Which database schema and migration owns the data?     |
+| Environment | Which service receives each variable?                  |
+| Legacy URL  | Is it removed or an explicit redirect?                 |
 
 Then update links, auth return URLs, cookies, CORS, environment configuration,
 deployment paths, and smoke tests as one change. A package-level test is not
@@ -107,8 +97,8 @@ together. Confirm:
 - the root Railway config points to the root Dockerfile;
 - the start command exists in the built image;
 - the deploy workflow uses the checked-in root `railway.json`;
-- CI runs before database deployment;
-- database deployment runs before application deployment;
+- CI and build finish before Labs deployment; Hominem manages database
+  migrations separately;
 - workflow-run jobs use the source SHA that was tested;
 - the job observes the actual Railway deployment result, not just a detached
   submission.
@@ -139,10 +129,9 @@ workflow changes.
 For every production-affecting change, verify in order:
 
 1. CI is green for the intended commit SHA.
-2. The database workflow is green or correctly reports no database changes.
-3. The expected Railway deployment exists for that SHA and is `SUCCESS`.
-4. The public endpoint returns the expected status, headers, and content.
-5. The primary user flow works from the public entry point through auth, API,
+2. The expected Railway deployment exists for that SHA and is `SUCCESS`.
+3. The public endpoint returns the expected status, headers, and content.
+4. The primary user flow works from the public entry point through auth, API,
    cookies, and persistence.
 
 For the standalone game, the minimum check is:
