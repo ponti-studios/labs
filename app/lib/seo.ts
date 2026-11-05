@@ -4,6 +4,14 @@ export const SITE_URL = "https://ponti.io";
 const SITE_NAME = "Ponti Studios";
 const DEFAULT_IMAGE = `${SITE_URL}/og.png`;
 
+/**
+ * Generated 1200x630 share card for a project page.
+ * Cards live in `public/og/projects/` — see `scripts/generate-project-og.ts`.
+ */
+export function projectOgImage(slug: string): string {
+  return `${SITE_URL}/og/projects/${slug}.png`;
+}
+
 type PageMetaInput = {
   title: string;
   description: string;

@@ -3,7 +3,7 @@ import { Link, useLoaderData } from "react-router";
 import { useRef } from "react";
 import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { BOOK_CALL_URL } from "~/data/studio";
-import { pageMeta } from "~/lib/seo";
+import { pageMeta, projectOgImage } from "~/lib/seo";
 import { FinanceMcpDetails, FinanceMcpHero } from "~/components/projects/finance-mcp";
 import { WaveformPreview } from "~/components/projects/waveform-preview";
 import { projects } from "~/data/projects";
@@ -26,6 +26,7 @@ export const meta: MetaFunction = ({ params }) => {
     title: `${project.name} | Ponti Studios`,
     description: project.shortDescription,
     path: `/projects/${project.slug}`,
+    image: projectOgImage(project.slug),
   });
 };
 
