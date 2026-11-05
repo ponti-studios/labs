@@ -3,18 +3,16 @@
 Ponti Studios portfolio and playground — a single React Router app with data visualization, tarot, and experiments. Newsboy is maintained in its own repository and deployed separately.
 
 Local infrastructure is provided by the sibling [Foundation](https://github.com/ponti-studios/foundation)
-repository; Labs runs on the host and connects to Foundation's Docker services.
-See the [development infrastructure instructions](AGENTS.md#development-infrastructure-foundation-compose)
-for the canonical services, ports, and database URLs.
+repository. Labs runs on the host; Hominem owns PostgreSQL data and migrations.
 
-Labs is a single pnpm app at the repository root. It owns its AI client,
-environment schemas, database schema, and migrations. Newsboy is maintained in
-its own repository and deployed separately.
+Labs is a single pnpm app at the repository root. It owns its AI client and
+environment schemas. Newsboy is maintained in its own repository and deployed
+separately.
 
 ## Getting Started
 
 ```bash
-# 1. Start foundation (shared infra)
+# 1. Start the local Foundation services needed by Labs
 git clone https://github.com/ponti-studios/foundation.git ../foundation
 cd ../foundation && just up
 
@@ -34,34 +32,29 @@ Labs gets a stable `https://labs.lvh.me` URL instead of a fixed port, configured
 via the `"portless"` key in the root `package.json` (`dev` delegates to
 `portless`, the app server command is `dev:app`).
 
-Foundation provides:
-
-- PostgreSQL on `localhost:5434` (database: `hominem`)
-- PostgreSQL test on `localhost:4433` (database: `hominem-test`)
-- Redis on `localhost:6379`
-- MinIO on `localhost:9000` (console `localhost:9001`)
-
-Credentials: `postgres` / `postgres` | `minioadmin` / `minioadmin`
+Foundation provides Redis on `localhost:6379` and MinIO on `localhost:9000`
+(console `localhost:9001`).
 
 ## Scripts (repo root)
 
-| Command | Purpose |
-| --- | --- |
+| Command                | Purpose                                           |
+| ---------------------- | ------------------------------------------------- |
 | `just up` / `just dev` | Portless proxy + Labs dev server (see `justfile`) |
-| `pnpm dev` | Start Labs dev server at `https://labs.lvh.me` |
-| `pnpm build` | Production build of Labs |
-| `pnpm check` | `lint:check` + full typecheck |
-| `pnpm test` | Labs unit tests |
-| `pnpm typecheck` | Labs React Router typegen + TypeScript check |
-| `pnpm db:generate` | Generate Drizzle migration (edit `app/lib/server/db/schema/` first) |
-| `pnpm db:migrate` | Apply Drizzle migrations to `DATABASE_URL` |
-| `pnpm storybook` | Labs Storybook (port 6007) |
+| `pnpm dev`             | Start Labs dev server at `https://labs.lvh.me`    |
+| `pnpm build`           | Production build of Labs                          |
+| `pnpm check`           | `lint:check` + full typecheck                     |
+| `pnpm test`            | Labs unit tests                                   |
+| `pnpm typecheck`       | Labs React Router typegen + TypeScript check      |
+| `pnpm storybook`       | Labs Storybook (port 6007)                        |
 
 ## Deployment
 
-Deployed to Railway via `.github/workflows/ci.yml` on production-relevant pushes
-to `main`: CI → production migration (`migrate` job) → `deploy-labs` (reusable
-`reusable-railway-deploy.yml`). Newsboy deploys and generates from its own repo.
+Deployed to Fly via `.github/workflows/ci.yml` on production-relevant pushes
+to `main`: CI and build → `deploy-labs` (reusable
+`reusable-fly-deploy.yml`). The checked-in `fly.toml` targets the existing
+`hominem-labs` app. GitHub Actions needs the app-scoped `FLY_API_TOKEN` secret.
+Labs Actions do not run database migrations; Hominem owns that pipeline.
+Newsboy deploys and generates from its own repo.
 
 Before changing environment values, routes, databases, authentication, or
 deployment workflows, read the [core development flows](docs/operations/core-development-flows.md)

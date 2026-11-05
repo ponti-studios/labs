@@ -35,7 +35,6 @@ const apiRoutes = [
   ),
   route("/api/gen/image", "routes/api.gen.image.ts"),
   route("/api/gen/predict", "routes/api.gen.predict.ts"),
-  route("/api/search", "routes/api.search.ts"),
   route("/api/tarot", "routes/api.tarot.ts"),
 ] satisfies RouteConfig;
 
@@ -73,7 +72,6 @@ const experimentRoutes = [
   route("/challenges/fee-or-upfront", "routes/challenges.fee-or-upfront.tsx"),
   route("/challenges/cloud-pricing", "routes/challenges.cloud-pricing.tsx"),
   route("/challenges/prime-countdown", "routes/challenges.prime-countdown.tsx"),
-  route("/challenges/search-studio", "routes/challenges.search-studio.tsx"),
   route("/challenges/red-badger", "routes/challenges.red-badger.tsx"),
   route("/health/medication", "routes/health/medication.tsx"),
   route("/health/api/medication-schedule", "routes/health/api.medication-schedule.ts"),
