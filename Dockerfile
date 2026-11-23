@@ -15,7 +15,13 @@ ENV VITE_SENTRY_DSN=$VITE_SENTRY_DSN \
     VITE_SENTRY_RELEASE=$VITE_SENTRY_RELEASE
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN pnpm install --frozen-lockfile
+# Org packages (@ponti-studios/*) resolve from GitHub Packages, which needs a
+# token for metadata + tarball fetches. CI passes it as a build secret.
+RUN --mount=type=secret,id=gh_packages_token \
+    if [ -f /run/secrets/gh_packages_token ]; then \
+      echo "//npm.pkg.github.com/:_authToken=$(cat /run/secrets/gh_packages_token)" >> ~/.npmrc; \
+    fi && \
+    pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm build
 

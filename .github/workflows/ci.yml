@@ -99,6 +99,9 @@ jobs:
   deploy-labs:
     if: github.event_name != 'pull_request'
     needs: [lint-and-test, build]
+    permissions:
+      contents: read
+      packages: read
     uses: ./.github/workflows/reusable-fly-deploy.yml
     with:
       timeout-minutes: 10
