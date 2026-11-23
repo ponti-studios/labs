@@ -18,10 +18,10 @@ importers:
         specifier: ^1.3.27
         version: 1.3.27
       '@ponti-studios/auth':
-        specifier: ^0.2.0
-        version: 0.2.0
+        specifier: gh:^0.2.1
+        version: 0.2.1(@playwright/test@1.65.1)
       '@ponti-studios/ui':
-        specifier: 1.8.0
+        specifier: gh:@ponti-studios/ui@1.8.0
         version: 1.8.0(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@react-router/node':
         specifier: ^8.4.0
@@ -1302,17 +1302,21 @@ packages:
   '@pinojs/redact@0.4.0':
     resolution: {integrity: sha512-k2ENnmBugE/rzQfEcdWHcCY+/FM3VLzH9cYEsbdsoqrvzAKRhUZeRNhAZvB8OitQJ1TBed3yqWtdjzS6wJKBwg==}
 
-  '@ponti-studios/auth@0.2.0':
-    resolution: {integrity: sha512-7OdiD3Pc5GoklY4NmePGCF/SE2/erlMpGm4mm/avbDQAej4/MPMKT2Mwr1oCjBxb6q/v03i8qT4atVBM6wH9vQ==, tarball: https://npm.pkg.github.com/download/@ponti-studios/auth/0.2.0/feaa5812ca5806cb967e3f6bff209aa76036b252}
+  '@playwright/test@1.65.1':
+    resolution: {integrity: sha512-y+NCIRm2LvY4slUVWvGh1nujJ8RF/hEisIsq2mtUPgdQC4L701bq5hZGMhrpeXjACvwvO9tj5dJqhvM6TP9lbw==}
+    engines: {node: '>=20'}
+    hasBin: true
+
+  '@ponti-studios/auth@0.2.1':
+    resolution: {integrity: sha512-9bRZUycCd7yrf2MOUnqDwLCsoRkiSTQmGA8m/x89OD9M6bG5G7EUNqj75HFC2lte43zdDFJCv8RR1T1gaZqmsw==, tarball: https://npm.pkg.github.com/download/@ponti-studios/auth/0.2.1/592081c379879c1bfcb11360a8a8050654760b3e}
+    peerDependencies:
+      '@playwright/test': ^1.64.1
 
   '@ponti-studios/ui@1.8.0':
     resolution: {integrity: sha512-1CgxQPeEqg4XjLXNzfHY7xHcbejs4plMcNgq8NJHRediXhsj8g45J57ZIWaKa3g6PRb0gFslrpSl4WYySameiw==, tarball: https://npm.pkg.github.com/download/@ponti-studios/ui/1.8.0/1afa719e14328df9d62afeb48325423787927146}
     peerDependencies:
       react: ^18.2.0 || ^19.0.0
       react-dom: ^18.2.0 || ^19.0.0
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
 
   '@radix-ui/colors@3.0.0':
     resolution: {integrity: sha512-FUOsGBkHrYJwCSEtWRCIfQbZG7q1e6DgxCIOe1SUQzDe/7rXXeA47s8yCn6fuTNQAj1Zq4oTFi9Yjp3wzElcxg==}
@@ -1628,7 +1632,9 @@ packages:
   '@smithy/core@3.35.0':
     resolution: {integrity: sha512-zRMhfkByhT2snNdr1si24vJitU6Cr9ix2MikUfWmkAgp4jrNP0GcKSP5YvwQ+TlI8AZXER5QOGJn3JsVtSD9/A==}
     engines: {node: '>=18.0.0'}
-    deprecated: Deprecated due to a bug in custom logger data redaction. See https://github.com/aws/aws-sdk-js-v3/issues/8393.
+    deprecated: |-
+      Deprecated due to a bug in custom logger data redaction. Upgrade to the latest version. If you used a custom logger with this
+        version, review your logs and rotate any credentials or other secrets. See https://github.com/aws/aws-sdk-js-v3/issues/8393.
 
   '@smithy/credential-provider-imds@4.5.2':
     resolution: {integrity: sha512-A9uSdn72ozbRUSit0eib0TW7nXuNPlaeM0zcGkJ+nE6tFcSDbnmtwoxbTCFBukVQcszDAyvsd7+rTduPTXpygg==}
@@ -3077,8 +3083,18 @@ packages:
     engines: {node: '>=20'}
     hasBin: true
 
+  playwright-core@1.65.1:
+    resolution: {integrity: sha512-hqPpz7blSMPxWVdoeE1yiBSzXsKiVOd2k+kjCvmUywD2GPO2Dd9HfcWnq9NN0GHbNZDFgZ9JfBFr+X5/BLo0qw==}
+    engines: {node: '>=20'}
+    hasBin: true
+
   playwright@1.62.1:
     resolution: {integrity: sha512-0M+L3LAD8/nm554LOla9Ayx0j0tmFZ0FBcoQ7F1VuVHpM/XpiC8RcDzBQB8W5+hA8L22THxELzeF+2WcUzvcLg==}
+    engines: {node: '>=20'}
+    hasBin: true
+
+  playwright@1.65.1:
+    resolution: {integrity: sha512-vJ1FuoOrNwOKHUIVEvSt3jT1L+wjjDpwhwIstKtfvTh8XIG4FG4bIFuvNdMxi81LGfAhUgUZleVFaOLY4RIUUw==}
     engines: {node: '>=20'}
     hasBin: true
 
@@ -4566,7 +4582,13 @@ snapshots:
 
   '@pinojs/redact@0.4.0': {}
 
-  '@ponti-studios/auth@0.2.0': {}
+  '@playwright/test@1.65.1':
+    dependencies:
+      playwright: 1.65.1
+
+  '@ponti-studios/auth@0.2.1(@playwright/test@1.65.1)':
+    dependencies:
+      '@playwright/test': 1.65.1
 
   '@ponti-studios/ui@1.8.0(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)':
     dependencies:
@@ -4576,9 +4598,8 @@ snapshots:
       clsx: 2.1.1
       lucide-react: 1.66.0(@types/react@19.3.0)(react@19.3.0)
       react: 19.3.0
-      tailwind-merge: 3.6.0
-    optionalDependencies:
       react-dom: 19.3.0(react@19.3.0)
+      tailwind-merge: 3.6.0
     transitivePeerDependencies:
       - '@date-fns/tz'
       - '@types/react'
@@ -6304,11 +6325,17 @@ snapshots:
 
   playwright-core@1.62.1: {}
 
+  playwright-core@1.65.1: {}
+
   playwright@1.62.1:
     dependencies:
       playwright-core: 1.62.1
     optionalDependencies:
       fsevents: 2.3.2
+
+  playwright@1.65.1:
+    dependencies:
+      playwright-core: 1.65.1
 
   portless@0.15.6: {}
 
