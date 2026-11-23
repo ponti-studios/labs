@@ -10,6 +10,8 @@ allowBuilds:
   msw: true
 
 minimumReleaseAgeExclude:
+  # org packages come from GitHub Packages, which serves no publish timestamps
+  - "@ponti-studios/*"
   - "@openrouter/sdk@1.2.6"
   - "@oxfmt/binding-android-arm-eabi@0.62.0 || 0.67.0"
   - "@oxfmt/binding-android-arm64@0.62.0 || 0.67.0"
